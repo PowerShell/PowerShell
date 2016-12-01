@@ -172,20 +172,6 @@ function New-TemporaryFile
         }
     }    
 }
-
-<# This cmdlet is used to generate a new guid #>
-function New-Guid
-{
-    [CmdletBinding(HelpURI='https://go.microsoft.com/fwlink/?LinkId=526920')]
-	[OutputType([System.Guid])]
-    Param()
-    
-    Begin
-    {
-        [Guid]::NewGuid()
-    }    
-}
-
 <############################################################################################ 
 # Format-Hex cmdlet helps in displaying the Hexadecimal equivalent of the input data.
 ############################################################################################>

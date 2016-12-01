@@ -8,7 +8,7 @@ PowerShellVersion="3.0"
 CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Out-File", "Out-String", "Get-FormatData", "Export-FormatData", "ConvertFrom-Json", "ConvertTo-Json",
     "Invoke-RestMethod", "Invoke-WebRequest", "Register-ObjectEvent", "Register-EngineEvent",
-    "Wait-Event", "Get-Event", "Remove-Event", "Get-EventSubscriber", "Unregister-Event",
+    "Wait-Event", "Get-Event", "Remove-Event", "Get-EventSubscriber", "Unregister-Event", "New-Guid", 
     "New-Event", "Add-Member", "Add-Type", "Compare-Object", "ConvertTo-Html", "ConvertFrom-StringData",
     "Export-Csv", "Import-Csv", "ConvertTo-Csv", "ConvertFrom-Csv", "Export-Alias", "Invoke-Expression",
     "Get-Alias", "Get-Culture", "Get-Date", "Get-Host", "Get-Member", "Get-Random", "Get-UICulture",
@@ -23,7 +23,7 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Get-TraceSource", "Set-TraceSource", "Trace-Command",
     "Unblock-File", "Get-Runspace", "Debug-Runspace", "Enable-RunspaceDebug", "Disable-RunspaceDebug",
     "Get-RunspaceDebug", "Wait-Debugger" , "Get-Uptime"
-FunctionsToExport= "Get-FileHash", "New-TemporaryFile", "New-Guid", "Format-Hex", "Import-PowerShellDataFile",
+FunctionsToExport= "Get-FileHash", "New-TemporaryFile", "Format-Hex", "Import-PowerShellDataFile",
     "ConvertFrom-SddlString"
 AliasesToExport= "fhx"
 NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"

@@ -226,6 +226,9 @@
     <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\neweventcommand.cs">
       <Link>commands\utility\neweventcommand.cs</Link>
     </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\NewGuidCommand.cs">
+      <Link>commands\utility\NewGuidCommand.cs</Link>
+    </Compile>
     <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\NewTimeSpanCommand.cs">
       <Link>commands\utility\NewTimeSpanCommand.cs</Link>
     </Compile>
