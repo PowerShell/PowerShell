@@ -3,6 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
+using System.Management.Automation;
 using System.Text;
 using Microsoft.Win32;
 
