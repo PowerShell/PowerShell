@@ -667,7 +667,8 @@ function Start-PSPester {
         [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output),
         [string]$powershell = (Join-Path $binDir 'powershell'),
         [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester")),
-        [switch]$Unelevate
+        [switch]$Unelevate,
+        [switch]$Quiet
     )
 
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
@@ -725,6 +726,11 @@ function Start-PSPester {
     }
     if ($Tag) {
         $Command += "-Tag @('" + (${Tag} -join "','") + "') "
+    }
+    # sometimes we need to eliminate Pester output, especially when we're
+    # doing a daily build as the log file is too large
+    if ( $Quiet ) {
+        $Command += "-Quiet "
     }
 
     $Command += "'" + $Path + "'"
@@ -799,6 +805,17 @@ function script:Start-UnelevatedProcess
     runas.exe /trustlevel:0x20000 "$process $arguments"
 }
 
+function Show-PSPesterError
+{
+    param ( [Xml.XmlElement]$testFailure )
+    logerror ("Description: " + $testFailure.description)
+    logerror ("Name:        " + $testFailure.name)
+    logerror "message:"
+    logerror $testFailure.failure.message
+    logerror "stack-trace:"
+    logerror $testFailure.failure."stack-trace"
+}
+
 #
 # Read the test result file and
 # Throw if a test failed 
@@ -806,7 +823,7 @@ function Test-PSPesterResults
 {
     param(
         [string]$TestResultsFile = "pester-tests.xml",
-        [string] $TestArea = 'test/powershell'
+        [string]$TestArea = 'test/powershell'
     )
 
     if(!(Test-Path $TestResultsFile))
@@ -817,6 +834,11 @@ function Test-PSPesterResults
     $x = [xml](Get-Content -raw $testResultsFile)
     if ([int]$x.'test-results'.failures -gt 0)
     {
+        logerror "TEST FAILURES"
+        foreach ( $testfail in $x.SelectNodes('.//test-case[@result = "Failure"]'))
+        {
+            Show-PSPesterError $testfail
+        }
         throw "$($x.'test-results'.failures) tests in $TestArea failed"
     }
 }
@@ -2049,6 +2071,12 @@ function script:Use-MSBuild {
 
 function script:log([string]$message) {
     Write-Host -Foreground Green $message
+    #reset colors for older package to at return to default after error message on a compilation error
+    [console]::ResetColor()
+}
+
+function script:logerror([string]$message) {
+    Write-Host -Foreground Red $message
     #reset colors for older package to at return to default after error message on a compilation error
     [console]::ResetColor()
 }
