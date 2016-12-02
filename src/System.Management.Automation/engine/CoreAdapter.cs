@@ -4887,14 +4887,8 @@ namespace System.Management.Automation
         /// <param name="convertIfPossible">instructs the adapter to convert before setting, if the adapter supports conversion</param>
         protected override void PropertySet(PSProperty property, object setValue, bool convertIfPossible)
         {
-            string valueString = setValue as string;
-            if (valueString == null)
-            {
-                throw new SetValueException("XmlNodeSetShouldBeAString",
-                    null,
-                    ExtendedTypeSystem.XmlNodeSetShouldBeAString,
-                    property.Name);
-            }
+            // XML is always a string so implicitly convert to string
+            string valueString = LanguagePrimitives.ConvertTo<string>(setValue);
             XmlNode[] nodes = (XmlNode[])property.adapterData;
             Diagnostics.Assert(nodes.Length != 0, "DoGetProperty would not return an empty array, it would return null instead");
             if (nodes.Length > 1)

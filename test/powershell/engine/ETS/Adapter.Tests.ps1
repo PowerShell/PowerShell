@@ -80,3 +80,31 @@ Describe "Adapter Tests" -tags "CI" {
         $val | Should Be "book"
     }
 }
+
+Describe "Adapter XML Tests" -tags "CI" {
+    BeforeAll {
+        [xml]$x  = "<root><data/></root>"
+        $testCases =
+            @{ rval = @{testprop = 1}; value = 'a hash (psobject)' },
+            @{ rval = $null;           value = 'a null (codemethod)' },
+            @{ rval = 1;               value = 'a int (codemethod)' },
+            @{ rval = "teststring";    value = 'a string (codemethod)' },
+            @{ rval = @("teststring1", "teststring2");  value = 'a string array (codemethod)' },
+            @{ rval = @(1,2); value = 'a int array (codemethod)' },
+            @{ rval = [PSObject]::AsPSObject(1); value = 'a int (psobject wrapping)' },
+            @{ rval = [PSObject]::AsPSObject("teststring"); value = 'a string (psobject wrapping)' },
+            @{ rval = [PSObject]::AsPSObject([psobject]@("teststring1", "teststring2")); value = 'a string array (psobject wrapping)' },
+            @{ rval = [PSObject]::AsPSObject(@(1,2)); value = 'int array (psobject wrapping)' }
+    }
+
+    Context "Can set XML node property to non-string object" {
+        It "rval is <value>" -TestCases $testCases {
+            # rval will be implicitly converted to 'string' type
+            param($rval)
+            {
+                { $x.root.data = $rval } | Should Not Throw
+                $x.root.data | Should Be [System.Management.Automation.LanguagePrimitives]::ConvertTo($rval, [string])
+            }
+        }
+    }
+}
