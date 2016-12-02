@@ -3,6 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
+using System.Management.Automation;
 using System.Text;
 using Microsoft.Win32;
 
@@ -87,7 +88,8 @@ namespace Microsoft.PowerShell.Commands
             || CheckIsXml(contentType)
             || CheckIsJson(contentType);
 
-            if (!isText)
+            // Further content type analysis is available on Windows
+            if (Platform.IsWindows && !isText)
             {
                 // Media types registered with Windows as having a perceived type of text, are text
                 using (RegistryKey contentTypeKey = Registry.ClassesRoot.OpenSubKey(@"MIME\Database\Content Type\" + contentType))
@@ -135,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
             // the correct type for JSON content, as specified in RFC 4627
             bool isJson = contentType.Equals("application/json", StringComparison.OrdinalIgnoreCase);
 
-            // add in these other "javascript" related types that 
+            // add in these other "javascript" related types that
             // sometimes get sent down as the mime type for JSON content
             isJson |= contentType.Equals("text/json", StringComparison.OrdinalIgnoreCase)
             || contentType.Equals("application/x-javascript", StringComparison.OrdinalIgnoreCase)
