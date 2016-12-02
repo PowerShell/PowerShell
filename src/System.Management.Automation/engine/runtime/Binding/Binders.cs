@@ -1728,8 +1728,7 @@ namespace System.Management.Automation.Language
                         Expression.Block(typeof(void), blockExprs),
                         Expression.Catch(
                             exception,
-                            Expression.Block(
-                               Compiler.ThrowRuntimeErrorWithInnerException("PropertyAssignmentException", Expression.Property(exception, "Message"), exception, typeof(void))))),
+                            Compiler.ThrowRuntimeErrorWithInnerException("PropertyAssignmentException", Expression.Property(exception, "Message"), exception, typeof(void)))),
                     // The result of the block is the object constructed, so the tmp must be the last expr in the block.
                     tmp);
             }
