@@ -13,7 +13,7 @@ using System.Management.Automation.Remoting;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using Dbg = System.Management.Automation.Diagnostics;
-
+using System.Collections;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -43,6 +43,18 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         #region Parameters
+
+        #region SSH Parameter Set
+
+        /// <summary>
+        /// Host name for an SSH remote connection
+        /// </summary>
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true,
+            ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [ValidateNotNullOrEmpty()]
+        public new string HostName { get; set; }
+
+        #endregion
 
         /// <summary>
         /// Computer name parameter.
@@ -171,6 +183,18 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = EnterPSSessionCommand.VMNameParameterSet)]
         public String ConfigurationName { get; set; }
+
+        #region Suppress PSRemotingBaseCmdlet SSH hash parameter set
+
+        /// <summary>
+        /// Suppress SSHConnection parameter set
+        /// </summary>
+        public override Hashtable[] SSHConnection
+        {
+            get { return null; }
+        }
+
+        #endregion
 
         #endregion
 
@@ -1246,7 +1270,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private RemoteRunspace GetRunspaceForSSHSession()
         {
-            var sshConnectionInfo = new SSHConnectionInfo(this.UserName, this.HostName, this.KeyFilePath);
+            var sshConnectionInfo = new SSHConnectionInfo(this.UserName, ResolveComputerName(HostName), this.KeyFilePath);
             var typeTable = TypeTable.LoadDefaultTypeFiles();
             var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
             remoteRunspace.Open();

@@ -240,6 +240,13 @@ namespace Microsoft.PowerShell
                         throw hostException;
                     }
 
+#if !CORECLR
+                    // The default font face used for Powershell Console is Lucida Console. 
+                    // However certain CJK locales dont support Lucida Console font. Hence for such 
+                    // locales the console font is updated to Raster dynamically.
+                    ConsoleControl.UpdateLocaleSpecificFont();
+#endif
+
                     s_theConsoleHost.BindBreakHandler();
                     PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
 

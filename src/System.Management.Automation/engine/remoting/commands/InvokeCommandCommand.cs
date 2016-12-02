@@ -3,6 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
@@ -387,7 +388,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostHashParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostHashParameterSet)]
         public SwitchParameter AsJob
         {
             get
@@ -446,7 +449,9 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostHashParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostHashParameterSet)]
         [Alias("HCN")]
         public SwitchParameter HideComputerName
         {
@@ -509,9 +514,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1,
                    Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
-        [Parameter(Position = 1,
-                   Mandatory = true,
+        [Parameter(Mandatory = true,
                    ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(Mandatory = true,
+                   ParameterSetName = InvokeCommandCommand.SSHHostHashParameterSet)]
         [ValidateNotNull]
         [Alias("Command")]
         public override ScriptBlock ScriptBlock
@@ -555,9 +561,10 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 1,
                    Mandatory = true,
                    ParameterSetName = FilePathContainerIdParameterSet)]
-        [Parameter(Position = 1,
-                   Mandatory = true,
+        [Parameter(Mandatory = true,
                    ParameterSetName = FilePathSSHHostParameterSet)]
+        [Parameter(Mandatory = true,
+                   ParameterSetName = FilePathSSHHostHashParameterSet)]
         [ValidateNotNull]
         [Alias("PSPath")]
         public override string FilePath
@@ -662,28 +669,28 @@ namespace Microsoft.PowerShell.Commands
         #region SSH Parameters
 
         /// <summary>
-        /// Host Name
+        /// Host name for an SSH remote connection
         /// </summary>
+        [Parameter(Mandatory = true,
+            ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(Mandatory = true,
+            ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
         [ValidateNotNullOrEmpty()]
-        [Parameter(Position = 0, Mandatory = true, ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        [Parameter(Position = 0, Mandatory = true, ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
-        public override string HostName
+        public override string[] HostName
         {
             get { return base.HostName; }
-
             set { base.HostName = value; }
         }
 
         /// <summary>
         /// User Name
         /// </summary>
-        [Parameter(Mandatory = true, ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
-        [Parameter(Mandatory = true, ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
         [ValidateNotNullOrEmpty()]
         public override string UserName
         {
             get { return base.UserName; }
-
             set { base.UserName = value; }
         }
 
@@ -693,11 +700,41 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
         [ValidateNotNullOrEmpty()]
+        [Alias("IdentityFilePath")]
         public override string KeyFilePath
         {
             get { return base.KeyFilePath; }
-
             set { base.KeyFilePath = value; }
+        }
+
+        /// <summary>
+        /// This parameter specifies that SSH is used to establish the remote
+        /// connection and act as the remoting transport.  By default WinRM is used
+        /// as the remoting transport.  Using the SSH transport requires that SSH is
+        /// installed and PowerShell remoting is enabled on both client and remote machines.
+        /// </summary>
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        [ValidateSet("true")]
+        public override SwitchParameter SSHTransport
+        {
+            get { return base.SSHTransport; }
+            set { base.SSHTransport = value; }
+        }
+
+        /// <summary>
+        /// Hashtable array containing SSH connection parameters for each remote target
+        ///   ComputerName  (Alias: HostName)           (required)
+        ///   UserName                                  (optional)
+        ///   KeyFilePath   (Alias: IdentityFilePath)   (optional)
+        /// </summary>
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostHashParameterSet, Mandatory = true)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostHashParameterSet, Mandatory = true)]
+        [ValidateNotNullOrEmpty()]
+        public override Hashtable[] SSHConnection
+        {
+            get;
+            set;
         }
 
         #endregion
@@ -969,6 +1006,10 @@ namespace Microsoft.PowerShell.Commands
                             case InvokeCommandCommand.FilePathVMIdParameterSet:
                             case InvokeCommandCommand.FilePathVMNameParameterSet:
                             case InvokeCommandCommand.FilePathContainerIdParameterSet:
+                            case InvokeCommandCommand.SSHHostParameterSet:
+                            case InvokeCommandCommand.FilePathSSHHostParameterSet:
+                            case InvokeCommandCommand.SSHHostHashParameterSet:
+                            case InvokeCommandCommand.FilePathSSHHostHashParameterSet:
                                 {
                                     if (ResolvedComputerNames.Length != 0 && Operations.Count > 0)
                                     {
@@ -979,18 +1020,6 @@ namespace Microsoft.PowerShell.Commands
                                         this.JobRepository.Add(job);
                                         WriteObject(job);
                                     }
-                                }
-                                break;
-
-                            case InvokeCommandCommand.SSHHostParameterSet:
-                            case InvokeCommandCommand.FilePathSSHHostParameterSet:
-                                {
-                                    var job = new PSRemotingJob(new string[] { this.HostName }, Operations,
-                                        ScriptBlock.ToString(), ThrottleLimit, _name);
-                                    job.PSJobTypeName = RemoteJobType;
-                                    job.HideComputerName = _hideComputerName;
-                                    this.JobRepository.Add(job);
-                                    WriteObject(job);
                                 }
                                 break;
 

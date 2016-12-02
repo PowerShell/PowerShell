@@ -1516,7 +1516,12 @@ namespace System.Management.Automation.Remoting.Client
                 while (true)
                 {
                     string error = reader.ReadLine();
-                    if (!string.IsNullOrEmpty(error) && (error.IndexOf("WARNING:", StringComparison.OrdinalIgnoreCase) > -1))
+                    if (string.IsNullOrEmpty(error))
+                    {
+                        // Ignore blank error messages.
+                        continue;
+                    }
+                    if (error.IndexOf("WARNING:", StringComparison.OrdinalIgnoreCase) > -1)
                     {
                         // Handle as interactive warning message.
                         Console.WriteLine(error);
