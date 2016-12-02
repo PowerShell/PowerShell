@@ -34,6 +34,6 @@ Describe 'Humanizer Tests for TimeSpan' -Tags 'CI' {
 Describe 'Humanizer Tests for TimeSpan: test default output to console' -Tags 'CI' {
 
     It 'Convert TimeSpan to human string' {
-        [timespan]"1:1:1:1.1" | Format-Custom | Out-String | Should Be "`r`n1 day, 1 hour, 1 mimute, 1 second, 100 milliseconds`r`n`r`n`r`n"
+        ([timespan]"1:1:1:1.1" | Format-Custom | Out-String) -like "*1 day, 1 hour, 1 mimute, 1 second, 100 milliseconds*" | Should Be $true
     }
 }
