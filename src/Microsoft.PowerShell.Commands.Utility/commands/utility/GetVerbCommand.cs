@@ -41,37 +41,37 @@ namespace Microsoft.PowerShell.Commands
 
             Type[] verbTypes = new Type[] { typeof(VerbsCommon), typeof(VerbsCommunications), typeof(VerbsData),
                 typeof(VerbsDiagnostic), typeof(VerbsLifecycle), typeof(VerbsOther), typeof(VerbsSecurity) };
+  
+            Collection<WildcardPattern> matchingVerbs = SessionStateUtilities.CreateWildcardsFromStrings(
+                            this.Verb,
+                            WildcardOptions.IgnoreCase
+                        );
 
             foreach (Type type in verbTypes)
             {
+                string groupName = type.Name.Substring(5);
+                if (this.Group != null)
+                {
+                    if (!SessionStateUtilities.CollectionContainsValue(this.Group, groupName, StringComparer.OrdinalIgnoreCase))
+                    {
+                        continue;
+                    }                            
+                }
                 foreach (FieldInfo field in type.GetFields())
                 {
                     if (field.IsLiteral)
                     {
-                        if(this.Verb != null)
+                        if (this.Verb != null)
                         {
-                            Collection<WildcardPattern> matchingVerbs = SessionStateUtilities.CreateWildcardsFromStrings(
-                                this.Verb,
-                                WildcardOptions.IgnoreCase
-                            );
-                            
-                            if(!SessionStateUtilities.MatchesAnyWildcardPattern(field.Name,matchingVerbs,false))
+                            if (!SessionStateUtilities.MatchesAnyWildcardPattern(field.Name, matchingVerbs, false))
                             {
                                 continue;
                             }
                         }
-
-                        if(this.Group != null)
-                        {
-                            if(!SessionStateUtilities.CollectionContainsValue(this.Group,type.Name.Substring(5),StringComparer.OrdinalIgnoreCase))
-                            {
-                                continue;
-                            }                            
-                        }
                         
                         VerbInfo verb = new VerbInfo();
                         verb.Verb = field.Name;
-                        verb.Group = type.Name.Substring(5);
+                        verb.Group = groupName;
                         WriteObject(verb);
                     }
                 }
