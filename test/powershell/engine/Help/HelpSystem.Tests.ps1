@@ -63,11 +63,24 @@ function RunTestCase
 }
 
 Describe "Validate that get-help <cmdletName> works" -Tags @('CI', 'RequireAdminOnWindows') {
-
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference 
+    }
     RunTestCase -tag "CI"
 }
 
 Describe "Validate Get-Help for all cmdlets in 'Microsoft.PowerShell.Core'" -Tags @('Feature', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference 
+    }
 
     RunTestCase -tag "Feature"
 }
@@ -79,7 +92,12 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
             dev     = 'http://schemas.microsoft.com/maml/dev/2004/10'
             maml    = 'http://schemas.microsoft.com/maml/2004/10'
             msh     = 'http://msh'
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
         }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference 
+    }
 
         # Currently these test cases are verified only on Windows, because
         # - WSMan:\ and Cert:\ providers are not yet supported on non-Windows platforms.

@@ -275,29 +275,71 @@ function ValidateSaveHelp
 }
 
 Describe "Validate Update-Help from the Web for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference 
+    }
 
     RunUpdateHelpTests -tag "CI" -Pending
 }
 
 Describe "Validate Update-Help from the Web for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference 
+    }
 
     RunUpdateHelpTests -tag "Feature"
 }
 
 Describe "Validate Update-Help -SourcePath for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference 
+    }
 
     RunUpdateHelpTests -tag "CI" -useSourcePath
 }
 
 Describe "Validate Update-Help -SourcePath for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference 
+    }
 
     RunUpdateHelpTests -tag "Feature" -useSourcePath
 }
 
 Describe "Validate 'Save-Help -DestinationPath for one PowerShell Core modules." -Tags @('CI', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference 
+    }
     RunSaveHelpTests -tag "CI" -Pending
 }
 
 Describe "Validate 'Save-Help -DestinationPath for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference 
+    }
     RunSaveHelpTests -tag "Feature"
 }
