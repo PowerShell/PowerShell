@@ -71,3 +71,41 @@ Import-Module Random
     }
 
 }
+
+Describe 'Module reloading with Class definition' -Tags "CI" {
+
+    BeforeAll {
+        Set-Content -Path TestDrive:\TestModule.psm1 -Value @'
+$passedArgs = $args
+class Root { $passedIn = $passedArgs }
+function Get-PassedArgsRoot { [Root]::new().passedIn }
+function Get-PassedArgsNoRoot { $passedArgs }
+'@
+    }
+
+    AfterEach {
+        Remove-Module TestModule -Force -ErrorAction SilentlyContinue
+    }
+
+    It "Class execution reflects changes in module reloading with '-Force'" {
+        Import-Module TestDrive:\TestModule.psm1 -ArgumentList 'value-1'
+        Get-PassedArgsRoot | Should Be 'value-1'
+        Get-PassedArgsNoRoot | Should Be 'value-1'
+
+        Import-Module TestDrive:\TestModule.psm1 -ArgumentList 'value-2' -Force
+        Get-PassedArgsRoot | Should Be 'value-2'
+        Get-PassedArgsNoRoot | Should Be 'value-2'
+    }
+
+    It "Class execution reflects changes in module reloading with 'Remove-Module' and 'Import-Module'" {
+        Import-Module TestDrive:\TestModule.psm1 -ArgumentList 'value-1'
+        Get-PassedArgsRoot | Should Be 'value-1'
+        Get-PassedArgsNoRoot | Should Be 'value-1'
+
+        Remove-Module TestModule
+
+        Import-Module TestDrive:\TestModule.psm1 -ArgumentList 'value-2'
+        Get-PassedArgsRoot | Should Be 'value-2'
+        Get-PassedArgsNoRoot | Should Be 'value-2'
+    }
+}
