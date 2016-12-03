@@ -192,7 +192,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetSecurityDescriptorProviderException",
                     SessionStateStrings.GetSecurityDescriptorProviderException,
@@ -380,7 +379,6 @@ namespace System.Management.Automation
             }
             catch (SystemException e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 //
                 // thrown if the CLR gets back unexpected error
                 // from OS security or marta
@@ -389,7 +387,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "SetSecurityDescriptorProviderException",
                     SessionStateStrings.SetSecurityDescriptorProviderException,
@@ -508,7 +505,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "NewSecurityDescriptorProviderException",
                     SessionStateStrings.GetSecurityDescriptorProviderException,
@@ -615,7 +611,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "NewSecurityDescriptorProviderException",
                     SessionStateStrings.GetSecurityDescriptorProviderException,

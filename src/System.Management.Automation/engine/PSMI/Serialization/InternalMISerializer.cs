@@ -542,8 +542,6 @@ namespace System.Management.Automation
             catch (Exception exception)
             {
                 // Catch-all OK. This is a third-party call-out.
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 PSEtwLog.LogAnalyticWarning(
                     PSEventId.Serializer_EnumerationFailed, PSOpcode.Exception, PSTask.Serialization,
                     PSKeyword.Serializer | PSKeyword.UseAlwaysAnalytic,
@@ -569,8 +567,6 @@ namespace System.Management.Automation
                     catch (Exception exception)
                     {
                         // Catch-all OK. This is a third-party call-out.
-                        CommandProcessorBase.CheckForSevereException(exception);
-
                         PSEtwLog.LogAnalyticWarning(
                             PSEventId.Serializer_EnumerationFailed, PSOpcode.Exception, PSTask.Serialization,
                             PSKeyword.Serializer | PSKeyword.UseAlwaysAnalytic,
@@ -599,8 +595,6 @@ namespace System.Management.Automation
             catch (Exception exception) // ignore non-severe exceptions
             {
                 // Catch-all OK. This is a third-party call-out.
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 PSEtwLog.LogAnalyticWarning(
                     PSEventId.Serializer_EnumerationFailed, PSOpcode.Exception, PSTask.Serialization,
                     PSKeyword.Serializer | PSKeyword.UseAlwaysAnalytic,
@@ -629,8 +623,6 @@ namespace System.Management.Automation
                     catch (Exception exception)
                     {
                         // Catch-all OK. This is a third-party call-out.
-                        CommandProcessorBase.CheckForSevereException(exception);
-
                         PSEtwLog.LogAnalyticWarning(
                             PSEventId.Serializer_EnumerationFailed, PSOpcode.Exception, PSTask.Serialization,
                             PSKeyword.Serializer | PSKeyword.UseAlwaysAnalytic,

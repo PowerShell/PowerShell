@@ -341,9 +341,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 return obj.ToString();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 // eats exception if safe
             }
             return "";

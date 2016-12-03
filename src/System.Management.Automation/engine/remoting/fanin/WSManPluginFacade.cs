@@ -463,10 +463,9 @@ namespace System.Management.Automation.Remoting
                 appContextType.InvokeMember("SetSwitch", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.InvokeMethod, null, null, blockLongPathsSwitch, CultureInfo.InvariantCulture);
                 appContextType.InvokeMember("SetSwitch", System.Reflection.BindingFlags.Public | System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.InvokeMethod, null, null, useLegacyPathHandlingSwitch, CultureInfo.InvariantCulture);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // If there are any non-critical exceptions (e.g. we are running on CLR prior to 4.6.2), we won't be able to use long paths
-                CommandProcessorBase.CheckForSevereException(e);
             }
 #endif
             ClrFacade.StructureToPtr<WSManPluginEntryDelegates.WSManPluginEntryDelegatesInternal>(workerPtrs.UnmanagedStruct, wkrPtrs, false);

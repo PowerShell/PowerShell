@@ -666,11 +666,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 this.ReportTrace("XmlDocument discarded");
                 return null;
             }
-            catch (Exception e) // will rethrow
-            {
-                CommandProcessor.CheckForSevereException(e);
-                throw;
-            }
         }
 
         #endregion

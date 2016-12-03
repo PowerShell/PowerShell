@@ -490,9 +490,8 @@ namespace System.Management.Automation.Remoting
                     false,                      // IsConnected
                     pipeHandle);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 pipeHandle.Dispose();
                 throw;
             }
@@ -679,7 +678,6 @@ namespace System.Management.Automation.Remoting
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 ex = e;
             }
             if (ex != null)
@@ -719,7 +717,6 @@ namespace System.Management.Automation.Remoting
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 ex = e;
                 restartListenerThread = false;
             }
@@ -832,9 +829,8 @@ namespace System.Management.Automation.Remoting
                         // Start the pipe server listening thread, and provide client connection callback.
                         IPCNamedPipeServer.StartListening(ClientConnectionCallback);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         IPCNamedPipeServer = null;
                     }
                 }
@@ -857,10 +853,9 @@ namespace System.Management.Automation.Remoting
                             namedPipeServer.Dispose();
                         }
                         catch (ObjectDisposedException) { }
-                        catch (Exception e)
+                        catch (Exception)
                         {
                             // Don't throw an exception on the app domain unload event thread.
-                            CommandProcessorBase.CheckForSevereException(e);
                         }
                     }
                 };
@@ -1157,9 +1152,8 @@ namespace System.Management.Automation.Remoting
                     true,                   // IsConnected
                     pipeHandle);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 pipeHandle.Dispose();
                 throw;
             }
@@ -1262,9 +1256,8 @@ namespace System.Management.Automation.Remoting
                     true,
                     pipeHandle);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 pipeHandle.Dispose();
                 throw;
             }

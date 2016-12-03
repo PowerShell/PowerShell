@@ -351,7 +351,6 @@ namespace System.Management.Automation
             {
                 // errors in the handlers are not errors in the operation
                 // silently ignore them
-                CommandProcessorBase.CheckForSevereException(exception);
                 _tracer.TraceException(exception);
             }
 #pragma warning restore 56500

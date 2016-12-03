@@ -929,7 +929,6 @@ namespace System.Management.Automation
                             }
                             catch (Exception e)
                             {
-                                CommandProcessorBase.CheckForSevereException(e);
                                 bindingException =
                                     new ParameterBindingArgumentTransformationException(
                                         e,
@@ -1777,8 +1776,6 @@ namespace System.Management.Automation
                             }
                             catch (Exception e) // Catch-all OK, this is a third-party callout
                             {
-                                CommandProcessorBase.CheckForSevereException(e);
-
                                 if (e is ProviderInvocationException) { throw; }
 
                                 ParameterBindingException bindingException =

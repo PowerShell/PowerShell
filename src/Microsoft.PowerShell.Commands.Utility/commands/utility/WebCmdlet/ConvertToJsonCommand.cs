@@ -583,9 +583,8 @@ namespace Microsoft.PowerShell.Commands
                 {
                     value = prop.Value;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    UtilityCommon.CheckForSevereException(this, ex);
                 }
 
                 if (!receiver.Contains(prop.Name))

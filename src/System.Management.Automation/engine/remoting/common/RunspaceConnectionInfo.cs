@@ -1873,7 +1873,6 @@ namespace System.Management.Automation.Runspaces
             string computerName,
             string keyFilePath)
         {
-            if (userName == null) { throw new PSArgumentNullException("userName"); }
             if (computerName == null) { throw new PSArgumentNullException("computerName"); }
 
             this.UserName = userName;
@@ -1980,9 +1979,9 @@ namespace System.Management.Automation.Runspaces
 
             // Extract an optional domain name if provided.
             string domainName = null;
-            string userName = this.UserName;
+            string userName = this.UserName ?? GetCurrentUserName();
 #if !UNIX
-            var parts = this.UserName.Split(Utils.Separators.Backslash);
+            var parts = userName.Split(Utils.Separators.Backslash);
             if (parts.Length == 2)
             {
                 domainName = parts[0];
@@ -2026,6 +2025,19 @@ namespace System.Management.Automation.Runspaces
         }
 
         #endregion
+
+        #region Private Methods
+
+        private string GetCurrentUserName()
+        {
+#if UNIX
+            return System.Environment.GetEnvironmentVariable("USER") ?? string.Empty;
+#else
+            return System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+#endif
+        }
+
+#endregion
 
         #region SSH Process Creation
 
@@ -2115,9 +2127,8 @@ namespace System.Management.Automation.Runspaces
                 stdOutReaderVar = new StreamReader(new NamedPipeServerStream(PipeDirection.In, true, true, stdOutPipeServer));
                 stdErrReaderVar = new StreamReader(new NamedPipeServerStream(PipeDirection.In, true, true, stdErrPipeServer));
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 if (stdInWriterVar != null) { stdInWriterVar.Dispose(); } else { stdInPipeServer.Dispose(); }
                 if (stdOutReaderVar != null) { stdInWriterVar.Dispose(); } else { stdOutPipeServer.Dispose(); }
                 if (stdErrReaderVar != null) { stdInWriterVar.Dispose(); } else { stdErrPipeServer.Dispose(); }
@@ -2165,10 +2176,8 @@ namespace System.Management.Automation.Runspaces
                 stdErrPipeServer = CreateNamedPipe(stdErrPipeName, securityDesc);
                 stdErrPipeClient = GetNamedPipeHandle(stdErrPipeName);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 if (stdInPipeServer != null) { stdInPipeServer.Dispose(); }
                 if (stdInPipeClient != null) { stdInPipeClient.Dispose(); }
                 if (stdOutPipeServer != null) { stdOutPipeServer.Dispose(); }
@@ -2224,9 +2233,8 @@ namespace System.Management.Automation.Runspaces
 
                 return result;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 if (stdInPipeServer != null) { stdInPipeServer.Dispose(); }
                 if (stdInPipeClient != null) { stdInPipeClient.Dispose(); }
                 if (stdOutPipeServer != null) { stdOutPipeServer.Dispose(); }
@@ -2896,8 +2904,6 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 if (e is FileNotFoundException || e is FileLoadException)
                 {
                     //
@@ -2987,8 +2993,6 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 if (e.InnerException != null &&
                     StringComparer.Ordinal.Equals(
                         e.InnerException.GetType().FullName,

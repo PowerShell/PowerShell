@@ -498,8 +498,6 @@ namespace System.Management.Automation
                     string unused =
                         this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
 
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     ProviderInvocationException providerException =
                         new ProviderInvocationException(
                             "ProviderContentReadError",
@@ -920,8 +918,6 @@ namespace System.Management.Automation
                         ProviderInfo providerInfo = null;
                         string unused =
                             this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
-
-                        CommandProcessorBase.CheckForSevereException(e);
 
                         ProviderInvocationException providerException =
                             new ProviderInvocationException(
@@ -1462,9 +1458,6 @@ namespace System.Management.Automation
                     ProviderInfo providerInfo = null;
                     string unused =
                         this.Globber.GetProviderPath(variablePath.QualifiedName, out providerInfo);
-
-
-                    CommandProcessorBase.CheckForSevereException(e);
 
                     ProviderInvocationException providerException =
                         new ProviderInvocationException(

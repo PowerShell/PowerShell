@@ -1964,23 +1964,6 @@ namespace System.Management.Automation
                 if (exitCode != 0)
                     _commandRuntime.PipelineProcessor.ExecutionFailed = true;
             }
-            catch (TerminateException)
-            {
-                // the debugger is terminating the execution of the current command; bubble up the exception
-                throw;
-            }
-            catch (RuntimeException)
-            {
-                throw;
-            }
-            catch (Exception e)
-            {
-                CommandProcessorBase.CheckForSevereException(e);
-
-                // This cmdlet threw an exception, so
-                // wrap it and bubble it up.
-                throw;// ManageInvocationException(e);
-            }
         }
 
         public object GetDynamicParameters()

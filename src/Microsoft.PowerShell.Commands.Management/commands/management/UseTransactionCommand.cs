@@ -55,7 +55,6 @@ namespace Microsoft.PowerShell.Commands
                 catch (Exception e)
                 {
                     // Catch-all OK. This is a third-party call-out.
-                    CommandProcessorBase.CheckForSevereException(e);
 
                     ErrorRecord errorRecord = new ErrorRecord(e, "TRANSACTED_SCRIPT_EXCEPTION", ErrorCategory.NotSpecified, null);
 

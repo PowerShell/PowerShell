@@ -113,9 +113,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 _cachedWrite.Append(output);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                UtilityCommon.CheckForSevereException(null, e);
                 // Catch and ignore all exceptions while tracing
                 // We don't want tracing to bring down the process.
             }
@@ -138,9 +137,8 @@ namespace Microsoft.PowerShell.Commands
                 _ui.WriteDebugLine(_cachedWrite.ToString());
                 _cachedWrite.Remove(0, _cachedWrite.Length);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                UtilityCommon.CheckForSevereException(null, e);
                 // Catch and ignore all exceptions while tracing
                 // We don't want tracing to bring down the process.
             }

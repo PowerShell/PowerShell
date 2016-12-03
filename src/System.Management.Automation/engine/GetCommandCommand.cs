@@ -1023,9 +1023,8 @@ namespace Microsoft.PowerShell.Commands
                     commandParameters = tmp.Values;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessor.CheckForSevereException(e);
                 // ignore all exceptions when getting parameter metadata (i.e. parse exceptions, dangling alias exceptions)
                 // and proceed as if there was no parameter metadata
             }

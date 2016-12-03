@@ -257,7 +257,6 @@ namespace System.Management.Automation.Remoting
                 // This will get executed on a thread pool thread..
                 // so we need to protect that thread, hence catching
                 // all exceptions
-                CommandProcessorBase.CheckForSevereException(exception);
                 s_baseTracer.WriteLine("Exception processing data. {0}", exception.Message);
 
                 PSRemotingTransportException e = new PSRemotingTransportException(exception.Message, exception);
@@ -659,7 +658,6 @@ namespace System.Management.Automation.Remoting.Client
                 // Enqueue an Exception to process in a thread-pool thread. Processing 
                 // Exception in a thread pool thread is important as calling
                 // WSManCloseShell/Command from a Receive callback results in a deadlock.
-                CommandProcessorBase.CheckForSevereException(exception);
                 tracer.WriteLine("Exception processing data. {0}", exception.Message);
 
                 PSRemotingTransportException e = new PSRemotingTransportException(exception.Message);
@@ -855,7 +853,6 @@ namespace System.Management.Automation.Remoting.Client
                 // This will get executed on a thread pool thread..
                 // so we need to protect that thread, hence catching
                 // all exceptions
-                CommandProcessorBase.CheckForSevereException(exception);
                 tracer.WriteLine("Exception processing data. {0}", exception.Message);
 
                 PSRemotingTransportException e = new PSRemotingTransportException(exception.Message, exception);

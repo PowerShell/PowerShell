@@ -236,7 +236,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetContentReaderProviderException",
                     SessionStateStrings.GetContentReaderProviderException,
@@ -396,7 +395,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetContentReaderDynamicParametersProviderException",
                     SessionStateStrings.GetContentReaderDynamicParametersProviderException,
@@ -624,7 +622,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetContentWriterProviderException",
                     SessionStateStrings.GetContentWriterProviderException,
@@ -784,7 +781,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetContentWriterDynamicParametersProviderException",
                     SessionStateStrings.GetContentWriterDynamicParametersProviderException,
@@ -992,7 +988,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "ClearContentProviderException",
                     SessionStateStrings.ClearContentProviderException,
@@ -1150,7 +1145,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "ClearContentDynamicParametersProviderException",
                     SessionStateStrings.ClearContentDynamicParametersProviderException,

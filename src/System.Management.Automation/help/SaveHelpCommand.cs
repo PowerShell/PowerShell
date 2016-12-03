@@ -364,8 +364,6 @@ namespace Microsoft.PowerShell.Commands
                                     }
                                     catch (Exception e)
                                     {
-                                        CommandProcessorBase.CheckForSevereException(e);
-
                                         ProcessException(module.ModuleName, contentUri.Culture.Name, e);
                                         installed = false;
                                         continue;
@@ -403,8 +401,6 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (Exception e)
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
-
                             ProcessException(module.ModuleName, contentUri.Culture.Name, e);
                         }
                         finally

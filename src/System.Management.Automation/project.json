@@ -138,7 +138,6 @@
                         "singleshell/installer/MshSnapinInstaller.cs",
                         "utils/BackgroundDispatcher.cs",
                         "utils/GraphicalHostReflectionWrapper.cs",
-                        "utils/WindowsErrorReporting.cs",
                         "utils/perfCounters/CounterSetInstanceBase.cs",
                         "utils/perfCounters/CounterSetRegistrarBase.cs",
                         "utils/perfCounters/PSPerfCountersMgr.cs",

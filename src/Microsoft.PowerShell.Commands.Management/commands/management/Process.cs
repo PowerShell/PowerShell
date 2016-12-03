@@ -679,7 +679,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception exception)
                     {
-                        CommandsCommon.CheckForSevereException(this, exception);
                         WriteNonTerminatingError(process, exception, ProcessResources.CouldNotEnumerateModuleFileVer, "CouldNotEnumerateModuleFileVer", ErrorCategory.PermissionDenied);
                     }
                 }
@@ -710,7 +709,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception exception)
                     {
-                        CommandsCommon.CheckForSevereException(this, exception);
                         WriteNonTerminatingError(process, exception, ProcessResources.CouldNotEnumerateModules, "CouldNotEnumerateModules", ErrorCategory.PermissionDenied);
                     }
                 }
@@ -749,7 +747,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception exception)
                     {
-                        CommandsCommon.CheckForSevereException(this, exception);
                         WriteNonTerminatingError(process, exception, ProcessResources.CouldNotEnumerateFileVer, "CouldNotEnumerateFileVer", ErrorCategory.PermissionDenied);
                     }
                 }
@@ -910,10 +907,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 // We might get an AccessDenied error
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 // I don't expect to get other exceptions,
-                CommandsCommon.CheckForSevereException(cmdlet, ex);
             }
             finally
             {

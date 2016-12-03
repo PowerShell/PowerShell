@@ -82,7 +82,6 @@ namespace System.Management.Automation.Remoting.Server
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 PSEtwLog.LogOperationalError(
                     PSEventId.TransportError, PSOpcode.Open, PSTask.None,
                     PSKeyword.UseAlwaysOperational,
@@ -364,8 +363,6 @@ namespace System.Management.Automation.Remoting.Server
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 PSEtwLog.LogOperationalError(
                     PSEventId.TransportError, PSOpcode.Open, PSTask.None,
                     PSKeyword.UseAlwaysOperational,

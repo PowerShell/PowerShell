@@ -1306,9 +1306,8 @@ namespace System.Management.Automation
                         {
                             return ToStringEnumerable(context, enumerable, separator, format, formatProvider);
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
                             // We do want to ignore exceptions here to try the regular ToString below.
                         }
                     }
@@ -1321,9 +1320,8 @@ namespace System.Management.Automation
                             {
                                 return ToStringEnumerator(context, enumerator, separator, format, formatProvider);
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
-                                CommandProcessorBase.CheckForSevereException(e);
                                 // We do want to ignore exceptions here to try the regular ToString below.
                             }
                         }
@@ -1349,7 +1347,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     throw new ExtendedTypeSystemException("ToStringObjectBasicException", e,
                         ExtendedTypeSystem.ToStringException, e.Message);
                 }
@@ -1420,9 +1417,8 @@ namespace System.Management.Automation
                     {
                         return PSObject.ToStringEmptyBaseObject(context, mshObj, separator, format, formatProvider);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         // We do want to ignore exceptions here to try the regular ToString below.
                     }
                 }
@@ -1434,9 +1430,8 @@ namespace System.Management.Automation
                     {
                         return ToStringEnumerable(context, enumerable, separator, format, formatProvider);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         // We do want to ignore exceptions here to try the regular ToString below.
                     }
                 }
@@ -1449,9 +1444,8 @@ namespace System.Management.Automation
                         {
                             return ToStringEnumerator(context, enumerator, separator, format, formatProvider);
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
                             // We do want to ignore exceptions here to try the regular ToString below.
                         }
                     }
@@ -1489,7 +1483,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new ExtendedTypeSystemException("ToStringPSObjectBasicException", e,
                     ExtendedTypeSystem.ToStringException, e.Message);
             }

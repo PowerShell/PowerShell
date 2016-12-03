@@ -475,7 +475,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetParentPathProviderException",
                     SessionStateStrings.GetParentPathProviderException,
@@ -799,7 +798,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e) // Catch-all OK, 3rd party callout.
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     throw NewProviderInvocationException(
                         "NormalizeRelativePathProviderException",
                     SessionStateStrings.NormalizeRelativePathProviderException,
@@ -1110,8 +1108,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e) // Catch-all OK, 3rd party callout.
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     throw NewProviderInvocationException(
                         "MakePathProviderException",
                         SessionStateStrings.MakePathProviderException,
@@ -1434,7 +1430,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetChildNameProviderException",
                     SessionStateStrings.GetChildNameProviderException,
@@ -1765,7 +1760,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "MoveItemProviderException",
                     SessionStateStrings.MoveItemProviderException,
@@ -1939,7 +1933,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "MoveItemDynamicParametersProviderException",
                     SessionStateStrings.MoveItemDynamicParametersProviderException,

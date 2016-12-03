@@ -1313,8 +1313,6 @@ namespace System.Management.Automation
                 catch (Exception e)
                 {
                     // Catch-all OK. This is a third-party call-out.
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     if (e is PipelineStoppedException)
                     {
                         // Enqueue the action again, as we weren't able to process it.
@@ -2720,8 +2718,6 @@ namespace System.Management.Automation
             catch (Exception e)
             {
                 // Catch-all OK. This is a third-party call-out.
-                CommandProcessorBase.CheckForSevereException(e);
-
                 if (!(e is PipelineStoppedException))
                 {
                     LogErrorsAndOutput(results, actionState);

@@ -3057,8 +3057,6 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception fsException)
             {
-                CommandProcessorBase.CheckForSevereException(fsException);
-
                 ErrorDetails errorDetails =
                     new ErrorDetails(this, "FileSystemProviderStrings",
                         "CannotRemoveItem",
@@ -3107,8 +3105,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (Exception attributeException)
                     {
-                        CommandProcessorBase.CheckForSevereException(attributeException);
-
                         if ((attributeException is System.IO.DirectoryNotFoundException) ||
                             (attributeException is System.Security.SecurityException) ||
                             (attributeException is System.ArgumentException) ||

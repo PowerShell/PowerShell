@@ -149,7 +149,6 @@ namespace System.Management.Automation
             }
             catch (Exception error)
             {
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "StopJob", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 throw;
@@ -172,7 +171,6 @@ namespace System.Management.Automation
             catch (Exception error)
             {
                 // Exception transferred using event arguments.
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "StopJobAsync", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 OnStopJobCompleted(new AsyncCompletedEventArgs(error, false, null));
@@ -224,7 +222,6 @@ namespace System.Management.Automation
             }
             catch (Exception error)
             {
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "SuspendJob", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 throw;
@@ -247,7 +244,6 @@ namespace System.Management.Automation
             catch (Exception error)
             {
                 // Exception transferred using event arguments.
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "SuspendJobAsync", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 OnSuspendJobCompleted(new AsyncCompletedEventArgs(error, false, null));
@@ -299,7 +295,6 @@ namespace System.Management.Automation
             }
             catch (Exception error)
             {
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "ResumeJob", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 throw;
@@ -322,7 +317,6 @@ namespace System.Management.Automation
             catch (Exception error)
             {
                 // Exception transferred using event arguments.
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "ResumeJobAsync", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 OnResumeJobCompleted(new AsyncCompletedEventArgs(error, false, null));
@@ -401,7 +395,6 @@ namespace System.Management.Automation
             }
             catch (Exception error)
             {
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "StartJob", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 throw;
@@ -430,7 +423,6 @@ namespace System.Management.Automation
             catch (Exception error)
             {
                 // Exception transferred using event arguments.
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "StartJobAsync", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 OnStartJobCompleted(new AsyncCompletedEventArgs(error, false, null));
@@ -479,7 +471,6 @@ namespace System.Management.Automation
             }
             catch (Exception error)
             {
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "RemoveJob", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 throw;
@@ -566,7 +557,6 @@ namespace System.Management.Automation
             {
                 // errors in the handlers are not errors in the operation
                 // silently ignore them
-                CommandProcessorBase.CheckForSevereException(exception);
                 _tracer.TraceException(exception);
             }
 #pragma warning restore 56500
@@ -1385,8 +1375,6 @@ namespace System.Management.Automation
                     }
                     catch (Exception e)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
-
                         // since this is third party code call out - it is ok
                         // to catch Exception. In all other cases the specific
                         // exception must be caught
@@ -2569,7 +2557,6 @@ namespace System.Management.Automation
             {
                 // errors in the handlers are not errors in the operation
                 // silently ignore them
-                CommandProcessorBase.CheckForSevereException(exception);
                 _tracer.WriteMessage(ClassNameTrace, "OnJobDataAdded", Guid.Empty, this, "END Exception thrown in JobDataAdded handler");
                 _tracer.TraceException(exception);
             }

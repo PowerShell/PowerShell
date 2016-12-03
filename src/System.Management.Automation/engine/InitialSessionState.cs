@@ -3211,8 +3211,6 @@ namespace System.Management.Automation.Runspaces
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     if (ThrowOnRunspaceOpenError)
                     {
                         return e;
@@ -3661,9 +3659,8 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
             }
-            catch (Exception e) // swallow all non-severe exceptions
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
         }
 
@@ -5423,9 +5420,8 @@ if($paths) {
                 {
                     ssi.RemoveDrive(di, true, null);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
         }

@@ -167,9 +167,6 @@ namespace System.Management.Automation.Remoting
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException +=
                 new UnhandledExceptionEventHandler(WSManPluginInstance.UnhandledExceptionHandler);
-
-            // Register our Watson handler for crash reports in server mode
-            System.Management.Automation.WindowsErrorReporting.RegisterWindowsErrorReporting(true);
 #endif
         }
 
@@ -359,8 +356,6 @@ namespace System.Management.Automation.Remoting
             }
             catch (System.Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 PSEtwLog.LogOperationalError(PSEventId.TransportError,
                     PSOpcode.Connect, PSTask.None, PSKeyword.UseAlwaysOperational, "00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000",
                     Convert.ToString(WSManPluginErrorCodes.ManagedException, CultureInfo.InvariantCulture), e.Message, e.StackTrace);
@@ -437,8 +432,6 @@ namespace System.Management.Automation.Remoting
             }
             catch (System.Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 PSEtwLog.LogOperationalError(PSEventId.TransportError,
                     PSOpcode.Connect, PSTask.None, PSKeyword.UseAlwaysOperational, "00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000",
                     Convert.ToString(WSManPluginErrorCodes.ManagedException, CultureInfo.InvariantCulture), e.Message, e.StackTrace);

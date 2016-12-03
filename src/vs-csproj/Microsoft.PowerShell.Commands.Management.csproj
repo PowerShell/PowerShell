@@ -138,9 +138,6 @@
     <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\CombinePathCommand.cs">
       <Link>commands\management\CombinePathCommand.cs</Link>
     </Compile>
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\CommandsCommon.cs">
-      <Link>commands\management\CommandsCommon.cs</Link>
-    </Compile>
     <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\CommitTransactionCommand.cs">
       <Link>commands\management\CommitTransactionCommand.cs</Link>
     </Compile>

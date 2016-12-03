@@ -86,10 +86,8 @@ namespace System.Management.Automation
                 var parser = new Language.Parser { ProduceV2Tokens = true };
                 parser.Parse(null, script, _tokenList, out _errors, ParseMode.Default);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                // Catch everything, die on fatal exceptions, otherwise ignore
-                CommandProcessorBase.CheckForSevereException(e);
             }
         }
 

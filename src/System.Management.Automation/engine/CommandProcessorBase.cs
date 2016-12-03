@@ -187,9 +187,8 @@ namespace System.Management.Automation
                     scriptBlock.GetPowerShell();
                     isSafeToDotSource = true;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CheckForSevereException(e);
                 }
 
                 if (!isSafeToDotSource)
@@ -426,9 +425,8 @@ namespace System.Management.Automation
                     HandleObsoleteCommand(ObsoleteAttribute);
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 if (_useLocalScope)
                 {
                     // If we had an exception during Prepare, we're done trying to execute the command
@@ -505,8 +503,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     // This cmdlet threw an exception, so
                     // wrap it and bubble it up.
                     throw ManageInvocationException(e);
@@ -577,8 +573,6 @@ namespace System.Management.Automation
             // an FXCOP violation, cleared by KCwalina.
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // This cmdlet threw an exception, so
                 // wrap it and bubble it up.
                 throw ManageInvocationException(e);
@@ -704,60 +698,6 @@ namespace System.Management.Automation
 
             return true;
         }
-
-#if CORECLR
-        // AccessViolationException/StackOverflowException Not In CoreCLR.
-        // The CoreCLR team told us to not check for these exceptions because they
-        // usually won't be caught.
-        internal static void CheckForSevereException(Exception e) { }
-#else
-        // Keep in sync:
-        // S.M.A.CommandProcessorBase.CheckForSevereException
-        // S.M.A.Internal.ConsoleHost.CheckForSevereException
-        // S.M.A.Commands.CommandsCommon.CheckForSevereException
-        // S.M.A.Commands.UtilityCommon.CheckForSevereException
-        /// <summary>
-        /// Checks whether the exception is a severe exception which should
-        /// cause immediate process failure.
-        /// </summary>
-        /// <param name="e"></param>
-        /// <remarks>
-        /// CB says 02/23/2005: I personally would err on the side
-        /// of treating OOM like an application exception, rather than
-        /// a critical system failure.I think this will be easier to justify
-        /// in Orcas, if we tease apart the two cases of OOM better.
-        /// But even in Whidbey, how likely is it that we couldnt JIT
-        /// some backout code?  At that point, the process or possibly
-        /// the machine is likely to stop executing soon no matter
-        /// what you do in this routine.  So I would just consider
-        /// AccessViolationException.  (I understand why you have SO here,
-        /// at least temporarily).
-        /// </remarks>
-        internal static void CheckForSevereException(Exception e)
-        {
-            if (e is AccessViolationException || e is StackOverflowException)
-            {
-                try
-                {
-                    if (!alreadyFailing)
-                    {
-                        alreadyFailing = true;
-
-                        // Get the ExecutionContext from the thread.
-                        ExecutionContext context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
-
-                        // Log a command health event for this critical error.
-                        MshLog.LogCommandHealthEvent(context, e, Severity.Critical);
-                    }
-                }
-                finally
-                {
-                    WindowsErrorReporting.FailFast(e);
-                }
-            }
-        }
-        private static bool alreadyFailing = false;
-#endif
 
         /// <summary>
         /// Wraps the exception which occurred during cmdlet invocation,

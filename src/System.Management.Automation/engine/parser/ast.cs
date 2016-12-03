@@ -8781,9 +8781,8 @@ namespace System.Management.Automation.Language
                         }
                         Interlocked.CompareExchange(ref _cachedType, type, null);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         // We don't want to throw exception from GetReflectionType
                     }
                 }

@@ -1177,7 +1177,6 @@ namespace System.Management.Automation.Tracing
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     // Exception in 3rd party code should never cause a crash due to tracing. The
                     // Implementation of the property getters could throw.
                     TraceException(e);

@@ -405,7 +405,6 @@ namespace Microsoft.PowerShell.Commands
                                 }
                                 catch (Exception ex)
                                 {
-                                    CommandProcessorBase.CheckForSevereException(ex);
                                     MethodException mex = ex as MethodException;
                                     if (mex != null && mex.ErrorRecord != null && mex.ErrorRecord.FullyQualifiedErrorId == "MethodCountCouldNotFindBest")
                                     {
@@ -443,12 +442,11 @@ namespace Microsoft.PowerShell.Commands
                                         // PipelineStoppedException can be caused by select-object
                                         throw;
                                     }
-                                    catch (Exception ex)
+                                    catch (Exception)
                                     {
                                         // When the property is not gettable or it throws an exception.
                                         // e.g. when trying to access an assembly's location property, since dynamic assemblies are not backed up by a file,
                                         // an exception will be thrown when accessing its location property. In this case, return null.
-                                        CommandProcessorBase.CheckForSevereException(ex);
                                         WriteObject(null);
                                     }
                                 }
@@ -548,7 +546,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception ex)
                 {
-                    CommandProcessorBase.CheckForSevereException(ex);
                     WriteError(new ErrorRecord(ex, "MethodInvocationError", ErrorCategory.InvalidOperation, _inputObject));
                 }
             }
@@ -567,9 +564,8 @@ namespace Microsoft.PowerShell.Commands
                 // The "ToString()" method could throw an exception
                 objInString = LanguagePrimitives.IsNull(obj) ? "null" : obj.ToString();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 objInString = null;
             }
 
@@ -1521,8 +1517,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception ex)
                 {
-                    CommandProcessorBase.CheckForSevereException(ex);
-
                     ErrorRecord errorRecord = new ErrorRecord(
                         PSTraceSource.NewInvalidOperationException(ParserStrings.OperatorFailed, _binaryOperator, ex.Message),
                         "OperatorFailed",
@@ -1613,10 +1607,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     throw;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // When the property is not gettable or it throws an exception
-                    CommandProcessorBase.CheckForSevereException(ex);
                     return null;
                 }
             }

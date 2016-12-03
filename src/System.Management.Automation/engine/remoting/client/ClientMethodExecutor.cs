@@ -168,10 +168,9 @@ namespace System.Management.Automation.Remoting
                             _clientHost.UI.WriteErrorLine(errorRecord.ToString());
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         // Catch-all OK, 3rd party callout.
-                        CommandProcessorBase.CheckForSevereException(e);
                     }
                 };
             }
@@ -231,7 +230,6 @@ namespace System.Management.Automation.Remoting
             catch (Exception exception)
             {
                 // Catch-all OK, 3rd party callout.
-                CommandProcessorBase.CheckForSevereException(exception);
 
                 // Extract inner exception.
                 if (exception.InnerException != null)

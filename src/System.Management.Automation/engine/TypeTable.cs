@@ -2929,7 +2929,6 @@ namespace System.Management.Automation.Runspaces
             catch (TargetInvocationException e) { instanceException = e.InnerException ?? e; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 instanceException = e;
             }
 #pragma warning restore 56500

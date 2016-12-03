@@ -97,13 +97,11 @@ namespace System.Management.Automation.Remoting
                 PowerShell powerShell = scriptBlock.GetPowerShell(context, isTrustedInput, useLocalScope, null);
                 return powerShell.Commands;
             }
-            catch (ScriptBlockToPowerShellNotSupportedException e)
+            catch (ScriptBlockToPowerShellNotSupportedException)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
-            catch (System.Management.Automation.RuntimeException e)
+            catch (RuntimeException)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // If parsing failed return null.

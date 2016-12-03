@@ -414,7 +414,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                     // String.Format and PSObject.ToString().
                                     // I think we can swallow these.
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     // NOTE: we catch all the exceptions, since we do not know
                     // what the underlying object access would throw
                     if (formatErrorObject != null)
