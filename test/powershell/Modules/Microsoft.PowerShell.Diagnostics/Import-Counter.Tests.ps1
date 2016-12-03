@@ -2,26 +2,43 @@
  # File: Import-Counter.Tests.ps1
  # Provides Pester tests for the Import-Counter cmdlet.
  ############################################################################################>
+
+# Translate a counter set name to a localized name
+function TranslateCounterSetName($counterName)
+{
+    $id = Get-PerformanceCounterID $counterName
+    if ($id -ne $null)
+    {
+        $translatedName = Get-PerformanceCounterLocalName $id
+        if ($translatedName -ne $null)
+        {
+            return $translatedName
+        }
+    }
+
+    return $counterName
+}
+
 Describe "Tests for Import-Counter cmdlet" -Tags "CI" {
 
     BeforeAll {
         $cmdletName = "Import-Counter"
 
-        . "$PSScriptRoot/CounterTestsCommon.ps1"
+        . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
 
-        $counterNames = @(
+        $counterPaths = @(
             (TranslateCounterPath("\Memory\Available Bytes"))
-            (TranslateCounterPath("\Processor(*)\% Processor Time"))
+            (TranslateCounterPath("\processor(*)\% Processor time"))
             (TranslateCounterPath("\Processor(_Total)\% Processor Time"))
             (TranslateCounterPath("\PhysicalDisk(_Total)\Current Disk Queue Length"))
             (TranslateCounterPath("\PhysicalDisk(_Total)\Disk Bytes/sec"))
             (TranslateCounterPath("\PhysicalDisk(_Total)\Disk Read Bytes/sec"))
         )
-        $setNames = @(
-            "memory"
-            "physicaldisk"
-            "processor"
-        )
+        $setNames = @{
+            Memory = (TranslateCounterSetName("memory"))
+            PhysicalDisk = (TranslateCounterSetName("physicaldisk"))
+            Processor = (TranslateCounterSetName("processor"))
+        }
 
         $outputDirectory = $PSScriptRoot
         $rootFilename = "exportedCounters"
@@ -32,7 +49,8 @@ Describe "Tests for Import-Counter cmdlet" -Tags "CI" {
         $corruptBlgPath = "$outputDirectory/assets/CorruptBlg.blg"
         $notFoundPath = "$outputDirectory/DAD288C0-72F8-47D3-8C54-C69481B528DF.blg"
 
-        $counterSamples = Get-Counter -Counter $counterNames -MaxSamples 25
+        Write-Host "Gathering counter values for export..."
+        $counterSamples = Get-Counter -Counter $counterPaths -MaxSamples 25
         Export-Counter -Force -FileFormat "blg" -Path $blgPath -InputObject $counterSamples
         Export-Counter -Force -FileFormat "csv" -Path $csvPath -InputObject $counterSamples
         Export-Counter -Force -FileFormat "tsv" -Path $tsvPath -InputObject $counterSamples
@@ -97,6 +115,7 @@ Describe "Tests for Import-Counter cmdlet" -Tags "CI" {
                 }
 
                 $cmd = ConstructCommand $testCase
+                Write-Host "Command to run: $cmd"
                 $cmd = $cmd + " -ErrorAction SilentlyContinue -ErrorVariable errVar"
 
                 $errVar = $null
@@ -169,6 +188,7 @@ Describe "Tests for Import-Counter cmdlet" -Tags "CI" {
         {
             It "$($testCase.Name)" {
                 $cmd = ConstructCommand $testCase
+                Write-Host "Command to run: $cmd"
                 $cmd = $cmd + " -ErrorAction Stop"
 
                 if ($testCase.ContainsKey("Script"))
@@ -201,7 +221,6 @@ Describe "Tests for Import-Counter cmdlet" -Tags "CI" {
                 }
             }
         }
-
     }
 
     AfterAll {
@@ -215,20 +234,17 @@ Describe "Tests for Import-Counter cmdlet" -Tags "CI" {
             @{
                 Name = "Fails when given non-existent path"
                 Path = $notFoundPath
-                Parameters = ""
                 ExpectedErrorCategory = [System.Management.Automation.ErrorCategory]::ObjectNotFound
                 ExpectedErrorId = "Microsoft.PowerShell.Commands.ImportCounterCommand"
             }
             @{
                 Name = "Fails when given null path"
                 Path = "`$null"
-                Parameters = ""
                 ExpectedErrorId = "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ImportCounterCommand"
             }
             @{
                 Name = "Fails when -Path specified but no path given"
                 Path = ""
-                Parameters = ""
                 ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.ImportCounterCommand"
             }
             @{
@@ -348,37 +364,53 @@ Describe "Tests for Import-Counter cmdlet" -Tags "CI" {
             @{
                 Name = "Can acquire a named list set"
                 UseKnownSamples = $true
-                Parameters = "-ListSet memory"
+                Parameters = "-ListSet $($setNames.Memory)"
                 Script = {
                     $result.Length | Should Be 1
-                    $result[0].CounterSetName | Should Be "memory"
+                    $result[0].CounterSetName | Should Be $setNames.Memory
                 }
             }
             @{
                 Name = "Can acquire list set from an array of names"
                 UseKnownSamples = $true
-                Parameters = "-ListSet memory, processor"
+                Parameters = "-ListSet $(TranslateCounterSetName 'memory'), $(TranslateCounterSetName 'processor')"
                 Script = {
                     $result.Length | Should Be 2
                     $names = @()
-                    foreach ($set in $result) { $names = $names + $set.CounterSetName }
-                    $names -Contains "memory" | Should Be $true
-                    $names -Contains "processor" | Should Be $true
+                    foreach ($set in $result)
+                    {
+                        $names = $names + $set.CounterSetName
+                    }
+                    $names -Contains $setNames.Memory | Should Be $true
+                    $names -Contains $setNames.Processor | Should Be $true
                 }
             }
             @{
+                # This test should work for English, but other languages are
+                # problematic since there is no reasonable way to construct
+                # a wild-card pattern that will, for every language, result
+                # in a known set of values or evan a set with a known minimum
+                # number of items.
                 Name = "Can acquire list set via wild-card name"
                 UseKnownSamples = $true
                 Parameters = "-ListSet p*"
                 Script = {
                     $result.Length | Should Be 2
                     $names = @()
-                    foreach ($set in $result) { $names = $names + $set.CounterSetName }
+                    foreach ($set in $result)
+                    {
+                        $names = $names + $set.CounterSetName
+                    }
                     $names -Contains "physicaldisk" | Should Be $true
                     $names -Contains "processor" | Should Be $true
                 }
             }
             @{
+                # This test should work for English, but other languages are
+                # problematic since there is no reasonable way to construct
+                # a wild-card pattern that will, for every language, result
+                # in a known set of values or evan a set with a known minimum
+                # number of items.
                 Name = "Can acquire list set from an array of names including wild-card"
                 UseKnownSamples = $true
                 Parameters = "-ListSet memory, p*"

@@ -6,7 +6,7 @@ Describe "Tests for Get-Counter cmdlet" -Tags "CI" {
     BeforeAll {
         $cmdletName = "Get-Counter"
 
-        . "$PSScriptRoot/CounterTestsCommon.ps1"
+        . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
 
         $badName = "bad-name-DAD288C0-72F8-47D3-8C54-C69481B528DF"
         $counterNames = @{
@@ -27,6 +27,7 @@ Describe "Tests for Get-Counter cmdlet" -Tags "CI" {
                     $counterParam = "-Counter `"$($testCase.Counters)`""
                 }
                 $cmd = "$cmdletName $counterParam $($testCase.Parameters) -ErrorAction Stop"
+                Write-Host "Command to run: $cmd"
 
                 try
                 {
@@ -71,19 +72,16 @@ Describe "Tests for Get-Counter cmdlet" -Tags "CI" {
             @{
                 Name = "Fails when given invalid counter path"
                 Counters = $counterNames.Bad
-                Parameters = ""
                 ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
             }
             @{
                 Name = "Fails when given unknown counter path"
                 Counters = $counterNames.Unknown
-                Parameters = ""
                 ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
             }
             @{
                 Name = "Fails when Counter parameter is null"
                 Counters = "`$null"
-                Parameters = ""
                 ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
             }
             @{
@@ -94,7 +92,6 @@ Describe "Tests for Get-Counter cmdlet" -Tags "CI" {
             @{
                 Name = "Fails when given invalid counter path in array"
                 Counters = "@($($counterNames.MemoryBytes), $($counterNames.Bad), $($counterNames.TotalDiskRead))"
-                Parameters = ""
                 ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
             }
             @{
@@ -198,6 +195,11 @@ Describe "Tests for Get-Counter cmdlet" -Tags "CI" {
             $counterSets[1].CounterSetName | Should Be $counterSetNames[1]
         }
 
+        # This test should work for English, but other languages are
+        # problematic since there is no reasonable way to construct
+        # a wild-card pattern that will, for every language, result
+        # in a known set of values or evan a set with a known minimum
+        # number of items.
         It "Can process counter set name with wildcards" {
             $wildcardBase = "roc"
             $counterSetName = "*$wildcardBase*"
@@ -209,6 +211,11 @@ Describe "Tests for Get-Counter cmdlet" -Tags "CI" {
             }
         }
 
+        # This test should work for English, but other languages are
+        # problematic since there is no reasonable way to construct
+        # a wild-card pattern that will, for every language, result
+        # in a known set of values or evan a set with a known minimum
+        # number of items.
         It "Can process counter set name with wildcards in array" {
             $wildcardBases = @("Memory", "roc")
             $counterSetNames = @($wildcardBases[0], ("*" + $wildcardBases[1] + "*"))

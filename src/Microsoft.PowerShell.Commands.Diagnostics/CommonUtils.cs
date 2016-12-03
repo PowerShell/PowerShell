@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using System.Diagnostics;
+using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Resources;
@@ -8,6 +9,8 @@ using System.Reflection;
 
 #if CORECLR
 using System.ComponentModel;
+#else
+using System.Threading;
 #endif
 
 namespace Microsoft.PowerShell.Commands.Diagnostics.Common
@@ -142,7 +145,7 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
             }
             return formatError;
         }
-        
+
         public static ResourceManager GetResourceManager()
         {
             // this naming pattern is dictated by the dotnet cli
