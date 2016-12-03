@@ -24,7 +24,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         }
 
 
-#if !CORECLR
+#if !CORECLR // ReliabilityContract not supported on CoreCLR
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
         protected override bool ReleaseHandle()
@@ -49,7 +49,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         }
 
 
-#if !CORECLR
+#if !CORECLR // ReliabilityContract not supported on CoreCLR
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
         protected override bool ReleaseHandle()
@@ -71,7 +71,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         }
 
 
-#if !CORECLR
+#if !CORECLR // ReliabilityContract not supported on CoreCLR
         [ReliabilityContract(Consistency.WillNotCorruptState, Cer.MayFail)]
 #endif
         protected override bool ReleaseHandle()

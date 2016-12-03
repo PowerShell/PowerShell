@@ -3,7 +3,6 @@
 using System.ComponentModel;
 using Microsoft.PowerShell.CoreClr.Stubs;
 
-
 namespace System.Diagnostics
 {
 	/// <summary>
@@ -33,7 +32,6 @@ namespace System.Diagnostics
 	/// method for a <see cref="T:System.Diagnostics.PerformanceCounter" /> instance.
 	/// </summary>
 	/// <filterpriority>2</filterpriority>
-	[TypeConverter(typeof(AlphabeticalEnumConverter))]
 	public enum PerformanceCounterType
 	{
 		/// <summary>
@@ -249,33 +247,6 @@ namespace System.Diagnostics
 		/// CounterDelta32 counter type except that is uses larger fields to
 		/// accomodate larger values.</summary>
 		CounterDelta64 = 4195584
-	}
-
-	internal class AlphabeticalEnumConverter : EnumConverter
-	{
-		public AlphabeticalEnumConverter(Type type)
-		  : base(type)
-		{
-		}
-
-		public override TypeConverter.StandardValuesCollection GetStandardValues(ITypeDescriptorContext context)
-		{
-			if (Values == null)
-			{
-				Array values = Enum.GetValues(EnumType);
-				object[] array = new object[values.Length];
-
-				for (int i = 0; i < array.Length; i++)
-				{
-					array[i] = ConvertTo(context, null, values.GetValue(i), typeof(string));
-				}
-
-				Array.Sort(array, values, 0, values.Length, System.Collections.Comparer.Default);
-				Values = new TypeConverter.StandardValuesCollection(values);
-			}
-
-			return Values;
-		}
 	}
 }
 #endif

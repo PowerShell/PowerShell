@@ -7,7 +7,7 @@ Describe "Tests for Export-Counter cmdlet" -Tags "CI" {
     BeforeAll {
         $cmdletName = "Export-Counter"
 
-        . "$PSScriptRoot/CounterTestsCommon.ps1"
+        . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
 
         $outputDirectory = $PSScriptRoot
         $rootFilename = "exportedCounters"
@@ -72,8 +72,9 @@ Describe "Tests for Export-Counter cmdlet" -Tags "CI" {
                     $pathParam = "-Path $filePath"
                 }
                 $cmd = "$cmdletName $pathParam $formatParam -InputObject `$counterValues $($testCase.Parameters) -ErrorAction Stop"
+                Write-Host "Command to run: $cmd"
 
-                if ($testCase.CreateFirst)
+                if ($testCase.CreateFileFirst)
                 {
                     if (-not (Test-Path $filePath))
                     {
@@ -116,25 +117,21 @@ Describe "Tests for Export-Counter cmdlet" -Tags "CI" {
         }
     }
 
-
     Context "Validate incorrect parameter usage" {
         $testCases = @(
             @{
                 Name = "Fails when given invalid path"
                 Path = "c:\DAD288C0-72F8-47D3-8C54-C69481B528DF\counterExport.blg"
-                Parameters = ""
                 ExpectedErrorId = "FileCreateFailed,Microsoft.PowerShell.Commands.ExportCounterCommand"
             }
             @{
                 Name = "Fails when given null path"
                 Path = "`$null"
-                Parameters = ""
                 ExpectedErrorId = "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ExportCounterCommand"
             }
             @{
                 Name = "Fails when -Path specified but no path given"
                 Path = ""
-                Parameters = ""
                 ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.ExportCounterCommand"
             }
             @{
@@ -155,7 +152,6 @@ Describe "Tests for Export-Counter cmdlet" -Tags "CI" {
             @{
                 Name = "Fails when given invalid file format"
                 FileFormat = "dat"
-                Parameters = ""
                 ExpectedErrorId = "CounterInvalidFormat,Microsoft.PowerShell.Commands.ExportCounterCommand"
             }
         )
@@ -170,8 +166,7 @@ Describe "Tests for Export-Counter cmdlet" -Tags "CI" {
         $testCases = @(
             @{
                 Name = "Fails when output file exists"
-                CreateFirst = $true
-                Parameters = ""
+                CreateFileFirst = $true     # the output file will be created before the test command runs
                 ExpectedErrorId = "CounterFileExists,Microsoft.PowerShell.Commands.ExportCounterCommand"
             }
             @{
@@ -182,27 +177,23 @@ Describe "Tests for Export-Counter cmdlet" -Tags "CI" {
             @{
                 Name = "Can export BLG format"
                 FileFormat = "blg"
-                Parameters = ""
                 GetCounterParams = "-MaxSamples 5"
                 Script = { CheckExportResults }
             }
             @{
                 Name = "Exports BLG format by default"
-                Parameters = ""
                 GetCounterParams = "-MaxSamples 5"
                 Script = { CheckExportResults }
             }
             @{
                 Name = "Can export CSV format"
                 FileFormat = "csv"
-                Parameters = ""
                 GetCounterParams = "-MaxSamples 2"
                 Script = { CheckExportResults }
             }
             @{
                 Name = "Can export TSV format"
                 FileFormat = "tsv"
-                Parameters = ""
                 GetCounterParams = "-MaxSamples 5"
                 Script = { CheckExportResults }
             }
