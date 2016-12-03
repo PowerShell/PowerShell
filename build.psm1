@@ -1200,8 +1200,9 @@ function Start-PSPackage {
     if ($IsWindows) {
         # Add the server name to the $RunTime. $runtime produced by dotnet is same for client or server
         switch ($Runtime) {
-            'win81-x64' {$NameSuffix = 'win81-w2k12r2-x64'}
-            'win10-x64' {$NameSuffix = 'win10-w2k16-x64'}
+            'win81-x64' {$NameSuffix = 'win81-win2k12r2-x64'}
+            'win10-x64' {$NameSuffix = 'win10-win2k16-x64'}
+            'win7-x64'  {$NameSuffix = 'win7-win2k8r2-x64'}
             Default {$NameSuffix = $Runtime}
         }
     }
@@ -2182,11 +2183,13 @@ function Get-PackageSemanticVersion
 
     if (3 -eq $packageVersionTokens.Count) {
         # In case the input is of the form a.b.c, add a '0' at the end for revision field
-        $packageSemanticVersion = $packageVersion,'0' -join '.'
+        $packageSemanticVersion = $Version,'0' -join '.'
     } elseif (3 -lt $packageVersionTokens.Count) {
         # We have all the four fields
         $packageRevisionTokens = ($packageVersionTokens[3].Split('-'))[0]
         $packageSemanticVersion = $packageVersionTokens[0],$packageVersionTokens[1],$packageVersionTokens[2],$packageRevisionTokens -join '.'
+    } else {
+        throw "Cannot create semantic version from a string $Version containing more than 4 tokens"
     }
 
     $packageSemanticVersion
