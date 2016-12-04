@@ -85,13 +85,13 @@
     },
 
     "frameworks": {
-        "netcoreapp1.0": {
+        "netcoreapp1.1": {
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "buildOptions": {
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
-                "Microsoft.NETCore.App": "1.1.0-preview1-001100-00"
+                "Microsoft.NETCore.App": "1.1.0"
             }
         }
     },

@@ -5,9 +5,9 @@
     },
 
     "dependencies": {
-        "Microsoft.NETCore.App": "1.1.0-preview1-001100-00",
-        "Microsoft.DotNet.ProjectModel": "1.0.0-rc3-003121",
-        "Microsoft.DotNet.Cli.Utils": "1.0.0-preview2-003121"
+        "Microsoft.NETCore.App": "1.1.0",
+        "Microsoft.DotNet.ProjectModel": "1.0.0-rc3-1-003177",
+        "Microsoft.DotNet.Cli.Utils": "1.0.0-preview3-004056"
     },
 
     "configurations": {
@@ -35,7 +35,7 @@
     },
 
     "frameworks": {
-        "netcoreapp1.0": {
+        "netcoreapp1.1": {
             "imports": [ "dnxcore50", "portable-net45+win8" ]
         }
     },

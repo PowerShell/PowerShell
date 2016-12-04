@@ -32,11 +32,11 @@
     },
 
     "frameworks": {
-        "netcoreapp1.0": {
+        "netcoreapp1.1": {
             "dependencies": {
-                "Microsoft.NETCore.App": "1.1.0-preview1-001100-00",
-                "System.Reflection.Metadata": "1.4.1-preview1-24530-04",
-                "System.Collections.Immutable": "1.3.0-preview1-24530-04"
+                "Microsoft.NETCore.App": "1.1.0",
+                "System.Reflection.Metadata": "1.4.1",
+                "System.Collections.Immutable": "1.3.0"
             }
         }
     },
