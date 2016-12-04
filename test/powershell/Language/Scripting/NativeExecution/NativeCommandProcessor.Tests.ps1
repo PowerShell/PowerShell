@@ -4,7 +4,8 @@ Describe 'native commands lifecycle' -tags 'Feature' {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
     }
 
-    It "native | ps | native doesn't block" {
+    #Marking this test as Pending due to issue # https://github.com/PowerShell/PowerShell/issues/2802
+    It "native | ps | native doesn't block" -Pending {
         $first = $true
         & $powershell -command '1..10 | % {Start-Sleep -mill 100; $_}' | %{$_} | & $powershell -command '$input' | % {
             if ($first)
