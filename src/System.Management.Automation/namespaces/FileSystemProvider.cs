@@ -4731,21 +4731,7 @@ namespace Microsoft.PowerShell.Commands
         protected override string GetParentPath(string path, string root)
         {
             string parentPath = base.GetParentPath(path, root);
-            if (IsUNCPath(path))
-            {
-                // Since UNC paths must have "\\server\share" as the base of
-                // the path, you cannot get a parent path higher than this.
-                // So this looks for the path separator between server\share and
-                // ensures that it is in a position where it is preceded by
-                // "\\s" at a minimum.
-
-                int indexOfLastPathSeparator = parentPath.LastIndexOf('\\');
-                if (indexOfLastPathSeparator < 3)
-                {
-                    parentPath = String.Empty;
-                }
-            }
-            else
+            if (!IsUNCPath(path))
             {
                 parentPath = EnsureDriveIsRooted(parentPath);
             }
@@ -5526,24 +5512,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                if (IsUNCPath(path))
-                {
-                    // For UNC paths we need to ensure that "\\server\share" is
-                    // maintained as a single unit. There is no child for "\\server\share"
-
-                    if (IsUNCRoot(path))
-                    {
-                        result = String.Empty;
-                    }
-                    else
-                    {
-                        result = path.Substring(separatorIndex + 1);
-                    }
-                }
-                else
-                {
-                    result = path.Substring(separatorIndex + 1);
-                }
+                result = path.Substring(separatorIndex + 1);
             }
 
             return result;
