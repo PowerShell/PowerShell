@@ -41,7 +41,7 @@ $testCases = @{
     }
 
 <#
-    This scenario is broken due to issue # https://github.com/PowerShell/platyPS/issues/241 
+    This scenario is broken due to issue # https://github.com/PowerShell/platyPS/issues/241
     Re-enable when issue is fixed.
     "Microsoft.PowerShell.Archive" = @{
         HelpFiles            = "Microsoft.PowerShell.Archive.psm1-help.xml"
@@ -141,7 +141,7 @@ function GetFiles
         [ValidateNotNullOrEmpty()]
         [string]$path
     )
-                            
+
     Get-ChildItem $path -Include $fileType -Recurse -ea SilentlyContinue | Select-Object -ExpandProperty FullName
 }
 
@@ -280,7 +280,7 @@ Describe "Validate Update-Help from the Web for one PowerShell Core module." -Ta
         $ProgressPreference = "SilentlyContinue"
     }
     AfterAll {
-        $ProgressPreference = $SavedProgressPreference 
+        $ProgressPreference = $SavedProgressPreference
     }
 
     RunUpdateHelpTests -tag "CI" -Pending
@@ -292,7 +292,7 @@ Describe "Validate Update-Help from the Web for all PowerShell Core modules." -T
         $ProgressPreference = "SilentlyContinue"
     }
     AfterAll {
-        $ProgressPreference = $SavedProgressPreference 
+        $ProgressPreference = $SavedProgressPreference
     }
 
     RunUpdateHelpTests -tag "Feature"
@@ -304,7 +304,7 @@ Describe "Validate Update-Help -SourcePath for one PowerShell Core module." -Tag
         $ProgressPreference = "SilentlyContinue"
     }
     AfterAll {
-        $ProgressPreference = $SavedProgressPreference 
+        $ProgressPreference = $SavedProgressPreference
     }
 
     RunUpdateHelpTests -tag "CI" -useSourcePath
@@ -316,7 +316,7 @@ Describe "Validate Update-Help -SourcePath for all PowerShell Core modules." -Ta
         $ProgressPreference = "SilentlyContinue"
     }
     AfterAll {
-        $ProgressPreference = $SavedProgressPreference 
+        $ProgressPreference = $SavedProgressPreference
     }
 
     RunUpdateHelpTests -tag "Feature" -useSourcePath
@@ -328,7 +328,7 @@ Describe "Validate 'Save-Help -DestinationPath for one PowerShell Core modules."
         $ProgressPreference = "SilentlyContinue"
     }
     AfterAll {
-        $ProgressPreference = $SavedProgressPreference 
+        $ProgressPreference = $SavedProgressPreference
     }
     RunSaveHelpTests -tag "CI" -Pending
 }
@@ -339,7 +339,7 @@ Describe "Validate 'Save-Help -DestinationPath for all PowerShell Core modules."
         $ProgressPreference = "SilentlyContinue"
     }
     AfterAll {
-        $ProgressPreference = $SavedProgressPreference 
+        $ProgressPreference = $SavedProgressPreference
     }
     RunSaveHelpTests -tag "Feature"
 }

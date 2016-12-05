@@ -26,7 +26,7 @@
 
         # Disable the test hook
         [system.management.automation.internal.internaltesthooks]::SetTestHook('BypassOnlineHelpRetrieval', $false)
-        $ProgressPreference = $SavedProgressPreference 
+        $ProgressPreference = $SavedProgressPreference
     }
 
     foreach ($filePath in @("$PSScriptRoot\assets\HelpURI\V2Cmdlets.csv", "$PSScriptRoot\assets\HelpURI\V3Cmdlets.csv"))
