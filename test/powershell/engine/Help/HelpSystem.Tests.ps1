@@ -68,7 +68,7 @@ Describe "Validate that get-help <cmdletName> works" -Tags @('CI', 'RequireAdmin
         $ProgressPreference = "SilentlyContinue"
     }
     AfterAll {
-        $ProgressPreference = $SavedProgressPreference 
+        $ProgressPreference = $SavedProgressPreference
     }
     RunTestCase -tag "CI"
 }
@@ -79,7 +79,7 @@ Describe "Validate Get-Help for all cmdlets in 'Microsoft.PowerShell.Core'" -Tag
         $ProgressPreference = "SilentlyContinue"
     }
     AfterAll {
-        $ProgressPreference = $SavedProgressPreference 
+        $ProgressPreference = $SavedProgressPreference
     }
 
     RunTestCase -tag "Feature"
@@ -87,17 +87,15 @@ Describe "Validate Get-Help for all cmdlets in 'Microsoft.PowerShell.Core'" -Tag
 
 Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+
         $namespaces = @{
             command = 'http://schemas.microsoft.com/maml/dev/command/2004/10'
             dev     = 'http://schemas.microsoft.com/maml/dev/2004/10'
             maml    = 'http://schemas.microsoft.com/maml/2004/10'
             msh     = 'http://msh'
-        $SavedProgressPreference = $ProgressPreference
-        $ProgressPreference = "SilentlyContinue"
         }
-    AfterAll {
-        $ProgressPreference = $SavedProgressPreference 
-    }
 
         # Currently these test cases are verified only on Windows, because
         # - WSMan:\ and Cert:\ providers are not yet supported on non-Windows platforms.
@@ -137,6 +135,9 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
         UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Tag 'CI'
     }
 
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference
+    }
     It -Skip:(-not $IsWindows) "shows contextual help when Get-Help is invoked for provider-specific path (Get-Help -Name <verb>-<noun> -Path <path>)" -TestCases $testCases {
         param($helpFile, $path, $helpContext, $verb, $noun)
 
