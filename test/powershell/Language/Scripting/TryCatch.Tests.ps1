@@ -18,73 +18,73 @@ Describe "Test try/catch" -Tags "CI" {
     }
     
     It "Test simple parsing, ensure newlines allowed everywhere" {
+        try
         {
-            try
-            {
-            }
-            catch
-            {
-            }
+        }
+        catch
+        {
+        }
 
-            try
-            {
-            }
-            catch
-            [int]
-            {
-            }
+        try
+        {
+        }
+        catch
+        [int]
+        {
+        }
 
-            try
-            {
-            }
-            catch
-            [int]
-            ,
-            [char]
-            {
-            }
+        try
+        {
+        }
+        catch
+        [int]
+        ,
+        [char]
+        {
+        }
 
-            try
-            {
-            }
-            finally
-            {
-            }
+        try
+        {
+        }
+        finally
+        {
+        }
 
-            try
-            {
-            }
-            catch
-            {
-            }
-            finally
-            {
-            }
+        try
+        {
+        }
+        catch
+        {
+        }
+        finally
+        {
+        }
 
-            try
-            {
-            }
-            catch
-            [int]
-            {
-            }
-            finally
-            {
-            }
+        try
+        {
+        }
+        catch
+        [int]
+        {
+        }
+        finally
+        {
+        }
 
-            try
-            {
-            }
-            catch
-            [int]
-            ,
-            [char]
-            {
-            }
-            finally
-            {
-            }
-        } | Should Not Throw
+        try
+        {
+        }
+        catch
+        [int]
+        ,
+        [char]
+        {
+        }
+        finally
+        {
+        }
+
+        $true | Should Be $true # we only verify that there is no parsing error. This line contains a dummy Should to make pester happy.
     }
 
     Context "Basic exception handling" {
@@ -136,6 +136,11 @@ Describe "Test try/catch" -Tags "CI" {
             $a = . { try { 1; $a = 0; 1/$a; "test failed" } catch [DivideByZeroException],[ArgumentNullException] { 2 } }
             AssertArraysEqual $a (1,2)
         }
+
+        It "Catch by type #5" {
+            $a = . { try { 1; throw ([ArgumentNullException]::new("bad")) } catch [DivideByZeroException],[ArgumentNullException] { 2 } }
+            AssertArraysEqual $a (1,2)
+        }
     }
 
     Context "Control flow in try [exit not tested and throw tested elsewhere]" {
@@ -176,7 +181,7 @@ Describe "Test try/catch" -Tags "CI" {
         }
 
         # Disabled - Compiled script has differing (but better) behavior
-        It "return in try" -Skip:$true {
+        It "return in try" -Pending {
             $a = . {
               function foo($i) {
                 try {
@@ -368,7 +373,7 @@ Describe "Test try/catch" -Tags "CI" {
         }
 
         # Disabled - Compiled script has differing (but better) behavior
-        It "return in catch without loop" -Skip:$true {
+        It "return in catch without loop" -Pending {
             $a = . {
               function foo {
                 try {
@@ -391,7 +396,7 @@ Describe "Test try/catch" -Tags "CI" {
         }
 
         # Disabled - Compiled script has differing (but better) behavior
-        It "return in catch within foreach loop" -Skip:$true {
+        It "return in catch within foreach loop" -Pending {
             $a = . {
               function foo {
                 foreach ($i in (1..3)) {
