@@ -4,6 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System.Collections.Specialized;
 using System.Diagnostics;
+using System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -86,7 +87,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 if (propertyNameCellCounts[k] < _propertyLabelsDisplayLength)
                 {
                     // shorter than the max, add padding
-                    _propertyLabels[k] = propertyNames[k] + new string(' ', _propertyLabelsDisplayLength - propertyNameCellCounts[k]);
+                    _propertyLabels[k] = propertyNames[k] + StringUtil.Padding(_propertyLabelsDisplayLength - propertyNameCellCounts[k]);
                 }
                 else if (propertyNameCellCounts[k] > _propertyLabelsDisplayLength)
                 {
@@ -181,7 +182,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 else
                 {
                     if (padding == null)
-                        padding = prependString = new string(' ', _propertyLabelsDisplayLength);
+                        padding = StringUtil.Padding(_propertyLabelsDisplayLength);
 
                     prependString = padding;
                 }
@@ -209,7 +210,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             StringCollection sc = StringManipulationHelper.GenerateLines(lo.DisplayCells, line, fieldCellCount, fieldCellCount);
 
             // padding to use in the lines after the first
-            string padding = new string(' ', _propertyLabelsDisplayLength);
+            string padding = StringUtil.Padding(_propertyLabelsDisplayLength);
 
             // display the string collection
             for (int k = 0; k < sc.Count; k++)
