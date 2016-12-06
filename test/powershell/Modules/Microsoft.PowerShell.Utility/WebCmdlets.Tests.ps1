@@ -643,3 +643,85 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result.Error | Should BeNullOrEmpty
     }
 }
+
+Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Feature" {
+
+    Context "InFile parameter negative tests" {
+
+        $testCases = @(
+#region INVOKE-WEBREQUEST
+            @{
+                Name = 'Validate error for Invoke-WebRequest -InFile ""'
+                ScriptBlock = {Invoke-WebRequest -Uri http://httpbin.org/post -Method Post -InFile ""}
+                ExpectedFullyQualifiedErrorId = 'WebCmdletInFileNotFilePathException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+            }
+
+            @{
+                Name = 'Validate error for Invoke-WebRequest -InFile'
+                ScriptBlock = {Invoke-WebRequest -Uri http://httpbin.org/post -Method Post -InFile}
+                ExpectedFullyQualifiedErrorId = 'MissingArgument,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+            }
+
+            @{
+                Name = "Validate error for Invoke-WebRequest -InFile  $TestDrive\content.txt"
+                ScriptBlock = {Invoke-WebRequest -Uri http://httpbin.org/post -Method Post -InFile  $TestDrive\content.txt}
+                ExpectedFullyQualifiedErrorId = 'PathNotFound,Microsoft.PowerShell.Commands.InvokeWebRequestCommand'
+            }
+#endregion
+
+#region INVOKE-RESTMETHOD
+            @{
+                Name = "Validate error for Invoke-RestMethod -InFile ''"
+                ScriptBlock = {Invoke-RestMethod -Uri http://httpbin.org/post -Method Post -InFile ''}
+                ExpectedFullyQualifiedErrorId = 'WebCmdletInFileNotFilePathException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+            }
+
+            @{
+                Name = "Validate error for Invoke-RestMethod -InFile <null>"
+                ScriptBlock = {Invoke-RestMethod -Uri http://httpbin.org/post -Method Post -InFile}
+                ExpectedFullyQualifiedErrorId = 'MissingArgument,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+            }
+
+            @{
+                Name = "Validate error for Invoke-RestMethod -InFile  $TestDrive\content.txt"
+                ScriptBlock = {Invoke-RestMethod -Uri http://httpbin.org/post -Method Post -InFile $TestDrive\content.txt}
+                ExpectedFullyQualifiedErrorId = 'PathNotFound,Microsoft.PowerShell.Commands.InvokeRestMethodCommand'
+            }
+#endregion
+        )
+
+        It "<Name>" -TestCases $testCases {
+            param ($scriptblock, $expectedFullyQualifiedErrorId)
+
+            try
+            {
+                & $scriptblock
+                throw "No Exception!"
+            }
+            catch
+            {
+                $_.FullyQualifiedErrorId | should be $ExpectedFullyQualifiedErrorId
+            }
+        }
+    }
+
+    Context "InFile parameter positive tests" {
+
+        BeforeAll {
+            $filePath = Join-Path $TestDrive test.txt
+            New-Item -Path $filePath -Value "hello" -ItemType File -Force
+        }
+
+        It "Invoke-WebRequest -InFile" {
+            $result = Invoke-WebRequest -InFile $filePath  -Uri http://httpbin.org/post -Method Post
+            $content = $result.Content | ConvertFrom-Json
+            $content.form | Should Match "hello"
+        }
+
+        It "Invoke-RestMethod -InFile" {
+            $result = Invoke-RestMethod -InFile $filePath  -Uri http://httpbin.org/post -Method Post
+            $result.form | Should Match "hello"
+        }
+    }
+}
+
