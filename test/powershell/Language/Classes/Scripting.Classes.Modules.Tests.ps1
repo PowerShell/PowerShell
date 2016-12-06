@@ -81,6 +81,8 @@ class Root { $passedIn = $passedArgs }
 function Get-PassedArgsRoot { [Root]::new().passedIn }
 function Get-PassedArgsNoRoot { $passedArgs }
 '@
+        $Arg_Hello = 'Hello'
+        $Arg_World = 'World'
     }
 
     AfterEach {
@@ -88,24 +90,24 @@ function Get-PassedArgsNoRoot { $passedArgs }
     }
 
     It "Class execution reflects changes in module reloading with '-Force'" {
-        Import-Module TestDrive:\TestModule.psm1 -ArgumentList 'value-1'
-        Get-PassedArgsRoot | Should Be 'value-1'
-        Get-PassedArgsNoRoot | Should Be 'value-1'
+        Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_Hello
+        Get-PassedArgsRoot | Should Be $Arg_Hello
+        Get-PassedArgsNoRoot | Should Be $Arg_Hello
 
-        Import-Module TestDrive:\TestModule.psm1 -ArgumentList 'value-2' -Force
-        Get-PassedArgsRoot | Should Be 'value-2'
-        Get-PassedArgsNoRoot | Should Be 'value-2'
+        Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_World -Force
+        Get-PassedArgsRoot | Should Be $Arg_World
+        Get-PassedArgsNoRoot | Should Be $Arg_World
     }
 
     It "Class execution reflects changes in module reloading with 'Remove-Module' and 'Import-Module'" {
-        Import-Module TestDrive:\TestModule.psm1 -ArgumentList 'value-1'
-        Get-PassedArgsRoot | Should Be 'value-1'
-        Get-PassedArgsNoRoot | Should Be 'value-1'
+        Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_Hello
+        Get-PassedArgsRoot | Should Be $Arg_Hello
+        Get-PassedArgsNoRoot | Should Be $Arg_Hello
 
         Remove-Module TestModule
 
-        Import-Module TestDrive:\TestModule.psm1 -ArgumentList 'value-2'
-        Get-PassedArgsRoot | Should Be 'value-2'
-        Get-PassedArgsNoRoot | Should Be 'value-2'
+        Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_World
+        Get-PassedArgsRoot | Should Be $Arg_World
+        Get-PassedArgsNoRoot | Should Be $Arg_World
     }
 }
