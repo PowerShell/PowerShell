@@ -2469,15 +2469,14 @@ function New-ZipPackage
     )
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
-
-    $PackageVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $PackageVersion
-    Write-Verbose "Create Zip for Product $PackageName_$PackageVersion"
-
+    
     $zipPackageName = $PackageName + "_" + $ProductSemanticVersion
     if ($PackageNameSuffix) {
         $zipPackageName = $zipPackageName, $PackageNameSuffix -join "-"
     }
     
+    Write-Verbose "Create Zip for Product $zipPackageName"
+
     $zipLocationPath = Join-Path $PWD "$zipPackageName.zip"
 
     If(Get-Command Compress-Archive -ErrorAction Ignore)
