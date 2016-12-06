@@ -18,32 +18,36 @@ $InternalSource = 'OneGetTestSource'
 
 
 Describe "PackageManagement Acceptance Test" -Tags "Feature" {
- 
+
  BeforeAll{
     Register-PackageSource -Name Nugettest -provider NuGet -Location https://www.nuget.org/api/v2 -force
     Register-PackageSource -Name $InternalSource -Location $InternalGallery -ProviderName 'PowerShellGet' -Trusted -ErrorAction SilentlyContinue
-
+    $SavedProgressPreference = $ProgressPreference
+    $ProgressPreference = "SilentlyContinue"
+ }
+ AfterAll {
+     $ProgressPreference = $SavedProgressPreference
  }
     It "get-packageprovider" {
-       
+
         $gpp = Get-PackageProvider
-        
+
         $gpp | ?{ $_.name -eq "NuGet" } | should not BeNullOrEmpty
-   
-        $gpp | ?{ $_.name -eq "PowerShellGet" } | should not BeNullOrEmpty   
+
+        $gpp | ?{ $_.name -eq "PowerShellGet" } | should not BeNullOrEmpty
     }
 
 
     It "find-packageprovider PowerShellGet" {
-        $fpp = (Find-PackageProvider -Name "PowerShellGet" -force).name 
+        $fpp = (Find-PackageProvider -Name "PowerShellGet" -force).name
         $fpp -contains "PowerShellGet" | should be $true
     }
 
      It "install-packageprovider, Expect succeed" {
-        $ipp = (install-PackageProvider -name gistprovider -force -source $InternalSource -Scope CurrentUser).name 
-        $ipp -contains "gistprovider" | should be $true      
+        $ipp = (install-PackageProvider -name gistprovider -force -source $InternalSource -Scope CurrentUser).name
+        $ipp -contains "gistprovider" | should be $true
     }
-       
+
 
     it "Find-package"  {
         $f = Find-Package -ProviderName NuGet -Name jquery -source Nugettest
@@ -51,7 +55,7 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 	}
 
     it "Install-package"  {
-        $i = install-Package -ProviderName NuGet -Name jquery -force -source Nugettest -Scope CurrentUser 
+        $i = install-Package -ProviderName NuGet -Name jquery -force -source Nugettest -Scope CurrentUser
         $i.Name -contains "jquery" | should be $true
 	}
 

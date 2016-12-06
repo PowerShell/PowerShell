@@ -8,6 +8,8 @@
     # (when calling get-help -online) might not matched the one in the csv file.
 
     BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
 
         # Enable the test hook
         [system.management.automation.internal.internaltesthooks]::SetTestHook('BypassOnlineHelpRetrieval', $true)
@@ -24,6 +26,7 @@
 
         # Disable the test hook
         [system.management.automation.internal.internaltesthooks]::SetTestHook('BypassOnlineHelpRetrieval', $false)
+        $ProgressPreference = $SavedProgressPreference
     }
 
     foreach ($filePath in @("$PSScriptRoot\assets\HelpURI\V2Cmdlets.csv", "$PSScriptRoot\assets\HelpURI\V3Cmdlets.csv"))
