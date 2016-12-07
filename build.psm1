@@ -400,6 +400,8 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
 
     if($PSModuleRestore)
     {
+        # this gets reset after leaving this function scope
+        $progressPreference = "SilentlyContinue"
         # Downloading the PowerShellGet and PackageManagement modules.
         # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp1.0\win10-x64\publish\powershell.exe", 
         # so we need to get its parent directory
@@ -2613,6 +2615,8 @@ function Restore-PSModule
         [string]$RequiredVersion
         )
 
+    # this gets reset after leaving this function scope
+    $progressPreference = "SilentlyContinue"
     $needRegister = $true
     $RepositoryName = "mygetpsmodule"
 
