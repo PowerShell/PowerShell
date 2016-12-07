@@ -19,12 +19,11 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Group-Object", "Sort-Object", "Get-Variable", "New-Variable", "Set-Variable", "Remove-Variable",
     "Clear-Variable", "Export-Clixml", "Import-Clixml", "ConvertTo-Xml", "Select-Xml", "Write-Debug",
     "Write-Verbose", "Write-Warning", "Write-Error", "Write-Information", "Write-Output", "Set-PSBreakpoint",
-    "Get-PSBreakpoint", "Remove-PSBreakpoint", "Enable-PSBreakpoint", "Disable-PSBreakpoint", "Get-PSCallStack",
+    "Get-PSBreakpoint", "Remove-PSBreakpoint", "New-TemporaryFile", "Enable-PSBreakpoint", "Disable-PSBreakpoint", "Get-PSCallStack",
     "Get-TraceSource", "Set-TraceSource", "Trace-Command",
     "Unblock-File", "Get-Runspace", "Debug-Runspace", "Enable-RunspaceDebug", "Disable-RunspaceDebug",
     "Get-RunspaceDebug", "Wait-Debugger" , "Get-Uptime"
-FunctionsToExport= "Get-FileHash", "New-TemporaryFile", "Format-Hex", "Import-PowerShellDataFile",
-    "ConvertFrom-SddlString"
+FunctionsToExport= "Get-FileHash", "Format-Hex", "Import-PowerShellDataFile", "ConvertFrom-SddlString"
 AliasesToExport= "fhx"
 NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=390787'

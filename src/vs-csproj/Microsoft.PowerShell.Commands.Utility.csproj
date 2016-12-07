@@ -229,6 +229,9 @@
     <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\NewGuidCommand.cs">
       <Link>commands\utility\NewGuidCommand.cs</Link>
     </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\NewTemporaryFileCommand.cs">
+      <Link>commands\utility\NewTemporaryFileCommand.cs</Link>
+    </Compile>
     <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\NewTimeSpanCommand.cs">
       <Link>commands\utility\NewTimeSpanCommand.cs</Link>
     </Compile>
