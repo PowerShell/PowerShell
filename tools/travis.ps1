@@ -17,6 +17,7 @@ $pesterParam = @{ 'binDir' = $output }
 if ($isFullBuild) {
     $pesterParam['Tag'] = @('CI','Feature','Scenario')
     $pesterParam['ExcludeTag'] = @()
+    # $pesterParam['Quiet'] = $true
 } else {
     $pesterParam['Tag'] = @('CI')
     $pesterParam['ThrowOnFailure'] = $true
