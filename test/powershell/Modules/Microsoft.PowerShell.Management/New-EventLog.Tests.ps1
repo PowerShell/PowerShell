@@ -43,5 +43,5 @@
       $result.Count   | Should be 1
       $result.EventID | Should be 4
     }
-  } 
+  }
 }

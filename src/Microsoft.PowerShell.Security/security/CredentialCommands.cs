@@ -10,9 +10,9 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// Defines the implementation of the 'get-credential' cmdlet.
-    /// The get-credential Cmdlet establishes a credential object called a 
+    /// The get-credential Cmdlet establishes a credential object called a
     /// Msh credential, by pairing a given username with
-    /// a prompted password. That credential object can then be used for other 
+    /// a prompted password. That credential object can then be used for other
     /// operations involving security.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Credential", DefaultParameterSetName = GetCredentialCommand.credentialSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113311")]
@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
         public PSCredential Credential { get; set; }
 
         /// <summary>
-        /// Gets and sets the user supplied message providing description about which script/function is 
+        /// Gets and sets the user supplied message providing description about which script/function is
         /// requesting the PSCredential from the user.
         /// </summary>
         [Parameter(Mandatory = false, ParameterSetName = messageSet)]

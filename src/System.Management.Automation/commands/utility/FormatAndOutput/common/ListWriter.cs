@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private int _columnWidth = 0;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="propertyNames">names of the properties to display</param>
         /// <param name="screenColumnWidth">column width of the screen</param>
@@ -205,7 +205,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // compute the width of the field for the value string (in screen cells)
             int fieldCellCount = _columnWidth - _propertyLabelsDisplayLength;
 
-            // split the lines 
+            // split the lines
             StringCollection sc = StringManipulationHelper.GenerateLines(lo.DisplayCells, line, fieldCellCount, fieldCellCount);
 
             // padding to use in the lines after the first

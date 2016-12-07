@@ -8,7 +8,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines a PowerShell command / script object which can be used with 
+    /// Defines a PowerShell command / script object which can be used with
     /// <see cref="PowerShell"/> object.
     /// </summary>
     public sealed class PSCommand
@@ -73,7 +73,7 @@ namespace System.Management.Automation
         /// A string representing the command.
         /// </param>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <returns>
@@ -116,7 +116,7 @@ namespace System.Management.Automation
         /// if true local scope is used to run the script command.
         /// </param>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <returns>
@@ -166,7 +166,7 @@ namespace System.Management.Automation
         /// command is null.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         public PSCommand AddScript(string script)
@@ -210,7 +210,7 @@ namespace System.Management.Automation
         /// command is null.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         public PSCommand AddScript(string script, bool useLocalScope)
@@ -247,7 +247,7 @@ namespace System.Management.Automation
         /// command is null.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         public PSCommand AddCommand(Command command)
@@ -282,7 +282,7 @@ namespace System.Management.Automation
         /// Value for the parameter.
         /// </param>
         /// <returns>
-        /// A PSCommand instance with <paramref name="parameterName"/> added 
+        /// A PSCommand instance with <paramref name="parameterName"/> added
         /// to the parameter list of the last command.
         /// </returns>
         /// <remarks>
@@ -292,7 +292,7 @@ namespace System.Management.Automation
         /// Name is non null and name length is zero after trimming whitespace.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         public PSCommand AddParameter(string parameterName, object value)
@@ -322,7 +322,7 @@ namespace System.Management.Automation
         /// Name of the parameter.
         /// </param>
         /// <returns>
-        /// A PSCommand instance with <paramref name="parameterName"/> added 
+        /// A PSCommand instance with <paramref name="parameterName"/> added
         /// to the parameter list of the last command.
         /// </returns>
         /// <remarks>
@@ -332,7 +332,7 @@ namespace System.Management.Automation
         /// Name is non null and name length is zero after trimming whitespace.
         /// </exception>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         public PSCommand AddParameter(string parameterName)
@@ -357,7 +357,7 @@ namespace System.Management.Automation
         ///         PSCommand command = new PSCommand("get-process").
         ///                                     AddCommand("select-object").AddParameter("name");
         ///     </code>
-        /// 
+        ///
         /// This will add the value "name" to the positional parameter list of "select-object"
         /// cmdlet. When the command is invoked, this value will get bound to positional parameter 0
         /// of the "select-object" cmdlet which is "Property".
@@ -366,11 +366,11 @@ namespace System.Management.Automation
         /// Value for the parameter.
         /// </param>
         /// <returns>
-        /// A PSCommand instance parameter value <paramref name="value"/> added 
+        /// A PSCommand instance parameter value <paramref name="value"/> added
         /// to the parameter list of the last command.
         /// </returns>
         /// <exception cref="InvalidPowerShellStateException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <remarks>
@@ -393,12 +393,12 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Adds an additional statement for execution
-        /// 
+        ///
         /// For example,
         ///     <code>
         ///         Runspace rs = RunspaceFactory.CreateRunspace();
         ///         PowerShell ps = PowerShell.Create();
-        /// 
+        ///
         ///         ps.Runspace = rs;
         ///         ps.AddCommand("Get-Process").AddArgument("idle");
         ///         ps.AddStatement().AddCommand("Get-Service").AddArgument("audiosrv");
@@ -406,7 +406,7 @@ namespace System.Management.Automation
         ///     </code>
         /// </summary>
         /// <returns>
-        /// A PowerShell instance with the items in <paramref name="parameters"/> added 
+        /// A PowerShell instance with the items in <paramref name="parameters"/> added
         /// to the parameter list of the last command.
         /// </returns>
         public PSCommand AddStatement()
@@ -452,7 +452,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Clears the command(s). 
+        /// Clears the command(s).
         /// </summary>
         public void Clear()
         {

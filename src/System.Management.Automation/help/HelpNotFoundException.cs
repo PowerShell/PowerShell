@@ -20,7 +20,7 @@ using System.Security.Permissions;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The exception that is thrown when there is no help found for a topic. 
+    /// The exception that is thrown when there is no help found for a topic.
     /// </summary>
     [Serializable]
     public class HelpNotFoundException : SystemException, IContainsErrorRecord
@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
         {
             string errMessage = string.Format(HelpErrors.HelpNotFound, _helpTopic);
 
-            // Don't do ParentContainsErrorRecordException(this), as this causes recursion, and creates a 
+            // Don't do ParentContainsErrorRecordException(this), as this causes recursion, and creates a
             // segmentation fault on Linux
             _errorRecord = new ErrorRecord(new ParentContainsErrorRecordException(errMessage), "HelpNotFound", ErrorCategory.ResourceUnavailable, null);
             _errorRecord.ErrorDetails = new ErrorDetails(typeof(HelpNotFoundException).GetTypeInfo().Assembly, "HelpErrors", "HelpNotFound", _helpTopic);
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         private ErrorRecord _errorRecord;
 
         /// <summary>
-        /// Gets ErrorRecord embedded in this exception. 
+        /// Gets ErrorRecord embedded in this exception.
         /// </summary>
         /// <value>ErrorRecord instance.</value>
         public ErrorRecord ErrorRecord

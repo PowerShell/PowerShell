@@ -159,7 +159,7 @@ namespace System.Management.Automation
                         int actualIndex = argCount - i - 1;
                         IntPtr varArgPtr = variantArgArray + s_variantSize * actualIndex;
 
-                        // If need to pass by ref, create a by-ref variant 
+                        // If need to pass by ref, create a by-ref variant
                         if (byRef != null && byRef[i])
                         {
                             // Allocate memory for temporary VARIANTs used in by-ref marshalling
@@ -223,7 +223,7 @@ namespace System.Management.Automation
                     string exceptionMsg = null;
                     if (innerException.HResult == DISP_E_EXCEPTION)
                     {
-                        // Invoke was successful but the actual underlying method failed. 
+                        // Invoke was successful but the actual underlying method failed.
                         // In this case, we use EXCEPINFO to get additional error info.
 
                         // Use EXCEPINFO.scode or EXCEPINFO.wCode as HR to construct the correct exception.
@@ -262,7 +262,7 @@ namespace System.Management.Automation
                         // !! The arguments should be in REVERSED order!!
                         int actualIndex = argCount - i - 1;
 
-                        // If need to pass by ref, back propagate 
+                        // If need to pass by ref, back propagate
                         if (byRef != null && byRef[i])
                         {
                             args[i] = Marshal.GetObjectForNativeVariant(variantArgArray + s_variantSize * actualIndex);
@@ -310,7 +310,7 @@ namespace System.Management.Automation
         internal static extern void VariantClear(IntPtr pVariant);
 
         /// <summary>
-        /// We have to declare 'bstrSource', 'bstrDescription' and 'bstrHelpFile' as pointers because 
+        /// We have to declare 'bstrSource', 'bstrDescription' and 'bstrHelpFile' as pointers because
         /// CLR marshalling layer would try to free those BSTRs by default and that is not correct.
         /// Therefore, manually marshalling might be needed to extract 'bstrDescription'.
         /// </summary>

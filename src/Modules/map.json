@@ -7,7 +7,7 @@
     "monad/miscfiles/modules/PSGet/PSModule.psm1": "Shared/PowerShellGet/PSModule.psm1",
     "monad/miscfiles/modules/PSGet/PSGet.Format.ps1xml": "Shared/PowerShellGet/PSGet.Format.ps1xml",
     "monad/miscfiles/modules/PSGet/PSGet.Resource.psd1": "Shared/PowerShellGet/PSGet.Resource.psd1",
-    "monad/miscfiles/modules/Microsoft.PowerShell.Host/Microsoft.PowerShell.Host.psd1": "Shared/Microsoft.PowerShell.Host/Microsoft.PowerShell.Host.psd1",    
+    "monad/miscfiles/modules/Microsoft.PowerShell.Host/Microsoft.PowerShell.Host.psd1": "Shared/Microsoft.PowerShell.Host/Microsoft.PowerShell.Host.psd1",
     "monad/src/oneget/PowerShell.Module/PackageManagement.psd1": "Shared/PackageManagement/PackageManagement.psd1",
     "monad/src/oneget/PowerShell.Module/PackageManagement.format.ps1xml": "Shared/PackageManagement/PackageManagement.format.ps1xml",
     "monad/src/oneget/providers/inbox/powershell.metaprovider/PackageProviderFunctions.psm1": "Shared/PackageManagement/PackageProviderFunctions.psm1",
@@ -17,7 +17,7 @@
     "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsHelper.ps1": "Windows-Full/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsHelper.ps1",
     "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataV4Adapter.ps1": "Windows-Full/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataV4Adapter.ps1",
     "wmi/psws/PSODataUtils/Microsoft.PowerShell.ODataUtils/Microsoft.PowerShell.ODataUtilsStrings.psd1": "Windows-Full/Microsoft.PowerShell.ODataUtils/en-US/Microsoft.PowerShell.ODataUtilsStrings.psd1",
-    
+
     "wmi/WMIv2/Client/CIMCmdlets/CimCmdlets.psd1": "Windows-Core+Full/CimCmdlets/CimCmdlets.psd1",
     "monad/miscfiles/modules/Microsoft.WSMan.Management/Microsoft.WSMan.Management.psd1": "Windows-Core+Full/Microsoft.WSMan.Management/Microsoft.WSMan.Management.psd1",
     "monad/miscfiles/display/WSMan.format.ps1xml": "Windows-Core+Full/Microsoft.WSMan.Management/WSMan.format.ps1xml",
@@ -25,7 +25,7 @@
     "monad/src/LocalAccounts/LocalAccounts.format.ps1xml": "Windows-Core+Full/Microsoft.PowerShell.LocalAccounts/LocalAccounts.format.ps1xml",
     "monad/miscfiles/modules/PSDiagnostics/PSDiagnostics.psd1": "Windows-Core+Full/PSDiagnostics/PSDiagnostics.psd1",
     "monad/miscfiles/modules/PSDiagnostics/PSDiagnostics.psm1": "Windows-Core+Full/PSDiagnostics/PSDiagnostics.psm1",
-    
+
     "monad/miscfiles/modules/Microsoft.PowerShell.Security/Microsoft.PowerShell.Security.psd1": "Windows-Full/Microsoft.PowerShell.Security/Microsoft.PowerShell.Security.psd1",
     "monad/miscfiles/modules/Microsoft.PowerShell.Management/Microsoft.PowerShell.Management.psd1": "Windows-Full/Microsoft.PowerShell.Management/Microsoft.PowerShell.Management.psd1",
     "monad/miscfiles/modules/Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1": "Windows-Full/Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1",
@@ -41,7 +41,7 @@
     "monad/src/m3p/product/PSWorkflow.types.ps1xml": "Windows-Full/PSWorkflow/PSWorkflow.types.ps1xml",
     "monad/src/m3p/product/PSWorkflowUtility.psd1": "Windows-Full/PSWorkflowUtility/PSWorkflowUtility.psd1",
     "monad/src/m3p/product/PSWorkflowUtility.psm1": "Windows-Full/PSWorkflowUtility/PSWorkflowUtility.psm1",
-    
+
     "monad/miscfiles/modules/Microsoft.PowerShell.Diagnostics/CoreClr/Microsoft.PowerShell.Diagnostics.psd1":  "Windows-Core/Microsoft.PowerShell.Diagnostics/Microsoft.PowerShell.Diagnostics.psd1",
 
     "monad/miscfiles/modules/Microsoft.PowerShell.Security/CoreClr/Microsoft.PowerShell.Security.psd1": "Windows-Core/Microsoft.PowerShell.Security/Microsoft.PowerShell.Security.psd1",

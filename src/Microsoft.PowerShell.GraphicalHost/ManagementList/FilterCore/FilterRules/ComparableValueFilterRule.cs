@@ -9,7 +9,7 @@ namespace Microsoft.Management.UI.Internal
     using System;
 
     /// <summary>
-    /// The ComparableValueFilterRule provides support for derived classes 
+    /// The ComparableValueFilterRule provides support for derived classes
     /// that evaluate against IComparable values.
     /// </summary>
     /// <typeparam name="T">

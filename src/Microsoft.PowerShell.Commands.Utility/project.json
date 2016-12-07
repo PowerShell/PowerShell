@@ -63,7 +63,7 @@
                         "commands/utility/ShowCommand/ShowCommandParameterInfo.cs",
                         "commands/utility/ShowCommand/ShowCommandParameterSetInfo.cs",
                         "commands/utility/ShowCommand/ShowCommandParameterType.cs",
-                        "commands/utility/ShowCommand/ShowCommandProxy.cs",                        
+                        "commands/utility/ShowCommand/ShowCommandProxy.cs",
                         "commands/utility/update-list.cs",
                         "singleshell/installer/MshUtilityMshSnapin.cs",
                         "commands/utility/WebCmdlet/FullClr/BasicHtmlWebResponseObject.FullClr.cs",
@@ -77,7 +77,7 @@
                         "commands/utility/WebCmdlet/FullClr/WebResponseObject.FullClr.cs",
                         "commands/utility/WebCmdlet/FullClr/WebResponseObjectFactory.FullClr.cs",
                         "commands/utility/WebCmdlet/CoreCLR/HtmlWebResponseObject.CoreClr.cs",
-                        
+
                         "gen/FormatAndOut_out_gridview.cs",
                         "gen/UtilityMshSnapinResources.cs",
                         "gen/OutPrinterDisplayStrings.cs",
@@ -109,7 +109,7 @@
                 "System.Diagnostics.TextWriterTraceListener": "4.3.0-preview1-24530-04"
             }
         },
-        "net451": {            
+        "net451": {
             "frameworkAssemblies": {
                 "System.Drawing": "",
                 "System.Web": "",

@@ -25,7 +25,7 @@ namespace Microsoft.Management.UI.Internal
         #region Properties
 
         /// <summary>
-        /// Gets a value indicating whether the FilterRule can be 
+        /// Gets a value indicating whether the FilterRule can be
         /// evaluated in its current state.
         /// </summary>
         public override bool IsValid
@@ -95,7 +95,7 @@ namespace Microsoft.Management.UI.Internal
 
             bool isBetweenForward = startValueComparedToData < 0 && endValueComparedToData > 0;
             bool isBetweenBackwards = endValueComparedToData < 0 && startValueComparedToData > 0;
-            
+
             return isBetweenForward || isBetweenBackwards;
         }
 

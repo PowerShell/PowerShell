@@ -72,7 +72,7 @@ Describe "Using Namespace" -Tags "CI" {
                 [CompilerGenerated()]
                 $b
             )
-            
+
             "OK"
         }
 

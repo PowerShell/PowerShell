@@ -90,18 +90,18 @@ namespace System.Management.Automation
     /// <see cref="ValidateArgumentsAttribute.Validate"/>
     /// abstract method, after which they can apply the
     /// attribute to their parameters.
-    /// 
+    ///
     /// <see cref="ValidateArgumentsAttribute"/> validates the argument
     /// as a whole.  If the argument value is potentially an enumeration,
     /// you can derive from <see cref="ValidateEnumeratedArgumentsAttribute"/>
     /// which will take care of unrolling the enumeration
     /// and validate each element individually.
-    /// 
+    ///
     /// It is also recommended to override
     /// <see cref="System.Object.ToString"/> to return a readable string
     /// similar to the attribute declaration, for example
     /// "[ValidateRangeAttribute(5,10)]".
-    /// 
+    ///
     /// If this attribute is applied to a string parameter, the string command argument will be validated.
     /// If this attribute is applied to a string[] parameter, the string[] command argument will be validated.
     /// </remarks>
@@ -141,7 +141,7 @@ namespace System.Management.Automation
         /// The engine APIs for the context under which the prerequisite is being
         /// evaluated.
         /// </param>
-        /// 
+        ///
         /// <returns>bool true if the validate succeeded</returns>
         /// <exception cref="ValidationMetadataException">
         /// Whenever any exception occurs during data validate.
@@ -172,13 +172,13 @@ namespace System.Management.Automation
     /// the argument value is an enumeration,
     /// <see cref="ValidateEnumeratedArgumentsAttribute"/> will unroll
     /// the enumeration and validate each item individually.
-    /// 
+    ///
     /// Existing enumerated validation attributes include
     /// <see cref="ValidateLengthAttribute"/>,
     /// <see cref="ValidateRangeAttribute"/>,
     /// <see cref="ValidatePatternAttribute"/>, and
     /// <see cref="ValidateSetAttribute"/>.
-    /// 
+    ///
     /// PSSnapins wishing to create custom enumerated argument validation attributes
     /// should derive from
     /// <seealso cref="ValidateEnumeratedArgumentsAttribute"/>
@@ -186,12 +186,12 @@ namespace System.Management.Automation
     /// <seealso cref="ValidateEnumeratedArgumentsAttribute.ValidateElement"/>
     /// abstract method, after which they can apply the
     /// attribute to their parameters.
-    /// 
+    ///
     /// It is also recommended to override
     /// <see cref="System.Object.ToString"/> to return a readable string
     /// similar to the attribute declaration, for example
     /// "[ValidateRangeAttribute(5,10)]".
-    /// 
+    ///
     /// If this attribute is applied to a string parameter, the string command argument will be validated.
     /// If this attribute is applied to a string[] parameter, each string command argument will be validated.
     /// </remarks>
@@ -269,22 +269,22 @@ namespace System.Management.Automation
     #region Misc Attributes
 
     /// <summary>
-    /// To specify RunAs behavior for the class 
+    /// To specify RunAs behavior for the class
     /// /// </summary>
     public enum DSCResourceRunAsCredential
     {
         /// <summary>Default is same as optional.</summary>
         Default,
         /// <summary>
-        /// PsDscRunAsCredential can not be used for this DSC Resource         
+        /// PsDscRunAsCredential can not be used for this DSC Resource
         /// </summary>
         NotSupported,
         /// <summary>
-        /// PsDscRunAsCredential is mandatory for resource         
+        /// PsDscRunAsCredential is mandatory for resource
         /// </summary>
         Mandatory,
         /// <summary>
-        /// PsDscRunAsCredential can or can not be specified         
+        /// PsDscRunAsCredential can or can not be specified
         /// </summary>
         Optional = Default,
     }
@@ -295,9 +295,9 @@ namespace System.Management.Automation
     [AttributeUsage(AttributeTargets.Class)]
     public class DscResourceAttribute : CmdletMetadataAttribute
     {
-        /// <summary>        
-        /// To specify RunAs Behavior for the resource. 
-        /// </summary>        
+        /// <summary>
+        /// To specify RunAs Behavior for the resource.
+        /// </summary>
         public DSCResourceRunAsCredential RunAsCredential { get; set; }
     }
 
@@ -531,9 +531,9 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Attributes implemented by a provider can use:
-        /// 
+        ///
         ///     [OutputType(ProviderCmdlet='cmdlet', typeof(...))]
-        ///     
+        ///
         /// To specify the provider specific objects returned for a given cmdlet.
         /// </summary>
         public string ProviderCmdlet { get; set; }
@@ -627,7 +627,7 @@ namespace System.Management.Automation
         public int Position { get; set; } = int.MinValue;
 
         /// <summary>
-        /// Gets and sets the name of the parameter set this parameter belongs to. When 
+        /// Gets and sets the name of the parameter set this parameter belongs to. When
         /// it is not specified ParameterAttribute.AllParameterSets is assumed.
         /// </summary>
         public string ParameterSetName
@@ -644,27 +644,27 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets and sets a flag specifying if this parameter is Mandatory. When 
+        /// Gets and sets a flag specifying if this parameter is Mandatory. When
         /// it is not specified, false is assumed and the parameter is considered optional.
         /// </summary>
         public bool Mandatory { get; set; } = false;
 
         /// <summary>
-        /// Gets and sets a flag that specifies that this parameter can take values 
+        /// Gets and sets a flag that specifies that this parameter can take values
         /// from the incoming pipeline object. When it is not specified, false is assumed.
         /// </summary>
         public bool ValueFromPipeline { get; set; }
 
         /// <summary>
         /// Gets and sets a flag that specifies that this parameter can take values from a property
-        /// in the incoming pipeline object with the same name as the parameter. When it 
+        /// in the incoming pipeline object with the same name as the parameter. When it
         /// is not specified, false is assumed.
         /// </summary>
         public bool ValueFromPipelineByPropertyName { get; set; }
 
         /// <summary>
         /// Gets and sets a flag that specifies that the remaining command line parameters
-        /// should be associated with this parameter in the form of an array. When it 
+        /// should be associated with this parameter in the form of an array. When it
         /// is not specified, false is assumed.
         /// </summary>
         public bool ValueFromRemainingArguments { get; set; } = false;
@@ -690,7 +690,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets and sets the base name of the resource for a help message. When this field is specified, 
+        /// Gets and sets the base name of the resource for a help message. When this field is specified,
         /// HelpMessageResourceId must also be specified.
         /// </summary>
         /// <exception cref="ArgumentException">for a null or empty value when setting</exception>
@@ -754,7 +754,7 @@ namespace System.Management.Automation
     public class PSTypeNameAttribute : Attribute
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string PSTypeName { get; private set; }
 
@@ -798,7 +798,7 @@ namespace System.Management.Automation
         public object Value { get; set; }
 
         /// <summary>
-        /// Specify the help string for the default value of a command parameter. 
+        /// Specify the help string for the default value of a command parameter.
         /// </summary>
         public string Help { get; set; }
     }
@@ -839,7 +839,7 @@ namespace System.Management.Automation
         /// specified by MinLength and MaxLength
         /// </summary>
         /// <param name="element">object to validate</param>
-        /// <exception cref="ValidationMetadataException">if <paramref name="element"/> is not a string 
+        /// <exception cref="ValidationMetadataException">if <paramref name="element"/> is not a string
         /// with length between minLength and maxLength</exception>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
         protected override void ValidateElement(object element)
@@ -919,7 +919,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// The range values and the value to validate will all be converted to the promoted type.
-        /// If minRange and maxRange are the same type, 
+        /// If minRange and maxRange are the same type,
         /// </summary>
         private Type _promotedType;
 
@@ -1117,7 +1117,7 @@ namespace System.Management.Automation
         /// Validates that each parameter argument matches the RegexPattern
         /// </summary>
         /// <param name="element">object to validate</param>
-        /// <exception cref="ValidationMetadataException">if <paramref name="element"/> is not a string 
+        /// <exception cref="ValidationMetadataException">if <paramref name="element"/> is not a string
         ///  that matches the pattern
         ///  and for invalid arguments</exception>
         protected override void ValidateElement(object element)
@@ -1159,7 +1159,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Class for validating against a script block. 
+    /// Class for validating against a script block.
     /// </summary>
     public sealed class ValidateScriptAttribute : ValidateEnumeratedArgumentsAttribute
     {
@@ -1337,7 +1337,7 @@ namespace System.Management.Automation
         private string[] _validValues;
 
         /// <summary>
-        /// Gets a flag specifying if we should ignore the case when performing string comparison. The 
+        /// Gets a flag specifying if we should ignore the case when performing string comparison. The
         /// default is true.
         /// </summary>
         public bool IgnoreCase { get; set; } = true;
@@ -1754,7 +1754,7 @@ namespace System.Management.Automation
     /// the name.
     /// Existing argument transformation attributes include
     /// <see cref="ArgumentTypeConverterAttribute"/>.
-    /// 
+    ///
     /// PSSnapins wishing to create custom argument transformation attributes
     /// should derive from
     /// <seealso cref="ArgumentTransformationAttribute"/>
@@ -1762,12 +1762,12 @@ namespace System.Management.Automation
     /// <seealso cref="ArgumentTransformationAttribute.Transform"/>
     /// abstract method, after which they can apply the
     /// attribute to their parameters.
-    /// 
+    ///
     /// It is also recommended to override
     /// <see cref="System.Object.ToString"/> to return a readable string
     /// similar to the attribute declaration, for example
     /// "[ValidateRangeAttribute(5,10)]".
-    /// 
+    ///
     /// If multiple transformations are defined on a parameter,
     /// they will be invoked in series, each getting the output
     /// of the previous transformation.

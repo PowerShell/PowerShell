@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else
                 {
-                    // save for further processing 
+                    // save for further processing
                     unprocessedNodes.Add(n);
                 }
             } // for

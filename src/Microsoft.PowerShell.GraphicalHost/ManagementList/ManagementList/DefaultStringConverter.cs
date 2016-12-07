@@ -30,7 +30,7 @@ namespace Microsoft.Management.UI.Internal
     /// By contrast, the converter for an <see cref="IMultiValueConverter"/>
     /// will be called even if any or all of the bindings fail to evaluate
     /// down to the last property.
-    /// 
+    ///
     /// Note that the <see cref="MultiBinding"/> which uses this
     /// <see cref="IMultiValueConverter"/> must have exactly one
     /// <see cref="Binding"/>.

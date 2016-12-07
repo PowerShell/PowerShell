@@ -29,7 +29,7 @@ using Microsoft.PowerShell.Commands;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public static class CompletionCompleters
     {
@@ -57,7 +57,7 @@ namespace System.Management.Automation
         #region Command Names
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="commandName"></param>
         /// <returns></returns>
@@ -67,7 +67,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="commandName"></param>
         /// <param name="moduleName"></param>
@@ -332,7 +332,7 @@ namespace System.Management.Automation
                     }
 
                     // The first command might be an un-prefixed commandInfo that we get by importing a module with the -Prefix parameter,
-                    // in that case, we should add the module name qualification because if the module is not in the module path, calling 
+                    // in that case, we should add the module name qualification because if the module is not in the module path, calling
                     // 'Get-Foo' directly doesn't work
                     string completionName = keyValuePair.Key;
                     if (!includeModulePrefix)
@@ -356,7 +356,7 @@ namespace System.Management.Automation
                     for (int index = 1; index < commandList.Count; index++)
                     {
                         var commandInfo = commandList[index] as CommandInfo;
-                        // If it's a pseudo command that only works in the script workflow, don't bother adding it to the result 
+                        // If it's a pseudo command that only works in the script workflow, don't bother adding it to the result
                         // list since it's a duplicate
                         if (commandInfo == null) { continue; }
 
@@ -374,7 +374,7 @@ namespace System.Management.Automation
                 else
                 {
                     // The first command might be an un-prefixed commandInfo that we get by importing a module with the -Prefix parameter,
-                    // in that case, we should add the module name qualification because if the module is not in the module path, calling 
+                    // in that case, we should add the module name qualification because if the module is not in the module path, calling
                     // 'Get-Foo' directly doesn't work
                     string completionName = keyValuePair.Key;
                     if (!includeModulePrefix)
@@ -965,7 +965,7 @@ namespace System.Management.Automation
                 }
                 else if (expressionAst.Parent is ArrayLiteralAst && expressionAst.Parent.Parent is CommandParameterAst)
                 {
-                    // Handle scenarios such as 
+                    // Handle scenarios such as
                     //      dir -Path: a.txt, <tab> || dir -Path: a.txt, b.txt <tab>
                     commandAst = (CommandAst)expressionAst.Parent.Parent.Parent;
                     if (context.WordToComplete == string.Empty)
@@ -1655,7 +1655,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Process a parameter to get the argument completion results
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// If the argument completion falls into these pre-defined cases:
         ///   1. The matching parameter is of type Enum
@@ -2810,7 +2810,7 @@ namespace System.Management.Automation
                 if (commandResults != null)
                     result.AddRange(commandResults);
 
-                // Consider files only if the -Module parameter is not present 
+                // Consider files only if the -Module parameter is not present
                 if (moduleName == null)
                 {
                     // ps1 files and directories. We only complete the files with .ps1 extension for Get-Command, because the -Syntax
@@ -3620,7 +3620,7 @@ namespace System.Management.Automation
         /// <param name="itemTypeToComplete">The item provided by user for completion.</param>
         /// <param name="paramName">Name of the parameter whose value needs completion.</param>
         /// <param name="result">List of completion suggestions.</param>
-        /// <param name="context">Completion context.</param>        
+        /// <param name="context">Completion context.</param>
         private static void NativeCompletionNewItemCommand(string itemTypeToComplete, string paramName, List<CompletionResult> result, CompletionContext context)
         {
             if (string.IsNullOrEmpty(paramName))
@@ -3955,7 +3955,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="prev">the argument that is right before the 'tab' location</param>
         /// <param name="position">the number of positional arguments before the 'tab' location</param>
@@ -4051,7 +4051,7 @@ namespace System.Management.Automation
         #region Filenames
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
@@ -4499,7 +4499,7 @@ namespace System.Management.Automation
         #region Variable
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="variableName"></param>
         /// <returns></returns>
@@ -5014,7 +5014,7 @@ namespace System.Management.Automation
                 //     $xml.
                 //     $xml.Save("C:\data.xml")
                 // In this example, we add $xml. between two existing statements, and the 'lastAst' in this case is
-                // a MemberExpressionAst '$xml.$xml', whose parent is still a MemberExpressionAst '$xml.$xml.Save'. 
+                // a MemberExpressionAst '$xml.$xml', whose parent is still a MemberExpressionAst '$xml.$xml.Save'.
                 // But here we DO NOT want to re-assign 'targetExpr' to be '$xml.$xml'. 'targetExpr' in this case
                 // should be '$xml'.
                 if (targetExpr == null)
@@ -5455,7 +5455,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                // Add stuff from our base class System.Object.  
+                // Add stuff from our base class System.Object.
                 if (@static)
                 {
                     // Don't add base class constructors
@@ -5605,7 +5605,7 @@ namespace System.Management.Automation
         /// In OneCore PS, there is no way to retrieve all loaded assemblies. But we have the type catalog dictionary
         /// which contains the full type names of all available CoreCLR .NET types. We can extract the necessary info
         /// from the full type names to make type name auto-completion work.
-        /// This type represents a generic type for type name completion. It only contains information that can be 
+        /// This type represents a generic type for type name completion. It only contains information that can be
         /// inferred from the full type name.
         /// </summary>
         private class GenericTypeCompletionInStringFormat : TypeCompletionInStringFormat
@@ -5812,7 +5812,7 @@ namespace System.Management.Automation
 
                     // If it's already included, skip it.
                     // This may happen when an accelerator name is the same as the short name of the type it represents,
-                    // and aslo that type has more than one accelerator names. For example: 
+                    // and aslo that type has more than one accelerator names. For example:
                     //    "float"  -> System.Single
                     //    "single" -> System.Single
                     if (typeAlreadyIncluded) { continue; }
@@ -6069,7 +6069,7 @@ namespace System.Management.Automation
                 }
             }
 
-            //this is a temporary fix. Only the type defined in the same script get complete. Need to use using Module when that is available. 
+            //this is a temporary fix. Only the type defined in the same script get complete. Need to use using Module when that is available.
             var scriptBlockAst = (ScriptBlockAst)context.RelatedAsts[0];
             var typeAsts = scriptBlockAst.FindAll(ast => ast is TypeDefinitionAst, false).Cast<TypeDefinitionAst>();
             foreach (var typeAst in typeAsts.Where(ast => pattern.IsMatch(ast.Name)))
@@ -6233,7 +6233,7 @@ namespace System.Management.Automation
         /// Generate auto complete results for hashtable key within a Dynamickeyword.
         /// Results are generated based on properties of a DynamicKeyword matches given identifier.
         /// For example, following "D" matches "DestinationPath"
-        /// 
+        ///
         ///     Configuration
         ///     {
         ///         File
@@ -6241,7 +6241,7 @@ namespace System.Management.Automation
         ///             D^
         ///         }
         ///     }
-        /// 
+        ///
         /// </summary>
         /// <param name="completionContext"></param>
         /// <param name="ast"></param>

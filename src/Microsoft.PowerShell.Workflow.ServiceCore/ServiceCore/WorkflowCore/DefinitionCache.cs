@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Workflow
         private int activitiesCleanupIntervalMSec;
 
         private static readonly DefinitionCache _instance = new DefinitionCache();
-        
+
         private DefinitionCache()
         {
             activitiesCleanupIntervalMSec = WorkflowJobSourceAdapter.GetInstance().GetPSWorkflowRuntime().Configuration.ActivitiesCacheCleanupIntervalMSec;
@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Workflow
         {
             return _workflowDetailsCache.Keys.FirstOrDefault(def => def.InstanceId == instanceId);
         }
- 
+
         internal string GetWorkflowXaml(WorkflowJobDefinition definition)
         {
             return definition.Xaml;
@@ -219,7 +219,7 @@ namespace Microsoft.PowerShell.Workflow
                 workflowDetail.CompiledAssemblyName = resultingCompiledAssemblyName;
 
                 lock (_syncObject)
-                {                   
+                {
                     WorkflowJobDefinition definitionToRemove =
                         _workflowDetailsCache.Keys.FirstOrDefault(item => item.InstanceId == definition.InstanceId);
                     if (definitionToRemove != null)
@@ -228,8 +228,8 @@ namespace Microsoft.PowerShell.Workflow
                     _workflowDetailsCache.Add(definition, workflowDetail);
                 }
 
-                // If cached activity count reaches _cacheSize, 
-                // Removing the cached activity at index 0 and adding the new activity to the activity cache, 
+                // If cached activity count reaches _cacheSize,
+                // Removing the cached activity at index 0 and adding the new activity to the activity cache,
                 // Old logic was to clear 1000 cached activities and recompiling them again when needed.
                 //
                 if (_cachedActivities.Count == _cacheSize)
@@ -237,10 +237,10 @@ namespace Microsoft.PowerShell.Workflow
                     Activity removedActivity;
                     _cachedActivities.TryRemove(_cachedActivities.Keys.ElementAt<WorkflowJobDefinition>(0), out removedActivity);
                 }
-                
+
                 _cachedActivities.TryAdd(definition, activity);
 
-                return activity;                
+                return activity;
             }
 
             // we should never hit this point under normal course of operations
@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="definition"></param>
         /// <param name="windowsWorkflow"></param>
@@ -281,7 +281,7 @@ namespace Microsoft.PowerShell.Workflow
                 if (activity == null)
                 {
                     // if activity is not available in cache recompile using info in
-                    // definition cache               
+                    // definition cache
                     activity = CompileActivityAndSaveInCache(definition, null, null, out windowsWorkflow);
                 }
 
@@ -292,7 +292,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="xaml"></param>
         /// <param name="workflowJobDefinition"></param>
@@ -355,7 +355,7 @@ namespace Microsoft.PowerShell.Workflow
         {
             bool windowsWorkflow;
             WorkflowJobDefinition workflowJobDefinition = new WorkflowJobDefinition(definition, string.Empty,
-                                                                                    WorkflowJobDefinition.EmptyEnumerable, 
+                                                                                    WorkflowJobDefinition.EmptyEnumerable,
                                                                                     string.Empty,
                                                                                     xaml);
             Activity activity = GetActivityFromCache(workflowJobDefinition, out windowsWorkflow) ??
@@ -369,7 +369,7 @@ namespace Microsoft.PowerShell.Workflow
         {
             bool windowsWorkflow;
             WorkflowJobDefinition workflowJobDefinition = new WorkflowJobDefinition(definition, string.Empty,
-                                                                                    dependentWorkflows ?? WorkflowJobDefinition.EmptyEnumerable, 
+                                                                                    dependentWorkflows ?? WorkflowJobDefinition.EmptyEnumerable,
                                                                                     string.Empty,
                                                                                     xaml);
 
@@ -386,7 +386,7 @@ namespace Microsoft.PowerShell.Workflow
             Activity activity = GetActivityFromCache(workflowJobDefinition, out windowsWorkflow) ??
                                 CompileActivityAndSaveInCache(workflowJobDefinition, null, null, out windowsWorkflow);
 
-            return activity;            
+            return activity;
         }
 
         /// <summary>
@@ -485,7 +485,7 @@ namespace Microsoft.PowerShell.Workflow
     internal class WorkflowJobDefinition : JobDefinition
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="jobSourceAdapterType"></param>
         /// <param name="command"></param>
@@ -495,7 +495,7 @@ namespace Microsoft.PowerShell.Workflow
             IsScriptWorkflow = false;
         }
 
-        internal WorkflowJobDefinition(Type jobSourceAdapterType, string command, string name, string modulePath, 
+        internal WorkflowJobDefinition(Type jobSourceAdapterType, string command, string name, string modulePath,
                     IEnumerable<string> dependentWorkflows, string dependentAssemblyPath, Dictionary<string, string> requiredAssemblies, string xaml)
                         : this(jobSourceAdapterType, command, name)
         {
@@ -507,7 +507,7 @@ namespace Microsoft.PowerShell.Workflow
             _lastUsedDateTime = DateTime.Now;
         }
 
-        internal WorkflowJobDefinition(JobDefinition jobDefinition, string modulePath, 
+        internal WorkflowJobDefinition(JobDefinition jobDefinition, string modulePath,
                     IEnumerable<string> dependentWorkflows, string dependentAssemblyPath, string xaml)
             : this(jobDefinition.JobSourceAdapterType, jobDefinition.Command, jobDefinition.Name, modulePath, dependentWorkflows, dependentAssemblyPath, null, xaml)
         {
@@ -517,11 +517,11 @@ namespace Microsoft.PowerShell.Workflow
         internal WorkflowJobDefinition(JobDefinition jobDefinition)
             :this(jobDefinition, string.Empty, EmptyEnumerable, string.Empty, string.Empty)
         {
-            
+
         }
 
         private readonly string _modulePath;
-        internal string ModulePath 
+        internal string ModulePath
         {
             get { return _modulePath; }
         }
@@ -576,7 +576,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>

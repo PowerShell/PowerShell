@@ -114,7 +114,7 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// Returns the number of parameters in this property. 
+        /// Returns the number of parameters in this property.
         /// This is applicable only for parameterized properties.
         /// </summary>
         internal int ParamCount

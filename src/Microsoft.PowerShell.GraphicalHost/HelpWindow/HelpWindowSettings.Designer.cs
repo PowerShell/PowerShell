@@ -12,14 +12,14 @@
 //------------------------------------------------------------------------------
 
 namespace Microsoft.Management.UI.Internal {
-    
-    
+
+
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "10.0.0.0")]
     internal sealed partial class HelpWindowSettings : global::System.Configuration.ApplicationSettingsBase {
-        
+
         private static HelpWindowSettings defaultInstance = ((HelpWindowSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new HelpWindowSettings())));
-        
+
         public static HelpWindowSettings Default {
             get {
                 return defaultInstance;
@@ -40,7 +40,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpRemarksDisplayed"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
@@ -52,7 +52,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpSyntaxDisplayed"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
@@ -64,7 +64,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpExamplesDisplayed"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
@@ -76,7 +76,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpSynopsisDisplayed"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
@@ -88,7 +88,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpDescriptionDisplayed"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
@@ -100,7 +100,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpParametersDisplayed"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
@@ -112,7 +112,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpInputsDisplayed"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
@@ -124,7 +124,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpOutputsDisplayed"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
@@ -136,7 +136,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpNotesDisplayed"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
@@ -148,7 +148,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpRelatedLinksDisplayed"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
@@ -160,7 +160,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpSearchMatchCase"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
@@ -172,7 +172,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpSearchWholeWord"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("400")]
@@ -184,7 +184,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpWindowHeight"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("600")]
@@ -196,7 +196,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpWindowWidth"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
@@ -208,7 +208,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpWindowTop"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
@@ -220,7 +220,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpWindowLeft"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
@@ -232,7 +232,7 @@ namespace Microsoft.Management.UI.Internal {
                 this["HelpWindowMaximized"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("100")]

@@ -22,7 +22,7 @@ using Microsoft.PowerShell.CoreClr.Stubs;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Provides enumerated values to use to set wildcard pattern 
+    /// Provides enumerated values to use to set wildcard pattern
     /// matching options.
     /// </summary>
     [Flags]
@@ -34,7 +34,7 @@ namespace System.Management.Automation
         None = 0,
 
         /// <summary>
-        /// Specifies that the wildcard pattern is compiled to an assembly. 
+        /// Specifies that the wildcard pattern is compiled to an assembly.
         /// This yields faster execution but increases startup time.
         /// </summary>
         Compiled = 1,
@@ -72,7 +72,7 @@ namespace System.Management.Automation
 
         //
         // options that control match behavior
-        // 
+        //
         internal WildcardOptions Options { get; } = WildcardOptions.None;
 
         /// <summary>
@@ -88,7 +88,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes and instance of the WildcardPattern class 
+        /// Initializes and instance of the WildcardPattern class
         /// for the specified wildcard pattern.
         /// </summary>
         /// <param name="pattern">The wildcard pattern to match</param>
@@ -105,8 +105,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes an instance of the WildcardPattern class for 
-        /// the specified wildcard pattern expression, with options 
+        /// Initializes an instance of the WildcardPattern class for
+        /// the specified wildcard pattern expression, with options
         /// that modify the pattern.
         /// </summary>
         /// <param name="pattern">The wildcard pattern to match.</param>
@@ -291,10 +291,10 @@ namespace System.Management.Automation
         /// Unescapes any escaped characters in the input string.
         /// </summary>
         /// <param name="pattern">
-        /// The input string containing the text to convert. 
+        /// The input string containing the text to convert.
         /// </param>
         /// <returns>
-        /// A string of characters with any escaped characters 
+        /// A string of characters with any escaped characters
         /// converted to their unescaped form.
         /// </returns>
         /// <exception cref="ArgumentNullException">
@@ -371,7 +371,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Converts this wildcard to a string that can be used as a right-hand-side operand of the LIKE operator of WQL.
-        /// For example: "a*" will be converted to "a%". 
+        /// For example: "a*" will be converted to "a%".
         /// </summary>
         /// <returns></returns>
         public string ToWql()
@@ -402,7 +402,7 @@ namespace System.Management.Automation
     public class WildcardPatternException : RuntimeException
     {
         /// <summary>
-        /// Constructor for class WildcardPatternException that takes 
+        /// Constructor for class WildcardPatternException that takes
         /// an ErrorRecord to use in constructing this exception.
         /// </summary>
         /// <remarks>This is the recommended constructor to use for this exception.</remarks>
@@ -468,13 +468,13 @@ namespace System.Management.Automation
     internal abstract class WildcardPatternParser
     {
         /// <summary>
-        /// Called from <see cref="Parse"/> method to indicate 
+        /// Called from <see cref="Parse"/> method to indicate
         /// the beginning of the wildcard pattern.
         /// Default implementation simply returns.
         /// </summary>
         /// <param name="pattern">
-        /// <see cref="WildcardPattern"/> object that includes both 
-        /// the text of the pattern (<see cref="WildcardPattern.Pattern"/>) 
+        /// <see cref="WildcardPattern"/> object that includes both
+        /// the text of the pattern (<see cref="WildcardPattern.Pattern"/>)
         /// and the pattern options (<see cref="WildcardPattern.Options"/>)
         /// </param>
         protected virtual void BeginWildcardPattern(WildcardPattern pattern)
@@ -483,22 +483,22 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Called from <see cref="Parse"/> method to indicate that the next
-        /// part of the pattern should match 
+        /// part of the pattern should match
         /// a literal character <paramref name="c"/>.
         /// </summary>
         protected abstract void AppendLiteralCharacter(char c);
 
         /// <summary>
         /// Called from <see cref="Parse"/> method to indicate that the next
-        /// part of the pattern should match 
+        /// part of the pattern should match
         /// any string, including an empty string.
         /// </summary>
         protected abstract void AppendAsterix();
 
         /// <summary>
         /// Called from <see cref="Parse"/> method to indicate that the next
-        /// part of the pattern should match 
-        /// any single character. 
+        /// part of the pattern should match
+        /// any single character.
         /// </summary>
         protected abstract void AppendQuestionMark();
 
@@ -511,16 +511,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Called from <see cref="Parse"/> method to indicate 
+        /// Called from <see cref="Parse"/> method to indicate
         /// the beginning of a bracket expression.
         /// </summary>
         /// <remarks>
-        /// Bracket expressions of <see cref="WildcardPattern"/> are 
-        /// a greatly simplified version of bracket expressions of POSIX wildcards 
+        /// Bracket expressions of <see cref="WildcardPattern"/> are
+        /// a greatly simplified version of bracket expressions of POSIX wildcards
         /// (http://www.opengroup.org/onlinepubs/9699919799/functions/fnmatch.html).
-        /// Only literal characters and character ranges are supported.  
-        /// Negation (with either '!' or '^' characters), 
-        /// character classes ([:alpha:]) 
+        /// Only literal characters and character ranges are supported.
+        /// Negation (with either '!' or '^' characters),
+        /// character classes ([:alpha:])
         /// and other advanced features are not supported.
         /// </remarks>
         protected abstract void BeginBracketExpression();
@@ -533,8 +533,8 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Called from <see cref="Parse"/> method to indicate that the bracket expression
-        /// should include all characters from character range 
-        /// starting at <paramref name="startOfCharacterRange"/> 
+        /// should include all characters from character range
+        /// starting at <paramref name="startOfCharacterRange"/>
         /// and ending at <paramref name="endOfCharacterRange"/>
         /// </summary>
         protected abstract void AppendCharacterRangeToBracketExpression(
@@ -548,7 +548,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// PowerShell v1 and v2 treats all characters inside
-        /// <paramref name="brackedExpressionContents"/> as literal characters, 
+        /// <paramref name="brackedExpressionContents"/> as literal characters,
         /// except '-' sign which denotes a range.  In particular it means that
         /// '^', '[', ']' are escaped within the bracket expression and don't
         /// have their regex-y meaning.
@@ -591,7 +591,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Parses <paramref name="pattern"/>, calling appropriate overloads 
+        /// Parses <paramref name="pattern"/>, calling appropriate overloads
         /// in <paramref name="parser"/>
         /// </summary>
         /// <param name="pattern">Pattern to parse</param>
@@ -613,7 +613,7 @@ namespace System.Management.Automation
                     {
                         // An unescaped closing square bracket closes the character set.  In other
                         // words, there are no nested square bracket expressions
-                        // This is different than the POSIX spec 
+                        // This is different than the POSIX spec
                         // (at http://www.opengroup.org/onlinepubs/9699919799/functions/fnmatch.html),
                         // but we are keeping this behavior for back-compatibility.
 
@@ -897,13 +897,13 @@ namespace System.Management.Automation
             // - each state of NFA is represented by (patternPosition, stringPosition) tuple
             //     - state transitions are documented in
             //       ProcessStringCharacter and ProcessEndOfString methods
-            // - the algorithm below tries to see if there is a path 
+            // - the algorithm below tries to see if there is a path
             //   from (0, 0) to (lengthOfPattern, lengthOfString)
             //    - this is a regular graph traversal
-            //    - there are O(1) edges per node (at most 2 edges) 
+            //    - there are O(1) edges per node (at most 2 edges)
             //      so the whole graph traversal takes O(number of nodes in the graph) =
             //      = O(lengthOfPattern * lengthOfString) time
-            //    - for efficient remembering which states have already been visited, 
+            //    - for efficient remembering which states have already been visited,
             //      the traversal goes methodically from beginning to end of the string
             //      therefore requiring only O(lengthOfPattern) memory for remembering
             //      which states have been already visited
@@ -935,7 +935,7 @@ namespace System.Management.Automation
                         patternPositionsForNextStringPosition);
                 }
 
-                // swap patternPositionsForCurrentStringPosition 
+                // swap patternPositionsForCurrentStringPosition
                 // with patternPositionsForNextStringPosition
                 var tmp = patternPositionsForCurrentStringPosition;
                 patternPositionsForCurrentStringPosition = patternPositionsForNextStringPosition;
@@ -1015,8 +1015,8 @@ namespace System.Management.Automation
                 }
             }
 
-            // non-virtual MoveNext is more performant 
-            // than implementing IEnumerable / virtual MoveNext 
+            // non-virtual MoveNext is more performant
+            // than implementing IEnumerable / virtual MoveNext
             public bool MoveNext(out int patternPosition)
             {
                 Dbg.Assert(

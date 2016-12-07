@@ -4,7 +4,7 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
 
   Context "Add-Content should actually add content" {
     It "should Add-Content to testdrive:\$file1" {
-      $result=add-content -path testdrive:\$file1 -value "ExpectedContent" -passthru 
+      $result=add-content -path testdrive:\$file1 -value "ExpectedContent" -passthru
       $result| Should be "ExpectedContent"
     }
     It "should return expected string from testdrive:\$file1" {
@@ -47,4 +47,4 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
       $result[1]     |Should be "world"
     }
   }
-} 
+}

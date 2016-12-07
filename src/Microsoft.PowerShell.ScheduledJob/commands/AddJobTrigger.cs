@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// <summary>
     /// This cmdlet adds ScheduledJobTriggers to ScheduledJobDefinition objects.
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "JobTrigger", DefaultParameterSetName = AddJobTriggerCommand.JobDefinitionParameterSet, 
+    [Cmdlet(VerbsCommon.Add, "JobTrigger", DefaultParameterSetName = AddJobTriggerCommand.JobDefinitionParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223913")]
     public sealed class AddJobTriggerCommand : ScheduleJobCmdletBase
     {
@@ -30,11 +30,11 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScheduledJobTrigger.
         /// </summary>
-        [Parameter(Position = 1, Mandatory = true, ValueFromPipeline = true, 
+        [Parameter(Position = 1, Mandatory = true, ValueFromPipeline = true,
                    ParameterSetName = AddJobTriggerCommand.JobDefinitionParameterSet)]
-        [Parameter(Position = 1, Mandatory = true, ValueFromPipeline = true, 
+        [Parameter(Position = 1, Mandatory = true, ValueFromPipeline = true,
                    ParameterSetName = AddJobTriggerCommand.JobDefinitionIdParameterSet)]
-        [Parameter(Position = 1, Mandatory = true, ValueFromPipeline = true, 
+        [Parameter(Position = 1, Mandatory = true, ValueFromPipeline = true,
                    ParameterSetName = AddJobTriggerCommand.JobDefinitionNameParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScheduledJobDefinition Id.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, 
+        [Parameter(Position = 0, Mandatory = true,
                    ParameterSetName = AddJobTriggerCommand.JobDefinitionIdParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScheduledJobDefinition Name.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, 
+        [Parameter(Position = 0, Mandatory = true,
                    ParameterSetName = AddJobTriggerCommand.JobDefinitionNameParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScheduledJobDefinition.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, 
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true,
                    ParameterSetName = AddJobTriggerCommand.JobDefinitionParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]

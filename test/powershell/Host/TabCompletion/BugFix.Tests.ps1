@@ -1,5 +1,5 @@
 Describe "Tab completion bug fix" -Tags "CI" {
-    
+
     It "Issue#682 - '[system.manage<tab>' should work" {
         $result = TabExpansion2 -inputScript "[system.manage" -cursorColumn "[system.manage".Length
         $result | Should Not BeNullOrEmpty

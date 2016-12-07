@@ -645,7 +645,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This returns the DependentServices of the specified service. 
+        /// This returns the DependentServices of the specified service.
         /// </summary>
         [Parameter]
         [Alias("DS")]
@@ -1424,11 +1424,11 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
-        /// Set the properties of service running on the list of computer names 
+        /// Set the properties of service running on the list of computer names
         /// specified. The default is the local computer.
-        /// Type the NETBIOS name, an IP address, or a fully-qualified domain name of 
-        /// one or more remote computers. To indicate the local computer, use the 
-        /// computer name, "localhost" or a dot (.). When the computer is in a different 
+        /// Type the NETBIOS name, an IP address, or a fully-qualified domain name of
+        /// one or more remote computers. To indicate the local computer, use the
+        /// computer name, "localhost" or a dot (.). When the computer is in a different
         /// domain than the user, the fully-qualified domain name is required.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -1476,8 +1476,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The following is the definition of the input parameter "Description".
         /// Specifies a new description for the service.
-        /// The service description appears in Services in Computer Management. 
-        /// Description is not a property of the ServiceController object that 
+        /// The service description appears in Services in Computer Management.
+        /// Description is not a property of the ServiceController object that
         /// Get-Service retrieve
         /// </summary>
         [Parameter]
@@ -1495,7 +1495,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "StartupType".
-        /// Changes the starting mode of the service. Valid values for StartupType are: 
+        /// Changes the starting mode of the service. Valid values for StartupType are:
         /// -- Automatic: Start when the system starts.
         /// -- Manual   : Starts only when started by a user or program.
         /// -- Disabled : Can
@@ -1520,10 +1520,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "Status".
-        /// This specifies what state the service should be in (e.g. Running, Stopped, 
-        /// Paused).  If it is already in that state, do nothing.  If it is not, do the 
-        /// appropriate action to bring about the desired result (start/stop/suspend the 
-        /// service) and issue an error if this cannot be achieved. 
+        /// This specifies what state the service should be in (e.g. Running, Stopped,
+        /// Paused).  If it is already in that state, do nothing.  If it is not, do the
+        /// appropriate action to bring about the desired result (start/stop/suspend the
+        /// service) and issue an error if this cannot be achieved.
         ///  Status can be  Paused ,  Running  and  Stopped
         /// </summary>
         [Parameter]
@@ -1540,8 +1540,8 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
-        /// Specifies ServiceController object representing the services to be stopped. 
-        /// Enter a variable that contains the objects or type a command or expression 
+        /// Specifies ServiceController object representing the services to be stopped.
+        /// Enter a variable that contains the objects or type a command or expression
         /// that gets the objects.
         /// </summary>
         [Parameter(ValueFromPipeline = true,
@@ -1550,7 +1550,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// This is not a parameter for this cmdlet.
-        /// </summary>        
+        /// </summary>
         //This has been shadowed from base class and removed parameter tag to fix gcm "Set-Service" -syntax
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public new string[] Include
@@ -1587,7 +1587,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Overrides
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [ArchitectureSensitive]
         protected override void ProcessRecord()
@@ -1759,7 +1759,7 @@ namespace Microsoft.PowerShell.Commands
 
 
                         //Addition by v-ramch Mar 11 2008
-                        //if Status parameter specified do the necessary action 
+                        //if Status parameter specified do the necessary action
                         //to bring about the desired result
 
                         if (!string.IsNullOrEmpty(Status))
@@ -1796,7 +1796,7 @@ namespace Microsoft.PowerShell.Commands
                                         WriteNonTerminatingError(service, null, "ServiceIsDependentOnNoForce", ServiceResources.ServiceIsDependentOnNoForce, ErrorCategory.InvalidOperation);
                                         continue;
                                     }
-                                    //stop service,give the force parameter always true as we have already checked for the dependent services 
+                                    //stop service,give the force parameter always true as we have already checked for the dependent services
                                     //Specify NoWait parameter as always false since we are not adding this switch to this cmdlet
                                     DoStopService(service, true, true);
                                 }
@@ -2357,17 +2357,17 @@ namespace Microsoft.PowerShell.Commands
         /// CreateJobObject API creates or opens a job object.
         /// </summary>
         /// <param name="lpJobAttributes">
-        /// A pointer to a SECURITY_ATTRIBUTES structure that specifies the security descriptor for the 
-        /// job object and determines whether child processes can inherit the returned handle. 
-        /// If lpJobAttributes is NULL, the job object gets a default security descriptor 
+        /// A pointer to a SECURITY_ATTRIBUTES structure that specifies the security descriptor for the
+        /// job object and determines whether child processes can inherit the returned handle.
+        /// If lpJobAttributes is NULL, the job object gets a default security descriptor
         /// and the handle cannot be inherited.
         /// </param>
         /// <param name="lpName">
         /// The name of the job.
         /// </param>
         /// <returns>
-        /// If the function succeeds, the return value is a handle to the job object. 
-        /// If the object existed before the function call, the function 
+        /// If the function succeeds, the return value is a handle to the job object.
+        /// If the object existed before the function call, the function
         /// returns a handle to the existing job object.
         /// </returns>
         [DllImport(PinvokeDllNames.CreateJobObjectDllName, CharSet = CharSet.Unicode)]
@@ -2399,13 +2399,13 @@ namespace Microsoft.PowerShell.Commands
         /// The information class for the limits to be queried.
         /// </param>
         /// <param name="lpJobObjectInfo">
-        /// The limit or job state information. 
+        /// The limit or job state information.
         /// </param>
         /// <param name="cbJobObjectLength">
         /// The count of the job information being queried, in bytes.
         /// </param>
         /// <param name="lpReturnLength">
-        /// A pointer to a variable that receives the length of 
+        /// A pointer to a variable that receives the length of
         /// data written to the structure pointed to by the lpJobObjectInfo parameter.
         /// </param>
         /// <returns>If the function succeeds, the return value is nonzero.

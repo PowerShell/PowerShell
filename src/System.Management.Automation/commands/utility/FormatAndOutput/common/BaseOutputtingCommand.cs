@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// execution entry point override
         /// we assume that a LineOutput interface instance already has been acquired
-        /// 
+        ///
         /// IMPORTANT: it assumes the presence of a pre-processing formatting command
         /// </summary>
         internal override void ProcessRecord()
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
 
         /// <summary>
-        /// instance of a command wrapper to execute the 
+        /// instance of a command wrapper to execute the
         /// default formatter when needed
         /// </summary>
         private CommandWrapper _command;
@@ -387,7 +387,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                         FormatInfoData formatInfoData)
         {
             FormatStartData formatStartData = formatInfoData as FormatStartData;
-            // initialize the format context 
+            // initialize the format context
             if (formatStartData != null)
             {
                 FormatOutputContext foc = new FormatOutputContext(parentContext, formatStartData);
@@ -643,7 +643,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         private FormattedObjectsCache _cache = null;
 
         /// <summary>
-        /// handler for processing the caching notification and responsible for 
+        /// handler for processing the caching notification and responsible for
         /// setting the value of the formatting hint
         /// </summary>
         /// <param name="formatStartData"></param>

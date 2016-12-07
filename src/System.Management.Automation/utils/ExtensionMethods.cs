@@ -71,7 +71,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// The type extension methods within this partial class are used/shared by both FullCLR and CoreCLR powershell.
-    /// 
+    ///
     /// * If you want to add an extension method that will be used by both FullCLR and CoreCLR powershell, please add it here.
     /// * If you want to add an extension method that will be used only by CoreCLR powershell, please add it to the partial
     ///   'PSTypeExtensions' class in 'CorePsExtensions.cs'.

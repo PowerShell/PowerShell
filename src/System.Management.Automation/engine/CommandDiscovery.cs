@@ -124,11 +124,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Default constructor...
         /// </summary>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="context"/> is null.
         /// </exception>
-        /// 
+        ///
         internal CommandDiscovery(ExecutionContext context)
         {
             if (context == null)
@@ -159,15 +159,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Determines if the cmdlet is a cmdlet that shouldn't be in the discovery list.
         /// </summary>
-        /// 
+        ///
         /// <param name="implementingType">
         /// Type implementing the cmdlet
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// True if the cmdlet is a special cmdlet that shouldn't be part of the discovery list. Or false otherwise.
         /// </returns>
-        /// 
+        ///
         private bool IsSpecialCmdlet(Type implementingType)
         {
             // These commands should never be put in the discovery list.  They are an internal implementation
@@ -211,19 +211,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds the CmdletInfo to the cmdlet cache in the current scope object.
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the cmdlet to add.
         /// </param>
-        /// 
+        ///
         /// <param name="newCmdletInfo">
         /// The CmdletInfo to add.
         /// </param>
-        /// 
+        ///
         /// <param name="isGlobal">
         /// If true, the cmdlet is added to the Module Scope of the session state.
         /// </param>
-        /// 
+        ///
         /// <exception cref="PSNotSupportedException">
         /// If a cmdlet with the same module and cmdlet name already exists
         /// but has a different implementing type.
@@ -243,7 +243,7 @@ namespace System.Management.Automation
 
             if (isGlobal)
             {
-                // When cmdlet cache was not scope-based, we used to import cmdlets to the module scope. 
+                // When cmdlet cache was not scope-based, we used to import cmdlets to the module scope.
                 // We need to do the same as the default action (setting "isGlobal" is done as a default action in the caller)
                 return Context.EngineSessionState.ModuleScope.AddCmdletToCache(newCmdletInfo.Name, newCmdletInfo, CommandOrigin.Internal, Context);
             }
@@ -303,35 +303,35 @@ namespace System.Management.Automation
         /// <summary>
         /// Look up a command named by the argument string and return its CommandProcessorBase.
         /// </summary>
-        /// 
+        ///
         /// <param name="commandName">
         /// The command name to lookup.
         /// </param>
-        /// 
+        ///
         /// <param name="commandOrigin"> Location where the command was dispatched from. </param>
-        /// 
-        /// <param name="useLocalScope"> 
+        ///
+        /// <param name="useLocalScope">
         /// True if command processor should use local scope to execute the command,
         /// False if not.  Null if command discovery should default to something reasonable
         /// for the command discovered.
         /// </param>
         /// <returns>
-        /// 
+        ///
         /// </returns>
-        /// 
+        ///
         /// <exception cref="CommandNotFoundException">
         /// If the command, <paramref name="commandName"/>, could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="System.Security.SecurityException">
         /// If the security manager is preventing the command from running.
         /// </exception>
-        /// 
+        ///
         internal CommandProcessorBase LookupCommandProcessor(string commandName,
             CommandOrigin commandOrigin, bool? useLocalScope)
         {
             CommandInfo commandInfo = null;
-#if false                   
+#if false
                 if (tokenCache.ContainsKey (commandName))
                 {
                     commandInfo = tokenCache[commandName];
@@ -639,7 +639,7 @@ namespace System.Management.Automation
         internal static void VerifyNetFrameworkVersion(ExternalScriptInfo scriptInfo)
         {
             Version requiresNetFrameworkVersion = scriptInfo.RequiresNetFrameworkVersion;
-            
+
             if (requiresNetFrameworkVersion != null)
             {
                 if (!Utils.IsNetFrameworkVersionSupported(requiresNetFrameworkVersion))
@@ -687,30 +687,30 @@ namespace System.Management.Automation
         /// <summary>
         /// Look up a command using a CommandInfo object and return its CommandProcessorBase.
         /// </summary>
-        /// 
+        ///
         /// <param name="commandInfo">
         /// The commandInfo for the command to lookup.
         /// </param>
-        /// 
+        ///
         /// <param name="commandOrigin"> Location where the command was dispatched from. </param>
-        /// <param name="useLocalScope"> 
+        /// <param name="useLocalScope">
         /// True if command processor should use local scope to execute the command,
         /// False if not.  Null if command discovery should default to something reasonable
         /// for the command discovered.
         /// </param>
         /// <param name="sessionState">The session state the commandInfo should be run in.</param>
         /// <returns>
-        /// 
+        ///
         /// </returns>
-        /// 
+        ///
         /// <exception cref="CommandNotFoundException">
         /// If the command, <paramref name="commandName"/>, could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="System.Management.Automation.PSSecurityException">
         /// If the security manager is preventing the command from running.
         /// </exception>
-        /// 
+        ///
         internal CommandProcessorBase LookupCommandProcessor(CommandInfo commandInfo,
             CommandOrigin commandOrigin, bool? useLocalScope, SessionStateInternal sessionState)
         {
@@ -909,21 +909,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Look up a command and return its CommandInfo.
         /// </summary>
-        /// 
+        ///
         /// <param name="commandName">
         /// The command name to lookup.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An instance of a CommandInfo object that represents the
         /// command. If the command is resolved as an alias, an AliasInfo
         /// is returned with the ReferencedCommand info intact.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="CommandNotFoundException">
         /// If the command, <paramref name="commandName"/>, could not be found.
         /// </exception>
-        /// 
+        ///
         internal CommandInfo LookupCommandInfo(string commandName)
         {
             return LookupCommandInfo(commandName, CommandOrigin.Internal);
@@ -980,7 +980,7 @@ namespace System.Management.Automation
                 finally { context.CommandDiscovery.UnregisterLookupCommandInfoAction("ActivePreLookup", commandName); }
             }
 
-            // Check the module auto-loading preference 
+            // Check the module auto-loading preference
             PSModuleAutoLoadingPreference moduleAutoLoadingPreference = GetCommandDiscoveryPreference(context, SpecialVariables.PSModuleAutoLoadingPreferenceVarPath, "PSModuleAutoLoadingPreference");
 
             if (eventArgs == null || eventArgs.StopSearch != true)
@@ -1391,7 +1391,7 @@ namespace System.Management.Automation
                 discoveryTracer.WriteLine("Executing module-qualified search: {0}", commandName);
                 context.CommandDiscovery.RegisterLookupCommandInfoAction("ActiveModuleSearch", commandName);
 
-                // Verify that auto-loading is only done on for internal commands if it's not public 
+                // Verify that auto-loading is only done on for internal commands if it's not public
                 CmdletInfo cmdletInfo = context.SessionState.InvokeCommand.GetCmdlet("Microsoft.PowerShell.Core\\Import-Module");
                 if ((commandOrigin == CommandOrigin.Internal) ||
                     ((cmdletInfo != null) && (cmdletInfo.Visibility == SessionStateEntryVisibility.Public)))
@@ -1484,16 +1484,16 @@ namespace System.Management.Automation
         /// Gets a CommandPathSearch constructed with the specified patterns and
         /// using the PATH as the lookup directories
         /// </summary>
-        /// 
+        ///
         /// <param name="patterns">
         /// The patterns to search for. These patterns must be in the form taken
         /// by DirectoryInfo.GetFiles().
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An instance of CommandPathSearch that is initialized with the specified
         /// patterns and using the PATH as the lookup directories.
-        /// </returns>  
+        /// </returns>
         internal IEnumerable<string> GetCommandPathSearcher(IEnumerable<string> patterns)
         {
             // Get the PATH environment variable
@@ -1507,15 +1507,15 @@ namespace System.Management.Automation
         /// Gets the resolved paths contained in the PATH environment
         /// variable.
         /// </summary>
-        /// 
+        ///
         /// <returns>
         /// The contents of the PATH environment variable split on System.IO.Path.PathSeparator.
         /// </returns>
-        /// 
+        ///
         /// <remarks>
         /// The result is an ordered list of paths with paths starting with "." unresolved until lookup time.
         /// </remarks>
-        /// 
+        ///
         internal IEnumerable<string> GetLookupDirectoryPaths()
         {
             LookupPathCollection result = new LookupPathCollection();
@@ -1585,7 +1585,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the PATHEXT environment variable extensions and tokenizes them.
         /// </summary>
-        /// 
+        ///
         internal static string[] PathExtensionsWithPs1Prepended
         {
             get
@@ -1605,7 +1605,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the PATHEXT environment variable extensions and tokenizes them.
         /// </summary>
-        /// 
+        ///
         internal static string[] PathExtensions
         {
             get
@@ -1650,22 +1650,22 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the cmdlet information for the specified name.
         /// </summary>
-        /// 
+        ///
         /// <param name="cmdletName">
         /// The name of the cmdlet to return the information for.
         /// </param>
         /// <param name="searchAllScopes">
         /// True if we should search all scopes, false if we should stop after finding the first.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The CmdletInfo for the cmdlet for all the cmdlets with the specified name.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="cmdletName"/> is null or empty.
         /// </exception>
-        /// 
+        ///
         internal IEnumerator<CmdletInfo> GetCmdletInfo(string cmdletName, bool searchAllScopes)
         {
             Dbg.Assert(!String.IsNullOrEmpty(cmdletName), "Caller should verify the cmdletName");
@@ -1703,7 +1703,7 @@ namespace System.Management.Automation
                                 yield break;
                             }
                         }
-                        // The engine cmdlets get imported (via Import-Module) once when PowerShell starts and the cmdletInfo is added to PSSnapinHelpers._cmdletcache(static) with ModuleName 
+                        // The engine cmdlets get imported (via Import-Module) once when PowerShell starts and the cmdletInfo is added to PSSnapinHelpers._cmdletcache(static) with ModuleName
                         // as "System.Management.Automation.dll" instead of the actual snapin name. The next time we load something in an InitialSessionState, we look at this _cmdletcache and
                         // if the the assembly is already loaded, we just return the cmdlets back. So, the CmdletInfo has moduleName has "System.Management.Automation.dll". So, when M3P Activity
                         // tries to access Microsoft.PowerShell.Core\\Get-Command, it cannot. So, adding an additional check to return the correct cmdletInfo for cmdlets from core modules.
@@ -1740,7 +1740,7 @@ namespace System.Management.Automation
         /// Called by the RunspaceConfiguration when a PSSnapIn gets added to the
         /// console to update the list of available cmdlets.
         /// </summary>
-        /// 
+        ///
         internal void UpdateCmdletCache()
         {
             if (!_cmdletCacheInitialized)
@@ -1782,11 +1782,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes a cmdlet from the cmdlet cache.
         /// </summary>
-        /// 
+        ///
         /// <param name="entry">
         /// The configuration entry for the cmdlet which is being removed.
         /// </param>
-        /// 
+        ///
         private void RemoveCmdletFromCache(CmdletConfigurationEntry entry)
         {
             IDictionary<string, List<CmdletInfo>> cmdletTable = Context.EngineSessionState.GetCmdletTable();
@@ -1828,16 +1828,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the cached ScriptInfo for a command using the script name.
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the script.
         /// </param>
-        /// 
+        ///
         /// <returns>
-        /// A reference to the ScriptInfo for the command if its in the cache, 
+        /// A reference to the ScriptInfo for the command if its in the cache,
         /// or null otherwise.
         /// </returns>
-        /// 
+        ///
         internal ScriptInfo GetScriptInfo(string name)
         {
             Dbg.Assert(
@@ -1852,7 +1852,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the script cache
         /// </summary>
-        /// 
+        ///
         internal Dictionary<string, ScriptInfo> ScriptCache
         {
             get { return _cachedScriptInfo; }
@@ -1861,7 +1861,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The cache for the ScriptInfo.
         /// </summary>
-        /// 
+        ///
         private Dictionary<string, ScriptInfo> _cachedScriptInfo;
 
         internal ExecutionContext Context { get; }
@@ -1869,21 +1869,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Reads the path for the appropriate shellID from the registry.
         /// </summary>
-        /// 
+        ///
         /// <param name="shellID">
         /// The ID of the shell to retrieve the path for.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The path to the shell represented by the shellID.
         /// </returns>
-        /// 
+        ///
         /// <remarks>
         /// The shellID must be registered in the Windows Registry in either
-        /// the HKEY_CURRENT_USER or HKEY_LOCAL_MACHINE hive under 
+        /// the HKEY_CURRENT_USER or HKEY_LOCAL_MACHINE hive under
         /// Software/Microsoft/MSH/&lt;ShellID&gt; and are searched in that order.
         /// </remarks>
-        /// 
+        ///
         internal static string GetShellPathFromRegistry(string shellID)
         {
             string result = null;
@@ -1930,7 +1930,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentNullException("context");
             }
 
-            // check the PSVariable 
+            // check the PSVariable
             object result = context.GetVariableValue(variablePath);
 
             try
@@ -1973,11 +1973,11 @@ namespace System.Management.Automation
         /// Constructs a LookupPathCollection object and adds all the items
         /// in the supplied collection to it.
         /// </summary>
-        /// 
+        ///
         /// <param name="collection">
         /// A set of items to be added to the collection.
         /// </param>
-        /// 
+        ///
         internal LookupPathCollection(IEnumerable<string> collection) : base()
         {
             foreach (string item in collection)
@@ -1990,15 +1990,15 @@ namespace System.Management.Automation
         /// Adds the specified string to the collection if its not already
         /// a member of the collection.
         /// </summary>
-        /// 
+        ///
         /// <param name="item">
         /// The string to add to the collection.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The index at which the string was added or -1 if it was not added.
         /// </returns>
-        /// 
+        ///
         public new int Add(string item)
         {
             int result = -1;
@@ -2013,15 +2013,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds all the strings in the specified collection to this collection
         /// </summary>
-        /// 
+        ///
         /// <param name="collection">
         /// The collection of strings to add.
         /// </param>
-        /// 
+        ///
         /// <remarks>
         /// Only the strings that are not already in the collection will be added.
         /// </remarks>
-        /// 
+        ///
         internal void AddRange(ICollection<string> collection)
         {
             foreach (string name in collection)
@@ -2034,15 +2034,15 @@ namespace System.Management.Automation
         /// Determines if the string already exists in the collection
         /// using a invariant culture case insensitive comparison.
         /// </summary>
-        /// 
+        ///
         /// <param name="item">
         /// The string to check for existence.
         ///  </param>
-        /// 
+        ///
         /// <returns>
         /// True if the string already exists in the collection.
         /// </returns>
-        /// 
+        ///
         public new bool Contains(string item)
         {
             bool result = false;
@@ -2061,11 +2061,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns a collection of all the indexes that are relative paths.
         /// </summary>
-        /// 
+        ///
         /// <returns>
         /// A collection of all the indexes that are relative paths.
         /// </returns>
-        /// 
+        ///
         internal Collection<int> IndexOfRelativePath()
         {
             Collection<int> result = new Collection<int>();
@@ -2086,19 +2086,19 @@ namespace System.Management.Automation
         /// Finds the first index of the specified string. The string
         /// is compared in the invariant culture using a case-insensitive comparison.
         /// </summary>
-        /// 
+        ///
         /// <param name="item">
         /// The string to look for.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The index of the string in the collection or -1 if it was not found.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="item"/> is null or empty.
         /// </exception>
-        /// 
+        ///
         public new int IndexOf(string item)
         {
             if (String.IsNullOrEmpty(item))

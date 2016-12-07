@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell.Activities
             RemotingBehavior remotingBehavior = PSRemotingBehavior.Get(context);
             if (PSRemotingBehavior.Expression == null)
             {
-                remotingBehavior = RemotingBehavior.PowerShell; 
+                remotingBehavior = RemotingBehavior.PowerShell;
             }
 
             // If they've specified the 'Custom' remoting behavior, ensure the activity
@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell.Activities
                 {
                     CreatePowerShellInstance(context, connection, commands);
                 }
-            }            
+            }
             // Configure the local invocation options
             else
             {
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Activities
         /// <param name="context">The activity context to use</param>
         /// <param name="connection">The wsman connection to use</param>
         /// <param name="commands">The list of commands</param>
-        private void CreatePowerShellInstance(NativeActivityContext context, WSManConnectionInfo connection, 
+        private void CreatePowerShellInstance(NativeActivityContext context, WSManConnectionInfo connection,
             List<ActivityImplementationContext> commands)
         {
             // Create the PowerShell instance, and add the command to it.
@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Activities
                 // if PSComputerName is "" or $null than connection is NULL
                 UpdateImplementationContextForLocalExecution(implementationContext, context);
             }
-            
+
 #endif
             // Add it to the queue of commands to execute.
             commands.Add(implementationContext);

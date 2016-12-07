@@ -18,8 +18,8 @@ namespace Microsoft.Management.UI.Internal
     /// <typeparam name="T">The type held by the collection.</typeparam>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
     public class ReadOnlyObservableAsyncCollection<T> :
-        ReadOnlyCollection<T>, 
-        IAsyncProgress, 
+        ReadOnlyCollection<T>,
+        IAsyncProgress,
         INotifyPropertyChanged, INotifyCollectionChanged
     {
         #region Private fields
@@ -80,7 +80,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets the error for the async operation.  This field is only valid if 
+        /// Gets the error for the async operation.  This field is only valid if
         /// OperationInProgress is false.  null indicates there was no error.
         /// </summary>
         public Exception OperationError

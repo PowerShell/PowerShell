@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Workflow
             ValidationSettings validationSettings = new ValidationSettings
             {
                 AdditionalConstraints =
-                    {                             
+                    {
                         { typeof(Activity), new List<Constraint> { ValidateActivitiesConstraint(runtimeAssembly, validationResults)} }
                     }
             };
@@ -267,7 +267,7 @@ namespace Microsoft.PowerShell.Workflow
                         return true;
                 }
             }
-            
+
             Parallel parActivity = activity as Parallel;
             if (parActivity != null && parActivity.Variables != null && parActivity.Variables.Count > 0)
             {
@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         #endregion Privates
-        
+
         #region Public methods
 
         /// <summary>
@@ -345,7 +345,7 @@ namespace Microsoft.PowerShell.Workflow
                 validationResults = new PSWorkflowValidationResults();
 
                 this.ValidateWorkflowInternal(workflow, runtimeAssembly, validationResults);
-                
+
                 // sanity check to ensure cache isn't growing unbounded
                 if (_validationCache.Keys.Count == Configuration.ValidationCacheLimit)
                 {
@@ -382,7 +382,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         #endregion Internal Accessors
-        
+
         # region Test Only Variables & Accessors
 
         // For testing purpose ONLY

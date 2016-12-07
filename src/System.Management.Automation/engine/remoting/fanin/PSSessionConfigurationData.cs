@@ -12,7 +12,7 @@ using System.Text;
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public sealed class PSSessionConfigurationData
     {
@@ -23,7 +23,7 @@ namespace System.Management.Automation.Remoting
         #region Public Properties
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public List<string> ModulesToImport
         {
@@ -42,7 +42,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public String PrivateData
         {

@@ -2,11 +2,11 @@
 /*============================================================
 **
 **
-** Purpose: 
+** Purpose:
 ** This public abstract class defines the methods / properties
 ** for a context object used to access a set of Data Values from
 ** an EventRecord.
-** 
+**
 ============================================================*/
 
 namespace System.Diagnostics.Eventing.Reader

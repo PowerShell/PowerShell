@@ -16,7 +16,7 @@ namespace System.Management.Automation.Runspaces
                         .StartFrame(leftIndent: 4)
                             .AddText(FileSystemProviderStrings.DirectoryDisplayGrouping)
                             .AddScriptBlockExpressionBinding(@"
-                                                  $_.PSParentPath.Replace(""Microsoft.PowerShell.Core\FileSystem::"", """")                                                  
+                                                  $_.PSParentPath.Replace(""Microsoft.PowerShell.Core\FileSystem::"", """")
                                               ")
                             .AddNewline()
                         .EndFrame()

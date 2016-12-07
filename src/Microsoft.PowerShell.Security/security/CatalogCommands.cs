@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     public abstract class CatalogCommandsBase : PSCmdlet
     {
         /// <summary>
-        /// Path of folder/file to generate or validate the catalog file 
+        /// Path of folder/file to generate or validate the catalog file
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
         public string CatalogFilePath
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
         private string catalogFilePath;
 
         /// <summary>
-        /// Path of folder/file to generate or validate the catalog file 
+        /// Path of folder/file to generate or validate the catalog file
         /// </summary>
         [Parameter(Position = 1, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
         public string[] Path
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Processes records from the input pipeline.
         /// For each input object, the command either generate the Catalog or
-        /// Validates the existing Catalog 
+        /// Validates the existing Catalog
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -102,7 +102,7 @@ namespace Microsoft.PowerShell.Commands
 
             string drive = null;
 
-            // resolve catalog destination Path 
+            // resolve catalog destination Path
             if (!SessionState.Path.IsPSAbsolute(catalogFilePath, out drive) && !System.IO.Path.IsPathRooted(catalogFilePath))
             {
                 catalogFilePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(catalogFilePath);
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Performs the action i.e. Generate or Validate the Windows Catalog File  
+        /// Performs the action i.e. Generate or Validate the Windows Catalog File
         /// </summary>
         /// <param name="path">
         /// The name of the Folder or file on which to perform the action.
@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Defines the implementation of the 'New-FileCatalog' cmdlet.
-    /// This cmdlet generates the catalog for File or Folder 
+    /// This cmdlet generates the catalog for File or Folder
     /// </summary>
     [Cmdlet(VerbsCommon.New, "FileCatalog", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkId=786749")]
@@ -137,9 +137,9 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public NewFileCatalogCommand() : base("New-FileCatalog") { }
 
-        /// <summary>  
-        /// Catalog version 
-        /// </summary>  
+        /// <summary>
+        /// Catalog version
+        /// </summary>
         [Parameter()]
         public int CatalogVersion
         {
@@ -153,20 +153,20 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        // Based on the Catalog version we will decide which hashing Algorithm to use 
+        // Based on the Catalog version we will decide which hashing Algorithm to use
         private int catalogVersion = 1;
 
         /// <summary>
-        /// Generate the Catalog for the Path 
+        /// Generate the Catalog for the Path
         /// </summary>
         /// <param name="path">
-        /// File or Folder Path 
+        /// File or Folder Path
         /// </param>
         /// <param name="catalogFilePath">
         /// Path to Catalog
         /// </param>
         /// <returns>
-        /// True if able to Create Catalog or else False 
+        /// True if able to Create Catalog or else False
         /// </returns>
         protected override void PerformAction(Collection<string> path, string catalogFilePath)
         {
@@ -179,14 +179,14 @@ namespace Microsoft.PowerShell.Commands
             FileInfo catalogFileInfo = new FileInfo(catalogFilePath);
 
             // If Path points to the expected cat file make sure
-            // parent Directory exists other wise CryptoAPI fails to create a .cat file                                     
+            // parent Directory exists other wise CryptoAPI fails to create a .cat file
             if (catalogFileInfo.Extension.Equals(".cat", StringComparison.Ordinal))
             {
                 System.IO.Directory.CreateDirectory(catalogFileInfo.Directory.FullName);
             }
             else
             {
-                // This only creates Directory if it does not exists, Append a default name 
+                // This only creates Directory if it does not exists, Append a default name
                 System.IO.Directory.CreateDirectory(catalogFilePath);
                 catalogFilePath = System.IO.Path.Combine(catalogFilePath, "catalog.cat");
             }
@@ -202,7 +202,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Defines the implementation of the 'Test-FileCatalog' cmdlet.
-    /// This cmdlet validates the Integrity of catalog  
+    /// This cmdlet validates the Integrity of catalog
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Test, "FileCatalog", SupportsShouldProcess = true, DefaultParameterSetName = "ByPath",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkId=786750")]
@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public TestFileCatalogCommand() : base("Test-FileCatalog") { }
 
-        /// <summary>        
+        /// <summary>
         /// </summary>
         [Parameter()]
         public SwitchParameter Detailed
@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
         private bool detailed = false;
 
         /// <summary>
-        /// Patterns used to exclude files from DiskPaths and Catalog         
+        /// Patterns used to exclude files from DiskPaths and Catalog
         /// </summary>
         [Parameter()]
         public string[] FilesToSkip
@@ -249,22 +249,22 @@ namespace Microsoft.PowerShell.Commands
         internal WildcardPattern[] excludedPatterns = null;
 
         /// <summary>
-        /// Validate the Integrity of given Catalog  
+        /// Validate the Integrity of given Catalog
         /// </summary>
         /// <param name="path">
-        /// File or Folder Path 
+        /// File or Folder Path
         /// </param>
         /// <param name="catalogFilePath">
         /// Path to Catalog
         /// </param>
         /// <returns>
-        /// True if able to Validate the Catalog and its not tampered or else False 
+        /// True if able to Validate the Catalog and its not tampered or else False
         /// </returns>
         protected override void PerformAction(Collection<string> path, string catalogFilePath)
         {
             if (path.Count == 0)
             {
-                // if user has not provided the path use the path of catalog file itself. 
+                // if user has not provided the path use the path of catalog file itself.
                 path.Add(new FileInfo(catalogFilePath).Directory.FullName);
             }
 

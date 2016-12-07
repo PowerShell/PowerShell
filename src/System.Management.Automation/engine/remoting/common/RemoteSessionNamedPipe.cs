@@ -306,7 +306,7 @@ namespace System.Management.Automation.Remoting
 
     /// <summary>
     /// Light wrapper class for BCL NamedPipeServerStream class, that
-    /// creates the named pipe server with process named pipe name, 
+    /// creates the named pipe server with process named pipe name,
     /// having correct access restrictions, and provides a listener
     /// thread loop.
     /// </summary>
@@ -956,7 +956,7 @@ namespace System.Management.Automation.Remoting
         #region Methods
 
         /// <summary>
-        /// Connect to named pipe server.  This is a blocking call until a 
+        /// Connect to named pipe server.  This is a blocking call until a
         /// connection occurs or the timeout time has elapsed.
         /// </summary>
         /// <param name="timeout">Connection attempt timeout in milliseconds</param>

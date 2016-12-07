@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Activities
             metadata.AddArgument(new RuntimeArgument("Values", typeof(IEnumerable<T>), ArgumentDirection.In, true));
             metadata.AddArgument(new RuntimeArgument("ThrottleLimit", typeof(int), ArgumentDirection.In));
 
-            // initialize the hasCompleted and valueEnumerator and add it to the list of private variables            
+            // initialize the hasCompleted and valueEnumerator and add it to the list of private variables
             this.hasCompleted = new Variable<bool>();
             metadata.AddImplementationVariable(this.hasCompleted);
 
@@ -87,7 +87,7 @@ namespace Microsoft.PowerShell.Activities
                 throw new ApplicationException("ParallelForEach requires a non null Values collection");
             }
 
-            // get the enumerator            
+            // get the enumerator
             this.valueEnumerator.Set(context, values.GetEnumerator());
 
             // initialize the values for creating the execution window (max and runningCount)

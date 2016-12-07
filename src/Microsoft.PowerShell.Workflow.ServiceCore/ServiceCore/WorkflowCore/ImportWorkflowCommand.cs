@@ -256,7 +256,7 @@ namespace Microsoft.PowerShell.Commands
                             FunctionDetails detailsToUseForUpdate = null;
                             try
                             {
-                                // Write a message indicating the file name it is trying to load. 
+                                // Write a message indicating the file name it is trying to load.
                                 string message = string.Format(CultureInfo.CurrentUICulture, Resources.ImportingWorkflowFrom, resolvedPath);
                                 WriteVerbose(message);
 
@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.Commands
                                     continue;
                                 }
 
-                                fileText = System.IO.File.ReadAllText(resolvedPath);                                
+                                fileText = System.IO.File.ReadAllText(resolvedPath);
                             }
                             catch (System.AccessViolationException noPerms)
                             {
@@ -343,7 +343,7 @@ namespace Microsoft.PowerShell.Commands
             } //if
 
 
-        } //ProcessRecord  
+        } //ProcessRecord
 
         private static void CheckFileSignatureAsNeeded(bool checkSignatures, string filePath)
         {
@@ -371,11 +371,11 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="resolvedPath">Resolved Path of the xaml</param>
         /// <param name="sourceLanguageMode">Language mode of source in which workflow should run</param>
         private static FunctionDetails GenerateFunctionFromXaml(
-            string name, 
-            string xaml, 
-            Dictionary<string, string> requiredAssemblies, 
-            string[] dependentWorkflows, 
-            string dependentAssemblyPath, 
+            string name,
+            string xaml,
+            Dictionary<string, string> requiredAssemblies,
+            string[] dependentWorkflows,
+            string dependentAssemblyPath,
             string resolvedPath,
             PSLanguageMode sourceLanguageMode)
         {
@@ -388,14 +388,14 @@ namespace Microsoft.PowerShell.Commands
 
             string modulePath = System.IO.Path.GetDirectoryName(resolvedPath);
             string functionDefinition = CreateFunctionFromXaml(
-                name, 
-                xaml, 
-                requiredAssemblies, 
-                dependentWorkflows, 
-                dependentAssemblyPath, 
-                null, 
-                modulePath, 
-                false, 
+                name,
+                xaml,
+                requiredAssemblies,
+                dependentWorkflows,
+                dependentAssemblyPath,
+                null,
+                modulePath,
+                false,
                 "[CmdletBinding()]",
                 null,   /* scriptContent */
                 null,   /* fullScript */
@@ -563,8 +563,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 var invalidOpException = new InvalidOperationException(
                                                                 string.Format(
-                                                                    CultureInfo.CurrentUICulture, 
-                                                                    Resources.InvalidWorkflowDefinitionState, 
+                                                                    CultureInfo.CurrentUICulture,
+                                                                    Resources.InvalidWorkflowDefinitionState,
                                                                     DefinitionCache.Instance.CacheSize));
                 Tracer.TraceException(invalidOpException);
                 throw invalidOpException;
@@ -633,7 +633,7 @@ namespace Microsoft.PowerShell.Commands
                 sourceLanguageMode = sourceLanguageModeValue;
             }
 
-            // Raise engine event of new WF job start for debugger, if 
+            // Raise engine event of new WF job start for debugger, if
             // debugger is active (i.e., has breakpoints set).
             if (debuggerActive)
             {
@@ -706,7 +706,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Retrieve a localized error message saying that only a single default parameter collection can be specified 
+        /// Retrieve a localized error message saying that only a single default parameter collection can be specified
         /// </summary>
         public static string ParameterErrorMessage
         {
@@ -717,7 +717,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Retrieve a localized error message saying that AsJob, JobName and PSParameterCollection cannot be specified as entries to PSParameterCollection 
+        /// Retrieve a localized error message saying that AsJob, JobName and PSParameterCollection cannot be specified as entries to PSParameterCollection
         /// </summary>
         public static string InvalidPSParameterCollectionEntryErrorMessage
         {
@@ -790,7 +790,7 @@ namespace Microsoft.PowerShell.Commands
             Debug.Assert((PSWorkflowRuntime.Instance.Configuration).GetType() == typeof(PSWorkflowConfigurationProvider), "type mismatch error.");
 
             PSWorkflowConfigurationProvider config = (PSWorkflowConfigurationProvider)PSWorkflowRuntime.Instance.Configuration;
-            
+
             // Calculating Hashcode
             string hashcode = string.Empty;
 
@@ -800,7 +800,7 @@ namespace Microsoft.PowerShell.Commands
                 codes.Add(dependentWorkflow.GetHashCode());
             }
             codes.Sort();
-            
+
             foreach (int code in codes)
             {
                 hashcode += code.ToString(CultureInfo.InvariantCulture);
@@ -838,7 +838,7 @@ namespace Microsoft.PowerShell.Commands
 
                 compiledAssemblyCache.TryAdd(hashcode, compiler);
             }
-            
+
             // Throw an error if there was a compilation problem
             if (!compiler.BuildReturnedCode || !File.Exists(compiler.AssemblyPath))
             {
@@ -1164,7 +1164,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    // If the parameter name is one of the expected collisions, don't add it to the list. 
+                    // If the parameter name is one of the expected collisions, don't add it to the list.
                     if (p.Name.Equals(Constants.ComputerName, StringComparison.OrdinalIgnoreCase) || p.Name.Equals(Constants.PrivateMetadata, StringComparison.OrdinalIgnoreCase))
                     {
                         continue;
@@ -1246,7 +1246,7 @@ namespace Microsoft.PowerShell.Commands
                             {
                                 foreach (var attribute in p.Attributes)
                                 {
-                                    // Check the type of the attribute 
+                                    // Check the type of the attribute
                                     if (attribute.TypeId.GetType() == typeof(RequiredArgumentAttribute))
                                     {
                                         mandatory = "[Parameter(Mandatory=$true)] ";
@@ -1342,7 +1342,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         # If there was no '*' collection, added the parameter defaults
-                        # to each individual collection if the parameter isn't already there... 
+                        # to each individual collection if the parameter isn't already there...
                         if (-not $PSParameterCollectionDefaultsMember)
                         {
                             foreach ($collection in $PSParameterCollection)
@@ -1407,7 +1407,7 @@ namespace Microsoft.PowerShell.Commands
             completeFunctionDefinitionTemplate.AppendLine(FunctionBodyTemplate);
 
             // Mark the function definition with sourceLanguageMode (language mode that function can run under, i.e.,
-            // as trusted or not trusted), unless the workflow script is marked with the "SecurityCritical" attribute in 
+            // as trusted or not trusted), unless the workflow script is marked with the "SecurityCritical" attribute in
             // which case the function will always be run under the current system lock down setting.
             bool isSecurityCritical = ContainsSecurityCriticalAttribute(attributeAstCollection);
             string sourceLanguageModeStr = (!isSecurityCritical && (sourceLanguageMode != null)) ? sourceLanguageMode.ToString() : string.Empty;
@@ -1461,7 +1461,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="parameterCollection"></param>
         /// <param name="defaultsParameterCollection"></param>
@@ -1538,8 +1538,8 @@ namespace Microsoft.PowerShell.Commands
                     @"
                 " + CodeGeneration.EscapeFormatStringContent(workflowAttribute);
             }
-            
-            functionPrefix += 
+
+            functionPrefix +=
                 @"
                 param (
                     {0}";
@@ -1588,7 +1588,7 @@ namespace Microsoft.PowerShell.Commands
                      $PSInputCollection.Add($InputObject)
                  }}
             }}
-            
+
             end {{
 
                 {0}
@@ -1635,7 +1635,7 @@ namespace Microsoft.PowerShell.Commands
                 $null = $psBoundParameters.Remove('" + Constants.OutBuffer + @"')
                 $null = $psBoundParameters.Remove('" + Constants.PipelineVariable + @"')
                 $null = $psBoundParameters.Remove('" + Constants.InformationVariable + @"')
-                
+
                 # Add parameter to add the path of the workflow module, needed by Import-LocalizedData
                 # which uses this as a base path to find localized content files.
                 $psBoundParameters['" + Constants.ModulePath + @"'] = '{2}'
@@ -1657,10 +1657,10 @@ namespace Microsoft.PowerShell.Commands
                 $myModule = $myCommand.Module
                 if ($myModule)
                 {{
-                    # The function was defined in a module so look for 
+                    # The function was defined in a module so look for
                     # the PrivateData member
                     [Hashtable] $privateData = $myModule.PrivateData -as [Hashtable]
-                        
+
                     if ($privateData)
                     {{
                         # Extract the nested hashtable corresponding to this
@@ -1670,7 +1670,7 @@ namespace Microsoft.PowerShell.Commands
                         {{
                             # Copy the author-supplied hashtable so we can safely
                             # modify it.
-                            $authorMetadata = @{{}} + $authorMetadata 
+                            $authorMetadata = @{{}} + $authorMetadata
                             if ($psBoundParameters['PSPrivateMetadata'])
                             {{
                                 # merge in the user-supplied metadata
@@ -1686,7 +1686,7 @@ namespace Microsoft.PowerShell.Commands
                 }}
 
                 # Add in the input collection if there wasn't one explicitly passed
-                # which can only happen through PSParameterCollection               
+                # which can only happen through PSParameterCollection
                 if (! $PSBoundParameters['" + Constants.PSInputCollection + @"'])
                 {{
                     $PSBoundParameters['" + Constants.PSInputCollection + @"'] = $PSInputCollection
@@ -1753,7 +1753,7 @@ namespace Microsoft.PowerShell.Commands
                 {{
                     $warningAction = ""Continue""
                 }}
-                
+
                 if ($PSBoundParameters['" + Constants.WarningAction + @"'] -in ""SilentlyContinue"",""Ignore"")
                 {{
                     $warningAction = ""SilentlyContinue""
@@ -1779,7 +1779,7 @@ namespace Microsoft.PowerShell.Commands
                 {{
                     $informationAction = ""Continue""
                 }}
-                
+
                 if ($PSBoundParameters['" + Constants.InformationAction + @"'] -in ""SilentlyContinue"",""Ignore"")
                 {{
                     $informationAction = ""SilentlyContinue""
@@ -1796,7 +1796,7 @@ namespace Microsoft.PowerShell.Commands
                 $finalParameterCollection = $null
                 if ($PSParameterCollection -ne $null)
                 {{
-                    $finalParameterCollection = $PSParameterCollection 
+                    $finalParameterCollection = $PSParameterCollection
                 }}
                 else
                 {{

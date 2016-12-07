@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// 
+        ///
         /// Values of the group
         ///
         /// </summary>
@@ -215,9 +215,9 @@ namespace Microsoft.PowerShell.Commands
         #region Command Line Switches
 
         /// <summary>
-        /// 
+        ///
         /// Flatten the groups
-        /// 
+        ///
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter AsHashTable { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = "HashTable")]
@@ -283,7 +283,7 @@ namespace Microsoft.PowerShell.Commands
 
                     for (int groupsIndex = 0; groupsIndex < groups.Count; groupsIndex++)
                     {
-                        // Check if the current input object can be converted to one of the already known types 
+                        // Check if the current input object can be converted to one of the already known types
                         // by looking up in the type to GroupInfo mapping.
                         if (orderByPropertyComparer.Compare(groups[groupsIndex].GroupValue, currentObjectEntry) == 0)
                         {
@@ -350,7 +350,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void EndProcessing()
         {

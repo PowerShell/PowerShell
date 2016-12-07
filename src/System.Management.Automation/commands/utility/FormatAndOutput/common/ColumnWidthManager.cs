@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// calculate the widths by applying some heuristics to get them to fit on the 
+        /// calculate the widths by applying some heuristics to get them to fit on the
         /// allotted table width. It first assigns widths to the columns that do not have a specified
         /// width, then it checks if the total width exceeds the screen widths. If so, it proceeds
         /// with column elimination, starting from the right most column

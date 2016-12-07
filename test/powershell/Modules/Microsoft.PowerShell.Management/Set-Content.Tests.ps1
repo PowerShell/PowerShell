@@ -7,7 +7,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
     }
     Context "Set-Content should create a file if it does not exist" {
         AfterEach {
-          Remove-Item -path $filePath1 -Force -ErrorAction SilentlyContinue 
+          Remove-Item -path $filePath1 -Force -ErrorAction SilentlyContinue
         }
         It "should create a file if it does not exist" {
             set-content -path $filePath1 -value "$file1"
@@ -48,7 +48,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
             try {
                 set-content -path $null -value "ShouldNotWorkBecausePathIsNull" -ea stop
                 Throw "Previous statement unexpectedly succeeded..."
-            } 
+            }
             catch {
                 $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
             }
@@ -57,7 +57,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
             try {
                 set-content -path $() -value "ShouldNotWorkBecausePathIsInvalid" -ea stop
                 Throw "Previous statement unexpectedly succeeded..."
-            } 
+            }
             catch {
                 $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
             }
@@ -66,7 +66,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
             try {
                 set-content -path HKLM:\\software\\microsoft -value "ShouldNotWorkBecausePathIsUnsupported" -ea stop
                 Throw "Previous statement unexpectedly succeeded..."
-            } 
+            }
             catch {
                 $_.FullyQualifiedErrorId | Should Be "NotSupported,Microsoft.PowerShell.Commands.SetContentCommand"
             }
@@ -86,7 +86,7 @@ Describe "Set-Content should work for PSDrive with UNC path as root" -Tags @('CI
     BeforeAll {
         $file1 = "file1.txt"
         $filePath1 = join-path $testdrive $file1
-        #create a random folder 
+        #create a random folder
         $randomFolderName = "TestFolder_" + (Get-Random).ToString()
         $randomFolderPath = join-path $testdrive $randomFolderName
         $null = New-Item -Path $randomFolderPath -ItemType Directory -ErrorAction SilentlyContinue
@@ -104,7 +104,7 @@ Describe "Set-Content should work for PSDrive with UNC path as root" -Tags @('CI
         finally
         {
             Remove-PSDrive -Name Foo
-            net share testshare /delete  
+            net share testshare /delete
         }
     }
 }

@@ -10,7 +10,7 @@ namespace Microsoft.Management.UI.Internal
     using System.Diagnostics;
 
     /// <summary>
-    /// The TextStartsWithFilterRule class evaluates a string item to 
+    /// The TextStartsWithFilterRule class evaluates a string item to
     /// check if it starts with the rule's value.
     /// </summary>
     [Serializable]

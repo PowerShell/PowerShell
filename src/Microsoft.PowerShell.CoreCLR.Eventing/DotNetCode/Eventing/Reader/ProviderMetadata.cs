@@ -2,11 +2,11 @@
 /*============================================================
 **
 **
-** Purpose: 
-** This public class exposes all the metadata for a specific 
-** Provider.  An instance of this class is obtained from 
+** Purpose:
+** This public class exposes all the metadata for a specific
+** Provider.  An instance of this class is obtained from
 ** EventLogManagement and is scoped to a single Locale.
-** 
+**
 ============================================================*/
 
 using System.Globalization;
@@ -16,14 +16,14 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Diagnostics.Eventing.Reader
 {
     /// <summary>
-    /// Exposes all the metadata for a specific event Provider.  An instance 
-    /// of this class is obtained from EventLogManagement and is scoped to a 
+    /// Exposes all the metadata for a specific event Provider.  An instance
+    /// of this class is obtained from EventLogManagement and is scoped to a
     /// single Locale.
     /// </summary>
     public class ProviderMetadata : IDisposable
     {
         //
-        // access to the data member reference is safe, while 
+        // access to the data member reference is safe, while
         // invoking methods on it is marked SecurityCritical as appropriate.
         //
         private EventLogHandle _handle = EventLogHandle.Zero;

@@ -23,4 +23,4 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
       {clear-content -path HKLM:\\software\\microsoft -ea stop} | Should Throw "IContentCmdletProvider interface is not implemented"
     }
   }
-} 
+}

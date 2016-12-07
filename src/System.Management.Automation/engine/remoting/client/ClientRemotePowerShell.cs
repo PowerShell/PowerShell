@@ -27,7 +27,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Constructors
 
         /// <summary>
-        /// Constructor which creates a client remote powershell 
+        /// Constructor which creates a client remote powershell
         /// </summary>
         /// <param name="shell">powershell instance </param>
         /// <param name="runspacePool">The runspace pool associated with
@@ -201,7 +201,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal void SendInput()
         {
@@ -222,7 +222,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// data needs to be written to</param>
         /// <param name="informationalBuffers">informational buffers
         /// which will hold debug, verbose and warning messages</param>
-        /// <param name="settings">settings based on which this powershell 
+        /// <param name="settings">settings based on which this powershell
         /// needs to be executed</param>
         /// <param name="outputstream">output stream to which data
         /// needs to be written to</param>
@@ -290,7 +290,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
@@ -310,7 +310,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Attempts to reconnect or connect to a running command on a remote server, 
+        /// Attempts to reconnect or connect to a running command on a remote server,
         /// which will resume events and data collection from the server.
         /// If connectCmdInfo parameter is null then a reconnection is attempted and
         /// it is assumed that the current client state is unchanged since disconnection.
@@ -358,7 +358,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Private Methods
 
         /// <summary>
-        /// An error record is received from the powershell at the 
+        /// An error record is received from the powershell at the
         /// server side. It is added to the error collection of the
         /// client powershell
         /// </summary>
@@ -410,7 +410,7 @@ namespace System.Management.Automation.Runspaces.Internal
             {
                 PSInvocationStateInfo stateInfo = eventArgs.Data;
 
-                // we should not receive any transient state from 
+                // we should not receive any transient state from
                 // the server
                 Dbg.Assert(!(stateInfo.State == PSInvocationState.Running ||
                            stateInfo.State == PSInvocationState.Stopping),
@@ -435,8 +435,8 @@ namespace System.Management.Automation.Runspaces.Internal
                                            (remotingTransportException.ErrorCode == System.Management.Automation.Remoting.Client.WSManNativeApi.ERROR_WSMAN_TARGETSESSION_DOESNOTEXIST);
                     }
 
-                    // if state is completed or failed or stopped, 
-                    // then the collections need to be closed as 
+                    // if state is completed or failed or stopped,
+                    // then the collections need to be closed as
                     // well, else the enumerator will block
                     UnblockCollections();
 
@@ -452,7 +452,7 @@ namespace System.Management.Automation.Runspaces.Internal
                             stateInfo.Reason));
 
                         // If the stop call failed due to network problems then close the runspace
-                        // since it is now unusable.  
+                        // since it is now unusable.
                         CheckAndCloseRunspaceAfterStop(stateInfo.Reason);
                     }
                     else
@@ -561,7 +561,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
@@ -629,13 +629,13 @@ namespace System.Management.Automation.Runspaces.Internal
         /// <param name="args"></param>
         private void HandleCloseCompleted(object sender, EventArgs args)
         {
-            // if state is completed or failed or stopped, 
-            // then the collections need to be closed as 
+            // if state is completed or failed or stopped,
+            // then the collections need to be closed as
             // well, else the enumerator will block
             UnblockCollections();
 
-            // close the transport manager when CreateCloseAckPacket is received 
-            // otherwise may have race conditions in Server.OutOfProcessMediator 
+            // close the transport manager when CreateCloseAckPacket is received
+            // otherwise may have race conditions in Server.OutOfProcessMediator
             dataStructureHandler.RaiseRemoveAssociationEvent();
 
             if (_stateInfoQueue.Count == 0)
@@ -645,7 +645,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 // in which case transition state to failed.
                 if (!IsFinished(shell.InvocationStateInfo.State))
                 {
-                    // If RemoteSessionStateEventArgs are provided then use them to set the 
+                    // If RemoteSessionStateEventArgs are provided then use them to set the
                     // session close reason when setting finished state.
                     RemoteSessionStateEventArgs sessionEventArgs = args as RemoteSessionStateEventArgs;
                     Exception closeReason = (sessionEventArgs != null) ? sessionEventArgs.SessionStateInfo.Reason : null;
@@ -696,7 +696,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
@@ -706,8 +706,8 @@ namespace System.Management.Automation.Runspaces.Internal
             // RunspacePool is closed...so going to set the state of PowerShell
             // to stopped here.
 
-            // if state is completed or failed or stopped, 
-            // then the collections need to be closed as 
+            // if state is completed or failed or stopped,
+            // then the collections need to be closed as
             // well, else the enumerator will block
             UnblockCollections();
 
@@ -739,8 +739,8 @@ namespace System.Management.Automation.Runspaces.Internal
             // RunspacePool is closed...so going to set the state of PowerShell
             // to stopped here.
 
-            // if state is completed or failed or stopped, 
-            // then the collections need to be closed as 
+            // if state is completed or failed or stopped,
+            // then the collections need to be closed as
             // well, else the enumerator will block
             UnblockCollections();
 

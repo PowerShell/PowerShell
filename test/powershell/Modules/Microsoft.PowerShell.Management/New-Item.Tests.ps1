@@ -129,7 +129,7 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
     $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
     $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
     $FullyQualifiedLink   = Join-Path -Path $tmpDirectory -ChildPath $testlink
-    
+
     BeforeEach {
         Clean-State
     }

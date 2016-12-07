@@ -1,11 +1,11 @@
 /* ****************************************************************************
  *
- * Copyright (c) Microsoft Corporation. 
+ * Copyright (c) Microsoft Corporation.
  *
- * This source code is subject to terms and conditions of the Apache License, Version 2.0. A 
- * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Apache License, Version 2.0, please send an email to 
- * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
+ * This source code is subject to terms and conditions of the Apache License, Version 2.0. A
+ * copy of the license can be found in the License.html file at the root of this distribution. If
+ * you cannot locate the  Apache License, Version 2.0, please send an email to
+ * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Apache License, Version 2.0.
  *
  * You must not remove this notice, or any other, from this software.
@@ -55,7 +55,7 @@ namespace System.Management.Automation.Interpreter
         private readonly Dictionary<ParameterExpression, LocalVariable> _outerVariables, _closureVariables;
         private readonly PowerShellLoopExpression _loop;
         private List<ParameterExpression> _temps;
-        // tracks variables that flow in and flow out for initialization and 
+        // tracks variables that flow in and flow out for initialization and
         private readonly Dictionary<ParameterExpression, LoopVariable> _loopVariables;
         // variables which are defined and used within the loop
         private HashSet<ParameterExpression> _loopLocals;
@@ -161,7 +161,7 @@ namespace System.Management.Automation.Interpreter
             var target = node.Target;
             var value = Visit(node.Value);
 
-            // TODO: Is it possible for an inner reducible node of the loop to rely on nodes produced by reducing outer reducible nodes? 
+            // TODO: Is it possible for an inner reducible node of the loop to rely on nodes produced by reducing outer reducible nodes?
 
             // Unknown label => must be within the loop:
             if (!_labelMapping.TryGetValue(target, out label))
@@ -188,8 +188,8 @@ namespace System.Management.Automation.Interpreter
         #region Local Variables
 
         // Gather all outer variables accessed in the loop.
-        // Determines which ones are read from and written to. 
-        // We will consider a variable as "read" if it is read anywhere in the loop even though 
+        // Determines which ones are read from and written to.
+        // We will consider a variable as "read" if it is read anywhere in the loop even though
         // the first operation might actually always be "write". We could do better if we had CFG.
 
         protected override Expression VisitBlock(BlockExpression node)
@@ -309,7 +309,7 @@ namespace System.Management.Automation.Interpreter
             return base.VisitUnary(node);
         }
 
-        // TODO: if we supported ref/out parameter we would need to override 
+        // TODO: if we supported ref/out parameter we would need to override
         // MethodCallExpression, VisitDynamic and VisitNew
 
         protected override Expression VisitParameter(ParameterExpression node)

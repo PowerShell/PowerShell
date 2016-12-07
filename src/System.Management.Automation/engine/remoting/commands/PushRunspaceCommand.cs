@@ -110,8 +110,8 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// When set and in loopback scenario (localhost) this enables creation of WSMan
-        /// host process with the user interactive token, allowing PowerShell script network access, 
-        /// i.e., allows going off box.  When this property is true and a PSSession is disconnected, 
+        /// host process with the user interactive token, allowing PowerShell script network access,
+        /// i.e., allows going off box.  When this property is true and a PSSession is disconnected,
         /// reconnection is allowed only if reconnecting from a PowerShell session on the same box.
         /// </summary>
         [Parameter(ParameterSetName = ComputerNameParameterSet)]
@@ -136,8 +136,8 @@ namespace Microsoft.PowerShell.Commands
         public new string VMName { get; set; }
 
         /// <summary>
-        /// Specifies the credentials of the user to impersonate in the 
-        /// virtual machine. If this parameter is not specified then the 
+        /// Specifies the credentials of the user to impersonate in the
+        /// virtual machine. If this parameter is not specified then the
         /// credentials of the current user process will be assumed.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -166,12 +166,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// For WSMan sessions:
         /// If this parameter is not specified then the value specified in
-        /// the environment variable DEFAULTREMOTESHELLNAME will be used. If 
+        /// the environment variable DEFAULTREMOTESHELLNAME will be used. If
         /// this is not set as well, then Microsoft.PowerShell is used.
         ///
         /// For VM/Container sessions:
         /// If this parameter is not specified then no configuration is used.
-        /// </summary>      
+        /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = EnterPSSessionCommand.ComputerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -530,7 +530,7 @@ namespace Microsoft.PowerShell.Commands
         }// EndProcessing()
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void StopProcessing()
         {

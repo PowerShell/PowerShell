@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         private const string resBaseName = "RegistryProviderStrings";
         /**
          * Current User Key.
-         * 
+         *
          * This key should be used as the root for all user specific settings.
          */
         /// <summary>TransactedRegistry.CurrentUser
@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         /**
          * Local Machine Key.
-         * 
+         *
          * This key should be used as the root for all machine specific settings.
          */
         /// <summary>TransactedRegistry.LocalMachine
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         /**
          * Classes Root Key.
-         * 
+         *
          * This is the root key of class information.
          */
         /// <summary>TransactedRegistry.ClassesRoot
@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         /**
          * Users Root Key.
-         * 
+         *
          * This is the root of users.
          */
         /// <summary>TransactedRegistry.Users
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         /**
          * Current Config Root Key.
-         * 
+         *
          * This is where current configuration information is stored.
          */
         /// <summary>TransactedRegistry.CurrentConfig

@@ -3,7 +3,7 @@
 //  Microsoft Windows NT
 //  Copyright (C) Microsoft Corporation, 2007.
 //
-//  Contents:  Entry points for managed PowerShell plugin worker used to 
+//  Contents:  Entry points for managed PowerShell plugin worker used to
 //  host powershell in a WSMan service.
 // ----------------------------------------------------------------------
 
@@ -27,7 +27,7 @@ namespace System.Management.Automation.Remoting
     // pointers (otherwise we end up storing the delegate into a GCRoot).
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -44,7 +44,7 @@ namespace System.Management.Automation.Remoting
         IntPtr inboundShellInformation);
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="shellContext">PVOID</param>
@@ -53,7 +53,7 @@ namespace System.Management.Automation.Remoting
         IntPtr shellContext);
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -70,7 +70,7 @@ namespace System.Management.Automation.Remoting
         IntPtr inboundConnectInformation);
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -94,7 +94,7 @@ namespace System.Management.Automation.Remoting
            IntPtr shutdownContext);
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="shellContext">PVOID</param>
@@ -105,7 +105,7 @@ namespace System.Management.Automation.Remoting
         IntPtr commandContext);
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -124,7 +124,7 @@ namespace System.Management.Automation.Remoting
         IntPtr inboundData);
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -141,7 +141,7 @@ namespace System.Management.Automation.Remoting
         IntPtr streamSet);
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     /// <param name="pluginContext">PVOID</param>
     /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -220,7 +220,7 @@ namespace System.Management.Automation.Remoting
         #region IDisposable Methods
 
         /// <summary>
-        /// Internal implementation of Dispose pattern callable by consumers. 
+        /// Internal implementation of Dispose pattern callable by consumers.
         /// </summary>
         public void Dispose()
         {
@@ -229,7 +229,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Protected implementation of Dispose pattern. 
+        /// Protected implementation of Dispose pattern.
         /// </summary>
         /// <param name="disposing"></param>
         private void Dispose(bool disposing)
@@ -237,17 +237,17 @@ namespace System.Management.Automation.Remoting
             if (_disposed)
                 return;
 
-            // Free any unmanaged objects here. 
+            // Free any unmanaged objects here.
             this.CleanUpDelegates();
 
             _disposed = true;
         }
 
         /// <summary>
-        /// Use C# destructor syntax for finalization code. 
-        /// This destructor will run only if the Dispose method 
-        /// does not get called. 
-        /// It gives your base class the opportunity to finalize. 
+        /// Use C# destructor syntax for finalization code.
+        /// This destructor will run only if the Dispose method
+        /// does not get called.
+        /// It gives your base class the opportunity to finalize.
         /// Do not provide destructors in types derived from this class.
         /// </summary>
         ~WSManPluginEntryDelegates()
@@ -258,7 +258,7 @@ namespace System.Management.Automation.Remoting
         #endregion IDisposable Methods
 
         /// <summary>
-        /// Creates delegates and populates the managed version of the 
+        /// Creates delegates and populates the managed version of the
         /// structure that will be passed to unmanaged callers.
         /// </summary>
         private void populateDelegates()
@@ -417,7 +417,7 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    /// Class containing the public static managed entry functions that are callable from outside 
+    /// Class containing the public static managed entry functions that are callable from outside
     /// the module.
     /// </summary>
     public sealed class WSManPluginManagedEntryWrapper
@@ -488,7 +488,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="pluginContext">PVOID</param>
         /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -521,7 +521,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="pluginContext">PVOID</param>
         /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -566,7 +566,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="pluginContext">PVOID</param>
         /// <param name="shellContext">PVOID</param>
@@ -579,7 +579,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="pluginContext">PVOID</param>
         /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -625,7 +625,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="pluginContext">PVOID</param>
         /// <param name="shellContext">PVOID</param>
@@ -640,7 +640,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="pluginContext">PVOID</param>
         /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -675,7 +675,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="pluginContext">PVOID</param>
         /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -708,7 +708,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="pluginContext">PVOID</param>
         /// <param name="requestDetails">WSMAN_PLUGIN_REQUEST*</param>
@@ -769,18 +769,18 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This is a thin wrapper around WSManPluginManagedEntryWrapper.InitPlugin()
     /// so that it can be called from native COM code in a non-static context.
-    /// 
+    ///
     /// This was done to get around an FXCop error: AvoidStaticMembersInComVisibleTypes.
     /// </summary>
     public sealed class WSManPluginManagedEntryInstanceWrapper : IDisposable
     {
         #region IDisposable
 
-        // Flag: Has Dispose already been called? 
+        // Flag: Has Dispose already been called?
         private bool _disposed = false;
 
         /// <summary>
-        /// Internal implementation of Dispose pattern callable by consumers. 
+        /// Internal implementation of Dispose pattern callable by consumers.
         /// </summary>
         public void Dispose()
         {
@@ -789,7 +789,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Protected implementation of Dispose pattern. 
+        /// Protected implementation of Dispose pattern.
         /// </summary>
         /// <param name="disposing"></param>
         private void Dispose(bool disposing)
@@ -797,17 +797,17 @@ namespace System.Management.Automation.Remoting
             if (_disposed)
                 return;
 
-            // Free any unmanaged objects here. 
+            // Free any unmanaged objects here.
             _initDelegateHandle.Free();
 
             _disposed = true;
         }
 
         /// <summary>
-        /// Use C# destructor syntax for finalization code. 
-        /// This destructor will run only if the Dispose method 
-        /// does not get called. 
-        /// It gives your base class the opportunity to finalize. 
+        /// Use C# destructor syntax for finalization code.
+        /// This destructor will run only if the Dispose method
+        /// does not get called.
+        /// It gives your base class the opportunity to finalize.
         /// Do not provide destructors in types derived from this class.
         /// </summary>
         ~WSManPluginManagedEntryInstanceWrapper()

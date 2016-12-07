@@ -83,7 +83,7 @@ namespace System.Management.Automation
                     throw e;
                 }
                 var.SetValueRaw(value, true);
-                // Don't update the PSVariable's attributes until we successfully set the value  
+                // Don't update the PSVariable's attributes until we successfully set the value
                 var.Attributes.Clear();
                 var.AddParameterAttributesNoChecks(attributes);
 

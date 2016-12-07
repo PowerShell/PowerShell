@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -31,7 +31,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             this.message = message;
             this.prompt = prompt;
-        }      
+        }
 
         /// <summary>
         /// <para>
@@ -77,13 +77,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     catch
                     {
                         this.responseType = CimResponseType.NoToAll;
-                        throw;                        
+                        throw;
                     }
                     finally
                     {
                         // unblocking the waiting thread
                         this.OnComplete();
-                    }                    
+                    }
                     break;
                 case CimPromptType.Normal:
                     try
@@ -101,26 +101,26 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     catch
                     {
                         this.responseType = CimResponseType.NoToAll;
-                        throw;                        
+                        throw;
                     }
                     finally
                     {
                         // unblocking the waiting thread
                         this.OnComplete();
-                    }                     
+                    }
                     break;
                 default:
                     break;
             }
             this.OnComplete();
-        }  
+        }
 
         #region members
 
         /// <summary>
         /// prompt message
         /// </summary>
-        public string Message 
+        public string Message
 	{
             get
             {

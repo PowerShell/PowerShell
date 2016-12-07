@@ -21,7 +21,7 @@ namespace System.Management.Automation
         static EnumMinimumDisambiguation()
         {
             // Add special minimum disambiguation cases here for certain enum types.
-            // The current implementation assumes that special names in each type can be 
+            // The current implementation assumes that special names in each type can be
             // differentiated by their first letter.
             s_specialDisambiguateCases.Add(
                 typeof(System.IO.FileAttributes),
@@ -49,7 +49,7 @@ namespace System.Management.Automation
                 }
             }
 
-            // Throw error when no match is found. 
+            // Throw error when no match is found.
             if (namesWithMatchingPrefix.Count == 0)
             {
                 throw InterpreterError.NewInterpreterException(null, typeof(RuntimeException),
@@ -83,7 +83,7 @@ namespace System.Management.Automation
                         }
                     }//foreach
                 }//if
-                // No special cases match, throw error for multiple matches. 
+                // No special cases match, throw error for multiple matches.
                 StringBuilder matchListSB = new StringBuilder(namesWithMatchingPrefix[0]);
                 string separator = ", ";
                 for (int i = 1; i < namesWithMatchingPrefix.Count; i++)
@@ -98,7 +98,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Produces a string that contains all the enumerator names in an enum type. 
+        /// Produces a string that contains all the enumerator names in an enum type.
         /// </summary>
         /// <param name="enumType"></param>
         /// <returns></returns>

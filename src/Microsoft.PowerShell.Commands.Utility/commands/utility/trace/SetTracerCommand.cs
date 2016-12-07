@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
         /// The TraceSource parameter determines which TraceSource categories the
         /// operation will take place on.
         /// </summary>
-        /// 
+        ///
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         public string[] Name
         {
@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
         /// The parameter which determines the options for output from the
         /// trace listeners.
         /// </summary>
-        /// 
+        ///
         [Parameter(ParameterSetName = "optionsSet")]
         public TraceOptions ListenerOption
         {
@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
         /// If set, the specified listeners will be removed regardless
         /// of their type.
         /// </summary>
-        /// 
+        ///
         [Parameter(ParameterSetName = "removeAllListenersSet")]
         [ValidateNotNullOrEmpty]
         public string[] RemoveListener { get; set; } = new string[] { "*" };
@@ -117,7 +117,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// If set, the specified file trace listeners will be removed.
         /// </summary>
-        /// 
+        ///
         [Parameter(ParameterSetName = "removeFileListenersSet")]
         [ValidateNotNullOrEmpty]
         public string[] RemoveFileListener { get; set; } = new string[] { "*" };

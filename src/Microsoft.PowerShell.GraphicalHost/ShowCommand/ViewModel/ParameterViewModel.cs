@@ -14,16 +14,16 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
     using Microsoft.PowerShell.Commands.ShowCommandExtension;
 
     /// <summary>
-    /// Contains information about a single parameter inside a parameter set. 
-    /// If a parameter with the same name belongs to two (or more) parameter sets, 
-    /// there will be two (or more) ParameterViewModel objects for the parameters, 
+    /// Contains information about a single parameter inside a parameter set.
+    /// If a parameter with the same name belongs to two (or more) parameter sets,
+    /// there will be two (or more) ParameterViewModel objects for the parameters,
     /// each one inside its own ParameterSetViewModel.
     /// </summary>
     public class ParameterViewModel : INotifyPropertyChanged
     {
         /// <summary>
         /// ParameterMetadata contains information that is the same throughout parameter sets
-        /// like Name and Type. 
+        /// like Name and Type.
         /// Note: It also happens to contain a list of all ParameterSetMetadata for the parametersets
         /// in this cmdlet, but this information is not used in this class since if a parameter is
         /// in multiple parametersets, there will be a ParameterViewModel for each time the parameter
@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         #region Properties
         /// <summary>
         /// Gets the ParameterMetadata that contains information that is the same throughout parameter sets
-        /// like Name and Type. 
+        /// like Name and Type.
         /// </summary>
         public ShowCommandParameterInfo Parameter
         {
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets Name with an extra suffix to indicate if the parameter is mandatory to serve 
+        /// Gets Name with an extra suffix to indicate if the parameter is mandatory to serve
         /// </summary>
         public string NameTextLabel
         {

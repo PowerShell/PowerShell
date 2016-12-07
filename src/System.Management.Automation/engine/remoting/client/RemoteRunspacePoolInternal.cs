@@ -26,11 +26,11 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// Constructor which creates a RunspacePool using the
-        /// supplied <paramref name="connectionInfo"/>, <paramref name="minRunspaces"/> 
+        /// supplied <paramref name="connectionInfo"/>, <paramref name="minRunspaces"/>
         /// and <paramref name="maxRunspaces"/>
         /// </summary>
         /// <param name="maxRunspaces">
-        /// The maximum number of Runspaces that can exist in this pool. 
+        /// The maximum number of Runspaces that can exist in this pool.
         /// Should be greater than or equal to 1.
         /// </param>
         /// <param name="minRunspaces">
@@ -217,7 +217,7 @@ namespace System.Management.Automation.Runspaces.Internal
         internal ClientRunspacePoolDataStructureHandler DataStructureHandler { get; private set; }
 
         /// <summary>
-        /// List of CommandConnectInfo objects for each remote running command 
+        /// List of CommandConnectInfo objects for each remote running command
         /// associated with this remote runspace pool.
         /// </summary>
         internal ConnectCommandInfo[] ConnectCommands { get; set; } = null;
@@ -318,7 +318,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         /// <summary>
         /// Sets the maximum number of Runspaces that can be active concurrently
-        /// in the pool. All requests above that number remain queued until 
+        /// in the pool. All requests above that number remain queued until
         /// runspaces become available.
         /// </summary>
         /// <param name="maxRunspaces">
@@ -328,7 +328,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// true if the change is successful; otherwise, false.
         /// </returns>
         /// <remarks>
-        /// You cannot set the number of runspaces to a number smaller than 
+        /// You cannot set the number of runspaces to a number smaller than
         /// the minimum runspaces.
         /// </remarks>
         internal override bool SetMaxRunspaces(int maxRunspaces)
@@ -345,7 +345,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 }
 
                 // if the runspace pool is not opened as yet, or is in Disconnected state.
-                // just change the value locally. No need to 
+                // just change the value locally. No need to
                 // send a message
                 if (stateInfo.State == RunspacePoolState.BeforeOpen ||
                     stateInfo.State == RunspacePoolState.Disconnected)
@@ -390,7 +390,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// true if the change is successful; otherwise, false.
         /// </returns>
         /// <remarks>
-        /// You cannot set the number of idle runspaces to a number smaller than 
+        /// You cannot set the number of idle runspaces to a number smaller than
         /// 1 or greater than maximum number of active runspaces.
         /// </remarks>
         internal override bool SetMinRunspaces(int minRunspaces)
@@ -408,7 +408,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 }
 
                 // if the runspace pool is not opened as yet, or is in Disconnected state.
-                // just change the value locally. No need to 
+                // just change the value locally. No need to
                 // send a message
                 if (stateInfo.State == RunspacePoolState.BeforeOpen ||
                     stateInfo.State == RunspacePoolState.Disconnected)
@@ -454,7 +454,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             lock (syncObject)
             {
-                // if the runspace pool is opened we need to 
+                // if the runspace pool is opened we need to
                 // get the value from the server, else
                 // return maxrunspaces
                 if (stateInfo.State == RunspacePoolState.Opened)
@@ -552,7 +552,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
                 if (raiseEvents)
                 {
-                    // this needs to be done outside the lock to avoid a 
+                    // this needs to be done outside the lock to avoid a
                     // deadlock scenario
                     RaiseStateChangeEvent(stateInfo);
                     SetOpenAsCompleted();
@@ -597,7 +597,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// A host call has been proxied from the server which needs to 
+        /// A host call has been proxied from the server which needs to
         /// be executed
         /// </summary>
         /// <param name="sender">sender of this event</param>
@@ -639,9 +639,9 @@ namespace System.Management.Automation.Runspaces.Internal
         internal PSPrimitiveDictionary ApplicationArguments { get; }
 
         /// <summary>
-        /// Private data to be used by applications built on top of PowerShell.  
-        /// 
-        /// Remote runspace pool gets its application private data from the server (when creating the remote runspace pool) 
+        /// Private data to be used by applications built on top of PowerShell.
+        ///
+        /// Remote runspace pool gets its application private data from the server (when creating the remote runspace pool)
         /// - calling this method on a remote runspace will block until the data is received from the server.
         /// - unless the runspace is disconnected and data hasn't been received in which case it returns null immediately.
         /// </summary>
@@ -705,7 +705,7 @@ namespace System.Management.Automation.Runspaces.Internal
         internal event EventHandler<CreateCompleteEventArgs> SessionCreateCompleted;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="shell"></param>
         internal void CreatePowerShellOnServerAndInvoke(ClientRemotePowerShell shell)
@@ -818,7 +818,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Protected Methods
 
         /// <summary>
-        /// Opens the runspacepool synchronously / asynchronously. 
+        /// Opens the runspacepool synchronously / asynchronously.
         /// Runspace pool must be opened before it can be used.
         /// </summary>
         /// <param name="isAsync">
@@ -832,7 +832,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// with.
         /// </param>
         /// <returns>
-        /// asyncResult object to monitor status of the async 
+        /// asyncResult object to monitor status of the async
         /// open operation. This is returned only if <paramref name="isAsync"/>
         /// is true.
         /// </returns>
@@ -841,7 +841,7 @@ namespace System.Management.Automation.Runspaces.Internal
         /// the BeforeOpen state.
         /// </exception>
         /// <exception cref="OutOfMemoryException">
-        /// There is not enough memory available to start this asynchronously. 
+        /// There is not enough memory available to start this asynchronously.
         /// </exception>
         protected override IAsyncResult CoreOpen(bool isAsync, AsyncCallback callback,
             object asyncState)
@@ -882,7 +882,7 @@ namespace System.Management.Automation.Runspaces.Internal
         #region Public Methods
 
         /// <summary>
-        /// Synchronous open 
+        /// Synchronous open
         /// </summary>
         public override void Open()
         {
@@ -1195,7 +1195,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Creates an array of PowerShell objects that are in the Disconnected state for 
+        /// Creates an array of PowerShell objects that are in the Disconnected state for
         /// all currently disconnected running commands associated with this runspace pool.
         /// </summary>
         /// <returns>Array of PowerShell objects.</returns>
@@ -1332,7 +1332,7 @@ namespace System.Management.Automation.Runspaces.Internal
                 }
 
                 // At this point we don't know if the runspace pool we want to connect to has just one runspace
-                // (a RemoteRunspace/PSSession) or multiple runspaces in its pool.  We do have an array of 
+                // (a RemoteRunspace/PSSession) or multiple runspaces in its pool.  We do have an array of
                 // running command information which will indicate a runspace pool if the count is gt one.
                 RunspacePool runspacePool = new RunspacePool(isDisconnected, shellId, strName,
                     connectCmdInfos.ToArray(), wsmanConnectionInfo, host, typeTable);
@@ -1575,8 +1575,8 @@ namespace System.Management.Automation.Runspaces.Internal
                     stateChange = true;
                 }
 
-                // Set boolean indicating this object has previous connection state and so 
-                // can be reconnected as opposed to the alternative where the connection 
+                // Set boolean indicating this object has previous connection state and so
+                // can be reconnected as opposed to the alternative where the connection
                 // state has to be reconstructed then connected.
                 _canReconnect = true;
             }
@@ -1691,7 +1691,7 @@ namespace System.Management.Automation.Runspaces.Internal
             }
 
             // Check if we have either an existing disconnect or connect async object
-            // and if so make sure they are set to completed since this is a 
+            // and if so make sure they are set to completed since this is a
             // final state for the runspace pool.
             SetDisconnectAsCompleted();
             SetReconnectAsCompleted();
@@ -1729,7 +1729,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
             // Ensure that openAsyncResult is completed and that
             // any error is thrown on the calling thread.
-            // The session can be closed at any time, including 
+            // The session can be closed at any time, including
             // during Open processing.
             SetOpenAsCompleted();
 
@@ -1742,7 +1742,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// When a response to a SetMaxRunspaces or SetMinRunspaces is received, 
+        /// When a response to a SetMaxRunspaces or SetMinRunspaces is received,
         /// from the server, this method sets the response and thereby unblocks
         /// corresponding call
         /// </summary>
@@ -1844,7 +1844,7 @@ namespace System.Management.Automation.Runspaces.Internal
         }
 
         /// <summary>
-        /// Waits for application private data from server before raising 
+        /// Waits for application private data from server before raising
         /// event:  Connecting->Opened state changed event.
         /// </summary>
         /// <param name="state"></param>
@@ -1877,7 +1877,7 @@ namespace System.Management.Automation.Runspaces.Internal
 
         #region Private Members
 
-        private RunspaceConnectionInfo _connectionInfo;     // connection info with which this 
+        private RunspaceConnectionInfo _connectionInfo;     // connection info with which this
         // runspace is created
         // data structure handler handling
         private RunspacePoolAsyncResult _openAsyncResult;// async result object generated on
@@ -1963,7 +1963,7 @@ namespace System.Management.Automation.Runspaces.Internal
     #region RemoteRunspacePoolEnumeration class
 
     /// <summary>
-    /// Enumerates remote runspacepools (Shells) and running commands 
+    /// Enumerates remote runspacepools (Shells) and running commands
     /// using Get-WSManInstance cmdlet.
     /// </summary>
     internal static class RemoteRunspacePoolEnumeration
@@ -2098,7 +2098,7 @@ namespace System.Management.Automation.Runspaces.Internal
                     }
                 }
 
-                // New-WSManSessionOption uses the SPNPort number here to enable SPN 
+                // New-WSManSessionOption uses the SPNPort number here to enable SPN
                 // server authentication.  It looks like any value > 0 will enable
                 // this.  Since the Port property always returns a valid port value (>0)
                 // just pass the WSManConnectionInfo port parameter.

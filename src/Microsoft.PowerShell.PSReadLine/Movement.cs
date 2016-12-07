@@ -436,7 +436,7 @@ namespace Microsoft.PowerShell
             var console = _singleton._console;
 #if UNIX // TODO: this is not correct, it should only scroll
             console.Clear();
-            _singleton._initialY = 0; 
+            _singleton._initialY = 0;
             _singleton.Render();
 #else
             if (_singleton._initialY + console.WindowHeight > console.BufferHeight)
@@ -450,7 +450,7 @@ namespace Microsoft.PowerShell
             {
                 console.SetWindowPosition(0, _singleton._initialY);
             }
-#endif                
+#endif
         }
 
         // Try to convert the arg to a char, return 0 for failure

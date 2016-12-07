@@ -67,44 +67,44 @@ namespace Microsoft.PowerShell
 
 
         /// <summary>
-        /// 
+        ///
         /// See base class
-        /// 
+        ///
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
         /// <param name="descriptions"></param>
         /// <returns></returns>
         /// <exception cref="ArgumentNullException">
-        /// 
+        ///
         /// If <paramref name="descriptions"/> is null
         ///    OR
         ///    at least one FieldDescription in <paramref name="descriptions"/> is null
-        /// 
+        ///
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// 
+        ///
         /// If <paramref name="descriptions"/> count is less than 1
-        ///    OR   
+        ///    OR
         ///    at least one FieldDescription.AssemblyFullName in <paramref name="descriptions"/> is
         ///     null or empty
-        /// 
+        ///
         /// </exception>
         /// <exception cref="PromptingException">
-        /// 
+        ///
         /// If a FieldDescription in <paramref name="descriptions"/> specifies one of SecureString or
         ///     PSCredential and the type can not be loaded.
         ///    OR
         ///    at least one FieldDescription in <paramref name="descriptions"/> specifies an array
         ///     whose rank is less than 1.
-        ///    
+        ///
         /// </exception>
         /// <exception cref="PSInvalidCastException">
-        /// 
+        ///
         /// If the converting the user input to the prompt field type fails unless it is caused by
         ///     OverflowException or FormatException
-        /// 
-        /// </exception> 
+        ///
+        /// </exception>
 
         public override
         Dictionary<string, PSObject>
@@ -315,12 +315,12 @@ namespace Microsoft.PowerShell
             {
                 WriteLineToConsole(WrapToCurrentWindowWidth(fieldPrompt));
                 PSCredential credential = null;
-                // the earlier implementation contained null 
+                // the earlier implementation contained null
                 // for caption and message in the call below
                 // Passing null is a potential security risk
                 // as any modifications made with security in
                 // mind is lost. This can lead to a malicious
-                // server prompting the user for a request 
+                // server prompting the user for a request
                 // which can appear to come from locally.
                 if (!PromptUsingConsole() && desc.ModifiedByRemotingProtocol)
                 {
@@ -496,7 +496,7 @@ namespace Microsoft.PowerShell
         /// !!*  input !* literally, returns !* where * is any string
         /// !h  prints out field's Quick Help, returns null
         /// All others tilde comments are invalid and return null
-        /// 
+        ///
         /// returns null iff there's nothing the caller can process
         /// </summary>
         /// <param name="input"></param>
@@ -567,5 +567,5 @@ namespace Microsoft.PowerShell
         // Prefix for command mode in Prompt
         private const string PromptCommandPrefix = "!";
     }
-}   // namespace 
+}   // namespace
 

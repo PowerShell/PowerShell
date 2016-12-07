@@ -5,7 +5,7 @@ Describe "Test constrained language mode" -Tags "CI" {
             "Microsoft.CSharp","System.Dynamic.Runtime","System.Management.Automation"
         }
         else {
-            "Microsoft.CSharp" 
+            "Microsoft.CSharp"
         }
 
         $t,$null = Add-Type -ReferencedAssemblies $refAssemblies -WarningAction Ignore -PassThru @"

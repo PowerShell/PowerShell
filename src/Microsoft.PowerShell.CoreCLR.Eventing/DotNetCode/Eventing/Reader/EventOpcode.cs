@@ -2,11 +2,11 @@
 /*============================================================
 **
 **
-** Purpose: 
-** This public class describes the metadata for a specific Opcode 
-** defined by a Provider. An instance of this class is obtained from 
+** Purpose:
+** This public class describes the metadata for a specific Opcode
+** defined by a Provider. An instance of this class is obtained from
 ** a ProviderMetadata object.
-** 
+**
 ============================================================*/
 
 using System.Collections.Generic;
@@ -24,7 +24,7 @@ namespace System.Diagnostics.Eventing.Reader
         private ProviderMetadata _pmReference;
         private object _syncObject;
 
-        //call from EventMetadata 
+        //call from EventMetadata
         internal EventOpcode(int value, ProviderMetadata pmReference)
         {
             _value = value;

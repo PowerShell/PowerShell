@@ -28,16 +28,16 @@ Import-LocalizedData  LocalizedData -filename ArchiveResources
 
 $zipFileExtension = ".zip"
 
-<############################################################################################ 
+<############################################################################################
 # The Compress-Archive cmdlet can be used to zip/compress one or more files/directories.
 ############################################################################################>
 function Compress-Archive
 {
     [CmdletBinding(
-    DefaultParameterSetName="Path", 
+    DefaultParameterSetName="Path",
     SupportsShouldProcess=$true,
     HelpUri="https://go.microsoft.com/fwlink/?LinkID=393252")]
-    param 
+    param
     (
         [parameter (mandatory=$true, Position=0, ParameterSetName="Path", ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
         [parameter (mandatory=$true, Position=0, ParameterSetName="PathWithForce", ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -53,15 +53,15 @@ function Compress-Archive
         [string[]] $LiteralPath,
 
         [parameter (mandatory=$true,
-        Position=1, 
-        ValueFromPipeline=$false, 
+        Position=1,
+        ValueFromPipeline=$false,
         ValueFromPipelineByPropertyName=$false)]
         [ValidateNotNullOrEmpty()]
         [string] $DestinationPath,
 
         [parameter (
-        mandatory=$false, 
-        ValueFromPipeline=$false, 
+        mandatory=$false,
+        ValueFromPipeline=$false,
         ValueFromPipelineByPropertyName=$false)]
         [ValidateSet("Optimal","NoCompression","Fastest")]
         [string]
@@ -75,11 +75,11 @@ function Compress-Archive
         [parameter(mandatory=$true, ParameterSetName="PathWithForce", ValueFromPipeline=$false, ValueFromPipelineByPropertyName=$false)]
         [parameter(mandatory=$true, ParameterSetName="LiteralPathWithForce", ValueFromPipeline=$false, ValueFromPipelineByPropertyName=$false)]
         [switch]
-        $Force = $false  
+        $Force = $false
     )
 
-    BEGIN 
-    {         
+    BEGIN
+    {
         $inputPaths = @()
         $destinationParentDir = [system.IO.Path]::GetDirectoryName($DestinationPath)
         if($null -eq $destinationParentDir)
@@ -95,7 +95,7 @@ function Compress-Archive
 
         $achiveFileName = [system.IO.Path]::GetFileName($DestinationPath)
         $destinationParentDir = GetResolvedPathHelper $destinationParentDir $false $PSCmdlet
-        
+
         if($destinationParentDir.Count -gt 1)
         {
             $errorMessage = ($LocalizedData.InvalidArchiveFilePathError -f $DestinationPath, "DestinationPath", "DestinationPath")
@@ -112,7 +112,7 @@ function Compress-Archive
         If($extension -eq [string]::Empty)
         {
             $DestinationPathWithOutExtension = $DestinationPath
-            $DestinationPath = $DestinationPathWithOutExtension + $zipFileExtension   
+            $DestinationPath = $DestinationPathWithOutExtension + $zipFileExtension
             $appendArchiveFileExtensionMessage = ($LocalizedData.AppendArchiveFileExtensionMessage -f $DestinationPathWithOutExtension, $DestinationPath)
             Write-Verbose $appendArchiveFileExtensionMessage
         }
@@ -134,7 +134,7 @@ function Compress-Archive
             ThrowTerminatingErrorHelper "ArchiveFileExists" $errorMessage ([System.Management.Automation.ErrorCategory]::InvalidArgument) $DestinationPath
         }
 
-        # If archive file already exists and if -Update is specified, then we check to see 
+        # If archive file already exists and if -Update is specified, then we check to see
         # if we have write access permission to update the existing archive file.
         if($archiveFileExist -and $Update -eq $true)
         {
@@ -156,27 +156,27 @@ function Compress-Archive
             ProgressBarHelper "Compress-Archive" $progressBarStatus 0 100 100 1
         }
     }
-    PROCESS 
+    PROCESS
     {
-        if($PsCmdlet.ParameterSetName -eq "Path" -or 
-        $PsCmdlet.ParameterSetName -eq "PathWithForce" -or 
+        if($PsCmdlet.ParameterSetName -eq "Path" -or
+        $PsCmdlet.ParameterSetName -eq "PathWithForce" -or
         $PsCmdlet.ParameterSetName -eq "PathWithUpdate")
         {
             $inputPaths += $Path
         }
 
-        if($PsCmdlet.ParameterSetName -eq "LiteralPath" -or 
-        $PsCmdlet.ParameterSetName -eq "LiteralPathWithForce" -or 
+        if($PsCmdlet.ParameterSetName -eq "LiteralPath" -or
+        $PsCmdlet.ParameterSetName -eq "LiteralPathWithForce" -or
         $PsCmdlet.ParameterSetName -eq "LiteralPathWithUpdate")
         {
             $inputPaths += $LiteralPath
         }
     }
-    END 
+    END
     {
-        # If archive file already exists and if -Force is specified, we delete the 
+        # If archive file already exists and if -Force is specified, we delete the
         # existing archive file and create a brand new one.
-        if(($PsCmdlet.ParameterSetName -eq "PathWithForce" -or 
+        if(($PsCmdlet.ParameterSetName -eq "PathWithForce" -or
         $PsCmdlet.ParameterSetName -eq "LiteralPathWithForce") -and $archiveFileExist)
         {
             Remove-Item -Path $DestinationPath -Force -ErrorAction Stop
@@ -186,8 +186,8 @@ function Compress-Archive
         # The specified source path contains one or more files or directories that needs
         # to be compressed.
         $isLiteralPathUsed = $false
-        if($PsCmdlet.ParameterSetName -eq "LiteralPath" -or 
-        $PsCmdlet.ParameterSetName -eq "LiteralPathWithForce" -or 
+        if($PsCmdlet.ParameterSetName -eq "LiteralPath" -or
+        $PsCmdlet.ParameterSetName -eq "LiteralPathWithForce" -or
         $PsCmdlet.ParameterSetName -eq "LiteralPathWithUpdate")
         {
             $isLiteralPathUsed = $true
@@ -196,7 +196,7 @@ function Compress-Archive
         ValidateDuplicateFileSystemPath $PsCmdlet.ParameterSetName $inputPaths
         $resolvedPaths = GetResolvedPathHelper $inputPaths $isLiteralPathUsed $PSCmdlet
         IsValidFileSystemPath $resolvedPaths | Out-Null
-    
+
         $sourcePath = $resolvedPaths;
 
         # CSVHelper: This is a helper function used to append comma after each path specified by
@@ -208,9 +208,9 @@ function Compress-Archive
             {
                 # StopProcessing is not available in Script cmdlets. However the pipeline execution
                 # is terminated when ever 'CTRL + C' is entered by user to terminate the cmdlet execution.
-                # The finally block is executed whenever pipeline is terminated. 
+                # The finally block is executed whenever pipeline is terminated.
                 # $isArchiveFileProcessingComplete variable is used to track if 'CTRL + C' is entered by the
-                # user. 
+                # user.
                 $isArchiveFileProcessingComplete = $false
 
                 $numberOfItemsArchived = CompressArchiveHelper $sourcePath $DestinationPath $CompressionLevel $Update
@@ -219,11 +219,11 @@ function Compress-Archive
             }
             finally
             {
-                # The $isArchiveFileProcessingComplete would be set to $false if user has typed 'CTRL + C' to 
+                # The $isArchiveFileProcessingComplete would be set to $false if user has typed 'CTRL + C' to
                 # terminate the cmdlet execution or if an unhandled exception is thrown.
                 # $numberOfItemsArchived contains the count of number of files or directories add to the archive file.
                 # If the newly created archive file is empty then we delete it as it's not usable.
-                if(($isArchiveFileProcessingComplete -eq $false) -or 
+                if(($isArchiveFileProcessingComplete -eq $false) -or
                 ($numberOfItemsArchived -eq 0))
                 {
                     $DeleteArchiveFileMessage = ($LocalizedData.DeleteArchiveFile -f $DestinationPath)
@@ -239,19 +239,19 @@ function Compress-Archive
     }
 }
 
-<############################################################################################ 
+<############################################################################################
 # The Expand-Archive cmdlet can be used to expand/extract an zip file.
 ############################################################################################>
 function Expand-Archive
 {
     [CmdletBinding(
-    DefaultParameterSetName="Path", 
+    DefaultParameterSetName="Path",
     SupportsShouldProcess=$true,
-    HelpUri="https://go.microsoft.com/fwlink/?LinkID=393253")]    
-    param 
+    HelpUri="https://go.microsoft.com/fwlink/?LinkID=393253")]
+    param
     (
         [parameter (
-        mandatory=$true, 
+        mandatory=$true,
         Position=0,
         ParameterSetName="Path",
         ValueFromPipeline=$true,
@@ -260,28 +260,28 @@ function Expand-Archive
         [string] $Path,
 
         [parameter (
-        mandatory=$true, 
-        ParameterSetName="LiteralPath",         
+        mandatory=$true,
+        ParameterSetName="LiteralPath",
         ValueFromPipelineByPropertyName=$true)]
         [ValidateNotNullOrEmpty()]
         [Alias("PSPath")]
         [string] $LiteralPath,
 
         [parameter (mandatory=$false,
-        Position=1, 
-        ValueFromPipeline=$false, 
+        Position=1,
+        ValueFromPipeline=$false,
         ValueFromPipelineByPropertyName=$false)]
         [ValidateNotNullOrEmpty()]
         [string] $DestinationPath,
 
         [parameter (mandatory=$false,
-        ValueFromPipeline=$false, 
+        ValueFromPipeline=$false,
         ValueFromPipelineByPropertyName=$false)]
         [switch] $Force
     )
 
-    BEGIN 
-    {   
+    BEGIN
+    {
        $isVerbose = $psboundparameters.ContainsKey("Verbose")
        $isConfirm = $psboundparameters.ContainsKey("Confirm")
 
@@ -298,7 +298,7 @@ function Expand-Archive
             {
                 $resolvedDestinationPath = GetResolvedPathHelper $DestinationPath $false $PSCmdlet
                 if($resolvedDestinationPath.Count -gt 1)
-                {    
+                {
                     $errorMessage = ($LocalizedData.InvalidExpandedDirPathError -f $DestinationPath)
                     ThrowTerminatingErrorHelper "InvalidDestinationPath" $errorMessage ([System.Management.Automation.ErrorCategory]::InvalidArgument) $DestinationPath
                 }
@@ -322,10 +322,10 @@ function Expand-Archive
                     ThrowTerminatingErrorHelper "InvalidDirectoryPath" $errorMessage ([System.Management.Automation.ErrorCategory]::InvalidArgument) $DestinationPath
                 }
 
-                $resolvedDestinationPath = GetResolvedPathHelper $DestinationPath $true $PSCmdlet                
-            } 
+                $resolvedDestinationPath = GetResolvedPathHelper $DestinationPath $true $PSCmdlet
+            }
         }
-        
+
         $isWhatIf = $psboundparameters.ContainsKey("WhatIf")
         if(!$isWhatIf)
         {
@@ -336,7 +336,7 @@ function Expand-Archive
             ProgressBarHelper "Expand-Archive" $progressBarStatus 0 100 100 1
         }
     }
-    PROCESS 
+    PROCESS
     {
         switch($PsCmdlet.ParameterSetName)
         {
@@ -345,25 +345,25 @@ function Expand-Archive
                 $resolvedSourcePaths = GetResolvedPathHelper $Path $false $PSCmdlet
 
                 if($resolvedSourcePaths.Count -gt 1)
-                {    
+                {
                     $errorMessage = ($LocalizedData.InvalidArchiveFilePathError -f $Path, $PsCmdlet.ParameterSetName, $PsCmdlet.ParameterSetName)
                     ThrowTerminatingErrorHelper "InvalidArchiveFilePath" $errorMessage ([System.Management.Automation.ErrorCategory]::InvalidArgument) $Path
                 }
             }
-            "LiteralPath" 
-            { 
+            "LiteralPath"
+            {
                 $resolvedSourcePaths = GetResolvedPathHelper $LiteralPath $true $PSCmdlet
 
                 if($resolvedSourcePaths.Count -gt 1)
-                {    
+                {
                     $errorMessage = ($LocalizedData.InvalidArchiveFilePathError -f $LiteralPath, $PsCmdlet.ParameterSetName, $PsCmdlet.ParameterSetName)
                     ThrowTerminatingErrorHelper "InvalidArchiveFilePath" $errorMessage ([System.Management.Automation.ErrorCategory]::InvalidArgument) $LiteralPath
                 }
             }
         }
-         
+
         ValidateArchivePathHelper $resolvedSourcePaths
-    
+
         if($pscmdlet.ShouldProcess($resolvedSourcePaths))
         {
             $expandedItems = @()
@@ -372,9 +372,9 @@ function Expand-Archive
             {
                 # StopProcessing is not available in Script cmdlets. However the pipeline execution
                 # is terminated when ever 'CTRL + C' is entered by user to terminate the cmdlet execution.
-                # The finally block is executed whenever pipeline is terminated. 
+                # The finally block is executed whenever pipeline is terminated.
                 # $isArchiveFileProcessingComplete variable is used to track if 'CTRL + C' is entered by the
-                # user. 
+                # user.
                 $isArchiveFileProcessingComplete = $false
 
                 # The User has not provided a destination path, hence we use '$pwd\ArchiveFileName' as the directory where the
@@ -399,13 +399,13 @@ function Expand-Archive
             }
             finally
             {
-                # The $isArchiveFileProcessingComplete would be set to $false if user has typed 'CTRL + C' to 
+                # The $isArchiveFileProcessingComplete would be set to $false if user has typed 'CTRL + C' to
                 # terminate the cmdlet execution or if an unhandled exception is thrown.
                 if($isArchiveFileProcessingComplete -eq $false)
                 {
                     if($expandedItems.Count -gt 0)
                     {
-                        # delete the expanded file/directory as the archive 
+                        # delete the expanded file/directory as the archive
                         # file was not completely expanded.
                         $expandedItems | % { Remove-Item $_ -Force -Recurse }
                     }
@@ -413,22 +413,22 @@ function Expand-Archive
             }
         }
     }
-} 
+}
 
-<############################################################################################ 
+<############################################################################################
 # GetResolvedPathHelper: This is a helper function used to resolve the user specified Path.
 # The path can either be absolute or relative path.
 ############################################################################################>
-function GetResolvedPathHelper 
+function GetResolvedPathHelper
 {
-    param 
+    param
     (
         [string[]] $path,
         [boolean] $isLiteralPath,
         [System.Management.Automation.PSCmdlet]
         $callerPSCmdlet
     )
-    
+
     $resolvedPaths =@()
 
     # null and empty check are are already done on Path parameter at the cmdlet layer.
@@ -463,7 +463,7 @@ function GetResolvedPathHelper
 }
 
 function Add-CompressionAssemblies {
-    
+
     if ($PSEdition -eq "Desktop")
     {
         Add-Type -AssemblyName System.IO.Compression
@@ -471,13 +471,13 @@ function Add-CompressionAssemblies {
     }
 }
 
-function IsValidFileSystemPath 
+function IsValidFileSystemPath
 {
-    param 
+    param
     (
         [string[]] $path
     )
-    
+
     $result = $true;
 
     # null and empty check are are already done on Path parameter at the cmdlet layer.
@@ -494,14 +494,14 @@ function IsValidFileSystemPath
 }
 
 
-function ValidateDuplicateFileSystemPath 
+function ValidateDuplicateFileSystemPath
 {
-    param 
+    param
     (
         [string] $inputParameter,
         [string[]] $path
     )
-    
+
     $uniqueInputPaths = @()
 
     # null and empty check are are already done on Path parameter at the cmdlet layer.
@@ -522,7 +522,7 @@ function ValidateDuplicateFileSystemPath
 
 function CompressionLevelMapper
 {
-    param 
+    param
     (
         [string] $compressionLevel
     )
@@ -536,8 +536,8 @@ function CompressionLevelMapper
         {
             $compressionLevelFormat = [System.IO.Compression.CompressionLevel]::Fastest
         }
-        "NoCompression" 
-        { 
+        "NoCompression"
+        {
             $compressionLevelFormat = [System.IO.Compression.CompressionLevel]::NoCompression
         }
     }
@@ -545,9 +545,9 @@ function CompressionLevelMapper
     return $compressionLevelFormat
 }
 
-function CompressArchiveHelper 
+function CompressArchiveHelper
 {
-    param 
+    param
     (
         [string[]] $sourcePath,
         [string]   $destinationPath,
@@ -616,9 +616,9 @@ function CompressArchiveHelper
     return $numberOfItemsArchived
 }
 
-function CompressFilesHelper 
+function CompressFilesHelper
 {
-    param 
+    param
     (
         [string[]] $sourceFilePaths,
         [string]   $destinationPath,
@@ -627,15 +627,15 @@ function CompressFilesHelper
         [double]   $previousSegmentWeight,
         [double]   $currentSegmentWeight
     )
-            
+
     $numberOfItemsArchived = ZipArchiveHelper $sourceFilePaths $destinationPath $compressionLevel $isUpdateMode $null $previousSegmentWeight $currentSegmentWeight
 
     return $numberOfItemsArchived
 }
 
-function CompressSingleDirHelper 
+function CompressSingleDirHelper
 {
-    param 
+    param
     (
         [string] $sourceDirPath,
         [string] $destinationPath,
@@ -654,8 +654,8 @@ function CompressSingleDirHelper
         $sourceDirFullName = $sourceDirInfo.Parent.FullName
 
         # If the directory is present at the drive level the DirectoryInfo.Parent include '\' example: C:\
-        # On the other hand if the directory exists at a deper level then DirectoryInfo.Parent 
-        # has just the path (without an ending '\'). example C:\source 
+        # On the other hand if the directory exists at a deper level then DirectoryInfo.Parent
+        # has just the path (without an ending '\'). example C:\source
         if($sourceDirFullName.Length -eq 3)
         {
             $modifiedSourceDirFullName = $sourceDirFullName
@@ -674,7 +674,7 @@ function CompressSingleDirHelper
     $dirContents = Get-ChildItem -LiteralPath $sourceDirPath -Recurse
     foreach($currentContent in $dirContents)
     {
-        $isContainer = $currentContent -is [System.IO.DirectoryInfo] 
+        $isContainer = $currentContent -is [System.IO.DirectoryInfo]
         if(!$isContainer)
         {
             $subDirFiles.Add($currentContent.FullName)
@@ -698,9 +698,9 @@ function CompressSingleDirHelper
     return $numberOfItemsArchived
 }
 
-function ZipArchiveHelper 
+function ZipArchiveHelper
 {
-    param 
+    param
     (
         [System.Collections.Generic.List[System.String]] $sourcePaths,
         [string]   $destinationPath,
@@ -720,7 +720,7 @@ function ZipArchiveHelper
     }
 
     Add-CompressionAssemblies
-    
+
     try
     {
         # At this point we are sure that the archive file has write access.
@@ -751,19 +751,19 @@ function ZipArchiveHelper
             # Update mode is selected.
             # Check to see if archive file already contains one or more zip files in it.
             if($isUpdateMode -eq $true -and $zipArchive.Entries.Count -gt 0)
-            {                    
+            {
                 $entryToBeUpdated = $null
 
-                # Check if the file already exists in the archive file. 
+                # Check if the file already exists in the archive file.
                 # If so replace it with new file from the input source.
-                # If the file does not exist in the archive file then default to 
+                # If the file does not exist in the archive file then default to
                 # create mode and create the entry in the archive file.
 
                 foreach($currentArchiveEntry in $zipArchive.Entries)
                 {
                     if($currentArchiveEntry.FullName -eq $relativeFilePath)
                     {
-                        $entryToBeUpdated = $currentArchiveEntry                      
+                        $entryToBeUpdated = $currentArchiveEntry
                         break
                     }
                 }
@@ -777,8 +777,8 @@ function ZipArchiveHelper
 
             $compression = CompressionLevelMapper $compressionLevel
 
-            # If a directory needs to be added to an archive file, 
-            # by convention the .Net API's expect the path of the directory 
+            # If a directory needs to be added to an archive file,
+            # by convention the .Net API's expect the path of the directory
             # to end with '\' to detect the path as an directory.
             if(!$relativeFilePath.EndsWith(([io.path]::DirectorySeparatorChar), [StringComparison]::OrdinalIgnoreCase))
             {
@@ -790,10 +790,10 @@ function ZipArchiveHelper
                     }
                     catch
                     {
-                        # Failed to access the file. Write a non terminating error to the pipeline 
+                        # Failed to access the file. Write a non terminating error to the pipeline
                         # and move on with the remaining files.
                         $exception = $_.Exception
-                        if($null -ne $_.Exception -and 
+                        if($null -ne $_.Exception -and
                         $null -ne $_.Exception.InnerException)
                         {
                             $exception = $_.Exception.InnerException
@@ -808,17 +808,17 @@ function ZipArchiveHelper
 
                         $currentArchiveEntry = $zipArchive.CreateEntry($relativeFilePath, $compression)
 
-                        # Updating  the File Creation time so that the same timestamp would be retained after expanding the compressed file. 
+                        # Updating  the File Creation time so that the same timestamp would be retained after expanding the compressed file.
                         # At this point we are sure that Get-ChildItem would succeed.
                         $currentArchiveEntry.LastWriteTime = (Get-Item -LiteralPath $currentFilePath).LastWriteTime
 
                         $destStream = New-Object System.IO.BinaryWriter $currentArchiveEntry.Open()
-                    
+
                         while($numberOfBytesRead = $srcStream.Read($buffer, 0, $bufferSize))
                         {
                             $destStream.Write($buffer, 0, $numberOfBytesRead)
                             $destStream.Flush()
-                        }                    
+                        }
 
                         $numberOfItemsArchived += 1
                         $addItemtoArchiveFileMessage = ($LocalizedData.AddItemtoArchiveFile -f $currentFilePath)
@@ -875,13 +875,13 @@ function ZipArchiveHelper
     return $numberOfItemsArchived
 }
 
-<############################################################################################ 
+<############################################################################################
 # ValidateArchivePathHelper: This is a helper function used to validate the archive file
 # path & its file format. The only supported archive file format is .zip
 ############################################################################################>
-function ValidateArchivePathHelper 
+function ValidateArchivePathHelper
 {
-    param 
+    param
     (
         [string] $archiveFile
     )
@@ -904,13 +904,13 @@ function ValidateArchivePathHelper
     }
 }
 
-<############################################################################################ 
+<############################################################################################
 # ExpandArchiveHelper: This is a helper function used to expand the archive file contents
 # to the specified directory.
 ############################################################################################>
 function ExpandArchiveHelper
 {
-    param 
+    param
     (
         [string]  $archiveFile,
         [string]  $expandedDir,
@@ -924,7 +924,7 @@ function ExpandArchiveHelper
 
     try
     {
-        # The existence of archive file has already been validated by ValidateArchivePathHelper 
+        # The existence of archive file has already been validated by ValidateArchivePathHelper
         # before calling this helper function.
         $archiveFileStreamArgs = @($archiveFile, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read)
         $archiveFileStream = New-Object -TypeName System.IO.FileStream -ArgumentList $archiveFileStreamArgs
@@ -945,12 +945,12 @@ function ExpandArchiveHelper
         # The archive entries can either be empty directories or files.
         foreach($currentArchiveEntry in $zipArchive.Entries)
         {
-            $currentArchiveEntryPath = Join-Path -Path $expandedDir -ChildPath $currentArchiveEntry.FullName 
+            $currentArchiveEntryPath = Join-Path -Path $expandedDir -ChildPath $currentArchiveEntry.FullName
             $extension = [system.IO.Path]::GetExtension($currentArchiveEntryPath)
 
             # The current archive entry is an empty directory
             # The FullName of the Archive Entry representing a directory would end with a trailing '\'.
-            if($extension -eq [string]::Empty -and 
+            if($extension -eq [string]::Empty -and
             $currentArchiveEntryPath.EndsWith(([io.path]::DirectorySeparatorChar), [StringComparison]::OrdinalIgnoreCase))
             {
                 $pathExists = Test-Path -LiteralPath $currentArchiveEntryPath
@@ -978,7 +978,7 @@ function ExpandArchiveHelper
                     $currentArchiveEntryFileInfo = New-Object -TypeName System.IO.FileInfo -ArgumentList $currentArchiveEntryPath
                     $parentDirExists = Test-Path -LiteralPath $currentArchiveEntryFileInfo.DirectoryName -PathType Container
 
-                    # If the Parent directory of the current entry in the archive file does not exist, then create it. 
+                    # If the Parent directory of the current entry in the archive file does not exist, then create it.
                     if($parentDirExists -eq $false)
                     {
                         New-Item $currentArchiveEntryFileInfo.DirectoryName -Type Directory -Confirm:$isConfirm | Out-Null
@@ -987,7 +987,7 @@ function ExpandArchiveHelper
                         {
                             # The directory referred by $currentArchiveEntryFileInfo.DirectoryName was not successfully created.
                             # This could be because the user has specified -Confirm parameter when Expand-Archive was invoked
-                            # and authorization was not provided when confirmation was prompted. In such a scenario, 
+                            # and authorization was not provided when confirmation was prompted. In such a scenario,
                             # we skip the current file in the archive and continue with the remaining archive file contents.
                             Continue
                         }
@@ -997,7 +997,7 @@ function ExpandArchiveHelper
 
                     $hasNonTerminatingError = $false
 
-                    # Check if the file in to which the current archive entry contents 
+                    # Check if the file in to which the current archive entry contents
                     # would be expanded already exists.
                     if($currentArchiveEntryFileInfo.Exists)
                     {
@@ -1013,7 +1013,7 @@ function ExpandArchiveHelper
                             {
                                 # The file referred by $currentArchiveEntryFileInfo.FullName was not successfully removed.
                                 # This could be because the user has specified -Confirm parameter when Expand-Archive was invoked
-                                # and authorization was not provided when confirmation was prompted. In such a scenario, 
+                                # and authorization was not provided when confirmation was prompted. In such a scenario,
                                 # we skip the current file in the archive and continue with the remaining archive file contents.
                                 Continue
                             }
@@ -1032,9 +1032,9 @@ function ExpandArchiveHelper
                     {
                         [System.IO.Compression.ZipFileExtensions]::ExtractToFile($currentArchiveEntry, $currentArchiveEntryPath, $false)
 
-                        # Add the expanded file path to the $expandedItems array, 
+                        # Add the expanded file path to the $expandedItems array,
                         # to keep track of all the expanded files created while expanding the archive file.
-                        # If user enters CTRL + C then at that point of time, all these expanded files 
+                        # If user enters CTRL + C then at that point of time, all these expanded files
                         # would be deleted as part of the clean up process.
                         $expandedItems.Value += $currentArchiveEntryPath
 
@@ -1055,7 +1055,7 @@ function ExpandArchiveHelper
                     }
                 }
             }
-            
+
             $currentEntryCount += 1
             # $currentSegmentWeight is Set to 100 giving equal weightage to each file that is getting expanded.
             # $previousSegmentWeight is set to 0 as there are no prior segments.
@@ -1081,14 +1081,14 @@ function ExpandArchiveHelper
     }
 }
 
-<############################################################################################ 
+<############################################################################################
 # ProgressBarHelper: This is a helper function used to display progress message.
 # This function is used by both Compress-Archive & Expand-Archive to display archive file
 # creation/expansion progress.
 ############################################################################################>
-function ProgressBarHelper 
+function ProgressBarHelper
 {
-    param 
+    param
     (
         [string] $cmdletName,
         [string] $status,
@@ -1098,26 +1098,26 @@ function ProgressBarHelper
         [int]    $currentEntryCount
     )
 
-    if($currentEntryCount -gt 0 -and 
-       $totalNumberofEntries -gt 0 -and 
-       $previousSegmentWeight -ge 0 -and 
+    if($currentEntryCount -gt 0 -and
+       $totalNumberofEntries -gt 0 -and
+       $previousSegmentWeight -ge 0 -and
        $currentSegmentWeight -gt 0)
     {
         $entryDefaultWeight = $currentSegmentWeight/[double]$totalNumberofEntries
 
         $percentComplete = $previousSegmentWeight + ($entryDefaultWeight * $currentEntryCount)
-        Write-Progress -Activity $cmdletName -Status $status -PercentComplete $percentComplete 
+        Write-Progress -Activity $cmdletName -Status $status -PercentComplete $percentComplete
     }
 }
 
-<############################################################################################ 
+<############################################################################################
 # CSVHelper: This is a helper function used to append comma after each path specified by
 # the SourcePath array. This helper function is used to display all the user supplied paths
 # in the WhatIf message.
 ############################################################################################>
-function CSVHelper 
+function CSVHelper
 {
-    param 
+    param
     (
         [string[]] $sourcePath
     )
@@ -1146,12 +1146,12 @@ function CSVHelper
     return $sourcePathInCsvFormat
 }
 
-<############################################################################################ 
+<############################################################################################
 # ThrowTerminatingErrorHelper: This is a helper function used to throw terminating error.
 ############################################################################################>
-function ThrowTerminatingErrorHelper 
+function ThrowTerminatingErrorHelper
 {
-    param 
+    param
     (
         [string] $errorId,
         [string] $errorMessage,
@@ -1174,12 +1174,12 @@ function ThrowTerminatingErrorHelper
     $PSCmdlet.ThrowTerminatingError($errorRecord)
 }
 
-<############################################################################################ 
+<############################################################################################
 # CreateErrorRecordHelper: This is a helper function used to create an ErrorRecord
 ############################################################################################>
-function CreateErrorRecordHelper 
+function CreateErrorRecordHelper
 {
-    param 
+    param
     (
         [string] $errorId,
         [string] $errorMessage,

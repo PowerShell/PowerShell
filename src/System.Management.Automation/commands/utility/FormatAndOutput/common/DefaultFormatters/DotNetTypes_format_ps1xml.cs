@@ -860,13 +860,13 @@ namespace System.Management.Automation.Runspaces
                         .AddScriptBlockColumn(@"
 					$eventType = $_.EventType;
 					if($_.EventType -eq 100)
-					{$eventType = ""BEGIN_SYSTEM_CHANGE"";}				
+					{$eventType = ""BEGIN_SYSTEM_CHANGE"";}
 					if($_.EventType -eq 101)
-					{$eventType = ""END_SYSTEM_CHANGE"";}				
+					{$eventType = ""END_SYSTEM_CHANGE"";}
 					if($_.EventType -eq 102)
-					{$eventType = ""BEGIN_NESTED_SYSTEM_CHANGE"";}				
+					{$eventType = ""BEGIN_NESTED_SYSTEM_CHANGE"";}
 					if($_.EventType -eq 103)
-					{$eventType = ""END_NESTED_SYSTEM_CHANGE"";}				
+					{$eventType = ""END_NESTED_SYSTEM_CHANGE"";}
 					return $eventType;
 				")
                         .AddScriptBlockColumn(@"

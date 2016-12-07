@@ -237,7 +237,7 @@ namespace System.Management.Automation
         #region private data
         // DirectoryEntry(DE) adapter needs dotnet adapter as DE adapter
         // don't know the underlying native adsi object's method metadata.
-        // In the MethodInvoke() call, this adapter first calls 
+        // In the MethodInvoke() call, this adapter first calls
         // native adsi object's method, if there is a failure it calls
         // dotnet method (if one available).
         // This ensures dotnet methods are available on the adapted object.
@@ -271,7 +271,7 @@ namespace System.Management.Automation
             // and catch an eventual exception.
             // Specifically for "LDAP://RootDse" there are some cases where calling
             // InvokeGet will throw COMException for existing properties like defaultNamingContext.
-            // Having a call to entry.Properties[propertyName] fixes the RootDse problem. 
+            // Having a call to entry.Properties[propertyName] fixes the RootDse problem.
             // Calling entry.RefreshCache() also fixes the RootDse problem.
             try
             {
@@ -320,7 +320,7 @@ namespace System.Management.Automation
                     // In case of collisions between Dotnet Property and adsi native object methods,
                     // Dotnet wins. Looking through IADs com interfaces there doesn't appear
                     // to be a collision like this.
-                    // Powershell Parser will call only GetMember<PSMemberInfo>, so here 
+                    // Powershell Parser will call only GetMember<PSMemberInfo>, so here
                     // we cannot distinguish if the caller is looking for a property or a
                     // method.
                     #endregion
@@ -340,7 +340,7 @@ namespace System.Management.Automation
         /// in the first call to GetMember and GetMembers so that subsequent
         /// calls can use the cache.
         /// In the case of the .NET adapter that would be a cache from the .NET type to
-        /// the public properties and fields available in that type. 
+        /// the public properties and fields available in that type.
         /// In the case of the DirectoryEntry adapter, this could be a cache of the objectClass
         /// to the properties available in it.
         /// </summary>
@@ -414,9 +414,9 @@ namespace System.Management.Automation
                 {
                     if (e.ErrorCode != unchecked((int)0x80004005) || (setValue == null))
                         // When clear is called, DirectoryEntry calls PutEx on AD object with Clear option and Null Value
-                        // WinNT provider throws E_FAIL when null value is specified though actually ADS_PROPERTY_CLEAR option is used, 
-                        // we need to catch  this exception here. 
-                        // But at the same time we don't want to catch the exception if user explicitly sets the value to null.                                                                                                                  
+                        // WinNT provider throws E_FAIL when null value is specified though actually ADS_PROPERTY_CLEAR option is used,
+                        // we need to catch  this exception here.
+                        // But at the same time we don't want to catch the exception if user explicitly sets the value to null.
                         throw;
                 }
 

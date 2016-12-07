@@ -10,7 +10,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         }
 
 
-        # If out-file -encoding happens to have a default, be sure to 
+        # If out-file -encoding happens to have a default, be sure to
         # save it away
         $SavedValue = $null
         $oldDefaultParameterValues = $psDefaultParameterValues
@@ -42,7 +42,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
             $bytes[$i] | Should be $expectedBytes[$i]
         }
     }
-    
+
     # $availableEncodings = "unknown","string","unicode","bigendianunicode","utf8","utf7", "utf32","ascii","default","oem"
     $availableEncodings = (get-command out-file).Parameters["Encoding"].Attributes.ValidValues
 
@@ -63,7 +63,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         $enc = [system.text.encoding]::$encoding
         if ( $enc )
         {
-            $msg = "Overriding encoding for out-file is respected for $encoding" 
+            $msg = "Overriding encoding for out-file is respected for $encoding"
             $BOM = $enc.GetPreamble()
             $TXT = $enc.GetBytes($asciiString)
             $CR  = $enc.GetBytes($asciiCR)

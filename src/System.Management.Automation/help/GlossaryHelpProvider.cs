@@ -13,7 +13,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Class GlossaryHelpProvider implement the help provider for glossary's.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// Glossary Help information are stored in 'glossary.xml' files. These files are
     /// located in the Monad / CustomShell Path as well as in the Application Base
@@ -60,18 +60,18 @@ namespace System.Management.Automation
         #region Load cache
 
         /// <summary>
-        /// This is for implementing CustomMatch algorithm to be used in 
-        /// HelpProviderWithCache for matching a help target with keys in 
-        /// help cache. 
-        /// 
+        /// This is for implementing CustomMatch algorithm to be used in
+        /// HelpProviderWithCache for matching a help target with keys in
+        /// help cache.
+        ///
         /// For each glossary entry, it can contain multiple terms. The
         /// key stored in help cache is a concatenation of keys. For example,
-        /// if there are two terms "foo" and "bar", the key to be used in 
-        /// help cache will be "foo, bar". 
-        ///  
-        /// Because of this mangling, key "foo, bar" should match both 
+        /// if there are two terms "foo" and "bar", the key to be used in
+        /// help cache will be "foo, bar".
+        ///
+        /// Because of this mangling, key "foo, bar" should match both
         /// "foo" and "bar".
-        /// 
+        ///
         /// </summary>
         /// <param name="target">target to search</param>
         /// <param name="key">key used in cache table</param>
@@ -116,13 +116,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Load help file for HelpInfo objects. The HelpInfo objects will be 
+        /// Load help file for HelpInfo objects. The HelpInfo objects will be
         /// put into help cache.
         /// </summary>
         /// <remarks>
-        /// 1. Needs to pay special attention about error handling in this function. 
+        /// 1. Needs to pay special attention about error handling in this function.
         /// Common errors include: file not found and invalid xml. None of these error
-        /// should cause help search to stop. 
+        /// should cause help search to stop.
         /// </remarks>
         /// <param name="helpFile"></param>
         private void LoadHelpFile(string helpFile)
@@ -211,7 +211,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="xmlNode"></param>
         private void LoadGlossaryDiv(XmlNode xmlNode)
@@ -242,8 +242,8 @@ namespace System.Management.Automation
         # region Help Provider Interface
 
         /// <summary>
-        /// This will reset the help cache. Normally this corresponds to a 
-        /// help culture change. 
+        /// This will reset the help cache. Normally this corresponds to a
+        /// help culture change.
         /// </summary>
         internal override void Reset()
         {
@@ -257,9 +257,9 @@ namespace System.Management.Automation
         #region Private Data
 
         /// <summary>
-        /// This is a hashtable to track which help files are loaded already. 
-        /// 
-        /// This will avoid one help file getting loaded again and again. 
+        /// This is a hashtable to track which help files are loaded already.
+        ///
+        /// This will avoid one help file getting loaded again and again.
         /// </summary>
         private readonly Hashtable _helpFiles = new Hashtable();
 

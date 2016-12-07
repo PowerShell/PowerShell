@@ -18,9 +18,9 @@ namespace Microsoft.PowerShell.Commands
     public abstract class MeasureInfo
     {
         /// <summary>
-        /// 
+        ///
         /// property name
-        /// 
+        ///
         /// </summary>
         public string Property { get; set; } = null;
     }
@@ -39,47 +39,47 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// Keeping track of number of objects with a certain property
-        /// 
+        ///
         /// </summary>
         public int Count { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// The average of property values
-        /// 
+        ///
         /// </summary>
         public double? Average { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// The sum of property values
-        /// 
+        ///
         /// </summary>
         public double? Sum { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// The max of property values
-        /// 
+        ///
         /// </summary>
         public double? Maximum { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// The min of property values
-        /// 
+        ///
         /// </summary>
         public double? Minimum { get; set; }
     }
 
     /// <summary>
-    /// Class output by Measure-Object. 
+    /// Class output by Measure-Object.
     /// </summary>
     /// <remarks>
     /// This class is created for fixing "Measure-Object -MAX -MIN  should work with ANYTHING that supports CompareTo"
-    /// bug (Win8:343911).  
+    /// bug (Win8:343911).
     /// GenericMeasureInfo class is shipped with PowerShell V2. Fixing this bug requires, changing the type of
     /// Maximum and Minimum properties which would be a breaking change. Hence created a new class to not
     /// have an appcompat issues with PS V2.
@@ -96,37 +96,37 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// Keeping track of number of objects with a certain property
-        /// 
+        ///
         /// </summary>
         public int Count { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// The average of property values
-        /// 
+        ///
         /// </summary>
         public double? Average { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// The sum of property values
-        /// 
+        ///
         /// </summary>
         public double? Sum { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// The max of property values
-        /// 
+        ///
         /// </summary>
         public object Maximum { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// The min of property values
-        /// 
+        ///
         /// </summary>
         public object Minimum { get; set; }
     }
@@ -146,23 +146,23 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// Keeping track of number of objects with a certain property
-        /// 
+        ///
         /// </summary>
         public int? Lines { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// The average of property values
-        /// 
+        ///
         /// </summary>
         public int? Words { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// The sum of property values
-        /// 
+        ///
         /// </summary>
         public int? Characters { get; set; }
     }
@@ -339,7 +339,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region TextMeasure ParameterSet
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = TextParameterSet)]
@@ -357,7 +357,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _measureLines = false;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = TextParameterSet)]
@@ -375,7 +375,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _measureWords = false;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = TextParameterSet)]
@@ -393,7 +393,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _measureCharacters = false;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <value></value>
         [Parameter(ParameterSetName = TextParameterSet)]
@@ -426,7 +426,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Collect data about each record that comes in. 
+        /// Collect data about each record that comes in.
         /// Side effects: Updates totalRecordCount.
         /// </summary>
         protected override void ProcessRecord()
@@ -454,7 +454,7 @@ namespace Microsoft.PowerShell.Commands
         {
             // Keep track of which properties are counted for an
             // input object so that repeated properties won't be
-            // counted twice. 
+            // counted twice.
             MeasureObjectDictionary<object> countedProperties = new MeasureObjectDictionary<object>();
 
             // First iterate over the user-specified list of
@@ -568,7 +568,7 @@ namespace Microsoft.PowerShell.Commands
         /// Current minimum or maximum value in the statistics.
         /// </param>
         /// <param name="isMin">
-        /// Indicates if minimum or maximum value has to be found. 
+        /// Indicates if minimum or maximum value has to be found.
         /// If true is passed in then the minimum of the two values would be returned.
         /// If false is passed in then maximum of the two values will be returned.</param>
         /// <returns></returns>
@@ -775,7 +775,7 @@ namespace Microsoft.PowerShell.Commands
                 else
                     mi = CreateTextMeasureInfo(stat);
 
-                // Set common properties.                 
+                // Set common properties.
                 if (Property != null)
                     mi.Property = propertyName;
 

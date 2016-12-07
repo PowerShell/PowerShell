@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Workflow
         private class ContainerParentJobRepository : Repository<ContainerParentJob>
         {
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <param name="item"></param>
             /// <returns></returns>
@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Workflow
 
             internal ContainerParentJobRepository(string identifier): base(identifier)
             {
-                
+
             }
         }
         #endregion ContainerParentJobRepository
@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Workflow
                     // check for invocation time pspersist value if not true then there is a possibility that workflow is not suspendable.
                     if (psPersistValue == null || (psPersistValue == false))
                     {
-                        // check for authoring time definition of persist activity 
+                        // check for authoring time definition of persist activity
                         if (isSuspendable != null && isSuspendable.Value == false)
                         {
                             job.Warning.Add(new WarningRecord(Resources.WarningMessageForPersistence));
@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Workflow
 
                 }
             }
-            
+
             StoreJobIdForReuse(newJob, true);
             _jobRepository.Add(newJob);
 
@@ -222,7 +222,7 @@ namespace Microsoft.PowerShell.Workflow
             var jobs = _jobRepository.GetItems().Where(parentJob => patternForName.IsMatch(parentJob.Name)).Cast<Job2>().
                         ToList();
             selectedJobs.AddRange(jobs);
-            
+
             if (recurse)
             {
                 var filter = new Dictionary<string, object> { { Constants.JobMetadataName, patternForName } };
@@ -267,14 +267,14 @@ namespace Microsoft.PowerShell.Workflow
         /// <summary>
         /// Get list of jobs that has the specified id
         /// </summary>
-        /// <param name="instanceId">Guid to match</param> 
+        /// <param name="instanceId">Guid to match</param>
         /// <param name="recurse"></param>
         /// <returns>job with the specified guid</returns>
         public override Job2 GetJobByInstanceId(Guid instanceId, bool recurse)
         {
             _tracer.WriteMessage(String.Format(CultureInfo.InvariantCulture, "WorkflowJobSourceAdapter: Getting Workflow job by instance id: {0}", instanceId));
 
-            // there can be a lot of jobs in the repository. First search whats in 
+            // there can be a lot of jobs in the repository. First search whats in
             // memory before rehydrating from disk
             Job2 selectedJob = _jobRepository.GetItem(instanceId);
             if (selectedJob == null)
@@ -342,7 +342,7 @@ namespace Microsoft.PowerShell.Workflow
         /// <param name="filter">dictionary containing name value
         ///   pairs for adapter specific filters</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs that match the 
+        /// <returns>collection of jobs that match the
         /// specified criteria</returns>
         public override IList<Job2> GetJobsByFilter(Dictionary<string, object> filter, bool recurse)
         {
@@ -358,7 +358,7 @@ namespace Microsoft.PowerShell.Workflow
             Dictionary<string, object> filter2 = new Dictionary<string, object>(filter, StringComparer.CurrentCultureIgnoreCase);
             bool addPid = false;
             bool searchParentJobs = true;
-            if (filter2.Keys.Count == 0) 
+            if (filter2.Keys.Count == 0)
                 searchParentJobs = false;
             else
             {
@@ -437,7 +437,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// Remove a job from the store 
+        /// Remove a job from the store
         /// </summary>
         /// <param name="job">job object to remove</param>
         public override void RemoveJob(Job2 job)
@@ -632,7 +632,7 @@ namespace Microsoft.PowerShell.Workflow
             PSWorkflowValidationResults validationResults = GetWorkflowValidator().ValidateWorkflow(
                 definition.InstanceId, activity,
                 DefinitionCache.Instance.GetRuntimeAssemblyName(workflowJobDefinition));
-                
+
             if (validationResults.Results != null)
             {
                 GetWorkflowValidator().ProcessValidationResults(validationResults.Results);
@@ -899,7 +899,7 @@ namespace Microsoft.PowerShell.Workflow
             catch (Exception exception)
             {
 
-                // when exception on shutdown, not much to do much other than logging the exception 
+                // when exception on shutdown, not much to do much other than logging the exception
                 _tracer.WriteMessage(String.Format(CultureInfo.InvariantCulture,
                                                    "Shutting down WSMan server: Exception details: {0}",
                                                    exception));

@@ -95,7 +95,7 @@ namespace System.Management.Automation
                     {
                         // http://msdn.microsoft.com/en-us/library/ee488948.aspx
                         // FUNCFLAGS -- FUNCFLAG_FRESTRICTED = 0x1:
-                        //     Indicates that the function should not be accessible from macro languages. 
+                        //     Indicates that the function should not be accessible from macro languages.
                         //     This flag is intended for system-level functions or functions that type browsers should not display.
                         //
                         // For IUnknown methods (AddRef, QueryInterface and Release) and IDispatch methods (GetTypeInfoCount, GetTypeInfo, GetIDsOfNames and Invoke)
@@ -205,7 +205,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="typeinfo"></param>
         /// <param name="index"></param>
@@ -222,7 +222,7 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="typeinfo"></param>
         /// <returns></returns>

@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class is used to specify Workflow related options in the Register-PSSessionConfiguration
     /// </summary>
-    public sealed class PSWorkflowExecutionOption : PSSessionTypeOption 
+    public sealed class PSWorkflowExecutionOption : PSSessionTypeOption
     {
         private const string PrivateDataFormat = @"<PrivateData>{0}</PrivateData>";
         private const string ParamToken = @"<Param Name='{0}' Value='{1}' />";
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
                 maxPersistenceStoreSizeGB = value;
             }
         }
-        
+
         /// <summary>
         /// PersistWithEncryption
         /// </summary>
@@ -278,7 +278,7 @@ namespace Microsoft.PowerShell.Commands
                 workflowApplicationPersistUnloadTimeoutSec = value;
             }
         }
-                
+
         /// <summary>
         /// WSManPluginReportCompletionOnZeroActiveSessionsWaitIntervalMSec
         /// </summary>
@@ -294,7 +294,7 @@ namespace Microsoft.PowerShell.Commands
                 wsmanPluginReportCompletionOnZeroActiveSessionsWaitIntervalMSec = value;
             }
         }
-                
+
         /// <summary>
         /// ActivitiesCacheCleanupIntervalMSec
         /// </summary>
@@ -620,7 +620,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// MaxPersistenceStoreSizeGB 
+        /// MaxPersistenceStoreSizeGB
         /// </summary>
         [Parameter]
         public long MaxPersistenceStoreSizeGB
@@ -634,7 +634,7 @@ namespace Microsoft.PowerShell.Commands
                 option.MaxPersistenceStoreSizeGB = value;
             }
         }
-        
+
         /// <summary>
         /// UseEncryption
         /// </summary>
@@ -857,17 +857,17 @@ namespace Microsoft.PowerShell.Commands
                 option.WorkflowShutdownTimeoutMSec = value;
             }
         }
-        
+
         /// <summary>
         /// ProcessRecord
         /// </summary>
         protected override void ProcessRecord()
         {
             // By default EnableValidation should be TRUE for NewPSWorkflowExecutionOption, so that activity validation is done in user created endpoints.
-            // 
+            //
             if(!enableValidationParamSpecified)
             {
-                option.EnableValidation = true; 
+                option.EnableValidation = true;
             }
 
             this.WriteObject(option);

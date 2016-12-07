@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
     };
 
     /// <summary>
-    /// This class implements Remove-PSBreakpoint 
+    /// This class implements Remove-PSBreakpoint
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "PSBreakpoint", DefaultParameterSetName = "Script", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113325")]
     [OutputType(typeof(Breakpoint))]

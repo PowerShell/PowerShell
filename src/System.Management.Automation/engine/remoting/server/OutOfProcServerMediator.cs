@@ -69,7 +69,7 @@ namespace System.Management.Automation.Remoting.Server
         {
             try
             {
-#if !CORECLR    
+#if !CORECLR
                 // CurrentUICulture is not available in Thread Class in CSS
                 // WinBlue: 621775. Thread culture is not properly set
                 // for local background jobs causing experience differences
@@ -349,7 +349,7 @@ namespace System.Management.Automation.Remoting.Server
                             RemotingErrorIdStrings.IPCUnknownElementReceived, string.Empty);
                     }
 
-                    // process data in a thread pool thread..this way Runspace, Command 
+                    // process data in a thread pool thread..this way Runspace, Command
                     // data can be processed concurrently.
 #if CORECLR
                     ThreadPool.QueueUserWorkItem(new WaitCallback(ProcessingThreadStart), data);
@@ -427,8 +427,8 @@ namespace System.Management.Automation.Remoting.Server
         #region Constructors
 
         /// <summary>
-        /// The mediator will take actions from the StdIn stream and responds to them. 
-        /// It will replace StdIn,StdOut and StdErr stream with TextWriter.Null's. This is 
+        /// The mediator will take actions from the StdIn stream and responds to them.
+        /// It will replace StdIn,StdOut and StdErr stream with TextWriter.Null's. This is
         /// to make sure these streams are totally used by our Mediator.
         /// </summary>
         private OutOfProcessMediator() : base(true)
@@ -437,20 +437,20 @@ namespace System.Management.Automation.Remoting.Server
             // We don't use the provided Console.In TextReader because it can have
             // an incorrect encoding, e.g., Hyper-V Container console where the
             // TextReader has incorrect default console encoding instead of the actual
-            // stream encoding.  This way the stream encoding is determined by the 
+            // stream encoding.  This way the stream encoding is determined by the
             // stream BOM as needed.
             originalStdIn = new StreamReader(Console.OpenStandardInput(), true);
 
-            // replacing StdIn with Null so that no other app messes with the 
+            // replacing StdIn with Null so that no other app messes with the
             // original stream.
             Console.SetIn(TextReader.Null);
 
-            // replacing StdOut with Null so that no other app messes with the 
+            // replacing StdOut with Null so that no other app messes with the
             // original stream
             originalStdOut = new OutOfProcessTextWriter(Console.Out);
             Console.SetOut(TextWriter.Null);
 
-            // replacing StdErr with Null so that no other app messes with the 
+            // replacing StdErr with Null so that no other app messes with the
             // original stream
             originalStdErr = new OutOfProcessTextWriter(Console.Error);
             Console.SetError(TextWriter.Null);
@@ -525,7 +525,7 @@ namespace System.Management.Automation.Remoting.Server
         #region Static Methods
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="initialCommand"></param>
         internal static void Run(string initialCommand)
@@ -712,7 +712,7 @@ namespace System.Management.Automation.Remoting.Server
                 s_instance = new HyperVSocketMediator();
             }
 
-#if !CORECLR 
+#if !CORECLR
             // AppDomain is not available in CoreCLR
             AppDomain.CurrentDomain.UnhandledException += new UnhandledExceptionEventHandler(AppDomainUnhandledException);
 #endif

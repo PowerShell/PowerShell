@@ -8,9 +8,9 @@ using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
-    /// <summary> 
-    /// implementation for the new-timespan command 
-    /// </summary> 
+    /// <summary>
+    /// implementation for the new-timespan command
+    /// </summary>
     [Cmdlet(VerbsCommon.New, "TimeSpan", DefaultParameterSetName = "Date",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113360", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(TimeSpan))]
@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameter indicates the end of a time span.  It is used if two
         /// times are being compared.  If one of the times is not specified,
-        /// the current system time is used.  
+        /// the current system time is used.
         /// </summary>
         [Parameter(Position = 1, ValueFromPipelineByPropertyName = true, ParameterSetName = "Date")]
         public DateTime End

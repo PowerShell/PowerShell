@@ -44,7 +44,7 @@ namespace System.Management.Automation
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// Thrown when runspaceConfiguration is null
-        /// </exception>    
+        /// </exception>
         public RunspaceInvoke(RunspaceConfiguration runspaceConfiguration)
         {
             if (runspaceConfiguration == null)
@@ -63,14 +63,14 @@ namespace System.Management.Automation
         /// Creates a RunspaceInvoke for invoking commands. Underlying Runspace is created using the
         /// specified console file.
         /// </summary>
-        /// <param name="consoleFilePath">Console file used for creating the underlying 
+        /// <param name="consoleFilePath">Console file used for creating the underlying
         /// runspace.</param>
         /// <exception cref="ArgumentNullException">
         /// Thrown when consoleFilePath is null
-        /// </exception>    
+        /// </exception>
         /// <exception cref="PSConsoleLoadException">
         /// Thrown when errors occurs in loading one or more PSSnapins.
-        /// </exception>    
+        /// </exception>
         public RunspaceInvoke(string consoleFilePath)
         {
             if (consoleFilePath == null)
@@ -93,7 +93,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Create RunspaceInvoke for invoking command in specified 
+        /// Create RunspaceInvoke for invoking command in specified
         /// runspace.
         /// </summary>
         /// <param name="runspace"></param>

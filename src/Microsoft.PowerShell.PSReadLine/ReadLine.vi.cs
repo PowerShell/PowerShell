@@ -581,7 +581,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Switch to Insert mode and position the cursor at the end of the line.
         /// </summary>
-        public static void 
+        public static void
             ViInsertAtEnd(ConsoleKeyInfo? key = null, object arg = null)
         {
             ViInsertMode(key, arg);
@@ -647,7 +647,7 @@ namespace Microsoft.PowerShell
                     char newChar = Char.IsUpper(c) ? Char.ToLower(c) : char.ToUpper(c);
                     EditItem delEditItem = EditItemDelete.Create(c.ToString(), _singleton._current);
                     EditItem insEditItem = EditItemInsertChar.Create(newChar, _singleton._current);
-                    _singleton.SaveEditItem(GroupedEdit.Create(new List<EditItem> 
+                    _singleton.SaveEditItem(GroupedEdit.Create(new List<EditItem>
                         {
                             delEditItem,
                             insEditItem

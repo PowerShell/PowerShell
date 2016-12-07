@@ -15,29 +15,29 @@ using System.Management.Automation.Runspaces;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
+    ///
     /// MshSnapin is a class for regular mshsnapin's which is constructed
-    /// based on mshsnapin assembly.  
+    /// based on mshsnapin assembly.
     ///
     /// This class derives from PSSnapInInstaller and will be used as the base
     /// for all regular mshsnapins.
     ///
     /// </summary>
-    /// 
+    ///
     /// <remarks>
-    /// Developers should derive from this class when implementing their own 
-    /// mshsnapins. 
-    /// 
+    /// Developers should derive from this class when implementing their own
+    /// mshsnapins.
+    ///
     /// Derived mshsnapins should be denoted with [RunInstaller] attribute
-    /// so that installutil.exe can directly install the mshsnapin into registry. 
+    /// so that installutil.exe can directly install the mshsnapin into registry.
     /// </remarks>
     public abstract class PSSnapIn : PSSnapInInstaller
     {
         /// <summary>
-        /// Gets list of format files to be loaded for this mshsnapin. 
+        /// Gets list of format files to be loaded for this mshsnapin.
         /// </summary>
         /// <remarks>
-        /// This member can be derived to provide the list of formats to be loaded for this mshsnapin. 
+        /// This member can be derived to provide the list of formats to be loaded for this mshsnapin.
         /// </remarks>
         public virtual string[] Formats
         {
@@ -48,10 +48,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets list of type files to be loaded for this mshsnapin. 
+        /// Gets list of type files to be loaded for this mshsnapin.
         /// </summary>
         /// <remarks>
-        /// This member can be derived to provide the list of types to be loaded for this mshsnapin. 
+        /// This member can be derived to provide the list of types to be loaded for this mshsnapin.
         /// </remarks>
         public virtual string[] Types
         {
@@ -64,7 +64,7 @@ namespace System.Management.Automation
         private Dictionary<String, object> _regValues = null;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal override Dictionary<String, object> RegValues
         {

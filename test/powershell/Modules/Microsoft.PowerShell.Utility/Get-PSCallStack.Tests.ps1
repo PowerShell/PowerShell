@@ -3,7 +3,7 @@
         $scriptFileName = "GetTryCatchCallStack.ps1"
         $scriptFilePath = Join-Path $TestDrive -ChildPath $scriptFileName
     }
-    It "Verifies that the script block of a catch clause does not show up on the call stack" {             
+    It "Verifies that the script block of a catch clause does not show up on the call stack" {
         $fileStream = @"
         function foo()
         {

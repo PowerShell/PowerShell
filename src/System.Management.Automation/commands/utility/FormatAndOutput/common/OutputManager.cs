@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// handler for processing shut down. It forwards the call to the 
+        /// handler for processing shut down. It forwards the call to the
         /// pipeline manager object
         /// </summary>
         internal override void EndProcessing()
@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     /// <summary>
     /// object managing the sub-pipelines that execute
-    /// different output commands (or different instances of the 
+    /// different output commands (or different instances of the
     /// default one)
     /// </summary>
     internal sealed class SubPipelineManager : IDisposable
@@ -158,7 +158,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             internal CommandWrapper command = new CommandWrapper();
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <param name="typeName">ETS type name of the object to process</param>
             /// <returns>true if there is a match</returns>
@@ -211,14 +211,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // set the default handler
             RegisterCommandDefault(context, "out-lineoutput", typeof(OutLineOutputCommand));
             /*
-            NOTE: 
-            This is the spot where we could add new specialized handlers for 
+            NOTE:
+            This is the spot where we could add new specialized handlers for
             additional types. Adding a handler here would cause a new sub-pipeline
             to be created.
 
             For example, the following line would add a new handler named "out-foobar"
             to be invoked when the incoming object type is "MyNamespace.Whatever.FooBar"
-            
+
             RegisterCommandForTypes (context, "out-foobar", new string[] { "MyNamespace.Whatever.FooBar" });
 
             And the method can be like this:

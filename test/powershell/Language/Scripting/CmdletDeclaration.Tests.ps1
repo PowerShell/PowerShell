@@ -35,8 +35,8 @@
 
                     $a
                 }' },
-                @{ 
-                Name ='Using parameter annotation in script cmdlets';                
+                @{
+                Name ='Using parameter annotation in script cmdlets';
                 Script = '
                 function get-foo
                 {
@@ -111,7 +111,7 @@
             param($Name, $script)
 
             $syntaxerrors = $null
-            
+
             $null = [system.management.automation.psparser]::tokenize($script, [ref] $syntaxerrors)
 
             #Error should not be reported

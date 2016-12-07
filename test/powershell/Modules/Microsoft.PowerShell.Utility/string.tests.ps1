@@ -3,14 +3,14 @@
         BeforeAll {
             $sep = [io.path]::DirectorySeparatorChar
             $fileName = New-Item 'TestDrive:\selectStr[ingLi]teralPath.txt'
-            "abc" | Out-File -LiteralPath $fileName.fullname            
+            "abc" | Out-File -LiteralPath $fileName.fullname
 	        "bcd" | Out-File -LiteralPath $fileName.fullname -Append
 	        "cde" | Out-File -LiteralPath $fileName.fullname -Append
 
             $fileNameWithDots = $fileName.FullName.Replace("\", "\.\")
-            
-            $tempFile = New-TemporaryFile            
-            "abc" | Out-File -LiteralPath $tempFile.fullname            
+
+            $tempFile = New-TemporaryFile
+            "abc" | Out-File -LiteralPath $tempFile.fullname
 	        "bcd" | Out-File -LiteralPath $tempFile.fullname -Append
 	        "cde" | Out-File -LiteralPath $tempFile.fullname -Append
             $driveLetter = $tempFile.PSDrive.Name
@@ -25,15 +25,15 @@
         }
 
         It "LiteralPath with relative path" {
-            (select-string -LiteralPath (Get-Item -LiteralPath $fileName).Name "b").count | Should Be 2	    
-        } 
-
-        It "LiteralPath with absolute path" {	        
-            (select-string -LiteralPath $fileName "b").count | Should Be 2	    
+            (select-string -LiteralPath (Get-Item -LiteralPath $fileName).Name "b").count | Should Be 2
         }
 
-        It "LiteralPath with dots in path" {	        
-            (select-string -LiteralPath $fileNameWithDots "b").count | Should Be 2	    
+        It "LiteralPath with absolute path" {
+            (select-string -LiteralPath $fileName "b").count | Should Be 2
+        }
+
+        It "LiteralPath with dots in path" {
+            (select-string -LiteralPath $fileNameWithDots "b").count | Should Be 2
         }
 
         It "Network path" -skip:($IsCoreCLR) {
@@ -52,9 +52,9 @@
 
         It "match object supports RelativePath method" {
             $file = "Modules${sep}Microsoft.PowerShell.Utility${sep}Microsoft.PowerShell.Utility.psd1"
-            
+
             $match = Select-String CmdletsToExport $pshome/$file
-            
+
             $match.RelativePath($pshome) | Should Be $file
             $match.RelativePath($pshome.ToLower()) | Should Be $file
             $match.RelativePath($pshome.ToUpper()) | Should Be $file

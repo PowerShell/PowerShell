@@ -19,15 +19,15 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// Class to manage the caching of analysis data.
-    /// 
+    ///
     /// For performance, module command caching is flattened after discovery. Many modules have nested
     /// modules that can only be resolved at runtime - for example,
     /// script modules that declare: $env:PATH += "; $psScriptRoot". When
     /// doing initial analysis, we include these in 'ExportedCommands'.
-    /// 
+    ///
     /// Changes to these type of modules will not be re-analyzed, unless the user re-imports the module,
     /// or runs Get-Module -List.
-    /// 
+    ///
     /// </summary>
     internal class AnalysisCache
     {
@@ -472,7 +472,7 @@ namespace System.Management.Automation
             {
                 bool needToUpdate = false;
 
-                // We need to iterate and check as exportedCommands will have more item as it can have aliases as well. 
+                // We need to iterate and check as exportedCommands will have more item as it can have aliases as well.
                 exportedCommands = moduleCacheEntry.Commands;
                 foreach (var pair in realExportedCommands)
                 {

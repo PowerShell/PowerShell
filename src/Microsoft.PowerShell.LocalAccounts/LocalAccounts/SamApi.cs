@@ -311,7 +311,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native.NtSam
 
         internal const UInt32 USER_ALL_UNDEFINED_MASK       = 0xC0000000;
 
-        
+
         //
         // Bit masks for the UserAccountControl member of the USER_ALL_INFORMATION structure
         //

@@ -11,7 +11,7 @@ namespace Microsoft.Management.UI.Internal
     using System.ComponentModel;
 
     /// <summary>
-    /// The SingleValueComparableValueFilterRule provides support for derived classes 
+    /// The SingleValueComparableValueFilterRule provides support for derived classes
     /// that take a single input and evaluate against IComparable values.
     /// </summary>
     /// <typeparam name="T">The generic parameter.</typeparam>
@@ -31,7 +31,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets a value indicating whether the FilterRule can be 
+        /// Gets a value indicating whether the FilterRule can be
         /// evaluated in its current state.
         /// </summary>
         public override bool IsValid

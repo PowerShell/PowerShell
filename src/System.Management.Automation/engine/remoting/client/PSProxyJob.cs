@@ -50,7 +50,7 @@ namespace System.Management.Automation
         #region Overrides of Job
 
         ///<summary>
-        /// Success status of the command execution. 
+        /// Success status of the command execution.
         /// </summary>
         public override string StatusMessage
         {
@@ -59,15 +59,15 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Indicates that more data is available in this
-        /// result object for reading. 
+        /// result object for reading.
         /// </summary>
         public override bool HasMoreData
         {
             get
             {
-                // moreData is initially set to true, and it 
-                // will remain so until the async result 
-                // object has completed execution. 
+                // moreData is initially set to true, and it
+                // will remain so until the async result
+                // object has completed execution.
 
                 if (_moreData && IsFinishedState(JobStateInfo.State))
                 {
@@ -118,7 +118,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Start a job asynchronously
         /// </summary>
-        /// <remarks>When a job is started all the data in the 
+        /// <remarks>When a job is started all the data in the
         /// job streams from a previous invocation will be cleared</remarks>
         public override void StartJobAsync()
         {
@@ -359,7 +359,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Start execution of the job with the
-        /// specified input. This input will serve as 
+        /// specified input. This input will serve as
         /// input to the underlying pipeline
         /// </summary>
         /// <param name="input"></param>
@@ -533,7 +533,7 @@ namespace System.Management.Automation
         public event EventHandler<AsyncCompletedEventArgs> RemoveJobCompleted;
 
         /// <summary>
-        /// Method to raise the event when removing a 
+        /// Method to raise the event when removing a
         /// server side job is completed
         /// </summary>
         /// <param name="eventArgs">argument describing
@@ -595,7 +595,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Runspace in which this job will be executed
         /// </summary>
-        /// <remarks>At any point of time only a runspace or a 
+        /// <remarks>At any point of time only a runspace or a
         /// runspacepool may be specified</remarks>
         public Runspace Runspace
         {
@@ -1026,7 +1026,7 @@ namespace System.Management.Automation
 
             var container = new AsyncCompleteContainer { EventArgs = eventArgs, Action = action };
 
-            // End the task. The asyncOp object is responsible 
+            // End the task. The asyncOp object is responsible
             // for marshaling the call.
             asyncOp.PostOperationCompleted(JobActionAsyncCompleted, container);
         }
@@ -1322,7 +1322,7 @@ namespace System.Management.Automation
                 RemoveComplete.Reset();
             }
 
-            // _receivePowerShell will never be null and so 
+            // _receivePowerShell will never be null and so
             // there is no need to do a null check
             Dbg.Assert(_receivePowerShell != null, "ReceivePowerShell should not be null");
 
@@ -1344,7 +1344,7 @@ namespace System.Management.Automation
                 using (PowerShell powershell = PowerShell.Create())
                 {
                     // Either the runspace or runspace pool will be
-                    // not null at this point. This is because of 
+                    // not null at this point. This is because of
                     // the following:
                     // 1. The job state is running
                     // 2. The job was started using either a runspace
@@ -1786,7 +1786,7 @@ namespace System.Management.Automation
                                  "storing job state to {0}", computedJobState.ToString());
             // we need to store the state and set it only when invocation
             // state changed for _receivePowerShell is received. This is to
-            // enable consumers from disposing the proxy job on its state 
+            // enable consumers from disposing the proxy job on its state
             // changed handler
             _computedJobState = computedJobState;
         }
@@ -1909,7 +1909,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <exception cref="ObjectDisposedException">Thrown if
         /// the object has already been disposed</exception>
-        /// <remarks>Method is not thread-safe. Caller has to 
+        /// <remarks>Method is not thread-safe. Caller has to
         /// ensure thread safety</remarks>
         private new void AssertNotDisposed()
         {

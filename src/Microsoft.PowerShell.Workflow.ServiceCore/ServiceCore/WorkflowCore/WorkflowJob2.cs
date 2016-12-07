@@ -438,10 +438,10 @@ namespace Microsoft.PowerShell.Workflow
             {
                 if (IsFinishedState(_previousState) || _isDisposed) return false;
 
-                // State should not be transitioned to suspended from stopping 
+                // State should not be transitioned to suspended from stopping
                 if (_previousState == JobState.Stopping && state == JobState.Suspended) return false;
 
-                // State should not be transitioned to suspended from suspended 
+                // State should not be transitioned to suspended from suspended
                 if (_previousState == JobState.Suspended && state == JobState.Suspended) return false;
 
                 if (state != _previousState && StructuredTracer.IsEnabled)
@@ -1173,7 +1173,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// Unloads the streams of the job. 
+        /// Unloads the streams of the job.
         /// </summary>
         /// <remarks>
         /// To be called from this class only</remarks>
@@ -1444,7 +1444,7 @@ namespace Microsoft.PowerShell.Workflow
 
             var container = new AsyncCompleteContainer { EventArgs = eventArgs, Action = action };
 
-            // End the task. The asyncOp object is responsible 
+            // End the task. The asyncOp object is responsible
             // for marshaling the call.
             asyncOp.PostOperationCompleted(JobActionAsyncCompleted, container);
         }
@@ -1536,7 +1536,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="runtime"></param>
         /// <param name="command"></param>
@@ -1551,7 +1551,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="runtime"></param>
         /// <param name="command"></param>
@@ -1567,7 +1567,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="runtime"></param>
         /// <param name="command"></param>
@@ -1595,7 +1595,7 @@ namespace Microsoft.PowerShell.Workflow
         #region Overrides of Job
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override void StopJob()
         {
@@ -2011,7 +2011,7 @@ namespace Microsoft.PowerShell.Workflow
                     // Labeled resumption is in progress so we cannot allow the suspension
                     return PSPersistableIdleAction.None;
                 }
-                
+
                 if (defaultValue == PSPersistableIdleAction.Suspend)
                     wfSuspendInProgress = true;
 
@@ -2102,7 +2102,7 @@ namespace Microsoft.PowerShell.Workflow
         #region IDisposable
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="disposing"></param>
         protected override void Dispose(bool disposing)
@@ -2159,9 +2159,9 @@ namespace Microsoft.PowerShell.Workflow
         {
             lock(SyncRoot)
             {
-                // Event Handler should be added 
+                // Event Handler should be added
                 // if JobState is not changed after job submitted to the Workflow job manager queue, OR
-                // if job is already running due to other labelled resume operation or other start job operation. 
+                // if job is already running due to other labelled resume operation or other start job operation.
                 //
                 if (JobStateInfo.State == expectedState || JobStateInfo.State == JobState.Running)
                 {

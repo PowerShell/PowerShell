@@ -391,7 +391,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             //   XmlNodeType.Whitespace
             //   XmlNodeType.SignificantWhitespace
             // In this case, we use 'ReadContentAsString()' to read the text content at the current position.
-            // We cannot use 'ReadElementContentAsString()'. It will fail because the XmlReader is not positioned on an Element start node. 
+            // We cannot use 'ReadElementContentAsString()'. It will fail because the XmlReader is not positioned on an Element start node.
             string str = _r.ReadContentAsString();
             if (str != null && trim)
                 str = str.Trim();
@@ -514,7 +514,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             // CDXML files are all under the namespace 'http://schemas.microsoft.com/cmdlets-over-objects/2009/11', so
             // they will never fall into the following namespaces:
             //     schemaNsID, soapNsID, soap12NsID, schemaNs2000ID, schemaNs1999ID, schemaNonXsdTypesNsID
-            // 
+            //
             // Actually, in the context of CDXML deserialization, GetXsiType() will always return null, so
             // the only possible 'type' passed in this method should be like this:
             //     type.Name = "anyType"; type.Namespace = "http://www.w3.org/2001/XMLSchema"
@@ -527,7 +527,7 @@ namespace Microsoft.PowerShell.Cmdletization.Xml
             InitPrimitiveIDs();
 
             // This method is only used in Read1_Object(bool isNullable, bool checkType).
-            // This method is invoked only if GetXsiType() returns a value that is not null. Actually, in the context of 
+            // This method is invoked only if GetXsiType() returns a value that is not null. Actually, in the context of
             // CDXML deserialization, GetXsiType() will always return null, so this method will never be called in runtime.
             return null;
         }

@@ -1,9 +1,9 @@
 ﻿Describe "FormatData" -tags "Feature" {
 
     Context "Export" {
-        It "can export all types" {            
+        It "can export all types" {
             try
-            {                
+            {
                 $expectAllFormat = Get-FormatData -typename *
                 $expectAllFormat | Export-FormatData -path $TESTDRIVE\allformat.ps1xml -IncludeScriptBlock
 
@@ -21,7 +21,7 @@
                 Compare-Object $expectAllFormat $actualAllFormat | Should Be $null
                 $runspace.Close()
             }
-            finally 
+            finally
             {
                 Remove-Item -Path $TESTDRIVE\allformat.ps1xml -Force -ErrorAction SilentlyContinue
             }
@@ -45,7 +45,7 @@
             $actual | Should Not Be $unexpected
         }
 
-        It "should not overwrite the destination file with NoClobber" {    
+        It "should not overwrite the destination file with NoClobber" {
             $filename = "TestDrive:\ExportFormatDataWithNoClobber.ps1xml"
             Get-FormatData -TypeName * | Export-FormatData -LiteralPath $filename
 

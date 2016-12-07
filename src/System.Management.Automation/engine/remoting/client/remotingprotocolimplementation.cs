@@ -97,7 +97,7 @@ namespace System.Management.Automation.Remoting
             {
                 // only WSMan transport supports redirection
 
-                // store the uri redirection handler and authmechanism 
+                // store the uri redirection handler and authmechanism
                 // for uri redirection.
                 _uriRedirectionHandler = uriRedirectionHandler;
                 _maxUriRedirectionCount = wsmanConnectionInfo.MaximumConnectionRedirectionCount;
@@ -136,7 +136,7 @@ namespace System.Management.Automation.Remoting
         {
             //No-OP. Once the negotiation messages are exchanged and the session gets into established state,
             //it will take care of spawning the receive operation on the connected session
-            // There is however a caveat. 
+            // There is however a caveat.
             // A rouge remote server if it does not send the required negotiation data in the Connect Response,
             // then the state machine can never get into the established state and the runspace can never get into a opened state
             // Living with this for now.
@@ -241,7 +241,7 @@ namespace System.Management.Automation.Remoting
         internal override void SendNegotiationAsync(RemoteSessionState sessionState)
         {
             // This state change is made before the call to CreateAsync to ensure the state machine
-            // is prepared for a NegotiationReceived response.  Otherwise a race condition can 
+            // is prepared for a NegotiationReceived response.  Otherwise a race condition can
             // occur when the transport NegotiationReceived arrives too soon, breaking the session.
             // This race condition was observed for OutOfProc transport when reusing the OutOfProc process.
             //this will change StateMachine to NegotiationSent.
@@ -370,7 +370,7 @@ namespace System.Management.Automation.Remoting
         /// newURIString is a null reference.
         /// </exception>
         /// <exception cref="UriFormatException">
-        /// uriString is empty. 
+        /// uriString is empty.
         /// The scheme specified in uriString is invalid.
         /// uriString contains too many slashes.
         /// The password specified in uriString is invalid.
@@ -395,7 +395,7 @@ namespace System.Management.Automation.Remoting
 
                 // perform other steps only after transport manager is closed.
                 _transportManager.CloseCompleted += HandleTransportCloseCompleteForRedirection;
-                // Handle errors happened while redirecting differently..We need to reset the 
+                // Handle errors happened while redirecting differently..We need to reset the
                 // original handlers in this case.
                 _transportManager.WSManTransportErrorOccured += HandleTransportErrorForRedirection;
 
@@ -572,7 +572,7 @@ namespace System.Management.Automation.Remoting
 
                 case RemotingTargetInterface.RunspacePool:
                 case RemotingTargetInterface.PowerShell:
-                    //Non Session messages do not change the state of the statemachine. 
+                    //Non Session messages do not change the state of the statemachine.
                     //However instead of forwarding them to Runspace/pipeline here, an
                     //event is raised in state machine which verified that state is
                     //suitable for accepting these messages. if state is suitable statemachine
@@ -599,7 +599,7 @@ namespace System.Management.Automation.Remoting
         // internal override event EventHandler<RemoteDataEventArgs> DataReceived;
 
         /// <summary>
-        /// This processes the object received from transport which are 
+        /// This processes the object received from transport which are
         /// targeted for session
         /// </summary>
         /// <param name="arg">
@@ -670,7 +670,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This processes the object received from transport which are 
+        /// This processes the object received from transport which are
         /// not targeted for session
         /// </summary>
         /// <param name="rcvdData">
@@ -710,7 +710,7 @@ namespace System.Management.Automation.Remoting
                     {
                         // The runspace pool may have been removed on the client side,
                         // so, we should just ignore the message.
-                        s_trace.WriteLine(@"Client received data for Runspace (id: {0}), 
+                        s_trace.WriteLine(@"Client received data for Runspace (id: {0}),
                             but the Runspace cannot be found", clientRunspacePoolId);
                     }
 
@@ -778,7 +778,7 @@ namespace System.Management.Automation.Remoting
         /// Raise the public key received event
         /// </summary>
         /// <param name="receivedData">received data</param>
-        /// <remarks>This method is a hook to be called 
+        /// <remarks>This method is a hook to be called
         /// from the transport manager</remarks>
         internal override void RaiseKeyExchangeMessageReceived(RemoteDataObject<PSObject> receivedData)
         {

@@ -95,7 +95,7 @@ namespace {0}
         /// Gets the fully qualified name of the command invoked by this activity.
         /// </summary>
         public override string PSCommandName {{ get {{ return ""{4}""; }} }}
-        
+
         // Arguments
         {3}
 
@@ -147,7 +147,7 @@ namespace {0}
         const string supportsCustomRemoting = @"
         /// <summary>
         /// Declares that this activity supports its own remoting.
-        /// </summary>        
+        /// </summary>
         protected override bool SupportsCustomRemoting { get { return true; } }";
 
         /// <summary>
@@ -324,7 +324,7 @@ namespace {0}
 
                 testType = testType.BaseType;
             }
-            
+
             foreach(KeyValuePair<string,ParameterMetadata> parameter in command.Parameters)
             {
                 // Get the name (with capitalized first letter)
@@ -425,7 +425,7 @@ namespace {0}
 
                 if (!String.IsNullOrEmpty(moduleToLoad))
                 {
-                    psDefiningModule = "        /// <summary>\n/// Script module contents for this activity`n/// </summary>\n" + 
+                    psDefiningModule = "        /// <summary>\n/// Script module contents for this activity`n/// </summary>\n" +
                         @"protected override string PSDefiningModule { get { return """ + moduleToLoad + @"""; } }";
                 }
             }
@@ -499,7 +499,7 @@ namespace {0}
                             // Remove all of the calls to Export-ModuleMember and getcommand
                             string editedDefinition = System.Text.RegularExpressions.Regex.Replace(moduleDefinition, @"Microsoft.PowerShell.Core\\Export-ModuleMember[^\n]*\n", "");
                             editedDefinition = System.Text.RegularExpressions.Regex.Replace(editedDefinition,
-                                @"if \(\$\(Microsoft.PowerShell.Core\\Get-Command Set-StrictMode[^\n]*\n", ""); 
+                                @"if \(\$\(Microsoft.PowerShell.Core\\Get-Command Set-StrictMode[^\n]*\n", "");
 
                             embeddedDefinition = "protected override string ModuleDefinition { get { return _moduleDefinition; } }\r\n        const string _moduleDefinition = @\""
                                 + editedDefinition.Replace("\"", "\"\"") + "\";";
@@ -521,7 +521,7 @@ namespace {0}
                         modules.Add(moduleName, moduleDefinition);
                     }
 
-                    
+
                 }
             }
 
@@ -652,7 +652,7 @@ namespace {0}
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="moduleToProcess"></param>
         /// <param name="activityNamespace"></param>

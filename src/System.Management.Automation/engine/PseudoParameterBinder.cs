@@ -9,7 +9,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The parameter binder for runtime-defined parameters which are declared through the RuntimeDefinedParameterDictionary.
     /// </summary>
-    /// 
+    ///
     internal class RuntimeDefinedParameterBinder : ParameterBinderBase
     {
         #region ctor
@@ -18,19 +18,19 @@ namespace System.Management.Automation
         /// Constructs the parameter binder with the specified type metadata. The binder is only valid
         /// for a single instance of a bindable runtime-defined parameter collection and only for the duration of a command.
         /// </summary>
-        /// 
+        ///
         /// <param name="target">
         /// The target runtime-defined parameter collection that the parameter values will be bound to.
         /// </param>
-        /// 
+        ///
         /// <param name="command">
         /// An instance of the command so that attributes can access the context.
         /// </param>
-        /// 
+        ///
         /// <param name="commandLineParameters">
         /// The Command line parameter collection to update...
         /// </param>
-        /// 
+        ///
         internal RuntimeDefinedParameterBinder(
             RuntimeDefinedParameterDictionary target,
             InternalCommand command,
@@ -71,7 +71,7 @@ namespace System.Management.Automation
         /// Hides the base class Target property to ensure the target
         /// is always a RuntimeDefinedParameterDictionary
         /// </summary>
-        /// 
+        ///
         internal new RuntimeDefinedParameterDictionary Target
         {
             get
@@ -90,15 +90,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the default value for the specified parameter
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the parameter to get the value for.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The value of the specified parameter
         /// </returns>
-        /// 
+        ///
         internal override object GetDefaultParameterValue(string name)
         {
             object result = null;

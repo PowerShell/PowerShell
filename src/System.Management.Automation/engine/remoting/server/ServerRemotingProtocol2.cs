@@ -101,7 +101,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Process the data received from the runspace pool on 
+        /// Process the data received from the runspace pool on
         /// the server
         /// </summary>
         /// <param name="receivedData">data received</param>
@@ -293,13 +293,13 @@ namespace System.Management.Automation
         /// <summary>
         /// This event is raised whenever there is a request from the
         /// client to create a powershell on the server and invoke it
-        /// </summary>        
+        /// </summary>
         internal event EventHandler<RemoteDataEventArgs<RemoteDataObject<PSObject>>> CreateAndInvokePowerShell;
 
         /// <summary>
         /// This event is raised whenever there is a request from the
         /// client to run command discovery pipeline
-        /// </summary>        
+        /// </summary>
         internal event EventHandler<RemoteDataEventArgs<RemoteDataObject<PSObject>>> GetCommandMetadata;
 
         /// <summary>
@@ -353,7 +353,7 @@ namespace System.Management.Automation
         /// Get the associated powershell data structure handler for the specified
         /// powershell id
         /// </summary>
-        /// <param name="clientPowerShellId">powershell id for the 
+        /// <param name="clientPowerShellId">powershell id for the
         /// powershell data structure handler</param>
         /// <returns>ServerPowerShellDataStructureHandler</returns>
         internal ServerPowerShellDataStructureHandler GetAssociatedPowerShellDataStructureHandler
@@ -588,7 +588,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// called when session is connected from a new client
-        /// calls into observers of this event. 
+        /// calls into observers of this event.
         /// observers include corresponding driver that shutdown
         /// input stream is present
         /// </summary>
@@ -598,7 +598,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Process the data received from the powershell on 
+        /// Process the data received from the powershell on
         /// the client
         /// </summary>
         /// <param name="receivedData">data received</param>
@@ -663,7 +663,7 @@ namespace System.Management.Automation
         /// </summary>
         internal void RaiseRemoveAssociationEvent()
         {
-            Dbg.Assert(RemoveAssociation != null, @"The ServerRunspacePoolDataStructureHandler should subscribe 
+            Dbg.Assert(RemoveAssociation != null, @"The ServerRunspacePoolDataStructureHandler should subscribe
                 to the RemoveAssociation event of ServerPowerShellDataStructureHandler");
             RemoveAssociation.SafeInvoke(this, EventArgs.Empty);
         }
@@ -671,7 +671,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates a ServerRemoteHost which is associated with this powershell.
         /// </summary>
-        /// <param name="powerShellHostInfo">Host information about the host associated 
+        /// <param name="powerShellHostInfo">Host information about the host associated
         /// PowerShell object on the client.</param>
         /// <param name="runspaceServerRemoteHost">Host associated with the RunspacePool
         /// on the server.</param>
@@ -682,7 +682,7 @@ namespace System.Management.Automation
         {
             HostInfo hostInfo;
 
-            // If host was null use the runspace's host for this powershell; otherwise, 
+            // If host was null use the runspace's host for this powershell; otherwise,
             // use the HostInfo to create a proxy host of the powershell's host.
             if (powerShellHostInfo.UseRunspaceHost)
             {
@@ -693,7 +693,7 @@ namespace System.Management.Automation
                 hostInfo = powerShellHostInfo;
             }
 
-            // If the host was not null on the client, then the PowerShell object should 
+            // If the host was not null on the client, then the PowerShell object should
             // get a brand spanking new host.
             return new ServerRemoteHost(_clientRunspacePoolId, _clientPowerShellId, hostInfo,
                 _transportManager, runspaceServerRemoteHost.Runspace, runspaceServerRemoteHost as ServerDriverRemoteHost);
@@ -705,7 +705,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// this event is raised when the state of associated
-        /// powershell is terminal and the runspace pool has 
+        /// powershell is terminal and the runspace pool has
         /// to detach the association
         /// </summary>
         internal event EventHandler RemoveAssociation;
@@ -734,7 +734,7 @@ namespace System.Management.Automation
         internal event EventHandler OnSessionConnected;
 
         /// <summary>
-        /// This event is raised when a host response is received 
+        /// This event is raised when a host response is received
         /// </summary>
         internal event EventHandler<RemoteDataEventArgs<RemoteHostResponse>> HostResponseReceived;
 

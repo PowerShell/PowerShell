@@ -10,7 +10,7 @@ using Microsoft.PowerShell.Workflow;
 namespace Microsoft.PowerShell.Activities
 {
     /// <summary>
-    /// Category attribute for "Activity-Specific Parameters" 
+    /// Category attribute for "Activity-Specific Parameters"
     /// </summary>
     [AttributeUsage(AttributeTargets.All, AllowMultiple = false, Inherited = true)]
     public sealed class ParameterSpecificCategoryAttribute : CategoryAttribute

@@ -34,10 +34,10 @@
                 <Label x:Name="FindLabel" Margin="0,5,0,5" Grid.Column="0" Content="{x:Static this:HelpWindowResources.FindText}"></Label>
                 <TextBox x:Name="Find" Margin="5" Grid.Column="1" Text="{Binding FindText, UpdateSourceTrigger=PropertyChanged}" AutomationProperties.Name="{x:Static this:HelpWindowResources.FindText}"></TextBox>
             </Grid>
-            <Button x:Name="PreviousMatch" Margin="5" Padding="3" Grid.Column="1" 
+            <Button x:Name="PreviousMatch" Margin="5" Padding="3" Grid.Column="1"
                     IsEnabled="{Binding CanGoToNextOrPrevious}"
                     Content="{x:Static this:HelpWindowResources.PreviousText}" Click="PreviousMatch_Click"></Button>
-            <Button x:Name="NextMatch" Margin="5" Padding="3" Grid.Column="2"  
+            <Button x:Name="NextMatch" Margin="5" Padding="3" Grid.Column="2"
                     IsEnabled="{Binding CanGoToNextOrPrevious}"
                     Content="{x:Static this:HelpWindowResources.NextText}" Click="NextMatch_Click"></Button>
             <Label x:Name="MatchCountLabel" Margin="5" MinWidth="100" Grid.Column="3" Content="{Binding MatchesLabel}"></Label>

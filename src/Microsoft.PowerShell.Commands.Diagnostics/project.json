@@ -60,7 +60,7 @@
                 }
             }
         },
-        
+
         "net451": {
             "buildOptions": {
                 "compile": {

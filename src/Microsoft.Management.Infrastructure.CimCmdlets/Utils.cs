@@ -1,9 +1,9 @@
 ﻿/*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
-// #define LOGENABLE // uncomment this line to enable the log, 
+// #define LOGENABLE // uncomment this line to enable the log,
                   // create c:\temp\cim.log before invoking cimcmdlets
 
 using System;
@@ -231,7 +231,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             return string.Format(CultureInfo.CurrentUICulture, "{0}::{1}        ",
                 frame.GetMethod().DeclaringType.Name,
                 frame.GetMethod().Name);
-            
+
 #endif
         }
         #endregion
@@ -371,7 +371,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         writer.WriteLineAsync(spaces[indent] + sourceInformation + @"        " + message);
                     }
-                    
+
                 }
             }
         }
