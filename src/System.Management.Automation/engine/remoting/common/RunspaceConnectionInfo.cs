@@ -2139,6 +2139,10 @@ namespace System.Management.Automation.Runspaces
             return sshProcess;
         }
 
+        // Process creation flags
+        private const int CREATE_NEW_PROCESS_GROUP = 0x00000200;
+        private const int CREATE_SUSPENDED = 0x00000004;
+
         /// <summary>
         /// CreateProcessWithRedirectedStd
         /// </summary>
@@ -2205,8 +2209,12 @@ namespace System.Management.Automation.Runspaces
                 // No new window: Inherit the parent process's console window
                 creationFlags = 0x00000000;
 
+                // Create the new process in its own group, so that Ctrl+C is not sent to ssh.exe.  We want to handle this
+                // control signal internally so that it can be passed via PSRP to the remote session.
+                creationFlags |= CREATE_NEW_PROCESS_GROUP;
+
                 // Create the new process suspended so we have a chance to get a corresponding Process object in case it terminates quickly.
-                creationFlags |= 0x00000004;
+                creationFlags |= CREATE_SUSPENDED;
 
                 PlatformInvokes.SECURITY_ATTRIBUTES lpProcessAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
                 PlatformInvokes.SECURITY_ATTRIBUTES lpThreadAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();

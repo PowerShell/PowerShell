@@ -3118,6 +3118,42 @@ namespace Microsoft.PowerShell.Commands
             set;
             get;
         }
+
+        #region Runspace Debug
+
+        internal void ConfigureRunspaceDebugging(Runspace runspace)
+        {
+            if (!RunspaceDebuggingEnabled || (runspace == null) || (runspace.Debugger == null)) { return; }
+
+            runspace.Debugger.DebuggerStop += HandleDebuggerStop;
+
+            // Configure runspace debugger to preserve unhandled stops (wait for debugger attach)
+            runspace.Debugger.UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Wait;
+
+            if (RunspaceDebugStepInEnabled)
+            {
+                // Configure runspace debugger to run script in step mode
+                try
+                {
+                    runspace.Debugger.SetDebuggerStepMode(true);
+                }
+                catch (PSInvalidOperationException) { }
+            }
+        }
+
+        private void HandleDebuggerStop(object sender, DebuggerStopEventArgs args)
+        {
+            PipelineRunspace.Debugger.DebuggerStop -= HandleDebuggerStop;
+
+            // Forward event
+            RaiseRunspaceDebugStopEvent(PipelineRunspace);
+
+            // Signal remote session to remain stopped in debuger
+            args.SuspendRemote = true;
+        }
+
+        #endregion
+
     } // ExecutionCmdletHelper
 
     /// <summary>
@@ -3152,6 +3188,8 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         internal override void StartOperation()
         {
+            ConfigureRunspaceDebugging(PipelineRunspace);
+
             try
             {
                 if (ShouldUseSteppablePipelineOnServer)
@@ -3386,6 +3424,8 @@ namespace Microsoft.PowerShell.Commands
 
                 case RunspaceState.Opened:
                     {
+                        ConfigureRunspaceDebugging(RemoteRunspace);
+
                         // if successfully opened
                         // Call InvokeAsync() on the pipeline
                         try
