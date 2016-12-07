@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Workflow
     }
 
     /// <summary>
-    /// PSWorkflowPerformanceCounterIds enumerates the 
+    /// PSWorkflowPerformanceCounterIds enumerates the
     /// list of valid performance counter ids related to Powershell Workflow.
     /// NOTE: The prime reason for making this not an enum are as follows:
     /// (1) Everytime the enum will have to be typecasted to an int before invoking any

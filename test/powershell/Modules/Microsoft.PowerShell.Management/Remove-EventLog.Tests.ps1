@@ -8,10 +8,10 @@
   Describe "New-EventLog cmdlet tests" -Tags "CI" {
     BeforeEach{
       Remove-EventLog -LogName TestLog -ea Ignore
-      {New-EventLog -LogName TestLog -Source TestSource -ea Stop}                              | Should Not Throw                            
+      {New-EventLog -LogName TestLog -Source TestSource -ea Stop}                              | Should Not Throw
       {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ea Stop} | Should Not Throw
     }
-    #CmdLet is NYI - change to -Skip:($NonWinAdmin) when implemented   
+    #CmdLet is NYI - change to -Skip:($NonWinAdmin) when implemented
     It "should be able to Remove-EventLog -LogName <string> -ComputerName <string>" -Pending:($True -Or $NonWinAdmin) {
       {Remove-EventLog -LogName TestLog -ComputerName $env:COMPUTERNAME -ea Stop}              | Should Not Throw
       try {Write-EventLog -LogName TestLog -Source TestSource -Message "Test" -EventID 1 -ea Stop; Throw "Previous statement unexpectedly succeeded..."

@@ -12,7 +12,7 @@ namespace Microsoft.Management.UI.Internal
     using System.Diagnostics;
 
     /// <summary>
-    /// The FilterEvaluator class is responsible for allowing the registration of 
+    /// The FilterEvaluator class is responsible for allowing the registration of
     /// the FilterExpressionProviders and producing a FilterExpression composed of
     /// the FilterExpression returned from the providers.
     /// </summary>
@@ -113,11 +113,11 @@ namespace Microsoft.Management.UI.Internal
         public abstract void StopFilter();
 
         /// <summary>
-        /// Returns a FilterExpression composed of FilterExpressions returned from the 
+        /// Returns a FilterExpression composed of FilterExpressions returned from the
         /// registered providers.
         /// </summary>
         /// <returns>
-        /// The FilterExpression composed of FilterExpressions returned from the 
+        /// The FilterExpression composed of FilterExpressions returned from the
         /// registered providers.
         /// </returns>
         public FilterExpressionNode FilterExpression

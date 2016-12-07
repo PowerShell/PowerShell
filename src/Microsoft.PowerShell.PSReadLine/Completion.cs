@@ -163,7 +163,7 @@ namespace Microsoft.PowerShell
 
             bool ambiguous = false;
             var replacementText = GetUnquotedText(firstResult.CompletionText, consistentQuoting);
-            foreach (var match in completions.CompletionMatches.Skip(1)) 
+            foreach (var match in completions.CompletionMatches.Skip(1))
             {
                 var matchText = GetUnquotedText(match.CompletionText, consistentQuoting);
                 for (int i = 0; i < replacementText.Length; i++)
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell
                 }
                 catch (Exception)
                 {
-                }                
+                }
             }
 
             return _tabCompletions;

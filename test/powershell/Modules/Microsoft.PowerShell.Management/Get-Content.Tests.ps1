@@ -9,7 +9,7 @@ Describe "Get-Content" -Tags "CI" {
   $testString2 = $firstline + $nl + $secondline + $nl + $thirdline + $nl + $fourthline + $nl + $fifthline
   $testPath   = Join-Path -Path $TestDrive -ChildPath testfile1
   $testPath2  = Join-Path -Path $TestDrive -ChildPath testfile2
-  
+
   BeforeEach {
     New-Item -Path $testPath -ItemType file -Force -Value $testString
     New-Item -Path $testPath2 -ItemType file -Force -Value $testString2
@@ -125,10 +125,10 @@ Describe "Get-Content" -Tags "CI" {
   #[BugId(BugDatabase.WindowsOutOfBandReleases, 905829)]
   It "should get-content that matches the input string"{
     set-content $testPath "Hello,llllWorlld","Hello2,llllWorlld2"
-    $result=get-content $testPath -delimiter "ll" 
+    $result=get-content $testPath -delimiter "ll"
     $result.Length    | Should Be 9
     if ($IsWindows) {$expected = "Hell","o,ll","ll","Worll","d`r`nHell","o2,ll","ll","Worll","d2`r`n"
-    } else {$expected = "Hell","o,ll","ll","Worll","d`nHell","o2,ll","ll","Worll","d2`n"}  
+    } else {$expected = "Hell","o,ll","ll","Worll","d`nHell","o2,ll","ll","Worll","d2`n"}
     for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
   }
 }

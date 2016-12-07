@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -140,7 +140,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             : base(cmdlet)
         {
             ValidationHelper.ValidateNoNullArgument(cimRemoveCimInstance, cimRemoveCimInstanceParameterName);
-            this.removeCimInstance = cimRemoveCimInstance; 
+            this.removeCimInstance = cimRemoveCimInstance;
         }
 
         /// <summary>
@@ -295,7 +295,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             DebugHelper.WriteLogEx();
 
             if (sendToPipeline is CimInstance)
-            {                
+            {
                 this.cimInvokeCimMethod.InvokeCimMethodOnCimInstance(sendToPipeline as CimInstance, context, this);
             }
             else

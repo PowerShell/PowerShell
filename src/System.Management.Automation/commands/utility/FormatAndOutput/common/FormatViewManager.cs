@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return false;
 
             // check if the type is derived from a System.Enum
-            // e.g. in C# 
+            // e.g. in C#
             // enum Foo { Red, Black, Green}
             if (PSObjectHelper.PSObjectIsEnum(typeNames))
                 return true;
@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// Prepares a given view for remote object processing ie., lets the view
-        /// display (or not) ComputerName property. This will query the object to 
+        /// display (or not) ComputerName property. This will query the object to
         /// check if ComputerName property is present. If present, this will prepare
         /// the view.
         /// </summary>
@@ -215,7 +215,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// Helper method to process Unknown error message.
-        /// It helps is creating appropriate error message to 
+        /// It helps is creating appropriate error message to
         /// be displayed to the user.
         /// </summary>
         /// <param name="errorContext">Error context.</param>
@@ -456,7 +456,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// class to manage the selection of a desired view type 
+    /// class to manage the selection of a desired view type
     /// for out of band objects
     /// </summary>
     internal static class OutOfBandFormatViewManager
@@ -592,7 +592,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// Helper class to manage the logging of errors resulting from
     /// evaluations of MshExpression instances
-    /// 
+    ///
     /// Depending on settings, it queues the failing MshExpressionResult
     /// instances and generates a list of out-of-band FormatEntryData
     /// objects to be sent to the output pipeline

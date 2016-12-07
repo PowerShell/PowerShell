@@ -50,7 +50,7 @@ namespace Microsoft.Management.UI.Internal
         /// class.
         /// </summary>
         /// <param name="children">
-        /// A collection of children which will be added to the 
+        /// A collection of children which will be added to the
         /// FilterExpressionAndOperatorNode's Children collection.
         /// </param>
         public FilterExpressionAndOperatorNode(IEnumerable<FilterExpressionNode> children)

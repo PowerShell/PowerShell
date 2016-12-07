@@ -5,11 +5,11 @@
 Add-Type -TypeDefinition $global:BaseClassDefinitions
 
 #########################################################
-# Generates PowerShell module containing client side 
-# proxy cmdlets that can be used to interact with an 
+# Generates PowerShell module containing client side
+# proxy cmdlets that can be used to interact with an
 # OData based server side endpoint.
-######################################################### 
-function ExportODataEndpointProxy 
+#########################################################
+function ExportODataEndpointProxy
 {
     param
     (
@@ -35,16 +35,16 @@ function ExportODataEndpointProxy
     [ODataUtils.Metadata] $metaData = ParseMetadata $metadataXML $MetadataUri $CmdletAdapter $PSCmdlet
 
     VerifyMetaData $MetadataUri $metaData $AllowClobber.IsPresent $PSCmdlet $progressBarStatus $CmdletAdapter $CustomData $ResourceNameMapping
-                
+
     GenerateClientSideProxyModule $metaData $MetadataUri $Uri $OutputModule $CreateRequestMethod $UpdateRequestMethod $CmdletAdapter $ResourceNameMapping $CustomData $ProgressBarStatus $PSCmdlet
 }
 
 #########################################################
-# ParseMetaData is a helper function used to parse the 
-# metadata to convert it in to an object structure for 
+# ParseMetaData is a helper function used to parse the
+# metadata to convert it in to an object structure for
 # further consumption during proxy generation.
-######################################################### 
-function ParseMetaData 
+#########################################################
+function ParseMetaData
 {
     param
     (
@@ -83,8 +83,8 @@ function ParseMetaData
 
         $metaDataVersion = New-Object -TypeName System.Version -ArgumentList @($metadataXML.Edmx.Version)
 
-        # When we support plug-in model, We would have to fetch the 
-        # $minSupportedVersionString & $maxSupportedVersionString 
+        # When we support plug-in model, We would have to fetch the
+        # $minSupportedVersionString & $maxSupportedVersionString
         # from the plug-in instead of using an hardcoded value.
         $minSupportedVersionString = '1.0'
         $maxSupportedVersionString = '3.0'
@@ -123,7 +123,7 @@ function ParseMetaData
     }
 
     $metaData = New-Object -TypeName ODataUtils.Metadata
-    
+
     # this is a processing queue for those types that require base types that haven't been defined yet
     $entityAndComplexTypesQueue = @{}
 
@@ -241,7 +241,7 @@ function ParseMetaData
                 "Name" = $association.Name;
                 "Type" = $newAssociationType;
             }
-            
+
             $metaData.Associations += $newAssociation
         }
     }
@@ -270,7 +270,7 @@ function ParseMetaData
                     # we don't care about IsAlwaysBindable, since we populate actions information from $metaData
                     # so we can't know the state of the entity
                 }
-                
+
                 # Actions are always SideEffecting, otherwise it's an OData function
                 if ($newAction.IsSideEffecting -ne $false)
                 {
@@ -322,11 +322,11 @@ function ParseMetaData
 }
 
 #########################################################
-# VerifyMetaData is a helper function used to validate 
+# VerifyMetaData is a helper function used to validate
 # the processed metadata to make sure client side proxy
 # can be created for the supplied metadata.
-######################################################### 
-function VerifyMetaData 
+#########################################################
+function VerifyMetaData
 {
     param
     (
@@ -362,15 +362,15 @@ function VerifyMetaData
         $errorRecord = CreateErrorRecordHelper "ODataEndpointProxyInvalidMetaDataUri" $null ([System.Management.Automation.ErrorCategory]::InvalidArgument) $exception $metaDataUri
         $callerPSCmdlet.ThrowTerminatingError($errorRecord)
     }
-    
+
     # All the generated proxy cmdlets would have the following parameters added.
-    # The ODataAdapter has the default implementation on how to handle the 
+    # The ODataAdapter has the default implementation on how to handle the
     # scenario when these parameters are used during proxy invocations.
-    # The default implementation can be overridden using adapter derivation model. 
+    # The default implementation can be overridden using adapter derivation model.
     $reservedProperties = @("Filter", "IncludeTotalResponseCount", "OrderBy", "Select", "Skip", "Top", "ConnectionUri", "CertificateThumbprint", "Credential")
     $validEntitySets = @()
     $sessionCommands = Get-Command -All
-    
+
     foreach ($entitySet in $metaData.EntitySets)
     {
         if ($entitySet.Type -eq $null)
@@ -404,7 +404,7 @@ function VerifyMetaData
                     $callerPSCmdlet.WriteError($errorRecord)
                 }
                 else
-                {                    
+                {
                     $warningMessage = ($LocalizedData.EntitySetProxyCreationWithWarning -f $entitySet.Name, $entityProperty.Name, $entitySet.Type.Name)
                     $callerPSCmdlet.WriteWarning($warningMessage)
                 }
@@ -419,10 +419,10 @@ function VerifyMetaData
                 $generatedCommandName = $resourceNameMapping[$entitySet.Name]
             }
 
-            if(($currentCommand.Noun -ne $null -and $currentCommand.Noun -eq $generatedCommandName) -and 
-            ($currentCommand.Verb -eq "Get" -or 
-            $currentCommand.Verb -eq "Set" -or 
-            $currentCommand.Verb -eq "New" -or 
+            if(($currentCommand.Noun -ne $null -and $currentCommand.Noun -eq $generatedCommandName) -and
+            ($currentCommand.Verb -eq "Get" -or
+            $currentCommand.Verb -eq "Set" -or
+            $currentCommand.Verb -eq "New" -or
             $currentCommand.Verb -eq "Remove"))
             {
                 $hasConflictingCommand = $true
@@ -435,7 +435,7 @@ function VerifyMetaData
         foreach($currentAction in $metaData.Actions)
         {
             $actionCommand = "Invoke-" + "$($entitySet.Name)$($currentAction.Verb)"
-        
+
             foreach($currentCommand in $sessionCommands)
             {
                 if($actionCommand -eq $currentCommand.Name)
@@ -453,17 +453,17 @@ function VerifyMetaData
             $validEntitySets += $entitySet
         }
     }
-    
+
     if ($cmdletAdapter -ne "NetworkControllerAdapter") {
-    
+
         $metaData.EntitySets = $validEntitySets
-    
-        $validServiceActions = @()        
+
+        $validServiceActions = @()
         $hasConflictingServiceActionCommand = $true
         foreach($currentAction in $metaData.Actions)
         {
             $serviceActionCommand = "Invoke-" + "$($currentAction.Verb)"
-    
+
             foreach($currentCommand in $sessionCommands)
             {
                 if($serviceActionCommand -eq $currentCommand.Name)
@@ -474,37 +474,37 @@ function VerifyMetaData
                     $currentCommand.Name $metaDataUri $allowClobber $callerPSCmdlet
                 }
             }
-    
+
             if(!$hasConflictingServiceActionCommand -or $allowClobber)
             {
                 $validServiceActions += $currentAction
             }
         }
-    
+
         $metaData.Actions = $validServiceActions
     }
-    
+
     # Update Progress bar.
     ProgressBarHelper "Export-ODataEndpointProxy" $progressBarStatus 5 20 1  1
 }
 
 #########################################################
-# GenerateClientSideProxyModule is a helper function used 
+# GenerateClientSideProxyModule is a helper function used
 # to generate a PowerShell module that serves as a client
-# side proxy for interacting with the server side 
+# side proxy for interacting with the server side
 # OData endpoint. The proxy module contains proxy cmdlets
-# implemented in CDXML modules and they are exposed 
+# implemented in CDXML modules and they are exposed
 # through module manifest as nested modules.
-# One CDXML module is created for each EntitySet 
+# One CDXML module is created for each EntitySet
 # described in the metadata. Each CDXML module contains
 # CRUD & Service Action specific proxy cmdlets targeting
 # the underlying EntityType. There is 1:M mapping between
 # EntitySet & its underlying EntityTypes (i.e., all
 # entities with in the single EntitySet will be of the
-# same EntityType but there can be multiple entities 
-# of the same type with in an EntitySet).    
+# same EntityType but there can be multiple entities
+# of the same type with in an EntitySet).
 #########################################################
-function GenerateClientSideProxyModule 
+function GenerateClientSideProxyModule
 {
     param
     (
@@ -513,9 +513,9 @@ function GenerateClientSideProxyModule
         [string]    $uri,
         [string]    $outputModule,
         [string]    $createRequestMethod,
-        [string]    $updateRequestMethod,    
-        [string]    $cmdletAdapter,   
-        [Hashtable] $resourceNameMapping,  
+        [string]    $updateRequestMethod,
+        [string]    $cmdletAdapter,
+        [Hashtable] $resourceNameMapping,
         [Hashtable] $customData,
         [string]    $progressBarStatus,
         [System.Management.Automation.PSCmdlet] $callerPSCmdlet
@@ -526,11 +526,11 @@ function GenerateClientSideProxyModule
     if($callerPSCmdlet -eq $null) { throw ($LocalizedData.ArguementNullError -f "PSCmdlet", "GenerateClientSideProxyModule") }
     if($progressBarStatus -eq $null) { throw ($LocalizedData.ArguementNullError -f "ProgressBarStatus", "GenerateClientSideProxyModule") }
 
-    # This function performs the following set of tasks 
+    # This function performs the following set of tasks
     # while creating the client side proxy module:
     # 1. If the server side endpoint exposes complex types,
     #    the client side proxy complex types are created
-    #    as C# class in ComplexTypeDefinitions.psm1 
+    #    as C# class in ComplexTypeDefinitions.psm1
     # 2. Creates proxy cmdlets for CRUD operations.
     # 3. Creates proxy cmdlets for Service action operations.
     # 4. Creates module manifest.
@@ -548,11 +548,11 @@ function GenerateClientSideProxyModule
     {
         $proxyFile = New-Object -TypeName System.IO.FileInfo -ArgumentList $complexTypeFileDefinitionPath | Get-Item
         if($callerPSCmdlet -ne $null)
-        { 
+        {
             $callerPSCmdlet.WriteObject($proxyFile)
         }
     }
-    
+
     $currentEntryCount = 0
     foreach ($entitySet in $metaData.EntitySets)
     {
@@ -562,7 +562,7 @@ function GenerateClientSideProxyModule
             ProgressBarHelper "Export-ODataEndpointProxy" $progressBarStatus 40 20 $metaData.EntitySets.Count  $currentEntryCount
             continue
         }
-         
+
         GenerateCRUDProxyCmdlet $entitySet $metaData $uri $outputModule $createRequestMethod $updateRequestMethod $cmdletAdapter $resourceNameMapping $customData $complexTypeMapping "Export-ODataEndpointProxy" $progressBarStatus 40 20 $metaData.EntitySets.Count $currentEntryCount $callerPSCmdlet
     }
 
@@ -574,12 +574,12 @@ function GenerateClientSideProxyModule
 }
 
 #########################################################
-# GenerateCRUDProxyCmdlet is a helper function used 
-# to generate Get, Set, New & Remove proxy cmdlet. 
-# The proxy cmdlet is generated in the CDXML 
-# compliant format. 
+# GenerateCRUDProxyCmdlet is a helper function used
+# to generate Get, Set, New & Remove proxy cmdlet.
+# The proxy cmdlet is generated in the CDXML
+# compliant format.
 #########################################################
-function GenerateCRUDProxyCmdlet 
+function GenerateCRUDProxyCmdlet
 {
     param
     (
@@ -590,7 +590,7 @@ function GenerateCRUDProxyCmdlet
         [string] $createRequestMethod,
         [string] $UpdateRequestMethod,
         [string] $cmdletAdapter,
-        [Hashtable] $resourceNameMapping,  
+        [Hashtable] $resourceNameMapping,
         [Hashtable] $customData,
         [Hashtable] $complexTypeMapping,
         [string] $progressBarActivityName,
@@ -608,8 +608,8 @@ function GenerateCRUDProxyCmdlet
     if($callerPSCmdlet -eq $null) { throw ($LocalizedData.ArguementNullError -f "PSCmdlet", "GenerateClientSideProxyModule") }
     if($progressBarStatus -eq $null) { throw ($LocalizedData.ArguementNullError -f "ProgressBarStatus", "GenerateClientSideProxyModule") }
 
-    $entitySetName = $entitySet.Name 
-    if(($resourceNameMapping -ne $null) -and 
+    $entitySetName = $entitySet.Name
+    if(($resourceNameMapping -ne $null) -and
     $resourceNameMapping.ContainsKey($entitySetName))
     {
         $entitySetName = $resourceNameMapping[$entitySetName]
@@ -727,22 +727,22 @@ function GenerateCRUDProxyCmdlet
 }
 
 #########################################################
-# GenerateGetProxyCmdlet is a helper function used 
+# GenerateGetProxyCmdlet is a helper function used
 # to generate Get-* proxy cmdlet. The proxy cmdlet is
-# generated in the CDXML compliant format. 
+# generated in the CDXML compliant format.
 #########################################################
-function GenerateGetProxyCmdlet 
+function GenerateGetProxyCmdlet
 {
     param
     (
         [System.XMl.XmlTextWriter] $xmlWriter,
-        [ODataUtils.Metadata] $metaData, 
+        [ODataUtils.Metadata] $metaData,
         [object[]]  $keys,
         [object[]]  $navigationProperties,
         [string]    $cmdletAdapter,
         [Hashtable] $complexTypeMapping
     )
-    
+
     # $cmdletAdapter is already validated at the cmdlet layer.
     if($xmlWriter -eq $null) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "GenerateGetProxyCmdlet") }
     if($metaData -eq $null) { throw ($LocalizedData.ArguementNullError -f "metadata", "GenerateGetProxyCmdlet") }
@@ -757,7 +757,7 @@ function GenerateGetProxyCmdlet
             {
                 $xmlWriter.WriteStartElement('QueryableProperties')
                 $position = 0
-                
+
                 $keys | ? { $_ -ne $null } | % {
                     $xmlWriter.WriteStartElement('Property')
                     $xmlWriter.WriteAttributeString('PropertyName', $_.Name)
@@ -812,16 +812,16 @@ function GenerateGetProxyCmdlet
                             $xmlWriter.WriteEndElement()
                         }
                     }
-                    
+
 
                     # Add Query Parameters (i.e., Top, Skip, OrderBy, Filter) to the generated Get-* cmdlets.
-                    $queryParameters = 
+                    $queryParameters =
                     @{
                         "Filter" = "Edm.String";
                         "IncludeTotalResponseCount" = "switch";
                         "OrderBy" = "Edm.String";
-                        "Select" = "Edm.String";  
-                        "Skip" = "Edm.Int32"; 
+                        "Select" = "Edm.String";
+                        "Skip" = "Edm.Int32";
                         "Top" = "Edm.Int32";
                     }
 
@@ -846,7 +846,7 @@ function GenerateGetProxyCmdlet
                         if($queryParameters[$currentQueryParameter] -eq "Edm.Int32")
                         {
                             $minValue = 1
-                            # For Skip Query parameter we want to support 0 as the 
+                            # For Skip Query parameter we want to support 0 as the
                             # minimum skip value in order to support client side paging.
                             if($currentQueryParameter -eq 'Skip')
                             {
@@ -879,11 +879,11 @@ function GenerateGetProxyCmdlet
 }
 
 #########################################################
-# GenerateNewProxyCmdlet is a helper function used 
+# GenerateNewProxyCmdlet is a helper function used
 # to generate New-* proxy cmdlet. The proxy cmdlet is
-# generated in the CDXML compliant format. 
+# generated in the CDXML compliant format.
 #########################################################
-function GenerateNewProxyCmdlet 
+function GenerateNewProxyCmdlet
 {
     param
     (
@@ -911,7 +911,7 @@ function GenerateNewProxyCmdlet
         $xmlWriter.WriteStartElement('Method')
         $xmlWriter.WriteAttributeString('MethodName', 'Create')
         $xmlWriter.WriteAttributeString('CmdletParameterSet', 'Default')
-        
+
         AddParametersNode $xmlWriter $keyProperties $nonNullableProperties $nullableProperties $null $true $true $complexTypeMapping
         $xmlWriter.WriteEndElement()
 
@@ -925,23 +925,23 @@ function GenerateNewProxyCmdlet
                 $xmlWriter.WriteStartElement('Method')
                 $xmlWriter.WriteAttributeString('MethodName', "Association:Create:$($associatedEntitySet.Name)")
                 $xmlWriter.WriteAttributeString('CmdletParameterSet', $_.Name)
-                    
+
                 $associatedKeys = ((GetAllProperties $associatedType) | ? { $_.isKey })
 
                 AddParametersNode $xmlWriter $associatedKeys $keyProperties $null "Associated$($_.Name)" $true $true $complexTypeMapping
                 $xmlWriter.WriteEndElement()
             }
         }
-    
+
         $xmlWriter.WriteEndElement()
 }
 
 #########################################################
-# GenerateRemoveProxyCmdlet is a helper function used 
+# GenerateRemoveProxyCmdlet is a helper function used
 # to generate Remove-* proxy cmdlet. The proxy cmdlet is
-# generated in the CDXML compliant format. 
+# generated in the CDXML compliant format.
 #########################################################
-function GenerateRemoveProxyCmdlet 
+function GenerateRemoveProxyCmdlet
 {
     param
     (
@@ -999,7 +999,7 @@ function GenerateRemoveProxyCmdlet
                 $xmlWriter.WriteStartElement('Method')
                 $xmlWriter.WriteAttributeString('MethodName', "Association:Delete:$($associatedEntitySet.Name)")
                 $xmlWriter.WriteAttributeString('CmdletParameterSet', $_.Name)
-                
+
                     $associatedType = GetAssociatedType $metaData $_
                     $associatedKeys = ((GetAllProperties $associatedType) | ? { $_.isKey })
 
@@ -1011,12 +1011,12 @@ function GenerateRemoveProxyCmdlet
 }
 
 #########################################################
-# GenerateActionProxyCmdlet is a helper function used 
+# GenerateActionProxyCmdlet is a helper function used
 # to generate Invoke-* proxy cmdlet. These proxy cmdlets
-# support Instance/Service level actions. They are 
-# generated in the CDXML compliant format. 
+# support Instance/Service level actions. They are
+# generated in the CDXML compliant format.
 #########################################################
-function GenerateActionProxyCmdlet 
+function GenerateActionProxyCmdlet
 {
     param
     (
@@ -1106,12 +1106,12 @@ function GenerateActionProxyCmdlet
 }
 
 #########################################################
-# GenerateServiceActionProxyCmdlet is a helper function 
-# used to generate Invoke-* proxy cmdlet. These proxy 
-# cmdlets support all Service-level actions. They are 
-# generated in the CDXML compliant format. 
+# GenerateServiceActionProxyCmdlet is a helper function
+# used to generate Invoke-* proxy cmdlet. These proxy
+# cmdlets support all Service-level actions. They are
+# generated in the CDXML compliant format.
 #########################################################
-function GenerateServiceActionProxyCmdlet 
+function GenerateServiceActionProxyCmdlet
 {
     param
     (
@@ -1165,19 +1165,19 @@ function GenerateServiceActionProxyCmdlet
 }
 
 #########################################################
-# GenerateModuleManifest is a helper function used 
+# GenerateModuleManifest is a helper function used
 # to generate a wrapper module manifest file. The
 # generated module manifest is persisted to the disk at
-# the specified OutPutModule path. When the module 
-# manifest is imported, the following commands will 
+# the specified OutPutModule path. When the module
+# manifest is imported, the following commands will
 # be imported:
 # 1. Get, Set, New & Remove proxy cmdlets.
 # 2. If the server side Odata endpoint exposes complex
 #    types, then the corresponding client side proxy
 #    complex types imported.
-# 3. Service Action proxy cmdlets.   
+# 3. Service Action proxy cmdlets.
 #########################################################
-function GenerateModuleManifest 
+function GenerateModuleManifest
 {
     param
     (
@@ -1196,8 +1196,8 @@ function GenerateModuleManifest
     $NestedModules = @()
     foreach ($entitySet in $metaData.EntitySets)
     {
-        $entitySetName = $entitySet.Name 
-        if(($resourceNameMapping -ne $null) -and 
+        $entitySetName = $entitySet.Name
+        if(($resourceNameMapping -ne $null) -and
         $resourceNameMapping.ContainsKey($entitySetName))
         {
             $entitySetName = $resourceNameMapping[$entitySetName]
@@ -1216,10 +1216,10 @@ function GenerateModuleManifest
 }
 
 #########################################################
-# GetBaseType is a helper function used to fetch the 
-# base type of the given type. 
+# GetBaseType is a helper function used to fetch the
+# base type of the given type.
 #########################################################
-function GetBaseType 
+function GetBaseType
 {
     param
     (
@@ -1227,8 +1227,8 @@ function GetBaseType
         [ODataUtils.Metadata] $metaData
     )
 
-    if ($metadataEntityDefinition -ne $null -and 
-    $metaData -ne $null -and 
+    if ($metadataEntityDefinition -ne $null -and
+    $metaData -ne $null -and
     $metadataEntityDefinition.BaseType -ne $null)
     {
         $baseType = $metaData.EntityTypes | Where {$_.Namespace+"."+$_.Name -eq $metadataEntityDefinition.BaseType}
@@ -1246,15 +1246,15 @@ function GetBaseType
 
 #########################################################
 # AddDerivedTypes is a helper function used to process
-# derived types of a newly added type, that were 
+# derived types of a newly added type, that were
 # previously waiting in the queue.
 #########################################################
-function AddDerivedTypes 
+function AddDerivedTypes
 {
     param
     (
         [ODataUtils.EntityType] $baseType,
-        [Hashtable]$entityAndComplexTypesQueue,    
+        [Hashtable]$entityAndComplexTypesQueue,
         [ODataUtils.Metadata] $metaData,
         [string] $namespace
     )
@@ -1287,10 +1287,10 @@ function AddDerivedTypes
 }
 
 #########################################################
-# ParseMetadataTypeDefinition is a helper function used 
+# ParseMetadataTypeDefinition is a helper function used
 # to parse types definitions element of metadata xml.
 #########################################################
-function ParseMetadataTypeDefinition 
+function ParseMetadataTypeDefinition
 {
     param
     (
@@ -1358,27 +1358,27 @@ function ParseMetadataTypeDefinition
 }
 
 #########################################################
-# GetAllProperties is a helper function used to fetch 
-# the entity properties or navigation properties of 
-# the entity type as well as that of complete base 
+# GetAllProperties is a helper function used to fetch
+# the entity properties or navigation properties of
+# the entity type as well as that of complete base
 # type hierarchy.
 #########################################################
-function GetAllProperties 
+function GetAllProperties
 {
     param
     (
         [ODataUtils.EntityType] $entityType,
-        [switch] $IncludeOnlyNavigationProperties 
+        [switch] $IncludeOnlyNavigationProperties
     )
 
     if($entityType -eq $null) { throw ($LocalizedData.ArguementNullError -f "EntityType", "GetAllProperties") }
 
     $requestedProperties = @()
 
-    # Populate EntityType property from current EntityType as well 
-    # as from the corresponding base types recursively if 
+    # Populate EntityType property from current EntityType as well
+    # as from the corresponding base types recursively if
     # $IncludeOnlyNavigationProperties switch parameter is used then follow
-    # the same routine for navigation properties. 
+    # the same routine for navigation properties.
     $currentEntityType = $entityType
     while($currentEntityType -ne $null)
     {
@@ -1399,11 +1399,11 @@ function GetAllProperties
 }
 
 #########################################################
-# SplitNamespaceAndName is a helper function used 
+# SplitNamespaceAndName is a helper function used
 # to split Namespace and actual Name.
 # e.g. "a.b.c" is namespace "a.b" and name "c"
 #########################################################
-function SplitNamespaceAndName 
+function SplitNamespaceAndName
 {
     param
     (
@@ -1433,12 +1433,12 @@ function SplitNamespaceAndName
 }
 
 #########################################################
-# GetEntitySetForEntityType is a helper function used 
-# to fetch EntitySet for a given EntityType by 
-# searching the inheritance hierarchy in the 
+# GetEntitySetForEntityType is a helper function used
+# to fetch EntitySet for a given EntityType by
+# searching the inheritance hierarchy in the
 # supplied metadata.
 #########################################################
-function GetEntitySetForEntityType 
+function GetEntitySetForEntityType
 {
     param
     (
@@ -1464,15 +1464,15 @@ function GetEntitySetForEntityType
 }
 
 #########################################################
-# ProcessStreamHelper is a helper function that performs 
+# ProcessStreamHelper is a helper function that performs
 # the following utility tasks:
 # 1. Writes verbose messages to the stream.
-# 2. Writes FileInfo objects for the proxy modules 
-#    saved to the disk. This is done to keep the user 
+# 2. Writes FileInfo objects for the proxy modules
+#    saved to the disk. This is done to keep the user
 #    experience in consistent with Export-PSSession.
 # 3. Updates progress bar.
 #########################################################
-function ProcessStreamHelper 
+function ProcessStreamHelper
 {
     param
     (
@@ -1497,12 +1497,12 @@ function ProcessStreamHelper
 }
 
 #########################################################
-# GetAssociatedType is a helper function used 
-# to fetch associated instance's EntityType 
-# for a given Navigation property in the 
+# GetAssociatedType is a helper function used
+# to fetch associated instance's EntityType
+# for a given Navigation property in the
 # supplied metadata.
 #########################################################
-function GetAssociatedType 
+function GetAssociatedType
 {
     param
     (
@@ -1544,13 +1544,13 @@ function GetAssociatedType
 }
 
 #########################################################
-# AddParametersNode is a helper function used 
-# to add parameters to the generated proxy cmdlet, 
+# AddParametersNode is a helper function used
+# to add parameters to the generated proxy cmdlet,
 # based on mandatoryProperties and otherProperties.
-# PrefixForKeys is used by associations to append a 
+# PrefixForKeys is used by associations to append a
 # prefix to PowerShell parameter name.
 #########################################################
-function AddParametersNode 
+function AddParametersNode
 {
     param
     (
@@ -1567,8 +1567,8 @@ function AddParametersNode
 
     if($xmlWriter -eq $null) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "AddParametersNode") }
 
-    if(($keyProperties.Length -gt 0) -or 
-       ($mandatoryProperties.Length -gt 0) -or 
+    if(($keyProperties.Length -gt 0) -or
+       ($mandatoryProperties.Length -gt 0) -or
        ($otherProperties.Length -gt 0) -or
        ($addForceParameter))
     {
@@ -1613,13 +1613,13 @@ function AddParametersNode
 }
 
 #########################################################
-# AddParametersNode is a helper function used 
+# AddParametersNode is a helper function used
 # to add Parameter node to CDXML based on properties.
-# Prefix is appended to PS parameter names, used for 
-# associations. Suffix is appended to all parameter 
+# Prefix is appended to PS parameter names, used for
+# associations. Suffix is appended to all parameter
 # names, for ex. to differentiate keys. returns new $pos
 #########################################################
-function AddParametersCDXML 
+function AddParametersCDXML
 {
     param
     (
@@ -1660,10 +1660,10 @@ function AddParametersCDXML
 }
 
 #########################################################
-# GenerateComplexTypeDefinition is a helper function used 
+# GenerateComplexTypeDefinition is a helper function used
 # to generate complex type definition from the metadata.
 #########################################################
-function GenerateComplexTypeDefinition 
+function GenerateComplexTypeDefinition
 {
     param
     (
@@ -1682,7 +1682,7 @@ function GenerateComplexTypeDefinition
 
     $Path = "$OutputModule\$typeDefinitionFileName"
 
-    # We are currently generating classes for EntityType & ComplexType 
+    # We are currently generating classes for EntityType & ComplexType
     # definition exposed in the metadata.
     $typesToBeGenerated = $metaData.EntityTypes+$metadata.ComplexTypes
 
@@ -1725,7 +1725,7 @@ using System.Management.Automation;
                 $entityTypes = $entityTypeNameSpaceMapping[$currentNameSpace]
 
                 $output += "`r`nnamespace $(ValidateComplexTypeIdentifier $currentNameSpace $true $metaDataUri $callerPSCmdlet)`r`n{"
-                
+
                 foreach ($entityType in $entityTypes)
                 {
                     $entityTypeFullName = (ValidateComplexTypeIdentifier $entityType.Namespace $true $metaDataUri $callerPSCmdlet) + '.' + $entityType.Name
@@ -1759,7 +1759,7 @@ using System.Management.Automation;
                             $navigationTypeName = GetNavigationPropertyTypeName $property $metaData
                             $typeName = Convert-ODataTypeToCLRType $navigationTypeName $complexTypeMapping
                             $properties += "`r`n     public $typeName  $(ValidateComplexTypeIdentifier $property.Name $false $metaDataUri $callerPSCmdlet);"
-                        }           
+                        }
                     }
 
                     $output += $properties
@@ -1779,21 +1779,21 @@ using System.Management.Automation;
      return $complexTypeMapping
 }
 
-# Creating a single instance of CSharpCodeProvider that would be used 
+# Creating a single instance of CSharpCodeProvider that would be used
 # for Identifier validation in the ValidateComplexTypeIdentifier helper method.
 $cSharpCodeProvider = [Microsoft.CSharp.CSharpCodeProvider]::new()
 
 #########################################################
-# ValidateComplexTypeIdentifier is a helper function to 
-# make sure that the type names defined in the 
-# metadata are valid C# Identifier names. This validation 
-# is performed to make sure that there are no security 
-# threat from importing the generated complex type 
+# ValidateComplexTypeIdentifier is a helper function to
+# make sure that the type names defined in the
+# metadata are valid C# Identifier names. This validation
+# is performed to make sure that there are no security
+# threat from importing the generated complex type
 # (which is created using the metadata file).
-# This method return the identifier name if its a 
-# valid identifier, else a terminating error in thrown. 
+# This method return the identifier name if its a
+# valid identifier, else a terminating error in thrown.
 #########################################################
-function ValidateComplexTypeIdentifier 
+function ValidateComplexTypeIdentifier
 {
     param
     (
@@ -1836,11 +1836,11 @@ function ValidateComplexTypeIdentifier
 }
 
 #########################################################
-# GetKeys is a helper function used to 
-# return the keys for the entity if customUri 
+# GetKeys is a helper function used to
+# return the keys for the entity if customUri
 # is specified.
 #########################################################
-function GetKeys 
+function GetKeys
 {
     param
     (
@@ -1889,7 +1889,7 @@ function GetKeys
     # Foreach old key check if that key is present in the new keyList
     # Else add the key to new key list
     $keyParams = $keys | ForEach-Object {$_.Name}
-    
+
     if ($keyParams -eq $null -Or $keyParams.Count -eq 0) {
         $keys = $key
     }
@@ -1910,13 +1910,13 @@ function GetKeys
 }
 
 #########################################################
-# GetNetworkControllerAdditionalProperties is a helper 
+# GetNetworkControllerAdditionalProperties is a helper
 # function used to fetch network controller specific
 # additional properties.
 #########################################################
-function GetNetworkControllerAdditionalProperties 
+function GetNetworkControllerAdditionalProperties
 {
-    param 
+    param
     (
         $navigationProperties,
         $metaData
@@ -1940,7 +1940,7 @@ function GetNetworkControllerAdditionalProperties
             "IsNullable" = $isNullable;
         }
     }
-   
+
     # Add etag to the additionalProperties
 
     if ($additionalProperties -ne $null)
@@ -1961,21 +1961,21 @@ function GetNetworkControllerAdditionalProperties
             "Name" = "Etag";
             "TypeName" = "Edm.String";
             "IsNullable" = $true;
-        }  
-    } 
+        }
+    }
 
     $additionalProperties
 }
 
 #########################################################
-# UpdateNetworkControllerSpecificProperties is a 
-# helper function used to append additionalProperties 
-# to nullable/nonNullable Properties. This is network controller 
+# UpdateNetworkControllerSpecificProperties is a
+# helper function used to append additionalProperties
+# to nullable/nonNullable Properties. This is network controller
 # specific logic.
 #########################################################
-function UpdateNetworkControllerSpecificProperties 
+function UpdateNetworkControllerSpecificProperties
 {
-    param 
+    param
     (
         $nullableProperties,
         $additionalProperties,
@@ -2009,7 +2009,7 @@ function UpdateNetworkControllerSpecificProperties
             $keyProperties = @($keyProperties)
         }
 
-        $keys = $keyProperties | ForEach-Object {$_.Name} 
+        $keys = $keyProperties | ForEach-Object {$_.Name}
 
         if ($keys.Count -eq 1) {
             $keys = @($keys)
@@ -2022,14 +2022,14 @@ function UpdateNetworkControllerSpecificProperties
 }
 
 #########################################################
-# GetNavigationPropertyTypeName is a 
-# helper function used to fetch the type corresponding 
-# to navigation property in this metadata. This is 
+# GetNavigationPropertyTypeName is a
+# helper function used to fetch the type corresponding
+# to navigation property in this metadata. This is
 # network controller specific logic.
 #########################################################
-function GetNavigationPropertyTypeName 
+function GetNavigationPropertyTypeName
 {
-    param 
+    param
     (
         $navigationProperty,
         $metaData
@@ -2054,12 +2054,12 @@ function GetNavigationPropertyTypeName
             $type = $association.Type.EndType2
             $multiplicity = $association.Type.Multiplicity2
         }
-        
+
         break
     }
 
     $fullName = $type.Namespace + '.' + $type.Name
-    
+
     # Check the multiplicity and convert to array if needed
     if ($multiplicity -eq "*")
     {

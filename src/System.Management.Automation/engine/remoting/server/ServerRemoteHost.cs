@@ -216,7 +216,7 @@ namespace System.Management.Automation.Remoting
             get
             {
                 // Return the thread's current culture and rely on WinRM to set this
-                // correctly based on the client's culture.                
+                // correctly based on the client's culture.
                 return CultureInfo.CurrentCulture;
             }
         }
@@ -327,7 +327,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="runspace">RemoteRunspace</param>
         public override void PushRunspace(Runspace runspace)
         {
-            // Double session hop is currently allowed only for WSMan (non-OutOfProc) sessions, where 
+            // Double session hop is currently allowed only for WSMan (non-OutOfProc) sessions, where
             // the second session is either through a named pipe or hyperV socket connection.
             if (!AllowPushRunspace &&
                 ((_transportManager is OutOfProcessServerSessionTransportManager) ||

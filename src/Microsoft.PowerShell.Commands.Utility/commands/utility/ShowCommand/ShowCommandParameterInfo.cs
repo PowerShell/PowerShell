@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// Creates an instance of the ShowCommandParameterInfo class based on a CommandParameterInfo object
         /// </summary>
-        /// 
+        ///
         /// <param name="other">
         /// The object to wrap.
         /// </param>
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// Creates an instance of the ShowCommandParameterInfo class based on a PSObject object
         /// </summary>
-        /// 
+        ///
         /// <param name="other">
         /// The object to wrap.
         /// </param>

@@ -6,12 +6,12 @@
 <#
     Purpose:
         Verify that Format-Hex display the Hexa decimal value for the input data.
-                
+
     Action:
         Run Format-Fex.
-               
-    Expected Result: 
-        Hexa decimal equivalent of the input data is displayed. 
+
+    Expected Result:
+        Hexa decimal equivalent of the input data is displayed.
 #>
 
 Describe "FormatHex" -tags "CI" {
@@ -22,11 +22,11 @@ Describe "FormatHex" -tags "CI" {
         $inputFile1 = setup -f "FormatHexDataDir/SourceFile-1.txt" -content $inputText1 -pass
         $inputFile2 = setup -f "FormatHexDataDir/SourceFile-2.txt" -content $inputText2 -pass
     }
-    
-    # This test is to validate to pipeline support in Format-Hex cmdlet.  
+
+    # This test is to validate to pipeline support in Format-Hex cmdlet.
     It "ValidatePipelineSupport" {
 
-        # InputObject Parameter set should get invoked and 
+        # InputObject Parameter set should get invoked and
         # the input data should be treated as string.
         $result = $inputText1 | Format-Hex
         $result | Should Not Be $null
@@ -35,10 +35,10 @@ Describe "FormatHex" -tags "CI" {
         ($actualResult -match $inputText1) | Should Be $true
     }
 
-    # This test is to validate to pipeline support in Format-Hex cmdlet.  
+    # This test is to validate to pipeline support in Format-Hex cmdlet.
     It "ValidateByteArrayInputSupport" {
 
-        # InputObject Parameter set should get invoked and 
+        # InputObject Parameter set should get invoked and
         # the input data should be treated as byte[].
         $inputBytes = [System.Text.Encoding]::ASCII.GetBytes($inputText1)
 
@@ -46,7 +46,7 @@ Describe "FormatHex" -tags "CI" {
         $result | Should Not Be $null
         $result.GetType().Name | Should Be 'ByteCollection'
         $actualResult = $result.ToString()
-        ($actualResult -match $inputText1) | Should Be $true   
+        ($actualResult -match $inputText1) | Should Be $true
     }
 
     # This test is to validate to input given through Path parameter set in Format-Hex cmdlet.
@@ -56,7 +56,7 @@ Describe "FormatHex" -tags "CI" {
         $result | Should Not Be $null
         $result.GetType().Name | Should Be 'ByteCollection'
         $actualResult = $result.ToString()
-        ($actualResult -match $inputText1) | Should Be $true  
+        ($actualResult -match $inputText1) | Should Be $true
     }
 
     # This test is to validate to Path parameter set is considered as default in Format-Hex cmdlet.
@@ -66,12 +66,12 @@ Describe "FormatHex" -tags "CI" {
         $result | Should Not BeNullOrEmpty
         $result.GetType().Name | Should Be 'ByteCollection'
         $actualResult = $result.ToString()
-        ($actualResult -match $inputText1) | Should Be $true  
+        ($actualResult -match $inputText1) | Should Be $true
     }
 
     # This test is to validate to input given through LiteralPath parameter set in Format-Hex cmdlet.
     It "ValidateLiteralPathParameterSet" {
-        
+
         $result =  Format-Hex -LiteralPath $inputFile1
         $result | Should Not BeNullOrEmpty
         $result.GetType().Name | Should Be 'ByteCollection'
@@ -81,7 +81,7 @@ Describe "FormatHex" -tags "CI" {
 
     # This test is to validate to input given through pipeline. The input being piped from results of Get-hildItem
     It "ValidateFileInfoPipelineInput" {
-        
+
         $result = Get-ChildItem $inputFile1 | Format-Hex
         $result | Should Not BeNullOrEmpty
         $result.GetType().Name | Should Be 'ByteCollection'
@@ -91,7 +91,7 @@ Describe "FormatHex" -tags "CI" {
 
     # This test is to validate Encoding formats functionality of Format-Hex cmdlet.
     It "ValidateEncodingFormats" {
-        
+
         $result =  Format-Hex -InputObject $inputText1 -Encoding ASCII
         $result | Should Not BeNullOrEmpty
         $result.GetType().Name | Should Be 'ByteCollection'
@@ -101,7 +101,7 @@ Describe "FormatHex" -tags "CI" {
 
     # This test is to validate that integers can be piped to the format-hex
     It "ValidateIntegerInput" {
-        
+
         $result = 1,2,3,4 | Format-Hex
         $result | Should Not BeNullOrEmpty
         $result.GetType().Name | Should Be 'ByteCollection'
@@ -113,7 +113,7 @@ Describe "FormatHex" -tags "CI" {
     # This test is to validate that integers can be piped to the format-hex
     # and properly represented as characters in the string
     It "ValidateIntegerInputThatPresentAsCharacters" {
-        
+
         $result = 65..68 | Format-Hex
         $result | Should Not BeNullOrEmpty
         $result.GetType().Name | Should Be 'ByteCollection'
@@ -124,7 +124,7 @@ Describe "FormatHex" -tags "CI" {
 
     # This test is to validate that integers can be piped to the format-hex
     It "ValidateIntegerRawInput" {
-        
+
         $result = 1,2,3,4 | Format-Hex -Raw
         $result | Should Not BeNullOrEmpty
         $result.GetType().Name | Should Be 'ByteCollection'
@@ -135,7 +135,7 @@ Describe "FormatHex" -tags "CI" {
 
     # handle int64
     It "ValidateInteger64" {
-        
+
         $result = [int64]::MaxValue | Format-Hex
         $result | Should Not BeNullOrEmpty
         $result.GetType().Name | Should Be 'ByteCollection'
@@ -206,7 +206,7 @@ Describe "FormatHex" -tags "CI" {
 
     # This test is to validate the alias for Format-Hex cmdlet.
     It "ValidateCmdletAlias" {
-        
+
         try
         {
             $result = Get-Command fhx -ErrorAction Stop

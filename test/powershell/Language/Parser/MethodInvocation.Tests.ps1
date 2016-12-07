@@ -39,7 +39,7 @@ namespace MSFT_716893
             serviceHost = new ServiceHost(typeof(ServiceImplementation), baseAddress);
             serviceHost.Open();
         }
-        
+
         public static IInterface1 GetProxy()
         {
             ChannelFactory<IInterface2> factory = new ChannelFactory<IInterface2>(

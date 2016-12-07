@@ -7,19 +7,19 @@ using System.Diagnostics.Tracing;
 
 namespace System.Management.Automation.Internal
 {
-    /// <summary>    
-    /// This wrapper is for encapsulating all the internal details of Asimov-compatible telemetry in Windows Threshold 
-    /// </summary>    
+    /// <summary>
+    /// This wrapper is for encapsulating all the internal details of Asimov-compatible telemetry in Windows Threshold
+    /// </summary>
     internal static class TelemetryWrapper
     {
         private static readonly PSObject s_eventSourceInstance;
         private static readonly object s_eventSourceOptionsForWrite;
 
-        /// <summary>    
+        /// <summary>
         /// Performing EventSource initialization in the Static Constructor since this is thread safe.
-        /// Static constructors are guaranteed to be run only once per application domain, before any instances of a class are created or any static members are accessed. 
+        /// Static constructors are guaranteed to be run only once per application domain, before any instances of a class are created or any static members are accessed.
         /// https://msdn.microsoft.com/en-us/library/aa645612(VS.71).aspx
-        /// </summary>  
+        /// </summary>
         static TelemetryWrapper()
         {
             try
@@ -44,7 +44,7 @@ namespace System.Management.Automation.Internal
                 const int EtwSelfDescribingEventFormat = 8;
                 var eventSourceSettingsEnumObject = Enum.ToObject(eventSourceSettingsType, EtwSelfDescribingEventFormat);
 
-                // Create instance of the class EventSource with Provider name of "Microsoft-PowerShell-Telemetry"     
+                // Create instance of the class EventSource with Provider name of "Microsoft-PowerShell-Telemetry"
                 // Supply this eventSourceTrait to EventSource constructor to enable Asimov type events
                 var eventSource = (EventSource)Activator.CreateInstance(typeof(EventSource),
                     new object[] {"Microsoft-PowerShell-Telemetry",
@@ -83,10 +83,10 @@ namespace System.Management.Automation.Internal
             get { return s_eventSourceInstance != null && ((EventSource)s_eventSourceInstance.BaseObject).IsEnabled(); }
         }
 
-        /// <summary>    
+        /// <summary>
         /// TRACEMESSAGE is the Generic method to use to log messages using UTC [Universal Telemetry Client] in Windows Threshold
-        /// TRACEMESSAGE calls into  EventSource.Write dynamically - https://msdn.microsoft.com/en-us/library/dn823293(v=vs.110).aspx                        
-        /// </summary> 
+        /// TRACEMESSAGE calls into  EventSource.Write dynamically - https://msdn.microsoft.com/en-us/library/dn823293(v=vs.110).aspx
+        /// </summary>
 
         // EventSource data gets raised on the Client containing OS Environment information and supplied arguments as "data"
         // Events are queued and uploaded to Cosmos/xPert.
@@ -140,7 +140,7 @@ namespace System.Management.Automation.Internal
                 }
                 catch
                 {
-                    // No-op on issues arising from calling EventSource.Write<T> 
+                    // No-op on issues arising from calling EventSource.Write<T>
                 }
             }
         }

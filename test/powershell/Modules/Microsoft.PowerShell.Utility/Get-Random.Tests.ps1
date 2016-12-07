@@ -68,8 +68,8 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
         $result.GetType().FullName | Should Be $type
 
     }
-    
-    It "Should be able to throw error when '<Name>'" -TestCases $testDataForError {         
+
+    It "Should be able to throw error when '<Name>'" -TestCases $testDataForError {
         param($maximum, $minimum)
         try
         {

@@ -196,7 +196,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// User's password.
-        /// </summary> 
+        /// </summary>
         public SecureString Password
         {
             get { return _password; }
@@ -250,14 +250,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns an equivalent NetworkCredential object for this
         /// PSCredential.
-        /// 
+        ///
         /// A null is returned if
         /// -- current object has not been initialized
         /// -- current creds are not compatible with NetworkCredential
         ///    (such as smart card creds or cert creds)
         /// </summary>
         ///
-        /// <returns> 
+        /// <returns>
         ///     null if the current object has not been initialized.
         ///     null if the current credentials are incompatible with
         ///       a NetworkCredential -- such as smart card credentials.
@@ -307,7 +307,7 @@ namespace System.Management.Automation
         ///
         /// <param name="credential"> PSCredential to convert. </param>
         ///
-        /// <returns> 
+        /// <returns>
         ///     null if the current object has not been initialized.
         ///     null if the current credentials are incompatible with
         ///       a NetworkCredential -- such as smart card credentials.
@@ -347,10 +347,10 @@ namespace System.Management.Automation
         /// two formats:
         /// -- domain\user
         /// -- user@domain
-        /// 
+        ///
         /// for any other format, we simply treat the entire string
         /// as user name and set domain name to "".
-        /// 
+        ///
         /// </summary>
         ///
         private static bool IsValidUserName(string input,
@@ -363,8 +363,8 @@ namespace System.Management.Automation
                 (domain == null) ||
                 (user.Length == 0))
             {
-                //UserName is the public property of Credential object. Use this as 
-                //parameter name in error 
+                //UserName is the public property of Credential object. Use this as
+                //parameter name in error
                 //See bug NTRAID#Windows OS Bugs-1106386-2005/03/25-hiteshr
                 throw PSTraceSource.NewArgumentException("UserName", Credential.InvalidUserNameFormat);
             }
@@ -377,7 +377,7 @@ namespace System.Management.Automation
         /// components. Supported formats are:
         /// -- domain\user
         /// -- user@domain
-        /// 
+        ///
         /// With any other format, the entire input is treated as user
         /// name and domain is set to "".
         ///
@@ -406,7 +406,7 @@ namespace System.Management.Automation
             // This was breaking apps (i.e.: Exchange), so we need to make
             // Username = foo@bar.com if the domain has a dot in it (since
             // domains can't have dots).
-            // 
+            //
             // HOWEVER, there was a workaround for this bug in v1 and v2, where the
             // cred could be entered as "foo@bar.com@bar.com" - making:
             // Username = foo@bar.com, Domain = bar.com

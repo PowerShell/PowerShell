@@ -258,9 +258,9 @@ namespace System.Management.Automation.Language
             //     * Search scope table (includes 'using type x = ...' aliases)
             //     * Built in type accelerators (implicit 'using type x = ...' aliases that are effectively in global scope
             //     * typeResolutionState.assemblies, which contains:
-            //          - Assemblies with PS types, added by 'using module' 
+            //          - Assemblies with PS types, added by 'using module'
             //          - Assemblies added by 'using assembly'.
-            //          For this case, we REPORT ambiguity, since user explicitly specifies the set of assemblies.                        
+            //          For this case, we REPORT ambiguity, since user explicitly specifies the set of assemblies.
             //     * All other loaded assemblies (excluding dynamic assemblies created for PS defined types).
             //          IGNORE ambiguity. It mimics PS v4. There are two reasons:
             //          1) If we report ambiguity, we need to fix our caching logic accordingly.
@@ -269,19 +269,19 @@ namespace System.Management.Automation.Language
             //                  Add-Type 'public class Q { }' # get error about the same name
             //                  [Q] # we would get error about ambiguous type, because we added assembly with duplicated type
             //                      # before we can report TYPE_ALREADY_EXISTS error.
-            //      
+            //
             //                  Add-Type 'public class Q2 {}' # ok
             //                  [Q2] # caching Q2 type
             //                  Add-Type 'public class Q2 { }' # get error about the same name
             //                  [Q2] # we don't get an error about ambiguous type, because it's cached already
-            //          2) NuGet (VS Package Management console) uses MEF extensibility model. 
-            //             Different assemblies includes same interface (i.e. NuGet.VisualStudio.IVsPackageInstallerServices), 
+            //          2) NuGet (VS Package Management console) uses MEF extensibility model.
+            //             Different assemblies includes same interface (i.e. NuGet.VisualStudio.IVsPackageInstallerServices),
             //             where they include only methods that they are interested in the interface declaration (result interfaces are different!).
             //             Then, at runtime VS provides an instance. Everything work as far as instance has compatible API.
             //             So [NuGet.VisualStudio.IVsPackageInstallerServices] can be resolved to several different assemblies and it's ok.
             //     * User defined type accelerators (rare - interface was never public)
             //
-            // If nothing is found, we search again, this time applying any 'using namespace ...' declarations including the implicit 'using namespace System'. 
+            // If nothing is found, we search again, this time applying any 'using namespace ...' declarations including the implicit 'using namespace System'.
             // We must search all using aliases and REPORT an error if there is an ambiguity.
 
             var assemList = assemblies ?? ClrFacade.GetAssemblies(typeResolutionState, typeName);
@@ -325,7 +325,7 @@ namespace System.Management.Automation.Language
 #if CORECLR
                     if (assemblies == null)
                     {
-                        // We called 'ClrFacade.GetAssemblies' to get assemblies. That means the assemblies to search from 
+                        // We called 'ClrFacade.GetAssemblies' to get assemblies. That means the assemblies to search from
                         // are not pre-defined, and thus we have to refetch assembly again based on the new type name.
                         assemList = ClrFacade.GetAssemblies(typeResolutionState, newTypeName);
                     }
@@ -434,14 +434,14 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// The idea behind this class is: I should be able to re-use expensive 
+    /// The idea behind this class is: I should be able to re-use expensive
     /// type resolution operation result in the same context.
     /// Hence, this class is a key for TypeCache dictionary.
-    /// 
-    /// Every SessionStateScope has TypeResolutionState. 
+    ///
+    /// Every SessionStateScope has TypeResolutionState.
     /// typesDefined contains PowerShell types names defined in the current scope and all scopes above.
     /// Same for namespaces.
-    /// 
+    ///
     /// If TypeResolutionState doesn't add anything new compare to it's parent, we represent it as null.
     /// So, when we do lookup, we need to find first non-null TypeResolutionState.
     /// </summary>

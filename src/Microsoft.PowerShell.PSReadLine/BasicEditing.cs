@@ -549,7 +549,7 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// A new empty line is created below the current line regardless of where the cursor
-        /// is on the current line.  The cursor moves to the beginning of the new line. 
+        /// is on the current line.  The cursor moves to the beginning of the new line.
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static void InsertLineBelow(ConsoleKeyInfo? key = null, object arg = null)

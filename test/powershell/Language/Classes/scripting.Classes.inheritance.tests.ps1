@@ -10,7 +10,7 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
         class C1 {}
         class C2a : C1 {}
         class C2b:C1 {}
-        
+
         [C2a]::new().GetType().BaseType.Name | Should Be "C1"
         [C2b].BaseType.Name | Should Be "C1"
     }
@@ -30,12 +30,12 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
     It 'inheritance syntax allows newlines in various places' {
         class C {}
         class C2a:C,system.IDisposable{ [void] Dispose() { }}
-        class C2b 
-            : 
+        class C2b
+            :
             C
-            , 
-            system.IDisposable 
-            { 
+            ,
+            system.IDisposable
+            {
                 [void] Dispose() {}
                 C2b()
                 :   # there are extra spaces here
@@ -56,7 +56,7 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
     }
 
     It 'can implement .NET interface' {
-        class MyComparable : system.IComparable 
+        class MyComparable : system.IComparable
         {
             [int] CompareTo([object] $obj)
             {
@@ -74,7 +74,7 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
             [A]::b = "bla"
         } catch {
             $_.Exception.GetType().Name | Should Be SetValueInvocationException
-            return 
+            return
         }
         # Fail, if come heres
         '' | Should Be "Exception expected"
@@ -94,7 +94,7 @@ Describe 'Classes inheritance syntax errors' -Tags "CI" {
     ShouldBeParseError "class A {}; class B : A, NonExistingInterface {}" TypeNotFound 25
 
     # base should be accepted only on instance ctors
-    ShouldBeParseError 'class A { A($a){} } ; class B : A { foo() : base(1) {} }' MissingFunctionBody 41 
+    ShouldBeParseError 'class A { A($a){} } ; class B : A { foo() : base(1) {} }' MissingFunctionBody 41
     ShouldBeParseError 'class A { static A() {} }; class B { static B() : base() {} }' MissingFunctionBody 47
 
     # Incomplete input
@@ -107,7 +107,7 @@ Describe 'Classes inheritance syntax errors' -Tags "CI" {
     # Non-existing Interface
     ShouldBeParseError "class bar {}; class baz : bar, Non.Existing.Interface {}" TypeNotFound 31 -SkipAndCheckRuntimeError
 
-    # .NET abstract method not implemented 
+    # .NET abstract method not implemented
     ShouldBeParseError "class MyType : Type {}" TypeCreationError 0 -SkipAndCheckRuntimeError
 
     # inheritance doesn't allow non linear order
@@ -123,7 +123,7 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
     Context 'Method calls' {
 
         It 'can call instance method on base class' {
-            class bar 
+            class bar
             {
                 [int]foo() {return 100500}
             }
@@ -132,7 +132,7 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'can call static method on base class' {
-            class bar 
+            class bar
             {
                 static [int]foo() {return 100500}
             }
@@ -141,12 +141,12 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'can access static and instance base class property' {
-            class A 
-            { 
-                static [int]$si 
-                [int]$i 
+            class A
+            {
+                static [int]$si
+                [int]$i
             }
-            class B : A 
+            class B : A
             {
                 [void]foo()
                 {
@@ -171,11 +171,11 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'overrides instance method' {
-            class bar 
+            class bar
             {
                 [int]foo() {return 100500}
             }
-            class baz : bar 
+            class baz : bar
             {
                 [int]foo() {return 200600}
             }
@@ -183,51 +183,51 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'allows base class method call and doesn''t fall into recursion' {
-            class bar 
+            class bar
             {
                 [int]foo() {return 1001}
             }
-            class baz : bar 
+            class baz : bar
             {
                 [int] $fooCallCounter
-                [int]foo() 
+                [int]foo()
                 {
-                    if ($this.fooCallCounter++ -gt 0) 
+                    if ($this.fooCallCounter++ -gt 0)
                     {
                         throw "Recursion happens"
                     }
-                    return 3 * ([bar]$this).foo() 
+                    return 3 * ([bar]$this).foo()
                 }
             }
-            
+
             $res = [baz]::new().foo()
             $res | Should Be 3003
         }
 
         It 'case insensitive for base class method calls' {
-            class bar 
+            class bar
             {
                 [int]foo() {return 1001}
             }
-            class baz : bar 
+            class baz : bar
             {
                 [int] $fooCallCounter
-                [int]fOo() 
+                [int]fOo()
                 {
-                    if ($this.fooCallCounter++ -gt 0) 
+                    if ($this.fooCallCounter++ -gt 0)
                     {
                         throw "Recursion happens"
                     }
                     return ([bAr]$this).fOo() + ([bAr]$this).FOO()
                 }
             }
-            
+
             $res = [baz]::new().foo()
             $res | Should Be 2002
         }
 
         It 'allows any call from the inheritance hierarchy' {
-            class A 
+            class A
             {
                 [string]GetName() {return "A"}
             }
@@ -239,7 +239,7 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
             {
                 [string]GetName() {return "C"}
             }
-            class D : C 
+            class D : C
             {
                 [string]GetName() {return "D"}
             }
@@ -253,7 +253,7 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'can call base method with params' {
-            class A 
+            class A
             {
                 [string]ToStr([int]$a) {return "A" + $a}
             }
@@ -267,7 +267,7 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'can call base method with many params' {
-            class A 
+            class A
             {
                 [string]ToStr([int]$a1, [int]$a2, [int]$a3, [int]$a4, [int]$a5, [int]$a6, [int]$a7, [int]$a8, [int]$a9, [int]$a10, [int]$a11, [int]$a12, [int]$a13, [int]$a14)
                 {
@@ -289,14 +289,14 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
                 {
                 }
             }
-            $b = [B]::new()     
+            $b = [B]::new()
 
             # we don't really care about methods results, we only checks that calls doesn't throw
-            
+
             # 14 args is a limit
             $b.ToStr(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14) | Should Be 'B'
             ([A]$b).ToStr(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14) | Should Be 'A'
-            
+
             # 14 args is a limit
             $b.Noop(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
             ([A]$b).Noop(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
@@ -304,7 +304,7 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
 
         It 'overrides void method call' {
             $script:voidOverrideVar = $null
-            class A 
+            class A
             {
                 [void]SetStr([int]$a) {$script:voidOverrideVar = "A" + $a}
                 [void]SetStr() {$script:voidOverrideVar = "A"}
@@ -326,10 +326,10 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
         }
 
         It 'hides final .NET method' {
-            class MyIntList : system.collections.generic.list[int] 
+            class MyIntList : system.collections.generic.list[int]
             {
                 # Add is final, can we hide it?
-                [void] Add([int]$arg) 
+                [void] Add([int]$arg)
                 {
                     ([system.collections.generic.list[int]]$this).Add($arg * 2)
                 }
@@ -343,7 +343,7 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
     }
 
     Context 'base static method call' {
-        class A 
+        class A
         {
             static [string]ToStr([int]$a) {return "A" + $a}
         }
@@ -354,7 +354,7 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
 
         $b = [B]::new()
 
-        # MSFT:1911652 
+        # MSFT:1911652
         # MSFT:2973835
         It 'doesn''t affect static method call on type' -Skip {
             ([A]$b)::ToStr(101) | Should Be "A101"
@@ -368,7 +368,7 @@ Describe 'Classes methods with inheritance' -Tags "CI" {
 
 
 Describe 'Classes inheritance ctors syntax errors' -Tags "CI" {
-    
+
     #DotNet.Interface.NotImplemented
     ShouldBeParseError "class MyComparable : system.IComparable {}" TypeCreationError 0 -SkipAndCheckRuntimeError
 
@@ -383,18 +383,18 @@ Describe 'Classes inheritance ctors syntax errors' -Tags "CI" {
 }
 
 Describe 'Classes inheritance ctors' -Tags "CI" {
-    
+
     It 'can call base ctor' {
-        class A { 
-            [int]$a 
-            A([int]$a) 
+        class A {
+            [int]$a
+            A([int]$a)
             {
                 $this.a = $a
             }
         }
 
-        class B : A 
-        { 
+        class B : A
+        {
             B([int]$a) : base($a * 2) {}
         }
 
@@ -404,16 +404,16 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
 
     # TODO: can we detect it in the parse time?
     It 'cannot call base ctor with the wrong number of parameters' {
-        class A { 
-            [int]$a 
-            A([int]$a) 
+        class A {
+            [int]$a
+            A([int]$a)
             {
                 $this.a = $a
             }
         }
 
-        class B : A 
-        { 
+        class B : A
+        {
             B([int]$a) : base($a * 2, 100) {}
         }
 
@@ -421,28 +421,28 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
             [B]::new(101)
         } catch {
             $_.Exception.GetType().Name | Should Be MethodException
-            return 
+            return
         }
         # Fail
         '' | Should Be "Exception expected"
     }
 
     It 'call default base ctor implicitly' {
-        class A { 
-            [int]$a 
-            A() 
+        class A {
+            [int]$a
+            A()
             {
                 $this.a = 1007
             }
         }
 
-        class B : A 
-        { 
+        class B : A
+        {
             B() {}
         }
 
-        class C : A 
-        { 
+        class C : A
+        {
         }
 
         $b = [B]::new()
@@ -458,23 +458,23 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
             $o.{.ctor}()
         } catch {
             $_.FullyQualifiedErrorId | Should Be MethodNotFound
-            return 
+            return
         }
         # Fail
         '' | Should Be "Exception expected"
     }
-    
+
     It 'allow use conversion [string -> int] in base ctor call' {
-        class A { 
-            [int]$a 
-            A([int]$a) 
+        class A {
+            [int]$a
+            A([int]$a)
             {
                 $this.a = $a
             }
         }
 
-        class B : A 
-        { 
+        class B : A
+        {
             B() : base("103") {}
         }
 
@@ -483,21 +483,21 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
     }
 
     It 'resolves ctor call based on argument type' {
-        class A { 
+        class A {
             [int]$i
             [string]$s
-            A([int]$a) 
+            A([int]$a)
             {
                 $this.i = $a
             }
-            A([string]$a) 
+            A([string]$a)
             {
                 $this.s = $a
             }
         }
 
-        class B : A 
-        { 
+        class B : A
+        {
             B($a) : base($a) {}
         }
 
@@ -521,7 +521,7 @@ class Derived : Base
     [int] foo() { return 2 * ([Base]$this).foo() }
 }
 
-[Derived]::new().foo() 
+[Derived]::new().foo()
 '@)
         $sb.Invoke() | Should Be 200
         $sb.Invoke() | Should Be 200

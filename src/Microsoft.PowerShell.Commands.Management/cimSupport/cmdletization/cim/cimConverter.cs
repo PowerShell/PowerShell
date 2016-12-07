@@ -614,7 +614,7 @@ namespace Microsoft.PowerShell.Cim
             Dbg.Assert(arrayType != null, "Caller should verify arrayType != null");
             Dbg.Assert(arrayType.IsArray, "Caller should verify arrayType.IsArray");
 
-            // MOF syntax from Appendix A of DSP0004 doesn't allow expressing 
+            // MOF syntax from Appendix A of DSP0004 doesn't allow expressing
             // of 1) nested arrays and 2) multi-dimensional arrays
             // (see production for "array" and how this production is used in
             //  other productions like "propertyDeclaration" or "parameter")

@@ -12,7 +12,7 @@ using Microsoft.PowerShell.LocalAccounts;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The New-LocalGroup Cmdlet can be used to create a new local security group 
+    /// The New-LocalGroup Cmdlet can be used to create a new local security group
     /// in the Windows Security Accounts Manager.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "LocalGroup",
@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
             set { this.description = value; }
         }
         private string description;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "Name".
         /// The group name for the local security group.
@@ -57,8 +57,8 @@ namespace Microsoft.PowerShell.Commands
         private string name;
         #endregion Parameter Properties
 
-      
-      
+
+
         #region Cmdlet Overrides
         /// <summary>
         /// BeginProcessing method.
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        
+
         /// <summary>
         /// EndProcessing method.
         /// </summary>

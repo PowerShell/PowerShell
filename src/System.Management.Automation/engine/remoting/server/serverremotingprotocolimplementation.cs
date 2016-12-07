@@ -28,7 +28,7 @@ namespace System.Management.Automation.Remoting
         #region Constructors
 
         /// <summary>
-        /// Constructs a ServerRemoteSession handler using the supplied transport manager. The 
+        /// Constructs a ServerRemoteSession handler using the supplied transport manager. The
         /// supplied transport manager will be used to send and receive data from the remote
         /// client.
         /// </summary>
@@ -60,7 +60,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This method sends the server side capability negotiation packet to the client. 
+        /// This method sends the server side capability negotiation packet to the client.
         /// </summary>
         internal override void SendNegotiationAsync()
         {
@@ -115,7 +115,7 @@ namespace System.Management.Automation.Remoting
         /// Raise the public key received event
         /// </summary>
         /// <param name="receivedData">received data</param>
-        /// <remarks>This method is a hook to be called 
+        /// <remarks>This method is a hook to be called
         /// from the transport manager</remarks>
         internal override void RaiseKeyExchangeMessageReceived(RemoteDataObject<PSObject> receivedData)
         {
@@ -166,7 +166,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="dataArg">
         /// The received client data.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter is null.
         /// </exception>

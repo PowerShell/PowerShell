@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Activities
 
         /// <summary>
         /// Declares that this activity supports its own remoting.
-        /// </summary>        
+        /// </summary>
         protected override bool SupportsCustomRemoting { get { return true; } }
 
         private ScriptBlock _compiledScriptForInProc;
@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Activities
         private string _scriptWithoutUsing;
         private HashSet<string> _usingVariables;
         // Remember the names of the variables/arguments that statically exist in the
-        // workflow context and potentially can be referenced by a using variable in 
+        // workflow context and potentially can be referenced by a using variable in
         // an InlineScript. Those static variables/arguments include:
         //  1. the default arguments of InlineScript and its parents
         //  2. the workflow runtime variables
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Activities
                                          //   Input, PSSessionOption, PSCulture, PSUICulture, PSVersionTable
                                          //
                                          // per discussion with Hemant and Rahim, we want to:
-                                         //   1. treat $using:input, $using:PSSessionOption, $using:PSCulture, and $using:PSUICulture as workflow 
+                                         //   1. treat $using:input, $using:PSSessionOption, $using:PSCulture, and $using:PSUICulture as workflow
                                          //      variable; add the special prefix when replacing 'using'.
                                          //   2. treat PSVersionTable as powershell variable, so never add special prefix to it.
                                          "PSVersionTable"
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Activities
             }
         }
 
-        // Use the same logic as the PSActivity.GetActivityArguments to retrieve the names of all default 
+        // Use the same logic as the PSActivity.GetActivityArguments to retrieve the names of all default
         // arguments from the InlineScript and its parents
         internal static IEnumerable<string> GetInlineScriptActivityArguments()
         {
@@ -240,7 +240,7 @@ namespace Microsoft.PowerShell.Activities
                     }
 
                     activityVariables[property.Name] = tempValue;
-                }               
+                }
             }
 
             // Then, set anything we received from parameters
@@ -627,7 +627,7 @@ namespace Microsoft.PowerShell.Activities
                 inlineScriptContext.Variables[entry.Key] = entry.Value;
             }
 
-            // Set the PowerShell session variables...            
+            // Set the PowerShell session variables...
             foreach (KeyValuePair<string, object> entry in activityVariables)
             {
                 var value = entry.Value;

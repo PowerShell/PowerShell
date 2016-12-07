@@ -2,7 +2,7 @@
 /*============================================================
 **
 **
-** Purpose: 
+** Purpose:
 ** This public class is an EventLog implementation of EventRecord.  An
 ** instance of this is obtained from an EventLogReader.
 **
@@ -18,7 +18,7 @@ namespace System.Diagnostics.Eventing.Reader
         private const int SYSTEM_PROPERTY_COUNT = 18;
 
         //
-        // access to the data member reference is safe, while 
+        // access to the data member reference is safe, while
         // invoking methods on it is marked SecurityCritical as appropriate.
         //
         [System.Security.SecuritySafeCritical]

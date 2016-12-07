@@ -1,8 +1,8 @@
 ﻿Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
-    $customPSObject = [pscustomobject]@{ "prop1" = "val1"; "prop2" = "val2" } 
+    $customPSObject = [pscustomobject]@{ "prop1" = "val1"; "prop2" = "val2" }
     $newLine = [System.Environment]::NewLine
     It "Test convertto-xml with a depth parameter" {
-        $returnObject = $customPSObject | ConvertTo-Xml -Depth 1 
+        $returnObject = $customPSObject | ConvertTo-Xml -Depth 1
         $returnObject -is [System.Xml.XmlDocument] | Should Be $true
         #$xml = [System.Xml.XmlDocument]$returnObject
         $expectedValue = '<?xml version="1.0" encoding="utf-8"?><Objects><Object Type="System.Management.Automation.PSCustomObject">' + '<Property Name="prop1" Type="System.String">val1</Property><Property Name="prop2" Type="System.String">val2</Property></Object></Objects>'
@@ -23,7 +23,7 @@
 "@
         $returnObject -is [System.String] | Should Be $true
         $returnObject | Should Be $expectedValue
-        #$returnObject.Trim($newLine) | Should Be $expectedValue.Trim($newLine) 
+        #$returnObject.Trim($newLine) | Should Be $expectedValue.Trim($newLine)
     }
 
     It "Test convertto-xml as Stream" {

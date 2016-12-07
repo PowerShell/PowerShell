@@ -23,7 +23,7 @@ namespace Microsoft.Management.UI.Internal
     using System.Collections.ObjectModel;
 
     /// <summary>
-    /// Extends the basic GrdView class to introduce the Visible concept to the 
+    /// Extends the basic GrdView class to introduce the Visible concept to the
     /// Columns collection.
     /// </summary>
     /// <!--We create our own version of Columns, that:
@@ -108,11 +108,11 @@ namespace Microsoft.Management.UI.Internal
         /// with reflection information on the first element of the ItemsSource.
         /// </summary>
         /// <param name="newValue">
-        /// The new ItemsSource. 
+        /// The new ItemsSource.
         /// This is used just to fetch .the first collection element.
         /// </param>
         internal void PopulateColumns(System.Collections.IEnumerable newValue)
-        {                      
+        {
             if (newValue == null)
             {
                 return; // No elements, so we can't populate
@@ -129,7 +129,7 @@ namespace Microsoft.Management.UI.Internal
             {
                 return;
             }
-            
+
             Debug.Assert(this.AvailableColumns.Count == 0, "AvailableColumns should be empty at this point");
 
             PropertyDescriptorCollection properties = TypeDescriptor.GetProperties(first);

@@ -11,19 +11,19 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This class implements a Finite State Machine (FSM) to control the remote connection on the client side.
     /// There is a similar but not identical FSM on the server side for this connection.
-    /// 
-    /// The FSM's states and events are defined to be the same for both the client FSM and the server FSM. 
+    ///
+    /// The FSM's states and events are defined to be the same for both the client FSM and the server FSM.
     /// This design allows the client and server FSM's to
     /// be as similar as possible, so that the complexity of maintaining them is minimized.
-    /// 
+    ///
     /// This FSM only controls the remote connection state. States related to runspace and pipeline are managed by runspace
     /// pipeline themselves.
-    /// 
+    ///
     /// This FSM defines an event handling matrix, which is filled by the event handlers.
-    /// The state transitions can only be performed by these event handlers, which are private 
+    /// The state transitions can only be performed by these event handlers, which are private
     /// to this class. The event handling is done by a single thread, which makes this
     /// implementation solid and thread safe.
-    /// 
+    ///
     /// This implementation of the FSM does not allow the remote session to be reused for a connection
     /// after it is been closed. This design decision is made to simplify the implementation.
     /// However, the design can be easily modified to allow the reuse of the remote session
@@ -80,7 +80,7 @@ namespace System.Management.Automation.Remoting
         private bool _pendingDisconnect = false;
 
         /// <summary>
-        /// processes events in the queue. If there are no 
+        /// processes events in the queue. If there are no
         /// more events to process, then sets eventsInProcess
         /// variable to false. This will ensure that another
         /// thread which raises an event can then take control
@@ -141,7 +141,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Raises the StateChanged events which are queued
         /// All StateChanged events will be raised once the
-        /// processing of the State Machine events are 
+        /// processing of the State Machine events are
         /// complete
         /// </summary>
         private void RaiseStateMachineEvents()
@@ -165,7 +165,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Handler to be used in cases, where setting the state is the
         /// only task being performed. This method also asserts
-        /// if the specified event is valid for the current state of 
+        /// if the specified event is valid for the current state of
         /// the state machine
         /// </summary>
         /// <param name="sender">sender of this event</param>
@@ -337,7 +337,7 @@ namespace System.Management.Automation.Remoting
         } // SetStateHandler
 
         /// <summary>
-        /// Handler to be used in cases, where raising an event to 
+        /// Handler to be used in cases, where raising an event to
         /// the state needs to be performed. This method also
         /// asserts if the specified event is valid for
         /// the current state of the state machine
@@ -442,7 +442,7 @@ namespace System.Management.Automation.Remoting
             _stateMachineHandle[(int)RemoteSessionState.EstablishedAndKeyRequested, (int)RemoteSessionEvent.KeySendFailed] += SetStateToClosedHandler;
 
 
-            //TODO: All these are potential unexpected state transitions.. should have a way to track these calls.. 
+            //TODO: All these are potential unexpected state transitions.. should have a way to track these calls..
             // should atleast put a dbg assert in this handler
             for (int i = 0; i < _stateMachineHandle.GetLength(0); i++)
             {
@@ -498,7 +498,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="clearQueuedEvents">
         /// optional bool indicating whether to clear currently queued events
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter is null.
         /// </exception>
@@ -527,7 +527,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This is the private version of raising a FSM event. 
+        /// This is the private version of raising a FSM event.
         /// It can only be called by the dedicated thread that processes the event queue.
         /// It calls the event handler
         /// in the right position of the event handling matrix.
@@ -535,7 +535,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// The parameter contains the actual FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter is null.
         /// </exception>
@@ -585,7 +585,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="PSArgumentNullException">
         /// If the parameter <paramref name="arg"/> is null.
         /// </exception>
@@ -620,7 +620,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="PSArgumentNullException">
         /// If the parameter <paramref name="arg"/> is null.
         /// </exception>
@@ -633,7 +633,7 @@ namespace System.Management.Automation.Remoting
 
                 if (State == RemoteSessionState.Idle)
                 {
-                    //We need to send negotiation and connect algorithm related info 
+                    //We need to send negotiation and connect algorithm related info
                     //Change state to let other DSHandlers add appropriate messages to be piggybacked on transport's Create payload
                     RemoteSessionStateMachineEventArgs sendingArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationSendingOnConnect);
                     RaiseEvent(sendingArg);
@@ -642,7 +642,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This is the handler for NegotiationSending event. 
+        /// This is the handler for NegotiationSending event.
         /// It sets the new state to be NegotiationSending and
         /// calls data structure handler to send the negotiation packet.
         /// </summary>
@@ -650,7 +650,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="arg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="arg"/> is null.
         /// </exception>
@@ -696,13 +696,13 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This is the handler for Close event. 
+        /// This is the handler for Close event.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="arg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="arg"/> is null.
         /// </exception>
@@ -774,7 +774,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Sets the state of the state machine. Since only 
+        /// Sets the state of the state machine. Since only
         /// one thread can be manipulating the state at a time
         /// the state is not synchronized
         /// </summary>

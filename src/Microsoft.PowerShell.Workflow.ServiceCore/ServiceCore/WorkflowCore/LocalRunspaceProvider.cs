@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Workflow
         internal LocalRunspaceAsyncResult(object state, AsyncCallback callback, Guid ownerId)
             :base(state, callback, ownerId)
         {
-            
+
         }
 
         internal Runspace Runspace { get; set; }
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="connectionInfo"></param>
         /// <param name="retryCount"></param>
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Workflow
                     (_maxRunspaces == MaxRunspacesPossible || _runspaceCache.Cache.Count < _maxRunspaces))
                 {
                     runspace = CreateLocalActivityRunspace(languageMode);
-                    
+
                     runspace.Open();
                     _tracer.WriteMessage("New local runspace created");
 
@@ -251,7 +251,7 @@ namespace Microsoft.PowerShell.Workflow
 
             return asyncResult;
         }
-        
+
         /// <summary>
         /// End for obtaining a runspace for the specified connection info
         /// </summary>
@@ -278,11 +278,11 @@ namespace Microsoft.PowerShell.Workflow
 
             Debug.Assert(runspace.RunspaceStateInfo.State == RunspaceState.Opened, "Only opened runspace should be returned");
 
-            return runspace;  
+            return runspace;
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="runspace"></param>
         public override void ReleaseRunspace(Runspace runspace)
@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)

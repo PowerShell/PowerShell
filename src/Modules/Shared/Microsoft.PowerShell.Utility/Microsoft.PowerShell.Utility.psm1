@@ -10,7 +10,7 @@ function Get-FileHash
         [Alias("PSPath")]
         [System.String[]]
         $LiteralPath,
-        
+
         [Parameter(Mandatory, ParameterSetName="Stream")]
         [System.IO.Stream]
         $InputStream,
@@ -19,12 +19,12 @@ function Get-FileHash
         [System.String]
         $Algorithm="SHA256"
     )
-    
+
     begin
     {
         # Construct the strongly-typed crypto object
-        
-        # First see if it has a FIPS algorithm  
+
+        # First see if it has a FIPS algorithm
         $hasherType = "System.Security.Cryptography.${Algorithm}CryptoServiceProvider" -as [Type]
         if ($hasherType)
         {
@@ -91,7 +91,7 @@ function Get-FileHash
             $retVal
         }
     }
-    
+
     process
     {
         if($PSCmdlet.ParameterSetName -eq "Stream")
@@ -135,7 +135,7 @@ function Get-FileHash
                     {
                         $stream.Dispose()
                     }
-                }                            
+                }
             }
         }
     }
@@ -147,11 +147,11 @@ function Get-FileHash
 function Format-Hex
 {
     [CmdletBinding(
-        DefaultParameterSetName="Path", 
+        DefaultParameterSetName="Path",
         HelpUri="https://go.microsoft.com/fwlink/?LinkId=526919")]
     [Alias("fhx")]
     [OutputType("Microsoft.PowerShell.Commands.ByteCollection")]
-    param 
+    param
     (
         [Parameter (Mandatory=$true, Position=0, ParameterSetName="Path")]
         [ValidateNotNullOrEmpty()]
@@ -177,20 +177,20 @@ function Format-Hex
     {
         $bufferSize = 16
         $inputStreamArray = [System.Collections.ArrayList]::New()
-        <############################################################################################ 
-        # The ConvertToHexadecimalHelper is a helper method used to fetch unicode bytes from the 
+        <############################################################################################
+        # The ConvertToHexadecimalHelper is a helper method used to fetch unicode bytes from the
         # input data and display the hexadecimal representation of the of the input data in bytes.
         ############################################################################################>
         function ConvertToHexadecimalHelper
         {
-            param 
+            param
             (
                 [Byte[]] $inputBytes,
                 [string] $path,
                 [Uint32] $offset
             )
 
-            # This section is used to display the hexadecimal 
+            # This section is used to display the hexadecimal
             # representation of the of the input data in bytes.
             if($inputBytes -ne $null)
             {
@@ -199,13 +199,13 @@ function Format-Hex
             }
         }
 
-        <############################################################################################ 
-        # The ProcessFileContent is a helper method used to fetch file contents in blocks and  
+        <############################################################################################
+        # The ProcessFileContent is a helper method used to fetch file contents in blocks and
         # process it to support displaying hexadecimal formating of the fetched content.
         ############################################################################################>
         function ProcessFileContent
         {
-            param 
+            param
             (
                 [string] $filePath,
                 [boolean] $isLiteralPath
@@ -220,13 +220,13 @@ function Format-Hex
                 $resolvedPaths = Resolve-Path -Path $filePath
             }
 
-            # If Path resolution has failed then a corresponding non-terminating error is 
+            # If Path resolution has failed then a corresponding non-terminating error is
             # written to the pipeline. We continue processing any remaining files.
             if($resolvedPaths -eq $null)
             {
                 return
             }
-                
+
             if($resolvedPaths.Count -gt 1)
             {
                 # write a non-terminating error message indicating that path specified is resolving to multiple file system paths.
@@ -249,10 +249,10 @@ function Format-Hex
                     }
                     catch
                     {
-                        # Failed to access the file. Write a non terminating error to the pipeline 
+                        # Failed to access the file. Write a non terminating error to the pipeline
                         # and move on with the remaining files.
                         $exception = $_.Exception
-                        if($null -ne $_.Exception -and 
+                        if($null -ne $_.Exception -and
                         $null -ne $_.Exception.InnerException)
                         {
                             $exception = $_.Exception.InnerException
@@ -264,16 +264,16 @@ function Format-Hex
 
                     if($null -ne $currentFileStream)
                     {
-                        $srcStream = [System.IO.BinaryReader]::new($currentFileStream) 
+                        $srcStream = [System.IO.BinaryReader]::new($currentFileStream)
                         $displayHeader = $true
                         $offset = 0
-                        $blockCounter = 0                   
+                        $blockCounter = 0
                         while($numberOfBytesRead = $srcStream.Read($buffer, 0, $bufferSize))
                         {
                             # send only the bytes that have been read
                             # if we send the whole buffer, we'll have extraneous bytes
                             # at the end of an incomplete group of 16 bytes
-                            if ( $numberOfBytesRead -eq $bufferSize ) 
+                            if ( $numberOfBytesRead -eq $bufferSize )
                             {
                                 # under some circumstances if we don't copy the buffer
                                 # and the results are stored to a variable, the results are not
@@ -292,7 +292,7 @@ function Format-Hex
 
                             # Updating the offset value.
                             $offset = $blockCounter*0x10
-                        }                    
+                        }
                     }
                 }
                 finally
@@ -310,7 +310,7 @@ function Format-Hex
         }
     }
 
-    process 
+    process
     {
         switch($PSCmdlet.ParameterSetName)
         {
@@ -318,12 +318,12 @@ function Format-Hex
             {
                 ProcessFileContent $Path $false
             }
-            "LiteralPath" 
-            { 
+            "LiteralPath"
+            {
                 ProcessFileContent $LiteralPath $true
             }
-            "ByInputObject" 
-            { 
+            "ByInputObject"
+            {
                 # If it's an actual byte array, then we directly use it for hexadecimal formatting.
                 if($InputObject -is [Byte[]])
                 {
@@ -368,7 +368,7 @@ function Format-Hex
                 elseif($InputObject -is [int])
                 {
                     # If we get what appears as ints, it may not be what the user really wants.
-                    # for example, if the user types a small set of numbers just to get their 
+                    # for example, if the user types a small set of numbers just to get their
                     # character representations, as follows:
                     #
                     # 170..180 | format-hex
@@ -382,11 +382,11 @@ function Format-Hex
                     # However, some might like to see the results with the raw data,
                     # -Raw exists to provide that behavior:
                     # PS# 170..180 | format-hex -Raw
-                    # 
+                    #
                     #            Path:
-                    # 
+                    #
                     #            00 01 02 03 04 05 06 07 08 09 0A 0B 0C 0D 0E 0F
-                    # 
+                    #
                     # 00000000   AA 00 00 00 AB 00 00 00 AC 00 00 00 AD 00 00 00  ª...«...¬...­...
                     # 00000010   AE 00 00 00 AF 00 00 00 B0 00 00 00 B1 00 00 00  ®...¯...°...±...
                     # 00000020   B2 00 00 00 B3 00 00 00 B4 00 00 00              ²...³...´...
@@ -404,7 +404,7 @@ function Format-Hex
                         $possibleByte = $InputObject -as [byte]
                         # first determine whether we can represent this as a int16
                         $possibleInt16 = $InputObject -as [int16]
-                        if ( $possibleByte -ne $null ) 
+                        if ( $possibleByte -ne $null )
                         {
                             $null = $inputStreamArray.Add($possibleByte)
                         }
@@ -434,7 +434,7 @@ function Format-Hex
                 {
                     $rowCount = [math]::Floor($inputStreamArray.Count/$bufferSize)
                     $arrayLength = $bufferSize * $rowCount
-                    for($i = 0; $i -lt $rowCount; $i++) 
+                    for($i = 0; $i -lt $rowCount; $i++)
                     {
                         $rowOffset = $i * $bufferSize
                         ConvertToHexadecimalHelper -inputBytes $inputStreamArray.GetRange($rowOffset, $bufferSize) -path ' ' -offset $offset
@@ -446,7 +446,7 @@ function Format-Hex
                     # $i = [int16]::MaxValue + 3
                     # $i64=[int64]::MaxValue -5
                     # .{ $i;$i;$i;$i64 } | format-hex
-                    # which create an arraylist 20 bytes 
+                    # which create an arraylist 20 bytes
                     # we need to remove only the bytes from the array which we emitted
                     $inputStreamArray.RemoveRange(0,$arrayLength)
                 }
@@ -461,7 +461,7 @@ function Format-Hex
             ConvertToHexadecimalHelper $inputStreamArray $null -path ' ' -offset $offset
         }
     }
-   
+
 }
 
 ## Imports a PowerShell Data File - a PowerShell hashtable defined in
@@ -473,27 +473,27 @@ function Import-PowerShellDataFile
     param(
         [Parameter(ParameterSetName = "ByPath", Position = 0)]
         [String[]] $Path,
-        
+
         [Parameter(ParameterSetName = "ByLiteralPath", ValueFromPipelineByPropertyName = $true)]
         [Alias("PSPath")]
         [String[]] $LiteralPath
     )
-    
+
     begin
     {
         function ThrowInvalidDataFile
         {
             param($resolvedPath, $extraError)
-            
+
             $errorId = "CouldNotParseAsPowerShellDataFile$extraError"
             $errorCategory = [System.Management.Automation.ErrorCategory]::InvalidData
             $errorMessage = [Microsoft.PowerShell.Commands.UtilityResources]::CouldNotParseAsPowerShellDataFile -f $resolvedPath
             $exception = [System.InvalidOperationException]::New($errorMessage)
             $errorRecord = [System.Management.Automation.ErrorRecord]::New($exception, $errorId, $errorCategory, $null)
-            $PSCmdlet.WriteError($errorRecord)   
+            $PSCmdlet.WriteError($errorRecord)
         }
     }
- 
+
     process
     {
         foreach($resolvedPath in (Resolve-Path @PSBoundParameters))
@@ -529,7 +529,7 @@ function ConvertFrom-SddlString
         ## The string representing the security descriptor in SDDL syntax
         [Parameter(Mandatory = $true, Position = 0, ValueFromPipeline = $true)]
         [String] $Sddl,
-        
+
         ## The type of rights that this SDDL string represents, if any.
         [Parameter()]
         [ValidateSet(
@@ -560,7 +560,7 @@ function ConvertFrom-SddlString
             if($Sid)
             {
                 $securityIdentifier = [System.Security.Principal.SecurityIdentifier] $Sid
-        
+
                 try
                 {
                     $ntAccount = $securityIdentifier.Translate([System.Security.Principal.NTAccount]).ToString()
@@ -602,25 +602,25 @@ function ConvertFrom-SddlString
                 }
             }
             $typesToExamine = $rightTypes.Values
-        
+
             ## If they know the access mask represents a certain type, prefer its names
             ## (i.e.: CreateLink for the registry over CreateDirectories for the filesystem)
             if($Type)
             {
                 $typesToExamine = @($rightTypes[$Type]) + $typesToExamine
             }
-            
-       
+
+
             ## Stores the access types we've found that apply
             $foundAccess = @()
-        
+
             ## Store the access types we've already seen, so that we don't report access
             ## flags that are essentially duplicate. Many of the access values in the different
             ## enumerations have the same value but with different names.
             $foundValues = @{}
 
             ## Go through the entries in the different right types, and see if they apply to the
-            ## provided access mask. If they do, then add that to the result.   
+            ## provided access mask. If they do, then add that to the result.
             foreach($rightType in $typesToExamine)
             {
                 foreach($accessFlag in [Enum]::GetNames($rightType))

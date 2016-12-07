@@ -63,7 +63,7 @@ namespace System.Management.Automation.ComInterop
 
             Expression argument = _argBuilder.Marshal(parameter);
 
-            // we are forced to special case ConvertibleArgBuilder since it does not have 
+            // we are forced to special case ConvertibleArgBuilder since it does not have
             // a corresponding _targetComType.
             if (_argBuilder is ConvertibleArgBuilder)
             {

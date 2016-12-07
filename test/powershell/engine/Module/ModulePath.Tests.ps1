@@ -1,8 +1,8 @@
 Describe "SxS Module Path Basic Tests" -tags "CI" {
-    
+
     BeforeAll {
 
-        if ($IsWindows) 
+        if ($IsWindows)
         {
             $powershell = "$PSHOME\powershell.exe"
             $ProductName = "WindowsPowerShell"

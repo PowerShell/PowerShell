@@ -9,41 +9,41 @@ using System.IO;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// MshSnapinBase (or MshSnapinInstaller) is a class for facilitating registry of necessary 
-    /// information for monad mshsnapin's. 
-    /// 
-    /// This class will be built with monad core engine dll 
-    /// (System.Management.Automation.dll). 
-    /// 
+    ///
+    /// MshSnapinBase (or MshSnapinInstaller) is a class for facilitating registry of necessary
+    /// information for monad mshsnapin's.
+    ///
+    /// This class will be built with monad core engine dll
+    /// (System.Management.Automation.dll).
+    ///
     /// This is the base class for two kinds of mshsnapins: MshSnapin and CustomMshSnapin.
-    /// 
-    /// Each mshsnapin assembly should derive from this class (indirectly) and fill 
-    /// in information about mshsnapin name, vendor, and version. 
-    /// 
-    /// At install time, installation utilities (like InstallUtil.exe) will 
+    ///
+    /// Each mshsnapin assembly should derive from this class (indirectly) and fill
+    /// in information about mshsnapin name, vendor, and version.
+    ///
+    /// At install time, installation utilities (like InstallUtil.exe) will
     /// call install this engine assembly based on the implementation in
-    /// this class. 
-    /// 
-    /// This class derives from base class PSInstaller. PSInstaller will 
-    /// handle the details about how information got written into registry. 
-    /// Here, the information about registry content is provided. 
-    /// 
-    /// The reason of not calling this class MshSnapinInstaller is to "hide" the details 
+    /// this class.
+    ///
+    /// This class derives from base class PSInstaller. PSInstaller will
+    /// handle the details about how information got written into registry.
+    /// Here, the information about registry content is provided.
+    ///
+    /// The reason of not calling this class MshSnapinInstaller is to "hide" the details
     /// that MshSnapin class is actually doing installation. It is also more intuitive
-    /// since people deriving from this class will think there are really 
-    /// implementing a class for mshsnapin. 
-    /// 
+    /// since people deriving from this class will think there are really
+    /// implementing a class for mshsnapin.
+    ///
     /// </summary>
-    /// 
+    ///
     /// <remarks>
-    /// This is an abstract class to be derived by monad mshsnapin and custom mshsnapin. 
-    /// MshSnapin developer should not directly derive from this class. 
+    /// This is an abstract class to be derived by monad mshsnapin and custom mshsnapin.
+    /// MshSnapin developer should not directly derive from this class.
     /// </remarks>
     public abstract class PSSnapInInstaller : PSInstaller
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public abstract string Name
         {
@@ -51,7 +51,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public abstract string Vendor
         {
@@ -59,7 +59,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public virtual string VendorResource
         {
@@ -70,7 +70,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public abstract string Description
         {
@@ -78,7 +78,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public virtual string DescriptionResource
         {
@@ -89,7 +89,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         private string MshSnapinVersion
         {
@@ -101,7 +101,7 @@ namespace System.Management.Automation
 
         private string _psVersion = null;
         /// <summary>
-        /// 
+        ///
         /// </summary>
         private string PSVersion
         {
@@ -109,7 +109,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal sealed override string RegKey
         {
@@ -123,7 +123,7 @@ namespace System.Management.Automation
 
         private Dictionary<String, object> _regValues = null;
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal override Dictionary<String, object> RegValues
         {

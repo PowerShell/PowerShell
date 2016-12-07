@@ -453,7 +453,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
             return Severity(ntstatus) == STATUS_SEVERITY_ERROR;
         }
 
-        
+
         /// <summary>
         /// Determine if an NTSTATUS value indicates a Warning
         /// </summary>
@@ -479,7 +479,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         {
             return Severity(ntstatus) == STATUS_SEVERITY_INFORMATIONAL;
         }
-        
+
 
         /// <summary>
         /// Return the Severity part of an NTSTATUS value
@@ -521,7 +521,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         {
             return ntstatus & 0xFFFF;
         }
-        
+
         #endregion Public Methods
     }
 }

@@ -640,7 +640,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
             }
 
-            // rowEntries must not be empty 
+            // rowEntries must not be empty
             if (tableBody.defaultDefinition == null)
             {
                 this.ReportErrorForLoadingFromObjectModel(
@@ -716,7 +716,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 catch (ParseException e)
                 {
-                    // Error at 
+                    // Error at
                     this.ReportErrorForLoadingFromObjectModel(
                         StringUtil.Format(FormatAndOutXmlLoadingStrings.InvalidScriptBlockInFormattingData, typeName, viewIndex, e.Message), typeName);
                     return null;

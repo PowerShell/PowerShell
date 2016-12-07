@@ -7,12 +7,12 @@
 
     It "Test conversion of an PSObject with Null Base Object to bool" {
         $mshObj = New-Object psobject
-        { [System.Management.Automation.LanguagePrimitives]::ConvertTo($mshObj, [bool]) } | Should Be $true             
+        { [System.Management.Automation.LanguagePrimitives]::ConvertTo($mshObj, [bool]) } | Should Be $true
     }
 
     It "Test conversion of an PSObject with Null Base Object to string" {
         $mshObj = New-Object psobject
-        { [System.Management.Automation.LanguagePrimitives]::ConvertTo($mshObj, [string]) -eq "" } | Should Be $true 
+        { [System.Management.Automation.LanguagePrimitives]::ConvertTo($mshObj, [string]) -eq "" } | Should Be $true
     }
 
     It "Test conversion of an PSObject with Null Base Object to object" {

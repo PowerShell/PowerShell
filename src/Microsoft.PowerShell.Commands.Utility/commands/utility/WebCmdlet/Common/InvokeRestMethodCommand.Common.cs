@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// gets or sets the parameter Method 
+        /// gets or sets the parameter Method
         /// </summary>
         [Parameter]
         public override WebRequestMethod Method
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
         public enum RestReturnType
         {
             /// <summary>
-            /// Return type not defined in response, 
+            /// Return type not defined in response,
             /// best effort detect
             /// </summary>
             Detect,
@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Commands
                     ((Position + totalCount) > _streamBuffer.Length))
                 {
                     // If we don't have enough data to fill this from memory, cache more.
-                    // We try to read 4096 bytes from base stream every time, so at most we 
+                    // We try to read 4096 bytes from base stream every time, so at most we
                     // may cache 4095 bytes more than what is required by the Read operation.
                     int bytesRead = _baseStream.Read(_copyBuffer, 0, _copyBuffer.Length);
 

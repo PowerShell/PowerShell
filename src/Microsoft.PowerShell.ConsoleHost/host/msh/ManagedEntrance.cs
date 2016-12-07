@@ -57,10 +57,10 @@ namespace Microsoft.PowerShell
             PSEtwLog.LogOperationalInformation(PSEventId.Perftrack_ConsoleStartupStart, PSOpcode.WinStart,
                 PSTask.PowershellConsoleStartup, PSKeyword.UseAlwaysOperational);
 
-            // Windows Vista and later support non-traditional UI fallback ie., a 
+            // Windows Vista and later support non-traditional UI fallback ie., a
             // user on an Arabic machine can choose either French or English(US) as
             // UI fallback language.
-            // CLR does not support this (non-traditional) fallback mechanism. 
+            // CLR does not support this (non-traditional) fallback mechanism.
             // The currentUICulture returned NativeCultureResolver supports this non
             // traditional fallback on Vista. So it is important to set currentUICulture
             // in the beginning before we do anything.

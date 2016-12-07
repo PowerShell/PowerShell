@@ -13,24 +13,24 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// 
-    /// ProgressPane is a class that represents the "window" in which outstanding activities for which the host has received 
-    /// progress updates are shown. 
-    /// 
+    ///
+    /// ProgressPane is a class that represents the "window" in which outstanding activities for which the host has received
+    /// progress updates are shown.
+    ///
     ///</summary>
 
     internal
     class ProgressPane
     {
         /// <summary>
-        /// 
+        ///
         /// Constructs a new instance.
-        /// 
+        ///
         /// </summary>
         /// <param name="ui">
-        /// 
+        ///
         /// An implementation of the PSHostRawUserInterface with which the pane will be shown and hidden.
-        /// 
+        ///
         /// </param>
 
         internal
@@ -44,14 +44,14 @@ namespace Microsoft.PowerShell
 
 
         /// <summary>
-        /// 
+        ///
         /// Indicates whether the pane is visible on the screen buffer or not.
-        /// 
+        ///
         /// </summary>
         /// <value>
         ///
         /// true if the pane is visible, false if not.
-        /// 
+        ///
         ///</value>
 
         internal
@@ -67,10 +67,10 @@ namespace Microsoft.PowerShell
 
 
         /// <summary>
-        /// 
-        /// Shows the pane in the screen buffer.  Saves off the content of the region of the buffer that will be overwritten so 
+        ///
+        /// Shows the pane in the screen buffer.  Saves off the content of the region of the buffer that will be overwritten so
         /// that it can be restored again.
-        /// 
+        ///
         /// </summary>
 
         internal
@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell
         {
             if (!IsShowing)
             {
-                // Get temporary reference to the progress region since it can be 
+                // Get temporary reference to the progress region since it can be
                 // changed at any time by a call to WriteProgress.
                 BufferCell[,] tempProgressRegion = _progressRegion;
                 if (tempProgressRegion == null)
@@ -131,10 +131,10 @@ namespace Microsoft.PowerShell
 
 
         /// <summary>
-        /// 
-        /// Hides the pane by restoring the saved contents of the region of the buffer that the pane occupies.  If the pane is 
+        ///
+        /// Hides the pane by restoring the saved contents of the region of the buffer that the pane occupies.  If the pane is
         /// not showing, then does nothing.
-        /// 
+        ///
         /// </summary>
 
         internal
@@ -143,7 +143,7 @@ namespace Microsoft.PowerShell
         {
             if (IsShowing)
             {
-                // It would be nice if we knew that the saved region could be kept for the next time Show is called, but alas, 
+                // It would be nice if we knew that the saved region could be kept for the next time Show is called, but alas,
                 // we have no way of knowing if the screen buffer has changed since we were hidden.  By "no good way" I mean that
                 // detecting a change would be at least as expensive as chucking the savedRegion and rebuilding it.  And it would
                 // be very complicated.
@@ -156,14 +156,14 @@ namespace Microsoft.PowerShell
 
 
         /// <summary>
-        /// 
+        ///
         /// Updates the pane with the rendering of the supplied PendingProgress, and shows it.
-        /// 
+        ///
         /// </summary>
         /// <param name="pendingProgress">
-        /// 
+        ///
         /// A PendingProgress instance that represents the outstanding activities that should be shown.
-        /// 
+        ///
         /// </param>
 
         internal
@@ -174,7 +174,7 @@ namespace Microsoft.PowerShell
 
             _bufSize = _rawui.BufferSize;
 
-            // In order to keep from slicing any CJK double-cell characters that might be present in the screen buffer, 
+            // In order to keep from slicing any CJK double-cell characters that might be present in the screen buffer,
             // we use the full width of the buffer.
 
             int maxWidth = _bufSize.Width;
@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell
         private PSHostRawUserInterface _rawui;
         private ConsoleHostUserInterface _ui;
     }
-}   // namespace 
+}   // namespace
 
 
 

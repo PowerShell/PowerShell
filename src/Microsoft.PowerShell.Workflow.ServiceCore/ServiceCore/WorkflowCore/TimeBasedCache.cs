@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Workflow
         private readonly ConcurrentDictionary<Guid, Item<T>> _cache = new ConcurrentDictionary<Guid, Item<T>>();
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal ConcurrentDictionary<Guid, Item<T>> Cache
         {
@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// The consumer of this class should hold a lock 
+        /// The consumer of this class should hold a lock
         /// on this object when servicing requests and adding
         /// to this cache
         /// </summary>
@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal void Add(Item<T> item)
         {
@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public void Dispose()
         {
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)

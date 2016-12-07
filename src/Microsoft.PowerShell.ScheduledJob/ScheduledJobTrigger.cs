@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan? RepetitionInterval
         {
             get { return _repInterval; }
-            set 
+            set
             {
                 // A TimeSpan value of zero is equivalent to a null value.
                 _repInterval = (value != null && value.Value == TimeSpan.Zero) ?
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public TimeSpan? RepetitionDuration
         {
             get { return _repDuration; }
-            set 
+            set
             {
                 // A TimeSpan value of zero is equivalent to a null value.
                 _repDuration = (value != null && value.Value == TimeSpan.Zero) ?
@@ -150,7 +150,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             get { return _jobDefAssociation; }
             internal set { _jobDefAssociation = value; }
         }
-        
+
         #endregion
 
         #region Constructors
@@ -642,7 +642,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     #region Public Enums
 
     /// <summary>
-    /// Specifies trigger types in terms of the frequency that 
+    /// Specifies trigger types in terms of the frequency that
     /// the trigger is activated.
     /// </summary>
     public enum TriggerFrequency
@@ -772,7 +772,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         #region Helper Methods
-        
+
         private CimInstance ConvertToWeekly(ScheduledJobTrigger trigger, CimSession cimSession)
         {
             CimClass cimClass = cimSession.GetClass(CIM_TRIGGER_NAMESPACE, "MSFT_TaskWeeklyTrigger");

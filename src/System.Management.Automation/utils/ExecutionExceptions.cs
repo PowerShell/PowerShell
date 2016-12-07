@@ -315,7 +315,7 @@ namespace System.Management.Automation
     /// indicates that the command was stopped asynchronously, either by the
     /// user hitting CTRL-C, or by a call to
     /// <see cref="System.Management.Automation.Runspaces.Pipeline.Stop"/>.
-    /// 
+    ///
     /// When a cmdlet or provider sees this exception thrown from a Monad API such as
     ///     WriteObject(object)
     /// this means that the command was already stopped.  The cmdlet or provider
@@ -1037,9 +1037,9 @@ namespace System.Management.Automation
     /// </summary>
     /// <remarks>
     /// For example, "more" will throw HaltCommandException if the user hits "q".
-    /// 
+    ///
     /// Only throw HaltCommandException from your implementation of ProcessRecord etc.
-    /// 
+    ///
     /// Note that HaltCommandException does not define IContainsErrorRecord.
     /// This is because it is not reported to the user.
     /// </remarks>

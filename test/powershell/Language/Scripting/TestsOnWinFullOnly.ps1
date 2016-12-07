@@ -3,13 +3,13 @@
     [CmdletBinding()]
     param( [string]$name )
 
-    switch ($name) 
+    switch ($name)
     {
         "ActionPreference:ErrorAction=SuspendOnWorkflow" {
             workflow TestErrorActionSuspend { "Hello" }
-    
+
             $r = TestErrorActionSuspend -ErrorAction Suspend
-    
+
             $r | Should Be Hello
             break;   }
 
@@ -25,6 +25,6 @@
         default {
             #do nothing
         }
-         
+
     }
 }

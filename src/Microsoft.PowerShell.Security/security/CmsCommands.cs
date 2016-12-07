@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// Defines the implementation of the 'Protect-CmsMessage' cmdlet.
-    /// 
+    ///
     /// This cmdlet generates a new encrypted CMS message given the
     /// recipient and content supplied.
     /// </summary>
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Defines the implementation of the 'Get-CmsMessage' cmdlet.
-    /// 
+    ///
     /// This cmdlet retrieves information about an encrypted CMS
     /// message.
     /// </summary>
@@ -334,7 +334,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Defines the implementation of the 'Unprotect-CmsMessage' cmdlet.
-    /// 
+    ///
     /// This cmdlet retrieves the clear text content of an encrypted CMS
     /// message.
     /// </summary>

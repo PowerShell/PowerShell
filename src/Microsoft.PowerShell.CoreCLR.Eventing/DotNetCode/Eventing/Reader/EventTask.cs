@@ -2,11 +2,11 @@
 /*============================================================
 **
 **
-** Purpose: 
-** This public class describes the metadata for a specific Task 
-** defined by a Provider. An instance of this class is obtained  
+** Purpose:
+** This public class describes the metadata for a specific Task
+** defined by a Provider. An instance of this class is obtained
 ** from a ProviderMetadata object.
-** 
+**
 ============================================================*/
 
 using System.Collections.Generic;
@@ -14,7 +14,7 @@ using System.Collections.Generic;
 namespace System.Diagnostics.Eventing.Reader
 {
     /// <summary>
-    /// Describes the metadata for a specific Task defined by a Provider. 
+    /// Describes the metadata for a specific Task defined by a Provider.
     /// An instance of this class is obtained from a ProviderMetadata object.
     /// </summary>
     public sealed class EventTask

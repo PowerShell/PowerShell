@@ -1,10 +1,10 @@
 Describe "Get-Unique DRT Unit Tests" -Tags "CI" {
     It "Command get-unique works with AsString switch" {
         $inputArray = "aa","aa","Aa","ba","BA","BA"
-        $results = $inputArray | Get-Unique -AsString 
-        
-        $results.Length | Should Be 4 
-               
+        $results = $inputArray | Get-Unique -AsString
+
+        $results.Length | Should Be 4
+
         $results[0] | Should Be "aa"
         $results[1] | Should Be "Aa"
         $results[2] | Should Be "ba"

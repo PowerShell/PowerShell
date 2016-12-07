@@ -16,17 +16,17 @@ namespace Microsoft.PowerShell.Cmdletization
         /// Default behavior is to be consistent with the built-in cmdlets:
         /// - When a wildcard is specified, then no errors are reported (i.e. Get-Process -Name noSuchProcess*)
         /// - When no wildcard is specified, then errors are reported (i.e. Get-Process -Name noSuchProcess)
-        /// 
+        ///
         /// Note that the following conventions are adopted:
-        /// - Min/max queries 
-        ///   (<see cref="QueryBuilder.FilterByMinPropertyValue(string,object,BehaviorOnNoMatch)"/> and 
-        ///    <see cref="QueryBuilder.FilterByMaxPropertyValue(string,object,BehaviorOnNoMatch)"/>) 
+        /// - Min/max queries
+        ///   (<see cref="QueryBuilder.FilterByMinPropertyValue(string,object,BehaviorOnNoMatch)"/> and
+        ///    <see cref="QueryBuilder.FilterByMaxPropertyValue(string,object,BehaviorOnNoMatch)"/>)
         ///   are treated as wildcards
-        /// - Exclusions 
-        ///   (<see cref="QueryBuilder.ExcludeByProperty(string,System.Collections.IEnumerable,bool,BehaviorOnNoMatch)"/>) 
+        /// - Exclusions
+        ///   (<see cref="QueryBuilder.ExcludeByProperty(string,System.Collections.IEnumerable,bool,BehaviorOnNoMatch)"/>)
         ///   are treated as wildcards
-        /// - Associations 
-        ///   (<see cref="QueryBuilder.FilterByAssociatedInstance(object,string,string,string,BehaviorOnNoMatch)"/>) 
+        /// - Associations
+        ///   (<see cref="QueryBuilder.FilterByAssociatedInstance(object,string,string,string,BehaviorOnNoMatch)"/>)
         ///   are treated as not a wildcard
         /// </summary>
         Default = 0,
@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="propertyName">Property name to query on</param>
         /// <param name="allowedPropertyValues">Property values to accept in the query</param>
         /// <param name="wildcardsEnabled">
-        /// <c>true</c> if <paramref name="allowedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern; 
+        /// <c>true</c> if <paramref name="allowedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern;
         /// <c>false otherwise</c>
         /// </param>
         /// <param name="behaviorOnNoMatch">
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Cmdletization
         /// <param name="propertyName">Property name to query on</param>
         /// <param name="excludedPropertyValues">Property values to reject in the query</param>
         /// <param name="wildcardsEnabled">
-        /// <c>true</c> if <paramref name="excludedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern; 
+        /// <c>true</c> if <paramref name="excludedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern;
         /// <c>false otherwise</c>
         /// </param>
         /// <param name="behaviorOnNoMatch">

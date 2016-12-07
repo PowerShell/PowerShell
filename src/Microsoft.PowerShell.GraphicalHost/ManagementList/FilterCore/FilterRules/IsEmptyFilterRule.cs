@@ -10,7 +10,7 @@ namespace Microsoft.Management.UI.Internal
 
     /// <summary>
     /// The IsEmptyFilterRule evaluates an item to determine whether it
-    /// is empty or not. 
+    /// is empty or not.
     /// </summary>
     [Serializable]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
@@ -25,11 +25,11 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets a values indicating whether the supplied item is empty. 
+        /// Gets a values indicating whether the supplied item is empty.
         /// </summary>
         /// <param name="item">The item to evaluate.</param>
         /// <returns>
-        /// Returns true if the item is null or if the item is a string 
+        /// Returns true if the item is null or if the item is a string
         /// composed of whitespace. False otherwise.
         /// </returns>
         public override bool Evaluate(object item)
@@ -46,7 +46,7 @@ namespace Microsoft.Management.UI.Internal
                 return 0 == ((string)item).Trim().Length;
             }
 
-            return false;           
+            return false;
         }
     }
 }

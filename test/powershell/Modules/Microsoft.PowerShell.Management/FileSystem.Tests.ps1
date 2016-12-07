@@ -9,7 +9,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         #restore the previous location
         Set-Location -Path $restoreLocation
     }
-    
+
     BeforeEach {
         Set-Location -Path "TestDrive:\"
     }
@@ -84,7 +84,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         It "Set-Content to a file" {
             $content =  Set-Content -Value $testContent -Path $testFile -PassThru
             $content | Should BeExactly $testContent
-        } 
+        }
 
         It "Add-Content to a file" {
             $content = Set-Content -Value $testContent -Path $testFile -PassThru
@@ -209,7 +209,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         #restore the previous location
         Set-Location -Path $restoreLocation
     }
-    
+
     BeforeEach {
         Set-Location -Path "TestDrive:\"
         New-Item -Path $testFile -ItemType File > $null
@@ -230,7 +230,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         It "Verify Directory + Whatif" {
             New-Item -Path . -ItemType Directory -Name $testDir -WhatIf > $null
             try {
-                Get-Item -Path $testDir -ErrorAction Stop 
+                Get-Item -Path $testDir -ErrorAction Stop
                 throw "Expected exception not thrown"
             }
             catch { $_.FullyQualifiedErrorId | Should Be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand" }
@@ -330,7 +330,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
         It "Verify WhatIf" {
             Rename-Item -Path $testFile -NewName $newFile -WhatIf
             try {
-                Get-Item -Path $newFile -ErrorAction Stop 
+                Get-Item -Path $newFile -ErrorAction Stop
                 throw "Expected exception not thrown"
             }
             catch { $_.FullyQualifiedErrorId | Should Be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand" }

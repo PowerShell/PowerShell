@@ -14,10 +14,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// <summary>
     /// Base class providing support for string manipulation.
     /// This class is a tear off class provided by the LineOutput class
-    /// 
+    ///
     /// Assumptions (in addition to the assumptions made for LineOutput):
     /// - characters map to one or more character cells
-    /// 
+    ///
     /// NOTE: we provide a base class that is valid for devices that have a
     /// 1:1 mapping between a UNICODE character and a display cell
     /// </summary>
@@ -57,7 +57,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #region  Helpers
 
         /// <summary>
-        /// Given a string and a number of display cells, it computes how many 
+        /// Given a string and a number of display cells, it computes how many
         /// characters would fit starting from the beginning or end of the string
         /// </summary>
         /// <param name="str">string to be displayed</param>
@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     /// *   File: it layers on top of a TextWriter
     /// *   In Memory text stream: it layers on top of an in memory buffer
     /// *   Printer: it layers on top of a memory buffer then sent to a printer device
-    /// 
+    ///
     /// Assumptions:
     /// - Fixed pitch font: layout done in terms of character cells
     /// - character cell layout not affected by bold, reverse screen, color, etc.
@@ -151,12 +151,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
 
         /// <summary>
-        /// if RequiresBuffering = true, this call will be made to 
+        /// if RequiresBuffering = true, this call will be made to
         /// start the playback
         /// </summary>
         internal virtual void ExecuteBufferPlayBack(DoPlayBackCall playback) { }
 
-        /// 
+        ///
         /// <summary>
         /// The number of columns the current device has
         /// </summary>
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// Write a line to the output device.
         /// </summary>
-        /// <param name="s"> 
+        /// <param name="s">
         ///     string to be written to the device
         /// </param>
         internal abstract void WriteLine(string s);
@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// helper class to provide line breaking (based on device width) 
+    /// helper class to provide line breaking (based on device width)
     /// and embedded newline processing
     /// It needs to be provided with two callbacks for line processing
     /// </summary>
@@ -352,7 +352,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// Implementation of the ILineOutput interface accepting an instance of a 
+    /// Implementation of the ILineOutput interface accepting an instance of a
     /// TextWriter abstract class
     /// </summary>
     internal class TextWriterLineOutput : LineOutput

@@ -101,7 +101,7 @@ namespace System.Management.Automation.Remoting
             RemoteDataObject<PSObject> dataToBeSent = RemoteDataObject<PSObject>.CreateFrom(RemotingDestination.Client,
                 _remoteHostCallDataType, _clientRunspacePoolId, _clientPowerShellId,
                 remoteHostCall.Encode());
-            // flush is not used here..since this is a void method and server host 
+            // flush is not used here..since this is a void method and server host
             // does not expect anything from client..so let the transport manager buffer
             // and send as much data as possible.
             _transportManager.SendDataToClient(dataToBeSent, false);

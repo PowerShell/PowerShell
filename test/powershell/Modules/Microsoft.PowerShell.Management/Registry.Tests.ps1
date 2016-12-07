@@ -1,7 +1,7 @@
 Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") {
     BeforeAll {
         $restoreLocation = Get-Location
-        
+
         #skip all tests on non-windows platform
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ($IsWindows -eq $false) {
@@ -132,7 +132,7 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
 Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWindows") {
     BeforeAll {
         $restoreLocation = Get-Location
-        
+
         #skip all tests on non-windows platform
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ($IsWindows -eq $false) {

@@ -58,7 +58,7 @@ namespace Microsoft.Management.UI.Internal
         /// Initializes a new instance of the DataErrorInfoValidationResult class.
         /// </summary>
         /// <param name="isValid">
-        /// Indicates whether the value checked against the 
+        /// Indicates whether the value checked against the
         /// DataErrorInfoValidationResult is valid
         /// </param>
         /// <param name="errorContent">

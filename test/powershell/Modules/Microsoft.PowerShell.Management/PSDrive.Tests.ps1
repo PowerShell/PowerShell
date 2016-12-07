@@ -81,7 +81,7 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
             New-PSDrive -Name $psDriveName -PSProvider FileSystem -Root $psDriveRoot -Description "Test PSDrive to remove" -Scope Local > $null
             $foundGlobal = $true
             try {
-               $globalDrive = Get-PSDrive -Name $psDriveName -Scope Global -ErrorAction Stop 
+               $globalDrive = Get-PSDrive -Name $psDriveName -Scope Global -ErrorAction Stop
             }
             catch { $foundGlobal = $false }
             $localDrive = Get-PSDrive -Name $psDriveName -Scope Local

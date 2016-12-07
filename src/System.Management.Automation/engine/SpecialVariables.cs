@@ -208,7 +208,7 @@ namespace System.Management.Automation
         internal static readonly VariablePath PSSessionConfigurationNameVarPath = new VariablePath("global:" + PSSessionConfigurationName);
 
         /// <summary>
-        /// environment variable that will define the default 
+        /// environment variable that will define the default
         /// application name for the connection uri
         /// </summary>
         internal const string PSSessionApplicationName = "PSSessionApplicationName";

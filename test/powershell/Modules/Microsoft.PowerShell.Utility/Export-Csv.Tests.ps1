@@ -69,7 +69,7 @@ Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
     $filePath = Join-Path $TestDrive -ChildPath "test.csv"
     $newLine = [environment]::NewLine
     It "Test basic function works well" {
-        $input = [pscustomobject]@{ "P1" = "V11"; "P2" = "V12"; "P3" = "V13" } 
+        $input = [pscustomobject]@{ "P1" = "V11"; "P2" = "V12"; "P3" = "V13" }
         $input | Export-Csv -Path $filePath -NoTypeInformation
         $results = Import-Csv $filePath
         $results.P1 | Should Be "V11"
@@ -79,29 +79,29 @@ Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
 
     It "Test if it works with special character" {
         $v3 = "abc" + $newLine + "foo"
-        $input = [pscustomobject]@{ "P1" = "  "; "P2" = "abc,foo"; "P3" = $v3} 
+        $input = [pscustomobject]@{ "P1" = "  "; "P2" = "abc,foo"; "P3" = $v3}
         $input | Export-Csv -Path $filePath -NoTypeInformation
         $results = Import-Csv $filePath
-        $results.P1 | Should Be "  " 
+        $results.P1 | Should Be "  "
         $results.P2 | Should Be "abc,foo"
         $results.P3 | Should Be $v3
     }
 
     It "Test force switch works well" {
-        $input = [pscustomobject]@{ "P1" = "first" } 
+        $input = [pscustomobject]@{ "P1" = "first" }
         $input | Export-Csv -Path $filePath
-        
-        $input =  [pscustomobject]@{ "P2" = "second" } 
+
+        $input =  [pscustomobject]@{ "P2" = "second" }
         $input | Export-Csv -Path $filePath -Force
         $results = Import-Csv $filePath
 
         $results.P2 | Should be "second"
-        $property = $results | Get-Member | ? { $_.MemberType -eq "NoteProperty" } | % { $_.Name } 
+        $property = $results | Get-Member | ? { $_.MemberType -eq "NoteProperty" } | % { $_.Name }
         $property | should not be P1
     }
 
     It "Test export-csv with a useculture flag" {
-        $outputFilesDir = Join-Path $TestDrive -ChildPath "Monad"        
+        $outputFilesDir = Join-Path $TestDrive -ChildPath "Monad"
         $fileToGenerate = Join-Path $outputFilesDir -ChildPath "CSVTests.csv"
         $delimiter = (Get-Culture).TextInfo.ListSeparator
         New-Item -Path $outputFilesDir -ItemType Directory -Force
@@ -109,6 +109,6 @@ Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
         $contents = Get-Content -Path $fileToGenerate
         $contents.Count | Should Be 2
         $contents[0].Contains($delimiter) | Should Be $true
-        $contents[1].Contains($delimiter) | Should Be $true       
+        $contents[1].Contains($delimiter) | Should Be $true
     }
 }

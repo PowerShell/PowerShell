@@ -1,18 +1,18 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
- 
-Description: 
- 
-Windows Vista and later support non-traditional UI fallback ie., a 
+
+Description:
+
+Windows Vista and later support non-traditional UI fallback ie., a
 user on an Arabic machine can choose either French or English(US) as
 UI fallback language.
 
-CLR does not support this (non-traditional) fallback mechanism. So 
-the static methods in this class calculate appropriate UI Culture 
+CLR does not support this (non-traditional) fallback mechanism. So
+the static methods in this class calculate appropriate UI Culture
 natively. ConsoleHot uses this API to set correct Thread UICulture.
 
-Dependent on: 
-GetThreadPreferredUILanguages 
+Dependent on:
+GetThreadPreferredUILanguages
 SetThreadPreferredUILanguages
 
 These methods are available on Windows Vista and later.
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Returns Parent culture for the current CultureInfo.
-        /// If Parent.Name is null or empty, then chooses the immediate fallback 
+        /// If Parent.Name is null or empty, then chooses the immediate fallback
         /// If it is not empty, otherwise just returns Parent.
         /// </summary>
         public override CultureInfo Parent
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell
                 // MUI_MERGE_SYSTEM_FALLBACK | MUI_MERGE_USER_FALLBACK
                 // returns fallback cultures (specified by the user)
                 // and also adds neutral culture where appropriate.
-                // Ex: ja-jp ja en-us en 
+                // Ex: ja-jp ja en-us en
                 while ((null != _fallbacks) && (_fallbacks.Length > 0))
                 {
                     string fallback = _fallbacks[0];
@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell
                 {
                     // filter out languages that console cannot display..
                     // Sometimes GetConsoleFallbackUICulture returns neutral cultures
-                    // like "en" on "ar-SA". However neutral culture cannot be 
+                    // like "en" on "ar-SA". However neutral culture cannot be
                     // assigned as CurrentCulture. CreateSpecificCulture fixes
                     // this problem.
                     returnValue = CultureInfo.CreateSpecificCulture(
@@ -298,7 +298,7 @@ namespace Microsoft.PowerShell
             }
             catch (ArgumentException)
             {
-                // if there is any exception retrieving the 
+                // if there is any exception retrieving the
                 // culture, just use the current thread's culture.
                 returnValue = CultureInfo.CurrentCulture;
             }
@@ -310,7 +310,7 @@ namespace Microsoft.PowerShell
         internal static extern WORD GetUserDefaultUILanguage();
 
         /// <summary>
-        /// Constructs CultureInfo object without considering any Vista and later 
+        /// Constructs CultureInfo object without considering any Vista and later
         /// custom culture fallback logic.
         /// </summary>
         /// <returns>A CultureInfo object</returns>
@@ -334,9 +334,9 @@ namespace Microsoft.PowerShell
         private static bool IsVistaAndLater()
         {
             // The version number is obtained from MSDN
-            // 4 - Windows NT 4.0, Windows Me, Windows 98, or Windows 95. 
-            // 5 - Windows Server 2003 R2, Windows Server 2003, Windows XP, or Windows 2000. 
-            // 6 - Windows Vista or Windows Server "Longhorn". 
+            // 4 - Windows NT 4.0, Windows Me, Windows 98, or Windows 95.
+            // 5 - Windows Server 2003 R2, Windows Server 2003, Windows XP, or Windows 2000.
+            // 6 - Windows Vista or Windows Server "Longhorn".
 
             if (Environment.OSVersion.Version.Major >= 6)
             {
@@ -367,7 +367,7 @@ namespace Microsoft.PowerShell
             if (filterOutNonConsoleCultures)
             {
                 // Filter out languages that do not support console.
-                // The third parameter should be null otherwise this API will not 
+                // The third parameter should be null otherwise this API will not
                 // set Console CodePage filter.
                 // The MSDN documentation does not call this out explicitly. Opened
                 // Bug 950 (Windows Developer Content) to track this.
@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell
             // MUI_MERGE_SYSTEM_FALLBACK | MUI_MERGE_USER_FALLBACK
             // returns fallback cultures (specified by the user)
             // and also adds neutral culture where appropriate.
-            // Ex: ja-jp ja en-us en 
+            // Ex: ja-jp ja en-us en
             if (!GetThreadPreferredUILanguages(
                 s_MUI_LANGUAGE_NAME | s_MUI_MERGE_SYSTEM_FALLBACK | s_MUI_MERGE_USER_FALLBACK,
                 out numberLangs,
@@ -426,17 +426,17 @@ namespace Microsoft.PowerShell
         #region Dll Import data
 
         /// <summary>
-        /// Returns the locale identifier for the user default locale. 
+        /// Returns the locale identifier for the user default locale.
         /// </summary>
         /// <returns></returns>
         /// <remarks>
         /// This function can return data from custom locales. Locales are not
         /// guaranteed to be the same from computer to computer or between runs
         /// of an application. If your application must persist or transmit data,
-        /// see Using Persistent Locale Data. 
-        /// Applications that are intended to run only on Windows Vista and later 
-        /// should use GetUserDefaultLocaleName in preference to this function. 
-        /// GetUserDefaultLocaleName provides good support for supplemental locales. 
+        /// see Using Persistent Locale Data.
+        /// Applications that are intended to run only on Windows Vista and later
+        /// should use GetUserDefaultLocaleName in preference to this function.
+        /// GetUserDefaultLocaleName provides good support for supplemental locales.
         /// However, GetUserDefaultLocaleName is not supported for versions of Windows
         /// prior to Windows Vista.
         /// </remarks>
@@ -449,14 +449,14 @@ namespace Microsoft.PowerShell
         /// <param name="lpLocaleName"></param>
         /// <param name="cchLocaleName"></param>
         /// <returns>
-        /// Returns the size of the buffer containing the locale name, including 
-        /// the terminating null character, if successful. The function returns 0 
+        /// Returns the size of the buffer containing the locale name, including
+        /// the terminating null character, if successful. The function returns 0
         /// if it does not succeed. To get extended error information, the application
         /// can call GetLastError. Possible returns from GetLastError
         /// include ERR_INSUFFICIENT_BUFFER.
         /// </returns>
         /// <remarks>
-        /// 
+        ///
         /// </remarks>
         [DllImport("kernel32.dll", SetLastError = false, CharSet = CharSet.Unicode)]
         private static extern int GetUserDefaultLocaleName(

@@ -8,7 +8,7 @@ if ((Get-Command -Name 'git' -ErrorAction Ignore) -ne $Null) {
 function Get-AssemblyCoverageData([xml.xmlelement] $element)
 {
     $coverageSummary = (Get-CoverageSummary -element $element.Summary)
-    $AssemblyCoverageData = [PSCustomObject] @{ 
+    $AssemblyCoverageData = [PSCustomObject] @{
         AssemblyName = $element.ModuleName
         CoverageSummary = $coverageSummary
         Branch = $coverageSummary.BranchCoverage
@@ -27,17 +27,17 @@ function Get-CodeCoverageChange($r1, $r2)
     $Deltas = new-object "System.Collections.ArrayList"
 
     $r1.assembly | % { $h[$_.assemblyname] = @($_) }
-    $r2.assembly | % { 
+    $r2.assembly | % {
                         if($h.ContainsKey($_.assemblyname))
-                        { 
-                            $h[$_.assemblyname] += $_ 
+                        {
+                            $h[$_.assemblyname] += $_
                         }
                         else
                         {
                             $h[$_.assemblyname] = @($_)
                         }
                      }
-    
+
     foreach($kvPair in $h.GetEnumerator())
     {
         $runs = @($h[$kvPair.Name])
@@ -87,7 +87,7 @@ function Get-AssemblyCoverageChange($r1, $r2)
 function Get-CoverageData($xmlPath)
 {
     [xml]$CoverageXml = get-content -readcount 0 $xmlPath
-    if ( $CoverageXml.CoverageSession -eq $null ) { throw "CoverageSession data not found" }        
+    if ( $CoverageXml.CoverageSession -eq $null ) { throw "CoverageSession data not found" }
 
     $assemblies = New-Object System.Collections.ArrayList
 
@@ -140,7 +140,7 @@ function Expand-ZipArchive([string] $Path, [string] $DestinationPath)
         Add-Type -AssemblyName System.IO.Compression
         Add-Type -AssemblyName System.IO.Compression.FileSystem
 
-        $fileStream = New-Object System.IO.FileStream -ArgumentList @($Path, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read) 
+        $fileStream = New-Object System.IO.FileStream -ArgumentList @($Path, [System.IO.FileMode]::Open, [System.IO.FileAccess]::Read)
         $zipArchive = New-Object System.IO.Compression.ZipArchive -ArgumentList @($fileStream, [System.IO.Compression.ZipArchiveMode]::Read, $false)
 
         foreach($entry in $zipArchive.Entries)
@@ -156,7 +156,7 @@ function Expand-ZipArchive([string] $Path, [string] $DestinationPath)
                 $entry.Open().CopyTo($newfileStream)
             }
             finally
-            {                
+            {
                 if($newfileStream) { $newfileStream.Dispose() }
             }
         }
@@ -165,23 +165,23 @@ function Expand-ZipArchive([string] $Path, [string] $DestinationPath)
     {
         if($zipArchive) { $zipArchive.Dispose() }
         if($fileStream) { $fileStream.Dispose() }
-    }    
+    }
 }
 
 #endregion
 
 <#
 .Synopsis
-   Get code coverage information for the supplied coverage file. 
+   Get code coverage information for the supplied coverage file.
 .Description
    Coverage information from the supplied OpenCover XML file is displayed. The output object has options to show assembly coverage and summary.
 .EXAMPLE
    PS> $coverage = Get-CodeCoverage -CoverageXmlFile .\opencover.xml
    PS> $cov.assembly
 
-   AssemblyName                                        Branch Sequence CoverageSummary            
-   ------------                                        ------ -------- ---------------            
-   powershell                                          100    100      Branch:100 Sequence:100    
+   AssemblyName                                        Branch Sequence CoverageSummary
+   ------------                                        ------ -------- ---------------
+   powershell                                          100    100      Branch:100 Sequence:100
    Microsoft.PowerShell.CoreCLR.AssemblyLoadContext    53.66  95.31    Branch:53.66 Sequence:95.31
    Microsoft.PowerShell.ConsoleHost                    36.53  38.40    Branch:36.53 Sequence:38.40
    System.Management.Automation                        42.18  44.11    Branch:42.18 Sequence:44.11
@@ -189,18 +189,18 @@ function Expand-ZipArchive([string] $Path, [string] $DestinationPath)
    Microsoft.PowerShell.Security                       15.17  18.16    Branch:15.17 Sequence:18.16
    Microsoft.PowerShell.Commands.Management            18.84  21.70    Branch:18.84 Sequence:21.70
    Microsoft.PowerShell.Commands.Utility               62.38  64.54    Branch:62.38 Sequence:64.54
-   Microsoft.WSMan.Management                          3.93   4.45     Branch:3.93 Sequence:4.45  
-   Microsoft.WSMan.Runtime                             0      0        Branch:  0 Sequence:  0    
+   Microsoft.WSMan.Management                          3.93   4.45     Branch:3.93 Sequence:4.45
+   Microsoft.WSMan.Runtime                             0      0        Branch:  0 Sequence:  0
    Microsoft.PowerShell.Commands.Diagnostics           44.96  49.93    Branch:44.96 Sequence:49.93
-   Microsoft.PowerShell.PSReadLine                     7.12   9.94     Branch:7.12 Sequence:9.94  
+   Microsoft.PowerShell.PSReadLine                     7.12   9.94     Branch:7.12 Sequence:9.94
    Microsoft.PowerShell.PackageManagement              59.77  62.04    Branch:59.77 Sequence:62.04
    Microsoft.PackageManagement                         41.73  44.47    Branch:41.73 Sequence:44.47
    Microsoft.Management.Infrastructure.CimCmdlets      13.20  17.01    Branch:13.20 Sequence:17.01
    Microsoft.PowerShell.LocalAccounts                  73.15  84.32    Branch:73.15 Sequence:84.32
    Microsoft.PackageManagement.MetaProvider.PowerShell 54.79  57.90    Branch:54.79 Sequence:57.90
    Microsoft.PackageManagement.NuGetProvider           62.36  65.37    Branch:62.36 Sequence:65.37
-   Microsoft.PackageManagement.CoreProviders           7.08   7.96     Branch:7.08 Sequence:7.96  
-   Microsoft.PackageManagement.ArchiverProviders       0.53   0.56     Branch:0.53 Sequence:0.56 
+   Microsoft.PackageManagement.CoreProviders           7.08   7.96     Branch:7.08 Sequence:7.96
+   Microsoft.PackageManagement.ArchiverProviders       0.53   0.56     Branch:0.53 Sequence:0.56
 .EXAMPLE
    PS> $coverage = Get-CodeCoverage -CoverageXmlFile .\opencover.xml
    PS> $cov.CoverageSummary
@@ -216,7 +216,7 @@ function Expand-ZipArchive([string] $Path, [string] $DestinationPath)
    VisitedMethods          : 17792
    NumMethods              : 37832
    SequenceCoverage        : 42.49
-   BranchCoverage          : 40.05   
+   BranchCoverage          : 40.05
 #>
 function Get-CodeCoverage
 {
@@ -228,7 +228,7 @@ function Get-CodeCoverage
 
 <#
 .Synopsis
-   Compare results between two coverage runs. 
+   Compare results between two coverage runs.
 .Description
    Coverage information from the supplied OpenCover XML file is displayed. The output object has options to show assembly coverage and summary.
 .EXAMPLE
@@ -257,8 +257,8 @@ function Get-CodeCoverage
    Microsoft.WSMan.Runtime                             0                0 0                    0
    powershell                                          100              0 100                  0
    System.Management.Automation                        42.18            0 44.11                0
-   
-.EXAMPLE 
+
+.EXAMPLE
    $comp = Compare-CodeCoverage -Run1 $c -Run2 $c
    $comp.Deltas | sort-object assemblyname | format-table
 
@@ -288,22 +288,22 @@ function Get-CodeCoverage
 function Compare-CodeCoverage
 {
     [CmdletBinding()]
-    param ( 
-        [Parameter(Mandatory=$true,Position=0,ParameterSetName="file")][string]$RunFile1, 
+    param (
+        [Parameter(Mandatory=$true,Position=0,ParameterSetName="file")][string]$RunFile1,
         [Parameter(Mandatory=$true,Position=1,ParameterSetName="file")][string]$RunFile2,
-        [Parameter(Mandatory=$true,Position=0,ParameterSetName="coverage")][Object]$Run1, 
+        [Parameter(Mandatory=$true,Position=0,ParameterSetName="coverage")][Object]$Run1,
         [Parameter(Mandatory=$true,Position=1,ParameterSetName="coverage")][Object]$Run2
         )
 
-    if ( $PSCmdlet.ParameterSetName -eq "file" ) 
+    if ( $PSCmdlet.ParameterSetName -eq "file" )
     {
-        [string]$xmlPath1 = (get-item $Run1File).Fullname        
+        [string]$xmlPath1 = (get-item $Run1File).Fullname
         $Run1 = (Get-CoverageData -xmlPath $xmlPath1)
 
         [string]$xmlPath2 = (get-item $Run1File).Fullname
         $Run2 = (Get-CoverageData -xmlPath $xmlPath2)
     }
-    
+
     (Get-CodeCoverageChange -r1 $Run1 -r2 $Run2)
 }
 
@@ -315,7 +315,7 @@ function Compare-CodeCoverage
 #>
 function Install-OpenCover
 {
-    param ( 
+    param (
         [parameter()][string]$Version = "4.6.519",
         [parameter()][string]$TargetDirectory = "~/",
         [parameter()][switch]$Force
@@ -326,22 +326,22 @@ function Install-OpenCover
     $packageUrl = "https://github.com/OpenCover/opencover/releases/download/${version}/${filename}"
     if ( test-path $tempPath )
     {
-        if ( $force ) 
+        if ( $force )
         {
             remove-item -force $tempPath
         }
-        else 
+        else
         {
             throw "Package already exists at $tempPath, not continuing.  Use -force to re-install"
         }
     }
     if ( test-path "$TargetDirectory/OpenCover" )
     {
-        if ( $force ) 
+        if ( $force )
         {
             remove-item -recurse -force "$TargetDirectory/OpenCover"
         }
-        else 
+        else
         {
             throw "$TargetDirectory/OpenCover exists, not continuing.  Use -force to re-install"
         }
@@ -352,7 +352,7 @@ function Install-OpenCover
     {
         throw "Download failed: $packageUrl"
     }
-    
+
     ## We add ErrorAction as we do not have this module on PS v4 and below. Calling import-module will throw an error otherwise.
     import-module Microsoft.PowerShell.Archive -ErrorAction SilentlyContinue
 
@@ -370,12 +370,12 @@ function Install-OpenCover
 .Description
    Invoke-OpenCover runs tests under OpenCover by executing tests on PowerShell.exe located at $PowerShellExeDirectory.
 .EXAMPLE
-   Invoke-OpenCover -TestDirectory $pwd/test/powershell -PowerShellExeDirectory $pwd/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win10-x64 
+   Invoke-OpenCover -TestDirectory $pwd/test/powershell -PowerShellExeDirectory $pwd/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win10-x64
 #>
 function Invoke-OpenCover
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
-    param ( 
+    param (
         [parameter()]$OutputLog = "$pwd/OpenCover.xml",
         [parameter()]$TestDirectory = "$($script:psRepoPath)/test/powershell",
         [parameter()]$OpenCoverPath = "~/OpenCover",
@@ -387,7 +387,7 @@ function Invoke-OpenCover
 
     $OpenCoverBin = "$OpenCoverPath\opencover.console.exe"
 
-    if ( ! (test-path $OpenCoverBin)) 
+    if ( ! (test-path $OpenCoverBin))
     {
         # see if it's somewhere else in the path
         $openCoverBin = (Get-Command -Name 'opencover.console' -ErrorAction Ignore).Source
@@ -398,15 +398,15 @@ function Invoke-OpenCover
 
     # check to be sure that powershell.exe is present
     $target = "${PowerShellExeDirectory}\powershell.exe"
-    if ( ! (test-path $target) ) 
+    if ( ! (test-path $target) )
     {
         throw "$target does not exist, use 'Start-PSBuild -configuration CodeCoverage'"
     }
 
     # create the arguments for OpenCover
-    $targetArgs = "-c", "Set-ExecutionPolicy Bypass -Force -Scope Process;", "Invoke-Pester","${TestDirectory}" 
-    
-    if ( $CIOnly ) 
+    $targetArgs = "-c", "Set-ExecutionPolicy Bypass -Force -Scope Process;", "Invoke-Pester","${TestDirectory}"
+
+    if ( $CIOnly )
     {
         $targetArgs += "-excludeTag @('Feature','Scenario','Slow','RequireAdminOnWindows')"
     }
@@ -417,21 +417,21 @@ function Invoke-OpenCover
 
     if ( $PSCmdlet.ShouldProcess("$OpenCoverBin $openCoverArgs")  )
     {
-        try 
+        try
         {
             # check to be sure that the module path is present
             # this isn't done earlier because there's no need to change env:psmodulepath unless we're going to really run tests
             $saveModPath = $env:psmodulepath
             $env:psmodulepath = "${PowerShellExeDirectory}\Modules"
-            if ( ! (test-path $env:psmodulepath) ) 
+            if ( ! (test-path $env:psmodulepath) )
             {
                 throw "${env:psmodulepath} does not exist"
             }
-            
+
             # invoke OpenCover
             & $OpenCoverBin $openCoverArgs
         }
-        finally 
+        finally
         {
             # set it back
             $env:PSModulePath = $saveModPath

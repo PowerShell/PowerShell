@@ -7,8 +7,8 @@
         Title="Commands" Width="380" Height="600">
     <Grid Margin="3" x:Name="MainGrid">
         <Grid.LayoutTransform>
-            <ScaleTransform  
-                    CenterX="0" CenterY="0" 
+            <ScaleTransform
+                    CenterX="0" CenterY="0"
                         ScaleX = "{Binding ZoomLevel}"
                         ScaleY=  "{Binding ZoomLevel}"
                 />

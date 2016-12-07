@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Activities
                 return;
             }
 
-            //BUGBUG: As written, the following checks cause error in scenarios where they should not. 
+            //BUGBUG: As written, the following checks cause error in scenarios where they should not.
             // They are left in for the time being but disabled until we verify that there are no
             // scenarios where we need to check for two variables being assigned.
 #if false
@@ -259,10 +259,10 @@ namespace Microsoft.PowerShell.Activities
 
             this.SetData(executionContext, this.OutputStream, outValue);
             this.SetData(executionContext, this.InputStream, inValue);
-            
+
             // Executing the next child activity.
             PipelineEnabledActivity nextChild = this.Activities[nextChildIndex];
-            
+
             executionContext.ScheduleActivity(nextChild, new CompletionCallback(InternalExecute));
 
             this.lastIndexHint.Set(executionContext, nextChildIndex);

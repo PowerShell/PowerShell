@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Workflow
     /// data for managing the same
     /// </summary>
     /// <remarks>the only reason this class has an internal scope is for
-    /// test purposes. Else this can be a private class inside 
+    /// test purposes. Else this can be a private class inside
     /// connection manager</remarks>
     internal class Connection
     {
@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Workflow
         internal uint RetryCount { get; set; }
         internal GetRunspaceAsyncResult AsyncResult { get; set; }
         internal WSManConnectionInfo ConnectionInfo { get; set; }
-        
+
         internal event EventHandler CloseCompleted;
         internal event EventHandler OpenCompleted;
         internal event EventHandler DisconnectCompleted;
@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Workflow
             }
         }
 
-        internal bool Busy 
+        internal bool Busy
         {
             get
             {
@@ -178,7 +178,7 @@ namespace Microsoft.PowerShell.Workflow
         internal uint RetryInterval
         {
             get { return _retryInterval; }
-            set 
+            set
             {
                 _retryInterval = value;
                 if (_retryInterval == 0) _retryInterval = 1;
@@ -205,7 +205,7 @@ namespace Microsoft.PowerShell.Workflow
 
                     try
                     {
-                        // Queries the server for disconnected runspaces. 
+                        // Queries the server for disconnected runspaces.
                         // Each runspace object in the returned array is in the Disconnected state and can be
                         // connected to the server by calling the Connect() or ConnectAsync() methods on the runspace.
                         runspaces = Runspace.GetRunspaces(connectionInfo);
@@ -298,7 +298,7 @@ namespace Microsoft.PowerShell.Workflow
             WSManConnectionInfo copyConnectionInfo = ConnectionInfo.Copy();
             copyConnectionInfo.EnableNetworkAccess = true;
 
-            // If the remote runspace is not available after crash/shutdown, 
+            // If the remote runspace is not available after crash/shutdown,
             // activity task resume will fall back to reexecuting in a new runspace is assigned for the connection
             if (!CheckAndReconnectAfterCrashOrShutdown(copyConnectionInfo))
             {
@@ -316,7 +316,7 @@ namespace Microsoft.PowerShell.Workflow
             // at this point the runspace can be in a closed or broken state
             // if so then close has to simply raise the event
             // if it was not in a terminal state when checking but happens
-            // later but before CloseAsync() is called then the other 
+            // later but before CloseAsync() is called then the other
             // call which caused the state change will raise an event
             if (_runspace.RunspaceStateInfo.State == RunspaceState.Broken ||
                 _runspace.RunspaceStateInfo.State == RunspaceState.Closed)
@@ -348,10 +348,10 @@ namespace Microsoft.PowerShell.Workflow
                     _manager.DisconnectCalled();
                     _runspace.DisconnectAsync();
                     return;
-                }                
+                }
             }
             RaiseEvents(Disconnect);
-        }        
+        }
 
         internal void ReconnectAsync()
         {
@@ -400,7 +400,7 @@ namespace Microsoft.PowerShell.Workflow
 
                 case RunspaceState.Opened:
                     {
-                        // runspace opened successfully, assign it to the asyncresult                        
+                        // runspace opened successfully, assign it to the asyncresult
                         // reset retry counter
                         RetryAttempt = 0;
                         ReadyForReconnect = false;
@@ -427,7 +427,7 @@ namespace Microsoft.PowerShell.Workflow
 
                             Timer timer = new Timer { AutoReset = false, Enabled = false, Interval = _retryInterval * 1000 };
                             timer.Elapsed += RetryTimerElapsed;
-                            timer.Start();                            
+                            timer.Start();
                         }
                         else
                         {
@@ -553,7 +553,7 @@ namespace Microsoft.PowerShell.Workflow
     /// AsyncResult object returned by ConnectionManager
     /// </summary>
     /// <remarks>the only reason this class has an internal scope is for
-    /// test purposes. Else this can be a private class inside 
+    /// test purposes. Else this can be a private class inside
     /// connection manager</remarks>
     internal class GetRunspaceAsyncResult : ConnectionAsyncResult
     {
@@ -702,7 +702,7 @@ namespace Microsoft.PowerShell.Workflow
             _connection.ReconnectCompleted -= HandleReconnectCompleted;
             RaiseOperationComplete();
         }
-        
+
         internal override void DoOperation()
         {
             if (_connection.Runspace.RunspaceStateInfo.State != RunspaceState.Disconnected)
@@ -804,7 +804,7 @@ namespace Microsoft.PowerShell.Workflow
         private const int TimerFired = 1;
         private const int TimerReset = 0;
         private bool _isDisposed;
-        private bool _isDisposing; 
+        private bool _isDisposing;
         private readonly PowerShellTraceSource _tracer = PowerShellTraceSourceFactory.GetTraceSource();
         private readonly object _syncObject = new object();
         private static readonly PSPerfCountersMgr _perfCountersMgr = PSPerfCountersMgr.Instance;
@@ -955,7 +955,7 @@ namespace Microsoft.PowerShell.Workflow
             _tracer.WriteMessage("PSW ConnMgr: Request serviced and runspace returned");
             Runspace runspace = result.Connection != null ? result.Connection.Runspace : null;
 
-            return runspace;            
+            return runspace;
         }
 
         /// <summary>
@@ -1097,7 +1097,7 @@ namespace Microsoft.PowerShell.Workflow
                         {
                             foreach (Connection connection in connections.Values)
                             {
-                                // if connection has been marked idle the last 
+                                // if connection has been marked idle the last
                                 // time remove resources
                                 if (connection.Idle)
                                 {
@@ -1115,7 +1115,7 @@ namespace Microsoft.PowerShell.Workflow
                         {
                             Connection removeConnection;
                             _createdConnections--;
-                            // remove connection from the table before attempting to 
+                            // remove connection from the table before attempting to
                             // close it. This will ensure that this connection is not
                             // assigned by mistake
                             connections.TryRemove(connection.InstanceId, out removeConnection);
@@ -1160,7 +1160,7 @@ namespace Microsoft.PowerShell.Workflow
                 _timerThreadRelease.Set();
             }
             catch (ObjectDisposedException)
-            { 
+            {
                 // Ignoring this exception
             }
             finally
@@ -1203,7 +1203,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// Checks to see if a thread is already servicing callbacks 
+        /// Checks to see if a thread is already servicing callbacks
         /// and if not starts one
         /// </summary>
         private void CheckAndStartCallbackServicingThread()
@@ -1328,7 +1328,7 @@ namespace Microsoft.PowerShell.Workflow
                         return;
                     }
 
-                } // service incoming requests  
+                } // service incoming requests
             }
             catch (ObjectDisposedException)
             {
@@ -1393,7 +1393,7 @@ namespace Microsoft.PowerShell.Workflow
             if (!activityResumption)
             {
             // table is available, check if there are any free runspaces
-            // if the collections was newly created, then this loop will 
+            // if the collections was newly created, then this loop will
             // be skipped)
                 foreach (Connection connection in
                     connections.Values.Where(connection => !connection.Busy).Where(connection => ValidateConnection(requestInfo, connection)))
@@ -1433,7 +1433,7 @@ namespace Microsoft.PowerShell.Workflow
                 return true;
             }
 
-            // when the existing connections are maxed out, there 
+            // when the existing connections are maxed out, there
             // are one of two choices
             //      1. all connections are busy, in which case
             //         the request cannot be serviced
@@ -1479,7 +1479,7 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             // there is a potential connection which can be closed,
-            // close the same and create a new one 
+            // close the same and create a new one
             removeConnections.TryRemove(potentialConnection.InstanceId, out potentialConnection);
 
             Debug.Assert(potentialConnection != null, "Trying to remove an element not in the dictionary");
@@ -1591,7 +1591,7 @@ namespace Microsoft.PowerShell.Workflow
                 connectionInfo2 = connection.Runspace.ConnectionInfo as WSManConnectionInfo;
 
             if (connectionInfo2 == null) return false;
-            
+
             // check URI related stuff
             if (!WorkflowUtils.CompareConnectionUri(connectionInfo, connectionInfo2))
             {
@@ -1622,13 +1622,13 @@ namespace Microsoft.PowerShell.Workflow
                 return false;
             }
 
-            //check proxy settings 
+            //check proxy settings
             if (!WorkflowUtils.CompareProxySettings(connectionInfo, connectionInfo2))
             {
                 return false;
             }
 
-            //check rest of wsman settings 
+            //check rest of wsman settings
             if (!WorkflowUtils.CompareOtherWSManSettings(connectionInfo, connectionInfo2))
             {
                 return false;
@@ -1708,7 +1708,7 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             // if this point is reached, then there is no match
-            // invalid runspace specified, throw an exception 
+            // invalid runspace specified, throw an exception
             _tracer.WriteMessage("PSW ConnMgr: Cannot find the actual connection object");
             ThrowInvalidRunspaceException(runspace);
 
@@ -1815,7 +1815,7 @@ namespace Microsoft.PowerShell.Workflow
 
             if (removedTable != null)
             {
-                // if this thread is the one that removed the table, then 
+                // if this thread is the one that removed the table, then
                 // make all the callbacks in this thread
                 RaiseCallbacksAfterCleanup(computerName);
             }
@@ -1985,7 +1985,7 @@ namespace Microsoft.PowerShell.Workflow
 
                 // close and clear all connections in connection pool
                 ClearAll();
-                
+
                 // This should be done after closing all connections.
                 // Throttling thread executes the close operations
                 Interlocked.CompareExchange(ref _isOperationsServiced, Servicing, NotServicing);
@@ -2120,7 +2120,7 @@ namespace Microsoft.PowerShell.Workflow
             Debug.Assert(operation != null, "OperationComplete event does not pass ThrottleOperation as sender");
             operation.OperationComplete -= HandleOperationComplete;
             Interlocked.Decrement(ref _inProgressCount);
-            CheckAndStartRequiredThreads();            
+            CheckAndStartRequiredThreads();
         }
 
         #endregion Throttling
@@ -2147,7 +2147,7 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <returns></returns>
             public bool MoveNext()
@@ -2192,7 +2192,7 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             public void Reset()
             {
@@ -2206,7 +2206,7 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             public object Current
             {
@@ -2214,7 +2214,7 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <returns></returns>
             public IEnumerator GetEnumerator()
@@ -2238,7 +2238,7 @@ namespace Microsoft.PowerShell.Workflow
 
             if (Interlocked.CompareExchange(ref _isReconnectServicing, Servicing, NotServicing) != NotServicing) return;
 
-            TraceThreadPoolInfo("Queuing user workitem disconnect/reconnect worker");           
+            TraceThreadPoolInfo("Queuing user workitem disconnect/reconnect worker");
             ThreadPool.QueueUserWorkItem(DisconnectReconnectWorker);
         }
 
@@ -2295,7 +2295,7 @@ namespace Microsoft.PowerShell.Workflow
             // reset flag that disconnect/reconnect thread is running
             Interlocked.CompareExchange(ref _isReconnectServicing, NotServicing, Servicing);
         }
-       
+
         /// <summary>
         /// Callback to indicate that this runspace been initiated with
         /// a pipeline and can be disconnected
@@ -2328,7 +2328,7 @@ namespace Microsoft.PowerShell.Workflow
 
                 CheckAndStartRequiredThreads();
             }
-        }       
+        }
 
         #endregion Disconnect/Reconnect
 

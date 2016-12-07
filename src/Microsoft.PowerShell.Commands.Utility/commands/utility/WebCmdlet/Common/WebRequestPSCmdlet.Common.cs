@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         #region URI
 
         /// <summary>
-        /// gets or sets the parameter UseBasicParsing 
+        /// gets or sets the parameter UseBasicParsing
         /// </summary>
         [Parameter]
         public virtual SwitchParameter UseBasicParsing { get; set; }
@@ -626,6 +626,6 @@ namespace Microsoft.PowerShell.Commands
             return (error);
         }
 
-        #endregion Helper Methods     
+        #endregion Helper Methods
     }
 }

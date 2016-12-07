@@ -13,8 +13,8 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
                             <PropertySet>
                                 <Name>PropertySetName</Name>
                                 <ReferencedProperties>
-                                    <Name>FirstName</Name> 
-                                    <Name>LastName</Name> 
+                                    <Name>FirstName</Name>
+                                    <Name>LastName</Name>
                                 </ReferencedProperties>
                             </PropertySet>
                         </MembersTypo>
@@ -22,8 +22,8 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
                             <PropertySet>
                                 <Name>PropertySetName</Name>
                                 <ReferencedProperties>
-                                    <Name>FirstName</Name> 
-                                    <Name>LastName</Name> 
+                                    <Name>FirstName</Name>
+                                    <Name>LastName</Name>
                                 </ReferencedProperties>
                             </PropertySet>
                         </MembersTypo2>
@@ -61,7 +61,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
         $ps.HadErrors | Should be $true
         $ps.Streams.Error[0].FullyQualifiedErrorId | Should be "WrongExtension,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
-	
+
 	It "Update-TypeData with Valid Dynamic Type NoteProperty with Force should work"{
         $null = $ps.AddScript("Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value 2 -TypeName System.String")
         $ps.Invoke()
@@ -81,7 +81,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
         $null = $ps.AddScript("'string'.TestNote")
         $ps.Invoke()| Should BeNullOrEmpty
 	}
-	
+
     It "Update-TypeData with Valid Dynamic Type AliasProperty with Force should work"{
         # setup
         $null = $ps.AddScript("Update-TypeData -MemberType AliasProperty -MemberName TestAlias -Value Length -TypeName System.String")
@@ -110,7 +110,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
         $null = $ps.AddScript("'string'.TestAlias")
         $ps.Invoke()| Should Be 6
     }
-	
+
 	It "Update-TypeData with Valid Dynamic Type ScriptMethod with Force should work"{
         $script1="script method"
         $null = $ps.AddScript("Update-TypeData -MemberType ScriptMethod -MemberName TestScriptMethod -Value {'$script1'} -TypeName System.String")
@@ -125,10 +125,10 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
         $ps.Invoke()
 
         $ps.Commands.Clear()
-        $null = $ps.AddScript('"string".TestScriptMethod()') 
+        $null = $ps.AddScript('"string".TestScriptMethod()')
         $ps.Invoke() | Should Be "new script method"
 	}
-	
+
 	It "Update-TypeData with Valid Dynamic Type Accept TypeData Object should work"{
 		$ps.Commands.AddScript('Add-Type -TypeDefinition "public class TypeDataTest{}"')
         $ps.Commands.AddStatement()
@@ -145,14 +145,14 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
 		$ps.Commands.Clear()
 		$ps.AddScript('$result.TestNote').Invoke() | Should Be 2
 	}
-	
+
 	It "Update-TypeData with Invalid DynamicType Null Value For AliasProperty should throw Exception"{
         $null = $ps.AddScript('Update-TypeData -MemberType AliasProperty -MemberName TestAlias -Value $null -TypeName System.String')
         $ps.Invoke()
         $ps.HadErrors  |Should be $true
         $ps.Streams.Error[0].FullyQualifiedErrorId  | Should be "ValueShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
-	
+
 
 	It "Update-TypeData with Invalid DynamicType with No MemberName should throw Exception"{
 	    $null = $ps.AddScript('Update-TypeData -MemberType NoteProperty -Value "Error" -TypeName System.String')
@@ -160,21 +160,21 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
         $ps.HadErrors  |Should be $true
         $ps.Streams.Error[0].FullyQualifiedErrorId  | Should be "MemberNameShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
-	
+
 	It "Update-TypeData with Invalid DynamicType with No Value should throw Exception"{
 		$null = $ps.AddScript('Update-TypeData -MemberType NoteProperty -MemberName TestNote -TypeName System.String')
         $ps.Invoke()
         $ps.HadErrors  |Should be $true
         $ps.Streams.Error[0].FullyQualifiedErrorId  | Should be "ValueShouldBeSpecified,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
-	
+
 	It "Update-TypeData with Invalid DynamicType with Empty TypeData should throw Exception"{
 		$null = $ps.AddScript("Update-TypeData -TypeName System.String")
         $ps.Invoke()
         $ps.HadErrors  |Should be $true
         $ps.Streams.Error[0].FullyQualifiedErrorId  | Should be "TypeDataEmpty,Microsoft.PowerShell.Commands.UpdateTypeDataCommand"
 	}
-	
+
 	It "Update-TypeData with Valid Standard Members Serialization Method String should work"{
         $null = $ps.AddScript('Update-TypeData -SerializationMethod string -StringSerializationSource Length -TargetTypeForDeserialization string -TypeName System.String')
         $ps.Invoke()
@@ -185,7 +185,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
         $ps.Commands.Clear(); $null = $ps.AddScript('"string".PSStandardMembers.TargetTypeForDeserialization')
         $ps.Invoke()| Should Be "string"
 	}
-	
+
 	It "Update-TypeData with Valid Standard Members Serialization Method SpecificProperties should work"{
         $null = $ps.AddScript('Update-TypeData -SerializationMethod SpecificProperties -StringSerializationSource Length -PropertySerializationSet Length -InheritPropertySerializationSet $true -SerializationDepth 2 -TypeName System.String')
         $ps.Invoke()
@@ -209,7 +209,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
         $ps.Commands.Clear();$ps.AddScript('"string".PSStandardMembers.SerializationDepth')
         $ps.Invoke()| Should Be 2
     }
-	
+
     It "Update-TypeData with Valid ISS UpdateType Command Test With DynamicType Set should work"{
         $ps.AddScript('Update-TypeData -MemberType NoteProperty -MemberName "TestNote" -Value "test the note" -SerializationMethod SpecificProperties -SerializationDepth 5 -PropertySerializationSet Length -DefaultDisplayPropertySet Length -TypeName System.String')
         $ps.Invoke()
@@ -223,7 +223,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
         $ps.Invoke()| Should Be "Length"
         $ps.Commands.Clear();$null = $ps.AddScript('"string".PSStandardMembers.DefaultDisplayPropertySet.ReferencedPropertyNames[0]')
         $ps.Invoke()| Should Be "Length"
-        
+
         $ps.Commands.Clear();$null = $ps.AddScript('Update-TypeData -MemberType NoteProperty -MemberName TestNote -Value "test the note again" -TargetTypeForDeserialization string -Force -TypeName System.String')
         $ps.Invoke()
         $ps.Commands.Clear();$null = $ps.AddScript('"string".TestNote')
@@ -239,7 +239,7 @@ Describe "Update-TypeData basic functionality" -Tags "CI" {
         $ps.Commands.Clear();$null = $ps.AddScript('"string".PSStandardMembers.TargetTypeForDeserialization')
         $ps.Invoke()| Should Be "string"
     }
-	
+
     It "Update-TypeData with Valid ISS UpdateType Command Test With StrongType Set should work"{
         $ps.AddScript('Update-TypeData -TypeName System.Array -MemberType NoteProperty -MemberName TestNote -Value "TestNote"')
         $ps.Commands.AddStatement()

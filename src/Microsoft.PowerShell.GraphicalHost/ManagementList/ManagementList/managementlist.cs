@@ -243,7 +243,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Clears all of the current columns, searchable rules and filter rules. 
+        /// Clears all of the current columns, searchable rules and filter rules.
         /// </summary>
         public void ResetView()
         {

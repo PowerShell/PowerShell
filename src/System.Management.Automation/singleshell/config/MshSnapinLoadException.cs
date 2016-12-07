@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Reflection;
 
 #if CORECLR
-// Use stubs for SystemException, SerializationInfo and SecurityPermissionAttribute 
+// Use stubs for SystemException, SerializationInfo and SecurityPermissionAttribute
 using Microsoft.PowerShell.CoreClr.Stubs;
 #else
 using System.Security.Permissions;
@@ -15,14 +15,14 @@ using System.Security.Permissions;
 namespace System.Management.Automation.Runspaces
 {
     /// <summary>
-    /// Defines exception thrown when a PSSnapin was not able to load into current runspace. 
+    /// Defines exception thrown when a PSSnapin was not able to load into current runspace.
     /// </summary>
     /// <!--
-    /// Implementation of PSSnapInException requires it to 
-    ///     1. Implement IContainsErrorRecord, 
+    /// Implementation of PSSnapInException requires it to
+    ///     1. Implement IContainsErrorRecord,
     ///     2. ISerializable
-    /// 
-    /// Basic information for this exception includes, 
+    ///
+    /// Basic information for this exception includes,
     ///     1. PSSnapin name
     ///     2. Inner exception.
     /// -->
@@ -104,7 +104,7 @@ namespace System.Management.Automation.Runspaces
         private void CreateErrorRecord()
         {
             // if _PSSnapin or _reason is empty, this exception is created using default
-            // constructor. Don't create the error record since there is 
+            // constructor. Don't create the error record since there is
             // no useful information anyway.
             if (!String.IsNullOrEmpty(_PSSnapin) && !String.IsNullOrEmpty(_reason))
             {
@@ -129,7 +129,7 @@ namespace System.Management.Automation.Runspaces
         private bool _isErrorRecordOriginallyNull;
 
         /// <summary>
-        /// Gets error record embedded in this exception. 
+        /// Gets error record embedded in this exception.
         /// </summary>
         /// <!--
         /// This property is required as part of IErrorRecordContainer
@@ -156,7 +156,7 @@ namespace System.Management.Automation.Runspaces
         private string _reason = "";
 
         /// <summary>
-        /// Gets message for this exception. 
+        /// Gets message for this exception.
         /// </summary>
         public override string Message
         {
@@ -174,7 +174,7 @@ namespace System.Management.Automation.Runspaces
         #region Serialization
 
         /// <summary>
-        /// Initiate a PSSnapInException instance. 
+        /// Initiate a PSSnapInException instance.
         /// </summary>
         /// <param name="info"> Serialization information </param>
         /// <param name="context"> Streaming context </param>

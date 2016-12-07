@@ -12,15 +12,15 @@ namespace System.Management.Automation
         /// Constructs an instance of the ParameterSetSpecificMetadata using the instance of the attribute
         /// that is specified.
         /// </summary>
-        /// 
+        ///
         /// <param name="attribute">
         /// The attribute to be compiled.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="attribute"/> is null.
         /// </exception>
-        /// 
+        ///
         internal ParameterSetSpecificMetadata(ParameterAttribute attribute)
         {
             if (attribute == null)
@@ -77,7 +77,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns true if the parameter is positional for this parameter set, or false otherwise.
         /// </summary>
-        /// 
+        ///
         internal bool IsPositional
         {
             get
@@ -138,14 +138,14 @@ namespace System.Management.Automation
         /// Gets or sets the value that tells whether this parameter set
         /// data is for the "all" parameter set
         /// </summary>
-        /// 
+        ///
         internal bool IsInAllSets { get; set; }
 
         /// <summary>
         /// Gets the parameter set flag that represents the parameter set
         /// that this data is valid for.
         /// </summary>
-        /// 
+        ///
         internal uint ParameterSetFlag { get; set; }
 
         /// <summary>
@@ -156,22 +156,22 @@ namespace System.Management.Automation
         /// If both HelpMessageBaseName and HelpMessageResourceId are not set, the help info is
         /// set to HelpMessage
         /// </summary>
-        /// 
+        ///
         /// <returns>
         /// Help info about the parameter
         /// </returns>
-        /// 
+        ///
         /// <exception cref="InvalidOperationException">
         /// If the value of the specified resource is not a string and
         ///     HelpMessage is not set.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If only one of HelpMessageBaseName and HelpMessageResourceId is set
         ///     OR if no usable resources have been found, and
         ///     there are no neutral culture resources and HelpMessage is not set.
         /// </exception>
-        /// 
+        ///
         internal string GetHelpMessage(Cmdlet cmdlet)
         {
             string helpInfo = null;

@@ -3,7 +3,7 @@
 //  Microsoft Windows NT
 //  Copyright (C) Microsoft Corporation, 2007.
 //
-//  Contents:  Entry points for managed PowerShell plugin worker used to 
+//  Contents:  Entry points for managed PowerShell plugin worker used to
 //  host powershell in a WSMan service.
 // ----------------------------------------------------------------------
 
@@ -50,7 +50,7 @@ namespace System.Management.Automation.Remoting
         // the context.
         internal event EventHandler<EventArgs> SessionClosed;
 
-        // Track whether Dispose has been called. 
+        // Track whether Dispose has been called.
         private bool _disposed = false;
 
         protected WSManPluginServerSession(
@@ -71,40 +71,40 @@ namespace System.Management.Automation.Remoting
         {
             // Dispose of unmanaged resources.
             Dispose(true);
-            // This object will be cleaned up by the Dispose method. 
-            // Therefore, you should call GC.SuppressFinalize to 
-            // take this object off the finalization queue 
-            // and prevent finalization code for this object 
+            // This object will be cleaned up by the Dispose method.
+            // Therefore, you should call GC.SuppressFinalize to
+            // take this object off the finalization queue
+            // and prevent finalization code for this object
             // from executing a second time.
             GC.SuppressFinalize(this);
         }
 
         /// <summary>
-        /// Dispose(bool disposing) executes in two distinct scenarios. 
-        /// If disposing equals true, the method has been called directly 
-        /// or indirectly by a user's code. Managed and unmanaged resources 
-        /// can be disposed. 
-        /// If disposing equals false, the method has been called by the 
-        /// runtime from inside the finalizer and you should not reference 
-        /// other objects. Only unmanaged resources can be disposed. 
+        /// Dispose(bool disposing) executes in two distinct scenarios.
+        /// If disposing equals true, the method has been called directly
+        /// or indirectly by a user's code. Managed and unmanaged resources
+        /// can be disposed.
+        /// If disposing equals false, the method has been called by the
+        /// runtime from inside the finalizer and you should not reference
+        /// other objects. Only unmanaged resources can be disposed.
         /// </summary>
         /// <param name="disposing"></param> True when called from Dispose(), False when called from Finalize().
         protected virtual void Dispose(bool disposing)
         {
-            // Check to see if Dispose has already been called. 
+            // Check to see if Dispose has already been called.
             if (!_disposed)
             {
-                // If disposing equals true, dispose all managed 
-                // and unmanaged resources. 
+                // If disposing equals true, dispose all managed
+                // and unmanaged resources.
                 if (disposing)
                 {
                     // Dispose managed resources.
                     //Close(false);
                 }
 
-                // Call the appropriate methods to clean up 
-                // unmanaged resources here. 
-                // If disposing is false, 
+                // Call the appropriate methods to clean up
+                // unmanaged resources here.
+                // If disposing is false,
                 // only the following code is executed.
                 Close(false);
 
@@ -114,16 +114,16 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Use C# destructor syntax for finalization code. 
-        /// This destructor will run only if the Dispose method 
-        /// does not get called. 
-        /// It gives your base class the opportunity to finalize. 
+        /// Use C# destructor syntax for finalization code.
+        /// This destructor will run only if the Dispose method
+        /// does not get called.
+        /// It gives your base class the opportunity to finalize.
         /// Do not provide destructors in types derived from this class.
         /// </summary>
         ~WSManPluginServerSession()
         {
-            // Do not re-create Dispose clean-up code here. 
-            // Calling Dispose(false) is optimal in terms of 
+            // Do not re-create Dispose clean-up code here.
+            // Calling Dispose(false) is optimal in terms of
             // readability and maintainability.
             Dispose(false);
         }
@@ -257,7 +257,7 @@ namespace System.Management.Automation.Remoting
                         creationRequestDetails.ToString(), creationRequestDetails.ToString());
 
                     //RACE TO BE FIXED - As soon as this API is called, WinRM service will send CommandResponse back and Signal is expected anytime
-                    // If Signal comes and executes before registering the notification handle, cleanup will be messed          
+                    // If Signal comes and executes before registering the notification handle, cleanup will be messed
                     result = WSManNativeApi.WSManPluginReportContext(creationRequestDetails.unmanagedHandle, 0, creationRequestDetails.unmanagedHandle);
                     if (Platform.IsWindows && (WSManPluginConstants.ExitCodeSuccess == result))
                     {
@@ -312,7 +312,7 @@ namespace System.Management.Automation.Remoting
             SessionClosed.SafeInvoke(sender, eventArgs);
         }
 
-        // handle transport manager related errors 
+        // handle transport manager related errors
         internal void HandleTransportError(Object sender, TransportErrorOccuredEventArgs eventArgs)
         {
             Exception reasonForClose = null;
@@ -354,7 +354,7 @@ namespace System.Management.Automation.Remoting
             transportMgr.WSManTransportErrorOccured -=
                 new EventHandler<TransportErrorOccuredEventArgs>(this.HandleTransportError);
 
-            // We should not use request details again after so releasing the resource. 
+            // We should not use request details again after so releasing the resource.
             // Remember not to free this memory as this memory is allocated and owned by WSMan.
             creationRequestDetails = null;
             // if already disposing..no need to let finalizer thread
@@ -396,7 +396,7 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     internal class WSManPluginShellSession : WSManPluginServerSession
     {
@@ -432,7 +432,7 @@ namespace System.Management.Automation.Remoting
         #endregion
 
         /// <summary>
-        /// Main Routine for Connect on a Shell. 
+        /// Main Routine for Connect on a Shell.
         /// Calls in server remotesessions ExecuteConnect to run the Connect algorithm
         /// This call is synchronous. i.e WSManOperationComplete will be called before the routine completes
         /// </summary>
@@ -464,7 +464,7 @@ namespace System.Management.Automation.Remoting
                 System.Byte[] inputData;
                 System.Byte[] outputData;
 
-                // Retrieve the string (Base64 encoded) 
+                // Retrieve the string (Base64 encoded)
                 inputData = ServerOperationHelpers.ExtractEncodedXmlElement(
                     inboundConnectInformation.Text,
                     WSManNativeApi.PS_CONNECT_XML_TAG);
@@ -767,7 +767,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="requestDetails"></param>
         internal void Stop(

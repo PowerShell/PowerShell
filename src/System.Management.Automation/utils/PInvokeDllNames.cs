@@ -6,9 +6,9 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// PinvokeDllNames contains the DLL names to be use for PInvoke in FullCLR/CoreCLR powershell.
-    /// 
+    ///
     /// * When adding a new DLL name here, make sure that you add both the FullCLR and CoreCLR version
-    ///   of it. Add the comment '/*COUNT*/' with the new DLL name, and make sure the 'COUNT' is the 
+    ///   of it. Add the comment '/*COUNT*/' with the new DLL name, and make sure the 'COUNT' is the
     ///   same for both FullCLR and CoreCLR DLL names.
     /// </summary>
     internal static class PinvokeDllNames
@@ -134,7 +134,7 @@ namespace System.Management.Automation
         internal const string FormatMessageDllName = "api-ms-win-core-localization-l1-2-0.dll";              /*119*/
         internal const string CreateToolhelp32SnapshotDllName = "api-ms-win-core-toolhelp-l1-1-0";           /*120*/
         internal const string Process32FirstDllName = "api-ms-win-core-toolhelp-l1-1-0";                     /*121*/
-        internal const string Process32NextDllName = "api-ms-win-core-toolhelp-l1-1-0";                      /*122*/               
+        internal const string Process32NextDllName = "api-ms-win-core-toolhelp-l1-1-0";                      /*122*/
 #else
         internal const string QueryDosDeviceDllName = "kernel32.dll";                                        /*1*/
         internal const string CreateSymbolicLinkDllName = "kernel32.dll";                                    /*2*/
@@ -256,7 +256,7 @@ namespace System.Management.Automation
         internal const string FormatMessageDllName = "wevtapi.dll";                                          /*119*/
         internal const string CreateToolhelp32SnapshotDllName = "kernel32.dll";                              /*120*/
         internal const string Process32FirstDllName = "kernel32.dll";                                        /*121*/
-        internal const string Process32NextDllName = "kernel32.dll";                                         /*122*/                
+        internal const string Process32NextDllName = "kernel32.dll";                                         /*122*/
 #endif
     }
 }

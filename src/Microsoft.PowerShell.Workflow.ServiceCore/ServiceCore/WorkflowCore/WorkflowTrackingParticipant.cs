@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Workflow
     using System.Text;
 
     /// <summary>
-    /// Contains members that allow the addition of custom extension to 
+    /// Contains members that allow the addition of custom extension to
     /// the PowerShell workflow engine.
     /// </summary>
     public static class PSWorkflowExtensions

@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     #region WriteDebugCommand
     /// <summary>
     /// This class implements Write-Debug command
-    /// 
+    ///
     /// </summary>
     [Cmdlet(VerbsCommunications.Write, "Debug", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113424", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteDebugCommand : PSCmdlet
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
     #region WriteVerboseCommand
     /// <summary>
     /// This class implements Write-Verbose command
-    /// 
+    ///
     /// </summary>
     [Cmdlet(VerbsCommunications.Write, "Verbose", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113429", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteVerboseCommand : PSCmdlet
@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
     #region WriteWarningCommand
     /// <summary>
     /// This class implements Write-Warning command
-    /// 
+    ///
     /// </summary>
     [Cmdlet(VerbsCommunications.Write, "Warning", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113430", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteWarningCommand : PSCmdlet
@@ -169,7 +169,7 @@ namespace Microsoft.PowerShell.Commands
     #region WriteInformationCommand
     /// <summary>
     /// This class implements Write-Information command
-    /// 
+    ///
     /// </summary>
     [Cmdlet(VerbsCommunications.Write, "Information", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=525909", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteInformationCommand : PSCmdlet

@@ -29,7 +29,7 @@ namespace System.Management.Automation
     #region Constructors
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public RemotingEncodingException()
             : base()
@@ -37,7 +37,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="message"></param>
         public RemotingEncodingException(string message)
@@ -46,7 +46,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -56,7 +56,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="message"></param>
         /// <param name="innerException"></param>
@@ -83,7 +83,7 @@ namespace System.Management.Automation
         internal static readonly Version ProtocolVersionWin8RTM = new Version(2, 2);
         internal static readonly Version ProtocolVersionWin10RTM = new Version(2, 3);
 
-        // Minor will be incremented for each change in PSRP client/server stack and new versions will be 
+        // Minor will be incremented for each change in PSRP client/server stack and new versions will be
         // forked on early major release/drop changes history.
         //      2.101 to 2.102 - Disconnect support as of M2
         //      2.102 to 2.103 - Key exchange protocol changes in M3
@@ -153,7 +153,7 @@ namespace System.Management.Automation
                     {
                         $params = @{static=$true}
                     }
-        
+
                     foreach ($_m in ,$_val | Get-Member @params $_pat |
                         Sort-Object membertype,name)
                     {
@@ -224,7 +224,7 @@ namespace System.Management.Automation
                         }
 
                         foreach ($_v in Get-ChildItem ($_varName + '*') | sort Name)
-                        { 
+                        {
                             $_nameFound = $_v.name
                             $(if ($_nameFound.IndexOfAny($_varsRequiringQuotes) -eq -1) {'{0}{1}{2}'}
                             else {'{0}{{{1}{2}}}'}) -f $_prefix, $_provider, $_nameFound
@@ -297,7 +297,7 @@ namespace System.Management.Automation
                         $_pattern = $matches[1]
                         if ($_pattern -match '^[0-9]+$')
                         {
-                            Get-History -ea SilentlyContinue -Id $_pattern | Foreach { $_.CommandLine } 
+                            Get-History -ea SilentlyContinue -Id $_pattern | Foreach { $_.CommandLine }
                         }
                         else
                         {
@@ -325,7 +325,7 @@ namespace System.Management.Automation
                                 {
                                     # handle parsing errors - the last token string should be the last
                                     # string in the line...
-                                    if ($lastword.Length -ge $_cmd.Length -and 
+                                    if ($lastword.Length -ge $_cmd.Length -and
                                         $lastword.substring($lastword.length-$_cmd.length) -eq $_cmd)
                                     {
                                         $_pat = $_cmd + '*'
@@ -522,9 +522,9 @@ namespace System.Management.Automation
         /// This data type is used when an Exception derived from IContainsErrorRecord
         /// is caught on server and is sent to client. This exception gets
         /// serialized as an error record. On the client this data type is deserialized in
-        /// to an ErrorRecord. 
-        /// 
-        /// ErrorRecord on the client has an instance of RemoteException as exception. 
+        /// to an ErrorRecord.
+        ///
+        /// ErrorRecord on the client has an instance of RemoteException as exception.
         /// </summary>
         ExceptionAsErrorRecord = 1,
 
@@ -636,13 +636,13 @@ namespace System.Management.Automation
         #region RunspacePool related
 
         /// <summary>
-        /// This method generates a Remoting data structure handler message for 
+        /// This method generates a Remoting data structure handler message for
         /// creating a RunspacePool on the server
         /// </summary>
         /// <param name="clientRunspacePoolId">id of the clientRunspacePool</param>
         /// <param name="minRunspaces">minRunspaces for the RunspacePool
         /// to be created at the server</param>
-        /// <param name="maxRunspaces">maxRunspaces for the RunspacePool 
+        /// <param name="maxRunspaces">maxRunspaces for the RunspacePool
         /// to be created at the server</param>
         /// <param name="runspacePool">local runspace pool</param>
         /// <param name="host">host for the runspacepool at the client end
@@ -663,7 +663,7 @@ namespace System.Management.Automation
         /// |   |           |        |         |            | hostInfo       |                     |
         /// |   |           |        |         |            | appParameters  |                     |
         /// --------------------------------------------------------------------------------------
-        /// 
+        ///
         ///
         internal static RemoteDataObject GenerateCreateRunspacePool(
             Guid clientRunspacePoolId,
@@ -698,13 +698,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This method generates a Remoting data structure handler message for 
+        /// This method generates a Remoting data structure handler message for
         /// creating a RunspacePool on the server
         /// </summary>
         /// <param name="clientRunspacePoolId">id of the clientRunspacePool</param>
         /// <param name="minRunspaces">minRunspaces for the RunspacePool
         /// to be created at the server</param>
-        /// <param name="maxRunspaces">maxRunspaces for the RunspacePool 
+        /// <param name="maxRunspaces">maxRunspaces for the RunspacePool
         /// to be created at the server</param>
         /// <returns>data structure handler message encoded as RemoteDataObject</returns>
         /// The message format is as under for this message
@@ -715,7 +715,7 @@ namespace System.Management.Automation
         /// |   |           |        |         | spacePool  | maxRunspaces,  |                     |
         /// |   |           |        |         |            |                |                     |
         /// --------------------------------------------------------------------------------------
-        /// 
+        ///
         ///
         internal static RemoteDataObject GenerateConnectRunspacePool(
             Guid clientRunspacePoolId,
@@ -760,7 +760,7 @@ namespace System.Management.Automation
         /// <param name="runspacePoolId">id of the clientRunspacePool</param>
         /// <param name="minRunspaces">minRunspaces for the RunspacePool
         /// to be created at the server</param>
-        /// <param name="maxRunspaces">maxRunspaces for the RunspacePool 
+        /// <param name="maxRunspaces">maxRunspaces for the RunspacePool
         /// to be created at the server</param>
         /// <returns>data structure handler message encoded as RemoteDataObject</returns>
         /// The message format is as under for this message
@@ -771,7 +771,7 @@ namespace System.Management.Automation
         /// |   |           |        |         | olInitData | maxRunspaces,  |                     |
         /// |   |           |        |         |            |                |                     |
         /// --------------------------------------------------------------------------------------
-        /// 
+        ///
         ///
         internal static RemoteDataObject GenerateRunspacePoolInitData(
             Guid runspacePoolId,
@@ -791,12 +791,12 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// This method generates a Remoting data structure handler message for 
+        /// This method generates a Remoting data structure handler message for
         /// modifying the maxrunspaces of the specified runspace pool on the server
         /// </summary>
         /// <param name="clientRunspacePoolId">id of the clientRunspacePool</param>
-        /// <param name="maxRunspaces">new value of maxRunspaces for the 
-        /// specified RunspacePool  </param>       
+        /// <param name="maxRunspaces">new value of maxRunspaces for the
+        /// specified RunspacePool  </param>
         /// <param name="callId">call id of the call at client</param>
         /// <returns>data structure handler message encoded as RemoteDataObject</returns>
         /// The message format is as under for this message
@@ -822,12 +822,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This method generates a Remoting data structure handler message for 
+        /// This method generates a Remoting data structure handler message for
         /// modifying the maxrunspaces of the specified runspace pool on the server
         /// </summary>
         /// <param name="clientRunspacePoolId">id of the clientRunspacePool</param>
-        /// <param name="minRunspaces">new value of minRunspaces for the 
-        /// specified RunspacePool  </param>       
+        /// <param name="minRunspaces">new value of minRunspaces for the
+        /// specified RunspacePool  </param>
         /// <param name="callId">call id of the call at client</param>
         /// <returns>data structure handler message encoded as RemoteDataObject</returns>
         /// The message format is as under for this message
@@ -853,7 +853,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This method generates a Remoting data structure handler message for 
+        /// This method generates a Remoting data structure handler message for
         /// that contains a response to SetMaxRunspaces or SetMinRunspaces
         /// </summary>
         /// <param name="clientRunspacePoolId">id of the clientRunspacePool</param>
@@ -883,7 +883,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This method generates a Remoting data structure handler message for 
+        /// This method generates a Remoting data structure handler message for
         /// getting the available runspaces on the server
         /// </summary>
         /// <param name="clientRunspacePoolId">guid of the runspace pool on which
@@ -994,7 +994,7 @@ namespace System.Management.Automation
         /// creating a command discovery pipeline on the server
         /// </summary>
         /// <param name="shell">The client remote powershell from which the
-        /// message needs to be generated.  
+        /// message needs to be generated.
         /// The data is extracted from parameters of the first command named "Get-Command".
         /// </param>
         /// <returns>data structure handler message encoded as RemoteDataObject</returns>
@@ -1007,7 +1007,7 @@ namespace System.Management.Automation
         /// |   |           |        |         | module,FQM,   |                     |
         /// |   |           |        |         | argumentList  |                     |
         /// --------------------------------------------------------------------------
-        /// 
+        ///
         internal static RemoteDataObject GenerateGetCommandMetadata(ClientRemotePowerShell shell)
         {
             Command getCommand = null;
@@ -1088,7 +1088,7 @@ namespace System.Management.Automation
         /// |   |           |        |         | tings, stream |                     |
         /// |   |           |        |         | options       |                     |
         /// --------------------------------------------------------------------------
-        /// 
+        ///
         internal static RemoteDataObject GenerateCreatePowerShell(ClientRemotePowerShell shell)
         {
             PowerShell powerShell = shell.PowerShell;
@@ -1151,7 +1151,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This method creates a remoting data structure handler message for transporting 
+        /// This method creates a remoting data structure handler message for transporting
         /// application private data from server to client
         /// </summary>
         /// <param name="clientRunspacePoolId">id of the client RunspacePool</param>
@@ -1209,7 +1209,7 @@ namespace System.Management.Automation
             //Add Reason property
             if (stateInfo.Reason != null)
             {
-                //If Reason is of not type IContainsErrorRecord, a new ErrorRecord is 
+                //If Reason is of not type IContainsErrorRecord, a new ErrorRecord is
                 //created using this errorId
                 string errorId = "RemoteRunspaceStateInfoReason";
                 PSNoteProperty exceptionProperty = GetExceptionProperty(stateInfo.Reason, errorId, ErrorCategory.NotSpecified);
@@ -1348,7 +1348,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This method creates a remoting data structure handler message for transporting a 
+        /// This method creates a remoting data structure handler message for transporting a
         /// powershell output data from server to client
         /// </summary>
         /// <param name="data">data to be sent</param>
@@ -1375,8 +1375,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This method creates a remoting data structure handler message for transporting a 
-        /// powershell informational message (debug/verbose/warning/progress)from 
+        /// This method creates a remoting data structure handler message for transporting a
+        /// powershell informational message (debug/verbose/warning/progress)from
         /// server to client
         /// </summary>
         /// <param name="data">data to be sent</param>
@@ -1405,8 +1405,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This method creates a remoting data structure handler message for transporting a 
-        /// powershell progress message from 
+        /// This method creates a remoting data structure handler message for transporting a
+        /// powershell progress message from
         /// server to client
         /// </summary>
         /// <param name="progressRecord">progress record to send</param>
@@ -1438,8 +1438,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This method creates a remoting data structure handler message for transporting a 
-        /// powershell information stream message from 
+        /// This method creates a remoting data structure handler message for transporting a
+        /// powershell information stream message from
         /// server to client
         /// </summary>
         /// <param name="informationRecord">information record to send</param>
@@ -1471,7 +1471,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This method creates a remoting data structure handler message for transporting a 
+        /// This method creates a remoting data structure handler message for transporting a
         /// powershell error record from server to client
         /// </summary>
         /// <param name="errorRecord">error record to be sent</param>
@@ -1498,7 +1498,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This method creates a remoting data structure handler message for transporting a 
+        /// This method creates a remoting data structure handler message for transporting a
         /// powershell state information from server to client
         /// </summary>
         /// <param name="stateInfo">state information object</param>
@@ -1528,7 +1528,7 @@ namespace System.Management.Automation
             //Add exception property
             if (stateInfo.Reason != null)
             {
-                // If Reason is of not type IContainsErrorRecord, 
+                // If Reason is of not type IContainsErrorRecord,
                 // a new ErrorRecord is created using this errorId
                 string errorId = "RemotePSInvocationStateInfoReason";
                 PSNoteProperty exceptionProperty =
@@ -1573,7 +1573,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets a Note Property for the exception. 
+        /// Gets a Note Property for the exception.
         /// </summary>
         /// <param name="exception"></param>
         /// <param name="errorId">ErrorId to use if exception is not of type IContainsErrorRecord</param>

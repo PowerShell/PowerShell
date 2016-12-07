@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Activities
         public override System.Type TypeImplementingCmdlet { get { return typeof(Microsoft.Management.Infrastructure.CimCmdlets.NewCimSessionOptionCommand); } }
 
         // Arguments
-        
+
         /// <summary>
         /// Provides access to the NoEncryption parameter.
         /// </summary>
@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Activities
             System.Management.Automation.PowerShell targetCommand = invoker.AddCommand(PSCommandName);
 
             // Initialize the arguments
-            
+
             if(NoEncryption.Expression != null)
             {
                 targetCommand.AddParameter("NoEncryption", NoEncryption.Get(context));

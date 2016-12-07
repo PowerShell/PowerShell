@@ -34,7 +34,7 @@ if ($IsLinux) {
 }
 
 #
-# At the moment, we just support x64 builds. When we support x86 builds, this 
+# At the moment, we just support x64 builds. When we support x86 builds, this
 # check may need to verify the SDK for the specified architecture.
 #
 function Get-Win10SDKBinDir {
@@ -120,7 +120,7 @@ function Start-PSBuild {
         Push-Location $PSScriptRoot
         try {
             git clean -fdX
-            # Extra cleaning is required to delete the CMake temporary files. 
+            # Extra cleaning is required to delete the CMake temporary files.
             # These are not cleaned when using "X" and cause CMake to retain state, leading to
             # mis-configured environment issues when switching between x86 and x64 compilation
             # environments.
@@ -318,7 +318,7 @@ cmd.exe /C cd /d "$currentLocation" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeH
                     # Describes wither it should build the CoreCLR or FullCLR version
                     [ValidateSet("ON", "OFF")]
                     [string]$OneCoreValue,
-                    
+
                     # Array of file names to copy from the local build directory to the packaging directory
                     [string[]]$FilesToCopy
                 )
@@ -348,19 +348,19 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
                     Copy-Item $srcPath $dstPath
                 }
             }
-        
+
             if ($FullCLR) {
-                $fullBinaries = @(  
+                $fullBinaries = @(
                     'powershell.exe',
                     'powershell.pdb',
                     'pwrshplugin.dll',
                     'pwrshplugin.pdb'
                 )
-                Build-NativeWindowsBinaries "OFF" $fullBinaries 
+                Build-NativeWindowsBinaries "OFF" $fullBinaries
             }
             else
             {
-                $coreClrBinaries = @(  
+                $coreClrBinaries = @(
                     'pwrshplugin.dll',
                     'pwrshplugin.pdb'
                 )
@@ -401,10 +401,10 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
     if($PSModuleRestore)
     {
         # Downloading the PowerShellGet and PackageManagement modules.
-        # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp1.0\win10-x64\publish\powershell.exe", 
+        # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp1.0\win10-x64\publish\powershell.exe",
         # so we need to get its parent directory
         $publishPath = Split-Path $Options.Output -Parent
-        log "Restore PowerShell modules to $publishPath"    
+        log "Restore PowerShell modules to $publishPath"
         # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
         Restore-PSModule -Name @('PowerShellGet') -Destination (Join-Path -Path $publishPath -ChildPath "Modules")
     }
@@ -416,11 +416,11 @@ function Compress-TestContent {
         $Destination
     )
 
-    $powerShellTestRoot =  Join-Path $PSScriptRoot 'test\powershell'    
+    $powerShellTestRoot =  Join-Path $PSScriptRoot 'test\powershell'
     Add-Type -AssemblyName System.IO.Compression.FileSystem
 
     $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Destination)
-    [System.IO.Compression.ZipFile]::CreateFromDirectory($powerShellTestRoot, $resolvedPath)    
+    [System.IO.Compression.ZipFile]::CreateFromDirectory($powerShellTestRoot, $resolvedPath)
 }
 
 function New-PSOptions {
@@ -717,7 +717,7 @@ function Start-PSPester {
     {
         $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
     }
-    
+
     $Command += "Invoke-Pester "
 
     $Command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
@@ -783,7 +783,7 @@ function Start-PSPester {
             {
                 Remove-Item $outputBufferFilePath
             }
-        }        
+        }
     }
     if($ThrowOnFailure)
     {
@@ -818,7 +818,7 @@ function Show-PSPesterError
 
 #
 # Read the test result file and
-# Throw if a test failed 
+# Throw if a test failed
 function Test-PSPesterResults
 {
     param(
@@ -829,7 +829,7 @@ function Test-PSPesterResults
     if(!(Test-Path $TestResultsFile))
     {
         throw "Test result file '$testResultsFile' not found for $TestArea."
-    } 
+    }
 
     $x = [xml](Get-Content -raw $testResultsFile)
     if ([int]$x.'test-results'.failures -gt 0)
@@ -1133,7 +1133,7 @@ function Start-PSPackage {
         [ValidateSet("deb", "osxpkg", "rpm", "msi", "appx", "zip")]
         [string[]]$Type,
 
-        # Generate windows downlevel package 
+        # Generate windows downlevel package
         [ValidateSet("win81-x64", "win7-x86", "win7-x64")]
         [ValidateScript({$IsWindows})]
         [string]$WindowsDownLevel
@@ -1649,7 +1649,7 @@ function Start-DevPowerShell {
         {
             Remove-Item env:DEVPATH
         }
-        
+
         if ($ZapDisable) {
             Remove-Item env:COMPLUS_ZapDisable
         }
@@ -2192,7 +2192,7 @@ function New-MSIPackage
 {
     [CmdletBinding()]
     param (
-    
+
         # Name of the Product
         [ValidateNotNullOrEmpty()]
         [string] $ProductName = 'PowerShell',
@@ -2221,7 +2221,7 @@ function New-MSIPackage
         # Path to Assets folder containing artifacts such as icons, images
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $AssetsPath, 
+        [string] $AssetsPath,
 
         # Path to license.rtf file - for the EULA
         [Parameter(Mandatory = $true)]
@@ -2250,13 +2250,13 @@ function New-MSIPackage
     $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
 
     $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion -Verbose
-    
+
     $assetsInSourcePath = Join-Path $ProductSourcePath 'assets'
     New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
 
-    Write-Verbose "Place dependencies such as icons to $assetsInSourcePath" 
+    Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
     Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
-    
+
     $productVersionWithName = $ProductName + "_" + $ProductVersion
     Write-Verbose "Create MSI for Product $productVersionWithName"
 
@@ -2281,13 +2281,13 @@ function New-MSIPackage
     if ($ProductNameSuffix) {
         $packageName += "-$ProductNameSuffix"
     }
-    $msiLocationPath = Join-Path $pwd "$packageName.msi"    
+    $msiLocationPath = Join-Path $pwd "$packageName.msi"
     Remove-Item -ErrorAction SilentlyContinue $msiLocationPath -Force
 
     & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v | Write-Verbose
     & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -arch x64 -v | Write-Verbose
     & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -dWixUILicenseRtf="$LicenseFilePath" -v | Write-Verbose
-    
+
     Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
 
     Write-Verbose "You can find the MSI @ $msiLocationPath"
@@ -2585,7 +2585,7 @@ function Clear-PSRepo
         [switch] $IncludePackages
     )
         Get-ChildItem $PSScriptRoot\* -Directory -Exclude 'Packages' | ForEach-Object {
-        Write-Verbose "Cleaning $_ ..." 
+        Write-Verbose "Cleaning $_ ..."
         git clean -fdX $_
     }
 
@@ -2674,7 +2674,7 @@ function Restore-PSModule
         # pull down the module
         log "running save-module $_"
         PowerShellGet\Save-Module @command -Force -Verbose
-        
+
         # Remove PSGetModuleInfo.xml file
         Find-Module -Name $_ -Repository $RepositoryName -IncludeDependencies | ForEach-Object {
             Get-ChildItem -Path (Join-Path -Path $Destination -ChildPath $_.Name) -Recurse -Depth 2 -File -Include 'PSGetModuleInfo.xml' -Attributes h,a,r | Remove-Item -Force

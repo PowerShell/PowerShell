@@ -11,19 +11,19 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This class implements a Finite State Machine (FSM) to control the remote connection on the server side.
     /// There is a similar but not identical FSM on the client side for this connection.
-    /// 
-    /// The FSM's states and events are defined to be the same for both the client FSM and the server FSM. 
+    ///
+    /// The FSM's states and events are defined to be the same for both the client FSM and the server FSM.
     /// This design allows the client and server FSM's to
     /// be as similar as possible, so that the complexity of maintaining them is minimized.
-    /// 
+    ///
     /// This FSM only controls the remote connection state. States related to runspace and pipeline are managed by runspace
     /// pipeline themselves.
-    /// 
+    ///
     /// This FSM defines an event handling matrix, which is filled by the event handlers.
-    /// The state transitions can only be performed by these event handlers, which are private 
+    /// The state transitions can only be performed by these event handlers, which are private
     /// to this class. The event handling is done by a single thread, which makes this
     /// implementation solid and thread safe.
-    /// 
+    ///
     /// This implementation of the FSM does not allow the remote session to be reused for a connection
     /// after it is been closed. This design decision is made to simplify the implementation.
     /// However, the design can be easily modified to allow the reuse of the remote session
@@ -216,7 +216,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// processes events in the queue. If there are no 
+        /// processes events in the queue. If there are no
         /// more events to process, then sets eventsInProcess
         /// variable to false. This will ensure that another
         /// thread which raises an event can then take control
@@ -243,7 +243,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This is the private version of raising a FSM event. 
+        /// This is the private version of raising a FSM event.
         /// It can only be called by the dedicated thread that processes the event queue.
         /// It calls the event handler
         /// in the right position of the event handling matrix.
@@ -251,7 +251,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// The parameter contains the actual FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter is null.
         /// </exception>
@@ -284,7 +284,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -305,7 +305,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This is the handler for NegotiationPending event. 
+        /// This is the handler for NegotiationPending event.
         /// NegotiationPending state can be in reached in the following cases
         /// 1. From Idle to NegotiationPending (during startup)
         /// 2. From Negotiation(Response)Sent to NegotiationPending.
@@ -341,7 +341,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -379,14 +379,14 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This is the handler for NegotiationSending event.
-        /// It sets the new state to be NegotiationSending, and sends the server side 
+        /// It sets the new state to be NegotiationSending, and sends the server side
         /// negotiation packet by queuing it on the output queue.
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -414,7 +414,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -443,7 +443,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -482,13 +482,13 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// If the parameter <paramref name="fsmEventArg"/> does not contain remote data.
-        /// </exception>        
+        /// </exception>
         internal void DoMessageReceived(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
             using (s_trace.TraceEventHandlers())
@@ -548,7 +548,7 @@ namespace System.Management.Automation.Remoting
                         }
                         else
                         {
-                            s_trace.WriteLine(@"Server received data for Runspace (id: {0}), 
+                            s_trace.WriteLine(@"Server received data for Runspace (id: {0}),
                                 but the Runspace cannot be found", clientRunspacePoolId);
 
                             PSRemotingDataStructureException reasonOfFailure = new
@@ -587,13 +587,13 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
         /// <exception cref="ArgumentException">
         /// If the parameter <paramref name="fsmEventArg"/> does not contain ConnectFailed event.
-        /// </exception>   
+        /// </exception>
         private void DoConnectFailed(object sender, RemoteSessionStateMachineEventArgs fsmEventArg)
         {
             using (s_trace.TraceEventHandlers())
@@ -625,11 +625,11 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> does not contains FatalError event.
         /// </exception>
@@ -675,7 +675,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -730,7 +730,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -761,7 +761,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -792,7 +792,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -822,7 +822,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -858,7 +858,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>
@@ -888,7 +888,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="fsmEventArg">
         /// This parameter contains the FSM event.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If the parameter <paramref name="fsmEventArg"/> is null.
         /// </exception>

@@ -69,7 +69,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="commandName">Creates a command object corresponding to specified name.</param>
         /// <param name="commandOrigin"> Location where the command was dispatched from. </param>
-        /// <param name="useLocalScope"> 
+        /// <param name="useLocalScope">
         /// True if command processor should use local scope to execute the command,
         /// False otherwise.
         /// </param>

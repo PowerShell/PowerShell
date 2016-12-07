@@ -590,7 +590,7 @@ namespace System.Management.Automation
                     // and an assignment is pending.  For cases like:
                     //   new-object System.Drawing.Point -prop @{ X=  -> Tab should not complete
                     // Note: This check works when all statements preceding the last are complete,
-                    //       but if a preceding statement is incomplete this test fails because 
+                    //       but if a preceding statement is incomplete this test fails because
                     //       the Ast mixes the statements due to incomplete parsing.
                     //   e.g.,
                     //   new-object System.Drawing.Point -prop @{ X = 100; Y =      <- Incomplete line
@@ -1263,7 +1263,7 @@ namespace System.Management.Automation
         /// Generate auto complete results for identifier within configuration.
         /// Results are generated based on DynamicKeywords matches given identifier.
         /// For example, following "Fi" matches "File", and "Us" matches "User"
-        /// 
+        ///
         ///     Configuration
         ///     {
         ///         Fi^
@@ -1272,7 +1272,7 @@ namespace System.Management.Automation
         ///             Us^
         ///         }
         ///     }
-        /// 
+        ///
         /// </summary>
         /// <param name="completionContext"></param>
         /// <param name="configureAst"></param>

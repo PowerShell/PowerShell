@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell.Activities
             System.Management.Automation.PowerShell targetCommand = invoker.AddCommand(PSCommandName);
 
             // Initialize the arguments
-            
+
             if(Namespace.Expression != null)
             {
                 targetCommand.AddParameter("Namespace", Namespace.Get(context));

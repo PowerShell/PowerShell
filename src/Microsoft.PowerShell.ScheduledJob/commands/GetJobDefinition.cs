@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScheduledJobDefinition Id.
         /// </summary>
-        [Parameter(Position = 0, 
+        [Parameter(Position = 0,
                    ParameterSetName = GetScheduledJobCommand.DefinitionIdParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Int32[] Id
@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScheduledJobDefinition Name.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, 
+        [Parameter(Position = 0, Mandatory = true,
                    ParameterSetName = GetScheduledJobCommand.DefinitionNameParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     else
                     {
                         FindJobDefinitionsById(
-                            _definitionIds, 
+                            _definitionIds,
                             (definition) =>
                             {
                                 WriteObject(definition);
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
                 case DefinitionNameParameterSet:
                     FindJobDefinitionsByName(
-                        _definitionNames, 
+                        _definitionNames,
                         (definition) =>
                         {
                             WriteObject(definition);

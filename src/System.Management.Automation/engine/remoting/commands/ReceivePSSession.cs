@@ -19,49 +19,49 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This cmdlet connects a running command associated with a PS session and then
     /// directs the command output either:
-    /// a) To Host.  This is the synchronous mode of the cmdlet which won't return 
-    ///    until the running command completes and all output data is received on 
+    /// a) To Host.  This is the synchronous mode of the cmdlet which won't return
+    ///    until the running command completes and all output data is received on
     ///    the client.
     /// b) To a job object.  This is the asynchronous mode of the cmdlet which will
-    ///    return immediately providing the job object that is collecting the 
+    ///    return immediately providing the job object that is collecting the
     ///    running command output data.
-    ///    
-    /// The running command becomes disconnected when the associated runspace is 
+    ///
+    /// The running command becomes disconnected when the associated runspace is
     /// disconnected (via the Disconnect-PSSession cmdlet).
-    /// 
+    ///
     /// The associated runspace object must be in the Opened state (connected) before
     /// the running command can be connected.  If the associated runspace object is
     /// in the disconnected state, it will first be connected before the running
     /// command is connected.
-    /// 
+    ///
     /// The user can specify how command output data is returned by using the public
     /// OutTarget enumeration (Host, Job).
     /// The default actions of this cmdlet is to always direct ouput to host unless
     /// a job object already exists on the client that is associated with the running
     /// command.  In this case the existing job object is connected to the running
     /// command and returned.
-    /// 
+    ///
     /// The cmdlet can be used in the following ways:
-    /// 
+    ///
     /// Receive PS session data by session object
     /// > $session = New-PSSession serverName
     /// > $job1 = Invoke-Command $session { [script] } -asjob
     /// > Disconnect-PSSession $session
     /// > Connect-PSSession $session
     /// > Receive-PSSession $session    // command output continues collecting at job object.
-    /// 
+    ///
     /// Receive PS session data by session Id
     /// > Receive-PSSession $session.Id
-    /// 
+    ///
     /// Receive PS session data by session instance Id
     /// > Receive-PSSession $session.InstanceId
-    /// 
+    ///
     /// Receive PS session data by session Name.  Direct output to job
     /// > Receive-PSSession $session.Name
-    /// 
+    ///
     /// Receive a running command from a computer.
     /// > $job = Receive-PSSession -ComputerName ServerOne -Name SessionName -OutTarget Job
-    /// 
+    ///
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Receive, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = ReceivePSSessionCommand.SessionParameterSet,
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// If this parameter is not specified then the value specified in
-        /// the environment variable DEFAULTREMOTESHELLNAME will be used. If 
+        /// the environment variable DEFAULTREMOTESHELLNAME will be used. If
         /// this is not set as well, then Microsoft.PowerShell is used.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
         private String _shell;
 
         /// <summary>
-        /// A complete URI(s) specified for the remote computer and shell to 
+        /// A complete URI(s) specified for the remote computer and shell to
         /// connect to and create a runspace for.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true,
@@ -245,8 +245,8 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Specifies the credentials of the user to impersonate in the 
-        /// remote machine. If this parameter is not specified then the 
+        /// Specifies the credentials of the user to impersonate in the
+        /// remote machine. If this parameter is not specified then the
         /// credentials of the current user process will be assumed.
         /// </summary>
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ComputerInstanceIdParameterSet)]
@@ -288,7 +288,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Specifies the certificate thumbprint to be used to impersonate the user on the 
+        /// Specifies the certificate thumbprint to be used to impersonate the user on the
         /// remote machine.
         /// </summary>
         [Parameter(ParameterSetName = ReceivePSSessionCommand.ComputerInstanceIdParameterSet)]
@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Port specifies the alternate port to be used in case the 
+        /// Port specifies the alternate port to be used in case the
         /// default ports are not used for the transport mechanism
         /// (port 80 for http and port 443 for useSSL)
         /// </summary>
@@ -481,7 +481,7 @@ namespace Microsoft.PowerShell.Commands
                     // Check the local repository for an existing viable session.
                     PSSession locSession = this.RunspaceRepository.GetItem(runspace.InstanceId);
 
-                    // Connect the session here.  If it fails (connectedSession == null) revert to the 
+                    // Connect the session here.  If it fails (connectedSession == null) revert to the
                     // reconstruct method.
                     Exception ex;
                     PSSession connectedSession = ConnectSession(locSession, out ex);
@@ -690,7 +690,7 @@ namespace Microsoft.PowerShell.Commands
                 if (ConnectSession(session, out ex) == null)
                 {
                     // Unable to connect runspace.  If this was a *reconnect* runspace then try
-                    // obtaining a connectable runspace directly from the server and do a 
+                    // obtaining a connectable runspace directly from the server and do a
                     // *reconstruct* connect.
                     PSSession oldSession = session;
                     session = TryGetSessionFromServer(oldSession);
@@ -742,8 +742,8 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                // Make sure that if this session is successfully connected that it is included 
-                // in the PSSession repository.  If it already exists then replace it because we 
+                // Make sure that if this session is successfully connected that it is included
+                // in the PSSession repository.  If it already exists then replace it because we
                 // want the latest/connected session in the repository.
                 if (session.Runspace.RunspaceStateInfo.State != RunspaceState.Disconnected)
                 {
@@ -873,7 +873,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // Otherwise this must be a new disconnected session object that has a running command 
+            // Otherwise this must be a new disconnected session object that has a running command
             // associated with it.
             if (remoteRunspace.RemoteCommand == null)
             {
@@ -1096,7 +1096,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Helper method to connect the runspace.  If the session/runspace can't
-        /// be connected or fails to be connected then a null PSSessionobject is 
+        /// be connected or fails to be connected then a null PSSessionobject is
         /// returned.
         /// </summary>
         /// <param name="session">Session to connect.</param>
@@ -1303,7 +1303,7 @@ namespace Microsoft.PowerShell.Commands
     public enum OutTarget
     {
         /// <summary>
-        /// Default mode.  If 
+        /// Default mode.  If
         /// </summary>
         Default = 0,
 

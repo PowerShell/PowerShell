@@ -24,7 +24,7 @@
         {
             $_.FullyQualifiedErrorId | Should be "CouldNotParseAsPowerShellDataFile,Import-PowerShellDataFile"
         }
-        
+
     }
 
     It "Generates a good error on an insecure file" {
@@ -46,7 +46,7 @@
         $path = setup -f NotAPSDataFile -content '"Hello World"' -Pass
         try
         {
-            Import-PowerShellDataFile $path -ErrorAction Stop 
+            Import-PowerShellDataFile $path -ErrorAction Stop
             Throw "Command did not throw exception"
         }
         catch
@@ -58,9 +58,9 @@
     It "Can parse a PowerShell Data File (detailed tests are in AST.SafeGetValue tests)" {
 
         $path = Setup -F gooddatafile -content '@{ "Hello" = "World" }' -pass
-        
+
         $result = Import-PowerShellDataFile $path -ErrorAction Stop
         $result.Hello | Should be "World"
     }
-    
+
 }

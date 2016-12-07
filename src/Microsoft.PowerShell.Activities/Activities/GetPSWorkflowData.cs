@@ -13,159 +13,159 @@ namespace Microsoft.PowerShell.Activities
 {
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public enum PSWorkflowRuntimeVariable
     {
         // Command Parameters
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSComputerName = 0,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSCredential = 1,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSPort = 2,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSUseSsl = 3,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSConfigurationName = 4,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSApplicationName = 5,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSConnectionUri = 6,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSAllowRedirection = 7,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSSessionOption = 8,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSAuthentication = 9,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSAuthenticationLevel = 10,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSCertificateThumbprint = 11,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Input = 13,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         Verbose = 15,
 
         // Retry policy constants
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSConnectionRetryCount = 19,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSConnectionRetryIntervalSec = 21,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSPrivateMetadata = 24,
 
         // Timers
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSRunningTimeoutSec = 27,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSElapsedTimeoutSec = 28,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSWorkflowRoot = 31,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         JobName = 32,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         JobInstanceId = 33,
         /// <summary>
-        /// 
+        ///
         /// </summary>
         JobId = 34,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        JobCommandName = 36, 
+        JobCommandName = 36,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         ParentJobInstanceId = 40,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         ParentJobName = 41,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         ParentJobId = 42,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         ParentCommandName = 43,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         WorkflowInstanceId = 48,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSSenderInfo = 49,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSCulture = 50,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly")]
         PSUICulture = 51,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         PSVersionTable = 52,
 
@@ -279,7 +279,7 @@ namespace Microsoft.PowerShell.Activities
                             outputStream = parameter.Value as PSDataCollection<PSObject>;
                         }
                     }
-                    
+
                     //
                     // If the property to return was all, then just return the entire collection as a hashtable.
                     // (We still needed to loop to find the output stream to write into.)
@@ -305,7 +305,7 @@ namespace Microsoft.PowerShell.Activities
                             //
                             if (workflowRuntimeVariables.ContainsKey(varKey))
                             {
-                                Object value = null; 
+                                Object value = null;
                                 dictionaryParam.TryGetValue(varKey, out value);
                                 workflowRuntimeVariables[varKey] = value;
                             }

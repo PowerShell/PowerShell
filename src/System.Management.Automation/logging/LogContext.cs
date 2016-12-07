@@ -5,13 +5,13 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 namespace System.Management.Automation
 {
     /// <summary>
-    /// LogContext is the class to keep track of context information for each 
+    /// LogContext is the class to keep track of context information for each
     /// event to be logged.
-    /// 
+    ///
     /// LogContext info is collected by Msh Log Engine and passed on to log provider
     /// interface.
     /// </summary>
-    /// 
+    ///
     internal class LogContext
     {
         #region Context Properties
@@ -71,7 +71,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Type of the command, which can be Alias, CommandLet, Script, Application, etc.
-        /// 
+        ///
         /// The value of this property is a usually conversion of CommandTypes enum into a string.
         /// </summary>
         /// <value></value>
@@ -98,12 +98,12 @@ namespace System.Management.Automation
         internal string SequenceNumber { get; set; } = "";
 
         /// <summary>
-        /// Current user. 
+        /// Current user.
         /// </summary>
         internal string User { get; set; } = "";
 
         /// <summary>
-        /// The user connected to the machine, if being done with 
+        /// The user connected to the machine, if being done with
         /// PowerShell remoting.
         /// </summary>
         internal string ConnectedUser { get; set; }
@@ -118,8 +118,8 @@ namespace System.Management.Automation
         #region Shell Id
 
         /// <summary>
-        /// This property should be filled in when logging api is called directly 
-        /// with LogContext (when ExecutionContext is not available). 
+        /// This property should be filled in when logging api is called directly
+        /// with LogContext (when ExecutionContext is not available).
         /// </summary>
         internal string ShellId { get; set; }
 

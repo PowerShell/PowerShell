@@ -7,10 +7,10 @@ using System.IO;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Class HelpFileHelpInfo keeps track of help information to be returned by 
+    ///
+    /// Class HelpFileHelpInfo keeps track of help information to be returned by
     /// command help provider.
-    /// 
+    ///
     /// </summary>
     internal class HelpFileHelpInfo : HelpInfo
     {
@@ -19,7 +19,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// This is made private intentionally so that the only way to create object of this type
-        /// is through 
+        /// is through
         ///     GetHelpInfo(string name, string text, string filename)
         /// </remarks>
         /// <param name="name">help topic name</param>
@@ -31,7 +31,7 @@ namespace System.Management.Automation
 
             Name = name;
 
-            // Take the 5th line as synopsis. This may not be true if 
+            // Take the 5th line as synopsis. This may not be true if
             // format of help file is changed later on.
             _synopsis = GetLine(text, 5);
             if (_synopsis != null)

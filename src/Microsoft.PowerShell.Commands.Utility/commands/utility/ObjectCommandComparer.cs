@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     internal class ObjectCommandComparer : IComparer
     {
@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.Commands
                 return Compare(first.PropertyValue, second.PropertyValue);
             }
             // if first.IsExistingProperty, !second.IsExistingProperty; otherwise the
-            // first branch if would return. Regardless of key orders non existing property 
+            // first branch if would return. Regardless of key orders non existing property
             // will be considered greater than others
             if (first.IsExistingProperty)
             {
@@ -187,7 +187,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="second">
         /// second object to extract value
         /// </param>
-        /// <returns> 
+        /// <returns>
         /// 0 if they are the same, less than 0 if first is smaller, more than 0 if first is greater
         ///</returns>
         public int Compare(object first, object second)

@@ -670,17 +670,17 @@ namespace System.Management.Automation.Tracing
         ManagedPlugIn = 0x100,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         UseAlwaysDebug = 0x2000000000000000,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         UseAlwaysOperational = 0x8000000000000000,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         UseAlwaysAnalytic = 0x4000000000000000,
     }
@@ -764,7 +764,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public virtual PowerShellTraceKeywords Keywords
         {
@@ -799,7 +799,7 @@ namespace System.Management.Automation.Tracing
 
     /// <summary>
     /// ChannelWrite is the concrete implementation of IChannelWrite.  It writes all the traces to the specified traceChannel.
-    /// TraceChannel is specified in the constructor.  
+    /// TraceChannel is specified in the constructor.
     /// It always uses PowerShell event provider Id.
     /// </summary>
     public sealed class PowerShellChannelWriter : BaseChannelWriter
@@ -815,7 +815,7 @@ namespace System.Management.Automation.Tracing
         private PowerShellTraceKeywords _keywords;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override PowerShellTraceKeywords Keywords
         {
@@ -1090,7 +1090,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="message"></param>
         /// <returns></returns>
@@ -1102,7 +1102,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="message1"></param>
         /// <param name="message2"></param>
@@ -1115,7 +1115,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="message"></param>
         /// <param name="instanceId"></param>
@@ -1129,7 +1129,7 @@ namespace System.Management.Automation.Tracing
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="className"></param>
         /// <param name="methodName"></param>
@@ -1151,7 +1151,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="className"></param>
         /// <param name="methodName"></param>
@@ -1450,7 +1450,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="className"></param>
         /// <param name="methodName"></param>
@@ -1474,7 +1474,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="connectionInfo"></param>
         /// <returns></returns>
@@ -1505,10 +1505,10 @@ namespace System.Management.Automation.Tracing
     public static class PowerShellTraceSourceFactory
     {
         /// <summary>
-        /// Returns an instance of BaseChannelWriter. 
+        /// Returns an instance of BaseChannelWriter.
         /// If the Etw is not supported by the platform it will return NullWriter.Instance
-        /// 
-        /// A Task and a set of Keywords can be specified in the GetTraceSource method (See overloads).  
+        ///
+        /// A Task and a set of Keywords can be specified in the GetTraceSource method (See overloads).
         ///    The supplied task and keywords are used to pass to the Etw provider in case they are
         /// not defined in the manifest file.
         /// </summary>
@@ -1518,10 +1518,10 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Returns an instance of BaseChannelWriter. 
+        /// Returns an instance of BaseChannelWriter.
         /// If the Etw is not supported by the platform it will return NullWriter.Instance
-        /// 
-        /// A Task and a set of Keywords can be specified in the GetTraceSource method (See overloads).  
+        ///
+        /// A Task and a set of Keywords can be specified in the GetTraceSource method (See overloads).
         ///    The supplied task and keywords are used to pass to the Etw provider in case they are
         /// not defined in the manifest file.
         /// </summary>
@@ -1531,10 +1531,10 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Returns an instance of BaseChannelWriter. 
+        /// Returns an instance of BaseChannelWriter.
         /// If the Etw is not supported by the platform it will return NullWriter.Instance
-        /// 
-        /// A Task and a set of Keywords can be specified in the GetTraceSource method (See overloads).  
+        ///
+        /// A Task and a set of Keywords can be specified in the GetTraceSource method (See overloads).
         ///    The supplied task and keywords are used to pass to the Etw provider in case they are
         /// not defined in the manifest file.
         /// </summary>

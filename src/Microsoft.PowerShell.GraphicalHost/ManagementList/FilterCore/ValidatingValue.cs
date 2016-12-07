@@ -107,7 +107,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Called to validate the property with the given name. 
+        /// Called to validate the property with the given name.
         /// </summary>
         /// <param name="columnName">
         /// The name of the property whose error message will be checked.
@@ -136,12 +136,12 @@ namespace Microsoft.Management.UI.Internal
             if (!this.TryGetCastValue(this.Value, out castValue))
             {
                 string errorMessage = FilterRuleCustomizationFactory.FactoryInstance.GetErrorMessageForInvalidValue(
-                    this.Value.ToString(), 
+                    this.Value.ToString(),
                     typeof(T));
 
                 return new DataErrorInfoValidationResult(
-                    false, 
-                    null, 
+                    false,
+                    null,
                     errorMessage);
             }
 

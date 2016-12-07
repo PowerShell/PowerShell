@@ -95,7 +95,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return _default;
             }
         }
-        
+
         private Nullable<T> _value;
         private T _default;
     }
@@ -314,7 +314,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// 0 : ignore
         /// greater than 0 : it represents the indentation for the first line (i.e. "first line indent").
         ///                  The first line will be indented by the indicated number of characters.
-        /// less than 0    : it represents the hanging of the first line WRT the following ones 
+        /// less than 0    : it represents the hanging of the first line WRT the following ones
         ///                  (i.e. "first line hanging").
         /// </summary>
         internal int firstLine = 0;
@@ -462,7 +462,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
     internal sealed partial class AppliesTo
     {
-        //it can contain either a type or type group reference 
+        //it can contain either a type or type group reference
         internal List<TypeOrGroupReference> referenceList = new List<TypeOrGroupReference>();
     }
 
@@ -509,7 +509,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// definition of a view 
+    /// definition of a view
     /// </summary>
     internal sealed class ViewDefinition
     {

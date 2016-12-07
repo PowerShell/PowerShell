@@ -278,7 +278,7 @@ namespace TestHost
 ## '
 function New-TestHost
 {
-    If ($IsCoreCLR) 
+    If ($IsCoreCLR)
     {
         $references = "System","mscorlib","System.Management.Automation",
             "System.Collections.NonGeneric","System.Console","System.Collections",

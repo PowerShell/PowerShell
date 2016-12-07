@@ -226,7 +226,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Marking all the streams as completed so that no further data can be added and 
+        /// Marking all the streams as completed so that no further data can be added and
         /// jobs will know that there is no more data coming in.
         /// </summary>
         public void CloseAll()

@@ -14,7 +14,7 @@ using System.Management.Automation.Runspaces;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// Base class defining the formatting context and the 
+    /// Base class defining the formatting context and the
     /// formatting context manager (stack based)
     /// </summary>
     internal class InnerFormatShapeCommandBase : ImplementationCommandBase
@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return _parameters.expansion.Value;
             }
 
-            // check if we have an expansion entry in format.mshxml 
+            // check if we have an expansion entry in format.mshxml
             var typeNames = so.InternalTypeNames;
             return DisplayDataQuery.GetEnumerableExpansionFromType(
                 _expressionFactory, _typeInfoDataBase, typeNames);
@@ -518,7 +518,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class OuterFormatShapeCommandBase : FrontEndCommandBase
     {
@@ -640,7 +640,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         #endregion
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -682,7 +682,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class OuterFormatTableAndListBase : OuterFormatShapeCommandBase
     {
@@ -746,7 +746,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class OuterFormatTableBase : OuterFormatTableAndListBase
     {

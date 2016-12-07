@@ -57,11 +57,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the provider internal path for the PSPath that this PathInfo represents.
         /// </summary>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// The provider encountered an error when resolving the path.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="InvalidOperationException">
         /// The path was a home relative path but the home path was not
         /// set for the provider.
@@ -139,7 +139,7 @@ namespace System.Management.Automation
         /// <param name="provider">
         /// The provider that contains the path.
         /// </param>
-        /// 
+        ///
         /// <param name="path">
         /// The path this object represents.
         /// </param>
@@ -147,12 +147,12 @@ namespace System.Management.Automation
         /// <param name="sessionState">
         /// The session state associated with the drive, provider, and path information.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="drive"/>, <paramref name="provider"/>,
         /// <paramref name="path"/>, or <paramref name="sessionState"/> is null.
         /// </exception>
-        /// 
+        ///
         internal PathInfo(PSDriveInfo drive, ProviderInfo provider, string path, SessionState sessionState)
         {
             if (provider == null)

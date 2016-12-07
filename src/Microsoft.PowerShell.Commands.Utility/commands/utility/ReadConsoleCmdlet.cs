@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         ///
         /// Constructs a new instance.
-        /// 
+        ///
         /// </summary>
 
         public
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
 
                     while (e.MoveNext())
                     {
-                        // The current object might itself be a collection, like a string array, as in read/console "foo","bar","baz"  
+                        // The current object might itself be a collection, like a string array, as in read/console "foo","bar","baz"
                         // If it is, then the PSObject ToString() will take care of it.  We could go on unwrapping collections
                         // forever, but it's a pretty common use case to see a varags confused with an array.
 

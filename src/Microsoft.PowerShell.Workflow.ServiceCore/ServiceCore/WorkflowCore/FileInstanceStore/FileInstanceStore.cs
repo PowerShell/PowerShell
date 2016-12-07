@@ -53,7 +53,7 @@ namespace Microsoft.PowerShell.Workflow
                 return new TypedCompletedAsyncResult<Exception>(e, callback, state);
             }
         }
-        
+
         protected override bool EndTryCommand(IAsyncResult result)
         {
             StructuredTracer.Correlate();
@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Workflow
             }
             return TypedCompletedAsyncResult<bool>.End(result);
         }
-        
+
         private bool SaveWorkflow(InstancePersistenceContext context, SaveWorkflowCommand command)
         {
             if (context.InstanceVersion == -1)
@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Workflow
                                                 | WorkflowStoreComponents.Streams
                                                 | WorkflowStoreComponents.TerminatingError
                                                 | WorkflowStoreComponents.Timer
-                                                | WorkflowStoreComponents.ActivityState 
+                                                | WorkflowStoreComponents.ActivityState
                                                 | WorkflowStoreComponents.JobState,
                                                 fullInstanceData);
 
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Workflow
 
             return true;
         }
-        
+
         private bool LoadWorkflow(InstancePersistenceContext context, LoadWorkflowCommand command)
         {
             if (command.AcceptUninitializedInstance)
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Workflow
             IDictionary<XName, InstanceValue> instanceMetadata = null;
 
             Dictionary<string, object> fullInstanceData = _stores.LoadWorkflowContext();
-            
+
             instanceData = this.DeserializePropertyBag((Dictionary<XName, object>)fullInstanceData["instanceData"]);
             instanceMetadata = this.DeserializePropertyBag((Dictionary<XName, object>)fullInstanceData["instanceMetadata"]);
 
@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Workflow
 
             return true;
         }
-        
+
         private bool CreateWorkflowOwner(InstancePersistenceContext context, CreateWorkflowOwnerCommand command)
         {
             Guid instanceOwnerId = Guid.NewGuid();
@@ -150,12 +150,12 @@ namespace Microsoft.PowerShell.Workflow
             context.BindEvent(HasRunnableWorkflowEvent.Value);
             return true;
         }
-        
+
         private bool DeleteWorkflowOwner(InstancePersistenceContext context, DeleteWorkflowOwnerCommand command)
         {
             return true;
         }
-        
+
         private Dictionary<XName, object> SerializeablePropertyBag(IDictionary<XName, InstanceValue> source)
         {
             Dictionary<XName, object> scratch = new Dictionary<XName, object>();

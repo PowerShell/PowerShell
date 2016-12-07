@@ -182,9 +182,9 @@ namespace System.Management.Automation
             None = 0,
 
             /// <summary>
-            /// Child job can call <see cref="ThrottlingJob.AddChildJobWithoutBlocking"/> method 
-            /// or <see cref="ThrottlingJob.AddChildJobAndPotentiallyBlock(StartableJob, ChildJobFlags)" /> 
-            /// or <see cref="ThrottlingJob.AddChildJobAndPotentiallyBlock(Cmdlet, StartableJob, ChildJobFlags)" /> 
+            /// Child job can call <see cref="ThrottlingJob.AddChildJobWithoutBlocking"/> method
+            /// or <see cref="ThrottlingJob.AddChildJobAndPotentiallyBlock(StartableJob, ChildJobFlags)" />
+            /// or <see cref="ThrottlingJob.AddChildJobAndPotentiallyBlock(Cmdlet, StartableJob, ChildJobFlags)" />
             /// method
             /// of the <see cref="ThrottlingJob"/> instance it belongs to.
             /// </summary>
@@ -260,8 +260,8 @@ namespace System.Management.Automation
         /// <param name="cmdletMode">
         /// <c>true</c> if this <see cref="ThrottlingJob" /> is used from a cmdlet invoked without -AsJob switch.
         /// <c>false</c> if this <see cref="ThrottlingJob" /> is used from a cmdlet invoked with -AsJob switch.
-        /// 
-        /// If <paramref name="cmdletMode"/> is <c>true</c>, then 
+        ///
+        /// If <paramref name="cmdletMode"/> is <c>true</c>, then
         /// memory can be managed more aggressively (for example ChildJobs can be discarded as soon as they complete)
         /// because the <see cref="ThrottlingJob" /> is not exposed to the end user.
         /// </param>
@@ -828,11 +828,11 @@ namespace System.Management.Automation
 
         private class ForwardingHelper : IDisposable
         {
-            // This is higher than 1000 used in 
-            //      RxExtensionMethods+ToEnumerableObserver<T>.BlockingCollectionCapacity 
-            // and in 
+            // This is higher than 1000 used in
+            //      RxExtensionMethods+ToEnumerableObserver<T>.BlockingCollectionCapacity
+            // and in
             //      RemoteDiscoveryHelper.BlockingCollectionCapacity
-            // It needs to be higher, because the high value is used as an attempt to workaround the fact that 
+            // It needs to be higher, because the high value is used as an attempt to workaround the fact that
             // WSMan will timeout if an OnNext call blocks for more than X minutes.
 
             // This is a static field (instead of a constant) to make it possible to set through tests (and/or by customers if needed for a workaround)

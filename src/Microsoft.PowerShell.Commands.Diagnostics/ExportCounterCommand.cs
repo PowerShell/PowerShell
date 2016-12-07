@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2008 Microsoft Corporation. All rights reserved.
-// 
+//
 
 
 using System;
@@ -30,15 +30,15 @@ using Microsoft.PowerShell.Commands.Diagnostics.Common;
 
 namespace Microsoft.PowerShell.Commands
 {
-    /// 
+    ///
     /// Class that implements the Get-Counter cmdlet.
-    /// 
+    ///
     [Cmdlet(VerbsData.Export, "Counter", DefaultParameterSetName = "ExportCounterSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=138337")]
     public sealed class ExportCounterCommand : PSCmdlet
     {
         //
         // Path parameter
-        //  
+        //
         [Parameter(
                 Mandatory = true,
                 Position = 0,
@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // Format parameter.
         // Valid strings are "blg", "csv", "tsv" (case-insensitive).
-        //  
+        //
         [Parameter(
                 Mandatory = false,
                 ValueFromPipeline = false,
@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // MaxSize parameter
         // Maximum output file size, in megabytes.
-        //  
+        //
         [Parameter(
                 HelpMessageBaseName = "GetEventResources")]
         public UInt32 MaxSize
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Commands
 
         //
         // InputObject parameter
-        //  
+        //
         [Parameter(
                 Mandatory = true,
                 ValueFromPipeline = true,
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands
 
             //
             // Validate the Format and CounterSamples arguments
-            //            
+            //
             ValidateFormat();
 
             if (Circular.IsPresent && _maxSize == 0)
@@ -200,9 +200,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
 
-        /// 
+        ///
         /// Handle Control-C
-        /// 
+        ///
         protected override void StopProcessing()
         {
             _stopping = true;
@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell.Commands
         // This is the main entry point for the cmdlet.
         // When counter data comes from the pipeline, this gets invoked for each pipelined object.
         // When it's passed in as an argument, ProcessRecord() is called once for the entire _counterSampleSets array.
-        //       
+        //
         protected override void ProcessRecord()
         {
             Debug.Assert(_counterSampleSets.Length != 0 && _counterSampleSets[0] != null);

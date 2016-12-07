@@ -30,9 +30,9 @@ namespace Microsoft.PowerShell.Activities
         /// The .NET type implementing the cmdlet to invoke.
         /// </summary>
         public override System.Type TypeImplementingCmdlet { get { return typeof(Microsoft.Management.Infrastructure.CimCmdlets.NewCimInstanceCommand); } }
-        
+
         // Arguments
-        
+
         /// <summary>
         /// Provides access to the ClassName parameter.
         /// </summary>
@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.Activities
             System.Management.Automation.PowerShell targetCommand = invoker.AddCommand(PSCommandName);
 
             // Initialize the arguments
-            
+
             if(ClassName.Expression != null)
             {
                 targetCommand.AddParameter("ClassName", ClassName.Get(context));

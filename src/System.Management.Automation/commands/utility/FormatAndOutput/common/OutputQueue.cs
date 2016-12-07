@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// add an object to the cache. the behavior depends on the object added, the 
+        /// add an object to the cache. the behavior depends on the object added, the
         /// objects already in the cache and the cache settings
         /// </summary>
         /// <param name="o">object to add</param>

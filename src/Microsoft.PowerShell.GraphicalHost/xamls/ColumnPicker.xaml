@@ -74,7 +74,7 @@
                 <Button x:Uid="AddButton" Name="AddButton" Content="{x:Static local:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_73}"
                         HorizontalAlignment="Stretch"
                         AutomationProperties.Name="{x:Static local:XamlLocalizableResources.AutoResXGen_ColumnPicker_AutomationPropertiesName_75}"
-                        Click="AddButtonClick" 
+                        Click="AddButtonClick"
                         ToolTip="{x:Static local:XamlLocalizableResources.AutoResXGen_ColumnPicker_Tooltip_76}">
                     <Button.Style>
                         <DynamicResource x:Uid="DynamicResource_7" ResourceKey="{ComponentResourceKey ResourceId=CPAddButtonStyle, TypeInTargetAssembly=local:ColumnPicker}" />
@@ -83,7 +83,7 @@
                 <Button x:Uid="RemoveButton" Name="RemoveButton" Content="{x:Static local:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_84}"
                         HorizontalAlignment="Stretch"
                         AutomationProperties.Name="{x:Static local:XamlLocalizableResources.AutoResXGen_ColumnPicker_AutomationPropertiesName_86}"
-                        Click="RemoveButtonClick" 
+                        Click="RemoveButtonClick"
                         ToolTip="{x:Static local:XamlLocalizableResources.AutoResXGen_ColumnPicker_Tooltip_84}">
                     <Button.Style>
                         <DynamicResource x:Uid="DynamicResource_8" ResourceKey="{ComponentResourceKey ResourceId=CPRemoveButtonStyle, TypeInTargetAssembly=local:ColumnPicker}" />
@@ -91,7 +91,7 @@
                 </Button>
             </StackPanel>
 
-            <Label x:Uid="SelectedLabel" Grid.Row="0" Grid.Column="2" Name="SelectedLabel" Content="{x:Static local:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_93}">                
+            <Label x:Uid="SelectedLabel" Grid.Row="0" Grid.Column="2" Name="SelectedLabel" Content="{x:Static local:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_93}">
                 <Label.Style>
                     <DynamicResource x:Uid="DynamicResource_9" ResourceKey="{ComponentResourceKey ResourceId=CPSelectedListboxHeaderStyle, TypeInTargetAssembly=local:ColumnPicker}" />
                 </Label.Style>
@@ -141,7 +141,7 @@
                        Margin="5"
                        Visibility="Hidden"
                        TextWrapping="Wrap"
-                       HorizontalAlignment="Left" 
+                       HorizontalAlignment="Left"
                        Text="{x:Static local:XamlLocalizableResources.AutoResXGen_ColumnPicker_Text_142}">
                 <TextBlock.Style>
                     <DynamicResource x:Uid="DynamicResource_15" ResourceKey="{ComponentResourceKey ResourceId=CPWarningTextStyle, TypeInTargetAssembly=local:ColumnPicker}" />
@@ -152,7 +152,7 @@
                        Margin="5"
                        Visibility="Hidden"
                        TextWrapping="Wrap"
-                       HorizontalAlignment="Left" 
+                       HorizontalAlignment="Left"
                        Text="{x:Static local:XamlLocalizableResources.AutoResXGen_ColumnPicker_Text_152}">
                 <TextBlock.Style>
                     <DynamicResource x:Uid="DynamicResource_16" ResourceKey="{ComponentResourceKey ResourceId=CPWarningTextStyle, TypeInTargetAssembly=local:ColumnPicker}" />
@@ -180,19 +180,19 @@
                 </Rectangle.Style>
             </Rectangle>
 
-            <Button Grid.Column="1" Grid.Row="1" 
-                    x:Name="OKButton" 
-                    Content="{x:Static local:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_189}" 
-                    IsDefault="True" 
+            <Button Grid.Column="1" Grid.Row="1"
+                    x:Name="OKButton"
+                    Content="{x:Static local:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_189}"
+                    IsDefault="True"
                     Click="OkButtonClick">
                 <Button.Style>
                     <DynamicResource x:Uid="DynamicResource_19" ResourceKey="{ComponentResourceKey ResourceId=CPOkCancelButtonStyle, TypeInTargetAssembly=local:ColumnPicker}" />
                 </Button.Style>
             </Button>
 
-            <Button Grid.Column="2" Grid.Row="1" 
-                    x:Name="CancelButton" 
-                    Content="{x:Static local:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_199}" 
+            <Button Grid.Column="2" Grid.Row="1"
+                    x:Name="CancelButton"
+                    Content="{x:Static local:XamlLocalizableResources.AutoResXGen_ColumnPicker_Content_199}"
                     IsCancel="True">
                 <Button.Style>
                     <DynamicResource x:Uid="DynamicResource_20" ResourceKey="{ComponentResourceKey ResourceId=CPOkCancelButtonStyle, TypeInTargetAssembly=local:ColumnPicker}" />

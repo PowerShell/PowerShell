@@ -8,11 +8,11 @@ using System.Collections.Generic;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Class HelpProviderWithCache provides a pseudo implementation of HelpProvider 
-    /// at which results are cached in a hashtable so that later retrieval can be 
+    ///
+    /// Class HelpProviderWithCache provides a pseudo implementation of HelpProvider
+    /// at which results are cached in a hashtable so that later retrieval can be
     /// faster.
-    /// 
+    ///
     /// </summary>
     internal abstract class HelpProviderWithCache : HelpProvider
     {
@@ -71,8 +71,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This is for child class to indicate that it has implemented 
-        /// a custom way of match. 
+        /// This is for child class to indicate that it has implemented
+        /// a custom way of match.
         /// </summary>
         /// <value></value>
         protected bool HasCustomMatch { get; set; } = false;
@@ -94,7 +94,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// Derived class can choose to either override ExactMatchHelp method to DoExactMatchHelp method.
         /// If ExactMatchHelp is overridden, initial cache checking will be disabled by default.
-        /// If DoExactMatchHelp is overridden, cache check will be done first in ExactMatchHelp before the 
+        /// If DoExactMatchHelp is overridden, cache check will be done first in ExactMatchHelp before the
         /// logic in DoExactMatchHelp is in place.
         /// </remarks>
         /// <param name="helpRequest">help request object</param>
@@ -105,13 +105,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Search help for a target
         /// </summary>
-        /// <param name="helpRequest">help request object</param>  
+        /// <param name="helpRequest">help request object</param>
         /// <param name="searchOnlyContent">
-        /// If true, searches for pattern in the help content. Individual 
+        /// If true, searches for pattern in the help content. Individual
         /// provider can decide which content to search in.
-        /// 
+        ///
         /// If false, searches for pattern in the command names.
-        /// </param> 
+        /// </param>
         /// <returns>a collection of help info objects</returns>
         internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
@@ -153,14 +153,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Create a wildcard pattern based on a target. 
-        /// 
-        /// Here we provide the default implementation of this, covering following 
+        /// Create a wildcard pattern based on a target.
+        ///
+        /// Here we provide the default implementation of this, covering following
         /// two cases
         ///     a. if target has wildcard pattern, return as it is.
         ///     b. if target doesn't have wildcard pattern, postfix it with *
-        /// 
-        /// Child class of this one may choose to override this function. 
+        ///
+        /// Child class of this one may choose to override this function.
         /// </summary>
         /// <param name="target">target string</param>
         /// <returns>wild card pattern created</returns>
@@ -176,7 +176,7 @@ namespace System.Management.Automation
         /// Do search help. This is for child class to override.
         /// </summary>
         /// <remarks>
-        /// Child class can choose to override SearchHelp of DoSearchHelp depending on 
+        /// Child class can choose to override SearchHelp of DoSearchHelp depending on
         /// whether it want to reuse the logic in SearchHelp for this class.
         /// </remarks>
         /// <param name="helpRequest">help request object</param>
@@ -208,18 +208,18 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Is cached fully loaded?
-        /// 
-        /// If cache is fully loaded, search/exactmatch Help can short cut the logic 
-        /// in various help providers to get help directly from cache. 
-        /// 
-        /// This indicator is usually set by help providers derived from this class. 
+        ///
+        /// If cache is fully loaded, search/exactmatch Help can short cut the logic
+        /// in various help providers to get help directly from cache.
+        ///
+        /// This indicator is usually set by help providers derived from this class.
         /// </summary>
         /// <value></value>
         protected internal bool CacheFullyLoaded { get; set; } = false;
 
         /// <summary>
-        /// This will reset the help cache. Normally this corresponds to a 
-        /// help culture change. 
+        /// This will reset the help cache. Normally this corresponds to a
+        /// help culture change.
         /// </summary>
         internal override void Reset()
         {

@@ -29,7 +29,7 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// helper fns
-    /// </summary> 
+    /// </summary>
     internal static class Utils
     {
         // From System.Web.Util.HashCodeCombiner
@@ -184,7 +184,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets TypeTable by querying the ExecutionContext stored in 
+        /// Gets TypeTable by querying the ExecutionContext stored in
         /// Thread-Local-Storage. This will return null if ExecutionContext
         /// is not available.
         /// </summary>
@@ -243,13 +243,13 @@ namespace System.Management.Automation
         /// </exception>
         internal static string GetApplicationBase(string shellId)
         {
-#if CORECLR 
+#if CORECLR
             // Use the location of SMA.dll as the application base
             // Assembly.GetEntryAssembly and GAC are not in CoreCLR.
             Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
             return Path.GetDirectoryName(assembly.Location);
 #else
-            // This code path applies to Windows FullCLR inbox deployments. All CoreCLR 
+            // This code path applies to Windows FullCLR inbox deployments. All CoreCLR
             // implementations should use the location of SMA.dll since it must reside in PSHOME.
             //
             // try to get the path from the registry first
@@ -258,13 +258,13 @@ namespace System.Management.Automation
             {
                 return result;
             }
-            
+
             // The default keys aren't installed, so try and use the entry assembly to
             // get the application base. This works for managed apps like minishells...
             Assembly assem = Assembly.GetEntryAssembly();
             if (assem != null)
             {
-                // For minishells, we just return the executable path. 
+                // For minishells, we just return the executable path.
                 return Path.GetDirectoryName(assem.Location);
             }
 
@@ -274,7 +274,7 @@ namespace System.Management.Automation
             string gacRootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Microsoft.Net\\assembly");
             if (!assem.Location.StartsWith(gacRootPath, StringComparison.OrdinalIgnoreCase))
             {
-                // For other hosts. 
+                // For other hosts.
                 return Path.GetDirectoryName(assem.Location);
             }
 
@@ -349,7 +349,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks if the filePath represents a file under product folder 
+        /// Checks if the filePath represents a file under product folder
         /// ie., PowerShell ApplicationBase or $env:windir\system32 or
         /// $env:windir\syswow64.
         /// </summary>
@@ -429,7 +429,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Coverts a string to version format. 
+        /// Coverts a string to version format.
         /// If the string is of the format x (ie., no dots), then ".0" is appended
         /// to the string.
         /// Version.TryParse will be used to convert the string to a Version
@@ -530,7 +530,7 @@ namespace System.Management.Automation
 #if !CORECLR
         /// <summary>
         /// Checks whether current monad session supports NetFrameworkVersion specified
-        /// by checkVersion. The specified version is treated as the the minimum required 
+        /// by checkVersion. The specified version is treated as the the minimum required
         /// version of .NET framework.
         /// </summary>
         /// <param name="checkVersion">Version to check</param>
@@ -546,13 +546,13 @@ namespace System.Management.Automation
                 return false;
             }
 
-            // Construct a temporary version number with build number and revision number set to 0. 
-            // This is done so as to re-use the version specifications in PSUtils.FrameworkRegistryInstallation          
+            // Construct a temporary version number with build number and revision number set to 0.
+            // This is done so as to re-use the version specifications in PSUtils.FrameworkRegistryInstallation
             Version tempVersion = new Version(checkVersion.Major, checkVersion.Minor, 0, 0);
 
-            // Win8: 840038 - For any version above the highest known .NET version (4.5 for Windows 8), we can't make a call as to 
+            // Win8: 840038 - For any version above the highest known .NET version (4.5 for Windows 8), we can't make a call as to
             // whether the requirement is satisfied or not because we can't detect that version of .NET.
-            // We end up erring on the side of app compat by letting it through. 
+            // We end up erring on the side of app compat by letting it through.
             // We will write a message in the Verbose output saying that we cannot detect the specified version of the .NET Framework.
             if (checkVersion > PsUtils.FrameworkRegistryInstallation.KnownHighestNetFrameworkVersion)
             {
@@ -609,7 +609,7 @@ namespace System.Management.Automation
 
         internal static string GetRegistryConfigurationPrefix()
         {
-            // For 3.0 PowerShell, we still use "1" as the registry version key for 
+            // For 3.0 PowerShell, we still use "1" as the registry version key for
             // Snapin and Custom shell lookup/discovery.
             // For 3.0 PowerShell, we use "3" as the registry version key only for Engine
             // related data like ApplicationBase etc.
@@ -621,7 +621,7 @@ namespace System.Management.Automation
             return GetRegistryConfigurationPrefix() + "\\" + shellID;
         }
 
-        // Calling static members of 'Registry' on UNIX will raise 'PlatformNotSupportedException' 
+        // Calling static members of 'Registry' on UNIX will raise 'PlatformNotSupportedException'
 #if UNIX
         internal static RegistryKey[] RegLocalMachine = null;
         internal static RegistryKey[] RegCurrentUser = null;
@@ -1005,12 +1005,12 @@ namespace System.Management.Automation
                 }
                 else if (errorCode == 32)
                 {
-                    // Errorcode 32 is 'ERROR_SHARING_VIOLATION' i.e. 
+                    // Errorcode 32 is 'ERROR_SHARING_VIOLATION' i.e.
                     // The process cannot access the file because it is being used by another process.
                     // GetFileAttributes may return INVALID_FILE_ATTRIBUTES for a system file or directory because of this error.
                     // GetFileAttributes function tries to open the file with FILE_READ_ATTRIBUTES access right but it fails if the
                     // sharing flag for the file is set to 0x00000000.This flag prevents it from opening a file for delete, read, or
-                    // write access. For example: C:\pagefile.sys is always opened by OS with sharing flag 0x00000000. 
+                    // write access. For example: C:\pagefile.sys is always opened by OS with sharing flag 0x00000000.
                     // But FindFirstFile is still able to get attributes as this api retrieves the required information using a find
                     // handle generated with FILE_LIST_DIRECTORY access.
                     // Fall back to FindFirstFile to check if the file actually exists.
@@ -1555,7 +1555,7 @@ namespace System.Management.Automation
 
             // (Copied from System.IO.Path so we can call TrimEnd in the same way that Directory.EnumerateFiles would on the search patterns).
             // Trim trailing white spaces, tabs etc but don't be aggressive in removing everything that has UnicodeCategory of trailing space.
-            // String.WhitespaceChars will trim aggressively than what the underlying FS does (for ex, NTFS, FAT).    
+            // String.WhitespaceChars will trim aggressively than what the underlying FS does (for ex, NTFS, FAT).
             internal static readonly char[] PathSearchTrimEnd = { (char)0x9, (char)0xA, (char)0xB, (char)0xC, (char)0xD, (char)0x20, (char)0x85, (char)0xA0 };
         }
     }

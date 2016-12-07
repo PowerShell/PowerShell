@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
     public abstract class SignatureCommandsBase : PSCmdlet
     {
         /// <summary>
-        /// Gets or sets the path to the file for which to get or set the 
+        /// Gets or sets the path to the file for which to get or set the
         /// digital signature.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByPath")]
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _path;
 
         /// <summary>
-        /// Gets or sets the literal path to the file for which to get or set the 
+        /// Gets or sets the literal path to the file for which to get or set the
         /// digital signature.
         /// </summary>
         [Parameter(Mandatory = true, ValueFromPipelineByPropertyName = true, ParameterSetName = "ByLiteralPath")]
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isLiteralPath = false;
 
         /// <summary>
-        /// Gets or sets the digital signature to be written to 
+        /// Gets or sets the digital signature to be written to
         /// the output pipeline.
         /// </summary>
         protected Signature Signature
@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Performs the action (ie: get signature, or set signature) 
+        /// Performs the action (ie: get signature, or set signature)
         /// on the specified file.
         /// </summary>
         /// <param name="filePath">
@@ -242,7 +242,7 @@ namespace Microsoft.PowerShell.Commands
         protected abstract Signature PerformAction(string filePath);
 
         /// <summary>
-        /// Performs the action (ie: get signature, or set signature) 
+        /// Performs the action (ie: get signature, or set signature)
         /// on the specified contents.
         /// </summary>
         /// <param name="fileName">
@@ -337,7 +337,7 @@ namespace Microsoft.PowerShell.Commands
         /// Use 'notroot' to include all certificates in the certificate
         ///    chain, except for the root authority.
         /// Use 'all' to include all certificates in the certificate chain.
-        /// 
+        ///
         /// Defaults to 'notroot'.
         /// </summary>
         ///

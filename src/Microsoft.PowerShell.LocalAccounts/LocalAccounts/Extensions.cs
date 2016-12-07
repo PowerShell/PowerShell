@@ -144,7 +144,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Extensions
     }
 
     internal static class SecureStringExtensions
-    { 
+    {
         /// <summary>
         /// Extension method to extract clear text from a
         /// <see cref="System.Security.SecureString"/> object.

@@ -6,7 +6,7 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// Defines the names of the internal providers.
-    /// Derived classes exist for custom and single shells. In the single 
+    /// Derived classes exist for custom and single shells. In the single
     /// shell the provider name includes the PSSnapin name. In custom
     /// shells it does not.
     /// </summary>

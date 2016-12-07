@@ -401,7 +401,7 @@ namespace System.Management.Automation.Help
 
             // Directory.Exists checks if baseUri is a network drive or
             // a local directory. If baseUri is local, we don't need to resolve it.
-            // 
+            //
             // The / check works because all of our fwlinks must resolve
             // to a remote virtual directory. I think HTTP always appends /
             // in reference to a directory.
@@ -1033,7 +1033,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Installs HelpInfo.xml   
+        /// Installs HelpInfo.xml
         /// </summary>
         /// <param name="moduleName"></param>
         /// <param name="moduleGuid"></param>
@@ -1311,7 +1311,7 @@ namespace System.Management.Automation.Help
             {
                 destPath += "\\";
             }
-            
+
             sucessfulDecompression = CabinetExtractorFactory.GetCabinetExtractor().Extract(Path.GetFileName(srcPath), sourceDirectory, destPath);
 #endif
             if (!sucessfulDecompression)
@@ -1816,7 +1816,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>

@@ -9,7 +9,7 @@ namespace Microsoft.Management.UI.Internal
     using System.ComponentModel;
 
     /// <summary>
-    /// The AddFilterRulePicker class is responsible for holding state 
+    /// The AddFilterRulePicker class is responsible for holding state
     /// information needed by the AddFilterRulePicker class.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]

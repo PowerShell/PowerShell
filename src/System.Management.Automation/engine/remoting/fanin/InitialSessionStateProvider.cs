@@ -216,18 +216,18 @@ namespace System.Management.Automation.Remoting
         /// <exception cref="ArgumentException">
         /// 1. "optionName" is already defined
         /// </exception>
-        /* 
+        /*
                   <InitializationParameters>
                     <Param Name="PSVersion" Value="2.0" />
                     <Param Name="ApplicationBase" Value="<folder path>" />
                     ...
-                  </InitializationParameters> 
+                  </InitializationParameters>
         */
         /* The following extensions have been added in V3 providing the user
          * the ability to pass data to the session configuration for initialization
-         * 
+         *
                 <Param Name="SessionConfigurationData" Value="<SessionConfigurationData with XML escaping>" />
-         * 
+         *
          * The session configuration data blob can be defined as under
                     <SessionConfigurationData>
                         <Param Name="ModulesToImport" Value="<folder path>" />
@@ -236,7 +236,7 @@ namespace System.Management.Automation.Remoting
                             ...
                             </PrivateData>
                         </Param>
-                    </SessionConfigurationData>                    
+                    </SessionConfigurationData>
          */
         internal static ConfigurationDataFromXML Create(string initializationParameters)
         {
@@ -304,7 +304,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArgumentException">
@@ -366,7 +366,7 @@ namespace System.Management.Automation.Remoting
         public abstract InitialSessionState GetInitialSessionState(PSSenderInfo senderInfo);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sessionConfigurationData"></param>
         /// <param name="senderInfo"></param>
@@ -407,7 +407,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Derived classes can override this method to provide application private data
-        /// that is going to be sent to the client and exposed via 
+        /// that is going to be sent to the client and exposed via
         /// <see cref="System.Management.Automation.Runspaces.PSSession.ApplicationPrivateData"/>,
         /// <see cref="System.Management.Automation.Runspaces.Runspace.GetApplicationPrivateData"/> and
         /// <see cref="System.Management.Automation.Runspaces.RunspacePool.GetApplicationPrivateData"/>
@@ -436,7 +436,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="isDisposing"></param>
         protected virtual void Dispose(bool isDisposing)
@@ -448,18 +448,18 @@ namespace System.Management.Automation.Remoting
         #region GetInitialSessionState from 3rd party shell ids
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="shellId"></param>
         /// <param name="initializationParameters">
         /// Initialization Parameters xml passed by WSMan API. This data is read from the config
-        /// xml and is in the following format:  
-        /// </param>   
-        /// <returns></returns>        
+        /// xml and is in the following format:
+        /// </param>
+        /// <returns></returns>
         /// <exception cref="InvalidOperationException">
         /// 1. Non existent InitialSessionState provider for the shellID
         /// </exception>
-        /* 
+        /*
                   <InitializationParameters>
                     <Param Name="PSVersion" Value="2.0" />
                     <Param Name="ApplicationBase" Value="<folder path>" />
@@ -507,7 +507,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="shellId">
         /// shellId for which the assembly is getting loaded
@@ -599,7 +599,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Sets the application's current working directory to <paramref name="applicationBase"/> and 
+        /// Sets the application's current working directory to <paramref name="applicationBase"/> and
         /// loads the assembly <paramref name="assemblyName"/>. Once the assembly is loaded, the application's
         /// current working directory is set back to the original value.
         /// </summary>
@@ -811,7 +811,7 @@ namespace System.Management.Automation.Remoting
     internal sealed class DefaultRemotePowerShellConfiguration : PSSessionConfiguration
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="senderInfo"></param>
         /// <returns></returns>
@@ -901,7 +901,7 @@ namespace System.Management.Automation.Remoting
         internal TypeValidationCallback ValidationCallback;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="callback"></param>
@@ -1031,7 +1031,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1063,7 +1063,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1095,7 +1095,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1127,7 +1127,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1148,7 +1148,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1196,7 +1196,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1249,7 +1249,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1513,7 +1513,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         private static void ValidatePS1XMLExtension(string key, string[] paths, string filePath)
         {
@@ -1541,7 +1541,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         private static void ValidatePS1OrPSM1Extension(string key, string[] paths, string filePath)
         {
@@ -1571,7 +1571,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="table"></param>
         /// <param name="filePath"></param>
@@ -1970,7 +1970,7 @@ namespace System.Management.Automation.Remoting
             {
                 iss.DefaultCommandVisibility = SessionStateEntryVisibility.Private;
 
-                // If visibility is applied on a default runspace then set initial ISS 
+                // If visibility is applied on a default runspace then set initial ISS
                 // commands visibility to private.
                 if (processDefaultSessionStateVisibility)
                 {
