@@ -4747,6 +4747,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         ///
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
+        [ValidateNotNullOrEmpty()]
         public string[] PSProvider
         {
             get { return _provider; }

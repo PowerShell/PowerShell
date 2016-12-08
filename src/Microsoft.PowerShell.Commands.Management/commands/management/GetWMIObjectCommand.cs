@@ -28,6 +28,7 @@ namespace Microsoft.PowerShell.Commands
         [Alias("ClassName")]
         [Parameter(Position = 0, Mandatory = true, ParameterSetName = "query")]
         [Parameter(Position = 1, ParameterSetName = "list")]
+        [ValidateNotNullOrEmpty()]
         public string Class { get; set; }
 
         /// <summary>
@@ -40,6 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// The WMI properties to retrieve
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = "query")]
+        [ValidateNotNullOrEmpty()]
         public string[] Property
         {
             get { return (string[])_property.Clone(); }
