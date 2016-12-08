@@ -636,7 +636,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result.Error | Should BeNullOrEmpty
     }
 
-    It "Invoke-RestMethod supports request that returns page containing UTF-8 data." {
+    It "Invoke-RestMethod supports request that returns response that is neither XML nor JSON." {
 
         $command = "Invoke-RestMethod -Uri 'http://httpbin.org/encoding/utf8'"
         $result = ExecuteWebCommand -command $command
