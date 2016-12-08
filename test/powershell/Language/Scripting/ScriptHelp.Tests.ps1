@@ -1,4 +1,7 @@
-﻿ Describe 'get-help HelpFunc1' -Tags "Feature" { 
+# this setting will go back to default when the script exits
+$ProgressPreference = "SilentlyContinue"
+
+  Describe 'get-help HelpFunc1' -Tags "Feature" { 
     BeforeAll {
     function TestHelpError {
         [CmdletBinding()]
