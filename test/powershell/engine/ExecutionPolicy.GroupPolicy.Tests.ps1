@@ -15,6 +15,8 @@ Describe "User group policy execution policy should work" -Tags 'Feature' {
         New-Item -Path $regHKCUKey -Force
         Set-ItemProperty -Path $regHKCUKey -Name "EnableScripts" -Value 1
         Set-ItemProperty -Path $regHKCUKey -Name "ExecutionPolicy" -Value "RemoteSigned"
+
+        $powershell = Join-Path -Path $PSHOME -ChildPath "powershell"
     }
 
     AfterAll {
@@ -31,8 +33,7 @@ Describe "User group policy execution policy should work" -Tags 'Feature' {
         return Get-ExecutionPolicy -List | ? { ($_.Scope -eq 'UserPolicy') -and ($_.ExecutionPolicy -eq 'RemoteSigned') }
 '@
 
-        $psPath = Join-Path -Path $PSHOME -ChildPath "powershell.exe"
-        $results = & $psPath -c $command
+        $results = & $powershell -c $command -noprofile
         $results -join "," | Should Not BeNullOrEmpty
     }
 }
