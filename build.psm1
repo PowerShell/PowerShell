@@ -926,7 +926,7 @@ function Install-Dotnet {
         $installScript = "dotnet-install.sh"
         Start-NativeExecution {
             curl -sO $obtainUrl/$installScript
-            bash ./$installScript -c $Channel
+            bash ./$installScript -c $Channel -v $Version
         }
 
         # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
