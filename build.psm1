@@ -401,7 +401,7 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
     if($PSModuleRestore)
     {
         # Downloading the PowerShellGet and PackageManagement modules.
-        # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp1.0\win10-x64\publish\powershell.exe", 
+        # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp1.1\win10-x64\publish\powershell.exe",
         # so we need to get its parent directory
         $publishPath = Split-Path $Options.Output -Parent
         log "Restore PowerShell modules to $publishPath"    
@@ -429,7 +429,7 @@ function New-PSOptions {
         [ValidateSet("Linux", "Debug", "Release", "CodeCoverage", "")]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp1.0", "net451")]
+        [ValidateSet("netcoreapp1.1", "net451")]
         [string]$Framework,
 
         # These are duplicated from Start-PSBuild
@@ -506,7 +506,7 @@ function New-PSOptions {
         $Framework = if ($FullCLR) {
             "net451"
         } else {
-            "netcoreapp1.0"
+            "netcoreapp1.1"
         }
         Write-Verbose "Using framework '$Framework'"
     }
@@ -893,7 +893,7 @@ function Start-PSxUnit {
 function Install-Dotnet {
     [CmdletBinding()]
     param(
-        [string]$Channel = "rel-1.0.0",
+        [string]$Channel = "preview",
         [string]$Version,
         [switch]$NoSudo
     )
@@ -902,9 +902,7 @@ function Install-Dotnet {
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
-    # this url is temporarely alternated because of https://github.com/dotnet/cli/issues/4715
-    # it should be reverted back to "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain" ASAP
-    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/9855dc0088cf7e56e24860c734f33fe8353f38a6/scripts/obtain"
+    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/v1.0.0-preview2-1-3177/scripts/obtain"
 
     # Install for Linux and OS X
     if ($IsLinux -or $IsOSX) {
@@ -924,7 +922,7 @@ function Install-Dotnet {
             Write-Warning "This script only removes prior versions of dotnet for Ubuntu 14.04 and OS X"
         }
 
-        # Install new dotnet 1.0.0 preview packages
+        # Install new dotnet 1.1.0 preview packages
         $installScript = "dotnet-install.sh"
         Start-NativeExecution {
             curl -sO $obtainUrl/$installScript
@@ -952,11 +950,11 @@ function Start-PSBootstrap {
         SupportsShouldProcess=$true,
         ConfirmImpact="High")]
     param(
-        [string]$Channel = "rel-1.0.0",
+        [string]$Channel = "preview",
         # we currently pin dotnet-cli version, because tool
         # is currently migrating to msbuild toolchain
         # and requires constant updates to our build process.
-        [string]$Version = "1.0.0-preview3-003930",
+        [string]$Version = "1.0.0-preview2-1-003177",
         [switch]$Package,
         [switch]$NoSudo,
         [switch]$Force
@@ -1152,7 +1150,7 @@ function Start-PSPackage {
         -not $Script:Options.CrossGen -or                       ## Last build didn't specify -CrossGen
         $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
         $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
-        $Script:Options.Framework -ne "netcoreapp1.0")          ## Last build wasn't for CoreCLR
+        $Script:Options.Framework -ne "netcoreapp1.1")          ## Last build wasn't for CoreCLR
     {
         # It's possible that the most recent build doesn't satisfy the package requirement but
         # an earlier build does. e.g., run the following in order on win10-x64:

@@ -93,9 +93,9 @@
                 }
             },
             "dependencies": {
-                "System.ServiceProcess.ServiceController": "4.3.0-preview1-24530-04",
-                "System.Net.NameResolution": "4.3.0-preview1-24530-04",
-                "System.Net.Ping": "4.3.0-preview1-24530-04"
+                "System.ServiceProcess.ServiceController": "4.3.0",
+                "System.Net.NameResolution": "4.3.0",
+                "System.Net.Ping": "4.3.0"
             }
         },
         "net451": {
