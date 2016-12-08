@@ -413,7 +413,7 @@ function Invoke-OpenCover
 
     $targetArgString = $targetArgs -join " "
     # the order seems to be important. Always keep -targetargs as the last parameter.
-    $openCoverArgs = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all","-targetargs:""$targetArgString"""
+    $openCoverArgs = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all","-targetargs:`"$targetArgString`""
 
     if ( $PSCmdlet.ShouldProcess("$OpenCoverBin $openCoverArgs")  )
     {
