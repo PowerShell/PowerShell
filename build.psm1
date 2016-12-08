@@ -2189,7 +2189,7 @@ function Get-PackageSemanticVersion
         $packageRevisionTokens = ($packageVersionTokens[3].Split('-'))[0]
         $packageSemanticVersion = $packageVersionTokens[0],$packageVersionTokens[1],$packageVersionTokens[2],$packageRevisionTokens -join '.'
     } else {
-        throw "Cannot create semantic version from a string $Version containing more than 4 tokens"
+        throw "Cannot create Semantic Version from the string $Version containing 4 or more tokens"
     }
 
     $packageSemanticVersion
