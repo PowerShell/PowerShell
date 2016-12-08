@@ -3121,7 +3121,7 @@ namespace System.Management.Automation
             }
 
             var productAttribute = assembly.GetCustomAttribute<AssemblyProductAttribute>();
-            if (productAttribute != null && string.Equals(productAttribute.Product, "Microsoft® .NET Framework", StringComparison.OrdinalIgnoreCase))
+            if (productAttribute != null && string.Equals(productAttribute.Product, "MicrosoftÂ® .NET Framework", StringComparison.OrdinalIgnoreCase))
             {
                 disallowReflection = true;
             }
