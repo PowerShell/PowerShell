@@ -43,9 +43,26 @@ namespace System.Management.Automation.Internal
 
         internal void RegisterRunspace()
         {
-            // it's not get, but really 'Add' value.
-            // ConditionalWeakTable.Add throw exception, when you are trying to add a value with the same key.
-            _stateMap.GetValue(Runspace.DefaultRunspace, runspace => runspace.ExecutionContext.EngineSessionState);
+            SessionStateInternal ssInMap = null;
+            Runspace rsToUse = Runspace.DefaultRunspace;
+            SessionStateInternal ssToUse = rsToUse.ExecutionContext.EngineSessionState;
+            
+            // Different threads will operate on different key/value pairs (default-runspace/session-state pairs),
+            // and a ConditionalWeakTable itself is thread safe, so there won't be race condition here.
+            if (!_stateMap.TryGetValue(rsToUse, out ssInMap))
+            {
+                // If the key doesn't exist yet, add it
+                _stateMap.Add(rsToUse, ssToUse);
+            }
+            else if (!ssInMap.Equals(ssToUse))
+            {
+                // If the key exists but the corresponding value is not what we should use, then remove the key/value pair and add the new pair.
+                // This could happen when a powershell class is defined in a module and the module gets reloaded. In such case, the same TypeDefinitionAst
+                // instance will get reused, but should be associated with the SessionState from the new module, instead of the one from the old module.
+                _stateMap.Remove(rsToUse);
+                _stateMap.Add(rsToUse, ssToUse);
+            }
+            // If the key exists and the corresponding value is the one we should use, then do nothing.
         }
 
         /// <summary>
