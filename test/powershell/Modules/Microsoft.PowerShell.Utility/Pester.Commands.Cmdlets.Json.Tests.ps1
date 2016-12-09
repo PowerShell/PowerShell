@@ -1356,13 +1356,20 @@ Describe "Validate Json serialization" -Tags "CI" {
 
     Context "Validate Json output is either Pretty or Compressed" {
 
-        It "Should indent by two spaces" {
-            (@{ a = 1 } | ConvertTo-Json)[6] | Should Be 'a'
-            (1, 2 | ConvertTo-Json)[5] | Should Be '1'
+        It "Should print a pretty Array" {
+            $array = 'one', 'two', 'three'
+            $response = $array | ConvertTo-Json
+            ($response -split "\r?\n")[1] | Should Be '  "one",'
         }
 
-        It "Should have one space after colons" {
-            (@{ a = 1 } | ConvertTo-Json)[10] | Should Be '1'
+        It "Should print a pretty dictionary" {
+            $dictionary = [Ordered]@{
+                'one' = 1
+                'two' = 2
+                'three' = 3
+            }       
+            $response2 = $dictionary | ConvertTo-Json
+            ($response2 -split "\r?\n")[1] | Should Be '  "one": 1,'
         }
         
         It "Should minify Json with Compress switch" {
