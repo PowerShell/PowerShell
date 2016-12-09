@@ -2,119 +2,146 @@
  # File: Export-Counter.Tests.ps1
  # Provides Pester tests for the Export-Counter cmdlet.
  ############################################################################################>
-Describe "Tests for Export-Counter cmdlet" -Tags "CI" {
+$cmdletName = "Export-Counter"
 
-    BeforeAll {
-        $cmdletName = "Export-Counter"
+. "$PSScriptRoot/CounterTestHelperFunctions.ps1"
 
-        . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
+$rootFilename = "exportedCounters"
+$filePath = $null
+$counterNames = @(
+    (TranslateCounterPath "\Memory\Available Bytes")
+    (TranslateCounterPath "\Processor(*)\% Processor Time")
+    (TranslateCounterPath "\Processor(_Total)\% Processor Time")
+    (TranslateCounterPath "\PhysicalDisk(_Total)\Current Disk Queue Length")
+    (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Bytes/sec")
+    (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec")
+)
+$counterValues = $null
 
-        $outputDirectory = $PSScriptRoot
-        $rootFilename = "exportedCounters"
-        $filePath = $null
-        $counterNames = @(
-            (TranslateCounterPath("\Memory\Available Bytes"))
-            (TranslateCounterPath("\Processor(*)\% Processor Time"))
-            (TranslateCounterPath("\Processor(_Total)\% Processor Time"))
-            (TranslateCounterPath("\PhysicalDisk(_Total)\Current Disk Queue Length"))
-            (TranslateCounterPath("\PhysicalDisk(_Total)\Disk Bytes/sec"))
-            (TranslateCounterPath("\PhysicalDisk(_Total)\Disk Read Bytes/sec"))
-        )
-        $counterValues = $null
+# Test the results of Export-Counter by importing the exported
+# counters and comparing the two sets
+function CheckExportResults
+{
+    Test-Path $filePath | Should Be $true
+    $importedCounterValues = Import-Counter $filePath
 
-        # Test the results of Export-Counter by importing the exported
-        # counters and comparing the two sets
-        function CheckExportResults
+    CompareCounterSets $counterValues $importedCounterValues
+}
+
+# Run a test case
+function RunTest($testCase)
+{
+    It "$($testCase.Name)" {
+        $getCounterParams = ""
+        if ($testCase.ContainsKey("GetCounterParams"))
         {
-            Test-Path $filePath | Should Be $true
-            $importedCounterValues = Import-Counter $filePath
+            $getCounterParams = $testCase.GetCounterParams
+        }
+        $counterValues = &([ScriptBlock]::Create("Get-Counter -Counter `$counterNames $getCounterParams"))
 
-            CompareCounterSets $counterValues $importedCounterValues
+        # build up a command
+        $filePath = ""
+        $pathParam = ""
+        $formatParam = ""
+        if ($testCase.ContainsKey("Path"))
+        {
+            $filePath = $testCase.Path
+        }
+        else
+        {
+            if ($testCase.ContainsKey("FileFormat"))
+            {
+                $formatParam = "-FileFormat $($testCase.FileFormat)"
+                $filePath = Join-Path $script:outputDirectory "$rootFilename.$($testCase.FileFormat)"
+            }
+            else
+            {
+                $filePath = Join-Path $script:outputDirectory "$rootFilename.blg"
+            }
+        }
+        if ($testCase.NoDashPath)
+        {
+            $pathParam = $filePath
+        }
+        else
+        {
+            $pathParam = "-Path $filePath"
+        }
+        $cmd = "$cmdletName $pathParam $formatParam -InputObject `$counterValues $($testCase.Parameters) -ErrorAction Stop"
+        Write-Host "Command to run: $cmd"
+
+        if ($testCase.CreateFileFirst)
+        {
+            if (-not (Test-Path $filePath))
+            {
+                New-Item $filePath -ItemType file
+            }
         }
 
-        # Run a test case
-        function RunTest($testCase)
+        try
         {
-            It "$($testCase.Name)" {
-                $getCounterParams = ""
-                if ($testCase.ContainsKey("GetCounterParams"))
-                {
-                    $getCounterParams = $testCase.GetCounterParams
-                }
-                $counterValues = &([ScriptBlock]::Create("Get-Counter -Counter `$counterNames $getCounterParams"))
-
-                # build up a command
-                $filePath = ""
-                $pathParam = ""
-                $formatParam = ""
-                if ($testCase.ContainsKey("Path"))
-                {
-                    $filePath = $testCase.Path
-                }
-                else
-                {
-                    if ($testCase.ContainsKey("FileFormat"))
-                    {
-                        $formatParam = "-FileFormat $($testCase.FileFormat)"
-                        $filePath = "$outputDirectory/$rootFilename.$($testCase.FileFormat)"
-                    }
-                    else
-                    {
-                        $filePath = "$outputDirectory/$rootFilename.blg"
-                    }
-                }
-                if ($testCase.NoDashPath)
-                {
-                    $pathParam = $filePath
-                }
-                else
-                {
-                    $pathParam = "-Path $filePath"
-                }
-                $cmd = "$cmdletName $pathParam $formatParam -InputObject `$counterValues $($testCase.Parameters) -ErrorAction Stop"
-                Write-Host "Command to run: $cmd"
-
-                if ($testCase.CreateFileFirst)
-                {
-                    if (-not (Test-Path $filePath))
-                    {
-                        New-Item $filePath -ItemType file
-                    }
-                }
-
+            if ($testCase.ContainsKey("Script"))
+            {
+                # Here we want to run the command then do our own post-run checks
+                $sb = [ScriptBlock]::Create($cmd)
+                &$sb
+                &$testCase.Script
+            }
+            else
+            {
+                # Here we expect and want the command to fail
                 try
                 {
-                    if ($testCase.ContainsKey("Script"))
-                    {
-                        # Here we want to run the command then do our own post-run checks
-                        $sb = [ScriptBlock]::Create($cmd)
-                        &$sb
-                        &$testCase.Script
-                    }
-                    else
-                    {
-                        # Here we expect and want the command to fail
-                        try
-                        {
-                            $sb = [ScriptBlock]::Create($cmd)
-                            &$sb
-                            throw "Did not throw expected exception"
-                        }
-                        catch
-                        {
-                            $_.FullyQualifiedErrorId | Should Be $testCase.ExpectedErrorId
-                        }
-                    }
+                    $sb = [ScriptBlock]::Create($cmd)
+                    &$sb
+                    throw "Did not throw expected exception"
                 }
-                finally
+                catch
                 {
-                    if ($filePath)
-                    {
-                        Remove-Item $filePath -ErrorAction SilentlyContinue
-                    }
+                    $_.FullyQualifiedErrorId | Should Be $testCase.ExpectedErrorId
                 }
             }
         }
+        finally
+        {
+            if ($filePath)
+            {
+                Remove-Item $filePath -ErrorAction SilentlyContinue
+            }
+        }
+    }
+}
+
+Describe "CI tests for Export-Counter cmdlet" -Tags "CI" {
+
+    BeforeAll {
+        $script:outputDirectory = $testDrive
+    }
+
+    $testCases = @(
+        @{
+            Name = "Can export BLG format"
+            FileFormat = "blg"
+            GetCounterParams = "-MaxSamples 5"
+            Script = { CheckExportResults }
+        }
+        @{
+            Name = "Exports BLG format by default"
+            GetCounterParams = "-MaxSamples 5"
+            Script = { CheckExportResults }
+        }
+    )
+
+    foreach ($testCase in $testCases)
+    {
+        RunTest $testCase
+    }
+}
+
+Describe "Feature tests for Export-Counter cmdlet" -Tags "Feature" {
+
+    BeforeAll {
+        $script:outputDirectory = $testDrive
     }
 
     Context "Validate incorrect parameter usage" {
@@ -172,7 +199,7 @@ Describe "Tests for Export-Counter cmdlet" -Tags "CI" {
             @{
                 Name = "Can force overwriting existing file"
                 Parameters = "-Force"
-                Script = { Test-Path $path | Should Be $true }
+                Script = { Test-Path $filePath | Should Be $true }
             }
             @{
                 Name = "Can export BLG format"

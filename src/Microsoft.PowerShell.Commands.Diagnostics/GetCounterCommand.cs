@@ -207,7 +207,13 @@ namespace Microsoft.PowerShell.Commands
         {
             _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
 
-            _pdhHelper = new PdhHelper(CommonUtilities.OsVersion.Major < 6);
+#if CORECLR
+            // PowerShell Core requires at least Windows 7,
+            // so no version test is needed
+            _pdhHelper = new PdhHelper(false);
+#else
+            _pdhHelper = new PdhHelper(System.Environment.OSVersion.Version.Major < 6);
+#endif
 
             uint res = _pdhHelper.ConnectToDataSource();
             if (res != 0)

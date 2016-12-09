@@ -3,26 +3,20 @@
  # Provides functions common to the performance counter Pester tests.
  ############################################################################################>
 
-# Create a helper class providing facilities for parsing out and
-# for re-assembling counter paths
+# Create a helper class providing facilities for translation of
+# counter names and counter paths
 $helperSource = @"
 using System;
-using System.Collections;
+using System.Globalization;
 using System.Runtime.InteropServices;
-
-    public class PerformanceCounterPathElements
-    {
-        public string MachineName;
-        public string ObjectName;
-        public string InstanceName;
-        public string ParentInstance;
-        public UInt32 InstanceIndex;
-        public string CounterName;
-    }
+using System.Text;
 
     public class TestCounterHelper
     {
         private const long PDH_MORE_DATA = 0x800007D2L;
+        private const int PDH_MAX_COUNTER_NAME = 1024;
+        private const int PDH_MAX_COUNTER_PATH = 2048;
+        private const string SubKeyPath = @"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Perflib\009";
 
         [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct PDH_COUNTER_PATH_ELEMENTS
@@ -47,8 +41,8 @@ using System.Runtime.InteropServices;
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
         private static extern uint PdhMakeCounterPath(ref PDH_COUNTER_PATH_ELEMENTS pCounterPathElements,
-                                                      IntPtr szFullPathBuffer,
-                                                      ref IntPtr pcchBufferSize,
+                                                      StringBuilder szFullPathBuffer,
+                                                      ref uint pcchBufferSize,
                                                       UInt32 dwFlags);
 
         [DllImport("pdh.dll", CharSet = CharSet.Unicode)]
@@ -57,15 +51,52 @@ using System.Runtime.InteropServices;
                                                        ref IntPtr pdwBufferSize,
                                                        uint dwFlags);
 
-        public TestCounterHelper()
+        [DllImport("pdh.dll", SetLastError=true, CharSet=CharSet.Unicode)]
+        private static extern UInt32 PdhLookupPerfNameByIndex(string szMachineName,
+                                                              uint dwNameIndex,
+                                                              System.Text.StringBuilder szNameBuffer,
+                                                              ref uint pcchNameBufferSize);
+
+        private string[] _counters;
+
+        public TestCounterHelper(string[] counters)
         {
+            _counters = counters;
         }
 
-        // Parse a counter path and place its constituent parts
-        // into a Hashtable, for use in PowerShell script code
-        public PerformanceCounterPathElements ParseCounterPath(string path)
+        public string TranslateCounterName(string name)
         {
-            PerformanceCounterPathElements rv = null;
+            var loweredName = name.ToLowerInvariant();
+
+            for (var i = 1; i < _counters.Length - 1; i += 2)
+            {
+                if (_counters[i].ToLowerInvariant() == loweredName)
+                {
+                    try
+                    {
+                        var index = Convert.ToUInt32(_counters[i - 1], CultureInfo.InvariantCulture);
+                        var sb = new StringBuilder(PDH_MAX_COUNTER_NAME);
+                        var bufSize = (uint)sb.Capacity;
+                        var result = PdhLookupPerfNameByIndex(null, index, sb, ref bufSize);
+
+                        if (result == 0)
+                            return sb.ToString().Substring(0, (int)bufSize - 1);
+                    }
+                    catch
+                    {
+                        // do nothing, we just won't translate
+                    }
+
+                    break;
+                }
+            }
+
+            // return original path if translation failed
+            return name;
+        }
+
+        public string TranslateCounterPath(string path)
+        {
             var bufSize = new IntPtr(0);
 
             var result = PdhParseCounterPath(path,
@@ -73,7 +104,7 @@ using System.Runtime.InteropServices;
                                              ref bufSize,
                                              0);
             if (result != 0 && result != PDH_MORE_DATA)
-                return null;
+                return path;
 
             IntPtr structPointer = Marshal.AllocHGlobal(bufSize.ToInt32());
 
@@ -88,15 +119,16 @@ using System.Runtime.InteropServices;
                 {
                     var cpe = Marshal.PtrToStructure<PDH_COUNTER_PATH_ELEMENTS>(structPointer);
 
-                    rv = new PerformanceCounterPathElements
-                        {
-                            MachineName = cpe.MachineName,
-                            ObjectName = cpe.ObjectName,
-                            InstanceName = cpe.InstanceName,
-                            ParentInstance = cpe.ParentInstance,
-                            InstanceIndex = cpe.InstanceIndex,
-                            CounterName = cpe.CounterName
-                        };
+                    cpe.ObjectName = TranslateCounterName(cpe.ObjectName);
+                    cpe.CounterName = TranslateCounterName(cpe.CounterName);
+
+                    var sb = new StringBuilder(PDH_MAX_COUNTER_NAME);
+                    var pathSize = (uint)sb.Capacity;
+
+                    result = PdhMakeCounterPath(ref cpe, sb, ref pathSize, 0);
+
+                    if (result == 0)
+                        return sb.ToString().Substring(0, (int)pathSize - 1);
                 }
             }
             finally
@@ -104,194 +136,132 @@ using System.Runtime.InteropServices;
                 Marshal.FreeHGlobal(structPointer);
             }
 
-            return rv;
-        }
-
-        // Build a counter path and from a Hashtable containing
-        // its constituent parts.
-        // Note: This is NOT a general-use function, but it is
-        //       sufficient for the limited use within the
-        //       performance-counter testing PowerShell scripts.
-        public string MakeCounterPath(PerformanceCounterPathElements parts)
-        {
-            string rv = null;
-            PDH_COUNTER_PATH_ELEMENTS cpe = new PDH_COUNTER_PATH_ELEMENTS
-                {
-                    MachineName = parts.MachineName,
-                    ObjectName = parts.ObjectName,
-                    InstanceName = parts.InstanceName,
-                    ParentInstance = parts.ParentInstance,
-                    InstanceIndex = parts.InstanceIndex,
-                    CounterName = parts.CounterName
-                };
-
-            var bufSize = new IntPtr(0);
-            var result = PdhMakeCounterPath(ref cpe, IntPtr.Zero, ref bufSize, 0);
-
-            if (result != PDH_MORE_DATA)
-                return null;
-
-            var nChars = bufSize.ToInt32();
-            var pathPtr = Marshal.AllocHGlobal(nChars * sizeof(Char));
-
-            try
-            {
-                result = PdhMakeCounterPath(ref cpe, pathPtr, ref bufSize, 0);
-
-                if (result == 0)
-                    rv = Marshal.PtrToStringUni(pathPtr);
-            }
-            finally
-            {
-                Marshal.FreeHGlobal(pathPtr);
-            }
-
-            return rv;
+            // return original path if translation failed
+            return path;
         }
     }
 "@
 
 Add-Type -TypeDefinition $helperSource
 
-# Given a performance-counter ID, look up and return the localized name
-#
-# This function came from an article in PowerShellMagazine by Tobias Weltner
-# http://www.powershellmagazine.com/2013/07/19/querying-performance-counters-from-powershell/
-Function Get-PerformanceCounterLocalName
+# Strip off machine name, if present, from counter path
+function RemoveMachineName
 {
-    param
-    (
-        [UInt32]
-        $ID,
-
-        $ComputerName = $env:COMPUTERNAME
+    param (
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $path
     )
 
-    $code = '[DllImport("pdh.dll", SetLastError=true, CharSet=CharSet.Unicode)] public static extern UInt32 PdhLookupPerfNameByIndex(string szMachineName, uint dwNameIndex, System.Text.StringBuilder szNameBuffer, ref uint pcchNameBufferSize);'
-
-    $Buffer = New-Object System.Text.StringBuilder(1024)
-    [UInt32]$BufferSize = $Buffer.Capacity
-
-    $t = Add-Type -MemberDefinition $code -PassThru -Name PerfCounter -Namespace Utility
-    $rv = $t::PdhLookupPerfNameByIndex($ComputerName, $id, $Buffer, [Ref]$BufferSize)
-
-    if ($rv -eq 0)
+    if ($path.StartsWith("\\"))
     {
-        $Buffer.ToString().Substring(0, $BufferSize-1)
+        return $path.SubString($path.IndexOf("\", 2))
     }
     else
     {
-        Throw 'Get-PerformanceCounterLocalName : Unable to retrieve localized name. Check computer name and performance counter ID.'
+        return $path
     }
 }
 
-# Given a performance-counter name, look up and return the counter ID
-#
-# This function is a slightly modified version of the function originally published on
-# PowerShellMagazine by Tobias Weltner
-# http://www.powershellmagazine.com/2013/07/19/querying-performance-counters-from-powershell/
-function Get-PerformanceCounterID
+# Retrieve the counters array from the Registry
+function GetCounters
 {
-    param
-    (
+    $key = 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Perflib\CurrentLanguage'
+    return (Get-ItemProperty -Path $key -Name Counter).Counter
+}
+
+# Translate a counter name from English to a localized counter name
+function TranslateCounterName
+{
+    param (
         [Parameter(Mandatory=$true)]
-        $Name
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $counterName
     )
 
-    if ($script:perfhash -eq $null)
+    $counters = GetCounters
+    if ($counters -and ($counters.Length -gt 1))
     {
-        $script:perfhash = @{}
+        $counterHelper = New-Object -TypeName "TestCounterHelper" -ArgumentList (, $counters)
+        return $counterHelper.TranslateCounterName($counterName)
     }
 
-    if (-not $script:perfHash.$Name)
-    {
-        $key = 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Perflib\CurrentLanguage'
-        $counters = (Get-ItemProperty -Path $key -Name Counter).Counter
-        $all = $counters.Count
-
-        for ($i = 0; $i -lt $all; $i += 2)
-        {
-            if ([string]::Compare($counters[$i + 1], $Name, $true) -eq 0)
-            {
-                $script:perfHash.$($counters[$i + 1]) = $counters[$i]
-            }
-        }
-    }
-
-    $script:perfHash.$Name
+    return $counterName
 }
 
-# Translate a counter path from "English" to a localized counter path
-function TranslateCounterPath($path)
+# Translate a counter path from English to a localized counter path
+function TranslateCounterPath
 {
-    $counterHelper = New-Object -TypeName "TestCounterHelper"
-    $rv = $path;
+    param (
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [String]
+        $path
+    )
 
-    # crack the counter path
-    $parts = $counterHelper.ParseCounterPath($path);
-
-    if ($parts)
+    $counters = GetCounters
+    if ($counters -and ($counters.Length -gt 1))
     {
-        $objectName = $null
-        $counterName = $null
-        $id = Get-PerformanceCounterID $parts.ObjectName
-        if ($id -ne $null)
+        $counterHelper = New-Object -TypeName "TestCounterHelper" -ArgumentList (, $counters)
+        $rv = $counterHelper.TranslateCounterPath($path)
+
+        # if our original path had no machine name,
+        # we don't want one on our translated path
+        if (-not $path.StartsWith("\\"))
         {
-            $objectName = Get-PerformanceCounterLocalName $id
+            $rv = RemoveMachineName $rv
         }
 
-        $id = Get-PerformanceCounterID $parts.CounterName
-        if ($id -ne $null)
-        {
-            $counterName = Get-PerformanceCounterLocalName $id
-        }
-
-        if ($objectName -and $counterName)
-        {
-            # build a new path from translated names
-            $parts.ObjectName = $objectName
-            $parts.CounterName = $counterName
-
-            $rv = $counterHelper.MakeCounterPath($parts)
-            if (-not $rv)
-            {
-                $rv = $path
-            }
-            else
-            {
-                # If our original path did not include a machine name,
-                # we don't want one in our translated path.
-                #
-                # This should have been possible by setting $parts.MachineName
-                # to $null above, but that fails in the C# code  when run in PowerShell.
-                if (-not $path.StartsWith("\\"))
-                {
-                    $rv = $rv.SubString($rv.IndexOf("\", 2))
-                }
-            }
-        }
+        return $rv
     }
 
-    return $rv
+    return $path
 }
 
 # Compare two DateTime objects for relative equality.
 #
 # Exporting lops fractional milliseconds off the time stamp,
 # so simply comparing the DateTime values isn't sufficient
-function DateTimesAreEqualish($dtA, $dtB)
+function DateTimesAreEqualish
 {
+    param (
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNull()]
+        [DateTime]
+        $dtA,
+        [Parameter(Mandatory)]
+        [ValidateNotNull()]
+        [DateTime]
+        $dtB
+    )
+
     $span = $dtA - $dtB
     return ([math]::Floor([math]::Abs($span.TotalMilliseconds)) -eq  0)
 }
 
 # Compare the content of counter sets
-function CompareCounterSets($setA, $setB)
+function CompareCounterSets
 {
+    param (
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        $setA,
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        $setB
+    )
+
     $setA.Length | Should Be $setB.Length
 
-    # the first item exported always seems to have several empty values
-    # when it should not, so we'll start at the second item
+    # Depending on the kinds of counters used, the first record in
+    # exported counters are likely to have embty items, so we'll
+    # start comparing at the second item.
+    #
+    # Note that this is not a bug in either the cmdlets or the tests
+    # script, but rather is the behavior of the underlying Windows
+    # PDH functions that perform the actual exporting of counter data.
     for ($i = 1; $i -lt $setA.Length; $i++)
     {
         $setA[$i].CounterSamples.Length | Should Be $setB[$i].CounterSamples.Length

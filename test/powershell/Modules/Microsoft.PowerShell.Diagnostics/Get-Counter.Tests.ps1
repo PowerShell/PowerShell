@@ -2,81 +2,99 @@
  # File: Get-Counter.Tests.ps1
  # Provides Pester tests for the Get-Counter cmdlet.
  ############################################################################################>
-Describe "Tests for Get-Counter cmdlet" -Tags "CI" {
-    BeforeAll {
-        $cmdletName = "Get-Counter"
+$cmdletName = "Get-Counter"
 
-        . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
+. "$PSScriptRoot/CounterTestHelperFunctions.ps1"
 
-        $badName = "bad-name-DAD288C0-72F8-47D3-8C54-C69481B528DF"
-        $counterNames = @{
-            MemoryBytes = TranslateCounterPath("\Memory\Available Bytes")
-            TotalDiskRead = TranslateCounterPath("\PhysicalDisk(_Total)\Disk Read Bytes/sec")
-            Unknown = TranslateCounterPath("\Memory\$badName")
-            Bad = $badName
-        }
+$badName = "bad-name-DAD288C0-72F8-47D3-8C54-C69481B528DF"
+$counterPaths = @{
+    MemoryBytes = TranslateCounterPath "\Memory\Available Bytes"
+    TotalDiskRead = TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec"
+    Unknown = TranslateCounterPath "\Memory\$badName"
+    Bad = $badName
+}
 
-        function ValidateParameters($testCase)
+$nonEnglishCulture = (-not (Get-Culture).Name.StartsWith("en-", [StringComparison]::InvariantCultureIgnoreCase))
+
+function ValidateParameters($testCase)
+{
+    It "$($testCase.Name)" {
+
+        # build up a command
+        $counterParam = ""
+        if ($testCase.ContainsKey("Counters"))
         {
-            It "$($testCase.Name)" {
+            $counterParam = "-Counter `"$($testCase.Counters)`""
+        }
+        $cmd = "$cmdletName $counterParam $($testCase.Parameters) -ErrorAction Stop"
+        Write-Host "Command to run: $cmd"
 
-                # build up a command
-                $counterParam = ""
-                if ($testCase.ContainsKey("Counters"))
-                {
-                    $counterParam = "-Counter `"$($testCase.Counters)`""
-                }
-                $cmd = "$cmdletName $counterParam $($testCase.Parameters) -ErrorAction Stop"
-                Write-Host "Command to run: $cmd"
-
-                try
-                {
-                    $sb = [scriptblock]::Create($cmd)
-                    &$sb
-                    throw "Did not throw expected exception"
-                }
-                catch
-                {
-                    $_.FullyQualifiedErrorId | Should Be $testCase.ExpectedErrorId
-                }
-            }
+        try
+        {
+            $sb = [scriptblock]::Create($cmd)
+            &$sb
+            throw "Did not throw expected exception"
+        }
+        catch
+        {
+            $_.FullyQualifiedErrorId | Should Be $testCase.ExpectedErrorId
         }
     }
+}
+
+Describe "CI Tests for Get-Counter cmdlet" -Tags "CI" {
+
+    It "Get-Counter with no parameters returns data for a default set of counters" {
+        $counterData = Get-Counter
+        # At the very least we should get processor and memory
+        $counterData.CounterSamples.Length | should BeGreaterThan 1
+    }
+
+    It "Can retrieve the specified counter" {
+        $counterPath = $counterPaths.MemoryBytes
+        $counterData = Get-Counter -Counter $counterPath
+        $counterData.Length | Should Be 1
+        $retrievedPath = RemoveMachineName $counterData[0].CounterSamples[0].Path
+        [string]::Compare($retrievedPath, $counterPath, $true) | Should Be 0
+    }
+}
+
+Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
 
     Context "Validate incorrect parameter usage" {
         $parameterTestCases = @(
             @{
                 Name = "Fails when MaxSamples parameter is < 1"
-                Counters = $counterNames.MemoryBytes
+                Counters = $counterPaths.MemoryBytes
                 Parameters = "-MaxSamples 0"
                 ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCounterCommand"
             }
             @{
                 Name = "Fails when MaxSamples parameter is used but no value given"
-                Counters = $counterNames.MemoryBytes
+                Counters = $counterPaths.MemoryBytes
                 Parameters = "-MaxSamples"
                 ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.GetCounterCommand"
             }
             @{
                 Name = "Fails when SampleInterval is < 1"
-                Counters = $counterNames.MemoryBytes
+                Counters = $counterPaths.MemoryBytes
                 Parameters = "-SampleInterval -2"
                 ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCounterCommand"
             }
             @{
                 Name = "Fails when SampleInterval parameter is used but no value given"
-                Counters = $counterNames.MemoryBytes
+                Counters = $counterPaths.MemoryBytes
                 Parameters = "-SampleInterval"
                 ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.GetCounterCommand"
             }
             @{
                 Name = "Fails when given invalid counter path"
-                Counters = $counterNames.Bad
+                Counters = $counterPaths.Bad
                 ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
             }
             @{
                 Name = "Fails when given unknown counter path"
-                Counters = $counterNames.Unknown
+                Counters = $counterPaths.Unknown
                 ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
             }
             @{
@@ -91,24 +109,24 @@ Describe "Tests for Get-Counter cmdlet" -Tags "CI" {
             }
             @{
                 Name = "Fails when given invalid counter path in array"
-                Counters = "@($($counterNames.MemoryBytes), $($counterNames.Bad), $($counterNames.TotalDiskRead))"
+                Counters = "@($($counterPaths.MemoryBytes), $($counterPaths.Bad), $($counterPaths.TotalDiskRead))"
                 ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
             }
             @{
                 Name = "Fails when ComputerName parameter is invalid"
-                Counters = $counterNames.MemoryBytes
+                Counters = $counterPaths.MemoryBytes
                 Parameters = "-ComputerName $badName"
                 ExpectedErrorId = "CounterApiError,Microsoft.PowerShell.Commands.GetCounterCommand"
             }
             @{
                 Name = "Fails when ComputerName parameter is null"
-                Counters = $counterNames.MemoryBytes
+                Counters = $counterPaths.MemoryBytes
                 Parameters = "-ComputerName `$null"
                 ExpectedErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetCounterCommand"
             }
             @{
                 Name = "Fails when ComputerName parameter is used but no name given"
-                Counters = $counterNames.MemoryBytes
+                Counters = $counterPaths.MemoryBytes
                 Parameters = "-ComputerName"
                 ExpectedErrorId = "MissingArgument,Microsoft.PowerShell.Commands.GetCounterCommand"
             }
@@ -134,7 +152,7 @@ Describe "Tests for Get-Counter cmdlet" -Tags "CI" {
             }
             @{
                 Name = "Fails when both -Counter and -ListSet parameters are given"
-                Counters = $counterNames.MemoryBytes
+                Counters = $counterPaths.MemoryBytes
                 Parameters = "-ListSet `"Memory`""
                 ExpectedErrorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.GetCounterCommand"
             }
@@ -147,21 +165,16 @@ Describe "Tests for Get-Counter cmdlet" -Tags "CI" {
     }
 
     Context "Get-Counter CounterSet tests" {
-        It "Get-Counter with no parameters returns data for a default set of counters" {
-            $counterData = Get-Counter
-            # At the very least we should get processor and memory
-            $counterData.CounterSamples.Length | should BeGreaterThan 1
-        }
 
         It "Can retrieve the specified number of counter samples" {
-            $counterPath = TranslateCounterPath("\Memory\Available Bytes")
+            $counterPath = $counterPaths.MemoryBytes
             $counterCount = 5
             $counterData = Get-Counter -Counter $counterPath -MaxSamples $counterCount
             $counterData.Length | Should Be $counterCount
         }
 
         It "Can specify the sample interval" {
-            $counterPath = TranslateCounterPath("\PhysicalDisk(*)\Current Disk Queue Length")
+            $counterPath = TranslateCounterPath "\PhysicalDisk(*)\Current Disk Queue Length"
             $counterCount = 5
             $sampleInterval = 2
             $startTime = Get-Date
@@ -172,8 +185,8 @@ Describe "Tests for Get-Counter cmdlet" -Tags "CI" {
         }
 
         It "Can process array of counter names" {
-            $counterPaths = @((TranslateCounterPath("\PhysicalDisk(_Total)\Disk Read Bytes/sec")),
-                              (TranslateCounterPath("\Memory\Available bytes")))
+            $counterPaths = @((TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec"),
+                              (TranslateCounterPath "\Memory\Available bytes"))
             $counterData = Get-Counter -Counter $counterPaths
             $counterData.CounterSamples.Length | Should Be $counterPaths.Length
         }
@@ -195,12 +208,11 @@ Describe "Tests for Get-Counter cmdlet" -Tags "CI" {
             $counterSets[1].CounterSetName | Should Be $counterSetNames[1]
         }
 
-        # This test should work for English, but other languages are
-        # problematic since there is no reasonable way to construct
-        # a wild-card pattern that will, for every language, result
-        # in a known set of values or evan a set with a known minimum
-        # number of items.
-        It "Can process counter set name with wildcards" {
+        # This test will be skipped for non-English languages, since
+        # there is no reasonable way to construct a wild-card pattern
+        # that will, for every language, result in a known set of values
+        # or evan a set with a known minimum number of items.
+        It "Can process counter set name with wildcards" -Skip:$nonEnglishCulture {
             $wildcardBase = "roc"
             $counterSetName = "*$wildcardBase*"
             $counterSets = Get-Counter -ListSet $counterSetName
@@ -211,12 +223,11 @@ Describe "Tests for Get-Counter cmdlet" -Tags "CI" {
             }
         }
 
-        # This test should work for English, but other languages are
-        # problematic since there is no reasonable way to construct
-        # a wild-card pattern that will, for every language, result
-        # in a known set of values or evan a set with a known minimum
-        # number of items.
-        It "Can process counter set name with wildcards in array" {
+        # This test will be skipped for non-English languages, since
+        # there is no reasonable way to construct a wild-card pattern
+        # that will, for every language, result in a known set of values
+        # or evan a set with a known minimum number of items.
+        It "Can process counter set name with wildcards in array" -Skip:$nonEnglishCulture {
             $wildcardBases = @("Memory", "roc")
             $counterSetNames = @($wildcardBases[0], ("*" + $wildcardBases[1] + "*"))
             $counterSets = Get-Counter -ListSet $counterSetNames
