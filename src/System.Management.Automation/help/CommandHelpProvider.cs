@@ -572,7 +572,7 @@ namespace System.Management.Automation
                 // e.g., <AssemblyName>.ni.dll as supposed to <AssemblyName>.dll.
 
                 // When cmdlet metadata is generated for the 'HelpFile' field, we use the name assembly and we append '-Help.xml' to it.
-                // Because of this, if the cmdlet is part of an N'gen assembly, then 'HelpFile' field will be pointing to a help file which does not exist.
+                // Because of this, if the cmdlet is part of an Ngen assembly, then 'HelpFile' field will be pointing to a help file which does not exist.
                 // If this is the case, we remove '.ni' from the help file name and try again.
                 // For example:
                 // Ngen assembly name: Microsoft.PowerShell.Commands.Management.ni.dll
