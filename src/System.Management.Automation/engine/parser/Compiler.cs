@@ -4540,9 +4540,8 @@ namespace System.Management.Automation.Language
                     else
                     {
                         cases.Add(Expression.SwitchCase(catchBody,
-                                                        Enumerable.Range(handlerTypeIndex,
-                                                                         handlerTypeIndex + c.CatchTypes.Count).Select(
-                                                                             ExpressionCache.Constant)));
+                                                        Enumerable.Range(handlerTypeIndex, c.CatchTypes.Count).Select(
+                                                            ExpressionCache.Constant)));
                         handlerTypeIndex += c.CatchTypes.Count;
                     }
                 }

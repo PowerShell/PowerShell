@@ -1254,66 +1254,173 @@ namespace System.Management.Automation
     {
         internal class CatchAll { }
 
-        internal static int FindMatchingHandler(MutableTuple tuple, RuntimeException rte, Type[] types, ExecutionContext context)
+        /// <summary>
+        /// Represent a handler search result
+        /// </summary>
+        private class HandlerSearchResult
         {
-            Exception exceptionToPass = rte;
-            Exception inner = rte.InnerException;
-            int handler = -1;
-            if (inner != null)
+            internal HandlerSearchResult()
             {
-                handler = FindMatchingHandlerByType(inner.GetType(), types);
-                exceptionToPass = inner;
+                Handler = -1;
+                Rank = int.MaxValue;
+                ExceptionToPass = null;
+                ErrorRecordToPass = null;
             }
 
-            // If no handler was found, or if the handler we found was the catch all handler,
-            // then look again, this time using the outer exception.  If we found the catch all,
-            // there may be a handler that catches outer but not inner.  Furthermore, rethrow
-            // should throw the original exception from a catchall, not the inner.
-            if (handler == -1 || types[handler].Equals(typeof(CatchAll)))
-            {
-                handler = FindMatchingHandlerByType(rte.GetType(), types);
-                exceptionToPass = rte;
-            }
-
-            // If we still didn't find a specific handler, we'll try unwrapping a few other of our exceptions:
-            //     ActionPreferenceStopException - to cover -ea stop
-            //         try { gci nosuchfile -ea stop } catch [System.Management.Automation.ItemNotFoundException] { 'caught' }
-            //     CmdletInvocationException - to cover cmdlets like Invoke-Expression
-            //
-            if ((handler == -1 || types[handler].Equals(typeof(CatchAll))))
-            {
-                var apse = rte as ActionPreferenceStopException;
-                if (apse != null)
-                {
-                    exceptionToPass = apse.ErrorRecord.Exception;
-                    if (exceptionToPass is RuntimeException)
-                    {
-                        return FindMatchingHandler(tuple, (RuntimeException)exceptionToPass, types, context);
-                    }
-
-                    if (exceptionToPass != null)
-                    {
-                        handler = FindMatchingHandlerByType(exceptionToPass.GetType(), types);
-                    }
-                }
-                else if (rte is CmdletInvocationException && inner != null)
-                {
-                    exceptionToPass = inner.InnerException;
-                    if (exceptionToPass != null)
-                    {
-                        handler = FindMatchingHandlerByType(exceptionToPass.GetType(), types);
-                    }
-                }
-            }
-
-            if (handler != -1)
-            {
-                var errorRecord = new ErrorRecord(rte.ErrorRecord, exceptionToPass);
-                tuple.SetAutomaticVariable(AutomaticVariable.Underbar, errorRecord, context);
-            }
-            return handler;
+            internal int Handler;
+            internal int Rank;
+            internal Exception ExceptionToPass;
+            internal ErrorRecord ErrorRecordToPass;
         }
 
+        /// <summary>
+        /// Rank the exception types based on how specific they are.
+        /// Smaller ranking number indicates more specific exception type.
+        /// </summary>
+        /// <remarks>
+        /// The ranking number for each type represent how many other
+        /// types from the array derive from it.
+        /// For example, 0 means no other types in the array derive from 
+        /// the corresponding type, while 3 means there are 3 other types
+        /// in the array actually derive from the corresponding type.
+        /// 'CatchAll' is considered to be derived by all exception types.
+        /// </remarks>
+        private static int[] RankExceptionTypes(Type[] types)
+        {
+            int[] ranks = new int[types.Length];
+            int length = types.Length;
+
+            // If 'CatchAll' is specified, it must be the last catch block.
+            // Handle it specially. This can save a few iterations in the
+            // 'for' loop below, and also avoid some type comparisons.
+            if (types[length - 1].Equals(typeof(CatchAll)))
+            {
+                ranks[length - 1] = length - 1;
+                length = length - 1;
+            }
+
+            // For each type check if it's a sub-class of any types after it.
+            // The ordering of the type array guarantees the more specific type comes first.
+            for (int i = 0; i < length - 1; i++)
+            {
+                for (int j = i + 1; j < length; j++)
+                {
+                    if (types[i].IsSubclassOf(types[j]))
+                        ranks[j]++;
+                }
+            }
+
+            return ranks;
+        }
+
+        /// <summary>
+        /// Search for handler by the exception type and process the found result.
+        /// </summary>
+        private static void FindAndProcessHandler(Type[] types, int[] ranks,
+                                                  HandlerSearchResult current,
+                                                  Exception exception,
+                                                  ErrorRecord errorRecord)
+        {
+            Diagnostics.Assert(current != null, "Caller makes sure 'current' is not null.");
+            int handler = FindMatchingHandlerByType(exception.GetType(), types);
+
+            // If no handler was found, return without changing the current result.
+            if (handler == -1) { return; }
+
+            // New handler was found.
+            //  - If new-rank is less than current-rank -- meaning the new handler is more specific,
+            //    then we update the current result with it.
+            //  - If new-rank is more than current-rank -- meaning the new handler is less specific,
+            //    then we do NOT change the current result.
+            //  - If new-rank is equal to current-rank, we do NOT change the current result UNLESS the
+            //    current handler is catch-all. (This is to keep the original behavior -- prefer to use
+            //    the later found exception as the exception-to-pass-in if all exceptions result in the
+            //    catch-all handler.
+            int rank = ranks[handler];
+            if (rank < current.Rank ||
+                (rank == current.Rank && types[current.Handler].Equals(typeof(CatchAll)))
+               )
+            {
+                current.Handler = handler;
+                current.Rank = rank;
+                current.ExceptionToPass = exception;
+                current.ErrorRecordToPass = errorRecord;
+            }
+        }
+
+        /// <summary>
+        /// Find the matching handler for the caught exception
+        /// </summary>
+        internal static int FindMatchingHandler(MutableTuple tuple, RuntimeException rte, Type[] types, ExecutionContext context)
+        {
+            bool continueToSearch = false;
+            int[] ranks = RankExceptionTypes(types);
+            var current = new HandlerSearchResult();
+
+            do {
+                // Always assume no need to repeat the search for another interation
+                continueToSearch = false;
+                // The 'ErrorRecord' of the current RuntimeException would be passed to $_
+                ErrorRecord errorRecordToPass = rte.ErrorRecord;
+
+                Exception inner = rte.InnerException;
+                if (inner != null)
+                {
+                    FindAndProcessHandler(types, ranks, current, inner, errorRecordToPass);
+                }
+
+                // If no handler was found (rank = int.MaxValue), or if the handler we found was not
+                // the most specific one, then look again, this time using the outer exception.
+                // If we found a handler, but not one of the most specific ones (rank != 0), there may
+                // be a more specific handler that catches outer but not inner exception.
+                if (current.Rank > 0)
+                {
+                    FindAndProcessHandler(types, ranks, current, rte, errorRecordToPass);
+                }
+
+                // If we still didn't find one of the most specific handlers (rank != 0), we'll try unwrapping a few other of our exceptions:
+                //     ActionPreferenceStopException - to cover '-ea stop'
+                //         try { gci nosuchfile -ea stop } catch [System.Management.Automation.ItemNotFoundException] { 'caught' }
+                //     CmdletInvocationException - to cover cmdlets like Invoke-Expression
+                if (current.Rank > 0)
+                {
+                    var apse = rte as ActionPreferenceStopException;
+                    if (apse != null)
+                    {
+                        var exceptionToPass = apse.ErrorRecord.Exception;
+
+                        // If it's again a RuntimeException, we repeat the search using it
+                        rte = exceptionToPass as RuntimeException;
+                        if (rte != null)
+                        {
+                            continueToSearch = true;
+                        }
+                        else if (exceptionToPass != null)
+                        {
+                            FindAndProcessHandler(types, ranks, current, exceptionToPass, errorRecordToPass);
+                        }
+                    }
+                    else if (rte is CmdletInvocationException && inner != null)
+                    {
+                        if (inner.InnerException != null)
+                        {
+                            FindAndProcessHandler(types, ranks, current, inner.InnerException, errorRecordToPass);
+                        }
+                    }
+                }
+            } while (continueToSearch);
+
+            if (current.Handler != -1)
+            {
+                var errorRecord = new ErrorRecord(current.ErrorRecordToPass, current.ExceptionToPass);
+                tuple.SetAutomaticVariable(AutomaticVariable.Underbar, errorRecord, context);
+            }
+            return current.Handler;
+        }
+
+        /// <summary>
+        /// Find the matching handler by the exception type
+        /// </summary>
         private static int FindMatchingHandlerByType(Type exceptionType, Type[] types)
         {
             int i;

@@ -61,4 +61,6 @@
     "monad/tests/monad/DRT/utscripts/Language/I18n.Test_fallback.psd1":"Scripting/I18n.Test_fallback.psd1",
     "monad/tests/monad/DRT/utscripts/Language/scriptHelp.ps1":"Scripting/ScriptHelp.Tests.ps1",
     "monad/tests/monad/DRT/utscripts/Language/scriptHelp.xml":"Scripting/ScriptHelp.Tests.xml",
+    "monad/tests/monad/DRT/utscripts/Language/trycatch.ps1":"Scripting/TryCatch.Tests.ps1",
+    "monad/tests/monad/DRT/utscripts/Language/trap.ps1":"Scripting/Trap.Tests.ps1"
 }
