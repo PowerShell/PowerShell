@@ -7,7 +7,11 @@ Describe "User group policy execution policy should work" -Tags 'Feature' {
 
     BeforeAll {
 
-        if (!$IsWindows) { return }
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        if (!$IsWindows)
+        {
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
 
         # Add User group policy execution policy RemoteSigned
         $regHKCUKey = "HKCU:\SOFTWARE\Policies\Microsoft\Windows\PowerShell"
@@ -21,13 +25,13 @@ Describe "User group policy execution policy should work" -Tags 'Feature' {
 
     AfterAll {
 
-        if (!$IsWindows) { return }
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
 
         # Remove User group policy
         Remove-Item $regHKCUKey -Force -ErrorAction SilentlyContinue
     }
 
-    It "Sets User GroupPolicy ExecutionPolicy to RemoteSigned" -Skip:(!$IsWindows) {
+    It "Sets User GroupPolicy ExecutionPolicy to RemoteSigned" {
 
         $command = @'
         return Get-ExecutionPolicy -List | ? { ($_.Scope -eq 'UserPolicy') -and ($_.ExecutionPolicy -eq 'RemoteSigned') }
