@@ -7,10 +7,11 @@ Describe "User group policy execution policy should work" -Tags 'Feature' {
 
     BeforeAll {
 
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if (!$IsWindows)
         {
+            $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
             $PSDefaultParameterValues["it:skip"] = $true
+            return
         }
 
         # Add User group policy execution policy RemoteSigned
@@ -25,7 +26,11 @@ Describe "User group policy execution policy should work" -Tags 'Feature' {
 
     AfterAll {
 
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        if (!$IsWindows) 
+        { 
+            $global:PSDefaultParameterValues = $originalDefaultParameterValues
+            return 
+        }
 
         # Remove User group policy
         Remove-Item $regHKCUKey -Force -ErrorAction SilentlyContinue
