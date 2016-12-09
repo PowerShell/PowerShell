@@ -3,230 +3,267 @@
  # Provides Pester tests for the Import-Counter cmdlet.
  ############################################################################################>
 
-# Translate a counter set name to a localized name
-function TranslateCounterSetName($counterName)
+$cmdletName = "Import-Counter"
+
+. "$PSScriptRoot/CounterTestHelperFunctions.ps1"
+
+$counterPaths = @(
+    (TranslateCounterPath "\Memory\Available Bytes")
+    (TranslateCounterPath "\processor(*)\% Processor time")
+    (TranslateCounterPath "\Processor(_Total)\% Processor Time")
+    (TranslateCounterPath "\PhysicalDisk(_Total)\Current Disk Queue Length")
+    (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Bytes/sec")
+    (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec")
+)
+$setNames = @{
+    Memory = (TranslateCounterName "memory")
+    PhysicalDisk = (TranslateCounterName "physicaldisk")
+    Processor = (TranslateCounterName "processor")
+}
+
+$badSamplesBlgPath = Join-Path $PSScriptRoot "assets" "BadCounterSamples.blg"
+$corruptBlgPath = Join-Path $PSScriptRoot "assets" "CorruptBlg.blg"
+$notFoundPath = Join-Path $PSScriptRoot "DAD288C0-72F8-47D3-8C54-C69481B528DF.blg"
+
+# Set script-scope variable values used by multiple Describes
+function SetScriptVars([string]$rootPath, [int]$maxSamples, [bool]$export)
 {
-    $id = Get-PerformanceCounterID $counterName
-    if ($id -ne $null)
+    $rootFilename = "exportedCounters"
+
+    $script:blgPath = Join-Path $rootPath "$rootFilename.blg"
+    $script:csvPath = Join-Path $rootPath "$rootFilename.csv"
+    $script:tsvPath = Join-Path $rootPath "$rootFilename.tsv"
+
+    $script:counterSamples = $null
+    if ($maxSamples)
     {
-        $translatedName = Get-PerformanceCounterLocalName $id
-        if ($translatedName -ne $null)
+        $script:counterSamples = Get-Counter -Counter $counterPaths -MaxSamples $maxSamples
+    }
+
+    if ($export)
+    {
+        Export-Counter -Force -FileFormat "blg" -Path $script:blgPath -InputObject $script:counterSamples
+        Export-Counter -Force -FileFormat "csv" -Path $script:csvPath -InputObject $script:counterSamples
+        Export-Counter -Force -FileFormat "tsv" -Path $script:tsvPath -InputObject $script:counterSamples
+    }
+}
+
+# Build up a command to execute
+function ConstructCommand($testCase)
+{
+    $filePath = ""
+    $pathParam = ""
+    $startTimeParam = ""
+    $endTimeParam = ""
+    if ($testCase.ContainsKey("Path"))
+    {
+        $filePath = $testCase.Path
+    }
+    else
+    {
+        $filePath = $script:blgPath
+    }
+
+    if ($testCase.NoDashPath)
+    {
+        $pathParam = $filePath
+    }
+    else
+    {
+        $pathParam = "-Path $filePath"
+    }
+
+    if ($testCase.ContainsKey("StartTime"))
+    {
+        $startTimeParam = "-StartTime `$testCase.StartTime"
+    }
+    if ($testCase.ContainsKey("EndTime"))
+    {
+        $endTimeParam = "-EndTime `$(`$testCase.EndTime)"
+    }
+
+    return "$cmdletName $pathParam $startTimeParam $endTimeParam $($testCase.Parameters)"
+}
+
+# Run a test that is expected to succeed
+function RunTest($testCase)
+{
+    #$skipTest = $false;
+    #if ($testCase.SkipTest) { $skipTest = $true }
+    $skipTest = $testCase.SkipTest
+
+    It "$($testCase.Name)" -Skip:$skipTest {
+
+        if ($testCase.TimestampIndexes)
         {
-            return $translatedName
+            if ($testCase.TimestampIndexes.ContainsKey("First"))
+            {
+                $testCase.StartTime = $script:counterSamples[$testCase.TimestampIndexes.First].Timestamp
+
+                # Exporting loses precision of DateTime objects, which results in almost always
+                # missing the first expected item when importing with a controlling StartTime.
+                # So, we'll adjust the precision of the timestamp we use for the StartTime value.
+                $testCase.StartTime = New-Object System.DateTime ([Int64]([math]::floor($testCase.StartTime.Ticks / 10000)) * 10000)
+            }
+            if ($testCase.TimestampIndexes.ContainsKey("Last"))
+            {
+                $testCase.EndTime = $script:counterSamples[$testCase.TimestampIndexes.Last].Timestamp
+            }
+        }
+
+        $cmd = ConstructCommand $testCase
+        Write-Host "Command to run: $cmd"
+        $cmd = $cmd + " -ErrorAction SilentlyContinue -ErrorVariable errVar"
+
+        $errVar = $null
+        $sb = [scriptblock]::Create($cmd)
+        $result = &$sb
+        $errVar | Should BeNullOrEmpty
+
+        if ($testCase.ContainsKey("Script"))
+        {
+            &$testCase.Script
+        }
+        else
+        {
+            if ($testCase.TimestampIndexes)
+            {
+                $start = 0
+                $end = $script:counterSamples.Length - 1
+                if ($testCase.TimestampIndexes.ContainsKey("First"))
+                {
+                    $start = $testCase.TimestampIndexes.First
+                }
+                if ($testCase.TimestampIndexes.ContainsKey("Last"))
+                {
+                    $end = $testCase.TimestampIndexes.Last
+                }
+
+                CompareCounterSets $result $script:counterSamples[$start..$end]
+            }
+            else
+            {
+                CompareCounterSets $result $script:counterSamples
+            }
+        }
+    }
+}
+
+# Run a test for each file format
+function RunPerFileTypeTests($testCase)
+{
+    if ($testCase.UseKnownSamples)
+    {
+        $basePath = Join-Path $PSScriptRoot "assets" "CounterSamples"
+        $formats = @{
+            "BLG" = "$basePath.blg"
+            "CSV" = "$basePath.blg"
+            "TSV" = "$basePath.blg"
+        }
+    }
+    else
+    {
+        $formats = @{
+            "BLG" = $script:blgPath
+            "CSV" = $script:csvPath
+            "TSV" = $script:tsvPath
         }
     }
 
-    return $counterName
+    foreach ($f in $formats.GetEnumerator())
+    {
+        $newCase = $testCase.Clone();
+        $newCase.Path = $f.Value
+        $newCase.Name = "$($newCase.Name) ($($f.Name) format)"
+
+        RunTest $newCase
+    }
 }
 
-Describe "Tests for Import-Counter cmdlet" -Tags "CI" {
+# Run a test case that is expected to fail
+function RunExpectedFailureTest($testCase)
+{
+    It "$($testCase.Name)" {
+        $cmd = ConstructCommand $testCase
+        Write-Host "Command to run: $cmd"
+        $cmd = $cmd + " -ErrorAction Stop"
+
+        if ($testCase.ContainsKey("Script"))
+        {
+            # Here we want to run the command then do our own post-run checks
+            $sb = [ScriptBlock]::Create($cmd)
+            &$sb
+            &$testCase.Script
+        }
+        else
+        {
+            # Here we expect and want the command to fail
+            try
+            {
+                $sb = [ScriptBlock]::Create($cmd)
+                &$sb
+                throw "Did not throw expected exception"
+            }
+            catch
+            {
+                if ($testCase.ExpectedErrorId)
+                {
+                    $_.FullyQualifiedErrorId | Should Be $testCase.ExpectedErrorId
+                }
+                if ($testCase.ExpectedErrorCategory)
+                {
+                    $_.CategoryInfo.Category | Should Be $testCase.ExpectedErrorCategory
+                }
+            }
+        }
+    }
+}
+
+Describe "CI tests for Import-Counter cmdlet" -Tags "CI" {
 
     BeforeAll {
-        $cmdletName = "Import-Counter"
-
-        . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
-
-        $counterPaths = @(
-            (TranslateCounterPath("\Memory\Available Bytes"))
-            (TranslateCounterPath("\processor(*)\% Processor time"))
-            (TranslateCounterPath("\Processor(_Total)\% Processor Time"))
-            (TranslateCounterPath("\PhysicalDisk(_Total)\Current Disk Queue Length"))
-            (TranslateCounterPath("\PhysicalDisk(_Total)\Disk Bytes/sec"))
-            (TranslateCounterPath("\PhysicalDisk(_Total)\Disk Read Bytes/sec"))
-        )
-        $setNames = @{
-            Memory = (TranslateCounterSetName("memory"))
-            PhysicalDisk = (TranslateCounterSetName("physicaldisk"))
-            Processor = (TranslateCounterSetName("processor"))
-        }
-
-        $outputDirectory = $PSScriptRoot
-        $rootFilename = "exportedCounters"
-        $blgPath = "$outputDirectory/$rootFilename.blg"
-        $csvPath = "$outputDirectory/$rootFilename.csv"
-        $tsvPath = "$outputDirectory/$rootFilename.tsv"
-        $badSamplesBlgPath = "$outputDirectory/assets/BadCounterSamples.blg"
-        $corruptBlgPath = "$outputDirectory/assets/CorruptBlg.blg"
-        $notFoundPath = "$outputDirectory/DAD288C0-72F8-47D3-8C54-C69481B528DF.blg"
-
-        Write-Host "Gathering counter values for export..."
-        $counterSamples = Get-Counter -Counter $counterPaths -MaxSamples 25
-        Export-Counter -Force -FileFormat "blg" -Path $blgPath -InputObject $counterSamples
-        Export-Counter -Force -FileFormat "csv" -Path $csvPath -InputObject $counterSamples
-        Export-Counter -Force -FileFormat "tsv" -Path $tsvPath -InputObject $counterSamples
-
-        # Build up a command to execute
-        function ConstructCommand($testCase)
-        {
-            $filePath = ""
-            $pathParam = ""
-            $startTimeParam = ""
-            $endTimeParam = ""
-            if ($testCase.ContainsKey("Path"))
-            {
-                $filePath = $testCase.Path
-            }
-            else
-            {
-                $filePath = "$outputDirectory/$rootFilename.blg"
-            }
-
-            if ($testCase.NoDashPath)
-            {
-                $pathParam = $filePath
-            }
-            else
-            {
-                $pathParam = "-Path $filePath"
-            }
-
-            if ($testCase.ContainsKey("StartTime"))
-            {
-                $startTimeParam = "-StartTime `$testCase.StartTime"
-            }
-            if ($testCase.ContainsKey("EndTime"))
-            {
-                $endTimeParam = "-EndTime `$(`$testCase.EndTime)"
-            }
-
-            return "$cmdletName $pathParam $startTimeParam $endTimeParam $($testCase.Parameters)"
-        }
-
-        # Run a test that is expected to succeed
-        function RunTest($testCase)
-        {
-            It "$($testCase.Name)" {
-
-                if ($testCase.TimestampIndexes)
-                {
-                    if ($testCase.TimestampIndexes.ContainsKey("First"))
-                    {
-                        $testCase.StartTime = $counterSamples[$testCase.TimestampIndexes.First].Timestamp
-
-                        # Exporting loses precision of DateTime objects, which results in almost always
-                        # missing the first expected item when importing with a controlling StartTime.
-                        # So, we'll adjust the precision of the timestamp we use for the StartTime value.
-                        $testCase.StartTime = New-Object System.DateTime ([Int64]([math]::floor($testCase.StartTime.Ticks / 10000)) * 10000)
-                    }
-                    if ($testCase.TimestampIndexes.ContainsKey("Last"))
-                    {
-                        $testCase.EndTime = $counterSamples[$testCase.TimestampIndexes.Last].Timestamp
-                    }
-                }
-
-                $cmd = ConstructCommand $testCase
-                Write-Host "Command to run: $cmd"
-                $cmd = $cmd + " -ErrorAction SilentlyContinue -ErrorVariable errVar"
-
-                $errVar = $null
-                $sb = [scriptblock]::Create($cmd)
-                $result = &$sb
-                $errVar | Should BeNullOrEmpty
-
-                if ($testCase.ContainsKey("Script"))
-                {
-                    &$testCase.Script
-                }
-                else
-                {
-                    if ($testCase.TimestampIndexes)
-                    {
-                        $start = 0
-                        $end = $counterSamples.Length - 1
-                        if ($testCase.TimestampIndexes.ContainsKey("First"))
-                        {
-                            $start = $testCase.TimestampIndexes.First
-                        }
-                        if ($testCase.TimestampIndexes.ContainsKey("Last"))
-                        {
-                            $end = $testCase.TimestampIndexes.Last
-                        }
-
-                        CompareCounterSets $result $counterSamples[$start..$end]
-                    }
-                    else
-                    {
-                        CompareCounterSets $result $counterSamples
-                    }
-                }
-            }
-        }
-
-        # Run a test for each file format
-        function RunPerFileTypeTests($testCase)
-        {
-            if ($testCase.UseKnownSamples)
-            {
-                $basePath = "$outputDirectory/assets/CounterSamples"
-                $formats = @{
-                    "BLG" = "$basePath.blg"
-                    "CSV" = "$basePath.blg"
-                    "TSV" = "$basePath.blg"
-                }
-            }
-            else
-            {
-                $formats = @{
-                    "BLG" = $blgPath
-                    "CSV" = $csvPath
-                    "TSV" = $tsvPath
-                }
-            }
-
-            foreach ($f in $formats.GetEnumerator())
-            {
-                $newCase = $testCase.Clone();
-                $newCase.Path = $f.Value
-                $newCase.Name = "$($newCase.Name) ($($f.Name) format)"
-
-                RunTest $newCase
-            }
-        }
-
-        # Run a test case that is expected to fail
-        function RunExpectedFailureTest($testCase)
-        {
-            It "$($testCase.Name)" {
-                $cmd = ConstructCommand $testCase
-                Write-Host "Command to run: $cmd"
-                $cmd = $cmd + " -ErrorAction Stop"
-
-                if ($testCase.ContainsKey("Script"))
-                {
-                    # Here we want to run the command then do our own post-run checks
-                    $sb = [ScriptBlock]::Create($cmd)
-                    &$sb
-                    &$testCase.Script
-                }
-                else
-                {
-                    # Here we expect and want the command to fail
-                    try
-                    {
-                        $sb = [ScriptBlock]::Create($cmd)
-                        &$sb
-                        throw "Did not throw expected exception"
-                    }
-                    catch
-                    {
-                        if ($testCase.ExpectedErrorId)
-                        {
-                            $_.FullyQualifiedErrorId | Should Be $testCase.ExpectedErrorId
-                        }
-                        if ($testCase.ExpectedErrorCategory)
-                        {
-                            $_.CategoryInfo.Category | Should Be $testCase.ExpectedErrorCategory
-                        }
-                    }
-                }
-            }
-        }
+        SetScriptVars $testDrive 0 $false
     }
 
     AfterAll {
-        Remove-Item $blgPath -ErrorAction SilentlyContinue
-        Remove-Item $csvPath -ErrorAction SilentlyContinue
-        Remove-Item $tsvPath -ErrorAction SilentlyContinue
+    }
+
+    $performatTestCases = @(
+        @{
+            Name = "Can import all samples from known sample sets"
+            UseKnownSamples = $true
+            Script = {
+                $result.Length | Should Be 25
+            }
+        }
+        @{
+            Name = "Can acquire summary information"
+            UseKnownSamples = $true
+            Parameters = "-Summary"
+            Script = {
+                $result.SampleCount | Should Be 25
+                $result.OldestRecord | Should Be (Get-Date -Year 2016 -Month 11 -Day 26 -Hour 13 -Minute 46 -Second 30 -Millisecond 874)
+                $result.NewestRecord | Should Be (Get-Date -Year 2016 -Month 11 -Day 26 -Hour 13 -Minute 47 -Second 42 -Millisecond 983)
+            }
+        }
+    )
+
+    foreach ($testCase in $performatTestCases)
+    {
+        RunPerFileTypeTests $testCase
+    }
+}
+
+Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
+
+    BeforeAll {
+        SetScriptVars $testDrive 25 $true
+    }
+
+    AfterAll {
+        Remove-Item $script:blgPath -Force -ErrorAction SilentlyContinue
+        Remove-Item $script:csvPath -Force -ErrorAction SilentlyContinue
+        Remove-Item $script:tsvPath -Force -ErrorAction SilentlyContinue
     }
 
     Context "Validate incorrect usage" {
@@ -352,16 +389,6 @@ Describe "Tests for Import-Counter cmdlet" -Tags "CI" {
                 }
             }
             @{
-                Name = "Can acquire summary information"
-                UseKnownSamples = $true
-                Parameters = "-Summary"
-                Script = {
-                    $result.SampleCount | Should Be 25
-                    $result.OldestRecord | Should Be (Get-Date -Year 2016 -Month 11 -Day 26 -Hour 13 -Minute 46 -Second 30 -Millisecond 874)
-                    $result.NewestRecord | Should Be (Get-Date -Year 2016 -Month 11 -Day 26 -Hour 13 -Minute 47 -Second 42 -Millisecond 983)
-                }
-            }
-            @{
                 Name = "Can acquire a named list set"
                 UseKnownSamples = $true
                 Parameters = "-ListSet $($setNames.Memory)"
@@ -373,7 +400,7 @@ Describe "Tests for Import-Counter cmdlet" -Tags "CI" {
             @{
                 Name = "Can acquire list set from an array of names"
                 UseKnownSamples = $true
-                Parameters = "-ListSet $(TranslateCounterSetName 'memory'), $(TranslateCounterSetName 'processor')"
+                Parameters = "-ListSet $(TranslateCounterName 'memory'), $(TranslateCounterName 'processor')"
                 Script = {
                     $result.Length | Should Be 2
                     $names = @()
@@ -386,16 +413,16 @@ Describe "Tests for Import-Counter cmdlet" -Tags "CI" {
                 }
             }
             @{
-                # This test should work for English, but other languages are
-                # problematic since there is no reasonable way to construct
-                # a wild-card pattern that will, for every language, result
-                # in a known set of values or evan a set with a known minimum
-                # number of items.
+                # This test will be skipped for non-English languages, since
+                # there is no reasonable way to construct a wild-card pattern
+                # that will, for every language, result in a known set of values
+                # or evan a set with a known minimum number of items.
                 Name = "Can acquire list set via wild-card name"
+                SkipTest = (-not (Get-Culture).Name.StartsWith("en-", [StringComparison]::InvariantCultureIgnoreCase))
                 UseKnownSamples = $true
                 Parameters = "-ListSet p*"
                 Script = {
-                    $result.Length | Should Be 2
+                    $result.Length | Should BeGreaterThan 1
                     $names = @()
                     foreach ($set in $result)
                     {
@@ -406,16 +433,16 @@ Describe "Tests for Import-Counter cmdlet" -Tags "CI" {
                 }
             }
             @{
-                # This test should work for English, but other languages are
-                # problematic since there is no reasonable way to construct
-                # a wild-card pattern that will, for every language, result
-                # in a known set of values or evan a set with a known minimum
-                # number of items.
+                # This test will be skipped for non-English languages, since
+                # there is no reasonable way to construct a wild-card pattern
+                # that will, for every language, result in a known set of values
+                # or evan a set with a known minimum number of items.
                 Name = "Can acquire list set from an array of names including wild-card"
+                SkipTest = (-not (Get-Culture).Name.StartsWith("en-", [StringComparison]::InvariantCultureIgnoreCase))
                 UseKnownSamples = $true
                 Parameters = "-ListSet memory, p*"
                 Script = {
-                    $result.Length | Should Be 3
+                    $result.Length | Should BeGreaterThan 2
                     $names = @()
                     foreach ($set in $result) { $names = $names + $set.CounterSetName }
                     $names -Contains "memory" | Should Be $true

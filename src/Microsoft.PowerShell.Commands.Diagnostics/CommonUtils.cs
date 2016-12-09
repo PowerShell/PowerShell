@@ -151,33 +151,6 @@ namespace Microsoft.PowerShell.Commands.Diagnostics.Common
             // this naming pattern is dictated by the dotnet cli
             return new ResourceManager("Microsoft.PowerShell.Commands.Diagnostics.resources.GetEventResources", typeof(CommonUtilities).GetTypeInfo().Assembly);
         }
-
-        private static Version _osVersion;
-        public static Version OsVersion
-        {
-            get
-            {
-                if (_osVersion == null)
-                    _osVersion = GetOsVersion();
-
-                return _osVersion;
-            }
-        }
-
-        private static Version GetOsVersion()
-        {
-#if CORECLR
-            var osVerEx = new OSVERSIONINFOEX();
-
-            osVerEx.OSVersionInfoSize = Marshal.SizeOf<OSVERSIONINFOEX>(osVerEx);
-            if (!GetVersionEx(ref osVerEx))
-                throw new Win32Exception(Marshal.GetLastWin32Error());
-
-            return new Version(osVerEx.MajorVersion, osVerEx.MinorVersion);
-#else
-            return System.Environment.OSVersion.Version;
-#endif
-        }
     }
 }
 
