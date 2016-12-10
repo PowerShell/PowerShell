@@ -29,7 +29,7 @@ if ($isFullBuild) {
 Start-PSPester @pesterParam
 if (-not $isPr) {
     # Only build packages for branches, not pull requests
-    Start-PSPackage
+    # Start-PSPackage
     Test-PSPesterResults
 }
 
