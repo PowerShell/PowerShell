@@ -4,6 +4,9 @@ If ( $IsWindows ) {
 elseif ($IsOSX ) {
     $PesterSkipOrPending = @{ Pending = $true }
 }
+else {
+    $PesterSkipOrPending = @{ }
+}
 
 Describe "NativeLinuxCommands" -tags "CI" {
     It "Should return a type of System.Object for hostname cmdlet" {
