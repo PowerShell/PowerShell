@@ -6,9 +6,6 @@ using System;
 using System.Management.Automation;
 using System.IO;
 using System.Xml;
-#if CORECLR
-using Newtonsoft.Json;
-#endif
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -147,14 +144,6 @@ namespace Microsoft.PowerShell.Commands
                 exRef = ex;
                 obj = null;
             }
-#if CORECLR
-            // we use another serializer for CORECLR implementation
-            catch (JsonException ex)
-            {
-                exRef = ex;
-                obj = null;
-            }
-#endif
             return (null != obj);
         }
 
