@@ -8,7 +8,7 @@ ARG POWERSHELL_VERSION=6.0.0-alpha.13
 ARG POWERSHELL_RELEASE=v6.0.0-alpha.13
 ARG POWERSHELL_PACKAGE=powershell-6.0.0_alpha.13-1.el7.centos.x86_64.rpm
 
-# The CentOS 7 release relies on an older version of libicu, so we'll be donwloading it
+# The CentOS 7 release relies on an older version of libicu, so we'll be downloading it
 # from the University of Kent (GB) mirror service.
 ARG LIBICU50_SOURCE=https://www.mirrorservice.org/sites/mirror.centos.org/7.2.1511/os/x86_64/Packages
 ARG LIBICU50_PACKAGE=libicu-50.1.2-15.el7.x86_64.rpm
@@ -22,7 +22,7 @@ ENV LANG en_US.UTF-8
 ENV LC_ALL $LANG
 RUN localedef --charmap=UTF-8 --inputfile=en_US $LANG
 
-# Disable Detla RPMS
+# Disable Delta RPMS
 RUN echo "deltarpm=False" >> /etc/dnf/dnf.conf
 
 # Install dependencies and clean up
