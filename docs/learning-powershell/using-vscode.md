@@ -127,4 +127,4 @@ There are a few blogs that may be helpful to get you started using PowerShell ex
 PowerShell Extension for Visual Studio Code
 ----
 
-The PowerShell extension's source code can be found on [GitHub](https://github.com/PowerShell/vscode-powershell-ops).
+The PowerShell extension's source code can be found on [GitHub](https://github.com/PowerShell/vscode-powershell).
