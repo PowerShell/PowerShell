@@ -50,17 +50,19 @@ namespace Microsoft.PowerShell.Commands
                 obj = JsonConvert.DeserializeObject(input, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.None, MaxDepth = 1024 });
 
                 // JObject is a IDictionary
-                if (obj is JObject)
+                var dictionary = obj as JObject;
+                if (dictionary != null)
                 {
-                    var dictionary = obj as JObject;
                     obj = PopulateFromJDictionary(dictionary, out error);
                 }
-
-                // JArray is a collection
-                else if (obj is JArray)
+                else
                 {
+                    // JArray is a collection
                     var list = obj as JArray;
-                    obj = PopulateFromJArray(list, out error);
+                    if (list != null)
+                    {
+                        obj = PopulateFromJArray(list, out error);
+                    }
                 }
             }
             catch (JsonException je)
