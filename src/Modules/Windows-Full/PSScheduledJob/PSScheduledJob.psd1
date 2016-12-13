@@ -1,4 +1,4 @@
-@{
+﻿@{
 
 ModuleToProcess = 'Microsoft.PowerShell.ScheduledJob.dll'
 

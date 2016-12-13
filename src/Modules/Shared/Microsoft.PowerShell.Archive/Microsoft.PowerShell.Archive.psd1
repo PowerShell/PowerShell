@@ -1,4 +1,4 @@
-@{
+﻿@{
 GUID="eb74e8da-9ae2-482a-a648-e96550fb8733"
 Author="Microsoft Corporation"
 CompanyName="Microsoft Corporation"
