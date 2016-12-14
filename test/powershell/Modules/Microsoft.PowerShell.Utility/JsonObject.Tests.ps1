@@ -6,7 +6,7 @@
             [Parameter(ValueFromPipeline = $true)]
             $InputObject,
             [Parameter(Position = 0)]
-            $expectedException
+            $ExpectedException
         )
 
         try
@@ -15,17 +15,17 @@
             throw "Should throw exception"
         } catch
         {
-            $_.FullyQualifiedErrorId | should be $expectedException
+            $_.FullyQualifiedErrorId | should be $ExpectedException
         }
     }
 
     $validStrings = @(
-        @{ str = "" }
-        @{ str = "  " }
-        @{ str = "{a:1}" }
+        @{ name = "empty"; str = "" }
+        @{ name = "spaces"; str = "  " }
+        @{ name = "object"; str = "{a:1}" }
     )
 
-    It 'no error for valid string' -TestCase $validStrings {
+    It 'no error for valid string - <name>' -TestCase $validStrings {
         param ($str)
         $errRecord = $null
         [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($str, [ref]$errRecord)
@@ -33,11 +33,11 @@
     }
 
     $invalidStrings = @(
-        @{ str = "plaintext" }
-        @{ str = "{a:1" }
+        @{ name = "plain text"; str = "plaintext" }
+        @{ name = "part"; str = '{"a" :' }
     )
 
-    It 'throw ArgumentException for invalid string' -TestCase $invalidStrings  {
+    It 'throw ArgumentException for invalid string - <name>' -TestCase $invalidStrings  {
         param ($str)
         $errRecord = $null
         { [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($str, [ref]$errRecord) } | ShouldThrow 'ArgumentException'
