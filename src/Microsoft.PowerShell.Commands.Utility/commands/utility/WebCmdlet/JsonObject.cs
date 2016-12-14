@@ -67,8 +67,9 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (JsonException je)
             {
+                var msg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.JsonDeserializationFailed, je.Message);
                 // the same as JavaScriptSerializer does
-                throw new ArgumentException("input", je);
+                throw new ArgumentException(msg, je);
             }
 #else
             //In ConvertTo-Json, to serialize an object with a given depth, we set the RecursionLimit to depth + 2, see JavaScriptSerializer constructor in ConvertToJsonCommand.cs.
