@@ -13,7 +13,8 @@
         {
             & $InputObject
             throw "Should throw exception"
-        } catch
+        }
+        catch
         {
             $_.FullyQualifiedErrorId | should be $ExpectedException
         }
