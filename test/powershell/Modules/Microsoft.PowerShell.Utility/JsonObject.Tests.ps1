@@ -1,5 +1,4 @@
-﻿# Unit tests for JsonObject
-Describe 'JsonObject' -tags "CI" {
+﻿Describe 'Unit tests for JsonObject' -tags "CI" {
 
     function ShouldThrow
     {
@@ -13,41 +12,34 @@ Describe 'JsonObject' -tags "CI" {
         try
         {
             & $InputObject
-        }
-        catch
+            throw "Should throw exception"
+        } catch
         {
-            $ex = $_.Exception.InnerException
+            $_.FullyQualifiedErrorId | should be $expectedException
         }
-
-        $ex | Should Not BeNullOrEmpty
-        $ex.GetType() | Should Be $expectedException
     }
 
-    It 'empty string' {
+    $validStrings = @(
+        @{ str = "" }
+        @{ str = "  " }
+        @{ str = "{a:1}" }
+    )
+
+    It 'no error for valid string' -TestCase $validStrings {
+        param ($str)
         $errRecord = $null
-        [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson("", [ref]$errRecord)
+        [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($str, [ref]$errRecord)
         $errRecord | Should BeNullOrEmpty
     }
 
-    It 'whitespace' {
-        $errRecord = $null
-        [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson("   ", [ref]$errRecord)
-        $errRecord | Should BeNullOrEmpty
-    }
+    $invalidStrings = @(
+        @{ str = "plaintext" }
+        @{ str = "{a:1" }
+    )
 
-    It 'plain text' {
+    It 'throw ArgumentException for invalid string' -TestCase $invalidStrings  {
+        param ($str)
         $errRecord = $null
-        { [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson("plaintext", [ref]$errRecord) } | ShouldThrow 'System.ArgumentException'
-    }
-
-    It 'object' {
-        $errRecord = $null
-        [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson("{a:1}", [ref]$errRecord)
-        $errRecord | Should BeNullOrEmpty
-    }
-
-    It 'part' {
-        $errRecord = $null
-        { [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson("{a:1", [ref]$errRecord) } | ShouldThrow 'System.ArgumentException'
+        { [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($str, [ref]$errRecord) } | ShouldThrow 'ArgumentException'
     }
 }
