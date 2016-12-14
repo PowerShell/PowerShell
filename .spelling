@@ -75,6 +75,7 @@ nunit
 exe
 init
 labeled
+alpha.14
  - demos/Azure/README.md
 alpha.12
 AzureRM.NetCore.Preview
