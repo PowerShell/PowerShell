@@ -3,40 +3,43 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
         $restoreLocation = Get-Location
         
         #skip all tests on non-windows platform
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if ($IsWindows -eq $false) {
+        $defaultParamValues = $PSdefaultParameterValues.Clone()
+        if (!$IsWindows) {
             $PSDefaultParameterValues["it:skip"] = $true
-            return
+        } else {
+            $registryBase = "HKLM:\software\Microsoft\PowerShell\3\"
+            $parentKey = "TestKeyThatWillNotConflict"
+            $testKey = "TestKey"
+            $testKey2 = "TestKey2"
+            $testPropertyName = "TestEntry"
+            $testPropertyValue = 1
         }
-
-        $registryBase = "HKLM:\software\Microsoft\PowerShell\3\"
-        $parentKey = "TestKeyThatWillNotConflict"
-        $testKey = "TestKey"
-        $testKey2 = "TestKey2"
-        $testPropertyName = "TestEntry"
-        $testPropertyValue = 1
     }
 
     AfterAll {
         #restore the previous environment
         Set-Location -Path $restoreLocation
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        $global:PSDefaultParameterValues = $defaultParamValues
     }
 
     BeforeEach {
-        #create a parent key that can be easily removed and will not conflict
-        Set-Location $registryBase
-        New-Item -Path $parentKey > $null
-        #create the test keys/test properties for the tests to manipulate
-        Set-Location $parentKey
-        New-Item -Path $testKey > $null
-        New-Item -Path $testKey2 > $null
-        New-ItemProperty -Path $testKey -Name $testPropertyName -Value $testPropertyValue > $null
+        if ($IsWindows) {
+            #create a parent key that can be easily removed and will not conflict
+            Set-Location $registryBase
+            New-Item -Path $parentKey > $null
+            #create the test keys/test properties for the tests to manipulate
+            Set-Location $parentKey
+            New-Item -Path $testKey > $null
+            New-Item -Path $testKey2 > $null
+            New-ItemProperty -Path $testKey -Name $testPropertyName -Value $testPropertyValue > $null
+       }
     }
 
     AfterEach {
-        Set-Location $registryBase
-        Remove-Item -Path $parentKey -Recurse -Force -ErrorAction SilentlyContinue
+        if ($IsWindows) {
+            Set-Location $registryBase
+            Remove-Item -Path $parentKey -Recurse -Force -ErrorAction SilentlyContinue
+        }
     }
 
     Context "Validate basic registry provider Cmdlets" {
@@ -134,41 +137,44 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
         $restoreLocation = Get-Location
         
         #skip all tests on non-windows platform
-        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if ($IsWindows -eq $false) {
+        $defaultParamValues = $PSdefaultParameterValues.Clone()
+        if (!$IsWindows) {
             $PSDefaultParameterValues["it:skip"] = $true
-            return
+        } else {
+            $registryBase = "HKLM:\software\Microsoft\PowerShell\3\"
+            $parentKey = "TestKeyThatWillNotConflict"
+            $testKey = "TestKey"
+            $testKey2 = "TestKey2"
+            $testPropertyName = "TestEntry"
+            $testPropertyValue = 1
         }
-
-        $registryBase = "HKLM:\software\Microsoft\PowerShell\3\"
-        $parentKey = "TestKeyThatWillNotConflict"
-        $testKey = "TestKey"
-        $testKey2 = "TestKey2"
-        $testPropertyName = "TestEntry"
-        $testPropertyValue = 1
     }
 
     AfterAll {
         #restore the previous environment
         Set-Location -Path $restoreLocation
-        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+        $global:PSDefaultParameterValues = $defaultParamValues
     }
 
     BeforeEach {
-        #create a parent key that can be easily removed and will not conflict
-        Set-Location $registryBase
-        New-Item -Path $parentKey > $null
-        #create the test keys/test properties for the tests to manipulate
-        Set-Location $parentKey
-        New-Item -Path $testKey > $null
-        New-Item -Path $testKey2 > $null
-        New-ItemProperty -Path $testKey -Name $testPropertyName -Value $testPropertyValue > $null
-        New-ItemProperty -Path $testKey2 -Name $testPropertyName -Value $testPropertyValue > $null
+        if ($IsWindows) {
+            #create a parent key that can be easily removed and will not conflict
+            Set-Location $registryBase
+            New-Item -Path $parentKey > $null
+            #create the test keys/test properties for the tests to manipulate
+            Set-Location $parentKey
+            New-Item -Path $testKey > $null
+            New-Item -Path $testKey2 > $null
+            New-ItemProperty -Path $testKey -Name $testPropertyName -Value $testPropertyValue > $null
+            New-ItemProperty -Path $testKey2 -Name $testPropertyName -Value $testPropertyValue > $null
+        }
     }
 
     AfterEach {
-        Set-Location $registryBase
-        Remove-Item -Path $parentKey -Recurse -Force -ErrorAction SilentlyContinue
+        if ($IsWindows) {
+            Set-Location $registryBase
+            Remove-Item -Path $parentKey -Recurse -Force -ErrorAction SilentlyContinue
+        }
     }
 
     Context "Valdiate New-ItemProperty Parameters" {

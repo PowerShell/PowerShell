@@ -1318,13 +1318,7 @@ try {
         } 
 
 
-        It "(special case) Test for property = OsFreeSpaceInPagingFiles" {
-            if ([System.Management.Automation.Platform]::IsIoT)
-            {
-                Write-Verbose -Verbose -Message "Win32_ComputerSystem.FreeSpaceInPagingFiles is not supported on IoT."
-                return
-            }
-
+        It "(special case) Test for property = OsFreeSpaceInPagingFiles" -Skip:([System.Management.Automation.Platform]::IsIoT) {
             ($observed.OsFreeSpaceInPagingFiles -gt 0) | Should Be $true
         } 
 
