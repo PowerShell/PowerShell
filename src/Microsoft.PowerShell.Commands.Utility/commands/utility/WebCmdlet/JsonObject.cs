@@ -44,20 +44,32 @@ namespace Microsoft.PowerShell.Commands
             }
             error = null;
 #if CORECLR
-            object obj = JsonConvert.DeserializeObject(input, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.None, MaxDepth = 1024 });
-
-            // JObject is a IDictionary
-            if (obj is JObject)
+            object obj = null;
+            try
             {
+                obj = JsonConvert.DeserializeObject(input, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.None, MaxDepth = 1024 });
+
+                // JObject is a IDictionary
                 var dictionary = obj as JObject;
-                obj = PopulateFromJDictionary(dictionary, out error);
+                if (dictionary != null)
+                {
+                    obj = PopulateFromJDictionary(dictionary, out error);
+                }
+                else
+                {
+                    // JArray is a collection
+                    var list = obj as JArray;
+                    if (list != null)
+                    {
+                        obj = PopulateFromJArray(list, out error);
+                    }
+                }
             }
-
-            // JArray is a collection
-            else if (obj is JArray)
+            catch (JsonException je)
             {
-                var list = obj as JArray;
-                obj = PopulateFromJArray(list, out error);
+                var msg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.JsonDeserializationFailed, je.Message);
+                // the same as JavaScriptSerializer does
+                throw new ArgumentException(msg, je);
             }
 #else
             //In ConvertTo-Json, to serialize an object with a given depth, we set the RecursionLimit to depth + 2, see JavaScriptSerializer constructor in ConvertToJsonCommand.cs.
