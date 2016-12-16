@@ -40,4 +40,14 @@
             $PSItem.FullyQualifiedErrorId | Should be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetVerbCommand' 
         }
     }
+
+    It "Accept all valid verb groups" {
+        $groups = ([System.Reflection.IntrospectionExtensions]::GetTypeInfo([PSObject]).Assembly.ExportedTypes | 
+            Where-Object {$_.Name -match '^Verbs.'} |
+            Select-Object -Property @{Name='VerbGroup';Expression={$_.Name.Substring(5)}}).VerbGroup
+        ForEach($group in $groups)
+        {
+            {Get-Verb -Group $group} | Should Not Throw
+        }
+    }
 }
