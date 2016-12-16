@@ -322,12 +322,14 @@ namespace System.Management.Automation.Language {
             Out(close.ToString(), Flow.Break);
         }
 
+#if !CORECLR
         protected override Expression VisitDynamic(DynamicExpression node) {
             Out(".Dynamic", Flow.Space);
             Out(FormatBinder(node.Binder));
             VisitExpressions('(', node.Arguments);
             return node;
         }
+#endif
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1502:AvoidExcessiveComplexity")]
         protected override Expression VisitBinary(BinaryExpression node) {
