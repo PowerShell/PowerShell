@@ -5339,12 +5339,17 @@ $OutputEncoding = if ($IsWindows -and $IsCoreCLR) {
 }
 
 # Respect PAGER, use more on Windows, and use less on Linux
-if (Test-Path env:PAGER) {
-    $moreCommand = (Get-Command -CommandType Application $env:PAGER | Select-Object -First 1).Definition
-} elseif ($IsWindows) {
-    $moreCommand = (Get-Command -CommandType Application more | Select-Object -First 1).Definition
-} else {
-    $moreCommand = (Get-Command -CommandType Application less | Select-Object -First 1).Definition
+Try {
+  if (Test-Path env:PAGER) {
+      $moreCommand = (Get-Command -CommandType Application $env:PAGER -ErrorAction Stop | Select-Object -First 1).Definition
+  } elseif ($IsWindows) {
+      $moreCommand = (Get-Command -CommandType Application more -ErrorAction Stop | Select-Object -First 1).Definition
+  } else {
+      $moreCommand = (Get-Command -CommandType Application less -ErrorAction Stop | Select-Object -First 1).Definition
+  }
+}
+Catch {
+  $moreCommand = (Get-Command -CommandType Application cat | Select-Object -First 1).Definition
 }
 
 if($paths) {
