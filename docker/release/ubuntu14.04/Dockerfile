@@ -25,6 +25,7 @@ RUN apt-get update \
         zlib1g \
         curl \
         git \
+        less \
     && rm -rf /var/lib/apt/lists/*
 
 # Install PowerShell package and clean up
