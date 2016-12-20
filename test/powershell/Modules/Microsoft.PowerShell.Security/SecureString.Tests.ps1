@@ -14,6 +14,7 @@ Describe "SecureString conversion tests" -Tags "CI" {
     It "using null arguments to ConvertFrom-SecureString produces an exception" {
         try {
             ConvertFrom-SecureString -secureString $null -key $null
+            throw "No Exception!"
         }
         catch {
             $_.FullyQualifiedErrorId | should be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand"

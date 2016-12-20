@@ -15,6 +15,7 @@
         try
         {
             test-PositionalBinding1 1
+            throw "No Exception!"
         }
         catch
         {
@@ -64,6 +65,7 @@
         try
         {
             test-allownullattributes -Parameter2 1 -Parameter3 $null -ShowMe 1
+            throw "No Exception!"
         }
         catch
         {
@@ -89,6 +91,7 @@
         try
         {
             test-namedwithboolishargument -Parameter2 -Parameter1
+            throw "No Exception!"
         }
         catch
         {
@@ -148,6 +151,7 @@
         try
         {
             test-singleintparameter -Parameter1 'dookie'
+            throw "No Exception!"
         }
         catch
         {
@@ -266,6 +270,7 @@
         try
         {
             test-nameconflicts6 -Parameter2 1
+            throw "No Exception!"
         }
         catch
         {

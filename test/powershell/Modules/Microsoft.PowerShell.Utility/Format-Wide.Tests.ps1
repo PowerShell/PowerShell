@@ -27,6 +27,7 @@ Describe "Format-Wide" -Tags "CI" {
         try
 		{
 			Format-Wide -InputObject $(Get-ChildItem) -Property CreationTime -View aoeu
+			throw "No Exception!"
 		}
 		catch
 		{

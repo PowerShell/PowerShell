@@ -164,9 +164,15 @@ Describe "Set-Timezone test cases" -Tags @('Feature', 'RequireAdminOnWindows') {
     }
 
     It "Call Set-TimeZone with invalid Id" {
-        $exception = $null
-        try { Set-TimeZone -Id "zzInvalidID" } catch { $exception = $_ }
-        $exception.FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
+        try
+        {
+            Set-TimeZone -Id "zzInvalidID"
+            throw "No Exception!"
+        }
+        catch
+        {
+            $_.FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
+        }
     }
 
     It "Call Set-TimeZone by Name" {
@@ -187,9 +193,15 @@ Describe "Set-Timezone test cases" -Tags @('Feature', 'RequireAdminOnWindows') {
     }
 
     It "Call Set-TimeZone with invalid Name" {
-        $exception = $null
-        try { Set-TimeZone -Name "zzINVALID_Name" } catch { $exception = $_ }
-        $exception.FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
+        try
+        {
+            Set-TimeZone -Name "zzINVALID_Name"
+            throw "No Exception!"
+        }
+        catch
+        {
+            $_.FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
+        }
     }
 
     It "Verify that alias 'stz' exists" {
