@@ -804,7 +804,7 @@ namespace System.Management.Automation
             builtinTypeAccelerators.Add("psvariableproperty", typeof(PSVariableProperty));
         }
 
-        internal static string FindBuiltinAccelerator(Type type,string expectedKey=null)
+        internal static string FindBuiltinAccelerator(Type type, string expectedKey = null)
         {
             // Taking attributes as special case. In this case, we only want to return the
             // accelerator.
