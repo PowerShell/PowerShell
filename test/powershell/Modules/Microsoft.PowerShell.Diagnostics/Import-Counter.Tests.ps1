@@ -7,18 +7,21 @@ $cmdletName = "Import-Counter"
 
 . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
 
-$counterPaths = @(
-    (TranslateCounterPath "\Memory\Available Bytes")
-    (TranslateCounterPath "\processor(*)\% Processor time")
-    (TranslateCounterPath "\Processor(_Total)\% Processor Time")
-    (TranslateCounterPath "\PhysicalDisk(_Total)\Current Disk Queue Length")
-    (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Bytes/sec")
-    (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec")
-)
-$setNames = @{
-    Memory = (TranslateCounterName "memory")
-    PhysicalDisk = (TranslateCounterName "physicaldisk")
-    Processor = (TranslateCounterName "processor")
+if ( ! $(SkipCounterTests) ) {
+
+    $counterPaths = @(
+        (TranslateCounterPath "\Memory\Available Bytes")
+        (TranslateCounterPath "\processor(*)\% Processor time")
+        (TranslateCounterPath "\Processor(_Total)\% Processor Time")
+        (TranslateCounterPath "\PhysicalDisk(_Total)\Current Disk Queue Length")
+        (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Bytes/sec")
+        (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec")
+    )
+    $setNames = @{
+        Memory = (TranslateCounterName "memory")
+        PhysicalDisk = (TranslateCounterName "physicaldisk")
+        Processor = (TranslateCounterName "processor")
+    }
 }
 
 $badSamplesBlgPath = Join-Path $PSScriptRoot "assets" "BadCounterSamples.blg"

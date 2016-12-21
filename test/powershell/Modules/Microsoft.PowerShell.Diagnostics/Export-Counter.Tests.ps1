@@ -8,14 +8,19 @@ $cmdletName = "Export-Counter"
 
 $rootFilename = "exportedCounters"
 $filePath = $null
-$counterNames = @(
-    (TranslateCounterPath "\Memory\Available Bytes")
-    (TranslateCounterPath "\Processor(*)\% Processor Time")
-    (TranslateCounterPath "\Processor(_Total)\% Processor Time")
-    (TranslateCounterPath "\PhysicalDisk(_Total)\Current Disk Queue Length")
-    (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Bytes/sec")
-    (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec")
-)
+
+if ( ! $(SkipCounterTests) ) {
+
+    $counterNames = @(
+        (TranslateCounterPath "\Memory\Available Bytes")
+        (TranslateCounterPath "\Processor(*)\% Processor Time")
+        (TranslateCounterPath "\Processor(_Total)\% Processor Time")
+        (TranslateCounterPath "\PhysicalDisk(_Total)\Current Disk Queue Length")
+        (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Bytes/sec")
+        (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec")
+    )
+}
+
 $counterValues = $null
 
 # Test the results of Export-Counter by importing the exported

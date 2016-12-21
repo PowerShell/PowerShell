@@ -7,11 +7,15 @@ $cmdletName = "Get-Counter"
 . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
 
 $badName = "bad-name-DAD288C0-72F8-47D3-8C54-C69481B528DF"
-$counterPaths = @{
-    MemoryBytes = TranslateCounterPath "\Memory\Available Bytes"
-    TotalDiskRead = TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec"
-    Unknown = TranslateCounterPath "\Memory\$badName"
-    Bad = $badName
+
+if ( ! $(SkipCounterTests) ) {
+
+    $counterPaths = @{
+        MemoryBytes = TranslateCounterPath "\Memory\Available Bytes"
+        TotalDiskRead = TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec"
+        Unknown = TranslateCounterPath "\Memory\$badName"
+        Bad = $badName
+    }
 }
 
 $nonEnglishCulture = (-not (Get-Culture).Name.StartsWith("en-", [StringComparison]::InvariantCultureIgnoreCase))
