@@ -80,9 +80,9 @@ If you have any problems building, please consult the developer [FAQ][].
 
 ### Build status of nightly builds
 
-| AppVeyor (Windows)       |
-|--------------------------|
-| [![av-nightly-image][]][av-nightly-site] |
+| AppVeyor (Windows)       | Code Coverage Status |
+|--------------------------|----------------------|
+| [![av-nightly-image][]][av-nightly-site] | [![cc-image][]][cc-site] |
 
 [bd-linux]: docs/building/linux.md
 [bd-windows]: docs/building/windows-core.md
@@ -96,6 +96,8 @@ If you have any problems building, please consult the developer [FAQ][].
 [av-site]: https://ci.appveyor.com/project/PowerShell/powershell
 [av-nightly-image]: https://ci.appveyor.com/api/projects/status/46yd4jogtm2jodcq?svg=true
 [av-nightly-site]: https://ci.appveyor.com/project/PowerShell/powershell-f975h
+[cc-site]: https://coveralls.io/github/PowerShell/PowerShell?branch=master
+[cc-image]: https://coveralls.io/repos/github/PowerShell/PowerShell/badge.svg?branch=master
 
 Downloading the Source Code
 ---------------------------
