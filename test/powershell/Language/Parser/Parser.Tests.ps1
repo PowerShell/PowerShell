@@ -826,8 +826,8 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         }
     }
 
-    It "A here string should not throw on '@`"``n'`"'``n`"@'" {
+    It "A here string should not throw on '`$herestr=@`"``n'`"'``n`"@'" {
         # Issue #2780
-        { ExecuteCommand "@`"`n'`"'`n`"@" } | Should Not Throw
+        { ExecuteCommand "`$herestr=@`"`n'`"'`n`"@" } | Should Not Throw
     }
 } 
