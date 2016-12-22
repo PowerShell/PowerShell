@@ -1,12 +1,30 @@
-﻿$codeCoverageZip = 'https://ci.appveyor.com/api/projects/PowerShell/powershell-f975h/artifacts/CodeCoverage.zip'
+﻿function Write-LogPassThru
+{
+    Param(
+        [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position = 0)]
+        [string] $Message,
+        $Path = "$env:Temp\CodeCoverageRunLogs.txt"
+    )
+
+    $message = "$([Datetime]::Now.ToShortDateString()) - $([datetime]::Now.ToShortTimeString()) : $message"
+
+    if(-not (Test-Path $Path))
+    {
+        Set-Content -Path $Path -Value $Message -Force -PassThru
+    }
+    else
+    {
+        Add-Content -Path $Path -Value $Message -PassThru
+    }
+}
+
+$codeCoverageZip = 'https://ci.appveyor.com/api/projects/PowerShell/powershell-f975h/artifacts/CodeCoverage.zip'
 $testContentZip = 'https://ci.appveyor.com/api/projects/PowerShell/powershell-f975h/artifacts/tests.zip'
 $openCoverZip = 'https://ci.appveyor.com/api/projects/PowerShell/powershell-f975h/artifacts/OpenCover.zip'
 
-
-New-Item "$PSScriptRoot\logs.txt"  -Force
-"codeCoverageZip: $codeCoverageZip" | Tee-Object -FilePath "$PSScriptRoot\logs.txt" -Append
-"testcontentZip: $testContentZip" | Tee-Object -FilePath "$PSScriptRoot\logs.txt" -Append
-"openCoverZip: $openCoverZip" | Tee-Object -FilePath "$PSScriptRoot\logs.txt" -Append
+Write-LogPassThru -Message "codeCoverageZip: $codeCoverageZip"
+Write-LogPassThru -Message "testcontentZip: $testContentZip"
+Write-LogPassThru -Message "openCoverZip: $openCoverZip"
 
 $outputBaseFolder = "$env:Temp\CC"
 $null = New-Item -ItemType Directory -Path $outputBaseFolder -Force
@@ -21,15 +39,15 @@ $psCodePath = "$outputBaseFolder\PSCode"
 
 try
 {
-    "Starting downloads." | Tee-Object -FilePath "$PSScriptRoot\logs.txt" -Append
+    Write-LogPassThru -Message "Starting downloads."
 
     Invoke-WebRequest -uri $codeCoverageZip -outfile "$outputBaseFolder\PSCodeCoverage.zip"
     Invoke-WebRequest $testContentZip -outfile "$outputBaseFolder\tests.zip"
     Invoke-WebRequest $openCoverZip -outfile "$outputBaseFolder\OpenCover.zip"
 
-    "Downloads complete." | Tee-Object -FilePath "$PSScriptRoot\logs.txt" -Append
+    Write-LogPassThru -Message "Downloads complete."
 
-    "Starting expansion." | Tee-Object -FilePath "$PSScriptRoot\logs.txt" -Append
+    Write-LogPassThru -Message "Starting expansion."
 
     Expand-Archive -path "$outputBaseFolder\PSCodeCoverage.zip" -destinationpath "$psBinPath"
     Expand-Archive -path "$outputBaseFolder\tests.zip" -destinationpath $testPath
@@ -43,15 +61,15 @@ try
     Invoke-WebRequest $coverallsToolsUrl -outfile "$outputBaseFolder\coveralls.zip"
     Expand-Archive -Path "$outputBaseFolder\coveralls.zip" -DestinationPath $coverallsPath
 
-    "Expansion complete." | Tee-Object -FilePath "$PSScriptRoot\logs.txt" -Append
+    Write-LogPassThru -Message "Expansion complete."
 
     Import-Module "$openCoverPath\OpenCover" -force
     Install-OpenCover -TargetDirectory $openCoverTargetDirectory -force
-    "OpenCover installed." | Tee-Object -FilePath "$PSScriptRoot\logs.txt" -Append
+    Write-LogPassThru -Message "OpenCover installed."
 
-    "TestDirectory : $testPath" | Tee-Object -FilePath "$PSScriptRoot\logs.txt" -Append
-    "openCoverPath : $openCoverTargetDirectory\OpenCover" | Tee-Object -FilePath "$PSScriptRoot\logs.txt" -Append
-    "psbinpath : $psBinPath" | Tee-Object -FilePath "$PSScriptRoot\logs.txt" -Append
+    Write-LogPassThru -Message "TestDirectory : $testPath"
+    Write-LogPassThru -Message "openCoverPath : $openCoverTargetDirectory\OpenCover"
+    Write-LogPassThru -Message "psbinpath : $psBinPath"
 
     $openCoverParams = @{outputlog = $outputLog;
                          TestDirectory = $testPath;
@@ -59,22 +77,22 @@ try
                          PowerShellExeDirectory = "$psBinPath\publish"
                         }
 
-    $openCoverParams | Tee-Object -FilePath "$PSScriptRoot\logs.txt" -Append
-
-    "Starting test run." | Tee-Object -FilePath "$PSScriptRoot\logs.txt" -Append
+    Write-LogPassThru -Message $openCoverParams
+    Write-LogPassThru -Message "Starting test run."
 
     Invoke-OpenCover @openCoverParams
 
     if(Test-Path $outputLog)
     {
-        get-childitem $outputLog | Tee-Object -FilePath "$PSScriptRoot\logs.txt" -Append
+        Write-LogPassThru -Message (get-childitem $outputLog).FullName
     }
 
-    "Test run done.!!" | Tee-Object -FilePath "$PSScriptRoot\logs.txt" -Append
+    Write-LogPassThru -Message "Test run done."
 
-    $powershellVersionString = (Get-Content "$psBinPath\publish\powershell.version")
-    $commitId = $powershellVersionString.Substring($powershellVersionString.LastIndexOf('-g') + 2)
-    $commitId | Add-Content -Path "$PSScriptRoot\logs.txt"
+    $gitCommitId = & "$psBinPath\publish\powershell.exe" -noprofile -command $PSVersiontable.GitCommitId  
+    $commitId = $gitCommitId.substring($gitCommitId.LastIndexOf('-g') + 2)
+
+    Write-LogPassThru -Message $commitId
 
     $coverallsPath = "$outputBaseFolder\coveralls"
     $coverallsToken = 'SaRLabTUDNqaO2JT9uuYcR78a7kia044D'
@@ -95,7 +113,7 @@ try
                         "--commitMessage `"$message`""
                         )
 
-    $coverallsParams | Add-Content -Path "$PSScriptRoot\logs.txt"
+    Write-LogPassThru -Message $coverallsParams
 
     & $coverallsExe """$coverallsParams"""
 }
