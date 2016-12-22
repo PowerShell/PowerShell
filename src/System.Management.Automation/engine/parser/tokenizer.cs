@@ -1236,6 +1236,7 @@ namespace System.Management.Automation.Language
                 case '0': return '\0';
                 case 'a': return '\a';
                 case 'b': return '\b';
+                case 'e': return '\u001b';
                 case 'f': return '\f';
                 case 'n': return '\n';
                 case 'r': return '\r';
