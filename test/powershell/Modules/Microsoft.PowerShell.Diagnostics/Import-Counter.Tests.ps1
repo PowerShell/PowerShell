@@ -7,7 +7,7 @@ $cmdletName = "Import-Counter"
 
 . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
 
-if ( ! $(SkipCounterTests) ) {
+if ( $isWindows ) {
 
     $counterPaths = @(
         (TranslateCounterPath "\Memory\Available Bytes")
@@ -91,7 +91,7 @@ function ConstructCommand($testCase)
 # Run a test that is expected to succeed
 function RunTest($testCase)
 {
-    $skipTest = $testCase.SkipTest -or (SkipCounterTests)
+    $skipTest = $testCase.SkipTest -or ( ! $isWindows )
 
     It "$($testCase.Name)" -Skip:$skipTest {
 
@@ -113,7 +113,6 @@ function RunTest($testCase)
         }
 
         $cmd = ConstructCommand $testCase
-        Write-Host "Command to run: $cmd"
         $cmd = $cmd + " -ErrorAction SilentlyContinue -ErrorVariable errVar"
 
         $errVar = $null
@@ -224,7 +223,18 @@ function RunExpectedFailureTest($testCase)
 Describe "CI tests for Import-Counter cmdlet" -Tags "CI" {
 
     BeforeAll {
-        SetScriptVars $testDrive 0 $false
+        if ( ! $IsWindows )
+        {
+            $origDefaults = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues['it:skip'] = $true
+            SetScriptVars $testDrive 0 $false
+        }
+    }
+
+    AfterAll {
+        if ( ! $IsWindows ){
+            $global:PSDefaultParameterValues = $origDefaults
+        }
     }
 
     $performatTestCases = @(
@@ -256,13 +266,21 @@ Describe "CI tests for Import-Counter cmdlet" -Tags "CI" {
 Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
 
     BeforeAll {
-        SetScriptVars $testDrive 25 $true
+        if ( ! $IsWindows )
+        {
+            $origDefaults = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues['it:skip'] = $true
+            SetScriptVars $testDrive 25 $true
+        }
     }
 
     AfterAll {
-        Remove-Item $script:blgPath -Force -ErrorAction SilentlyContinue
-        Remove-Item $script:csvPath -Force -ErrorAction SilentlyContinue
-        Remove-Item $script:tsvPath -Force -ErrorAction SilentlyContinue
+        if ( ! $IsWindows ){
+            $global:PSDefaultParameterValues = $origDefaults
+            Remove-Item $script:blgPath -Force -ErrorAction SilentlyContinue
+            Remove-Item $script:csvPath -Force -ErrorAction SilentlyContinue
+            Remove-Item $script:tsvPath -Force -ErrorAction SilentlyContinue
+        }
     }
 
     Context "Validate incorrect usage" {

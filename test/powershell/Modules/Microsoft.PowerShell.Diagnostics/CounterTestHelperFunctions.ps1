@@ -278,14 +278,3 @@ function CompareCounterSets
         }
     }
 }
-
-function SkipCounterTests
-{
-    if ([System.Management.Automation.Platform]::IsLinux -or
-        [System.Management.Automation.Platform]::IsOSX)
-    {
-        return $true
-    }
-
-    return $false
-}
