@@ -77,7 +77,7 @@ try
                          PowerShellExeDirectory = "$psBinPath\publish"
                         }
 
-    Write-LogPassThru -Message $openCoverParams
+    $openCoverParams | Out-String | Write-LogPassThru
     Write-LogPassThru -Message "Starting test run."
 
     Invoke-OpenCover @openCoverParams
