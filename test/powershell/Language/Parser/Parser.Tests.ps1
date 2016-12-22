@@ -274,7 +274,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         $result = ExecuteCommand '"fo`obar"'
 		$result | should be "foobar"
     }
-
+	
 	Context "Test that we support all of the C# escape sequences. We use the ` instead of \. (line 613)" {
 		# the first two sequences are tricky, because we need to provide something to
 		# execute without causing an incomplete parse error
