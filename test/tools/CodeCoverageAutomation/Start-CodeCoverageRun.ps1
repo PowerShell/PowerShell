@@ -116,6 +116,8 @@ try
     Write-LogPassThru -Message $coverallsParams
 
     & $coverallsExe """$coverallsParams"""
+
+    Write-LogPassThru -Message "Upload complete."
 }
 catch
 {
