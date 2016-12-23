@@ -49,9 +49,9 @@ try
 
     Write-LogPassThru -Message "Starting expansion."
 
-    Expand-Archive -path "$outputBaseFolder\PSCodeCoverage.zip" -destinationpath "$psBinPath"
-    Expand-Archive -path "$outputBaseFolder\tests.zip" -destinationpath $testPath
-    Expand-Archive -path "$outputBaseFolder\OpenCover.zip" -destinationpath $openCoverPath
+    Expand-Archive -path "$outputBaseFolder\PSCodeCoverage.zip" -destinationpath "$psBinPath" -Force
+    Expand-Archive -path "$outputBaseFolder\tests.zip" -destinationpath $testPath -Force
+    Expand-Archive -path "$outputBaseFolder\OpenCover.zip" -destinationpath $openCoverPath -Force
 
     ## Download Coveralls.net uploader
     $coverallsToolsUrl = 'https://github.com/csMACnz/coveralls.net/releases/download/0.7.0/coveralls.net.0.7.0.nupkg'
@@ -59,7 +59,7 @@ try
 
     ## Saving the nupkg as zip so we can expand it.
     Invoke-WebRequest $coverallsToolsUrl -outfile "$outputBaseFolder\coveralls.zip"
-    Expand-Archive -Path "$outputBaseFolder\coveralls.zip" -DestinationPath $coverallsPath
+    Expand-Archive -Path "$outputBaseFolder\coveralls.zip" -DestinationPath $coverallsPath -Force
 
     Write-LogPassThru -Message "Expansion complete."
 
@@ -89,7 +89,7 @@ try
 
     Write-LogPassThru -Message "Test run done."
 
-    $gitCommitId = & "$psBinPath\publish\powershell.exe" -noprofile -command $PSVersiontable.GitCommitId  
+    $gitCommitId = & "$psBinPath\publish\powershell.exe" -noprofile -command { $PSVersiontable.GitCommitId }
     $commitId = $gitCommitId.substring($gitCommitId.LastIndexOf('-g') + 2)
 
     Write-LogPassThru -Message $commitId
