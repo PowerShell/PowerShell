@@ -830,4 +830,9 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
             $_.FullyQualifiedErrorId | should be "ParseException"
         }
     }
+
+    It "A here string should not throw on '`$herestr=@`"``n'`"'``n`"@'" {
+        # Issue #2780
+        { ExecuteCommand "`$herestr=@`"`n'`"'`n`"@" } | Should Not Throw
+    }
 } 

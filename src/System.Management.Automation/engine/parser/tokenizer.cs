@@ -2610,6 +2610,8 @@ namespace System.Management.Automation.Language
                         case '.':
                         case '[':
                             // Something like $a.b or $a[1].
+                        case '=':
+                            // Something like $a=
                             UngetChar();
                             scanning = false;
                             break;
