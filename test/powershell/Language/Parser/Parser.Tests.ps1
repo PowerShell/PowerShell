@@ -265,6 +265,11 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 		$result | should be "foo bar"
     }
 	
+    It "Test that escaping the character 'e' returns the ESC character (0x1b)." {
+        $result = ExecuteCommand '"`e"'
+        $result | should be ([char]0x1b)
+    }
+	
 	It "Test that escaping any character with no special meaning just returns that char. (line 602)" {
         $result = ExecuteCommand '"fo`obar"'
 		$result | should be "foobar"
