@@ -630,6 +630,8 @@ namespace System.Management.Automation.Language
             _parser = parser;
         }
 
+        internal char CommandChar { get; set; }
+
         internal TokenizerMode Mode { get; set; }
         internal bool AllowSignedNumbers { get; set; }
         internal bool WantSimpleName { get; set; }
@@ -2772,6 +2774,15 @@ namespace System.Management.Automation.Language
                     case SpecialChars.QuoteDoubleLeft:
                     case SpecialChars.QuoteDoubleRight:
                     case SpecialChars.QuoteLowDoubleLeft:
+                        if (CommandChar == '\0')
+                        {
+                            CommandChar = c;
+                        }
+                        else if (CommandChar.IsSingleQuote() != c.IsSingleQuote())
+                        {
+                            sb.Append(c);
+                            break;
+                        }
                         if (InCommandMode())
                         {
                             // Quotes are never part of a parameter.  Treat the token as an argument.
@@ -2888,7 +2899,7 @@ namespace System.Management.Automation.Language
                         c = Backtick(c1);
                     }
                 }
-                else if (c.IsSingleQuote())
+                else if (CommandChar.IsSingleQuote() && c.IsSingleQuote())
                 {
                     int len = sb.Length;
                     ScanStringLiteral(sb);
@@ -2898,7 +2909,7 @@ namespace System.Management.Automation.Language
                     }
                     continue;
                 }
-                else if (c.IsDoubleQuote())
+                else if (CommandChar.IsDoubleQuote() && c.IsDoubleQuote())
                 {
                     ScanStringExpandable(sb, formatSb, nestedTokens);
                     continue;
