@@ -18,7 +18,6 @@ using System.Resources;
 [assembly: AssemblyTitle("Microsoft.PowerShell.ConsoleHost")]
 [assembly: AssemblyDescription("Microsoft Windows PowerShell Console Host")]
 
-[assembly: System.Runtime.Versioning.TargetFrameworkAttribute(".NETFramework,Version=v4.5")]
 [assembly: System.Reflection.AssemblyFileVersion("10.0.10011.16384")]
 #endif
 

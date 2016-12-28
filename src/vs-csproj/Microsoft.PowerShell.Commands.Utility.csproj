@@ -1,16 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{5B134412-7EAF-4D60-9EED-CD200BDC5153}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoStandardLibraries>false</NoStandardLibraries>
     <AssemblyName>Microsoft.PowerShell.Commands.Utility</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
+  </PropertyGroup>
+  <PropertyGroup>
+    <RootNamespace>Microsoft.PowerShell.Commands.Utility</RootNamespace>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>$(MSBuildProjectDirectory)\..\signing\visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+    <PackageDir>$(MSBuildProjectDirectory)\..\..\Packages</PackageDir>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+  <SignAssembly>true</SignAssembly>
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
@@ -18,38 +28,41 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
+    <SignAssembly>true</SignAssembly>
+    <PackageKind>net451</PackageKind>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RootNamespace>Microsoft.PowerShell.Commands.Utility</RootNamespace>
+    <DefineConstants>NET451</DefineConstants>
+    <NoWarn>CS1570;CS1734</NoWarn>
+    <ErrorReport>queue</ErrorReport>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UNIX|AnyCPU'">
     <OutputPath>bin\UNIX\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CORECLR|AnyCPU'">
     <OutputPath>bin\CORECLR\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
+    <Reference Include="Microsoft.JScript" />
+    <Reference Include="Microsoft.mshtml" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Drawing">
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Drawing.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics">
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Numerics.dll</HintPath>
-    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Drawing" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Web.Extensions" />
+    <Reference Include="System.Web" />
     <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Microsoft.PowerShell.Commands.Utility\AssemblyInfo.cs">
@@ -514,6 +527,9 @@
     <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\GetRandomCommandStrings.cs">
       <Link>gen\GetRandomCommandStrings.cs</Link>
     </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\GetUptimeStrings.cs">
+      <Link>gen\GetUptimeStrings.cs</Link>
+    </Compile>
     <Compile Include="..\Microsoft.PowerShell.Commands.Utility\gen\HostStrings.cs">
       <Link>gen\HostStrings.cs</Link>
     </Compile>
@@ -579,6 +595,7 @@
     </Compile>
     <Compile Include="..\Microsoft.PowerShell.Commands.Utility\singleshell\installer\MshUtilityMshSnapin.cs">
       <Link>singleshell\installer\MshUtilityMshSnapin.cs</Link>
+      <SubType>Component</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>

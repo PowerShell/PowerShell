@@ -1,21 +1,45 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{1256D32A-BE8D-4EFE-9769-57BE5663209E}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoStandardLibraries>false</NoStandardLibraries>
-    <AssemblyName>ClassLibrary</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <AssemblyName>System.Management.Automation</AssemblyName>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup>
     <RootNamespace>System.Management.Automation</RootNamespace>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>$(MSBuildProjectDirectory)\..\signing\visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+    <PackageDir>$(MSBuildProjectDirectory)\..\..\Packages</PackageDir>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'WINDOWS|AnyCPU'">
-    <OutputPath>bin\UNIX\</OutputPath>
-    <DefineConstants>DEBUG;NOT_SIGNED</DefineConstants>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <SignAssembly>true</SignAssembly>
+    <PackageKind>net451</PackageKind>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>NET451</DefineConstants>
+    <NoWarn>CS1570;CS1734</NoWarn>
+    <ErrorReport>queue</ErrorReport>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>false</Optimize>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <SignAssembly>true</SignAssembly>
+    <PackageKind>net451</PackageKind>
+    <OutputPath>bin\Windows\</OutputPath>
+    <DefineConstants>NET451</DefineConstants>
+    <NoWarn>CS1570;CS1734</NoWarn>
+    <ErrorReport>queue</ErrorReport>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
+    <Optimize>true</Optimize>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UNIX|AnyCPU'">
     <OutputPath>bin\UNIX\</OutputPath>
@@ -26,21 +50,23 @@
     <DefineConstants>DEBUG;CORECLR;NOT_SIGNED</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Management.Infrastructure" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.DirectoryServices" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Transactions" />
+    <Reference Include="$(PackageDir)\Microsoft.Management.Infrastructure\1.0.0-alpha05\ref\$(PackageKind)\Microsoft.Management.Infrastructure.Native.dll" />
+    <Reference Include="$(PackageDir)\Microsoft.Management.Infrastructure\1.0.0-alpha05\ref\$(PackageKind)\Microsoft.Management.Infrastructure.dll" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Security" />
+    <Reference Include="System.Transactions" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Management" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
+    <Reference Include="mscorlib" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\System.Management.Automation\AssemblyInfo.cs">
@@ -1618,6 +1644,9 @@
     <Compile Include="..\System.Management.Automation\gen\AutomationExceptions.cs">
       <Link>gen\AutomationExceptions.cs</Link>
     </Compile>
+    <Compile Include="..\System.Management.Automation\gen\CatalogStrings.cs">
+      <Link>gen\CatalogStrings.cs</Link>
+    </Compile>
     <Compile Include="..\System.Management.Automation\gen\CimInstanceTypeAdapterResources.cs">
       <Link>gen\CimInstanceTypeAdapterResources.cs</Link>
     </Compile>
@@ -1630,7 +1659,7 @@
     <Compile Include="..\System.Management.Automation\gen\ConsoleInfoErrorStrings.cs">
       <Link>gen\ConsoleInfoErrorStrings.cs</Link>
     </Compile>
-    <Compile Include="..\System.Management.Automation\gen\CoreClrStubResources.cs">
+    <Compile Include="..\System.Management.Automation\gen\CoreClrStubResources.cs" Condition="'$(Configuration)' != 'Windows'">
       <Link>gen\CoreClrStubResources.cs</Link>
     </Compile>
     <Compile Include="..\System.Management.Automation\gen\CoreMshSnapinResources.cs">
@@ -2104,6 +2133,9 @@
     <Compile Include="..\System.Management.Automation\security\Authenticode.cs">
       <Link>security\Authenticode.cs</Link>
     </Compile>
+    <Compile Include="..\System.Management.Automation\security\CatalogHelper.cs">
+      <Link>security\CatalogHelper.cs</Link>
+    </Compile>
     <Compile Include="..\System.Management.Automation\security\CredentialParameter.cs">
       <Link>security\CredentialParameter.cs</Link>
     </Compile>
@@ -2151,18 +2183,23 @@
     </Compile>
     <Compile Include="..\System.Management.Automation\singleshell\installer\CustomMshSnapin.cs">
       <Link>singleshell\installer\CustomMshSnapin.cs</Link>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="..\System.Management.Automation\singleshell\installer\MshCoreMshSnapin.cs">
       <Link>singleshell\installer\MshCoreMshSnapin.cs</Link>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="..\System.Management.Automation\singleshell\installer\MshInstaller.cs">
       <Link>singleshell\installer\MshInstaller.cs</Link>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="..\System.Management.Automation\singleshell\installer\MshSnapin.cs">
       <Link>singleshell\installer\MshSnapin.cs</Link>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="..\System.Management.Automation\singleshell\installer\MshSnapinInstaller.cs">
       <Link>singleshell\installer\MshSnapinInstaller.cs</Link>
+      <SubType>Component</SubType>
     </Compile>
     <Compile Include="..\System.Management.Automation\utils\ArchitectureSensitiveAttribute.cs">
       <Link>utils\ArchitectureSensitiveAttribute.cs</Link>
@@ -2347,6 +2384,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="..\System.Management.Automation\resources\CmdletizationCoreResources.resx">
       <Link>resources\CmdletizationCoreResources.resx</Link>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="..\System.Management.Automation\resources\CommandBaseStrings.resx">
       <Link>resources\CommandBaseStrings.resx</Link>
