@@ -3212,6 +3212,55 @@ namespace System.Management.Automation
                 valueToConvert.ToString(), resultType.ToString(), exception.Message);
         }
 
+
+        private static Delegate ConvertPSMethodInfoToDelegate(object valueToConvert,
+                                                      Type resultType,
+                                                      bool recurse,
+                                                      PSObject originalValueToConvert,
+                                                      IFormatProvider formatProvider,
+                                                      TypeTable backupTable)
+        {
+            try
+            {
+                var psMethod = (PSMethod)valueToConvert;
+
+                var maybeType = psMethod.instance as Type;
+                var methodInfoCandiates = maybeType != null
+                    ? maybeType.GetMethods(BindingFlags.Static | BindingFlags.Public)
+                    : psMethod.instance.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public);
+
+                var isAction = resultType.FullName.StartsWith("System.Action`");
+                var comparator = new FuncActionArgsComparator(isAction, resultType.GenericTypeArguments);
+
+                foreach (var candidate in methodInfoCandiates)
+                {
+                    if (candidate.Name != psMethod.Name)
+                    {
+                        continue;
+                    }
+                    if (comparator.SignatureMatches(candidate.ReturnType, candidate.GetParameters()))
+                    {
+                        return maybeType != null
+                            ? candidate.CreateDelegate(resultType)
+                            : candidate.CreateDelegate(resultType, psMethod.instance);
+                    }
+                }
+                var msg = $"No matching overload found from {psMethod} to {resultType}";
+                typeConversion.WriteLine($"PSMethod to Func/Action exception: \"{msg}\".");
+                throw new PSInvalidCastException("InvalidCastExceptionPSMethodToInvokable", null,
+                    ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
+                    valueToConvert.ToString(), resultType.ToString(), msg);
+            }
+            catch (Exception e)
+            {
+
+                typeConversion.WriteLine("PSMethod to Func/Action exception: \"{0}\".", e.Message);
+                throw new PSInvalidCastException("InvalidCastExceptionPSMethodToInvokable", e,
+                    ExtendedTypeSystem.InvalidCastExceptionWithInnerException,
+                    valueToConvert.ToString(), resultType.ToString(), e.Message);
+            }
+        }
+
         private static object ConvertToNullable(object valueToConvert,
                                                 Type resultType,
                                                 bool recursion,
@@ -4004,6 +4053,7 @@ namespace System.Management.Automation
             return null;
         }
 
+        [System.Diagnostics.DebuggerDisplay("{from.Name}->{to.Name}")]
         private struct ConversionTypePair
         {
             internal Type from;
@@ -4057,6 +4107,7 @@ namespace System.Management.Automation
                           TypeTable backupTable);
         }
 
+        [System.Diagnostics.DebuggerDisplay("{_converter.Method.Name}")]
         internal class ConversionData<T> : ConversionData
         {
             private readonly PSConverter<T> _converter;
@@ -4113,9 +4164,9 @@ namespace System.Management.Automation
             }
         }
 
-        internal static ConversionRank GetConversionRank(Type fromType, Type toType)
+        internal static ConversionRank GetConversionRank(Type fromType, Type toType, object fromInstance = null)
         {
-            return FigureConversion(fromType, toType).Rank;
+            return FigureConversion(fromType, toType, fromInstance).Rank;
         }
 
         private static Type[] s_numericTypes = new Type[] {
@@ -4457,7 +4508,7 @@ namespace System.Management.Automation
 
             debase = false;
 
-            ConversionData data = FigureConversion(originalType, resultType);
+            ConversionData data = FigureConversion(originalType, resultType, valueToConvert);
             if (data.Rank != ConversionRank.None)
             {
                 return data;
@@ -4586,6 +4637,7 @@ namespace System.Management.Automation
         }
 
         private static ConversionData FigureLanguageConversion(Type fromType, Type toType,
+                                                               object fromInstance,
                                                                out PSConverter<object> valueDependentConversion,
                                                                out ConversionRank valueDependentRank)
         {
@@ -4739,8 +4791,74 @@ namespace System.Management.Automation
                 return CacheConversion<object>(fromType, toType, LanguagePrimitives.ConvertIntegerToEnum, ConversionRank.Language);
             }
 
+            if (fromType == typeof(PSMethod) && toType.IsSubclassOf(typeof(MulticastDelegate)))
+            {
+                var psMethod = (PSMethod) fromInstance;
+
+                var maybeType = psMethod.instance as Type;
+                var methodInfoCandiates = maybeType != null
+                    ? maybeType.GetMethods(BindingFlags.Static|BindingFlags.Public)
+                    : psMethod.instance.GetType().GetMethods(BindingFlags.Instance | BindingFlags.Public);
+
+                var isAction = toType.FullName.StartsWith("System.Action`");
+                var comparator = new FuncActionArgsComparator(isAction, toType.GenericTypeArguments);
+
+                foreach (var candidate in methodInfoCandiates)
+                {
+                    if (candidate.Name != psMethod.Name)
+                    {
+                        continue;
+                    }
+                    if (comparator.SignatureMatches(candidate.ReturnType, candidate.GetParameters()))
+                    {
+                        return CacheConversion<Delegate>(fromType, toType, LanguagePrimitives.ConvertPSMethodInfoToDelegate, ConversionRank.Language);
+                    }
+                }
+            }
+
             return null;
         }
+
+        struct FuncActionArgsComparator
+        {
+            private readonly bool _isAction;
+            private readonly Type[] _typeArguments;
+
+            public FuncActionArgsComparator(bool isAction, Type[] typeArguments)
+            {
+                _isAction = isAction;
+                _typeArguments = typeArguments;
+            }
+
+            public bool SignatureMatches(Type returnType, ParameterInfo[] arguments)
+            {
+                return ReturnTypeMatches(returnType) && ParameterTypeMatches(arguments);
+            }
+
+            private bool ReturnTypeMatches(Type returnType)
+            {
+                return _isAction ? returnType == typeof(void) : returnType == _typeArguments[_typeArguments.Length - 1];
+            }
+
+            private bool ParameterTypeMatches(ParameterInfo[] arguments)
+            {
+                int expectedArgsCount = _isAction ? _typeArguments.Length : _typeArguments.Length - 1;
+                if (arguments.Length != expectedArgsCount)
+                {
+                    return false;
+                }
+                for (int i = 0; i < arguments.Length; i++)
+                {
+                    var parameterInfo = arguments[i];
+                    if (parameterInfo.ParameterType != _typeArguments[i])
+                    {
+                        return false;
+                    }
+                }
+                return true;
+            }
+        }
+
 
         private static PSConverter<object> FigureStaticCreateMethodConversion(Type fromType, Type toType)
         {
@@ -5122,7 +5240,7 @@ namespace System.Management.Automation
         }
 
         internal class InternalPSObject : PSObject { }
-        internal static ConversionData FigureConversion(Type fromType, Type toType)
+        internal static ConversionData FigureConversion(Type fromType, Type toType, object fromInstance = null)
         {
             ConversionData data = GetConversionData(fromType, toType);
             if (data != null)
@@ -5188,7 +5306,7 @@ namespace System.Management.Automation
 #endif
             PSConverter<object> valueDependentConversion = null;
             ConversionRank valueDependentRank = ConversionRank.None;
-            ConversionData conversionData = FigureLanguageConversion(fromType, toType, out valueDependentConversion, out valueDependentRank);
+            ConversionData conversionData = FigureLanguageConversion(fromType, toType, fromInstance, out valueDependentConversion, out valueDependentRank);
             if (conversionData != null)
             {
                 return conversionData;
