@@ -29,7 +29,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
     /// <summary>
     /// The Cmdlet allows the IT Pro to create a CimSessionOptions object that she/he 
-    /// can subsequently use to crate one or more CimSession connections. The 
+    /// can subsequently use to create one or more CimSession connections. The 
     /// options object holds the CIM Session information that is less commonly set 
     /// and used by the IT Pro, and most commonly defaulted. 
     ///
