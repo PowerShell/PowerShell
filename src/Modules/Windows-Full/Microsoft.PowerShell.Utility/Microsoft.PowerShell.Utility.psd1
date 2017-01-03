@@ -24,7 +24,7 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Remove-PSBreakpoint", "Enable-PSBreakpoint", "Disable-PSBreakpoint", "Get-PSCallStack",
     "Send-MailMessage", "Get-TraceSource", "Set-TraceSource", "Trace-Command", "Show-Command", "Unblock-File",
     "Get-Runspace", "Debug-Runspace", "Enable-RunspaceDebug", "Disable-RunspaceDebug", "Get-RunspaceDebug", "Wait-Debugger",
-    "ConvertFrom-String", "Convert-String" , "Get-Uptime", "New-TemporaryFile"
+    "ConvertFrom-String", "Convert-String" , "Get-Uptime", "New-TemporaryFile", "Get-Verb"
 FunctionsToExport= "Get-FileHash", "Format-Hex", "Import-PowerShellDataFile", "ConvertFrom-SddlString"
 AliasesToExport= "CFS", "fhx"
 NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"
