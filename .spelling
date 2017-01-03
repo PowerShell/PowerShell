@@ -259,6 +259,7 @@ alpha.7
 Toolset
 WiX
 2012r2
+CHANGELOG.md
  - docs/testing-guidelines/PowerShellCoreTestStatus.md
 Get-Acl
 Set-Acl
