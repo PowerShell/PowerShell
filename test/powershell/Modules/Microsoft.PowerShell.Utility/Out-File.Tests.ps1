@@ -127,4 +127,11 @@ Describe "Out-File" -Tags "CI" {
 	# reset to not read only so it can be deleted
 	Set-ItemProperty -Path $testfile -Name IsReadOnly -Value $false
     }
+    It "Creates a file using Out-File with the alias 'Path' for the -filepath parameter" {
+    {Out-File -path .\test.txt | Should Not Throw}
+    
+    #Remove the test file it created.
+    Remove-Item .\test.txt -ErrorAction SilentlyContinue
+    }
+
 }
