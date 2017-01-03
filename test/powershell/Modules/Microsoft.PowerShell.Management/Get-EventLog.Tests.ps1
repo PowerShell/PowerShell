@@ -2,8 +2,7 @@
 
     BeforeAll {
         $defaultParamValues = $PSdefaultParameterValues.Clone()
-        $IsNotSkipped = ($IsWindows -and !$IsCoreCLR)
-        $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
+        $PSDefaultParameterValues["it:skip"] = !$IsWindows -or $IsCoreCLR
     }
 
     AfterAll {

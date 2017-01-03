@@ -106,7 +106,7 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
                 helpContext = "[@id='FileSystem' or @ID='FileSystem']"
                 verb        = 'Add'
                 noun        = 'Content'
-                pending     =  if ($IsWindows) { $false } else { $true }
+                pending     =  !$IsWindows
             }
         )
 
