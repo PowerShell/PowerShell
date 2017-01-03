@@ -1,4 +1,8 @@
-﻿function Write-LogPassThru
+﻿param(
+    [Parameter(Mandatory = $true, Position = 0)] $coverallsToken
+    )
+
+function Write-LogPassThru
 {
     Param(
         [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position = 0)]
@@ -6,17 +10,11 @@
         $Path = "$env:Temp\CodeCoverageRunLogs.txt"
     )
 
-    $message = "$([Datetime]::Now.ToShortDateString()) - $([datetime]::Now.ToShortTimeString()) : $message"
-
-    if(-not (Test-Path $Path))
-    {
-        Set-Content -Path $Path -Value $Message -Force -PassThru
-    }
-    else
-    {
-        Add-Content -Path $Path -Value $Message -PassThru
-    }
+    $message = "{0:d} - {0:t} : {1}" -f ([datetime]::now),$message
+    Add-Content -Path $Path -Value $Message -PassThru -Force
 }
+
+Write-LogPassThru -Message "***** New Run *****"
 
 $codeCoverageZip = 'https://ci.appveyor.com/api/projects/PowerShell/powershell-f975h/artifacts/CodeCoverage.zip'
 $testContentZip = 'https://ci.appveyor.com/api/projects/PowerShell/powershell-f975h/artifacts/tests.zip'
@@ -39,15 +37,13 @@ $psCodePath = "$outputBaseFolder\PSCode"
 
 try
 {
+    $oldErrorActionPreference = $ErrorActionPreference
+    $ErrorActionPreference = 'Stop'
     Write-LogPassThru -Message "Starting downloads."
-
     Invoke-WebRequest -uri $codeCoverageZip -outfile "$outputBaseFolder\PSCodeCoverage.zip"
-    Invoke-WebRequest $testContentZip -outfile "$outputBaseFolder\tests.zip"
-    Invoke-WebRequest $openCoverZip -outfile "$outputBaseFolder\OpenCover.zip"
-
-    Write-LogPassThru -Message "Downloads complete."
-
-    Write-LogPassThru -Message "Starting expansion."
+    Invoke-WebRequest -uri $testContentZip -outfile "$outputBaseFolder\tests.zip"
+    Invoke-WebRequest -uri $openCoverZip -outfile "$outputBaseFolder\OpenCover.zip"
+    Write-LogPassThru -Message "Downloads complete. Starting expansion"
 
     Expand-Archive -path "$outputBaseFolder\PSCodeCoverage.zip" -destinationpath "$psBinPath" -Force
     Expand-Archive -path "$outputBaseFolder\tests.zip" -destinationpath $testPath -Force
@@ -58,7 +54,7 @@ try
     $coverallsPath = "$outputBaseFolder\coveralls"
 
     ## Saving the nupkg as zip so we can expand it.
-    Invoke-WebRequest $coverallsToolsUrl -outfile "$outputBaseFolder\coveralls.zip"
+    Invoke-WebRequest -uri $coverallsToolsUrl -outfile "$outputBaseFolder\coveralls.zip"
     Expand-Archive -Path "$outputBaseFolder\coveralls.zip" -DestinationPath $coverallsPath -Force
 
     Write-LogPassThru -Message "Expansion complete."
@@ -95,7 +91,6 @@ try
     Write-LogPassThru -Message $commitId
 
     $coverallsPath = "$outputBaseFolder\coveralls"
-    $coverallsToken = 'SaRLabTUDNqaO2JT9uuYcR78a7kia044D'
 
     $commitInfo = Invoke-RestMethod -Method Get "https://api.github.com/repos/powershell/powershell/git/commits/$commitId"
     $message = ($commitInfo.message).replace("`n", " ")
@@ -113,7 +108,7 @@ try
                         "--commitMessage `"$message`""
                         )
 
-    Write-LogPassThru -Message $coverallsParams
+    $coverallsParams | % { Write-LogPassThru -Message $_ }
 
     & $coverallsExe """$coverallsParams"""
 
@@ -126,4 +121,5 @@ catch
 finally
 {
     Remove-Item -recurse -force -path $outputBaseFolder
+    $ErrorActionPreference = $oldErrorActionPreference
 }
