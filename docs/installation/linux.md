@@ -5,7 +5,7 @@ Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16],
 [CentOS 7][cos], and [macOS 10.11][osx].
 All packages are available on our GitHub [releases][] page.
 
-All of these steps can be down automatically by the [`download.sh`][download] script.
+All of these steps can be done automatically by the [`download.sh`][download] script.
 You should *never* run a script without reading it first!
 
 Please **read the [download][] script first**, and then if you want to run it, use:
