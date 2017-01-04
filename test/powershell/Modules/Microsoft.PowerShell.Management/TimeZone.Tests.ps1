@@ -14,7 +14,10 @@
            [snippet] Both StandardName and DaylightName are localized according to the current user default UI language.
 #>
 
-if ($IsWindows) {
+try {
+
+    $defaultParamValues = $PSdefaultParameterValues.Clone()
+    $PSDefaultParameterValues["it:skip"] = !$IsWindows
 
 function Assert-ListsSame
 {
@@ -119,12 +122,15 @@ Describe "Get-Timezone test cases" -Tags "CI" {
 }
 
 Describe "Set-Timezone test case: call by single Id" -Tags @('CI', 'RequireAdminOnWindows') {
-    $originalTimeZoneId
     BeforeAll {
-        $originalTimeZoneId = (Get-TimeZone).Id
+        if ($IsWindows) {
+            $originalTimeZoneId = (Get-TimeZone).Id
+        }
     }
     AfterAll {
-        Set-TimeZone -ID $originalTimeZoneId
+        if ($IsWindows) {
+            Set-TimeZone -ID $originalTimeZoneId
+        }
     }
 
     It "Call Set-TimeZone by Id" {
@@ -146,12 +152,15 @@ Describe "Set-Timezone test case: call by single Id" -Tags @('CI', 'RequireAdmin
 }
 
 Describe "Set-Timezone test cases" -Tags @('Feature', 'RequireAdminOnWindows') {
-    $originalTimeZoneId
     BeforeAll {
-        $originalTimeZoneId = (Get-TimeZone).Id
+        if ($IsWindows) {
+            $originalTimeZoneId = (Get-TimeZone).Id
+        }
     }
     AfterAll {
-        Set-TimeZone -ID $originalTimeZoneId
+        if ($IsWindows) {
+            Set-TimeZone -ID $originalTimeZoneId
+        }
     }
 
     It "Call Set-TimeZone with invalid Id" {
@@ -224,4 +233,6 @@ Describe "Set-Timezone test cases" -Tags @('Feature', 'RequireAdminOnWindows') {
     }
 }
 
+} finally {
+    $global:PSDefaultParameterValues = $defaultParamValues
 }
