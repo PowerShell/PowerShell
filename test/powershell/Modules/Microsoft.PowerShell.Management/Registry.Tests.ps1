@@ -1,12 +1,12 @@
+try {
+    #skip all tests on non-windows platform
+    $defaultParamValues = $PSdefaultParameterValues.Clone()
+    $PSDefaultParameterValues["it:skip"] = !$IsWindows
+
 Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") {
     BeforeAll {
-        $restoreLocation = Get-Location
-        
-        #skip all tests on non-windows platform
-        $defaultParamValues = $PSdefaultParameterValues.Clone()
-        if (!$IsWindows) {
-            $PSDefaultParameterValues["it:skip"] = $true
-        } else {
+        if ($IsWindows) {
+            $restoreLocation = Get-Location
             $registryBase = "HKLM:\software\Microsoft\PowerShell\3\"
             $parentKey = "TestKeyThatWillNotConflict"
             $testKey = "TestKey"
@@ -17,9 +17,10 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
     }
 
     AfterAll {
-        #restore the previous environment
-        Set-Location -Path $restoreLocation
-        $global:PSDefaultParameterValues = $defaultParamValues
+        if ($IsWindows) {
+            #restore the previous environment
+            Set-Location -Path $restoreLocation
+        }
     }
 
     BeforeEach {
@@ -32,7 +33,7 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
             New-Item -Path $testKey > $null
             New-Item -Path $testKey2 > $null
             New-ItemProperty -Path $testKey -Name $testPropertyName -Value $testPropertyValue > $null
-       }
+        }
     }
 
     AfterEach {
@@ -134,13 +135,8 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
 
 Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWindows") {
     BeforeAll {
-        $restoreLocation = Get-Location
-        
-        #skip all tests on non-windows platform
-        $defaultParamValues = $PSdefaultParameterValues.Clone()
-        if (!$IsWindows) {
-            $PSDefaultParameterValues["it:skip"] = $true
-        } else {
+        if ($IsWindows) {
+            $restoreLocation = Get-Location
             $registryBase = "HKLM:\software\Microsoft\PowerShell\3\"
             $parentKey = "TestKeyThatWillNotConflict"
             $testKey = "TestKey"
@@ -151,9 +147,10 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
     }
 
     AfterAll {
-        #restore the previous environment
-        Set-Location -Path $restoreLocation
-        $global:PSDefaultParameterValues = $defaultParamValues
+        if ($IsWindows) {
+            #restore the previous environment
+            Set-Location -Path $restoreLocation
+        }
     }
 
     BeforeEach {
@@ -412,4 +409,8 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
             $result."$testPropertyName" | Should Be $testPropertyValue
         }
     }
+}
+
+} finally {
+    $global:PSdefaultParameterValues = $defaultParamValues
 }
