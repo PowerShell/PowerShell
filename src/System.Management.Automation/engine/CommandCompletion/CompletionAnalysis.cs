@@ -327,6 +327,7 @@ namespace System.Management.Automation
 
                     case TokenKind.Multiply:
                     case TokenKind.Generic:
+                    case TokenKind.MinusMinus: // for native commands '--'
                     case TokenKind.Identifier:
                         result = GetResultForIdentifier(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
                         break;
@@ -1533,11 +1534,22 @@ namespace System.Management.Automation
                 return result;
             }
 
-            if (tokenAtCursorText.Length == 1 && tokenAtCursorText[0].IsDash() && (lastAst.Parent is CommandAst || lastAst.Parent is DynamicKeywordStatementAst))
+            var isSingleDash = tokenAtCursorText.Length == 1 && tokenAtCursorText[0].IsDash();
+            var isDoubleDash = tokenAtCursorText.Length == 2 && tokenAtCursorText[0].IsDash() && tokenAtCursorText[1].IsDash();
+            var isParentCommandOrDynamicKeyword = (lastAst.Parent is CommandAst || lastAst.Parent is DynamicKeywordStatementAst);
+            if ((isSingleDash || isDoubleDash) && isParentCommandOrDynamicKeyword)
             {
                 // When it's the content of a quoted string, we only handle variable/member completion
-                if (isQuotedString) { return result; }
-                return CompletionCompleters.CompleteCommandParameter(completionContext);
+                if (isSingleDash)
+                {
+                    if (isQuotedString) { return result; }
+                    var res = CompletionCompleters.CompleteCommandParameter(completionContext);
+                    if (res.Count != 0)
+                    {
+                        return res;
+                    }
+                }
+                return CompletionCompleters.CompleteCommandArgument(completionContext);
             }
 
             TokenKind memberOperator = TokenKind.Unknown;
