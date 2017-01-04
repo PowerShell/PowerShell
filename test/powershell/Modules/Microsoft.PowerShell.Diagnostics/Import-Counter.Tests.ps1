@@ -454,3 +454,19 @@ Describe "Feature tests for Import-Counter cmdlet" -Tags "Feature" {
         }
     }
 }
+
+Describe "Import-Counter cmdlet does not run on IoT" -Tags "CI" {
+
+    It "Import-Counter throws PlatformNotSupportedException" -Skip:$(-not [System.Management.Automation.Platform]::IsIoT)  {
+
+        try
+        {
+            Import-Counter -Path "$testDrive\ProcessorData.blg"
+            throw "'Import-Counter -Path $testDrive\ProcessorData.blg' on IoT is expected to throw a PlatformNotSupportedException, and it did not."
+        }
+        catch
+        {
+            $_.FullyQualifiedErrorId | should be "System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.ImportCounterCommand"
+        }
+    }
+}
