@@ -3,7 +3,10 @@
 # Copyright (c) Microsoft Corporation, 2016
 #
 
-if ($IsWindows) {
+try {
+    #skip all tests on non-windows platform
+    $defaultParamValues = $PSdefaultParameterValues.Clone()
+    $PSDefaultParameterValues["it:skip"] = !$IsWindows
 
 $script:catalogPath = "" 
  
@@ -378,4 +381,6 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
     }
 }
 
+} finally {
+    $global:PSdefaultParameterValues = $defaultParamValues
 }

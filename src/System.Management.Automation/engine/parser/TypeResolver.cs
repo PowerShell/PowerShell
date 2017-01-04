@@ -804,18 +804,31 @@ namespace System.Management.Automation
             builtinTypeAccelerators.Add("psvariableproperty", typeof(PSVariableProperty));
         }
 
-        internal static string FindBuiltinAccelerator(Type type)
+        internal static string FindBuiltinAccelerator(Type type, string expectedKey = null)
         {
-            foreach (KeyValuePair<string, Type> entry in builtinTypeAccelerators)
+            // Taking attributes as special case. In this case, we only want to return the
+            // accelerator.
+            if (null == expectedKey || typeof(Attribute).IsAssignableFrom(type))
             {
-                if (entry.Value == type)
+                foreach (KeyValuePair<string, Type> entry in builtinTypeAccelerators)
                 {
-                    return entry.Key;
+                    if (entry.Value == type)
+                    {
+                        return entry.Key;
+                    }
+                }
+            }
+            else
+            {
+                Type resultType = null;
+                builtinTypeAccelerators.TryGetValue(expectedKey, out resultType);
+                if (null != resultType && resultType == type)
+                {
+                    return expectedKey;
                 }
             }
             return null;
         }
-
         /// <summary>
         /// Add a type accelerator.
         /// </summary>

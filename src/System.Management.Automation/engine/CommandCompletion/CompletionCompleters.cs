@@ -5698,7 +5698,7 @@ namespace System.Management.Automation
 
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
             {
-                string completion = ToStringCodeMethods.Type(Type);
+                string completion = ToStringCodeMethods.Type(Type, false, keyMatched);
 
                 // If the completion included a namespace and ToStringCodeMethods.Type found
                 // an accelerator, then just use the type's FullName instead because the user

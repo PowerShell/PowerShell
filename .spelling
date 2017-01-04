@@ -76,6 +76,7 @@ exe
 init
 labeled
 toolset
+alpha.14
  - demos/Azure/README.md
 alpha.12
 AzureRM.NetCore.Preview
@@ -259,6 +260,7 @@ alpha.7
 Toolset
 WiX
 2012r2
+CHANGELOG.md
  - docs/testing-guidelines/PowerShellCoreTestStatus.md
 Get-Acl
 Set-Acl

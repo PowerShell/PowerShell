@@ -1,6 +1,21 @@
 Changelog
 =========
 
+v6.0.0-alpha.14 - 2016-12-14
+----------------------------
+- Moved to .NET Core 1.1
+- Add Windows performance counter cmdlets to PowerShell Core
+- Fix try/catch to choose the more specific exception handler
+- Fix issue reloading modules that define PowerShell classes
+- `Add ValidateNotNullOrEmpty` to approximately 15 parameters
+- `New-TemporaryFile` and `New-Guid` rewritten in C#
+- Enable client side PSRP on non-Windows platforms
+- `Split-Path` now works with UNC roots
+- Implicitly convert value assigned to XML property to string
+- Updates to `Invoke-Command` parameters when using SSH remoting transport
+- Fix `Invoke-WebRequest` with non-text responses on non-Windows platforms
+- `Write-Progress` performance improvement from `alpha13` reverted because it introduced crash with a race condition
+
 v6.0.0-alpha.13 - 2016-11-22
 ----------------------------
 - Fix `NullReferenceException` in binder after turning on constrained language mode

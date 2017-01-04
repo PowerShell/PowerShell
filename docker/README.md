@@ -33,7 +33,7 @@ The nightly containers derive from their respective release images,
 such as `microsoft/powershell:centos7`,
 then run the `bootstrap.ps1` script which clones the repository,
 runs `Start-PSBootstrap -Package` to install building and packaging tools,
-runs `Start-PSBuild -Crossgen` to build PowerShell with native-image DLLs,
+runs `Start-PSBuild -Crossgen -PSModuleRestore` to build PowerShell with native-image DLLs,
 runs `Start-PSPackage` to generate the platform's package,
 and finally installs the generated package.
 

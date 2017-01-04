@@ -2828,11 +2828,11 @@ function Restore-PSModule
 
         # pull down the module
         log "running save-module $_"
-        PowerShellGet\Save-Module @command -Force -Verbose
+        PowerShellGet\Save-Module @command -Force
         
         # Remove PSGetModuleInfo.xml file
         Find-Module -Name $_ -Repository $RepositoryName -IncludeDependencies | ForEach-Object {
-            Get-ChildItem -Path (Join-Path -Path $Destination -ChildPath $_.Name) -Recurse -Depth 2 -File -Include 'PSGetModuleInfo.xml' -Attributes h,a,r | Remove-Item -Force
+            Remove-Item -Path $Destination\$($_.Name)\*\PSGetModuleInfo.xml -Force
         }
     }
 

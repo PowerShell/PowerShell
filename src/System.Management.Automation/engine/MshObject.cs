@@ -2415,7 +2415,7 @@ namespace Microsoft.PowerShell
             sb.Append(']');
         }
 
-        internal static string Type(Type type, bool dropNamespaces = false)
+        internal static string Type(Type type, bool dropNamespaces = false, string key = null)
         {
             if (type == null)
                 return String.Empty;
@@ -2450,9 +2450,13 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                result = TypeAccelerators.FindBuiltinAccelerator(type);
+                result = TypeAccelerators.FindBuiltinAccelerator(type, key);
                 if (result == null)
                 {
+                    if (type == typeof(PSCustomObject))
+                    {
+                        return type.Name;
+                    }
                     if (dropNamespaces)
                     {
                         if (typeinfo.IsNested)
