@@ -6,7 +6,7 @@ The script is self contained and can be executed on any Windows system which sup
 
 ## Execution
 
-The virtual machine hosting the script, has a scheduled task to start the tests at 5 am PDT. 
+The virtual machine hosting the script has a scheduled task to start the tests at 5 am PDT. 
 
 The script follows the steps below:
 
@@ -16,7 +16,7 @@ The script follows the steps below:
 4. Download Coveralls.net from 'https://github.com/csMACnz/coveralls.net/releases/download/0.7.0/coveralls.net.0.7.0.nupkg'
 5. Invoke 'Install-OpenCover' to install OpenCover toolset.
 6. Invoke 'Invoke-OpenCover' to execute tests.
-7. Get git commit ID from powershell.version file from the downloaded daily build package.
+7. Invoke powershell to get the git commit ID of the downloaded daily build package.
 8. Using the commit ID get committer info like, message, author and email using the github REST API.
 9. Invoke 'csmacnz.Coveralls.exe' to upload the coverage results to Coveralls.net
 
