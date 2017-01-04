@@ -147,16 +147,20 @@ Describe "Export-Alias" -Tags "CI" {
 		$fulltestpath       = Join-Path -Path $testAliasDirectory -ChildPath $testAliases
 	}
 
-    BeforeEach {
+	BeforeEach {
 		New-Item -Path $testAliasDirectory -ItemType Directory -Force
-    }
+	}
 
-    It "Should be able to create a file in the specified location"{
+	AfterEach {
+		Remove-Item -Path $testAliasDirectory -Recurse -Force
+	}
+
+	It "Should be able to create a file in the specified location"{
 		Export-Alias $fulltestpath
 		Test-Path $fulltestpath | Should be $true
-    }
+  }
 
-    It "Should create a file with the list of aliases that match the expected list" {
+  It "Should create a file with the list of aliases that match the expected list" {
 		Export-Alias $fulltestpath
 		Test-Path $fulltestpath | Should Be $true
 
@@ -168,7 +172,5 @@ Describe "Export-Alias" -Tags "CI" {
 			# We loop through the expected list and not the other because the output writes some comments to the file.
 			$expected[$i] | Should Match $actual[$i].Name
 		}
-    }
-
-    Remove-Item -Path $testAliasDirectory -Recurse -Force
+  }
 }
