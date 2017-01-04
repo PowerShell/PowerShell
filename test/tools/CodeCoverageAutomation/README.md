@@ -17,7 +17,7 @@ The script follows the steps below:
 5. Invoke 'Install-OpenCover' to install OpenCover toolset.
 6. Invoke 'Invoke-OpenCover' to execute tests.
 7. Get git commit ID from powershell.version file from the downloaded daily build package.
-8. Using the commit ID get commiter info like, message, author and email using the github REST API.
+8. Using the commit ID get committer info like, message, author and email using the github REST API.
 9. Invoke 'csmacnz.Coveralls.exe' to upload the coverage results to Coveralls.net
 
 The uploaded coverage data can be viewed at: https://coveralls.io/github/PowerShell/PowerShell
