@@ -1,4 +1,7 @@
-﻿$RepositoryName = 'INTGallery'
+﻿# no progress output during these tests
+$ProgressPreference = "SilentlyContinue"
+
+$RepositoryName = 'INTGallery'
 $SourceLocation = 'https://dtlgalleryint.cloudapp.net'
 $RegisteredINTRepo = $false
 $ContosoServer = 'ContosoServer'
@@ -89,6 +92,7 @@ function Remove-InstalledModules
 {
     Get-InstalledModule -Name $ContosoServer -AllVersions -ErrorAction SilentlyContinue | Uninstall-Module -Force
 }
+
 
 Describe "PowerShellGet - Module tests" -tags "Feature" {
 
