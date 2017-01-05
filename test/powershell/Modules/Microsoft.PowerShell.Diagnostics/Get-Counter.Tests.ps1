@@ -7,18 +7,22 @@ $cmdletName = "Get-Counter"
 . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
 
 $badName = "bad-name-DAD288C0-72F8-47D3-8C54-C69481B528DF"
-$counterPaths = @{
-    MemoryBytes = TranslateCounterPath "\Memory\Available Bytes"
-    TotalDiskRead = TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec"
-    Unknown = TranslateCounterPath "\Memory\$badName"
-    Bad = $badName
+
+if ( $isWindows ) {
+
+    $counterPaths = @{
+        MemoryBytes = TranslateCounterPath "\Memory\Available Bytes"
+        TotalDiskRead = TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec"
+        Unknown = TranslateCounterPath "\Memory\$badName"
+        Bad = $badName
+    }
 }
 
 $nonEnglishCulture = (-not (Get-Culture).Name.StartsWith("en-", [StringComparison]::InvariantCultureIgnoreCase))
 
 function ValidateParameters($testCase)
 {
-    It "$($testCase.Name)" -Skip:$(SkipCounterTests) {
+    It "$($testCase.Name)" {
 
         # build up a command
         $counterParam = ""
@@ -45,13 +49,27 @@ function ValidateParameters($testCase)
 
 Describe "CI Tests for Get-Counter cmdlet" -Tags "CI" {
 
-    It "Get-Counter with no parameters returns data for a default set of counters" -Skip:$(SkipCounterTests) {
+    BeforeAll {
+        if ( ! $IsWindows )
+        {
+            $origDefaults = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues['it:skip'] = $true
+        }
+    }
+
+    AfterAll {
+        if ( ! $IsWindows ){
+            $global:PSDefaultParameterValues = $origDefaults
+        }
+    }
+
+    It "Get-Counter with no parameters returns data for a default set of counters" {
         $counterData = Get-Counter
         # At the very least we should get processor and memory
         $counterData.CounterSamples.Length | should BeGreaterThan 1
     }
 
-    It "Can retrieve the specified counter" -Skip:$(SkipCounterTests) {
+    It "Can retrieve the specified counter" {
         $counterPath = $counterPaths.MemoryBytes
         $counterData = Get-Counter -Counter $counterPath
         $counterData.Length | Should Be 1
@@ -61,6 +79,20 @@ Describe "CI Tests for Get-Counter cmdlet" -Tags "CI" {
 }
 
 Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
+
+    BeforeAll {
+        if ( ! $IsWindows )
+        {
+            $origDefaults = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues['it:skip'] = $true
+        }
+    }
+
+    AfterAll {
+        if ( ! $IsWindows ){
+            $global:PSDefaultParameterValues = $origDefaults
+        }
+    }
 
     Context "Validate incorrect parameter usage" {
         $parameterTestCases = @(
@@ -167,14 +199,14 @@ Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
 
     Context "Get-Counter CounterSet tests" {
 
-        It "Can retrieve the specified number of counter samples" -Skip:$(SkipCounterTests) {
+        It "Can retrieve the specified number of counter samples" {
             $counterPath = $counterPaths.MemoryBytes
             $counterCount = 5
             $counterData = Get-Counter -Counter $counterPath -MaxSamples $counterCount
             $counterData.Length | Should Be $counterCount
         }
 
-        It "Can specify the sample interval" -Skip:$(SkipCounterTests) {
+        It "Can specify the sample interval" {
             $counterPath = TranslateCounterPath "\PhysicalDisk(*)\Current Disk Queue Length"
             $counterCount = 5
             $sampleInterval = 2
@@ -185,7 +217,7 @@ Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
             ($endTime - $startTime).TotalSeconds | Should Not BeLessThan ($counterCount * $sampleInterval)
         }
 
-        It "Can process array of counter names" -Skip:$(SkipCounterTests) {
+        It "Can process array of counter names" {
             $counterPaths = @((TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec"),
                               (TranslateCounterPath "\Memory\Available bytes"))
             $counterData = Get-Counter -Counter $counterPaths
@@ -194,14 +226,14 @@ Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
     }
 
     Context "Get-Counter ListSet tests" {
-        It "Can retrieve specified counter set" -Skip:$(SkipCounterTests) {
+        It "Can retrieve specified counter set" {
             $counterSetName = "Memory"
             $counterSet = Get-Counter -ListSet $counterSetName
             $counterSet.Length | Should Be 1
             $counterSet.CounterSetName | Should Be $counterSetName
         }
 
-        It "Can process an array of counter set names" -Skip:$(SkipCounterTests) {
+        It "Can process an array of counter set names" {
             $counterSetNames = @("Memory", "Processor")
             $counterSets = Get-Counter -ListSet $counterSetNames
             $counterSets.Length | Should Be 2

@@ -8,14 +8,19 @@ $cmdletName = "Export-Counter"
 
 $rootFilename = "exportedCounters"
 $filePath = $null
-$counterNames = @(
-    (TranslateCounterPath "\Memory\Available Bytes")
-    (TranslateCounterPath "\Processor(*)\% Processor Time")
-    (TranslateCounterPath "\Processor(_Total)\% Processor Time")
-    (TranslateCounterPath "\PhysicalDisk(_Total)\Current Disk Queue Length")
-    (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Bytes/sec")
-    (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec")
-)
+
+if ( $isWindows ) {
+
+    $counterNames = @(
+        (TranslateCounterPath "\Memory\Available Bytes")
+        (TranslateCounterPath "\Processor(*)\% Processor Time")
+        (TranslateCounterPath "\Processor(_Total)\% Processor Time")
+        (TranslateCounterPath "\PhysicalDisk(_Total)\Current Disk Queue Length")
+        (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Bytes/sec")
+        (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec")
+    )
+}
+
 $counterValues = $null
 
 # Test the results of Export-Counter by importing the exported
@@ -31,7 +36,7 @@ function CheckExportResults
 # Run a test case
 function RunTest($testCase)
 {
-    It "$($testCase.Name)" -Skip:$(SkipCounterTests) {
+    It "$($testCase.Name)" {
         $getCounterParams = ""
         if ($testCase.ContainsKey("GetCounterParams"))
         {
@@ -116,19 +121,30 @@ function RunTest($testCase)
 Describe "CI tests for Export-Counter cmdlet" -Tags "CI" {
 
     BeforeAll {
+        if ( ! $IsWindows )
+        {
+            $origDefaults = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues['it:skip'] = $true
+        }
         $script:outputDirectory = $testDrive
+    }
+
+    AfterAll {
+        if ( ! $IsWindows ){
+            $global:PSDefaultParameterValues = $origDefaults
+        }
     }
 
     $testCases = @(
         @{
             Name = "Can export BLG format"
             FileFormat = "blg"
-            GetCounterParams = "-MaxSamples 5"
+            GetCounterParams = "-MaxSamples 2"
             Script = { CheckExportResults }
         }
         @{
             Name = "Exports BLG format by default"
-            GetCounterParams = "-MaxSamples 5"
+            GetCounterParams = "-MaxSamples 2"
             Script = { CheckExportResults }
         }
     )
@@ -142,7 +158,18 @@ Describe "CI tests for Export-Counter cmdlet" -Tags "CI" {
 Describe "Feature tests for Export-Counter cmdlet" -Tags "Feature" {
 
     BeforeAll {
+        if ( ! $IsWindows )
+        {
+            $origDefaults = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues['it:skip'] = $true
+        }
         $script:outputDirectory = $testDrive
+    }
+
+    AfterAll {
+        if ( ! $IsWindows ){
+            $global:PSDefaultParameterValues = $origDefaults
+        }
     }
 
     Context "Validate incorrect parameter usage" {
