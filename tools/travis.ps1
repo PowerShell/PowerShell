@@ -17,13 +17,6 @@ $pesterParam = @{ 'binDir' = $output }
 if ($isFullBuild) {
     $pesterParam['Tag'] = @('CI','Feature','Scenario')
     $pesterParam['ExcludeTag'] = @()
-    # cron jobs create log files which include the stdout of Pester
-    # which creates too much data for travis to put in the log file
-    # and the job is then cancelled. Add Quiet to reduce the log size
-    # the xunit log created by pester is what is important
-    if ( $env:TRAVIS_EVENT_TYPE -eq 'cron' ) {
-        $pesterParam['Quiet'] = $true
-    }
 } else {
     $pesterParam['Tag'] = @('CI')
     $pesterParam['ThrowOnFailure'] = $true
