@@ -93,7 +93,6 @@ function Remove-InstalledModules
     Get-InstalledModule -Name $ContosoServer -AllVersions -ErrorAction SilentlyContinue | Uninstall-Module -Force
 }
 
-
 Describe "PowerShellGet - Module tests" -tags "Feature" {
 
     BeforeEach {

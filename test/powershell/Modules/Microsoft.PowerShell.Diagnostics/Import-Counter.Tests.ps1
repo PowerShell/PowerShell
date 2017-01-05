@@ -118,7 +118,6 @@ function RunTest($testCase)
         }
 
         $cmd = ConstructCommand $testCase
-        # Write-Host "Command to run: $cmd"
         $cmd = $cmd + " -ErrorAction SilentlyContinue -ErrorVariable errVar"
 
         $errVar = $null
