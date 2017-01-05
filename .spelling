@@ -75,6 +75,7 @@ nunit
 exe
 init
 labeled
+toolset
 alpha.14
  - demos/Azure/README.md
 alpha.12
@@ -727,3 +728,15 @@ shebang
  - CHANGELOG.md
 v6.0.0
 alpha.13
+ - test/tools/CodeCoverageAutomation/README.md
+Start-CodeCoverageRun
+Coveralls.io.
+v5.0
+v6.0.
+CodeCoverage.zip
+OpenCover.zip
+tests.zip
+Coveralls.net
+powershell.version
+csmacnz
+Coveralls.exe
