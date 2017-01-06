@@ -241,3 +241,19 @@ Describe "Feature tests for Get-Counter cmdlet" -Tags "Feature" {
         }
     }
 }
+
+Describe "Get-Counter cmdlet does not run on IoT" -Tags "CI" {
+
+    It "Get-Counter throws PlatformNotSupportedException" -Skip:$(-not [System.Management.Automation.Platform]::IsIoT)  {
+
+        try
+        {
+            Get-Counter
+            throw "'Get-Counter' on IoT is expected to throw a PlatformNotSupportedException, and it did not."
+        }
+        catch
+        {
+            $_.FullyQualifiedErrorId | should be "System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.GetCounterCommand"
+        }
+    }
+}
