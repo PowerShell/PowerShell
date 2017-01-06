@@ -837,7 +837,7 @@ function Test-PSPesterResults
     {
         logerror "TEST FAILURES"
         # switch between methods, SelectNode is not available on dotnet core
-        if ( "System.Xml.XmlDocumentXPathExtensions" -as "Type" ) {
+        if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] ) {
             $failures = [System.Xml.XmlDocumentXPathExtensions]::SelectNodes($x."test-results",'.//test-case[@result = "Failure"]')
         }
         else {

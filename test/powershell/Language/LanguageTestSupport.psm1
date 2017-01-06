@@ -66,7 +66,6 @@ function Get-RuntimeError
     }
     catch 
     {
-        write-verbose -verbose "caught"
         return $_.Exception.InnerException.ErrorRecord
     }
     finally
@@ -115,7 +114,7 @@ function ShouldBeParseError
         if ($SkipAndCheckRuntimeError) 
         {
             It "error should happen at parse time, not at runtime" -Skip {}
-            $errors = Get-RuntimeError -Src $src -Timeout 5
+            $errors = Get-RuntimeError -Src $src -Timeout 10
             # for runtime errors we will only get the first one
             $expectedErrors = ,$expectedErrors[0]
             $expectedOffsets = ,$expectedOffsets[0]
