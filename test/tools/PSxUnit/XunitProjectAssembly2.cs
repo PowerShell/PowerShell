@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 
 namespace Xunit.Runner.DotNet
 {
@@ -16,27 +17,45 @@ namespace Xunit.Runner.DotNet
         static Stream GetConfigurationStreamForAssembly(string assemblyFilename)
         {
             // get parent directory
+            if (string.IsNullOrEmpty(assemblyFilename))
+                return null;
+
             var directory = Path.GetDirectoryName(assemblyFilename);
             var assemblyName = Path.GetFileNameWithoutExtension(assemblyFilename);
 
             var pathWithAssemblyName = Path.Combine(directory, assemblyName);
 
-            // See if there's a directory with the assm name. this might be the case for appx
+            // See if there's a directory with the assembly name. this might be the case for appx
             if (Directory.Exists(pathWithAssemblyName))
             {
-                if (File.Exists(Path.Combine(pathWithAssemblyName, $"{assemblyName}.xunit.runner.json")))
-                    return File.OpenRead(Path.Combine(pathWithAssemblyName, $"{assemblyName}.xunit.runner.json"));
+                var runnerJsonPathAssemblyName = Path.Combine(pathWithAssemblyName, $"{assemblyName}.xunit.runner.json");
+                var runnerJsonPath = Path.Combine(pathWithAssemblyName, "xunit.runner.json");
+                try
+                {
+                    if (File.Exists(runnerJsonPathAssemblyName))
+                        return File.OpenRead(runnerJsonPathAssemblyName);
 
-                if (File.Exists(Path.Combine(pathWithAssemblyName, "xunit.runner.json")))
-                    return File.OpenRead(Path.Combine(pathWithAssemblyName, "xunit.runner.json"));
+                    if (File.Exists(runnerJsonPath))
+                        return File.OpenRead(runnerJsonPath);
+                }
+                // if I/O exception is occured, dismiss the exception, any ohter exception will be thrown as is
+                catch (IOException ex) { }
+
             }
 
             // Fallback to directory with assembly
-            if (File.Exists(Path.Combine(directory, $"{assemblyName}.xunit.runner.json")))
-                return File.OpenRead(Path.Combine(directory, $"{assemblyName}.xunit.runner.json"));
+            var runnerJsonDirectoryAssemblyName = Path.Combine(directory, $"{assemblyName}.xunit.runner.json");
+            var runnerJsonDirectory = Path.Combine(directory, "xunit.runner.json");
+            try
+            {
+                if (File.Exists(runnerJsonDirectoryAssemblyName))
+                    return File.OpenRead(runnerJsonDirectoryAssemblyName);
 
-            if (File.Exists(Path.Combine(directory, "xunit.runner.json")))
-                return File.OpenRead(Path.Combine(directory, "xunit.runner.json"));
+                if (File.Exists(runnerJsonDirectory))
+                    return File.OpenRead(runnerJsonDirectory);
+            }
+            // if I/O exception is occured, dismiss the exception, any ohter exception will be thrown as is
+            catch (IOException ex) { }
 
             return null;
         }

@@ -32,23 +32,44 @@ namespace PSxUnit
 
     public class Options : CommandLineOptions
     {
+        /// <summary>
+        /// Accept the command args.
+        /// </summary>
         public Options(string[] args) : base(args) { }
 
+        /// <summary>
+        /// Provide a list of tests to execute.
+        /// </summary>
         [Option(Description = "provide a list of tests to execute")]
         public string[] TestList;
 
+        /// <summary>
+        /// Test Assembly.
+        /// </summary>
         [Option(Mandatory = true, Description = "assembly which contains the test")]
         public string Assembly;
 
+        /// <summary>
+        /// Test type to execute.
+        /// </summary>
         [Option(Description = "the type of test to execute")]
         public TestType TestType = TestType.All;
 
+        /// <summary>
+        /// Timeout for single test case.
+        /// </summary>
         [Option(Description = "TimeOut for single test case")]
         public int TimeOut = 5000;
 
-        [Option(Alias = "?", Description = "Get Help")]
-        public bool help = false;
+        /// <summary>
+        /// result file name that stores test result.
+        /// </summary>
+        [Option(Description = "result file Name")]
+        public string ResultFileName = "result.xml";
 
+        /// <summary>
+        /// Help function.
+        /// </summary>
         public override void Help()
         {
             base.Help();
@@ -72,7 +93,6 @@ namespace PSxUnit
 
             Program p = new Program();
             Go(args);
-            //Console.ReadKey();
             Environment.Exit(0);
         }
         static List<IRunnerReporter> GetAvailableRunnerReporters()
@@ -118,29 +138,33 @@ namespace PSxUnit
             
             var nullMessage = new Xunit.NullMessageSink();
             var discoveryOptions = TestFrameworkOptions.ForDiscovery();
-            using (var c = new XunitFrontController(AppDomainSupport.Denied, o.Assembly, null, false))
+            using (var controller = new XunitFrontController(AppDomainSupport.Denied, o.Assembly, null, false))
             {
-                var tv = new TestDiscoverySink();
+                var testSuite = new TestDiscoverySink();
                 var excludeTestCaseSet = new TestDiscoverySink();
-                c.Find(true, tv, discoveryOptions);
-                tv.Finished.WaitOne();
-                foreach (var tc in tv.TestCases)
+                controller.Find(true, testSuite, discoveryOptions);
+                testSuite.Finished.WaitOne();
+                foreach (var tc in testSuite.TestCases)
                 {
                     var method = tc.TestMethod.Method;
                     var attributes = method.GetCustomAttributes(typeof(FactAttribute));
                     foreach (ReflectionAttributeInfo at in attributes)
                     {
-                        var result = at.GetNamedArgument<string>("Skip");
-                        if (result != null)
-                        {
-                            Console.WriteLine("SKIPPY! {0} because {1}", method, result);
-                        }
-
+                        bool checkForSkip = true;
                         if (o.TestType != TestType.All)
                         {
                             if (!at.ToString().EndsWith(o.TestType.ToString()))
                             {
                                 excludeTestCaseSet.TestCases.Add(tc);
+                                checkForSkip = false;
+                            }
+                        }
+                        if (checkForSkip)
+                        {
+                            var result = at.GetNamedArgument<string>("Skip");
+                            if (result != null)
+                            {
+                                Console.WriteLine("SKIPPY! {0} because {1}", method, result);
                             }
                         }
                     }
@@ -148,14 +172,14 @@ namespace PSxUnit
 
                 foreach (var tc in excludeTestCaseSet.TestCases)
                 {
-                    tv.TestCases.Remove(tc);
+                    testSuite.TestCases.Remove(tc);
                 }
 
-                Console.WriteLine("TEST COUNT: {0}", tv.TestCases.Count);
+                Console.WriteLine("TEST COUNT: {0}", testSuite.TestCases.Count);
                 //core execution Sink
 
-                int testCaseCount = tv.TestCases.Count;
-                Stream file = new FileStream(".\\result.xml", FileMode.Create);
+                int testCaseCount = testSuite.TestCases.Count;
+                Stream file = new FileStream(".\\" + o.ResultFileName, FileMode.Create);
                 int totalResult = 0;
                 int totalErrors = 0;
                 int totalFailed = 0;
@@ -173,9 +197,9 @@ namespace PSxUnit
                     resultsSink = new XmlAggregateSink(reporterMessageHandler, completionMessages, xmlElement, () => true);
                     var message = new Xunit.NullMessageSink();
                     var executionOptions = TestFrameworkOptions.ForExecution();
-                    c.RunTests(tv.TestCases.Take<Xunit.Abstractions.ITestCase>(1), resultsSink, executionOptions);
+                    controller.RunTests(testSuite.TestCases.Take<Xunit.Abstractions.ITestCase>(1), resultsSink, executionOptions);
                     resultsSink.Finished.WaitOne(o.TimeOut);
-                    tv.TestCases.RemoveAt(0);
+                    testSuite.TestCases.RemoveAt(0);
                     totalResult++;
                     totalErrors = totalErrors + resultsSink.ExecutionSummary.Errors;
                     totalFailed = totalFailed + resultsSink.ExecutionSummary.Failed;

@@ -101,13 +101,15 @@ namespace Codeblast
 
         public bool MissingMandatoryOption()
         {
-			Type t = this.GetType();
-			FieldInfo[] fields = t.GetFields(BindingFlags.Instance|BindingFlags.Public);
-			foreach (FieldInfo field in fields) 
+            Type t = this.GetType();
+            FieldInfo[] fields = t.GetFields(BindingFlags.Instance | BindingFlags.Public);
+            foreach (FieldInfo field in fields)
             {
                 OptionAttribute[] atts = (OptionAttribute[])field.GetCustomAttributes(typeof(OptionAttribute), true);
-                foreach(OptionAttribute a in atts) { 
-                    if ( a.Mandatory && field.GetValue(this) == null) {
+                foreach (OptionAttribute a in atts)
+                {
+                    if (a.Mandatory && field.GetValue(this) == null)
+                    {
                         InvalidOption(field.Name);
                         return true;
                     }
@@ -116,7 +118,7 @@ namespace Codeblast
             return false;
         }
 
-		public IList InvalidArguments
+        public IList InvalidArguments
 		{
 			get { return invalidArguments; }
 		}

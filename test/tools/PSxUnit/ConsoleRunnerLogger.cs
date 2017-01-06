@@ -36,17 +36,17 @@ namespace Xunit
         /// <inheritdoc/>
         public void LogImportantMessage(StackFrameInfo stackFrame, string message)
         {
-            //using (SetColor(ConsoleColor.Gray))
-            //    lock (LockObject)
-            //        Console.WriteLine(message);
+            using (SetColor(ConsoleColor.Gray))
+                lock (LockObject)
+                    Console.WriteLine(message);
         }
 
         /// <inheritdoc/>
         public void LogMessage(StackFrameInfo stackFrame, string message)
         {
-            //using (SetColor(ConsoleColor.DarkGray))
-            //    lock (LockObject)
-            //        Console.WriteLine(message);
+            using (SetColor(ConsoleColor.DarkGray))
+                lock (LockObject)
+                    Console.WriteLine(message);
         }
 
         /// <inheritdoc/>
