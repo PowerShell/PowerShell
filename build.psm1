@@ -31,6 +31,14 @@ if ($IsLinux) {
     $IsUbuntu14 = $IsUbuntu -and $LinuxInfo.VERSION_ID -match '14.04'
     $IsUbuntu16 = $IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'
     $IsCentOS = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'
+    $IsFedora = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24
+    $IsRedHatFamily = $IsCentOS -or $IsFedora
+
+    # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
+    if (Test-Path ENV:\LD_LIBRARY_PATH) {
+        Remove-Item -Force ENV:\LD_LIBRARY_PATH
+        Get-ChildItem ENV:
+    }
 }
 
 #
@@ -75,6 +83,7 @@ function Start-PSBuild {
                      "ubuntu.16.04-x64",
                      "debian.8-x64",
                      "centos.7-x64",
+                     "fedora.24-x64",
                      "win7-x64",
                      "win7-x86",
                      "win81-x64",
@@ -439,6 +448,7 @@ function New-PSOptions {
                      "ubuntu.16.04-x64",
                      "debian.8-x64",
                      "centos.7-x64",
+                     "fedora.24-x64",
                      "win7-x86",
                      "win7-x64",
                      "win81-x64",
@@ -944,6 +954,15 @@ function Install-Dotnet {
     }
 }
 
+function Get-RedHatPackageManager {
+    if ($IsRedHatFamily -and $IsCentOS) {
+        "yum"
+    } elseif ($IsRedHatFamily -and $IsFedora) {
+        "dnf"
+    } else {
+        throw "Error determining package manager for this distribution."
+    }
+}
 
 function Start-PSBootstrap {
     [CmdletBinding(
@@ -1000,7 +1019,7 @@ function Start-PSBootstrap {
                 Invoke-Expression "$sudo apt-get update"
                 Invoke-Expression "$sudo apt-get install -y -qq $Deps"
             }
-        } elseif ($IsCentOS) {
+        } elseif ($IsRedHatFamily) {
             # Build tools
             $Deps += "which", "curl", "gcc-c++", "cmake", "make"
 
@@ -1010,9 +1029,11 @@ function Start-PSBootstrap {
             # Packaging tools
             if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff" }
 
+            $PackageManager = Get-RedHatPackageManager
+
             # Install dependencies
             Start-NativeExecution {
-                Invoke-Expression "$sudo yum install -y -q $Deps"
+                Invoke-Expression "$sudo $PackageManager install -y -q $Deps"
             }
         } elseif ($IsOSX) {
             precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
@@ -1192,7 +1213,7 @@ function Start-PSPackage {
         [ValidatePattern("^powershell")]
         [string]$Name = "powershell",
 
-        # Ubuntu, CentOS, and OS X, and Windows packages are supported
+        # Ubuntu, CentOS, Fedora, OS X, and Windows packages are supported
         [ValidateSet("deb", "osxpkg", "rpm", "msi", "appx", "zip")]
         [string[]]$Type,
 
@@ -1246,7 +1267,7 @@ function Start-PSPackage {
         $Type = if ($IsLinux) {
             if ($LinuxInfo.ID -match "ubuntu") {
                 "deb"
-            } elseif ($LinuxInfo.ID -match "centos") {
+            } elseif ($IsRedHatFamily) {
                 "rpm"
             } else {
                 throw "Building packages for $($LinuxInfo.PRETTY_NAME) is unsupported!"
@@ -1357,8 +1378,8 @@ function New-UnixPackage {
                 }
         }
         "rpm" {
-            if (!$IsCentOS) {
-                throw ($ErrorMessage -f "CentOS")
+            if (!$IsRedHatFamily) {
+                throw ($ErrorMessage -f "Redhat Family")
             }
         }
         "osxpkg" {
@@ -1422,7 +1443,7 @@ It consists of a cross-platform command-line shell and associated scripting lang
 
     New-Item -Force -ItemType SymbolicLink -Path "/tmp/$Name" -Target "$Destination/$Name" >$null
 
-    if ($IsCentos) {
+    if ($IsRedHatFamily) {
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
         @'
@@ -1539,7 +1560,7 @@ esac
         } elseif ($IsUbuntu16) {
             $Dependencies += "libicu55"
         }
-    } elseif ($IsCentOS) {
+    } elseif ($IsRedHatFamily) {
         $Dependencies = @(
             "glibc",
             "libcurl",
@@ -1562,9 +1583,15 @@ esac
         $Iteration += "ubuntu1.16.04.1"
     }
 
-    # We currently only support CentOS 7
+    # We currently only support CentOS 7 and Fedora 24+
     # https://fedoraproject.org/wiki/Packaging:DistTag
-    $rpm_dist = "el7.centos"
+    if ($IsCentOS) {
+        $rpm_dist = "el7.centos"
+    } elseif ($IsFedora) {
+        $version_id = $LinuxInfo.VERSION_ID
+        $rpm_dist = "fedora.$version_id"
+    }
+
 
     $Arguments = @(
         "--force", "--verbose",
@@ -2570,6 +2597,7 @@ function Start-CrossGen {
                      "ubuntu.16.04-x64",
                      "debian.8-x64",
                      "centos.7-x64",
+                     "fedora.24-x64",
                      "win7-x86",
                      "win7-x64",
                      "win81-x64",
@@ -2640,6 +2668,8 @@ function Start-CrossGen {
             "ubuntu.14.04-x64"
         } elseif ($IsCentOS) {
             "rhel.7-x64"
+        } elseif ($IsFedora) {
+            "fedora.24-x64"
         }
     } elseif ($IsOSX) {
         "osx.10.10-x64"
