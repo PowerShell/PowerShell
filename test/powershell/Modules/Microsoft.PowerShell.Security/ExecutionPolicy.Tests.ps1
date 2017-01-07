@@ -919,7 +919,7 @@ ZoneId=$FileType
         )
         try {
             Set-ExecutionPolicy -Scope $policyScope -ExecutionPolicy Restricted
-            throw "No Exception!"
+            throw "Expected an exception throw, but no Exception was thrown."
         }
         catch {
             $_.FullyQualifiedErrorId | Should Be "CantSetGroupPolicy,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand"

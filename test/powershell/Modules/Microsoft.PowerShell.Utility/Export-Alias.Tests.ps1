@@ -118,7 +118,7 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 
 		try{
 			Export-Alias $fulltestpath abcd02
-			throw "No Exception!"
+			throw "Expected an exception throw, but no Exception was thrown."
 		}
 		catch{
 			$_.FullyQualifiedErrorId | Should be "FileOpenFailure,Microsoft.PowerShell.Commands.ExportAliasCommand"

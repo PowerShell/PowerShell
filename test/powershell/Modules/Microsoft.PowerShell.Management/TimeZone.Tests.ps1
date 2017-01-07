@@ -167,7 +167,7 @@ Describe "Set-Timezone test cases" -Tags @('Feature', 'RequireAdminOnWindows') {
         try
         {
             Set-TimeZone -Id "zzInvalidID"
-            throw "No Exception!"
+            throw "Expected an exception throw, but no Exception was thrown."
         }
         catch
         {
@@ -196,7 +196,7 @@ Describe "Set-Timezone test cases" -Tags @('Feature', 'RequireAdminOnWindows') {
         try
         {
             Set-TimeZone -Name "zzINVALID_Name"
-            throw "No Exception!"
+            throw "Expected an exception throw, but no Exception was thrown."
         }
         catch
         {
