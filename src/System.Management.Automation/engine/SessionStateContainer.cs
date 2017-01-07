@@ -9,6 +9,7 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Internal;
 using System.Reflection;
 using Dbg = System.Management.Automation;
+using System.IO;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 #pragma warning disable 56500
@@ -3689,9 +3690,16 @@ namespace System.Management.Automation
 
             foreach (string path in paths)
             {
+                string resolvePath = null;
                 if (path == null)
                 {
                     PSTraceSource.NewArgumentNullException("paths");
+                }
+                else
+                {
+                    // To be compatible with Linux OS. Which will be either '/' or '\' depends on the OS type.
+                    char[] charsToTrim = {' ', Path.AltDirectorySeparatorChar, Path.DirectorySeparatorChar};
+                    resolvePath = path.TrimEnd(charsToTrim);
                 }
 
                 ProviderInfo provider = null;
@@ -3705,7 +3713,7 @@ namespace System.Management.Automation
                 if (String.IsNullOrEmpty(name))
                 {
                     string providerPath =
-                        Globber.GetProviderPath(path, context, out provider, out driveInfo);
+                        Globber.GetProviderPath(resolvePath, context, out provider, out driveInfo);
 
                     providerInstance = GetProviderInstance(provider);
                     providerPaths.Add(providerPath);
@@ -3714,7 +3722,7 @@ namespace System.Management.Automation
                 {
                     providerPaths =
                         Globber.GetGlobbedProviderPathsFromMonadPath(
-                                path,
+                                resolvePath,
                                 true,
                                 context,
                                 out provider,
