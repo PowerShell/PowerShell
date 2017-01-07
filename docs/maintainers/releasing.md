@@ -1,3 +1,16 @@
+Release Checklist
+=================
+* Summarize major changes since the previous release.
+* Update [CHANGELOG.md](../../CHANGELOG.md) with the major change list.
+* Create an [annotated tag][tag] for the release, with the major change list as the message.
+* Push the release tag, and create a release draft with the major change list.
+* Build packages and add them to the release draft.
+* Create NuGet packages and publish them to [powershell-core feed][ps-core-feed].
+* Publish the release draft.
+* Update documentation and scripts to use the links to new packages.
+* Push a branch named `docker` to `powershell/powershell` repository to trigger building docker images.
+* Delete the `docker` branch once the builds are successful at [powershell docker hub](https://hub.docker.com/r/microsoft/powershell/builds/).
+
 Preparing
 =========
 
@@ -43,7 +56,7 @@ Building Packages
 =================
 
 The `build.psm1` module contains a `Start-PSPackage` function to build packages.
-It **requires** that `Start-PSBuild -CrossGen` has been run.
+It **requires** that `Start-PSBuild -CrossGen -PSModuleRestore` has been run.
 
 Linux / macOS
 ------------
@@ -128,7 +141,7 @@ Then run the following commands:
 ``` powershell
 Import-Module ./build.psm1
 Start-PSBootstrap -Package
-Start-PSBuild -Crossgen
+Start-PSBuild -Crossgen -PSModuleRestore
 Start-PSPackage
 ```
 
@@ -147,7 +160,7 @@ Then run the following commands:
 ``` powershell
 Import-Module ./build.psm1
 Start-PSBootstrap -Package
-Start-PSBuild -Crossgen
+Start-PSBuild -Crossgen -PSModuleRestore
 Start-PSPackage
 ```
 Repeat the steps on other supported Linux distros to generate the corresponding powershell core packages.
@@ -183,7 +196,7 @@ Windows
 ### Overview
 
 The `Start-PSPackage` function delegates to `New-MSIPackage` which creates a Windows Installer Package of PowerShell.
-The packages *must* be published in release mode, so use `Start-PSBuild -CrossGen -Configuration Release`.
+The packages *must* be published in release mode, so use `Start-PSBuild -CrossGen -PSModuleRestore -Configuration Release`.
 It uses the Windows Installer XML Toolset (WiX) to generate a `PowerShell_<version>.msi`,
 which installs a self-contained copy of the current version (commit) of PowerShell.
 It copies the output of the published PowerShell application to a version-specific folder in Program Files,
@@ -205,7 +218,7 @@ git checkout -b local-release-branch v6.0.0-alpha.11
 ``` powershell
 Import-Module .\build.psm1 
 Start-PSBootstrap -Package 
-Start-PSBuild -Clean -CrossGen -Runtime win10-x64 -Configuration Release 
+Start-PSBuild -Clean -CrossGen -PSModuleRestore -Runtime win10-x64 -Configuration Release 
 Start-PSPackage -Type msi
 Start-PSPackage -Type zip
 ```
@@ -215,7 +228,7 @@ Start-PSPackage -Type zip
 ``` powershell
 Import-Module .\build.psm1 
 Start-PSBootstrap -Package 
-Start-PSBuild -Clean -CrossGen -Runtime win81-x64 -Configuration Release 
+Start-PSBuild -Clean -CrossGen -PSModuleRestore -Runtime win81-x64 -Configuration Release 
 Start-PSPackage -Type msi -WindowsDownLevel win81-x64  
 Start-PSPackage -Type zip -WindowsDownLevel win81-x64
 ```

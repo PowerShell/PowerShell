@@ -207,4 +207,7 @@
   <data name="ReachedMaximumDepthAllowed" xml:space="preserve">
     <value>The maximum depth allowed for serialization is {0}.</value>
   </data>
+  <data name="JsonDeserializationFailed" xml:space="preserve">
+    <value>Conversion from JSON failed with error: {0}</value>
+  </data>
 </root>

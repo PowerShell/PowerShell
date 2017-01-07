@@ -1049,7 +1049,6 @@ namespace System.Management.Automation.Runspaces.Internal
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
                 SetStateToBroken(exception);
                 // rethrow the exception
                 throw;
@@ -1119,7 +1118,6 @@ namespace System.Management.Automation.Runspaces.Internal
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 // report non-severe exceptions to the user via the
                 // asyncresult object
                 exception = e;
@@ -1217,7 +1215,6 @@ namespace System.Management.Automation.Runspaces.Internal
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 // report non-severe exceptions to the user via the
                 // asyncresult object
                 exception = e;
@@ -1452,9 +1449,8 @@ namespace System.Management.Automation.Runspaces.Internal
                     runspaceListCopy[index].Close();
                     runspaceListCopy[index].Dispose();
                 }
-                catch (InvalidRunspaceStateException e)
+                catch (InvalidRunspaceStateException)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
 

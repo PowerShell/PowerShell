@@ -165,7 +165,6 @@ namespace Microsoft.PowerShell.Commands
                         }
                         catch (Exception e)
                         {
-                            CommandsCommon.CheckForSevereException(this, e);
                             ProviderInvocationException providerException =
                                 new ProviderInvocationException(
                                     "ProviderContentReadError",
@@ -219,7 +218,6 @@ namespace Microsoft.PowerShell.Commands
                             }
                             catch (Exception e) // Catch-all OK. 3rd party callout
                             {
-                                CommandsCommon.CheckForSevereException(this, e);
                                 ProviderInvocationException providerException =
                                     new ProviderInvocationException(
                                         "ProviderContentReadError",
@@ -296,7 +294,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception e)
                 {
-                    CommandsCommon.CheckForSevereException(this, e);
                     ProviderInvocationException providerException =
                         new ProviderInvocationException(
                             "ProviderContentReadError",

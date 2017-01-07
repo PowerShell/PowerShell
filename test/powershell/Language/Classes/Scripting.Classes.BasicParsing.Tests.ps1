@@ -120,7 +120,6 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
         It "Expected a System.Collections.Generic.List[C9b] returned" {  $c9b -is [System.Collections.Generic.List[C9b]] | should be $true }
     }
 
-
     It 'Positive ParseProperty Attributes Test' {
         class C1a { [ValidateNotNull()][int]$x; } 
         class C1b
@@ -161,7 +160,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
         }
     }
 
-    It 'Clas sMethod Reference ConstantVars' {
+    It 'Class Method Reference ConstantVars' {
         class C1
         {
             [bool] f1() { return $true }
@@ -248,6 +247,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
         [A]::new().h.GetType().Name | Should Be 'OrderedDictionary'
     }
 }
+
 Describe 'Negative Parsing Tests' -Tags "CI" {
     ShouldBeParseError 'class' MissingNameAfterKeyword 5
     ShouldBeParseError 'class foo' MissingTypeBody 9
@@ -399,8 +399,7 @@ Describe 'Negative ClassAttributes Tests' -Tags "CI" {
             
         }
     }
-}
-    
+}    
 
 Describe 'Property Attributes Test' -Tags "CI" {
         class C { [ValidateSet('a', 'b')]$p; }
@@ -411,7 +410,7 @@ Describe 'Property Attributes Test' -Tags "CI" {
         It "Should have 2 valid values" { $v.ValidValues.Count | should be 2 }
         It "first value should be a" { $v.ValidValues[0] | should be 'a' }
         It "second value should be b" { $v.ValidValues[1] -eq 'b' }
-    }
+}
 
 Describe 'Method Attributes Test' -Tags "CI" {
         class C { [Obsolete("aaa")][int]f() { return 1 } } 
@@ -419,7 +418,7 @@ Describe 'Method Attributes Test' -Tags "CI" {
         $t = [C].GetMethod('f').GetCustomAttributes($false)
         It "Should have one attribute" {$t.Count | should be 1 }
         It "Attribute type should be ObsoleteAttribute" { $t[0].GetType().FullName | should be System.ObsoleteAttribute } 
-    }
+}
 
 Describe 'Positive SelfClass Type As Parameter Test' -Tags "CI" {
         class Point
@@ -451,7 +450,7 @@ Describe 'Positive SelfClass Type As Parameter Test' -Tags "CI" {
             $point.x | should be 101
             $point.y | should be 202
         }         
-    }
+}
 
 Describe 'PositiveReturnSelfClassTypeFromMemberFunction Test' -Tags "CI" {
         class ReturnObjectFromMemberFunctionTest
@@ -468,7 +467,7 @@ Describe 'PositiveReturnSelfClassTypeFromMemberFunction Test' -Tags "CI" {
         $f = [ReturnObjectFromMemberFunctionTest]::new()
         $z = $f.CreateInstance() # Line 13
         It "CreateInstance works" { $z.SayHello() | should be 'Hello1' } 
-    }
+}
 
 Describe 'TestMultipleArguments Test' -Tags "CI" {
         if ( $IsCoreCLR ) { $maxCount = 14 } else { $maxCount = 16 }
@@ -524,7 +523,8 @@ $ctorAssignments
 
             Invoke-Expression $class
         }
-    }
+}
+
 Describe 'Scopes Test' -Tags "CI" {
         class C1
         {
@@ -541,7 +541,7 @@ Describe 'Scopes Test' -Tags "CI" {
                 return $script:bar + $global:bar
             }
         }
-    }
+}
 
 Describe 'Check PS Class Assembly Test' -Tags "CI" {
         class C1 {}
@@ -549,7 +549,7 @@ Describe 'Check PS Class Assembly Test' -Tags "CI" {
         $attrs = @($assem.GetCustomAttributes($true))
         $expectedAttr = @($attrs | ? { $_  -is [System.Management.Automation.DynamicClassImplementationAssemblyAttribute] })
         It "Expected a DynamicClassImplementationAssembly attribute" { $expectedAttr.Length | should be 1}
-    }
+}
 
 Describe 'ScriptScopeAccessFromClassMethod' -Tags "CI" {
         Import-Module "$PSScriptRoot\MSFT_778492.psm1"
@@ -562,7 +562,7 @@ Describe 'ScriptScopeAccessFromClassMethod' -Tags "CI" {
         {
             Remove-Module MSFT_778492
         }
-    }
+}
 
 Describe 'Hidden Members Test ' -Tags "CI" {
         class C1
@@ -596,13 +596,13 @@ Describe 'Hidden Members Test ' -Tags "CI" {
         $line = 'class C2 { hidden [int]$hiddenZ } [C2]::new().h'
         $completions = [System.Management.Automation.CommandCompletion]::CompleteInput($line, $line.Length, $null)
         It "Tab completion should not return a hidden member" { $completions.CompletionMatches.Count | should be 0 }        
-    }
+}
 
 Describe 'BaseMethodCall Test ' -Tags "CI" {
         It "Derived class method call" {"abc".ToString() | should be "abc" }        
         # call [object] ToString() method as a base class method.
         It "Base class method call" {([object]"abc").ToString() | should be "System.String" }        
-    }
+}
 
 Describe 'Scoped Types Test' -Tags "CI" {
         class C1 { [string] GetContext() { return "Test scope" } }
@@ -630,7 +630,7 @@ Describe 'Scoped Types Test' -Tags "CI" {
         
         It "[C1]::new() in nested scope (in pipeline)" { (1 | f1 | f2 | f1) | should be "f1 scope" }
         It "'new-object C1' in nested scope (in pipeline)" { (1 | f2 | f1 | f2) | should be "f2 scope" }
-    }
+}
 
 Describe 'ParameterOfClassTypeInModule Test' -Tags "CI" {
         try
@@ -647,7 +647,7 @@ function test-it([EE]$ee){$ee}
         {
             Remove-Module -ea ignore MSFT_2081529
         }
-    }
+}
 
 Describe 'Type building' -Tags "CI" {
     It 'should build the type only once for scriptblock' {

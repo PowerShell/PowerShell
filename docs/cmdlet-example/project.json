@@ -11,7 +11,7 @@
         "netstandard1.3": {
             "imports": [ "net40" ],
             "dependencies": {
-                "Microsoft.NETCore": "5.0.3-preview1-001100-00",
+                "Microsoft.NETCore": "5.0.3-rc2-0-0",
                 "Microsoft.NETCore.Portable.Compatibility": "1.0.3-beta-24514-00"
             }
         }

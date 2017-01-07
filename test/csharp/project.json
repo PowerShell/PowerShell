@@ -14,10 +14,10 @@
     },
 
     "frameworks": {
-        "netcoreapp1.0": {
+        "netcoreapp1.1": {
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "dependencies": {
-                "xunit": "2.2.0-beta3-build3402",
+                "xunit": "2.2.0-beta4-build3444",
                 "dotnet-test-xunit": "2.2.0-preview2-build1029"
             }
         }

@@ -214,9 +214,8 @@ namespace System.Management.Automation.Runspaces
                     {
                         _invokeCallback(_invokeCallbackState);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                     }
                 }
             }

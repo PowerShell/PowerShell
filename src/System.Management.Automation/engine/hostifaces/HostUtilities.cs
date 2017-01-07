@@ -380,11 +380,9 @@ namespace System.Management.Automation
                     {
                         result = invocationModule.Invoke(evaluator, null);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         // Catch-all OK. This is a third-party call-out.
-                        CommandProcessorBase.CheckForSevereException(e);
-
                         suggestion["Enabled"] = false;
                         continue;
                     }
@@ -579,11 +577,9 @@ namespace System.Management.Automation
                 {
                     result = invocationModule.Invoke(suggestionScript, suggestionArgs);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
                     // Catch-all OK. This is a third-party call-out.
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     return String.Empty;
                 }
 
@@ -850,8 +846,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 throw new PSInvalidOperationException(
                     StringUtil.Format(RemotingErrorIdStrings.CannotCreateConfiguredRunspace, configurationName),
                     e);

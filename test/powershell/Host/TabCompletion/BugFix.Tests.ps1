@@ -21,4 +21,10 @@ Describe "Tab completion bug fix" -Tags "CI" {
         $result.CompletionMatches[0].CompletionText | Should Be "-and"
         $result.CompletionMatches[1].CompletionText | Should Be "-as"
     }
+    It "Issue#2295 - '[pscu<tab>' should expand to [pscustomobject]" {
+        $result = TabExpansion2 -inputScript "[pscu" -cursorColumn "[pscu".Length
+        $result | Should Not BeNullOrEmpty
+        $result.CompletionMatches.Count | Should Be 1
+        $result.CompletionMatches[0].CompletionText | Should Be "pscustomobject"
+    }
 }

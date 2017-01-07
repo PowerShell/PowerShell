@@ -284,8 +284,6 @@ namespace System.Management.Automation
                 // an FXCOP violation, cleared by KCwalina.
                 catch (Exception e)  // Catch-all OK, 3rd party callout.
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     // This cmdlet threw an exception, so
                     // wrap it and bubble it up.
                     throw ManageInvocationException(e);
@@ -371,8 +369,6 @@ namespace System.Management.Automation
                 }
                 if (exceptionToThrow != null)
                 {
-                    CommandProcessorBase.CheckForSevereException(exceptionToThrow);
-
                     // This cmdlet threw an exception, so
                     // wrap it and bubble it up.
                     throw ManageInvocationException(exceptionToThrow);
@@ -700,8 +696,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // We don't have a Command or InvocationInfo at this point,
                 // since the command failed to initialize.
                 var commandException = new CmdletInvocationException(e, null);
@@ -776,8 +770,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // Log a command health event
 
                 MshLog.LogCommandHealthEvent(

@@ -3,7 +3,11 @@
 # This is the list of PowerShell Core modules for which we test update-help
 $powershellCoreModules = @(
     "CimCmdlets"
+    <#
+    This scenario is broken due to issue # https://github.com/PowerShell/platyPS/issues/241
+    Re-enable when issue is fixed.
     "Microsoft.PowerShell.Archive"
+    #>
     "Microsoft.PowerShell.Host"
     "Microsoft.PowerShell.Core"
     "Microsoft.PowerShell.Diagnostics"
@@ -36,12 +40,16 @@ $testCases = @{
         HelpInstallationPath = "$pshome\Modules\CimCmdlets\en-US"
     }
 
+<#
+    This scenario is broken due to issue # https://github.com/PowerShell/platyPS/issues/241
+    Re-enable when issue is fixed.
     "Microsoft.PowerShell.Archive" = @{
         HelpFiles            = "Microsoft.PowerShell.Archive.psm1-help.xml"
         HelpInfoFiles        = "Microsoft.PowerShell.Archive_eb74e8da-9ae2-482a-a648-e96550fb8733_HelpInfo.xml"
         CompressedFiles      = "Microsoft.PowerShell.Archive_eb74e8da-9ae2-482a-a648-e96550fb8733_en-US_HelpContent$extension"
         HelpInstallationPath = "$pshome\Modules\Microsoft.PowerShell.Archive\en-US"
     }
+#>
 
     "Microsoft.PowerShell.Core" = @{
         HelpFiles            = "System.Management.Automation.dll-help.xml"
@@ -133,7 +141,7 @@ function GetFiles
         [ValidateNotNullOrEmpty()]
         [string]$path
     )
-                            
+
     Get-ChildItem $path -Include $fileType -Recurse -ea SilentlyContinue | Select-Object -ExpandProperty FullName
 }
 
@@ -267,29 +275,71 @@ function ValidateSaveHelp
 }
 
 Describe "Validate Update-Help from the Web for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference
+    }
 
     RunUpdateHelpTests -tag "CI" -Pending
 }
 
 Describe "Validate Update-Help from the Web for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference
+    }
 
     RunUpdateHelpTests -tag "Feature"
 }
 
 Describe "Validate Update-Help -SourcePath for one PowerShell Core module." -Tags @('CI', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference
+    }
 
     RunUpdateHelpTests -tag "CI" -useSourcePath
 }
 
 Describe "Validate Update-Help -SourcePath for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference
+    }
 
     RunUpdateHelpTests -tag "Feature" -useSourcePath
 }
 
 Describe "Validate 'Save-Help -DestinationPath for one PowerShell Core modules." -Tags @('CI', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference
+    }
     RunSaveHelpTests -tag "CI" -Pending
 }
 
 Describe "Validate 'Save-Help -DestinationPath for all PowerShell Core modules." -Tags @('Feature', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference
+    }
     RunSaveHelpTests -tag "Feature"
 }

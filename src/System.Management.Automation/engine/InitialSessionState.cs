@@ -3211,8 +3211,6 @@ namespace System.Management.Automation.Runspaces
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     if (ThrowOnRunspaceOpenError)
                     {
                         return e;
@@ -3661,9 +3659,8 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
             }
-            catch (Exception e) // swallow all non-severe exceptions
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
         }
 
@@ -4744,41 +4741,6 @@ end {
 ";
         }
 
-
-        internal static string GetGetVerbText()
-        {
-            return @"
-param(
-    [Parameter(ValueFromPipeline=$true)]
-    [string[]]
-    $verb = '*'
-)
-begin {
-    $allVerbs = [System.Reflection.IntrospectionExtensions]::GetTypeInfo([PSObject]).Assembly.ExportedTypes |
-        Microsoft.PowerShell.Core\Where-Object {$_.Name -match '^Verbs.'} |
-        Microsoft.PowerShell.Utility\Get-Member -type Properties -static |
-        Microsoft.PowerShell.Utility\Select-Object @{
-            Name='Verb'
-            Expression = {$_.Name}
-        }, @{
-            Name='Group'
-            Expression = {
-                $str = ""$($_.TypeName)""
-                $str.Substring($str.LastIndexOf('Verbs') + 5)
-            }
-        }
-}
-process {
-    foreach ($v in $verb) {
-        $allVerbs | Microsoft.PowerShell.Core\Where-Object { $_.Verb -like $v }
-    }
-}
-# .Link
-# https://go.microsoft.com/fwlink/?LinkID=160712
-# .ExternalHelp System.Management.Automation.dll-help.xml
-";
-        }
-
         internal static string GetOSTFunctionText()
         {
             return @"
@@ -5373,7 +5335,6 @@ if($paths) {
 #if !UNIX
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("mkdir", GetMkdirFunctionText(), isProductCode: true),
 #endif
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Get-Verb", GetGetVerbText(), isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("oss", GetOSTFunctionText(), isProductCode: true),
 
             // Porting note: we remove the drive functions from Linux because they make no sense
@@ -5423,9 +5384,8 @@ if($paths) {
                 {
                     ssi.RemoveDrive(di, true, null);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
         }

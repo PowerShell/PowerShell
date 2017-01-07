@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2008 Microsoft Corporation. All rights reserved.
-// 
+//
 
 
 using System;
@@ -30,7 +30,7 @@ using Microsoft.PowerShell.Commands.Diagnostics.Common;
 
 namespace Microsoft.PowerShell.Commands
 {
-    /// 
+    ///
     /// Class that implements the Get-Counter cmdlet.
     /// 
     [Cmdlet(VerbsData.Import, "Counter", DefaultParameterSetName = "GetCounterSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=138338")]
@@ -38,7 +38,7 @@ namespace Microsoft.PowerShell.Commands
     {
         //
         // Path parameter
-        //  
+        //
         [Parameter(
                 Position = 0,
                 Mandatory = true,
@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
 
         //
         // ListSet parameter
-        //  
+        //
         [Parameter(
                 Mandatory = true,
                 ParameterSetName = "ListSetSet",
@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
 
         //
         // Counter parameter
-        //  
+        //
         [Parameter(
                 Mandatory = false,
                 ParameterSetName = "GetCounterSet",
@@ -188,8 +188,21 @@ namespace Microsoft.PowerShell.Commands
         //
         protected override void BeginProcessing()
         {
-            _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
+
+#if CORECLR
+            if (Platform.IsIoT)
+            {
+                // IoT does not have the '$env:windir\System32\pdh.dll' assembly which is required by this cmdlet.
+                throw new PlatformNotSupportedException();
+            }
+
+            // PowerShell Core requires at least Windows 7,
+            // so no version test is needed
+            _pdhHelper = new PdhHelper(false);
+#else
             _pdhHelper = new PdhHelper(System.Environment.OSVersion.Version.Major < 6);
+#endif
+            _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
         }
 
         //
@@ -199,7 +212,7 @@ namespace Microsoft.PowerShell.Commands
         {
             //
             // Resolve and validate the Path argument: present for all parametersets.
-            //            
+            //
             if (!ResolveFilePaths())
             {
                 return;
@@ -229,9 +242,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
 
-        // 
+        //
         // Handle Control-C
-        // 
+        //
         protected override void StopProcessing()
         {
             _stopping = true;
@@ -242,7 +255,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // ProcessRecord() override.
         // This is the main entry point for the cmdlet.
-        //       
+        //
         protected override void ProcessRecord()
         {
             AccumulatePipelineFileNames();
@@ -251,7 +264,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // ProcessSummary().
         // Does the work to process Summary parameter set.
-        //       
+        //
         private void ProcessSummary()
         {
             uint res = _pdhHelper.ConnectToDataSource(_resolvedPaths);
@@ -276,7 +289,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // ProcessListSet().
         // Does the work to process ListSet parameter set.
-        //       
+        //
         private void ProcessListSet()
         {
             uint res = _pdhHelper.ConnectToDataSource(_resolvedPaths);
@@ -373,7 +386,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // ProcessGetCounter()
         // Does the work to process GetCounterSet parameter set.
-        //      
+        //
         private void ProcessGetCounter()
         {
             // Validate StartTime-EndTime, if present
@@ -556,7 +569,7 @@ namespace Microsoft.PowerShell.Commands
         // Returns a string collection of resolved file paths.
         // Writes non-terminating errors for invalid paths
         // and returns an empty collection.
-        // 
+        //
         private bool ResolveFilePaths()
         {
             StringCollection retColl = new StringCollection();
@@ -607,7 +620,7 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    _resolvedPaths.Add(pi.ProviderPath.ToLower(CultureInfo.InvariantCulture));
+                    _resolvedPaths.Add(pi.ProviderPath.ToLowerInvariant());
                 }
             }
 
@@ -635,9 +648,9 @@ namespace Microsoft.PowerShell.Commands
 
         //
         // WriteSampleSetObject() helper.
-        // In addition to writing the PerformanceCounterSampleSet object, 
+        // In addition to writing the PerformanceCounterSampleSet object,
         // it writes a single error if one of the samples has an invalid (non-zero) status.
-        // The only exception is the first set, where we allow for the formatted value to be 0 - 
+        // The only exception is the first set, where we allow for the formatted value to be 0 -
         // this is expected for CSV and TSV files.
 
         private void WriteSampleSetObject(PerformanceCounterSampleSet set, bool firstSet)

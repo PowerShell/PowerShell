@@ -138,7 +138,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 exceptionThrown = e;
             }
 
@@ -170,7 +169,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 exceptionThrown = e;
             }
             finally
@@ -215,11 +213,9 @@ namespace System.Management.Automation
                 }
                 return result;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // We swallow all exceptions from command completion because we don't want the shell to crash
-                CommandProcessorBase.CheckForSevereException(e);
-
                 return string.Empty;
             }
         }

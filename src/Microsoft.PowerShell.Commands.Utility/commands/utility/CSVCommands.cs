@@ -976,9 +976,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             //If we cannot read some value, treat it as null.
-            catch (Exception ex)
+            catch (Exception)
             {
-                UtilityCommon.CheckForSevereException(_cmdlet, ex);
             }
             return value;
         }

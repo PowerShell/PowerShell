@@ -2824,6 +2824,7 @@ $args[0] | foreach {{
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         [Parameter(Position = 0, Mandatory = false)]
+        [ValidateNotNullOrEmpty()]
         public string[] Name { get; set; }
 
         /// <summary>

@@ -43,11 +43,11 @@
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
-                "NETStandard.Library": "1.6.1-preview1-24530-04",
-                "System.Security.Principal": "4.3.0-preview1-24530-04",
-                "System.Security.Principal.Windows": "4.3.0-preview1-24530-04",
-                "System.Diagnostics.TraceSource": "4.3.0-preview1-24530-04",
-                "System.Security.SecureString": "4.3.0-preview1-24530-04"
+                "NETStandard.Library": "1.6.1",
+                "System.Security.Principal": "4.3.0",
+                "System.Security.Principal.Windows": "4.3.0",
+                "System.Diagnostics.TraceSource": "4.3.0",
+                "System.Security.SecureString": "4.3.0"
             }
         }
     }

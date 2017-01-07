@@ -402,7 +402,6 @@ namespace Microsoft.PowerShell.Cim
                                                                      }
                                                                      catch (Exception e)
                                                                      {
-                                                                         CommandProcessor.CheckForSevereException(e);
                                                                          throw CimValueConverter.GetInvalidCastException(
                                                                              e,
                                                                              "InvalidCimToDotNetCast",

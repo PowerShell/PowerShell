@@ -285,9 +285,8 @@ namespace System.Management.Automation
 
                 property = new PSProperty(collection.PropertyName, this, obj, valueToTake);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 property = null;
             }
 #pragma warning restore 56500
@@ -365,9 +364,8 @@ namespace System.Management.Automation
             {
                 countOfProperties = entry.Properties.PropertyNames.Count;
             }
-            catch (Exception e) // swallow all non-severe exceptions
+            catch (Exception) // swallow all non-severe exceptions
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 #pragma warning restore 56500
 

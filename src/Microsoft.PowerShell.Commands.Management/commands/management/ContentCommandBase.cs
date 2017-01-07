@@ -399,7 +399,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception e) // Catch-all OK. 3rd party callout
                 {
-                    CommandsCommon.CheckForSevereException(this, e);
                     // Catch all the exceptions caused by closing the writer
                     // and write out an error.
 
@@ -438,7 +437,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception e) // Catch-all OK. 3rd party callout
                 {
-                    CommandsCommon.CheckForSevereException(this, e);
                     // Catch all the exceptions caused by closing the writer
                     // and write out an error.
 

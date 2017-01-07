@@ -141,51 +141,6 @@ function Get-FileHash
     }
 }
 
-<# This cmdlet is used to create a new temporary file in $env:temp #>
-function New-TemporaryFile
-{
-    [CmdletBinding(
-        HelpURI='https://go.microsoft.com/fwlink/?LinkId=526726',
-        SupportsShouldProcess=$true)]
-    [OutputType([System.IO.FileInfo])]
-    Param()
-
-    Begin
-    {
-        try
-        {
-            if($PSCmdlet.ShouldProcess($env:TEMP))
-            {
-                $tempFilePath = [System.IO.Path]::GetTempFileName()            
-            }
-        }
-        catch
-        {
-            $errorRecord = [System.Management.Automation.ErrorRecord]::new($_.Exception,"NewTemporaryFileWriteError", "WriteError", $env:TEMP)
-            Write-Error -ErrorRecord $errorRecord
-            return
-        } 
-
-        if($tempFilePath)
-        {
-            Get-Item $tempFilePath
-        }
-    }    
-}
-
-<# This cmdlet is used to generate a new guid #>
-function New-Guid
-{
-    [CmdletBinding(HelpURI='https://go.microsoft.com/fwlink/?LinkId=526920')]
-	[OutputType([System.Guid])]
-    Param()
-    
-    Begin
-    {
-        [Guid]::NewGuid()
-    }    
-}
-
 <############################################################################################ 
 # Format-Hex cmdlet helps in displaying the Hexadecimal equivalent of the input data.
 ############################################################################################>

@@ -63,17 +63,33 @@ function RunTestCase
 }
 
 Describe "Validate that get-help <cmdletName> works" -Tags @('CI', 'RequireAdminOnWindows') {
-
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference
+    }
     RunTestCase -tag "CI"
 }
 
 Describe "Validate Get-Help for all cmdlets in 'Microsoft.PowerShell.Core'" -Tags @('Feature', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference
+    }
 
     RunTestCase -tag "Feature"
 }
 
 Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
+        $SavedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+
         $namespaces = @{
             command = 'http://schemas.microsoft.com/maml/dev/command/2004/10'
             dev     = 'http://schemas.microsoft.com/maml/dev/2004/10'
@@ -90,6 +106,7 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
                 helpContext = "[@id='FileSystem' or @ID='FileSystem']"
                 verb        = 'Add'
                 noun        = 'Content'
+                pending     =  !$IsWindows
             }
         )
 
@@ -102,6 +119,7 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
                     helpContext = "[@id='ClientCertificate' or @ID='ClientCertificate']"
                     verb        = 'New'
                     noun        = 'Item'
+                    pending     = $false
                 }
                 ,
                 @{
@@ -110,6 +128,7 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
                     helpContext = $null  # CertificateProvider uses only verb and noun in XPath query
                     verb        = 'New'
                     noun        = 'Item'
+                    pending     = $false
                 }
             )
             UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.WSMan.Management' -Tag 'CI'
@@ -119,20 +138,34 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
         UpdateHelpFromLocalContentPath -ModuleName 'Microsoft.PowerShell.Core' -Tag 'CI'
     }
 
-    It -Skip:(-not $IsWindows) "shows contextual help when Get-Help is invoked for provider-specific path (Get-Help -Name <verb>-<noun> -Path <path>)" -TestCases $testCases {
-        param($helpFile, $path, $helpContext, $verb, $noun)
+    AfterAll {
+        $ProgressPreference = $SavedProgressPreference
+    }
 
-        # Path should exist or else Get-Help will fallback to default help text
-        $path | Should Exist
+    foreach ($helptest in $testCases)
+    {
+        $helpFile = $helptest.helpFile
+        $path = $helptest.path
+        $helpContext = $helptest.helpContext
+        $verb = $helptest.verb
+        $noun = $helptest.noun
+        $pending = $helptest.pending
 
-        $xpath = "/msh:helpItems/msh:providerHelp/msh:CmdletHelpPaths/msh:CmdletHelpPath$helpContext/command:command/command:details[command:verb='$verb' and command:noun='$noun']"
-        $helpXmlNode = Select-Xml -Path $helpFile -XPath $xpath -Namespace $namespaces | Select-Object -ExpandProperty Node
 
-        # Synopsis comes from command:command/command:details/maml:description
-        $expected = Get-Help -Name "$verb-$noun" -Path $path | Select-Object -ExpandProperty Synopsis
+        It -Pending:$pending "Shows contextual help when Get-Help is invoked for provider-specific path (Get-Help -Name $verb-$noun -Path $path)" {
 
-        # System.Management.Automation.ProviderContext.GetProviderSpecificHelpInfo ignores extra whitespace, line breaks and
-        # comments when loading help XML, but Select-Xml can not; use BeLikeExactly operator to omit trailing line breaks:
-        $helpXmlNode.description.para -clike "$expected*" | Should Be $true
+            # Path should exist or else Get-Help will fallback to default help text
+            $path | Should Exist
+
+            $xpath = "/msh:helpItems/msh:providerHelp/msh:CmdletHelpPaths/msh:CmdletHelpPath$helpContext/command:command/command:details[command:verb='$verb' and command:noun='$noun']"
+            $helpXmlNode = Select-Xml -Path $helpFile -XPath $xpath -Namespace $namespaces | Select-Object -ExpandProperty Node
+
+            # Synopsis comes from command:command/command:details/maml:description
+            $expected = Get-Help -Name "$verb-$noun" -Path $path | Select-Object -ExpandProperty Synopsis
+
+            # System.Management.Automation.ProviderContext.GetProviderSpecificHelpInfo ignores extra whitespace, line breaks and
+            # comments when loading help XML, but Select-Xml can not; use BeLikeExactly operator to omit trailing line breaks:
+            $helpXmlNode.description.para -clike "$expected*" | Should Be $true
+        }
     }
 }

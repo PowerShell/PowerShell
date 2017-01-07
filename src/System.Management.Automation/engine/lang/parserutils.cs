@@ -1111,7 +1111,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     throw InterpreterError.NewInterpreterExceptionWithInnerException(list, typeof(RuntimeException),
                         errorPosition, "BadEnumeration", ParserStrings.BadEnumeration, e, e.Message);
                 }
@@ -1264,7 +1263,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw InterpreterError.NewInterpreterExceptionWithInnerException(enumerator, typeof(RuntimeException),
                     errorPosition, "BadEnumeration", ParserStrings.BadEnumeration, e, e.Message);
             }
@@ -1296,7 +1294,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw InterpreterError.NewInterpreterExceptionWithInnerException(enumerator, typeof(RuntimeException),
                     errorPosition, "BadEnumeration", ParserStrings.BadEnumeration, e, e.Message);
             }
@@ -1463,7 +1460,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 // Note - we are catching all methods thrown from a method call and wrap them
                 // unless they are already RuntimeException. This is ok.
 

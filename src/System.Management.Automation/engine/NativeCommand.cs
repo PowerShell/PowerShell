@@ -28,11 +28,8 @@ namespace System.Management.Automation
                 if (_myCommandProcessor != null)
                     _myCommandProcessor.StopProcessing();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-                // Ignore exceptions here...
-                ;
             }
         }
     }

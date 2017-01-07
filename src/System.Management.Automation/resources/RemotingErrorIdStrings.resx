@@ -1621,4 +1621,19 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   <data name="SSHClientEndNoErrorMessage" xml:space="preserve">
     <value>The SSH client session has ended with no error message.</value>
   </data>
+  <data name="MissingRequiredSSHParameter" xml:space="preserve">
+    <value>The provided SSHConnection hashtable is missing the required ComputerName or HostName parameter.</value>
+  </data>
+  <data name="InvalidSSHConnectionParameter" xml:space="preserve">
+    <value>The provided SSHConnection hashtable parameter name or element is null or empty.</value>
+  </data>
+  <data name="UnknownSSHConnectionParameter" xml:space="preserve">
+    <value>The provided SSHConnection hashtable parameter {0} is not supported.</value>
+  </data>
+  <data name="SSHConnectionDuplicateHostName" xml:space="preserve">
+    <value>The provided SSHConnection hashtable contains both a ComputerName and HostName parameter.  Only one can be specified.</value>
+  </data>
+  <data name="SSHConnectionDuplicateKeyPath" xml:space="preserve">
+    <value>The provided SSHConnection hashtable contains both a KeyFilePath and IdentityFilePath parameter.  Only one can be specified.</value>
+  </data>
 </root>

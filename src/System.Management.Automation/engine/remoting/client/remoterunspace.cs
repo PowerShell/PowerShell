@@ -371,9 +371,8 @@ namespace System.Management.Automation
                 {
                     eh(this, e);
                 }
-                catch (Exception exception) // ignore non-severe exceptions
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(exception);
                 }
             }
         }
@@ -1306,9 +1305,8 @@ namespace System.Management.Automation
                 {
                     _remoteDebugger.SetDebugMode(hostDebugMode);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
         }
@@ -1494,9 +1492,8 @@ namespace System.Management.Automation
                         {
                             stateChanged(this, new RunspaceStateEventArgs(queueItem.RunspaceStateInfo));
                         }
-                        catch (Exception exception) // ignore non-severe exceptions
+                        catch (Exception)
                         {
-                            CommandProcessorBase.CheckForSevereException(exception);
                         }
                     }
                 }
@@ -1949,8 +1946,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessor.CheckForSevereException(e);
-
                     executionError = true;
                     RemoteException re = e as RemoteException;
                     if ((re != null) && (re.ErrorRecord != null))
@@ -2063,9 +2058,8 @@ namespace System.Management.Automation
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessor.CheckForSevereException(e);
             }
 
             return rtnArgs;
@@ -2127,10 +2121,9 @@ namespace System.Management.Automation
                     _isDebuggerSteppingEnabled = enabled;
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Don't propagate exceptions.
-                CommandProcessorBase.CheckForSevereException(e);
             }
         }
 
@@ -2468,10 +2461,8 @@ namespace System.Management.Automation
                     SetDebuggerAction(DebuggerResumeAction.Continue);
                 }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(ex);
-
                 _handleDebuggerStop = false;
             }
             finally
@@ -2568,9 +2559,8 @@ namespace System.Management.Automation
                     {
                         _runspace.UpdateRunspaceAvailability(newAvailability, true);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                     }
                 }
             }

@@ -40,7 +40,7 @@
                 "define": [ "CORECLR" ]
             },
             "dependencies": {
-                "NETStandard.Library": "1.6.1-preview1-24530-04"
+                "NETStandard.Library": "1.6.1"
             }
         },
         "net451": {

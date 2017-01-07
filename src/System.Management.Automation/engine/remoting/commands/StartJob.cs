@@ -10,6 +10,7 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Collections;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -119,6 +120,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        #region Suppress PSRemotingBaseCmdlet parameters
+
         // suppress all the parameters from PSRemotingBaseCmdlet
         // which should not be part of Start-PSJob
 
@@ -151,6 +154,40 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return false; }
         }
+
+        /// <summary>
+        /// Suppress SSHTransport
+        /// </summary>
+        public override SwitchParameter SSHTransport
+        {
+            get { return false; }
+        }
+
+        /// <summary>
+        /// Suppress SSHConnection
+        /// </summary>
+        public override Hashtable[] SSHConnection
+        {
+            get { return null; }
+        }
+
+        /// <summary>
+        /// Suppress UserName
+        /// </summary>
+        public override string UserName
+        {
+            get { return null; }
+        }
+
+        /// <summary>
+        /// Suppress KeyFilePath
+        /// </summary>
+        public override string KeyFilePath
+        {
+            get { return null; }
+        }
+
+        #endregion
 
         /// <summary>
         /// Credential to use for this job

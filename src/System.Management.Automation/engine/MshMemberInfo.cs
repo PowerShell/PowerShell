@@ -895,7 +895,6 @@ namespace System.Management.Automation
                     {
                         throw;
                     }
-                    CommandProcessorBase.CheckForSevereException(e);
                     throw new GetValueInvocationException("CatchFromCodePropertyGet",
                         e,
                         ExtendedTypeSystem.ExceptionWhenGetting,
@@ -929,7 +928,6 @@ namespace System.Management.Automation
                     {
                         throw;
                     }
-                    CommandProcessorBase.CheckForSevereException(e);
                     throw new SetValueInvocationException("CatchFromCodePropertySet",
                         e,
                         ExtendedTypeSystem.ExceptionWhenSetting,

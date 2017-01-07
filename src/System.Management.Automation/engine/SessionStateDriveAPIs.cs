@@ -423,8 +423,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 throw
                     NewProviderInvocationException(
                         "NewDriveDynamicParametersProviderException",
@@ -669,9 +667,8 @@ namespace System.Management.Automation
                 {
                     throw;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     // Catch all exceptions and continue since the drive does not exist
                     // This action wasn't requested by the user and as such we don't
                     // want to expose the user to any error conditions other than
@@ -770,7 +767,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 // Since the user isn't expecting this behavior, we don't
                 // want to let errors find their way out. If there are any
                 // failures we just don't mount the drive.
@@ -842,7 +838,6 @@ namespace System.Management.Automation
                 if (exception != null)
                 {
                     // Call-out to user code, catch-all OK
-                    CommandProcessorBase.CheckForSevereException(exception);
                 }
             }
 #endif
@@ -886,9 +881,8 @@ namespace System.Management.Automation
             {
                 throw;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 // Assume any exception means the drive is no longer valid and needs
                 // to be removed.
 
@@ -924,9 +918,8 @@ namespace System.Management.Automation
                     // are doing this without an explicit request from the
                     // user. Since the provider can throw any exception
                     // we must catch all exceptions here.
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                     }
 
 
@@ -1379,7 +1372,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "RemoveDriveProviderException",
                     SessionStateStrings.RemoveDriveProviderException,

@@ -843,9 +843,8 @@ namespace System.Management.Automation
                         {
                             stateChanged(this, new PipelineStateEventArgs(queueItem.PipelineStateInfo));
                         }
-                        catch (Exception exception) // ignore non-severe exceptions
+                        catch (Exception)
                         {
-                            CommandProcessorBase.CheckForSevereException(exception);
                         }
                     }
                 }

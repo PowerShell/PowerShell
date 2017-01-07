@@ -173,8 +173,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // NTRAID#Windows OS Bugs-1009281-2004/02/11-JeffJon
                 this.ExecutionContext.ReportEngineStartupError(e);
             }
@@ -279,7 +277,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 ProviderInvocationException pie =
                     NewProviderInvocationException(
                         "NewDriveProviderException",
@@ -1182,7 +1179,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e) // Catch-all OK, 3rd party callout
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     ProviderInvocationException providerException =
                         NewProviderInvocationException(
                             "InitializeDefaultDrivesException",
@@ -1332,7 +1328,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-call OK, 3rd party callout
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw
                     NewProviderInvocationException(
                         "ProviderStartException",
@@ -1550,8 +1545,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // NTRAID#Windows OS Bugs-1009281-2004/02/11-JeffJon
                 this.ExecutionContext.ReportEngineStartupError(e);
             }
@@ -1747,7 +1740,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 errors = true;
                 context.WriteError(
                     new ErrorRecord(

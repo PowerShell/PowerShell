@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Variable")]
         [Parameter(ParameterSetName = "Command")]
         [Parameter(ParameterSetName = "Type")]
-        [ValidateNotNull]
+        [ValidateNotNullOrEmpty()]
         public string[] Script
         {
             get

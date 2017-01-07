@@ -10,7 +10,7 @@ RUN git clone --recursive https://github.com/$env:fork/PowerShell.git -b $env:br
     Set-Location PowerShell; \
     Import-Module ./build.psm1; \
     Start-PSBootstrap -Package -NoSudo; \
-    Start-PSBuild -Crossgen; \
+    Start-PSBuild -Crossgen -PSModuleRestore; \
     Start-PSPackage;
 
 SHELL ["/bin/sh", "-c"]

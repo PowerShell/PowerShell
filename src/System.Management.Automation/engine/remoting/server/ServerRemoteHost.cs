@@ -498,9 +498,8 @@ namespace System.Management.Automation.Remoting
                     args: args.SourceArgs,
                     extraData: null);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
         }
 

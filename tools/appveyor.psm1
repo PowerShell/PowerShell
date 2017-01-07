@@ -374,8 +374,7 @@ function Compress-CoverageArtifacts
     [System.IO.Compression.ZipFile]::CreateFromDirectory($resolvedPath, $zipOpenCoverPath) 
     $null = $artifacts.Add($zipOpenCoverPath)
 
-    $name = Get-PackageName
-    $zipCodeCoveragePath = Join-Path $pwd "$name.CodeCoverage.zip"
+    $zipCodeCoveragePath = Join-Path $pwd "CodeCoverage.zip"
     Write-Verbose "Zipping ${CodeCoverageOutput} into $zipCodeCoveragePath" -verbose
     [System.IO.Compression.ZipFile]::CreateFromDirectory($CodeCoverageOutput, $zipCodeCoveragePath)
     $null = $artifacts.Add($zipCodeCoveragePath)
@@ -441,7 +440,11 @@ function Invoke-AppveyorFinish
         }
 
         $nugetArtifacts = Get-ChildItem .\nuget-artifacts -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }
-        $artifacts.AddRange($nugetArtifacts)
+
+        if($nugetArtifacts)
+        {
+            $artifacts.AddRange($nugetArtifacts)
+        }
 
         $pushedAllArtifacts = $true
         $artifacts | ForEach-Object { 

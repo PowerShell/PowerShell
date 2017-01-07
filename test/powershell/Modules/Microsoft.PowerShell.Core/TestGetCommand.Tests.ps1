@@ -243,7 +243,8 @@
     It "Throw an Exception when set testtorun to 'returnduplicateparameter'" { 
         try
         {       
-            Get-Command testgetcommand-dynamicparametersdcr -testtorun returnduplicateparameter -ErrorAction SilentlyContinue
+            Get-Command testgetcommand-dynamicparametersdcr -testtorun returnduplicateparameter -ErrorAction Stop
+            throw "No Exception!"
         }
         catch
         {

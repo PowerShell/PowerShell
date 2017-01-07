@@ -109,9 +109,8 @@ namespace Microsoft.PowerShell
                 {
                     _parent.WriteToTranscript(value);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    ConsoleHost.CheckForSevereException(e);
                     _parent.IsTranscribing = false;
                 }
             }
@@ -156,9 +155,8 @@ namespace Microsoft.PowerShell
                     // Reads always terminate with the enter key, so add that.
                     _parent.WriteToTranscript(value + Crlf);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    ConsoleHost.CheckForSevereException(e);
                     _parent.IsTranscribing = false;
                 }
             }

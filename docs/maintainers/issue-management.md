@@ -50,7 +50,7 @@ These labels describe what feature area of PowerShell that an issue affects:
 * `Area-PSReadline`: PSReadLine related issues
 * `Area-Remoting`: PSRP issues with any transport layer
 * `Area-SideBySide`: side by side support
-* `Area-Test`:issues in a test or in test infrastructure
+* `Area-Test`: issues in a test or in test infrastructure
 
 ### Operating Systems
 
@@ -68,9 +68,11 @@ The following labels are used on PRs:
 * `Review - Waiting on Author` : The PR was reviewed by the team and requires changes or comments from the author before being accepted.
 * `Review - Abandoned` : The PR was not updated for significant number of days (the exact number could vary over time).
   Maintainers should look into such PRs and re-evaluate them.
+* `Review - Committee` : The PR/Issue needs a review from [powershell-committee](../community/governance.md#powershell-committee)
 
 ### Miscellaneous labels
 
+* `Committee-Reviewed` : The PR/Issue has been reviewed by the [powershell-committee](../community/governance.md#powershell-committee)
 * `Up-for-Grabs`: We've acknowledged the issue but have no immediate plans to address it.
   If you're looking for a way to contribute, these issues can be a good place to start.
 * `Blocked`: an issue cannot be addressed due to external factors,

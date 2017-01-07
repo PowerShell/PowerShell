@@ -581,6 +581,28 @@ namespace System.Management.Automation
         public const string Use = "Use";
     }
 
+    /// <summary>
+    /// Class for Verbs and Groups
+    /// </summary>
+    public class VerbInfo
+    {
+        /// <summary>
+        /// Verb Name
+        /// </summary>
+        public string Verb
+        {
+            get;set;
+        }
+
+        /// <summary>
+        /// Group Name
+        /// </summary>
+        public string Group
+        {
+            get;set;
+        }
+    }
+
     internal static class Verbs
     {
         static Verbs()

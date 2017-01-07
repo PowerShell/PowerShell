@@ -20,6 +20,14 @@
         @{ Name = 'Hashtable(Stored in a variable) conversion to  PSCustomObject succeeds (Insertion Order is not retained)';
            Cmd = "`$ht = @{one=1;two=2};[pscustomobject]`$ht";
            ExpectedType = 'System.Management.automation.psobject'
+        },
+        @{ Name = 'New-Object cmdlet should accept `$null as Property argument for pscustomobject';
+           Cmd = "new-object pscustomobject -property `$null";
+           ExpectedType = 'System.Management.automation.psobject'
+        },
+	   @{ Name = 'New-Object cmdlet should accept empty hashtable as property argument for pscustomobject';
+           Cmd = "`$ht = @{};new-object pscustomobject -property `$ht";
+           ExpectedType = 'System.Management.automation.psobject'
         }
     )
 
@@ -128,6 +136,22 @@
 	    $obj = [PSCustomObject] @{pstypename = 'System.Object'}
 	    $obj.PSTypeNames.Count | Should Be 3
 	    $obj.PSTypeNames[0] | Should Be 'System.Object'
+    }
+    It "new-object should fail to create object for System.Management.Automation.PSCustomObject" {
+
+        $errorObj = $null
+        $obj = $null
+		$ht = @{one=1;two=2}
+        try
+        {
+            $obj = New-Object System.Management.Automation.PSCustomObject -property $ht
+        }
+        catch
+        {
+            $errorObj = $_
+        }
+        $obj | should be $null
+        $errorObj.FullyQualifiedErrorId | should be "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
     }
 }
 

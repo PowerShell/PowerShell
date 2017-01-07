@@ -253,7 +253,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
 
                 string errorMessage = String.Format(

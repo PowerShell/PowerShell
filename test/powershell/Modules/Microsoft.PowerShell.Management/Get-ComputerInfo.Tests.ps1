@@ -340,7 +340,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         $returnValue = $null
         try
         {
-            $returnValue = Get-CimClassPropVal Win32_DeviceGuard $propertyName -namespace 'root\Microsoft\Windows\DeviceGuard'
+            $returnValue = Get-CimClassPropVal Win32_DeviceGuard $propertyName -namespace 'root\Microsoft\Windows\DeviceGuard' -ErrorAction Stop
         }
         catch
         {
@@ -1187,7 +1187,7 @@ try {
 
     Describe "Tests for Get-ComputerInfo: Ensure Type returned" -tags "CI", "RequireAdminOnWindows" {
 
-        It "Verfiy type returned by Get-ComputerInfo" {
+        It "Verify type returned by Get-ComputerInfo" {
             $computerInfo = Get-ComputerInfo
             $computerInfo.GetType().Name | Should Be "ComputerInfo"
         } 
@@ -1318,13 +1318,7 @@ try {
         } 
 
 
-        It "(special case) Test for property = OsFreeSpaceInPagingFiles" {
-            if ([System.Management.Automation.Platform]::IsIoT)
-            {
-                Write-Verbose -Verbose -Message "Win32_ComputerSystem.FreeSpaceInPagingFiles is not supported on IoT."
-                return
-            }
-
+        It "(special case) Test for property = OsFreeSpaceInPagingFiles" -Skip:([System.Management.Automation.Platform]::IsIoT) {
             ($observed.OsFreeSpaceInPagingFiles -gt 0) | Should Be $true
         } 
 

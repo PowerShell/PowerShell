@@ -61,45 +61,6 @@ namespace Microsoft.PowerShell
         internal const uint ExitCodeInitFailure = 0xFFFF0000;
         internal const uint ExitCodeBadCommandLineParameter = 0xFFFD0000;
 
-#if CORECLR
-        // AccessViolationException/StackOverflowException Not In CoreCLR.
-        // The CoreCLR team told us to not check for these exceptions because they
-        // usually won't be caught.
-        internal static void CheckForSevereException(Exception e) { }
-#else
-        // Keep in sync:
-        // S.M.A.CommandProcessorBase.CheckForSevereException
-        // S.M.A.Internal.ConsoleHost.CheckForSevereException
-        // S.M.A.Commands.CommandsCommon.CheckForSevereException
-        // S.M.A.Commands.UtilityCommon.CheckForSevereException
-        /// <summary>
-        /// Checks whether the exception is a severe exception which should
-        /// cause immediate process failure.
-        /// </summary>
-        /// <param name="e"></param>
-        /// <remarks>
-        /// CB says 02/23/2005: I personally would err on the side
-        /// of treating OOM like an application exception, rather than
-        /// a critical system failure.I think this will be easier to justify
-        /// in Orcas, if we tease apart the two cases of OOM better.
-        /// But even in Whidbey, how likely is it that we couldn't JIT
-        /// some backout code?  At that point, the process or possibly
-        /// the machine is likely to stop executing soon no matter
-        /// what you do in this routine.  So I would just consider
-        /// AccessViolationException.  (I understand why you have SO here,
-        /// at least temporarily).
-        /// 
-        /// JN/GX 04/15/2005: There is currently no way to log host events,
-        /// so these FailFasts cannot be logged.
-        /// </remarks>
-        internal static void CheckForSevereException(Exception e)
-        {
-            if (e is AccessViolationException || e is StackOverflowException)
-            {
-                WindowsErrorReporting.FailFast(e);
-            }
-        }
-#endif
         // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
         // Removed HandleUnexpectedExceptions infrastructure
         /// <summary>
@@ -278,6 +239,13 @@ namespace Microsoft.PowerShell
                         // Unable to create console host.
                         throw hostException;
                     }
+
+#if !CORECLR
+                    // The default font face used for Powershell Console is Lucida Console. 
+                    // However certain CJK locales dont support Lucida Console font. Hence for such 
+                    // locales the console font is updated to Raster dynamically.
+                    ConsoleControl.UpdateLocaleSpecificFont();
+#endif
 
                     s_theConsoleHost.BindBreakHandler();
                     PSHost.IsStdOutputRedirected = Console.IsOutputRedirected;
@@ -460,9 +428,8 @@ namespace Microsoft.PowerShell
                         {
                             consoleHost.Runspace.Debugger.StopProcessCommand();
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
                         }
                     }
                 }
@@ -511,9 +478,8 @@ namespace Microsoft.PowerShell
                     cmd.StopAsync();
                     return true;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
 
@@ -1601,9 +1567,8 @@ namespace Microsoft.PowerShell
                         {
                             OpenConsoleRunspace(consoleRunspace, staMode);
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
                             consoleRunspace = null;
                             psReadlineFailed = true;
                         }
@@ -1959,7 +1924,6 @@ namespace Microsoft.PowerShell
                 }
                 catch (Exception e) // Catch-all OK, 3rd party callout
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     ReportException(e, exec);
 
                     s_runspaceInitTracer.WriteLine("Could not load profile.");
@@ -2695,7 +2659,6 @@ namespace Microsoft.PowerShell
                 }
                 catch (Exception ex)
                 {
-                    ConsoleHost.CheckForSevereException(ex);
                     e = ex;
                     results = new DebuggerCommandResults(null, false);
                 }
@@ -2757,8 +2720,6 @@ namespace Microsoft.PowerShell
                 catch (Exception e)
                 {
                     // Catch-all OK. This is a third-party call-out.
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     ui.WriteErrorLine(e.Message);
 
                     LocalRunspace localRunspace = (LocalRunspace)_parent.Runspace;
@@ -2809,7 +2770,6 @@ namespace Microsoft.PowerShell
                 }
                 catch (Exception ex)
                 {
-                    ConsoleHost.CheckForSevereException(ex);
                     _parent.ReportException(ex, _exec);
                 }
 

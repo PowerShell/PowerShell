@@ -103,7 +103,6 @@ namespace System.Management.Automation
             catch (GetValueException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new GetValueInvocationException("CatchFromBaseAdapterGetValue",
                     e,
                     ExtendedTypeSystem.ExceptionWhenGetting,
@@ -152,7 +151,6 @@ namespace System.Management.Automation
             catch (SetValueException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new SetValueInvocationException("CatchFromBaseAdapterSetValue",
                     e,
                     ExtendedTypeSystem.ExceptionWhenSetting,

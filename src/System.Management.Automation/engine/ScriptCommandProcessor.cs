@@ -560,8 +560,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // This cmdlet threw an exception, so
                 // wrap it and bubble it up.
                 throw ManageInvocationException(e);
