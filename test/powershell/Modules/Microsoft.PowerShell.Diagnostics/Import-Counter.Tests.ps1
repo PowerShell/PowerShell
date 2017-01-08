@@ -7,17 +7,9 @@ $cmdletName = "Import-Counter"
 
 . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
 
-if ( $IsWindows -and ! [System.Management.Automation.Platform]::IsIoT )
-{
-    $ShouldRun = $true
-}
-else
-{
-    # don't run on IoT, Linux, or Mac
-    $ShouldRun = $false
-}
+$SkipTests = SkipCounterTests
 
-if ( $ShouldRun )
+if ( ! $SkipTests )
 {
     $counterPaths = @(
         (TranslateCounterPath "\Memory\Available Bytes")
@@ -53,12 +45,12 @@ function SetScriptVars([string]$rootPath, [int]$maxSamples, [bool]$export)
     $script:tsvPath = Join-Path $rootPath "$rootFilename.tsv"
 
     $script:counterSamples = $null
-    if ($maxSamples -and $ShouldRun)
+    if ($maxSamples -and ! $SkipTests )
     {
         $script:counterSamples = Get-Counter -Counter $counterPaths -MaxSamples $maxSamples
     }
 
-    if ($export -and $ShouldRun)
+    if ($export -and ! $SkipTests )
     {
         Export-Counter -Force -FileFormat "blg" -Path $script:blgPath -InputObject $script:counterSamples
         Export-Counter -Force -FileFormat "csv" -Path $script:csvPath -InputObject $script:counterSamples
