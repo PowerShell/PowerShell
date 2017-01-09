@@ -1614,17 +1614,19 @@ esac
         "--name", $Name,
         "--version", $Version,
         "--iteration", $Iteration,
-        "--rpm-dist", $rpm_dist,
         "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
         "--vendor", "Microsoft Corporation",
         "--url", "https://microsoft.com/powershell",
         "--license", "MIT License",
         "--description", $Description,
         "--category", "shells",
-        "--rpm-os", "linux",
         "-t", $Type,
         "-s", "dir"
     )
+    if ($IsRedHatFamily) {
+        $Arguments += @("--rpm-dist", $rpm_dist)
+        $Arguments += @("--rpm-os", "linux")
+    }
     foreach ($Dependency in $Dependencies) {
         $Arguments += @("--depends", $Dependency)
     }
