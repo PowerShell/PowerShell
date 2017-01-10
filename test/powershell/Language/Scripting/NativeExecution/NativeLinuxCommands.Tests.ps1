@@ -1,28 +1,37 @@
+if ( $IsWindows ) {
+    $PesterSkipOrPending = @{ Skip = $true }
+}
+elseif ( $IsOSX ) {
+    $PesterSkipOrPending = @{ Pending = $true }
+}
+else {
+    $PesterSkipOrPending = @{}
+}
 Describe "NativeLinuxCommands" -tags "CI" {
     It "Should return a type of System.Object for hostname cmdlet" {
         (hostname).GetType().BaseType | Should Be 'System.Object'
         (hostname).GetType().Name | Should Be String
     }
 
-    It "Should find Application grep" -Skip:$IsWindows {
+    It "Should find Application grep" @PesterSkipOrPending {
         (get-command grep).CommandType | Should Be Application
     }
 
-    It "Should pipe to grep and get result" -Skip:$IsWindows {
+    It "Should pipe to grep and get result" @PesterSkipOrPending {
         "hello world" | grep hello | Should Be "hello world"
     }
 
-    It "Should find Application touch" -Skip:$IsWindows {
+    It "Should find Application touch" @PesterSkipOrPending {
         (get-command touch).CommandType | Should Be Application
     }
 
-    It "Should not redirect standard input if native command is the first command in pipeline (1)" -Skip:$IsWindows {
+    It "Should not redirect standard input if native command is the first command in pipeline (1)" @PesterSkipOrPending {
         stty | ForEach-Object -Begin { $out = @() } -Process { $out += $_ }
         $out.Length -gt 0 | Should Be $true
         $out[0] -like "speed * baud; line =*" | Should Be $true
     }
 
-    It "Should not redirect standard input if native command is the first command in pipeline (2)" -Skip:$IsWindows {
+    It "Should not redirect standard input if native command is the first command in pipeline (2)" @PesterSkipOrPending {
         $out = stty
         $out.Length -gt 0 | Should Be $true
         $out[0] -like "speed * baud; line =*" | Should Be $true

@@ -1,4 +1,7 @@
-﻿$RepositoryName = 'INTGallery'
+﻿# no progress output during these tests
+$ProgressPreference = "SilentlyContinue"
+
+$RepositoryName = 'INTGallery'
 $SourceLocation = 'https://dtlgalleryint.cloudapp.net'
 $RegisteredINTRepo = $false
 $ContosoServer = 'ContosoServer'

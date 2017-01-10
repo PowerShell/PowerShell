@@ -400,6 +400,7 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
 
     if($PSModuleRestore)
     {
+        $ProgressPreference = "SilentlyContinue"
         # Downloading the PowerShellGet and PackageManagement modules.
         # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp1.1\win10-x64\publish\powershell.exe",
         # so we need to get its parent directory
@@ -835,7 +836,14 @@ function Test-PSPesterResults
     if ([int]$x.'test-results'.failures -gt 0)
     {
         logerror "TEST FAILURES"
-        foreach ( $testfail in $x.SelectNodes('.//test-case[@result = "Failure"]'))
+        # switch between methods, SelectNode is not available on dotnet core
+        if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] ) {
+            $failures = [System.Xml.XmlDocumentXPathExtensions]::SelectNodes($x."test-results",'.//test-case[@result = "Failure"]')
+        }
+        else {
+            $failures = $x.SelectNodes('.//test-case[@result = "Failure"]')
+        }
+        foreach ( $testfail in $failures )
         {
             Show-PSPesterError $testfail
         }
@@ -2813,6 +2821,8 @@ function Restore-PSModule
 
     log ("Name='{0}', Destination='{1}', Repository='{2}'" -f ($Name -join ','), $Destination, $RepositoryName)
 
+    # do not output progress
+    $ProgressPreference = "SilentlyContinue"
     $Name | ForEach-Object {
 
         $command = @{

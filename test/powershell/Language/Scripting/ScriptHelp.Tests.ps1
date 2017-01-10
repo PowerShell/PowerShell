@@ -1,4 +1,6 @@
-﻿ Describe 'get-help HelpFunc1' -Tags "Feature" { 
+$ProgressPreference = "SilentlyContinue"
+
+Describe 'get-help HelpFunc1' -Tags "Feature" { 
     BeforeAll {
     function TestHelpError {
         [CmdletBinding()]
@@ -22,7 +24,7 @@
         It '$x.relatedLinks.navigationLink[0].uri' {  $x.relatedLinks.navigationLink[0].uri | Should Be "http://blogs.msdn.com/powershell" }
         It '$x.relatedLinks.navigationLink[1].linkText' { $x.relatedLinks.navigationLink[1].linkText | Should Be "other commands" }
         It '$x.examples.example.code' { $x.examples.example.code | Should Be "If you need an example, you're hopeless." }
-        It '$x.inputTypes.inputType.type.name‘ { $x.inputTypes.inputType.type.name | Should Be "Anything you like." }
+        It '$x.inputTypes.inputType.type.name' { $x.inputTypes.inputType.type.name | Should Be "Anything you like." }
         It '$x.returnValues.returnValue.type.name' { $x.returnValues.returnValue.type.name | Should Be  "Nothing." }
         It '$x.Component' { $x.Component | Should Be "Something" }
         It '$x.Role' { $x.Role | Should Be "CrazyUser" }

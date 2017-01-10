@@ -7,18 +7,28 @@ $cmdletName = "Import-Counter"
 
 . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
 
-$counterPaths = @(
-    (TranslateCounterPath "\Memory\Available Bytes")
-    (TranslateCounterPath "\processor(*)\% Processor time")
-    (TranslateCounterPath "\Processor(_Total)\% Processor Time")
-    (TranslateCounterPath "\PhysicalDisk(_Total)\Current Disk Queue Length")
-    (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Bytes/sec")
-    (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec")
-)
-$setNames = @{
-    Memory = (TranslateCounterName "memory")
-    PhysicalDisk = (TranslateCounterName "physicaldisk")
-    Processor = (TranslateCounterName "processor")
+$SkipTests = SkipCounterTests
+
+if ( ! $SkipTests )
+{
+    $counterPaths = @(
+        (TranslateCounterPath "\Memory\Available Bytes")
+        (TranslateCounterPath "\processor(*)\% Processor time")
+        (TranslateCounterPath "\Processor(_Total)\% Processor Time")
+        (TranslateCounterPath "\PhysicalDisk(_Total)\Current Disk Queue Length")
+        (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Bytes/sec")
+        (TranslateCounterPath "\PhysicalDisk(_Total)\Disk Read Bytes/sec")
+        )
+    $setNames = @{
+        Memory = (TranslateCounterName "memory")
+        PhysicalDisk = (TranslateCounterName "physicaldisk")
+        Processor = (TranslateCounterName "processor")
+        }
+}
+else 
+{
+    $counterPaths = @()
+    $setNames = @{}
 }
 
 $badSamplesBlgPath = Join-Path $PSScriptRoot "assets" "BadCounterSamples.blg"
@@ -35,12 +45,12 @@ function SetScriptVars([string]$rootPath, [int]$maxSamples, [bool]$export)
     $script:tsvPath = Join-Path $rootPath "$rootFilename.tsv"
 
     $script:counterSamples = $null
-    if ($maxSamples)
+    if ($maxSamples -and ! $SkipTests )
     {
         $script:counterSamples = Get-Counter -Counter $counterPaths -MaxSamples $maxSamples
     }
 
-    if ($export)
+    if ($export -and ! $SkipTests )
     {
         Export-Counter -Force -FileFormat "blg" -Path $script:blgPath -InputObject $script:counterSamples
         Export-Counter -Force -FileFormat "csv" -Path $script:csvPath -InputObject $script:counterSamples
@@ -110,7 +120,6 @@ function RunTest($testCase)
         }
 
         $cmd = ConstructCommand $testCase
-        Write-Host "Command to run: $cmd"
         $cmd = $cmd + " -ErrorAction SilentlyContinue -ErrorVariable errVar"
 
         $errVar = $null

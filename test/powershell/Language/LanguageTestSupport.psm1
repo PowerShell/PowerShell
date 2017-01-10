@@ -24,17 +24,55 @@ function Get-RuntimeError
     [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline=$True,Mandatory=$True)]
-        [string]$src
+        [string]$src,
+        [Parameter()]
+        [int]$Timeout = 0
     )
-
+ 
     $errors = $null
     try 
     {
-        [scriptblock]::Create($src).Invoke() > $null
+        # some tests cannot be run in a isolated runspace
+        # easily because they require more than just a single
+        # execution
+        if ( $Timeout -eq 0 )
+        {
+            [scriptblock]::Create($src).Invoke() > $null
+        }
+        else
+        {
+            $ps = [powershell]::Create()
+            $ps.AddScript($src) > $null
+            $ar = $ps.BeginInvoke()
+            # give it 250 milliseconds to complete
+            start-sleep -mill 250
+            if ( $ar.IsCompleted ) {
+                $ps.EndInvoke($ar)
+            }
+            # wait another ${Timeout} seconds, then give up
+            else {
+                Start-Sleep -sec $Timeout
+                if ( $ar.IsCompleted ) {
+                    # this can throw, which will be picked up below
+                    $ps.EndInvoke($ar)
+                }
+                else {
+                    # if it didn't throw, then return a constructed error
+                    $ER = Write-Error "Operation Timed Out ('$src')" 2>&1
+                    return $ER
+                }
+            }
+        }
     }
     catch 
     {
         return $_.Exception.InnerException.ErrorRecord
+    }
+    finally
+    {
+        if ( $ps -ne $null ) {
+            $ps.dispose()
+        }
     }
 }
 
@@ -76,7 +114,7 @@ function ShouldBeParseError
         if ($SkipAndCheckRuntimeError) 
         {
             It "error should happen at parse time, not at runtime" -Skip {}
-            $errors = Get-RuntimeError -Src $src
+            $errors = Get-RuntimeError -Src $src -Timeout 10
             # for runtime errors we will only get the first one
             $expectedErrors = ,$expectedErrors[0]
             $expectedOffsets = ,$expectedOffsets[0]

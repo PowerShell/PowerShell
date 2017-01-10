@@ -1318,7 +1318,7 @@ try {
         } 
 
 
-        It "(special case) Test for property = OsFreeSpaceInPagingFiles" -Skip:([System.Management.Automation.Platform]::IsIoT) {
+        It "(special case) Test for property = OsFreeSpaceInPagingFiles" -Skip:([System.Management.Automation.Platform]::IsIoT -or !$IsWindows) {
             ($observed.OsFreeSpaceInPagingFiles -gt 0) | Should Be $true
         } 
 
