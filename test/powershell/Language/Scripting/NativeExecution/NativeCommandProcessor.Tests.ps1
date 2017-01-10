@@ -23,7 +23,7 @@ Describe 'native commands lifecycle' -tags 'Feature' {
 
         # waiting 30 seconds, because powershell startup time could be long on the slow machines,
         # such as CI
-        Wait-CompleteExecution { $rs.RunspaceAvailability -eq 'Available' } -timeout 30000 -interval 100 | Should Be $true
+        Wait-UntilTrue { $rs.RunspaceAvailability -eq 'Available' } -timeout 30000 -interval 100 | Should Be $true
 
         $ps.Stop()
         $rs.ResetRunspaceState()

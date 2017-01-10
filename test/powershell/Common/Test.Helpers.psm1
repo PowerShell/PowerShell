@@ -1,4 +1,4 @@
-function Wait-CompleteExecution
+function Wait-UntilTrue
 {
     [CmdletBinding()]
     param ( 
@@ -66,5 +66,5 @@ function ShouldBeErrorId
         }
 }
 
-export-modulemember -function Wait-CompleteExecution,Test-IsElevated, ShouldBeErrorId
+export-modulemember -function Wait-UntilTrue,Test-IsElevated, ShouldBeErrorId
 
