@@ -110,14 +110,38 @@ namespace System.Management.Automation
             // Does the provider know how to generate MAML.
             CmdletProvider cmdletProvider = providerInfo.CreateInstance();
             ICmdletProviderSupportsHelp provider = cmdletProvider as ICmdletProviderSupportsHelp;
+
+            // Under JEA sessions the resolvedProviderPath will be null, we should allow get-help to continue.
             if (provider == null)
             {
                 return null;
             }
 
+            bool isJEASession = false;
+            if (this._executionContext.InitialSessionState != null && this._executionContext.InitialSessionState.Providers != null && providerInfo != null)
+            {
+                foreach (
+                    Runspaces.SessionStateProviderEntry sessionStateProvider in
+                        this._executionContext.InitialSessionState.Providers[providerInfo.Name])
+                {
+                    if (sessionStateProvider.Visibility == SessionStateEntryVisibility.Private)
+                    {
+                        isJEASession = true;
+                        break;
+                    }
+                }
+            }
+
             if (resolvedProviderPath == null)
             {
-                throw new ItemNotFoundException(_requestedPath, "PathNotFound", SessionStateStrings.PathNotFound);
+                if (isJEASession)
+                {
+                    return null;
+                }
+                else
+                {
+                    throw new ItemNotFoundException(_requestedPath, "PathNotFound", SessionStateStrings.PathNotFound);
+                }
             }
 
             // ok we have path and valid provider that supplys content..initialize the provider
