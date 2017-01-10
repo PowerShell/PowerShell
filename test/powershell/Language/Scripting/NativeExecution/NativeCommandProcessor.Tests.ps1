@@ -12,18 +12,18 @@ Describe 'native commands lifecycle' -tags 'Feature' {
     It "native | ps | native doesn't block" {
         $iss = [initialsessionstate]::CreateDefault2();
         $rs = [runspacefactory]::CreateRunspace($iss)
-        $rs.Name = "TestRunspaceDebuggerReset"
         $rs.Open()
 
         $ps = [powershell]::Create()
         $ps.Runspace = $rs
 
+        $ps.AddScript("& $powershell -noprofile -command '100;
+            Start-Sleep -Seconds 100' |
+            %{ if (`$_ -eq 100) { 'foo'; exit; }}").BeginInvoke()
+
         # waiting 30 seconds, because powershell startup time could be long on the slow machines,
         # such as CI
-        Wait-CompleteExecution {
-            $ps.AddScript("& $powershell -noprofile -command '100; Start-Sleep -Seconds 100' |
-                %{ if (`$_ -eq 100) { 'foo'; exit; }}").Invoke()
-        } -timeout 30000 -interval 100 | Should Be $true
+        Wait-CompleteExecution { $rs.RunspaceAvailability -eq 'Available' } -timeout 30000 -interval 100 | Should Be $true
 
         $ps.Stop()
         $rs.ResetRunspaceState()
