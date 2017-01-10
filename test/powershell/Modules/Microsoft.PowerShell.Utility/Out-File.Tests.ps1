@@ -127,10 +127,9 @@ Describe "Out-File" -Tags "CI" {
 	# reset to not read only so it can be deleted
 	Set-ItemProperty -Path $testfile -Name IsReadOnly -Value $false
     }
-    It "Should be able to use the 'Path' alias for the 'FilePath' parameter" {
-    {Out-File -Path $testfile -InputObject $expectedContent | Should Not Throw}
     
-
+	It "Should be able to use the 'Path' alias for the 'FilePath' parameter" {
+    { Out-File -Path $testfile } | Should Not Throw
     }
 
 }
