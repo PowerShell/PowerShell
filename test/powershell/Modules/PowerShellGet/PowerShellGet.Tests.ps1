@@ -91,6 +91,10 @@ function Remove-InstalledModules
 }
 
 Describe "PowerShellGet - Module tests" -tags "Feature" {
+    BeforeAll {
+        $savedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
 
     BeforeEach {
         Remove-InstalledModules
@@ -117,10 +121,15 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
 
     AfterAll {
         Remove-InstalledModules
+        $ProgressPreference = $savedProgressPreference
     }
 }
 
 Describe "PowerShellGet - Module tests (Admin)" -tags @('Feature', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $savedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
 
     BeforeEach {
         Remove-InstalledModules
@@ -141,6 +150,7 @@ Describe "PowerShellGet - Module tests (Admin)" -tags @('Feature', 'RequireAdmin
 
     AfterAll {
         Remove-InstalledModules
+        $ProgressPreference = $savedProgressPreference
     }
 }
 
@@ -150,6 +160,10 @@ function Remove-InstalledScripts
 }
 
 Describe "PowerShellGet - Script tests" -tags "Feature" {
+    BeforeAll {
+        $savedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
 
     BeforeEach {
         Remove-InstalledScripts
@@ -172,10 +186,15 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
 
     AfterAll {
         Remove-InstalledScripts
+        $ProgressPreference = $savedProgressPreference
     }
 }
 
 Describe "PowerShellGet - Script tests (Admin)" -tags @('Feature', 'RequireAdminOnWindows') {
+    BeforeAll {
+        $savedProgressPreference = $ProgressPreference
+        $ProgressPreference = "SilentlyContinue"
+    }
 
     BeforeEach {
         Remove-InstalledScripts
@@ -192,6 +211,7 @@ Describe "PowerShellGet - Script tests (Admin)" -tags @('Feature', 'RequireAdmin
 
     AfterAll {
         Remove-InstalledScripts
+        $ProgressPreference = $savedProgressPreference
     }
 }
 

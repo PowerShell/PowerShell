@@ -86,7 +86,7 @@ Describe 'Classes inheritance syntax errors' -Tags "CI" {
     ShouldBeParseError "class A : {}" TypeNameExpected 9
     ShouldBeParseError "class A {}; class B : A, {}" TypeNameExpected 24
     ShouldBeParseError "class A{} ; class B : A[] {}" SubtypeArray 22 -SkipAndCheckRuntimeError
-    ShouldBeParseError "class A : System.Collections.Generic.List``1 {}" SubtypeUnclosedGeneric 10 -SkipAndCheckRuntimeError
+    # ShouldBeParseError "class A : System.Collections.Generic.List``1 {}" SubtypeUnclosedGeneric 10 -SkipAndCheckRuntimeError
 
     ShouldBeParseError "class A {}; class B : A, NonExistingInterface {}" TypeNotFound 25
     ShouldBeParseError "class A {} ; class B {}; class C : A, B {}" InterfaceNameExpected 38 -SkipAndCheckRuntimeError
