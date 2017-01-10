@@ -1,4 +1,4 @@
-﻿Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1 -force
+﻿Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
 set-strictmode -v 2    
 
     
