@@ -71,7 +71,7 @@ $PSVersionTable
 $env:PSModulePath
 
 Get-Module -ListAvailable -Name PackageManagement, PowerShellGet
-Import-Module PackageManagement -force -verbose
+Import-Module PackageManagement -verbose
 Get-PackageProvider -ListAvailable
 
 $repo = Get-PSRepository -ErrorAction SilentlyContinue | 

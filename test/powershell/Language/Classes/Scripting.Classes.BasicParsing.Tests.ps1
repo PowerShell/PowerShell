@@ -1,7 +1,7 @@
 #
 # Copyright (c) Microsoft Corporation, 2014
 #
-Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1 -force
+Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
 
 Describe 'Positive Parse Properties Tests' -Tags "CI" {
     It 'PositiveParsePropertiesTest' {
