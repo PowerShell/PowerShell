@@ -639,6 +639,7 @@ namespace Microsoft.PowerShell.Commands
                 output.WindowsRegisteredOwner = regCurVer.RegisteredOwner;
                 output.WindowsSystemRoot = regCurVer.SystemRoot;
                 output.WindowsVersion = regCurVer.ReleaseId;
+                output.WindowsUBR = regCurVer.UBR;
             }
 
             var os = osInfo.os;
@@ -1261,7 +1262,8 @@ namespace Microsoft.PowerShell.Commands
                         RegisteredOrganization = (string)key.GetValue("RegisteredOrganization"),
                         RegisteredOwner = (string)key.GetValue("RegisteredOwner"),
                         SystemRoot = (string)key.GetValue("SystemRoot"),
-                        ReleaseId = (string)key.GetValue("ReleaseId")
+                        ReleaseId = (string)key.GetValue("ReleaseId"),
+                        UBR = (int?)key.GetValue("UBR")
                     };
                 }
             }
@@ -1955,6 +1957,7 @@ namespace Microsoft.PowerShell.Commands
         public string RegisteredOwner;
         public string SystemRoot;
         public string ReleaseId;
+        public int? UBR;
     }
     #endregion Other Intermediate classes
 
@@ -2230,6 +2233,11 @@ namespace Microsoft.PowerShell.Commands
         /// The Windows ReleaseId, from the Windows Registry.
         /// </summary>
         public string WindowsVersion { get; internal set; }
+
+        /// <summary>
+        /// The Windows Update Build Revision (UBR), from the Windows Registry.
+        /// </summary>
+        public int? WindowsUBR { get; internal set; }
         #endregion Registry
 
         #region BIOS
