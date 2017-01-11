@@ -654,6 +654,8 @@ namespace Microsoft.PowerShell
             ProcessedOutput = 0x001,  // yes, I know they are the same values as some flags defined above.
             WrapEndOfLine = 0x002,
             VirtualTerminal = 0x004,
+            // Error getting console mode
+            Unknown = 0xffffffff,
         }
 
         /// <summary>
