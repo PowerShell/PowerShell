@@ -38,6 +38,7 @@ These labels describe what feature area of PowerShell that an issue affects:
 * `Area-Debugging`: debugging PowerShell script
 * `Area-Demo`: a demo or sample
 * `Area-Documentation`: PowerShell *repo* documentation issues, general PowerShell doc issues go [here](https://github.com/PowerShell/PowerShell-Docs/issues)
+* `Area-DSC`: DSC related issues
 * `Area-Engine`: core PowerShell engine, interpreter, runtime
 * `Area-HelpSystem`: anything related to the help infrastructure and formatting of help
 * `Area-Intellisense`: tab completion
