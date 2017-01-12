@@ -1,8 +1,8 @@
 FROM fedora:24
 MAINTAINER Andrew Schwartzmeyer <andschwa@microsoft.com>
 
-# This release Dockerfile uses the CentOS 7 build for the purposes of enabling
-# nightlies
+# TODO: Until a release of PowerShell for Fedora 24 is available,
+# this Dockerfile installs the CentOS 7 version for compatibility.
 
 ARG POWERSHELL_VERSION=6.0.0-alpha.13
 ARG POWERSHELL_RELEASE=v6.0.0-alpha.13

@@ -41,7 +41,8 @@ if ($IsLinux) {
     $IsRedHatFamily = $IsCentOS -or $IsFedora
 
     # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
-    if (Test-Path ENV:\LD_LIBRARY_PATH) {
+    # https://github.com/PowerShell/PowerShell/issues/2511
+    if ($IsFedora -and (Test-Path ENV:\LD_LIBRARY_PATH)) {
         Remove-Item -Force ENV:\LD_LIBRARY_PATH
         Get-ChildItem ENV:
     }
