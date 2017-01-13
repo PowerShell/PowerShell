@@ -8,7 +8,7 @@ PowerShellVersion="3.0"
 CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Out-File", "Out-String", "Get-FormatData", "Export-FormatData", "ConvertFrom-Json", "ConvertTo-Json",
     "Invoke-RestMethod", "Invoke-WebRequest", "Register-ObjectEvent", "Register-EngineEvent",
-    "Wait-Event", "Get-Event", "Remove-Event", "Get-EventSubscriber", "Unregister-Event", "New-Guid", 
+    "Wait-Event", "Get-Event", "Remove-Event", "Get-EventSubscriber", "Unregister-Event", "New-Guid",
     "New-Event", "Add-Member", "Add-Type", "Compare-Object", "ConvertTo-Html", "ConvertFrom-StringData",
     "Export-Csv", "Import-Csv", "ConvertTo-Csv", "ConvertFrom-Csv", "Export-Alias", "Invoke-Expression",
     "Get-Alias", "Get-Culture", "Get-Date", "Get-Host", "Get-Member", "Get-Random", "Get-UICulture",
