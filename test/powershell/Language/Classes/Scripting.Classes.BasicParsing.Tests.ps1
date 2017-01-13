@@ -11,21 +11,21 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
         # script will fail to parse.
 
         # No members
-        class C1 {} 
+        class C1 {}
 
         # Simple field
         class C2 { $x; }
-        
+
         # Simple typed field
         class C3 { [int] $x; }
-        
+
         # Multiple fields, one line, last w/o semicolon
         class C4 { $x; $y }
 
         # Multiple fields, multiple lines
         class C5
         {
-            $x 
+            $x
             $y
         }
 
@@ -83,7 +83,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
 
         # Method using return type defined in this scope
         class C8a { [C1] f1() { return [C1]::new() } }
-        class C8b { [c1] f1() { return [c1]::new() } }        
+        class C8b { [c1] f1() { return [c1]::new() } }
 
         # Hidden methods
         class C10a { hidden F() { } }
@@ -121,7 +121,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
     }
 
     It 'Positive ParseProperty Attributes Test' {
-        class C1a { [ValidateNotNull()][int]$x; } 
+        class C1a { [ValidateNotNull()][int]$x; }
         class C1b
         {
             [ValidateNotNull()]
@@ -141,7 +141,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
     }
 
     It 'PositiveParseMethodAttributesTest' {
-        class C1a { [Obsolete()][int] f() { return 0 } } 
+        class C1a { [Obsolete()][int] f() { return 0 } }
         class C1b
         {
             [Obsolete()]
@@ -214,7 +214,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
 
     It 'allows some useful implicit variables inside methods' {
         class C {
-            [void] m() 
+            [void] m()
             {
                 $LASTEXITCODE
                 $lastexitcode
@@ -239,7 +239,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
         class A
         {
             $h
-            A() 
+            A()
             {
                 $this.h = [ordered] @{}
             }
@@ -264,7 +264,7 @@ Describe 'Negative Parsing Tests' -Tags "CI" {
     ShouldBeParseError 'class foo { [zz]$x; }' TypeNotFound 13
     ShouldBeParseError 'class foo { [zz]f() { return 0 } }' TypeNotFound 13
     ShouldBeParseError 'class foo { f([zz]$x) {} }' TypeNotFound 15
-        
+
     ShouldBeParseError 'class C {} class C {}' MemberAlreadyDefined 11
     ShouldBeParseError 'class C { f(){} f(){} }' MemberAlreadyDefined 16 -SkipAndCheckRuntimeError
     ShouldBeParseError 'class C { F(){} F($o){} [int] F($o) {return 1} }' MemberAlreadyDefined 24 -SkipAndCheckRuntimeError
@@ -273,12 +273,12 @@ Describe 'Negative Parsing Tests' -Tags "CI" {
     ShouldBeParseError 'class C { $x; [int]$x; }' MemberAlreadyDefined 14 -SkipAndCheckRuntimeError
     ShouldBeParseError 'class C { static C($x) {} }' StaticConstructorCantHaveParameters 19 -SkipAndCheckRuntimeError
     ShouldBeParseError 'class C { static C([int]$x = 100) {} }' StaticConstructorCantHaveParameters 19 -SkipAndCheckRuntimeError
-        
+
     ShouldBeParseError 'class C {f(){ return 1} }' VoidMethodHasReturn 14
     ShouldBeParseError 'class C {[int] f(){ return } }' NonVoidMethodMissingReturnValue 20
     ShouldBeParseError 'class C {[int] f(){} }' MethodHasCodePathNotReturn 15
     ShouldBeParseError 'class C {f(){ $x=1; if($x -lt 2){ return } elseif($x -gt 0 ) {return 1} else{return 2} return 3 } }' @("VoidMethodHasReturn", "VoidMethodHasReturn", "VoidMethodHasReturn") @(62,77,87)
-        
+
     ShouldBeParseError 'class foo { [int] bar() { $y = $z; return $y} }' VariableNotLocal 31
     ShouldBeParseError 'class foo { bar() { foreach ($zz in $yy) { } } }' VariableNotLocal 36
     ShouldBeParseError 'class foo { bar() { foreach ($zz in $global:yy) { $abc = $zzzzz } } }' VariableNotLocal 57
@@ -286,12 +286,12 @@ Describe 'Negative Parsing Tests' -Tags "CI" {
     ShouldBeParseError 'class foo { bar() { try { $zz = 42 } catch { } $zz } }' VariableNotLocal 47
     ShouldBeParseError 'class foo { bar() { switch (@()) { default { $aa = 42 } } $aa } }' VariableNotLocal 58
     ShouldBeParseError 'class C { $x; static bar() { $this.x = 1 } }' NonStaticMemberAccessInStaticMember 29
-    ShouldBeParseError 'class C { $x; static $y = $this.x }' NonStaticMemberAccessInStaticMember 26 
-        
+    ShouldBeParseError 'class C { $x; static $y = $this.x }' NonStaticMemberAccessInStaticMember 26
+
     ShouldBeParseError 'class C { $x; static bar() { $this.x = 1 } }' NonStaticMemberAccessInStaticMember 29
-    ShouldBeParseError 'class C { $x; static $y = $this.x }' NonStaticMemberAccessInStaticMember 26 
+    ShouldBeParseError 'class C { $x; static $y = $this.x }' NonStaticMemberAccessInStaticMember 26
     ShouldBeParseError 'class C { $x; static bar() { $This.x = 1 } }' NonStaticMemberAccessInStaticMember 29
-    ShouldBeParseError 'class C { $x; static $y = $This.x }' NonStaticMemberAccessInStaticMember 26 
+    ShouldBeParseError 'class C { $x; static $y = $This.x }' NonStaticMemberAccessInStaticMember 26
 
     ShouldBeParseError 'class C { [void]foo() { try { throw "foo"} finally { return } } }' ControlLeavingFinally 53
     ShouldBeParseError 'class C { [int]foo() { return; return 1 } }' NonVoidMethodMissingReturnValue 23
@@ -302,7 +302,7 @@ Describe 'Negative Parsing Tests' -Tags "CI" {
     ShouldBeParseError 'class C { [int]foo() { try { mkdir foo } finally { rm -rec foo } } }' MethodHasCodePathNotReturn 15
     ShouldBeParseError 'class C { [int]foo() { try { mkdir foo; return 1 } catch { } } }' MethodHasCodePathNotReturn 15
     ShouldBeParseError 'class C { [bool] Test() { if ($false) { return $true; } } }' MethodHasCodePathNotReturn 17
-        
+
     ShouldBeParseError 'class C { [int]$i; [void] foo() {$i = 10} }' MissingThis 33
     ShouldBeParseError 'class C { static [int]$i; [void] foo() {$i = 10} }' MissingTypeInStaticPropertyAssignment 40
 
@@ -349,7 +349,7 @@ Describe 'Negative Assignment Tests' -Tags "CI" {
     # Default ctor
     ShouldBeParseError '[DscResource()]class C { [DscProperty(Key)][string]$Key; [bool] Test() { return $false } [C] Get() { return $this } Set() {} C($a) { } }' DscResourceMissingDefaultConstructor 0
 }
-    
+
 Describe 'Negative DscResources Tests' -Tags "CI" {
         # Usage errors
         ShouldBeParseError '[Flags()]class C{}' AttributeNotAllowedOnDeclaration 0
@@ -373,10 +373,10 @@ Describe 'Negative ClassAttributes Tests' -Tags "CI" {
 
     It "Should have one attribute" {$t.Count | should be 1}
     It "Should have instance of CmdletAttribute" {$t[0].GetType().FullName | should be System.Management.Automation.CmdletAttribute }
-    
+
     [System.Management.Automation.CmdletAttribute]$c = $t[0]
     It "Verb should be Get" {$c.VerbName | should be 'Get'}
-    It "Noun should be Thing" {$c.NounName | should be 'Thing'}        
+    It "Noun should be Thing" {$c.NounName | should be 'Thing'}
 
     [System.Management.Automation.Cmdlet("Get", "Thing", SupportsShouldProcess = $true, SupportsPaging = $true)]class C2{}
     $t = [C2].GetCustomAttributes($false)
@@ -384,22 +384,22 @@ Describe 'Negative ClassAttributes Tests' -Tags "CI" {
     It "Should have instance of CmdletAttribute" { $t[0].GetType().FullName | should be System.Management.Automation.CmdletAttribute }
     [System.Management.Automation.CmdletAttribute]$c = $t[0]
     It "Verb should be Get" {$c.VerbName | should be 'Get'}
-    It "Noun should be Thing" {$c.NounName | should be 'Thing'} 
-    
+    It "Noun should be Thing" {$c.NounName | should be 'Thing'}
+
     It  "SupportsShouldProcess should be $true" { $c.ConfirmImpact | should be $true }
     It  "SupportsPaging should be `$true" { $c.SupportsPaging | should be $true }
     Context "Support ConfirmImpact as an attribute" {
-        It  "ConfirmImpact should be high" -pending { 
+        It  "ConfirmImpact should be high" -pending {
             [System.Management.Automation.Cmdlet("Get", "Thing", ConfirmImpact = 'High', SupportsPaging = $true)]class C3{}
             $t = [C3].GetCustomAttributes($false)
             It "Should have one attribute" { $t.Count | should be 1 }
             It "Should have instance of CmdletAttribute" { $t[0].GetType().FullName | should be System.Management.Automation.CmdletAttribute }
             [System.Management.Automation.CmdletAttribute]$c = $t[0]
             $c.ConfirmImpact | should be 'High'
-            
+
         }
     }
-}    
+}
 
 Describe 'Property Attributes Test' -Tags "CI" {
         class C { [ValidateSet('a', 'b')]$p; }
@@ -413,11 +413,11 @@ Describe 'Property Attributes Test' -Tags "CI" {
 }
 
 Describe 'Method Attributes Test' -Tags "CI" {
-        class C { [Obsolete("aaa")][int]f() { return 1 } } 
+        class C { [Obsolete("aaa")][int]f() { return 1 } }
 
         $t = [C].GetMethod('f').GetCustomAttributes($false)
         It "Should have one attribute" {$t.Count | should be 1 }
-        It "Attribute type should be ObsoleteAttribute" { $t[0].GetType().FullName | should be System.ObsoleteAttribute } 
+        It "Attribute type should be ObsoleteAttribute" { $t[0].GetType().FullName | should be System.ObsoleteAttribute }
 }
 
 Describe 'Positive SelfClass Type As Parameter Test' -Tags "CI" {
@@ -425,10 +425,10 @@ Describe 'Positive SelfClass Type As Parameter Test' -Tags "CI" {
         {
             Point($x, $y) { $this.x = $x; $this.y = $y }
             Point() {}
-         
+
             [int] $x = 0
             [int] $y = 0
-            Add([Point] $val) {  $this.x += $val.x; $this.y += $val.y;  } 
+            Add([Point] $val) {  $this.x += $val.x; $this.y += $val.y;  }
 
             Print() { Write-Host "[`$x=$($this.x) `$y=$($this.y)]" }
             Set($x, $y) { $this.x = $x; $this.y = $y }
@@ -440,7 +440,7 @@ Describe 'Positive SelfClass Type As Parameter Test' -Tags "CI" {
 
             $point.x | should be 101
             $point.y | should be 202
-        }        
+        }
 
         It  "[Point]::Add works" {
             $point = New-Object Point 100,200
@@ -449,7 +449,7 @@ Describe 'Positive SelfClass Type As Parameter Test' -Tags "CI" {
 
             $point.x | should be 101
             $point.y | should be 202
-        }         
+        }
 }
 
 Describe 'PositiveReturnSelfClassTypeFromMemberFunction Test' -Tags "CI" {
@@ -466,7 +466,7 @@ Describe 'PositiveReturnSelfClassTypeFromMemberFunction Test' -Tags "CI" {
         }
         $f = [ReturnObjectFromMemberFunctionTest]::new()
         $z = $f.CreateInstance() # Line 13
-        It "CreateInstance works" { $z.SayHello() | should be 'Hello1' } 
+        It "CreateInstance works" { $z.SayHello() | should be 'Hello1' }
 }
 
 Describe 'TestMultipleArguments Test' -Tags "CI" {
@@ -582,7 +582,7 @@ Describe 'Hidden Members Test ' -Tags "CI" {
         $tableOutput = $instance | Format-Table -HideTableHeaders -AutoSize | Out-String
         It "Table formatting should not have included hidden member hiddenZ - should contain 10" { $tableOutput.Contains(10) | should be $true}
         It "Table formatting should not have included hidden member hiddenZ- should contain 12" { $tableOutput.Contains(12) | should be $true}
-        It "Table formatting should not have included hidden member hiddenZ - should not contain 42" { $tableOutput.Contains(42) | should be $false}        
+        It "Table formatting should not have included hidden member hiddenZ - should not contain 42" { $tableOutput.Contains(42) | should be $false}
 
         # Get-Member should not include hidden members by default
         $member = $instance | Get-Member hiddenZ
@@ -590,18 +590,18 @@ Describe 'Hidden Members Test ' -Tags "CI" {
 
         # Get-Member should include hidden members with -Force
         $member = $instance | Get-Member hiddenZ -Force
-        It "Get-Member should find hidden member w/ -Force" { $member | should not be $null }        
+        It "Get-Member should find hidden member w/ -Force" { $member | should not be $null }
 
         # Tab completion should not return a hidden member
         $line = 'class C2 { hidden [int]$hiddenZ } [C2]::new().h'
         $completions = [System.Management.Automation.CommandCompletion]::CompleteInput($line, $line.Length, $null)
-        It "Tab completion should not return a hidden member" { $completions.CompletionMatches.Count | should be 0 }        
+        It "Tab completion should not return a hidden member" { $completions.CompletionMatches.Count | should be 0 }
 }
 
 Describe 'BaseMethodCall Test ' -Tags "CI" {
-        It "Derived class method call" {"abc".ToString() | should be "abc" }        
+        It "Derived class method call" {"abc".ToString() | should be "abc" }
         # call [object] ToString() method as a base class method.
-        It "Base class method call" {([object]"abc").ToString() | should be "System.String" }        
+        It "Base class method call" {([object]"abc").ToString() | should be "System.String" }
 }
 
 Describe 'Scoped Types Test' -Tags "CI" {
@@ -627,7 +627,7 @@ Describe 'Scoped Types Test' -Tags "CI" {
         It "[C1]::new() in nested scope" { (f1) | should be "f1 scope" }
         It "'new-object C1' in nested scope" { (f2) | should be "f2 scope" }
 
-        
+
         It "[C1]::new() in nested scope (in pipeline)" { (1 | f1 | f2 | f1) | should be "f1 scope" }
         It "'new-object C1' in nested scope (in pipeline)" { (1 | f2 | f1 | f2) | should be "f2 scope" }
 }
@@ -658,7 +658,7 @@ Describe 'Type building' -Tags "CI" {
                 $a -eq [C] | Should Be $true
             }
             $a = [C]
-        }  
+        }
     }
 
     It 'should create a new type every time scriptblock executed?' -Pending {
@@ -672,9 +672,9 @@ Describe 'Type building' -Tags "CI" {
 }
 
 Describe 'RuntimeType created for TypeDefinitionAst' -Tags "CI" {
-    
+
     It 'can make cast to the right RuntimeType in two different contexts' -pending {
-        
+
         $ssfe = [System.Management.Automation.Runspaces.SessionStateFunctionEntry]::new("foo", @'
 class Base
 {
@@ -708,7 +708,7 @@ class Derived : Base
 }
 
 Describe 'TypeTable lookups' -Tags "CI" {
-    
+
     Context 'Call methods from a different thread' {
         $b = [powershell]::Create().AddScript(
 @'
@@ -748,17 +748,17 @@ namespace Foo
      It 'doesn''t allow protected methods access outside of inheritance chain' -pending {
         $a = [scriptblock]::Create(@'
 class A
-{ 
-    SetX([Foo.Bar]$bar, [int]$x) 
+{
+    SetX([Foo.Bar]$bar, [int]$x)
     {
         $bar.x = $x
-    } 
-    
-    [int] GetX([Foo.Bar]$bar) 
+    }
+
+    [int] GetX([Foo.Bar]$bar)
     {
         Set-StrictMode -Version latest
         return $bar.x
-    } 
+    }
 }
 [A]::new()
 
@@ -782,17 +782,17 @@ class A
 
      It 'can call protected methods sequentially from two different contexts' {
         $ssfe = [System.Management.Automation.Runspaces.SessionStateFunctionEntry]::new("foo", @'
-class A : Foo.Bar 
-{ 
-    SetX([int]$x)   
+class A : Foo.Bar
+{
+    SetX([int]$x)
     {
         $this.x = $x
-    } 
-    
-    [int] GetX() 
+    }
+
+    [int] GetX()
     {
-        return $this.x 
-    } 
+        return $this.x
+    }
 }
 return [A]::new()
 '@)
@@ -827,7 +827,7 @@ Describe 'variable analysis' -Tags "CI" {
                 [A] $var = [A]::new()
                 return $var
             }
-        } 
+        }
 
         [B]::getA().getFoo() | Should Be 'foo'
     }

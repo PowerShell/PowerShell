@@ -1,24 +1,24 @@
-$ProgressPreference = "SilentlyContinue"
+﻿$ProgressPreference = "SilentlyContinue"
 
-Describe 'get-help HelpFunc1' -Tags "Feature" { 
+Describe 'get-help HelpFunc1' -Tags "Feature" {
     BeforeAll {
     function TestHelpError {
         [CmdletBinding()]
         param(
-        $x, 
+        $x,
         [System.Management.Automation.ErrorRecord[]]$e,
         [string] $expectedError
         )
         It 'Help result should be $null' { $x | Should Be $null }
-        It '$e.Count' { $e.Count | Should BeGreaterThan 0 }        
+        It '$e.Count' { $e.Count | Should BeGreaterThan 0 }
         It 'FullyQualifiedErrorId' { $e[0].FullyQualifiedErrorId | Should Be $expectedError }
-    } 
+    }
 
     function TestHelpFunc1 {
         [CmdletBinding()]
         param( $x )
         It '$x should not be $null' { $x | Should Not Be $null }
-        It '$x.Synopsis' { $x.Synopsis | Should Be "A relatively useless function." } 
+        It '$x.Synopsis' { $x.Synopsis | Should Be "A relatively useless function." }
         It '$x.Description' { $x.Description[0].Text | Should Be "A description`n`n    with indented text and a blank line." }
         It '$x.alertSet.alert' { $x.alertSet.alert[0].Text | Should Be "This function is mostly harmless." }
         It '$x.relatedLinks.navigationLink[0].uri' {  $x.relatedLinks.navigationLink[0].uri | Should Be "http://blogs.msdn.com/powershell" }
@@ -30,7 +30,7 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
         It '$x.Role' { $x.Role | Should Be "CrazyUser" }
         It '$x.Functionality' { $x.Functionality | Should Be "Useless" }
         }
-    
+
         # .SYNOPSIS
         #
         #    A relatively useless function.
@@ -79,13 +79,13 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
         #
         function helpFunc1 {}
     }
-    
 
-    Context 'Get-Help helpFunc1' {      
+
+    Context 'Get-Help helpFunc1' {
         $x = get-help helpFunc1
         TestHelpFunc1 $x
     }
-    
+
     Context 'get-help helpFunc1 -component blah' {
         $x = get-help helpFunc1 -component blah -ea SilentlyContinue -ev e
         TestHelpError $x $e 'HelpNotFound,Microsoft.PowerShell.Commands.GetHelpCommand'
@@ -94,7 +94,7 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
     Context 'get-help helpFunc1 -component Something' {
         $x = get-help helpFunc1 -component Something -ea SilentlyContinue -ev e
         TestHelpFunc1 $x
-        It '$e should be empty' { $e.Count | Should Be 0 }  
+        It '$e should be empty' { $e.Count | Should Be 0 }
     }
 
     Context 'get-help helpFunc1 -role blah' {
@@ -105,7 +105,7 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
     Context 'get-help helpFunc1 -role CrazyUser' {
         $x = get-help helpFunc1 -role CrazyUser -ea SilentlyContinue -ev e
         TestHelpFunc1 $x
-        It '$e should be empty' { $e.Count | Should Be 0 }  
+        It '$e should be empty' { $e.Count | Should Be 0 }
     }
 
     Context '$x = get-help helpFunc1 -functionality blah' {
@@ -116,7 +116,7 @@ Describe 'get-help HelpFunc1' -Tags "Feature" {
     Context '$x = get-help helpFunc1 -functionality Useless' {
         $x = get-help helpFunc1 -functionality Useless -ea SilentlyContinue -ev e
         TestHelpFunc1 $x
-        It '$e should be empty' { $e.Count | Should Be 0 }  
+        It '$e should be empty' { $e.Count | Should Be 0 }
     }
 }
 
@@ -169,10 +169,10 @@ Describe 'get-help file' -Tags "CI" {
         $x = get-help $tmpfile
         It '$x.Synopsis' { $x.Synopsis | Should Be 'Script help, not function help' }
         $x = & $tmpfile
-        It '$x should not be $null' { $x | Should Not Be $null }   
+        It '$x should not be $null' { $x | Should Not Be $null }
     }
-} 
-   
+}
+
 Describe 'get-help other tests' -Tags "CI" {
     BeforeAll {
         try {
@@ -199,8 +199,8 @@ Describe 'get-help other tests' -Tags "CI" {
             $x = get-help missingHelp
             It '$x should not be $null' { $x | Should Not Be $null }
             It '$x.Synopsis' { $x.Synopsis.Trim() | Should Be 'missingHelp [[-abc] <Object>]' }
-        }   
-    
+        }
+
     Context 'get-help helpFunc2' {
 
     <#
@@ -264,7 +264,7 @@ Describe 'get-help other tests' -Tags "CI" {
     }
 
     Context 'get-help psuedo file' {
-    
+
     $script = @'
         ###########################################
         #
@@ -292,14 +292,14 @@ Describe 'get-help other tests' -Tags "CI" {
 
         Set-Content $tempFile $script
         $x = get-help $tempFile
-    
+
         It '$x.Synopsis' { $x.Synopsis | Should Be "Changes Admin passwords across all KDE servers." }
         It '$x.parameters.parameter[0].required' { $x.parameters.parameter[0].required | Should Be $true}
         It '$x.syntax.syntaxItem[0].parameter.required' { $x.syntax.syntaxItem[0].parameter.required | Should Be $true}
         It '$x.syntax.syntaxItem[0].parameter.parameterValue.required' { $x.syntax.syntaxItem[0].parameter.parameterValue.required | Should Be $true}
         It 'Common parameters should not be appear in the syntax' { $x.Syntax -like "*verbose*" | Should Be $false }
-        It 'Common parameters should not be in syntax maml' {@($x.syntax.syntaxItem[0].parameter).Count | Should Be 1} 
-        It 'Common parameters should also not appear in parameters maml' { $x.parameters.parameter.Count | Should Be 2} 
+        It 'Common parameters should not be in syntax maml' {@($x.syntax.syntaxItem[0].parameter).Count | Should Be 1}
+        It 'Common parameters should also not appear in parameters maml' { $x.parameters.parameter.Count | Should Be 2}
     }
 
     It 'helpFunc3 -?' {
@@ -328,7 +328,7 @@ Describe 'get-help other tests' -Tags "CI" {
           description
 
         .Synopsis
-  
+
 
         .Component
           component
@@ -360,7 +360,7 @@ Describe 'get-help other tests' -Tags "CI" {
         if ($PSUICulture -ieq "en-us")
         {
             $x = get-help helpFunc6
-            It '$x should not be $null' { $x | Should Not Be $null }        
+            It '$x should not be $null' { $x | Should Not Be $null }
             It '$x.Synopsis' { $x.Synopsis | Should Be "Useless.  Really, trust me on this one." }
         }
     }
@@ -415,7 +415,7 @@ Describe 'get-help other tests' -Tags "CI" {
 
         $x = Get-Help func8
         It '$x should not be $null' { $x | Should Not Be $null }
-        
+
         $x = func8
         It '$x.Synopsis' { $x.Synopsis | Should Be 'Help on helpFunc8, not func8' }
     }
@@ -426,18 +426,18 @@ Describe 'get-help other tests' -Tags "CI" {
             # .SYNOPSIS
             #    Help on helpFunc9, not func9
             param($x)
-    
+
             function func9
             {
             }
             get-help func9
         }
         $x = Get-Help helpFunc9
-        It 'help is on the outer functon' { $x.Synopsis | Should Be 'Help on helpFunc9, not func9' }        
+        It 'help is on the outer functon' { $x.Synopsis | Should Be 'Help on helpFunc9, not func9' }
         $x = helpFunc9
         It '$x should not be $null' { $x | Should Not Be $null }
     }
-    
+
     It 'get-help helpFunc10' {
         #######################################################
         # .SYNOPSIS
@@ -461,7 +461,7 @@ Describe 'get-help other tests' -Tags "CI" {
             param(
 
                 # not in help
-    
+
                 <# abc #><# help #> [parameter()]    [string]
                 $abc,
 
@@ -499,9 +499,9 @@ Describe 'get-help other tests' -Tags "CI" {
                    [System.Management.Automation.CommandTypes]$AnEnum)
             $name = $name + "." + $extension
             $name
-      
+
         <#
-        .SYNOPSIS 
+        .SYNOPSIS
         Adds a file name extension to a supplied name.
 
         .EXAMPLE

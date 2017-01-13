@@ -10,7 +10,7 @@ Describe 'conversion syntax' -Tags "CI" {
 
     It 'calls virtual method non-virtually' {
         ([object]"abc").ToString() | Should Be "System.String"
-        
+
         # generate random string to avoid JIT optimization
         $r = [guid]::NewGuid().Guid
         ([object]($r + "a")).Equals(($r + "a")) | Should Be $false

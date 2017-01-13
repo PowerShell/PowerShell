@@ -68,7 +68,7 @@ Describe "bnot on integral types" -Tags "CI" {
     {
         Context $baseType.Name  {
 
-            $max = $baseType::MaxValue 
+            $max = $baseType::MaxValue
             $maxMinus1 = $max - 1
             $min = $baseType::MinValue
             $minPlus1 = $min + 1

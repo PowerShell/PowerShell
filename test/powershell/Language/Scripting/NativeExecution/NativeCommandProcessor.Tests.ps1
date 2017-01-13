@@ -49,7 +49,7 @@ Describe "Native Command Processor" -tags "Feature" {
         # make sure no test processes are running
         # on Linux, the Process class truncates the name so filter using Where-Object
         Get-Process | Where-Object {$_.Name -like 'createchildproc*'} | Stop-Process
-        
+
         [int] $numToCreate = 2
 
         $ps = [PowerShell]::Create().AddCommand($createchildprocess)
@@ -60,7 +60,7 @@ Describe "Native Command Processor" -tags "Feature" {
         [bool] $childrenCreated = $false
         while (-not $childrenCreated)
         {
-            $childprocesses = Get-Process | Where-Object {$_.Name -like 'createchildproc*'} 
+            $childprocesses = Get-Process | Where-Object {$_.Name -like 'createchildproc*'}
             if ($childprocesses.count -eq $numToCreate+1)
             {
                 $childrenCreated = $true
@@ -78,7 +78,7 @@ Describe "Native Command Processor" -tags "Feature" {
             }
         }
         $childprocesses = Get-Process | Where-Object {$_.Name -like 'createchildproc*'}
-        $count = $childprocesses.count 
+        $count = $childprocesses.count
         $childprocesses | Stop-Process
         $count | Should Be 0
     }

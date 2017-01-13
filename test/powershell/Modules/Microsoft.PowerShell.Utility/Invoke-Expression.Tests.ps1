@@ -28,7 +28,7 @@ Describe "Invoke-Expression" -Tags "CI" {
     }
 }
 Describe "Invoke-Expression DRT Unit Tests" -Tags "CI" {
-	It "Invoke-Expression should work"{	
+	It "Invoke-Expression should work"{
 		$result=invoke-expression -Command 2+2
 		$result|Should Be 4
 	}

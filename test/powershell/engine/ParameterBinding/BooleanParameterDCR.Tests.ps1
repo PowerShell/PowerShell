@@ -6,7 +6,7 @@ Describe "BooleanParameterDCR Tests" -tags "CI" {
           param([switch]$switchParam)
           return $switchParam
         }
-        
+
         Function ParserTestBoolCmdlet2
         {
           [CmdletBinding()]
@@ -14,7 +14,7 @@ Describe "BooleanParameterDCR Tests" -tags "CI" {
           return $First
         }
     }
-    
+
     $tests = @(
             @{ inputTest = 0; expected = $false },
             @{ inputTest = 000; expected = $false },
@@ -27,7 +27,7 @@ Describe "BooleanParameterDCR Tests" -tags "CI" {
             $result = ParserTestSwitchCmdlet -switchParam:$switchTestParam
             $result | should be $expected
     }
-    
+
     $tests = @(
             @{ inputTest = $(1 -eq 1); expected = $true },
             @{ inputTest = $true; expected = $true },
@@ -39,7 +39,7 @@ Describe "BooleanParameterDCR Tests" -tags "CI" {
             $result = ParserTestSwitchCmdlet -switchParam:$switchTestParam
             $result | should be $expected
     }
-    
+
     It "Test that a nullable boolean is accepted for a boolean parameter." {
         [System.Nullable[System.Int32]] $nullBoolVar = $false
         $result = ParserTestBoolCmdlet2 $nullBoolVar

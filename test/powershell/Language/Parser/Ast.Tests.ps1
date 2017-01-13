@@ -2,8 +2,8 @@ using Namespace System.Management.Automation.Language
 Describe "The SafeGetValue method on AST returns safe values" -Tags "CI" {
     It "A hashtable is returned from a HashtableAst" {
         $HashtableAstType = [HashtableAst]
-        $HtAst = { 
-            @{ one = 1 } 
+        $HtAst = {
+            @{ one = 1 }
             }.ast.Find({$args[0] -is $HashtableAstType}, $true)
         $HtAst.SafeGetValue().GetType().Name | Should be Hashtable
     }

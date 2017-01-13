@@ -16,14 +16,14 @@
 
             {{2+2}.CheckRestrictedLanguage($null, $null, $false) } | Should Not Throw  # Succeed with no variables
         }
-        
+
         It 'Check default variables' {
 
             {{ $PSCulture, $PSUICulture, $true, $false, $null}.CheckRestrictedLanguage($null, $null, $false) } | Should Not Throw
         }
 
         It 'Check default variables' {
-            
+
             try
             {
                 {2+$a}.CheckRestrictedLanguage($null, $null, $false)
@@ -33,7 +33,7 @@
             {
                 $_.FullyQualifiedErrorId | Should Be 'ParseException'
             }
-            
+
         }
 
         It 'Check union of default + one allowed variables' {
@@ -78,7 +78,7 @@
         }
 
         It 'Check union of default + one allowed variable name and allow environment variable ' {
-                    
+
             {{ 2 + $a + $env:foo }.CheckRestrictedLanguage($null, (list a), $true)}   | Should Not Throw # succeed
         }
 
@@ -88,7 +88,7 @@
         }
 
         It 'Check for restricted commands' {
-        
+
             try
             {
                 {get-date}.CheckRestrictedLangauge($null, $null, $false)

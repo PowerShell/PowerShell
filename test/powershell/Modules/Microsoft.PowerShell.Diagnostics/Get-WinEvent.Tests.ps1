@@ -46,7 +46,7 @@ Describe 'Get-WinEvent' -Tags "CI" {
             }
         }
         It 'Get-WinEvent can get events via logname' {
-            $results = get-winevent -logname $providerForTests.LogLinks.LogName -MaxEvents 10 
+            $results = get-winevent -logname $providerForTests.LogLinks.LogName -MaxEvents 10
             $results | should not BeNullOrEmpty
         }
         It 'Get-WinEvent can use the simplest of filters' {
@@ -98,7 +98,7 @@ Describe 'Get-WinEvent' -Tags "CI" {
             # this relies on apriori knowledge about the log file
             # the provided log file has been edited to remove MS PII, so we must use -ea silentlycontinue
             $eventLogFile = [io.path]::Combine($PSScriptRoot, "assets", "Saved-Events.evtx")
-            $filter = @{ path = "$eventLogFile"; DriverName = "Remote Desktop Easy Print", "Microsoft enhanced Point and Print compatibility driver" } 
+            $filter = @{ path = "$eventLogFile"; DriverName = "Remote Desktop Easy Print", "Microsoft enhanced Point and Print compatibility driver" }
             $results = Get-WinEvent -filterHashtable $filter -ea silentlycontinue
             @($results).Count | Should be 2
             ($results.RecordId -contains 9) | should be $true
@@ -108,7 +108,7 @@ Describe 'Get-WinEvent' -Tags "CI" {
             # this relies on apriori knowledge about the log file
             # the provided log file has been edited to remove MS PII, so we must use -ea silentlycontinue
             $eventLogFile = [io.path]::Combine($PSScriptRoot, "assets", "Saved-Events.evtx")
-            $filter = @{ path = "$eventLogFile"; PackageAware="Not package aware"; DriverName = "Remote Desktop Easy Print", "Microsoft enhanced Point and Print compatibility driver" } 
+            $filter = @{ path = "$eventLogFile"; PackageAware="Not package aware"; DriverName = "Remote Desktop Easy Print", "Microsoft enhanced Point and Print compatibility driver" }
             $results = Get-WinEvent -filterHashtable $filter -ea silentlycontinue
             @($results).Count | Should be 2
             ($results.RecordId -contains 9) | should be $true

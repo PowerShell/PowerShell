@@ -1,6 +1,6 @@
 ﻿Describe "Get-Command Tests" -Tags "CI" {
-    BeforeAll {       
-        function TestGetCommand-DynamicParametersDCR 
+    BeforeAll {
+        function TestGetCommand-DynamicParametersDCR
         {
         [CmdletBinding()]
             param (
@@ -11,7 +11,7 @@
             [Parameter()]
             [Type]$ParameterType
             )
-          
+
             DynamicParam {
                 if ( ! $testToRun ) {
                     $testToRun = "returnnull"
@@ -19,7 +19,7 @@
                 $dynamicParamDictionary = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
                 switch ( $testToRun )
                 {
-                    "returnnull" { 
+                    "returnnull" {
                         $dynamicParamDictionary = $null
                         break
                      }
@@ -28,7 +28,7 @@
                         $attr.Mandatory = $true
 				        $dynamicParameter = [System.Management.Automation.RuntimeDefinedParameter]::new("OneString",[string],$attr)
                         $dynamicParamDictionary.Add("OneString",$dynamicParameter)
-                        break 
+                        break
                     }
                     "return2" {
                         $attr1 = [System.Management.Automation.ParameterAttribute]::new()
@@ -97,11 +97,11 @@
                         $attr1.ParameterSetName = "__AllParameterSets"
                         $ac1 = [Collections.ObjectModel.Collection[Attribute]]::new()
                         $ac1.Add($attr1)
-                        $p1 = [System.Management.Automation.RuntimeDefinedParameter]::new("TypedValue",$ParameterType,$ac1)                       
-                        $dynamicParamDictionary.Add("TypedValue",$p1)              
-                        break 
+                        $p1 = [System.Management.Automation.RuntimeDefinedParameter]::new("TypedValue",$ParameterType,$ac1)
+                        $dynamicParamDictionary.Add("TypedValue",$p1)
+                        break
                     }
-                    default { 
+                    default {
                         throw ([invalidoperationexception]::new("unable to determine which dynamic parameters to return!"))
                         break
                     }
@@ -123,8 +123,8 @@
                 $ThrowException = "ThrowException"
                 return $dynamicParamDictionary
             }
-        }       
-        
+        }
+
         function GetDynamicParameter($cmdlet, $parameterName)
         {
             foreach ($paramSet in $cmdlet.ParameterSets)
@@ -150,15 +150,15 @@
             foreach($paramName in $parameterNames)
             {
                 $foundParam = GetDynamicParameter -cmdlet $cmdlet -parameterName $paramName
-                $foundParam.Name | Should Be $paramName            
-            } 
+                $foundParam.Name | Should Be $paramName
+            }
         }
 
         function VerifyParameterType($cmdlet, $parameterName, $ParameterType)
         {
             $foundParam = GetDynamicParameter -cmdlet $cmdlet -parameterName $parameterName
-            $foundParam.ParameterType | Should Be $ParameterType                    
-        }                              
+            $foundParam.ParameterType | Should Be $ParameterType
+        }
     }
 
     It "Verify that get-command get-content includes the dynamic parameters when the cmdlet is checked against the file system provider implementation" {
@@ -166,7 +166,7 @@
         New-Item -Path $fullPath -ItemType directory -Force
         $results = get-command get-content -path $fullPath
         $dynamicParameter = "Wait", "Encoding", "Delimiter"
-        VerifyDynamicParametersExist -cmdlet $results[0] -parameterNames $dynamicParameter      
+        VerifyDynamicParametersExist -cmdlet $results[0] -parameterNames $dynamicParameter
     }
 
     It "Verify that get-command get-content doesn't have any dynamic parameters for Function provider" {
@@ -177,59 +177,59 @@
             $results[0].ParameterSets.Parameters.Name -contains $dynamicPara | Should be $false
         }
     }
-    
+
     It "Verify that the specified dynamic parameter exists in the CmdletInfo result returned" {
-        $results = get-command testgetcommand-dynamicparametersdcr -testtorun return1       
+        $results = get-command testgetcommand-dynamicparametersdcr -testtorun return1
         $dynamicParameter = "OneString"
         VerifyDynamicParametersExist -cmdlet $results[0] -parameterNames $dynamicParameter
         VerifyParameterType -cmdlet $results[0] -parameterName $dynamicParameter -ParameterType string
-    } 
-    
+    }
+
     It "Verify three dynamic parameters are created properly" {
         $results = get-command testgetcommand-dynamicparametersdcr -testtorun return3
         $dynamicParameter = "OneString", "TwoInt", "ThreeBool"
-        
+
         VerifyDynamicParametersExist -cmdlet $results[0] -parameterNames $dynamicParameter
         VerifyParameterType -cmdlet $results[0] -parameterName "OneString" -parameterType string
         VerifyParameterType -cmdlet $results[0] -parameterName "TwoInt" -parameterType Int
-        VerifyParameterType -cmdlet $results[0] -parameterName "ThreeBool" -parameterType bool      
-    }  
-    
+        VerifyParameterType -cmdlet $results[0] -parameterName "ThreeBool" -parameterType bool
+    }
+
     It "Verify dynamic parameter type is process" {
-        $results = get-command testgetcommand-dynamicparametersdcr -args '-testtorun','returngenericparameter','-parametertype','System.Diagnostics.Process'      
+        $results = get-command testgetcommand-dynamicparametersdcr -args '-testtorun','returngenericparameter','-parametertype','System.Diagnostics.Process'
         VerifyParameterType -cmdlet $results[0] -parameterName "TypedValue" -parameterType System.Diagnostics.Process
     }
-    
+
     It "Verify a single cmdlet returned using verb and noun parameter set syntax works properly" {
         $paramName = "OneString"
         $results = get-command -verb testgetcommand -noun dynamicparametersdcr -testtorun Return1
         VerifyDynamicParametersExist -cmdlet $results[0] -parameterNames $paramName
         VerifyParameterType -cmdlet $results[0] -parameterName $paramName -parameterType string
     }
-    
+
     It "Verify Single Cmdlet Using Verb&Noun ParameterSet" {
         $paramName = "Encoding"
         $results = get-command -verb get -noun content -Encoding Unicode
         VerifyDynamicParametersExist -cmdlet $results[0] -parameterNames $paramName
         VerifyParameterType -cmdlet $results[0] -parameterName $paramName -parameterType Microsoft.PowerShell.Commands.FileSystemCmdletProviderEncoding
-    }  
-    
+    }
+
     It "Verify Single Cmdlet Using Verb&Noun ParameterSet With Usage" {
         $results =  get-command -verb get -noun content -Encoding Unicode -syntax
         $results.ToString() | Should Match "-Encoding"
         $results.ToString() | Should Match "-Wait"
         $results.ToString() | Should Match "-Delimiter"
     }
-    
+
 
     It "Test Script Lookup Positive Script Info" {
         $tempFile = "mytempfile.ps1"
         $fullPath = Join-Path $TestDrive -ChildPath $tempFile
         "$a = dir" > $fullPath
         $results = get-command $fullPath
-            
+
         $results.Name | Should Be $tempFile
-        $results.Definition | Should Be $fullPath  
+        $results.Definition | Should Be $fullPath
     }
 
     It "Two dynamic parameters are created properly" {
@@ -240,16 +240,16 @@
         VerifyParameterType -cmdlet $results[0] -parameterName "TwoInt" -ParameterType int
     }
 
-    It "Throw an Exception when set testtorun to 'returnduplicateparameter'" { 
+    It "Throw an Exception when set testtorun to 'returnduplicateparameter'" {
         try
-        {       
+        {
             Get-Command testgetcommand-dynamicparametersdcr -testtorun returnduplicateparameter -ErrorAction Stop
             throw "No Exception!"
         }
         catch
         {
             $_.FullyQualifiedErrorId | Should Be "GetCommandMetadataError,Microsoft.PowerShell.Commands.GetCommandCommand"
-        }          
+        }
     }
 
     It "verify if get the proper dynamic parameter type skipped by issue #1430" -Pending {
@@ -270,5 +270,5 @@
         $results = get-command -verb get -noun content -encoding UTF8 -synop
         VerifyDynamicParametersExist -cmdlet $results[0] -parameterNames $paramName
         VerifyParameterType -cmdlet $results[0] -parameterName $paramName -ParameterType Microsoft.PowerShell.Commands.FileSystemCmdletProviderEncoding
-    }            
+    }
 }

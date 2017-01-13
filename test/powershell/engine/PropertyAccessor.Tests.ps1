@@ -1,8 +1,8 @@
 #
 # Functional tests to verify basic conditions for IO to the PowerShellProperties.json files
-# The properties files are supported on non-Windows OSes, but the tests are specific to 
+# The properties files are supported on non-Windows OSes, but the tests are specific to
 # Windows so that file IO can be verified using supported cmdlets.
-# 
+#
 
 try {
     # Skip these tests when run against "InBox" PowerShell

@@ -19,7 +19,7 @@ Describe "Get-Runspace cmdlet tests" -Tag "CI" {
     It "Get-Runspace with runspace Id should return the correct runspace" {
         $runspace = get-runspace -id $CurrentRunspace.Id
         $runspace.InstanceId | Should be $ExpectedInstanceId
-    }        
+    }
     Context "Multiple Runspaces" {
         BeforeAll {
             $runspaceCount = @(get-runspace).count

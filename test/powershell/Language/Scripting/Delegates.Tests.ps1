@@ -6,7 +6,7 @@
         }
 
         function Generate-ArgumentTypesAndParameters
-        {    
+        {
             param([int] $num, [ref] $parameters, [ref]$argumentTypes, [bool]$hasReturn = $false)
 
             For($j = 1; $j -le $num; $j++)
@@ -39,41 +39,41 @@
     }
 
     #0 arg, no return
-    It 'System.Action' {        
+    It 'System.Action' {
         ([System.Action]{ $script:gl=lineno; $args.Length | Should Be 0 }).Invoke()
         ($gl + 1) | Should Be (lineno)
     }
     # multiple args, no return
     For($i = 1; $i -le 8; $i++)
     {
-        $str = 'System.Action`{0}' -f $i        
-        Context $str {            
+        $str = 'System.Action`{0}' -f $i
+        Context $str {
             $gt = [object].Assembly.GetType($str)
 
             $parameters = @()
             $argumentTypes=@()
             Generate-ArgumentTypesAndParameters $i ([ref] $parameters) ([ref] $argumentTypes)
-            
+
             $ct = $gt.MakeGenericType($argumentTypes)
 
             $func = { $script:gl=lineno; $args.Length | Should Be $i } -as $ct
             $func.DynamicInvoke($parameters)
             It '$gl + 2' { ($gl + 2) | Should Be (lineno) }
-        }        
+        }
     }
 
     #0 arg with return value
-    It 'System.Func[Int32]' {        
+    It 'System.Func[Int32]' {
         ([System.Func[Int32]]{ $script:gl=lineno; $args.Length }).Invoke() | Should Be 0
         ($gl + 1) | Should Be (lineno)
     }
 
-    It 'System.Func[string]' {        
+    It 'System.Func[string]' {
         ([System.Func[string]]{ $script:gl=lineno; 'hello' }).Invoke() | Should Be 'hello'
         ($gl + 1) | Should Be (lineno)
     }
 
-    It 'System.Func[hashtable]' {        
+    It 'System.Func[hashtable]' {
         (([System.Func[hashtable]]{ $script:gl=lineno; @{a = 'foo' }}).Invoke()).a | Should Be 'foo'
         ($gl + 1) | Should Be (lineno)
     }
@@ -81,7 +81,7 @@
     #multiple args, differnt return type
     For($i = 2; $i -le 9; $i++)
     {
-        $str = 'System.Func`{0}' -f $i        
+        $str = 'System.Func`{0}' -f $i
         Context $str {
             $gt = [object].Assembly.GetType($str)
 
@@ -89,7 +89,7 @@
             $argumentTypes=@()
             Generate-ArgumentTypesAndParameters $i ([ref] $parameters) ([ref] $argumentTypes) $true
             $v= Get-Value($argumentTypes[$i-1])
-            $ct = $gt.MakeGenericType($argumentTypes)            
+            $ct = $gt.MakeGenericType($argumentTypes)
             $func = { $script:gl=lineno; $null = ($args.Length | Should Be ($i-1)); $v } -as $ct
             $t = $func.DynamicInvoke($parameters)
             It '$gl + 2' { ($gl + 2) | Should Be (lineno) }
@@ -100,7 +100,7 @@
             else
             {
                 It '$t' { $t | Should Be $v }
-            }            
+            }
         }
     }
 }

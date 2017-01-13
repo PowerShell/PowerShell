@@ -27,7 +27,7 @@ Describe "ComparisonOperator" -tag "CI" {
 	It "Should be $true for 1 -ne 2" {
 	 1 -ne 2       | Should Be $true
     }
-	
+
 	It "Should be $true for 1 -and 1, $false for 1 -and 0, $false for 0 -and 0" {
 	 1 -and 1       | Should Be $true
 	 1 -and 0       | Should Be $false
@@ -46,7 +46,7 @@ Describe "ComparisonOperator" -tag "CI" {
 	 !1       | Should Be $false
 	 !0       | Should Be $true
     }
-	
+
 	It "Should be $true for 'Hello','world' -contains 'Hello'" {
 	 $arr= 'Hello','world'
 	 $arr -contains 'Hello'       | Should Be $true

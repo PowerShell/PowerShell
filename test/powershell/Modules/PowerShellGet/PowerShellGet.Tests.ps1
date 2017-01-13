@@ -40,7 +40,7 @@ if(IsInbox)
     $script:MyDocumentsPSPath = if($script:MyDocumentsFolderPath)
                                 {
                                     Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath "WindowsPowerShell"
-                                } 
+                                }
                                 else
                                 {
                                     Microsoft.PowerShell.Management\Join-Path -Path $env:USERPROFILE -ChildPath "Documents\WindowsPowerShell"
@@ -74,7 +74,7 @@ Get-Module -ListAvailable -Name PackageManagement, PowerShellGet
 Import-Module PackageManagement -verbose
 Get-PackageProvider -ListAvailable
 
-$repo = Get-PSRepository -ErrorAction SilentlyContinue | 
+$repo = Get-PSRepository -ErrorAction SilentlyContinue |
             Where-Object {$_.SourceLocation.StartsWith($SourceLocation, [System.StringComparison]::OrdinalIgnoreCase)}
 if($repo)
 {

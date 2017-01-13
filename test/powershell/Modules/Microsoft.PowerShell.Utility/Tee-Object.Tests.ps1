@@ -34,12 +34,12 @@ Describe "Tee-Object DRT Unit Tests" -Tags "CI" {
     }
 
     It "Positive Variable Test" {
-        $expected = "1", "2", "3" 
+        $expected = "1", "2", "3"
         $varName = "teeObjectTestVar"
         $results = $expected | Tee-Object -Variable $varName
         $results.Length | Should be 3
         $results | Should Be $expected
-        
+
         $results = Get-Variable -Name $varName -ValueOnly
         $results.Length | Should be 3
         $results | Should Be $expected

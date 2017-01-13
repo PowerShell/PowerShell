@@ -58,7 +58,7 @@ Describe "It should be possible to reset runspace debugging" -tag "Feature" {
 
         # Run script file until breakpoint hit.
         $ar = $ps.AddScript("$scriptPath").BeginInvoke()
-        $completed = Wait-UntilTrue { $rs.Debugger.InBreakPoint -eq $true } -timeout 10000 -interval 200 
+        $completed = Wait-UntilTrue { $rs.Debugger.InBreakPoint -eq $true } -timeout 10000 -interval 200
         $ps.Stop()
         $rs.ResetRunspaceState()
     }
