@@ -74,7 +74,7 @@ Describe "Start-Process" -Tags @("CI","SLOW") {
         try 
         {
             Start-Process -Verb runas -FilePath $pingCommand -ArgumentList $pingParam
-            throw "No Exception!"
+            throw "Expected an exception throw, but no Exception was thrown."
         }
         catch
         {

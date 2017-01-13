@@ -32,7 +32,7 @@ Describe "Get-Uptime" -Tags "CI" {
             [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsNotHighResolution', $true) 
 
             Get-Uptime
-            throw "No Exception!"
+            throw "Expected an exception throw, but no Exception was thrown."
         }
         catch
         {

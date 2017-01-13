@@ -59,7 +59,7 @@ it "Get-Item on a nonexisting file should have error PathNotFound" {
     try
     {
         get-item "ThisFileCannotPossiblyExist" -ErrorAction Stop
-        throw "No Exception!"
+        throw "Expected an exception throw, but no Exception was thrown."
     }
     catch
     {

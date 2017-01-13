@@ -244,7 +244,7 @@
         try
         {       
             Get-Command testgetcommand-dynamicparametersdcr -testtorun returnduplicateparameter -ErrorAction Stop
-            throw "No Exception!"
+            throw "Expected an exception throw, but no Exception was thrown."
         }
         catch
         {

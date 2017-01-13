@@ -224,7 +224,7 @@ Describe "Get-Alias null tests" -Tags "CI" {
       try 
       {
           Get-Alias -Name $data
-          throw "No Exception!"
+          throw "Expected an exception throw, but no Exception was thrown."
       }
       catch { $_.FullyQualifiedErrorId | Should Be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetAliasCommand' }
     }
@@ -235,7 +235,7 @@ Describe "Get-Alias null tests" -Tags "CI" {
       try 
       {
           $data | Get-Alias -ErrorAction Stop
-          throw "No Exception!"
+          throw "Expected an exception throw, but no Exception was thrown."
       }
       catch { $_.FullyQualifiedErrorId | Should Be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetAliasCommand' }
     }
