@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter Force { get; set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override string[] Command { get; set; }
         #endregion Parameters
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Release all the resources. 
+        /// Release all the resources.
         /// </summary>
         /// <param name="disposing">
         /// if true, release all the managed objects.

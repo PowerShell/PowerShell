@@ -30,7 +30,7 @@ namespace cimcmdlets.Activities
         /// The .NET type implementing the cmdlet to invoke.
         /// </summary>
         public override System.Type TypeImplementingCmdlet { get { return typeof(Microsoft.Management.Infrastructure.CimCmdlets.SetCimInstanceCommand); } }
-       
+
         /// <summary>
         /// Provides access to the Namespace parameter.
         /// </summary>
@@ -87,7 +87,7 @@ namespace cimcmdlets.Activities
         protected override string PSDefiningModule { get { return "CimCmdlets"; } }
 
         // Additional custom code for this activity
-        
+
 
         /// <summary>
         /// Returns a configured instance of System.Management.Automation.PowerShell, pre-populated with the command to run.

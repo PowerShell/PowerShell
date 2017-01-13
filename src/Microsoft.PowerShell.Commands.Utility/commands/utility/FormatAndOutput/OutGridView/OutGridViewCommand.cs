@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
         #region Input Parameters
 
         /// <summary>
-        /// This parameter specifies the current pipeline object 
+        /// This parameter specifies the current pipeline object
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { get; set; } = AutomationNull.Value;
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Input Parameters
 
-        #region Public Methods 
+        #region Public Methods
 
         /// <summary>
         /// Provides a one-time, pre-processing functionality for the cmdlet.
@@ -129,7 +129,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Blocks depending on the wait and selected 
+        /// Blocks depending on the wait and selected
         /// </summary>
         protected override void EndProcessing()
         {
@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell.Commands
             IDictionary dictionary = InputObject.BaseObject as IDictionary;
             if (dictionary != null)
             {
-                // Dictionaries should be enumerated through because the pipeline does not enumerate through them. 
+                // Dictionaries should be enumerated through because the pipeline does not enumerate through them.
                 foreach (DictionaryEntry entry in dictionary)
                 {
                     ProcessObject(PSObjectHelper.AsPSObject(entry));
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
             return smartToString;
         }
 
-        #endregion Public Methods 
+        #endregion Public Methods
 
         #region Private Methods
 

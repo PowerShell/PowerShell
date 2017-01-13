@@ -5,7 +5,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Class ScriptCommandHelpProvider implement the help provider for Functions/ExternalScripts. 
+    /// Class ScriptCommandHelpProvider implement the help provider for Functions/ExternalScripts.
     /// This class does the same thing as CommandHelpProvider except for decision making: whether
     /// a particular command is Function/Script or not.
     /// </summary>

@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
             // Create named pipe runspace for selected process and open.
             Runspace namedPipeRunspace = CreateNamedPipeRunspace(Process.Id, AppDomainName);
 
-            // Set runspace prompt.  The runspace is closed on pop so we don't 
+            // Set runspace prompt.  The runspace is closed on pop so we don't
             // have to reverse this change.
             PrepareRunspace(namedPipeRunspace);
 
@@ -381,8 +381,8 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// This cmdlet returns a collection of PSHostProcessInfo objects containing 
-    /// process and AppDomain name information for processes that have PowerShell loaded.  
+    /// This cmdlet returns a collection of PSHostProcessInfo objects containing
+    /// process and AppDomain name information for processes that have PowerShell loaded.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "PSHostProcessInfo", DefaultParameterSetName = GetPSHostProcessInfoCommand.ProcessNameParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkId=517012")]

@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -81,11 +81,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                 cmdlet.Key,
                                 cmdlet.Property,
                                 cmdlet);
-                            
+
                         }
-                        break;                        
+                        break;
                     case CimBaseCommand.ResourceUriSessionSet:
-                    case CimBaseCommand.ResourceUriComputerSet:                        
+                    case CimBaseCommand.ResourceUriComputerSet:
                         {
                             nameSpace = cmdlet.Namespace; //passing null is ok for resourceUri set
                             cimInstance = CreateCimInstance("DummyClass",
@@ -93,7 +93,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                 cmdlet.Key,
                                 cmdlet.Property,
                                 cmdlet);
-                            
+
                         }
                         break;
                     case CimBaseCommand.CimClassComputerSet:
@@ -103,7 +103,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             cimInstance = CreateCimInstance(cmdlet.CimClass,
                                 cmdlet.Property,
                                 cmdlet);
-                            
+
                         }
                         break;
                     default:
@@ -272,7 +272,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return cimInstance;
             }
-            
+
             List<string> keys = new List<string>();
             if (key != null)
             {
@@ -309,7 +309,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                         flag);
                     cimInstance.CimInstanceProperties.Add(newProperty);
                 }
-                
+
             }
             return cimInstance;
         }

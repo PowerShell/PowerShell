@@ -30,7 +30,7 @@ namespace System.Management.Automation.ComInterop
         /// </summary>
         internal ComParamDesc(ref ELEMDESC elemDesc, string name)
         {
-            // Ensure _defaultValue is set to DBNull.Value regardless of whether or not the 
+            // Ensure _defaultValue is set to DBNull.Value regardless of whether or not the
             // default value is extracted from the parameter description.  Failure to do so
             // yields a runtime exception in the ToString() function.
             DefaultValue = DBNull.Value;

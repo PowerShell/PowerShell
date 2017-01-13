@@ -6,7 +6,7 @@
  * Common file that contains implementation for both server and client transport
  * managers for Out-Of-Process and Named Pipe (on the local machine) remoting implementation.
  * These interfaces are used by *-Job cmdlets to support background jobs and
- * attach-to-process feature without depending on WinRM (WinRM has complex requirements like 
+ * attach-to-process feature without depending on WinRM (WinRM has complex requirements like
  * elevation to support local machine remoting).
  */
 
@@ -526,7 +526,7 @@ namespace System.Management.Automation.Remoting.Client
                 if (null == stdInWriter)
                 {
                     // this will happen if CloseAsync() is called
-                    // before ConnectAsync()..in which case we 
+                    // before ConnectAsync()..in which case we
                     // just need to raise close completed event.
                     shouldRaiseCloseCompleted = true;
                 }
@@ -627,7 +627,7 @@ namespace System.Management.Automation.Remoting.Client
             lock (syncObject)
             {
                 // We always need to remove commands from collection, even if isClosed is true.
-                // If we don't then we hang because CloseAsync() will not complete until all 
+                // If we don't then we hang because CloseAsync() will not complete until all
                 // commands are closed.
                 if (!_cmdTransportManagers.Remove(key))
                 {
@@ -707,7 +707,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 // dont let the writer write new data as the process is exited.
                 // Not assigning null to stdInWriter to fix the race condition between OnExited() and CloseAsync() methods.
-                // 
+                //
                 stdInWriter.StopWriting();
             }
             PSRemotingTransportException psrte = new PSRemotingTransportException(PSRemotingErrorId.IPCServerProcessExited,
@@ -957,7 +957,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <exception cref="System.InvalidOperationException">
         /// </exception>
         /// <exception cref="System.ComponentModel.Win32Exception">
-        /// 1. There was an error in opening the associated file. 
+        /// 1. There was an error in opening the associated file.
         /// </exception>
         internal override void CreateAsync()
         {
@@ -1116,7 +1116,7 @@ namespace System.Management.Automation.Remoting.Client
                 try
                 {
                     // For processes running in an NTVDM, trying to kill with
-                    // the original handle fails with a Win32 error, so we'll 
+                    // the original handle fails with a Win32 error, so we'll
                     // use the ID and try to get a new handle...
                     Process newHandle = Process.GetProcessById(_serverProcess.Id);
                     // If the process was not found, we won't get here...
@@ -1863,7 +1863,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             _clientPipe.Close();
 
-            // 
+            //
             // We should terminate the PowerShell process inside container that
             // is created for PowerShell Direct.
             //
@@ -2018,7 +2018,7 @@ namespace System.Management.Automation.Remoting.Client
 
             lock (syncObject)
             {
-                // if the transport manager is already closed..return immediately           
+                // if the transport manager is already closed..return immediately
                 if (isClosed)
                 {
                     tracer.WriteLine("Client Command TM: Transport manager is closed. So returning");
@@ -2233,7 +2233,7 @@ namespace System.Management.Automation.Remoting.Server
         {
             OutOfProcessServerTransportManager cmdTM = new OutOfProcessServerTransportManager(_stdOutWriter, _stdErrWriter,
                 powerShellCmdId, this.TypeTable, this.Fragmentor.FragmentSize, this.CryptoHelper);
-            // this will make the Session's DataReady event handler handle 
+            // this will make the Session's DataReady event handler handle
             // the commands data as well. This is because the state machine
             // is per session.
             cmdTM.MigrateDataReadyEventHandlers(this);

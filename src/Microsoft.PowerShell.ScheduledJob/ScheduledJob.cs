@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// running job definition based jobs but can also save and load job
     /// results data from file.  This class is used to load job result
     /// data from previously run jobs so that a user can view results of
-    /// scheduled job runs.  This class also contains the definition of 
+    /// scheduled job runs.  This class also contains the definition of
     /// the scheduled job and so can run an instance of the scheduled
     /// job and optionally save results to file.
     /// </summary>
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 _job.StateChanged += new EventHandler<JobStateEventArgs>(HandleJobStateChanged);
                 SetJobState(_job.JobStateInfo.State);
 
-                // Add all child jobs to this object's list so that 
+                // Add all child jobs to this object's list so that
                 // the user and Receive-Job can retrieve results.
                 foreach (Job childJob in _job.ChildJobs)
                 {
@@ -600,7 +600,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         #region Internal Methods
 
         /// <summary>
-        /// Method to update a ScheduledJob based on new state and 
+        /// Method to update a ScheduledJob based on new state and
         /// result data from a provided Job.
         /// </summary>
         /// <param name="fromJob">ScheduledJob to update from.</param>

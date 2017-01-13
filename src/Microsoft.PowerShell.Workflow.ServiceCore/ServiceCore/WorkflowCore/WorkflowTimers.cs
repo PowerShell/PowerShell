@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell.Workflow
             _timers = new Dictionary<WorkflowTimerType, PSTimer>();
 
             if (deserializedTimers == null) throw new ArgumentNullException("deserializedTimers");
-            
+
             List<object> deserializedTimerList = (List<object>)deserializedTimers;
             foreach (object data in deserializedTimerList)
             {
@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Workflow
         {
             if (this.disposed || !disposing)
                 return;
-            
+
             lock (syncLock)
             {
                 if (this.disposed)

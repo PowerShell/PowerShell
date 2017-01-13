@@ -9,16 +9,16 @@ using System.Text;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Class MamlCommandHelpInfo keeps track of help information to be returned by 
+    ///
+    /// Class MamlCommandHelpInfo keeps track of help information to be returned by
     /// command help provider.
-    /// 
+    ///
     /// </summary>
     internal class MamlCommandHelpInfo : BaseCommandHelpInfo
     {
         /// <summary>
         /// Constructor for custom HelpInfo object construction
-        /// 
+        ///
         /// This is used by the CommandHelpProvider class to generate the
         /// default help UX when no help content is present.
         /// </summary>
@@ -49,7 +49,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Constructor for MamlCommandHelpInfo. This constructor will call the corresponding
-        /// constructor in CommandHelpInfo so that xmlNode will be converted a mamlNode. 
+        /// constructor in CommandHelpInfo so that xmlNode will be converted a mamlNode.
         /// </summary>
         /// <remarks>
         /// This constructor is intentionally made private so that the only way to create
@@ -65,7 +65,7 @@ namespace System.Management.Automation
             this.Errors = mamlNode.Errors;
 
             // The type name hierarchy for mshObject doesn't necessary
-            // reflect the hierarchy in source code. From display's point of 
+            // reflect the hierarchy in source code. From display's point of
             // view MamlCommandHelpInfo is derived from HelpInfo.
 
             _fullHelpObject.TypeNames.Clear();
@@ -151,15 +151,15 @@ namespace System.Management.Automation
 
         #region Component, Role, Features
 
-        // Component, Role, Functionality are required by exchange for filtering 
+        // Component, Role, Functionality are required by exchange for filtering
         // help contents to be returned from help system.
         //
-        // Following is how this is going to work, 
+        // Following is how this is going to work,
         //    1. Each command will optionally include component, role and functionality
         //       information. This information is discovered from help content
-        //       from xml tags <component>, <role>, <functionality> respectively 
+        //       from xml tags <component>, <role>, <functionality> respectively
         //       as part of command metadata.
-        //    2. From command line, end user can request help for commands for 
+        //    2. From command line, end user can request help for commands for
         //       particular component, role and functionality using parameters like
         //       -component, -role, -functionality.
         //    3. At runtime, help engine will match against component/role/functionality
@@ -248,7 +248,7 @@ namespace System.Management.Automation
 
         #endregion
 
-        #region Load 
+        #region Load
 
         /// <summary>
         /// Create a MamlCommandHelpInfo object from an XmlNode.
@@ -274,8 +274,8 @@ namespace System.Management.Automation
 
 #if V2
         /// <summary>
-        /// Merge the provider specific help with current command help. 
-        /// 
+        /// Merge the provider specific help with current command help.
+        ///
         /// The cmdletHelp and dynamicParameterHelp is normally retrieved from ProviderHelpProvider.
         /// </summary>
         /// <remarks>
@@ -292,7 +292,7 @@ namespace System.Management.Automation
             MamlCommandHelpInfo result = (MamlCommandHelpInfo)this.MemberwiseClone();
 
             // We will need to use a deep clone of _fullHelpObject
-            // to avoid _fullHelpObject being get terminated. 
+            // to avoid _fullHelpObject being get terminated.
             result._fullHelpObject = this._fullHelpObject.Copy();
 
             if (cmdletHelp != null)
@@ -388,10 +388,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns true if help content in help info matches the
-        /// pattern contained in <paramref name="pattern"/>. 
+        /// pattern contained in <paramref name="pattern"/>.
         /// The underlying code will usually run pattern.IsMatch() on
         /// content it wants to search.
-        /// Cmdlet help info looks for pattern in Synopsis and 
+        /// Cmdlet help info looks for pattern in Synopsis and
         /// DetailedDescription
         /// </summary>
         /// <param name="pattern"></param>

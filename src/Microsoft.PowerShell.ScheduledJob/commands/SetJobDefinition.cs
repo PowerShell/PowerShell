@@ -256,7 +256,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             try
             {
-                // If RunEvery parameter is specified then create a job trigger for the definition that 
+                // If RunEvery parameter is specified then create a job trigger for the definition that
                 // runs the job at the requested interval.
                 bool addedTrigger = false;
                 if (MyInvocation.BoundParameters.ContainsKey("RunEvery"))
@@ -306,7 +306,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 else
                 {
                     string msg = StringUtil.Format(ScheduledJobErrorStrings.CantSetJobDefinition, _definition.Name);
-                    errorRecord = new ErrorRecord(new RuntimeException(msg, e), 
+                    errorRecord = new ErrorRecord(new RuntimeException(msg, e),
                         "CantSetPropertiesToScheduledJobDefinition", ErrorCategory.InvalidOperation, _definition);
                 }
 
@@ -363,7 +363,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Create new ScheduledJobInvocationInfo object with update information and 
+        /// Create new ScheduledJobInvocationInfo object with update information and
         /// update the job definition object.
         /// </summary>
         private void UpdateJobInvocationInfo()
@@ -371,7 +371,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             Dictionary<string, object> parameters = UpdateParameters();
             string name = _definition.Name;
             string command;
-            
+
             if (ScriptBlock != null)
             {
                 command = ScriptBlock.ToString();
@@ -398,7 +398,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <returns>Updated parameters.</returns>
         private Dictionary<string, object> UpdateParameters()
         {
-            Debug.Assert(_definition.InvocationInfo.Parameters.Count != 0, 
+            Debug.Assert(_definition.InvocationInfo.Parameters.Count != 0,
                 "ScheduledJobDefinition must always have some job invocation parameters");
             Dictionary<string, object> newParameters = new Dictionary<string, object>();
             foreach (CommandParameter parameter in _definition.InvocationInfo.Parameters[0])

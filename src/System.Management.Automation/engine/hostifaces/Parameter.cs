@@ -160,7 +160,7 @@ namespace System.Management.Automation.Runspaces
             }
             Debug.Assert(endPosition > 0, "parameter name should have some non-whitespace characters in it");
 
-            // now make sure that parameterText doesn't have whitespace at the end, 
+            // now make sure that parameterText doesn't have whitespace at the end,
             parameterText = name.Substring(0, endPosition);
 
             // parameterName should contain only the actual name of the parameter (no whitespace, colons, dashes)
@@ -193,13 +193,13 @@ namespace System.Management.Automation.Runspaces
         #region Serialization / deserialization for remoting
 
         /// <summary>
-        /// Creates a CommandParameter object from a PSObject property bag. 
+        /// Creates a CommandParameter object from a PSObject property bag.
         /// PSObject has to be in the format returned by ToPSObjectForRemoting method.
         /// </summary>
         /// <param name="parameterAsPSObject">PSObject to rehydrate</param>
         /// <returns>
         /// CommandParameter rehydrated from a PSObject property bag
-        /// </returns>       
+        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if the PSObject is null.
         /// </exception>

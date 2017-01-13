@@ -85,7 +85,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This is static property which gets Current TimeZone in byte format
-        /// by using ByteFormatter. 
+        /// by using ByteFormatter.
         /// This is static to make client generate this only once.
         /// </summary>
         internal static byte[] GetCurrentTimeZoneInByteFormat()

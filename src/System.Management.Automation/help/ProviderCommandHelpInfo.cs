@@ -55,7 +55,7 @@ namespace System.Management.Automation
         /// RelatedLinks.
         /// </summary>
         /// <returns>
-        /// Null if no Uri is specified by the helpinfo or a 
+        /// Null if no Uri is specified by the helpinfo or a
         /// valid Uri.
         /// </returns>
         internal override Uri GetUriForOnlineHelp()

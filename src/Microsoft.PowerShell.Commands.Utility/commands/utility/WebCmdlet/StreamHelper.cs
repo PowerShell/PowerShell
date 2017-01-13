@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Microsoft.PowerShell.Commands.WebResponse has a public property RawContentStream
     /// which is of type MemoryStream. We shipped like that in PowerShell 3. Creating
-    /// this class as a wrapper to MemoryStream to lazily initialize. Otherwise, the 
+    /// this class as a wrapper to MemoryStream to lazily initialize. Otherwise, the
     /// content will unnecessarily be read even if there are no consumers for it.
     /// </summary>
     internal class WebResponseContentMemoryStream : MemoryStream
@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Constructors
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="stream"></param>
         /// <param name="initialCapacity"></param>
@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override bool CanRead
         {
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override bool CanSeek
         {
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override bool CanTimeout
         {
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override bool CanWrite
         {
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override long Length
         {
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="destination"></param>
         /// <param name="bufferSize"></param>
@@ -118,7 +118,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
@@ -131,7 +131,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
@@ -145,7 +145,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public override int ReadByte()
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="value"></param>
         public override void SetLength(long value)
@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public override byte[] ToArray()
@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
@@ -187,7 +187,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="value"></param>
         public override void WriteByte(byte value)
@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="stream"></param>
         public override void WriteTo(Stream stream)
@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void Dispose(bool disposing)
         {
@@ -230,7 +230,7 @@ namespace Microsoft.PowerShell.Commands
 
 #if !CORECLR
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override IAsyncResult BeginRead(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override IAsyncResult BeginWrite(byte[] buffer, int offset, int count, AsyncCallback callback, object state)
         {
@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override byte[] GetBuffer()
         {
@@ -257,7 +257,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override void Close()
         {
@@ -266,7 +266,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         private void Initialize()
         {
@@ -423,8 +423,8 @@ namespace Microsoft.PowerShell.Commands
             int bytesRead = 0;
             do
             {
-                // Read at most the number of bytes that will fit in the input buffer. The  
-                // return value is the actual number of bytes read, or zero if no bytes remain. 
+                // Read at most the number of bytes that will fit in the input buffer. The
+                // return value is the actual number of bytes read, or zero if no bytes remain.
                 bytesRead = stream.Read(bytes, 0, useBufferSize * 4);
 
                 bool completed = false;
@@ -434,13 +434,13 @@ namespace Microsoft.PowerShell.Commands
 
                 while (!completed)
                 {
-                    // If this is the last input data, flush the decoder's internal buffer and state. 
+                    // If this is the last input data, flush the decoder's internal buffer and state.
                     bool flush = (bytesRead == 0);
                     decoder.Convert(bytes, byteIndex, bytesRead - byteIndex,
                                     chars, 0, useBufferSize, flush,
                                     out bytesUsed, out charsUsed, out completed);
 
-                    // The conversion produced the number of characters indicated by charsUsed. Write that number 
+                    // The conversion produced the number of characters indicated by charsUsed. Write that number
                     // of characters to our result buffer
                     result.Append(chars, 0, charsUsed);
 

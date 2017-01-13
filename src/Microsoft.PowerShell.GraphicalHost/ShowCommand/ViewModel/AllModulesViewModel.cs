@@ -168,9 +168,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         public Visibility RefreshVisibility
         {
-            get 
-            { 
-                return this.refreshVisibility; 
+            get
+            {
+                return this.refreshVisibility;
             }
 
             set
@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                     this.selectedModule.RefreshFilteredCommands(this.CommandNameFilter);
                     this.selectedModule.SelectedCommand = null;
                 }
-                
+
                 this.OnNotifyPropertyChanged("CommandNameFilter");
             }
         }
@@ -519,7 +519,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 moduleViewModel.SetAllModules(this);
             }
 
-            // populates this.modules 
+            // populates this.modules
             this.modules = new List<ModuleViewModel>();
 
             // if there is just one module then use only it

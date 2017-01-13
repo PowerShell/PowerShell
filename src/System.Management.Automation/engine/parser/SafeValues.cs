@@ -8,12 +8,12 @@ using System.Linq;
 using System.Management.Automation.Internal;
 
 /*
- * 
+ *
  * This visitor makes a determination as to whether an operation is safe in a GetPowerShell API Context.
- * It is modeled on the ConstantValueVisitor with changes which allow those 
+ * It is modeled on the ConstantValueVisitor with changes which allow those
  * operations which are deemed safe, rather than constant. The following are differences from
  * ConstantValueVisitor:
- *  o Because we are going to call for values in ScriptBlockToPowerShell, the 
+ *  o Because we are going to call for values in ScriptBlockToPowerShell, the
  *    Get*ValueVisitor class is removed
  *  o IsGetPowerShellSafeValueVisitor only needs to determine whether it is safe, we won't return
  *    anything but that determination (vs actually returning a value in the out constantValue parameter
@@ -23,7 +23,7 @@ using System.Management.Automation.Internal;
  *  o VisitIndexExpression may be safe under the proper circumstances
  *  o VisitStatementBlock is safe if its component statements are safe
  *  o VisitBinaryExpression is not safe as it allows for a DOS attack
- *  o VisitVariableExpression is generally safe, there are checks outside of this code for ensuring variables actually 
+ *  o VisitVariableExpression is generally safe, there are checks outside of this code for ensuring variables actually
  *    have provided references. Those other checks ensure that the variable isn't something like $PID or $HOME, etc.,
  *    otherwise it's a safe operation, such as reference to a variable such as $true, or passed parameters.
  *  o VisitTypeExpression is not safe as it enables determining what types are available on the system which
@@ -32,7 +32,7 @@ using System.Management.Automation.Internal;
  *  o VisitArrayExpression may be safe if its components are safe
  *  o VisitArrayLiteral may be safe if its components are safe
  *  o VisitHashtable may be safe if its components are safe
- *  
+ *
  */
 
 namespace System.Management.Automation.Language
@@ -54,7 +54,7 @@ namespace System.Management.Automation.Language
             _safeValueContext = safeValueContext;
         }
 
-        // This is a check of the number of visits 
+        // This is a check of the number of visits
         private int _visitCount = 0;
         private const int MaxVisitCount = 5000;
         private const int MaxHashtableKeyCount = 500;
@@ -216,7 +216,7 @@ namespace System.Management.Automation.Language
                 // GetPowerShell does its own validation of allowed variables in the
                 // context of the entire script block, and then supplies this visitor
                 // with the CommandExpressionAst directly. This
-                // prevents us from evaluating variable safety in this visitor, 
+                // prevents us from evaluating variable safety in this visitor,
                 // so we rely on GetPowerShell's implementation.
                 return true;
             }
@@ -234,7 +234,7 @@ namespace System.Management.Automation.Language
 
         public object VisitTypeExpression(TypeExpressionAst typeExpressionAst)
         {
-            // Type expressions are not safe as they allow fingerprinting by providing 
+            // Type expressions are not safe as they allow fingerprinting by providing
             // a set of types, you can inspect the types in the AppDomain implying which assemblies are in use
             // and their version
             return false;
@@ -384,7 +384,7 @@ namespace System.Management.Automation.Language
             {
                 return targetHashtable[index];
             }
-            // The actual exception doesn't really matter because the caller in ScriptBlockToPowerShell 
+            // The actual exception doesn't really matter because the caller in ScriptBlockToPowerShell
             // will present the user with the offending script segment
             throw new Exception();
         }
@@ -424,18 +424,18 @@ namespace System.Management.Automation.Language
             for (int offset = 0; offset < safeValues.Length; offset++)
             {
                 var result = expandableStringExpressionAst.NestedExpressions[offset].Accept(this);
-                // depending on the nested expression we may retrieve a variable, or even need to 
+                // depending on the nested expression we may retrieve a variable, or even need to
                 // execute a sub-expression. The result of which may be returned
                 // as a scalar, array or nested array. If the unwrap of first array doesn't contain a nested
                 // array we can then pass it to String.Join. If it *does* contain an array,
                 // we need to unwrap the inner array and pass *that* to String.Join.
-                // 
+                //
                 // This means we get the same answer with GetPowerShell() as in the command-line
-                // { echo "abc $true $(1) $(2,3) def" }.Invoke() gives the same answer as 
+                // { echo "abc $true $(1) $(2,3) def" }.Invoke() gives the same answer as
                 // { echo "abc $true $(1) $(2,3) def" }.GetPowerShell().Invoke()
                 // abc True 1 2 3 def
                 // as does { echo "abc $true $(1) $(@(1,2),@(3,4)) def"
-                // which is 
+                // which is
                 // abc True 1 System.Object[] System.Object[] def
                 // fortunately, at this point, we're dealing with strings, so whatever the result
                 // from the ToString method of the array (or scalar) elements, that's symmetrical with
@@ -538,7 +538,7 @@ namespace System.Management.Automation.Language
 
         public object VisitConvertExpression(ConvertExpressionAst convertExpressionAst)
         {
-            // at this point, we know we're safe because we checked both the type and the child, 
+            // at this point, we know we're safe because we checked both the type and the child,
             // so now we can just call the compiler and indicate that it's trusted (at this point)
             if (s_context != null)
             {
@@ -608,7 +608,7 @@ namespace System.Management.Automation.Language
 
         public object VisitTypeExpression(TypeExpressionAst typeExpressionAst)
         {
-            // Type expressions are not safe as they allow fingerprinting by providing 
+            // Type expressions are not safe as they allow fingerprinting by providing
             // a set of types, you can inspect the types in the AppDomain implying which assemblies are in use
             // and their version
             throw PSTraceSource.NewArgumentException("ast");

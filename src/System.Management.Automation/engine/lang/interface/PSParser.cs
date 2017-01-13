@@ -4,7 +4,7 @@
     Project:     PowerShell
 
 
-    Contents:    PowerShell parser interface for syntax editors 
+    Contents:    PowerShell parser interface for syntax editors
 
     Classes:     System.Management.Automation.PSParser
 
@@ -22,44 +22,44 @@ namespace System.Management.Automation
     /// PSParser class
     /// </summary>
     /// <remarks>
-    /// This is a class providing the interface for parsing a script into a collection of 
-    /// tokens, which primarily can be used for syntax colorization. 
-    /// 
-    /// Classes provided for syntax colorization includes, 
-    /// 
-    ///     1. PSParser: this class provides the main interface to be used. 
-    ///     2. PSToken: this class provides a public representation of powershell tokens. 
-    ///     3. PSParseError: this class provides a public representation of syntax errors. 
-    /// 
-    /// These three classes are provided for exposing interfaces only. They 
-    /// should not be used in PowerShell engine code. 
-    /// 
+    /// This is a class providing the interface for parsing a script into a collection of
+    /// tokens, which primarily can be used for syntax colorization.
+    ///
+    /// Classes provided for syntax colorization includes,
+    ///
+    ///     1. PSParser: this class provides the main interface to be used.
+    ///     2. PSToken: this class provides a public representation of powershell tokens.
+    ///     3. PSParseError: this class provides a public representation of syntax errors.
+    ///
+    /// These three classes are provided for exposing interfaces only. They
+    /// should not be used in PowerShell engine code.
+    ///
     /// </remarks>
     //
     //  1. Design
-    //  
-    //  PSParser class is a public wrapper class of internal Parser class. It is mail goal 
-    //  is to provide a public interface for parsing a script into a collection of tokens. 
     //
-    //  Design of this class is made up of two parts, 
+    //  PSParser class is a public wrapper class of internal Parser class. It is mail goal
+    //  is to provide a public interface for parsing a script into a collection of tokens.
     //
-    //      1. interface part: which implement the static public interface for parsing a script. 
-    //      2. logic part: which implement the parsing logic for parsing. 
+    //  Design of this class is made up of two parts,
+    //
+    //      1. interface part: which implement the static public interface for parsing a script.
+    //      2. logic part: which implement the parsing logic for parsing.
     //
     //  2. Interface
-    // 
+    //
     //  The only public interface provided by this class is the static member
-    // 
+    //
     //     static Collection<PSToken> Parse(string script, out Collection<PSParseError> errors)
     //
     //  3. Parsing Logic
-    //  
-    //  Script parsing is done through instances of PSParser object. Each PSParser object 
-    //  wraps an internal Parser object. It is PSParser object's responsibility to 
-    //      a. setup local runspace and retrieve internal Parser object from it. 
+    //
+    //  Script parsing is done through instances of PSParser object. Each PSParser object
+    //  wraps an internal Parser object. It is PSParser object's responsibility to
+    //      a. setup local runspace and retrieve internal Parser object from it.
     //      b. call internal parser for actual parsing
     //      c. translate parsing result from internal Token and RuntimeException type
-    //         into public PSToken and PSParseError type. 
+    //         into public PSToken and PSParseError type.
     //
     public sealed class PSParser
     {
@@ -68,7 +68,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// This constructor is made private intentionally. The only way to create an instance
-        /// of PSParser object is from PSParser pool maintained in this class. 
+        /// of PSParser object is from PSParser pool maintained in this class.
         /// </remarks>
         private PSParser()
         {
@@ -92,7 +92,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Return collection of tokens generated for recent parsing task. 
+        /// Return collection of tokens generated for recent parsing task.
         /// </summary>
         private Collection<PSToken> Tokens
         {
@@ -111,7 +111,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Return collection of errors happened for recent parsing task. 
+        /// Return collection of errors happened for recent parsing task.
         /// </summary>
         private Collection<PSParseError> Errors
         {
@@ -132,7 +132,7 @@ namespace System.Management.Automation
         #region Public API
 
         /// <summary>
-        /// Parse a script into a collection of tokens. 
+        /// Parse a script into a collection of tokens.
         /// </summary>
         /// <param name="script">script to parse</param>
         /// <param name="errors">errors happened during parsing</param>
@@ -159,7 +159,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Parse a script into a collection of tokens. 
+        /// Parse a script into a collection of tokens.
         /// </summary>
         /// <param name="script">script to parse, as an array of lines</param>
         /// <param name="errors">errors happened during parsing</param>

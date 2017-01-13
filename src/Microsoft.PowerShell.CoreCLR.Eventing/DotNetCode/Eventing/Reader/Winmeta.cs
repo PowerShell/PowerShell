@@ -2,10 +2,10 @@
 /*============================================================
 **
 **
-** Purpose: 
-** Contains eventing constants defined by the Windows 
+** Purpose:
+** Contains eventing constants defined by the Windows
 ** environment.
-** 
+**
 ============================================================*/
 
 using System.Diagnostics.CodeAnalysis;
@@ -38,7 +38,7 @@ namespace System.Diagnostics.Eventing.Reader
         /// </summary>
         Informational,
         /// <summary>
-        /// All events, including previous levels 
+        /// All events, including previous levels
         /// </summary>
         Verbose
     }
@@ -68,7 +68,7 @@ namespace System.Diagnostics.Eventing.Reader
         /// </summary>
         Start,
         /// <summary>
-        /// An activity end event 
+        /// An activity end event
         /// </summary>
         Stop,
         /// <summary>
@@ -100,7 +100,7 @@ namespace System.Diagnostics.Eventing.Reader
         /// </summary>
         Send,
         /// <summary>
-        /// An event representing receiving an activity transfer from another component 
+        /// An event representing receiving an activity transfer from another component
         /// </summary>
         Receive = 240
     }
@@ -140,7 +140,7 @@ namespace System.Diagnostics.Eventing.Reader
         /// </summary>
         AuditSuccess = 0x20000000000000,
         /// <summary>
-        /// Incorrect CorrelationHint value mistakenly shipped in .NET 3.5. Don't use: duplicates AuditFailure. 
+        /// Incorrect CorrelationHint value mistakenly shipped in .NET 3.5. Don't use: duplicates AuditFailure.
         /// </summary>
         [Obsolete("Incorrect value: use CorrelationHint2 instead", false)]
         CorrelationHint = 0x10000000000000,

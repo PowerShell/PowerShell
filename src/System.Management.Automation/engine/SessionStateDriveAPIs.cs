@@ -16,7 +16,7 @@ using System.Globalization;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session 
+    /// Holds the state of a Monad Shell session
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -31,11 +31,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds the specified drive to the current scope.
         /// </summary>
-        /// 
+        ///
         /// <param name="drive">
         /// The drive to be added to the current scope.
         /// </param>
-        /// 
+        ///
         /// <param name="scopeID">
         /// The ID for the scope to add the drive to. The scope ID can be any of the
         /// "special" scope identifiers like "global", "local", or "private" or it
@@ -44,33 +44,33 @@ namespace System.Management.Automation
         /// If this parameter is null or empty the drive will be placed in the
         /// current scope.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The drive that was added, if any.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="drive"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If the drive already exists,
         /// or
         /// If <paramref name="drive"/>.Name contains one or more invalid characters; ~ / \\ . :
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider is not a DriveCmdletProvider.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// The provider for the <paramref name="drive"/> could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception or returned null.
         /// </exception>
-        /// 
+        ///
         internal PSDriveInfo NewDrive(PSDriveInfo drive, string scopeID)
         {
             if (drive == null)
@@ -111,11 +111,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds a drive to the PowerShell namespace.
         /// </summary>
-        /// 
+        ///
         /// <param name="drive">
         /// The new drive to be added.
         /// </param>
-        /// 
+        ///
         /// <param name="scopeID">
         /// The ID for the scope to add the drive to. The scope ID can be any of the
         /// "special" scope identifiers like "global", "local", or "private" or it
@@ -124,38 +124,38 @@ namespace System.Management.Automation
         /// If this parameter is null or empty the drive will be placed in the
         /// current scope.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="drive"/> or <paramref name="context"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If the drive already exists
         /// or
         /// If <paramref name="drive"/>.Name contains one or more invalid characters; ~ / \\ . :
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider is not a DriveCmdletProvider.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// The provider for the <paramref name="drive"/> could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception or returned null.
         /// </exception>
-        /// 
+        ///
         internal void NewDrive(PSDriveInfo drive, string scopeID, CmdletProviderContext context)
         {
             if (drive == null)
@@ -278,19 +278,19 @@ namespace System.Management.Automation
         /// to a single path then the resolved provider internal path is returned. If it
         /// does not resolve to a single MSH path the root is returned as it was passed.
         /// </summary>
-        /// 
+        ///
         /// <param name="root">
         /// The root path of the drive to be resolved.
         /// </param>
-        /// 
+        ///
         /// <param name="provider">
         /// The provider that should be used when resolving the path.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The new root path of the drive.
         /// </returns>
-        /// 
+        ///
         private string GetProviderRootFromSpecifiedRoot(string root, ProviderInfo provider)
         {
             Dbg.Diagnostics.Assert(
@@ -319,7 +319,7 @@ namespace System.Management.Automation
                 if (resolvedPaths != null &&
                     resolvedPaths.Count == 1)
                 {
-                    // and the provider used to resolve the path, 
+                    // and the provider used to resolve the path,
                     // matches the one specified by the drive...
 
                     if (provider.NameEquals(resolvedProvider.FullName))
@@ -382,33 +382,33 @@ namespace System.Management.Automation
         /// Gets an object that defines the additional parameters for the NewDrive implementation
         /// for a provider.
         /// </summary>
-        /// 
+        ///
         /// <param name="providerId">
         /// The provider ID for the drive that is being created.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerId"/> is not a DriveCmdletProvider.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="providerId"/> does not exist.
         /// </exception>
-        /// 
+        ///
         internal object NewDriveDynamicParameters(string providerId, CmdletProviderContext context)
         {
             if (providerId == null)
             {
-                // If the provider hasn't been specified yet, just return null. 
+                // If the provider hasn't been specified yet, just return null.
                 // The provider can be specified as pipeline input.
                 return null;
             }
@@ -441,23 +441,23 @@ namespace System.Management.Automation
         /// <summary>
         /// Searches through the session state scopes to find a drive
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of a drive to find.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The drive information if the drive is found.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="name"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If there is no drive with <paramref name="name"/>.
         /// </exception>
-        /// 
+        ///
         internal PSDriveInfo GetDrive(string name)
         {
             return GetDrive(name, true);
@@ -534,37 +534,37 @@ namespace System.Management.Automation
         /// Searches through the session state scopes looking
         /// for a drive of the specified name.
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the drive to return.
         /// </param>
-        /// 
+        ///
         /// <param name="scopeID">
         /// The scope ID of the scope to look in for the drive.
         /// If this parameter is null or empty the drive will be
         /// found by searching the scopes using the dynamic scoping
         /// rules.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The drive for the given name in the given scope or null if
         /// the drive was not found.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="name"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
         /// a number and not "script", "global", "local", or "private"
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        /// 
+        ///
         internal PSDriveInfo GetDrive(string name, string scopeID)
         {
             if (name == null)
@@ -847,20 +847,20 @@ namespace System.Management.Automation
         /// Determines if the specified automounted drive still exists. If not,
         /// the drive is removed.
         /// </summary>
-        /// 
+        ///
         /// <param name="drive">
         /// The drive to validate or remove.
         /// </param>
-        /// 
+        ///
         /// <param name="scope">
         /// The scope the drive is in.  This will be used to remove the drive
         /// if necessary.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// True if the drive is still valid, false if the drive was removed.
         /// </returns>
-        /// 
+        ///
         private bool ValidateOrRemoveAutoMountedDrive(PSDriveInfo drive, SessionStateScope scope)
         {
             bool result = true;
@@ -931,8 +931,8 @@ namespace System.Management.Automation
         } // ValidateOrRemoveAutoMountedDrive
 
         /// <summary>
-        /// If a VHD is mounted to a drive prior to the PowerShell session being launched, 
-        /// then such a drive has to be validated for its existence before performing 
+        /// If a VHD is mounted to a drive prior to the PowerShell session being launched,
+        /// then such a drive has to be validated for its existence before performing
         /// any operations on that drive to make sure that the drive is not unmounted.
         /// </summary>
         /// <param name="drive"></param>
@@ -953,7 +953,7 @@ namespace System.Management.Automation
             // We would hit this situation in the following scenario:
             //  1. Launch Powershell session 'A' and mount the VHD.
             //  2. Launch different powershell session 'B'.
-            //  3. Unmount the VHD in session 'A'. 
+            //  3. Unmount the VHD in session 'A'.
             // The drive pointing to VHD in session 'B' gets detected as DriveType.NoRootDirectory
             // after the VHD is removed in session 'A'.
             if (drive != null && !string.IsNullOrEmpty(drive.Name) && drive.Name.Length == 1)
@@ -1004,15 +1004,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets all the drives for a specific provider
         /// </summary>
-        /// 
+        ///
         /// <param name="providerId">
         /// The identifier for the provider to retrieve the drives for.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An IEnumerable that contains the drives for the specified provider.
         /// </returns>
-        /// 
+        ///
         internal Collection<PSDriveInfo> GetDrivesForProvider(string providerId)
         {
             if (String.IsNullOrEmpty(providerId))
@@ -1043,11 +1043,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes the drive with the specified name.
         /// </summary>
-        /// 
+        ///
         /// <param name="driveName">
         /// The name of the drive to remove.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// Determines whether drive should be forcefully removed even if there was errors.
         /// </param>
@@ -1058,7 +1058,7 @@ namespace System.Management.Automation
         /// starting at the current scope through all the parent scopes to the
         /// global scope until a drive of the given name is found to remove.
         /// </param>
-        /// 
+        ///
         internal void RemoveDrive(string driveName, bool force, string scopeID)
         {
             if (driveName == null)
@@ -1083,11 +1083,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes the drive with the specified name.
         /// </summary>
-        /// 
+        ///
         /// <param name="driveName">
         /// The name of the drive to remove.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// Determines whether drive should be forcefully removed even if there was errors.
         /// </param>
@@ -1098,11 +1098,11 @@ namespace System.Management.Automation
         /// starting at the current scope through all the parent scopes to the
         /// global scope until a drive of the given name is found to remove.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context of the command.
         /// </param>
-        /// 
+        ///
         internal void RemoveDrive(
             string driveName,
             bool force,
@@ -1137,11 +1137,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes the specified drive.
         /// </summary>
-        /// 
+        ///
         /// <param name="drive">
         /// The drive to be removed.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// Determines whether drive should be forcefully removed even if there was errors.
         /// </param>
@@ -1152,7 +1152,7 @@ namespace System.Management.Automation
         /// starting at the current scope through all the parent scopes to the
         /// global scope until a drive of the given name is found to remove.
         /// </param>
-        /// 
+        ///
         internal void RemoveDrive(PSDriveInfo drive, bool force, string scopeID)
         {
             if (drive == null)
@@ -1173,11 +1173,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes the specified drive.
         /// </summary>
-        /// 
+        ///
         /// <param name="drive">
         /// The drive to be removed.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// Determines whether drive should be forcefully removed even if there was errors.
         /// </param>
@@ -1188,16 +1188,16 @@ namespace System.Management.Automation
         /// starting at the current scope through all the parent scopes to the
         /// global scope until a drive of the given name is found to remove.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        /// 
+        ///
         internal void RemoveDrive(
             PSDriveInfo drive,
             bool force,
@@ -1306,27 +1306,27 @@ namespace System.Management.Automation
         /// Determines if the drive can be removed by calling the provider
         /// for the drive.
         /// </summary>
-        /// 
+        ///
         /// <param name="drive">
         /// The drive to test for removal.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// True if the drive can be removed, false otherwise.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="drive"/> or <paramref name="context"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception when RemoveDrive was called.
         /// </exception>
-        /// 
+        ///
         private bool CanRemoveDrive(PSDriveInfo drive, CmdletProviderContext context)
         {
             if (context == null)
@@ -1413,12 +1413,12 @@ namespace System.Management.Automation
         /// If <paramref name="scope"/> is less than zero, or not
         /// a number and not "script", "global", "local", or "private"
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        /// 
+        ///
         internal Collection<PSDriveInfo> Drives(string scope)
         {
             Dictionary<String, PSDriveInfo> driveTable = new Dictionary<String, PSDriveInfo>();

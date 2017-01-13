@@ -119,7 +119,7 @@ namespace System.Management.Automation.PerformanceData
 
         /// <summary>
         /// If isNumerator is true, then updates the numerator component
-        /// of target counter 'counterId' by a value given by 'stepAmount'. 
+        /// of target counter 'counterId' by a value given by 'stepAmount'.
         /// Otherwise, updates the denominator component by 'stepAmount'.
         /// </summary>
         public abstract bool UpdateCounterByValue(
@@ -130,7 +130,7 @@ namespace System.Management.Automation.PerformanceData
 
         /// <summary>
         /// If isNumerator is true, then updates the numerator component
-        /// of target counter 'counterName' by a value given by 'stepAmount'. 
+        /// of target counter 'counterName' by a value given by 'stepAmount'.
         /// Otherwise, updates the denominator component by 'stepAmount'.
         /// </summary>
         public abstract bool UpdateCounterByValue(
@@ -139,7 +139,7 @@ namespace System.Management.Automation.PerformanceData
             bool isNumerator);
 
         /// <summary>
-        /// If isNumerator is true, then sets the numerator component of target 
+        /// If isNumerator is true, then sets the numerator component of target
         /// counter 'counterId' to 'counterValue'.
         /// Otherwise, sets the denominator component to 'counterValue'.
         /// </summary>
@@ -149,7 +149,7 @@ namespace System.Management.Automation.PerformanceData
             bool isNumerator);
 
         /// <summary>
-        /// If isNumerator is true, then sets the numerator component of target 
+        /// If isNumerator is true, then sets the numerator component of target
         /// Counter 'counterName' to 'counterValue'.
         /// Otherwise, sets the denominator component to 'counterValue'.
         /// </summary>
@@ -198,13 +198,13 @@ namespace System.Management.Automation.PerformanceData
         {
             this.SetCounterValue(counterName, 0, true);
             this.SetCounterValue(counterName, 0, false);
-        }       
+        }
         */
         #endregion
     }
 
     /// <summary>
-    /// PSCounterSetInstance is a thin wrapper 
+    /// PSCounterSetInstance is a thin wrapper
     /// on System.Diagnostics.PerformanceData.CounterSetInstance
     /// </summary>
     public class PSCounterSetInstance : CounterSetInstanceBase
@@ -343,7 +343,7 @@ namespace System.Management.Automation.PerformanceData
 
         /// <summary>
         /// If isNumerator is true, then updates the numerator component
-        /// of target counter 'counterId' by a value given by 'stepAmount'. 
+        /// of target counter 'counterId' by a value given by 'stepAmount'.
         /// Otherwise, updates the denominator component by 'stepAmount'.
         /// </summary>
         public override bool UpdateCounterByValue(int counterId, long stepAmount, bool isNumerator)
@@ -384,7 +384,7 @@ namespace System.Management.Automation.PerformanceData
         }
         /// <summary>
         /// If isNumerator is true, then updates the numerator component
-        /// of target counter 'counterName' by a value given by 'stepAmount'. 
+        /// of target counter 'counterName' by a value given by 'stepAmount'.
         /// Otherwise, updates the denominator component by 'stepAmount'.
         /// </summary>
         public override bool UpdateCounterByValue(string counterName, long stepAmount, bool isNumerator)
@@ -424,7 +424,7 @@ namespace System.Management.Automation.PerformanceData
 
         /// <summary>
         /// If isNumerator is true, then sets the numerator component
-        /// of target counter 'counterId' to 'counterValue'. 
+        /// of target counter 'counterId' to 'counterValue'.
         /// Otherwise, sets the denominator component to 'counterValue'.
         /// </summary>
         public override bool SetCounterValue(int counterId, long counterValue, bool isNumerator)
@@ -467,7 +467,7 @@ namespace System.Management.Automation.PerformanceData
 
         /// <summary>
         /// If isNumerator is true, then updates the numerator component
-        /// of target counter 'counterName' by a value given by 'counterValue'. 
+        /// of target counter 'counterName' by a value given by 'counterValue'.
         /// Otherwise, sets the denominator component to 'counterValue'.
         /// </summary>
         public override bool SetCounterValue(string counterName, long counterValue, bool isNumerator)

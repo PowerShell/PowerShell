@@ -570,7 +570,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                         frame.frameInfoDefinition.firstLine = LoadPositiveOrZeroIntegerValue(n, out success);
                         if (!success)
                             return null;
-                        // hanging is codified as negative 
+                        // hanging is codified as negative
                         frame.frameInfoDefinition.firstLine = -frame.frameInfoDefinition.firstLine;
                     }
                     else if (MatchNodeName(n, XmlTags.ComplexItemNode))

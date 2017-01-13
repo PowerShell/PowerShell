@@ -25,11 +25,11 @@ namespace Microsoft.Management.UI.Internal
     /// The FilterRulePanel manages two primary entities: <see cref="FilterRulePanelItem"/>s and DataTemplates.
     /// /// </para>
     /// <para>
-    /// <see cref="FilterRulePanelItem" />s are the data classes that store the state for each item in the panel. 
+    /// <see cref="FilterRulePanelItem" />s are the data classes that store the state for each item in the panel.
     /// They are added and removed to/from the panel using the AddRulesCommand and the RemoveRuleCommand commands.
     /// </para>
     /// <para>
-    /// For a FilterRule to display in the panel it must have a DataTemplate registered. To add and remove 
+    /// For a FilterRule to display in the panel it must have a DataTemplate registered. To add and remove
     /// DataTemplates, use the AddFilterRulePanelItemContentTemplate and RemoveFilterRulePanelItemContentTemplate methods.
     /// </para>
     /// </remarks>

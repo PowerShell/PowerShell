@@ -16,12 +16,12 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// <summary>
     /// This class encapsulates the work of determining the file location where
     /// a job definition will be stored and retrieved and where job runs will
-    /// be stored and retrieved.  Scheduled job definitions are stored in a 
-    /// location based on the current user.  Job runs are stored in the 
-    /// corresponding scheduled job definition location under an "Output" 
+    /// be stored and retrieved.  Scheduled job definitions are stored in a
+    /// location based on the current user.  Job runs are stored in the
+    /// corresponding scheduled job definition location under an "Output"
     /// directory, where each run will have a subdirectory with a name derived
     /// from the job run date/time.
-    /// 
+    ///
     /// File Structure for "JobDefinitionFoo":
     /// $env:User\AppData\Local\Windows\PowerShell\ScheduledJobs\JobDefinitionFoo\
     ///     ScheduledJobDefinition.xml
@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Returns an IEnumerable object of scheduled job definition names in 
+        /// Returns an IEnumerable object of scheduled job definition names in
         /// the job store.
         /// </summary>
         /// <returns>IEnumerable of job definition names.</returns>
@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             string filePathName = GetRunFilePathNameFromPath(definitionOutputPath, runItem, runStart);
 
-            // If the file already exists, we overwrite it because the job run 
+            // If the file already exists, we overwrite it because the job run
             // can be updated multiple times while the job is running.
             return File.Create(filePathName);
         }
@@ -308,7 +308,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="definitionName">Scheduled Job Definition name</param>
         /// <param name="runStart">DateTime of job run</param>
         public static void RemoveJobRun(
-            string definitionName, 
+            string definitionName,
             DateTime runStart)
         {
             if (string.IsNullOrEmpty(definitionName))
@@ -593,7 +593,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         private static void AddFullAccessToDirectory(
-            string user, 
+            string user,
             string directoryPath)
         {
             // Create rule.
@@ -618,7 +618,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         private static string ConvertDateTimeToJobRunName(DateTime dt)
         {
-            return string.Format(CultureInfo.InvariantCulture, 
+            return string.Format(CultureInfo.InvariantCulture,
                 @"{0:d4}{1:d2}{2:d2}-{3:d2}{4:d2}{5:d2}-{6:d3}",
                 dt.Year, dt.Month, dt.Day,
                 dt.Hour, dt.Minute, dt.Second, dt.Millisecond);

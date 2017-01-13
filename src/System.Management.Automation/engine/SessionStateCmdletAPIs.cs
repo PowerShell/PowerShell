@@ -9,7 +9,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session 
+    /// Holds the state of a Monad Shell session
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -18,15 +18,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the value of the specified cmdlet from the cmdlet table.
         /// </summary>
-        /// 
+        ///
         /// <param name="cmdletName">
         /// The name of the cmdlet value to retrieve.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The CmdletInfo representing the cmdlet.
         /// </returns>
-        /// 
+        ///
         internal CmdletInfo GetCmdlet(string cmdletName)
         {
             return GetCmdlet(cmdletName, CommandOrigin.Internal);
@@ -35,19 +35,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the value of the specified cmdlet from the cmdlet table.
         /// </summary>
-        /// 
+        ///
         /// <param name="cmdletName">
         /// The name of the cmdlet value to retrieve.
         /// </param>
-        /// 
+        ///
         /// <param name="origin">
         /// The origin of hte command trying to retrieve this cmdlet.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The CmdletInfo representing the cmdlet.
         /// </returns>
-        /// 
+        ///
         internal CmdletInfo GetCmdlet(string cmdletName, CommandOrigin origin)
         {
             CmdletInfo result = null;
@@ -92,31 +92,31 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the value of the specified cmdlet from the cmdlet table.
         /// </summary>
-        /// 
+        ///
         /// <param name="cmdletName">
         /// The name of the cmdlet value to retrieve.
         /// </param>
-        /// 
+        ///
         /// <param name="scopeID">
         /// A scope identifier that is either one of the "special" scopes like
         /// "global", "script", "local", or "private, or a numeric ID of a relative scope
         /// to the current scope.
         /// </param>
-        ///  
+        ///
         /// <returns>
         /// The CmdletInfo representing the cmdlet.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
         /// a number and not "script", "global", "local", or "private"
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        /// 
+        ///
         internal CmdletInfo GetCmdletAtScope(string cmdletName, string scopeID)
         {
             CmdletInfo result = null;
@@ -144,7 +144,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets an IEnumerable for the cmdlet table
         /// </summary>
-        /// 
+        ///
         internal IDictionary<string, List<CmdletInfo>> GetCmdletTable()
         {
             Dictionary<string, List<CmdletInfo>> result =
@@ -182,23 +182,23 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets an IEnumerable for the cmdlet table for a given scope
         /// </summary>
-        /// 
+        ///
         /// <param name="scopeID">
         /// A scope identifier that is either one of the "special" scopes like
         /// "global", "script", "local", or "private, or a numeric ID of a relative scope
         /// to the current scope.
         /// </param>
-        ///  
+        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
         /// a number and not "script", "global", "local", or "private"
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        /// 
+        ///
         internal IDictionary<string, List<CmdletInfo>> GetCmdletTableAtScope(string scopeID)
         {
             Dictionary<string, List<CmdletInfo>> result =
@@ -233,31 +233,31 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes a cmdlet from the function table.
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the cmdlet to remove.
         /// </param>
-        /// 
+        ///
         /// <param name="index">
         /// The name of the cmdlet to remove.
         /// </param>
-        /// 
+        ///
         /// <param name="origin">
         /// THe origin of the caller of this API
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// If true, the cmdlet is removed even if it is ReadOnly.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is constant.
-        /// </exception> 
-        /// 
+        /// </exception>
+        ///
         internal void RemoveCmdlet(string name, int index, bool force, CommandOrigin origin)
         {
             if (String.IsNullOrEmpty(name))
@@ -298,23 +298,23 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes a cmdlet entry from the cmdlet table.
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the cmdlet entry to remove.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// If true, the cmdlet is removed even if it is ReadOnly.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="name"/> is null or empty.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is constant.
-        /// </exception> 
-        /// 
+        /// </exception>
+        ///
         internal void RemoveCmdletEntry(string name, bool force)
         {
             if (String.IsNullOrEmpty(name))

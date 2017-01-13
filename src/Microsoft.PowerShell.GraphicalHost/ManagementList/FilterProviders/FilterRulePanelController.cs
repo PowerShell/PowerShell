@@ -38,7 +38,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         public FilterExpressionNode FilterExpression
         {
-            get 
+            get
             {
                 return this.CreateFilterExpression();
             }
@@ -73,9 +73,9 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         public FilterRulePanelController()
         {
-            this.filterRulePanelItems = 
+            this.filterRulePanelItems =
                 new ObservableCollection<FilterRulePanelItem>();
-            this.readOnlyFilterRulePanelItems = 
+            this.readOnlyFilterRulePanelItems =
                 new ReadOnlyObservableCollection<FilterRulePanelItem>(this.filterRulePanelItems);
         }
 
@@ -155,7 +155,7 @@ namespace Microsoft.Management.UI.Internal
             for (int i = 0; i < this.filterRulePanelItems.Count; )
             {
                 int endIndex = this.GetExclusiveEndIndexForGroupStartingAt(i);
-                
+
                 FilterExpressionOrOperatorNode operatorOrNode = this.CreateFilterExpressionForGroup(i, endIndex);
                 if (operatorOrNode.Children.Count > 0)
                 {

@@ -65,9 +65,9 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// 
+        ///
         /// See base class
-        /// 
+        ///
         /// </summary>
         /// <value></value>
         /// <exception/>
@@ -88,9 +88,9 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// 
+        ///
         /// See base class
-        /// 
+        ///
         /// </summary>
         /// <exception cref="HostException">
         ///
@@ -114,8 +114,8 @@ namespace System.Management.Automation.Internal.Host
             }
             catch (PipelineStoppedException)
             {
-                //PipelineStoppedException is thrown by host when it wants 
-                //to stop the pipeline. 
+                //PipelineStoppedException is thrown by host when it wants
+                //to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
@@ -130,9 +130,9 @@ namespace System.Management.Automation.Internal.Host
 
 
         /// <summary>
-        /// 
+        ///
         /// See base class
-        /// 
+        ///
         /// </summary>
         /// <exception cref="HostException">
         ///
@@ -158,8 +158,8 @@ namespace System.Management.Automation.Internal.Host
             }
             catch (PipelineStoppedException)
             {
-                //PipelineStoppedException is thrown by host when it wants 
-                //to stop the pipeline. 
+                //PipelineStoppedException is thrown by host when it wants
+                //to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
@@ -174,9 +174,9 @@ namespace System.Management.Automation.Internal.Host
 
 
         /// <summary>
-        /// 
+        ///
         /// See base class
-        /// 
+        ///
         /// </summary>
         /// <param name="value">
         /// </param>
@@ -207,9 +207,9 @@ namespace System.Management.Automation.Internal.Host
 
 
         /// <summary>
-        /// 
+        ///
         /// See base class
-        /// 
+        ///
         /// </summary>
         /// <param name="foregroundColor">
         /// </param>
@@ -244,9 +244,9 @@ namespace System.Management.Automation.Internal.Host
 
 
         /// <summary>
-        /// 
+        ///
         /// See base class
-        /// 
+        ///
         /// <seealso cref="Write(string)"/>
         /// <seealso cref="WriteLine(string)"/>
         /// </summary>
@@ -272,9 +272,9 @@ namespace System.Management.Automation.Internal.Host
 
 
         /// <summary>
-        /// 
+        ///
         /// See base class
-        /// 
+        ///
         /// </summary>
         /// <param name="value">
         /// </param>
@@ -324,9 +324,9 @@ namespace System.Management.Automation.Internal.Host
 
 
         /// <summary>
-        /// 
+        ///
         /// See base class
-        /// 
+        ///
         /// </summary>
         /// <param name="foregroundColor">
         /// </param>
@@ -361,9 +361,9 @@ namespace System.Management.Automation.Internal.Host
 
 
         /// <summary>
-        /// 
+        ///
         /// See base class
-        /// 
+        ///
         /// </summary>
         /// <exception cref="HostException">
         ///
@@ -380,7 +380,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal void WriteDebugRecord(DebugRecord record)
         {
@@ -413,19 +413,19 @@ namespace System.Management.Automation.Internal.Host
         /// <param name="message"></param>
         /// <param name="preference"></param>
         /// <exception cref="ActionPreferenceStopException">
-        /// 
+        ///
         /// If the debug preference is set to ActionPreference.Stop
-        /// 
+        ///
         /// </exception>
         /// <exception cref="ActionPreferenceStopException">
-        /// 
+        ///
         /// If the debug preference is set to ActionPreference.Inquire and user requests to stop execution.
-        /// 
+        ///
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// 
+        ///
         /// If the debug preference is not a valid ActionPreference value.
-        /// 
+        ///
         /// </exception>
 
         internal
@@ -486,7 +486,7 @@ namespace System.Management.Automation.Internal.Host
         /// </param>
         /// <remarks>
         /// This method is not thread safe. Caller should make sure of the
-        /// associated risks. 
+        /// associated risks.
         /// </remarks>
         internal void SetInformationalMessageBuffers(PSInformationalBuffers informationalBuffers)
         {
@@ -517,21 +517,21 @@ namespace System.Management.Automation.Internal.Host
 
 
         /// <summary>
-        /// 
+        ///
         /// Ask the user whether to continue/stop or break to a nested prompt.
-        /// 
+        ///
         /// </summary>
         /// <param name="message">
-        /// 
+        ///
         /// Message to display to the user. This routine will append the text "Continue" to ensure that people know what question
         /// they are answering.
-        /// 
+        ///
         /// </param>
         /// <param name="actionPreference">
-        /// 
+        ///
         /// Preference setting which determines the behaviour.  This is by-ref and will be modified based upon what the user
         /// types. (e.g. YesToAll will change Inquire => NotifyContinue)
-        /// 
+        ///
         /// </param>
 
         private
@@ -636,9 +636,9 @@ namespace System.Management.Automation.Internal.Host
 
 
         /// <summary>
-        /// 
+        ///
         /// See base class
-        /// 
+        ///
         /// </summary>
         /// <exception cref="HostException">
         ///
@@ -660,7 +660,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal void WriteVerboseRecord(VerboseRecord record)
         {
@@ -687,9 +687,9 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// 
+        ///
         /// See base class
-        /// 
+        ///
         /// </summary>
         /// <exception cref="HostException">
         ///
@@ -709,7 +709,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal void WriteWarningRecord(WarningRecord record)
         {
@@ -736,7 +736,7 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal void WriteInformationRecord(InformationRecord record)
         {
@@ -790,9 +790,9 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// 
+        ///
         /// See base class
-        /// 
+        ///
         /// </summary>
         /// <param name="caption">
         /// </param>
@@ -801,14 +801,14 @@ namespace System.Management.Automation.Internal.Host
         /// <param name="descriptions">
         /// </param>
         /// <exception cref="ArgumentNullException">
-        /// 
+        ///
         /// If <paramref name="descriptions"/> is null.
-        /// 
+        ///
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// 
+        ///
         /// If <paramref name="descriptions"/>.Count is less than 1.
-        /// 
+        ///
         /// </exception>
         /// <exception cref="HostException">
         ///
@@ -844,8 +844,8 @@ namespace System.Management.Automation.Internal.Host
             }
             catch (PipelineStoppedException)
             {
-                //PipelineStoppedException is thrown by host when it wants 
-                //to stop the pipeline. 
+                //PipelineStoppedException is thrown by host when it wants
+                //to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
@@ -861,9 +861,9 @@ namespace System.Management.Automation.Internal.Host
 
 
         /// <summary>
-        /// 
+        ///
         /// See base class
-        /// 
+        ///
         /// </summary>
         /// <param name="caption"></param>
         /// <param name="message"></param>
@@ -893,8 +893,8 @@ namespace System.Management.Automation.Internal.Host
             }
             catch (PipelineStoppedException)
             {
-                //PipelineStoppedException is thrown by host when it wants 
-                //to stop the pipeline. 
+                //PipelineStoppedException is thrown by host when it wants
+                //to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
@@ -919,8 +919,8 @@ namespace System.Management.Automation.Internal.Host
         /// An Collection of ChoiceDescription objects that describe each choice.
         /// </param>
         /// <param name="defaultChoices">
-        /// The index of the labels in the choices collection element to be presented to the user as 
-        /// the default choice(s). 
+        /// The index of the labels in the choices collection element to be presented to the user as
+        /// the default choice(s).
         /// </param>
         /// <returns>
         /// The indices of the choice elements that corresponds to the options selected.
@@ -957,8 +957,8 @@ namespace System.Management.Automation.Internal.Host
             }
             catch (PipelineStoppedException)
             {
-                //PipelineStoppedException is thrown by host when it wants 
-                //to stop the pipeline. 
+                //PipelineStoppedException is thrown by host when it wants
+                //to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {
@@ -1136,5 +1136,5 @@ namespace System.Management.Automation.Internal.Host
         private InternalHost _parent = null;
         private PSInformationalBuffers _informationalBuffers = null;
     }
-}  // namespace 
+}  // namespace
 

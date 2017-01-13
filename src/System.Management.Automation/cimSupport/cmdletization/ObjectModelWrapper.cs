@@ -108,7 +108,7 @@ namespace Microsoft.PowerShell.Cmdletization
 
         /// <summary>
         /// When overridden in the derived class, interrupts currently
-        /// running code within the <see cref="CmdletAdapter&lt;TObjectInstance&gt;"/>. 
+        /// running code within the <see cref="CmdletAdapter&lt;TObjectInstance&gt;"/>.
         /// Default implementation in the base class just returns.
         /// </summary>
         /// <remarks>

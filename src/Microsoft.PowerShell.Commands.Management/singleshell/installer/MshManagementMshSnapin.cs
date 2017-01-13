@@ -8,19 +8,19 @@ using System.Management.Automation;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// 
-    /// MshManagementMshSnapin (or MshManagementMshSnapinInstaller) is a class for facilitating registry 
-    /// of necessary information for monad management mshsnapin. 
-    /// 
-    /// This class will be built with monad management dll 
-    /// 
+    ///
+    /// MshManagementMshSnapin (or MshManagementMshSnapinInstaller) is a class for facilitating registry
+    /// of necessary information for monad management mshsnapin.
+    ///
+    /// This class will be built with monad management dll
+    ///
     /// </summary>
-    /// 
+    ///
     [RunInstaller(true)]
     public sealed class PSManagementPSSnapIn : PSSnapIn
     {
         /// <summary>
-        /// Create an instance of this class. 
+        /// Create an instance of this class.
         /// </summary>
         public PSManagementPSSnapIn()
             : base()
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Get the default vendor string for this mshsnapin. 
+        /// Get the default vendor string for this mshsnapin.
         /// </summary>
         public override string Vendor
         {
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Get resource information for vendor. This is a string of format: resourceBaseName,resourceName. 
+        /// Get resource information for vendor. This is a string of format: resourceBaseName,resourceName.
         /// </summary>
         public override string VendorResource
         {
@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Get the default description string for this mshsnapin. 
+        /// Get the default description string for this mshsnapin.
         /// </summary>
         public override string Description
         {
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Get resource information for description. This is a string of format: resourceBaseName,resourceName. 
+        /// Get resource information for description. This is a string of format: resourceBaseName,resourceName.
         /// </summary>
         public override string DescriptionResource
         {

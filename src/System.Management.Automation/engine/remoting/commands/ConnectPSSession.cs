@@ -24,26 +24,26 @@ namespace Microsoft.PowerShell.Commands
     /// be specified and in this case all disconnected remote runspaces found on the
     /// remote computer will be be connected and PSSession objects created on the local
     /// machine.
-    /// 
+    ///
     /// The cmdlet can be used in the following ways:
-    /// 
+    ///
     /// Connect a PS session object:
     /// > $session = New-PSSession serverName
     /// > Disconnect-PSSession $session
     /// > Connect-PSSession $session
-    /// 
+    ///
     /// Connect a PS session by name:
     /// > Connect-PSSession $session.Name
-    /// 
+    ///
     /// Connect a PS session by Id:
     /// > Connect-PSSession $session.Id
-    /// 
+    ///
     /// Connect a collection of PS session:
     /// > Get-PSSession | Connect-PSSession
-    /// 
+    ///
     /// Connect all disconnected PS sessions on a remote computer
     /// > Connect-PSSession serverName
-    /// 
+    ///
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Connect, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = ConnectPSSessionCommand.NameParameterSet,
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// If this parameter is not specified then the value specified in
-        /// the environment variable DEFAULTREMOTESHELLNAME will be used. If 
+        /// the environment variable DEFAULTREMOTESHELLNAME will be used. If
         /// this is not set as well, then Microsoft.PowerShell is used.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -125,7 +125,7 @@ namespace Microsoft.PowerShell.Commands
         private String _shell;
 
         /// <summary>
-        /// A complete URI(s) specified for the remote computer and shell to 
+        /// A complete URI(s) specified for the remote computer and shell to
         /// connect to and create a runspace for.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true,
@@ -184,8 +184,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Specifies the credentials of the user to impersonate in the 
-        /// remote machine. If this parameter is not specified then the 
+        /// Specifies the credentials of the user to impersonate in the
+        /// remote machine. If this parameter is not specified then the
         /// credentials of the current user process will be assumed.
         /// </summary>
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameParameterSet)]
@@ -226,7 +226,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Specifies the certificate thumbprint to be used to impersonate the user on the 
+        /// Specifies the certificate thumbprint to be used to impersonate the user on the
         /// remote machine.
         /// </summary>
         [Parameter(ParameterSetName = ConnectPSSessionCommand.ComputerNameParameterSet)]
@@ -247,7 +247,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Port specifies the alternate port to be used in case the 
+        /// Port specifies the alternate port to be used in case the
         /// default ports are not used for the transport mechanism
         /// (port 80 for http and port 443 for useSSL)
         /// </summary>
@@ -410,7 +410,7 @@ namespace Microsoft.PowerShell.Commands
             // Wait for all connect operations to complete.
             _operationsComplete.WaitOne();
 
-            // If there are failed connect operations due to stale 
+            // If there are failed connect operations due to stale
             // session state then perform the query retry here.
             if (_failedSessions.Count > 0)
             {
@@ -449,7 +449,7 @@ namespace Microsoft.PowerShell.Commands
             // Stop any remote server queries that may be running.
             _queryRunspaces.StopAllOperations();
 
-            // Signal the ThrottleManager to stop any further 
+            // Signal the ThrottleManager to stop any further
             // PSSession connect processing.
             _throttleManager.StopAllOperations();
 
@@ -611,7 +611,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    // Check to see if failure is due to stale PSSession error and 
+                    // Check to see if failure is due to stale PSSession error and
                     // add to retry list if this is the case.
                     bool writeError = true;
                     if (_queryRunspaces == null)
@@ -655,7 +655,7 @@ namespace Microsoft.PowerShell.Commands
 
             private void WriteConnectedPSSession()
             {
-                // Use temporary variable because we need to preserve _session class variable 
+                // Use temporary variable because we need to preserve _session class variable
                 // for later clean up.
                 PSSession outSession = _session;
                 if (_queryRunspaces != null)
@@ -850,7 +850,7 @@ namespace Microsoft.PowerShell.Commands
                     else if (psSession.Runspace.RunspaceStateInfo.State == RunspaceState.Disconnected &&
                         psSession.Runspace.RunspaceAvailability == RunspaceAvailability.None)
                     {
-                        // Can only connect sessions that are in Disconnected state.                    
+                        // Can only connect sessions that are in Disconnected state.
                         // Update session connection information based on cmdlet parameters.
                         UpdateConnectionInfo(psSession.Runspace.ConnectionInfo as WSManConnectionInfo);
 
@@ -1036,7 +1036,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Dispose method of IDisposable. Gets called in the following cases:
         ///     1. Pipeline explicitly calls dispose on cmdlets
-        ///     2. Called by the garbage collector 
+        ///     2. Called by the garbage collector
         /// </summary>
         public void Dispose()
         {
@@ -1049,7 +1049,7 @@ namespace Microsoft.PowerShell.Commands
         /// Internal dispose method which does the actual
         /// dispose operations and finalize suppressions
         /// </summary>
-        /// <param name="disposing">Whether method is called 
+        /// <param name="disposing">Whether method is called
         /// from Dispose or destructor</param>
         private void Dispose(bool disposing)
         {
@@ -1146,7 +1146,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         // The Get-WSManInstance cmdlet used to query remote computers for runspaces will throw
                         // an Invalid Operation (inner) exception if the connectInfo object is invalid, including
-                        // invalid computer names.  
+                        // invalid computer names.
                         // We don't want to propagate the exception so just write error here.
                         if (stream.ObjectWriter != null && stream.ObjectWriter.IsOpen)
                         {
@@ -1196,7 +1196,7 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         // Check the repository for an existing viable PSSession for
-                        // this runspace (based on instanceId).  Use the existing 
+                        // this runspace (based on instanceId).  Use the existing
                         // local runspace instead of the one returned from the server
                         // query.
                         PSSession existingPSSession = null;
@@ -1328,7 +1328,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns Exception message.  If message is WSMan Xml then 
+        /// Returns Exception message.  If message is WSMan Xml then
         /// the WSMan message and error code is extracted and returned.
         /// </summary>
         /// <param name="e">Exception</param>

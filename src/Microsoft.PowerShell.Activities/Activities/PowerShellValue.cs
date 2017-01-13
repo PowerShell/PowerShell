@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Activities
                             // The guard check for a null expression string is done in Execute() instead
                             // of in this property. It's also done in the validation check for CacheMetadata
                             string updatedExpression = Expression;
-                            
+
                             // Hack to make sure the $input *does* get unrolled...
                             if (string.Equals("$input", Expression.Trim(), StringComparison.OrdinalIgnoreCase))
                             {
@@ -134,7 +134,7 @@ namespace Microsoft.PowerShell.Activities
         /// List of command names to allow in the expression
         /// </param>
         /// <param name="allowedVariables">
-        /// List of variable names to allow in the expression. If the collection contains a single 
+        /// List of variable names to allow in the expression. If the collection contains a single
         /// element "*", all variables will be allowed including environment variables
         /// functions, etc.
         /// </param>
@@ -270,7 +270,7 @@ namespace Microsoft.PowerShell.Activities
                 }
                 catch (Exception)
                 {
-                    // it is fine to catch generic exception here 
+                    // it is fine to catch generic exception here
                     // if the local runspace provider does not give us
                     // a runspace we will create one locally (fallback)
                 }

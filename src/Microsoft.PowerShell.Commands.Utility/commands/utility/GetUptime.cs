@@ -31,13 +31,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            // Get-Uptime throw if IsHighResolution = false  
+            // Get-Uptime throw if IsHighResolution = false
             // because stopwatch.GetTimestamp() return DateTime.UtcNow.Ticks
             // instead of ticks from system startup.
             // InternalTestHooks.StopwatchIsNotHighResolution is used as test hook.
             if (Stopwatch.IsHighResolution && !InternalTestHooks.StopwatchIsNotHighResolution)
             {
-                TimeSpan uptime = TimeSpan.FromSeconds(Stopwatch.GetTimestamp()/Stopwatch.Frequency); 
+                TimeSpan uptime = TimeSpan.FromSeconds(Stopwatch.GetTimestamp()/Stopwatch.Frequency);
 
                 switch (ParameterSetName)
                 {

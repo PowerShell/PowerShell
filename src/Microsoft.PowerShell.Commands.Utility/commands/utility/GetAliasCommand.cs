@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "get-alias" cmdlet
     /// </summary>
-    /// 
+    ///
     [Cmdlet(VerbsCommon.Get, "Alias", DefaultParameterSetName = "Default", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113306")]
     [OutputType(typeof(AliasInfo))]
     public class GetAliasCommand : PSCmdlet
@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Name parameter for the command
         /// </summary>
-        /// 
+        ///
         [Parameter(ParameterSetName = "Default", Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty()]
         public string[] Name
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Exclude parameter for the command
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public string[] Exclude
         {
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         /// The scope parameter for the command determines
         /// which scope the aliases are retrieved from.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public string Scope { get; set; }
 
@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The main processing loop of the command.
         /// </summary>
-        /// 
+        ///
         protected override void ProcessRecord()
         {
             if (ParameterSetName.Equals("Definition"))
@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteMatches(aliasName, "Default");
                 }
-            }//parameterset else                
+            }//parameterset else
         } // ProcessRecord
         #endregion Command code
 

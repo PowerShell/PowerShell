@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
         #region Virtual Method Overrides
 
         /// <summary>
-        /// Process the web response and output corresponding objects. 
+        /// Process the web response and output corresponding objects.
         /// </summary>
         /// <param name="response"></param>
         internal override void ProcessResponse(WebResponse response)
@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Commands
                 WebResponseObject ro = WebResponseObjectFactory.GetResponseObject(response, responseStream, this.Context, UseBasicParsing);
                 WriteObject(ro);
 
-                // use the rawcontent stream from WebResponseObject for further 
+                // use the rawcontent stream from WebResponseObject for further
                 // processing of the stream. This is need because WebResponse's
                 // stream can be used only once.
                 responseStream = ro.RawContentStream;

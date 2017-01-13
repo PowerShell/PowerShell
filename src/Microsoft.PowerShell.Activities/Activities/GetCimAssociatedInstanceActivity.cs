@@ -25,14 +25,14 @@ namespace Microsoft.PowerShell.Activities
         /// Gets the fully qualified name of the command invoked by this activity.
         /// </summary>
         public override string PSCommandName { get { return "CimCmdlets\\Get-CimAssociatedInstance"; } }
-  
+
         /// <summary>
         /// The .NET type implementing the cmdlet to invoke.
         /// </summary>
         public override System.Type TypeImplementingCmdlet { get { return typeof(Microsoft.Management.Infrastructure.CimCmdlets.GetCimAssociatedInstanceCommand); } }
-  
+
         // Arguments
-        
+
         /// <summary>
         /// Provides access to the Association parameter.
         /// </summary>
@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.Activities
             System.Management.Automation.PowerShell targetCommand = invoker.AddCommand(PSCommandName);
 
             // Initialize the arguments
-            
+
             if(Association.Expression != null)
             {
                 targetCommand.AddParameter("Association", Association.Get(context));

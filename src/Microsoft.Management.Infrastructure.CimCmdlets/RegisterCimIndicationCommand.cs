@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -15,10 +15,10 @@ using Microsoft.PowerShell.Commands;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// Enables the user to subscribe to indications using Filter Expression or 
+    /// Enables the user to subscribe to indications using Filter Expression or
     /// Query Expression.
     /// -SourceIdentifier is a name given to the subscription
-    /// The Cmdlet should return a PS EventSubscription object that can be used to 
+    /// The Cmdlet should return a PS EventSubscription object that can be used to
     /// cancel the subscription
     /// Should we have the second parameter set with a -Query?
     /// </summary>
@@ -92,7 +92,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <para>
         /// The following is the definition of the input parameter "QueryDialect".
-        /// Specifies the dialect used by the query Engine that interprets the Query 
+        /// Specifies the dialect used by the query Engine that interprets the Query
         /// string.
         /// </para>
         /// </summary>
@@ -146,7 +146,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
-        /// Specifies the computer on which the commands associated with this session 
+        /// Specifies the computer on which the commands associated with this session
         /// will run. The default value is LocalHost.
         /// </summary>
         [Alias(CimBaseCommand.AliasCN, CimBaseCommand.AliasServerName)]
@@ -308,7 +308,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                     new ParameterDefinitionEntry(CimBaseCommand.ClassNameSessionSet, true),
                                     new ParameterDefinitionEntry(CimBaseCommand.ClassNameComputerSet, true),
                                  }
-            },           
+            },
             {
                 nameQuery, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.QueryExpressionSessionSet, true),

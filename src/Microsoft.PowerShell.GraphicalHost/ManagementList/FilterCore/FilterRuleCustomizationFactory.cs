@@ -12,7 +12,7 @@ namespace Microsoft.Management.UI.Internal
     using System.Reflection;
 
     /// <summary>
-    /// The FilterRuleCustomizationFactory class provides a central location 
+    /// The FilterRuleCustomizationFactory class provides a central location
     /// a return an abstract factory which creates the standard settings and rules
     /// used by the builtin FilterRules.
     /// </summary>
@@ -22,7 +22,7 @@ namespace Microsoft.Management.UI.Internal
         private static FilterRuleCustomizationFactory factoryInstance;
 
         /// <summary>
-        /// Gets or sets a factory instance which is used by builtin 
+        /// Gets or sets a factory instance which is used by builtin
         /// filter rules.
         /// </summary>
         public static FilterRuleCustomizationFactory FactoryInstance

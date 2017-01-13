@@ -254,7 +254,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="source">object to be serialized</param>
         /// <remarks>
-        /// Please note that this method shouldn't throw any exceptions.  
+        /// Please note that this method shouldn't throw any exceptions.
         /// If it throws - please open a bug.
         /// </remarks>
         internal void Serialize(object source)
@@ -272,7 +272,7 @@ namespace System.Management.Automation
         /// Stream to which this object belong. Ex: Output, Error etc.
         /// </param>
         /// <remarks>
-        /// Please note that this method shouldn't throw any exceptions.  
+        /// Please note that this method shouldn't throw any exceptions.
         /// If it throws - please open a bug.
         /// </remarks>
         internal void Serialize(object source, string streamName)
@@ -300,7 +300,7 @@ namespace System.Management.Automation
     internal enum DeserializationOptions
     {
         None = 0,
-        NoRootElement = 256,            // I start at 256 to try not to overlap 
+        NoRootElement = 256,            // I start at 256 to try not to overlap
         NoNamespace = 512,              // with SerializationOptions and to catch bugs early
         DeserializeScriptBlocks = 1024,
 
@@ -526,7 +526,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Read the root element tag and set the cursor to start tag of 
+        /// Read the root element tag and set the cursor to start tag of
         /// first object.
         /// </summary>
         private void Start()
@@ -726,7 +726,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets a new collection of typenames without "Deserialization." prefix
-        /// in the typename. This will allow to map type info/format info of the orignal type 
+        /// in the typename. This will allow to map type info/format info of the orignal type
         /// for deserialized objects.
         /// </summary>
         /// <param name="typeNames"></param>
@@ -852,7 +852,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Writes the start of root element 
+        /// Writes the start of root element
         /// </summary>
         internal void Start()
         {
@@ -864,7 +864,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Writes the end of root element 
+        /// Writes the end of root element
         /// </summary>
         internal void End()
         {
@@ -952,7 +952,7 @@ namespace System.Management.Automation
                     return;
                 }
 
-                //Object is not of primitive known type. Check if this has 
+                //Object is not of primitive known type. Check if this has
                 //already been serialized.
                 string refId = _objectRefIdHandler.GetRefId(source);
                 if (refId != null)
@@ -966,7 +966,7 @@ namespace System.Management.Automation
                     return;
                 }
 
-                //Note: We do not use containers in depth calculation. i.e even if the 
+                //Note: We do not use containers in depth calculation. i.e even if the
                 //current depth is zero, we serialize the container. All contained items will
                 //get serialized with depth zero.
                 if (HandleKnownContainerTypes(source, streamName, property, depth))
@@ -1068,7 +1068,7 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="source"></param>
         /// <param name="streamName"></param>
@@ -1127,7 +1127,7 @@ namespace System.Management.Automation
                             WriteAttribute(SerializationStrings.StreamNameAttribute, streamName);
                         }
 
-                        //Note: We do not use WriteRaw for serializing secure string. WriteString 
+                        //Note: We do not use WriteRaw for serializing secure string. WriteString
                         //does necessary escaping which may be needed for certain
                         //characters.
                         _writer.WriteString(encryptedString);
@@ -1243,9 +1243,9 @@ namespace System.Management.Automation
 
             if (depth != 0)
             {
-                // An object which is original enumerable becomes an PSObject with ArrayList on deserialization. 
+                // An object which is original enumerable becomes an PSObject with ArrayList on deserialization.
                 // So on roundtrip it will show up as List.
-                // We serialize properties of enumerable and on deserialization mark the object as Deserialized. 
+                // We serialize properties of enumerable and on deserialization mark the object as Deserialized.
                 // So if object is marked deserialized, we should write properties.
                 if (ct == ContainerType.Enumerable || (mshSource != null && mshSource.isDeserialized))
                 {
@@ -1328,7 +1328,7 @@ namespace System.Management.Automation
         /// it can be different. <see cref="HandlePSObjectAsString"/> for more info.
         /// </param>
         /// <param name="pktInfo">
-        /// TypeSerializationInfo for the primitive. 
+        /// TypeSerializationInfo for the primitive.
         /// </param>
         /// <param name="streamName"></param>
         /// <param name="property"></param>
@@ -1393,7 +1393,7 @@ namespace System.Management.Automation
         /// <param name="hasModifiedTypesCollection"></param>
         /// <param name="toStringValue"></param>
         /// <param name="pktInfo">
-        /// TypeSerializationInfo for the primitive. 
+        /// TypeSerializationInfo for the primitive.
         /// </param>
         /// <param name="streamName"></param>
         /// <param name="property"></param>
@@ -1540,7 +1540,7 @@ namespace System.Management.Automation
         {
             Queue<CimClassSerializationId> serializedClasses = new Queue<CimClassSerializationId>();
 
-            // 
+            //
             // CREATE SERIALIZED FORM OF THE CLASS METADATA
             //
             ArrayList psoClasses = new ArrayList();
@@ -1706,7 +1706,7 @@ namespace System.Management.Automation
         #region membersets
 
         /// <summary>
-        /// Returns true if PSObject has notes. 
+        /// Returns true if PSObject has notes.
         /// </summary>
         /// <param name="source"></param>
         /// <returns>
@@ -1737,7 +1737,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Serialize member set. This method serializes without writing 
+        /// Serialize member set. This method serializes without writing
         /// enclosing tags and attributes.
         /// </summary>
         /// <param name="me">
@@ -1947,7 +1947,7 @@ namespace System.Management.Automation
         /// Name for enclosing element tag
         /// </param>
         /// <param name="depth">
-        /// depth to which each property should be 
+        /// depth to which each property should be
         /// serialized
         /// </param>
         private void SerializeProperties
@@ -2026,7 +2026,7 @@ namespace System.Management.Automation
                 }
                 catch (System.NotSupportedException)
                 {
-                    //ignore exceptions thrown when the enumerator doesn't support Reset() method as in  win8:948569 
+                    //ignore exceptions thrown when the enumerator doesn't support Reset() method as in  win8:948569
                 }
             }
             catch (Exception exception)
@@ -2180,15 +2180,15 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets the string from PSObject using the information from
-        /// types.ps1xml. 
-        /// This string is used for serializing the PSObject at depth 0 
+        /// types.ps1xml.
+        /// This string is used for serializing the PSObject at depth 0
         /// or when pso.SerializationMethod == SerializationMethod.String.
         /// </summary>
-        /// 
+        ///
         /// <param name="source">
         /// PSObject to be converted to string
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// string value to use for serializing this PSObject.
         /// </returns>
@@ -2541,7 +2541,7 @@ namespace System.Management.Automation
                 serializer.WriteAttribute(SerializationStrings.StreamNameAttribute, streamName);
             }
 
-            //Note: We do not use WriteRaw for serializing string. WriteString 
+            //Note: We do not use WriteRaw for serializing string. WriteString
             //does necessary escaping which may be needed for certain
             //characters.
             Dbg.Assert(source is string, "Caller should verify that typeof(source) is String");
@@ -2771,13 +2771,13 @@ namespace System.Management.Automation
         /// (or InternalDeserializer.DecodeString).
         /// This method has been introduced to produce shorter output than XmlConvert.EncodeName
         /// (which escapes everything that can't be part of an xml name - whitespace, punctuation).
-        /// 
+        ///
         /// This method has been split into 2 parts to optimize its performance:
-        /// 1) part1 (this method) checks if there are any encodable characters and 
+        /// 1) part1 (this method) checks if there are any encodable characters and
         ///    if there aren't it simply (and efficiently) returns the original string
-        /// 2) part2 (EncodeString(string, int)) picks up when part1 detects the first encodable 
+        /// 2) part2 (EncodeString(string, int)) picks up when part1 detects the first encodable
         ///    character.  It avoids looking at the characters already verified by part1
-        ///    and copies those already verified characters and then starts encoding 
+        ///    and copies those already verified characters and then starts encoding
         ///    the rest of the string.
         /// </remarks>
         internal static string EncodeString(string s)
@@ -2932,7 +2932,7 @@ namespace System.Management.Automation
             get
             {
                 Dbg.Assert(_version.Major <= 1, "Deserializer assumes clixml version is <= 1.1");
-                //If minor version is greater than 1, it means that there can be 
+                //If minor version is greater than 1, it means that there can be
                 //some unknown tags in xml. Deserialization should ignore such element.
                 return (_version.Minor > 1);
             }
@@ -2968,7 +2968,7 @@ namespace System.Management.Automation
         private readonly ReferenceIdHandlerForDeserializer<ConsolidatedString> _typeRefIdHandler;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="reader"></param>
         /// <param name="context"></param>
@@ -3030,10 +3030,10 @@ namespace System.Management.Automation
             //Versioning Note:Future version of serialization can add new known types.
             //This version will ignore those known types, if they are base object.
             //It is expected that future version will still put information in base
-            //and adapter properties which this serializer can read and use. 
-            //For example, assume the version 2 serialization engine supports a new known 
-            //type IPAddress. The version 1 deserializer doesn't know IPAddress as known 
-            //type and it must retrieve it as an PSObject. The version 2 serializer 
+            //and adapter properties which this serializer can read and use.
+            //For example, assume the version 2 serialization engine supports a new known
+            //type IPAddress. The version 1 deserializer doesn't know IPAddress as known
+            //type and it must retrieve it as an PSObject. The version 2 serializer
             //can serialize this as follows:
             //<PSObject Version=1.2 Was=Deserialized.IPAddress >
             //  <TypeNames>...</TypeNames>
@@ -3113,7 +3113,7 @@ namespace System.Management.Automation
                 return ReadPSObject();
             }
 
-            //If we are here, we have an unknown node. Unknown nodes may 
+            //If we are here, we have an unknown node. Unknown nodes may
             //be allowed inside PSObject. We do not allow them at top level.
 
             s_trace.TraceError("Invalid element {0} tag found", _reader.LocalName);
@@ -3586,8 +3586,8 @@ namespace System.Management.Automation
                     // Fix for Win8:75437
                     // The TokenText property is used in type conversion and it is not being populated during deserialization
                     // As a result, parameter binding fails in the following case on a remote session
-                    // register-psssessionconfiguration -Name foo -psversion 3.0 
-                    // The value "3.0" is treated as a double and since the TokenText property holds null, the type converter tries to convert 
+                    // register-psssessionconfiguration -Name foo -psversion 3.0
+                    // The value "3.0" is treated as a double and since the TokenText property holds null, the type converter tries to convert
                     // from System.Double to System.Version using Parse method of System.Version and fails
                     dso.TokenText = dso.ToStringFromDeserialization;
                 }
@@ -3597,7 +3597,7 @@ namespace System.Management.Automation
                     object baseObject = null;
                     ContainerType ct = ContainerType.None;
 
-                    //Check if tag is PrimaryKnownType. 
+                    //Check if tag is PrimaryKnownType.
                     TypeSerializationInfo pktInfo = KnownTypes.GetTypeSerializationInfoFromItemTag(_reader.LocalName);
                     if (pktInfo != null)
                     {
@@ -3646,7 +3646,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This function reads the refId attribute and creates a 
+        /// This function reads the refId attribute and creates a
         /// mshObject for that attribute
         /// </summary>
         /// <returns>mshObject which is created for refId</returns>
@@ -3665,7 +3665,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Read type names 
+        /// Read type names
         /// </summary>
         /// <param name="dso">
         /// PSObject to which TypeNames are added
@@ -3755,7 +3755,7 @@ namespace System.Management.Automation
             Dbg.Assert(dso != null, "caller should validate the parameter");
             Dbg.Assert(_reader.NodeType == XmlNodeType.Element, "NodeType should be Element");
 
-            //Since we are adding baseobject properties as propertybag, 
+            //Since we are adding baseobject properties as propertybag,
             //mark the object as deserialized.
             dso.isDeserialized = true;
             dso.adaptedMembers = new PSMemberInfoInternalCollection<PSPropertyInfo>();
@@ -3784,7 +3784,7 @@ namespace System.Management.Automation
         #region memberset
 
         /// <summary>
-        /// Read memberset. 
+        /// Read memberset.
         /// </summary>
         /// <param name="collection">
         /// collection to which members are added
@@ -3820,7 +3820,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// read note 
+        /// read note
         /// </summary>
         /// <returns></returns>
         private PSNoteProperty ReadNoteProperty()
@@ -4723,7 +4723,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Skips an element and all its  child elements. 
+        /// Skips an element and all its  child elements.
         /// Moves cursor to next content Node.
         /// </summary>
         private void Skip()
@@ -4775,7 +4775,7 @@ namespace System.Management.Automation
         /// Helper function for building XmlException
         /// </summary>
         /// <param name="resourceString">
-        /// resource String 
+        /// resource String
         /// </param>
         /// <param name="innerException"></param>
         /// <param name="args">
@@ -4999,13 +4999,13 @@ namespace System.Management.Automation
 
     /// <summary>
     /// A class for identifying types which are treated as KnownType by Monad.
-    /// A KnownType is guranteed to be available on machine on which monad is 
+    /// A KnownType is guranteed to be available on machine on which monad is
     /// running.
     /// </summary>
     internal static class KnownTypes
     {
         /// <summary>
-        /// Static constructor 
+        /// Static constructor
         /// </summary>
         static KnownTypes()
         {
@@ -5205,7 +5205,7 @@ namespace System.Management.Automation
         };
 
         /// <summary>
-        /// Hashtable of knowntypes. 
+        /// Hashtable of knowntypes.
         /// Key is Type.FullName and value is Type object.
         /// </summary>
         private static readonly Dictionary<string, TypeSerializationInfo> s_knownTableKeyType = new Dictionary<string, TypeSerializationInfo>();
@@ -5254,7 +5254,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks if source is known container type and returns appropriate 
+        /// Checks if source is known container type and returns appropriate
         /// information
         /// </summary>
         /// <param name="source"></param>
@@ -5342,15 +5342,15 @@ namespace System.Management.Automation
                 }
             }
 
-            //Check if type is IEnumerable 
-            //(LanguagePrimitives.GetEnumerable above should be enough - the check below is to preserve 
+            //Check if type is IEnumerable
+            //(LanguagePrimitives.GetEnumerable above should be enough - the check below is to preserve
             // backcompatibility in some corner-cases (see bugs in Windows7 - #372562 and #372563))
             if (ct == ContainerType.None)
             {
                 enumerable = source as IEnumerable;
                 if (enumerable != null)
                 {
-                    //WinBlue: 206515 - There are no elements in the source. The source is of type XmlLinkedNode (which derives from XmlNode which implements IEnumerable). 
+                    //WinBlue: 206515 - There are no elements in the source. The source is of type XmlLinkedNode (which derives from XmlNode which implements IEnumerable).
                     // So, adding an additional check to see if this contains any elements
                     IEnumerator enumerator = enumerable.GetEnumerator();
                     if (enumerator != null && enumerator.MoveNext())
@@ -5388,11 +5388,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the "ToString" from PSObject.
         /// </summary>
-        /// 
+        ///
         /// <param name="source">
         /// PSObject to be converted to string
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// "ToString" value
         /// </returns>
@@ -5550,8 +5550,8 @@ namespace System.Management.Automation
 
     /// <summary>
     /// A dictionary from object to T where
-    /// 1) keys are objects, 
-    /// 2) keys use reference equality, 
+    /// 1) keys are objects,
+    /// 2) keys use reference equality,
     /// 3) dictionary keeps only weak references to keys
     /// </summary>
     /// <typeparam name="T">type of dictionary values</typeparam>
@@ -5783,9 +5783,9 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// <see cref="PSPrimitiveDictionary"/> is a <see cref="Hashtable"/> that is limited to 
-    /// 1) case-insensitive strings as keys and 
-    /// 2) values that can be serialized and deserialized during PowerShell remoting handshake 
+    /// <see cref="PSPrimitiveDictionary"/> is a <see cref="Hashtable"/> that is limited to
+    /// 1) case-insensitive strings as keys and
+    /// 2) values that can be serialized and deserialized during PowerShell remoting handshake
     ///    (in major-version compatible versions of PowerShell remoting)
     /// </summary>
     [Serializable]
@@ -5951,7 +5951,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key. 
+        /// Gets or sets the value associated with the specified key.
         /// </summary>
         /// <param name="key">The key whose value to get or set</param>
         /// <returns>The value associated with the specified key.</returns>
@@ -5979,7 +5979,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the value associated with the specified key. 
+        /// Gets or sets the value associated with the specified key.
         /// </summary>
         /// <param name="key">The key whose value to get or set</param>
         /// <returns>The value associated with the specified key.</returns>
@@ -6403,7 +6403,7 @@ namespace System.Management.Automation
         #region Internal Methods
 
         /// <summary>
-        /// If originalHash contains PSVersionTable, then just returns the Cloned copy of 
+        /// If originalHash contains PSVersionTable, then just returns the Cloned copy of
         /// the original hash. Othewise, creates a clone copy and add PSVersionInfo.GetPSVersionTable
         /// to the clone and returns.
         /// </summary>
@@ -6735,7 +6735,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// Gets value of a property (has to be present, value has to be non-null).  
+        /// Gets value of a property (has to be present, value has to be non-null).
         /// Can throw any exception (which is ok - LanguagePrimitives.ConvertTo will catch that).
         /// </summary>
         /// <typeparam name="T">Expected type of the property</typeparam>

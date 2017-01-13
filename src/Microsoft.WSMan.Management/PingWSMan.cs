@@ -21,7 +21,7 @@ namespace Microsoft.WSMan.Management
     #region Test-WSMAN
 
     /// <summary>
-    /// Issues an operation against the remote machine to ensure that the wsman 
+    /// Issues an operation against the remote machine to ensure that the wsman
     /// service is running
     /// </summary>
 
@@ -30,8 +30,8 @@ namespace Microsoft.WSMan.Management
     {
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
-        /// Executes the management operation on the specified computer. The default is 
-        /// the local computer. Type the fully qualified domain name, NETBIOS name or IP 
+        /// Executes the management operation on the specified computer. The default is
+        /// the local computer. Type the fully qualified domain name, NETBIOS name or IP
         /// address to indicate the remote host
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
@@ -52,17 +52,17 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "Authentication".
-        /// This parameter takes a set of authentication methods the user can select 
-        /// from. The available method are an enum called AuthenticationMechanism in the 
-        /// System.Management.Automation.Runspaces  namespace. The available options 
+        /// This parameter takes a set of authentication methods the user can select
+        /// from. The available method are an enum called AuthenticationMechanism in the
+        /// System.Management.Automation.Runspaces  namespace. The available options
         /// should be as follows:
-        /// - Default : Use the default authentication (ad defined by the underlying 
+        /// - Default : Use the default authentication (ad defined by the underlying
         /// protocol) for establishing a remote connection.
         /// - Negotiate
         /// - Kerberos
         /// - Basic:  Use basic authentication for establishing a remote connection.
-        /// -CredSSP: Use CredSSP authentication for establishing a remote connection 
-        /// which will enable the user to perform credential delegation. (i.e. second 
+        /// -CredSSP: Use CredSSP authentication for establishing a remote connection
+        /// which will enable the user to perform credential delegation. (i.e. second
         /// hop)
         /// </summary>
         /// <remarks>
@@ -74,8 +74,8 @@ namespace Microsoft.WSMan.Management
         public override AuthenticationMechanism Authentication
         {
             get { return authentication; }
-            set 
-            { 
+            set
+            {
                 authentication = value;
                 ValidateSpecifiedAuthentication();
             }
@@ -84,7 +84,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "Port".
-        /// Specifies the port to be used when connecting to the ws management service. 
+        /// Specifies the port to be used when connecting to the ws management service.
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
@@ -98,8 +98,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
-        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to 
-        /// the remote computer. If SSL is not available on the port specified by the 
+        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to
+        /// the remote computer. If SSL is not available on the port specified by the
         /// Port parameter, the command fails.
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
@@ -139,7 +139,7 @@ namespace Microsoft.WSMan.Management
             try
             {
                 m_SessionObj = helper.CreateSessionObject(wsmanObject, Authentication, null, Credential, connectionStr, CertificateThumbprint, usessl.IsPresent);
-                m_SessionObj.Timeout = 1000; //1 sec. we are putting this low so that Test-WSMan can return promptly if the server goes unresponsive. 
+                m_SessionObj.Timeout = 1000; //1 sec. we are putting this low so that Test-WSMan can return promptly if the server goes unresponsive.
                 XmlDocument xmldoc = new XmlDocument();
                 xmldoc.LoadXml(m_SessionObj.Identify(0));
                 WriteObject(xmldoc.DocumentElement);

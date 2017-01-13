@@ -10,7 +10,7 @@ namespace Microsoft.Management.UI.Internal
     using System.Diagnostics;
 
     /// <summary>
-    /// The IsLessThanFilterRule class evaluates an IComparable item to 
+    /// The IsLessThanFilterRule class evaluates an IComparable item to
     /// check if it is less than the rule's value.
     /// </summary>
     /// <typeparam name="T">

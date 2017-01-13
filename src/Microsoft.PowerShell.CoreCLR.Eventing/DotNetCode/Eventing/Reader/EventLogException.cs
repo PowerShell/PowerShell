@@ -2,8 +2,8 @@
 /*============================================================
 **
 **
-** Purpose: 
-** This public class describes an exception thrown from Event 
+** Purpose:
+** This public class describes an exception thrown from Event
 ** Log related classes.
 **
 ============================================================*/
@@ -69,7 +69,7 @@ namespace System.Diagnostics.Eventing.Reader
     }
 
     /// <summary>
-    /// The object requested by the operation is not found. 
+    /// The object requested by the operation is not found.
     /// </summary>
     public class EventLogNotFoundException : EventLogException
     {
@@ -81,8 +81,8 @@ namespace System.Diagnostics.Eventing.Reader
 
     /// <summary>
     /// The state of the reader cursor has become invalid, most likely due to the fact
-    /// that the log has been cleared.  User needs to obtain a new reader object if 
-    /// they wish to continue navigating result set. 
+    /// that the log has been cleared.  User needs to obtain a new reader object if
+    /// they wish to continue navigating result set.
     /// </summary>
     public class EventLogReadingException : EventLogException
     {
@@ -93,9 +93,9 @@ namespace System.Diagnostics.Eventing.Reader
     }
 
     /// <summary>
-    /// Provider has been uninstalled while ProviderMetadata operations are being performed.  
+    /// Provider has been uninstalled while ProviderMetadata operations are being performed.
     /// Obtain a new ProviderMetadata object, when provider is reinstalled, to continue navigating
-    /// provider's metadata.  
+    /// provider's metadata.
     /// </summary>
     public class EventLogProviderDisabledException : EventLogException
     {
@@ -106,7 +106,7 @@ namespace System.Diagnostics.Eventing.Reader
     }
 
     /// <summary>
-    /// Data obtained from the eventlog service, for the current operation, is invalid . 
+    /// Data obtained from the eventlog service, for the current operation, is invalid .
     /// </summary>
     public class EventLogInvalidDataException : EventLogException
     {

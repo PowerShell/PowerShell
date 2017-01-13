@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// New-PSSessionConfigurationFile command implementation
-    /// 
+    ///
     /// See Declarative Initial Session State (DISC)
     /// </summary>
     [Cmdlet(VerbsCommon.New, "PSSessionConfigurationFile", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217036")]
@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Creates a User PSDrive in the session.
-        /// The User drive is used with Copy-Item for file transfer when the FileSystem provider is 
+        /// The User drive is used with Copy-Item for file transfer when the FileSystem provider is
         /// not visible in the session.
         /// </summary>
         [Parameter()]
@@ -1071,7 +1071,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// New-PSRoleCapabilityFile command implementation
-    /// 
+    ///
     /// Creates a role capability file suitable for use in a Role Capability (which can be referenced in a Session Configuration file)
     /// </summary>
     [Cmdlet(VerbsCommon.New, "PSRoleCapabilityFile", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=623708")]
@@ -1440,7 +1440,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void ProcessRecord()
         {

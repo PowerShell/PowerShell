@@ -22,7 +22,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Monad internal implementation of the ICommandRuntime2 interface
     /// used for execution in the monad engine environment.
-    /// 
+    ///
     /// There will be one instance of this class for each cmdlet added to
     /// a pipeline. When the cmdlet calls its WriteObject API, that API will call
     /// the WriteObject implementation in this class which, in turn, calls
@@ -75,11 +75,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This allows all success output to be set to a variable.  Similar to the way -errorvariable sets 
+        /// This allows all success output to be set to a variable.  Similar to the way -errorvariable sets
         /// all errors to a variable name.  Semantically this is equivalent to :  cmd |set-var varname -passthru
         /// but it should be MUCH faster as there is no binding that takes place
         /// </summary>
-        /// 
+        ///
         /// <exception cref="System.ArgumentNullException">
         /// may not be set to null
         /// </exception>
@@ -313,7 +313,7 @@ namespace System.Management.Automation
         /// Use WriteProgress to display progress information about
         /// the activity of your Cmdlet, when the operation of your Cmdlet
         /// could potentially take a long time.
-        /// 
+        ///
         /// By default, progress output will
         /// be displayed, although this can be configured with the
         /// ProgressPreference shell variable.
@@ -332,12 +332,12 @@ namespace System.Management.Automation
             ThrowIfStopping();
 
             //
-            // WriteError/WriteObject have a check that prevents them to be called from outside 
-            // Begin/Process/End. This is done because the Pipeline needs to be ready before these 
+            // WriteError/WriteObject have a check that prevents them to be called from outside
+            // Begin/Process/End. This is done because the Pipeline needs to be ready before these
             // functions can be called.
             //
-            // WriteDebug/Warning/Verbose/Process used to do the same check, even though it is not 
-            // strictly needed. If we ever implement pipelines for these objects we may need to 
+            // WriteDebug/Warning/Verbose/Process used to do the same check, even though it is not
+            // strictly needed. If we ever implement pipelines for these objects we may need to
             // enforce the check again.
             //
             // See bug 583774 in the Windows 7 database for more details.
@@ -784,7 +784,7 @@ namespace System.Management.Automation
 
                             if (foregroundColor.HasValue || backgroundColor.HasValue)
                             {
-                                // It is possible for either one or the other to be empty if run from a 
+                                // It is possible for either one or the other to be empty if run from a
                                 // non-interactive host, but only one was specified in Write-Host.
                                 // So fill them with defaults if they are empty.
                                 if (!foregroundColor.HasValue)
@@ -847,9 +847,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="text">text to be written to log</param>
         /// <remarks>
-        /// Use WriteCommandDetail to write important information about cmdlet execution to 
-        /// pipeline execution log. 
-        /// 
+        /// Use WriteCommandDetail to write important information about cmdlet execution to
+        /// pipeline execution log.
+        ///
         /// If LogPipelineExecutionDetail is turned on, this information will be written
         /// to monad log under log category "Pipeline execution detail"
         /// </remarks>
@@ -898,7 +898,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This allows all success output to be set to a variable, where the variable is reset for each item returned by 
+        /// This allows all success output to be set to a variable, where the variable is reset for each item returned by
         /// the cmdlet. Semantically this is equivalent to :  cmd | % { $pipelineVariable = $_; (...) }
         /// </summary>
         internal string PipelineVariable { get; set; }
@@ -1017,11 +1017,11 @@ namespace System.Management.Automation
         /// A Cmdlet should declare
         /// [Cmdlet( SupportsShouldProcess = true )]
         /// if-and-only-if it calls ShouldProcess before making changes.
-        /// 
+        ///
         /// ShouldProcess may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// ShouldProcess will take into account command-line settings
         /// and preference variables in determining what it should return
         /// and whether it should prompt the user.
@@ -1049,7 +1049,7 @@ namespace System.Management.Automation
         ///                     set { filename = value; }
         ///                 }
         ///                 private string filename;
-        /// 
+        ///
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(filename))
@@ -1080,7 +1080,7 @@ namespace System.Management.Automation
         /// (e.g. delete files, stop services etc.) should call ShouldProcess
         /// to give the user the opportunity to confirm that the operation
         /// should actually be performed.
-        /// 
+        ///
         /// This variant allows the caller to specify text for both the
         /// target resource and the action.
         /// </summary>
@@ -1113,11 +1113,11 @@ namespace System.Management.Automation
         /// A Cmdlet should declare
         /// [Cmdlet( SupportsShouldProcess = true )]
         /// if-and-only-if it calls ShouldProcess before making changes.
-        /// 
+        ///
         /// ShouldProcess may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// ShouldProcess will take into account command-line settings
         /// and preference variables in determining what it should return
         /// and whether it should prompt the user.
@@ -1143,7 +1143,7 @@ namespace System.Management.Automation
         ///                     set { filename = value; }
         ///                 }
         ///                 private string filename;
-        /// 
+        ///
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(filename, "delete"))
@@ -1175,7 +1175,7 @@ namespace System.Management.Automation
         /// (e.g. delete files, stop services etc.) should call ShouldProcess
         /// to give the user the opportunity to confirm that the operation
         /// should actually be performed.
-        /// 
+        ///
         /// This variant allows the caller to specify the complete text
         /// describing the operation, rather than just the name and action.
         /// </summary>
@@ -1216,11 +1216,11 @@ namespace System.Management.Automation
         /// A Cmdlet should declare
         /// [Cmdlet( SupportsShouldProcess = true )]
         /// if-and-only-if it calls ShouldProcess before making changes.
-        /// 
+        ///
         /// ShouldProcess may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// ShouldProcess will take into account command-line settings
         /// and preference variables in determining what it should return
         /// and whether it should prompt the user.
@@ -1246,7 +1246,7 @@ namespace System.Management.Automation
         ///                     set { filename = value; }
         ///                 }
         ///                 private string filename;
-        /// 
+        ///
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
@@ -1284,7 +1284,7 @@ namespace System.Management.Automation
         /// (e.g. delete files, stop services etc.) should call ShouldProcess
         /// to give the user the opportunity to confirm that the operation
         /// should actually be performed.
-        /// 
+        ///
         /// This variant allows the caller to specify the complete text
         /// describing the operation, rather than just the name and action.
         /// </summary>
@@ -1331,11 +1331,11 @@ namespace System.Management.Automation
         /// A Cmdlet should declare
         /// [Cmdlet( SupportsShouldProcess = true )]
         /// if-and-only-if it calls ShouldProcess before making changes.
-        /// 
+        ///
         /// ShouldProcess may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// ShouldProcess will take into account command-line settings
         /// and preference variables in determining what it should return
         /// and whether it should prompt the user.
@@ -1361,7 +1361,7 @@ namespace System.Management.Automation
         ///                     set { filename = value; }
         ///                 }
         ///                 private string filename;
-        /// 
+        ///
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     ShouldProcessReason shouldProcessReason;
@@ -1474,12 +1474,12 @@ namespace System.Management.Automation
                 // 2005/05/24 908827
                 // WriteDebug/WriteVerbose/WriteProgress/WriteWarning should only be callable from the main thread
                 //
-                // WriteError/WriteObject have a check that prevents them to be called from outside 
-                // Begin/Process/End. This is done because the Pipeline needs to be ready before these 
+                // WriteError/WriteObject have a check that prevents them to be called from outside
+                // Begin/Process/End. This is done because the Pipeline needs to be ready before these
                 // functions can be called.
                 //
-                // WriteDebug/Warning/Verbose/Process used to do the same check, even though it is not 
-                // strictly needed. If we ever implement pipelines for these objects we may need to 
+                // WriteDebug/Warning/Verbose/Process used to do the same check, even though it is not
+                // strictly needed. If we ever implement pipelines for these objects we may need to
                 // enforce the check again.
                 //
                 // See bug 583774 in the Windows 7 database for more details.
@@ -1503,12 +1503,12 @@ namespace System.Management.Automation
                     // 2005/05/24 908827
                     // WriteDebug/WriteVerbose/WriteProgress/WriteWarning should only be callable from the main thread
                     //
-                    // WriteError/WriteObject have a check that prevents them to be called from outside 
-                    // Begin/Process/End. This is done because the Pipeline needs to be ready before these 
+                    // WriteError/WriteObject have a check that prevents them to be called from outside
+                    // Begin/Process/End. This is done because the Pipeline needs to be ready before these
                     // functions can be called.
                     //
-                    // WriteDebug/Warning/Verbose/Process used to do the same check, even though it is not 
-                    // strictly needed. If we ever implement pipelines for these objects we may need to 
+                    // WriteDebug/Warning/Verbose/Process used to do the same check, even though it is not
+                    // strictly needed. If we ever implement pipelines for these objects we may need to
                     // enforce the check again.
                     //
                     // See bug 583774 in the Windows 7 database for more details.
@@ -1528,12 +1528,12 @@ namespace System.Management.Automation
             // 2005/05/24 908827
             // WriteDebug/WriteVerbose/WriteProgress/WriteWarning should only be callable from the main thread
             //
-            // WriteError/WriteObject have a check that prevents them to be called from outside 
-            // Begin/Process/End. This is done because the Pipeline needs to be ready before these 
+            // WriteError/WriteObject have a check that prevents them to be called from outside
+            // Begin/Process/End. This is done because the Pipeline needs to be ready before these
             // functions can be called.
             //
-            // WriteDebug/Warning/Verbose/Process used to do the same check, even though it is not 
-            // strictly needed. If we ever implement pipelines for these objects we may need to 
+            // WriteDebug/Warning/Verbose/Process used to do the same check, even though it is not
+            // strictly needed. If we ever implement pipelines for these objects we may need to
             // enforce the check again.
             //
             // See bug 583774 in the Windows 7 database for more details.
@@ -1632,16 +1632,16 @@ namespace System.Management.Automation
         /// and ShouldProcess.
         /// If this is not done, it will be difficult to use the Cmdlet
         /// from scripts and non-interactive hosts.
-        /// 
+        ///
         /// Cmdlets using ShouldContinue must still verify operations
         /// which will make changes using ShouldProcess.
         /// This will assure that settings such as -WhatIf work properly.
         /// You may call ShouldContinue either before or after ShouldProcess.
-        /// 
+        ///
         /// ShouldContinue may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// Cmdlets may have different "classes" of confirmations.  For example,
         /// "del" confirms whether files in a particular directory should be
         /// deleted, whether read-only files should be deleted, etc.
@@ -1666,7 +1666,7 @@ namespace System.Management.Automation
         ///                     set { filename = value; }
         ///                 }
         ///                 private string filename;
-        /// 
+        ///
         ///                 [Parameter]
         ///                 public SwitchParameter Force
         ///                 {
@@ -1674,7 +1674,7 @@ namespace System.Management.Automation
         ///                     set { force = value; }
         ///                 }
         ///                 private bool force;
-        /// 
+        ///
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
@@ -1809,16 +1809,16 @@ namespace System.Management.Automation
         /// and ShouldProcess.
         /// If this is not done, it will be difficult to use the Cmdlet
         /// from scripts and non-interactive hosts.
-        /// 
+        ///
         /// Cmdlets using ShouldContinue must still verify operations
         /// which will make changes using ShouldProcess.
         /// This will assure that settings such as -WhatIf work properly.
         /// You may call ShouldContinue either before or after ShouldProcess.
-        /// 
+        ///
         /// ShouldContinue may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// Cmdlets may have different "classes" of confirmations.  For example,
         /// "del" confirms whether files in a particular directory should be
         /// deleted, whether read-only files should be deleted, etc.
@@ -1843,7 +1843,7 @@ namespace System.Management.Automation
         ///                     set { filename = value; }
         ///                 }
         ///                 private string filename;
-        /// 
+        ///
         ///                 [Parameter]
         ///                 public SwitchParameter Force
         ///                 {
@@ -1851,10 +1851,10 @@ namespace System.Management.Automation
         ///                     set { force = value; }
         ///                 }
         ///                 private bool force;
-        /// 
+        ///
         ///                 private bool yesToAll;
         ///                 private bool noToAll;
-        /// 
+        ///
         ///                 public override void ProcessRecord()
         ///                 {
         ///                     if (ShouldProcess(
@@ -1903,12 +1903,12 @@ namespace System.Management.Automation
             ThrowIfStopping();
 
             //
-            // WriteError/WriteObject have a check that prevents them to be called from outside 
-            // Begin/Process/End. This is done because the Pipeline needs to be ready before these 
+            // WriteError/WriteObject have a check that prevents them to be called from outside
+            // Begin/Process/End. This is done because the Pipeline needs to be ready before these
             // functions can be called.
             //
-            // WriteDebug/Warning/Verbose/Process used to do the same check, even though it is not 
-            // strictly needed. If we ever implement pipelines for these objects we may need to 
+            // WriteDebug/Warning/Verbose/Process used to do the same check, even though it is not
+            // strictly needed. If we ever implement pipelines for these objects we may need to
             // enforce the check again.
             //
             // See bug 583774 in the Windows 7 database for more details.
@@ -2000,7 +2000,7 @@ namespace System.Management.Automation
         /// terminates the command, where
         /// <see cref="System.Management.Automation.ICommandRuntime.WriteError"/>
         /// allows the command to continue.
-        /// 
+        ///
         /// The cmdlet can also terminate the command by simply throwing
         /// any exception.  When the cmdlet's implementation of
         /// <see cref="System.Management.Automation.Cmdlet.ProcessRecord"/>,
@@ -2013,7 +2013,7 @@ namespace System.Management.Automation
         /// so that the additional information in
         /// <see cref="System.Management.Automation.ErrorRecord"/>
         /// is available.
-        /// 
+        ///
         /// <see cref="System.Management.Automation.Cmdlet.ThrowTerminatingError"/>
         /// always throws
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
@@ -2643,7 +2643,7 @@ namespace System.Management.Automation
         /// terminates the command, where
         /// <see cref="System.Management.Automation.ICommandRuntime.WriteError"/>
         /// allows the command to continue.
-        /// 
+        ///
         /// If the pipeline is terminated due to ActionPreference.Stop
         /// or ActionPreference.Inquire, this method will throw
         /// <see cref="System.Management.Automation.PipelineStoppedException"/>,
@@ -2886,7 +2886,7 @@ namespace System.Management.Automation
         /// This is not an independent parameter, it just emerges from the
         /// Verbose, Debug, Confirm, and WhatIf parameters and the
         /// $ConfirmPreference shell variable.
-        /// 
+        ///
         /// We only read $ConfirmPreference once, then cache the value.
         /// </remarks>
         internal ConfirmImpact ConfirmPreference
@@ -3242,9 +3242,9 @@ namespace System.Management.Automation
         internal bool IsErrorActionSet { get; private set; } = false;
 
         /// <summary>
-        /// 
+        ///
         /// Preference setting for displaying ProgressRecords when WriteProgress is called.
-        /// 
+        ///
         /// </summary>
         /// <value></value>
         internal ActionPreference ProgressPreference
@@ -3273,9 +3273,9 @@ namespace System.Management.Automation
         private bool _isProgressPreferenceCached = false;
 
         /// <summary>
-        /// 
+        ///
         /// Preference setting for displaying InformationRecords when WriteInformation is called.
-        /// 
+        ///
         /// </summary>
         /// <value></value>
         internal ActionPreference InformationPreference
@@ -3356,12 +3356,12 @@ namespace System.Management.Automation
             // 2005/05/24 908827
             // WriteDebug/WriteVerbose/WriteProgress/WriteWarning should only be callable from the main thread
             //
-            // WriteError/WriteObject have a check that prevents them to be called from outside 
-            // Begin/Process/End. This is done because the Pipeline needs to be ready before these 
+            // WriteError/WriteObject have a check that prevents them to be called from outside
+            // Begin/Process/End. This is done because the Pipeline needs to be ready before these
             // functions can be called.
             //
-            // WriteDebug/Warning/Verbose/Process used to do the same check, even though it is not 
-            // strictly needed. If we ever implement pipelines for these objects we may need to 
+            // WriteDebug/Warning/Verbose/Process used to do the same check, even though it is not
+            // strictly needed. If we ever implement pipelines for these objects we may need to
             // enforce the check again.
             //
             // See bug 583774 in the Windows 7 database for more details.

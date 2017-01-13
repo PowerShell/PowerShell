@@ -6,7 +6,7 @@ using System.Runtime.Serialization;
 using System.Reflection;
 
 #if CORECLR
-// Use stubs for SystemException, SerializationInfo and SecurityPermissionAttribute 
+// Use stubs for SystemException, SerializationInfo and SecurityPermissionAttribute
 using Microsoft.PowerShell.CoreClr.Stubs;
 #else
 using System.Security.Permissions;
@@ -15,16 +15,16 @@ using System.Security.Permissions;
 namespace System.Management.Automation.Runspaces
 {
     /// <summary>
-    /// Defines exception thrown when runspace configuration attribute is not defined correctly. 
+    /// Defines exception thrown when runspace configuration attribute is not defined correctly.
     /// </summary>
     /// <!--
     /// RunspaceConfigurationAttributeException is either
-    /// 
+    ///
     ///     1. no assembly attribute of type RunspaceConfigurationTypeAttribute defined
     ///     2. or multiple assembly attributes of type RunspaceConfigurationTypeAttribute defined
-    /// 
-    /// Implementation of RunspaceConfigurationAttributeException requires it to 
-    ///     1. Implement IContainsErrorRecord, 
+    ///
+    /// Implementation of RunspaceConfigurationAttributeException requires it to
+    ///     1. Implement IContainsErrorRecord,
     ///     2. ISerializable
     /// -->
     [Serializable]
@@ -88,7 +88,7 @@ namespace System.Management.Automation.Runspaces
         private void CreateErrorRecord()
         {
             // if _error is empty, this exception is created using default
-            // constructor. Don't create the error record since there is 
+            // constructor. Don't create the error record since there is
             // no useful information anyway.
             if (!String.IsNullOrEmpty(_error) && !String.IsNullOrEmpty(_assemblyName))
             {
@@ -100,7 +100,7 @@ namespace System.Management.Automation.Runspaces
         private ErrorRecord _errorRecord;
 
         /// <summary>
-        /// Gets error record embedded in this exception. 
+        /// Gets error record embedded in this exception.
         /// </summary>
         /// <!--
         /// This property is required as part of IErrorRecordContainer
@@ -117,7 +117,7 @@ namespace System.Management.Automation.Runspaces
         private string _error = "";
 
         /// <summary>
-        /// Get localized error message. 
+        /// Get localized error message.
         /// </summary>
         /// <value>error</value>
         public string Error
@@ -143,7 +143,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Gets message for this exception. 
+        /// Gets message for this exception.
         /// </summary>
         public override string Message
         {
@@ -161,7 +161,7 @@ namespace System.Management.Automation.Runspaces
         #region Serialization
 
         /// <summary>
-        /// Initiate a RunspaceConfigurationAttributeException instance. 
+        /// Initiate a RunspaceConfigurationAttributeException instance.
         /// </summary>
         /// <param name="info"> Serialization information </param>
         /// <param name="context"> Streaming context </param>

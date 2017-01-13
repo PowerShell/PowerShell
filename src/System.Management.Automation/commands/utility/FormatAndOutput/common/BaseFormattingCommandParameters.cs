@@ -144,7 +144,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // it could be a string
 
             // build a hash with "hotrodded" entries if there
-            
+
             string s = val as string;
             object width, align;
             string nameVal = UnpackString (s, out width, out align);

@@ -13,24 +13,24 @@ namespace System.Management.Automation.Runspaces
 {
     /// <summary>
     /// Runspace config for single shell are a special kind of runspace
-    /// configuration that is generated for single shells. 
-    /// 
-    /// This class needs to handle the standard management of 
-    /// 
-    ///     1. consoleInfo: each instance of this class will have 
-    ///        a consoleInfo object. 
-    ///     2. interface to consoleInfo. This includes "open", 
+    /// configuration that is generated for single shells.
+    ///
+    /// This class needs to handle the standard management of
+    ///
+    ///     1. consoleInfo: each instance of this class will have
+    ///        a consoleInfo object.
+    ///     2. interface to consoleInfo. This includes "open",
     ///        "save", and "change" of consoleInfo and console files.
-    ///     3. interface to mshsnapin's. This includes add, remove 
-    ///        and list mshsnapins in console file. 
-    /// 
-    /// This class derives from RunspaceConfiguration and supports 
-    /// basic information for cmdlets, providers, types, formats, 
-    /// etc. 
-    /// 
+    ///     3. interface to mshsnapin's. This includes add, remove
+    ///        and list mshsnapins in console file.
+    ///
+    /// This class derives from RunspaceConfiguration and supports
+    /// basic information for cmdlets, providers, types, formats,
+    /// etc.
+    ///
     /// Eventually when minishell model goes away, RunspaceConfiguration
-    /// and RunspaceConfigForSingleShell may merge into one class. 
-    /// 
+    /// and RunspaceConfigForSingleShell may merge into one class.
+    ///
     /// </summary>
     internal class RunspaceConfigForSingleShell : RunspaceConfiguration
     {
@@ -62,8 +62,8 @@ namespace System.Management.Automation.Runspaces
                 s_mshsnapinTracer.TraceWarning("There was a warning while creating MshConsoleInfo: {0}", warning1.Message);
             }
 
-            // At this time, consoleInfo should not be null. 
-            // Otherwise, an exception should have been thrown up. 
+            // At this time, consoleInfo should not be null.
+            // Otherwise, an exception should have been thrown up.
             if (consoleInfo != null)
             {
                 RunspaceConfigForSingleShell rspcfg = new RunspaceConfigForSingleShell(consoleInfo);
@@ -116,7 +116,7 @@ namespace System.Management.Automation.Runspaces
             MshConsoleInfo consoleInfo = MshConsoleInfo.CreateDefaultConfiguration();
 
             // This should not happen. If there is a failure in creating consoleInfo,
-            // an exception should have been thrown up. 
+            // an exception should have been thrown up.
             if (consoleInfo != null)
             {
                 RunspaceConfigForSingleShell rspcfg = new RunspaceConfigForSingleShell(consoleInfo);
@@ -330,7 +330,7 @@ namespace System.Management.Automation.Runspaces
                 if (!mshsnapinInfo.IsDefault)
                     _consoleInfo.RemovePSSnapIn(mshsnapinInfo.Name);
 
-                // exception during load mshsnapin are fatal. 
+                // exception during load mshsnapin are fatal.
                 throw;
             }
 
@@ -400,7 +400,7 @@ namespace System.Management.Automation.Runspaces
             if (mshsnapinInfo == null)
                 return;
 
-#if !CORECLR // CustomPSSnapIn Not Supported On CSS. 
+#if !CORECLR // CustomPSSnapIn Not Supported On CSS.
             if (!String.IsNullOrEmpty(mshsnapinInfo.CustomPSSnapInType))
             {
                 LoadCustomPSSnapIn(mshsnapinInfo);
@@ -676,7 +676,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the shell id for current runspace configuration.
         /// </summary>
-        /// 
+        ///
         public override string ShellId
         {
             get

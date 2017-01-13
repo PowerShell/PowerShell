@@ -221,14 +221,14 @@ function __cmdletization_BindCommonParameters
     param(
         $__cmdletization_objectModelWrapper,
         $myPSBoundParameters
-    )       
+    )
                 ");
 
             foreach (ParameterMetadata commonParameter in this.GetCommonParameters().Values)
             {
                 output.WriteLine(@"
-        if ($myPSBoundParameters.ContainsKey('{0}')) {{ 
-            $__cmdletization_objectModelWrapper.PSObject.Properties['{0}'].Value = $myPSBoundParameters['{0}'] 
+        if ($myPSBoundParameters.ContainsKey('{0}')) {{
+            $__cmdletization_objectModelWrapper.PSObject.Properties['{0}'].Value = $myPSBoundParameters['{0}']
         }}
                     ",
                      CodeGeneration.EscapeSingleQuotedStringContent(commonParameter.Name));
@@ -765,7 +765,7 @@ function __cmdletization_BindCommonParameters
                         if (this.GetCommonParameters().ContainsKey(parameter.Key))
                         {
                             string message = string.Format(
-                                CultureInfo.InvariantCulture, // parameter name 
+                                CultureInfo.InvariantCulture, // parameter name
                                 CmdletizationCoreResources.ScriptWriter_ParameterNameConflictsWithCommonParameters,
                                 parameter.Key,
                                 commandMetadata.Name,
@@ -775,7 +775,7 @@ function __cmdletization_BindCommonParameters
                         else
                         {
                             string message = string.Format(
-                                CultureInfo.InvariantCulture, // parameter name 
+                                CultureInfo.InvariantCulture, // parameter name
                                 CmdletizationCoreResources.ScriptWriter_ParameterNameConflictsWithQueryParameters,
                                 parameter.Key,
                                 commandMetadata.Name,
@@ -925,7 +925,7 @@ function __cmdletization_BindCommonParameters
         }
 
 
-        private const string StaticCommonParameterSetTemplate = "{1}"; //"{0}::{1}"; 
+        private const string StaticCommonParameterSetTemplate = "{1}"; //"{0}::{1}";
         private const string StaticMethodParameterSetTemplate = "{0}"; //"{1}::{0}";
 
         private const string InstanceCommonParameterSetTemplate = "{1}"; //"{0}::{1}::{2}";
@@ -1773,7 +1773,7 @@ function {0}
     {4})
 
     DynamicParam {{
-        try 
+        try
         {{
             if (-not $__cmdletization_exceptionHasBeenThrown)
             {{
@@ -1795,7 +1795,7 @@ function {0}
 
     Begin {{
         $__cmdletization_exceptionHasBeenThrown = $false
-        try 
+        try
         {{
             __cmdletization_BindCommonParameters $__cmdletization_objectModelWrapper $PSBoundParameters
             $__cmdletization_objectModelWrapper.BeginProcessing()
@@ -1810,7 +1810,7 @@ function {0}
 
         private const string CmdletProcessBlockTemplate = @"
     Process {{
-        try 
+        try
         {{
             if (-not $__cmdletization_exceptionHasBeenThrown)
             {{

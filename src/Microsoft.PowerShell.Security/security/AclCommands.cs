@@ -233,7 +233,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 // All Acl cmdlets returning SIDs will return a string
                 // representation of the SID in all cases where the SID
-                // cannot be mapped to a proper user or group name.                    
+                // cannot be mapped to a proper user or group name.
             }
 
             // We are here since we cannot get IdentityReference from sd..
@@ -569,7 +569,7 @@ namespace Microsoft.PowerShell.Commands
 #endif
 
         /// <summary>
-        /// Gets the security descriptor (in SDDL form) of the 
+        /// Gets the security descriptor (in SDDL form) of the
         /// provided PSObject.  SDDL form is the Security Descriptor
         /// Definition Language.
         /// </summary>
@@ -617,7 +617,7 @@ namespace Microsoft.PowerShell.Commands
 #if !UNIX
     /// <summary>
     /// Defines the implementation of the 'get-acl' cmdlet.
-    /// This cmdlet gets the security descriptor of an item at the specified path.  
+    /// This cmdlet gets the security descriptor of an item at the specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "Acl", SupportsTransactions = true, DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113305")]
     public sealed class GetAclCommand : SecurityDescriptorCommandsBase
@@ -698,7 +698,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _isLiteralPath = false;
 
         /// <summary>
-        /// Gets or sets the audit flag of the command.  This flag 
+        /// Gets or sets the audit flag of the command.  This flag
         /// determines if audit rules should also be retrieved.
         /// </summary>
         [Parameter()]
@@ -718,7 +718,7 @@ namespace Microsoft.PowerShell.Commands
 
 #if CORECLR
         /// <summary>
-        /// Parameter '-AllCentralAccessPolicies' is not supported in OneCore powershell, 
+        /// Parameter '-AllCentralAccessPolicies' is not supported in OneCore powershell,
         /// because function 'LsaQueryCAPs' is not available in OneCoreUAP and NanoServer.
         /// </summary>
         private SwitchParameter AllCentralAccessPolicies
@@ -727,8 +727,8 @@ namespace Microsoft.PowerShell.Commands
         }
 #else
         /// <summary>
-        /// Gets or sets the AllCentralAccessPolicies flag of the command. This flag 
-        /// determines whether the information about all central access policies 
+        /// Gets or sets the AllCentralAccessPolicies flag of the command. This flag
+        /// determines whether the information about all central access policies
         /// available on the machine should be displayed.
         /// </summary>
         [Parameter()]
@@ -894,7 +894,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Defines the implementation of the 'set-acl' cmdlet.
-    /// This cmdlet sets the security descriptor of an item at the specified path.  
+    /// This cmdlet sets the security descriptor of an item at the specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "Acl", SupportsShouldProcess = true, SupportsTransactions = true, DefaultParameterSetName = "ByPath",
             HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113389")]
@@ -986,7 +986,7 @@ namespace Microsoft.PowerShell.Commands
 
 #if CORECLR
         /// <summary>
-        /// Parameter '-CentralAccessPolicy' is not supported in OneCore powershell, 
+        /// Parameter '-CentralAccessPolicy' is not supported in OneCore powershell,
         /// because function 'LsaQueryCAPs' is not available in OneCoreUAP and NanoServer.
         /// </summary>
         private string CentralAccessPolicy
@@ -1103,7 +1103,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <remarks>
         /// Function 'LsaQueryCAPs' is not available in OneCoreUAP and NanoServer.
-        /// So the parameter "-CentralAccessPolicy" is not supported on OneCore powershell, 
+        /// So the parameter "-CentralAccessPolicy" is not supported on OneCore powershell,
         /// and thus this method won't be hit in OneCore powershell.
         /// </remarks>
         private IntPtr GetSaclWithCapId(string capStr)
@@ -1120,10 +1120,10 @@ namespace Microsoft.PowerShell.Commands
                 if (!ret)
                 {
                     // We may have got a CAP friendly name instead of CAPID.
-                    // Enumerate all CAPs on the system and try to find one with 
+                    // Enumerate all CAPs on the system and try to find one with
                     // a matching friendly name.
-                    // If we retrieve the CAPID from the LSA, the CAPID need not 
-                    // be deallocated separately (but with the entire buffer 
+                    // If we retrieve the CAPID from the LSA, the CAPID need not
+                    // be deallocated separately (but with the entire buffer
                     // returned by LsaQueryCAPs).
                     freeCapId = false;
                     uint capCount = 0;
@@ -1237,8 +1237,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns the current thread or process token with the specified privilege enabled 
-        /// and the previous state of this privilege. Free the returned token 
+        /// Returns the current thread or process token with the specified privilege enabled
+        /// and the previous state of this privilege. Free the returned token
         /// by calling NativeMethods.CloseHandle.
         /// </summary>
         private IntPtr GetTokenWithEnabledPrivilege(
@@ -1317,7 +1317,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// Processes records from the input pipeline.
         /// For each input file, the command sets its
-        /// security descriptor to the specified 
+        /// security descriptor to the specified
         /// Access Control List (ACL).
         protected override void ProcessRecord()
         {

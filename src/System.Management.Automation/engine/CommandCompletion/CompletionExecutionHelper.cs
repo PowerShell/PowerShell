@@ -75,7 +75,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            // we got back one or more objects. 
+            // we got back one or more objects.
             return (streamResults.Count > 1) || (LanguagePrimitives.IsTrue(streamResults[0]));
         }
 

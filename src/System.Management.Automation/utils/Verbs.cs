@@ -14,9 +14,9 @@ namespace System.Management.Automation
     /// <summary>
     /// Verbs that are commonly used in cmdlet names.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
-    /// These verbs are recommended over their synonyms when used as the verb name 
+    /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
     /// </remarks>
     public static class VerbsCommon
@@ -77,12 +77,12 @@ namespace System.Management.Automation
         public const string Lock = "Lock";
 
         /// <summary>
-        /// Move a resource 
+        /// Move a resource
         /// </summary>
         public const string Move = "Move";
 
         /// <summary>
-        /// Create a new resource 
+        /// Create a new resource
         /// </summary>
         public const string New = "New";
 
@@ -169,7 +169,7 @@ namespace System.Management.Automation
         public const string Split = "Split";
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public const string Switch = "Switch";
 
@@ -198,9 +198,9 @@ namespace System.Management.Automation
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet manipulates data.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
-    /// These verbs are recommended over their synonyms when used as the verb name 
+    /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
     /// </remarks>
     public static class VerbsData
@@ -250,7 +250,7 @@ namespace System.Management.Automation
         /// </summary>
         public const string Expand = "Expand";
 
-        /// <summary> 
+        /// <summary>
         /// Make a copy of a set of resources using an interchange format
         /// </summary>
         public const string Export = "Export";
@@ -260,7 +260,7 @@ namespace System.Management.Automation
         /// </summary>
         public const string Group = "Group";
 
-        /// <summary> 
+        /// <summary>
         /// Create a set of resources using an interchange format
         /// </summary>
         public const string Import = "Import";
@@ -306,7 +306,7 @@ namespace System.Management.Automation
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Unpublish")]
         public const string Unpublish = "Unpublish";
 
-        /// <summary> 
+        /// <summary>
         /// Update a resource with new elements or refresh from a source of truth
         /// </summary>
         public const string Update = "Update";
@@ -330,9 +330,9 @@ namespace System.Management.Automation
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet manipulates the lifecycle of something.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
-    /// These verbs are recommended over their synonyms when used as the verb name 
+    /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
     /// </remarks>
     public static class VerbsLifecycle
@@ -398,12 +398,12 @@ namespace System.Management.Automation
         ///</summary>
         public const string Restart = "Restart";
 
-        /// <summary> 
+        /// <summary>
         /// Begin an activity again after it was suspended
         /// </summary>
         public const string Resume = "Resume";
 
-        /// <summary> 
+        /// <summary>
         /// Begin an activity
         /// </summary>
         public const string Start = "Start";
@@ -418,7 +418,7 @@ namespace System.Management.Automation
         /// </summary>
         public const string Submit = "Submit";
 
-        /// <summary> 
+        /// <summary>
         /// Suspend an activity temporarily
         /// </summary>
         public const string Suspend = "Suspend";
@@ -444,9 +444,9 @@ namespace System.Management.Automation
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet is used to diagnose the health of something.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
-    /// These verbs are recommended over their synonyms when used as the verb name 
+    /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
     /// </remarks>
     public static class VerbsDiagnostic
@@ -456,22 +456,22 @@ namespace System.Management.Automation
         /// </summary>
         public const string Debug = "Debug";
 
-        /// <summary> 
-        /// calculate/identify resources consumed by a specified operation or retrieve statistics about a resource 
+        /// <summary>
+        /// calculate/identify resources consumed by a specified operation or retrieve statistics about a resource
         /// </summary>
         public const string Measure = "Measure";
 
-        /// <summary> 
+        /// <summary>
         /// Determine whether a resource is alive and responding to requests
         /// </summary>
         public const string Ping = "Ping";
 
-        /// <summary> 
+        /// <summary>
         /// Detect and correct problems
         /// </summary>
         public const string Repair = "Repair";
 
-        /// <summary> 
+        /// <summary>
         /// Map a shorthand name will be bound to a longname
         /// </summary>
         public const string Resolve = "Resolve";
@@ -481,7 +481,7 @@ namespace System.Management.Automation
         /// </summary>
         public const string Test = "Test";
 
-        /// <summary> 
+        /// <summary>
         /// Trace activities performed by a specified operation
         /// </summary>
         public const string Trace = "Trace";
@@ -491,9 +491,9 @@ namespace System.Management.Automation
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet is used to communicate with something.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
-    /// These verbs are recommended over their synonyms when used as the verb name 
+    /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
     /// </remarks>
     public static class VerbsCommunications
@@ -532,9 +532,9 @@ namespace System.Management.Automation
     /// <summary>
     /// Verbs that are commonly used in cmdlet names when the cmdlet is used to secure a resource.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
-    /// These verbs are recommended over their synonyms when used as the verb name 
+    /// These verbs are recommended over their synonyms when used as the verb name
     /// for cmdlets.
     /// </remarks>
     public static class VerbsSecurity

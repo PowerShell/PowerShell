@@ -15,7 +15,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A cmdlet that traces the specified categories and flags for the duration of the 
+    /// A cmdlet that traces the specified categories and flags for the duration of the
     /// specified expression.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Trace, "Command", DefaultParameterSetName = "expressionSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113419")]
@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// This parameter specifies the current pipeline object 
+        /// This parameter specifies the current pipeline object
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         /// The TraceSource parameter determines which TraceSource categories the
         /// operation will take place on.
         /// </summary>
-        /// 
+        ///
         [Parameter(Position = 0, Mandatory = true)]
         public string[] Name
         {
@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
         /// The parameter which determines the options for output from the
         /// trace listeners.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public TraceOptions ListenerOption
         {
@@ -157,7 +157,7 @@ namespace Microsoft.PowerShell.Commands
             TurnOnTracing(_matchingSources, false);
             TurnOnTracing(preconfiguredSources, true);
 
-            // Now that tracing has been configured, move all the sources into a 
+            // Now that tracing has been configured, move all the sources into a
             // single collection
 
             foreach (PSTraceSource preconfiguredSource in preconfiguredSources)
@@ -190,7 +190,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Executes the expression.
-        /// 
+        ///
         /// Note, this was taken from apply-expression
         /// </summary>
         protected override void ProcessRecord()
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Ensures that the sub-pipeline we created gets stopped as well.
         /// </summary>
-        /// 
+        ///
         protected override void StopProcessing()
         {
             if (_pipeline != null)
@@ -323,7 +323,7 @@ namespace Microsoft.PowerShell.Commands
     /// cmdlet.  It gets attached to the sub-pipelines success or error pipeline and redirects
     /// all objects written to these pipelines to trace-command pipeline.
     /// </summary>
-    /// 
+    ///
     internal class TracePipelineWriter : PipelineWriter
     {
         internal TracePipelineWriter(

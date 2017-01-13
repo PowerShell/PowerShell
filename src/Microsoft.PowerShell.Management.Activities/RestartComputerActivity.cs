@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.Management.Activities
             RestartActivityContext c = new RestartActivityContext();
             c.NeedsRestart = true;
             restartActivityContext.Set(executionContext, c);
-            
+
             executionContext.ScheduleActivity(persistActivity, SelfRestart);
         }
 

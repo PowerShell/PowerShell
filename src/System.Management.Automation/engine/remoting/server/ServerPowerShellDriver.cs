@@ -33,7 +33,7 @@ namespace System.Management.Automation
                                                  // information
         private object _syncObject = new object(); // sync object for synchronizing sending
                                                    // data to client
-        private bool _noInput;                   // there is no input when this driver 
+        private bool _noInput;                   // there is no input when this driver
                                                  // was created
         private bool _addToHistory;
         private ServerRemoteHost _remoteHost;   // the server remote host instance
@@ -57,7 +57,7 @@ namespace System.Management.Automation
         /// <param name="noInput">whether there is input for this powershell</param>
         /// <param name="clientPowerShellId">the client powershell id</param>
         /// <param name="clientRunspacePoolId">the client runspacepool id</param>
-        /// <param name="runspacePoolDriver">runspace pool driver 
+        /// <param name="runspacePoolDriver">runspace pool driver
         /// which is creating this powershell driver</param>
         /// <param name="apartmentState">apartment state for this powershell</param>
         /// <param name="hostInfo">host info using which the host for
@@ -87,8 +87,8 @@ namespace System.Management.Automation
         /// <param name="noInput">whether there is input for this powershell</param>
         /// <param name="clientPowerShellId">the client powershell id</param>
         /// <param name="clientRunspacePoolId">the client runspacepool id</param>
-        /// <param name="runspacePoolDriver">runspace pool driver 
-        /// which is creating this powershell driver</param>        
+        /// <param name="runspacePoolDriver">runspace pool driver
+        /// which is creating this powershell driver</param>
         /// <param name="hostInfo">host info using which the host for
         /// this powershell will be constructed</param>
         /// <param name="streamOptions">serialization options for the streams in this powershell</param>
@@ -118,8 +118,8 @@ namespace System.Management.Automation
         /// <param name="noInput">whether there is input for this powershell</param>
         /// <param name="clientPowerShellId">the client powershell id</param>
         /// <param name="clientRunspacePoolId">the client runspacepool id</param>
-        /// <param name="runspacePoolDriver">runspace pool driver 
-        /// which is creating this powershell driver</param>        
+        /// <param name="runspacePoolDriver">runspace pool driver
+        /// which is creating this powershell driver</param>
         /// <param name="hostInfo">host info using which the host for
         /// this powershell will be constructed</param>
         /// <param name="streamOptions">serialization options for the streams in this powershell</param>
@@ -132,7 +132,7 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="output">
         /// If not null, this is used as another source of output sent to the client.
-        /// </param> 
+        /// </param>
         internal ServerPowerShellDriver(PowerShell powershell, PowerShell extraPowerShell, bool noInput, Guid clientPowerShellId,
             Guid clientRunspacePoolId, ServerRunspacePoolDriver runspacePoolDriver,
             HostInfo hostInfo, RemoteStreamOptions streamOptions,
@@ -146,7 +146,7 @@ namespace System.Management.Automation
         /// <param name="noInput">whether there is input for this powershell</param>
         /// <param name="clientPowerShellId">the client powershell id</param>
         /// <param name="clientRunspacePoolId">the client runspacepool id</param>
-        /// <param name="runspacePoolDriver">runspace pool driver 
+        /// <param name="runspacePoolDriver">runspace pool driver
         /// which is creating this powershell driver</param>
         /// <param name="apartmentState">apartment state for this powershell</param>
         /// <param name="hostInfo">host info using which the host for
@@ -256,7 +256,7 @@ namespace System.Management.Automation
         internal PowerShell LocalPowerShell { get; }
 
         /// <summary>
-        /// Instance id by which this powershell driver is 
+        /// Instance id by which this powershell driver is
         /// identified. This is the same as the id of the
         /// powershell on the client side
         /// </summary>
@@ -269,9 +269,9 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Id of the runspace pool driver which created
-        /// this object. This is the same as the id of 
+        /// this object. This is the same as the id of
         /// the runspace pool at the client side which
-        /// is associated with the powershell on the 
+        /// is associated with the powershell on the
         /// client side
         /// </summary>
         internal Guid RunspacePoolId { get; }
@@ -291,13 +291,13 @@ namespace System.Management.Automation
             }
 
             PSInvocationSettings settings = new PSInvocationSettings();
-#if !CORECLR // No ApartmentState In CoreCLR            
+#if !CORECLR // No ApartmentState In CoreCLR
             settings.ApartmentState = apartmentState;
 #endif
             settings.Host = _remoteHost;
 
             // Flow the impersonation policy to pipeline execution thread
-            // only if the current thread is impersonated (Delegation is 
+            // only if the current thread is impersonated (Delegation is
             // also a kind of impersonation).
             if (Platform.IsWindows)
             {
@@ -480,11 +480,11 @@ namespace System.Management.Automation
                             // If completed successfully then allow extra commands to run.
                             if (state == PSInvocationState.Completed) { return; }
 
-                            // For failed or stopped state, extra commands cannot run and 
+                            // For failed or stopped state, extra commands cannot run and
                             // we allow this command invocation to finish.
                         }
 
-                        // send the remaining data before sending in 
+                        // send the remaining data before sending in
                         // state information. This is required because
                         // the client side runspace pool will remove
                         // the association with the client side powershell
@@ -600,7 +600,7 @@ namespace System.Management.Automation
                 if ((indexIntoDataSent == 0) && (!_datasent[indexIntoDataSent]))
                 {
                     ProgressRecord data = LocalPowerShell.Streams.Progress[index];
-                    // once the debug message is sent, it is removed so that 
+                    // once the debug message is sent, it is removed so that
                     // the same is not sent again by SendRemainingData() method
                     LocalPowerShell.Streams.Progress.RemoveAt(index);
 
@@ -625,7 +625,7 @@ namespace System.Management.Automation
                 if ((indexIntoDataSent == 0) && (!_datasent[indexIntoDataSent]))
                 {
                     WarningRecord data = LocalPowerShell.Streams.Warning[index];
-                    // once the debug message is sent, it is removed so that 
+                    // once the debug message is sent, it is removed so that
                     // the same is not sent again by SendRemainingData() method
                     LocalPowerShell.Streams.Warning.RemoveAt(index);
 
@@ -650,7 +650,7 @@ namespace System.Management.Automation
                 if ((indexIntoDataSent == 0) && (!_datasent[indexIntoDataSent]))
                 {
                     VerboseRecord data = LocalPowerShell.Streams.Verbose[index];
-                    // once the debug message is sent, it is removed so that 
+                    // once the debug message is sent, it is removed so that
                     // the same is not sent again by SendRemainingData() method
                     LocalPowerShell.Streams.Verbose.RemoveAt(index);
 
@@ -675,7 +675,7 @@ namespace System.Management.Automation
                 if ((indexIntoDataSent == 0) && (!_datasent[indexIntoDataSent]))
                 {
                     DebugRecord data = LocalPowerShell.Streams.Debug[index];
-                    // once the debug message is sent, it is removed so that 
+                    // once the debug message is sent, it is removed so that
                     // the same is not sent again by SendRemainingData() method
                     LocalPowerShell.Streams.Debug.RemoveAt(index);
 
@@ -700,7 +700,7 @@ namespace System.Management.Automation
                 if ((indexIntoDataSent == 0) && (!_datasent[indexIntoDataSent]))
                 {
                     InformationRecord data = LocalPowerShell.Streams.Information[index];
-                    // once the Information message is sent, it is removed so that 
+                    // once the Information message is sent, it is removed so that
                     // the same is not sent again by SendRemainingData() method
                     LocalPowerShell.Streams.Information.RemoveAt(index);
 
@@ -715,7 +715,7 @@ namespace System.Management.Automation
         /// client
         /// </summary>
         /// <remarks>This method should be called before
-        /// sending the state information. The client will 
+        /// sending the state information. The client will
         /// remove the association between a powershell and
         /// runspace pool if it receives any of the terminal
         /// states. Hence all the remaining data should be
@@ -817,7 +817,7 @@ namespace System.Management.Automation
         /// <param name="eventArgs">arguments describing this event</param>
         private void HandleInputReceived(object sender, RemoteDataEventArgs<object> eventArgs)
         {
-            // This can be called in pushed runspace scenarios for error reporting (pipeline stopped).  
+            // This can be called in pushed runspace scenarios for error reporting (pipeline stopped).
             // Ignore for noInput.
             if (!_noInput && (InputCollection != null))
             {
@@ -832,7 +832,7 @@ namespace System.Management.Automation
         /// <param name="eventArgs">arguments describing this event</param>
         private void HandleInputEndReceived(object sender, EventArgs eventArgs)
         {
-            // This can be called in pushed runspace scenarios for error reporting (pipeline stopped).  
+            // This can be called in pushed runspace scenarios for error reporting (pipeline stopped).
             // Ignore for noInput.
             if (!_noInput && (InputCollection != null))
             {

@@ -68,7 +68,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Max # of drives allowed in a scope in Session State
         /// </summary>
-        /// 
+        ///
         internal const int MaxDriveCapacity = 32768;
 
         /// <summary>
@@ -84,7 +84,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Max # of errors allowed in a scope in Session State
         /// </summary>
-        /// 
+        ///
         internal const int MaxErrorCapacity = 32768;
 
         /// <summary>
@@ -111,15 +111,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts the specified array into a collection of the specified type.
         /// </summary>
-        /// 
+        ///
         /// <param name="array">
         /// The array to be converted.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A collection of the elements that were in the array.
         /// </returns>
-        /// 
+        ///
         internal static Collection<T> ConvertArrayToCollection<T>(T[] array)
         {
             Collection<T> result = new Collection<T>();
@@ -138,27 +138,27 @@ namespace System.Management.Automation
         /// the string comparer is specified it is used for the comparison, else the
         /// .Equals method is used.
         /// </summary>
-        /// 
+        ///
         /// <param name="collection">
         /// The collection to check for the value.
         /// </param>
-        /// 
+        ///
         /// <param name="value">
         /// The value to check for.
         /// </param>
-        /// 
+        ///
         /// <param name="comparer">
         /// If specified the comparer will be used instead of .Equals.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// true if the value is contained in the collection or false otherwise.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="collection"/> is null.
         /// </exception>
-        /// 
+        ///
         internal static bool CollectionContainsValue(IEnumerable collection, object value, IComparer comparer)
         {
             if (collection == null)
@@ -194,20 +194,20 @@ namespace System.Management.Automation
         /// Constructs a collection of WildcardPatterns for the specified
         /// string collection.
         /// </summary>
-        /// 
+        ///
         /// <param name="globPatterns">
         /// The string patterns to construct the WildcardPatterns for.
         /// </param>
-        /// 
+        ///
         /// <param name="options">
         /// The options to create the WildcardPatterns with.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A collection of WildcardPatterns that represent the string patterns
         /// that were passed.
         /// </returns>
-        /// 
+        ///
         internal static Collection<WildcardPattern> CreateWildcardsFromStrings(
             IEnumerable<string> globPatterns,
             WildcardOptions options)
@@ -289,15 +289,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Converts an OpenMode enum value to a FileMode
         /// </summary>
-        /// 
+        ///
         /// <param name="openMode">
         /// The OpenMode value to be converted.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The FileMode representation of the OpenMode.
         /// </returns>
-        /// 
+        ///
         internal static FileMode GetFileModeFromOpenMode(OpenMode openMode)
         {
             FileMode result = FileMode.Create;
@@ -328,7 +328,7 @@ namespace Microsoft.PowerShell.Commands
     /// The enum used by commands to allow the user to specify how
     /// a file (or other item) should be opened.
     /// </summary>
-    /// 
+    ///
     public enum OpenMode
     {
         /// <summary>

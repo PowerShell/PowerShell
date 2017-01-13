@@ -18,7 +18,7 @@ using System.Windows;
 
 namespace Microsoft.Management.UI.Internal
 {
-    
+
     /// <summary>
     /// An Adorner which displays a given UIElement.
     /// </summary>
@@ -32,7 +32,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the Child dependency property.
         /// </summary>
         public static readonly DependencyProperty ChildProperty = DependencyProperty.Register( "Child", typeof(UIElement), typeof(UIElementAdorner), new FrameworkPropertyMetadata( null, FrameworkPropertyMetadataOptions. AffectsArrange | FrameworkPropertyMetadataOptions.AffectsMeasure , ChildProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets the child element.
         /// </summary>
@@ -51,18 +51,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(ChildProperty,value);
             }
         }
-        
+
         static private void ChildProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             UIElementAdorner obj = (UIElementAdorner) o;
             obj.OnChildChanged( new PropertyChangedEventArgs<UIElement>((UIElement)e.OldValue, (UIElement)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when Child property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<UIElement>> ChildChanged;
-        
+
         /// <summary>
         /// Called when Child property changes.
         /// </summary>
@@ -74,7 +74,7 @@ namespace Microsoft.Management.UI.Internal
                 eh(this,e);
             }
         }
-        
+
         /// <summary>
         /// Called when Child property changes.
         /// </summary>
@@ -83,9 +83,9 @@ namespace Microsoft.Management.UI.Internal
             OnChildChangedImplementation(e);
             RaiseChildChanged(e);
         }
-        
+
         partial void OnChildChangedImplementation(PropertyChangedEventArgs<UIElement> e);
-        
+
     }
 }
 #endregion

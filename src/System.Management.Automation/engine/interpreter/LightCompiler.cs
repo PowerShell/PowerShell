@@ -1,11 +1,11 @@
 /* ****************************************************************************
  *
- * Copyright (c) Microsoft Corporation. 
+ * Copyright (c) Microsoft Corporation.
  *
- * This source code is subject to terms and conditions of the Apache License, Version 2.0. A 
- * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Apache License, Version 2.0, please send an email to 
- * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
+ * This source code is subject to terms and conditions of the Apache License, Version 2.0. A
+ * copy of the license can be found in the License.html file at the root of this distribution. If
+ * you cannot locate the  Apache License, Version 2.0, please send an email to
+ * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Apache License, Version 2.0.
  *
  * You must not remove this notice, or any other, from this software.
@@ -896,7 +896,7 @@ namespace System.Management.Automation.Interpreter
                 return;
             }
 
-            // TODO: Conversions to a super-class or implemented interfaces are no-op. 
+            // TODO: Conversions to a super-class or implemented interfaces are no-op.
             // A conversion to a non-implemented interface or an unrelated class, etc. should fail.
             return;
         }
@@ -1207,7 +1207,7 @@ namespace System.Management.Automation.Interpreter
             // Anything that is "statement-like" -- e.g. has no associated
             // stack state can be jumped into, with the exception of try-blocks
             // We indicate this by a "Block"
-            // 
+            //
             // Otherwise, we push an "Expression" to indicate that it can't be
             // jumped into
             switch (node.NodeType)
@@ -1411,7 +1411,7 @@ namespace System.Management.Automation.Interpreter
             _instructions.MarkLabel(gotoEnd);
             _instructions.EmitGoto(end, hasValue, hasValue);
 
-            // keep the result on the stack:     
+            // keep the result on the stack:
             if (node.Handlers.Count > 0)
             {
                 exHandlers = new List<ExceptionHandler>();

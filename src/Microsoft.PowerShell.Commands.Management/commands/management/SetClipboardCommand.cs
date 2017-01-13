@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// Defines the implementation of the 'Set-Clipboard' cmdlet.
-    /// This cmdlet gets the content from system clipboard. 
+    /// This cmdlet gets the content from system clipboard.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "Clipboard", DefaultParameterSetName = "String", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526220")]
     [Alias("scb")]
@@ -27,9 +27,9 @@ namespace Microsoft.PowerShell.Commands
         private const string PathParameterSet = "Path";
         private const string LiteralPathParameterSet = "LiteralPath";
 
-        /// <summary>  
+        /// <summary>
         /// Property that sets clipboard content.
-        /// </summary>  
+        /// </summary>
         [Parameter(ParameterSetName = ValueParameterSet, Position = 0, Mandatory = true, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
         [AllowNull]
         [AllowEmptyCollection]
@@ -37,32 +37,32 @@ namespace Microsoft.PowerShell.Commands
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Value { get; set; }
 
-        /// <summary>  
-        /// Property that sets append parameter. This will allow to append clipboard without clear it. 
-        /// </summary>  
+        /// <summary>
+        /// Property that sets append parameter. This will allow to append clipboard without clear it.
+        /// </summary>
         [Parameter]
         public SwitchParameter Append { get; set; }
 
-        /// <summary>  
-        /// Property that sets Path parameter. This will allow to set file formats to Clipboard. 
-        /// </summary>  
+        /// <summary>
+        /// Property that sets Path parameter. This will allow to set file formats to Clipboard.
+        /// </summary>
         [Parameter(ParameterSetName = PathParameterSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Path { get; set; }
 
-        /// <summary>  
-        /// Property that sets LiteralPath parameter. This will allow to set file formats to Clipboard. 
-        /// </summary>  
+        /// <summary>
+        /// Property that sets LiteralPath parameter. This will allow to set file formats to Clipboard.
+        /// </summary>
         [Parameter(ParameterSetName = LiteralPathParameterSet, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath")]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] LiteralPath { get; set; }
 
-        /// <summary>  
+        /// <summary>
         /// Property that sets html parameter. This will allow html content rendered as html to clipboard.
-        /// </summary>  
+        /// </summary>
         [Parameter]
         public SwitchParameter AsHtml
         {
@@ -299,21 +299,21 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        /// <summary>      
-        /// Generate HTML fragment data string with  header that is required for the clipboard.      
-        /// </summary>      
-        /// <param name="html">the  html to generate for</param>      
-        /// <returns>the resulted  string</returns>      
+        /// <summary>
+        /// Generate HTML fragment data string with  header that is required for the clipboard.
+        /// </summary>
+        /// <param name="html">the  html to generate for</param>
+        /// <returns>the resulted  string</returns>
         private static string GetHtmlDataString(string html)
         {
-            // The string contains index references to  other spots in the string, so we need placeholders so we can compute the  offsets.   
-            // The  "<<<<<<<<1,<<<<<<<<2, etc" strings are just placeholders.  We'll back-patch them actual values within the header location afterwards.    
-            const string Header = @"Version:0.9      
-StartHTML:<<<<<<<<1      
-EndHTML:<<<<<<<<2      
-StartFragment:<<<<<<<<3      
-EndFragment:<<<<<<<<4      
-StartSelection:<<<<<<<<3      
+            // The string contains index references to  other spots in the string, so we need placeholders so we can compute the  offsets.
+            // The  "<<<<<<<<1,<<<<<<<<2, etc" strings are just placeholders.  We'll back-patch them actual values within the header location afterwards.
+            const string Header = @"Version:0.9
+StartHTML:<<<<<<<<1
+EndHTML:<<<<<<<<2
+StartFragment:<<<<<<<<3
+EndFragment:<<<<<<<<4
+StartSelection:<<<<<<<<3
 EndSelection:<<<<<<<<4";
 
             const string StartFragment = "<!--StartFragment-->";
@@ -323,7 +323,7 @@ EndSelection:<<<<<<<<4";
             sb.AppendLine(Header);
             sb.AppendLine(@"<!DOCTYPE HTML  PUBLIC ""-//W3C//DTD HTML 4.0  Transitional//EN"">");
 
-            // if given html already provided the  fragments we won't add them      
+            // if given html already provided the  fragments we won't add them
             int fragmentStart, fragmentEnd;
             int fragmentStartIdx = html.IndexOf(StartFragment, StringComparison.OrdinalIgnoreCase);
             int fragmentEndIdx = html.LastIndexOf(EndFragment, StringComparison.OrdinalIgnoreCase);
@@ -343,7 +343,7 @@ EndSelection:<<<<<<<<4";
 
                 if (htmlOpenEndIdx < 0 && bodyOpenEndIdx < 0)
                 {
-                    // the given html doesn't  contain html or body tags so we need to add them and place start/end fragments  around the given html only      
+                    // the given html doesn't  contain html or body tags so we need to add them and place start/end fragments  around the given html only
                     sb.Append("<html><body>");
                     sb.Append(StartFragment);
                     fragmentStart = GetByteCount(sb);
@@ -354,7 +354,7 @@ EndSelection:<<<<<<<<4";
                 }
                 else
                 {
-                    // insert start/end fragments  in the proper place (related to html/body tags if exists) so the paste will  work correctly      
+                    // insert start/end fragments  in the proper place (related to html/body tags if exists) so the paste will  work correctly
                     //find the index of "</body", ignore white space and case
                     int bodyCloseIdx = Regex.Match(html, @"<\s*/\s*b\s*o\s*d\s*y", RegexOptions.IgnoreCase).Index;
 
@@ -385,11 +385,11 @@ EndSelection:<<<<<<<<4";
             }
             else
             {
-                // directly return the cf_html     
+                // directly return the cf_html
                 return html;
             }
 
-            // Back-patch offsets, the replace text area is restricted to header only from index 0 to header.Length   
+            // Back-patch offsets, the replace text area is restricted to header only from index 0 to header.Length
             sb.Replace("<<<<<<<<1", Header.Length.ToString("D9", CultureInfo.CreateSpecificCulture("en-US")), 0, Header.Length);
             sb.Replace("<<<<<<<<2", GetByteCount(sb).ToString("D9", CultureInfo.CreateSpecificCulture("en-US")), 0, Header.Length);
             sb.Replace("<<<<<<<<3", fragmentStart.ToString("D9", CultureInfo.CreateSpecificCulture("en-US")), 0, Header.Length);
@@ -397,13 +397,13 @@ EndSelection:<<<<<<<<4";
             return sb.ToString();
         }
 
-        /// <summary>      
-        /// Calculates the number of bytes produced  by encoding the string in the string builder in UTF-8 and not .NET default  string encoding.      
-        /// </summary>      
-        /// <param name="sb">the  string builder to count its string</param>      
-        /// <param  name="start">optional: the start index to calculate from (default  - start of string)</param>      
-        /// <param  name="end">optional: the end index to calculate to (default - end  of string)</param>      
-        /// <returns>the number of bytes  required to encode the string in UTF-8</returns>      
+        /// <summary>
+        /// Calculates the number of bytes produced  by encoding the string in the string builder in UTF-8 and not .NET default  string encoding.
+        /// </summary>
+        /// <param name="sb">the  string builder to count its string</param>
+        /// <param  name="start">optional: the start index to calculate from (default  - start of string)</param>
+        /// <param  name="end">optional: the end index to calculate to (default - end  of string)</param>
+        /// <returns>the number of bytes  required to encode the string in UTF-8</returns>
         private static int GetByteCount(StringBuilder sb, int start = 0, int end = -1)
         {
             char[] _byteCount = new char[1];

@@ -27,13 +27,13 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// This is a static utility class that performs some of the common chore work for the 
+    /// This is a static utility class that performs some of the common chore work for the
     /// the remoting cmdlets.
     /// </summary>
     internal static class RemotingCommandUtil
     {
         /// <summary>
-        /// The existence of the following registry confirms that the host machine is a WinPE 
+        /// The existence of the following registry confirms that the host machine is a WinPE
         /// HKLM\System\CurrentControlSet\Control\MiniNT
         /// </summary>
         internal static string WinPEIdentificationRegKey = @"System\CurrentControlSet\Control\MiniNT";
@@ -153,8 +153,8 @@ namespace Microsoft.PowerShell.Commands
         /// PowerShell remoting is supported on all Windows SQU's except WinPE.
         /// </summary>
         /// <exception cref="InvalidOperationException">
-        /// When PowerShell is hosted on a WinPE machine, the execution 
-        /// of this API would result in an InvalidOperationException being 
+        /// When PowerShell is hosted on a WinPE machine, the execution
+        /// of this API would result in an InvalidOperationException being
         /// thrown, indicating that remoting is not supported on a WinPE machine.
         /// </exception>
         internal static void CheckHostRemotingPrerequisites()

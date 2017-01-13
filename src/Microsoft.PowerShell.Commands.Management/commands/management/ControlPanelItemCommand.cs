@@ -170,8 +170,8 @@ $result
                  ((version.Major == 6) && (version.Minor < 2))
                 ))
             {
-                // Below Win8, this cmdlet is not supported because of Win8:794135 
-                // throw terminating 
+                // Below Win8, this cmdlet is not supported because of Win8:794135
+                // throw terminating
                 string message = string.Format(CultureInfo.InvariantCulture,
                                                ControlPanelResources.ControlPanelItemCmdletNotSupported,
                                                this.CommandInfo.Name);
@@ -241,10 +241,10 @@ $result
         }
 
         /// <summary>
-        /// IsServerCoreORHeadLessServer is a helper function that checks if the current SKU is a 
+        /// IsServerCoreORHeadLessServer is a helper function that checks if the current SKU is a
         /// Server Core machine or if the Server-GUI-Shell feature is removed on the machine.
         /// </summary>
-        /// <returns>True if the current SKU is a Server Core machine or if the Server-GUI-Shell 
+        /// <returns>True if the current SKU is a Server Core machine or if the Server-GUI-Shell
         /// feature is removed on the machine or else returns false.</returns>
         private bool IsServerCoreOrHeadLessServer()
         {
@@ -605,7 +605,7 @@ $result
         #endregion "Parameters"
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -722,7 +722,7 @@ $result
         #endregion "Parameters"
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void ProcessRecord()
         {

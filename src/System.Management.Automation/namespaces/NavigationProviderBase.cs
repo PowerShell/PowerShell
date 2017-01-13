@@ -13,12 +13,12 @@ namespace System.Management.Automation.Provider
     /// <summary>
     /// The base class for a Cmdlet provider that expose a hierarchy of items and containers.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// The NavigationCmdletProvider class is a base class that provider can derive from
     /// to implement a set of methods that allow
     /// the use of a set of core commands against the data store that the provider
-    /// gives access to. By implementing this interface users can take advantage 
+    /// gives access to. By implementing this interface users can take advantage
     /// the recursive commands, nested containers, and relative paths.
     /// </remarks>
     public abstract class NavigationCmdletProvider : ContainerCmdletProvider
@@ -30,24 +30,24 @@ namespace System.Management.Automation.Provider
         /// of the protected method that is overridden by derived classes so that the
         /// context of the command can be set.
         /// </summary>
-        /// 
+        ///
         /// <param name="parent">
         /// The parent segment of a path to be joined with the child.
         /// </param>
-        /// 
+        ///
         /// <param name="child">
         /// The child segment of a path to be joined with the parent.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A string that represents the parent and child segments of the path
         /// joined by a path separator.
         /// </returns>
-        /// 
+        ///
         /// <remarks>
         /// This method should use lexical joining of two path segments with a path
         /// separator character. It should not validate the path as a legal fully
@@ -58,12 +58,12 @@ namespace System.Management.Automation.Provider
         /// parameter and "foo.dll" as the child parameter. The method should join these
         /// with the "\" separator and return "windows\system32\foo.dll". Note that
         /// the returned path is not a fully qualified file system path.
-        /// 
+        ///
         /// Also beware that the path segments may contain characters that are illegal
         /// in the provider namespace. These characters are most likely being used
         /// for globbing and should not be removed by the implementation of this method.
         /// </remarks>
-        /// 
+        ///
         internal string MakePath(
             string parent,
             string child,
@@ -81,23 +81,23 @@ namespace System.Management.Automation.Provider
         /// of the protected method that is overridden by derived classes so that the
         /// context of the command can be set.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// A fully qualified provider specific path to an item. The item may or
         /// may not exist.
         /// </param>
-        /// 
+        ///
         /// <param name="root">
         /// The fully qualified path to the root of a drive. This parameter may be null
         /// or empty if a mounted drive is not in use for this operation. If this parameter
         /// is not null or empty the result of the method should not be a path to a container
         /// that is a parent or in a different tree than the root.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The path of the parent of the path parameter.
         /// </returns>
@@ -107,7 +107,7 @@ namespace System.Management.Automation.Provider
         /// for the provider namespace. For example, the file system provider should look
         /// for the last "\" and return everything to the left of the "\".
         /// </remarks>
-        /// 
+        ///
         internal string GetParentPath(
             string path,
             string root,
@@ -125,20 +125,20 @@ namespace System.Management.Automation.Provider
         /// of the protected method that is overridden by derived classes so that the
         /// context of the command can be set.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// A fully qualified provider specific path to an item. The item should exist
         /// or the provider should write out an error.
         /// </param>
-        /// 
+        ///
         /// <param name="basePath">
         /// The path that the return value should be relative to.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A normalized path that is relative to the basePath that was passed. The
         /// provider should parse the path parameter, normalize the path, and then
@@ -150,7 +150,7 @@ namespace System.Management.Automation.Provider
         /// is encouraged that the provider actually use the path to lookup in its store
         /// and create a relative path that matches the casing, and standardized path syntax.
         /// </remarks>
-        /// 
+        ///
         internal string NormalizeRelativePath(
             string path,
             string basePath,
@@ -168,26 +168,26 @@ namespace System.Management.Automation.Provider
         /// of the protected method that is overridden by derived classes so that the
         /// context of the command can be set.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The fully qualified path to the item
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The leaf element in the path.
         /// </returns>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        /// 
+        ///
         /// <remarks>
         /// This should be implemented as a split on the path separator. The characters
         /// in the fullPath may not be legal characters in the namespace but may be
         /// used in globing or regular expression matching. The provider should not error
         /// unless there are no path separators in the fully qualified path.
         /// </remarks>
-        /// 
+        ///
         internal string GetChildName(
             string path,
             CmdletProviderContext context)
@@ -204,19 +204,19 @@ namespace System.Management.Automation.Provider
         /// of the protected method that is overridden by derived classes so that the
         /// context of the command can be set.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item to determine if it is a container.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// true if the item specified by path is a container, false otherwise.
         /// </returns>
-        /// 
+        ///
         internal bool IsItemContainer(
             string path,
             CmdletProviderContext context)
@@ -233,23 +233,23 @@ namespace System.Management.Automation.Provider
         /// of the protected method that is overridden by derived classes so that the
         /// context of the command can be set.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item to be moved.
         /// </param>
-        /// 
+        ///
         /// <param name="destination">
         /// The path of the destination container.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// Nothing. All objects that are moved should be written to the WriteObject method.
         /// </returns>
-        /// 
+        ///
         internal void MoveItem(
             string path,
             string destination,
@@ -266,25 +266,25 @@ namespace System.Management.Automation.Provider
         /// Gives the provider to attach additional parameters to
         /// the move-item cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// If the path was specified on the command line, this is the path
         /// to the item to get the dynamic parameters for.
         /// </param>
-        /// 
+        ///
         /// <param name="destination">
         /// The path of the destination container.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which this method is being called.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        /// 
+        ///
         internal object MoveItemDynamicParameters(
             string path,
             string destination,
@@ -301,20 +301,20 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Joins two strings with a path a provider specific path separator.
         /// </summary>
-        /// 
+        ///
         /// <param name="parent">
         /// The parent segment of a path to be joined with the child.
         /// </param>
-        /// 
+        ///
         /// <param name="child">
         /// The child segment of a path to be joined with the parent.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A string that represents the parent and child segments of the path
         /// joined by a path separator.
         /// </returns>
-        /// 
+        ///
         /// <remarks>
         /// This method should use lexical joining of two path segments with a path
         /// separator character. It should not validate the path as a legal fully
@@ -325,7 +325,7 @@ namespace System.Management.Automation.Provider
         /// parameter and "foo.dll" as the child parameter. The method should join these
         /// with the "\" separator and return "windows\system32\foo.dll". Note that
         /// the returned path is not a fully qualified file system path.
-        /// 
+        ///
         /// Also beware that the path segments may contain characters that are illegal
         /// in the provider namespace. These characters are most likely being used
         /// for globbing and should not be removed by the implementation of this method.
@@ -338,24 +338,24 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Joins two strings with a path a provider specific path separator.
         /// </summary>
-        /// 
+        ///
         /// <param name="parent">
         /// The parent segment of a path to be joined with the child.
         /// </param>
-        /// 
+        ///
         /// <param name="child">
         /// The child segment of a path to be joined with the parent.
         /// </param>
-        /// 
+        ///
         /// <param name="childIsLeaf">
         /// Indicate that the <paramref name="child"/> is the name of a child item that's guaranteed to exist
         /// </param>
-        /// 
+        ///
         /// <remarks>
         /// If the <paramref name="childIsLeaf"/> is True, then we don't normalize the child path, and would do
         /// some checks to decide whether to normalize the parent path.
         /// </remarks>
-        /// 
+        ///
         /// <returns></returns>
         protected string MakePath(string parent, string child, bool childIsLeaf)
         {
@@ -406,7 +406,7 @@ namespace System.Management.Automation.Provider
                 {
                     // Both parts are not empty so join them
 
-                    // 'childIsLeaf == true' indicates that 'child' is actually the name of a child item and 
+                    // 'childIsLeaf == true' indicates that 'child' is actually the name of a child item and
                     // guaranteed to exist. In this case, we don't normalize the child path.
                     if (childIsLeaf)
                     {
@@ -470,19 +470,19 @@ namespace System.Management.Automation.Provider
         /// Removes the child segment of a path and returns the remaining parent
         /// portion.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// A fully qualified provider specific path to an item. The item may or
         /// may not exist.
         /// </param>
-        /// 
+        ///
         /// <param name="root">
         /// The fully qualified path to the root of a drive. This parameter may be null
         /// or empty if a mounted drive is not in use for this operation. If this parameter
         /// is not null or empty the result of the method should not be a path to a container
         /// that is a parent or in a different tree than the root.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The path of the parent of the path parameter.
         /// </returns>
@@ -561,16 +561,16 @@ namespace System.Management.Automation.Provider
         /// Normalizes the path that was passed in and returns the normalized path
         /// as a relative path to the basePath that was passed.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// A fully qualified provider specific path to an item. The item should exist
         /// or the provider should write out an error.
         /// </param>
-        /// 
+        ///
         /// <param name="basePath">
         /// The path that the return value should be relative to.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A normalized path that is relative to the basePath that was passed. The
         /// provider should parse the path parameter, normalize the path, and then
@@ -581,7 +581,7 @@ namespace System.Management.Automation.Provider
         /// This method does not have to be purely syntactical parsing of the path. It
         /// is encouraged that the provider actually use the path to lookup in its store
         /// and create a relative path that matches the casing, and standardized path syntax.
-        /// 
+        ///
         /// Note, the base class implementation uses GetParentPath, GetChildName, and MakePath
         /// to normalize the path and then make it relative to basePath. All string comparisons
         /// are done using StringComparison.InvariantCultureIgnoreCase.
@@ -628,11 +628,11 @@ namespace System.Management.Automation.Provider
             string normalizedBasePath = basePath;
 
             // NTRAID#Windows 7-697922-2009/06/29-leeholm
-            // WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND 
+            // WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND
             //
             // This path normalization got moved here from the MakePath override in V2 to prevent
             // over-normalization of paths. This was a net-improvement for providers that use the default
-            // implementations, but now incorrectly replaces forward slashes with back slashes during the call to 
+            // implementations, but now incorrectly replaces forward slashes with back slashes during the call to
             // GetParentPath and GetChildName. This breaks providers that are sensitive to slash direction, the only
             // one we are aware of being the Active Directory provider. This change prevents this over-normalization
             // from being done on AD paths.
@@ -640,7 +640,7 @@ namespace System.Management.Automation.Provider
             // For more information, see Win7:695292. Do not change this code without closely working with the
             // Active Directory team.
             //
-            // WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND 
+            // WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND WORKAROUND
             if (!String.Equals(context.ProviderInstance.ProviderInfo.FullName,
                 @"Microsoft.ActiveDirectory.Management\ActiveDirectory", StringComparison.OrdinalIgnoreCase))
             {
@@ -784,15 +784,15 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Gets the name of the leaf element in the specified path.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The fully qualified path to the item
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The leaf element in the path.
         /// </returns>
-        /// 
+        ///
         /// <remarks>
         /// This should be implemented as a split on the path separator. The characters
         /// in the fullPath may not be legal characters in the namespace but may be
@@ -858,23 +858,23 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Determines if the item specified by the path is a container.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item to determine if it is a container.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// true if the item specified by path is a container, false otherwise.
         /// </returns>
-        /// 
+        ///
         /// <remarks>
-        /// Providers override this method to give the user the ability to check 
+        /// Providers override this method to give the user the ability to check
         /// to see if a provider object is a container using the test-path -container cmdlet.
-        /// 
+        ///
         /// Providers that declare <see cref="System.Management.Automation.Provider.ProviderCapabilities"/>
         /// of ExpandWildcards, Filter, Include, or Exclude should ensure that the path passed meets those
         /// requirements by accessing the appropriate property from the base class.
-        /// 
+        ///
         /// The default implementation of this method throws an <see cref="System.Management.Automation.PSNotSupportedException"/>.
         /// </remarks>
         protected virtual bool IsItemContainer(string path)
@@ -891,34 +891,34 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Moves the item specified by path to the specified destination.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item to be moved.
         /// </param>
-        /// 
+        ///
         /// <param name="destination">
         /// The path of the destination container.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// Nothing is returned, but all the objects that were moved should be written to the WriteItemObject method.
         /// </returns>
-        /// 
+        ///
         /// <remarks>
         /// Providers override this method to give the user the ability to move provider objects using
         /// the move-item cmdlet.
-        /// 
+        ///
         /// Providers that declare <see cref="System.Management.Automation.Provider.ProviderCapabilities"/>
         /// of ExpandWildcards, Filter, Include, or Exclude should ensure that the path and items being moved
         /// meets those requirements by accessing the appropriate property from the base class.
-        /// 
-        /// By default overrides of this method should not move objects over existing items unless the Force 
+        ///
+        /// By default overrides of this method should not move objects over existing items unless the Force
         /// property is set to true. For instance, the FileSystem provider should not move c:\temp\foo.txt over
         /// c:\bar.txt if c:\bar.txt already exists unless the Force parameter is true.
-        /// 
+        ///
         /// If <paramref name="destination"/> exists and is a container then Force isn't required and <paramref name="path"/>
         /// should be moved into the <paramref name="destination"/> container as a child.
-        /// 
+        ///
         /// The default implementation of this method throws an <see cref="System.Management.Automation.PSNotSupportedException"/>.
         /// </remarks>
         protected virtual void MoveItem(
@@ -937,21 +937,21 @@ namespace System.Management.Automation.Provider
         /// Gives the provider an opportunity to attach additional parameters to
         /// the move-item cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// If the path was specified on the command line, this is the path
         /// to the item to get the dynamic parameters for.
         /// </param>
-        /// 
+        ///
         /// <param name="destination">
         /// The path of the destination container.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// Overrides of this method should return an object that has properties and fields decorated with
-        /// parsing attributes similar to a cmdlet class or a 
+        /// parsing attributes similar to a cmdlet class or a
         /// <see cref="System.Management.Automation.RuntimeDefinedParameterDictionary"/>.
-        /// 
+        ///
         /// The default implementation returns null. (no additional parameters)
         /// </returns>
         protected virtual object MoveItemDynamicParameters(
@@ -970,15 +970,15 @@ namespace System.Management.Automation.Provider
         #region private members
 
         /// <summary>
-        /// When a path contains both forward slash and backslash, we may introduce some errors by 
+        /// When a path contains both forward slash and backslash, we may introduce some errors by
         /// normalizing the path. This method does some smart checks to reduce the chances of making
         /// those errors.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to normalize
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// Normalized path or the original path
         /// </returns>
@@ -1036,20 +1036,20 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Tokenizes the specified path onto a stack
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to tokenize.
         /// </param>
-        /// 
+        ///
         /// <param name="basePath">
         /// The base part of the path that should not be tokenized.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A stack containing the tokenized path with leaf elements on the bottom
         /// of the stack and the most ancestral parent at the top.
         /// </returns>
-        /// 
+        ///
         private Stack<string> TokenizePathToStack(string path, string basePath)
         {
             Stack<string> tokenizedPathStack = new Stack<string>();
@@ -1089,30 +1089,30 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Given the tokenized path, the relative path elements are removed.
         /// </summary>
-        /// 
+        ///
         /// <param name="tokenizedPathStack">
         /// A stack containing path elements where the leaf most element is at
         /// the bottom of the stack and the most ancestral parent is on the top.
         /// Generally this stack comes from TokenizePathToStack().
         /// </param>
-        /// 
+        ///
         /// <param name="path">
         /// The path being normalized. Just used for error reporting.
         /// </param>
-        /// 
+        ///
         /// <param name="basePath">
         /// The base path to make the path relative to. Just used for error reporting.
         /// </param>
-        /// 
+        ///
         /// <param name="allowNonExistingPaths">
         /// Determines whether to throw an exception on non-existing paths.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A stack in reverse order with the path elements normalized and all relative
         /// path tokens removed.
         /// </returns>
-        /// 
+        ///
         private static Stack<string> NormalizeThePath(
             Stack<string> tokenizedPathStack, string path,
             string basePath, bool allowNonExistingPaths)
@@ -1167,21 +1167,21 @@ namespace System.Management.Automation.Provider
         /// <summary>
         /// Pops each leaf element of the stack and uses MakePath to generate the relative path
         /// </summary>
-        /// 
+        ///
         /// <param name="normalizedPathStack">
         /// The stack containing the leaf elements of the path.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A path that is made up of the leaf elements on the given stack.
         /// </returns>
-        /// 
+        ///
         /// <remarks>
         /// The elements on the stack start from the leaf element followed by its parent
         /// followed by its parent, etc. Each following element on the stack is the parent
         /// of the one before it.
         /// </remarks>
-        /// 
+        ///
         private string CreateNormalizedRelativePathFromStack(Stack<string> normalizedPathStack)
         {
             string leafElement = String.Empty;

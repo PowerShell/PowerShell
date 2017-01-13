@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Determines if the path is an absolute path.
         /// </summary>
-        /// 
+        ///
         [Parameter(ParameterSetName = isAbsoluteSet)]
         public SwitchParameter IsAbsolute
         {
@@ -274,7 +274,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command code
 
         /// <summary>
-        /// Parses the specified path and returns the portion determined by the 
+        /// Parses the specified path and returns the portion determined by the
         /// boolean parameters.
         /// </summary>
         protected override void ProcessRecord()
@@ -520,15 +520,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Removes either the drive or provider qualifier or both from the path.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to strip the provider qualifier from.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The path without the qualifier.
         /// </returns>
-        /// 
+        ///
         private string RemoveQualifier(string path)
         {
             Dbg.Diagnostics.Assert(

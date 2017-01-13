@@ -474,8 +474,8 @@ namespace System.Management.Automation
             }
 
             //
-            // Don't cache scriptblocks that have 
-            // a) dynamic keywords 
+            // Don't cache scriptblocks that have
+            // a) dynamic keywords
             // b) 'using module' or 'using assembly'
             // The definition of the dynamic keyword could change, consequently changing how the source text should be parsed.
             // Exported types definitions from 'using module' could change, we need to do all parse-time checks again.
@@ -1496,7 +1496,7 @@ namespace System.Management.Automation
         // is true, we log them to the event log despite event log settings.
         //
         // Performance notes:
-        // 
+        //
         // For the current number of search terms, the this approach is about as high
         // performance as we can get. It adds about 1ms to the invocation of a script
         // block (we don't do this at parse time).
@@ -1647,7 +1647,7 @@ namespace System.Management.Automation
             // Crypto - ransomware, etc.
             "CryptoServiceProvider", "Cryptography", "RijndaelManaged", "SHA1Managed", "CryptoStream",
             "CreateEncryptor", "CreateDecryptor", "TransformFinalBlock", "DeviceIoControl", "SetInformationProcess",
-            "PasswordDeriveBytes", 
+            "PasswordDeriveBytes",
 
             // Keylogging
             "GetAsyncKeyState", "GetKeyboardState", "GetForegroundWindow",
