@@ -16,7 +16,7 @@
                     <DockPanel HorizontalAlignment="Center" VerticalAlignment="Center"  Margin="5">
                         <Polygon
                             Points="25,12 35,25 45,12 25,12"
-                            Stroke="DarkBlue" 
+                            Stroke="DarkBlue"
                             StrokeThickness="2">
                             <Polygon.Fill>
                                 <SolidColorBrush Color="LightBlue" Opacity="0.4"/>
