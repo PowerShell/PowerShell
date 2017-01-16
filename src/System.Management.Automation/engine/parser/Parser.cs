@@ -4426,6 +4426,7 @@ namespace System.Management.Automation.Language
             if (itemAst == null)
             {
                 ReportError(itemToken.Extent, () => ParserStrings.InvalidValueForUsingItemName, itemToken.Text);
+                return new ErrorStatementAst(ExtentOf(usingToken, itemToken));
             }
 
             if (!(itemAst is StringConstantExpressionAst) && (kind != UsingStatementKind.Module || !(itemAst is HashtableAst)))
