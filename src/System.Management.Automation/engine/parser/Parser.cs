@@ -4414,8 +4414,10 @@ namespace System.Management.Automation.Language
             {
                 case TokenKind.EndOfInput:
                 case TokenKind.NewLine:
-                // Example, using module ,FooBar
+                // Example: 'using module ,FooBar'
                 case TokenKind.Comma:
+                // Example: 'using module ;'
+                case TokenKind.Semi:
                     {
                         ReportIncompleteInput(After(directiveToken), () => ParserStrings.MissingUsingItemName);
                         return new ErrorStatementAst(ExtentOf(usingToken, directiveToken));
@@ -4426,11 +4428,14 @@ namespace System.Management.Automation.Language
             if (itemAst == null)
             {
                 ReportError(itemToken.Extent, () => ParserStrings.InvalidValueForUsingItemName, itemToken.Text);
+                // ErrorRecovery: If there is no identifier, skip whole 'using' line
+                SyncOnError(true, TokenKind.NewLine);
+                return new ErrorStatementAst(ExtentOf(usingToken, itemToken.Extent));
             }
 
             if (!(itemAst is StringConstantExpressionAst) && (kind != UsingStatementKind.Module || !(itemAst is HashtableAst)))
             {
-                ReportError(ExtentOf(usingToken, ExtentFromFirstOf(itemAst, itemToken)), () => ParserStrings.InvalidValueForUsingItemName, itemAst.Extent.Text);
+                ReportError(ExtentFromFirstOf(itemAst, itemToken), () => ParserStrings.InvalidValueForUsingItemName, itemAst.Extent.Text);
                 return new ErrorStatementAst(ExtentOf(usingToken, ExtentFromFirstOf(itemAst, itemToken)));
             }
 
