@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands.Internal
     [System.Runtime.InteropServices.ComVisible(true)]
     internal static class Buffer
     {
-        // This is ported from the optimized CRT assembly in memchr.asm. The JIT generates 
+        // This is ported from the optimized CRT assembly in memchr.asm. The JIT generates
         // pretty good code here and this ends up being within a couple % of the CRT asm.
         // It is however cross platform as the CRT hasn't ported their fast version to 64-bit
         // platforms.
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         {
             BCLDebug.Assert((srcIndex >= 0) && (destIndex >= 0) && (len >= 0), "Index and length must be non-negative!");
             BCLDebug.Assert(dest.Length - destIndex >= len, "not enough bytes in dest");
-            // If dest has 0 elements, the fixed statement will throw an 
+            // If dest has 0 elements, the fixed statement will throw an
             // IndexOutOfRangeException.  Special-case 0-byte copies.
             if (len == 0)
                 return;
@@ -122,7 +122,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         {
             BCLDebug.Assert((srcIndex >= 0) && (destIndex >= 0) && (len >= 0), "Index and length must be non-negative!");
             BCLDebug.Assert(src.Length - srcIndex >= len, "not enough bytes in src");
-            // If dest has 0 elements, the fixed statement will throw an 
+            // If dest has 0 elements, the fixed statement will throw an
             // IndexOutOfRangeException.  Special-case 0-byte copies.
             if (len == 0)
                 return;
@@ -151,15 +151,15 @@ namespace Microsoft.PowerShell.Commands.Internal
             BCLDebug.Assert(len >= 0, "Negative length in memcopy!");
 
             // It turns out that on AMD64 it is faster to not be careful of alignment issues.
-            // On IA64 it is necessary to be careful... Oh well. When we do the IA64 push we 
+            // On IA64 it is necessary to be careful... Oh well. When we do the IA64 push we
             // can work on this implementation.
 #if IA64
             long dstAlign = 8 - (((long)dest) & 7); // number of bytes to copy before dest is 8-byte aligned
-            
+
             while ((dstAlign > 0) && (len > 0))
             {
                 *dest++ = *src++;
-                
+
                 len--;
                 dstAlign--;
             }
@@ -201,9 +201,9 @@ namespace Microsoft.PowerShell.Commands.Internal
                 }
                 else
                 {
-                    if (len >= 16) 
+                    if (len >= 16)
                     {
-                        do 
+                        do
                         {
                             ((long*)dest)[0] = ((long*)src)[0];
                             ((long*)dest)[1] = ((long*)src)[1];
@@ -213,19 +213,19 @@ namespace Microsoft.PowerShell.Commands.Internal
                     }
                     if (len > 0)  // protection against negative len and optimization for len==16*N
                     {
-                       if ((len & 8) != 0) 
+                       if ((len & 8) != 0)
                        {
                            ((long*)dest)[0] = ((long*)src)[0];
                            dest += 8;
                            src += 8;
                        }
-                       if ((len & 4) != 0) 
+                       if ((len & 4) != 0)
                        {
                            ((int*)dest)[0] = ((int*)src)[0];
                            dest += 4;
                            src += 4;
                        }
-                       if ((len & 2) != 0) 
+                       if ((len & 2) != 0)
                        {
                            ((short*)dest)[0] = ((short*)src)[0];
                            dest += 2;
@@ -242,11 +242,11 @@ namespace Microsoft.PowerShell.Commands.Internal
 #else
             // AMD64 implementation uses longs instead of ints where possible
             //
-            // <STRIP>This is a faster memcpy implementation, from 
-            // COMString.cpp.  For our strings, this beat the processor's 
-            // repeat & move single byte instruction, which memcpy expands into.  
+            // <STRIP>This is a faster memcpy implementation, from
+            // COMString.cpp.  For our strings, this beat the processor's
+            // repeat & move single byte instruction, which memcpy expands into.
             // (You read that correctly.)
-            // This is 3x faster than a simple while loop copying byte by byte, 
+            // This is 3x faster than a simple while loop copying byte by byte,
             // for large copies.</STRIP>
             if (len >= 16)
             {
@@ -255,7 +255,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 #if AMD64
                     ((long*)dest)[0] = ((long*)src)[0];
                     ((long*)dest)[1] = ((long*)src)[1];
-#else                    
+#else
                     ((int*)dest)[0] = ((int*)src)[0];
                     ((int*)dest)[1] = ((int*)src)[1];
                     ((int*)dest)[2] = ((int*)src)[2];

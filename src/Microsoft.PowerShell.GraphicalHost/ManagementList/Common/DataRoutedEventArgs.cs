@@ -13,7 +13,7 @@ namespace Microsoft.Management.UI.Internal
     using System.Diagnostics.CodeAnalysis;
 
     /// <summary>
-    /// Routed event args which provide the ability to attach an 
+    /// Routed event args which provide the ability to attach an
     /// arbitrary piece of data.
     /// </summary>
     /// <typeparam name="T">There are no restrictions on type T.</typeparam>

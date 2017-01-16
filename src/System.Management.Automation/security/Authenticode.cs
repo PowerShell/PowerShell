@@ -14,7 +14,7 @@ using System.Management.Automation.Security;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 #if CORECLR
-// Use stub for 
+// Use stub for
 using Microsoft.PowerShell.CoreClr.Stubs;
 #endif
 
@@ -23,7 +23,7 @@ using DWORD = System.UInt32;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Defines the options that control what data is embedded in the 
+    /// Defines the options that control what data is embedded in the
     /// signature blob
     /// </summary>
     ///
@@ -46,14 +46,14 @@ namespace System.Management.Automation
         AddFullCertificateChainExceptRoot,
 
         /// <summary>
-        /// Default: Embeds the entire certificate chain, except for the 
+        /// Default: Embeds the entire certificate chain, except for the
         /// root certificate.
         /// </summary>
         Default = AddFullCertificateChainExceptRoot
     }
 
     /// <summary>
-    /// Helper functions for signature functionality 
+    /// Helper functions for signature functionality
     /// </summary>
     internal static class SignatureHelper
     {
@@ -67,7 +67,7 @@ namespace System.Management.Automation
                           "tracer for SignatureHelper");
 
         /// <summary>
-        /// Sign a file 
+        /// Sign a file
         /// </summary>
         ///
         /// <param name="option"> option that controls what gets embedded in the signature blob  </param>
@@ -82,21 +82,21 @@ namespace System.Management.Automation
         /// algorithm to use. </param>
         ///
         /// <returns> Does not return a value </returns>
-        /// 
-        /// 
+        ///
+        ///
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if argument fileName or certificate is null.
         /// </exception>
-        /// 
-        /// 
+        ///
+        ///
         /// <exception cref="System.ArgumentException">
         /// Thrown if
         /// -- argument fileName is empty OR
         /// -- the specified certificate is not suitable for
         ///    signing code
         /// </exception>
-        /// 
-        /// 
+        ///
+        ///
         /// <exception cref="System.Security.Cryptography.CryptographicException">
         /// This exception can be thrown if any cryptographic error occurs.
         /// It is not possible to know exactly what went wrong.
@@ -107,12 +107,12 @@ namespace System.Management.Automation
         ///  -- certificate password mismatch
         ///  -- etc
         /// </exception>
-        /// 
-        /// 
+        ///
+        ///
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found
         /// </exception>
-        /// 
+        ///
         /// <remarks>  </remarks>
         ///
         [ArchitectureSensitive]
@@ -182,9 +182,9 @@ namespace System.Management.Automation
 
             try
             {
-                // CryptUI is not documented either way, but does not 
-                // support empty strings for the timestamp server URL.  
-                // It expects null, only.  Instead, it randomly AVs if you 
+                // CryptUI is not documented either way, but does not
+                // support empty strings for the timestamp server URL.
+                // It expects null, only.  Instead, it randomly AVs if you
                 // try.
                 string timeStampServerUrlForCryptUI = null;
                 if (!String.IsNullOrEmpty(timeStampServerUrl))
@@ -293,17 +293,17 @@ namespace System.Management.Automation
         /// <exception cref="System.ArgumentException">
         /// Thrown if argument fileName is empty.
         /// </exception>
-        /// 
-        /// 
+        ///
+        ///
         /// <exception cref="System.ArgumentNullException">
         /// Thrown if argument fileName is null
         /// </exception>
-        /// 
-        /// 
+        ///
+        ///
         /// <exception cref="System.IO.FileNotFoundException">
         /// Thrown if the file specified by argument fileName is not found.
         /// </exception>
-        /// 
+        ///
         /// <remarks>  </remarks>
         ///
         [ArchitectureSensitive]
@@ -332,7 +332,7 @@ namespace System.Management.Automation
         {
             if (Signature.CatalogApiAvailable.HasValue && !Signature.CatalogApiAvailable.Value)
             {
-                // Signature.CatalogApiAvailable would be set to false the first time it is detected that 
+                // Signature.CatalogApiAvailable would be set to false the first time it is detected that
                 // WTGetSignatureInfo API does not exist on the platform, or if the API is not functional on the target platform.
                 // Just return from the function instead of revalidating.
                 return null;
@@ -400,8 +400,8 @@ namespace System.Management.Automation
                                     }
                                     else
                                     {
-                                        // ProductFile has to be Catalog signed. Hence validating 
-                                        // to see if the Catalog API is functional using the ProductFile. 
+                                        // ProductFile has to be Catalog signed. Hence validating
+                                        // to see if the Catalog API is functional using the ProductFile.
                                         Signature productFileSignature = GetSignatureFromCatalog(productFile);
                                         Signature.CatalogApiAvailable = (productFileSignature != null && productFileSignature.Status == SignatureStatus.Valid);
                                     }

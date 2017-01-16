@@ -1,14 +1,14 @@
 ﻿<Configuration>
-   
+
 
   <!-- ################ VIEW DEFINITIONS ################ -->
 
-  <ViewDefinitions>    
+  <ViewDefinitions>
     <View>
       <Name>Counter</Name>
       <ViewSelectedBy>
         <TypeName>Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSampleSet</TypeName>
-      </ViewSelectedBy>      
+      </ViewSelectedBy>
       <TableControl>
         <TableHeaders>
           <TableColumnHeader>
@@ -20,7 +20,7 @@
             <Label>CounterSamples</Label>
             <Alignment>left</Alignment>
             <Width>100</Width>
-          </TableColumnHeader>          
+          </TableColumnHeader>
         </TableHeaders>
         <TableRowEntries>
           <TableRowEntry>
@@ -31,7 +31,7 @@
               </TableColumnItem>
               <TableColumnItem>
                 <PropertyName>Readings</PropertyName>
-              </TableColumnItem>              
+              </TableColumnItem>
             </TableColumnItems>
           </TableRowEntry>
         </TableRowEntries>
@@ -74,6 +74,6 @@
           </TableRowEntry>
         </TableRowEntries>
       </TableControl>
-    </View>   
+    </View>
   </ViewDefinitions>
 </Configuration>

@@ -9,13 +9,13 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// A class for identifying types which are treated as Known Cim Type by Monad.
-    /// A KnownMIType is guranteed to be available on machine on which monad is 
+    /// A KnownMIType is guranteed to be available on machine on which monad is
     /// running.
     /// </summary>
     internal static class KnownMITypes
     {
         /// <summary>
-        /// Static constructor 
+        /// Static constructor
         /// </summary>
         static KnownMITypes()
         {
@@ -116,7 +116,7 @@ namespace System.Management.Automation
 
             //new MITypeSerializationInfo(typeof(Uri),
             //                    InternalSerializer.WriteUri),
-                                
+
             //new MITypeSerializationInfo(typeof(byte[]),
             //                          InternalSerializer.WriteByteArray),
 
@@ -132,7 +132,7 @@ namespace System.Management.Automation
 		};
 
         /// <summary>
-        /// Dictionary of knowntypes. 
+        /// Dictionary of knowntypes.
         /// Key is Type.FullName and value is Type object.
         /// </summary>
         private static readonly Dictionary<string, MITypeSerializationInfo> s_knownTableKeyType = new Dictionary<string, MITypeSerializationInfo>();

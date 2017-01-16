@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2007 Microsoft Corporation. All rights reserved.
-// 
+//
 
 using System;
 using System.Xml;
@@ -22,9 +22,9 @@ using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
-    /// 
+    ///
     /// Class that implements the Get-WinEvent cmdlet.
-    /// 
+    ///
     [Cmdlet(VerbsCommon.Get, "WinEvent", DefaultParameterSetName = "GetLogSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=138336")]
     public sealed class GetWinEventCommand : PSCmdlet
     {
@@ -719,7 +719,7 @@ namespace Microsoft.PowerShell.Commands
             if (!Oldest.IsPresent)
             {
                 //
-                // Do minimal parsing of xmlQuery to determine if any direct channels or ETL files are in it.        
+                // Do minimal parsing of xmlQuery to determine if any direct channels or ETL files are in it.
                 //
                 XmlElement root = _xmlQuery.DocumentElement;
                 XmlNodeList queryNodes = root.SelectNodes("//Query//Select");
@@ -764,7 +764,7 @@ namespace Microsoft.PowerShell.Commands
 
             //
             // At this point, _path array contains paths that might have wildcards,
-            // environment variables or PS drives. Let's resolve those.        
+            // environment variables or PS drives. Let's resolve those.
             //
             for (int i = 0; i < _path.Length; i++)
             {
@@ -839,7 +839,7 @@ namespace Microsoft.PowerShell.Commands
             if (_computerName == string.Empty)
             {
                 // Set _computerName to "localhost" for future error messages,
-                // but do not use it for the connection to avoid RPC overhead.            
+                // but do not use it for the connection to avoid RPC overhead.
                 _computerName = "localhost";
 
                 if (_credential == PSCredential.Empty)
@@ -1080,7 +1080,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     xpathString.Append(added);
                 }
-                
+
             }
 
             return xpathString.ToString();
@@ -1120,9 +1120,9 @@ namespace Microsoft.PowerShell.Commands
                 // Process log, _path, or provider parameters first
                 // to create initial partially-filled query templates.
                 // Error out for direct channels unless -oldest is present.
-                // 
+                //
                 // Order is important! Process "providername" key after "logname" and "file".
-                //            
+                //
                 if (hash.ContainsKey(hashkey_logname_lc))
                 {
                     List<string> logPatterns = new List<string>();
@@ -1262,7 +1262,7 @@ namespace Microsoft.PowerShell.Commands
                 // Let's build xpathString to attach to each query opening.
                 //
                 xpathString = BuildXPathFromHashTable(hash);
-                
+
                 //
                 // Build xpath for <Suppress>
                 //
@@ -1277,7 +1277,7 @@ namespace Microsoft.PowerShell.Commands
                 // Handle the case where the query opener already has provider predicate(s).
                 // Add the queries from queriedLogsQueryMap into the resulting string.
                 // Add <Suppress> from queriedLogsQueryMapSuppress into the resulting string.
-                //        
+                //
                 foreach (string keyLogName in queriedLogsQueryMap.Keys)
                 {
                     // For every Log a separate query is
@@ -1319,7 +1319,7 @@ namespace Microsoft.PowerShell.Commands
 
                     result.Append(queryCloser);
                 }
-            } //end foreach hashtable  
+            } //end foreach hashtable
 
 
             result.Append(queryListClose);
@@ -1628,7 +1628,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         //
-        // TerminateForNonEvtxFileWithoutOldest terminates for .evt and .etl files unless -Oldest is specified.                
+        // TerminateForNonEvtxFileWithoutOldest terminates for .evt and .etl files unless -Oldest is specified.
         //
         private void TerminateForNonEvtxFileWithoutOldest(string fileName)
         {
@@ -1646,7 +1646,7 @@ namespace Microsoft.PowerShell.Commands
 
         //
         // ValidateLogName writes an error if logName is not a valid log.
-        // It also terminates for direct ETW channels unless -Oldest is specified.                
+        // It also terminates for direct ETW channels unless -Oldest is specified.
         //
         private bool ValidateLogName(string logName, EventLogSession eventLogSession)
         {
@@ -1710,7 +1710,7 @@ namespace Microsoft.PowerShell.Commands
         // StringToDateTime helper converts a string to DateTime object.
         // Returns true and DateTime ref if successful.
         // Writes an error and returns false if dtString cannot be converted.
-        // 
+        //
         private bool StringToDateTime(string dtString, ref DateTime dt)
         {
             try
@@ -1733,7 +1733,7 @@ namespace Microsoft.PowerShell.Commands
         // Returns a string collection of resolved file paths.
         // Writes non-terminating errors for invalid paths
         // and returns an empty collection.
-        // 
+        //
         private StringCollection ValidateAndResolveFilePath(string path)
         {
             StringCollection retColl = new StringCollection();
@@ -1782,7 +1782,7 @@ namespace Microsoft.PowerShell.Commands
                     continue;
                 }
 
-                // 
+                //
                 // Check the extension: only .evt, .evtx, and .etl files are allowed.
                 // If the file was specified without wildcards, display an error.
                 // Otherwise, skip silently.
@@ -1849,7 +1849,7 @@ namespace Microsoft.PowerShell.Commands
         //
         // AddProviderPredicatesToFilter() builds an XPath query
         // by adding provider predicates to _filter.
-        // Note that this is by no means an XPath expression parser 
+        // Note that this is by no means an XPath expression parser
         // and will may produce garbage if the _filterXPath expression provided by the user is invalid.
         // However, we are relying on the EventLog XPath parser to reject the garbage later on.
         //
@@ -1918,7 +1918,7 @@ namespace Microsoft.PowerShell.Commands
         // BuildAllProvidersPredicate() builds a predicate expression like:
         // "System/Provider[@Name='a' or @Name='b']"
         // for all unique provider names specified in _providersByLogMap.
-        // Eliminates duplicates, too, since the same provider can 
+        // Eliminates duplicates, too, since the same provider can
         // be writing to several different logs.
         //
         private string BuildAllProvidersPredicate()
@@ -1964,7 +1964,7 @@ namespace Microsoft.PowerShell.Commands
         // Retrieves log names to which _providerName writes.
         // NOTE: there are many misconfigured providers in the system.
         // We therefore catch EventLogException exceptions and write them out as non-terminating errors.
-        // The results are added to _providersByLogMap dictionary.  
+        // The results are added to _providersByLogMap dictionary.
         //
         private void AddLogsForProviderToInternalMap(EventLogSession eventLogSession, string providerName)
         {
@@ -1981,7 +1981,7 @@ namespace Microsoft.PowerShell.Commands
                         //
                         // Skip direct ETW channels unless -force is present.
                         // Error out for direct channels unless -oldest is present.
-                        //                
+                        //
                         EventLogConfiguration logObj = new EventLogConfiguration(logLink.LogName, eventLogSession);
                         if (logObj.LogType == EventLogType.Debug || logObj.LogType == EventLogType.Analytical)
                         {
@@ -2030,9 +2030,9 @@ namespace Microsoft.PowerShell.Commands
 
         //
         // FindLogNamesMatchingWildcards helper.
-        // Finds all logs whose names match wildcard patterns in the 'logPatterns' argument.   
+        // Finds all logs whose names match wildcard patterns in the 'logPatterns' argument.
         // For each non-matched pattern, a non-terminating error is written.
-        // The results are added to _logNamesMatchingWildcard array.  
+        // The results are added to _logNamesMatchingWildcard array.
         //
         private void FindLogNamesMatchingWildcards(EventLogSession eventLogSession, IEnumerable<string> logPatterns)
         {
@@ -2104,9 +2104,9 @@ namespace Microsoft.PowerShell.Commands
 
         //
         // FindProvidersByLogForWildcardPatterns helper.
-        // Finds all providers whose names match wildcard patterns in 'providerPatterns' argument.   
+        // Finds all providers whose names match wildcard patterns in 'providerPatterns' argument.
         // For each non-matched pattern, a non-terminating error is written.
-        // The results are added to _providersByLogMap dictionary (keyed by log names to which these providers write).  
+        // The results are added to _providersByLogMap dictionary (keyed by log names to which these providers write).
         //
         private void FindProvidersByLogForWildcardPatterns(EventLogSession eventLogSession, IEnumerable<string> providerPatterns)
         {

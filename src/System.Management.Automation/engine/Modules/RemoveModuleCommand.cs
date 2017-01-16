@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
     public sealed class RemoveModuleCommand : ModuleCmdletBase
     {
         /// <summary>
-        /// This parameter specifies the current pipeline object 
+        /// This parameter specifies the current pipeline object
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "name", ValueFromPipeline = true, Position = 0)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
@@ -38,14 +38,14 @@ namespace Microsoft.PowerShell.Commands
         private string[] _name = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// This parameter specifies the current pipeline object 
+        /// This parameter specifies the current pipeline object
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "FullyQualifiedName", ValueFromPipeline = true, Position = 0)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
         public ModuleSpecification[] FullyQualifiedName { get; set; }
 
         /// <summary>
-        /// This parameter specifies the current pipeline object 
+        /// This parameter specifies the current pipeline object
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ModuleInfo", ValueFromPipeline = true, Position = 0)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            // This dictionary has the list of modules to be removed. 
+            // This dictionary has the list of modules to be removed.
             // Key - Module specified as a parameter to Remove-Module
             // Values - List of all modules that need to be removed for this key (includes all nested modules of this module)
             Dictionary<PSModuleInfo, List<PSModuleInfo>> modulesToRemove = new Dictionary<PSModuleInfo, List<PSModuleInfo>>();
@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell.Commands
             // Check the list of modules to remove and exclude those that cannot or should not be removed
             Dictionary<PSModuleInfo, List<PSModuleInfo>> actualModulesToRemove = new Dictionary<PSModuleInfo, List<PSModuleInfo>>();
 
-            // We want to remove the modules starting from the nested modules 
+            // We want to remove the modules starting from the nested modules
             // If we start from the parent module, the nested modules do not get removed and are left hanging in the parent modules's sessionstate.
             foreach (var entry in modulesToRemove)
             {

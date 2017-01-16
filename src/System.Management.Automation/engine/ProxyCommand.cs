@@ -27,7 +27,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method constructs a string representing the command specified by <paramref name="commandMetadata"/>.
-        /// The returned string is a ScriptBlock which can be used to configure a Cmdlet/Function in a Runspace. 
+        /// The returned string is a ScriptBlock which can be used to configure a Cmdlet/Function in a Runspace.
         /// </summary>
         /// <param name="commandMetadata">
         /// An instance of CommandMetadata representing a command.
@@ -50,7 +50,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method constructs a string representing the command specified by <paramref name="commandMetadata"/>.
-        /// The returned string is a ScriptBlock which can be used to configure a Cmdlet/Function in a Runspace. 
+        /// The returned string is a ScriptBlock which can be used to configure a Cmdlet/Function in a Runspace.
         /// </summary>
         /// <param name="commandMetadata">
         /// An instance of CommandMetadata representing a command.
@@ -76,7 +76,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method constructs a string representing the command specified by <paramref name="commandMetadata"/>.
-        /// The returned string is a ScriptBlock which can be used to configure a Cmdlet/Function in a Runspace. 
+        /// The returned string is a ScriptBlock which can be used to configure a Cmdlet/Function in a Runspace.
         /// </summary>
         /// <param name="commandMetadata">
         /// An instance of CommandMetadata representing a command.

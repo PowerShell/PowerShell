@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// This provider is the data accessor for shell variables. It uses
     /// the HashtableProvider as the base class to get a hashtable as
     /// a data store.
-    /// </summary>    
+    /// </summary>
     [CmdletProvider(VariableProvider.ProviderName, ProviderCapabilities.ShouldProcess)]
     [OutputType(typeof(PSVariable), ProviderCmdlet = ProviderCmdlet.SetItem)]
     [OutputType(typeof(PSVariable), ProviderCmdlet = ProviderCmdlet.RenameItem)]
@@ -77,15 +77,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a variable from session state
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the variable to retrieve.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A PSVariable that represents the variable.
         /// </returns>
-        /// 
+        ///
         internal override object GetSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
@@ -98,19 +98,19 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the variable of the specified name to the specified value
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the variable to set.
         /// </param>
-        /// 
+        ///
         /// <param name="value">
         /// The new value for the variable.
         /// </param>
-        /// 
+        ///
         /// <param name="writeItem">
         /// If true, the item that was set should be written to WriteItemObject.
         /// </param>
-        /// 
+        ///
         internal override void SetSessionStateItem(string name, object value, bool writeItem)
         {
             Dbg.Diagnostics.Assert(
@@ -154,11 +154,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Removes the specified variable from session state.
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the variable to remove from session state.
         /// </param>
-        /// 
+        ///
         internal override void RemoveSessionStateItem(string name)
         {
             Dbg.Diagnostics.Assert(
@@ -171,12 +171,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets a flattened view of the variables in session state
         /// </summary>
-        /// 
+        ///
         /// <returns>
         /// An IDictionary representing the flattened view of the variables in
         /// session state.
         /// </returns>
-        /// 
+        ///
         internal override IDictionary GetSessionStateTable()
         {
             return (IDictionary)SessionState.Internal.GetVariableTable();
@@ -186,15 +186,15 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the value of the item that is returned from GetItem by
         /// extracting the PSVariable value.
         /// </summary>
-        /// 
+        ///
         /// <param name="item">
         /// The item to extract the value from.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The value of the specified item.
         /// </returns>
-        /// 
+        ///
         internal override object GetValueOfItem(object item)
         {
             Dbg.Diagnostics.Assert(
@@ -212,21 +212,21 @@ namespace Microsoft.PowerShell.Commands
                 value = var.Value;
             }
             return value;
-        } // GetValueOfItem        
+        } // GetValueOfItem
 
         /// <summary>
         /// Determines if the item can be renamed. Derived classes that need
         /// to perform a check should override this method.
         /// </summary>
-        /// 
+        ///
         /// <param name="item">
         /// The item to verify if it can be renamed.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// true if the item can be renamed or false otherwise.
         /// </returns>
-        /// 
+        ///
         internal override bool CanRenameItem(object item)
         {
             bool result = false;

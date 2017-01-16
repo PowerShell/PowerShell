@@ -10,7 +10,7 @@ namespace Microsoft.Management.UI.Internal
     using System.Diagnostics;
 
     /// <summary>
-    /// The TextContainsFilterRule class evaluates a string item to 
+    /// The TextContainsFilterRule class evaluates a string item to
     /// check if it is contains the rule's value within it.
     /// </summary>
     [Serializable]

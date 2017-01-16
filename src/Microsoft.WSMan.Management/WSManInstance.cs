@@ -22,10 +22,10 @@ namespace Microsoft.WSMan.Management
 {
     #region Get-WSManInstance
     /// <summary>
-    /// Executes action on a target object specified by RESOURCE_URI, where 
+    /// Executes action on a target object specified by RESOURCE_URI, where
     /// parameters are specified by key value pairs.
     /// eg., Call StartService method on the spooler service
-    /// Invoke-WSManAction -Action StartService -ResourceURI wmicimv2/Win32_Service  
+    /// Invoke-WSManAction -Action StartService -ResourceURI wmicimv2/Win32_Service
     /// -SelectorSet {Name=Spooler}
     /// </summary>
 
@@ -51,8 +51,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "BasePropertiesOnly".
-        /// Enumerate only those properties that are part of the base class 
-        /// specification in the Resource URI. When 
+        /// Enumerate only those properties that are part of the base class
+        /// specification in the Resource URI. When
         /// Shallow is specified then this flag has no effect
         /// </summary>
         [Parameter(ParameterSetName = "Enumerate")]
@@ -69,8 +69,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
-        /// Executes the management operation on the specified computer(s). The default 
-        /// is the local computer. Type the fully qualified domain name, NETBIOS name or 
+        /// Executes the management operation on the specified computer(s). The default
+        /// is the local computer. Type the fully qualified domain name, NETBIOS name or
         /// IP address to indicate the remote host(s)
         /// </summary>
         [Parameter(ParameterSetName = "GetInstance")]
@@ -92,8 +92,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
-        /// Specifies the transport, server, port, and Prefix, needed to connect to the 
-        /// remote machine. The format of this string is: 
+        /// Specifies the transport, server, port, and Prefix, needed to connect to the
+        /// remote machine. The format of this string is:
         /// transport://server:port/Prefix.
         /// </summary>
 
@@ -130,7 +130,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "Enumerate".
-        /// Switch indicates list all instances of a management resource. Equivalent to 
+        /// Switch indicates list all instances of a management resource. Equivalent to
         /// WSManagement Enumerate
         /// </summary>
 
@@ -164,7 +164,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "Fragment".
-        /// Specifies a section inside the instance that is to be updated or retrieved 
+        /// Specifies a section inside the instance that is to be updated or retrieved
         /// for the given operation
         /// </summary>
 
@@ -182,7 +182,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "OptionSet".
-        /// OptionSet is a hashtable  and is used to pass a set of switches to the 
+        /// OptionSet is a hashtable  and is used to pass a set of switches to the
         /// service to modify or refine the nature of the request.
         /// </summary>
         [Parameter(ValueFromPipeline = true,
@@ -202,7 +202,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "Port".
-        /// Specifies the port to be used when connecting to the ws management service. 
+        /// Specifies the port to be used when connecting to the ws management service.
         /// </summary>
         [Parameter(ParameterSetName = "Enumerate")]
         [Parameter(ParameterSetName = "GetInstance")]
@@ -218,8 +218,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "Associations".
-        /// Associations indicates retrieval of association instances as opposed to 
-        /// associated instances. This can only be used when specifying the Dialect as 
+        /// Associations indicates retrieval of association instances as opposed to
+        /// associated instances. This can only be used when specifying the Dialect as
         /// Association
         /// </summary>
 
@@ -257,14 +257,14 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "ReturnType".
-        /// Indicates the type of data returned. Possible options are 'Object', 'EPR', 
-        /// and 'ObjectAndEPR'. Default is Object. 
-        /// If Object is specified or if this parameter is absent then only the objects 
+        /// Indicates the type of data returned. Possible options are 'Object', 'EPR',
+        /// and 'ObjectAndEPR'. Default is Object.
+        /// If Object is specified or if this parameter is absent then only the objects
         /// are returned
-        /// If EPR is specified then only the EPRs of the objects 
-        /// are returned. EPRs contain information about the Resource URI and selectors 
+        /// If EPR is specified then only the EPRs of the objects
+        /// are returned. EPRs contain information about the Resource URI and selectors
         /// for the instance
-        /// If ObjectAndEPR is specified, then both the object and the associated EPRs 
+        /// If ObjectAndEPR is specified, then both the object and the associated EPRs
         /// are returned
         /// </summary>
         [Parameter(ParameterSetName = "Enumerate")]
@@ -284,8 +284,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
-        /// SelectorSet is a hash table which helps in identify an instance of the 
-        /// management resource if there are are more than 1 instance of the resource 
+        /// SelectorSet is a hash table which helps in identify an instance of the
+        /// management resource if there are are more than 1 instance of the resource
         /// class
         /// </summary>
         [Parameter(
@@ -304,7 +304,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "SessionOption".
-        /// Defines a set of extended options for the WSMan session.  This can be 
+        /// Defines a set of extended options for the WSMan session.  This can be
         /// created by using the cmdlet New-WSManSessionOption
         /// </summary>
         [Parameter]
@@ -323,8 +323,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "Shallow".
-        /// Enumerate only instances of the base class specified in the resource URI. If 
-        /// this flag is not specified, instances of the base class specified in the URI 
+        /// Enumerate only instances of the base class specified in the resource URI. If
+        /// this flag is not specified, instances of the base class specified in the URI
         /// and all its derived classes are returned
         /// </summary>
         [Parameter(ParameterSetName = "Enumerate")]
@@ -341,8 +341,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
-        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to 
-        /// the remote computer. If SSL is not available on the port specified by the 
+        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to
+        /// the remote computer. If SSL is not available on the port specified by the
         /// Port parameter, the command fails.
         /// </summary>
         [Parameter(ParameterSetName = "GetInstance")]
@@ -407,7 +407,7 @@ namespace Microsoft.WSMan.Management
                             flags = wsmanObject.EnumerationFlagReturnObjectAndEPR();
                     }
                 }
-                
+
                 if (shallow)
                 {
                     flags |= wsmanObject.EnumerationFlagHierarchyShallow();
@@ -596,10 +596,10 @@ namespace Microsoft.WSMan.Management
     #region Set-WsManInstance
 
     /// <summary>
-    /// Executes action on a target object specified by RESOURCE_URI, where 
+    /// Executes action on a target object specified by RESOURCE_URI, where
     /// parameters are specified by key value pairs.
     /// eg., Call StartService method on the spooler service
-    /// Set-WSManInstance -Action StartService -ResourceURI wmicimv2/Win32_Service  
+    /// Set-WSManInstance -Action StartService -ResourceURI wmicimv2/Win32_Service
     /// -SelectorSet {Name=Spooler}
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141458")]
@@ -622,12 +622,12 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
-        /// Executes the management operation on the specified computer(s). The default 
-        /// is the local computer. Type the fully qualified domain name, NETBIOS name or 
+        /// Executes the management operation on the specified computer(s). The default
+        /// is the local computer. Type the fully qualified domain name, NETBIOS name or
         /// IP address to indicate the remote host(s)
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
-        [Alias("cn")]        
+        [Alias("cn")]
         public String ComputerName
         {
             get { return computername; }
@@ -644,8 +644,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
-        /// Specifies the transport, server, port, and ApplicationName of the new 
-        /// runspace. The format of this string is: 
+        /// Specifies the transport, server, port, and ApplicationName of the new
+        /// runspace. The format of this string is:
         /// transport://server:port/ApplicationName.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "URI")]
@@ -673,7 +673,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "FilePath".
-        /// Updates the management resource specified by the ResourceURI and SelectorSet 
+        /// Updates the management resource specified by the ResourceURI and SelectorSet
         /// via this input file
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -688,7 +688,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "Fragment".
-        /// Specifies a section inside the instance that is to be updated or retrieved 
+        /// Specifies a section inside the instance that is to be updated or retrieved
         /// for the given operation
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
@@ -703,8 +703,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "OptionSet".
-        /// OptionSet is a hahs table which help modify or refine the nature of the 
-        /// request. These are similar to switches used in command line shells in that 
+        /// OptionSet is a hahs table which help modify or refine the nature of the
+        /// request. These are similar to switches used in command line shells in that
         /// they are service-specific
         /// </summary>
 
@@ -721,7 +721,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "Port".
-        /// Specifies the port to be used when connecting to the ws management service. 
+        /// Specifies the port to be used when connecting to the ws management service.
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
@@ -753,8 +753,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
-        /// SelectorSet is a hash table which helps in identify an instance of the 
-        /// management resource if there are are more than 1 instance of the resource 
+        /// SelectorSet is a hash table which helps in identify an instance of the
+        /// management resource if there are are more than 1 instance of the resource
         /// class
         /// </summary>
         [Parameter(Position = 1,
@@ -771,7 +771,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "SessionOption".
-        /// Defines a set of extended options for the WSMan session. This can be created 
+        /// Defines a set of extended options for the WSMan session. This can be created
         /// by using the cmdlet New-WSManSessionOption
         /// </summary>
         [Parameter]
@@ -787,8 +787,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
-        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to 
-        /// the remote computer. If SSL is not available on the port specified by the 
+        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to
+        /// the remote computer. If SSL is not available on the port specified by the
         /// Port parameter, the command fails.
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
@@ -803,7 +803,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "ValueSet".
-        /// ValueSet is a hash table which helps to modify resource represented by the 
+        /// ValueSet is a hash table which helps to modify resource represented by the
         /// ResourceURI and SelectorSet.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -949,10 +949,10 @@ namespace Microsoft.WSMan.Management
     #region Remove-WsManInstance
 
     /// <summary>
-    /// Executes action on a target object specified by RESOURCE_URI, where 
+    /// Executes action on a target object specified by RESOURCE_URI, where
     /// parameters are specified by key value pairs.
     /// eg., Call StartService method on the spooler service
-    /// Set-WSManInstance -Action StartService -ResourceURI wmicimv2/Win32_Service  
+    /// Set-WSManInstance -Action StartService -ResourceURI wmicimv2/Win32_Service
     /// -SelectorSet {Name=Spooler}
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "WSManInstance", DefaultParameterSetName = "ComputerName", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=141453")]
@@ -975,12 +975,12 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
-        /// Executes the management operation on the specified computer(s). The default 
-        /// is the local computer. Type the fully qualified domain name, NETBIOS name or 
+        /// Executes the management operation on the specified computer(s). The default
+        /// is the local computer. Type the fully qualified domain name, NETBIOS name or
         /// IP address to indicate the remote host(s)
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
-        [Alias("cn")]        
+        [Alias("cn")]
         public String ComputerName
         {
             get { return computername; }
@@ -997,8 +997,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
-        /// Specifies the transport, server, port, and ApplicationName of the new 
-        /// runspace. The format of this string is: 
+        /// Specifies the transport, server, port, and ApplicationName of the new
+        /// runspace. The format of this string is:
         /// transport://server:port/ApplicationName.
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "URI")]
@@ -1013,8 +1013,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "OptionSet".
-        /// OptionSet is a hahs table which help modify or refine the nature of the 
-        /// request. These are similar to switches used in command line shells in that 
+        /// OptionSet is a hahs table which help modify or refine the nature of the
+        /// request. These are similar to switches used in command line shells in that
         /// they are service-specific
         /// </summary>
 
@@ -1031,7 +1031,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "Port".
-        /// Specifies the port to be used when connecting to the ws management service. 
+        /// Specifies the port to be used when connecting to the ws management service.
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
@@ -1063,8 +1063,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
-        /// SelectorSet is a hash table which helps in identify an instance of the 
-        /// management resource if there are are more than 1 instance of the resource 
+        /// SelectorSet is a hash table which helps in identify an instance of the
+        /// management resource if there are are more than 1 instance of the resource
         /// class
         /// </summary>
         [Parameter(Position = 1, Mandatory = true,
@@ -1081,7 +1081,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "SessionOption".
-        /// Defines a set of extended options for the WSMan session. This can be created 
+        /// Defines a set of extended options for the WSMan session. This can be created
         /// by using the cmdlet New-WSManSessionOption
         /// </summary>
         [Parameter]
@@ -1097,8 +1097,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
-        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to 
-        /// the remote computer. If SSL is not available on the port specified by the 
+        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to
+        /// the remote computer. If SSL is not available on the port specified by the
         /// Port parameter, the command fails.
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
@@ -1208,7 +1208,7 @@ namespace Microsoft.WSMan.Management
 
     #region New-WsManInstance
     /// <summary>
-    /// Creates an instance of a management resource identified by the resource URI 
+    /// Creates an instance of a management resource identified by the resource URI
     /// using specified ValueSet or input File
     /// </summary>
 
@@ -1230,11 +1230,11 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
-        /// Executes the management operation on the specified computer(s). The default 
-        /// is the local computer. Type the fully qualified domain name, NETBIOS name or 
+        /// Executes the management operation on the specified computer(s). The default
+        /// is the local computer. Type the fully qualified domain name, NETBIOS name or
         /// IP address to indicate the remote host(s)
         /// </summary>
-        [Parameter(ParameterSetName = "ComputerName")]        
+        [Parameter(ParameterSetName = "ComputerName")]
         [Alias("cn")]
         public String ComputerName
         {
@@ -1252,8 +1252,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
-        /// Specifies the transport, server, port, and ApplicationName of the new 
-        /// runspace. The format of this string is: 
+        /// Specifies the transport, server, port, and ApplicationName of the new
+        /// runspace. The format of this string is:
         /// transport://server:port/ApplicationName.
         /// </summary>
         [Parameter(ParameterSetName = "URI")]
@@ -1269,7 +1269,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "FilePath".
-        /// Updates the management resource specified by the ResourceURI and SelectorSet 
+        /// Updates the management resource specified by the ResourceURI and SelectorSet
         /// via this input file
         /// </summary>
         [Parameter]
@@ -1283,7 +1283,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "OptionSet".
-        /// OptionSet is a hash table and is used to pass a set of switches to the 
+        /// OptionSet is a hash table and is used to pass a set of switches to the
         /// service to modify or refine the nature of the request.
         /// </summary>
         [Parameter]
@@ -1299,7 +1299,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "Port".
-        /// Specifies the port to be used when connecting to the ws management service. 
+        /// Specifies the port to be used when connecting to the ws management service.
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
@@ -1328,8 +1328,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
-        /// SelectorSet is a hash table which helps in identify an instance of the 
-        /// management resource if there are are more than 1 instance of the resource 
+        /// SelectorSet is a hash table which helps in identify an instance of the
+        /// management resource if there are are more than 1 instance of the resource
         /// class
         /// </summary>
         [Parameter(Mandatory = true, Position = 1,
@@ -1360,8 +1360,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
-        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to 
-        /// the remote computer. If SSL is not available on the port specified by the 
+        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to
+        /// the remote computer. If SSL is not available on the port specified by the
         /// Port parameter, the command fails.
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
@@ -1375,7 +1375,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "ValueSet".
-        /// ValueSet is a hash table which helps to modify resource represented by the 
+        /// ValueSet is a hash table which helps to modify resource represented by the
         /// ResourceURI and SelectorSet.
         /// </summary>
         [Parameter]

@@ -210,7 +210,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Called for a newly created multiline text box to increase its height and 
+        /// Called for a newly created multiline text box to increase its height and
         /// </summary>
         /// <param name="sender">event sender</param>
         /// <param name="e">event arguments</param>

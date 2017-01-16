@@ -35,8 +35,8 @@ namespace System.Management.Automation
 
     /// <summary>
     /// The type extension methods within this partial class are only used for CoreCLR powershell.
-    /// 
-    /// * If you want to add an extension method that will be used by both FullCLR and CoreCLR powershell, please 
+    ///
+    /// * If you want to add an extension method that will be used by both FullCLR and CoreCLR powershell, please
     ///   add it to the 'PSTypeExtensions' partial class in 'ExtensionMethods.cs'.
     /// * If you want to add an extension method that will be used only by CoreCLR powershell, please add it here.
     /// </summary>
@@ -152,7 +152,7 @@ namespace System.Management.Automation
                     {
                         if (isInHierarchy)
                         {
-                            // Specify BindingFlags.FlattenHierarchy to include public and protected static members up the hierarchy; 
+                            // Specify BindingFlags.FlattenHierarchy to include public and protected static members up the hierarchy;
                             // private static members in inherited classes are not included
                             if (!field.IsPublic && !(field.IsFamily && field.IsStatic))
                             {
@@ -235,7 +235,7 @@ namespace System.Management.Automation
                     {
                         if (isInHierarchy)
                         {
-                            // Specify BindingFlags.FlattenHierarchy to include public and protected static members up the hierarchy; 
+                            // Specify BindingFlags.FlattenHierarchy to include public and protected static members up the hierarchy;
                             // private static members in inherited classes are not included
                             if (!IsPublicProperty(property) && !(IsProtectedProperty(property) && IsStaticProperty(property)))
                             {
@@ -411,7 +411,7 @@ namespace System.Management.Automation
         /// </summary>
         private static ConstructorInfo GetMatchingConstructor(ConstructorInfo[] constructors, Type[] types)
         {
-            // Compare the parameter types in two passes. 
+            // Compare the parameter types in two passes.
             // The first pass is to check if the parameter types are exactly the same,
             // The second pass is to check if the parameter types is assignable from the given argument types.
             var matchConstructors = new List<ConstructorInfo>();
@@ -443,7 +443,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                // Flip the 'inSecondPass' flag, so that we run another pass only if we're about 
+                // Flip the 'inSecondPass' flag, so that we run another pass only if we're about
                 // to start the second pass and we didn't find anything from the first pass.
                 inSecondPass = !inSecondPass;
 
@@ -473,7 +473,7 @@ namespace System.Management.Automation
                 throw new PSArgumentException("Invalid binding flags");
             }
 
-            // If bindingFlags is zero, return null. 
+            // If bindingFlags is zero, return null.
             if (bindingFlags == 0)
             {
                 return null;
@@ -562,7 +562,7 @@ namespace System.Management.Automation
         // Helper method
         private static MethodInfo GetMatchingMethod(MethodInfo[] methods, Type[] types)
         {
-            // Compare the parameter types in two passes. 
+            // Compare the parameter types in two passes.
             // The first pass is to check if the parameter types are exactly the same,
             // The second pass is to check if the parameter types is assignable from the given argument types.
             var matchMethods = new List<MethodInfo>();
@@ -594,7 +594,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                // Flip the 'inSecondPass' flag, so that we run another pass only if we're about 
+                // Flip the 'inSecondPass' flag, so that we run another pass only if we're about
                 // to start the second pass and we didn't find anything from the first pass.
                 inSecondPass = !inSecondPass;
 
@@ -660,7 +660,7 @@ namespace System.Management.Automation
                     {
                         if (isInHierarchy)
                         {
-                            // Specify BindingFlags.FlattenHierarchy to include public and protected static members up the hierarchy; 
+                            // Specify BindingFlags.FlattenHierarchy to include public and protected static members up the hierarchy;
                             // private static members in inherited classes are not included
                             if (!method.IsPublic && !(method.IsFamily && method.IsStatic))
                             {
@@ -875,7 +875,7 @@ namespace System.Management.Automation
                     return GetRegistryKeyNameValuePairs(environmentKey);
                 }
             }
-            else // target == EnvironmentVariableTarget.User 
+            else // target == EnvironmentVariableTarget.User
             {
                 using (RegistryKey environmentKey =
                        Registry.CurrentUser.OpenSubKey("Environment", false))
@@ -997,7 +997,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// OSVersion 
+        /// OSVersion
         /// </summary>
         public static OperatingSystem OSVersion
         {
@@ -1518,7 +1518,7 @@ namespace System.Management.Automation
         #region Methods
 
         /// <summary>
-        /// Boxes the supplied unmanaged memory pointer and the type associated with that pointer into a managed Pointer wrapper object. 
+        /// Boxes the supplied unmanaged memory pointer and the type associated with that pointer into a managed Pointer wrapper object.
         /// The value and the type are saved so they can be accessed from the native code during an invocation.
         /// </summary>
         /// <param name="ptr"></param>

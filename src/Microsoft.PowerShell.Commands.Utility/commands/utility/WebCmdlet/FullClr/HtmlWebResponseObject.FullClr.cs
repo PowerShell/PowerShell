@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
         /// Constructor for HtmlWebResponseObject with memory stream
         /// </summary>
         /// <param name="response"></param>
-        /// <param name="contentStream"></param>        
+        /// <param name="contentStream"></param>
         /// <param name="executionContext"></param>
         internal HtmlWebResponseObject(WebResponse response, Stream contentStream, ExecutionContext executionContext)
             : base(response, contentStream)

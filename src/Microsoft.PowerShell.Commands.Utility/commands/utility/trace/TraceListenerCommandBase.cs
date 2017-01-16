@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// The TraceSource parameter determines which TraceSource categories the
         /// operation will take place on.
         /// </summary>
-        /// 
+        ///
         internal string[] NameInternal { get; set; } = new string[0];
 
 
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
         /// The parameter which determines the options for output from the
         /// trace listeners.
         /// </summary>
-        /// 
+        ///
         internal TraceOptions ListenerOptionsInternal
         {
             get { return _traceOptions; }
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands
         /// Adds the console, debugger, file, or host listener
         /// if requested.
         /// </summary>
-        /// 
+        ///
         internal void AddTraceListenersToSources(Collection<PSTraceSource> matchingSources)
         {
             if (DebuggerListener)
@@ -377,7 +377,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The file streams that were open by this command
         /// </summary>
-        /// 
+        ///
         internal Collection<FileStream> FileStreams { get; private set; }
 
         private static void AddListenerToSources(Collection<PSTraceSource> matchingSources, TraceListener listener)
@@ -396,7 +396,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Removes the tracelisteners from the specified trace sources
         /// </summary>
-        /// 
+        ///
         internal static void RemoveListenersByName(
             Collection<PSTraceSource> matchingSources,
             string[] listenerNames,
@@ -471,7 +471,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the flags for all the specified TraceSources
         /// </summary>
-        /// 
+        ///
         internal void SetFlags(Collection<PSTraceSource> matchingSources)
         {
             foreach (PSTraceSource structuredSource in matchingSources)
@@ -521,7 +521,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
 
-                // Now set the new flags 
+                // Now set the new flags
                 source.Options = this.OptionsInternal;
             }
 

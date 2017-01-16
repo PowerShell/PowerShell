@@ -9,7 +9,7 @@ namespace Microsoft.Management.UI.Internal
     using System;
     using System.Diagnostics;
     using System.Diagnostics.CodeAnalysis;
-        
+
     /// <summary>
     /// The FilterExpressionOperandNode class is responsible for holding a
     /// FilterRule within the FilterExpression tree.

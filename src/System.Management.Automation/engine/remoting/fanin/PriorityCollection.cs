@@ -10,7 +10,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation.Remoting
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     internal enum DataPriorityType : int
     {
@@ -136,7 +136,7 @@ namespace System.Management.Automation.Remoting
         /// Adds data to this collection. The data is fragmented in this method
         /// before being stored into the collection. So the calling thread
         /// will get affected, if it tries to add a huge object.
-        /// 
+        ///
         /// The data is added with Default priority.
         /// </summary>
         /// <typeparam name="T"></typeparam>
@@ -168,9 +168,9 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Gets the fragment or if no fragment is available registers the callback which
-        /// gets called once a fragment is available. These 2 steps are performed in a 
+        /// gets called once a fragment is available. These 2 steps are performed in a
         /// synchronized way.
-        /// 
+        ///
         /// While getting a fragment the following algorithm is used:
         /// 1. If this is the first time or if the last fragment read is an EndFragment,
         ///    then a new set of fragments is chosen based on the implicit priority.
@@ -326,7 +326,7 @@ namespace System.Management.Automation.Remoting
 
         #region Constructor
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="defragmentor">
         /// Defragmentor used to deserialize an object.
@@ -339,10 +339,10 @@ namespace System.Management.Automation.Remoting
         {
             Dbg.Assert(null != defragmentor, "ReceiveDataCollection needs a defragmentor to work with");
 
-            // Memory streams created with an unsigned byte array provide a non-resizable stream view 
+            // Memory streams created with an unsigned byte array provide a non-resizable stream view
             // of the data, and can only be written to. When using a byte array, you can neither append
-            // to nor shrink the stream, although you might be able to modify the existing contents 
-            // depending on the parameters passed into the constructor. Empty memory streams are 
+            // to nor shrink the stream, although you might be able to modify the existing contents
+            // depending on the parameters passed into the constructor. Empty memory streams are
             // resizable, and can be written to and read from.
             _pendingDataStream = new MemoryStream();
             _syncObject = new object();
@@ -363,8 +363,8 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This might be needed only for ServerCommandTransportManager case 
-        /// where the command is run in the same thread that runs ProcessRawData 
+        /// This might be needed only for ServerCommandTransportManager case
+        /// where the command is run in the same thread that runs ProcessRawData
         /// (to avoid thread context switch). By default this class supports
         /// only one thread in ProcessRawData.
         /// </summary>
@@ -386,8 +386,8 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Process data coming from the transport. This method analyses the data
-        /// and if an object can be created, it creates one and calls the 
-        /// <paramref name="callback"/> with the deserialized object. This method 
+        /// and if an object can be created, it creates one and calls the
+        /// <paramref name="callback"/> with the deserialized object. This method
         /// does not assume all fragments to be available. So if not enough fragments are
         /// available it will simply return..
         /// </summary>
@@ -403,7 +403,7 @@ namespace System.Management.Automation.Remoting
         /// <exception cref="PSRemotingTransportException">
         /// 1. Fragment Ids not in sequence
         /// 2. Object Ids does not match
-        /// 3. The current deserialized object size of the received data exceeded 
+        /// 3. The current deserialized object size of the received data exceeded
         /// allowed maximum object size. The current deserialized object size is {0}.
         /// Allowed maximum object size is {1}.
         /// </exception>
@@ -558,10 +558,10 @@ namespace System.Management.Automation.Remoting
                     {
                         _canIgnoreOffSyncFragments = false; //reset this upon receiving a start fragment of a fresh object
                         _currentObjectId = objectId;
-                        // Memory streams created with an unsigned byte array provide a non-resizable stream view 
+                        // Memory streams created with an unsigned byte array provide a non-resizable stream view
                         // of the data, and can only be written to. When using a byte array, you can neither append
-                        // to nor shrink the stream, although you might be able to modify the existing contents 
-                        // depending on the parameters passed into the constructor. Empty memory streams are 
+                        // to nor shrink the stream, although you might be able to modify the existing contents
+                        // depending on the parameters passed into the constructor. Empty memory streams are
                         // resizable, and can be written to and read from.
                         _dataToProcessStream = new MemoryStream();
                     }
@@ -571,7 +571,7 @@ namespace System.Management.Automation.Remoting
                         if (objectId != _currentObjectId)
                         {
                             s_baseTracer.WriteLine("ObjectId != CurrentObjectId");
-                            //TODO - drop an ETW event 
+                            //TODO - drop an ETW event
                             ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
                             {
@@ -588,7 +588,7 @@ namespace System.Management.Automation.Remoting
                         if (fragmentId != (_currentFrgId + 1))
                         {
                             s_baseTracer.WriteLine("Fragment Id is not in sequence.");
-                            //TODO - drop an ETW event 
+                            //TODO - drop an ETW event
                             ResetReceiveData();
                             if (!_canIgnoreOffSyncFragments)
                             {
@@ -708,7 +708,7 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    /// DataStructure used by different remoting protocol / 
+    /// DataStructure used by different remoting protocol /
     /// DataStructures to receive data from transport manager.
     /// This class holds the responsibility of defragmenting and
     /// deserializing.
@@ -787,8 +787,8 @@ namespace System.Management.Automation.Remoting
 
 
         /// <summary>
-        /// This might be needed only for ServerCommandTransportManager case 
-        /// where the command is run in the same thread that runs ProcessRawData 
+        /// This might be needed only for ServerCommandTransportManager case
+        /// where the command is run in the same thread that runs ProcessRawData
         /// (to avoid thread context switch). By default this class supports
         /// only one thread in ProcessRawData.
         /// </summary>
@@ -802,8 +802,8 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Process data coming from the transport. This method analyses the data
-        /// and if an object can be created, it creates one and calls the 
-        /// <paramref name="callback"/> with the deserialized object. This method 
+        /// and if an object can be created, it creates one and calls the
+        /// <paramref name="callback"/> with the deserialized object. This method
         /// does not assume all fragments to be available. So if not enough fragments are
         /// available it will simply return..
         /// </summary>
@@ -822,10 +822,10 @@ namespace System.Management.Automation.Remoting
         /// <exception cref="PSRemotingTransportException">
         /// 1. Fragment Ids not in sequence
         /// 2. Object Ids does not match
-        /// 3. The current deserialized object size of the received data exceeded 
+        /// 3. The current deserialized object size of the received data exceeded
         /// allowed maximum object size. The current deserialized object size is {0}.
         /// Allowed maximum object size is {1}.
-        /// 4.The total data received from the remote machine exceeded allowed maximum. 
+        /// 4.The total data received from the remote machine exceeded allowed maximum.
         /// The total data received from remote machine is {0}. Allowed maximum is {1}.
         /// </exception>
         /// <remarks>

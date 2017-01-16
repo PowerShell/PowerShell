@@ -4,7 +4,7 @@
     Project:     PowerShell
 
 
-    Contents:    PowerShell token interface for syntax editors 
+    Contents:    PowerShell token interface for syntax editors
 
     Classes:     System.Management.Automation.PSToken
 
@@ -16,13 +16,13 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// This is public class for representing a powershell token. 
+    /// This is public class for representing a powershell token.
     /// </summary>
     /// <remarks>
-    /// There is already an internal class Token for representing the token. 
-    /// 
+    /// There is already an internal class Token for representing the token.
+    ///
     /// This class wraps the internal Token class for providing limited information
-    /// to syntax editor. 
+    /// to syntax editor.
     /// </remarks>
     public sealed class PSToken
     {
@@ -47,18 +47,18 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Resulting text for the token. 
+        /// Resulting text for the token.
         /// </summary>
         /// <remarks>
-        /// The text here represents the content of token. It can be the same as 
-        /// the text chunk within script resulting into this token, but usually is not 
-        /// the case. 
-        /// 
-        /// For example, -name in following command result into a parameter token. 
-        /// 
+        /// The text here represents the content of token. It can be the same as
+        /// the text chunk within script resulting into this token, but usually is not
+        /// the case.
+        ///
+        /// For example, -name in following command result into a parameter token.
+        ///
         ///     get-process -name foo
-        /// 
-        /// Text property in this case is 'name' instead of '-name'. 
+        ///
+        /// Text property in this case is 'name' instead of '-name'.
         /// </remarks>
         public string Content
         {
@@ -99,7 +99,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Token type. 
+        /// Token type.
         /// </summary>
         public PSTokenType Type { get; }
 
@@ -302,14 +302,14 @@ namespace System.Management.Automation
             /*            LastToken */ PSTokenType.Unknown,
         };
 
-        #endregion 
+        #endregion
 
         #region Position Information
 
         private readonly IScriptExtent _extent;
 
         /// <summary>
-        /// Offset of token start in script buffer. 
+        /// Offset of token start in script buffer.
         /// </summary>
         public int Start
         {
@@ -317,7 +317,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Offset of token end in script buffer. 
+        /// Offset of token end in script buffer.
         /// </summary>
         public int Length
         {
@@ -328,35 +328,35 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Line number of token start. 
+        /// Line number of token start.
         /// </summary>
         /// <remarks>
-        /// StartLine, StartColumn, EndLine, and EndColumn are 1-based, 
-        /// i.e., first line has a line number 1 and first character in 
-        /// a line has column number 1. 
+        /// StartLine, StartColumn, EndLine, and EndColumn are 1-based,
+        /// i.e., first line has a line number 1 and first character in
+        /// a line has column number 1.
         /// </remarks>
         public int StartLine { get { return _extent.StartLineNumber; } }
 
         /// <summary>
-        /// Position of token start in start line. 
+        /// Position of token start in start line.
         /// </summary>
         public int StartColumn { get { return _extent.StartColumnNumber; } }
 
         /// <summary>
-        /// Line number of token end. 
+        /// Line number of token end.
         /// </summary>
         public int EndLine { get { return _extent.EndLineNumber; } }
 
         /// <summary>
-        /// Position of token end in end line. 
+        /// Position of token end in end line.
         /// </summary>
         public int EndColumn { get { return _extent.EndColumnNumber; } }
 
-        #endregion 
+        #endregion
     }
 
     /// <summary>
-    /// PowerShell token types. 
+    /// PowerShell token types.
     /// </summary>
     public enum PSTokenType
     {
@@ -371,10 +371,10 @@ namespace System.Management.Automation
         /// Command
         /// </summary>
         /// <remarks>
-        /// For example, 'get-process' in 
-        /// 
+        /// For example, 'get-process' in
+        ///
         ///     get-process -name foo
-        /// 
+        ///
         /// </remarks>
         Command,
 
@@ -382,10 +382,10 @@ namespace System.Management.Automation
         /// Command Parameter
         /// </summary>
         /// <remarks>
-        /// For example, '-name' in 
-        /// 
+        /// For example, '-name' in
+        ///
         ///     get-process -name foo
-        /// 
+        ///
         /// </remarks>
         CommandParameter,
 
@@ -393,10 +393,10 @@ namespace System.Management.Automation
         /// Command Argument
         /// </summary>
         /// <remarks>
-        /// For example, 'foo' in 
-        /// 
+        /// For example, 'foo' in
+        ///
         ///     get-process -name foo
-        /// 
+        ///
         /// </remarks>
         CommandArgument,
 
@@ -404,10 +404,10 @@ namespace System.Management.Automation
         /// Number
         /// </summary>
         /// <remarks>
-        /// For example, 12 in 
-        /// 
+        /// For example, 12 in
+        ///
         ///     $a=12
-        /// 
+        ///
         /// </remarks>
         Number,
 
@@ -415,10 +415,10 @@ namespace System.Management.Automation
         /// String
         /// </summary>
         /// <remarks>
-        /// For example, "12" in 
-        /// 
+        /// For example, "12" in
+        ///
         ///     $a="12"
-        /// 
+        ///
         /// </remarks>
         String,
 
@@ -426,10 +426,10 @@ namespace System.Management.Automation
         /// Variable
         /// </summary>
         /// <remarks>
-        /// For example, $a in 
-        /// 
+        /// For example, $a in
+        ///
         ///     $a="12"
-        /// 
+        ///
         /// </remarks>
         Variable,
 
@@ -437,10 +437,10 @@ namespace System.Management.Automation
         /// Property name or method name
         /// </summary>
         /// <remarks>
-        /// For example, Name in 
-        /// 
+        /// For example, Name in
+        ///
         ///     $a.Name
-        /// 
+        ///
         /// </remarks>
         Member,
 
@@ -448,14 +448,14 @@ namespace System.Management.Automation
         /// Loop label
         /// </summary>
         /// <remarks>
-        /// For example, :loop in 
-        /// 
+        /// For example, :loop in
+        ///
         ///     :loop
         ///     foreach($a in $b)
         ///     {
         ///         $a
         ///     }
-        /// 
+        ///
         /// </remarks>
         LoopLabel,
 
@@ -463,10 +463,10 @@ namespace System.Management.Automation
         /// Attributes
         /// </summary>
         /// <remarks>
-        /// For example, Mandatory in 
-        /// 
+        /// For example, Mandatory in
+        ///
         ///     param([Mandatory] $a)
-        /// 
+        ///
         /// </remarks>
         Attribute,
 
@@ -474,10 +474,10 @@ namespace System.Management.Automation
         /// Types
         /// </summary>
         /// <remarks>
-        /// For example, [string] in 
-        /// 
+        /// For example, [string] in
+        ///
         ///     $a = [string] 12
-        /// 
+        ///
         /// </remarks>
         Type,
 
@@ -485,10 +485,10 @@ namespace System.Management.Automation
         /// Operators
         /// </summary>
         /// <remarks>
-        /// For example, + in 
-        /// 
+        /// For example, + in
+        ///
         ///     $a = 1 + 2
-        /// 
+        ///
         /// </remarks>
         Operator,
 
@@ -496,13 +496,13 @@ namespace System.Management.Automation
         /// Group Starter
         /// </summary>
         /// <remarks>
-        /// For example, { in 
-        /// 
+        /// For example, { in
+        ///
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        /// 
+        ///
         /// </remarks>
         GroupStart,
 
@@ -510,13 +510,13 @@ namespace System.Management.Automation
         /// Group Ender
         /// </summary>
         /// <remarks>
-        /// For example, } in 
-        /// 
+        /// For example, } in
+        ///
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        /// 
+        ///
         /// </remarks>
         GroupEnd,
 
@@ -524,13 +524,13 @@ namespace System.Management.Automation
         /// Keyword
         /// </summary>
         /// <remarks>
-        /// For example, if in 
-        /// 
+        /// For example, if in
+        ///
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        /// 
+        ///
         /// </remarks>
         Keyword,
 
@@ -538,14 +538,14 @@ namespace System.Management.Automation
         /// Comment
         /// </summary>
         /// <remarks>
-        /// For example, #here in 
-        /// 
+        /// For example, #here in
+        ///
         ///     #here
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        /// 
+        ///
         /// </remarks>
         Comment,
 
@@ -553,14 +553,14 @@ namespace System.Management.Automation
         /// Statement separator. This is ';'
         /// </summary>
         /// <remarks>
-        /// For example, ; in 
-        /// 
+        /// For example, ; in
+        ///
         ///     #here
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        /// 
+        ///
         /// </remarks>
         StatementSeparator,
 
@@ -568,14 +568,14 @@ namespace System.Management.Automation
         /// New line. This is '\n'
         /// </summary>
         /// <remarks>
-        /// For example, \n in 
-        /// 
+        /// For example, \n in
+        ///
         ///     #here
         ///     if ($a -gt 4)
         ///     {
         ///         $a++;
         ///     }
-        /// 
+        ///
         /// </remarks>
         NewLine,
 
@@ -583,11 +583,11 @@ namespace System.Management.Automation
         /// Line continuation
         /// </summary>
         /// <remarks>
-        /// For example, ` in 
-        /// 
+        /// For example, ` in
+        ///
         ///     get-command -name `
         ///     foo
-        /// 
+        ///
         /// </remarks>
         LineContinuation,
 
@@ -595,8 +595,8 @@ namespace System.Management.Automation
         /// Position token
         /// </summary>
         /// <remarks>
-        /// Position token are bogus tokens generated for identifying a location 
-        /// in the script. 
+        /// Position token are bogus tokens generated for identifying a location
+        /// in the script.
         /// </remarks>
         Position
     }

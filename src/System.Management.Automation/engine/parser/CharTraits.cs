@@ -16,10 +16,10 @@ namespace System.Management.Automation.Language
         internal const char HorizontalBar = (char)0x2015;
 
         // Special quotes
-        internal const char QuoteSingleLeft = (char)0x2018; // left single quotation mark  
-        internal const char QuoteSingleRight = (char)0x2019; // right single quotation mark 
+        internal const char QuoteSingleLeft = (char)0x2018; // left single quotation mark
+        internal const char QuoteSingleRight = (char)0x2019; // right single quotation mark
         internal const char QuoteSingleBase = (char)0x201a; // single low-9 quotation mark
-        internal const char QuoteReversed = (char)0x201b; // single high-reversed-9 quotation mark    
+        internal const char QuoteReversed = (char)0x201b; // single high-reversed-9 quotation mark
         internal const char QuoteDoubleLeft = (char)0x201c; // left double quotation mark
         internal const char QuoteDoubleRight = (char)0x201d; // right double quotation mark
         internal const char QuoteLowDoubleLeft = (char)0x201E; // low double left quote used in german.

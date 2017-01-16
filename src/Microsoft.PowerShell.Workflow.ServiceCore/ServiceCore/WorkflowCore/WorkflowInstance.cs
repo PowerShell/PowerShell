@@ -178,8 +178,8 @@ namespace Microsoft.PowerShell.Workflow
         public PSWorkflowRemoteActivityState(PSWorkflowInstanceStore store, Dictionary<string, Dictionary<int, Tuple<object, string>>> deserializedRemoteActivityState)
         {
             _store = store;
-            
-            if (deserializedRemoteActivityState == null) 
+
+            if (deserializedRemoteActivityState == null)
                 throw new ArgumentNullException("deserializedRemoteActivityState");
 
             _remoteRunspaceIdCollection = deserializedRemoteActivityState;
@@ -297,7 +297,7 @@ namespace Microsoft.PowerShell.Workflow
             if (InternalUnloaded)
             {
                 _tracer.WriteMessage(String.Format(CultureInfo.InvariantCulture, "RemoteActivityState.SetRemoteActivityRunspaceEntry: persisting the Streams and RemoteActivityState"));
-                
+
                 // Streams and ActivityState needs to be persisted when workflow application is already unloaded internally
                 // Streams will have the results from task completion
                 _store.Save(WorkflowStoreComponents.ActivityState | WorkflowStoreComponents.Streams);
@@ -337,14 +337,14 @@ namespace Microsoft.PowerShell.Workflow
 
                         // This method is first time called from OnResumeBookmark, if no resume required it's entry
                         // needs to be removed fromt the collection as activity execution has finished.
-                        // When an activity entry is removed, remoteActivityState will be persisted 
+                        // When an activity entry is removed, remoteActivityState will be persisted
                         // as part of whole workflow application persistence at the end of activity completion
                         if (activityResumeRequired == false)
                             _remoteRunspaceIdCollection.Remove(activity.Id);
                     }
                     else if (duringResumeBookmark)
                     {
-                        // Activity needs to be restarted/resumed if the process got crashed/terminated just after activity is bookmarked and 
+                        // Activity needs to be restarted/resumed if the process got crashed/terminated just after activity is bookmarked and
                         // in this case there will be no entry for this activity id in _remoteRunspaceIdCollection
                         activityResumeRequired = true;
                     }
@@ -367,7 +367,7 @@ namespace Microsoft.PowerShell.Workflow
         /// Tracer initialization.
         /// </summary>
         private readonly PowerShellTraceSource Tracer = PowerShellTraceSourceFactory.GetTraceSource();
-        
+
         /// <summary>
         /// Workflow Application executes the workflow and it is part of CLR 4.0.
         /// </summary>
@@ -376,7 +376,7 @@ namespace Microsoft.PowerShell.Workflow
         /// <summary>
         /// The Guid, which represents the unique instance of a workflow.
         /// </summary>
-        private Guid id;        
+        private Guid id;
 
         /// <summary>
         /// Workflow definition.
@@ -737,7 +737,7 @@ namespace Microsoft.PowerShell.Workflow
 
             if (this.OnPersistableIdleAction != null)
                 action = this.OnPersistableIdleAction(e.Bookmarks, this.suspendAtNextCheckpoint, this);
-            
+
             if(action == PSPersistableIdleAction.NotDefined) // fall back default handler
                 action = _job.GetPersistableIdleAction(e.Bookmarks, this.suspendAtNextCheckpoint);
 
@@ -852,8 +852,8 @@ namespace Microsoft.PowerShell.Workflow
                 Tracer.WriteMessage("PSWorkflowInstance", "DoSuspendInstance", id, "Not able to unload workflow application in a given timeout.");
                 Tracer.TraceException(e);
 
-                HandleWorkflowApplicationFaultedState(e); 
-                
+                HandleWorkflowApplicationFaultedState(e);
+
                 return;
             }
 
@@ -874,8 +874,8 @@ namespace Microsoft.PowerShell.Workflow
 
             Tracer.WriteMessage("Workflow Application is completed in Faulted state.");
 
-            // there might be possible of race condition here in case of Winrm shutdown. if the activity is 
-            // executing on loop back winrm process so there might be possibility that the winrm shuts down the 
+            // there might be possible of race condition here in case of Winrm shutdown. if the activity is
+            // executing on loop back winrm process so there might be possibility that the winrm shuts down the
             // activity process fist and causing the workflow to fail in the M3P process.
             // in order to avoid those situations we will ignore the remote exception if the shutdown is in progress
             if (WorkflowJobSourceAdapter.GetInstance().IsShutdownInProgress)
@@ -891,8 +891,8 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             // before we start handling the faulted state we need to cancel
-            // all running activities. Activities may be running if there is a 
-            // parallel statement involved            
+            // all running activities. Activities may be running if there is a
+            // parallel statement involved
             StopAllAsyncExecutions();
 
             State = JobState.Failed;
@@ -986,10 +986,10 @@ namespace Microsoft.PowerShell.Workflow
         /// <param name="pipelineInput">This is input coming from pipeline, which is added to the input stream.</param>
         /// <param name="job"></param>
         internal PSWorkflowApplicationInstance(
-                                        PSWorkflowRuntime runtime, 
+                                        PSWorkflowRuntime runtime,
                                         PSWorkflowDefinition definition,
                                         PSWorkflowContext metadata,
-                                        PSDataCollection<PSObject> pipelineInput,                                        
+                                        PSDataCollection<PSObject> pipelineInput,
                                         PSWorkflowJob job)
         {
             Tracer.WriteMessage("Creating Workflow instance.");
@@ -998,7 +998,7 @@ namespace Microsoft.PowerShell.Workflow
             this._metadatas = metadata;
             this._streams = new PowerShellStreams<PSObject, PSObject>(pipelineInput);
             RegisterHandlersForDataAdding(_streams);
-            this._timers = new PSWorkflowTimer(this);           
+            this._timers = new PSWorkflowTimer(this);
             this.creationMode = WorkflowInstanceCreationMode.Normal;
 
             _job = job;
@@ -1128,7 +1128,7 @@ namespace Microsoft.PowerShell.Workflow
             this.creationMode = WorkflowInstanceCreationMode.AfterCrashOrShutdown;
 
             _stores = Runtime.Configuration.CreatePSWorkflowInstanceStore(this);
-            this._remoteActivityState = null;            
+            this._remoteActivityState = null;
         }
 
         /// <summary>
@@ -1235,7 +1235,7 @@ namespace Microsoft.PowerShell.Workflow
 
             _structuredTracer.EndWorkflowExecution(_job.InstanceId);
         }
-        
+
         /// <summary>
         /// Save streams if they are not already persisted
         /// </summary>
@@ -1244,7 +1244,7 @@ namespace Microsoft.PowerShell.Workflow
         /// true - otherwise</returns>
         internal override bool SaveStreamsIfNecessary()
         {
-            // if there was start and end persistence, there is 
+            // if there was start and end persistence, there is
             // no need to persist again, simply return
             if (CheckForStartOrEndPersistence())
                 return true;
@@ -1296,11 +1296,11 @@ namespace Microsoft.PowerShell.Workflow
         /// </summary>
         public override Dictionary<string, object> CreationContext
         {
-            get 
+            get
             {
                 Dictionary<string, object> creationContext = null;
 
-                object jobCreationContext = null;                
+                object jobCreationContext = null;
                 if (this.PSWorkflowContext.JobMetadata.TryGetValue(Constants.WorkflowJobCreationContext, out jobCreationContext))
                 {
                     creationContext = jobCreationContext as Dictionary<string, object>;
@@ -1369,7 +1369,7 @@ namespace Microsoft.PowerShell.Workflow
         {
             get
             {
-                if (this._streams == null && 
+                if (this._streams == null &&
                     (_streamsDisposed || this.creationMode == WorkflowInstanceCreationMode.AfterCrashOrShutdown))
                 {
                     lock (SyncLock)
@@ -1429,7 +1429,7 @@ namespace Microsoft.PowerShell.Workflow
                             try
                             {
                                 _stores.Load(WorkflowStoreComponents.ActivityState);
-                                
+
                             }
                             catch (Exception e)
                             {
@@ -1472,7 +1472,7 @@ namespace Microsoft.PowerShell.Workflow
                             {
                                 errorExceptionLoadCalled = true;
                                 _stores.Load(WorkflowStoreComponents.TerminatingError);
-                                
+
                             }
                             catch (Exception e)
                             {
@@ -1544,7 +1544,7 @@ namespace Microsoft.PowerShell.Workflow
         /// </summary>
         public override PSWorkflowContext PSWorkflowContext
         {
-            get 
+            get
             {
                 if (this._metadatas == null && this.creationMode == WorkflowInstanceCreationMode.AfterCrashOrShutdown)
                 {
@@ -1568,8 +1568,8 @@ namespace Microsoft.PowerShell.Workflow
                         }
                     }
                 }
- 
-                return this._metadatas; 
+
+                return this._metadatas;
             }
 
             set
@@ -1729,7 +1729,7 @@ namespace Microsoft.PowerShell.Workflow
 
             Tracer.WriteMessage("Starting workflow execution");
             _structuredTracer.BeginWorkflowExecution(_job.InstanceId);
-            
+
             try
             {
                 this.workflowApplication.Run();
@@ -1743,7 +1743,7 @@ namespace Microsoft.PowerShell.Workflow
             this.StartTimers();
             Tracer.WriteMessage("Workflow application started execution");
         }
-        
+
         /// <summary>
         /// DoResumeBookmark
         /// </summary>
@@ -1794,7 +1794,7 @@ namespace Microsoft.PowerShell.Workflow
             }
             _structuredTracer.WorkflowLoadedForExecution(this.id);
         }
-        
+
         /// <summary>
         /// Remove
         /// </summary>
@@ -1803,7 +1803,7 @@ namespace Microsoft.PowerShell.Workflow
             CheckDisposed();
             _stores.Delete();
         }
-        
+
         /// <summary>
         /// DoPersistInstance
         /// </summary>
@@ -1891,7 +1891,7 @@ namespace Microsoft.PowerShell.Workflow
 
 
         /// <summary>
-        /// Dispose 
+        /// Dispose
         /// </summary>
         protected override void Dispose(bool disposing)
         {
@@ -1913,7 +1913,7 @@ namespace Microsoft.PowerShell.Workflow
                 }
 
                 this.ConfigureTimerOnUnload();
-                
+
                 // saving the workflow application handle into the temporary variable
                 // then unregistering the workflow application handle
                 // temporary variable will be used to call abort if workflow is in running state
@@ -1931,7 +1931,7 @@ namespace Microsoft.PowerShell.Workflow
                         // We are not re-throwing any exception during Dispose
                     }
                 }
-                
+
                 if (_paramDefaults != null)
                 {
                     _paramDefaults.Dispose();
@@ -2027,7 +2027,7 @@ namespace Microsoft.PowerShell.Workflow
                     this.workflowApplication.Extensions.Add<object>(extensionFunc);
                 }
             }
-            
+
             _paramDefaults = new HostParameterDefaults();
 
             if (this.PSWorkflowContext.PSWorkflowCommonParameters != null)
@@ -2049,54 +2049,54 @@ namespace Microsoft.PowerShell.Workflow
             // Job related parameters
             if (this.PSWorkflowContext.JobMetadata.ContainsKey(Constants.JobMetadataName))
             {
-                _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataName)] = 
+                _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataName)] =
                     this.PSWorkflowContext.JobMetadata[Constants.JobMetadataName];
             }
 
             if (this.PSWorkflowContext.JobMetadata.ContainsKey(Constants.JobMetadataInstanceId))
             {
-                _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataInstanceId)] = 
+                _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataInstanceId)] =
                     this.PSWorkflowContext.JobMetadata[Constants.JobMetadataInstanceId];
             }
 
             if (this.PSWorkflowContext.JobMetadata.ContainsKey(Constants.JobMetadataSessionId))
             {
-                _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataSessionId)] = 
+                _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataSessionId)] =
                     this.PSWorkflowContext.JobMetadata[Constants.JobMetadataSessionId];
             }
 
             if (this.PSWorkflowContext.JobMetadata.ContainsKey(Constants.JobMetadataCommand))
             {
-                _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataCommand)] = 
+                _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataCommand)] =
                     this.PSWorkflowContext.JobMetadata[Constants.JobMetadataCommand];
             }
 
             if (this.PSWorkflowContext.JobMetadata.ContainsKey(Constants.JobMetadataParentName))
             {
-                _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataParentName)] = 
+                _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataParentName)] =
                     this.PSWorkflowContext.JobMetadata[Constants.JobMetadataParentName];
             }
 
             if (this.PSWorkflowContext.JobMetadata.ContainsKey(Constants.JobMetadataParentInstanceId))
             {
-                _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataParentInstanceId)] = 
+                _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataParentInstanceId)] =
                     this.PSWorkflowContext.JobMetadata[Constants.JobMetadataParentInstanceId];
             }
 
             if (this.PSWorkflowContext.JobMetadata.ContainsKey(Constants.JobMetadataParentSessionId))
             {
-                _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataParentSessionId)] = 
+                _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataParentSessionId)] =
                     this.PSWorkflowContext.JobMetadata[Constants.JobMetadataParentSessionId];
             }
 
             if (this.PSWorkflowContext.JobMetadata.ContainsKey(Constants.JobMetadataParentCommand))
             {
-                _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataParentCommand)] = 
+                _paramDefaults.Parameters[TranslateMetaDataName(Constants.JobMetadataParentCommand)] =
                     this.PSWorkflowContext.JobMetadata[Constants.JobMetadataParentCommand];
             }
 
             _paramDefaults.Parameters["WorkflowInstanceId"] = this.InstanceId;
-          
+
             _paramDefaults.Parameters["Input"] = this.Streams.InputStream;
             _paramDefaults.Parameters["Result"] = this.Streams.OutputStream;
             _paramDefaults.Parameters["PSError"] = this.Streams.ErrorStream;
@@ -2146,7 +2146,7 @@ namespace Microsoft.PowerShell.Workflow
                 }
             }
         }
-        
+
         private void StartTimers()
         {
             if (Timer != null)
@@ -2188,9 +2188,9 @@ namespace Microsoft.PowerShell.Workflow
                 TrackingProfile = new TrackingProfile()
                 {
                     Name = "WorkflowTrackingProfile",
-                    Queries = 
+                    Queries =
                     {
-                        new CustomTrackingQuery() 
+                        new CustomTrackingQuery()
                         {
                          Name = all,
                          ActivityName = all
@@ -2198,11 +2198,11 @@ namespace Microsoft.PowerShell.Workflow
                         new WorkflowInstanceQuery()
                         {
                             // Limit workflow instance tracking records for started and completed workflow states
-                            States = { 
-                                WorkflowInstanceStates.Started, 
-                                WorkflowInstanceStates.Completed, 
-                                WorkflowInstanceStates.Persisted, 
-                                WorkflowInstanceStates.UnhandledException 
+                            States = {
+                                WorkflowInstanceStates.Started,
+                                WorkflowInstanceStates.Completed,
+                                WorkflowInstanceStates.Persisted,
+                                WorkflowInstanceStates.UnhandledException
                             },
                         },
                         new ActivityStateQuery()
@@ -2214,16 +2214,16 @@ namespace Microsoft.PowerShell.Workflow
                             // Extract workflow variables and arguments as a part of the activity tracking record
                             // VariableName = "*" allows for extraction of all variables in the scope
                             // of the activity
-                            Variables = 
-                            {                                
-                                { all }   
+                            Variables =
+                            {
+                                { all }
                             },
 
                             Arguments =
                             {
                                 { all }
                             }
-                        }   
+                        }
                     }
                 }
             };
@@ -2261,7 +2261,7 @@ namespace Microsoft.PowerShell.Workflow
         #region Persist and Reactivation
 
         internal bool InternalUnloaded;
-        
+
         private void SetInternalUnloaded(bool value)
         {
             InternalUnloaded = value;
@@ -2350,7 +2350,7 @@ namespace Microsoft.PowerShell.Workflow
         private void StopBookMarkedWorkflow()
         {
             // Workflow is currently in booked marked state
-            // we will try to cancel all async operations 
+            // we will try to cancel all async operations
             // and then perform the terminal tasks related to stop workflow
 
             if (Disposed)
@@ -2553,7 +2553,7 @@ namespace Microsoft.PowerShell.Workflow
         #region Static Methods
 
         /// <summary>
-        /// Helper method to translate internal Workflow metadata names to 
+        /// Helper method to translate internal Workflow metadata names to
         /// public Workflow variable names.
         /// </summary>
         /// <param name="metaDataName">Metadata key string</param>

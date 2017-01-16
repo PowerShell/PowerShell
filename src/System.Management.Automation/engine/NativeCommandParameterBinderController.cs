@@ -10,7 +10,7 @@ namespace System.Management.Automation
     /// This is the interface between the NativeCommandProcessor and the
     /// parameter binders required to bind parameters to a native command.
     /// </summary>
-    /// 
+    ///
     internal class NativeCommandParameterBinderController : ParameterBinderController
     {
         #region ctor
@@ -19,11 +19,11 @@ namespace System.Management.Automation
         /// Initializes the cmdlet parameter binder controller for
         /// the specified native command and engine context
         /// </summary>
-        /// 
+        ///
         /// <param name="command">
         /// The command that the parameters will be bound to.
         /// </param>
-        /// 
+        ///
         internal NativeCommandParameterBinderController(NativeCommand command)
             : base(command.MyInvocation, command.Context, new NativeCommandParameterBinder(command))
         {
@@ -47,20 +47,20 @@ namespace System.Management.Automation
         /// Passes the binding directly through to the parameter binder.
         /// It does no verification against metadata.
         /// </summary>
-        /// 
+        ///
         /// <param name="argument">
         /// The name and value of the variable to bind.
         /// </param>
-        /// 
+        ///
         /// <param name="flags">
         /// Ignored.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// True if the parameter was successfully bound. Any error condition
         /// produces an exception.
         /// </returns>
-        /// 
+        ///
         internal override bool BindParameter(
             CommandParameterInternal argument,
             ParameterBindingFlags flags)
@@ -73,16 +73,16 @@ namespace System.Management.Automation
         /// <summary>
         /// Binds the specified parameters to the native command
         /// </summary>
-        /// 
+        ///
         /// <param name="parameters">
         /// The parameters to bind.
         /// </param>
-        /// 
+        ///
         /// <remarks>
         /// For any parameters that do not have a name, they are added to the command
         /// line arguments for the command
         /// </remarks>
-        /// 
+        ///
         internal override Collection<CommandParameterInternal> BindParameters(Collection<CommandParameterInternal> parameters)
         {
             ((NativeCommandParameterBinder)DefaultParameterBinder).BindParameters(parameters);

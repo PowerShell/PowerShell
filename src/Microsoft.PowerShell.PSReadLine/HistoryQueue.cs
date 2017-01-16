@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell
         public T this[int index]
         {
             get
-            { 
+            {
                 Debug.Assert(index >= 0 && index < Count);
                 return _array[(_head + index) % _array.Length];
             }

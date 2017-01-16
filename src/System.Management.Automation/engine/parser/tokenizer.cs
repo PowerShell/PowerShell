@@ -27,7 +27,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         NoName = 0,
         /// <summary>
-        /// Name must be present and simple non-empty bare word 
+        /// Name must be present and simple non-empty bare word
         /// </summary>
         SimpleNameRequired = 1,
         /// <summary>
@@ -65,7 +65,7 @@ namespace System.Management.Automation.Language
 
     /// <summary>
     /// Defines the schema/behaviour for a dynamic keyword.
-    /// a constrained 
+    /// a constrained
     /// </summary>
     public class DynamicKeyword
     {
@@ -127,7 +127,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -148,7 +148,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -164,7 +164,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="keywordToAdd"></param>
         public static void AddKeyword(DynamicKeyword keywordToAdd)
@@ -290,7 +290,7 @@ namespace System.Management.Automation.Language
         /// rewrite the node as a simple direct function call.
         /// If NameMode is other than NoName, then the name of the instance
         /// will be passed as the parameter -InstanceName.
-        /// 
+        ///
         /// </summary>
         public bool DirectCall { get; set; }
 
@@ -559,15 +559,15 @@ namespace System.Management.Automation.Language
         };
 
         internal static readonly string[] _operatorText = new string[] {
-        /*1*/   "bnot",                 "not",                  "eq",                   "ieq",                    /*1*/ 
-        /*2*/   "ceq",                  "ne",                   "ine",                  "cne",                    /*2*/ 
-        /*3*/   "ge",                   "ige",                  "cge",                  "gt",                     /*3*/ 
-        /*4*/   "igt",                  "cgt",                  "lt",                   "ilt",                    /*4*/ 
-        /*5*/   "clt",                  "le",                   "ile",                  "cle",                    /*5*/ 
-        /*6*/   "like",                 "ilike",                "clike",                "notlike",                /*6*/ 
-        /*7*/   "inotlike",             "cnotlike",             "match",                "imatch",                 /*7*/ 
-        /*8*/   "cmatch",               "notmatch",             "inotmatch",            "cnotmatch",              /*8*/ 
-        /*9*/   "replace",              "ireplace",             "creplace",             "contains",               /*9*/ 
+        /*1*/   "bnot",                 "not",                  "eq",                   "ieq",                    /*1*/
+        /*2*/   "ceq",                  "ne",                   "ine",                  "cne",                    /*2*/
+        /*3*/   "ge",                   "ige",                  "cge",                  "gt",                     /*3*/
+        /*4*/   "igt",                  "cgt",                  "lt",                   "ilt",                    /*4*/
+        /*5*/   "clt",                  "le",                   "ile",                  "cle",                    /*5*/
+        /*6*/   "like",                 "ilike",                "clike",                "notlike",                /*6*/
+        /*7*/   "inotlike",             "cnotlike",             "match",                "imatch",                 /*7*/
+        /*8*/   "cmatch",               "notmatch",             "inotmatch",            "cnotmatch",              /*8*/
+        /*9*/   "replace",              "ireplace",             "creplace",             "contains",               /*9*/
         /*10*/  "icontains",            "ccontains",            "notcontains",          "inotcontains",           /*10*/
         /*11*/  "cnotcontains",         "in",                   "iin",                  "cin",                    /*11*/
         /*12*/  "notin",                "inotin",               "cnotin",               "split",                  /*12*/
@@ -578,15 +578,15 @@ namespace System.Management.Automation.Language
         };
 
         private static readonly TokenKind[] s_operatorTokenKind = new TokenKind[] {
-        /*1*/   TokenKind.Bnot,         TokenKind.Not,          TokenKind.Ieq,          TokenKind.Ieq,            /*1*/ 
-        /*2*/   TokenKind.Ceq,          TokenKind.Ine,          TokenKind.Ine,          TokenKind.Cne,            /*2*/ 
-        /*3*/   TokenKind.Ige,          TokenKind.Ige,          TokenKind.Cge,          TokenKind.Igt,            /*3*/ 
-        /*4*/   TokenKind.Igt,          TokenKind.Cgt,          TokenKind.Ilt,          TokenKind.Ilt,            /*4*/ 
-        /*5*/   TokenKind.Clt,          TokenKind.Ile,          TokenKind.Ile,          TokenKind.Cle,            /*5*/ 
-        /*6*/   TokenKind.Ilike,        TokenKind.Ilike,        TokenKind.Clike,        TokenKind.Inotlike,       /*6*/ 
-        /*7*/   TokenKind.Inotlike,     TokenKind.Cnotlike,     TokenKind.Imatch,       TokenKind.Imatch,         /*7*/ 
-        /*8*/   TokenKind.Cmatch,       TokenKind.Inotmatch,    TokenKind.Inotmatch,    TokenKind.Cnotmatch,      /*8*/ 
-        /*9*/   TokenKind.Ireplace,     TokenKind.Ireplace,     TokenKind.Creplace,     TokenKind.Icontains,      /*9*/ 
+        /*1*/   TokenKind.Bnot,         TokenKind.Not,          TokenKind.Ieq,          TokenKind.Ieq,            /*1*/
+        /*2*/   TokenKind.Ceq,          TokenKind.Ine,          TokenKind.Ine,          TokenKind.Cne,            /*2*/
+        /*3*/   TokenKind.Ige,          TokenKind.Ige,          TokenKind.Cge,          TokenKind.Igt,            /*3*/
+        /*4*/   TokenKind.Igt,          TokenKind.Cgt,          TokenKind.Ilt,          TokenKind.Ilt,            /*4*/
+        /*5*/   TokenKind.Clt,          TokenKind.Ile,          TokenKind.Ile,          TokenKind.Cle,            /*5*/
+        /*6*/   TokenKind.Ilike,        TokenKind.Ilike,        TokenKind.Clike,        TokenKind.Inotlike,       /*6*/
+        /*7*/   TokenKind.Inotlike,     TokenKind.Cnotlike,     TokenKind.Imatch,       TokenKind.Imatch,         /*7*/
+        /*8*/   TokenKind.Cmatch,       TokenKind.Inotmatch,    TokenKind.Inotmatch,    TokenKind.Cnotmatch,      /*8*/
+        /*9*/   TokenKind.Ireplace,     TokenKind.Ireplace,     TokenKind.Creplace,     TokenKind.Icontains,      /*9*/
         /*10*/  TokenKind.Icontains,    TokenKind.Ccontains,    TokenKind.Inotcontains, TokenKind.Inotcontains,   /*10*/
         /*11*/  TokenKind.Cnotcontains, TokenKind.Iin,          TokenKind.Iin,          TokenKind.Cin,            /*11*/
         /*12*/  TokenKind.Inotin,       TokenKind.Inotin,       TokenKind.Cnotin,       TokenKind.Isplit,         /*12*/
@@ -1366,7 +1366,7 @@ namespace System.Management.Automation.Language
                             //
                             // The average script is 14% comments and parses in about 5.05 ms with this algorithm,
                             // about 4.45 ms with the more simplistic algorithm.
-                            // 
+                            //
                             string commentLineComparison = commentLine.ToString().ToLowerInvariant();
 
                             int sawBeginTokenSimilarity = GetStringSimilarity(commentLineComparison, beginSignatureTextNoSpace);
@@ -4072,7 +4072,7 @@ namespace System.Management.Automation.Language
 
                         // check if the next token is actually a number
                         string strNum = ScanNumberHelper(c, out hex, out real, out suffix, out multiplier);
-                        // rescan characters after the check 
+                        // rescan characters after the check
                         _currentIndex = _tokenStart;
                         c = GetChar();
 

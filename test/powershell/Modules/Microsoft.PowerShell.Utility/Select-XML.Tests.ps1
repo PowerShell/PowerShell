@@ -1,6 +1,6 @@
 
 Describe "Select-XML DRT Unit Tests" -Tags "CI" {
-	
+
 	BeforeAll {
 		$testfile = Join-Path -Path $TestDrive -ChildPath "testfile.xml"
 		$xmlContent = @"
@@ -18,7 +18,7 @@ Describe "Select-XML DRT Unit Tests" -Tags "CI" {
 "@
 		$xmlContent >$testfile
 	}
-	
+
 	It "Select-XML should work"{
 		$results = Select-XML -Path $testfile -XPath "/bookstore/book/title"
 		$results.Count | Should Be 2

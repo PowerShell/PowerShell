@@ -8,10 +8,10 @@ using System.Diagnostics.CodeAnalysis; // for fxcop
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Class GeneralHelpInfo keeps track of help information to be returned by 
+    ///
+    /// Class GeneralHelpInfo keeps track of help information to be returned by
     /// general help provider.
-    /// 
+    ///
     /// </summary>
     internal class GeneralHelpInfo : HelpInfo
     {
@@ -20,7 +20,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// This constructor is can be called only from constructors of derived class
-        /// for GeneralHelpInfo. The only way to to create a GeneralHelpInfo is through 
+        /// for GeneralHelpInfo. The only way to to create a GeneralHelpInfo is through
         /// static function
         ///     Load(XmlNode node)
         /// where some sanity check is done.
@@ -42,7 +42,7 @@ namespace System.Management.Automation
         #region Basic Help Properties
 
         /// <summary>
-        /// Name of help content. 
+        /// Name of help content.
         /// </summary>
         /// <value>Name of help content</value>
         internal override string Name
@@ -106,7 +106,7 @@ namespace System.Management.Automation
 
         #endregion
 
-        #region Load 
+        #region Load
 
         /// <summary>
         /// Create a GeneralHelpInfo object from an XmlNode.

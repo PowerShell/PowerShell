@@ -2,11 +2,11 @@
 /*============================================================
 **
 **
-** Purpose: 
-** The objects of this class allow access to the run-time 
-** properties of logs and external log files. An instance of this 
+** Purpose:
+** The objects of this class allow access to the run-time
+** properties of logs and external log files. An instance of this
 ** class is obtained from EventLogSession.
-** 
+**
 ============================================================*/
 
 namespace System.Diagnostics.Eventing.Reader

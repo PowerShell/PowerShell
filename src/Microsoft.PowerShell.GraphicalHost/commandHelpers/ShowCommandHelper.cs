@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         #region fields
 
         internal const string CommandTypeSegment = " -CommandType Cmdlet, Function, Script, ExternalScript, Workflow";
-        
+
         /// <summary>
         /// Method that will return the dialog from ShowAllModulesWindow or ShowCommandWindow.
         /// This is necessary because the PlainInvokeAndShowDialog thread starter cannot receive parameters
@@ -287,7 +287,7 @@ Function PSGetSerializedShowCommandInfo
 
         #region constructor and destructor
         /// <summary>
-        /// Prevents a default instance of the ShowCommandHelper class from being created 
+        /// Prevents a default instance of the ShowCommandHelper class from being created
         /// </summary>
         private ShowCommandHelper()
         {
@@ -447,7 +447,7 @@ Function PSGetSerializedShowCommandInfo
                 }
             }
         }
-        
+
         /// <summary>
         /// Gets the command to be run to get commands and imported modules
         /// </summary>
@@ -457,7 +457,7 @@ Function PSGetSerializedShowCommandInfo
         internal static string GetShowAllModulesCommand(bool isRemoteRunspace = false, bool isFirstChance = true)
         {
             string scriptBase;
-            
+
             if (isRemoteRunspace)
             {
                 if (isFirstChance)
@@ -476,7 +476,7 @@ Function PSGetSerializedShowCommandInfo
                 scriptBase = "@(Get-Command " + ShowCommandHelper.CommandTypeSegment + ")";
             }
 
-            
+
             scriptBase += ShowCommandHelper.GetGetModuleSuffix();
             return scriptBase;
         }
@@ -487,8 +487,8 @@ Function PSGetSerializedShowCommandInfo
         /// <returns>String representation of the script for Get-SerializedCommand</returns>
         private static string GetSerializedCommandScript()
         {
-            return string.Format(CultureInfo.InvariantCulture, "@({0};{1};{2})", 
-                ScriptGetSerializedCommand, 
+            return string.Format(CultureInfo.InvariantCulture, "@({0};{1};{2})",
+                ScriptGetSerializedCommand,
                 @"PSGetSerializedShowCommandInfo",
                 @"Remove-Item -Path 'function:\PSGetSerializedShowCommandInfo' -Force");
         }
@@ -520,7 +520,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 scriptBase += ";@(Get-Command " + ShowCommandHelper.CommandTypeSegment + ")";
             }
-            
+
             scriptBase += ShowCommandHelper.GetGetModuleSuffix();
             return scriptBase;
         }
@@ -555,7 +555,7 @@ Function PSGetSerializedShowCommandInfo
                 {
                     wrappedModule = new ShowCommandModuleInfo(rawModule);
                 }
-                
+
                 // It is probably an issue somewhere else that a module would show up twice in the list, but we want to avoid
                 // throwing an exception regarding that in returnValue.Add
                 if(!returnValue.ContainsKey(wrappedModule.Name))
@@ -607,15 +607,15 @@ Function PSGetSerializedShowCommandInfo
             {
                 objectArray = ((System.Collections.ArrayList)commandObjects).ToArray();
             }
-            
+
             return objectArray;
         }
-        
+
         /// <summary>
         /// Called after a module in <paramref name="oldViewModel"/> is imported to refresh the view model.
         /// Gets a new AllModulesViewModel populated with <paramref name="importedModules"/> and <paramref name="commands"/>.
         /// The <paramref name="oldViewModel"/> is used to cleanup event listening in the old view model and to copy NoCommonParameters.
-        /// The new ViewModel will have the command selected according to <paramref name="selectedModuleNeedingImportModule"/>, 
+        /// The new ViewModel will have the command selected according to <paramref name="selectedModuleNeedingImportModule"/>,
         /// <paramref name="parentModuleNeedingImportModule"/> and <paramref name="commandNeedingImportModule"/>.
         /// </summary>
         /// <param name="oldViewModel">the viewModel before the module was imported</param>
@@ -631,7 +631,7 @@ Function PSGetSerializedShowCommandInfo
 
             if (oldViewModel.SelectedModule != null)
             {
-                // this will allow the old view model to stop listening for events before we 
+                // this will allow the old view model to stop listening for events before we
                 // replace it with a new view model
                 oldViewModel.SelectedModule.SelectedCommand = null;
                 oldViewModel.SelectedModule = null;
@@ -659,7 +659,7 @@ Function PSGetSerializedShowCommandInfo
             {
                 return returnValue;
             }
-            
+
             returnValue.SelectedModule = moduleToSelect;
 
             CommandViewModel commandToSelect = moduleToSelect.Commands.Find(
@@ -851,8 +851,8 @@ Function PSGetSerializedShowCommandInfo
         private static string GetShowCommandCommand(string commandName, bool includeAliasAndModules)
         {
             string quotedCommandName = ShowCommandHelper.SingleQuote(commandName);
-            return "@(get-command " + quotedCommandName + " " + ShowCommandHelper.CommandTypeSegment + 
-                (includeAliasAndModules ? ",Alias" : String.Empty) + ")" + 
+            return "@(get-command " + quotedCommandName + " " + ShowCommandHelper.CommandTypeSegment +
+                (includeAliasAndModules ? ",Alias" : String.Empty) + ")" +
                 (includeAliasAndModules ? ShowCommandHelper.GetGetModuleSuffix() : String.Empty);
         }
 
@@ -965,7 +965,7 @@ Function PSGetSerializedShowCommandInfo
         }
 
         /// <summary>
-        /// Calls ShowsDialog on methodThatReturnsDialog either in a separate thread or dispatched 
+        /// Calls ShowsDialog on methodThatReturnsDialog either in a separate thread or dispatched
         /// to the hostWindow thread if there is a hostWindow
         /// </summary>
         /// <param name="cmdlet">cmdlet used to retrieve the host window</param>

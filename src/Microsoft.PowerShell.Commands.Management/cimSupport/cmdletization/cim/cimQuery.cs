@@ -196,7 +196,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <param name="propertyName">Property name to query on</param>
         /// <param name="allowedPropertyValues">Property values to accept in the query</param>
         /// <param name="wildcardsEnabled">
-        ///   <c>true</c> if <paramref name="allowedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern; 
+        ///   <c>true</c> if <paramref name="allowedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern;
         ///   <c>false otherwise</c>
         /// </param>
         /// <param name="behaviorOnNoMatch">
@@ -219,7 +219,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         /// <param name="propertyName">Property name to query on</param>
         /// <param name="excludedPropertyValues">Property values to reject in the query</param>
         /// <param name="wildcardsEnabled">
-        /// <c>true</c> if <paramref name="excludedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern; 
+        /// <c>true</c> if <paramref name="excludedPropertyValues"/> should be treated as a <see cref="System.String"/> containing a wildcard pattern;
         /// <c>false otherwise</c>
         /// </param>
         /// <param name="behaviorOnNoMatch">

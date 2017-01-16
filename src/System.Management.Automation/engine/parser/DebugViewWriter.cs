@@ -1,11 +1,11 @@
 /* ****************************************************************************
  *
- * Copyright (c) Microsoft Corporation. 
+ * Copyright (c) Microsoft Corporation.
  *
- * This source code is subject to terms and conditions of the Microsoft Public License. A 
- * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Microsoft Public License, please send an email to 
- * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
+ * This source code is subject to terms and conditions of the Microsoft Public License. A
+ * copy of the license can be found in the License.html file at the root of this distribution. If
+ * you cannot locate the  Microsoft Public License, please send an email to
+ * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Microsoft Public License.
  *
  * You must not remove this notice, or any other, from this software.
@@ -14,7 +14,7 @@
  * ***************************************************************************/
 
 
-#if ENABLE_BINDER_DEBUG_LOGGING 
+#if ENABLE_BINDER_DEBUG_LOGGING
 
 using System.Linq.Expressions;
 using System.Collections.Generic;
@@ -23,7 +23,7 @@ using System.Runtime.CompilerServices;
 using System.Reflection;
 using System.Globalization;
 using System.Diagnostics;
-using System.Dynamic; 
+using System.Dynamic;
 
 namespace System.Management.Automation.Language {
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling")]
@@ -603,7 +603,7 @@ namespace System.Management.Automation.Language {
                 // 3) Parent op is -, / or %, and the child is the left operand.
                 // In this case, if left and right operand are the same, we don't
                 // remove parenthesis, e.g. (x + y) - (x + y)
-                // 
+                //
                 switch (parent.NodeType) {
                     case ExpressionType.AndAlso:
                     case ExpressionType.OrElse:

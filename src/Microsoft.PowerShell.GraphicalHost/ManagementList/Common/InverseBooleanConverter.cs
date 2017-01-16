@@ -29,7 +29,7 @@ namespace Microsoft.Management.UI.Internal
             {
                 throw new ArgumentNullException("value");
             }
-            
+
             var boolValue = (bool)value;
 
             return !boolValue;

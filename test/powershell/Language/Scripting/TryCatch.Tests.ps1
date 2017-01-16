@@ -16,7 +16,7 @@ Describe "Test try/catch" -Tags "CI" {
             }
         }
     }
-    
+
     It "Test simple parsing, ensure newlines allowed everywhere" {
         try
         {
@@ -414,7 +414,7 @@ Describe "Test try/catch" -Tags "CI" {
               }
               foo
             }
-            
+
             AssertArraysEqual $a (1, "finally 1", "finally 2", "returned")
         }
     }
@@ -435,7 +435,7 @@ Describe "Test try/catch" -Tags "CI" {
                 }
               }
             }
-            
+
             AssertArraysEqual $a ("try", "finally", 1)
         }
 
@@ -454,7 +454,7 @@ Describe "Test try/catch" -Tags "CI" {
                 }
               }
             }
-            
+
             AssertArraysEqual $a ("try", "finally", 1, 3)
         }
     }
@@ -569,7 +569,7 @@ Describe "Test try/catch" -Tags "CI" {
         It "throw; outside catch threw wrong object" {
             $a = . {
               function foo {
-                trap [system.management.automation.runtimeexception] {      
+                trap [system.management.automation.runtimeexception] {
                   return "test passed"
                 }
                 trap {

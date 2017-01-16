@@ -1,7 +1,7 @@
 ﻿<#
   Windows PowerShell Diagnostics Module
   This module contains a set of wrapper scripts that
-  enable a user to use ETW tracing in Windows 
+  enable a user to use ETW tracing in Windows
   PowerShell.
  #>
 
@@ -23,9 +23,9 @@ function Start-Trace
 {
     Param(
     [Parameter(Mandatory=$true,
-               Position=0)]               
+               Position=0)]
     [string]
-    $SessionName,    
+    $SessionName,
     [Parameter(Position=1)]
     [string]
     $OutputFilePath,
@@ -46,66 +46,66 @@ function Start-Trace
     $MaxBuffers=256,
     [Parameter()]
     [int]
-    $BufferSizeInKB = 0,    
+    $BufferSizeInKB = 0,
     [Parameter()]
     [int]
     $MaxLogFileSizeInMB=0
     )
-    
+
     Process
     {
         $executestring = " start $SessionName"
-        
+
         if ($ETS)
         {
             $executestring += " -ets"
         }
-        
+
         if ($OutputFilePath -ne $null)
         {
             $executestring += " -o $OutputFilePath"
         }
-        
+
         if ($ProviderFilePath -ne $null)
         {
             $executestring += " -pf $ProviderFilePath"
         }
-        
+
         if ($Format -ne $null)
         {
             $executestring += " -f $Format"
         }
-        
+
         if ($MinBuffers -ne 0 -or $MaxBuffers -ne 256)
         {
             $executestring += " -nb $MinBuffers $MaxBuffers"
         }
-        
+
         if ($BufferSizeInKB -ne 0)
         {
             $executestring += " -bs $BufferSizeInKB"
         }
-        
+
         if ($MaxLogFileSizeInMB -ne 0)
         {
             $executestring += " -max $MaxLogFileSizeInMB"
         }
-        
+
         & $script:Logman $executestring.Split(" ")
-    }               
+    }
 }
 
 function Stop-Trace
 {
     param(
-    [Parameter(Mandatory=$true,               
+    [Parameter(Mandatory=$true,
                Position=0)]
     $SessionName,
     [Parameter()]
     [switch]
     $ETS
     )
-    
+
     Process
     {
         if ($ETS)
@@ -113,20 +113,20 @@ function Stop-Trace
             & $script:Logman update $SessionName -ets
             & $script:Logman stop $SessionName -ets
         }
-        else        
+        else
         {
             & $script:Logman update $SessionName
-            & $script:Logman stop $SessionName 
+            & $script:Logman stop $SessionName
         }
-    }    
+    }
 }
 
 function Enable-WSManTrace
 {
-    
+
     # winrm
     "{04c6e16d-b99f-4a3a-9b3e-b8325bbc781e} 0xffffffff 0xff" | out-file $script:wsmprovfile -encoding ascii
-    
+
     # winrsmgr
     "{c0a36be8-a515-4cfa-b2b6-2676366efff7} 0xffffffff 0xff" | out-file $script:wsmprovfile -encoding ascii -append
 
@@ -138,7 +138,7 @@ function Enable-WSManTrace
 
     # IPMIPrv
     "{651d672b-e11f-41b7-add3-c2f6a4023672} 0xffffffff 0xff" | out-file $script:wsmprovfile -encoding ascii -append
-	
+
     #IpmiDrv
     "{D5C6A3E9-FA9C-434e-9653-165B4FC869E4} 0xffffffff 0xff" | out-file $script:wsmprovfile -encoding ascii -append
 
@@ -148,7 +148,7 @@ function Enable-WSManTrace
     # Event Forwarding
     "{6FCDF39A-EF67-483D-A661-76D715C6B008} 0xffffffff 0xff" | out-file $script:wsmprovfile -encoding ascii -append
 
-    Start-Trace -SessionName $script:wsmsession -ETS -OutputFilePath $script:wsmanlogfile -Format bincirc -MinBuffers 16 -MaxBuffers 256 -BufferSizeInKb 64 -MaxLogFileSizeInMB 256 -ProviderFilePath $script:wsmprovfile    
+    Start-Trace -SessionName $script:wsmsession -ETS -OutputFilePath $script:wsmanlogfile -Format bincirc -MinBuffers 16 -MaxBuffers 256 -BufferSizeInKb 64 -MaxLogFileSizeInMB 256 -ProviderFilePath $script:wsmprovfile
 }
 
 function Disable-WSManTrace
@@ -161,32 +161,32 @@ function Enable-PSWSManCombinedTrace
     param (
         [switch] $DoNotOverwriteExistingTrace
     )
-	
+
     $provfile = [io.path]::GetTempFilename()
-    
+
     $traceFileName = [string][Guid]::NewGuid()
     if ($DoNotOverwriteExistingTrace) {
         $fileName = [string][guid]::newguid()
-        $logfile = $pshome + "\\Traces\\PSTrace_$fileName.etl" 
+        $logfile = $pshome + "\\Traces\\PSTrace_$fileName.etl"
     } else {
-        $logfile = $pshome + "\\Traces\\PSTrace.etl" 
+        $logfile = $pshome + "\\Traces\\PSTrace.etl"
     }
-    
+
     "Microsoft-Windows-PowerShell 0 5" | out-file $provfile -encoding ascii
     "Microsoft-Windows-WinRM 0 5" | out-file $provfile -encoding ascii -append
-    
+
     if (!(Test-Path $pshome\Traces))
     {
         mkdir -Force $pshome\Traces | out-null
     }
-    
+
     if (Test-Path $logfile)
     {
         Remove-Item -Force $logfile | out-null
     }
-    
-    Start-Trace -SessionName $script:pssession -OutputFilePath $logfile -ProviderFilePath $provfile -ets 
-	
+
+    Start-Trace -SessionName $script:pssession -OutputFilePath $logfile -ProviderFilePath $provfile -ets
+
     remove-item $provfile -Force -ea 0
 }
 
@@ -209,16 +209,16 @@ function Set-LogProperties
         if ($LogDetails.AutoBackup -and !$LogDetails.Retention)
         {
             throw (New-Object System.InvalidOperationException)
-        }    
-        
+        }
+
         $enabled = $LogDetails.Enabled.ToString()
         $retention = $LogDetails.Retention.ToString()
         $autobackup = $LogDetails.AutoBackup.ToString()
         $maxLogSize = $LogDetails.MaxLogSize.ToString()
         $osVersion = [Version] (Get-Ciminstance Win32_OperatingSystem).Version
-        
+
         if (($LogDetails.Type -eq "Analytic") -or ($LogDetails.Type -eq "Debug"))
-        {           
+        {
             if ($LogDetails.Enabled)
             {
                 if($osVersion -lt 6.3.7600)
@@ -253,7 +253,7 @@ function Set-LogProperties
                 & $script:wevtutil /q:$Force $script:slparam $LogDetails.Name -e:$Enabled -rt:$Retention -ab:$AutoBackup -ms:$MaxLogSize
             }
         }
-    }            
+    }
 }
 
 function ConvertTo-Bool([string]$value)
@@ -273,21 +273,21 @@ function Get-LogProperties
     param(
         [Parameter(Mandatory=$true, ValueFromPipeline=$true, Position=0)] $Name
     )
-    
+
     Process
     {
         $details = & $script:wevtutil $script:glparam $Name
         $indexes = @(1,2,8,9,10)
         $value = @()
         foreach($index in $indexes)
-        { 
+        {
             $value += @(($details[$index].SubString($details[$index].IndexOf(":")+1)).Trim())
         }
-        
+
         $enabled = ConvertTo-Bool $value[0]
         $retention = ConvertTo-Bool $value[2]
-        $autobackup = ConvertTo-Bool $value[3]        
-        
+        $autobackup = ConvertTo-Bool $value[3]
+
         New-Object Microsoft.PowerShell.Diagnostics.LogDetails $Name, $enabled, $value[1], $retention, $autobackup, $value[4]
     }
 }
@@ -300,11 +300,11 @@ function Enable-PSTrace
      )
 
     $Properties = Get-LogProperties ($script:psprovidername + $script:analyticlog)
-	
+
 	if (!$Properties.Enabled) {
 		$Properties.Enabled = $true
 		if ($Force) {
-			Set-LogProperties $Properties -Force 
+			Set-LogProperties $Properties -Force
 		} else {
 			Set-LogProperties $Properties
 		}
@@ -315,7 +315,7 @@ function Enable-PSTrace
 		if (!$Properties.Enabled) {
 			$Properties.Enabled = $true
 			if ($Force) {
-				Set-LogProperties $Properties -Force 
+				Set-LogProperties $Properties -Force
 			} else {
 				Set-LogProperties $Properties
 			}
@@ -333,7 +333,7 @@ function Disable-PSTrace
 		$Properties.Enabled = $false
 		Set-LogProperties $Properties
 	}
-	
+
 	if (!$AnalyticOnly) {
 		$Properties = Get-LogProperties ($script:psprovidername + $script:debuglog)
 		if ($Properties.Enabled) {

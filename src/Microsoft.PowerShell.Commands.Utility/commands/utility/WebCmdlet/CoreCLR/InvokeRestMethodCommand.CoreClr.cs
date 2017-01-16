@@ -14,9 +14,9 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The Invoke-RestMethod command
     /// This command makes an HTTP or HTTPS request to a web service,
-    /// and returns the response in an appropriate way. 
-    /// Intended to work against the wide spectrum of "RESTful" web services 
-    /// currently deployed across the web.  
+    /// and returns the response in an appropriate way.
+    /// Intended to work against the wide spectrum of "RESTful" web services
+    /// currently deployed across the web.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Invoke, "RestMethod", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217034")]
     public partial class InvokeRestMethodCommand : WebRequestPSCmdlet
@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
         #region Virtual Method Overrides
 
         /// <summary>
-        /// Process the web response and output corresponding objects. 
+        /// Process the web response and output corresponding objects.
         /// </summary>
         /// <param name="response"></param>
         internal override void ProcessResponse(HttpResponseMessage response)
@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ShouldWriteToPipeline)
                 {
-                    // First see if it is an RSS / ATOM feed, in which case we can 
+                    // First see if it is an RSS / ATOM feed, in which case we can
                     // stream it - unless the user has overridden it with a return type of "XML"
                     if (TryProcessFeedStream(responseStream))
                     {

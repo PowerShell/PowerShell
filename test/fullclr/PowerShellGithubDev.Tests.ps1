@@ -1,5 +1,5 @@
-$originalPSModulePath = $env:PSModulePath 
-try 
+$originalPSModulePath = $env:PSModulePath
+try
 {
     # load all modules only from $env:DEVPATH !!!
     $env:PSModulePath = "$($env:DEVPATH)\Modules"
@@ -84,7 +84,7 @@ try
                 {
                     Remove-Module -ErrorAction SilentlyContinue PsScheduledJob
                 }
-            }            
+            }
 
 
             It 'loads PSWorkflowUtility' {
@@ -153,10 +153,10 @@ try
                 }
             }
         }
-    }    
+    }
 
 }
 finally
 {
     $env:PSModulePath = $originalPSModulePath
-}     
+}

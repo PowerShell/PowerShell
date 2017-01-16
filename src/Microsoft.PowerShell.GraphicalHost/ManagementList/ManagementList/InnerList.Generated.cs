@@ -19,7 +19,7 @@ using System.Windows.Input;
 
 namespace Microsoft.Management.UI.Internal
 {
-    
+
     /// <summary>
     /// List control for Inner Applications.  This Control supports grouping, sorting, filtering and GUI Virtualization through DataBinding.
     /// </summary>
@@ -34,13 +34,13 @@ namespace Microsoft.Management.UI.Internal
             InnerList obj = (InnerList) sender;
             obj.OnCopyCanExecute( e );
         }
-        
+
         static private void CopyCommand_CommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             InnerList obj = (InnerList) sender;
             obj.OnCopyExecuted( e );
         }
-        
+
         /// <summary>
         /// Called to determine if Copy can execute.
         /// </summary>
@@ -48,9 +48,9 @@ namespace Microsoft.Management.UI.Internal
         {
             OnCopyCanExecuteImplementation(e);
         }
-        
+
         partial void OnCopyCanExecuteImplementation(CanExecuteRoutedEventArgs e);
-        
+
         /// <summary>
         /// Called when Copy executes.
         /// </summary>
@@ -61,9 +61,9 @@ namespace Microsoft.Management.UI.Internal
         {
             OnCopyExecutedImplementation(e);
         }
-        
+
         partial void OnCopyExecutedImplementation(ExecutedRoutedEventArgs e);
-        
+
         //
         // AutoGenerateColumns dependency property
         //
@@ -71,7 +71,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the AutoGenerateColumns dependency property.
         /// </summary>
         public static readonly DependencyProperty AutoGenerateColumnsProperty = DependencyProperty.Register( "AutoGenerateColumns", typeof(bool), typeof(InnerList), new PropertyMetadata( BooleanBoxes.FalseBox, AutoGenerateColumnsProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets a value indicating whether this list&apos;s columns should be automatically generated based on its data.
         /// </summary>
@@ -90,18 +90,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(AutoGenerateColumnsProperty,BooleanBoxes.Box(value));
             }
         }
-        
+
         static private void AutoGenerateColumnsProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             InnerList obj = (InnerList) o;
             obj.OnAutoGenerateColumnsChanged( new PropertyChangedEventArgs<bool>((bool)e.OldValue, (bool)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when AutoGenerateColumns property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<bool>> AutoGenerateColumnsChanged;
-        
+
         /// <summary>
         /// Called when AutoGenerateColumns property changes.
         /// </summary>
@@ -110,9 +110,9 @@ namespace Microsoft.Management.UI.Internal
             OnAutoGenerateColumnsChangedImplementation(e);
             RaisePropertyChangedEvent(AutoGenerateColumnsChanged, e);
         }
-        
+
         partial void OnAutoGenerateColumnsChangedImplementation(PropertyChangedEventArgs<bool> e);
-        
+
         //
         // IsGroupsExpanded dependency property
         //
@@ -120,7 +120,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the IsGroupsExpanded dependency property.
         /// </summary>
         public static readonly DependencyProperty IsGroupsExpandedProperty = DependencyProperty.Register( "IsGroupsExpanded", typeof(bool), typeof(InnerList), new PropertyMetadata( BooleanBoxes.FalseBox, IsGroupsExpandedProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets a value indicating whether is groups expanded or not.
         /// </summary>
@@ -139,18 +139,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(IsGroupsExpandedProperty,BooleanBoxes.Box(value));
             }
         }
-        
+
         static private void IsGroupsExpandedProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             InnerList obj = (InnerList) o;
             obj.OnIsGroupsExpandedChanged( new PropertyChangedEventArgs<bool>((bool)e.OldValue, (bool)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when IsGroupsExpanded property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<bool>> IsGroupsExpandedChanged;
-        
+
         /// <summary>
         /// Called when IsGroupsExpanded property changes.
         /// </summary>
@@ -159,9 +159,9 @@ namespace Microsoft.Management.UI.Internal
             OnIsGroupsExpandedChangedImplementation(e);
             RaisePropertyChangedEvent(IsGroupsExpandedChanged, e);
         }
-        
+
         partial void OnIsGroupsExpandedChangedImplementation(PropertyChangedEventArgs<bool> e);
-        
+
         //
         // IsPrimarySortColumn dependency property
         //
@@ -173,7 +173,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the IsPrimarySortColumn dependency property.
         /// </summary>
         public static readonly DependencyProperty IsPrimarySortColumnProperty = IsPrimarySortColumnPropertyKey.DependencyProperty;
-        
+
         /// <summary>
         /// Gets whether a column is the primary sort in a list.
         /// </summary>
@@ -185,7 +185,7 @@ namespace Microsoft.Management.UI.Internal
         {
             return (bool) element.GetValue(IsPrimarySortColumnProperty);
         }
-        
+
         /// <summary>
         /// Sets whether a column is the primary sort in a list.
         /// </summary>
@@ -195,14 +195,14 @@ namespace Microsoft.Management.UI.Internal
         {
             element.SetValue(IsPrimarySortColumnPropertyKey,BooleanBoxes.Box(value));
         }
-        
+
         static private void IsPrimarySortColumnProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             IsPrimarySortColumnProperty_PropertyChangedImplementation(o, e);
         }
-        
+
         static partial void IsPrimarySortColumnProperty_PropertyChangedImplementation(DependencyObject o, DependencyPropertyChangedEventArgs e);
-        
+
         /// <summary>
         /// Called when a property changes.
         /// </summary>
@@ -213,11 +213,11 @@ namespace Microsoft.Management.UI.Internal
                 eh(this,e);
             }
         }
-        
+
         //
         // Static constructor
         //
-        
+
         /// <summary>
         /// Called when the type is initialized.
         /// </summary>
@@ -227,9 +227,9 @@ namespace Microsoft.Management.UI.Internal
             CommandManager.RegisterClassCommandBinding( typeof(InnerList), new CommandBinding( ApplicationCommands.Copy, CopyCommand_CommandExecuted, CopyCommand_CommandCanExecute ));
             StaticConstructorImplementation();
         }
-        
+
         static partial void StaticConstructorImplementation();
-        
+
     }
 }
 #endregion

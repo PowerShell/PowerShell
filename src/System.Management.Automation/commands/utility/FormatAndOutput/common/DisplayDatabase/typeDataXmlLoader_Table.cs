@@ -445,7 +445,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 TableRowItemDefinition rid = new TableRowItemDefinition();
 
-                // process the remaining nodes 
+                // process the remaining nodes
                 bool alignmentNodeFound = false; // cardinality 0..1
                 foreach (XmlNode n in unprocessedNodes)
                 {

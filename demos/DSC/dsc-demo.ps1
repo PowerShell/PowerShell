@@ -1,6 +1,6 @@
 
 #Get Distro type and set distro-specific variables
-$OSname = Get-Content "/etc/os-release" |Select-String -Pattern "^Name=" 
+$OSname = Get-Content "/etc/os-release" |Select-String -Pattern "^Name="
 $OSName = $OSName.tostring().split("=")[1].Replace('"','')
 if ($OSName -like "Ubuntu*"){
     $distro = "Ubuntu"
@@ -56,12 +56,12 @@ Configuration ApacheServer{
 
         nxFile Welcome.conf{
             DestinationPath = "${VhostDir}/welcome.conf"
-            Ensure = "Absent"            
+            Ensure = "Absent"
         }
 
         nxFile UserDir.conf{
             DestinationPath = "${VhostDir}/userdir.conf"
-            Ensure = "Absent"            
+            Ensure = "Absent"
         }
 
         #Ensure website is defined
@@ -107,8 +107,8 @@ ServerName $hostname
             Controller = $ServiceCtl
             DependsOn = "[nxFile]DefaultSite.conf"
         }
-    
-    } 
+
+    }
 }
 
 ApacheServer -OutputPath "/tmp"

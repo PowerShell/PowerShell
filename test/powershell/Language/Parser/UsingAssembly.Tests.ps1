@@ -41,7 +41,7 @@ public class ABC {}
             $err.Count | Should Be 1
             $err[0].ErrorId | Should Be CannotLoadAssemblyWithUriSchema
         }
-        
+
         It "parse does not load the assembly" -pending {
             $assemblies = [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
             $assemblies -contains "UsingAssemblyTest$guid" | Should Be $false
@@ -82,26 +82,26 @@ public class ABC {}
             $assemblies = powershell -noprofile -command @"
     using assembly .\UsingAssemblyTest$guid.dll
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
-"@ 
+"@
             $assemblies -contains "UsingAssemblyTest$guid" | Should Be $true
 
             $assemblies = powershell -noprofile -command @"
     using assembly $PSScriptRoot\UsingAssemblyTest$guid.dll
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
-"@ 
+"@
             $assemblies -contains "UsingAssemblyTest$guid" | Should Be $true
 
 
             $assemblies = powershell -noprofile -command @"
     using assembly System.Drawing
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
-"@ 
+"@
             $assemblies -contains "System.Drawing" | Should Be $true
 
             $assemblies = powershell -noprofile -command @"
     using assembly 'System.Drawing, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a'
     [Appdomain]::CurrentDomain.GetAssemblies().GetName().Name
-"@ 
+"@
             $assemblies -contains "System.Drawing" | Should Be $true
         }
     }

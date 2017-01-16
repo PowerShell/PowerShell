@@ -19,40 +19,40 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
+    ///
     /// PSInstaller is a class for facilitating installation
-    /// of monad engine and monad PSSnapin's. 
-    /// 
+    /// of monad engine and monad PSSnapin's.
+    ///
     /// This class implements installer api from CLR. At install
-    /// time, installation utilities (like InstallUtil.exe) will 
-    /// call api implementation functions in this class automatically. 
+    /// time, installation utilities (like InstallUtil.exe) will
+    /// call api implementation functions in this class automatically.
     /// This includes functions like Install, Uninstall, Rollback
-    /// and Commit. 
-    /// 
+    /// and Commit.
+    ///
     /// This class is an abstract class for handling installation needs
-    /// that are common for all monad components, which include, 
-    /// 
+    /// that are common for all monad components, which include,
+    ///
     ///     1. accessing system registry
-    ///     2. support of additional command line parameters. 
+    ///     2. support of additional command line parameters.
     ///     3. writing registry files
     ///     4. automatically extract information like vender, version, etc.
-    /// 
+    ///
     /// Different monad component will derive from this class. Two common
-    /// components that need install include, 
-    /// 
-    ///     1. PSSnapin. Installation of PSSnapin will require information 
-    ///        about PSSnapin assembly, version, vendor, etc to be 
+    /// components that need install include,
+    ///
+    ///     1. PSSnapin. Installation of PSSnapin will require information
+    ///        about PSSnapin assembly, version, vendor, etc to be
     ///        written to registry.
-    /// 
+    ///
     ///     2. Engine. Installation of monad engine will require information
     ///        about engine assembly, version, CLR information to be
-    ///        written to registry. 
-    /// 
+    ///        written to registry.
+    ///
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// This is an abstract class to be derived by monad engine and PSSnapin installers
-    /// only. Developer should not directly derive from this class. 
+    /// only. Developer should not directly derive from this class.
     /// </remarks>
     public abstract class PSInstaller : Installer
     {
@@ -62,8 +62,8 @@ namespace System.Management.Automation
             {
                 // For 3.0 PowerShell, we use "3" as the registry version key only for Engine
                 // related data like ApplicationBase.
-                // For 3.0 PowerShell, we still use "1" as the registry version key for 
-                // Snapin and Custom shell lookup/discovery. 
+                // For 3.0 PowerShell, we still use "1" as the registry version key for
+                // Snapin and Custom shell lookup/discovery.
                 return new string[] {
                     "HKEY_LOCAL_MACHINE\\Software\\Microsoft\\PowerShell\\" + PSVersionInfo.RegistryVersion1Key + "\\"
                 };
@@ -71,7 +71,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal abstract string RegKey
         {
@@ -79,7 +79,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal abstract Dictionary<String, object> RegValues
         {
@@ -87,7 +87,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="stateSaver"></param>
         public sealed override void Install(IDictionary stateSaver)

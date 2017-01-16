@@ -8,7 +8,7 @@ Describe "SecureString conversion tests" -Tags "CI" {
         if ( ! $IsWindows ) { $PSdefaultParameterValues["it:pending"] = $true }
     }
     AfterAll {
-        $PSdefaultParameterValues = $defaultParamValues 
+        $PSdefaultParameterValues = $defaultParamValues
     }
 
     It "using null arguments to ConvertFrom-SecureString produces an exception" {
@@ -19,9 +19,9 @@ Describe "SecureString conversion tests" -Tags "CI" {
         catch {
             $_.FullyQualifiedErrorId | should be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ConvertFromSecureStringCommand"
         }
-        
+
     }
-    
+
     It "using a bad key produces an exception" {
         try {
             $badkey = [byte[]]@(1,2)

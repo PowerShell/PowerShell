@@ -92,10 +92,10 @@ namespace System.Management.Automation
             yield return type.ToString();
 
             // Win8: 186792: PSTypeNames does not include full WMI class derivation
-            // From MSDN: __Derivation; Data type: CIM_STRING array 
-            // Access type: Read-only for both instances and classes 
+            // From MSDN: __Derivation; Data type: CIM_STRING array
+            // Access type: Read-only for both instances and classes
             // Class hierarchy of the current class or instance. The first element is
-            // the immediate parent class, the next is its parent, and so on; the last element 
+            // the immediate parent class, the next is its parent, and so on; the last element
             // is the base class.
             PropertyData derivationData = managementObj.SystemProperties["__Derivation"];
             if (null != derivationData)
@@ -202,7 +202,7 @@ namespace System.Management.Automation
         /// in the first call to GetMember and GetMembers so that subsequent
         /// calls can use the cache.
         /// In the case of the .NET adapter that would be a cache from the .NET type to
-        /// the public properties and fields available in that type. 
+        /// the public properties and fields available in that type.
         /// In the case of the DirectoryEntry adapter, this could be a cache of the objectClass
         /// to the properties available in it.
         /// </summary>
@@ -268,22 +268,22 @@ namespace System.Management.Automation
             }
             catch (ManagementException)
             {
-                // A property that lacks the Write qualifier may still be writeable. 
-                // The provider implementation may allow any properties in the provider 
+                // A property that lacks the Write qualifier may still be writeable.
+                // The provider implementation may allow any properties in the provider
                 // classes to be changed, whether the Write qualifier is present or not.
                 return true;
             }
             catch (UnauthorizedAccessException)
             {
-                // A property that lacks the Write qualifier may still be writeable. 
-                // The provider implementation may allow any properties in the provider 
+                // A property that lacks the Write qualifier may still be writeable.
+                // The provider implementation may allow any properties in the provider
                 // classes to be changed, whether the Write qualifier is present or not.
                 return true;
             }
             catch (System.Runtime.InteropServices.COMException)
             {
-                // A property that lacks the Write qualifier may still be writeable. 
-                // The provider implementation may allow any properties in the provider 
+                // A property that lacks the Write qualifier may still be writeable.
+                // The provider implementation may allow any properties in the provider
                 // classes to be changed, whether the Write qualifier is present or not.
                 return true;
             }
@@ -498,7 +498,7 @@ namespace System.Management.Automation
                     bool isStatic = IsStaticMethod(mdata);
                     if (isStatic == staticBinding)
                     {
-                        // a method is added depending on 
+                        // a method is added depending on
                         // whether staticBinding is requested or not.
                         string methodName = mdata.Name;
                         WMIMethodCacheEntry mCache = new WMIMethodCacheEntry(methodName, classPath.Path, mdata);
@@ -575,7 +575,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the dotnet type of a given PropertyData 
+        /// Gets the dotnet type of a given PropertyData
         /// </summary>
         /// <param name="pData">PropertyData input.</param>
         /// <returns>A string representing dotnet type.</returns>
@@ -764,12 +764,12 @@ namespace System.Management.Automation
                 catch (ManagementException)
                 {
                     // If there is an exception accessing location
-                    // add the parameter to the end.                        
+                    // add the parameter to the end.
                 }
                 catch (System.Runtime.InteropServices.COMException)
                 {
                     // If there is an exception accessing location
-                    // add the parameter to the end.                        
+                    // add the parameter to the end.
                 }
 
                 if (location < 0)
@@ -871,13 +871,13 @@ namespace System.Management.Automation
         /// Retrieves all the properties available in the object.
         /// </summary>
         /// <param name="wmiObject">object to get all the property information from</param>
-        /// <param name="members">collection where the members will be added</param>        
+        /// <param name="members">collection where the members will be added</param>
         protected abstract void AddAllProperties<T>(ManagementBaseObject wmiObject,
             PSMemberInfoInternalCollection<T> members) where T : PSMemberInfo;
 
         /// <summary>
         /// Adds method information of the ManagementObject. This is done by accessing
-        /// the ManagementClass corresponding to this ManagementObject. All the method 
+        /// the ManagementClass corresponding to this ManagementObject. All the method
         /// information is cached for a particular ManagementObject.
         /// </summary>
         /// <typeparam name="T">PSMemberInfo</typeparam>
@@ -927,7 +927,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Deals with ManagementClass objects.
-    /// Adapts only static methods and SystemProperties of a 
+    /// Adapts only static methods and SystemProperties of a
     /// ManagementClass object.
     /// </summary>
     internal class ManagementClassApdapter : BaseWMIAdapter

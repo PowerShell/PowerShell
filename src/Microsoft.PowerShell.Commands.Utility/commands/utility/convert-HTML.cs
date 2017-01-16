@@ -188,7 +188,7 @@ namespace Microsoft.PowerShell.Commands
         private SwitchParameter _fragment;
 
         /// <summary>
-        /// Specifies the text to include prior the 
+        /// Specifies the text to include prior the
         /// closing body tag of the HTML output
         /// </summary>
         [Parameter]
@@ -208,7 +208,7 @@ namespace Microsoft.PowerShell.Commands
         private string[] _postContent;
 
         /// <summary>
-        /// Specifies the text to include after the 
+        /// Specifies the text to include after the
         /// body tag of the HTML output
         /// </summary>
         [Parameter]
@@ -350,7 +350,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -506,7 +506,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void WriteTableHeader(StringBuilder THtag, List<MshParameter> resolvedNameMshParameters)
         {
-            //write the property names 
+            //write the property names
             foreach (MshParameter p in resolvedNameMshParameters)
             {
                 THtag.Append("<th>");
@@ -533,8 +533,8 @@ namespace Microsoft.PowerShell.Commands
         private int _numberObjects = 0;
 
         /// <summary>
-        /// 
-        /// 
+        ///
+        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -590,7 +590,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void EndProcessing()
         {

@@ -28,7 +28,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 	BeforeEach {
 		$testfile = Join-Path -Path $TestDrive -ChildPath "clixml-directive.xml"
 	}
-	
+
     AfterEach {
 		remove-item $testfile
     }
@@ -39,7 +39,7 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$results.Count | Should BeGreaterThan 0
 		$results[0].ToString() | Should Match "System.Diagnostics.Process"
     }
-	
+
 	It "Import with Rehydration should work" -Skip:$IsOSX{
 		$property1 = 256
 		$property2 = "abcdef"

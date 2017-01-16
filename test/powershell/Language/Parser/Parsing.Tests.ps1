@@ -1,7 +1,6 @@
 ﻿Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
-set-strictmode -v 2    
+set-strictmode -v 2
 
-    
 Describe 'for statement parsing' -Tags "CI" {
     ShouldBeParseError 'for' MissingOpenParenthesisAfterKeyword 4 -CheckColumnNumber
     ShouldBeParseError 'for(' MissingEndParenthesisAfterStatement 5 -CheckColumnNumber
@@ -138,7 +137,7 @@ Describe 'do/while statement statement parsing' -Tags "CI" {
 }
 
 Describe 'trap statement parsing' -Tags "CI" {
-   
+
     ShouldBeParseError 'trap' MissingTrapStatement 4
     ShouldBeParseError 'trap [int]' MissingTrapStatement 11 -CheckColumnNumber
 
@@ -204,7 +203,7 @@ Describe 'try/catch/finally statement parsing' -Tags "CI" {
     ShouldBeParseError 'try {} finally { break }' ControlLeavingFinally 17
     ShouldBeParseError 'try {} finally { continue }' ControlLeavingFinally 17
 
-    Test-ErrorStmt 'try'                                   'try' 
+    Test-ErrorStmt 'try'                                   'try'
     Test-ErrorStmt 'try {1}'                               'try {1}' '{1}' '1' '1' '1'
     Test-ErrorStmt 'try {1} catch'                         'try {1} catch'  '{1}' '1' '1' '1'
     Test-ErrorStmt 'try {1} finally'                       'try {1} finally'  '{1}' '1' '1' '1'

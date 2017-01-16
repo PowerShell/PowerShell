@@ -3,7 +3,7 @@
 //     Copyright (c) Microsoft Corporation.  All rights reserved.
 // </copyright>
 // <summary>
-// A textbox modified to show Default text when no user text 
+// A textbox modified to show Default text when no user text
 // is supplied
 // </summary>
 //-----------------------------------------------------------------------
@@ -24,10 +24,10 @@ namespace Microsoft.Management.UI.Internal
         static partial void StaticConstructorImplementation()
         {
             TextProperty.OverrideMetadata(
-                                          typeof(MessageTextBox), 
+                                          typeof(MessageTextBox),
                                           new FrameworkPropertyMetadata(
                                                                         String.Empty,
-                                                                        null, 
+                                                                        null,
                                                                         new CoerceValueCallback(OnTextBoxTextCoerce)));
         }
 

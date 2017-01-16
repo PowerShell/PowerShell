@@ -148,10 +148,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Static constructor
-        /// 
-        /// NOTE: FWLinks for core PowerShell modules are needed since they get loaded as snapins in a Remoting Endpoint. 
+        ///
+        /// NOTE: FWLinks for core PowerShell modules are needed since they get loaded as snapins in a Remoting Endpoint.
         /// When we moved to modules in V3, we were not able to make this change as it was a risky change to make at that time.
-        /// 
+        ///
         /// </summary>
         static UpdatableHelpCommandBase()
         {
@@ -487,7 +487,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // Win8: 572882 When the system locale is English and the UI is JPN, 
+            // Win8: 572882 When the system locale is English and the UI is JPN,
             // running "update-help" still downs English help content.
             var cultures = _language ?? _helpSystem.GetCurrentUICulture();
 
@@ -699,7 +699,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="path">path to resolve</param>
         /// <param name="recurse">resolve recursively?</param>
-        /// <param name="isLiteralPath">Treat the path / start path as a literal path?</param>/// 
+        /// <param name="isLiteralPath">Treat the path / start path as a literal path?</param>///
         /// <returns>a list of directories</returns>
         internal IEnumerable<string> ResolvePath(string path, bool recurse, bool isLiteralPath)
         {

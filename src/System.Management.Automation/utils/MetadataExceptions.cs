@@ -33,7 +33,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of MetadataException with the message set 
+        /// Initializes a new instance of MetadataException with the message set
         /// to typeof(MetadataException).FullName
         /// </summary>
         public MetadataException() : base(typeof(MetadataException).FullName)
@@ -110,7 +110,7 @@ namespace System.Management.Automation
         /// <param name="context">streaming context</param>
         protected ValidationMetadataException(SerializationInfo info, StreamingContext context) : base(info, context) { }
         /// <summary>
-        /// Initializes a new instance of ValidationMetadataException with the message set 
+        /// Initializes a new instance of ValidationMetadataException with the message set
         /// to typeof(ValidationMetadataException).FullName
         /// </summary>
         public ValidationMetadataException() : base(typeof(ValidationMetadataException).FullName) { }
@@ -133,7 +133,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initialize a new instance of ValidationMetadataException. This validation exception could be 
+        /// Initialize a new instance of ValidationMetadataException. This validation exception could be
         /// ignored in positional binding phase if the <para>swallowException</para> is set to be true.
         /// </summary>
         /// <param name="message">
@@ -149,7 +149,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Make the positional binding swallow this exception when it's set to true
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// This property is only used internally in the positional binding phase
         /// </remarks>
@@ -175,7 +175,7 @@ namespace System.Management.Automation
         /// <param name="context">streaming context</param>
         protected ArgumentTransformationMetadataException(SerializationInfo info, StreamingContext context) : base(info, context) { }
         /// <summary>
-        /// Initializes a new instance of ArgumentTransformationMetadataException with the message set 
+        /// Initializes a new instance of ArgumentTransformationMetadataException with the message set
         /// to typeof(ArgumentTransformationMetadataException).FullName
         /// </summary>
         public ArgumentTransformationMetadataException() : base(typeof(ArgumentTransformationMetadataException).FullName) { }
@@ -213,7 +213,7 @@ namespace System.Management.Automation
         /// <param name="context">streaming context</param>
         protected ParsingMetadataException(SerializationInfo info, StreamingContext context) : base(info, context) { }
         /// <summary>
-        /// Initializes a new instance of ParsingMetadataException with the message set 
+        /// Initializes a new instance of ParsingMetadataException with the message set
         /// to typeof(ParsingMetadataException).FullName
         /// </summary>
         public ParsingMetadataException() : base(typeof(ParsingMetadataException).FullName) { }

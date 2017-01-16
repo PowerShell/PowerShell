@@ -18,23 +18,23 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the function.
         /// </param>
-        /// 
+        ///
         /// <param name="function">
         /// The ScriptBlock for the function
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The execution context for the function.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        /// 
+        ///
         internal FunctionInfo(string name, ScriptBlock function, ExecutionContext context) : this(name, function, context, null)
         {
         } // FunctionInfo ctor
@@ -42,27 +42,27 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the function.
         /// </param>
-        /// 
+        ///
         /// <param name="function">
         /// The ScriptBlock for the function
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The execution context for the function.
         /// </param>
-        /// 
+        ///
         /// <param name="helpFile">
         /// The name of the help file associated with the function.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        /// 
+        ///
         internal FunctionInfo(string name, ScriptBlock function, ExecutionContext context, string helpFile) : base(name, CommandTypes.Function, context)
         {
             if (function == null)
@@ -81,27 +81,27 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the function.
         /// </param>
-        /// 
+        ///
         /// <param name="function">
         /// The ScriptBlock for the function
         /// </param>
-        /// 
+        ///
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The execution context for the function.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        /// 
+        ///
         internal FunctionInfo(string name, ScriptBlock function, ScopedItemOptions options, ExecutionContext context) : this(name, function, options, context, null)
         {
         } // FunctionInfo ctor
@@ -109,31 +109,31 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the FunctionInfo class with the specified name and ScriptBlock
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the function.
         /// </param>
-        /// 
+        ///
         /// <param name="function">
         /// The ScriptBlock for the function
         /// </param>
-        /// 
+        ///
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The execution context for the function.
         /// </param>
-        /// 
+        ///
         /// <param name="helpFile">
         /// The name of the help file associated with the function.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="function"/> is null.
         /// </exception>
-        /// 
+        ///
         internal FunctionInfo(string name, ScriptBlock function, ScopedItemOptions options, ExecutionContext context, string helpFile)
             : this(name, function, context, helpFile)
         {
@@ -200,22 +200,22 @@ namespace System.Management.Automation
         /// <summary>
         /// Updates a function.
         /// </summary>
-        /// 
+        ///
         /// <param name="newFunction">
         /// The script block that the function should represent.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// If true, the script block will be applied even if the filter is ReadOnly.
         /// </param>
-        /// 
+        ///
         /// <param name="options">
         /// Any options to set on the new function, null if none.
         /// </param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="newFunction"/> is null.
         /// </exception>
-        /// 
+        ///
         internal void Update(ScriptBlock newFunction, bool force, ScopedItemOptions options)
         {
             Update(newFunction, force, options, null);
@@ -230,27 +230,27 @@ namespace System.Management.Automation
         /// <summary>
         /// Updates a function.
         /// </summary>
-        /// 
+        ///
         /// <param name="newFunction">
         /// The script block that the function should represent.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// If true, the script block will be applied even if the filter is ReadOnly.
         /// </param>
-        /// 
+        ///
         /// <param name="options">
         /// Any options to set on the new function, null if none.
         /// </param>
-        /// 
+        ///
         /// <param name="helpFile">
         /// The helpfile for this function.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="newFunction"/> is null.
         /// </exception>
-        /// 
+        ///
         internal void Update(ScriptBlock newFunction, bool force, ScopedItemOptions options, string helpFile)
         {
             if (newFunction == null)
@@ -309,7 +309,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the name of the default parameter set.  
+        /// Gets the name of the default parameter set.
         /// Returns <c>null</c> if this function doesn't use cmdlet parameter binding or if the default parameter set wasn't specified.
         /// </summary>
         public string DefaultParameterSet
@@ -329,7 +329,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets or sets the scope options for the function.
         /// </summary>
-        /// 
+        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the trying to set a function that is constant or
         ///     if the value trying to be set is ScopedItemOptions.Constant

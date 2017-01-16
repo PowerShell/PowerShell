@@ -9,7 +9,7 @@ using System.Collections.ObjectModel;
 using COM = System.Runtime.InteropServices.ComTypes;
 
 // Stops compiler from warning about unknown warnings. Prefast warning numbers are not recognized by C# compiler
-#pragma warning disable 1634, 1691 
+#pragma warning disable 1634, 1691
 
 namespace System.Management.Automation
 {
@@ -60,7 +60,7 @@ namespace System.Management.Automation
                 ElementDescription = new COM.ELEMDESC();
                 ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
 
-                //Disable PRefast warning for converting to int32 and converting back into intptr. 
+                //Disable PRefast warning for converting to int32 and converting back into intptr.
                 //Code below takes into account 32 bit vs 64 bit conversions
 #pragma warning disable 56515
                 if (IntPtr.Size == 4)
@@ -299,7 +299,7 @@ namespace System.Management.Automation
 
                 ElementDescription = new COM.ELEMDESC();
                 ElementDescriptionArrayByteOffset = i * ElementDescriptionSize;
-                //Disable PRefast warning for converting to int32 and converting back into intptr. 
+                //Disable PRefast warning for converting to int32 and converting back into intptr.
                 //Code below takes into account 32 bit vs 64 bit conversions
 #pragma warning disable 56515
 

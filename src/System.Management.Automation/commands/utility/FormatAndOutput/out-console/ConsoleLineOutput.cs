@@ -37,13 +37,13 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return len;
         }
 
-        internal override int Length(char character) 
+        internal override int Length(char character)
         {
             if (character >= 'A' && character <= 'Z')
                 return 2;
             return 1;
         }
-        
+
         internal override int GetHeadSplitLength(string str, int offset, int displayCells)
         {
             return GetSplitLengthInternalHelper(str, offset, displayCells, true);
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         #region LineOutput implementation
         /// <summary>
-        /// the # of columns is just the width of the screen buffer (not the 
+        /// the # of columns is just the width of the screen buffer (not the
         /// width of the window)
         /// </summary>
         /// <value></value>
@@ -288,7 +288,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// callback to be called when ILineOutput.WriteLine() is called by WriteLineHelper 
+        /// callback to be called when ILineOutput.WriteLine() is called by WriteLineHelper
         /// </summary>
         /// <param name="s">string to write</param>
         private void OnWriteLine(string s)

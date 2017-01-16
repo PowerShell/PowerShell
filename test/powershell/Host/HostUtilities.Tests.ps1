@@ -53,7 +53,7 @@ Describe "InvokeOnRunspace method as nested command" -tags "Feature" {
 }
 
 Describe "InvokeOnRunspace method on remote runspace" -tags "Feature" {
-    
+
     BeforeAll {
 
         if ($IsWindows) {

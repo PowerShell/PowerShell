@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _stopping = false;
 
         /// <summary>
-        /// This method causes calling thread to sleep for 
+        /// This method causes calling thread to sleep for
         /// specified milliseconds
         /// </summary>
         private void Sleep(int milliSecondsToSleep)
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void ProcessRecord()
         {

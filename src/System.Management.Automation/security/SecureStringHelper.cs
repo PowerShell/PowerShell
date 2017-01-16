@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell
             SecureString ss = new SecureString();
 
             //
-            // each unicode char is 2 bytes. 
+            // each unicode char is 2 bytes.
             //
             int len = data.Length / 2;
 
@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell
         internal static byte[] GetData(SecureString s)
         {
             //
-            // each unicode char is 2 bytes. 
+            // each unicode char is 2 bytes.
             //
             byte[] data = new byte[s.Length * 2];
 
@@ -445,7 +445,7 @@ namespace Microsoft.PowerShell
 
 #if CORECLR
 
-    // The DPAPIs implemented in this section are temporary workaround. 
+    // The DPAPIs implemented in this section are temporary workaround.
     // CoreCLR team will bring 'ProtectedData' type to Project K eventually.
 
     #region DPAPI

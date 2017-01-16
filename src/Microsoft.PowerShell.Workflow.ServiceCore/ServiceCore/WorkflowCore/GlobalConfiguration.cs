@@ -21,12 +21,12 @@ using System.Management.Automation.Remoting;
 namespace Microsoft.PowerShell.Workflow
 {
     /// <summary>
-    /// PSWorkflowConfigurationProvider 
+    /// PSWorkflowConfigurationProvider
     /// </summary>
     public class PSWorkflowConfigurationProvider
     {
         #region Public Methods
-        
+
         /// <summary>
         /// Default constructor
         /// </summary>
@@ -217,7 +217,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public PSWorkflowRuntime Runtime
         {
@@ -369,7 +369,7 @@ namespace Microsoft.PowerShell.Workflow
         /// </summary>
         /// <param name="applicationPrivateData"></param>
         /// <param name="configProviderId"></param>
-        public PSWorkflowConfigurationProvider(string applicationPrivateData, string configProviderId) 
+        public PSWorkflowConfigurationProvider(string applicationPrivateData, string configProviderId)
         {
             Populate(applicationPrivateData, configProviderId);
         }
@@ -548,7 +548,7 @@ namespace Microsoft.PowerShell.Workflow
         #endregion
 
         /// <summary>
-        /// CurrentUserIdentity returns the current user 
+        /// CurrentUserIdentity returns the current user
         /// </summary>
         internal WindowsIdentity CurrentUserIdentity
         {
@@ -612,14 +612,14 @@ namespace Microsoft.PowerShell.Workflow
                     if (CurrentUserIdentity.User != null)
                     {
                         string path = Path.Combine(_wfOptions.PersistencePath ?? DefaultPersistencePath, _configProviderId ?? "default", CurrentUserIdentity.User.Value);
-                    
+
                         WindowsPrincipal principal = new WindowsPrincipal(CurrentUserIdentity);
 
                         bool elevated = false;
                         bool nonInteractive = false;
                         bool credssp = false;
 
-                    
+
                         if (principal.IsInRole(WindowsBuiltInRole.Administrator))
                             elevated = true;
 
@@ -653,7 +653,7 @@ namespace Microsoft.PowerShell.Workflow
 
                         _instanceStorePath = path;
                     }
-                    IsDefaultStorePath = string.IsNullOrEmpty(_configProviderId) ? true : false; 
+                    IsDefaultStorePath = string.IsNullOrEmpty(_configProviderId) ? true : false;
                 }
                 return _instanceStorePath;
             }
@@ -813,7 +813,7 @@ namespace Microsoft.PowerShell.Workflow
                 return _wfOptions.ActivitiesCacheCleanupIntervalMSec;
             }
         }
-        
+
         /// <summary>
         /// Local Machine Runspace Language Mode
         /// </summary>
@@ -856,7 +856,7 @@ namespace Microsoft.PowerShell.Workflow
             {
                 return _wfOptions.SessionThrottleLimit;
             }
-        }     
+        }
 
         internal int ValidationCacheLimit
         {
@@ -924,7 +924,7 @@ namespace Microsoft.PowerShell.Workflow
                 ? new WildcardPattern(allowedActivity, WildcardOptions.IgnoreCase).IsMatch(match)
                 : string.Equals(allowedActivity, match, StringComparison.OrdinalIgnoreCase));
         }
-    
+
         #endregion Configuration Properties
     }
 }

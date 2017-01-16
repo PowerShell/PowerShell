@@ -1,18 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <!-- *******************************************************************
-These sample files contain formatting information used by the Windows 
-PowerShell engine. Do not edit or change the contents of this file 
-directly. Please see the Windows PowerShell documentation or type 
+These sample files contain formatting information used by the Windows
+PowerShell engine. Do not edit or change the contents of this file
+directly. Please see the Windows PowerShell documentation or type
 Get-Help Update-TypeData for more information.
 
 Copyright (c) Microsoft Corporation.  All rights reserved.
 
-THIS SAMPLE CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY 
-OF ANY KIND,WHETHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO 
+THIS SAMPLE CODE AND INFORMATION IS PROVIDED "AS IS" WITHOUT WARRANTY
+OF ANY KIND,WHETHER EXPRESSED OR IMPLIED, INCLUDING BUT NOT LIMITED TO
 THE IMPLIED WARRANTIES OF MERCHANTABILITY AND/OR FITNESS FOR A PARTICULAR
 PURPOSE. IF THIS CODE AND INFORMATION IS MODIFIED, THE ENTIRE RISK OF USE
-OR RESULTS IN CONNECTION WITH THE USE OF THIS CODE AND INFORMATION 
-REMAINS WITH THE USER. 
+OR RESULTS IN CONNECTION WITH THE USE OF THIS CODE AND INFORMATION
+REMAINS WITH THE USER.
 ******************************************************************** -->
 
 <Types>
@@ -104,7 +104,7 @@ REMAINS WITH THE USER.
   </Type>
   <Type>
     <Name>Microsoft.PowerShell.Commands.GetCounter.PerformanceCounterSampleSet</Name>
-    <Members>      
+    <Members>
       <MemberSet>
         <Name>PSStandardMembers</Name>
         <Members>
@@ -112,7 +112,7 @@ REMAINS WITH THE USER.
             <Name>DefaultDisplayPropertySet</Name>
             <ReferencedProperties>
               <Name>Timestamp</Name>
-              <Name>Readings</Name>              
+              <Name>Readings</Name>
             </ReferencedProperties>
           </PropertySet>
         </Members>
@@ -128,12 +128,12 @@ REMAINS WITH THE USER.
           $strPaths = ""
           foreach ($ctr in $this.CounterSamples)
           {
-              $strPaths += ($ctr.Path + " :" + "`n")	
-              $strPaths += ($ctr.CookedValue.ToString() + "`n`n")     
-          }                   
+              $strPaths += ($ctr.Path + " :" + "`n")
+              $strPaths += ($ctr.CookedValue.ToString() + "`n`n")
+          }
           return $strPaths
         </GetScriptBlock>
-      </ScriptProperty>      
+      </ScriptProperty>
     </Members>
   </Type>
 </Types>

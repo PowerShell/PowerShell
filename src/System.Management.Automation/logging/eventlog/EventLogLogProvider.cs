@@ -14,19 +14,19 @@ using System.Threading;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// EventLogLogProvider is a class to implement Msh Provider interface using EventLog technology. 
-    /// 
+    /// EventLogLogProvider is a class to implement Msh Provider interface using EventLog technology.
+    ///
     /// EventLogLogProvider will be the provider to use if Monad is running in early windows releases
-    /// from 2000 to 2003. 
-    /// 
-    /// EventLogLogProvider will be packaged in the same dll as Msh Log Engine since EventLog should 
-    /// always be available. 
-    /// 
+    /// from 2000 to 2003.
+    ///
+    /// EventLogLogProvider will be packaged in the same dll as Msh Log Engine since EventLog should
+    /// always be available.
+    ///
     /// </summary>
     internal class EventLogLogProvider : LogProvider
     {
         /// <summary>
-        /// Constructor. 
+        /// Constructor.
         /// </summary>
         /// <returns></returns>
         internal EventLogLogProvider(string shellId)
@@ -57,8 +57,8 @@ namespace System.Management.Automation
                 else
                     source = shellId.Substring(index + 1);
 
-                // There may be a situation where ShellId ends with a '.'. 
-                // In that case, use the default source. 
+                // There may be a situation where ShellId ends with a '.'.
+                // In that case, use the default source.
                 if (String.IsNullOrEmpty(source))
                     source = "Default";
             }
@@ -214,7 +214,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="exception"></param>
-        /// 
+        ///
         internal override void LogCommandHealthEvent(LogContext logContext, Exception exception)
         {
             int eventId = _commandHealthEventId;
@@ -311,8 +311,8 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Log pipeline execution detail event.
-        /// 
-        /// This may end of logging more than one event if the detail string is too long to be fit in 64K. 
+        ///
+        /// This may end of logging more than one event if the detail string is too long to be fit in 64K.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="pipelineExecutionDetail"></param>
@@ -355,8 +355,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Log one pipeline execution detail event. Detail message is already chopped up so that it will 
-        /// fit in 64K. 
+        /// Log one pipeline execution detail event. Detail message is already chopped up so that it will
+        /// fit in 64K.
         /// </summary>
         /// <param name="logContext"></param>
         /// <param name="pipelineExecutionDetail"></param>
@@ -390,7 +390,7 @@ namespace System.Management.Automation
         /// <param name="logContext"></param>
         /// <param name="providerName"></param>
         /// <param name="exception"></param>
-        /// 
+        ///
         internal override void LogProviderHealthEvent(LogContext logContext, string providerName, Exception exception)
         {
             int eventId = _providerHealthEventId;
@@ -520,7 +520,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is the helper function for logging an event with localizable message
-        /// to event log. It will trace all exception thrown by eventlog. 
+        /// to event log. It will trace all exception thrown by eventlog.
         /// </summary>
         /// <param name="entry"></param>
         /// <param name="args"></param>
@@ -550,8 +550,8 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Fill event arguments with logContext info.
-        /// 
-        /// In EventLog Api, arguments are passed in as an array of objects. 
+        ///
+        /// In EventLog Api, arguments are passed in as an array of objects.
         /// </summary>
         /// <param name="mapArgs">An ArrayList to contain the event arguments</param>
         /// <param name="logContext">The log context containing the info to fill in</param>

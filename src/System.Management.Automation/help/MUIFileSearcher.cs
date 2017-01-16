@@ -13,8 +13,8 @@ namespace System.Management.Automation
     internal class MUIFileSearcher
     {
         /// <summary>
-        /// Constructor. It is private so that MUIFileSearcher is used only internal for this class. 
-        /// To access functionality in this class, static api should be used. 
+        /// Constructor. It is private so that MUIFileSearcher is used only internal for this class.
+        /// To access functionality in this class, static api should be used.
         /// </summary>
         /// <param name="target"></param>
         /// <param name="searchPaths"></param>
@@ -39,10 +39,10 @@ namespace System.Management.Automation
         #region Basic Properties
 
         /// <summary>
-        /// Search target. It can be 
+        /// Search target. It can be
         ///     1. a file name
         ///     2. a search pattern
-        /// It can also include a path, in that case, 
+        /// It can also include a path, in that case,
         ///     1. the path will be searched first for the existence of the files.
         /// </summary>
         internal string Target { get; } = null;
@@ -53,7 +53,7 @@ namespace System.Management.Automation
         internal Collection<String> SearchPaths { get; } = null;
 
         /// <summary>
-        /// Search mode for this file search. 
+        /// Search mode for this file search.
         /// </summary>
         internal SearchMode SearchMode { get; } = SearchMode.Unique;
 
@@ -89,7 +89,7 @@ namespace System.Management.Automation
         private Hashtable _uniqueMatches = new Hashtable(StringComparer.OrdinalIgnoreCase);
 
         /// <summary>
-        /// search for files using the target, searchPaths member of this class. 
+        /// search for files using the target, searchPaths member of this class.
         /// </summary>
         private void SearchForFiles()
         {
@@ -154,7 +154,7 @@ namespace System.Management.Automation
 
                         case SearchMode.Unique:
                             // Construct a Unique filename for this directory.
-                            // Remember the file may belong to one of the sub-culture 
+                            // Remember the file may belong to one of the sub-culture
                             // directories. In this case we should not be returning
                             // same files that are residing in 2 or more sub-culture
                             // directories.
@@ -180,9 +180,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Search for files of a particular pattern under a particular directory. 
-        /// This will do MUI search in which appropriate language directories are 
-        /// searched in order. 
+        /// Search for files of a particular pattern under a particular directory.
+        /// This will do MUI search in which appropriate language directories are
+        /// searched in order.
         /// </summary>
         /// <param name="pattern"></param>
         /// <param name="directory"></param>
@@ -238,7 +238,7 @@ namespace System.Management.Automation
         {
             Collection<String> result = new Collection<String>();
 
-            // step 1: if target has path attached, directly locate 
+            // step 1: if target has path attached, directly locate
             //         file from there.
             if (!String.IsNullOrEmpty(target) && !String.IsNullOrEmpty(Path.GetDirectoryName(target)))
             {
@@ -337,12 +337,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the file in different search paths corresponding to current culture. 
-        /// 
+        /// Get the file in different search paths corresponding to current culture.
+        ///
         /// The file name to search is the filename part of path parameter. (Normally path
-        /// parameter should contain only the filename part. But it is possible for 
+        /// parameter should contain only the filename part. But it is possible for
         /// RunspaceConfiguration to directly specify a hard coded path for help file there).
-        /// 
+        ///
         /// </summary>
         /// <param name="file">This is the path to the file. If it has a path, we need to search under that path first</param>
         /// <param name="searchPaths">Additional search paths</param>

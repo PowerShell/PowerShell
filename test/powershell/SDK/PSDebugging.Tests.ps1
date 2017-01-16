@@ -201,7 +201,7 @@ Describe "Runspace Debugging API tests" -tag CI {
             $runspace.Dispose()
             $ps.dispose()
         }
-        
+
         It "PSStandaloneMonitorRunspaceInfo should throw when called with a null argument to the constructor" {
             try {
                 [PSStandaloneMonitorRunspaceInfo]::new($null)
@@ -241,7 +241,7 @@ Describe "Runspace Debugging API tests" -tag CI {
                 [DebuggerUtils]::StartMonitoringRunspace($null,$runspaceInfo)
                 throw "Execution should have thrown"
             }
-            catch { 
+            catch {
                 $_.fullyqualifiederrorid | should be PSArgumentNullException
             }
         }
@@ -250,7 +250,7 @@ Describe "Runspace Debugging API tests" -tag CI {
                 [DebuggerUtils]::StartMonitoringRunspace($runspace.Debugger,$null)
                 throw "Execution should have thrown"
             }
-            catch { 
+            catch {
                 $_.fullyqualifiederrorid | should be PSArgumentNullException
             }
         }
@@ -260,7 +260,7 @@ Describe "Runspace Debugging API tests" -tag CI {
                 [DebuggerUtils]::EndMonitoringRunspace($null,$runspaceInfo)
                 throw "Execution should have thrown"
             }
-            catch { 
+            catch {
                 $_.fullyqualifiederrorid | should be PSArgumentNullException
             }
         }
@@ -269,7 +269,7 @@ Describe "Runspace Debugging API tests" -tag CI {
                 [DebuggerUtils]::EndMonitoringRunspace($runspace.Debugger,$null)
                 throw "Execution should have thrown"
             }
-            catch { 
+            catch {
                 $_.fullyqualifiederrorid | should be PSArgumentNullException
             }
         }

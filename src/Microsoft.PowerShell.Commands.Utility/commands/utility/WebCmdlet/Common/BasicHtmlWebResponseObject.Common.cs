@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands
             // We might get an empty input for a directive from the HTML file
             if (!string.IsNullOrEmpty(outerHtml))
             {
-                // Extract just the opening tag of the HTML element (omitting the closing tag and any contents, 
+                // Extract just the opening tag of the HTML element (omitting the closing tag and any contents,
                 // including contained HTML elements)
                 var match = s_tagRegex.Match(outerHtml);
 

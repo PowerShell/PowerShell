@@ -9,7 +9,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Provides the *-SecurityDescriptor noun for the cmdlet providers.  
+    /// Provides the *-SecurityDescriptor noun for the cmdlet providers.
     /// </summary>
     ///
     public sealed class SecurityDescriptorCmdletProviderIntrinsics
@@ -82,7 +82,7 @@ namespace System.Management.Automation
         /// <param name="includeSections">
         /// The sections of the security descriptor to include.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The SecurityDescriptor(s) at the specified path.
         /// </returns>
@@ -203,7 +203,7 @@ namespace System.Management.Automation
         /// <param name="includeSections">
         /// The sections of the security descriptor to include.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The SecurityDescriptor(s) at the specified path.
         /// </returns>
@@ -233,7 +233,7 @@ namespace System.Management.Automation
         /// <param name="includeSections">
         /// The sections of the security descriptor to include.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A new SecurityDescriptor of the specified type.
         /// </returns>

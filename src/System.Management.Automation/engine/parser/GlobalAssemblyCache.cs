@@ -9,7 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
-#if !CORECLR // Only enable/port what is needed by CORE CLR. 
+#if !CORECLR // Only enable/port what is needed by CORE CLR.
 namespace Microsoft.CodeAnalysis
 {
     /// <summary>

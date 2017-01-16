@@ -107,7 +107,7 @@ Describe "Hashtable key property syntax" -Tags "CI" {
 }
 
 Describe "Assign automatic variables" -Tags "CI" {
-    
+
     $autos = '_', 'args', 'this', 'input', 'pscmdlet', 'psboundparameters', 'myinvocation', 'psscriptroot', 'pscommandpath'
 
     foreach ($auto in $autos)

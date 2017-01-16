@@ -18,7 +18,7 @@ namespace System.Management.Automation.ComInterop
 {
     /// <summary>
     /// Cached information from a TLB. Only information that is required is saved. CoClasses are used
-    /// for event hookup. Enums are stored for accessing symbolic names from scripts. 
+    /// for event hookup. Enums are stored for accessing symbolic names from scripts.
     /// </summary>
     internal sealed class ComTypeLibDesc : IDynamicMetaObjectProvider
     {

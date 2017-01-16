@@ -6,17 +6,17 @@ using System.Diagnostics.CodeAnalysis; // for fxcop
 
 namespace System.Management.Automation
 {
-    /// <summary>   
-    /// Stores help information related to Alias Commands.     
+    /// <summary>
+    /// Stores help information related to Alias Commands.
     /// </summary>
     internal class AliasHelpInfo : HelpInfo
     {
         /// <summary>
         /// Initializes a new instance of the AliasHelpInfo class.
         /// </summary>
-        /// 
+        ///
         /// <remarks>
-        /// The constructor is private. The only way to create an 
+        /// The constructor is private. The only way to create an
         /// AliasHelpInfo object is through static method <see cref="GetHelpInfo"/>
         /// </remarks>
         [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
@@ -57,7 +57,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns synopsis of alias help.
         /// </summary>
-        /// <value>Synopsis of alias help.</value>        
+        /// <value>Synopsis of alias help.</value>
         internal override string Synopsis { get; } = "";
 
         /// <summary>

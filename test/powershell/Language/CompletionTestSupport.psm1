@@ -49,7 +49,7 @@ class CompletionTestCase
 }
 
 function Get-Completions
-{            
+{
     [CmdletBinding()]
     param([string]$InputScript, [int]$CursorColumn, $Options = $null)
 
@@ -93,7 +93,7 @@ function Test-Completions
         [CompletionTestCase[]]$TestCases,
         [string]
         $Description)
-    
+
     process
     {
         foreach ($test in $TestCases)
@@ -101,12 +101,12 @@ function Test-Completions
             Describe $test.Description -Tags "CI" {
                 $hash = $Test.TestInput
                 $results = Get-Completions @hash
-                
+
                 foreach ($expected in $test.ExpectedResults)
                 {
                     foreach ($result in $results.CompletionMatches)
                     {
-                
+
                         if ($expected.Equals($result))
                         {
                             It "Checking for duplicates of: $($expected.CompletionText)" {
@@ -134,9 +134,9 @@ function Test-Completions
                         }
                     }
                 }
-                
+
             }
-        }  
-    }  
+        }
+    }
 }
 

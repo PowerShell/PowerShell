@@ -26,15 +26,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a facade for the specified session.
         /// </summary>
-        /// 
+        ///
         /// <param name="sessionState">
         /// The session for which the facade wraps.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="sessionState"/> is null.
         /// </exception>
-        /// 
+        ///
         internal PSVariableIntrinsics(SessionStateInternal sessionState)
         {
             if (sessionState == null)
@@ -99,7 +99,7 @@ namespace System.Management.Automation
         /// </param>
         ///
         /// <param name="scope">
-        /// The ID of the scope to do the lookup in. 
+        /// The ID of the scope to do the lookup in.
         /// </param>
         ///
         /// <returns>
@@ -109,12 +109,12 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="name"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="scope"/> is less than zero, or not
         /// a number and not "script", "global", "local", or "private"
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
@@ -146,20 +146,20 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="name"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="name"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="name"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="name"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -196,20 +196,20 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="name"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="name"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="name"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="name"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -236,7 +236,7 @@ namespace System.Management.Automation
         /// </param>
         ///
         /// <param name="scope">
-        /// The ID of the scope to do the lookup in. 
+        /// The ID of the scope to do the lookup in.
         /// </param>
         ///
         /// <returns>
@@ -246,30 +246,30 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="name"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="scope"/> is less than zero, or not
         /// a number and not "script", "global", "local", or "private"
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="name"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="name"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="name"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -300,24 +300,24 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="name"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the variable is read-only or constant.
-        /// </exception> 
-        /// 
+        /// </exception>
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="name"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="name"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="name"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -337,18 +337,18 @@ namespace System.Management.Automation
         /// </summary>
         ///
         /// <param name="variable">
-        /// 
+        ///
         /// The variable to set
         /// </param>
         ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="variable"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the variable is read-only or constant.
-        /// </exception> 
-        /// 
+        /// </exception>
+        ///
         public void Set(PSVariable variable)
         {
             Dbg.Diagnostics.Assert(
@@ -372,24 +372,24 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="name"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// if the variable is constant.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="name"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="name"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="name"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
@@ -415,7 +415,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="variable"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// if the variable is constant.
         /// </exception>
@@ -447,17 +447,17 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="name"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        /// 
-        /// 
+        ///
+        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// if the variable is constant.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If <paramref name="name"/> refers to an MSH path (not a variable)
         /// and the provider throws an exception.
@@ -490,13 +490,13 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="variable"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        /// 
-        /// 
+        ///
+        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// if the variable is constant.
         /// </exception>

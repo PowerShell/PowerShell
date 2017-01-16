@@ -1,6 +1,6 @@
 Describe 'Attributes Test' -Tags "CI" {
-    
-    BeforeAll { 
+
+    BeforeAll {
         $dummyAttributesSource = @'
 using System.Management.Automation;
 namespace Dummy
@@ -44,12 +44,12 @@ namespace Dummy
         }
     }
 }
-'@    
+'@
         Add-Type -TypeDefinition $dummyAttributesSource -ReferencedAssemblies "System.Management.Automation","mscorlib"
     }
 
-    
-    
+
+
     Context 'Property.Instance.ValidateSet.String' {
         class C1 { [ValidateSet("Present", "Absent")][string]$Ensure }
         # This call should not throw exception
@@ -62,7 +62,7 @@ namespace Dummy
                 throw "Exception expected"
             }
             catch
-            {                
+            {
                 $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
             }
         }
@@ -73,14 +73,14 @@ namespace Dummy
         # This call should not throw exception
         [C1]::Ensure = "Present"
         It 'Error when ValidateSet should be ExceptionWhenSetting'{
-            try  { 
+            try  {
                 [C1]::Ensure = "foo"
                 throw "Exception expected"
             }
-            catch { 
+            catch {
                 $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
-            } 
-        }       
+            }
+        }
     }
 
     Context 'Property.Instance.ValidateRange.Int' {
@@ -93,10 +93,10 @@ namespace Dummy
                 [C1]::new().f = 20
                 throw "Exception expected"
             }
-            catch { 
+            catch {
                 $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
-            } 
-        }       
+            }
+        }
     }
 
     Context 'Property.Static.ValidateRange.Int' {
@@ -108,7 +108,7 @@ namespace Dummy
                 [C1]::f = 20
                 throw "Exception expected"
             }
-            catch { 
+            catch {
                 $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
             }
         }
@@ -124,7 +124,7 @@ namespace Dummy
                 [C1]::o = 1
                 throw "Exception expected"
             }
-            catch { 
+            catch {
                 $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
             }
         }
@@ -136,10 +136,10 @@ namespace Dummy
     #
     # Invoke() returns an array, we need first element of it.
     #
-    
+
     Context 'Property.Instance.Transformation.ImplicitObject' {
         $c = [scriptblock]::Create('class C1 { [Dummy.DoubleStringTransformation()]$arg }; [C1]::new()').Invoke()[0]
-        
+
         It 'Implicitly Transform to 100' {
             $c.arg = 100
             $c.arg | should be 100
@@ -159,20 +159,20 @@ namespace Dummy
     }
 
     Context Property.Instance.Transformation.Int {
-        $c = [scriptblock]::Create('class C1 { [Dummy.DoubleInt()][int]$arg }; [C1]::new()').Invoke()[0]        
+        $c = [scriptblock]::Create('class C1 { [Dummy.DoubleInt()][int]$arg }; [C1]::new()').Invoke()[0]
         It 'arg should be 200' {
             $c.arg = 100
             $c.arg | should be 200
         }
-        It 'Set to string should fail with ExceptionWhenSetting' {        
+        It 'Set to string should fail with ExceptionWhenSetting' {
             try {
                 $c.arg = "abc"
                 throw "Exception expected"
             }
-            catch { 
+            catch {
                 $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
             }
-        }        
+        }
     }
 
     Context Property.Instance.Transformation.Nullable {
@@ -180,7 +180,7 @@ namespace Dummy
         It 'arg should be 100' {
             $c.arg = 100
             $c.arg | should be 100
-        }        
+        }
     }
 
     Context Property.Instance.Transformation.Order {
@@ -189,26 +189,26 @@ namespace Dummy
             $c.arg = 100
             $c.arg | should be 100
         }
-        
+
         It 'arg should be foo___foo___g' {
             $c.arg = "foo"
             $c.arg | should be "foo___foo___"
         }
-    }  
+    }
 }
 
 Describe 'Type resolution with attributes' -Tag "CI" {
-    # There is kind of a collision between names 
+    # There is kind of a collision between names
     # System.Diagnostics.Tracing.EventSource
     # System.Diagnostics.Tracing.EventSourceAttribute
     # We need to make sure that we resolve type name to the right class at each usage
     Context 'Name collision' {
-        
+
         It 'Resolve System.Diagnostics.Tracing.EventSource to Attribute and to Type in the different contexts' {
             [System.Diagnostics.Tracing.EventSource(Name = "MyPSEventSource")]
-            class MyEventSource : System.Diagnostics.Tracing.EventSource 
-            { 
-                [void] OnEvent([string]$Message) {} 
+            class MyEventSource : System.Diagnostics.Tracing.EventSource
+            {
+                [void] OnEvent([string]$Message) {}
             }
 
             [MyEventSource]::new() | Should Not Be $null

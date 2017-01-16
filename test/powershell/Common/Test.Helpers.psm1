@@ -1,7 +1,7 @@
 function Wait-UntilTrue
 {
     [CmdletBinding()]
-    param ( 
+    param (
         [ScriptBlock]$sb,
         [int]$TimeoutInMilliseconds = 10000,
         [int]$IntervalInMilliseconds = 1000
@@ -31,10 +31,10 @@ function Test-IsElevated
         # elevated context
         $identity = [System.Security.Principal.WindowsIdentity]::GetCurrent()
         $windowsPrincipal = new-object 'Security.Principal.WindowsPrincipal' $identity
-        if ($windowsPrincipal.IsInRole("Administrators") -eq 1) 
-        { 
-            $IsElevated = $true 
-        } 
+        if ($windowsPrincipal.IsInRole("Administrators") -eq 1)
+        {
+            $IsElevated = $true
+        }
     }
     else {
         # on Linux, tests run via sudo will generally report "root" for whoami
@@ -50,7 +50,7 @@ function ShouldBeErrorId
     param([Parameter(ValueFromPipeline, Mandatory)]
         [ScriptBlock]
         $sb,
-          
+
         [Parameter(Mandatory, Position=0)]
         [string]
         $FullyQualifiedErrorId)

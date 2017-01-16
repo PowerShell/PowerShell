@@ -14,7 +14,7 @@ namespace Microsoft.Management.UI.Internal
     using System.Diagnostics;
 
     /// <summary>
-    /// The ValidatingValueBase class provides basic services for base 
+    /// The ValidatingValueBase class provides basic services for base
     /// classes to support validation via the IDataErrorInfo interface.
     /// </summary>
     [Serializable]
@@ -28,7 +28,7 @@ namespace Microsoft.Management.UI.Internal
         private List<DataErrorInfoValidationRule> validationRules = new List<DataErrorInfoValidationRule>();
         private ReadOnlyCollection<DataErrorInfoValidationRule> readonlyValidationRules;
         private bool isValidationRulesCollectionDirty = true;
-        
+
         [field: NonSerialized]
         private DataErrorInfoValidationResult cachedValidationResult;
 
@@ -69,14 +69,14 @@ namespace Microsoft.Management.UI.Internal
         #region Item
 
         /// <summary>
-        /// Gets the error message for the property with the given name. 
+        /// Gets the error message for the property with the given name.
         /// </summary>
         /// <param name="columnName">
         /// The name of the property whose error message will be checked.
         /// </param>
         /// <returns>
-        /// The error message for the property, or an empty string ("") if 
-        /// the property is valid. 
+        /// The error message for the property, or an empty string ("") if
+        /// the property is valid.
         /// </returns>
         /// <exception cref="ArgumentException">
         /// <paramref name="columnName"/> is invalid.
@@ -205,7 +205,7 @@ namespace Microsoft.Management.UI.Internal
 
 
         /// <summary>
-        /// Called to validate the property with the given name. 
+        /// Called to validate the property with the given name.
         /// </summary>
         /// <param name="propertyName">
         /// The name of the property whose error message will be checked.

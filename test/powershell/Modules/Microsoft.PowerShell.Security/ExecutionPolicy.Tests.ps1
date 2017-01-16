@@ -27,12 +27,12 @@ Describe "ExecutionPolicy" -Tags "CI" {
 }
 
 #
-# Ported from MultiMachine Tests 
+# Ported from MultiMachine Tests
 # Tests\Engine\HelpSystem\Pester.Engine.HelpSystem.BugFix.Tests.ps1
 # Tests\Commands\Cmdlets\Microsoft.PowerShell.Security\Pester.Command.Cmdlets.Security.Tests.ps1
 #
-# These tests verify behavior of the ExecutionPolicy cmdlets on supported 
-# systems. Right now, ExecutionPolicy is only supported on Windows, so these 
+# These tests verify behavior of the ExecutionPolicy cmdlets on supported
+# systems. Right now, ExecutionPolicy is only supported on Windows, so these
 # tests only run if ($IsWindows -eq $true)
 #
 
@@ -86,11 +86,11 @@ try {
                 $null = New-Item $testDirectory -ItemType Directory -Force
                 $remoteTestDirectory = $testDirectory
 
-                $InternetSignatureCorruptedScript = Join-Path -Path $remoteTestDirectory -ChildPath InternetSignatureCorruptedScript.ps1        
+                $InternetSignatureCorruptedScript = Join-Path -Path $remoteTestDirectory -ChildPath InternetSignatureCorruptedScript.ps1
                 $InternetSignedScript = Join-Path -Path $remoteTestDirectory -ChildPath InternetSignedScript.ps1
                 $InternetUnsignedScript = Join-Path -Path $remoteTestDirectory -ChildPath InternetUnsignedScript.ps1
                 $IntranetSignatureCorruptedScript = Join-Path -Path $remoteTestDirectory -ChildPath IntranetSignatureCorruptedScript.ps1
-                $IntranetSignedScript = Join-Path -Path $remoteTestDirectory -ChildPath IntranetSignedScript.ps1       
+                $IntranetSignedScript = Join-Path -Path $remoteTestDirectory -ChildPath IntranetSignedScript.ps1
                 $IntranetUnsignedScript = Join-Path -Path $remoteTestDirectory -ChildPath IntranetUnsignedScript.ps1
                 $LocalSignatureCorruptedScript = Join-Path -Path $remoteTestDirectory -ChildPath LocalSignatureCorruptedScript.ps1
                 $LocalSignedScript = Join-Path -Path $remoteTestDirectory -ChildPath LocalSignedScript.ps1
@@ -98,7 +98,7 @@ try {
                 $TrustedSignatureCorruptedScript = Join-Path -Path $remoteTestDirectory -ChildPath TrustedSignatureCorruptedScript.ps1
                 $TrustedSignedScript = Join-Path -Path $remoteTestDirectory -ChildPath TrustedSignedScript.ps1
                 $TrustedUnsignedScript = Join-Path -Path $remoteTestDirectory -ChildPath TrustedUnsignedScript.ps1
-                $UntrustedSignatureCorruptedScript = Join-Path -Path $remoteTestDirectory -ChildPath UntrustedSignatureCorruptedScript.ps1       
+                $UntrustedSignatureCorruptedScript = Join-Path -Path $remoteTestDirectory -ChildPath UntrustedSignatureCorruptedScript.ps1
                 $UntrustedSignedScript = Join-Path -Path $remoteTestDirectory -ChildPath UntrustedSignedScript.ps1
                 $UntrustedUnsignedScript = Join-Path -Path $remoteTestDirectory -ChildPath UntrustedUnsignedScript.ps1
                 $MyComputerSignatureCorruptedScript = Join-Path -Path $remoteTestDirectory -ChildPath MyComputerSignatureCorruptedScript.ps1
@@ -226,7 +226,7 @@ try {
                 )
 
                 #Generate Test Data on remote machine and get the execution policy
-                
+
                 function createTestFile
                 {
                     param (
@@ -242,10 +242,10 @@ try {
                     [switch]
                     $Corrupted
                     )
-                         
+
                     $null = New-Item -Path $filePath -ItemType File
 
-                    $content = "`"Hello`"" + "`r`n" 
+                    $content = "`"Hello`"" + "`r`n"
                     if($AddSignature)
                     {
                         if($Corrupted)
@@ -433,7 +433,7 @@ try {
                     set-content $filePath -Value $content
 
                     ## Valida File types and their corresponding int values are :
-                    ##  
+                    ##
                     ##    Local = -1
                     ##    MyComputer = 0
                     ##    Intranet = 1
@@ -451,7 +451,7 @@ ZoneId=$FileType
                         Add-Content -Path $filePath -Value $alternateStreamContent -stream Zone.Identifier
                     }
                 }
-                
+
                 foreach($fileInfo in $testFilesInfo)
                 {
                     createTestFile -FilePath $fileInfo.filePath -FileType $fileInfo.fileType -AddSignature:$fileInfo.AddSignature -Corrupted:$fileInfo.corrupted
@@ -541,7 +541,7 @@ ZoneId=$FileType
 
         AfterAll {
             if ($IsNotSkipped) {
-                # Clean up 
+                # Clean up
                 $testDirectory = $remoteTestDirectory
 
                 Remove-Item $testDirectory -Recurse -Force -ea SilentlyContinue
@@ -941,7 +941,7 @@ ZoneId=$FileType
                 catch {
                     if ($_.FullyQualifiedErrorId -ne "ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
                     {
-                        # Re-throw unrecognized exceptions. Otherwise, swallow 
+                        # Re-throw unrecognized exceptions. Otherwise, swallow
                         # the exception that warns about overridden policies
                         throw $_
                     }
@@ -955,16 +955,16 @@ ZoneId=$FileType
                 catch {
                     if ($_.FullyQualifiedErrorId -eq "System.UnauthorizedAccessException,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
                     {
-                        # Do nothing. Depending on the ownership of the file, 
-                        # regular users may or may not be able to set its 
-                        # value. 
+                        # Do nothing. Depending on the ownership of the file,
+                        # regular users may or may not be able to set its
+                        # value.
                         #
                         # When targetting the Registry, regular users cannot
                         # modify this value.
                     }
                     elseif ($_.FullyQualifiedErrorId -ne "ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand")
                     {
-                        # Re-throw unrecognized exceptions. Otherwise, swallow 
+                        # Re-throw unrecognized exceptions. Otherwise, swallow
                         # the exception that warns about overridden policies
                         throw $_
                     }
@@ -1054,7 +1054,7 @@ ZoneId=$FileType
             # before we can set LocalMachine policy without ExecutionPolicyOverride error.
             Set-ExecutionPolicy -Scope Process -ExecutionPolicy Undefined
             Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Undefined
-            
+
             Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy ByPass
             Get-ExecutionPolicy -Scope LocalMachine | Should Be "ByPass"
         }

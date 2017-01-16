@@ -97,13 +97,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <remarks>
         /// Currently we support following views:
-        /// 
+        ///
         /// 1. Reminder (Default - Experienced User)
         /// 2. Detailed (Beginner - Beginning User)
         /// 3. Full     (All Users)
-        /// 4. Examples 
-        /// 5. Parameters 
-        /// 
+        /// 4. Examples
+        /// 5. Parameters
+        ///
         /// Currently we support these views only for Cmdlets.
         /// A SnapIn developer can however change these views.
         /// </remarks>
@@ -124,13 +124,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <remarks>
         /// Currently we support following views:
-        /// 
+        ///
         /// 1. Reminder (Default - Experienced User)
         /// 2. Detailed (Beginner - Beginning User)
         /// 3. Full     (All Users)
-        /// 4. Examples 
-        /// 5. Parameters 
-        /// 
+        /// 4. Examples
+        /// 5. Parameters
+        ///
         /// Currently we support these views only for Cmdlets.
         /// A SnapIn developer can however change these views.
         /// </remarks>
@@ -151,12 +151,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <remarks>
         /// Currently we support following views:
-        /// 
+        ///
         /// 1. Reminder (Default - Experienced User)
         /// 2. Detailed (Beginner - Beginning User)
         /// 3. Full     (All Users)
-        /// 4. Examples 
-        /// 
+        /// 4. Examples
+        ///
         /// Currently we support these views only for Cmdlets.
         /// A SnapIn developer can however change these views.
         /// </remarks>
@@ -349,8 +349,8 @@ namespace Microsoft.PowerShell.Commands
                 if (((countOfHelpInfos == 0) && (!WildcardPattern.ContainsWildcardCharacters(helpRequest.Target)))
                     || this.Context.HelpSystem.VerboseHelpErrors)
                 {
-                    // Check if there is any error happened. If yes, 
-                    // pipe out errors. 
+                    // Check if there is any error happened. If yes,
+                    // pipe out errors.
                     if (this.Context.HelpSystem.LastErrors.Count > 0)
                     {
                         foreach (ErrorRecord errorRecord in this.Context.HelpSystem.LastErrors)
@@ -400,9 +400,9 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Change <paramref name="originalHelpObject"/> as per user request.
-        /// 
-        /// This method creates a new type to the existing typenames 
-        /// depending on Detailed,Full,Example parameters and adds this 
+        ///
+        /// This method creates a new type to the existing typenames
+        /// depending on Detailed,Full,Example parameters and adds this
         /// new type(s) to the top of the list.
         /// </summary>
         /// <param name="originalHelpObject">Full help object to transform.</param>
@@ -421,7 +421,7 @@ namespace Microsoft.PowerShell.Commands
 
             string tokenToAdd = _viewTokenToAdd.ToString();
             // We are changing the types without modifying the original object.
-            // The contract between help command and helpsystem does not 
+            // The contract between help command and helpsystem does not
             // allow us to modify returned help objects.
             PSObject objectToReturn = originalHelpObject.Copy();
             objectToReturn.TypeNames.Clear();

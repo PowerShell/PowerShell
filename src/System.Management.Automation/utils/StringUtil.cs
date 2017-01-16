@@ -60,7 +60,7 @@ namespace System.Management.Automation.Internal
                 else
                 {
                     // The segment does not fit, back off a tad until it does
-                    // We need to back off 1 by 1 because there could theoretically 
+                    // We need to back off 1 by 1 because there could theoretically
                     // be characters taking more 2 buffer cells
                     --i;
                 }

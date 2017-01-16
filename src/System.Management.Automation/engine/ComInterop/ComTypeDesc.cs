@@ -16,7 +16,7 @@ namespace System.Management.Automation.ComInterop
     {
         private string _typeName;
         private string _documentation;
-        //Hashtable is threadsafe for multiple readers single writer. 
+        //Hashtable is threadsafe for multiple readers single writer.
         //Enumerating and writing is mutually exclusive so require locking.
         private Hashtable _putRefs;
         private ComMethodDesc _getItem;

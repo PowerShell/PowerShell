@@ -21,7 +21,7 @@ using Microsoft.PowerShell.CoreClr.Stubs;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Contains the definition of a job which is defined in a 
+    /// Contains the definition of a job which is defined in a
     /// job store
     /// </summary>
     /// <remarks>The actual implementation of this class will
@@ -144,7 +144,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -154,7 +154,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -165,16 +165,16 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Class that helps define the parameters to 
+    /// Class that helps define the parameters to
     /// be passed to a job so that the job can be
     /// instantiated without having to specify
-    /// the parameters explicitly. Helps in 
+    /// the parameters explicitly. Helps in
     /// passing job parameters to disk
     /// </summary>
     /// <remarks>This class is not required if
     /// CommandParameterCollection adds a public
-    /// constructor.The actual implementation of 
-    /// this class will happen in M2</remarks>   
+    /// constructor.The actual implementation of
+    /// this class will happen in M2</remarks>
     [Serializable]
     public class JobInvocationInfo : ISerializable
     {
@@ -308,7 +308,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="definition"></param>
         /// <param name="parameters"></param>
@@ -319,7 +319,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="definition"></param>
         /// <param name="parameters"></param>
@@ -334,7 +334,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -344,7 +344,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -373,7 +373,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Abstract class for a job store which will 
+    /// Abstract class for a job store which will
     /// contain the jobs of a specific type.
     /// </summary>
     public abstract class JobSourceAdapter
@@ -450,9 +450,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a new job with the definition as specified by 
+        /// Creates a new job with the definition as specified by
         /// the provided definition name and path.  If path is null
-        /// then a default location will be used to find the job 
+        /// then a default location will be used to find the job
         /// definition by name.
         /// </summary>
         /// <param name="definitionName">Job definition name</param>
@@ -528,12 +528,12 @@ namespace System.Management.Automation
         /// <param name="filter">dictionary containing name value
         ///   pairs for adapter specific filters</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs that match the 
+        /// <returns>collection of jobs that match the
         /// specified criteria</returns>
         public abstract IList<Job2> GetJobsByFilter(Dictionary<string, object> filter, bool recurse);
 
         /// <summary>
-        /// Remove a job from the store 
+        /// Remove a job from the store
         /// </summary>
         /// <param name="job">job object to remove</param>
         public abstract void RemoveJob(Job2 job);

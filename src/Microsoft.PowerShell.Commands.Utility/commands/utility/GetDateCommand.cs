@@ -12,9 +12,9 @@ namespace Microsoft.PowerShell.Commands
 {
     #region get-date
 
-    /// <summary> 
-    /// implementation for the get-date command 
-    /// </summary> 
+    /// <summary>
+    /// implementation for the get-date command
+    /// </summary>
     [Cmdlet(VerbsCommon.Get, "Date", DefaultParameterSetName = "net", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113313")]
     [OutputType(typeof(string), ParameterSetName = new string[] { "UFormat", "net" })]
     [OutputType(typeof(DateTime), ParameterSetName = new string[] { "net" })]
@@ -197,14 +197,14 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Unix format string
-        /// </summary> 
+        /// </summary>
         [Parameter(ParameterSetName = "UFormat")]
         public string UFormat { get; set; }
 
 
         /// <summary>
         /// Unix format string
-        /// </summary> 
+        /// </summary>
         [Parameter(ParameterSetName = "net")]
         public string Format { get; set; }
 
@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// get the time
-        /// </summary> 
+        /// </summary>
         protected override void ProcessRecord()
         {
             DateTime dateToUse = DateTime.Now;
@@ -332,7 +332,7 @@ namespace Microsoft.PowerShell.Commands
             StringBuilder sb = new StringBuilder();
 
 
-            // folks may include the "+" as part of the format string 
+            // folks may include the "+" as part of the format string
             if (UFormat[0] == '+')
             {
                 offset++;

@@ -59,7 +59,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="totalCount">a total count of objects that the cmdlet would return without paging</param>
         /// <param name="accuracy">
-        /// accuracy of the <paramref name="totalCount"/> parameter.  
+        /// accuracy of the <paramref name="totalCount"/> parameter.
         /// <c>1.0</c> means 100% accurate;
         /// <c>0.0</c> means that total count is unknown;
         /// anything in-between means that total count is estimated
@@ -108,12 +108,12 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Constructs an instance with the specified command instance
         /// </summary>
-        /// 
+        ///
         /// <param name="commandRuntime">
         /// The instance of the command that the parameters should set the
         /// user feedback properties on when the parameters get bound.
         /// </param>
-        /// 
+        ///
         internal ShouldProcessParameters(MshCommandRuntime commandRuntime)
         {
             if (commandRuntime == null)
@@ -175,12 +175,12 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Constructs an instance with the specified command instance
         /// </summary>
-        /// 
+        ///
         /// <param name="commandRuntime">
         /// The instance of the command that the parameters should set the
         /// user feedback properties on when the parameters get bound.
         /// </param>
-        /// 
+        ///
         internal TransactionParameters(MshCommandRuntime commandRuntime)
         {
             _commandRuntime = commandRuntime;

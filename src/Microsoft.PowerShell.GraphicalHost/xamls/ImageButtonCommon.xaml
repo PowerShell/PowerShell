@@ -6,8 +6,8 @@
 	mc:Ignorable="d"
     xmlns:controls="clr-namespace:Microsoft.PowerShell.Commands.ShowCommandInternal"
     xmlns:Microsoft_Windows_Themes="clr-namespace:Microsoft.Windows.Themes;assembly=PresentationFramework.Aero">
-    
-    
+
+
     <!--  ImageButtonBase Start -->
     <controls:ImageButtonToolTipConverter x:Key="imageButtonToolTipConverter"/>
     <LinearGradientBrush x:Key="ImageButtonPressedBrush" StartPoint="0,0" EndPoint="0,1">

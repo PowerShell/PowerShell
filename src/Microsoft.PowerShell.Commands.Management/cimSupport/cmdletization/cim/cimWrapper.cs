@@ -289,8 +289,8 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         /// <summary>
-        /// Creates a <see cref="System.Management.Automation.Job"/> object that invokes a static method 
-        /// (of the class named by <see cref="Microsoft.PowerShell.Cmdletization.CmdletAdapter&lt;TObjectInstance&gt;.ClassName"/>) 
+        /// Creates a <see cref="System.Management.Automation.Job"/> object that invokes a static method
+        /// (of the class named by <see cref="Microsoft.PowerShell.Cmdletization.CmdletAdapter&lt;TObjectInstance&gt;.ClassName"/>)
         /// in the wrapped object model.
         /// </summary>
         /// <param name="session">Remote session to invoke the method in</param>
@@ -353,7 +353,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             return GetSessionOfOriginFromCimInstance(instance);
         }
 
-        #endregion 
+        #endregion
 
         #region Handling of dynamic parameters
 

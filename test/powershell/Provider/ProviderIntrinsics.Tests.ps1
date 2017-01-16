@@ -17,5 +17,5 @@ Describe "ProviderIntrinsics Tests" -tags "CI" {
             $_.fullyqualifiederrorid | should be "ItemNotFoundException"
         }
     }
-} 
+}
 

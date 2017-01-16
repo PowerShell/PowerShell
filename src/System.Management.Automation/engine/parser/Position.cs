@@ -710,7 +710,7 @@ namespace System.Management.Automation.Language
 
         /// <summary>
         /// The script text that the extent includes.
-        /// </summary>       
+        /// </summary>
         public string Text
         {
             get

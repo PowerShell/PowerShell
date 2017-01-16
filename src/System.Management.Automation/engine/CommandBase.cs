@@ -25,14 +25,14 @@ namespace System.Management.Automation.Internal
     /// Do not attempt to create instances of
     /// <see cref="System.Management.Automation.Internal.InternalCommand"/>
     /// independently, or to derive other classes than
-    /// <see cref="System.Management.Automation.Cmdlet"/> from 
+    /// <see cref="System.Management.Automation.Cmdlet"/> from
     /// <see cref="System.Management.Automation.Internal.InternalCommand"/>.
     /// </remarks>
     /// <seealso cref="System.Management.Automation.Cmdlet"/>
     /// <!--
     /// These are the Cmdlet members which are also used by other
     /// non-public command types.
-    /// 
+    ///
     /// Ideally this would be an internal class, but C# does not support
     /// public classes deriving from internal classes.
     /// -->
@@ -108,7 +108,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Internal helper to get to SessionState
         /// </summary>
-        /// 
+        ///
         internal SessionState InternalState
         {
             get { return _state; }
@@ -203,7 +203,7 @@ namespace System.Management.Automation.Internal
 
         /// <summary>
         /// When overridden in the derived class, performs clean-up
-        /// after the command execution. 
+        /// after the command execution.
         /// Default implementation in the base class just returns.
         /// </summary>
         internal virtual void DoEndProcessing()
@@ -243,7 +243,7 @@ namespace System.Management.Automation.Internal
         /// Using InternalDispose instead of Dispose pattern because this
         /// interface was shipped in PowerShell V1 and 3rd cmdlets indirectly
         /// derive from this interface. If we depend on Dispose() and 3rd
-        /// party cmdlets do not call base.Dispose (which is the case), we 
+        /// party cmdlets do not call base.Dispose (which is the case), we
         /// will still end up having this leak.
         /// </remarks>
         internal void InternalDispose(bool isDisposing)
@@ -331,10 +331,10 @@ namespace System.Management.Automation
     /// deriving from the PSCmdlet base class.  The Cmdlet base class is the primary means by
     /// which users create their own Cmdlets.  Extending this class provides support for the most
     /// common functionality, including object output and record processing.
-    /// If your Cmdlet requires access to the MSH Runtime (for example, variables in the session state, 
-    /// access to the host, or information about the current Cmdlet Providers,) then you should instead 
-    /// derive from the PSCmdlet base class.  
-    /// The public members defined by the PSCmdlet class are not designed to be overridden; instead, they 
+    /// If your Cmdlet requires access to the MSH Runtime (for example, variables in the session state,
+    /// access to the host, or information about the current Cmdlet Providers,) then you should instead
+    /// derive from the PSCmdlet base class.
+    /// The public members defined by the PSCmdlet class are not designed to be overridden; instead, they
     /// provided access to different aspects of the MSH runtime.
     /// In both cases, users should first develop and implement an object model to accomplish their
     /// task, extending the Cmdlet or PSCmdlet classes only as a thin management layer.
@@ -393,7 +393,7 @@ namespace System.Management.Automation
         } // Events
 
         /// <summary>
-        /// Repository for jobs 
+        /// Repository for jobs
         /// </summary>
         public JobRepository JobRepository
         {

@@ -122,7 +122,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Match options 
+    /// Match options
     /// </summary>
     [FlagsAttribute]
     internal enum MshMemberMatchOptions
@@ -225,7 +225,7 @@ namespace System.Management.Automation
         /// or enumerating a collection.
         /// This should not be settable as it would make the count of hidden properties in
         /// PSMemberInfoInternalCollection invalid.
-        /// For now, we are carefully setting this.isHidden before adding 
+        /// For now, we are carefully setting this.isHidden before adding
         /// the members toPSObjectMembersetCollection. In the future, we might need overload for all
         /// PSMemberInfo constructors to take isHidden.
         /// </summary>
@@ -240,11 +240,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets and Sets the value of this member
         /// </summary>
-        /// <exception cref="GetValueException">When getting the value of a property throws an exception. 
-        /// This exception is also thrown if the property is an <see cref="PSScriptProperty"/> and there 
+        /// <exception cref="GetValueException">When getting the value of a property throws an exception.
+        /// This exception is also thrown if the property is an <see cref="PSScriptProperty"/> and there
         /// is no Runspace to run the script.</exception>
         /// <exception cref="SetValueException">When setting the value of a property throws an exception.
-        /// This exception is also thrown if the property is an <see cref="PSScriptProperty"/> and there 
+        /// This exception is also thrown if the property is an <see cref="PSScriptProperty"/> and there
         /// is no Runspace to run the script.</exception>
         /// <exception cref="ExtendedTypeSystemException">When some problem other then getting/setting the value happened</exception>
         public abstract object Value { get; set; }
@@ -363,7 +363,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of PSAliasProperty setting the name of the alias, 
+        /// Initializes a new instance of PSAliasProperty setting the name of the alias,
         /// the name of the member this alias refers to and the type to convert the referenced
         /// member's value.
         /// </summary>
@@ -404,7 +404,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the the type to convert the referenced member's value. It might be 
+        /// Gets the the type to convert the referenced member's value. It might be
         /// null when no conversion is done.
         /// </summary>
         public Type ConversionType { get; private set; }
@@ -438,7 +438,7 @@ namespace System.Management.Automation
         /// Gets the type of the value for this member
         /// </summary>
         /// <exception cref="ExtendedTypeSystemException">
-        /// When 
+        /// When
         ///     the alias has not been added to an PSObject or
         ///     the alias has a cycle or
         ///     an aliased member is not present
@@ -459,7 +459,7 @@ namespace System.Management.Automation
         /// Gets true if this property can be set
         /// </summary>
         /// <exception cref="ExtendedTypeSystemException">
-        /// When 
+        /// When
         ///     the alias has not been added to an PSObject or
         ///     the alias has a cycle or
         ///     an aliased member is not present
@@ -481,7 +481,7 @@ namespace System.Management.Automation
         /// Gets true if this property can be read
         /// </summary>
         /// <exception cref="ExtendedTypeSystemException">
-        ///     When 
+        ///     When
         ///         the alias has not been added to an PSObject or
         ///         the alias has a cycle or
         ///         an aliased member is not present
@@ -557,7 +557,7 @@ namespace System.Management.Automation
         /// Gets and Sets the value of this member
         /// </summary>
         /// <exception cref="ExtendedTypeSystemException">
-        /// When 
+        /// When
         ///     the alias has not been added to an PSObject or
         ///     the alias has a cycle or
         ///     an aliased member is not present
@@ -633,7 +633,7 @@ namespace System.Management.Automation
             }
             catch (AmbiguousMatchException)
             {
-                // Ignore the AmbiguousMatchException. 
+                // Ignore the AmbiguousMatchException.
                 // We will generate error below if we cannot find exactly one match method.
             }
 
@@ -660,7 +660,7 @@ namespace System.Management.Automation
             }
             catch (AmbiguousMatchException)
             {
-                // Ignore the AmbiguousMatchException. 
+                // Ignore the AmbiguousMatchException.
                 // We will generate error below if we cannot find exactly one match method.
             }
 
@@ -786,7 +786,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">when methodForGet and methodForSet are null</exception>
         /// <exception cref="ExtendedTypeSystemException">
         /// if:
-        ///     - getterCodeReference doesn't have the right format, 
+        ///     - getterCodeReference doesn't have the right format,
         ///     - setterCodeReference doesn't have the right format,
         ///     - both getterCodeReference and setterCodeReference are null.
         /// </exception>
@@ -1174,7 +1174,7 @@ namespace System.Management.Automation
             : base(name, null, null, tag)
         {
             //
-            // Note that the constructor sets the adapter and base object to null; the ThirdPartyAdapter managing this property must set these values 
+            // Note that the constructor sets the adapter and base object to null; the ThirdPartyAdapter managing this property must set these values
             //
         }
 
@@ -1679,7 +1679,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes an instance of the PSScriptProperty class as a read only 
+        /// Initializes an instance of the PSScriptProperty class as a read only
         /// property. getterScript or setterScript can be null, but not both.
         /// </summary>
         /// <param name="name">Name of this property</param>
@@ -1713,7 +1713,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes an instance of the PSScriptProperty class as a read only 
+        /// Initializes an instance of the PSScriptProperty class as a read only
         /// property, using the text of the properties to support lazy initialization.
         /// </summary>
         /// <param name="name">Name of this property</param>
@@ -1800,7 +1800,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets and Sets the value of this property
         /// </summary>
-        /// <exception cref="GetValueException">When getting and there is no getter, 
+        /// <exception cref="GetValueException">When getting and there is no getter,
         /// when the getter throws an exception or when there is no Runspace to run the script.
         /// </exception>
         /// <exception cref="SetValueException">When setting and there is no setter,
@@ -2147,7 +2147,7 @@ namespace System.Management.Automation
             }
             catch (AmbiguousMatchException)
             {
-                // Ignore the AmbiguousMatchException. 
+                // Ignore the AmbiguousMatchException.
                 // We will generate error below if we cannot find exactly one match method.
             }
 
@@ -2238,7 +2238,7 @@ namespace System.Management.Automation
         /// <returns>return value from the method</returns>
         /// <exception cref="ArgumentException">if arguments is null</exception>
         /// <exception cref="MethodException">
-        ///     When 
+        ///     When
         ///         could CodeReference cannot match the given argument count or
         ///         could not convert an argument to the type required
         /// </exception>
@@ -2367,15 +2367,15 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="script"></param>
         /// <param name="shouldCloneOnAccess">
         /// Used by TypeTable.
-        /// TypeTable might be shared between multiple runspaces and 
-        /// ScriptBlock is not shareable. We decided to Clone as needed 
-        /// instead of Cloning whenever a shared TypeTable is attached 
+        /// TypeTable might be shared between multiple runspaces and
+        /// ScriptBlock is not shareable. We decided to Clone as needed
+        /// instead of Cloning whenever a shared TypeTable is attached
         /// to a Runspace to save on Memory.
         /// </param>
         internal PSScriptMethod(string name, ScriptBlock script, bool shouldCloneOnAccess)
@@ -2956,7 +2956,7 @@ namespace System.Management.Automation
         internal bool inheritMembers = true;
 
         /// <summary>
-        /// Gets a flag indicating whether the memberset will inherit members of the memberset 
+        /// Gets a flag indicating whether the memberset will inherit members of the memberset
         /// of the same name in the "parent" class.
         /// </summary>
         public bool InheritMembers
@@ -3077,7 +3077,7 @@ namespace System.Management.Automation
     /// <summary>
     /// This MemberSet is used internally to represent the memberset for properties
     /// PSObject, PSBase, PSAdapted members of a PSObject. Having a specialized
-    /// memberset enables delay loading the members for these members. This saves 
+    /// memberset enables delay loading the members for these members. This saves
     /// time loading the members of a PSObject.
     /// </summary>
     /// <remarks>
@@ -3576,7 +3576,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="member">member to be added</param>
         /// <param name="preValidated">flag to indicate that validation has already been done
-        ///     on this new member.  Use only when you can guarantee that the input will not 
+        ///     on this new member.  Use only when you can guarantee that the input will not
         ///     cause any of the errors normally caught by this method.</param>
         /// <exception cref="ExtendedTypeSystemException">
         ///     When:
@@ -3666,7 +3666,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the specific enumerator for this collection. 
+        /// Gets the specific enumerator for this collection.
         /// </summary>
         /// <returns>the enumerator for this collection</returns>
         public abstract IEnumerator<T> GetEnumerator();
@@ -3757,7 +3757,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the specific enumerator for this collection. 
+        /// Gets the specific enumerator for this collection.
         /// </summary>
         /// <returns>the enumerator for this collection</returns>
         public virtual IEnumerator<T> GetEnumerator()
@@ -3839,7 +3839,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="member">member to be added</param>
         /// <param name="preValidated">flag to indicate that validation has already been done
-        ///     on this new member.  Use only when you can guarantee that the input will not 
+        ///     on this new member.  Use only when you can guarantee that the input will not
         ///     cause any of the errors normally caught by this method.</param>
         /// <exception cref="ExtendedTypeSystemException">when a member by this name is already present</exception>
         /// <exception cref="ArgumentException">for invalid arguments</exception>
@@ -4221,7 +4221,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="member">member to be added</param>
         /// <exception cref="ExtendedTypeSystemException">
-        ///     When 
+        ///     When
         ///         member is an PSProperty or PSMethod
         ///         adding a member to a MemberSet with a reserved name
         ///         adding a member with a reserved member name or
@@ -4240,10 +4240,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="member">member to be added</param>
         /// <param name="preValidated">flag to indicate that validation has already been done
-        ///     on this new member.  Use only when you can guarantee that the input will not 
+        ///     on this new member.  Use only when you can guarantee that the input will not
         ///     cause any of the errors normally caught by this method.</param>
         /// <exception cref="ExtendedTypeSystemException">
-        ///     When 
+        ///     When
         ///         member is an PSProperty or PSMethod
         ///         adding a member to a MemberSet with a reserved name
         ///         adding a member with a reserved member name or
@@ -4308,10 +4308,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="member">member to be added</param>
         /// <param name="preValidated">flag to indicate that validation has already been done
-        ///    on this new member.  Use only when you can guarantee that the input will not 
+        ///    on this new member.  Use only when you can guarantee that the input will not
         ///    cause any of the errors normally caught by this method.</param>
         /// <exception cref="ExtendedTypeSystemException">
-        ///     When 
+        ///     When
         ///         adding a member with a reserved member name or
         ///         adding a member with a type not compatible with this collection
         ///         a member with this name already exists
@@ -4418,7 +4418,7 @@ namespace System.Management.Automation
         /// Method which checks if the <paramref name="name"/> is reserved and if so
         /// it will ensure that the particular reserved member is loaded into the
         /// objects member collection.
-        /// 
+        ///
         /// Caller should ensure that name is not null or empty.
         /// </summary>
         /// <param name="name">

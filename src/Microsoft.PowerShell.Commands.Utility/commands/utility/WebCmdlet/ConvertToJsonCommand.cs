@@ -125,8 +125,8 @@ namespace Microsoft.PowerShell.Commands
 #else
                 // In Full CLR, we use the JavaScriptSerializer for which RecursionLimit was set to the default value of 100 (the actual recursion limit is 99 since
                 // at 100 the exception is thrown). See https://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer.recursionlimit(v=vs.110).aspx
-                // ProcessValue creates an object to be serialized from 1 to depth. However, the properties of the object at 'depth' should also be serialized, 
-                // and from the perspective of the serializer, this means it needs to support serializing depth + 1. For the JavaScriptSerializer to support this, 
+                // ProcessValue creates an object to be serialized from 1 to depth. However, the properties of the object at 'depth' should also be serialized,
+                // and from the perspective of the serializer, this means it needs to support serializing depth + 1. For the JavaScriptSerializer to support this,
                 // RecursionLimit needs to be set to depth + 2.
                 JavaScriptSerializer helper = new JavaScriptSerializer() { RecursionLimit = (maxDepthAllowed + 2) };
                 helper.MaxJsonLength = Int32.MaxValue;
@@ -253,7 +253,7 @@ namespace Microsoft.PowerShell.Commands
                 if (json[i] == '"')
                 {
                     // Ensure that the quote is not escaped by iteratively searching backwards for the backslash.
-                    // Examples: 
+                    // Examples:
                     //      "a \" b" --> here second quote is escaped
                     //      "c:\\"  --> here second quote is not escaped
                     //
@@ -408,9 +408,9 @@ namespace Microsoft.PowerShell.Commands
         #endregion convertOutputToPrettierFormat
 
         /// <summary>
-        /// Return an alternate representation of the specified object that serializes the same JSON, except 
+        /// Return an alternate representation of the specified object that serializes the same JSON, except
         /// that properties that cannot be evaluated are treated as having the value null.
-        /// 
+        ///
         /// Primitive types are returned verbatim.  Aggregate types are processed recursively.
         /// </summary>
         /// <param name="obj">The object to be processed</param>
@@ -452,7 +452,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (t.IsEnum)
                 {
-                    // Win8:378368 Enums based on System.Int64 or System.UInt64 are not JSON-serializable 
+                    // Win8:378368 Enums based on System.Int64 or System.UInt64 are not JSON-serializable
                     // because JavaScript does not support the necessary precision.
                     Type enumUnderlyingType = Enum.GetUnderlyingType(obj.GetType());
                     if (enumUnderlyingType.Equals(typeof(Int64)) || enumUnderlyingType.Equals(typeof(UInt64)))
@@ -470,7 +470,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (pso != null && pso.immediateBaseObjectIsEmpty)
                         {
-                            // The obj is a pure PSObject, we convert the original PSObject to a string, 
+                            // The obj is a pure PSObject, we convert the original PSObject to a string,
                             // instead of its base object in this case
                             rv = LanguagePrimitives.ConvertTo(pso, typeof(string),
                                 CultureInfo.InvariantCulture);
@@ -595,7 +595,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Return an alternate representation of the specified dictionary that serializes the same JSON, except 
+        /// Return an alternate representation of the specified dictionary that serializes the same JSON, except
         /// that any contained properties that cannot be evaluated are treated as having the value null.
         /// </summary>
         /// <param name="dict"></param>
@@ -625,7 +625,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Return an alternate representation of the specified collection that serializes the same JSON, except 
+        /// Return an alternate representation of the specified collection that serializes the same JSON, except
         /// that any contained properties that cannot be evaluated are treated as having the value null.
         /// </summary>
         /// <param name="enumerable"></param>
@@ -644,9 +644,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Return an alternate representation of the specified aggregate object that serializes the same JSON, except 
+        /// Return an alternate representation of the specified aggregate object that serializes the same JSON, except
         /// that any contained properties that cannot be evaluated are treated as having the value null.
-        /// 
+        ///
         /// The result is a dictionary in which all public fields and public gettable properties of the original object
         /// are represented.  If any exception occurs while retrieving the value of a field or property, that entity
         /// is included in the output dictionary with a value of null.

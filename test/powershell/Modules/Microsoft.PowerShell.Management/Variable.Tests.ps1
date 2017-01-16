@@ -79,7 +79,7 @@ Describe "Validate basic negative test cases for Variable provider cmdlets" -Tag
 
     It "Verify Negative New-Item" {
         try {
-            New-Item -Name $testVarName -Value 5 -Path "Variable:" -ErrorAction Stop 
+            New-Item -Name $testVarName -Value 5 -Path "Variable:" -ErrorAction Stop
             throw "Expected exception not thrown"
         }
         catch { $_.FullyQualifiedErrorId | Should be "Argument,Microsoft.PowerShell.Commands.NewItemCommand" }
@@ -88,15 +88,15 @@ Describe "Validate basic negative test cases for Variable provider cmdlets" -Tag
     It "Verify Negative Move-Item" {
         $alreadyExistsVar = 2
         try {
-            Move-Item -Path "Variable:${testVarName}" -Destination "Variable:alreadyExistsVar" -ErrorAction Stop 
+            Move-Item -Path "Variable:${testVarName}" -Destination "Variable:alreadyExistsVar" -ErrorAction Stop
             throw "Expected exception not thrown"
-        } 
+        }
         catch { $_.FullyQualifiedErrorId | Should be "GetDynamicParametersException,Microsoft.PowerShell.Commands.MoveItemCommand" }
     }
 
     It "Verify Negative Invoke-Item" {
         try {
-            Invoke-Item -Path "Variable:${testVarName}" -ErrorAction Stop 
+            Invoke-Item -Path "Variable:${testVarName}" -ErrorAction Stop
             throw "Expected exception not thrown"
         }
         catch { $_.FullyQualifiedErrorId | Should be "NotSupported,Microsoft.PowerShell.Commands.InvokeItemCommand" }
@@ -104,7 +104,7 @@ Describe "Validate basic negative test cases for Variable provider cmdlets" -Tag
 
     It "Verify Negative Get-ItemPropertyValue" {
         try {
-            Get-ItemPropertyValue -Path "Variable:" -Name $testVarName -ErrorAction Stop 
+            Get-ItemPropertyValue -Path "Variable:" -Name $testVarName -ErrorAction Stop
             throw "Expected exception not thrown"
         }
         catch { $_.FullyQualifiedErrorId | Should be "NotSupported,Microsoft.PowerShell.Commands.GetItemPropertyValueCommand" }

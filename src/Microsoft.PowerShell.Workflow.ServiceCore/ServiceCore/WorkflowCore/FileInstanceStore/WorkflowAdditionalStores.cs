@@ -419,7 +419,7 @@ namespace Microsoft.PowerShell.Workflow
                 }
 
 
-                // Now verify if the data can be in allowed max persistence limit 
+                // Now verify if the data can be in allowed max persistence limit
                 long oldValue = (
                                     contextLengthOld +
                                     streamLengthOld +
@@ -505,7 +505,7 @@ namespace Microsoft.PowerShell.Workflow
             }
         }
 
-        # region Stream 
+        # region Stream
 
         private ArraySegment<byte> serializedInputStreamData;
         private ArraySegment<byte> serializedOutputStreamData;
@@ -802,7 +802,7 @@ namespace Microsoft.PowerShell.Workflow
                     if (!string.IsNullOrEmpty(runtimeAssemblyPath) && File.Exists(runtimeAssemblyPath))
                     {
                         string radllPath = Path.Combine(storePath, RuntimeAssembly_dll);
-                        
+
                         // Copy if file locations are different.
                         // Both paths are same when a suspended job from another console is resumed and end persistence happened.
                         if (!String.Equals(radllPath, runtimeAssemblyPath, StringComparison.OrdinalIgnoreCase))
@@ -1316,7 +1316,7 @@ namespace Microsoft.PowerShell.Workflow
 
             return _disablePersistenceLimits
                         ? (Dictionary<string, Dictionary<int, Tuple<object, string>>>)LoadFromFileAndDeserialize(Path.Combine(storePath, ActivityState_xml))
-                        : (Dictionary<string, Dictionary<int, Tuple<object, string>>>)DeserializeObject(Decrypt(LoadFromFile(Path.Combine(storePath, ActivityState_xml))));        
+                        : (Dictionary<string, Dictionary<int, Tuple<object, string>>>)DeserializeObject(Decrypt(LoadFromFile(Path.Combine(storePath, ActivityState_xml))));
         }
 
         # endregion
@@ -1754,7 +1754,7 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             return tmpBuf;
-        }        
+        }
 
         internal void DoSave2(IEnumerable<object> components)
         {
@@ -1794,13 +1794,13 @@ namespace Microsoft.PowerShell.Workflow
 
                         totalBytesWritten += SerializeAndSaveToFile(streams.InputStream, Path.Combine(storePath, InputStream_xml));
 
-                        long bytesWritten = 0; 
+                        long bytesWritten = 0;
                         bytesWritten = SerializeAndSaveToFile(streams.OutputStream,
                                                               Path.Combine(storePath, OutputStream_xml));
                         totalBytesWritten += bytesWritten;
 
                         bytesWritten = SerializeAndSaveToFile(streams.ErrorStream, Path.Combine(storePath, ErrorStream_xml));
-                        totalBytesWritten += bytesWritten; 
+                        totalBytesWritten += bytesWritten;
 
 
                         bytesWritten = SerializeAndSaveToFile(streams.WarningStream,
@@ -1809,14 +1809,14 @@ namespace Microsoft.PowerShell.Workflow
 
                         bytesWritten = SerializeAndSaveToFile(streams.VerboseStream,
                                                               Path.Combine(storePath, VerboseStream_xml));
-                        totalBytesWritten += bytesWritten; 
-                        
+                        totalBytesWritten += bytesWritten;
+
                         bytesWritten = SerializeAndSaveToFile(streams.ProgressStream,
                                                               Path.Combine(storePath, ProgressStream_xml));
-                        totalBytesWritten += bytesWritten; 
-                        
+                        totalBytesWritten += bytesWritten;
+
                         bytesWritten = SerializeAndSaveToFile(streams.DebugStream, Path.Combine(storePath, DebugStream_xml));
-                        totalBytesWritten += bytesWritten; 
+                        totalBytesWritten += bytesWritten;
 
                         bytesWritten = SerializeAndSaveToFile(streams.InformationStream, Path.Combine(storePath, InformationStream_xml));
                         totalBytesWritten += bytesWritten;
@@ -2012,7 +2012,7 @@ namespace Microsoft.PowerShell.Workflow
                     }
                 }
             }
-                // It is safe of absorb an exception here because there might be a possibility that the multiple 
+                // It is safe of absorb an exception here because there might be a possibility that the multiple
                 // processes are try work on the same endpoint or default end point store folder.
                 // There is a possibility that one process has deleted the a workflow store and the other one is trying to access it for calculating its store size.
                 // And we will set the flag to make sure we calculate the size next time.

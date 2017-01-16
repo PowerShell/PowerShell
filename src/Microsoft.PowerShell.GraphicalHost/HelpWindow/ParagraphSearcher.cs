@@ -14,7 +14,7 @@ namespace Microsoft.Management.UI.Internal
     using System.Windows.Media;
 
     /// <summary>
-    /// Moves through search highlights built in a ParagraphBuilder 
+    /// Moves through search highlights built in a ParagraphBuilder
     /// changing the color of the current highlight
     /// </summary>
     internal class ParagraphSearcher
@@ -70,7 +70,7 @@ namespace Microsoft.Management.UI.Internal
             // We also need to move to the adjacent run if the caret is at the first run and we
             // are moving backwards so that a search backwards when the first run is highlighted
             // and the caret is at the beginning will wrap to the end
-            if ((!forward && IsFirstRun(caretRun)) || 
+            if ((!forward && IsFirstRun(caretRun)) ||
                 ((caretPosition.GetOffsetToPosition(caretRun.ContentEnd) == 0) && ParagraphSearcher.Ishighlighted(caretRun)))
             {
                 currentRun = ParagraphSearcher.GetNextRun(caretRun, forward);
@@ -230,7 +230,7 @@ namespace Microsoft.Management.UI.Internal
             Debug.Assert(caretRun != null, "a caret run is always valid");
 
             Paragraph paragraph = GetParagraph(caretRun);
-            
+
             Inline firstOrLastInline;
             if (forward)
             {

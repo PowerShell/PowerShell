@@ -49,7 +49,7 @@ namespace System.Management.Automation.Runspaces
         /// <value>true if the underlying stream is open, otherwise false</value>
         /// <remarks>
         /// The underlying stream may be readable after it is closed if data remains in the
-        /// internal buffer. Check <see cref="EndOfPipeline"/> to determine if 
+        /// internal buffer. Check <see cref="EndOfPipeline"/> to determine if
         /// the underlying stream is closed and contains no data.
         /// </remarks>
         public abstract bool IsOpen
@@ -127,7 +127,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>A collection of zero or more objects.</returns>
         /// <remarks>
         /// This method performs a read of all objects currently in the
-        /// stream.  If there are no objects in the stream, 
+        /// stream.  If there are no objects in the stream,
         /// an empty collection is returned.
         /// </remarks>
         public abstract Collection<T> NonBlockingRead();
@@ -139,7 +139,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns>A collection of zero or more objects.</returns>
         /// <remarks>
         /// This method performs a read of objects currently in the
-        /// stream.  If there are no objects in the stream, 
+        /// stream.  If there are no objects in the stream,
         /// an empty collection is returned.
         /// </remarks>
         /// <param name="maxRequested">

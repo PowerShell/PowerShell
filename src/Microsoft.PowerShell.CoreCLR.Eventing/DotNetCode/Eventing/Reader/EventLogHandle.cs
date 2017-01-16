@@ -2,8 +2,8 @@
 /*============================================================
 **
 **
-** Purpose: 
-** This internal class is a SafeHandle implementation over a 
+** Purpose:
+** This internal class is a SafeHandle implementation over a
 ** native EVT_HANDLE - obtained from EventLog Native Methods.
 **
 ============================================================*/
@@ -51,7 +51,7 @@ namespace System.Diagnostics.Eventing.Reader
         }
 
         // DONT compare EventLogHandle with EventLogHandle.Zero
-        // use IsInvalid instead. Zero is provided where a NULL handle needed   
+        // use IsInvalid instead. Zero is provided where a NULL handle needed
         public static EventLogHandle Zero
         {
             get

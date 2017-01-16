@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Workflow
         /// The workflow unhandled exception.
         /// </summary>
         private Exception unhandledException;
-        
+
         /// <summary>
         /// Constructor with instance id and state.
         /// </summary>
@@ -121,6 +121,6 @@ namespace Microsoft.PowerShell.Workflow
         internal Exception UnhandledException
         {
             get { return this.unhandledException; }
-        }        
+        }
     }
 }

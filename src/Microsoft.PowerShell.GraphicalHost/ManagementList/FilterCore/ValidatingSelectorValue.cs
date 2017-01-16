@@ -12,7 +12,7 @@ namespace Microsoft.Management.UI.Internal
     using System.Windows.Data;
 
     /// <summary>
-    /// The ValidatingSelectorValue class provides support for selecting 
+    /// The ValidatingSelectorValue class provides support for selecting
     /// a value from a collection of available values.
     /// </summary>
     /// <typeparam name="T">
@@ -53,14 +53,14 @@ namespace Microsoft.Management.UI.Internal
         private int selectedIndex;
 
         /// <summary>
-        /// Gets or sets the index of the currently selected item or 
+        /// Gets or sets the index of the currently selected item or
         /// returns negative one (-1) if the selection is empty.
         /// </summary>
         /// <remarks>
-        /// If you set SelectedIndex to a value less that -1, an 
-        /// ArgumentException is thrown. If you set SelectedIndex to a 
-        /// value equal or greater than the number of child elements, 
-        /// the value is ignored. 
+        /// If you set SelectedIndex to a value less that -1, an
+        /// ArgumentException is thrown. If you set SelectedIndex to a
+        /// value equal or greater than the number of child elements,
+        /// the value is ignored.
         /// </remarks>
         public int SelectedIndex
         {
@@ -98,7 +98,7 @@ namespace Microsoft.Management.UI.Internal
 
         /// <summary>
         /// Gets the item within AvailableValues at the offset indicated
-        /// by SelectedIndex or returns default(T) if the selection is empty. 
+        /// by SelectedIndex or returns default(T) if the selection is empty.
         /// </summary>
         public T SelectedValue
         {
@@ -172,7 +172,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Called to validate the property with the given name. 
+        /// Called to validate the property with the given name.
         /// </summary>
         /// <param name="columnName">
         /// The name of the property whose error message will be checked.

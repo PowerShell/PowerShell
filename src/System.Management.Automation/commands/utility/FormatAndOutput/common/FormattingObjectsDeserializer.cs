@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
 
-            // check the type of the object by 
+            // check the type of the object by
             // 1) verifying the type name information
             // 2) trying to access the property containing CLSID information
             if (!Deserializer.IsInstanceOfType(so, typeof(FormatInfoData)))
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 return null;
             }
 
-            // check the type of the object by 
+            // check the type of the object by
             // 1) verifying the type name information
             // 2) trying to access the property containing CLSID information
             if (!Deserializer.IsInstanceOfType(so, typeof(FormatInfoData)))
@@ -160,7 +160,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
 #if _UNUSED
-        NOTE: this code is commented out because the current schema does not have the need for 
+        NOTE: this code is commented out because the current schema does not have the need for
         it. We retail it because future schema extensions might require it
 
         /// <summary>
@@ -177,7 +177,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             if (e == null)
                 return null;
 
-            // copy to string collection, since, a priori, we do not know the length 
+            // copy to string collection, since, a priori, we do not know the length
             StringCollection temp = new StringCollection ();
 
             foreach (string s in e)

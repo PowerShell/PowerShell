@@ -29,7 +29,7 @@
 /*
   Note on ACL support:
   The key thing to note about ACL's is you set them on a kernel object like a
-  registry key, then the ACL only gets checked when you construct handles to 
+  registry key, then the ACL only gets checked when you construct handles to
   them.  So if you set an ACL to deny read access to yourself, you'll still be
   able to read with that handle, but not with new handles.
 
@@ -41,8 +41,8 @@
   may not be able to read or write to a registry key.  It's very strange.  But
   the real test of these handles is attempting to read or set a value in an
   affected registry key.
-  
-  For reference, at least two registry keys must be set to particular values 
+
+  For reference, at least two registry keys must be set to particular values
   for this behavior:
   HKLM\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Terminal Server\RegistryExtensionFlags, the least significant bit must be 1.
   HKLM\SYSTEM\CurrentControlSet\Control\TerminalServer\TSAppCompat must be 1
@@ -239,7 +239,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         {
             SafeTransactionHandle safeTransactionHandle = null;
 
-            // If myTransaction is not null and is not the same as Transaction.Current 
+            // If myTransaction is not null and is not the same as Transaction.Current
             // this is an invalid operation. The transaction within which the RegistryKey object was created
             // needs to be the same as the transaction being used now.
             if (null != _myTransaction)
@@ -336,7 +336,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             Dispose(true);
         }
 
-        /// <summary> 
+        /// <summary>
         /// <para>Creates a new subkey, or opens an existing one.
         /// Utilizes Transaction.Current for its transaction.</para>
         /// <param name='subkey'>Name or path to subkey to create or open. Cannot be null or an empty string,
@@ -353,12 +353,12 @@ namespace Microsoft.PowerShell.Commands.Internal
             return CreateSubKey(subkey, _checkMode);
         }
 
-        /// <summary> 
+        /// <summary>
         /// <para>Creates a new subkey, or opens an existing one.
         /// Utilizes Transaction.Current for its transaction.</para>
         /// <param name='subkey'>Name or path to subkey to create or open. Cannot be null or an empty string,
         /// otherwise an ArgumentException is thrown.</param>
-        /// <param name='permissionCheck'>One of the Microsoft.Win32.RegistryKeyPermissionCheck values that 
+        /// <param name='permissionCheck'>One of the Microsoft.Win32.RegistryKeyPermissionCheck values that
         /// specifies whether the key is opened for read or read/write access.</param>
         /// <returns>A TransactedRegistryKey object for the subkey, which is associated with Transaction.Current.
         /// returns null if the operation failed.</returns>
@@ -373,12 +373,12 @@ namespace Microsoft.PowerShell.Commands.Internal
             return CreateSubKeyInternal(subkey, permissionCheck, (TransactedRegistrySecurity)null);
         }
 
-        /// <summary> 
+        /// <summary>
         /// <para>Creates a new subkey, or opens an existing one.
         /// Utilizes Transaction.Current for its transaction.</para>
         /// <param name='subkey'>Name or path to subkey to create or open. Cannot be null or an empty string,
         /// otherwise an ArgumentException is thrown.</param>
-        /// <param name='permissionCheck'>One of the Microsoft.Win32.RegistryKeyPermissionCheck values that 
+        /// <param name='permissionCheck'>One of the Microsoft.Win32.RegistryKeyPermissionCheck values that
         /// specifies whether the key is opened for read or read/write access.</param>
         /// <param name='registrySecurity'>A TransactedRegistrySecurity object that specifies the access control security for the new key.</param>
         /// <returns>A TransactedRegistryKey object for the subkey, which is associated with Transaction.Current.
@@ -618,8 +618,8 @@ namespace Microsoft.PowerShell.Commands.Internal
             }
         }
 
-        // An internal version which does no security checks or argument checking.  Skipping the 
-        // security checks should give us a slight perf gain on large trees. 
+        // An internal version which does no security checks or argument checking.  Skipping the
+        // security checks should give us a slight perf gain on large trees.
         [ResourceExposure(ResourceScope.Machine)]
         [ResourceConsumption(ResourceScope.Machine)]
         // Suppressed to be consistent with naming in Microsoft.Win32.RegistryKey
@@ -689,7 +689,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             int errorCode = Win32Native.RegDeleteValue(_hkey, name);
 
             //
-            // From windows 2003 server, if the name is too long we will get error code ERROR_FILENAME_EXCED_RANGE  
+            // From windows 2003 server, if the name is too long we will get error code ERROR_FILENAME_EXCED_RANGE
             // This still means the name doesn't exist. We need to be consistent with previous OS.
             //
             if (errorCode == Win32Native.ERROR_FILE_NOT_FOUND || errorCode == Win32Native.ERROR_FILENAME_EXCED_RANGE)
@@ -756,7 +756,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         {
             ValidateKeyName(name);
             EnsureNotDisposed();
-            name = FixupName(name); // Fixup multiple slashes to a single slash            
+            name = FixupName(name); // Fixup multiple slashes to a single slash
 
             CheckOpenSubKeyPermission(name, writable);
             SafeRegistryHandle result = null;
@@ -1132,7 +1132,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// unnamed or default value of this Registry key is returned, if any.</para>
         /// <param name="name">Name of value to retrieve.</param>
         /// <param name="defaultValue">Value to return if name doesn't exist.</param>
-        /// <param name="options">One of the Microsoft.Win32.RegistryValueOptions values that specifies 
+        /// <param name="options">One of the Microsoft.Win32.RegistryValueOptions values that specifies
         /// optional processing of the retrieved value.</param>
         /// <returns>The data associated with the value.</returns>
         /// </summary>
@@ -1169,8 +1169,8 @@ namespace Microsoft.PowerShell.Commands.Internal
             if (ret != 0)
             {
                 // For stuff like ERROR_FILE_NOT_FOUND, we want to return null (data).
-                // Some OS's returned ERROR_MORE_DATA even in success cases, so we 
-                // want to continue on through the function. 
+                // Some OS's returned ERROR_MORE_DATA even in success cases, so we
+                // want to continue on through the function.
                 if (ret != Win32Native.ERROR_MORE_DATA)
                     return data;
             }
@@ -1261,8 +1261,8 @@ namespace Microsoft.PowerShell.Commands.Internal
                                 }
                                 else
                                 {
-                                    // we found an empty string.  But if we're at the end of the data, 
-                                    // it's just the extra null terminator. 
+                                    // we found an empty string.  But if we're at the end of the data,
+                                    // it's just the extra null terminator.
                                     if (nextNull != len - 1)
                                         strings.Add(String.Empty);
                                 }
@@ -1390,7 +1390,7 @@ namespace Microsoft.PowerShell.Commands.Internal
             VerifyTransaction();
 
             if (ContainsRegistryValue(name))
-            { // Existing key 
+            { // Existing key
                 CheckValueWritePermission(name);
             }
             else
@@ -1430,7 +1430,7 @@ namespace Microsoft.PowerShell.Commands.Internal
 
                     case RegistryValueKind.MultiString:
                         {
-                            // Other thread might modify the input array after we calculate the buffer length.                            
+                            // Other thread might modify the input array after we calculate the buffer length.
                             // Make a copy of the input array to be safe.
                             string[] dataStrings = (string[])(((string[])value).Clone());
 
@@ -1589,7 +1589,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <summary>
         /// <para>Returns the access control security for the current registry key.
         /// Utilizes Transaction.Current for its transaction.</para>
-        /// <returns>A TransactedRegistrySecurity object that describes the access control 
+        /// <returns>A TransactedRegistrySecurity object that describes the access control
         /// permissions on the registry key represented by the current TransactedRegistryKey.</returns>
         /// </summary>
         public TransactedRegistrySecurity GetAccessControl()
@@ -1601,7 +1601,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         /// <para>Returns the access control security for the current registry key.
         /// Utilizes Transaction.Current for its transaction.</para>
         /// <param name="includeSections">A bitwise combination of AccessControlSections values that specifies the type of security information to get.</param>
-        /// <returns>A TransactedRegistrySecurity object that describes the access control 
+        /// <returns>A TransactedRegistrySecurity object that describes the access control
         /// permissions on the registry key represented by the current TransactedRegistryKey.</returns>
         /// </summary>
         public TransactedRegistrySecurity GetAccessControl(AccessControlSections includeSections)
@@ -1657,8 +1657,8 @@ namespace Microsoft.PowerShell.Commands.Internal
                     //* on reentrant calls because of this error code path in RegistryKey
                     //*
                     //* Normally we'd make our caller synchronize access to a shared RegistryKey instead of doing something like this,
-                    //* however we shipped PerformanceCounter.NextValue() un-synchronized in v2.0RTM and customers have taken a dependency on 
-                    //* this behavior (being able to simultaneously query multiple remote-machine counters on multiple threads, instead of 
+                    //* however we shipped PerformanceCounter.NextValue() un-synchronized in v2.0RTM and customers have taken a dependency on
+                    //* this behavior (being able to simultaneously query multiple remote-machine counters on multiple threads, instead of
                     //* having serialized access).
                     //*
                     //* FUTURE: Consider changing PerformanceCounterLib to handle its own Win32 RegistryKey API calls instead of depending
@@ -1764,7 +1764,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         private void CheckOpenSubKeyPermission(string subkeyName, bool subKeyWritable)
         {
             // If the parent key is not opened under default mode, we have access already.
-            // If the parent key is opened under default mode, we need to check for permission.                            
+            // If the parent key is opened under default mode, we need to check for permission.
             if (_checkMode == RegistryKeyPermissionCheck.Default)
             {
                 CheckSubKeyReadPermission(subkeyName);
@@ -1882,7 +1882,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         private void CheckValueWritePermission(string valueName)
         {
             BCLDebug.Assert(_checkMode != RegistryKeyPermissionCheck.ReadSubTree, "We shouldn't allow writing value to read-only key!");
-            // skip the security check if the key is opened under write mode                
+            // skip the security check if the key is opened under write mode
             if (_checkMode == RegistryKeyPermissionCheck.Default)
             {
                 new RegistryPermission(RegistryPermissionAccess.Write, _keyName + "\\" + valueName).Demand();
@@ -1918,7 +1918,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         {
             if (_checkMode == RegistryKeyPermissionCheck.Default)
             {
-                // only need to check for default mode (dynamic check)                
+                // only need to check for default mode (dynamic check)
                 new RegistryPermission(RegistryPermissionAccess.Read, _keyName + "\\.").Demand();
             }
         }

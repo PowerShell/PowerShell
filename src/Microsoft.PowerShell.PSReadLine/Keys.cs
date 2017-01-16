@@ -289,7 +289,7 @@ namespace Microsoft.PowerShell
         public static ConsoleKeyInfo ShiftF3 = new ConsoleKeyInfo((char)0, ConsoleKey.F3, true, false, false);
         public static ConsoleKeyInfo ShiftF8 = new ConsoleKeyInfo((char)0, ConsoleKey.F8, true, false, false);
 
-        // Keys to ignore 
+        // Keys to ignore
 #if !UNIX
         public static ConsoleKeyInfo VolumeUp   = new ConsoleKeyInfo((char)0, /*ConsoleKey.VolumeUp*/(ConsoleKey)175, false, false, false);
         public static ConsoleKeyInfo VolumeDown = new ConsoleKeyInfo((char)0, /*ConsoleKey.VolumeDown*/(ConsoleKey)174, false, false, false);

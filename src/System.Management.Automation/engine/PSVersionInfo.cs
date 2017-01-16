@@ -28,11 +28,11 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// We can't depend on assembly version for PowerShell version.
-        /// 
-        /// This is why we hard code the PowerShell version here. 
-        /// 
-        /// For each later release of PowerShell, this constant needs to 
-        /// be updated to reflect the right version. 
+        ///
+        /// This is why we hard code the PowerShell version here.
+        ///
+        /// For each later release of PowerShell, this constant needs to
+        /// be updated to reflect the right version.
         /// </remarks>
         private static Version s_psV1Version = new Version(1, 0);
         private static Version s_psV2Version = new Version(2, 0);
@@ -194,11 +194,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>
         /// For 2.0 PowerShell, we still use "1" as the registry version key.
-        /// For >=3.0 PowerShell, we still use "1" as the registry version key for 
+        /// For >=3.0 PowerShell, we still use "1" as the registry version key for
         /// Snapin and Custom shell lookup/discovery.
         /// </remarks>
         internal static string RegistryVersion1Key
@@ -210,13 +210,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <remarks>
         /// For 3.0 PowerShell, we use "3" as the registry version key only for Engine
         /// related data like ApplicationBase.
-        /// For 3.0 PowerShell, we still use "1" as the registry version key for 
-        /// Snapin and Custom shell lookup/discovery. 
+        /// For 3.0 PowerShell, we still use "1" as the registry version key for
+        /// Snapin and Custom shell lookup/discovery.
         /// </remarks>
         internal static string RegistryVersionKey
         {
@@ -310,7 +310,7 @@ namespace System.Management.Automation
     /// <summary>
     /// An implementation of semantic versioning (http://semver.org)
     /// that can be converted to/from <see cref="System.Version"/>.
-    /// 
+    ///
     /// When converting to <see cref="Version"/>, a PSNoteProperty is
     /// added to the instance to store the semantic version label so
     /// that it can be recovered when creating a new SemanticVersion.

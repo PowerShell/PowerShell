@@ -11,8 +11,8 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// Defines the implementation of the 'Clear-RecycleBin' cmdlet.
-    /// This cmdlet clear all files in the RecycleBin for the given DriveLetter. 
-    /// If not DriveLetter is specified, then the RecycleBin for all drives are cleared. 
+    /// This cmdlet clear all files in the RecycleBin for the given DriveLetter.
+    /// If not DriveLetter is specified, then the RecycleBin for all drives are cleared.
     /// </summary>
     [Cmdlet(VerbsCommon.Clear, "RecycleBin", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=524082", ConfirmImpact = ConfirmImpact.High)]
     public class ClearRecycleBinCommand : PSCmdlet
@@ -21,9 +21,9 @@ namespace Microsoft.PowerShell.Commands
         private DriveInfo[] _availableDrives;
         private bool _force;
 
-        /// <summary>  
+        /// <summary>
         /// Property that sets DriveLetter parameter.
-        /// </summary>  
+        /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -33,9 +33,9 @@ namespace Microsoft.PowerShell.Commands
             set { _drivesList = value; }
         }
 
-        /// <summary>  
-        /// Property that sets force parameter. This will allow to clear the recyclebin.  
-        /// </summary>  
+        /// <summary>
+        /// Property that sets force parameter. This will allow to clear the recyclebin.
+        /// </summary>
         [Parameter()]
         public SwitchParameter Force
         {
@@ -142,7 +142,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns true if the given input is of the form c, c:, c:\, C, C: or C:\ 
+        /// Returns true if the given input is of the form c, c:, c:\, C, C: or C:\
         /// </summary>
         /// <param name="input"></param>
         /// <returns></returns>
@@ -152,7 +152,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Returns a drive path of the form C:\ for the given drive driveName. 
+        /// Returns a drive path of the form C:\ for the given drive driveName.
         /// Supports the following inputs: C, C:, C:\
         /// </summary>
         /// <param name="driveName"></param>
@@ -176,7 +176,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Clear the recyclebin for the given drive name. 
+        /// Clear the recyclebin for the given drive name.
         /// If no driveName is provided, it clears the recyclebin for all drives.
         /// </summary>
         /// <param name="drivePath"></param>
@@ -197,7 +197,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (_force || (ShouldProcess(clearRecycleBinShouldProcessTarget, "Clear-RecycleBin")))
             {
-                // If driveName is null, then clear the recyclebin for all drives; otherwise, just for the specified driveName. 
+                // If driveName is null, then clear the recyclebin for all drives; otherwise, just for the specified driveName.
 
                 string activity = String.Format(CultureInfo.InvariantCulture, ClearRecycleBinResources.ClearRecycleBinProgressActivity);
                 string statusDescription;

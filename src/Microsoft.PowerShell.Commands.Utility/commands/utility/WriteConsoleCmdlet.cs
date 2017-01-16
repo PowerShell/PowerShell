@@ -56,9 +56,9 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// 
+        ///
         /// The separator to print between objects
-        /// 
+        ///
         /// </summary>
         /// <value></value>
 

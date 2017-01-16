@@ -928,7 +928,7 @@ namespace System.Management.Automation
                                                                         workflowInfo.ParameterSets, common, commonWorkflow, "MamlCommandHelpInfo");
                 }
 
-                // Add HelpUri if necessary 
+                // Add HelpUri if necessary
                 if (localHelpInfo.GetUriForOnlineHelp() == null)
                 {
                     DefaultCommandHelpObjectBuilder.AddRelatedLinksProperties(localHelpInfo.FullHelp, commandInfo.CommandMetadata.HelpUri);

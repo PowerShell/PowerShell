@@ -2954,7 +2954,7 @@ namespace Microsoft.PowerShell.Commands
         /// operating system.
         /// </summary>
         /// <remarks>
-        /// This value does not necessarily indicate the true amount of 
+        /// This value does not necessarily indicate the true amount of
         /// physical memory, but what is reported to the operating system
         /// as available to it.
         /// </remarks>
@@ -3687,7 +3687,7 @@ namespace Microsoft.PowerShell.Commands
         BackupDomainController = 4,
 
         /// <summary>
-        /// Primary Domain Controller 
+        /// Primary Domain Controller
         /// </summary>
         PrimaryDomainController = 5
     }
@@ -4094,7 +4094,7 @@ namespace Microsoft.PowerShell.Commands
         ServerForSmallBusinessEdition = 24,
 
         /// <summary>
-        /// SKU is Small Business Server Premium Edition 
+        /// SKU is Small Business Server Premium Edition
         /// </summary>
         SmallBusinessServerPremiumEdition = 25,
 
@@ -4732,7 +4732,7 @@ namespace Microsoft.PowerShell.Commands
         FullPower = 1,
 
         /// <summary>
-        /// Power Save - Low Power mode 
+        /// Power Save - Low Power mode
         /// </summary>
         PowerSaveLowPowerMode = 2,
 
@@ -4784,7 +4784,7 @@ namespace Microsoft.PowerShell.Commands
         Other = 1,
 
         /// <summary>
-        /// Processor type is 
+        /// Processor type is
         /// </summary>
         Unknown = 2,
 
@@ -5099,22 +5099,22 @@ namespace Microsoft.PowerShell.Commands
         [DllImport(PInvokeDllNames.LCIDToLocaleNameDllName, SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuilder localeName, int localeNameSize, int flags);
 
-        /// <summary>    
+        /// <summary>
         /// Gets the data specified for the passed in property name from the
         /// Software Licensing API
         /// </summary>
-        /// <param name="licenseProperty">Name of the licensing property to get.</param>    
-        /// <param name="propertyValue">Out parameter for the value.</param>    
-        /// <returns>An hresult indicating success or failure.</returns>    
+        /// <param name="licenseProperty">Name of the licensing property to get.</param>
+        /// <param name="propertyValue">Out parameter for the value.</param>
+        /// <returns>An hresult indicating success or failure.</returns>
         [DllImport("slc.dll", CharSet = CharSet.Unicode)]
         internal static extern int SLGetWindowsInformationDWORD(string licenseProperty, out int propertyValue);
-        /*                               
-         * SLGetWindowsInformationDWORD function returns  
-         * S_OK (0x00000000): If the method succeeds  
-         * SL_E_RIGHT_NOT_GRANTED (0xC004F013): The caller does not have the permissions necessary to call this function.  
-         * SL_E_DATATYPE_MISMATCHED (0xC004F013): The value portion of the name-value pair is not a DWORD.                               
-        [DllImport("Slc.dll", EntryPoint = "SLGetWindowsInformationDWORD", CharSet = CharSet.Unicode)]  
-        public static extern UInt32 SLGetWindowsInformationDWORD(string pwszValueName, ref int pdwValue);  
+        /*
+         * SLGetWindowsInformationDWORD function returns
+         * S_OK (0x00000000): If the method succeeds
+         * SL_E_RIGHT_NOT_GRANTED (0xC004F013): The caller does not have the permissions necessary to call this function.
+         * SL_E_DATATYPE_MISMATCHED (0xC004F013): The value portion of the name-value pair is not a DWORD.
+        [DllImport("Slc.dll", EntryPoint = "SLGetWindowsInformationDWORD", CharSet = CharSet.Unicode)]
+        public static extern UInt32 SLGetWindowsInformationDWORD(string pwszValueName, ref int pdwValue);
          */
     }
     #endregion Native

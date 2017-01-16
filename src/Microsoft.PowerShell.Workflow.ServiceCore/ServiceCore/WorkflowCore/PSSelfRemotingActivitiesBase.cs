@@ -127,7 +127,7 @@ namespace Microsoft.PowerShell.Activities
 
 
         /// <summary>
-        /// Contains the powershell text defining the mode for this command. 
+        /// Contains the powershell text defining the mode for this command.
         /// </summary>
         protected abstract string ModuleDefinition { get; }
 
@@ -213,7 +213,7 @@ namespace Microsoft.PowerShell.Activities
                         sessionOptions.UICulture = pso.UICulture;
 
                     if (pso.ProxyCredential != null)
-                    {   
+                    {
                         string[] parts = pso.ProxyCredential.UserName.Split('\\');
                         string domain, userid;
                         if (parts.Length < 2)
@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell.Activities
                         }
 
                         sessionOptions.AddProxyCredentials(
-                            new CimCredential(ConvertPSAuthenticationMechanismToCimPasswordAuthenticationMechanism(pso.ProxyAuthentication), 
+                            new CimCredential(ConvertPSAuthenticationMechanismToCimPasswordAuthenticationMechanism(pso.ProxyAuthentication),
                                 domain, userid, pso.ProxyCredential.Password));
                     }
 
@@ -257,11 +257,11 @@ namespace Microsoft.PowerShell.Activities
 
                 PasswordAuthenticationMechanism passwordAuthenticationMechanism = PasswordAuthenticationMechanism.Default;
                 AuthenticationMechanism? authenticationMechanism = PSAuthentication.Get(context);
-                
+
                 if (authenticationMechanism.HasValue)
                     passwordAuthenticationMechanism = ConvertPSAuthenticationMechanismToCimPasswordAuthenticationMechanism(authenticationMechanism.Value);
 
-                
+
                 if (certificateThumbprint != null)
                 {
                     sessionOptions.AddDestinationCredentials(new CimCredential(CertificateAuthenticationMechanism.Default, certificateThumbprint));
@@ -292,19 +292,19 @@ namespace Microsoft.PowerShell.Activities
                     {
                         ActivityImplementationContext configuredCommand = GetPowerShell(context);
 
-                        CimActivityImplementationContext activityImplementationContext = 
+                        CimActivityImplementationContext activityImplementationContext =
                             new CimActivityImplementationContext(
-                                configuredCommand, 
-                                session.ComputerName, 
-                                pscreds, 
-                                certificateThumbprint, 
+                                configuredCommand,
+                                session.ComputerName,
+                                pscreds,
+                                certificateThumbprint,
                                 authenticationMechanism,
-                                sessionOptionUseSsl, 
-                                sessionOptionPort, 
-                                pso, 
-                                session, 
-                                sessionOptions, 
-                                ModuleDefinition, 
+                                sessionOptionUseSsl,
+                                sessionOptionPort,
+                                pso,
+                                session,
+                                sessionOptions,
+                                ModuleDefinition,
                                 resourceUri);
 
                         commands.Add(activityImplementationContext);
@@ -341,17 +341,17 @@ namespace Microsoft.PowerShell.Activities
                         ActivityImplementationContext baseContext = GetPowerShell(context);
 
                         CimActivityImplementationContext activityImplementationContext =
-                            new CimActivityImplementationContext(baseContext, 
-                                                                 computer, 
+                            new CimActivityImplementationContext(baseContext,
+                                                                 computer,
                                                                  pscreds,
                                                                  certificateThumbprint,
                                                                  authenticationMechanism,
-                                                                 sessionOptionUseSsl, 
+                                                                 sessionOptionUseSsl,
                                                                  sessionOptionPort,
-                                                                 pso, 
+                                                                 pso,
                                                                  null, // session
-                                                                 sessionOptions, 
-                                                                 ModuleDefinition, 
+                                                                 sessionOptions,
+                                                                 ModuleDefinition,
                                                                  resourceUri);
 
                         commands.Add(activityImplementationContext);
@@ -364,7 +364,7 @@ namespace Microsoft.PowerShell.Activities
                 // Create the PowerShell instance, and add the script to it.
                 ActivityImplementationContext baseContext = GetPowerShell(context);
                 CimActivityImplementationContext activityImplementationContext =
-                    new CimActivityImplementationContext(baseContext, 
+                    new CimActivityImplementationContext(baseContext,
                                                          null,  // ComputerName
                                                          null,  // Credential
                                                          null,  // CertificateThumbprint
@@ -393,7 +393,7 @@ namespace Microsoft.PowerShell.Activities
                 case AuthenticationMechanism.Negotiate:
                 case AuthenticationMechanism.NegotiateWithImplicitCredential:
                     return PasswordAuthenticationMechanism.Negotiate;
-                            
+
                 case AuthenticationMechanism.Credssp:
                     return PasswordAuthenticationMechanism.CredSsp;
 
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Activities
 
                 case  AuthenticationMechanism.Default:
                 default:
-                    return PasswordAuthenticationMechanism.Default;                   
+                    return PasswordAuthenticationMechanism.Default;
             }
         }
     }
@@ -449,15 +449,15 @@ namespace Microsoft.PowerShell.Activities
         /// <param name="resourceUri"></param>
         public CimActivityImplementationContext(
             ActivityImplementationContext activityImplementationContext,
-            string computerName, 
-            PSCredential credential, 
-            string certificateThumbprint, 
-            AuthenticationMechanism? authenticationMechanism, 
-            bool useSsl, 
-            uint port, 
-            PSSessionOption sessionOption, 
-            CimSession session, 
-            CimSessionOptions cimSessionOptions, 
+            string computerName,
+            PSCredential credential,
+            string certificateThumbprint,
+            AuthenticationMechanism? authenticationMechanism,
+            bool useSsl,
+            uint port,
+            PSSessionOption sessionOption,
+            CimSession session,
+            CimSessionOptions cimSessionOptions,
             string moduleDefinition,
             Uri resourceUri)
         {
@@ -511,10 +511,10 @@ namespace Microsoft.PowerShell.Activities
         public CimSessionOptions SessionOptions { get; set; }
 
         /// <summary>
-        /// The name of the computer this activity targets 
+        /// The name of the computer this activity targets
         /// </summary>
         public string ComputerName { get; set; }
-        
+
         /// <summary>
         /// Base64 encoded string defining this module...
         /// </summary>
@@ -602,7 +602,7 @@ namespace Microsoft.PowerShell.Activities
             public int IterationsRemaining = MaxIterations;
             public CimSessionOptions SessionOptions;
             public CimSession Session;
-            
+
             public void AddReference()
             {
                 Interlocked.Add(ref _numberOfUses, 1);
@@ -625,7 +625,7 @@ namespace Microsoft.PowerShell.Activities
             }
             private PSCredential _credential;
 
-            public bool UseSsl 
+            public bool UseSsl
             {
                 get
                 {
@@ -655,7 +655,7 @@ namespace Microsoft.PowerShell.Activities
 
             public string CertificateThumbprint
             {
-                get 
+                get
                 {
                     return _certificateThumbprint;
                 }
@@ -684,7 +684,7 @@ namespace Microsoft.PowerShell.Activities
             }
         }
 
-        object SyncRoot = new object();        
+        object SyncRoot = new object();
 
         /// <summary>
         /// Get a CIM session for the target computer
@@ -726,7 +726,7 @@ namespace Microsoft.PowerShell.Activities
                     }
                 }
 
-                
+
                 // Allocate a new session entry for this computer
 
                 newSessionEntry = new SessionEntry(computerName, credential, certificateThumbprint, authenticationMechanism, sessionOptions, useSsl, port, pssessionOption);
@@ -744,7 +744,7 @@ namespace Microsoft.PowerShell.Activities
             }
         }
 
-        
+
 
         /// <summary>
         /// Return a session to the session table.

@@ -19,8 +19,8 @@ namespace Microsoft.Management.UI.Internal
     public class DateTimeApproximationComparer : IComparer<DateTime>
     {
         /// <summary>
-        /// Compares two objects and returns a value indicating 
-        /// whether one is less than, equal to, or greater than the other. 
+        /// Compares two objects and returns a value indicating
+        /// whether one is less than, equal to, or greater than the other.
         /// </summary>
         /// <param name="value1">
         /// The first object to compare.

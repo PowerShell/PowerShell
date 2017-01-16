@@ -44,7 +44,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This is the shellName which identifies the PowerShell configuration to launch
-        /// on remote machine.        
+        /// on remote machine.
         /// </summary>
         internal string ShellName { get; set; }
 
@@ -81,7 +81,7 @@ namespace System.Management.Automation.Remoting
         public abstract void CloseAsync();
 
         /// <summary>
-        /// Disconnects the remote session in an asynchronous manner        
+        /// Disconnects the remote session in an asynchronous manner
         /// </summary>
         public abstract void DisconnectAsync();
 
@@ -149,7 +149,7 @@ namespace System.Management.Automation.Remoting
             }
             set
             {
-                Dbg.Assert(_remoteRunspacePool == null, @"RunspacePool should be 
+                Dbg.Assert(_remoteRunspacePool == null, @"RunspacePool should be
                         attached only once to the session");
                 _remoteRunspacePool = value;
             }
@@ -313,7 +313,7 @@ namespace System.Management.Automation.Remoting
 
                 if (arg.SessionStateInfo.State == RemoteSessionState.ClosingConnection)
                 {
-                    // when the connection is being closed we need to 
+                    // when the connection is being closed we need to
                     // complete the key exchange process to release
                     // the lock under which the key exchange is happening
                     // if we fail to release the lock, then when
@@ -356,7 +356,7 @@ namespace System.Management.Automation.Remoting
 
                 if (!ret)
                 {
-                    // we need to complete the key exchange 
+                    // we need to complete the key exchange
                     // since the crypto helper will be waiting on it
                     CompleteKeyExchange();
 
@@ -489,12 +489,12 @@ namespace System.Management.Automation.Remoting
         /// <param name="serverRemoteSessionCapability">
         /// Capabilities of remote session
         /// </param>
-        /// <returns> 
+        /// <returns>
         /// The method returns true if the capability negotiation is successful.
         /// Otherwise, it returns false.
         /// </returns>
         /// <exception cref="PSRemotingDataStructureException">
-        /// 1. PowerShell client does not support the PSVersion {1} negotiated by the server. 
+        /// 1. PowerShell client does not support the PSVersion {1} negotiated by the server.
         ///    Make sure the server is compatible with the build {2} of PowerShell.
         /// 2. PowerShell client does not support the SerializationVersion {1} negotiated by the server.
         ///    Make sure the server is compatible with the build {2} of PowerShell.

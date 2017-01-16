@@ -8,7 +8,7 @@ using System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     [Cmdlet("Sort",
             "Object",
@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Command Line Switches
         /// <summary>
-        /// This param specifies if sort order is ascending. 
+        /// This param specifies if sort order is ascending.
         /// </summary>
         [Parameter]
         public SwitchParameter Descending
@@ -225,7 +225,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void EndProcessing()
         {

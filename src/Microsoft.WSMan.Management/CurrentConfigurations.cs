@@ -88,7 +88,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// Refresh the CurrentConfiguration. This method calls GET operation for the given 
+        /// Refresh the CurrentConfiguration. This method calls GET operation for the given
         /// URI on the server and update the current configuration. It also initialize some
         /// of required class members.
         /// </summary>
@@ -128,7 +128,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// This method will remove the configuration from the XML.
-        /// Currently the method will only remove the attributes. But it is extensible enough to support 
+        /// Currently the method will only remove the attributes. But it is extensible enough to support
         /// Node removals in future.
         /// </summary>
         /// <param name="pathToNodeFromRoot">Path with namespace to the node from Root element. Must not end with '/'.</param>
@@ -158,7 +158,7 @@ namespace Microsoft.WSMan.Management
         }
 
         /// <summary>
-        /// Create or Update the value of the configuration on the given Node. Currently this 
+        /// Create or Update the value of the configuration on the given Node. Currently this
         /// method is supported for updating attributes, but can be easily updated for nodes.
         /// Caller should call this method to add a new attribute to the Node.
         /// </summary>
@@ -200,7 +200,7 @@ namespace Microsoft.WSMan.Management
 
                 XmlNode attr = this.rootDocument.CreateNode(XmlNodeType.Attribute, configurationName, String.Empty);
                 attr.Value = configurationValue;
-                                
+
                 nodeToUpdate.Attributes.SetNamedItem(attr);
             }
         }
