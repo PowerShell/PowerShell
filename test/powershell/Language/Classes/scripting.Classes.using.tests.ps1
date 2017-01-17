@@ -261,6 +261,29 @@ New-Object Foo
             $err[1].ErrorId | Should Be 'RequiresModuleInvalid'
         }
 
+        It "report an error when 'using module' terminating by NewLine" {
+            $err = Get-ParseResults "using module"
+            $err.Count | Should Be 1
+            $err[0].ErrorId | Should Be 'MissingUsingItemName'
+        }
+
+        It "report an error when 'using module' terminating by Semicolon" {
+            $err = Get-ParseResults "using module; $testvar=1"
+            $err.Count | Should Be 1
+            $err[0].ErrorId | Should Be 'MissingUsingItemName'
+        }
+
+        It "report an error when a value after 'using module' is a unallowed expression" {
+            $err = Get-ParseResults "using module )"
+            $err.Count | Should Be 1
+            $err[0].ErrorId | Should Be 'InvalidValueForUsingItemName'
+        }
+
+        It "report an error when a value after 'using module' is not a valid module name" {
+            $err = Get-ParseResults "using module 123"
+            $err.Count | Should Be 1
+            $err[0].ErrorId | Should Be 'InvalidValueForUsingItemName'
+        }
     }
 
     Context 'short name in case of name collision' {
