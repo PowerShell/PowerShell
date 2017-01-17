@@ -261,8 +261,14 @@ New-Object Foo
             $err[1].ErrorId | Should Be 'RequiresModuleInvalid'
         }
 
-        It "report an error when missing identifier after 'using module'" {
+        It "report an error when 'using module' terminating by NewLine" {
             $err = Get-ParseResults "using module"
+            $err.Count | Should Be 1
+            $err[0].ErrorId | Should Be 'MissingUsingItemName'
+        }
+
+        It "report an error when 'using module' terminating by Semicolon" {
+            $err = Get-ParseResults "using module; using module System.Collections"
             $err.Count | Should Be 1
             $err[0].ErrorId | Should Be 'MissingUsingItemName'
         }
