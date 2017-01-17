@@ -4430,7 +4430,7 @@ namespace System.Management.Automation.Language
             {
                 ReportError(itemToken.Extent, () => ParserStrings.InvalidValueForUsingItemName, itemToken.Text);
                 // ErrorRecovery: If there is no identifier, skip whole 'using' line
-                SyncOnError(true, TokenKind.NewLine);
+                SyncOnError(true, TokenKind.Semi, TokenKind.NewLine);
                 return new ErrorStatementAst(ExtentOf(usingToken, itemToken.Extent));
             }
 
