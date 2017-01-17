@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Encoding optional flag
         /// </summary>
-        /// 
+        ///
         [Parameter]
         [ValidateSetAttribute(new string[] { "Unicode", "UTF7", "UTF8", "ASCII", "UTF32", "BigEndianUnicode", "Default", "OEM" })]
         public string Encoding { get; set; } = "Unicode";
@@ -127,7 +127,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override
         void
@@ -141,7 +141,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override
         void
@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void StopProcessing()
         {
@@ -352,7 +352,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void StopProcessing()
         {
@@ -454,7 +454,7 @@ namespace Microsoft.PowerShell.Commands
                     _serializer.DoneAsStream();
                     _serializer = null;
                 }
-                //Loading to the XML Document 
+                //Loading to the XML Document
                 _ms.Position = 0;
                 StreamReader read = new StreamReader(_ms);
                 string data = read.ReadToEnd();
@@ -471,7 +471,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void EndProcessing()
         {
@@ -487,7 +487,7 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                //Loading to the XML Document 
+                //Loading to the XML Document
                 _ms.Position = 0;
                 if (As.Equals("Document", StringComparison.OrdinalIgnoreCase))
                 {
@@ -509,7 +509,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void StopProcessing()
         {
@@ -521,7 +521,7 @@ namespace Microsoft.PowerShell.Commands
         #region memory
 
         /// <summary>
-        /// XmlText writer 
+        /// XmlText writer
         /// </summary>
         private XmlWriter _xw;
 
@@ -581,7 +581,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        ///Cleaning up the MemoryStream 
+        ///Cleaning up the MemoryStream
         /// </summary>
         private void CleanUp()
         {
@@ -825,7 +825,7 @@ namespace Microsoft.PowerShell.Commands
     {
         # region parameters
         /// <summary>
-        /// Specifies the path which contains the xml files. The default is the current 
+        /// Specifies the path which contains the xml files. The default is the current
         /// user directory
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -836,7 +836,7 @@ namespace Microsoft.PowerShell.Commands
         public String[] Path { get; set; }
 
         /// <summary>
-        /// Specifies the literal path which contains the xml files. The default is the current 
+        /// Specifies the literal path which contains the xml files. The default is the current
         /// user directory
         /// </summary>
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -878,7 +878,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "Xpath".
-        /// Specifies the String in XPath language syntax. The xml documents will be 
+        /// Specifies the String in XPath language syntax. The xml documents will be
         /// searched for the nodes/values represented by this parameter.
         /// </summary>
         [Parameter(Mandatory = true, Position = 0)]
@@ -886,7 +886,7 @@ namespace Microsoft.PowerShell.Commands
         public string XPath { get; set; }
 
         /// <summary>
-        /// The following definition used to specify the 
+        /// The following definition used to specify the
         /// NameSpace of xml.
         /// </summary>
         [Parameter]
@@ -932,7 +932,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void ProcessXmlFile(string filePath)
         {
-            //Cannot use ImportXMLHelper because it will throw terminating error which will 
+            //Cannot use ImportXMLHelper because it will throw terminating error which will
             //not be inline with Select-String
             //So doing self processing of the file.
             try

@@ -560,7 +560,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     WriteValidationError(msg);
                     return false;
                 }
-                if ((trigger.DaysOfWeek == null || trigger.DaysOfWeek.Count == 0) && 
+                if ((trigger.DaysOfWeek == null || trigger.DaysOfWeek.Count == 0) &&
                     !MyInvocation.BoundParameters.ContainsKey(_paramDaysOfWeek))
                 {
                     string msg = StringUtil.Format(ScheduledJobErrorStrings.MissingDaysOfWeek, ScheduledJobErrorStrings.TriggerDailyType);

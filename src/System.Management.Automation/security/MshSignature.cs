@@ -100,7 +100,7 @@ namespace System.Management.Automation
     /// <summary>
     /// Represents a digital signature on a signed
     /// file.
-    /// </summary>    
+    /// </summary>
     public sealed class Signature
     {
         private string _path;
@@ -113,7 +113,7 @@ namespace System.Management.Automation
 
         // Three states:
         //   - True: we can rely on the catalog API to check catalog signature.
-        //   - False: we cannot rely on the catalog API, either because it doesn't exist in the OS (win7), 
+        //   - False: we cannot rely on the catalog API, either because it doesn't exist in the OS (win7),
         //            or it's not working properly (OneCore SKUs or dev environment where powershell might
         //            be updated/refreshed).
         //   - Null: it's not determined yet whether catalog API can be relied on or not.

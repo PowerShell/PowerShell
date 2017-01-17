@@ -12,9 +12,9 @@ using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
-    /// <summary> 
-    /// implementation for the set-date command 
-    /// </summary> 
+    /// <summary>
+    /// implementation for the set-date command
+    /// </summary>
     [Cmdlet(VerbsCommon.Set, "Date", DefaultParameterSetName = "Date", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113393")]
     [OutputType(typeof(DateTime))]
     public sealed class SetDateCommand : PSCmdlet
@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// set the date
-        /// </summary> 
+        /// </summary>
         [ArchitectureSensitive]
         protected override void ProcessRecord()
         {

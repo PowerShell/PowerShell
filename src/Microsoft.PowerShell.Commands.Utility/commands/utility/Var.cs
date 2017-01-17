@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// Base class for all variable commands.
-    /// 
+    ///
     /// Because -Scope is defined in VariableCommandBase, all derived commands
     /// must implement -Scope.
     /// </summary>
@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Include parameter for all the variable commands
         /// </summary>
-        /// 
+        ///
         protected string[] IncludeFilters
         {
             get
@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Exclude parameter for all the variable commands
         /// </summary>
-        /// 
+        ///
         protected string[] ExcludeFilters
         {
             get
@@ -82,30 +82,30 @@ namespace Microsoft.PowerShell.Commands
         /// Gets the matching variable for the specified name, using the
         /// Include, Exclude, and Scope parameters defined in the base class.
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name or pattern of the variables to retrieve.
         /// </param>
-        /// 
+        ///
         /// <param name="lookupScope">
         /// The scope to do the lookup in. If null or empty the normal scoping
         /// rules apply.
         /// </param>
-        /// 
+        ///
         /// <param name="wasFiltered">
         /// True is returned if a variable exists of the given name but was filtered
         /// out via globbing, include, or exclude.
         /// </param>
-        /// 
+        ///
         /// <param name="quiet">
         /// If true, don't report errors when trying to access private variables.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A collection of the variables matching the name, include, and exclude
         /// pattern in the specified scope.
         /// </returns>
-        /// 
+        ///
         internal List<PSVariable> GetMatchingVariables(string name, string lookupScope, out bool wasFiltered, bool quiet)
         {
             wasFiltered = false;
@@ -300,7 +300,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Include parameter for all the variable commands
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public string[] Include
         {
@@ -318,7 +318,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Exclude parameter for all the variable commands
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public string[] Exclude
         {
@@ -414,7 +414,7 @@ namespace Microsoft.PowerShell.Commands
         /// The options for the variable to specify if the variable should
         /// be ReadOnly, Constant, and/or Private.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public ScopedItemOptions Option { get; set; } = ScopedItemOptions.None;
 
@@ -476,9 +476,9 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Add objects received on the pipeline to an ArrayList of values, to
         /// take the place of the Value parameter if none was specified on the
-        /// command line. 
+        /// command line.
         /// </summary>
-        /// 
+        ///
         protected override void ProcessRecord()
         {
             // If Force is not specified, see if the variable already exists
@@ -599,7 +599,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Include parameter for all the variable commands
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public string[] Include
         {
@@ -617,7 +617,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Exclude parameter for all the variable commands
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public string[] Exclude
         {
@@ -643,7 +643,7 @@ namespace Microsoft.PowerShell.Commands
         /// The options for the variable to specify if the variable should
         /// be ReadOnly, Constant, and/or Private.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public ScopedItemOptions Option
         {
@@ -742,7 +742,7 @@ namespace Microsoft.PowerShell.Commands
         /// If name is not a formal parameter, then set
         /// the variable each time ProcessRecord is called.
         /// </summary>
-        /// 
+        ///
         protected override void ProcessRecord()
         {
             if (_nameIsFormalParameter && _valueIsFormalParameter)
@@ -808,15 +808,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the variables of the given names to the specified value.
         /// </summary>
-        /// 
+        ///
         /// <param name="varNames">
         /// The name(s) of the variables to set.
         /// </param>
-        /// 
+        ///
         /// <param name="varValue">
         /// The value to set the variable to.
         /// </param>
-        /// 
+        ///
         private void SetVariable(string[] varNames, object varValue)
         {
             CommandOrigin origin = MyInvocation.CommandOrigin;
@@ -1047,7 +1047,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Include parameter for all the variable commands
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public string[] Include
         {
@@ -1065,7 +1065,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Exclude parameter for all the variable commands
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public string[] Exclude
         {
@@ -1083,7 +1083,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// If true, the variable is removed even if it is ReadOnly
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public SwitchParameter Force
         {
@@ -1103,7 +1103,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Removes the matching variables from the specified scope
         /// </summary>
-        /// 
+        ///
         protected override void ProcessRecord()
         {
             // Removal of variables only happens in the local scope if the
@@ -1202,7 +1202,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Include parameter for all the variable commands
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public string[] Include
         {
@@ -1220,7 +1220,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Exclude parameter for all the variable commands
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public string[] Exclude
         {
@@ -1275,7 +1275,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The implementation of the Clear-Variable command
         /// </summary>
-        /// 
+        ///
         protected override void ProcessRecord()
         {
             foreach (string varName in Name)
@@ -1365,11 +1365,11 @@ namespace Microsoft.PowerShell.Commands
         /// Clears the value of the variable using the PSVariable instance if the scope
         /// was specified or using standard variable lookup if the scope was not specified.
         /// </summary>
-        /// 
+        ///
         /// <param name="matchingVariable">
         /// The variable that matched the name parameter(s).
         /// </param>
-        /// 
+        ///
         private PSVariable ClearValue(PSVariable matchingVariable)
         {
             PSVariable result = matchingVariable;

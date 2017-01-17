@@ -7,7 +7,7 @@ function Get-ParseResults
     [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline=$True,Mandatory=$True)]
-        [string]$src, 
+        [string]$src,
         [switch]$Ast
     )
 
@@ -24,17 +24,55 @@ function Get-RuntimeError
     [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline=$True,Mandatory=$True)]
-        [string]$src
+        [string]$src,
+        [Parameter()]
+        [int]$Timeout = 0
     )
-
+ 
     $errors = $null
-    try 
+    try
     {
-        [scriptblock]::Create($src).Invoke() > $null
+        # some tests cannot be run in a isolated runspace
+        # easily because they require more than just a single
+        # execution
+        if ( $Timeout -eq 0 )
+        {
+            [scriptblock]::Create($src).Invoke() > $null
+        }
+        else
+        {
+            $ps = [powershell]::Create()
+            $ps.AddScript($src) > $null
+            $ar = $ps.BeginInvoke()
+            # give it 250 milliseconds to complete
+            start-sleep -mill 250
+            if ( $ar.IsCompleted ) {
+                $ps.EndInvoke($ar)
+            }
+            # wait another ${Timeout} seconds, then give up
+            else {
+                Start-Sleep -sec $Timeout
+                if ( $ar.IsCompleted ) {
+                    # this can throw, which will be picked up below
+                    $ps.EndInvoke($ar)
+                }
+                else {
+                    # if it didn't throw, then return a constructed error
+                    $ER = Write-Error "Operation Timed Out ('$src')" 2>&1
+                    return $ER
+                }
+            }
+        }
     }
-    catch 
+    catch
     {
         return $_.Exception.InnerException.ErrorRecord
+    }
+    finally
+    {
+        if ( $ps -ne $null ) {
+            $ps.dispose()
+        }
     }
 }
 
@@ -60,9 +98,9 @@ function ShouldBeParseError
 {
     [CmdletBinding()]
     param(
-        [string]$src, 
-        [string[]]$expectedErrors, 
-        [int[]]$expectedOffsets, 
+        [string]$src,
+        [string[]]$expectedErrors,
+        [int[]]$expectedOffsets,
         # This is a temporary solution after moving type creation from parse time to runtime
         [switch]$SkipAndCheckRuntimeError,
         # for test coverarage purpose, tests validate columnNumber or offset
@@ -72,16 +110,16 @@ function ShouldBeParseError
     Context "Parse error expected: <<$src>>" {
         # Test case error if this fails
         $expectedErrors.Count | Should Be $expectedOffsets.Count
-        
-        if ($SkipAndCheckRuntimeError) 
+
+        if ($SkipAndCheckRuntimeError)
         {
             It "error should happen at parse time, not at runtime" -Skip {}
-            $errors = Get-RuntimeError -Src $src
+            $errors = Get-RuntimeError -Src $src -Timeout 10
             # for runtime errors we will only get the first one
             $expectedErrors = ,$expectedErrors[0]
             $expectedOffsets = ,$expectedOffsets[0]
-        } 
-        else 
+        }
+        else
         {
             $errors = Get-ParseResults -Src $src
         }
@@ -95,7 +133,7 @@ function ShouldBeParseError
             {
                 $errorId = $err.FullyQualifiedErrorId
             }
-            else 
+            else
             {
                 $errorId = $err.ErrorId
             }
@@ -114,7 +152,7 @@ function Flatten-Ast
     param([System.Management.Automation.Language.Ast] $ast)
 
     $ast
-    $ast | gm -type property | ? { ($prop = $_.Name) -ne 'Parent' } | % { 
+    $ast | gm -type property | ? { ($prop = $_.Name) -ne 'Parent' } | % {
         $ast.$prop | ? { $_ -is [System.Management.Automation.Language.Ast] } | % { Flatten-Ast $_ }
     }
 }
@@ -127,7 +165,7 @@ function Test-ErrorStmt
         $ast = Get-ParseResults $src -Ast
         $asts = @(Flatten-Ast $ast.EndBlock.Statements[0])
 
-        It 'Type is ErrorStatementAst' { $asts[0].GetType() | Should Be System.Management.Automation.Language.ErrorStatementAst }        
+        It 'Type is ErrorStatementAst' { $asts[0].GetType() | Should Be System.Management.Automation.Language.ErrorStatementAst }
         It "`$asts.count" { $asts.Count | Should Be ($a.Count + 1) }
         It "`$asts[0].Extent.Text" { $asts[0].Extent.Text | Should Be $errorStmtExtent }
         for ($i = 0; $i -lt $a.Count; ++$i)
@@ -171,6 +209,6 @@ function Test-Ast
                 $asts[$i].Extent.Text | Should Be $a[$i]
             }
         }
-    }    
+    }
 
 Export-ModuleMember -Function Test-ErrorStmt, Test-Ast, ShouldBeParseError, Get-ParseResults, Get-RuntimeError, Test-ErrorStmtForSwitchFlag

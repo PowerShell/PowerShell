@@ -83,7 +83,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Move to the Next value in the enumerator. 
+        /// Move to the Next value in the enumerator.
         /// </summary>
         /// <returns></returns>
         public bool MoveNext()

@@ -77,7 +77,7 @@ function Add-UserToGroup
 
 
 # tests if we should run a daily build
-# returns true if the build is scheduled 
+# returns true if the build is scheduled
 # or is a pushed tag
 Function Test-DailyBuild
 {
@@ -106,7 +106,7 @@ Function Set-BuildVariable
     {
         Set-AppveyorBuildVariable @PSBoundParameters
     }
-    else 
+    else
     {
         Set-Item env:/$name -Value $Value
     }
@@ -237,9 +237,9 @@ function Update-AppVeyorTestResults
 
     if($env:Appveyor)
     {
-        $retryCount = 0 
+        $retryCount = 0
         $pushedResults = $false
-        $pushedArtifacts = $false 
+        $pushedArtifacts = $false
         while( (!$pushedResults -or !$pushedResults) -and $retryCount -lt 3)
         {
             if($retryCount -gt 0)
@@ -271,20 +271,20 @@ function Update-AppVeyorTestResults
             Write-Warning "Failed to push all artifacts for $resultsFile"
         }
     }
-    else 
+    else
     {
         Write-Warning "Not running in appveyor, skipping upload of test results: $resultsFile"
     }
 }
 
 # Implement AppVeyor 'Test_script'
-function Invoke-AppVeyorTest 
+function Invoke-AppVeyorTest
 {
     [CmdletBinding()]
     param()
     #
     # CoreCLR
-    
+
     $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish -Configuration 'Release'))
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
@@ -294,7 +294,7 @@ function Invoke-AppVeyorTest
     {
         throw "CoreCLR PowerShell.exe was not built"
     }
-    
+
     if(-not (Test-DailyBuild))
     {
         # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
@@ -303,12 +303,12 @@ function Invoke-AppVeyorTest
         $ExcludeTag = @('Slow', 'Feature', 'Scenario')
         Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
     }
-    else 
+    else
     {
         $ExcludeTag = @()
         Write-Host -Foreground Green 'Running all CoreCLR tests..'
     }
-    
+
     Start-PSPester -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
     Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
@@ -316,7 +316,7 @@ function Invoke-AppVeyorTest
     Start-PSPester -bindir $env:CoreOutput -outputFile $testResultsAdminFile -Tag @('RequireAdminOnWindows') -ExcludeTag $ExcludeTag
     Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
-    
+
     #
     # FullCLR
     $env:FullOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -FullCLR))
@@ -348,7 +348,7 @@ function Invoke-AppVeyorAfterTest
     if(Test-DailyBuild)
     {
         ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
-        ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in AppveyorFinish. 
+        ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in AppveyorFinish.
         $codeCoverageOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Configuration CodeCoverage))
         $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
 
@@ -371,7 +371,7 @@ function Compress-CoverageArtifacts
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath((Join-Path $PSScriptRoot '..\test\tools\OpenCover'))
     $zipOpenCoverPath = Join-Path $pwd 'OpenCover.zip'
-    [System.IO.Compression.ZipFile]::CreateFromDirectory($resolvedPath, $zipOpenCoverPath) 
+    [System.IO.Compression.ZipFile]::CreateFromDirectory($resolvedPath, $zipOpenCoverPath)
     $null = $artifacts.Add($zipOpenCoverPath)
 
     $zipCodeCoveragePath = Join-Path $pwd "CodeCoverage.zip"
@@ -447,7 +447,7 @@ function Invoke-AppveyorFinish
         }
 
         $pushedAllArtifacts = $true
-        $artifacts | ForEach-Object { 
+        $artifacts | ForEach-Object {
             Write-Host "Pushing $_ as Appveyor artifact"
             if(Test-Path $_)
             {
@@ -466,7 +466,7 @@ function Invoke-AppveyorFinish
         {
             throw "Some artifacts did not exist!"
         }
-    } 
+    }
     catch {
         Write-Host -Foreground Red $_
     }

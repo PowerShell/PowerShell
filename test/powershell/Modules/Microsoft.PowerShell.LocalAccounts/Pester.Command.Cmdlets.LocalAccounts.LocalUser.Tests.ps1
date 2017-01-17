@@ -9,7 +9,7 @@ Set-Variable dateInvalid -option Constant -value "12/12/2016 25:00"
 function RemoveTestUsers
 {
     param([string] $basename)
-   
+
     $results = Get-LocalUser $basename*
     foreach ($element in $results) {
         Remove-LocalUser -SID $element.SID
@@ -183,7 +183,7 @@ try {
             }
             VerifyFailingTest $sb "InvalidName,Microsoft.PowerShell.Commands.NewLocalUserCommand"
         }
-       
+
         It "Errors on name collison" {
             $sb = {
                 New-LocalUser TestUserNew1 -NoPassword
@@ -207,7 +207,7 @@ try {
         It "Can set AccountExpires to the future" {
             $expiration = $dateInFuture
             $result = New-LocalUser TestUserNew1 -NoPassword -AccountExpires $expiration
-           
+
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeNullOrEmpty
             $result.Enabled | Should Be $true
@@ -219,7 +219,7 @@ try {
         It "Can set AccountExpires to the past" {
             $expiration = $dateInPast
             $result = New-LocalUser TestUserNew1 -NoPassword -AccountExpires $expiration
-           
+
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeNullOrEmpty
             $result.Enabled | Should Be $true
@@ -333,7 +333,7 @@ try {
 
         It "Can set Password value at max 256" {
             $result = New-LocalUser TestUserNew1 -Password (ConvertTo-SecureString ("135@"+"A"*252) -AsPlainText -Force)
-           
+
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeNullOrEmpty
             $result.Enabled | Should Be $true
@@ -350,7 +350,7 @@ try {
 
         It "Can set UserMayNotChangePassword" {
             $result = New-LocalUser TestUserNew1 -NoPassword -UserMayNotChangePassword
-           
+
             $result.Name | Should BeExactly TestUserNew1
             $result.Description | Should BeNullOrEmpty
             $result.Enabled | Should Be $true
@@ -361,7 +361,7 @@ try {
 
         It "Can set PasswordNeverExpires to create a user with null for PasswordExpires date" {
             $result = New-LocalUser TestUserNew1 -Password (ConvertTo-SecureString "p@ssw0rd" -Asplaintext -Force) -PasswordNeverExpires
-           
+
             $result.Name | Should BeExactly TestUserNew1
             $result.PasswordExpires | Should BeNullOrEmpty
         }
@@ -455,7 +455,7 @@ try {
 
         It "Can get a user by array of names" {
             $result = Get-LocalUser @("TestUserGet1", "TestUserGet2")
-           
+
             $result.Count -eq 2 | Should Be $true
             $result.Name -contains "TestUserGet1" | Should Be $true
             $result.Name -contains "TestUserGet2" | Should Be $true
@@ -520,7 +520,7 @@ try {
             }
             VerifyFailingTest $sb "UserNotFound,Microsoft.PowerShell.Commands.GetLocalUserCommand"
         }
-       
+
         It "Gets no results using a wildcard" {
             $localUserName = 'TestUserGetNameThatDoesntExist'
             $result = Get-LocalGroup $localUserName*
@@ -634,7 +634,7 @@ try {
             }
             VerifyFailingTest $sb "UserNotFound,Microsoft.PowerShell.Commands.SetLocalUserCommand"
         }
-       
+
         It "Errors on nonexistent SID" {
             $sb = {
                 Set-LocalUser -SID "S-1-5-32-545" -Description "Test User Set 1 new description" -ErrorAction Stop
@@ -646,7 +646,7 @@ try {
             $expiration = $dateInFuture
             Set-LocalUser -Name TestUserSet1 -AccountExpires $expiration
             $result = Get-LocalUser -Name TestUserSet1
-           
+
             $result.Name | Should BeExactly TestUserSet1
             $result.Description | Should BeExactly "Test User Set 1 Description"
             $result.Enabled | Should Be $true
@@ -659,7 +659,7 @@ try {
             $expiration = $dateInPast
             Set-LocalUser -Name TestUserSet1 -AccountExpires $expiration
             $result = Get-LocalUser -Name TestUserSet1
-           
+
             $result.Name | Should BeExactly TestUserSet1
             $result.Description | Should BeExactly "Test User Set 1 Description"
             $result.Enabled | Should Be $true
@@ -750,7 +750,7 @@ try {
         It "Can set Password value at max 256" {
             Set-LocalUser -Name TestUserSet1 -Password (ConvertTo-SecureString ("123@"+"A"*252) -asplaintext -Force)
             $result = Get-LocalUser -Name TestUserSet1
-           
+
             $result.Name | Should BeExactly TestUserSet1
             $result.Enabled | Should Be $true
             $result.SID | Should Not BeNullOrEmpty
@@ -847,7 +847,7 @@ try {
                 $user1SID = [String](Get-LocalUser -Name TestUserRename1).SID
             }
         }
-       
+
         AfterEach {
             if ($IsNotSkipped) {
                 RemoveTestUsers -basename TestUserRename
@@ -885,7 +885,7 @@ try {
             }
             VerifyFailingTest $sb "AmbiguousParameterSet,Microsoft.PowerShell.Commands.RenameLocalUserCommand"
         }
-       
+
         It "Errors on nonexistant user name" {
             $sb = {
                 Rename-LocalUser -Name TestUserRenameThatDoesntExist -NewName TestUserRenameThatDoesntExist2

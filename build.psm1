@@ -40,7 +40,7 @@ if ($IsLinux) {
 }
 
 #
-# At the moment, we just support x64 builds. When we support x86 builds, this 
+# At the moment, we just support x64 builds. When we support x86 builds, this
 # check may need to verify the SDK for the specified architecture.
 #
 function Get-Win10SDKBinDir {
@@ -126,7 +126,7 @@ function Start-PSBuild {
         Push-Location $PSScriptRoot
         try {
             git clean -fdX
-            # Extra cleaning is required to delete the CMake temporary files. 
+            # Extra cleaning is required to delete the CMake temporary files.
             # These are not cleaned when using "X" and cause CMake to retain state, leading to
             # mis-configured environment issues when switching between x86 and x64 compilation
             # environments.
@@ -319,7 +319,7 @@ cmd.exe /C cd /d "$currentLocation" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeH
                     # Describes wither it should build the CoreCLR or FullCLR version
                     [ValidateSet("ON", "OFF")]
                     [string]$OneCoreValue,
-                    
+
                     # Array of file names to copy from the local build directory to the packaging directory
                     [string[]]$FilesToCopy
                 )
@@ -349,19 +349,19 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
                     Copy-Item $srcPath $dstPath
                 }
             }
-        
+
             if ($FullCLR) {
-                $fullBinaries = @(  
+                $fullBinaries = @(
                     'powershell.exe',
                     'powershell.pdb',
                     'pwrshplugin.dll',
                     'pwrshplugin.pdb'
                 )
-                Build-NativeWindowsBinaries "OFF" $fullBinaries 
+                Build-NativeWindowsBinaries "OFF" $fullBinaries
             }
             else
             {
-                $coreClrBinaries = @(  
+                $coreClrBinaries = @(
                     'pwrshplugin.dll',
                     'pwrshplugin.pdb'
                 )
@@ -401,11 +401,12 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
 
     if($PSModuleRestore)
     {
+        $ProgressPreference = "SilentlyContinue"
         # Downloading the PowerShellGet and PackageManagement modules.
         # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp1.1\win10-x64\publish\powershell.exe",
         # so we need to get its parent directory
         $publishPath = Split-Path $Options.Output -Parent
-        log "Restore PowerShell modules to $publishPath"    
+        log "Restore PowerShell modules to $publishPath"
         # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
         Restore-PSModule -Name @('PowerShellGet') -Destination (Join-Path -Path $publishPath -ChildPath "Modules")
     }
@@ -417,11 +418,11 @@ function Compress-TestContent {
         $Destination
     )
 
-    $powerShellTestRoot =  Join-Path $PSScriptRoot 'test\powershell'    
+    $powerShellTestRoot =  Join-Path $PSScriptRoot 'test\powershell'
     Add-Type -AssemblyName System.IO.Compression.FileSystem
 
     $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Destination)
-    [System.IO.Compression.ZipFile]::CreateFromDirectory($powerShellTestRoot, $resolvedPath)    
+    [System.IO.Compression.ZipFile]::CreateFromDirectory($powerShellTestRoot, $resolvedPath)
 }
 
 function New-PSOptions {
@@ -718,7 +719,7 @@ function Start-PSPester {
     {
         $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
     }
-    
+
     $Command += "Invoke-Pester "
 
     $Command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
@@ -784,7 +785,7 @@ function Start-PSPester {
             {
                 Remove-Item $outputBufferFilePath
             }
-        }        
+        }
     }
     if($ThrowOnFailure)
     {
@@ -819,7 +820,7 @@ function Show-PSPesterError
 
 #
 # Read the test result file and
-# Throw if a test failed 
+# Throw if a test failed
 function Test-PSPesterResults
 {
     param(
@@ -830,13 +831,20 @@ function Test-PSPesterResults
     if(!(Test-Path $TestResultsFile))
     {
         throw "Test result file '$testResultsFile' not found for $TestArea."
-    } 
+    }
 
     $x = [xml](Get-Content -raw $testResultsFile)
     if ([int]$x.'test-results'.failures -gt 0)
     {
         logerror "TEST FAILURES"
-        foreach ( $testfail in $x.SelectNodes('.//test-case[@result = "Failure"]'))
+        # switch between methods, SelectNode is not available on dotnet core
+        if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] ) {
+            $failures = [System.Xml.XmlDocumentXPathExtensions]::SelectNodes($x."test-results",'.//test-case[@result = "Failure"]')
+        }
+        else {
+            $failures = $x.SelectNodes('.//test-case[@result = "Failure"]')
+        }
+        foreach ( $testfail in $failures )
         {
             Show-PSPesterError $testfail
         }
@@ -1197,7 +1205,7 @@ function Start-PSPackage {
         [ValidateSet("deb", "osxpkg", "rpm", "msi", "appx", "zip")]
         [string[]]$Type,
 
-        # Generate windows downlevel package 
+        # Generate windows downlevel package
         [ValidateSet("win81-x64", "win7-x86", "win7-x64")]
         [ValidateScript({$IsWindows})]
         [string]$WindowsDownLevel
@@ -1424,6 +1432,13 @@ It consists of a cross-platform command-line shell and associated scripting lang
     New-Item -Force -ItemType SymbolicLink -Path "/tmp/$Name" -Target "$Destination/$Name" >$null
 
     if ($IsCentos) {
+        # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
+        # platform specific changes. This is the only set of platforms needed for this currently
+        # as Ubuntu has these specific library files in the platform and OSX builds for itself 
+        # against the correct versions.
+        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" >$null
+        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" >$null
+
         $AfterInstallScript = [io.path]::GetTempFileName()
         $AfterRemoveScript = [io.path]::GetTempFileName()
         @'
@@ -1719,7 +1734,7 @@ function Start-DevPowerShell {
         {
             Remove-Item env:DEVPATH
         }
-        
+
         if ($ZapDisable) {
             Remove-Item env:COMPLUS_ZapDisable
         }
@@ -2291,7 +2306,7 @@ function New-MSIPackage
 {
     [CmdletBinding()]
     param (
-    
+
         # Name of the Product
         [ValidateNotNullOrEmpty()]
         [string] $ProductName = 'PowerShell',
@@ -2320,7 +2335,7 @@ function New-MSIPackage
         # Path to Assets folder containing artifacts such as icons, images
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $AssetsPath, 
+        [string] $AssetsPath,
 
         # Path to license.rtf file - for the EULA
         [Parameter(Mandatory = $true)]
@@ -2350,16 +2365,16 @@ function New-MSIPackage
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
     $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
-    
+
     $assetsInSourcePath = Join-Path $ProductSourcePath 'assets'
     New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
 
-    Write-Verbose "Place dependencies such as icons to $assetsInSourcePath" 
+    Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
     Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
-    
+
     $productVersionWithName = $ProductName + "_" + $ProductVersion
     $productSemanticVersionWithName = $ProductName + "_" + $ProductSemanticVersion
-    
+
     Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
 
     [Environment]::SetEnvironmentVariable("ProductSourcePath", $ProductSourcePath, "Process")
@@ -2384,13 +2399,13 @@ function New-MSIPackage
     if ($ProductNameSuffix) {
         $packageName += "-$ProductNameSuffix"
     }
-    $msiLocationPath = Join-Path $pwd "$packageName.msi"    
+    $msiLocationPath = Join-Path $pwd "$packageName.msi"
     Remove-Item -ErrorAction SilentlyContinue $msiLocationPath -Force
 
     & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v | Write-Verbose
     & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -arch x64 -v | Write-Verbose
     & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -dWixUILicenseRtf="$LicenseFilePath" -v | Write-Verbose
-    
+
     Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
 
     Write-Verbose "You can find the MSI @ $msiLocationPath" -Verbose
@@ -2425,8 +2440,8 @@ function New-AppxPackage
         [ValidateNotNullOrEmpty()]
         [string] $AssetsPath
     )
-     
-    $PackageSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion 
+
+    $PackageSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
 
     $PackageVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $PackageVersion
     Write-Verbose "Package Version is $PackageVersion"
@@ -2513,7 +2528,7 @@ function New-ZipPackage
 {
     [CmdletBinding()]
     param (
-    
+
         # Name of the Product
         [ValidateNotNullOrEmpty()]
         [string] $PackageName = 'PowerShell',
@@ -2533,12 +2548,12 @@ function New-ZipPackage
     )
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
-    
+
     $zipPackageName = $PackageName + "_" + $ProductSemanticVersion
     if ($PackageNameSuffix) {
         $zipPackageName = $zipPackageName, $PackageNameSuffix -join "-"
     }
-    
+
     Write-Verbose "Create Zip for Product $zipPackageName"
 
     $zipLocationPath = Join-Path $PWD "$zipPackageName.zip"
@@ -2551,7 +2566,7 @@ function New-ZipPackage
         $zipLocationPath
 
     }
-    #TODO: Use .NET Api to do compresss-archive equivalent if the cmdlet is not present    
+    #TODO: Use .NET Api to do compresss-archive equivalent if the cmdlet is not present
     else
     {
         Write-Error -Message "Compress-Archive cmdlet is missing in this PowerShell version"
@@ -2732,9 +2747,10 @@ function Clear-PSRepo
 {
     [CmdletBinding()]
     param()
-        Get-ChildItem $PSScriptRoot\* -Directory | ForEach-Object {
-            Write-Verbose "Cleaning $_ ..."
-            git clean -fdX $_
+
+    Get-ChildItem $PSScriptRoot\* -Directory | ForEach-Object {
+        Write-Verbose "Cleaning $_ ..."
+        git clean -fdX $_
     }
 }
 
@@ -2801,6 +2817,8 @@ function Restore-PSModule
 
     log ("Name='{0}', Destination='{1}', Repository='{2}'" -f ($Name -join ','), $Destination, $RepositoryName)
 
+    # do not output progress
+    $ProgressPreference = "SilentlyContinue"
     $Name | ForEach-Object {
 
         $command = @{
@@ -2817,7 +2835,7 @@ function Restore-PSModule
         # pull down the module
         log "running save-module $_"
         PowerShellGet\Save-Module @command -Force
-        
+
         # Remove PSGetModuleInfo.xml file
         Find-Module -Name $_ -Repository $RepositoryName -IncludeDependencies | ForEach-Object {
             Remove-Item -Path $Destination\$($_.Name)\*\PSGetModuleInfo.xml -Force

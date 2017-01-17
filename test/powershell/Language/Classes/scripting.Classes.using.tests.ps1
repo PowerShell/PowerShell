@@ -1,20 +1,20 @@
 Describe 'using module' -Tags "CI" {
     BeforeAll {
         $originalPSMODULEPATH = $env:PSMODULEPATH
-        
+
         Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
 
         function New-TestModule {
             param(
-                [string]$Name, 
-                [string]$Content, 
-                [switch]$Manifest, 
+                [string]$Name,
+                [string]$Content,
+                [switch]$Manifest,
                 [version]$Version = '1.0', # ignored, if $Manifest -eq $false
                 [string]$ModulePathPrefix = 'modules' # module is created under TestDrive:\$ModulePathPrefix\$Name
             )
-            
+
             if ($manifest) {
-                new-item -type directory -Force "${TestDrive}\$ModulePathPrefix\$Name\$Version" > $null    
+                new-item -type directory -Force "${TestDrive}\$ModulePathPrefix\$Name\$Version" > $null
                 Set-Content -Path "${TestDrive}\$ModulePathPrefix\$Name\$Version\$Name.psm1" -Value $Content
                 New-ModuleManifest -RootModule "$Name.psm1" -Path "${TestDrive}\$ModulePathPrefix\$Name\$Version\$Name.psd1" -ModuleVersion $Version
             } else {
@@ -31,14 +31,14 @@ Describe 'using module' -Tags "CI" {
     }
 
     AfterAll {
-        $env:PSMODULEPATH = $originalPSMODULEPATH 
+        $env:PSMODULEPATH = $originalPSMODULEPATH
     }
 
     It 'Import-Module has ImplementedAssembly, when classes are present in the module' {
         # Create modules in TestDrive:\
         New-TestModule -Name Foo -Content 'class Foo { [string] GetModuleName() { return "Foo" } }'
         New-TestModule -Manifest -Name FooWithManifest -Content 'class Foo { [string] GetModuleName() { return "FooWithManifest" } }'
-        
+
         $module = Import-Module Foo  -PassThru
         try {
             $module.ImplementingAssembly | Should Not Be $null
@@ -53,7 +53,7 @@ using module Foo
 class Bar : Foo {}
 [Bar]
 "@).Invoke()
-            
+
         $barType.BaseType.Name | Should Be 'Foo'
     }
 
@@ -76,7 +76,7 @@ using module Foo
 class Bar : Foo.Foo {}
 [Foo.Foo]::new()
 "@).Invoke()
-        $fooObject.GetModuleName() | Should Be 'Foo' 
+        $fooObject.GetModuleName() | Should Be 'Foo'
     }
 
     It "can use modules with classes collision" {
@@ -110,7 +110,7 @@ class Bar : Foo {}
         $sb1 = [scriptblock]::Create(@"
 using module Foo
 class Bar : Foo {}
-[Bar]::new().GetModuleName() 
+[Bar]::new().GetModuleName()
 "@)
 
         $sb2 = [scriptblock]::Create(@"
@@ -118,7 +118,7 @@ using module Foo
 
 class Foo { [string] GetModuleName() { return "This" } }
 class Bar : Foo {}
-[Bar]::new().GetModuleName() 
+[Bar]::new().GetModuleName()
 
 "@)
         $sb1.Invoke() | Should Be 'Foo'
@@ -311,7 +311,7 @@ using module FooWithManifest
 using module Foo
 [Foo]::new().GetModuleName()
 "@).Invoke()
-            
+
             $moduleName | Should Be 'Foo2'
         }
     }
@@ -381,13 +381,13 @@ using module ModuleWithRuntimeError
     }
 
     Context 'shared InitialSessionState' {
-    
+
         It 'can pick the right module' {
-                
+
             $scriptToProcessPath = "${TestDrive}\toProcess.ps1"
             Set-Content -Path $scriptToProcessPath -Value @'
 using module Foo
-function foo() 
+function foo()
 {
     [Foo]::new()
 }
@@ -411,7 +411,7 @@ function foo()
             $ps.Streams.Error | Should Be $null
         }
     }
-       
+
 
     # here we are back to normal $env:PSMODULEPATH, but all modules are there
     Context "Module by path" {
@@ -422,13 +422,13 @@ function foo()
 
             new-item -type directory -Force TestDrive:\FooRelativeConsumer
             Set-Content -Path "${TestDrive}\FooRelativeConsumer\FooRelativeConsumer.ps1" -Value @'
-using module ..\modules\FooForPaths 
+using module ..\modules\FooForPaths
 class Bar : Foo {}
 [Bar]::new()
 '@
-        
+
             Set-Content -Path "${TestDrive}\FooRelativeConsumerErr.ps1" -Value @'
-using module FooForPaths 
+using module FooForPaths
 class Bar : Foo {}
 [Bar]::new()
 '@
@@ -439,8 +439,8 @@ class Bar : Foo {}
         }
 
         It "can be accessed by relative path" {
-            $barObject = & TestDrive:\FooRelativeConsumer\FooRelativeConsumer.ps1          
-            $barObject.GetModuleName() | Should Be 'FooForPaths' 
+            $barObject = & TestDrive:\FooRelativeConsumer\FooRelativeConsumer.ps1
+            $barObject.GetModuleName() | Should Be 'FooForPaths'
         }
 
         It "cannot be accessed by relative path without .\ from a script" {
@@ -456,8 +456,8 @@ using module $resolvedTestDrivePath\FooForPaths
 "@
             $err = Get-ParseResults $s
             $err.Count | Should Be 0
-            $barObject = [scriptblock]::Create($s).Invoke()            
-            $barObject.GetModuleName() | Should Be 'FooForPaths' 
+            $barObject = [scriptblock]::Create($s).Invoke()
+            $barObject.GetModuleName() | Should Be 'FooForPaths'
         }
 
         It "can be accessed by absolute path with file extension" {
@@ -465,8 +465,8 @@ using module $resolvedTestDrivePath\FooForPaths
             $barObject = [scriptblock]::Create(@"
 using module $resolvedTestDrivePath\FooForPaths\FooForPaths.psm1
 [Foo]::new()
-"@).Invoke()            
-            $barObject.GetModuleName() | Should Be 'FooForPaths' 
+"@).Invoke()
+            $barObject.GetModuleName() | Should Be 'FooForPaths'
         }
 
         It "can be accessed by relative path without file" {
@@ -476,14 +476,14 @@ using module .\FooForPaths
 [Foo]::new()
 "@
             $err.FullyQualifiedErrorId | Should Be ModuleNotFoundDuringParse
-            
+
             Push-Location TestDrive:\modules
             try {
                 $barObject = [scriptblock]::Create(@"
 using module .\FooForPaths
 [Foo]::new()
-"@).Invoke()            
-                $barObject.GetModuleName() | Should Be 'FooForPaths' 
+"@).Invoke()
+                $barObject.GetModuleName() | Should Be 'FooForPaths'
             } finally {
                 Pop-Location
             }

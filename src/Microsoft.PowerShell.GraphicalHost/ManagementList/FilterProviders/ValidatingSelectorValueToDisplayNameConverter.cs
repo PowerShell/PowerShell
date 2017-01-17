@@ -53,7 +53,7 @@ namespace Microsoft.Management.UI.Internal
 
             // NOTE : null values are ok.
             object input = values[0];
-            
+
             IValueConverter converter = values[1] as IValueConverter;
             if (null == converter)
             {

@@ -7,7 +7,7 @@ namespace System.Management.Automation.Provider
     /// <summary>
     /// Declares a class as a Cmdlet provider.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// The class must be derived from System.Management.Automation.Provider.CmdletProvider to
     /// be recognized by the runspace.
@@ -31,7 +31,7 @@ namespace System.Management.Automation.Provider
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="providerName"/> is null or empty.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="PSArgumentException">
         /// If <paramref name="providerName"/> contains any of the following characters: \ [ ] ? * :
         /// </exception>
@@ -88,8 +88,8 @@ namespace System.Management.Automation.Provider
         None = 0x0,
 
         /// <summary>
-        /// The provider does the inclusion filtering for those commands that take an Include 
-        /// parameter. The Monad engine should not try to do the filtering on behalf of this 
+        /// The provider does the inclusion filtering for those commands that take an Include
+        /// parameter. The Monad engine should not try to do the filtering on behalf of this
         /// provider.
         /// </summary>
         ///
@@ -101,8 +101,8 @@ namespace System.Management.Automation.Provider
         Include = 0x1,
 
         /// <summary>
-        /// The provider does the exclusion filtering for those commands that take an Exclude 
-        /// parameter. The Monad engine should not try to do the filtering on behalf of this 
+        /// The provider does the exclusion filtering for those commands that take an Exclude
+        /// parameter. The Monad engine should not try to do the filtering on behalf of this
         /// provider.
         /// </summary>
         ///
@@ -147,7 +147,7 @@ namespace System.Management.Automation.Provider
 
         /// <summary>
         /// The provider supports credentials. When this capability is specified and
-        /// the user passes credentials to the core cmdlets, those credentials will 
+        /// the user passes credentials to the core cmdlets, those credentials will
         /// be passed to the provider. If the provider doesn't specify this capability
         /// and the user passes credentials, an exception is thrown.
         /// </summary>

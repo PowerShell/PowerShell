@@ -8,7 +8,7 @@ if (-not (Get-Module TestRemoting -ErrorAction SilentlyContinue))
 Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature" {
 
     BeforeAll {
-        
+
         # Skip test for non-windows machines
         $skipTest = !$IsWindows
 
@@ -96,7 +96,7 @@ Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy
 Describe "Tests Import-PSSession cmdlet works with types unavailable on the client" -tags "Feature" {
 
     BeforeAll {
-        
+
         # Skip test for non-windows machines for now
         $skipTest = !$IsWindows
 
@@ -144,7 +144,7 @@ Describe "Tests Import-PSSession cmdlet works with types unavailable on the clie
 Describe "Cmdlet help from remote session" -tags "Feature" {
 
     BeforeAll {
-        
+
         # Skip test for non-windows machines for now
         $skipTest = !$IsWindows
 
@@ -173,7 +173,7 @@ Describe "Cmdlet help from remote session" -tags "Feature" {
 Describe "Import-PSSession Cmdlet error handling" -tags "Feature" {
 
     BeforeAll {
-        
+
         # Skip test for non-windows machines for now
         $skipTest = !$IsWindows
 
@@ -201,7 +201,7 @@ Describe "Import-PSSession Cmdlet error handling" -tags "Feature" {
     }
 
     Context "Test content and format of proxied error message (Windows 7: #319080)" {
-        
+
         BeforeAll {
             if ($skipTest) { return }
             $module = Import-PSSession -Session $session -Name Get-Variable -Prefix My -AllowClobber
@@ -216,14 +216,14 @@ Describe "Import-PSSession Cmdlet error handling" -tags "Feature" {
             $results = Get-MyVariable blah,pid 2>&1
 
             ($results[1]).Value | Should Not Be $PID  # Verifies that returned PID is not for this session
-            
+
             $errorString = $results[0] | Out-String   # Verifies error message for variable blah
             ($errorString -like "*VariableNotFound*") | Should Be $true
         }
 
         It "Test terminating error" -Skip:$skipTest {
             $results = Get-MyVariable pid -Scope blah 2>&1
-            
+
             $results.Count | Should Be 1              # Verifies that remote session pid is not returned
 
             $errorString = $results[0] | Out-String   # Verifes error message for incorrect Scope parameter argument
@@ -232,7 +232,7 @@ Describe "Import-PSSession Cmdlet error handling" -tags "Feature" {
     }
 
     Context "Ordering of a sequence of error and output messages (Windows 7: #405065)" {
-    
+
         BeforeAll {
             if ($skipTest) { return }
 
@@ -270,13 +270,13 @@ Describe "Import-PSSession Cmdlet error handling" -tags "Feature" {
         It "Verifies proxied order = icm order (for mixed error and output results)" -Skip:$skipTest {
             $icmOrder = Invoke-Command $session { foo1 } 2>&1 | out-string
             $proxiedOrder = foo1 2>&1 | out-string
-            
+
             $icmOrder | Should Be $proxiedOrder
         }
     }
 
     Context "WarningVariable parameter works with implicit remoting (Windows 8: #44861)" {
-    
+
         BeforeAll {
             if ($skipTest) { return }
             $module = Import-PSSession $session -CommandName Write-Warning -Prefix Remote -AllowClobber
@@ -298,7 +298,7 @@ Describe "Import-PSSession Cmdlet error handling" -tags "Feature" {
 Describe "Tests Export-PSSession" -tags "Feature" {
 
     BeforeAll {
-        
+
         # Skip test for non-windows machines for now
         $skipTest = !$IsWindows
 
@@ -325,11 +325,11 @@ Describe "Tests Export-PSSession" -tags "Feature" {
     It "Verifies Export-PSSession creates a psd1 file" -Skip:$skipTest {
         ($results | ?{ $_.Name -like "*$(Split-Path -Leaf $file).psd1" }) | Should Be $true
     }
-        
+
     It "Verifies Export-PSSession creates a psm1 file" -Skip:$skipTest {
         ($results | ?{ $_.Name -like "*.psm1" }) | Should Be $true
     }
-        
+
     It "Verifies Export-PSSession creates a ps1xml file" -Skip:$skipTest {
         ($results | ?{ $_.Name -like "*.ps1xml" }) | Should Be $true
     }
@@ -338,7 +338,7 @@ Describe "Tests Export-PSSession" -tags "Feature" {
         try {
             Export-PSSession -Session $session -CommandName Get-Variable -AllowClobber -ModuleName $file -EA SilentlyContinue -ErrorVariable expectedError
         } catch { }
-        
+
         $expectedError | Should Not Be NullOrEmpty
         # Error contains reference to the directory that already exists
         ([string]($expectedError[0]) -like "*$file*") | Should Be $true
@@ -355,7 +355,7 @@ Describe "Tests Export-PSSession" -tags "Feature" {
     }
 
     Context "The module is usable when the original runspace is still around" {
-    
+
         BeforeAll {
             if ($skipTest) { return }
             $module = Import-Module $file -PassThru
@@ -632,13 +632,13 @@ Describe "Import-PSSession with FormatAndTypes" -tags "Feature" {
 
             $formattingScript = { new-object System.Management.Automation.Host.Size | %{ $_.Width = 123; $_.Height = 456; $_ } | Out-String }
             $originalLocalFormatting = & $formattingScript
-        
+
             # Original local and remote formatting should be equal (sanity check)
             $originalRemoteFormatting = Invoke-Command $session $formattingScript
             $originalLocalFormatting | Should Be $originalRemoteFormatting
 
             Invoke-Command $session { param($file) Update-FormatData $file } -ArgumentList $formatFile
-        
+
             # Original remote and modified remote formatting should not be equal (sanity check)
             $modifiedRemoteFormatting = Invoke-Command $session $formattingScript
             $originalRemoteFormatting | Should Not Be $modifiedRemoteFormatting
@@ -735,7 +735,7 @@ Describe "Import-PSSession with FormatAndTypes" -tags "Feature" {
 }
 
 Describe "Import-PSSession functional tests" -tags "Feature" {
-    
+
     BeforeAll {
         # Skip test for non-windows machines for now
         $skipTest = !$IsWindows
@@ -784,11 +784,11 @@ Describe "Import-PSSession functional tests" -tags "Feature" {
     It "proxy should return remote pid" -Skip:$skipTest {
         (Get-VariableProxy -Name:pid).Value | Should Not Be $pid
     }
-    
+
     It "proxy should return remote pid" -Skip:$skipTest {
         (Get-Variable -Name:pid).Value | Should Not Be $pid
     }
-    
+
     It "proxy should return remote pid" -Skip:$skipTest {
         $(& (Get-Command gvalias -Type alias) -Name:pid).Value | Should Not Be $pid
     }
@@ -1058,7 +1058,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
                         [parameter(Position = 0, parametersetname = 'set2', mandatory = $true)]
                         $ipaddress
                     )
-                    
+
                     "Bound parameter: $($myInvocation.BoundParameters.Keys | sort)"
                 }
             }
@@ -1094,12 +1094,12 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
                         [object]
                         [parameter(Position = 0, mandatory = $true)]
                         $p1,
-                        
+
                         [object]
                         [parameter(Position = 1)]
                         $p2
                     )
-                    
+
                     "$p1 : $p2"
                 }
             }
@@ -1118,23 +1118,23 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
             if ($skipTest) { return }
             if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
-        
+
         It "Positional binding works when binding an array value" -Skip:$skipTest {
             foo 1,2,3 | Should Be "1 2 3 : "
         }
-        
+
         It "Positional binding works when binding an array value" -Skip:$skipTest {
             foo 1,2,3 4 | Should Be "1 2 3 : 4"
         }
-        
+
         It "Positional binding works when binding an array value" -Skip:$skipTest {
             foo -p2 4 1,2,3 | Should Be "1 2 3 : 4"
         }
-        
+
         It "Positional binding works when binding an array value" -Skip:$skipTest {
             foo 1 4 | Should Be "1 : 4"
         }
-        
+
         It "Positional binding works when binding an array value" -Skip:$skipTest {
             foo -p2 4 1 | Should Be "1 : 4"
         }
@@ -1150,12 +1150,12 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
                         [string]
                         [parameter(Position = 0)]
                         $firstArg,
-                        
+
                         [string[]]
                         [parameter(ValueFromRemainingArguments = $true)]
                         $remainingArgs
                     )
-                    
+
                     "$firstArg : $remainingArgs"
                 }
             }
@@ -1176,31 +1176,31 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
             if ($skipTest) { return }
             if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
-        
+
         It "Value from remaining arguments works" -Skip:$skipTest {
             $( foo ) | Should Be " : "
         }
-        
+
         It "Value from remaining arguments works" -Skip:$skipTest {
             $( foo 1 ) | Should Be "1 : "
         }
-        
+
         It "Value from remaining arguments works" -Skip:$skipTest {
             $( foo -first 1 ) | Should Be "1 : "
         }
-        
+
         It "Value from remaining arguments works" -Skip:$skipTest {
             $( foo 1 2 3 ) | Should Be "1 : 2 3"
         }
-        
+
         It "Value from remaining arguments works" -Skip:$skipTest {
             $( foo -first 1 2 3 ) | Should Be "1 : 2 3"
         }
-        
+
         It "Value from remaining arguments works" -Skip:$skipTest {
             $( foo 2 3 -first 1 4 5 ) | Should Be "1 : 2 3 4 5"
         }
-        
+
         It "Value from remaining arguments works" -Skip:$skipTest {
             $( foo -remainingArgs 2,3 1 ) | Should Be "1 : 2 3"
         }
@@ -1216,7 +1216,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
                         $firstArg,
                         $secondArg
                     )
-                    
+
                     "$firstArg : $secondArg : $args"
                 }
             }
@@ -1241,7 +1241,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
             if ($skipTest) { return }
             if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
-        
+
         It "Non cmdlet-based binding works." -Skip:$skipTest {
             foo | Should Be " :  : "
         }
@@ -1249,7 +1249,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
         It "Non cmdlet-based binding works." -Skip:$skipTest {
             foo 1 | Should Be "1 :  : "
         }
-        
+
         It "Non cmdlet-based binding works." -Skip:$skipTest {
             foo -first 1 | Should Be "1 :  : "
         }
@@ -1257,19 +1257,19 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
         It "Non cmdlet-based binding works." -Skip:$skipTest {
             foo 1 2 | Should Be "1 : 2 : "
         }
-        
+
         It "Non cmdlet-based binding works." -Skip:$skipTest {
             foo 1 -second 2 | Should Be "1 : 2 : "
         }
-        
+
         It "Non cmdlet-based binding works." -Skip:$skipTest {
             foo -first 1 -second 2 | Should Be "1 : 2 : "
         }
-        
+
         It "Non cmdlet-based binding works." -Skip:$skipTest {
             foo 1 2 3 4 | Should Be "1 : 2 : 3 4"
         }
-        
+
         It "Non cmdlet-based binding works." -Skip:$skipTest {
             foo -first 1 2 3 4 | Should Be "1 : 2 : 3 4"
         }
@@ -1308,11 +1308,11 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
             if ($skipTest) { return }
             if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
-        
+
         It "Initializer run on the remote server" -Skip:$skipTest {
             (MyInitializerFunction) | Should Be $remotePid
         }
-        
+
         It "Initializer not run when value provided" -Skip:$skipTest {
             (MyInitializerFunction 123) | Should Be 123
         }
@@ -1408,7 +1408,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
             if ($skipTest) { return }
             if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
-        
+
         It "Implicit remoting: OutVariable is not intercepted for non-cmdlet-bound functions" -Skip:$skipTest {
             foo -OutVariable x | Should Be "OutVariable = x"
         }
@@ -1425,7 +1425,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
             if ($skipTest) { return }
             if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
-        
+
         It "Switch parameters work fine" -Skip:$skipTest {
             $proxiedPid = Get-RemoteVariable -Name pid -ValueOnly
             $remotePid | Should Be $proxiedPid
@@ -1559,7 +1559,7 @@ Describe "Implicit remoting on restricted ISS" -tags "Feature" {
 }
 
 Describe "Implicit remoting tests" -tags "Feature" {
-    
+
     BeforeAll {
         # Skip test for non-windows machines for now
         $skipTest = !$IsWindows
@@ -1583,15 +1583,15 @@ Describe "Implicit remoting tests" -tags "Feature" {
             if ($skipTest) { return }
             if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
-        
+
         It "PSModuleInfo.Name shouldn't contain a psd1 extension" -Skip:$skipTest {
             ($module.Name -notlike '*.psd1') | Should Be $true
         }
-        
+
         It "PSModuleInfo.Name shouldn't contain a psm1 extension" -Skip:$skipTest {
             ($module.Name -notlike '*.psm1') | Should Be $true
         }
-        
+
         It "PSModuleInfo.Name shouldn't contain a path" -Skip:$skipTest {
             ($module.Name -notlike "${env:TMP}*") | Should Be $true
         }
@@ -1670,7 +1670,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
             Invoke-Command $session { $oldGetCommand = ${function:Get-Command} }
             Invoke-Command $session { function Get-Command { write-error blah } }
             $module = Import-PSSession -Session $session -ErrorAction SilentlyContinue -ErrorVariable expectedError -AllowClobber
-            
+
             $expectedError | Should Not Be NullOrEmpty
 
             $msg = [string]($expectedError[0])
@@ -1730,7 +1730,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
 
             $module = Import-PSSession $session myOrder -CommandType All -AllowClobber
             $actualResult = myOrder -aliasParam 123
-        	
+
             $expectedResult | Should Be $actualResult
         } finally {
             if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
@@ -1780,20 +1780,20 @@ Describe "Implicit remoting tests" -tags "Feature" {
         It "Imported function with bad verb should work" -Skip:$skipTest {
             try {
                 $module = Import-PSSession $session BadVerb-Variable -WarningAction SilentlyContinue -AllowClobber
-                
+
                 $remotePid = Invoke-Command $session { $PID }
                 $getVariablePid = Invoke-Command $session { (Get-Variable -Name PID).Value }
                 $getVariablePid | Should Be $remotePid
 
                 ## Get-Variable function should not be exported when importing a BadVerb-Variable function
                 ((Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue) -eq $null) | Should Be $true
-                
+
                 ## BadVerb-Variable should be a function, not an alias (1)
                 ((Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue) -ne $null) | Should Be $true
-                
+
                 ## BadVerb-Variable should be a function, not an alias (2)
                 ((Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue) -eq $null) | Should Be $true
-                
+
                 (BadVerb-Variable -Name pid).Value | Should Be $remotePid
             } finally {
                 if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
@@ -1820,20 +1820,20 @@ Describe "Implicit remoting tests" -tags "Feature" {
         It "Imported function with bad verb by 'Import-PSSession -DisableNameChecking' should work" -Skip:$skipTest {
             try {
                 $module = Import-PSSession $session BadVerb-Variable -DisableNameChecking -AllowClobber
-                
+
                 $remotePid = Invoke-Command $session { $PID }
                 $getVariablePid = Invoke-Command $session { (Get-Variable -Name PID).Value }
                 $getVariablePid | Should Be $remotePid
 
                 ## Get-Variable function should not be exported when importing a BadVerb-Variable function
                 ((Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue) -eq $null) | Should Be $true
-                
+
                 ## BadVerb-Variable should be a function, not an alias (1)
                 ((Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue) -ne $null) | Should Be $true
-                
+
                 ## BadVerb-Variable should be a function, not an alias (2)
                 ((Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue) -eq $null) | Should Be $true
-                
+
                 (BadVerb-Variable -Name pid).Value | Should Be $remotePid
             } finally {
                 if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
@@ -1871,17 +1871,17 @@ Describe "Implicit remoting tests" -tags "Feature" {
         It "Importing alias with bad verb should work" -Skip:$skipTest {
             try {
                 $module = Import-PSSession $session BadVerb-Variable -AllowClobber
-                
+
                 $remotePid = Invoke-Command $session { $PID }
                 $getVariablePid = Invoke-Command $session { (Get-Variable -Name PID).Value }
                 $getVariablePid | Should Be $remotePid
-                
+
                 ## BadVerb-Variable should be an alias, not a function (1)
                 ((Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue) -eq $null) | Should Be $true
-                
+
                 ## BadVerb-Variable should be an alias, not a function (2)
                 ((Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue) -ne $null) | Should Be $true
-                
+
                 (BadVerb-Variable -Name pid).Value | Should Be $remotePid
             } finally {
                 if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
@@ -1912,7 +1912,7 @@ Describe "Export-PSSession function" -tags "Feature" {
         if ($skipTest) { return }
 
         $session = New-RemoteSession
-        
+
         $tempdir = Join-Path $env:TEMP ([IO.Path]::GetRandomFileName())
         New-Item $tempdir -ItemType Directory > $null
 
@@ -1932,7 +1932,7 @@ Describe "Export-PSSession function" -tags "Feature" {
     It "Test the module created by Export-PSSession" -Skip:$skipTest {
         try {
             Export-PSSession -Session $session -OutputModule $tempdir\Diag -CommandName New-Guid -AllowClobber > $null
-            
+
             # Only the snapin Microsoft.PowerShell.Core is loaded
             $iss = [System.Management.Automation.Runspaces.InitialSessionState]::CreateDefault2()
             $ps = [PowerShell]::Create($iss)
@@ -1975,10 +1975,10 @@ Describe "Implicit remoting with disconnected session" -tags "Feature" {
 
     It "Disconnected session should be reconnected when calling proxied command" -Skip:$skipTest {
         Disconnect-PSSession $session
-        
+
         $dSessionPid = Get-RemoteVariable pid
         $dSessionPid.Value | Should Be $remotePid
-        
+
         $session.State | Should Be 'Opened'
     }
 

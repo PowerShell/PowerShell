@@ -9,7 +9,7 @@ namespace Microsoft.Management.UI.Internal
     using System;
 
     /// <summary>
-    /// The TextDoesNotEqualFilterRule class evaluates a string item to 
+    /// The TextDoesNotEqualFilterRule class evaluates a string item to
     /// check if it is not equal to the rule's value.
     /// </summary>
     [Serializable]

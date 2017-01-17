@@ -8,12 +8,12 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 namespace System.Management.Automation.Runspaces
 {
     /// <summary>
-    /// Define class for runspace configuration entry. 
+    /// Define class for runspace configuration entry.
     /// </summary>
     /// <remarks>
-    /// This abstract class is to be derived internally by Monad for different 
-    /// runspace configuration entries only. Developers should not derive from 
-    /// this class. 
+    /// This abstract class is to be derived internally by Monad for different
+    /// runspace configuration entries only. Developers should not derive from
+    /// this class.
     /// </remarks>
 #if CORECLR
     internal
@@ -23,12 +23,12 @@ namespace System.Management.Automation.Runspaces
     abstract class RunspaceConfigurationEntry
     {
         /// <summary>
-        /// Initiate an instance of runspace configuration entry. 
+        /// Initiate an instance of runspace configuration entry.
         /// </summary>
         /// <param name="name">Name for the runspace configuration entry</param>
         /// <!--
-        /// This is meant to be called by derived class only. It doesn't make sense to 
-        /// directly create an instance of this class. 
+        /// This is meant to be called by derived class only. It doesn't make sense to
+        /// directly create an instance of this class.
         /// -->
         protected RunspaceConfigurationEntry(string name)
         {
@@ -41,13 +41,13 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Initiate an instance of runspace configuration entry. 
+        /// Initiate an instance of runspace configuration entry.
         /// </summary>
         /// <param name="name">Name for the runspace configuration entry</param>
         /// <param name="psSnapin">The name of the PSSnapin the entry comes from.</param>
         /// <!--
-        /// This is meant to be called by derived class only. It doesn't make sense to 
-        /// directly create an instance of this class. 
+        /// This is meant to be called by derived class only. It doesn't make sense to
+        /// directly create an instance of this class.
         /// -->
         internal RunspaceConfigurationEntry(string name, PSSnapInInfo psSnapin)
         {
@@ -73,7 +73,7 @@ namespace System.Management.Automation.Runspaces
         public string Name { get; }
 
         /// <summary>
-        /// Gets name of PSSnapin that this configuration entry belongs to. 
+        /// Gets name of PSSnapin that this configuration entry belongs to.
         /// </summary>
         public PSSnapInInfo PSSnapIn { get; } = null;
 

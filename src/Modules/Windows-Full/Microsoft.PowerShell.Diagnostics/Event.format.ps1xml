@@ -89,7 +89,7 @@
                     </TableRowEntry>
                  </TableRowEntries>
             </TableControl>
-        </View>     
+        </View>
         <View>
             <Name>Default</Name>
             <ViewSelectedBy>
@@ -116,6 +116,6 @@
                 </ListEntries>
             </ListControl>
         </View>
-           
+
     </ViewDefinitions>
 </Configuration>

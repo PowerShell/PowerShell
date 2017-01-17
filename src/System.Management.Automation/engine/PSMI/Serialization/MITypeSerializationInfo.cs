@@ -60,7 +60,7 @@ namespace System.Management.Automation
         internal MITypeSerializerDelegate Serializer { get; }
 
         /// <summary>
-        /// The CimType corresponding to the .NET type 
+        /// The CimType corresponding to the .NET type
         /// </summary>
         internal Microsoft.Management.Infrastructure.CimType CimType { get; }
 

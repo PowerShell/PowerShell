@@ -13,7 +13,7 @@ Describe "Event Subscriber Tests" -tags "CI" {
         $job = Start-Job { Start-Sleep -Seconds 5; 1..5 }
         $eventtest = Register-ObjectEvent $job -EventName StateChanged -SourceIdentifier EventSIDTest -Action {} -MessageData $messageData
         new-event EventSIDTest
-        
+
         wait-event EventSIDTest
         $eventdata = get-event EventSIDTest
         $eventdata.MessageData | should Be $messageData
@@ -21,7 +21,7 @@ Describe "Event Subscriber Tests" -tags "CI" {
         Unregister-Event EventSIDTest
         Get-EventSubscriber | should BeNullOrEmpty
     }
-    
+
     It "Access a global variable from an event action." {
         Get-EventSubscriber | should BeNullOrEmpty
         set-variable incomingGlobal -scope global -value globVarValue

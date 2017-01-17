@@ -51,10 +51,10 @@ namespace Microsoft.Management.UI
             this.viewModel = new HelpViewModel(helpObject, this.DocumentParagraph);
             CommonHelper.SetStartingPositionAndSize(
                 this,
-                HelpWindowSettings.Default.HelpWindowTop, 
-                HelpWindowSettings.Default.HelpWindowLeft, 
-                HelpWindowSettings.Default.HelpWindowWidth, 
-                HelpWindowSettings.Default.HelpWindowHeight, 
+                HelpWindowSettings.Default.HelpWindowTop,
+                HelpWindowSettings.Default.HelpWindowLeft,
+                HelpWindowSettings.Default.HelpWindowWidth,
+                HelpWindowSettings.Default.HelpWindowHeight,
                 double.Parse((string)HelpWindowSettings.Default.Properties["HelpWindowWidth"].DefaultValue, CultureInfo.InvariantCulture.NumberFormat),
                 double.Parse((string)HelpWindowSettings.Default.Properties["HelpWindowHeight"].DefaultValue, CultureInfo.InvariantCulture.NumberFormat),
                 HelpWindowSettings.Default.HelpWindowMaximized);
@@ -300,7 +300,7 @@ namespace Microsoft.Management.UI
             {
                 return;
             }
-            
+
             run.BringIntoView();
             this.HelpText.CaretPosition = run.ElementEnd;
             this.HelpText.Focus();

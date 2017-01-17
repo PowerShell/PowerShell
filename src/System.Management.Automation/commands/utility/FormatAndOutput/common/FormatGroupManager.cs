@@ -11,7 +11,7 @@ using System.Globalization;
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
-    /// internal class to manage the grouping algorithm for the 
+    /// internal class to manage the grouping algorithm for the
     /// format-xxx commands
     /// </summary>
     internal sealed class GroupingInfoManager
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             }
 
             // we had no matches or we could not get the value:
-            // NOTICE: we need to do this to avoid starting a new group every time 
+            // NOTICE: we need to do this to avoid starting a new group every time
             // there is a failure to read the grouping property.
             // For example, for AD, there are objects that throw when trying
             // to read the "distinguishedName" property (used by the brokered property "ParentPath)
@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// value of the display label passed in. 
+        /// value of the display label passed in.
         /// </summary>
         private string _label = null;
 

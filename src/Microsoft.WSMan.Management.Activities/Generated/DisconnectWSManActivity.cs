@@ -28,27 +28,27 @@ namespace Microsoft.WSMan.Management.Activities
         /// Gets the fully qualified name of the command invoked by this activity.
         /// </summary>
         public override string PSCommandName { get { return "Microsoft.WSMan.Management\\Disconnect-WSMan"; } }
-        
+
         // Arguments
-        
+
         /// <summary>
         /// Provides access to the ComputerName parameter.
-        /// </summary>        
+        /// </summary>
         [ParameterSpecificCategory]
         [DefaultValue(null)]
         public InArgument<System.String> ComputerName { get; set; }
-        
+
         /// <summary>
         /// Declares that this activity supports its own remoting.
-        /// </summary>        
+        /// </summary>
         protected override bool SupportsCustomRemoting { get { return true; } }
 
 
         // Module defining this command
-        
+
 
         // Optional custom code for this activity
-        
+
 
         /// <summary>
         /// Returns a configured instance of System.Management.Automation.PowerShell, pre-populated with the command to run.
@@ -62,12 +62,12 @@ namespace Microsoft.WSMan.Management.Activities
             System.Management.Automation.PowerShell targetCommand = invoker.AddCommand(PSCommandName);
 
             // Initialize the arguments
-            
+
             if((ComputerName.Expression != null) && (PSRemotingBehavior.Get(context) != RemotingBehavior.Custom))
             {
                 targetCommand.AddParameter("ComputerName", ComputerName.Get(context));
             }
-            
+
             if(GetIsComputerNameSpecified(context) && (PSRemotingBehavior.Get(context) == RemotingBehavior.Custom))
             {
                 targetCommand.AddParameter("ComputerName", PSComputerName.Get(context));

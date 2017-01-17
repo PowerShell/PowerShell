@@ -219,7 +219,7 @@ namespace Microsoft.PowerShell
                 {
                     // haven't seen this happen yet, but possible
                     failReason = String.Format(CultureInfo.CurrentCulture, PSReadLineResources.UnrecognizedKey, virtualKey);
-                }                
+                }
             }
             else
             {

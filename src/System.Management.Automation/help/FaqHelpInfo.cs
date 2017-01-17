@@ -9,10 +9,10 @@ using System.Diagnostics.CodeAnalysis; // for fxcop
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Class FaqHelpInfo keeps track of help information to be returned by 
+    ///
+    /// Class FaqHelpInfo keeps track of help information to be returned by
     /// faq help provider.
-    /// 
+    ///
     /// </summary>
     internal class FaqHelpInfo : HelpInfo
     {
@@ -21,7 +21,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// This constructor is can be called only from constructors of derived class
-        /// for FaqHelpInfo. The only way to to create a FaqHelpInfo is through 
+        /// for FaqHelpInfo. The only way to to create a FaqHelpInfo is through
         /// static function
         ///     Load(XmlNode node)
         /// where some sanity check is done.
@@ -43,7 +43,7 @@ namespace System.Management.Automation
         #region Basic Help Properties / Methods
 
         /// <summary>
-        /// Name of faq. 
+        /// Name of faq.
         /// </summary>
         /// <value>Name of faq</value>
         internal override string Name
@@ -120,10 +120,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns true if help content in help info matches the
-        /// pattern contained in <paramref name="pattern"/>. 
+        /// pattern contained in <paramref name="pattern"/>.
         /// The underlying code will usually run pattern.IsMatch() on
         /// content it wants to search.
-        /// FAQ help info looks for pattern in Synopsis and 
+        /// FAQ help info looks for pattern in Synopsis and
         /// Answers
         /// </summary>
         /// <param name="pattern"></param>

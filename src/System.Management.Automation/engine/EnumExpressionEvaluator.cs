@@ -148,11 +148,11 @@ namespace System.Management.Automation
         #region tree nodes
 
         /// <summary>
-        /// Abstract base type for other types of nodes in the tree. 
+        /// Abstract base type for other types of nodes in the tree.
         /// </summary>
         internal abstract class Node
         {
-            // Only used in internal nodes holding operators. 
+            // Only used in internal nodes holding operators.
 
             public Node Operand1 { get; set; }
 
@@ -252,8 +252,8 @@ namespace System.Management.Automation
 
             /// <summary>
             /// Takes a string value and converts to corresponding enum value.
-            /// The string value should be checked at parsing stage prior to 
-            /// tree construction to ensure it is valid. 
+            /// The string value should be checked at parsing stage prior to
+            /// tree construction to ensure it is valid.
             /// </summary>
             internal OperandNode(string enumString)
             {
@@ -357,7 +357,7 @@ namespace System.Management.Automation
         /// Whether the enum element is present in the expression.
         /// </returns>
         /// <remarks>
-        /// The enum value passed in should be a single enum element value, 
+        /// The enum value passed in should be a single enum element value,
         /// not a flag enum value with multiple bits set.
         /// </remarks>
         internal bool ExistsInExpression(T flagName)
@@ -377,10 +377,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="input">
         /// The input argument string,
-        /// could be partial input (one element from the argument collection). 
+        /// could be partial input (one element from the argument collection).
         /// </param>
         /// <returns>
-        /// A generic list of tokenized input. 
+        /// A generic list of tokenized input.
         /// </returns>
         private List<Token> TokenizeInput(string input)
         {
@@ -399,13 +399,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Find the start of the next token, skipping white spaces. 
+        /// Find the start of the next token, skipping white spaces.
         /// </summary>
         /// <param name="input">
         /// Input string
         /// </param>
         /// <param name="_offset">
-        /// Current offset position for the string parser. 
+        /// Current offset position for the string parser.
         /// </param>
         private void FindNextToken(string input, ref int _offset)
         {
@@ -509,7 +509,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks syntax errors on input expression, 
+        /// Checks syntax errors on input expression,
         /// as well as performing disambiguation for identifiers.
         /// </summary>
         /// <param name="tokenList">
@@ -605,7 +605,7 @@ namespace System.Management.Automation
                 else if (kind == TokenKind.Or)
                 {
                     // Dequeue all nodes from AND queue,
-                    // create the AND tree, then add to the OR queue. 
+                    // create the AND tree, then add to the OR queue.
                     Node andCurrent = andQueue.Dequeue();
                     while (andQueue.Count > 0)
                     {

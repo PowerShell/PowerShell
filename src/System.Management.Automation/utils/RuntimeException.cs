@@ -268,7 +268,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public bool WasThrownFromThrowStatement
         {

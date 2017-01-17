@@ -768,7 +768,7 @@ namespace System.Management.Automation.Runspaces
                                 ")
                         .AddScriptBlockExpressionBinding(@"
                                    if ($_.FullyQualifiedErrorId -eq ""NativeCommandErrorMessage"" -or $_.FullyQualifiedErrorId -eq ""NativeCommandError"") {
-                                        $_.Exception.Message   
+                                        $_.Exception.Message
                                    }
                                    else
                                    {
@@ -778,14 +778,14 @@ namespace System.Management.Automation.Runspaces
                                         } else {
                                             $posmsg = """"
                                         }
-                                        
+
                                         if ($posmsg -ne """")
                                         {
                                             $posmsg = ""`n"" + $posmsg
                                         }
-    				    
+
                                         if ( & { Set-StrictMode -Version 1; $_.PSMessageDetails } ) {
-                                            $posmsg = "" : "" +  $_.PSMessageDetails + $posmsg 
+                                            $posmsg = "" : "" +  $_.PSMessageDetails + $posmsg
                                         }
 
                                         $indent = 4
@@ -1256,13 +1256,13 @@ namespace System.Management.Automation.Runspaces
                                   $result = $_.Content
                                   $result = $result.Substring(0, [Math]::Min($result.Length, 200) )
                                   if($result.Length -eq 200) { $result += ""..."" }
-                                  $result                               
+                                  $result
                                 ", label: "Content")
                         .AddItemScriptBlock(@"
                                   $result = $_.RawContent
                                   $result = $result.Substring(0, [Math]::Min($result.Length, 200) )
                                   if($result.Length -eq 200) { $result += ""..."" }
-                                  $result                               
+                                  $result
                                 ", label: "RawContent")
                         .AddItemProperty(@"Forms")
                         .AddItemProperty(@"Headers")
@@ -1287,7 +1287,7 @@ namespace System.Management.Automation.Runspaces
                                   $result = $_.RawContent
                                   $result = $result.Substring(0, [Math]::Min($result.Length, 200) )
                                   if($result.Length -eq 200) { $result += ""..."" }
-                                  $result                               
+                                  $result
                                 ", label: "RawContent")
                         .AddItemProperty(@"Headers")
                         .AddItemProperty(@"RawContentLength")

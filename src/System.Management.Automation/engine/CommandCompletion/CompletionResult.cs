@@ -57,7 +57,7 @@ namespace System.Management.Automation
         /// <summary>A dynamic keyword</summary>
         DynamicKeyword = 13,
 
-        // If a new enum is added, there is a range test that uses DynamicKeyword for parameter validation 
+        // If a new enum is added, there is a range test that uses DynamicKeyword for parameter validation
         // that needs to be updated to use the new enum.
         // We can't use a "MaxValue" enum because it's value would preclude ever adding a new enum.
     }
@@ -208,8 +208,8 @@ namespace System.Management.Automation
         /// <summary>
         /// An null instance of CompletionResult.
         /// </summary>
-        /// 
-        /// <remarks> 
+        ///
+        /// <remarks>
         /// This can be used in argument completion, to indicate that the completion attempt has gone through the
         /// native command argument completion methods.
         /// </remarks>

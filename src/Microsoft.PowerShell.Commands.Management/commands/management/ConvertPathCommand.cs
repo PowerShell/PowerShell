@@ -9,7 +9,7 @@ using Dbg = System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// A command to convert a drive qualified or provider qualified path to 
+    /// A command to convert a drive qualified or provider qualified path to
     /// a provider internal path.
     /// </summary>
     [Cmdlet(VerbsData.Convert, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true,

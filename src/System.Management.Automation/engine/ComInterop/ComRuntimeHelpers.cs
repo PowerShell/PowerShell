@@ -31,7 +31,7 @@ namespace System.Management.Automation.ComInterop
             switch (hresult)
             {
                 case ComHresults.DISP_E_BADPARAMCOUNT:
-                    // The number of elements provided to DISPPARAMS is different from the number of arguments 
+                    // The number of elements provided to DISPPARAMS is different from the number of arguments
                     // accepted by the method or property.
 
                     parameterException = Error.DispBadParamCount(method.Name, args.Length - 1);
@@ -43,12 +43,12 @@ namespace System.Management.Automation.ComInterop
                     break;
 
                 case ComHresults.DISP_E_EXCEPTION:
-                    // The application needs to raise an exception. In this case, the structure passed in pExcepInfo 
+                    // The application needs to raise an exception. In this case, the structure passed in pExcepInfo
                     // should be filled in.
                     throw excepInfo.GetException();
 
                 case ComHresults.DISP_E_MEMBERNOTFOUND:
-                    // The requested member does not exist, or the call to Invoke tried to set the value of a 
+                    // The requested member does not exist, or the call to Invoke tried to set the value of a
                     // read-only property.
                     throw Error.DispMemberNotFound(method.Name);
 
@@ -113,7 +113,7 @@ namespace System.Management.Automation.ComInterop
                     break;
 
                 case ComHresults.DISP_E_UNKNOWNLCID:
-                    // The member being invoked interprets string arguments according to the LCID, and the 
+                    // The member being invoked interprets string arguments according to the LCID, and the
                     // LCID is not recognized.
                     break;
 
@@ -188,7 +188,7 @@ namespace System.Management.Automation.ComInterop
         /// <param name="dispatch"></param>
         /// <param name="throwIfMissingExpectedTypeInfo">
         /// Some COM objects just dont expose typeinfo. In these cases, this method will return null.
-        /// Some COM objects do intend to expose typeinfo, but may not be able to do so if the type-library is not properly 
+        /// Some COM objects do intend to expose typeinfo, but may not be able to do so if the type-library is not properly
         /// registered. This will be considered as acceptable or as an error condition depending on throwIfMissingExpectedTypeInfo</param>
         /// <returns></returns>
         internal static ComTypes.ITypeInfo GetITypeInfoFromIDispatch(IDispatch dispatch, bool throwIfMissingExpectedTypeInfo)
@@ -246,7 +246,7 @@ namespace System.Management.Automation.ComInterop
         /// will check if the typeinfo is expected to be missing. This can include error cases where
         /// the same error is guaranteed to happen all the time, on all machines, under all circumstances.
         /// In such cases, we just have to operate without the typeinfo.
-        /// 
+        ///
         /// However, if accessing the typeinfo is failing in a transient way, we might want to throw
         /// an exception so that we will eagerly predictably indicate the problem.
         /// </summary>
@@ -332,7 +332,7 @@ namespace System.Management.Automation.ComInterop
     /// Callers of these methods need to use them extremely carefully as incorrect use could cause GC-holes
     /// and other problems.
     /// </summary>
-    /// 
+    ///
     internal static class UnsafeMethods
     {
         [System.Runtime.Versioning.ResourceExposure(System.Runtime.Versioning.ResourceScope.None)]
@@ -456,7 +456,7 @@ namespace System.Management.Automation.ComInterop
             Debug.Assert(obj != null);
 
             // GetNativeVariantForObject is very expensive for values that marshal as VT_DISPATCH
-            // also is is extremely common scenario when object at hand is an RCW. 
+            // also is is extremely common scenario when object at hand is an RCW.
             // Therefore we are going to test for IDispatch before defaulting to GetNativeVariantForObject.
             IDispatch disp = obj as IDispatch;
             if (disp != null)
@@ -592,7 +592,7 @@ namespace System.Management.Automation.ComInterop
 
         /// <summary>
         /// Ensure that "value" is a local variable in some caller's frame. So converting
-        /// the byref to an IntPtr is a safe operation. Alternatively, we could also allow 
+        /// the byref to an IntPtr is a safe operation. Alternatively, we could also allow
         /// allowed "value"  to be a pinned object.
         /// </summary>
         [Conditional("DEBUG")]
@@ -646,8 +646,8 @@ namespace System.Management.Automation.ComInterop
         private const int _dummyMarker = 0x10101010;
 
         /// <summary>
-        /// We will emit an indirect call to an unmanaged function pointer from the vtable of the given interface pointer. 
-        /// This approach can take only ~300 instructions on x86 compared with ~900 for Marshal.Release. We are relying on 
+        /// We will emit an indirect call to an unmanaged function pointer from the vtable of the given interface pointer.
+        /// This approach can take only ~300 instructions on x86 compared with ~900 for Marshal.Release. We are relying on
         /// the JIT-compiler to do pinvoke-stub-inlining and calling the pinvoke target directly.
         /// </summary>
         private delegate int IUnknownReleaseDelegate(IntPtr interfacePointer);
@@ -694,9 +694,9 @@ namespace System.Management.Automation.ComInterop
         }
 
         /// <summary>
-        /// We will emit an indirect call to an unmanaged function pointer from the vtable of the given IDispatch interface pointer. 
-        /// It is not possible to express this in C#. Using an indirect pinvoke call allows us to do our own marshalling. 
-        /// We can allocate the Variant arguments cheaply on the stack. We are relying on the JIT-compiler to do 
+        /// We will emit an indirect call to an unmanaged function pointer from the vtable of the given IDispatch interface pointer.
+        /// It is not possible to express this in C#. Using an indirect pinvoke call allows us to do our own marshalling.
+        /// We can allocate the Variant arguments cheaply on the stack. We are relying on the JIT-compiler to do
         /// pinvoke-stub-inlining and calling the pinvoke target directly.
         /// The alternative of calling via a managed interface declaration of IDispatch would have a performance
         /// penalty of going through a CLR stub that would have to re-push the arguments on the stack, etc.

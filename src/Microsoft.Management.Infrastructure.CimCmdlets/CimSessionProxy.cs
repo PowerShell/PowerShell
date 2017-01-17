@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -401,7 +401,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             }
 
             Debug.Assert(cimInstance != null, "Caller should verify cimInstance != null");
-            
+
             // computerName is null, fallback to create session from cimInstance
             CimSessionState state = CimSessionBase.GetCimSessionState();
             if (state != null)
@@ -569,7 +569,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 return this.options.ResourceUri;
             }
-        }        
+        }
 
         /// <summary>
         /// Enable/Disable the method result streaming,
@@ -600,9 +600,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 if(value)
                 {
                     this.options.PromptUser = this.PromptUser;
-                }                
+                }
             }
-        }        
+        }
 
         /// <summary>
         /// Enable the pssemantics
@@ -1021,7 +1021,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         }
 
         /// <summary>
-        /// This method adds a note property to <paramref name="o"/>, 
+        /// This method adds a note property to <paramref name="o"/>,
         /// which will cause the default PowerShell formatting and output
         /// to include PSComputerName column/property in the display.
         /// </summary>
@@ -1639,8 +1639,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private IObjectPreProcess objectPreprocess;
 
         /// <summary>
-        /// <see cref="isDefaultSession"/> is <c>true</c> if this <see cref="CimSessionProxy"/> was 
-        /// created to handle the "default" session, in cases where cmdlets are invoked without 
+        /// <see cref="isDefaultSession"/> is <c>true</c> if this <see cref="CimSessionProxy"/> was
+        /// created to handle the "default" session, in cases where cmdlets are invoked without
         /// ComputerName and/or CimSession parameters.
         /// </summary>
         private bool isDefaultSession;

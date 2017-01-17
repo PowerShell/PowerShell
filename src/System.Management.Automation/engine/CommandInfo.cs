@@ -20,9 +20,9 @@ namespace System.Management.Automation
     public enum CommandTypes
     {
         /// <summary>
-        /// Aliases create a name that refers to other command types 
+        /// Aliases create a name that refers to other command types
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// Aliases are only persisted within the execution of a single engine.
         /// </remarks>
@@ -31,7 +31,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Script functions that are defined by a script block
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// Functions are only persisted within the execution of a single engine.
         /// </remarks>
@@ -40,14 +40,14 @@ namespace System.Management.Automation
         /// <summary>
         /// Script filters that are defined by a script block.
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// Filters are only persisted within the execution of a single engine.
         /// </remarks>
         Filter = 0x0004,
 
         /// <summary>
-        /// A cmdlet. 
+        /// A cmdlet.
         /// </summary>
         Cmdlet = 0x0008,
 
@@ -59,7 +59,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Any existing application (can be console or GUI).
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// An application can have any extension that can be executed either directly through CreateProcess
         /// or indirectly through ShellExecute.
@@ -85,7 +85,7 @@ namespace System.Management.Automation
         /// <summary>
         /// All possible command types.
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// Note, a CommandInfo instance will never specify
         /// All as its CommandType but All can be used when filtering the CommandTypes.
@@ -104,19 +104,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the CommandInfo class with the specified name and type
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the command.
         /// </param>
-        /// 
+        ///
         /// <param name="type">
         /// The type of the command.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="name"/> is null.
         /// </exception>
-        /// 
+        ///
         internal CommandInfo(string name, CommandTypes type)
         {
             // The name can be empty for functions and filters but it
@@ -134,23 +134,23 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the CommandInfo class with the specified name and type
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the command.
         /// </param>
-        /// 
+        ///
         /// <param name="type">
         /// The type of the command.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The execution context for the command.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="name"/> is null.
         /// </exception>
-        /// 
+        ///
         internal CommandInfo(string name, CommandTypes type, ExecutionContext context)
             : this(name, type)
         {
@@ -286,7 +286,7 @@ namespace System.Management.Automation
         /// <summary>
         /// A string representing the definition of the command.
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// This is overridden by derived classes to return specific
         /// information for the command type.
@@ -297,15 +297,15 @@ namespace System.Management.Automation
         /// <summary>
         /// This is required for renaming aliases, functions, and filters
         /// </summary>
-        /// 
+        ///
         /// <param name="newName">
         /// The new name for the command.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="newName"/> is null or empty.
         /// </exception>
-        /// 
+        ///
         internal void Rename(string newName)
         {
             if (String.IsNullOrEmpty(newName))
@@ -523,14 +523,14 @@ namespace System.Management.Automation
         private void GetMergedCommandParameterMetadata(out MergedCommandParameterMetadata result)
         {
             // MSFT:652277 - When invoking cmdlets or advanced functions, MyInvocation.MyCommand.Parameters do not contain the dynamic parameters
-            // When trying to get parameter metadata for a CommandInfo that has dynamic parameters, a new CommandProcessor will be 
-            // created out of this CommandInfo and the parameter binding algorithm will be invoked. However, when this happens via 
-            // 'MyInvocation.MyCommand.Parameter', it's actually retrieving the parameter metadata of the same cmdlet that is currently 
-            // running. In this case, information about the specified parameters are not kept around in 'MyInvocation.MyCommand', so 
-            // going through the binding algorithm again won't give us the metadata about the dynamic parameters that should have been 
+            // When trying to get parameter metadata for a CommandInfo that has dynamic parameters, a new CommandProcessor will be
+            // created out of this CommandInfo and the parameter binding algorithm will be invoked. However, when this happens via
+            // 'MyInvocation.MyCommand.Parameter', it's actually retrieving the parameter metadata of the same cmdlet that is currently
+            // running. In this case, information about the specified parameters are not kept around in 'MyInvocation.MyCommand', so
+            // going through the binding algorithm again won't give us the metadata about the dynamic parameters that should have been
             // discovered already.
-            // The fix is to check if the CommandInfo is actually representing the currently running cmdlet. If so, the retrieval of parameter 
-            // metadata actually stems from the running of the same cmdlet. In this case, we can just use the current CommandProcessor to 
+            // The fix is to check if the CommandInfo is actually representing the currently running cmdlet. If so, the retrieval of parameter
+            // metadata actually stems from the running of the same cmdlet. In this case, we can just use the current CommandProcessor to
             // retrieve all bindable parameters, which should include the dynamic parameters that have been discovered already.
             CommandProcessor processor;
             if (Context.CurrentCommandProcessor != null && Context.CurrentCommandProcessor.CommandInfo == this)
@@ -670,30 +670,30 @@ namespace System.Management.Automation
         /// <summary>
         /// Generates the parameter and parameter set info from the cmdlet metadata
         /// </summary>
-        /// 
+        ///
         /// <returns>
         /// A collection of CommandParameterSetInfo representing the cmdlet metadata.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// The type name is invalid or the length of the type name
         /// exceeds 1024 characters.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="System.Security.SecurityException">
         /// The caller does not have the required permission to load the assembly
         /// or create the type.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ParsingMetadataException">
         /// If more than int.MaxValue parameter-sets are defined for the command.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="MetadataException">
         /// If a parameter defines the same parameter-set name multiple times.
         /// If the attributes could not be read from a property or field.
         /// </exception>
-        /// 
+        ///
         internal Collection<CommandParameterSetInfo> GenerateCommandParameterSetInfo()
         {
             Collection<CommandParameterSetInfo> result;
@@ -711,7 +711,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets whether this CmdletInfo instance is a copy used for get-command.
-        /// If true, and the cmdlet supports dynamic parameters, it means that the dynamic 
+        /// If true, and the cmdlet supports dynamic parameters, it means that the dynamic
         /// parameter metadata will be merged into the parameter set information.
         /// </summary>
         internal bool IsGetCommandCopy { get; set; }

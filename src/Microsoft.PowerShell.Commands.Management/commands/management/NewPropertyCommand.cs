@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The type of the property to create on the item.
         /// </summary>
-        /// 
+        ///
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("Type")]
         public string PropertyType { get; set; }
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The value of the property to create on the item.
         /// </summary>
-        /// 
+        ///
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public object Value { get; set; }
 
@@ -108,16 +108,16 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)

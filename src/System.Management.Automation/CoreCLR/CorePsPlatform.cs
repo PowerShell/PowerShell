@@ -75,7 +75,7 @@ namespace System.Management.Automation
 #endif
             }
         }
-        
+
         /// <summary>
         /// True if the underlying system is NanoServer.
         /// </summary>
@@ -89,7 +89,7 @@ namespace System.Management.Automation
                 return false;
 #else
                 if (_isNanoServer.HasValue) { return _isNanoServer.Value; }
-                
+
                 _isNanoServer = false;
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels"))
                 {
@@ -167,7 +167,7 @@ namespace System.Management.Automation
             }
         }
 
-#if !UNIX 
+#if !UNIX
         private static bool? _isNanoServer = null;
         private static bool? _isIoT = null;
         private static bool? _isInbox = null;

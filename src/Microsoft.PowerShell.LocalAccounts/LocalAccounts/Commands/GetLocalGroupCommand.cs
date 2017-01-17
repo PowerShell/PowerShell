@@ -12,7 +12,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Get-LocalGroup cmdlet gets local groups from the Windows Security 
+    /// The Get-LocalGroup cmdlet gets local groups from the Windows Security
     /// Accounts manager.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "LocalGroup",
@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
         private System.Security.Principal.SecurityIdentifier[] sid;
         #endregion Parameter Properties
 
-      
+
 
 
         #region Cmdlet Overrides
@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
             ProcessSids();
         }
 
-        
+
         /// <summary>
         /// EndProcessing method.
         /// </summary>

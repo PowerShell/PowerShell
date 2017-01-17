@@ -67,7 +67,7 @@ namespace System.Management.Automation.PerformanceData
     /// derived non-abstract type.
     /// The created instance is then passed to PSPerfCounterMgr's AddCounterSetInstance()
     /// method.
-    /// 
+    ///
     /// </summary>
     public abstract class CounterSetRegistrarBase
     {
@@ -95,7 +95,7 @@ namespace System.Management.Automation.PerformanceData
         #region Constructors
         /// <summary>
         /// Constructor that creates an instance of CounterSetRegistrarBase derived type
-        /// based on Provider Id, counterSetId, counterSetInstanceType, a collection 
+        /// based on Provider Id, counterSetId, counterSetInstanceType, a collection
         /// with counters information and an optional counterSetName.
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
@@ -189,7 +189,7 @@ namespace System.Management.Automation.PerformanceData
 
 
         /// <summary>
-        /// Getter method that returns an instance of the CounterSetInstanceBase's 
+        /// Getter method that returns an instance of the CounterSetInstanceBase's
         /// derived type
         /// </summary>
         public CounterSetInstanceBase CounterSetInstance

@@ -1,7 +1,7 @@
 
 
 configuration  scriptdsc
-{ 
+{
     param ($one, $two, $three)
 
     Import-DscResource -ModuleName UserConfigProv

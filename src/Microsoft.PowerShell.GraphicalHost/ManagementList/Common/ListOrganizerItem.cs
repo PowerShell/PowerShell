@@ -36,7 +36,7 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         public bool IsInEditMode
         {
-            get 
+            get
             {
                 return (null != this.renameButton) ? this.renameButton.IsChecked.Value : false;
             }
@@ -74,7 +74,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Provides class handling for the KeyDown routed event that 
+        /// Provides class handling for the KeyDown routed event that
         /// occurs when the user presses a key while this control has focus.
         /// </summary>
         /// <param name="e">The event data.</param>
@@ -133,7 +133,7 @@ namespace Microsoft.Management.UI.Internal
             switch (e.Key)
             {
                 case Key.Enter:
-                    this.ChangeFromEditToDisplayMode();                    
+                    this.ChangeFromEditToDisplayMode();
                     e.Handled = true;
                     break;
 

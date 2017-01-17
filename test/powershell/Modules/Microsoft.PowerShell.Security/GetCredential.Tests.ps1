@@ -28,7 +28,7 @@ Describe "Get-Credential Test" -tag "CI" {
         $netcred = $cred.GetNetworkCredential()
         $netcred.UserName | Should be "Joe"
         $netcred.Password | Should be "this is a test"
-        $th.ui.Streams.Prompt[-1] | Should Match "Credential:[^:]+:Foo" 
+        $th.ui.Streams.Prompt[-1] | Should Match "Credential:[^:]+:Foo"
     }
     It "Get-Credential with title, produces a credential object" {
         $cred = $ps.AddScript("Get-Credential -UserName Joe -Title CustomTitle").Invoke() | Select-Object -First 1

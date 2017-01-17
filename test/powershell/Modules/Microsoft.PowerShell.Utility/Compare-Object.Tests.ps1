@@ -17,7 +17,7 @@ Describe "Compare-Object" -Tags "CI" {
 		$null = New-Item $file3 -ItemType file -Value $content3 -Force
 		$null = New-Item $file4 -ItemType file -Value $content4 -Force
 	}
-	
+
     It "Should be able to compare the same object using the referenceObject and differenceObject switches" {
 	{ Compare-Object -ReferenceObject $(Get-Content $file1) -DifferenceObject $(Get-Content $file2) } | Should Not Throw
     }
@@ -225,7 +225,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 				foreach($passthru in $boolvalues)
 				{
 					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -Passthru:$passthru -DifferenceObject $empsDifference
-					
+
 					if(!$excludeDifferent)
 					{
 						$result.Count | Should Be 2
@@ -250,7 +250,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 			}
 		}
 	}
-	
+
 	It "Compare-Object with 2 referenceObjects and 1 differenceObject should work"{
 		$empsReference = @([EmployeeComparable]::New("john","smith",5),[EmployeeComparable]::New("mary","jane",3))
 		$empsDifference = @([EmployeeComparable]::New("john","smith",5))
@@ -316,7 +316,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 			}
 		}
 	}
-	
+
 	It "Compare-Object with 0 SyncWindow should work"{
 		$empsReference = @([EmployeeComparable]::New("john","smith",5))
 		$empsDifference = @([EmployeeComparable]::New("john","smith",5),[EmployeeComparable]::New("mary","jane",3))
@@ -382,7 +382,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 			}
 		}
 	}
-	
+
 	It "Compare-Object with SyncWindow should work"{
 		$empsReference = @([EmployeeComparable]::New("mary","jane",3),[EmployeeComparable]::New("john","smith",5),[EmployeeComparable]::New("jack", "black", 15),[EmployeeComparable]::New("jim", "bob", 1))
 		$empsDifference = @([EmployeeComparable]::New("jack", "black", 15),[EmployeeComparable]::New("jim", "bob", 1),[EmployeeComparable]::New("mary","jane",3),[EmployeeComparable]::New("john","smith",5))
@@ -394,7 +394,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 				foreach($passthru in $boolvalues)
 				{
 					$result = Compare-Object -ReferenceObject $empsReference -IncludeEqual:$recordEqual -ExcludeDifferent:$excludeDifferent -Passthru:$passthru -DifferenceObject $empsDifference -SyncWindow:2
-					
+
 					if($recordEqual)
 					{
 						$result.Count | Should Be 4
@@ -425,7 +425,7 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 			}
 		}
 	}
-	
+
 	It "Compare-Object with Script Block Property Parameter should work"{
 		$a = [version]"1.2.3.4"
 		$b = [version]"5.6.7.8"
@@ -437,18 +437,18 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 		$result[1]|Select -ExpandProperty "*Minor" | Should Be 2
 		$result[1].SideIndicator | Should Be "<="
 	}
-	
+
 	It "Compare-Object with no ReferenceObject nor DifferenceObject: output nothing, no error and should work"{
 		$result = Compare-Object @() @()
 		$result | Should BeNullOrEmpty
 	}
-	
+
 	It "Compare-Object with no DifferenceObject should work"{
 		$result = Compare-Object @() @("diffObject")
 		$result.InputObject | Should Be "diffObject"
 		$result.SideIndicator | Should Be "=>"
 	}
-	
+
 	It "Compare-Object with no ReferenceObject should work"{
 		$result = Compare-Object @("refObject") @()
 		$result.InputObject | Should Be "refObject"

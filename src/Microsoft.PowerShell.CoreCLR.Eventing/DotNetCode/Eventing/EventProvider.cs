@@ -22,7 +22,7 @@ namespace System.Diagnostics.Eventing
         private long _anyKeywordMask;                  // Trace Enable Flags
         private long _allKeywordMask;                  // Match all keyword
         private int _enabled;                           // Enabled flag from Trace callback
-        private Guid _providerId;                       // Control Guid 
+        private Guid _providerId;                       // Control Guid
         private int _disposed;                          // when 1, provider has unregister
 
         [ThreadStatic]
@@ -67,7 +67,7 @@ namespace System.Diagnostics.Eventing
         }
 
         /// <summary>
-        /// Constructor for EventProvider class.  
+        /// Constructor for EventProvider class.
         /// </summary>
         /// <param name="providerGuid">
         /// Unique GUID among all trace sources running on a system
@@ -86,10 +86,10 @@ namespace System.Diagnostics.Eventing
 
         /// <summary>
         /// This method registers the controlGuid of this class with ETW.
-        /// We need to be running on Vista or above. If not an 
-        /// PlatformNotSupported exception will be thrown. 
+        /// We need to be running on Vista or above. If not an
+        /// PlatformNotSupported exception will be thrown.
         /// If for some reason the ETW EtwRegister call failed
-        /// a NotSupported exception will be thrown. 
+        /// a NotSupported exception will be thrown.
         /// </summary>
         [System.Security.SecurityCritical]
         private unsafe void EtwRegister()
@@ -106,7 +106,7 @@ namespace System.Diagnostics.Eventing
         }
 
         //
-        // implement Dispose Pattern to early deregister from ETW insted of waiting for 
+        // implement Dispose Pattern to early deregister from ETW insted of waiting for
         // the finalizer to call deregistration.
         // Once the user is done with the provider it needs to call Close() or Dispose()
         // If neither are called the finalizer will unregister the provider anyway
@@ -121,7 +121,7 @@ namespace System.Diagnostics.Eventing
         protected virtual void Dispose(bool disposing)
         {
             //
-            // explicit cleanup is done by calling Dispose with true from 
+            // explicit cleanup is done by calling Dispose with true from
             // Dispose() or Close(). The disposing argument is ignored because there
             // are no unmanaged resources.
             // The finalizer calls Dispose with false.
@@ -140,7 +140,7 @@ namespace System.Diagnostics.Eventing
 
             //
             // Disables Tracing in the provider, then unregister
-            // 
+            //
 
             _enabled = 0;
 
@@ -149,7 +149,7 @@ namespace System.Diagnostics.Eventing
 
         /// <summary>
         /// This method deregisters the controlGuid of this class with ETW.
-        /// 
+        ///
         /// </summary>
         public virtual void Close()
         {
@@ -274,7 +274,7 @@ namespace System.Diagnostics.Eventing
         Routine Description:
 
            This routine is used by WriteEvent to unbox the object type and
-           to fill the passed in ETW data descriptor. 
+           to fill the passed in ETW data descriptor.
 
         Arguments:
 
@@ -436,10 +436,10 @@ namespace System.Diagnostics.Eventing
         /// Message  to write
         /// </param>
         /// <param name="eventLevel">
-        /// Level  to test  
+        /// Level  to test
         /// </param>
         /// <param name="eventKeywords">
-        /// Keyword  to test 
+        /// Keyword  to test
         /// </param>
         [System.Security.SecurityCritical]
         public bool WriteMessageEvent(string eventMessage, byte eventLevel, long eventKeywords)
@@ -480,8 +480,8 @@ namespace System.Diagnostics.Eventing
         /// The activity ID will be propagated only if the call stays on the same native thread as SetActivityId().
         /// </summary>
         /// <param name="eventMessage">
-        /// Message to log  
-        /// </param> 
+        /// Message to log
+        /// </param>
         public bool WriteMessageEvent(string eventMessage)
         {
             return WriteMessageEvent(eventMessage, 0, 0);
@@ -492,7 +492,7 @@ namespace System.Diagnostics.Eventing
         /// WriteEvent method to write parameters with event schema properties
         /// </summary>
         /// <param name="eventDescriptor">
-        /// Event Descriptor for this event. 
+        /// Event Descriptor for this event.
         /// </param>
         /// <param name="eventPayload">
         /// </param>
@@ -505,10 +505,10 @@ namespace System.Diagnostics.Eventing
         /// WriteEvent, method to write a string with event schema properties
         /// </summary>
         /// <param name="eventDescriptor">
-        /// Event Descriptor for this event. 
+        /// Event Descriptor for this event.
         /// </param>
         /// <param name="data">
-        /// string to log. 
+        /// string to log.
         /// </param>
         [System.Security.SecurityCritical]
         [SuppressMessage("Microsoft.Usage", "CA2208:InstantiateArgumentExceptionsCorrectly")]
@@ -563,14 +563,14 @@ namespace System.Diagnostics.Eventing
         /// WriteEvent, method to be used by generated code on a derived class
         /// </summary>
         /// <param name="eventDescriptor">
-        /// Event Descriptor for this event. 
+        /// Event Descriptor for this event.
         /// </param>
         /// <param name="dataCount">
-        /// number of event descriptors 
+        /// number of event descriptors
         /// </param>
         /// <param name="data">
         /// pointer  do the event data
-        /// </param> 
+        /// </param>
         [System.Security.SecurityCritical]
         protected bool WriteEvent(ref EventDescriptor eventDescriptor, int dataCount, IntPtr data)
         {
@@ -602,7 +602,7 @@ namespace System.Diagnostics.Eventing
         /// WriteTransferEvent, method to write a parameters with event schema properties
         /// </summary>
         /// <param name="eventDescriptor">
-        /// Event Descriptor for this event. 
+        /// Event Descriptor for this event.
         /// </param>
         /// <param name="relatedActivityId">
         /// </param>
@@ -638,14 +638,14 @@ namespace System.Diagnostics.Eventing
                         int index;
                         int stringIndex = 0;
                         int[] stringPosition = new int[s_etwAPIMaxStringCount]; //used to keep the position of strings in the eventPayload parameter
-                        string[] dataString = new string[s_etwAPIMaxStringCount]; // string arrays from the eventPayload parameter                        
+                        string[] dataString = new string[s_etwAPIMaxStringCount]; // string arrays from the eventPayload parameter
                         EventData* userData = stackalloc EventData[argCount];             // allocation for the data descriptors
                         userDataPtr = (EventData*)userData;
                         byte* dataBuffer = stackalloc byte[s_basicTypeAllocationBufferSize * argCount]; // 16 byte for unboxing non-string argument
                         byte* currentBuffer = dataBuffer;
 
                         //
-                        // The loop below goes through all the arguments and fills in the data 
+                        // The loop below goes through all the arguments and fills in the data
                         // descriptors. For strings save the location in the dataString array.
                         // Calculates the total size of the event by adding the data descriptor
                         // size value set in EncodeObjec method.

@@ -9,7 +9,7 @@ namespace Microsoft.Management.UI.Internal
     using System;
 
     /// <summary>
-    /// The DoesNotEqualFilterRule class evaluates an IComparable item to 
+    /// The DoesNotEqualFilterRule class evaluates an IComparable item to
     /// check if it is not equal to the rule's value.
     /// </summary>
     /// <typeparam name="T">

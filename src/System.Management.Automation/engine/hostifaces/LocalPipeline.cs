@@ -118,7 +118,7 @@ namespace System.Management.Automation.Runspaces
         #region private_methods
 
         /// <summary>
-        /// Invoke the pipeline asynchronously with input. 
+        /// Invoke the pipeline asynchronously with input.
         /// </summary>
         /// <remarks>
         /// Results are returned through the <see cref="Pipeline.Output"/> reader.
@@ -131,7 +131,7 @@ namespace System.Management.Automation.Runspaces
                 throw PSTraceSource.NewObjectDisposedException("pipeline");
             }
 
-            //Note:This method is called from within a lock by parent class. There 
+            //Note:This method is called from within a lock by parent class. There
             //is no need to lock further.
 
             //Use input stream in two cases:
@@ -307,7 +307,7 @@ namespace System.Management.Automation.Runspaces
             PipelineProcessor pipelineProcessor = null;
             try
             {
-#if TRANSACTIONS_SUPPORTED 
+#if TRANSACTIONS_SUPPORTED
                 // 2004/11/08-JeffJon
                 //Transactions will not be supported for the Exchange release
 
@@ -471,7 +471,7 @@ namespace System.Management.Automation.Runspaces
                                 this.LocalRunspace.ExecutionContext.EngineHostInterface.SetShouldExit(exitCode);
 
                                 // close the remote runspaces available
-                                /*foreach (RemoteRunspaceInfo remoteRunspaceInfo in 
+                                /*foreach (RemoteRunspaceInfo remoteRunspaceInfo in
                                     this.LocalRunspace.RunspaceRepository.Runspaces)
                                 {
                                     remoteRunspaceInfo.RemoteRunspace.CloseAsync();
@@ -637,8 +637,8 @@ namespace System.Management.Automation.Runspaces
                 {
                     // Impersonation is not supported in CoreCLR.
                     // This finally block is needed to handle fxcop CA2124
-                    // If sensitive operations such as impersonation occur in the try block, and an 
-                    // exception is thrown, the filter can execute before the finally block. For the 
+                    // If sensitive operations such as impersonation occur in the try block, and an
+                    // exception is thrown, the filter can execute before the finally block. For the
                     // impersonation example, this means that the filter would execute as the impersonated user.
                     if (null != oldImpersonationCtxt)
                     {
@@ -700,11 +700,11 @@ namespace System.Management.Automation.Runspaces
                     LocalRunspace.ExecutionContext.InternalHost.RevertHostRef();
                 }
 
-                //Remove Execution Context From TLS 
+                //Remove Execution Context From TLS
                 Runspace.DefaultRunspace = previousDefaultRunspace;
 
                 //If incomplete parse exception is hit, we should not add to history.
-                //This is ensure that in case of multiline commands, command is in the 
+                //This is ensure that in case of multiline commands, command is in the
                 //history only once.
                 if (!incompleteParseException)
                 {
@@ -843,7 +843,7 @@ namespace System.Management.Automation.Runspaces
             LocalRunspace.StopNestedPipelines(this);
 
             //close the input pipe if it hasn't been closed.
-            //This would release the pipeline thread if it is 
+            //This would release the pipeline thread if it is
             //waiting for input.
             if (InputStream.IsOpen)
             {
@@ -875,7 +875,7 @@ namespace System.Management.Automation.Runspaces
         #endregion stop
 
         /// <summary>
-        /// Creates a PipelineProcessor object from LocalPipeline object. 
+        /// Creates a PipelineProcessor object from LocalPipeline object.
         /// </summary>
         /// <returns>Created PipelineProcessor object</returns>
         private PipelineProcessor CreatePipelineProcessor()
@@ -1013,7 +1013,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// This method initializes streams and backs up their original states. 
+        /// This method initializes streams and backs up their original states.
         /// This should be only called from constructors.
         /// </summary>
         private void InitStreams()
@@ -1028,7 +1028,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// This method sets streams to their orignal states from execution context. 
+        /// This method sets streams to their orignal states from execution context.
         /// This is done when Pipeline is completed/failed/stopped ie., termination state.
         /// </summary>
         private void ClearStreams()
@@ -1070,7 +1070,7 @@ namespace System.Management.Automation.Runspaces
         /// This method is called Add-History cmdlet to add history entry.
         /// </summary>
         /// <remarks>
-        /// In general history entry for current pipeline is added at the 
+        /// In general history entry for current pipeline is added at the
         /// end of pipeline execution.
         /// However when add-history cmdlet is executed, history entry
         /// needs to be added before add-history adds additional entries
@@ -1081,7 +1081,7 @@ namespace System.Management.Automation.Runspaces
         {
             //This method can be called by multiple times during a single
             //pipeline execution. For ex: a script can execute add-history
-            //command multiple times. However we should add entry only 
+            //command multiple times. However we should add entry only
             //once.
             if (_historyIdForThisPipeline != -1)
             {
@@ -1094,7 +1094,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Add-history cmdlet adds history entry for the pipeline in its 
+        /// Add-history cmdlet adds history entry for the pipeline in its
         /// begin processing. This method is called to update the end execution
         /// time and status of pipeline.
         /// </summary>
@@ -1146,7 +1146,7 @@ namespace System.Management.Automation.Runspaces
         #region private_fields
 
         /// <summary>
-        /// Holds reference to LocalRunspace to which this pipeline is 
+        /// Holds reference to LocalRunspace to which this pipeline is
         /// associated with
         /// </summary>
         private LocalRunspace LocalRunspace
@@ -1168,7 +1168,7 @@ namespace System.Management.Automation.Runspaces
         #region invoke_loop_detection
 
         /// <summary>
-        /// This is list of HistoryInfo ids which have been executed in 
+        /// This is list of HistoryInfo ids which have been executed in
         /// this pipeline.
         /// </summary>
         private List<long> _invokeHistoryIds = new List<long>();
@@ -1471,7 +1471,7 @@ namespace System.Management.Automation.Runspaces
             //Note: after _stopping is set to true, nothing can be pushed/popped
             //from stack and it is safe to call stop on PipelineProcessors in stack
             //outside the lock
-            //Note: you want to do below loop outside the lock so that  
+            //Note: you want to do below loop outside the lock so that
             //pipeline execution thread doesn't get blocked on Push and Pop.
             //Note: A copy of the stack is made because we "unstop" a stopped
             //pipeline to execute finally blocks.  We don't want to stop pipelines

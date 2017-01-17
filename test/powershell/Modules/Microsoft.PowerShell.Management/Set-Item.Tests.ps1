@@ -5,7 +5,7 @@ Describe "Set-Item" -Tag "CI" {
         @{ Path = "env:SetItemTestCase"; Value = { 1 }; Validate = { $env:SetItemTestCase | should be 1 }; Reset = { remove-item env:SetItemTestCase } }
 
     It "Set-Item should be able to handle <Path>" -TestCase $testCases {
-        param ( $Path, $Value, $Validate, $Reset ) 
+        param ( $Path, $Value, $Validate, $Reset )
         Set-item -path $path -Value $value
         try {
             & $Validate

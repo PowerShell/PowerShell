@@ -142,7 +142,10 @@ using System.Text;
     }
 "@
 
-Add-Type -TypeDefinition $helperSource
+if ( $IsWindows )
+{
+    Add-Type -TypeDefinition $helperSource
+}
 
 # Strip off machine name, if present, from counter path
 function RemoveMachineName
@@ -167,8 +170,11 @@ function RemoveMachineName
 # Retrieve the counters array from the Registry
 function GetCounters
 {
-    $key = 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Perflib\CurrentLanguage'
-    return (Get-ItemProperty -Path $key -Name Counter).Counter
+    if ( $IsWindows )
+    {
+        $key = 'Registry::HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Perflib\CurrentLanguage'
+        return (Get-ItemProperty -Path $key -Name Counter).Counter
+    }
 }
 
 # Translate a counter name from English to a localized counter name

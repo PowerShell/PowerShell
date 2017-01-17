@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         private object[] _props;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <value></value>
         [ValidateRangeAttribute(1, int.MaxValue)]

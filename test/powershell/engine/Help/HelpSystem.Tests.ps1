@@ -19,7 +19,7 @@ function UpdateHelpFromLocalContentPath
     }
     else
     {
-        Update-Help -Module $ModuleName -Force -Verbose -ErrorAction Stop
+        Update-Help -Module $ModuleName -Force -ErrorAction Stop
     }
 }
 

@@ -4,9 +4,9 @@ using System.Runtime.InteropServices;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Represents a System.Management.Automation.PowerShell object  
-    /// 
+    ///
+    /// Represents a System.Management.Automation.PowerShell object
+    ///
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     internal struct PSPowerShellPipeline
@@ -25,9 +25,9 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// 
-    /// Represents a System.Management.Automation.Command object  
-    /// 
+    ///
+    /// Represents a System.Management.Automation.Command object
+    ///
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     internal struct PS_Command
@@ -43,9 +43,9 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// 
-    /// Represents a System.Management.Automation.Runspaces.CommandParameter object  
-    /// 
+    ///
+    /// Represents a System.Management.Automation.Runspaces.CommandParameter object
+    ///
     /// </summary>
     [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
     internal struct PS_Parameter

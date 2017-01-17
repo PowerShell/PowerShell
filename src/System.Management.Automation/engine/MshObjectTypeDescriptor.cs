@@ -9,7 +9,7 @@ using System.Management.Automation.Runspaces;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Serves as the arguments for events triggered by exceptions in the SetValue method of <see cref="PSObjectPropertyDescriptor"/> 
+    /// Serves as the arguments for events triggered by exceptions in the SetValue method of <see cref="PSObjectPropertyDescriptor"/>
     /// </summary>
     /// <remarks>
     /// The sender of this event is an object of type <see cref="PSObjectPropertyDescriptor"/>.
@@ -44,8 +44,8 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Serves as the arguments for events triggered by exceptions in the GetValue 
-    /// method of <see cref="PSObjectPropertyDescriptor"/> 
+    /// Serves as the arguments for events triggered by exceptions in the GetValue
+    /// method of <see cref="PSObjectPropertyDescriptor"/>
     /// </summary>
     /// <remarks>
     /// The sender of this event is an object of type <see cref="PSObjectPropertyDescriptor"/>.
@@ -77,7 +77,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets and sets the value that will serve as a replacement to the return of the GetValue 
+        /// Gets and sets the value that will serve as a replacement to the return of the GetValue
         /// method of <see cref="PSObjectPropertyDescriptor"/>. If this property is not set
         /// to a value other than null then the exception associated with this event is thrown.
         /// </summary>
@@ -116,7 +116,7 @@ namespace System.Management.Automation
         public override bool IsReadOnly { get; }
 
         /// <summary>
-        /// This method has no effect for <see cref="PSObjectPropertyDescriptor"/>. 
+        /// This method has no effect for <see cref="PSObjectPropertyDescriptor"/>.
         /// CanResetValue returns false.
         /// </summary>
         /// <param name="component">This parameter is ignored for <see cref="PSObjectPropertyDescriptor"/></param>
@@ -159,16 +159,16 @@ namespace System.Management.Automation
         /// <param name="component">The component with the property for which to retrieve the value. </param>
         /// <returns>The value of a property for a given component.</returns>
         /// <exception cref="ExtendedTypeSystemException">
-        /// If the property has not been found in the component or an exception has 
-        /// been thrown when getting the value of the property. 
+        /// If the property has not been found in the component or an exception has
+        /// been thrown when getting the value of the property.
         /// This Exception will only be thrown if there is no event handler for the GettingValueException
         /// event of the <see cref="PSObjectTypeDescriptor"/> that created this <see cref="PSObjectPropertyDescriptor"/>.
         /// If there is an event handler, it can prevent this exception from being thrown, by changing
-        /// the ShouldThrow property of <see cref="GettingValueExceptionEventArgs"/> from its default 
+        /// the ShouldThrow property of <see cref="GettingValueExceptionEventArgs"/> from its default
         /// value of true to false.
         /// </exception>
         /// <exception cref="PSArgumentNullException">If <paramref name="component"/> is null.</exception>
-        /// <exception cref="PSArgumentException">if <paramref name="component"/> is not 
+        /// <exception cref="PSArgumentException">if <paramref name="component"/> is not
         /// an <see cref="PSObject"/> or an <see cref="PSObjectTypeDescriptor"/>.</exception>
         public override object GetValue(object component)
         {
@@ -214,7 +214,7 @@ namespace System.Management.Automation
         private static PSObject GetComponentPSObject(object component)
         {
             // If you use the PSObjectTypeDescriptor directly as your object, it will be the component
-            // if you use a provider, the PSObject will be the component. 
+            // if you use a provider, the PSObject will be the component.
             PSObject mshObj = component as PSObject;
             if (mshObj == null)
             {
@@ -251,8 +251,8 @@ namespace System.Management.Automation
         /// <param name="component">The component with the property value that is to be set. </param>
         /// <param name="value">The new value.</param>
         /// <exception cref="ExtendedTypeSystemException">
-        /// If the property has not been found in the component or an exception has 
-        /// been thrown when setting the value of the property. 
+        /// If the property has not been found in the component or an exception has
+        /// been thrown when setting the value of the property.
         /// This Exception will only be thrown if there is no event handler for the SettingValueException
         /// event of the <see cref="PSObjectTypeDescriptor"/> that created this <see cref="PSObjectPropertyDescriptor"/>.
         /// If there is an event handler, it can prevent this exception from being thrown, by changing
@@ -260,7 +260,7 @@ namespace System.Management.Automation
         /// from its default value of true to false.
         /// </exception>
         /// <exception cref="PSArgumentNullException">If <paramref name="component"/> is null.</exception>
-        /// <exception cref="PSArgumentException">if <paramref name="component"/> is not an 
+        /// <exception cref="PSArgumentException">if <paramref name="component"/> is not an
         /// <see cref="PSObject"/> or an <see cref="PSObjectTypeDescriptor"/>.
         /// </exception>
         public override void SetValue(object component, object value)
@@ -344,7 +344,7 @@ namespace System.Management.Automation
         public event EventHandler<GettingValueExceptionEventArgs> GettingValueException;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="PSObjectTypeDescriptor"/> that provides 
+        /// Initializes a new instance of the <see cref="PSObjectTypeDescriptor"/> that provides
         /// property information about <paramref name="instance"/>.
         /// </summary>
         /// <param name="instance">The <see cref="PSObject"/> this class retrieves property information from.</param>
@@ -420,7 +420,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Returns a collection of property descriptors for the <see cref="PSObject"/> represented by this type descriptor. 
+        /// Returns a collection of property descriptors for the <see cref="PSObject"/> represented by this type descriptor.
         /// </summary>
         /// <returns>A PropertyDescriptorCollection containing the property descriptions for the <see cref="PSObject"/> represented by this type descriptor.</returns>
         public override PropertyDescriptorCollection GetProperties()
@@ -452,7 +452,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Determines whether the Instance property of <paramref name="obj"/> is equal to the current Instance. 
+        /// Determines whether the Instance property of <paramref name="obj"/> is equal to the current Instance.
         /// </summary>
         /// <param name="obj">The Object to compare with the current Object.</param>
         /// <returns>true if the Instance property of <paramref name="obj"/> is equal to the current Instance; otherwise, false.</returns>
@@ -572,7 +572,7 @@ namespace System.Management.Automation
         // attributes.
         // The calls are not recursive because the BaseObject was implemented so it is never
         // another PSObject. ImmediateBaseObject or PSObject.Base could cause the call to be
-        // recursive in the case of an object like "new PSObject(new PSObject())". 
+        // recursive in the case of an object like "new PSObject(new PSObject())".
         // Even if we used ImmediateBaseObject, the recursion would be finite since we would
         // keep getting an ImmediatebaseObject until it ceased to be an PSObject.
         #endregion ReadMe
@@ -708,7 +708,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="objectType">The type of object for which to retrieve the type descriptor. If this parameter is not noll and is not the <see cref="PSObject"/>, the return of this method will be null.</param>
         /// <param name="instance">An instance of the type. If instance is null or has a type other than <see cref="PSObject"/>, this method returns null.</param>
-        /// <returns>An <see cref="ICustomTypeDescriptor"/> that can provide property information for the 
+        /// <returns>An <see cref="ICustomTypeDescriptor"/> that can provide property information for the
         /// type <see cref="PSObject"/>, or null if <paramref name="objectType"/> is not null,
         /// but has a type other than <see cref="PSObject"/>.</returns>
         public override ICustomTypeDescriptor GetTypeDescriptor(Type objectType, object instance)
@@ -721,11 +721,11 @@ namespace System.Management.Automation
             // property of a PropertyGrid.
             //    2) If, by mistake, an object[] or Collection<PSObject> is used instead of an ArrayList
             // to set the DataSource property of a DataGrid or DatagridView.
-            // 
-            // It would be nice to throw an exception for the case 2) instructing the user to use 
+            //
+            // It would be nice to throw an exception for the case 2) instructing the user to use
             // an ArrayList, but since we have case 1) and maybe others we haven't found we return
-            // an PSObjectTypeDescriptor(null). PSObjectTypeDescriptor's GetProperties 
-            // checks for null instance and returns an empty property collection. 
+            // an PSObjectTypeDescriptor(null). PSObjectTypeDescriptor's GetProperties
+            // checks for null instance and returns an empty property collection.
             // All other overrides also check for null and return some default result.
             // Case 1), which is using a PropertyGrid seems to be unaffected by these results returned
             // by PSObjectTypeDescriptor overrides when the Instance is null, so we must conclude

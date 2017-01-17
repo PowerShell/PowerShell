@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
 
-        /// 
+        ///
         /// <summary>
         /// Do nothing
         /// </summary>

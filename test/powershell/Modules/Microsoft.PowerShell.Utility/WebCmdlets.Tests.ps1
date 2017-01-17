@@ -15,7 +15,7 @@ function ExecuteWebCommand
         [string]
         $command
     )
-    
+
     $result = [PSObject]@{Output = $null; Error = $null}
 
     try
@@ -37,13 +37,13 @@ function ExecuteWebCommand
 function ExecuteRequestWithOutFile
 {
     param (
-        [ValidateSet("Invoke-RestMethod", "Invoke-WebRequest" )] 
+        [ValidateSet("Invoke-RestMethod", "Invoke-WebRequest" )]
         [string]
         $cmdletName,
         [string]
         $uri = "http://httpbin.org/get"
     )
-    
+
     $result = [PSObject]@{Output = $null; Error = $null}
     $filePath = Join-Path $TestDrive ((Get-Random).ToString() + ".txt")
     try
@@ -72,19 +72,19 @@ function ExecuteRequestWithOutFile
     return $result
 }
 
-# This function calls either Invoke-WebRequest or Invoke-RestMethod with the given uri 
+# This function calls either Invoke-WebRequest or Invoke-RestMethod with the given uri
 # using the Headers parameter to disable keep-alive.
 #
 function ExecuteRequestWithHeaders
 {
     param (
-        [ValidateSet("Invoke-RestMethod", "Invoke-WebRequest" )] 
+        [ValidateSet("Invoke-RestMethod", "Invoke-WebRequest" )]
         [string]
         $cmdletName,
         [string]
         $uri = "http://httpbin.org/get"
     )
-    
+
     $result = [PSObject]@{Output = $null; Error = $null}
     try
     {
@@ -168,7 +168,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     It "Invoke-WebRequest returns User-Agent" {
 
         $command = "Invoke-WebRequest -Uri http://httpbin.org/user-agent -TimeoutSec 5"
-        
+
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
 
@@ -180,7 +180,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     It "Invoke-WebRequest returns headers dictionary" {
 
         $command = "Invoke-WebRequest -Uri http://httpbin.org/headers -TimeoutSec 5"
-        
+
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
 
@@ -206,7 +206,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     It "Validate Invoke-WebRequest -MaximumRedirection" {
 
         $command = "Invoke-WebRequest -Uri 'http://httpbin.org/redirect/3' -MaximumRedirection 4 -TimeoutSec 5"
-        
+
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
 
@@ -219,7 +219,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     It "Validate Invoke-WebRequest error for -MaximumRedirection" {
 
         $command = "Invoke-WebRequest -Uri 'http://httpbin.org/redirect/3' -MaximumRedirection 2 -TimeoutSec 5"
-        
+
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
@@ -227,7 +227,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     It "Invoke-WebRequest supports request that returns page containing UTF-8 data." {
 
         $command = "Invoke-WebRequest -Uri http://httpbin.org/encoding/utf8 -TimeoutSec 5"
-        
+
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
 
@@ -244,7 +244,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     It "Invoke-WebRequest validate timeout option" {
 
         $command = "Invoke-WebRequest -Uri http://httpbin.org/delay/:5 -TimeoutSec 5"
-        
+
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
 
@@ -253,7 +253,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     # Perform the following operation for Invoke-WebRequest
     # gzip Returns gzip-encoded data.
     # deflate Returns deflate-encoded data.
-    # $dataEncodings = @("Chunked", "Compress", "Deflate", "GZip", "Identity") 
+    # $dataEncodings = @("Chunked", "Compress", "Deflate", "GZip", "Identity")
     #                 Note: These are the supported options, but we do not have a web service to test them all.
     # $dataEncodings = @("gzip", "deflate") --> Currently there is a bug for deflate encoding. Please see '7976639:Invoke-WebRequest does not support -TransferEncoding deflate' for more info.
     $dataEncodings = @("gzip")
@@ -262,7 +262,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         It "Invoke-WebRequest supports request that returns $data-encoded data." {
 
             $command = "Invoke-WebRequest -Uri http://httpbin.org/$data -TimeoutSec 5"
-        
+
             $result = ExecuteWebCommand -command $command
             ValidateResponse -response $result
 
@@ -331,7 +331,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                         $jsonContent.data | Should Match $body
                     }
                 }
-            } 
+            }
         }
     }
 
@@ -391,7 +391,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
         $result.Error | Should BeNullOrEmpty
     }
-    
+
     It "Validate Invoke-WebRequest handles missing Content-Type in response header" {
 
         #Validate that exception is not thrown when response headers are missing Content-Type.
@@ -416,7 +416,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     It "Invoke-RestMethod returns headers dictionary" {
 
         $command = "Invoke-RestMethod -Uri http://httpbin.org/headers -TimeoutSec 5"
-        
+
         $result = ExecuteWebCommand -command $command
 
         # Validate response
@@ -437,14 +437,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result.Output.headers.Host | Should Match "httpbin.org"
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
 
-        # Unfortunately, the connection information is not display in the output of Invoke-RestMethod 
+        # Unfortunately, the connection information is not display in the output of Invoke-RestMethod
         #$result.Output.Headers["Connection"] | Should Be "Close"
     }
 
     It "Validate Invoke-RestMethod -MaximumRedirection" {
 
         $command = "Invoke-RestMethod -Uri 'http://httpbin.org/redirect/3' -MaximumRedirection 4 -TimeoutSec 5"
-        
+
         $result = ExecuteWebCommand -command $command
 
         # Validate response
@@ -455,7 +455,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     It "Validate Invoke-RestMethod error for -MaximumRedirection" {
 
         $command = "Invoke-RestMethod -Uri 'http://httpbin.org/redirect/3' -MaximumRedirection 2 -TimeoutSec 5"
-        
+
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
@@ -464,7 +464,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     It "Invoke-RestMethod supports request that returns page containing UTF-8 data." {
 
         $command = "Invoke-RestMethod -Uri http://httpbin.org/encoding/utf8 -TimeoutSec 5"
-        
+
         $result = ExecuteWebCommand -command $command
 
         # Validate response content
@@ -472,14 +472,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result.headers.'Accept-Encoding' | Should Match "gzip, deflate"
         $result.headers.Host | Should Match "httpbin.org"
         $result.headers.'User-Agent' | Should Match "WindowsPowerShell"
-        
+
     }
     #>
 
     It "Invoke-RestMethod validate timeout option" {
 
         $command = "Invoke-RestMethod -Uri http://httpbin.org/delay/:5 -TimeoutSec 2"
-        
+
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
 
@@ -488,7 +488,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     # Perform the following operation for Invoke-RestMethod
     # gzip Returns gzip-encoded data.
     # deflate Returns deflate-encoded data.
-    # $dataEncodings = @("Chunked", "Compress", "Deflate", "GZip", "Identity") 
+    # $dataEncodings = @("Chunked", "Compress", "Deflate", "GZip", "Identity")
     #                 Note: These are the supported options, but we do not have a web service to test them all.
     # $dataEncodings = @("gzip", "deflate") --> Currently there is a bug for deflate encoding. Please see '7976639:Invoke-RestMethod does not support -TransferEncoding deflate' for more info.
     $dataEncodings = @("gzip")
@@ -497,7 +497,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         It "Invoke-RestMethod supports request that returns $data-encoded data." {
 
             $command = "Invoke-RestMethod -Uri http://httpbin.org/$data -TimeoutSec 5"
-        
+
             $result = ExecuteWebCommand -command $command
 
             # Validate response
@@ -576,7 +576,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result.Output.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
 
-        # Unfortunately, the connection information is not display in the output of Invoke-RestMethod 
+        # Unfortunately, the connection information is not display in the output of Invoke-RestMethod
         #$result.Output.Headers["Connection"] | Should Be "Close"
     }
 
@@ -607,7 +607,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Validate Invoke-RestMethod -OutFile" {
 
-        $uri = "http://httpbin.org/get" 
+        $uri = "http://httpbin.org/get"
         $result = ExecuteRequestWithOutFile -cmdletName "Invoke-RestMethod" -uri $uri
         $jsonContent = $result.Output | ConvertFrom-Json
         $jsonContent.headers.Host | Should Match "httpbin.org"

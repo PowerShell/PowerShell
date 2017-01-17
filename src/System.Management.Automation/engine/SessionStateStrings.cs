@@ -5,7 +5,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the #defines for any special strings used in session state. 
+    /// Holds the #defines for any special strings used in session state.
     /// </summary>
     ///
     internal static class StringLiterals
@@ -24,7 +24,7 @@ namespace System.Management.Automation
         /// Porting note: IO.Path.DirectorySeparatorChar is correct for all platforms. On Windows,
         /// it is '\', and on Linux, it is '/', as expected.
         /// </summary>
-        /// 
+        ///
         internal static readonly char DefaultPathSeparator = System.IO.Path.DirectorySeparatorChar;
         internal static readonly string DefaultPathSeparatorString = DefaultPathSeparator.ToString();
 
@@ -36,7 +36,7 @@ namespace System.Management.Automation
         /// be "slash agnostic", we need to use the assumption that a '\' is the alternate path
         /// separator on Linux.
         /// </summary>
-        /// 
+        ///
         internal static readonly char AlternatePathSeparator = Platform.IsWindows ? '/' : '\\';
         internal static readonly string AlternatePathSeparatorString = AlternatePathSeparator.ToString();
 
@@ -44,14 +44,14 @@ namespace System.Management.Automation
         /// The default path prefix for remote paths. This is to mimic
         /// UNC paths in the file system.
         /// </summary>
-        /// 
+        ///
         internal const string DefaultRemotePathPrefix = "\\\\";
 
         /// <summary>
         /// The alternate path prefix for remote paths. This is to mimic
         /// UNC paths in the file system.
         /// </summary>
-        /// 
+        ///
         internal const string AlternateRemotePathPrefix = "//";
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace System.Management.Automation
         internal const string HomePath = "~";
 
         /// <summary>
-        /// name of the global variable table in Variable scopes of session state. 
+        /// name of the global variable table in Variable scopes of session state.
         /// </summary>
         internal const string Global = "GLOBAL";
 

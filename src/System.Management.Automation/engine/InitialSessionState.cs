@@ -835,7 +835,7 @@ namespace System.Management.Automation.Runspaces
 
 #if !CORECLR // Workflow Not Supported On CSS
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public sealed class SessionStateWorkflowEntry : SessionStateCommandEntry
     {
@@ -1631,7 +1631,7 @@ namespace System.Management.Automation.Runspaces
             iss.ThrowOnRunspaceOpenError = true;
             iss.UseFullLanguageModeInDebugger = false;
 
-            // WIN8:551312 M3P endpoint should have NO application exposed 
+            // WIN8:551312 M3P endpoint should have NO application exposed
             //
             foreach (SessionStateCommandEntry entry in iss.Commands)
             {
@@ -1701,7 +1701,7 @@ namespace System.Management.Automation.Runspaces
             iss.ThrowOnRunspaceOpenError = true;
             iss.UseFullLanguageModeInDebugger = false;
 
-            // WIN8:551312 M3P endpoint should have NO application exposed 
+            // WIN8:551312 M3P endpoint should have NO application exposed
             //
             foreach (SessionStateCommandEntry entry in iss.Commands)
             {
@@ -1778,7 +1778,7 @@ namespace System.Management.Automation.Runspaces
             iss.ThrowOnRunspaceOpenError = true;
             iss.UseFullLanguageModeInDebugger = false;
 
-            // WIN8:551312 M3P endpoint should have NO application exposed 
+            // WIN8:551312 M3P endpoint should have NO application exposed
             //
             foreach (SessionStateCommandEntry entry in iss.Commands)
             {
@@ -2827,7 +2827,7 @@ namespace System.Management.Automation.Runspaces
 
             // Win8:328748 - functions defined in global scope end up in a module
             // Since we import the core modules, EngineSessionState's module is set to the last imported module. So, if a function is defined in global scope, it ends up in that module.
-            // Setting the module to null fixes that. 
+            // Setting the module to null fixes that.
             initializedRunspace.ExecutionContext.EngineSessionState.Module = null;
 
             // Set the SessionStateDrive here since we have all the provider information at this point
@@ -3369,7 +3369,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Helper method to search for commands matching the provided commandPattern.
-        /// Supports wild cards and if the commandPattern contains wildcard characters then multiple 
+        /// Supports wild cards and if the commandPattern contains wildcard characters then multiple
         /// results can be returned.  Otherwise a single (and first) match will be returned.
         /// If a moduleName is provided then only commands associated with that module will be returned.
         /// Only public commands are searched to start with.  If no results are found then a search on
@@ -3439,9 +3439,9 @@ namespace System.Management.Automation.Runspaces
                 else
                 {
                     // If FullyQualifiedPath is supplied then use it.
-                    // In this scenario, the FullyQualifiedPath would 
-                    // refer to $pshome\Modules location where core 
-                    // modules are deployed. 
+                    // In this scenario, the FullyQualifiedPath would
+                    // refer to $pshome\Modules location where core
+                    // modules are deployed.
                     if (!string.IsNullOrEmpty(path))
                     {
                         name = Path.Combine(path, name);
@@ -4149,7 +4149,7 @@ namespace System.Management.Automation.Runspaces
                 throw e;
             }
 
-#if !CORECLR // CustomPSSnapIn Not Supported On CSS. 
+#if !CORECLR // CustomPSSnapIn Not Supported On CSS.
             if (!String.IsNullOrEmpty(psSnapInInfo.CustomPSSnapInType))
             {
                 LoadCustomPSSnapIn(psSnapInInfo);
@@ -4517,14 +4517,14 @@ namespace System.Management.Automation.Runspaces
 
    To customize your own custom options, pass a hashtable to CompleteInput, e.g.
          return [System.Management.Automation.CommandCompletion]::CompleteInput($inputScript, $cursorColumn,
-             @{ RelativeFilePaths=$false } 
+             @{ RelativeFilePaths=$false }
 #>
 
 [CmdletBinding(DefaultParameterSetName = 'ScriptInputSet')]
 Param(
     [Parameter(ParameterSetName = 'ScriptInputSet', Mandatory = $true, Position = 0)]
     [string] $inputScript,
-    
+
     [Parameter(ParameterSetName = 'ScriptInputSet', Mandatory = $true, Position = 1)]
     [int] $cursorColumn,
 
@@ -4536,7 +4536,7 @@ Param(
 
     [Parameter(ParameterSetName = 'AstInputSet', Mandatory = $true, Position = 2)]
     [System.Management.Automation.Language.IScriptPosition] $positionOfCursor,
-    
+
     [Parameter(ParameterSetName = 'ScriptInputSet', Position = 2)]
     [Parameter(ParameterSetName = 'AstInputSet', Position = 3)]
     [Hashtable] $options = $null
@@ -4613,7 +4613,7 @@ $RawUI.SetBufferContents(
             return @"
 <#
 .FORWARDHELPTARGETNAME Get-Help
-.FORWARDHELPCATEGORY Cmdlet 
+.FORWARDHELPCATEGORY Cmdlet
 #>
 [CmdletBinding(DefaultParameterSetName='AllUsersView', HelpUri='https://go.microsoft.com/fwlink/?LinkID=113316')]
 param(
@@ -4671,9 +4671,9 @@ param(
         internal static string GetMkdirFunctionText()
         {
             return @"
-<# 
+<#
 .FORWARDHELPTARGETNAME New-Item
-.FORWARDHELPCATEGORY Cmdlet 
+.FORWARDHELPCATEGORY Cmdlet
 #>
 
 [CmdletBinding(DefaultParameterSetName='pathSet',
@@ -4786,7 +4786,7 @@ end
 }
 <#
 .ForwardHelpTargetName Out-String
-.ForwardHelpCategory Cmdlet 
+.ForwardHelpCategory Cmdlet
 #>
 ";
         }

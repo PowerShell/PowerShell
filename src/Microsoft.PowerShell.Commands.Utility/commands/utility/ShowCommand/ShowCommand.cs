@@ -34,7 +34,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _passThrough;
 
         /// <summary>
-        /// Uses ShowCommandProxy to invoke WPF GUI object. 
+        /// Uses ShowCommandProxy to invoke WPF GUI object.
         /// </summary>
         private ShowCommandProxy _showCommandProxy;
 
@@ -225,7 +225,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // We wait untill the window is loaded and then activate it
-            // to work arround the console window gaining activation somewhere 
+            // to work arround the console window gaining activation somewhere
             // in the end of ProcessRecord, which causes the keyboard focus
             // (and use oif tab key to focus controls) to go away from the window
             _showCommandProxy.WindowLoaded.WaitOne();
@@ -527,7 +527,7 @@ namespace Microsoft.PowerShell.Commands
                 if (!ConsoleInputWithNativeMethods.WriteConsoleInput(handle, records, strLen, out written) || written != strLen)
                 {
                     // I do not know of a case where written is not going to be strlen. Maybe for some character that
-                    // is not supported in the console. The API suggests this can happen, 
+                    // is not supported in the console. The API suggests this can happen,
                     // so we handle it by returning false
                     return false;
                 }

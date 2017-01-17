@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// callback to be called when IConsole.WriteLine() is called by WriteLineHelper 
+        /// callback to be called when IConsole.WriteLine() is called by WriteLineHelper
         /// </summary>
         /// <param name="s">string to write</param>
         private void OnWriteLine(string s)
@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// helper to create a font. 
+        /// helper to create a font.
         /// If the font object exists, it does nothing.
         /// Else, the a new object is created and verified
         /// </summary>
@@ -205,7 +205,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Event fired for each page to print 
+        /// Event fired for each page to print
         /// </summary>
         /// <param name="sender">sender, not used</param>
         /// <param name="ev">print page event</param>
@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// default font, used if the printFont is not specified or if the
-        /// printFont is not fixed pitch. 
+        /// printFont is not fixed pitch.
         /// </summary>
         /// <remarks>
         /// This default must be loaded from a resource file as different

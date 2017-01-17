@@ -27,7 +27,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets a string that identifies which group this 
+        /// Gets a string that identifies which group this
         /// item belongs to.
         /// </summary>
         public string GroupId
@@ -76,7 +76,7 @@ namespace Microsoft.Management.UI.Internal
         /// The FilterRule to store in this FilterRulePanelItem.
         /// </param>
         /// <param name="groupId">
-        /// A string which identifies which group this 
+        /// A string which identifies which group this
         /// item belongs to.
         /// </param>
         public FilterRulePanelItem(FilterRule rule, string groupId)

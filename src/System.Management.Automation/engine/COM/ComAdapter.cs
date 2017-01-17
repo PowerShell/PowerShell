@@ -96,7 +96,7 @@ namespace System.Management.Automation
         /// in the first call to GetMember and GetMembers so that subsequent
         /// calls can use the cache.
         /// In the case of the .NET adapter that would be a cache from the .NET type to
-        /// the public properties and fields available in that type. 
+        /// the public properties and fields available in that type.
         /// In the case of the DirectoryEntry adapter, this could be a cache of the objectClass
         /// to the properties available in it.
         /// </summary>

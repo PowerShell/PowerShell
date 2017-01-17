@@ -2,9 +2,9 @@
 /*============================================================
 **
 **
-** Purpose: 
-** This public class describes the metadata for a specific Log 
-** Reference defined by a Provider. An instance of this class is obtained from 
+** Purpose:
+** This public class describes the metadata for a specific Log
+** Reference defined by a Provider. An instance of this class is obtained from
 ** a ProviderMetadata object.
 **
 ============================================================*/
@@ -15,7 +15,7 @@ namespace System.Diagnostics.Eventing.Reader
 {
     /// <summary>
     /// Describes the metadata for a specific Log Reference defined
-    /// by a Provider. An instance of this class is obtained from 
+    /// by a Provider. An instance of this class is obtained from
     /// a ProviderMetadata object.
     /// </summary>
     public sealed class EventLogLink

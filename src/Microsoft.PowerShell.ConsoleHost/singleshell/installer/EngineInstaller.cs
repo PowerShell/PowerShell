@@ -12,21 +12,21 @@ using System.Management.Automation;
 namespace Microsoft.PowerShell
 {
     /// <summary>
-    /// 
-    /// EngineInstaller is a class for facilitating registry of necessary 
-    /// information for monad engine. 
-    /// 
-    /// This class will be built with monad console host dll 
-    /// (System.Management.Automation.dll). 
-    /// 
-    /// At install time, installation utilities (like InstallUtil.exe) will 
+    ///
+    /// EngineInstaller is a class for facilitating registry of necessary
+    /// information for monad engine.
+    ///
+    /// This class will be built with monad console host dll
+    /// (System.Management.Automation.dll).
+    ///
+    /// At install time, installation utilities (like InstallUtil.exe) will
     /// call install this engine assembly based on the implementation in
-    /// this class. 
-    /// 
-    /// This class derives from base class PSInstaller. PSInstaller will 
-    /// handle the details about how information got written into registry. 
-    /// Here, the information about registry content is provided. 
-    /// 
+    /// this class.
+    ///
+    /// This class derives from base class PSInstaller. PSInstaller will
+    /// handle the details about how information got written into registry.
+    /// Here, the information about registry content is provided.
+    ///
     /// </summary>
     [RunInstaller(true)]
     public sealed class EngineInstaller : PSInstaller
@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal sealed override string RegKey
         {
@@ -60,7 +60,7 @@ namespace Microsoft.PowerShell
 
         private Dictionary<String, object> _regValues = null;
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal sealed override Dictionary<String, object> RegValues
         {

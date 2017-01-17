@@ -9,10 +9,10 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Class GlossaryHelpInfo keeps track of help information to be returned by 
+    ///
+    /// Class GlossaryHelpInfo keeps track of help information to be returned by
     /// glossary help provider.
-    /// 
+    ///
     /// </summary>
     internal class GlossaryHelpInfo : HelpInfo
     {
@@ -21,7 +21,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// This constructor is can be called only from constructors of derived class
-        /// for GlossaryHelpInfo. The only way to to create a GlossaryHelpInfo is through 
+        /// for GlossaryHelpInfo. The only way to to create a GlossaryHelpInfo is through
         /// static function
         ///     Load(XmlNode node)
         /// where some sanity check is done.
@@ -45,7 +45,7 @@ namespace System.Management.Automation
         #region Basic Help Properties
 
         /// <summary>
-        /// Name of glossary. 
+        /// Name of glossary.
         /// </summary>
         /// <value>Name of glossary</value>
         internal override string Name { get; } = "";
@@ -144,7 +144,7 @@ namespace System.Management.Automation
 
         #endregion
 
-        #region Load 
+        #region Load
 
         /// <summary>
         /// Create a GlossaryHelpInfo object from an XmlNode.

@@ -11,10 +11,10 @@
             </ResourceDictionary>
         </Grid.Resources>
         <Grid>
-            <ToggleButton  
+            <ToggleButton
                 x:Name="toggleInnerButton"
-                Command="{Binding Path=Command, RelativeSource={RelativeSource AncestorType={x:Type controls:ImageButtonBase}}}"  
-                IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource AncestorType={x:Type controls:ImageButtonBase}}}"  
+                Command="{Binding Path=Command, RelativeSource={RelativeSource AncestorType={x:Type controls:ImageButtonBase}}}"
+                IsChecked="{Binding Path=IsChecked, RelativeSource={RelativeSource AncestorType={x:Type controls:ImageButtonBase}}}"
                 ToolTip="{Binding Converter={StaticResource imageButtonToolTipConverter}, RelativeSource={RelativeSource AncestorType={x:Type controls:ImageButtonBase}}}"
                 ToolTipService.ShowOnDisabled="True" Template="{StaticResource imageButtonTemplate}">
             </ToggleButton>

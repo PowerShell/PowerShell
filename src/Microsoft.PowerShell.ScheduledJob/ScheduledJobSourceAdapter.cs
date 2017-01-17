@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This class provides functionality for retrieving scheduled job run results
     /// from the scheduled job store.  An instance of this object will be registered
     /// with the PowerShell JobManager so that GetJobs commands will retrieve schedule
-    /// job runs from the file based scheduled job store.  This allows scheduled job 
+    /// job runs from the file based scheduled job store.  This allows scheduled job
     /// runs to be managed from PowerShell in the same way workflow jobs are managed.
     /// </summary>
     public sealed class ScheduledJobSourceAdapter : JobSourceAdapter
@@ -81,15 +81,15 @@ namespace Microsoft.PowerShell.ScheduledJob
                 specification, null, null, null);
 
             return new ScheduledJob(
-                specification.Command, 
+                specification.Command,
                 specification.Name,
                 scheduledJobDef);
         }
 
         /// <summary>
         /// Creates a new Job2 object based on a definition name
-        /// that can be run manually.  If the path parameter is 
-        /// null then a default location will be used to find the 
+        /// that can be run manually.  If the path parameter is
+        /// null then a default location will be used to find the
         /// job definition by name.
         /// </summary>
         /// <param name="definitionName">ScheduledJob definition name</param>
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     scheduledJobDef);
             }
             catch (FileNotFoundException)
-            { 
+            {
                 // Return null if no job definition exists.
             }
 
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         public override IList<Job2> GetJobsByState(JobState state, bool recurse)
         {
             RefreshRepository();
-            
+
             List<Job2> rtnJobs = new List<Job2>();
             foreach (var job in JobRepository.Jobs)
             {
@@ -270,7 +270,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="filter">dictionary containing name value
         ///   pairs for adapter specific filters</param>
         /// <param name="recurse"></param>
-        /// <returns>collection of jobs that match the 
+        /// <returns>collection of jobs that match the
         /// specified criteria</returns>
         public override IList<Job2> GetJobsByFilter(Dictionary<string, object> filter, bool recurse)
         {
@@ -302,7 +302,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Remove a job from the store 
+        /// Remove a job from the store
         /// </summary>
         /// <param name="job">job object to remove</param>
         public override void RemoveJob(Job2 job)
@@ -597,7 +597,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Clears all items for given job definition name in the 
+        /// Clears all items for given job definition name in the
         /// repository.
         /// </summary>
         /// <param name="definitionName">Scheduled job definition name.</param>
@@ -760,7 +760,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="jobRunReturn"></param>
         /// <returns></returns>
         private static bool GetJobRunInfo(
-            string path, 
+            string path,
             out string definitionName,
             out DateTime jobRunReturn)
         {
@@ -797,7 +797,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         private void GetJobsBefore(
-            DateTime dateTime, 
+            DateTime dateTime,
             ref List<Job2> jobList)
         {
             foreach (var job in JobRepository.Jobs)
@@ -831,7 +831,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             List<Job2> allJobs = JobRepository.Jobs;
 
             // Sort descending.
-            allJobs.Sort((firstJob, secondJob) => 
+            allJobs.Sort((firstJob, secondJob) =>
                 {
                     if (firstJob.PSEndTime > secondJob.PSEndTime)
                     {

@@ -200,7 +200,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Converts a ScriptBlock to a PowerShell object by traversing the 
+    /// Converts a ScriptBlock to a PowerShell object by traversing the
     /// given Ast.
     /// </summary>
     internal class ScriptBlockToPowerShellConverter
@@ -281,7 +281,7 @@ namespace System.Management.Automation
                     var locals =
                         MutableTuple.MakeTuple(Compiler.DottedLocalsTupleType, Compiler.DottedLocalsNameIndexMap);
 
-                    // Get the parameter metadata for the script block. 
+                    // Get the parameter metadata for the script block.
                     // If 'functionParameters' is not null, then the ScriptBlockAst is actually the body of a FunctionDefinitionAst, and it doesn't have a ParamBlock.
                     // If 'functionParameters' is null, then the ScriptBlockAst may have parameters defined in its ParamBlock.
                     bool usesCmdletBinding = false;
@@ -368,12 +368,12 @@ namespace System.Management.Automation
                     usingAst = (UsingExpressionAst)usingAsts[i];
                     object value = null;
 
-                    // This happens only when GetUsingValues gets called outside the ScriptBlockToPowerShellConverter class 
+                    // This happens only when GetUsingValues gets called outside the ScriptBlockToPowerShellConverter class
                     if (!hasUsingExprInDifferentScope && HasUsingExpressionsInDifferentScopes(usingAst, body, ref sbClosestToPreUsingExpr))
                     {
                         // If there are UsingExpressions in different scopes, the array-form using values will not be useful
                         // even if the remote end is PSv3 or PSv4, because the way we handle using expression in PSv3 and PSv4
-                        // doesn't support UsingExpression in different scopes. In this case, we will set the array-form using 
+                        // doesn't support UsingExpression in different scopes. In this case, we will set the array-form using
                         // value to be null before return.
                         //
                         // Note that this check only affect array-form using value. In PSv5, we change the way to handle UsingExpression
@@ -500,7 +500,7 @@ namespace System.Management.Automation
                 var funcAst = current as FunctionDefinitionAst;
                 if (funcAst != null)
                 {
-                    // The parent chain of the current UsingExpression reaches a FunctionDefinitionAst, then the UsingExpression 
+                    // The parent chain of the current UsingExpression reaches a FunctionDefinitionAst, then the UsingExpression
                     // must be in 'Parameters' property of this FunctionDefinitionAst.
                     // In this case, the 'Body' of this FunctionDefinitionAst represents the scope that the UsingExpression is in.
 

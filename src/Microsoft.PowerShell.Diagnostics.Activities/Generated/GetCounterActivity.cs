@@ -28,9 +28,9 @@ namespace Microsoft.PowerShell.Diagnostics.Activities
         /// Gets the fully qualified name of the command invoked by this activity.
         /// </summary>
         public override string PSCommandName { get { return "Microsoft.PowerShell.Diagnostics\\Get-Counter"; } }
-        
+
         // Arguments
-        
+
         /// <summary>
         /// Provides access to the ListSet parameter.
         /// </summary>
@@ -68,15 +68,15 @@ namespace Microsoft.PowerShell.Diagnostics.Activities
 
         /// <summary>
         /// Declares that this activity supports its own remoting.
-        /// </summary>        
+        /// </summary>
         protected override bool SupportsCustomRemoting { get { return true; } }
 
 
         // Module defining this command
-        
+
 
         // Optional custom code for this activity
-        
+
 
         /// <summary>
         /// Returns a configured instance of System.Management.Automation.PowerShell, pre-populated with the command to run.
@@ -90,7 +90,7 @@ namespace Microsoft.PowerShell.Diagnostics.Activities
             System.Management.Automation.PowerShell targetCommand = invoker.AddCommand(PSCommandName);
 
             // Initialize the arguments
-            
+
             if(ListSet.Expression != null)
             {
                 targetCommand.AddParameter("ListSet", ListSet.Get(context));

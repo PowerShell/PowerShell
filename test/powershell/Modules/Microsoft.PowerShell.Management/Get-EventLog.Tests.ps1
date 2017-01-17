@@ -13,14 +13,14 @@
     It "should return an array of eventlogs objects when called with -AsString parameter" -Pending:($True) {
       {$result=Get-EventLog -AsString -ea stop}    | Should Not Throw
       $result.GetType().BaseType.Name              | Should Be "Array"
-      $result -eq "Application"                    | Should Be "Application" 
+      $result -eq "Application"                    | Should Be "Application"
       $result.Count -ge 3                          | Should Be $true
     }
     It "should return a list of eventlog objects when called with -List parameter" -Pending:($True) {
       {$result=Get-EventLog -List -ea stop}        | Should Not Throw
       $result.GetType().BaseType.Name              | Should Be "array"
       {$logs=$result|Select -ExpandProperty Log}  | Should Not Throw
-      $logs -eq "System"                           | Should Be "System" 
+      $logs -eq "System"                           | Should Be "System"
       $logs.Count -ge 3                            | Should Be $true
     }
     It "should be able to Get-EventLog -LogName Application -Newest 100" -Pending:($True) {
@@ -36,7 +36,7 @@
     It "should be able to Get-EventLog -LogName * with multiple matches" -Pending:($True) {
       {$result=get-eventlog -LogName *  -ea stop}  | Should Not Throw
       $result                                      | Should Not BeNullOrEmpty
-      $result -eq "Security"                       | Should Be "Security" 
+      $result -eq "Security"                       | Should Be "Security"
       $result.Count -ge 3                          | Should Be $true
     }
     It "should throw 'InvalidOperationException' when asked to get a log that does not exist" -Pending:($True) {

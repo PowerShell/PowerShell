@@ -1,9 +1,9 @@
 ﻿Describe "Common parameters support for script cmdlets" -Tags "CI" {
-    BeforeEach {        
+    BeforeEach {
         $rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace()
         $rs.open()
         $ps = [System.Management.Automation.PowerShell]::Create()
-        $ps.Runspace = $rs        
+        $ps.Runspace = $rs
     }
 
     AfterEach {
@@ -18,15 +18,15 @@
                 {
                     [CmdletBinding()]
                     param()
-        
+
                     write-output 'output foo'
                     write-debug  'debug foo'
                 }"
         }
 
         It "Debug get-foo" {
-            $command = 'get-foo'                
-            [void] $ps.AddScript($script + $command)            
+            $command = 'get-foo'
+            [void] $ps.AddScript($script + $command)
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
@@ -34,12 +34,12 @@
             $ps.Streams.Debug.Count | Should Be 0
         }
 
-        It 'get-foo -debug' {        
-            $command = 'get-foo -debug'    
-            [void] $ps.AddScript($script + $command)        
+        It 'get-foo -debug' {
+            $command = 'get-foo -debug'
+            [void] $ps.AddScript($script + $command)
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
-        
+
             $output[0] | Should Be "output foo"
             $ps.Streams.Debug[0].Message | Should Be "debug foo"
             $ps.InvocationStateInfo.State | Should Be 'Completed'
@@ -53,15 +53,15 @@
                 {
                     [CmdletBinding()]
                     param()
-            
+
                     write-output 'output foo'
                     write-verbose  'verbose foo'
                 }"
         }
 
         It 'get-foo' {
-            $command = 'get-foo'    
-            [void] $ps.AddScript($script + $command)            
+            $command = 'get-foo'
+            [void] $ps.AddScript($script + $command)
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
@@ -71,8 +71,8 @@
 
         It 'get-foo -verbose' {
             $command = 'get-foo -verbose'
-                
-            [void] $ps.AddScript($script + $command)        
+
+            [void] $ps.AddScript($script + $command)
             $asyncResult = $ps.BeginInvoke()
             $output = $ps.EndInvoke($asyncResult)
 
@@ -89,14 +89,14 @@
                 {
                     [CmdletBinding()]
                     param()
-            
+
                     write-error  'error foo'
                     write-output 'output foo'
                 }"
             }
 
         It 'erroraction' {
-    
+
             $command = 'get-foo'
             [void] $ps.AddScript($script + $command)
             $asyncResult = $ps.BeginInvoke()
@@ -134,7 +134,7 @@
 
             [void] $ps.AddScript($script + $command)
             $asyncResult = $ps.BeginInvoke()
-            
+
             try
             {
                 $ps.EndInvoke($asyncResult)
@@ -143,7 +143,7 @@
             catch {
                 $_.FullyQualifiedErrorId | Should Be "ActionPreferenceStopException"
             } # Exception: "Command execution stopped because the preference variable "ErrorActionPreference" or common parameter is set to Stop: error foo"
-            
+
 
             # BUG in runspace api.
             #$ps.error.count | Should Be 1
@@ -157,7 +157,7 @@
                 function get-foo
                 {
                     [CmdletBinding(SupportsShouldProcess=$true)]
-                    param()       
+                    param()
 
                     if($pscmdlet.shouldprocess("foo", "foo action"))
                     {
@@ -165,7 +165,7 @@
                     }
                 }'
 
-        It 'SupportShouldprocess' {            
+        It 'SupportShouldprocess' {
 
             $command = 'get-foo'
             $ps = [system.management.automation.powershell]::Create()
@@ -193,10 +193,10 @@
 
             $command = 'get-foo -confirm'
             [void] $ps.AddScript($script + $command)
-            
+
             $asyncResult = $ps.BeginInvoke()
             $ps.EndInvoke($asyncResult)
-            
+
             $ps.Streams.Error.Count | Should Be 1 # the host does not implement it.
             $ps.InvocationStateInfo.State | Should Be 'Completed'
         }
@@ -209,7 +209,7 @@
                 {
                     [CmdletBinding(supportsshouldprocess=$true, ConfirmImpact="none")]
                     param()
-                
+
                     if($pscmdlet.shouldprocess("foo", "foo action"))
                     {
                         write-output "foo action"
@@ -243,7 +243,7 @@
                 {
                     [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="low")]
                     param()
-            
+
                     if($pscmdlet.shouldprocess("foo", "foo action"))
                     {
                         write-output "foo action"
@@ -278,7 +278,7 @@
                 {
                     [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="medium")]
                     param()
-        
+
                     if($pscmdlet.shouldprocess("foo", "foo action"))
                     {
                         write-output "foo action"
@@ -315,7 +315,7 @@
                 {
                     [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact="high")]
                     param()
-        
+
                     if($pscmdlet.shouldprocess("foo", "foo action"))
                     {
                         write-output "foo action"
@@ -347,11 +347,11 @@
     Context 'ShouldContinue Support under the non-interactive host' {
         BeforeAll {
             $script = '
-                function get-foo 
+                function get-foo
                 {
                     [CmdletBinding()]
                     param()
-        
+
                     if($pscmdlet.shouldcontinue("foo", "foo action"))
                     {
                         write-output "foo action"
@@ -369,5 +369,5 @@
             $ps.Streams.Error.Count | Should Be 1   # the host does not implement it.
             $ps.InvocationStateInfo.State | Should Be 'Completed'
         }
-    }   
+    }
 }

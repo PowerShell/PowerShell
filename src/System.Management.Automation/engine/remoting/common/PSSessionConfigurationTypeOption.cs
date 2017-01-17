@@ -81,7 +81,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Returns all the quota related options in the form of a hashtable.
         /// </summary>
-        /// <returns></returns>       
+        /// <returns></returns>
         internal virtual Hashtable ConstructQuotasAsHashtable()
         {
             throw new NotImplementedException();
@@ -94,7 +94,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Sets all the values to default values.
-        /// If keepAssigned is true only those values are set 
+        /// If keepAssigned is true only those values are set
         /// which are unassigned.
         /// </summary>
         /// <param name="sessionType"></param>

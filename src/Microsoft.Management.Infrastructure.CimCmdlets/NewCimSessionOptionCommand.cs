@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -28,14 +28,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     };
 
     /// <summary>
-    /// The Cmdlet allows the IT Pro to create a CimSessionOptions object that she/he 
-    /// can subsequently use to create one or more CimSession connections. The 
-    /// options object holds the CIM Session information that is less commonly set 
-    /// and used by the IT Pro, and most commonly defaulted. 
+    /// The Cmdlet allows the IT Pro to create a CimSessionOptions object that she/he
+    /// can subsequently use to create one or more CimSession connections. The
+    /// options object holds the CIM Session information that is less commonly set
+    /// and used by the IT Pro, and most commonly defaulted.
     ///
-    /// The Cmdlet has two parameter sets, one for WMMan options and one for DCOM 
-    /// options. Depending on the arguments the Cmdlet will return an instance of 
-    /// DComSessionOptions or WSManSessionOptions, which derive from 
+    /// The Cmdlet has two parameter sets, one for WMMan options and one for DCOM
+    /// options. Depending on the arguments the Cmdlet will return an instance of
+    /// DComSessionOptions or WSManSessionOptions, which derive from
     /// CimSessionOptions.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "CimSessionOption", DefaultParameterSetName = ProtocolNameParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227969")]
@@ -43,7 +43,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     public sealed class NewCimSessionOptionCommand : CimBaseCommand
     {
         #region constructor
-        
+
         /// <summary>
         /// constructor
         /// </summary>
@@ -52,7 +52,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
         }
-        
+
         #endregion
 
         #region cmdlet parameters
@@ -153,8 +153,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "Encoding".
-        /// Defined the message encoding. 
-        /// The allowed encodings are { Default | Utf8 | Utf16 }. The default value 
+        /// Defined the message encoding.
+        /// The allowed encodings are { Default | Utf8 | Utf16 }. The default value
         /// should be Utf8.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -174,7 +174,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "HttpPrefix".
-        /// This is the HTTP URL on the server on which the WSMan service is listening. 
+        /// This is the HTTP URL on the server on which the WSMan service is listening.
         /// In most cases it is /wsman, which is the default.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -302,7 +302,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "Impersonation".
-        /// Used to select if, and if so what kind of, impersonation should be used. 
+        /// Used to select if, and if so what kind of, impersonation should be used.
         /// Applies only to the DCOM channel.
         /// </summary>
         [Parameter(ParameterSetName = DcomParameterSet)]
@@ -321,7 +321,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "PacketIntegrity".
-        /// Switch indicating if the package integrity in DCOM connections should be 
+        /// Switch indicating if the package integrity in DCOM connections should be
         /// checked/enforced.
         /// </summary>
         [Parameter(ParameterSetName = DcomParameterSet)]
@@ -340,7 +340,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "PacketPrivacy".
-        /// Switch indicating if packet privacy of the packets in DCOM communications 
+        /// Switch indicating if packet privacy of the packets in DCOM communications
         /// should be checked/enforced.
         /// </summary>
         [Parameter(ParameterSetName = DcomParameterSet)]
@@ -660,13 +660,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                     new ParameterDefinitionEntry(CimBaseCommand.WSManParameterSet, false),
                                  }
             },
-            
+
             {
                 nameSkipCACheck, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.WSManParameterSet, false),
                                  }
             },
-            
+
             {
                 nameSkipCNCheck, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.WSManParameterSet, false),
@@ -677,7 +677,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                     new ParameterDefinitionEntry(CimBaseCommand.WSManParameterSet, false),
                                  }
             },
-            
+
             {
                 nameEncodePortInServicePrincipalName, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.WSManParameterSet, false),
@@ -688,7 +688,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                     new ParameterDefinitionEntry(CimBaseCommand.WSManParameterSet, false),
                                  }
             },
-            
+
             {
                 nameHttpPrefix, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.WSManParameterSet, false),
@@ -699,7 +699,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                     new ParameterDefinitionEntry(CimBaseCommand.WSManParameterSet, false),
                                  }
             },
-            
+
             {
                 nameProxyAuthentication, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.WSManParameterSet, false),
@@ -710,7 +710,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                     new ParameterDefinitionEntry(CimBaseCommand.WSManParameterSet, false),
                                  }
             },
-            
+
             {
                 nameProxyCredential, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.WSManParameterSet, false),
@@ -721,7 +721,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                     new ParameterDefinitionEntry(CimBaseCommand.WSManParameterSet, false),
                                  }
             },
-            
+
             {
                 nameUseSsl, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.WSManParameterSet, false),
@@ -732,7 +732,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                     new ParameterDefinitionEntry(CimBaseCommand.DcomParameterSet, false),
                                  }
             },
-            
+
             {
                 namePacketIntegrity, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.DcomParameterSet, false),
@@ -743,7 +743,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                     new ParameterDefinitionEntry(CimBaseCommand.DcomParameterSet, false),
                                  }
             },
-            
+
             {
                 nameProtocol, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.ProtocolNameParameterSet, true),

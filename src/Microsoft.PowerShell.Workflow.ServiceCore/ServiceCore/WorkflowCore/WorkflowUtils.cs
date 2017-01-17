@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             return true;
-        }  // CompareConnectionUri ... 
+        }  // CompareConnectionUri ...
 
         /// <summary>
         /// CompareShellUri compares two shell URIs
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             return true;
-        } // CompareShellUri ... 
+        } // CompareShellUri ...
 
 
         /// <summary>
@@ -75,7 +75,7 @@ namespace Microsoft.PowerShell.Workflow
         internal static bool CompareAuthentication(AuthenticationMechanism authentication1, AuthenticationMechanism authentication2)
         {
             return authentication1 == authentication2;
-        }  // CompareAuthentication ... 
+        }  // CompareAuthentication ...
 
         /// <summary>
         /// CompareCredentials compares two PSCredential credentials
@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Workflow
                 return false;
             }
 
-            Debug.Assert(credential1 != null && credential2 != null 
+            Debug.Assert(credential1 != null && credential2 != null
                 && credential1.UserName != null && credential2.UserName != null, "Credentials should be != null");
 
             // check the username
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Workflow
                     }
                     notDone = leftLow != 0 || leftHigh != 0; // terminator - 2 null characters (0x00)?
                     leftLow = rightLow = leftHigh = rightHigh = 0;
-                } while (notDone); 
+                } while (notDone);
 
                 return true;
             }
@@ -223,10 +223,10 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             return true;
-        } // CompareCertificateThumbprint ... 
+        } // CompareCertificateThumbprint ...
 
         /// <summary>
-        /// CompareProxySettings compares the proxy settings for two wsman connections 
+        /// CompareProxySettings compares the proxy settings for two wsman connections
         /// by doing a comparison of elements.
         /// </summary>
         /// <param name="connectionInfo1">Connection info 1</param>
@@ -258,10 +258,10 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             return true;
-        }  // CompareProxySettings ... 
+        }  // CompareProxySettings ...
 
         /// <summary>
-        /// CompareOtherWSManSettings compares the rest of the wsman settings for two wsman connections 
+        /// CompareOtherWSManSettings compares the rest of the wsman settings for two wsman connections
         /// by doing a comparison of elements.
         /// </summary>
         /// <param name="connectionInfo1">Connection info 1</param>
@@ -317,7 +317,7 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             return true;
-        }  // CompareOtherWSManSettings ... 
-    
+        }  // CompareOtherWSManSettings ...
+
     } // WorkflowUtils ...
 }

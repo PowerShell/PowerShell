@@ -42,7 +42,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Converts a value. 
+        /// Converts a value.
         /// </summary>
         /// <remarks>
         /// This method is not implemented.

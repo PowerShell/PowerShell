@@ -18,7 +18,7 @@ namespace System.Management.Automation.Language
         #region public_property
 
         /// <summary>
-        /// This overrides ToString() method and returns null. 
+        /// This overrides ToString() method and returns null.
         /// </summary>
         public override string ToString()
         {

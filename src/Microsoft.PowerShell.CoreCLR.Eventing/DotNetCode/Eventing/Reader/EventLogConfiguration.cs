@@ -2,8 +2,8 @@
 /*============================================================
 **
 **
-** Purpose: 
-** This public class allows accessing static channel information and 
+** Purpose:
+** This public class allows accessing static channel information and
 ** configures channel publishing and logging properties.  An instance
 ** of this class is obtained from EventLogManagement class.
 **
@@ -46,12 +46,12 @@ namespace System.Diagnostics.Eventing.Reader
 
     /// <summary>
     /// Provides access to static log information and configures
-    /// log publishing and log file properties.   
+    /// log publishing and log file properties.
     /// </summary>
     public class EventLogConfiguration : IDisposable
     {
         //
-        // access to the data member reference is safe, while 
+        // access to the data member reference is safe, while
         // invoking methods on it is marked SecurityCritical as appropriate.
         //
         private EventLogHandle _handle = EventLogHandle.Zero;

@@ -13,7 +13,7 @@ namespace System.Management.Automation
     /// PSListModifier is a simple helper class created by the update-list cmdlet.
     /// The update-list cmdlet will either return an instance of this class, or
     /// it will internally use an instance of this class to implement the updates.
-    /// 
+    ///
     /// Cmdlets can also take a PSListModifier as a parameter.  Usage might look like:
     ///
     ///     Get-Mailbox | Set-Mailbox -Alias @{Add='jim'}
@@ -252,7 +252,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// A generic version of PSListModifier that exists for the sole purpose of making 
+    /// A generic version of PSListModifier that exists for the sole purpose of making
     /// cmdlets that accept a PSListModifier more usable.  Users that look at the syntax
     /// of the command will see something like PSListModifier[Mailbox] and know they need
     /// to pass in Mailboxes.

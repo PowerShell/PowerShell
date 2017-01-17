@@ -6,10 +6,10 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// This class contains strings required for serialization for Convertto-XML
-    /// </summary> 
+    /// </summary>
     internal static class CustomSerializationStrings
     {
-        #region element tags        
+        #region element tags
 
 
         /// <summary>

@@ -21,7 +21,7 @@ namespace System.Management.Automation
         #region Constructors
 
         /// <summary>
-        /// Constructor for InvocationInfo object when the associated command object is present. 
+        /// Constructor for InvocationInfo object when the associated command object is present.
         /// </summary>
         /// <param name="command"></param>
         internal InvocationInfo(InternalCommand command)
@@ -34,15 +34,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for InvocationInfo object
         /// </summary>
-        /// 
+        ///
         /// <param name="commandInfo">
         /// The command information the invocation info represents.
         /// </param>
-        /// 
+        ///
         /// <param name="scriptPosition">
         /// The position representing the invocation, or the position representing the error.
         /// </param>
-        /// 
+        ///
         internal InvocationInfo(CommandInfo commandInfo, IScriptExtent scriptPosition)
             : this(commandInfo, scriptPosition, null)
         {
@@ -52,19 +52,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for InvocationInfo object
         /// </summary>
-        /// 
+        ///
         /// <param name="commandInfo">
         /// The command information the invocation info represents.
         /// </param>
-        /// 
+        ///
         /// <param name="scriptPosition">
         /// The position representing the invocation, or the position representing the error.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context in which the InvocationInfo is being created.
         /// </param>
-        /// 
+        ///
         internal InvocationInfo(CommandInfo commandInfo, IScriptExtent scriptPosition, ExecutionContext context)
         {
             MyCommand = commandInfo;
@@ -125,7 +125,7 @@ namespace System.Management.Automation
             MyCommand = RemoteCommandInfo.FromPSObjectForRemoting(psObject);
 
             //
-            // Arrays are de-serialized as ArrayList so we need to convert the deserialized 
+            // Arrays are de-serialized as ArrayList so we need to convert the deserialized
             // object into an int[] before assigning to pipelineIterationInfo.
             //
             var list = (ArrayList)SerializationUtilities.GetPsObjectPropertyBaseObject(psObject, "InvocationInfo_PipelineIterationInfo");
@@ -397,10 +397,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Index of the ProcessRecord iteration for each of the commands in the pipeline. 
+        /// Index of the ProcessRecord iteration for each of the commands in the pipeline.
         /// </summary>
         /// <remarks>
-        /// All the commands in a given pipeline share the same PipelinePositionInfo. 
+        /// All the commands in a given pipeline share the same PipelinePositionInfo.
         /// </remarks>
         internal int[] PipelineIterationInfo { get; set; } = Utils.EmptyArray<int>();
 
@@ -456,9 +456,9 @@ namespace System.Management.Automation
     public class RemoteCommandInfo : CommandInfo
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
-        /// 
+        ///
         private RemoteCommandInfo(string name, CommandTypes type)
             : base(name, type)
         {

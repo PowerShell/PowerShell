@@ -26,7 +26,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="sessionState"/> is null.
         /// </exception>
-        /// 
+        ///
         internal SessionState(SessionStateInternal sessionState)
         {
             if (sessionState == null)
@@ -311,7 +311,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The state APIs to access relationship providers in session state.
         /// </summary>
-        /// 
+        ///
         public RelationshipProviderManagementIntrinsics Relationship
         {
             get
@@ -334,7 +334,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a reference to the "real" session state object instead of the facade
         /// </summary>
-        /// 
+        ///
         internal SessionStateInternal Internal
         {
             get { return _sessionState; }

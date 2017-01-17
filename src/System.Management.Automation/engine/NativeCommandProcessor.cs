@@ -145,23 +145,23 @@ namespace System.Management.Automation
         #region ctor/native command properties
 
         /// <summary>
-        /// Information about application which is invoked by this instance of 
-        /// NativeCommandProcessor 
+        /// Information about application which is invoked by this instance of
+        /// NativeCommandProcessor
         /// </summary>
         private ApplicationInfo _applicationInfo;
 
         /// <summary>
         /// Initializes the new instance of NativeCommandProcessor class.
         /// </summary>
-        /// 
+        ///
         /// <param name="applicationInfo">
         /// The information about the application to run.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The execution context for this command.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// <paramref name="applicationInfo"/> or <paramref name="context"/> is null
         /// </exception>
@@ -247,15 +247,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets a new instance of a ParameterBinderController using a NativeCommandParameterBinder
         /// </summary>
-        /// 
+        ///
         /// <param name="command">
         /// The native command to be run.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A new parameter binder controller for the specified command.
         /// </returns>
-        /// 
+        ///
         internal ParameterBinderController NewParameterBinderController(InternalCommand command)
         {
             Dbg.Assert(_isPreparedCalled, "parameter binder should not be created before prepared is called");
@@ -302,8 +302,8 @@ namespace System.Management.Automation
             //Check if the application is minishell
             _isMiniShell = IsMiniShell();
 
-            //For minishell parameter binding is done in Complete method because we need 
-            //to know if output is redirected before we can bind parameters. 
+            //For minishell parameter binding is done in Complete method because we need
+            //to know if output is redirected before we can bind parameters.
             if (!_isMiniShell)
             {
                 this.NativeParameterBinderController.BindParameters(arguments);
@@ -338,18 +338,18 @@ namespace System.Management.Automation
         /// <summary>
         /// Is true if this command is to be run "standalone" - that is, with
         /// no redirection.
-        /// </summary>        
+        /// </summary>
         private bool _runStandAlone;
 
         /// <summary>
         /// Indicate whether we need to consider redirecting the output/error of the current native command.
         /// Usually a windows program which is the last command in a pipeline can be executed as 'background' -- we don't need to capture its output/error streams.
-        /// </summary>        
+        /// </summary>
         private bool _isRunningInBackground;
 
         /// <summary>
         /// This output queue helps us keep the output and error (if redirected) order correct.
-        /// We could do a blocking read in the Complete block instead, 
+        /// We could do a blocking read in the Complete block instead,
         /// but then we would not be able to restore the order reasonable.
         /// </summary>
         private BlockingCollection<ProcessOutputObject> _nativeProcessOutputQueue;
@@ -359,7 +359,7 @@ namespace System.Management.Automation
         private Host.Coordinates _startPosition;
 
         /// <summary>
-        /// object used for synchronization between StopProcessing thread and 
+        /// object used for synchronization between StopProcessing thread and
         /// Pipeline thread.
         /// </summary>
         private object _sync = new object();
@@ -389,7 +389,7 @@ namespace System.Management.Automation
             // Find out if it's the only command in the pipeline.
             bool soloCommand = this.Command.MyInvocation.PipelineLength == 1;
 
-            // Get the start info for the process. 
+            // Get the start info for the process.
             ProcessStartInfo startInfo = GetProcessStartInfo(redirectOutput, redirectError, redirectInput, soloCommand);
 
             if (this.Command.Context.CurrentPipelineStopping)
@@ -404,7 +404,7 @@ namespace System.Management.Automation
             try
             {
                 // If this process is being run standalone, tell the host, which might want
-                // to save off the window title or other such state as might be tweaked by 
+                // to save off the window title or other such state as might be tweaked by
                 // the native process
                 if (!redirectOutput)
                 {
@@ -482,7 +482,7 @@ namespace System.Management.Automation
                                 startInfo.FileName = oldFileName;
                             }
                         }
-                        // We got here because there was either no executable found for this 
+                        // We got here because there was either no executable found for this
                         // file or we tried to launch the exe and it failed. In either case
                         // we will try launching one last time using ShellExecute...
                         if (notDone)
@@ -610,7 +610,7 @@ namespace System.Management.Automation
                 {
                     try
                     {
-                        // If adding is not complete we need a try {} catch {} 
+                        // If adding is not complete we need a try {} catch {}
                         // to mitigate a concurrent call to CompleteAdding().
                         return _nativeProcessOutputQueue.Take();
                     }
@@ -662,7 +662,7 @@ namespace System.Management.Automation
             Exception exceptionToRethrow = null;
             try
             {
-                if (_isRunningInBackground == false)   
+                if (_isRunningInBackground == false)
                 {
                     //Wait for input writer to finish.
                     _inputWriter.Done();
@@ -783,7 +783,7 @@ namespace System.Management.Automation
                 try
                 {
                     // For processes running in an NTVDM, trying to kill with
-                    // the original handle fails with a Win32 error, so we'll 
+                    // the original handle fails with a Win32 error, so we'll
                     // use the ID and try to get a new handle...
                     Process newHandle = Process.GetProcessById(processToKill.Id);
                     // If the process was not found, we won't get here...
@@ -887,7 +887,7 @@ namespace System.Management.Automation
                 try
                 {
                     // For processes running in an NTVDM, trying to kill with
-                    // the original handle fails with a Win32 error, so we'll 
+                    // the original handle fails with a Win32 error, so we'll
                     // use the ID and try to get a new handle...
                     Process newHandle = Process.GetProcessById(processToKill.Id);
 
@@ -992,7 +992,7 @@ namespace System.Management.Automation
             }
         }
 
-        #endregion internal overrides        
+        #endregion internal overrides
 
         /// <summary>
         /// Aggressively clean everything up...
@@ -1014,7 +1014,7 @@ namespace System.Management.Automation
         private void ProcessOutputRecord(ProcessOutputObject outputValue)
         {
             Dbg.Assert(outputValue != null, "only object of type ProcessOutputObject expected");
-            
+
             if (outputValue.Stream == MinishellStream.Error)
             {
                 ErrorRecord record = outputValue.Data as ErrorRecord;
@@ -1154,7 +1154,7 @@ namespace System.Management.Automation
             if (outputProcessor != null)
             {
                 // We have the test 'utscript\Engine\TestOutDefaultRedirection.ps1' to check that a user defined
-                // Out-Default function should not cause a native command to be redirected. So here we should only 
+                // Out-Default function should not cause a native command to be redirected. So here we should only
                 // compare the command name to avoid breaking change.
                 if (String.Equals(outputProcessor.CommandInfo.Name, "Out-Default", StringComparison.OrdinalIgnoreCase))
                 {
@@ -1196,9 +1196,9 @@ namespace System.Management.Automation
                 // If the output pipe is the default outputter, for example, calling the native command from command-line host,
                 // then we're possibly running standalone.
                 //
-                // If the downstream cmdlet is explicitly Out-Default, for example: 
-                //    $powershell.AddScript('ipconfig.exe') 
-                //    $powershell.AddCommand('Out-Default') 
+                // If the downstream cmdlet is explicitly Out-Default, for example:
+                //    $powershell.AddScript('ipconfig.exe')
+                //    $powershell.AddCommand('Out-Default')
                 //    $powershell.Invoke())
                 // we should not count it as a redirection.
                 if (IsDownstreamOutDefault(this.commandRuntime.OutputPipe))
@@ -1215,9 +1215,9 @@ namespace System.Management.Automation
                 // If the error output pipe is the default outputter, for example, calling the native command from command-line host,
                 // then we're possibly running standalone.
                 //
-                // If the downstream cmdlet is explicitly Out-Default, for example: 
-                //    $powershell.AddScript('ipconfig.exe') 
-                //    $powershell.AddCommand('Out-Default') 
+                // If the downstream cmdlet is explicitly Out-Default, for example:
+                //    $powershell.AddScript('ipconfig.exe')
+                //    $powershell.AddCommand('Out-Default')
                 //    $powershell.Invoke())
                 // we should not count that as a redirection.
                 if (IsDownstreamOutDefault(this.commandRuntime.ErrorOutputPipe))
@@ -1226,7 +1226,7 @@ namespace System.Management.Automation
                 }
             }
 
-            //In minishell scenario, if output is redirected 
+            //In minishell scenario, if output is redirected
             //then error should also be redirected.
             if (redirectError == false && redirectOutput == true && _isMiniShell)
             {
@@ -1237,7 +1237,7 @@ namespace System.Management.Automation
             // Currently, the WinRM is using std io pipes to communicate with PowerShell server.
             // To protect these std io pipes from access from user command, we have replaced the original std io pipes with null pipes.
             // The original std io pipes are taken private, to be used by remoting infrastructure only.
-            // Doing so prevents user data to corrupt PowerShell remoting communication data which are encoded in a 
+            // Doing so prevents user data to corrupt PowerShell remoting communication data which are encoded in a
             // special format.
             // In the following, we check for this server condition.
             // If it is the server, then we redirect all std io handles for the native command.
@@ -1383,7 +1383,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns></returns>
         /// <remarks>
-        /// If any of the argument supplied to native command is script block, 
+        /// If any of the argument supplied to native command is script block,
         /// we assume it is minishell.
         /// </remarks>
         private bool IsMiniShell()
@@ -1652,11 +1652,11 @@ namespace System.Management.Automation
     /// </summary>
     internal class ProcessInputWriter
     {
-        #region constructor 
+        #region constructor
 
         private InternalCommand _command;
         /// <summary>
-        /// Creates an instance of ProcessInputWriter 
+        /// Creates an instance of ProcessInputWriter
         /// </summary>
         internal ProcessInputWriter(InternalCommand command)
         {
@@ -1755,7 +1755,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(process != null, "caller should validate the paramter");
 
-            //Get the encoding for writing to native command. Note we get the Encoding 
+            //Get the encoding for writing to native command. Note we get the Encoding
             //from the current scope so a script or function can use a different encoding
             //than global value.
             Encoding pipeEncoding = _command.Context.GetVariableValue(SpecialVariables.OutputEncodingVarPath) as System.Text.Encoding ??
@@ -1847,7 +1847,7 @@ namespace System.Management.Automation
             Dispose();
         }
     }
-   
+
 #if !CORECLR // There is no GUI application on OneCore, so powershell on OneCore should always have a console attached.
 
     /// <summary>
@@ -1997,11 +1997,11 @@ namespace System.Management.Automation
 #endif
 
     /// <summary>
-    /// Exception used to wrap the error coming from 
+    /// Exception used to wrap the error coming from
     /// remote instance of Msh.
-    /// </summary>     
+    /// </summary>
     /// <remarks>
-    /// This remote instance of Msh can be in a separate process, 
+    /// This remote instance of Msh can be in a separate process,
     /// appdomain or machine.
     /// </remarks>
     [Serializable]
@@ -2017,10 +2017,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of RemoteException with a specified error message. 
+        /// Initializes a new instance of RemoteException with a specified error message.
         /// </summary>
         /// <param name="message">
-        /// The message that describes the error. 
+        /// The message that describes the error.
         /// </param>
         public RemoteException(string message)
             : base(message)
@@ -2028,12 +2028,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the RemoteException class 
-        /// with a specified error message and a reference to the inner exception 
-        /// that is the cause of this exception. 
+        /// Initializes a new instance of the RemoteException class
+        /// with a specified error message and a reference to the inner exception
+        /// that is the cause of this exception.
         /// </summary>
         /// <param name="message">
-        /// The message that describes the error.         
+        /// The message that describes the error.
         /// </param>
         /// <param name="innerException">
         /// The exception that is the cause of the current exception.
@@ -2044,8 +2044,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the RemoteException 
-        /// with a specified error message, serialized Exception and 
+        /// Initializes a new instance of the RemoteException
+        /// with a specified error message, serialized Exception and
         /// serialized InvocationInfo
         /// </summary>
         /// <param name="message">The message that describes the error. </param>
@@ -2075,11 +2075,11 @@ namespace System.Management.Automation
         ///  class with serialized data.
         /// </summary>
         /// <param name="info">
-        /// The <see cref="SerializationInfo"/> that holds the serialized object 
+        /// The <see cref="SerializationInfo"/> that holds the serialized object
         /// data about the exception being thrown.
         /// </param>
         /// <param name="context">
-        /// The <see cref="StreamingContext"/> that contains contextual information 
+        /// The <see cref="StreamingContext"/> that contains contextual information
         /// about the source or destination.
         /// </param>
         protected RemoteException(SerializationInfo info, StreamingContext context)

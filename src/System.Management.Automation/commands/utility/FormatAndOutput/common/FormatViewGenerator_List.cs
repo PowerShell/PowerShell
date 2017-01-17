@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Let the view prepare itself for RemoteObjects. This will add "ComputerName" to the 
+        /// Let the view prepare itself for RemoteObjects. This will add "ComputerName" to the
         /// table columns.
         /// </summary>
         /// <param name="so"></param>
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 else if (result != null)
                 {
-                    // if we got a valid match from the Mshexpression, use it as a label 
+                    // if we got a valid match from the Mshexpression, use it as a label
                     lvf.label = result.ResolvedExpression.ToString();
                 }
                 else

@@ -25,7 +25,7 @@ using System.Globalization;
 
 namespace Microsoft.PowerShell.Activities
 {
-    
+
     /// <summary>
     /// Workflow activity wrapping the Get-Wmiobject cmdlet
     /// </summary>

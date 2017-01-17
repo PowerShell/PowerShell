@@ -16,27 +16,27 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the workflowInfo class with the specified name and ScriptBlock
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the workflow.
         /// </param>
-        /// 
+        ///
         /// <param name="definition">
         /// The script body defining the workflow.
         /// </param>
-        /// 
+        ///
         /// <param name="workflow">
         /// The ScriptBlock for the workflow
         /// </param>
-        /// 
+        ///
         /// <param name="xamlDefinition">
         /// The XAML used to define the workflow
         /// </param>
-        /// 
+        ///
         /// <param name="workflowsCalled">
         /// The workflows referenced within <paramref name="xamlDefinition"/>.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="workflow"/> is null.
         /// </exception>
@@ -58,26 +58,26 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Creates an instance of the workflowInfo class with the specified name and ScriptBlock
-        /// </summary> 
+        /// </summary>
         /// <param name="name">
         /// The name of the workflow.
-        /// </param> 
+        /// </param>
         /// <param name="definition">
         /// The script body defining the workflow.
         /// </param>
         /// <param name="workflow">
         /// The ScriptBlock for the workflow
-        /// </param> 
+        /// </param>
         /// <param name="xamlDefinition">
         /// The XAML used to define the workflow
         /// </param>
         /// <param name="workflowsCalled">
         /// The workflows referenced within <paramref name="xamlDefinition"/>.
         /// </param>
-        /// <param name="module">module</param> 
+        /// <param name="module">module</param>
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="workflow"/> is null.
-        /// </exception> 
+        /// </exception>
         public WorkflowInfo(string name, string definition, ScriptBlock workflow, string xamlDefinition, WorkflowInfo[] workflowsCalled, PSModuleInfo module)
             : this(name, definition, workflow, xamlDefinition, workflowsCalled)
         {
@@ -87,23 +87,23 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the workflowInfo class with the specified name and ScriptBlock
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the workflow.
         /// </param>
-        /// 
+        ///
         /// <param name="workflow">
         /// The ScriptBlock for the workflow
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The ExecutionContext for the workflow.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="workflow"/> is null.
         /// </exception>
-        /// 
+        ///
         internal WorkflowInfo(string name, ScriptBlock workflow, ExecutionContext context) : this(name, workflow, context, null)
         {
         }
@@ -111,27 +111,27 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the workflowInfo class with the specified name and ScriptBlock
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the workflow.
         /// </param>
-        /// 
+        ///
         /// <param name="workflow">
         /// The ScriptBlock for the workflow
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The ExecutionContext for the workflow.
         /// </param>
-        /// 
+        ///
         /// <param name="helpFile">
         /// The helpfile for the workflow.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="workflow"/> is null.
         /// </exception>
-        /// 
+        ///
         internal WorkflowInfo(string name, ScriptBlock workflow, ExecutionContext context, string helpFile)
             : base(name, workflow, context, helpFile)
         {
@@ -141,27 +141,27 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the WorkflowInfo class with the specified name and ScriptBlock
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the workflow.
         /// </param>
-        /// 
+        ///
         /// <param name="workflow">
         /// The ScriptBlock for the workflow
         /// </param>
-        /// 
+        ///
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The execution context for the workflow.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="workflow"/> is null.
         /// </exception>
-        /// 
+        ///
         internal WorkflowInfo(string name, ScriptBlock workflow, ScopedItemOptions options, ExecutionContext context) : this(name, workflow, options, context, null)
         {
         } // workflowInfo ctor
@@ -169,31 +169,31 @@ namespace System.Management.Automation
         /// <summary>
         /// Creates an instance of the WorkflowInfo class with the specified name and ScriptBlock
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the workflow.
         /// </param>
-        /// 
+        ///
         /// <param name="workflow">
         /// The ScriptBlock for the workflow
         /// </param>
-        /// 
+        ///
         /// <param name="options">
         /// The options to set on the function. Note, Constant can only be set at creation time.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The execution context for the workflow.
         /// </param>
-        /// 
+        ///
         /// <param name="helpFile">
         /// The helpfile for the workflow.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="workflow"/> is null.
         /// </exception>
-        /// 
+        ///
         internal WorkflowInfo(string name, ScriptBlock workflow, ScopedItemOptions options, ExecutionContext context, string helpFile)
             : base(name, workflow, options, context, helpFile)
         {
@@ -236,15 +236,15 @@ namespace System.Management.Automation
         /// <param name="function">
         /// The script block that the function should represent.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// If true, the script block will be applied even if the filter is ReadOnly.
         /// </param>
-        /// 
+        ///
         /// <param name="options">
         /// Any options to set on the new function, null if none.
         /// </param>
-        /// 
+        ///
         /// <param name="helpFile">
         /// Helpfile for this function
         /// </param>

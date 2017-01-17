@@ -13,18 +13,18 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// 
+    ///
     /// Implements the write-progress cmdlet
-    /// 
+    ///
     /// </summary>
 
     [Cmdlet(VerbsCommunications.Write, "Progress", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113428", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteProgressCommand : PSCmdlet
     {
         /// <summary>
-        /// 
+        ///
         /// Describes the activity for which progress is being reported.
-        /// 
+        ///
         /// </summary>
         /// <value></value>
 
@@ -37,9 +37,9 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// 
+        ///
         /// Describes the current state of the activity.
-        /// 
+        ///
         /// </summary>
         /// <value></value>
 
@@ -52,9 +52,9 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// 
+        ///
         /// Uniquely identifies this activity for purposes of chaining subordinate activities.
-        /// 
+        ///
         /// </summary>
         /// <value></value>
 
@@ -64,9 +64,9 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// 
+        ///
         /// Percentage completion of the activity, or -1 if n/a
-        /// 
+        ///
         /// </summary>
         /// <value></value>
 
@@ -76,9 +76,9 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// 
+        ///
         /// Seconds remaining to complete the operation, or -1 if n/a
-        /// 
+        ///
         /// </summary>
         /// <value></value>
 
@@ -87,9 +87,9 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// 
+        ///
         /// Description of current operation in activity, empty if n/a
-        /// 
+        ///
         /// </summary>
         /// <value></value>
 
@@ -98,9 +98,9 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// 
+        ///
         /// Identifies the parent Id of this activity, or -1 if none.
-        /// 
+        ///
         /// </summary>
         /// <value></value>
 
@@ -110,10 +110,10 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// 
+        ///
         /// Identifies whether the activity has completed (and the display for it should be removed),
         /// or if it is proceeding (and the display for it should be shown).
-        /// 
+        ///
         /// </summary>
         /// <value></value>
 
@@ -133,9 +133,9 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// 
+        ///
         /// Identifies the source of the record.
-        /// 
+        ///
         /// </summary>
         /// <value></value>
 
@@ -144,9 +144,9 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// 
+        ///
         /// Writes a ProgressRecord created from the parameters.
-        /// 
+        ///
         /// </summary>
 
         protected override

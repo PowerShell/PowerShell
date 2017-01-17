@@ -9,28 +9,28 @@ using System.Runtime.CompilerServices;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Define type for a reference object in Monad scripting language. 
+    /// Define type for a reference object in Monad scripting language.
     /// </summary>
     /// <remarks>
-    /// This class is used to describe both kinds of references: 
-    ///     a. reference to a value: _value will be holding the value being referenced. 
-    ///     b. reference to a variable: _value will be holding a PSVariable instance for the variable to be referenced.  
-    /// 
-    /// A reference is created in following ways, 
+    /// This class is used to describe both kinds of references:
+    ///     a. reference to a value: _value will be holding the value being referenced.
+    ///     b. reference to a variable: _value will be holding a PSVariable instance for the variable to be referenced.
+    ///
+    /// A reference is created in following ways,
     ///     a. value reference
     ///         $a = [ref] 3
     ///         [ref] $a = 3
     ///         [ref] $a = $b
     ///     b. variable reference
     ///         $a = [ref] $b
-    ///        
+    ///
     /// </remarks>
     public class PSReference
     {
         private object _value;
 
         /// <summary>
-        /// Create an instance of PSReference. 
+        /// Create an instance of PSReference.
         /// </summary>
         /// <param name="value"></param>
         public PSReference(object value)
@@ -39,11 +39,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get and set value of PSReference. 
+        /// Get and set value of PSReference.
         /// </summary>
         /// <remarks>
-        /// If underlining object is a value, the object itself will be operated on. 
-        /// If underlining object is a variable, the variable will be operated on. 
+        /// If underlining object is a value, the object itself will be operated on.
+        /// If underlining object is a variable, the variable will be operated on.
         /// </remarks>
         public object Value
         {

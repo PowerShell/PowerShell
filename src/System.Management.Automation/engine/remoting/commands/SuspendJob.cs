@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         private Job[] _jobs;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override String[] Command
         {
@@ -84,7 +84,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _force = false;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [Parameter()]
         public SwitchParameter Wait
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    // there could be possibility that the job gets completed before or after the 
+                    // there could be possibility that the job gets completed before or after the
                     // subscribing to nowait_job2_statechanged event so checking it again.
                     if (!_wait && (job2.IsFinishedState(job2.JobStateInfo.State) || job2.JobStateInfo.State == JobState.Suspending || job2.JobStateInfo.State == JobState.Suspended))
                     {
@@ -329,7 +329,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void StopProcessing()
         {
@@ -341,7 +341,7 @@ namespace Microsoft.PowerShell.Commands
         #region Dispose
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public void Dispose()
         {
@@ -350,7 +350,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)
