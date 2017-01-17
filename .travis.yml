@@ -17,7 +17,9 @@ matrix:
 
 addons:
   artifacts:
-    paths: $(ls powershell*{deb,pkg} | tr "\n" ":")
+    paths: 
+      - $(ls powershell*{deb,pkg} | tr "\n" ":")
+      - pester-tests.xml
 
 install:
   - pushd tools
