@@ -22,6 +22,12 @@ try {
 if ($IsWindows)
 {
     $IsAdmin = (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+    # Can't use $env:HOME - not available on older systems (e.g. in AppVeyor)
+    $nugetPackagesRoot = "${env:HOMEDRIVE}${env:HOMEPATH}\.nuget\packages"
+}
+else
+{
+    $nugetPackagesRoot = "${env:HOME}/.nuget/packages"
 }
 
 if ($IsLinux) {
@@ -145,11 +151,6 @@ function Start-PSBuild {
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
 
     if ($IsWindows) {
-        # use custom package store - this value is also defined in nuget.config under config/repositoryPath
-        # dotnet restore uses this value as the target for installing the assemblies for referenced nuget packages.
-        # dotnet build does not currently consume the  config value but will consume env:NUGET_PACKAGES to resolve these dependencies
-        $env:NUGET_PACKAGES="$PSScriptRoot\Packages"
-
         # cmake is needed to build powershell.exe
         $precheck = $precheck -and (precheck 'cmake' 'cmake not found. Run Start-PSBootstrap. You can also install it from https://chocolatey.org/packages/cmake')
 
@@ -2637,11 +2638,7 @@ function Start-CrossGen {
     }
 
     # Get the path to crossgen
-    $crossGenSearchPath = if ($IsWindows) {
-        "$PSScriptRoot\Packages\*crossgen.exe"
-    } else {
-        "~/.nuget/packages/*crossgen"
-    }
+    $crossGenExe = if ($IsWindows) { "crossgen.exe" } else { "crossgen" }
 
     # The crossgen tool is only published for these particular runtimes
     $crossGenRuntime = if ($IsWindows) {
@@ -2665,7 +2662,7 @@ function Start-CrossGen {
     }
 
     # Get the CrossGen.exe for the correct runtime with the latest version
-    $crossGenPath = Get-ChildItem $crossGenSearchPath -Recurse | `
+    $crossGenPath = Get-ChildItem $script:nugetPackagesRoot $crossGenExe -Recurse | `
                         Where-Object { $_.FullName -match $crossGenRuntime } | `
                         Sort-Object -Property FullName -Descending | `
                         Select-Object -First 1 | `
@@ -2745,23 +2742,15 @@ function Start-CrossGen {
     }
 }
 
-# Cleans the PowerShell repo
-# by default everything but the root folder and the Packages folder
-# if you specify -IncludePackages it will clean the Packages folder
+# Cleans the PowerShell repo - everything but the root folder
 function Clear-PSRepo
 {
     [CmdletBinding()]
-    param(
-        [switch] $IncludePackages
-    )
-        Get-ChildItem $PSScriptRoot\* -Directory -Exclude 'Packages' | ForEach-Object {
+    param()
+
+    Get-ChildItem $PSScriptRoot\* -Directory | ForEach-Object {
         Write-Verbose "Cleaning $_ ..."
         git clean -fdX $_
-    }
-
-    if($IncludePackages)
-    {
-        remove-item $RepoRoot\Packages\ -Recurse -Force  -ErrorAction SilentlyContinue
     }
 }
 
