@@ -994,6 +994,14 @@ namespace Microsoft.PowerShell
                     // save the window title when first notified.
 
                     _savedWindowTitle = ui.RawUI.WindowTitle;
+#if !UNIX
+                    if (_initialConsoleMode != ConsoleControl.ConsoleModes.Unknown)
+                    {
+                        var activeScreenBufferHandle = ConsoleControl.GetActiveScreenBufferHandle();
+                        _savedConsoleMode = ConsoleControl.GetMode(activeScreenBufferHandle);
+                        ConsoleControl.SetMode(activeScreenBufferHandle, _initialConsoleMode);
+                    }
+#endif
                 }
             }
         }
@@ -1015,6 +1023,12 @@ namespace Microsoft.PowerShell
                     // restore the window title when the last application started has ended.
 
                     ui.RawUI.WindowTitle = _savedWindowTitle;
+#if !UNIX
+                    if (_savedConsoleMode != ConsoleControl.ConsoleModes.Unknown)
+                    {
+                        ConsoleControl.SetMode(ConsoleControl.GetActiveScreenBufferHandle(), _savedConsoleMode);
+                    }
+#endif
                 }
             }
         }
@@ -1046,6 +1060,20 @@ namespace Microsoft.PowerShell
         /// </summary>
         internal ConsoleHost(RunspaceConfiguration configuration)
         {
+#if !UNIX
+            try
+            {
+                // Capture the initial console mode before constructing our ui - that constructor
+                // will change the console mode to turn on VT100 support.
+                _initialConsoleMode = ConsoleControl.GetMode(ConsoleControl.GetActiveScreenBufferHandle());
+            }
+            catch (Exception)
+            {
+                // Make sure we skip setting the console mode later.
+                _savedConsoleMode = _initialConsoleMode = ConsoleControl.ConsoleModes.Unknown;
+            }
+#endif
+
             ClrFacade.SetCurrentThreadUiCulture(this.CurrentUICulture);
             ClrFacade.SetCurrentThreadCulture(this.CurrentCulture);
             // BUG: 610329. Tell PowerShell engine to apply console
@@ -2853,6 +2881,10 @@ namespace Microsoft.PowerShell
 
 #if !UNIX
         private GCHandle breakHandlerGcHandle;
+
+        // Set to Unknown so that we avoid saving/restoring the console mode if we don't have a console.
+        private ConsoleControl.ConsoleModes _savedConsoleMode = ConsoleControl.ConsoleModes.Unknown;
+        private ConsoleControl.ConsoleModes _initialConsoleMode = ConsoleControl.ConsoleModes.Unknown;
 #endif
         private System.Threading.Thread _breakHandlerThread;
         private bool _isDisposed;
