@@ -268,7 +268,8 @@ New-Object Foo
         }
 
         It "report an error when 'using module' terminating by Semicolon" {
-            $err = Get-ParseResults "using module; using module System.Collections"
+            $err = Get-ParseResults "using module; $testvar=1"
+Write-Host $err
             $err.Count | Should Be 1
             $err[0].ErrorId | Should Be 'MissingUsingItemName'
         }
