@@ -12,7 +12,7 @@
       $global:PSDefaultParameterValues = $originalDefaultParameterValues
   }
 
-  $testCases = 
+  $testCases =
     @{ data = $null; value = 'null' },
     @{ data = [String]::Empty; value = 'empty string' }
 
@@ -34,7 +34,7 @@
       try {
         $null = Get-Service -Name $data -ErrorAction Stop
         throw 'Expected error on previous command'
-      }      
+      }
       catch {
         $_.FullyQualifiedErrorId | Should Be 'ParameterArgumentValidationError,Microsoft.Powershell.Commands.GetServiceCommand'
       }

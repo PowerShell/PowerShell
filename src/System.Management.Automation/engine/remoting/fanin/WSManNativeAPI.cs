@@ -36,38 +36,38 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// The WinRM service cannot process the request because the request needs to be sent
         /// to a different machine.
-        /// Use the redirect information to send the request to a new machine. 
+        /// Use the redirect information to send the request to a new machine.
         /// 0x8033819B from sdk\inc\wsmerror.h
         /// </summary>
         internal const int ERROR_WSMAN_REDIRECT_REQUESTED = -2144108135;
 
         /// <summary>
         /// The WS-Management service cannot process the request. The resource URI is missing or
-        ///  it has an incorrect format. Check the documentation or use the following command for 
+        ///  it has an incorrect format. Check the documentation or use the following command for
         /// information on how to construct a resource URI: "winrm help uris".
         /// </summary>
         internal const int ERROR_WSMAN_INVALID_RESOURCE_URI = -2144108485;
 
         /// <summary>
         /// The WinRM service cannon re-connect the session because the session is no longer
-        /// associated with this transportmanager object.  
+        /// associated with this transportmanager object.
         /// </summary>
         internal const int ERROR_WSMAN_INUSE_CANNOT_RECONNECT = -2144108083;
 
         /// <summary>
-        /// Sending data to a remote command failed with the following error message: The client 
-        /// cannot connect to the destination specified in the request. Verify that the service on 
-        /// the destination is running and is accepting requests. Consult the logs and documentation 
-        /// for the WS-Management service running on the destination, most commonly IIS or WinRM. 
-        /// If the destination is the WinRM service, run the following command on the destination to 
+        /// Sending data to a remote command failed with the following error message: The client
+        /// cannot connect to the destination specified in the request. Verify that the service on
+        /// the destination is running and is accepting requests. Consult the logs and documentation
+        /// for the WS-Management service running on the destination, most commonly IIS or WinRM.
+        /// If the destination is the WinRM service, run the following command on the destination to
         /// analyze and configure the WinRM service:
         /// </summary>
         internal const int ERROR_WSMAN_SENDDATA_CANNOT_CONNECT = -2144108526;
 
         /// <summary>
-        /// Sending data to a remote command failed with the following error message: The WinRM client 
-        /// cannot complete the operation within the time specified. Check if the machine name is valid 
-        /// and is reachable over the network and firewall exception for Windows Remote Management service 
+        /// Sending data to a remote command failed with the following error message: The WinRM client
+        /// cannot complete the operation within the time specified. Check if the machine name is valid
+        /// and is reachable over the network and firewall exception for Windows Remote Management service
         /// is enabled.
         /// </summary>
         internal const int ERROR_WSMAN_SENDDATA_CANNOT_COMPLETE = -2144108250;
@@ -246,11 +246,11 @@ namespace System.Management.Automation.Remoting.Client
             /// </summary>
             WSMAN_FLAG_AUTH_BASIC = 0x8,
             /// <summary>
-            /// Use kerberos authentication for a remote operation 
+            /// Use kerberos authentication for a remote operation
             /// </summary>
             WSMAN_FLAG_AUTH_KERBEROS = 0x10,
             /// <summary>
-            /// Use client certificate authentication for a remote operation 
+            /// Use client certificate authentication for a remote operation
             /// </summary>
             WSMAN_FLAG_AUTH_CLIENT_CERTIFICATE = 0x20,
             /// <summary>
@@ -283,23 +283,23 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Used to supply _WSMAN_USERNAME_PASSWORD_CREDS type credentials for 
+        /// Used to supply _WSMAN_USERNAME_PASSWORD_CREDS type credentials for
         /// WSManCreateSession.
         /// </summary>
         internal class WSManUserNameAuthenticationCredentials : BaseWSManAuthenticationCredentials
         {
             /// <summary>
-            /// 
+            ///
             /// </summary>
             [StructLayout(LayoutKind.Sequential)]
             internal struct WSManUserNameCredentialStruct
             {
                 /// <summary>
-                /// 
+                ///
                 /// </summary>
                 internal WSManAuthenticationMechanism authenticationMechanism;
                 /// <summary>
-                /// 
+                ///
                 /// </summary>
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string userName;
@@ -335,9 +335,9 @@ namespace System.Management.Automation.Remoting.Client
             /// password.
             /// </param>
             /// <param name="authMechanism">
-            /// can be 0 (the user did not specify an authentication mechanism, 
+            /// can be 0 (the user did not specify an authentication mechanism,
             /// WSMan client will choose between Kerberos and Negotiate only);
-            /// if it is not 0, it must be one of the values from 
+            /// if it is not 0, it must be one of the values from
             /// WSManAuthenticationMechanism enumeration.
             /// </param>
             internal WSManUserNameAuthenticationCredentials(string name,
@@ -364,7 +364,7 @@ namespace System.Management.Automation.Remoting.Client
 
             /// <summary>
             /// Marshalled Data
-            /// </summary>            
+            /// </summary>
             /// <returns></returns>
             public override MarshalledObject GetMarshalledObject()
             {
@@ -388,22 +388,22 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal class WSManCertificateThumbprintCredentials : BaseWSManAuthenticationCredentials
         {
             /// <summary>
-            /// 
+            ///
             /// </summary>
             [StructLayout(LayoutKind.Sequential)]
             private struct WSManThumbprintStruct
             {
                 /// <summary>
-                /// 
+                ///
                 /// </summary>
                 internal WSManAuthenticationMechanism authenticationMechanism;
                 /// <summary>
-                /// 
+                ///
                 /// </summary>
                 [MarshalAs(UnmanagedType.LPWStr)]
                 internal string certificateThumbprint;
@@ -516,7 +516,7 @@ namespace System.Management.Automation.Remoting.Client
             /// </summary>
             WSMAN_OPTION_ENABLE_SPN_SERVER_PORT = 22,
             /// <summary>
-            /// int - Used when not talking to the main OS on a machine but, for instance, a BMC 
+            /// int - Used when not talking to the main OS on a machine but, for instance, a BMC
             /// 1 Identify this machine to the server by including the MachineID header; 0 - default
             /// </summary>
             WSMAN_OPTION_MACHINE_ID = 23,
@@ -541,24 +541,24 @@ namespace System.Management.Automation.Remoting.Client
 
             #region Other
             /// <summary>
-            /// int - max SOAP envelope size (kb) - default 150kb from winrm config 
-            /// (see 'winrm help config' for more details); the client SOAP packet size cannot surpass 
-            /// this value; this value will be also sent to the server in the SOAP request as a 
-            /// MaxEnvelopeSize header; the server will use min(MaxEnvelopeSizeKb from server configuration, 
+            /// int - max SOAP envelope size (kb) - default 150kb from winrm config
+            /// (see 'winrm help config' for more details); the client SOAP packet size cannot surpass
+            /// this value; this value will be also sent to the server in the SOAP request as a
+            /// MaxEnvelopeSize header; the server will use min(MaxEnvelopeSizeKb from server configuration,
             /// MaxEnvelopeSize value from SOAP).
             /// </summary>
             WSMAN_OPTION_MAX_ENVELOPE_SIZE_KB = 28,
             /// <summary>
-            /// int (read only) - max data size (kb) provided by the client, guaranteed by 
-            /// the winrm client implementation to fit into one SOAP packet; this is an 
-            /// approximate value calculated based on the WSMAN_OPTION_MAX_ENVELOPE_SIZE_KB (default 150kb), 
-            /// the maximum possible size of the SOAP headers and the overhead of the base64 
-            /// encoding which is specific to WSManSendShellInput API; this option can be used 
+            /// int (read only) - max data size (kb) provided by the client, guaranteed by
+            /// the winrm client implementation to fit into one SOAP packet; this is an
+            /// approximate value calculated based on the WSMAN_OPTION_MAX_ENVELOPE_SIZE_KB (default 150kb),
+            /// the maximum possible size of the SOAP headers and the overhead of the base64
+            /// encoding which is specific to WSManSendShellInput API; this option can be used
             /// with WSManGetSessionOptionAsDword API; it cannot be used with WSManSetSessionOption API.
             /// </summary>
             WSMAN_OPTION_SHELL_MAX_DATA_SIZE_PER_MESSAGE_KB = 29,
             /// <summary>
-            /// string - 
+            /// string -
             /// </summary>
             WSMAN_OPTION_REDIRECT_LOCATION = 30,
             /// <summary>
@@ -570,7 +570,7 @@ namespace System.Management.Automation.Remoting.Client
             /// </summary>
             WSMAN_OPTION_ALLOW_NEGOTIATE_IMPLICIT_CREDENTIALS = 32,
             /// <summary>
-            ///  DWORD - When using just a machine name in the connection string use an SSL connection. 
+            ///  DWORD - When using just a machine name in the connection string use an SSL connection.
             ///  0 means HTTP, 1 means HTTPS.  Default is 0.
             /// </summary>
             WSMAN_OPTION_USE_SSL = 33
@@ -648,7 +648,7 @@ namespace System.Management.Automation.Remoting.Client
 
             /// <summary>
             /// Constructs a WSMAN_DATA_BINARY object. This is used to send
-            /// data to remote end. 
+            /// data to remote end.
             /// </summary>
             /// <param name="data"></param>
             internal WSManData_ManToUn(byte[] data)
@@ -692,8 +692,8 @@ namespace System.Management.Automation.Remoting.Client
 
             /// <summary>
             /// Finalizer
-            /// 
-            /// Note: Do not depend on the finalizer! This object should be 
+            ///
+            /// Note: Do not depend on the finalizer! This object should be
             /// properly disposed of when no longer needed via a direct call
             /// to Dispose().
             /// </summary>
@@ -903,7 +903,7 @@ namespace System.Management.Automation.Remoting.Client
 
             /// <summary>
             /// This struct is created to honor struct boundaries between
-            /// x86,amd64 and ia64. WSMan defines a generic WSMAN_DATA 
+            /// x86,amd64 and ia64. WSMan defines a generic WSMAN_DATA
             /// structure that addresses DWORD, binary, text data.
             /// </summary>
             [StructLayout(LayoutKind.Sequential)]
@@ -1126,7 +1126,7 @@ namespace System.Management.Automation.Remoting.Client
             }
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             public void Dispose()
             {
@@ -1209,7 +1209,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal struct WSManCommandArgSet : IDisposable
         {
@@ -1565,7 +1565,7 @@ namespace System.Management.Automation.Remoting.Client
             private MarshalledObject _data;
 
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <param name="proxyAccessType"></param>
             /// <param name="authCredentials"></param>
@@ -1608,21 +1608,21 @@ namespace System.Management.Automation.Remoting.Client
         #region WSMan Shell Async
 
         /// <summary>
-        /// flags used by all callback functions: WSMAN_COMPLETION_FUNCTION, 
+        /// flags used by all callback functions: WSMAN_COMPLETION_FUNCTION,
         /// WSMAN_SUBSCRIPTION_COMPLETION_FUNCTION and WSMAN_SHELL_COMPLETION_FUNCTION
         /// </summary>
         internal enum WSManCallbackFlags
         {
             //
             // Flag that marks the end of any single step of multistep operation
-            // 
+            //
             WSMAN_FLAG_CALLBACK_END_OF_OPERATION = 0x1,
 
             //
             // WSMAN_SHELL_COMPLETION_FUNCTION API specific flags
-            //  end of a particular stream; it is used for optimization purposes if the shell 
-            //  knows that no more output will occur for this stream; in some conditions this 
-            //  cannot be determined. 
+            //  end of a particular stream; it is used for optimization purposes if the shell
+            //  knows that no more output will occur for this stream; in some conditions this
+            //  cannot be determined.
             //
             WSMAN_FLAG_CALLBACK_END_OF_STREAM = 0x8,
 
@@ -1669,16 +1669,16 @@ namespace System.Management.Automation.Remoting.Client
 
         /// <summary>
         /// Completion function used by all Shell functions. Returns error->code != 0 upon error;
-        /// use error->errorDetail structure for extended error informations; the callback is 
-        /// called for each shell operation; after a WSManReceiveShellOutput operation is initiated, 
-        /// the callback is called for each output stream element or if error; the underlying 
-        /// implementation handles the polling of stream data from the command or shell. 
+        /// use error->errorDetail structure for extended error informations; the callback is
+        /// called for each shell operation; after a WSManReceiveShellOutput operation is initiated,
+        /// the callback is called for each output stream element or if error; the underlying
+        /// implementation handles the polling of stream data from the command or shell.
         /// If WSMAN_COMMAND_STATE_DONE state is received, no more streams will be received from the command,
         /// so the command can be closed using WSManCloseShellOperationEx(command).
-        /// If error->code != 0, the result is guaranteed to be NULL. The error and result objects are 
-        /// allocated and owned by the WSMan client stack; they are valid during the callback only; the user 
-        /// has to synchronously copy the data in the callback. This callback function will use the current 
-        /// access token, whether it is a process or impersonation token. 
+        /// If error->code != 0, the result is guaranteed to be NULL. The error and result objects are
+        /// allocated and owned by the WSMan client stack; they are valid during the callback only; the user
+        /// has to synchronously copy the data in the callback. This callback function will use the current
+        /// access token, whether it is a process or impersonation token.
         /// </summary>
         /// <param name="operationContext">
         /// user supplied operation context.
@@ -1716,7 +1716,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Struct which holds reference to the callback(delegate) passed to WSMan
         /// API
-        /// </summary>        
+        /// </summary>
         internal struct WSManShellAsyncCallback
         {
             // GC handle which prevents garbage collector from collecting this delegate.
@@ -1783,7 +1783,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             internal int errorCode;
             /// <summary>
-            /// extended error description from the fault; 
+            /// extended error description from the fault;
             /// </summary>
             internal string errorDetail;
             /// <summary>
@@ -2322,9 +2322,9 @@ namespace System.Management.Automation.Remoting.Client
           [In, Out]  ref IntPtr wsManAPIHandle);
 
         /// <summary>
-        /// This API deinitializes the Winrm client stack; all operations will 
+        /// This API deinitializes the Winrm client stack; all operations will
         /// finish before this API will return; this is a sync call;
-        /// it is highly recommended that all operations are explicitly cancelled 
+        /// it is highly recommended that all operations are explicitly cancelled
         /// and all sessions are closed before calling this API
         /// Returns non zero error code upon failure.
         /// </summary>
@@ -2345,7 +2345,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="flags"></param>
         /// <param name="authenticationCredentials">
         /// can be null.
-        /// </param>        
+        /// </param>
         /// <param name="proxyInfo">
         /// </param>
         /// <param name="wsManSessionHandle"></param>
@@ -2359,9 +2359,9 @@ namespace System.Management.Automation.Remoting.Client
             [In, Out]  ref IntPtr wsManSessionHandle);
 
         /// <summary>
-        /// Frees memory of session and closes all related operations before returning; 
-        /// this is sync call it is recommended that all pending operations are either 
-        /// completed or cancelled before calling this API. Returns a non zero error 
+        /// Frees memory of session and closes all related operations before returning;
+        /// this is sync call it is recommended that all pending operations are either
+        /// completed or cancelled before calling this API. Returns a non zero error
         /// code upon failure
         /// </summary>
         /// <param name="wsManSessionHandle"></param>
@@ -2524,7 +2524,7 @@ namespace System.Management.Automation.Remoting.Client
             [In, Out]  ref IntPtr shellOperationHandle);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="wsManSessionHandle"></param>
         /// <param name="flags"></param>
@@ -2546,7 +2546,7 @@ namespace System.Management.Automation.Remoting.Client
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="wsManSessionHandle"></param>
         /// <param name="flags"></param>
@@ -2559,7 +2559,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr asyncCallback);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="wsManSessionHandle"></param>
         /// <param name="flags"></param>
@@ -2698,11 +2698,11 @@ namespace System.Management.Automation.Remoting.Client
             [In, Out]  ref IntPtr sendOperationHandle);
 
         /// <summary>
-        /// Closes a shell or a command; if the callback associated with the operation 
-        /// is pending and have not completed when WSManCloseShellOperationEx is called, 
+        /// Closes a shell or a command; if the callback associated with the operation
+        /// is pending and have not completed when WSManCloseShellOperationEx is called,
         /// the function waits for the callback to finish; If the operation was not finished,
-        /// the operation is cancelled and the operation callback is called with 
-        /// WSMAN_ERROR_OPERATION_ABORTED error; then the WSManCloseShellOperationEx callback 
+        /// the operation is cancelled and the operation callback is called with
+        /// WSMAN_ERROR_OPERATION_ABORTED error; then the WSManCloseShellOperationEx callback
         /// is called with WSMAN_FLAG_CALLBACK_END_OF_OPERATION flag as result of this operation
         /// </summary>
         /// <param name="shellHandle">
@@ -2718,7 +2718,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr asyncCallback);
 
         /// <summary>
-        /// Closes a command (signals the termination of a command); the WSManCloseCommand callback 
+        /// Closes a command (signals the termination of a command); the WSManCloseCommand callback
         /// is called with WSMAN_FLAG_CALLBACK_END_OF_OPERATION flag as result of this operation
         /// </summary>
         /// <param name="cmdHandle">
@@ -2735,7 +2735,7 @@ namespace System.Management.Automation.Remoting.Client
 
 
         /// <summary>
-        /// Sends a signal. If <paramref name="cmdOperationHandle"/> is null, then the signal will 
+        /// Sends a signal. If <paramref name="cmdOperationHandle"/> is null, then the signal will
         /// be sent to shell.
         /// </summary>
         /// <param name="shellOperationHandle"></param>
@@ -2753,11 +2753,11 @@ namespace System.Management.Automation.Remoting.Client
             [In, Out] ref IntPtr signalOperationHandle);
 
         /// <summary>
-        /// Closes an asynchronous operation; if the callback associated with the operation 
-        /// is pending and have not completed when WSManCloseOperation is called, then 
+        /// Closes an asynchronous operation; if the callback associated with the operation
+        /// is pending and have not completed when WSManCloseOperation is called, then
         /// the function marks the operation for deletion and returns; If the callback was not called,
-        /// the operation is cancelled and the operation callback is called with 
-        /// WSMAN_ERROR_OPERATION_ABORTED error; the operation handle is freed in all cases 
+        /// the operation is cancelled and the operation callback is called with
+        /// WSMAN_ERROR_OPERATION_ABORTED error; the operation handle is freed in all cases
         /// after the callback returns.
         /// </summary>
         /// <param name="operationHandle"></param>
@@ -2842,22 +2842,22 @@ namespace System.Management.Automation.Remoting.Client
         /// components.
         /// </param>
         /// <param name="messageLength">
-        /// Represents the size of the output message buffer in characters, including the NULL terminator. 
-        /// If 0, then the "message" parameter must be NULL; in this case the function will return 
-        /// ERROR_INSUFFICIENT_BUFFER error and the "messageLengthUsed" parameter will be set to the number 
+        /// Represents the size of the output message buffer in characters, including the NULL terminator.
+        /// If 0, then the "message" parameter must be NULL; in this case the function will return
+        /// ERROR_INSUFFICIENT_BUFFER error and the "messageLengthUsed" parameter will be set to the number
         /// of characters needed, including NULL terminator.
         /// </param>
         /// <param name="message">
         /// Represents the output buffer to store the message in. It must be allocated/deallocated by the client.
-        /// The buffer must be big enough to store the message plus the NULL terminator otherwise an 
+        /// The buffer must be big enough to store the message plus the NULL terminator otherwise an
         /// ERROR_INSUFFICIENT_BUFFER error will be returned and the "messageLengthUsed" parameter will be set
-        /// to the number of characters needed, including NULL terminator. If NULL, then the "messageLength" parameter 
-        /// must be NULL; in this case the function will return ERROR_INSUFFICIENT_BUFFER error and the "messageLengthUsed" 
-        /// parameter will be set to the number of characters needed, including NULL terminator. 
+        /// to the number of characters needed, including NULL terminator. If NULL, then the "messageLength" parameter
+        /// must be NULL; in this case the function will return ERROR_INSUFFICIENT_BUFFER error and the "messageLengthUsed"
+        /// parameter will be set to the number of characters needed, including NULL terminator.
         /// </param>
         /// <param name="messageLengthUsed">
-        /// Represents the effective number of characters written to the output buffer, including the NULL terminator. 
-        /// It cannot be NULL. If both "messageLength" and "message" parameters are 0, the function will return ERROR_INSUFFICIENT_BUFFER 
+        /// Represents the effective number of characters written to the output buffer, including the NULL terminator.
+        /// It cannot be NULL. If both "messageLength" and "message" parameters are 0, the function will return ERROR_INSUFFICIENT_BUFFER
         /// and "messageLengthUsed" parameter will be set to the number of characters needed, including NULL terminator
         /// </param>
         [DllImport(WSManNativeApi.WSManClientApiDll, SetLastError = false, CharSet = CharSet.Unicode)]
@@ -2874,7 +2874,7 @@ namespace System.Management.Automation.Remoting.Client
         #region DllImports PluginAPI
 
         /// <summary>
-        /// Gets operational information for items such as time-outs and data restrictions that 
+        /// Gets operational information for items such as time-outs and data restrictions that
         /// are associated with the operation.
         /// </summary>
         /// <param name="requestDetails">Specifies the resource URI, options, locale, shutdown flag, and handle for the request.</param>
@@ -2889,7 +2889,7 @@ namespace System.Management.Automation.Remoting.Client
         //[In, Out] ref IntPtr data);
 
         /// <summary>
-        /// Reports the completion of an operation by all operation entry points except for the 
+        /// Reports the completion of an operation by all operation entry points except for the
         /// WSManPluginStartup and WSManPluginShutdown methods.
         /// </summary>
         /// <param name="requestDetails">Specifies the resource URI, options, locale, shutdown flag, and handle for the request.</param>
@@ -2912,7 +2912,7 @@ namespace System.Management.Automation.Remoting.Client
             /// </summary>
             WSMAN_FLAG_RECEIVE_RESULT_NO_MORE_DATA = 1,
             /// <summary>
-            /// Send the data as soon as possible.  Normally data is held onto in 
+            /// Send the data as soon as possible.  Normally data is held onto in
             /// order to maximise the size of the response packet.  This should
             /// only be used if a request/response style of data is needed between
             /// the send and receive data streams.
@@ -2920,8 +2920,8 @@ namespace System.Management.Automation.Remoting.Client
             WSMAN_FLAG_RECEIVE_FLUSH = 2,
             /// <summary>
             /// Data reported is at a boundary. Plugins usually serialize and fragment
-            /// output data objects and push them along the receive byte stream. 
-            /// If the current data chunk being reported is an end fragment of the 
+            /// output data objects and push them along the receive byte stream.
+            /// If the current data chunk being reported is an end fragment of the
             /// data object current processed, plugins would set this flag.
             /// </summary>
             WSMAN_FLAG_RECEIVE_RESULT_DATA_BOUNDARY = 4
@@ -2933,8 +2933,8 @@ namespace System.Management.Automation.Remoting.Client
         internal const string WSMAN_COMMAND_STATE_RUNNING = WSMAN_SHELL_NAMESPACE + "/CommandState/Running";
 
         /// <summary>
-        /// Reports results for the WSMAN_PLUGIN_RECEIVE plug-in call and is used by most shell 
-        /// plug-ins that return results. After all of the data is received, the 
+        /// Reports results for the WSMAN_PLUGIN_RECEIVE plug-in call and is used by most shell
+        /// plug-ins that return results. After all of the data is received, the
         /// WSManPluginOperationComplete method must be called.
         /// </summary>
         /// <param name="requestDetails">Specifies the resource URI, options, locale, shutdown flag, and handle for the request.</param>
@@ -2954,9 +2954,9 @@ namespace System.Management.Automation.Remoting.Client
             int exitCode);
 
         /// <summary>
-        /// Reports shell and command context back to the Windows Remote Management (WinRM) 
-        /// infrastructure so that further operations can be performed against the shell and/or 
-        /// command. This method is called only for WSManPluginShell and WSManPluginCommand plug-in 
+        /// Reports shell and command context back to the Windows Remote Management (WinRM)
+        /// infrastructure so that further operations can be performed against the shell and/or
+        /// command. This method is called only for WSManPluginShell and WSManPluginCommand plug-in
         /// entry points.
         /// </summary>
         /// <param name="requestDetails">Specifies the resource URI, options, locale, shutdown flag, and handle for the request.</param>
@@ -2970,7 +2970,7 @@ namespace System.Management.Automation.Remoting.Client
             IntPtr context);
 #if UNIX
         /// <summary>
-        /// Registers the shutdown callback.  
+        /// Registers the shutdown callback.
         /// </summary>
         /// <param name="requestDetails">Specifies the resource URI, options, locale, shutdown flag, and handle for the request.</param>
         /// <param name="shutdownCallback">Callback to be executed on shutdown</param>

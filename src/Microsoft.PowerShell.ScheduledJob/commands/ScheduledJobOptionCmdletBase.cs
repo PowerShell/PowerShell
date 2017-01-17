@@ -99,7 +99,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         private SwitchParameter _stopIfGoingOffIdle = false;
 
         /// <summary>
-        /// Will wake the computer to run the job if computer is in sleep mode when 
+        /// Will wake the computer to run the job if computer is in sleep mode when
         /// trigger activates.
         /// </summary>
         [Parameter(ParameterSetName = ScheduledJobOptionCmdletBase.OptionsParameterSet)]

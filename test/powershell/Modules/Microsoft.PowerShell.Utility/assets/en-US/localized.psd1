@@ -1,6 +1,6 @@
 # culture="en-US"
 ConvertFrom-StringData @'
-    messageDate = Today is 
+    messageDate = Today is
     d0 = Sunday
     d1 = Monday
     d2 = Tuesday

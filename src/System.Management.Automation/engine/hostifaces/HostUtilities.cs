@@ -42,7 +42,7 @@ namespace System.Management.Automation
             param()
 
             $foundSuggestion = $false
-        
+
             if($lastError -and
                 ($lastError.Exception -is ""System.Management.Automation.CommandNotFoundException""))
             {
@@ -831,7 +831,7 @@ namespace System.Management.Automation
             string configurationName,
             PSHost host)
         {
-            // Create a loop-back remote runspace with network access enabled, and 
+            // Create a loop-back remote runspace with network access enabled, and
             // with the provided endpoint configurationname.
             TypeTable typeTable = TypeTable.LoadDefaultTypeFiles();
             var connectInfo = new WSManConnectionInfo();
@@ -861,16 +861,16 @@ namespace System.Management.Automation
         #region Runspace Invoke
 
         /// <summary>
-        /// Helper method to invoke a PSCommand on a given runspace.  This method correctly invokes the command for 
+        /// Helper method to invoke a PSCommand on a given runspace.  This method correctly invokes the command for
         /// these runspace cases:
         ///   1. Local runspace.  If the local runspace is busy it will invoke as a nested command.
         ///   2. Remote runspace.
         ///   3. Runspace that is stopped in the debugger at a breakpoint.
-        ///   
+        ///
         /// Error and information streams are ignored and only the command result output is returned.
-        /// 
-        /// This method is NOT thread safe.  It does not support running commands from different threads on the 
-        /// provided runspace.  It assumes the thread invoking this method is the same that runs all other 
+        ///
+        /// This method is NOT thread safe.  It does not support running commands from different threads on the
+        /// provided runspace.  It assumes the thread invoking this method is the same that runs all other
         /// commands on the provided runspace.
         /// </summary>
         /// <param name="runspace">Runspace to invoke the command on</param>

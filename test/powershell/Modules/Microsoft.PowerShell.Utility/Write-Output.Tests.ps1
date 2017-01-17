@@ -10,13 +10,13 @@ Describe "Write-Output DRT Unit Tests" -Tags "CI" {
         $results[2] | Should Be $objectWritten[2]
         $results[2] -is [System.Array] | Should Be $true
 
-        $results[3] | Should Be $objectWritten[3]       
+        $results[3] | Should Be $objectWritten[3]
         $results[3] -is [System.String] | Should Be $true
     }
 
     It "Works with NoEnumerate switch" {
         $objectWritten = 1, 2.2, @("John", "Smith", 10), "abc"
-        Write-Output $objectWritten -NoEnumerate 6>&1 | Should be  '1 2.2 System.Object[] abc'      
+        Write-Output $objectWritten -NoEnumerate 6>&1 | Should be  '1 2.2 System.Object[] abc'
     }
 }
 

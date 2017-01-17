@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Internal
         public const uint MAPVK_VK_TO_VSC   = 0x00;
         public const uint MAPVK_VSC_TO_VK   = 0x01;
         public const uint MAPVK_VK_TO_CHAR  = 0x02;
-        
+
         public const byte VK_SHIFT          = 0x10;
         public const byte VK_CONTROL        = 0x11;
         public const byte VK_ALT            = 0x12;
@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell.Internal
         public ushort Attributes;
     }
 
-    internal static class ConsoleKeyInfoExtension 
+    internal static class ConsoleKeyInfoExtension
     {
         public static string ToGestureString(this ConsoleKeyInfo key)
         {

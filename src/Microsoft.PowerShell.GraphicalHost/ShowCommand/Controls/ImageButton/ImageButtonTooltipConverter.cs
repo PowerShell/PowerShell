@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
     [SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes", Justification = "Needed for XAML")]
     public class ImageButtonToolTipConverter : IValueConverter
     {
-        // This class is meant to be used like this in XAML: 
+        // This class is meant to be used like this in XAML:
         //  <Window xmlns:controls="clr-namespace:Microsoft.PowerShell.Commands.ShowCommandInternal" ...>
         //     ...
         //     <Window.Resources>

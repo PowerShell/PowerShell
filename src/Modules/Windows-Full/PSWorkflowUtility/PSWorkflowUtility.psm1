@@ -16,11 +16,11 @@ workflow Invoke-AsWorkflow
     )
     if($CommandName)
     {
-        if($Parameter) 
+        if($Parameter)
 		{
 			InlineScript {& $using:CommandName @using:Parameter}
 		}
-        else 
+        else
 		{
 			InlineScript {& $using:CommandName}
 		}

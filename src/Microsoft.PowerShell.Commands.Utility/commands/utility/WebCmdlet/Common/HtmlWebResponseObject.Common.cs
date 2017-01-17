@@ -298,7 +298,7 @@ namespace Microsoft.PowerShell.Commands
                 // The IHTMLDocument events cannot be handled in STA ApartmentState, so we use a worker thread to load the document
                 ThreadPool.QueueUserWorkItem(new WaitCallback(LoadDocumentInMtaThread));
 
-                // Wait for the worker thread to finish loading the document. In the meantime, we check the Ctrl-C every 500ms 
+                // Wait for the worker thread to finish loading the document. In the meantime, we check the Ctrl-C every 500ms
                 bool wait = true;
                 while (wait)
                 {
@@ -372,7 +372,7 @@ namespace Microsoft.PowerShell.Commands
             // We might get an empty input for a directive from the HTML file
             if (!string.IsNullOrEmpty(outerHtml))
             {
-                // Extract just the opening tag of the HTML element (omitting the closing tag and any contents, 
+                // Extract just the opening tag of the HTML element (omitting the closing tag and any contents,
                 // including contained HTML elements)
                 var match = _tagRegex.Match(outerHtml);
 

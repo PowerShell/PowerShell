@@ -3,8 +3,8 @@
 //  Microsoft Windows NT
 //  Copyright (C) Microsoft Corporation, 2007.
 //
-//  Contents:  Entry points for managed PowerShell plugin worker used to 
-//  host powershell in a WSMan service. 
+//  Contents:  Entry points for managed PowerShell plugin worker used to
+//  host powershell in a WSMan service.
 // ----------------------------------------------------------------------
 
 using System.Threading;
@@ -39,7 +39,7 @@ namespace System.Management.Automation.Remoting
         // shell context.
         private RegisteredWaitHandle _registeredShutDownWaitHandle;
 
-        // event that gets raised when Prepare is called. Respective Session 
+        // event that gets raised when Prepare is called. Respective Session
         // object can use this callback to ReportContext to client.
         public event EventHandler<EventArgs> PrepareCalled;
 
@@ -65,7 +65,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="isShuttingDown">true if the method is called from RegisterWaitForSingleObject
         /// callback. This boolean is used to decide whether to UnregisterWait or
@@ -212,7 +212,7 @@ namespace System.Management.Automation.Remoting
             if (!_isRequestPending)
             {
                 // Dont send data until we have received request from client.
-                // The following blocks the calling thread. The thread is 
+                // The following blocks the calling thread. The thread is
                 // unblocked once a request from client arrives.
                 _waitHandle.WaitOne();
                 _isRequestPending = true;
@@ -222,7 +222,7 @@ namespace System.Management.Automation.Remoting
 
             int result = (int)WSManPluginErrorCodes.NoError;
             // at this point we have pending request from client. so it is safe
-            // to send data to client using WSMan API.    
+            // to send data to client using WSMan API.
             using (WSManNativeApi.WSManData_ManToUn dataToBeSent = new WSManNativeApi.WSManData_ManToUn(data))
             {
                 lock (_syncObject)
@@ -263,7 +263,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="powerShellCmdId"></param>
         /// <returns></returns>

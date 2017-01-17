@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -16,7 +16,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
     /// <para>
-    /// Enables the user to enumerate the list of CIM Classes under a specific 
+    /// Enables the user to enumerate the list of CIM Classes under a specific
     /// Namespace. If no list of classes is given, the Cmdlet returns all
     /// classes in the given namespace.
     /// </para>
@@ -30,7 +30,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     public class GetCimClassCommand : CimBaseCommand
     {
         #region constructor
-        
+
         /// <summary>
         /// constructor
         /// </summary>
@@ -39,7 +39,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
         }
-        
+
         #endregion
 
         #region parameters
@@ -211,7 +211,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 cimGetCimClass = CreateOperationAgent();
             }
             cimGetCimClass.GetCimClass(this);
-            cimGetCimClass.ProcessActions(this.CmdletOperation);   
+            cimGetCimClass.ProcessActions(this.CmdletOperation);
         }//End ProcessRecord()
 
         /// <summary>
@@ -283,7 +283,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                     new ParameterDefinitionEntry(CimBaseCommand.SessionSetName, true),
                                  }
             },
-            
+
             {
                 nameComputerName, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.ComputerSetName, false),

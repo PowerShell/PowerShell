@@ -253,7 +253,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Runs the PowerShell parameter binding algorithm against a CommandAst,
     /// returning information about which parameters were bound.
-    /// 
+    ///
     /// </summary>
     public static class StaticParameterBinder
     {
@@ -697,12 +697,12 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Dictionary<string, ParameterBindingResult> BoundParameters { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Dictionary<string, StaticBindingError> BindingExceptions { get; }
     }
@@ -724,12 +724,12 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public ParameterMetadata Parameter { get; internal set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Object ConstantValue
         {
@@ -745,7 +745,7 @@ namespace System.Management.Automation.Language
         private object _constantValue;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public CommandElementAst Value
         {
@@ -1281,7 +1281,7 @@ namespace System.Management.Automation.Language
                             commandProcessor.SetCurrentScopeToExecutionScope();
                             // Run method "BindCommandLineParametersNoValidation" to get all available parameters, including the dynamic
                             // parameters (some of them, not necessarily all. Since we don't do the actual binding, some dynamic parameters
-                            // might not be retrieved). 
+                            // might not be retrieved).
                             if (!retryWithNoArgs)
                             {
                                 // Win8 345299: First try with all unbounded arguments
@@ -1573,7 +1573,7 @@ namespace System.Management.Automation.Language
         /// specified. We always eat the error (such as parameter without value) and continue
         /// to do the binding.
         /// </summary>
-        /// 
+        ///
         /// <param name="paramAstAtCursor">
         /// For parameter completion, if the cursor is pointing at a CommandParameterAst, we
         /// should not try exact matching for that CommandParameterAst. This is to handle the
@@ -1581,7 +1581,7 @@ namespace System.Management.Automation.Language
         ///     Add-Computer -domain(tab)
         /// Add-Computer has an alias "Domain" that can exactly match this partial input, but
         /// since the user is typing 'tab', the partial input 'domain' should not be considered
-        /// as an exact match. In this case, we don't try exact matching when calling 
+        /// as an exact match. In this case, we don't try exact matching when calling
         /// GetMatchingParameter(..) so as to preserve other possibilities.
         /// </param>
         private bool ParseParameterArguments(CommandParameterAst paramAstAtCursor)
@@ -1615,7 +1615,7 @@ namespace System.Management.Automation.Language
                 catch (ParameterBindingException e)
                 {
                     // The parameterName is resolved to multiple parameters. The most possible scenario for this
-                    // would be the user typing tab to complete a parameter. In this case, we can ignore this 
+                    // would be the user typing tab to complete a parameter. In this case, we can ignore this
                     // parameter safely.
 
                     // If the next item is a pure argument, we skip it so that it doesn't get bound
@@ -1863,7 +1863,7 @@ namespace System.Management.Automation.Language
 
                     // The positional pseudo binding is processed in two different approaches for parameter completion and parameter argument completion.
                     // - For parameter completion, we do NOT honor the default parameter set, so we can preserve potential parameters as many as possible.
-                    //   Example:  
+                    //   Example:
                     //           Where-Object PropertyA -<tab>
                     //   If the default parameter is honored, the completion results only contain EQ, because it's locked to the default set
                     //
@@ -1879,7 +1879,7 @@ namespace System.Management.Automation.Language
                     //
                     // So the algorithm for positional binding is:
                     // - With bindingType == ParameterCompletion
-                    //   Skip the attempt with the default set, as well as the attempt with all sets but no coercion. 
+                    //   Skip the attempt with the default set, as well as the attempt with all sets but no coercion.
                     //   Do the positional binding with the (all valid set + with coercion) directly.
                     //
                     // - With bindingType == ArgumentCompletion  (parameter argument completion)

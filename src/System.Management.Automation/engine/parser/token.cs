@@ -1422,7 +1422,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class LabelToken : Token
     {
@@ -1433,7 +1433,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string LabelText { get; }
     }

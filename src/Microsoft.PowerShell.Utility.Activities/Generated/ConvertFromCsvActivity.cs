@@ -28,9 +28,9 @@ namespace Microsoft.PowerShell.Utility.Activities
         /// Gets the fully qualified name of the command invoked by this activity.
         /// </summary>
         public override string PSCommandName { get { return "Microsoft.PowerShell.Utility\\ConvertFrom-Csv"; } }
-        
+
         // Arguments
-        
+
         /// <summary>
         /// Provides access to the Delimiter parameter.
         /// </summary>
@@ -61,10 +61,10 @@ namespace Microsoft.PowerShell.Utility.Activities
 
 
         // Module defining this command
-        
+
 
         // Optional custom code for this activity
-        
+
 
         /// <summary>
         /// Returns a configured instance of System.Management.Automation.PowerShell, pre-populated with the command to run.
@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Utility.Activities
             System.Management.Automation.PowerShell targetCommand = invoker.AddCommand(PSCommandName);
 
             // Initialize the arguments
-            
+
             if(Delimiter.Expression != null)
             {
                 targetCommand.AddParameter("Delimiter", Delimiter.Get(context));

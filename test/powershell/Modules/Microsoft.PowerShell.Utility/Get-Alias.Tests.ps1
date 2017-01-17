@@ -1,25 +1,25 @@
 
 Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
-    It "Get-Alias Bogus Scope Name should throw PSArgumentException"{    
-        try { 
+    It "Get-Alias Bogus Scope Name should throw PSArgumentException"{
+        try {
             Get-Alias -Name "ABCD" -Scope "bogus"
             Throw "Execution OK"
-        } 
+        }
         catch {
             $_.FullyQualifiedErrorId | Should be "Argument,Microsoft.PowerShell.Commands.GetAliasCommand"
         }
     }
     It "Get-Alias OutOfRange Scope"{
-        try { 
+        try {
             Get-Alias -Name "ABCD" -Scope "99999"
             Throw "Execution OK"
-        } 
+        }
         catch {
             $_.FullyQualifiedErrorId | Should be "ArgumentOutOfRange,Microsoft.PowerShell.Commands.GetAliasCommand"
         }
     }
     It "Get-Alias Named Single Valid"{
-            Set-Alias -Name ABCD -Value "foo" 
+            Set-Alias -Name ABCD -Value "foo"
             $result=Get-Alias -Name ABCD
             $result.Name| Should Be "ABCD"
             $result.Definition| Should Be "foo"
@@ -27,7 +27,7 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             $result.Options| Should Be "None"
     }
     It "Get-Alias Positional Single Valid"{
-            Set-Alias -Name ABCD -Value "foo" 
+            Set-Alias -Name ABCD -Value "foo"
             $result=Get-Alias ABCD
             $result.Name| Should Be "ABCD"
             $result.Definition| Should Be "foo"
@@ -35,8 +35,8 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             $result.Options| Should Be "None"
     }
     It "Get-Alias Named Multiple Valid"{
-            Set-Alias -Name ABCD -Value "foo" 
-            Set-Alias -Name AEFG -Value "bar" 
+            Set-Alias -Name ABCD -Value "foo"
+            Set-Alias -Name AEFG -Value "bar"
             $result=Get-Alias -Name ABCD,AEFG
             $result[0].Name| Should Be "ABCD"
             $result[0].Definition| Should Be "foo"
@@ -48,8 +48,8 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             $result[1].Options| Should Be "None"
     }
     It "Get-Alias Named Wildcard Valid"{
-            Set-Alias -Name ABCD -Value "foo" 
-            Set-Alias -Name ABCG -Value "bar" 
+            Set-Alias -Name ABCD -Value "foo"
+            Set-Alias -Name ABCG -Value "bar"
             $result=Get-Alias -Name ABC*
             $result[0].Name| Should Be "ABCD"
             $result[0].Definition| Should Be "foo"
@@ -61,8 +61,8 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             $result[1].Options| Should Be "None"
     }
     It "Get-Alias Positional Wildcard Valid"{
-            Set-Alias -Name ABCD -Value "foo" 
-            Set-Alias -Name ABCG -Value "bar" 
+            Set-Alias -Name ABCD -Value "foo"
+            Set-Alias -Name ABCG -Value "bar"
             $result=Get-Alias ABC*
             $result[0].Name| Should Be "ABCD"
             $result[0].Definition| Should Be "foo"
@@ -74,8 +74,8 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             $result[1].Options| Should Be "None"
     }
     It "Get-Alias Named Wildcard And Exclude Valid"{
-            Set-Alias -Name ABCD -Value "foo" 
-            Set-Alias -Name ABCG -Value "bar" 
+            Set-Alias -Name ABCD -Value "foo"
+            Set-Alias -Name ABCG -Value "bar"
             $result=Get-Alias -Name ABC* -Exclude "*BCG"
             $result[0].Name| Should Be "ABCD"
             $result[0].Definition| Should Be "foo"
@@ -89,49 +89,49 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             $result.Definition| Should Be "foo"
             $result.Description| Should Be ""
             $result.Options| Should Be "None"
-            
+
             Set-Alias -Name ABCD -Value "localfoo" -scope local
             $result=Get-Alias -Name ABCD -scope local
             $result.Name| Should Be "ABCD"
             $result.Definition| Should Be "localfoo"
             $result.Description| Should Be ""
             $result.Options| Should Be "None"
-            
+
             Set-Alias -Name ABCD -Value "globalfoo" -scope global
             Set-Alias -Name ABCD -Value "scriptfoo" -scope "script"
             Set-Alias -Name ABCD -Value "foo0" -scope "0"
             Set-Alias -Name ABCD -Value "foo1" -scope "1"
-            
+
             $result=Get-Alias -Name ABCD
             $result.Name| Should Be "ABCD"
             $result.Definition| Should Be "foo0"
             $result.Description| Should Be ""
             $result.Options| Should Be "None"
-            
+
             $result=Get-Alias -Name ABCD -scope local
             $result.Name| Should Be "ABCD"
             $result.Definition| Should Be "foo0"
             $result.Description| Should Be ""
             $result.Options| Should Be "None"
-            
+
             $result=Get-Alias -Name ABCD -scope global
             $result.Name| Should Be "ABCD"
             $result.Definition| Should Be "globalfoo"
             $result.Description| Should Be ""
             $result.Options| Should Be "None"
-            
+
             $result=Get-Alias -Name ABCD -scope "script"
             $result.Name| Should Be "ABCD"
             $result.Definition| Should Be "scriptfoo"
             $result.Description| Should Be ""
             $result.Options| Should Be "None"
-            
+
             $result=Get-Alias -Name ABCD -scope "0"
             $result.Name| Should Be "ABCD"
             $result.Definition| Should Be "foo0"
             $result.Description| Should Be ""
             $result.Options| Should Be "None"
-            
+
             $result=Get-Alias -Name ABCD -scope "1"
             $result.Name| Should Be "ABCD"
             $result.Definition| Should Be "foo1"
@@ -139,10 +139,10 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             $result.Options| Should Be "None"
     }
     It "Get-Alias Expose Bug 1065828, BugId:905235"{
-        try { 
+        try {
             Get-Alias -Name "ABCD" -Scope "100"
             Throw "Execution OK"
-        } 
+        }
         catch {
             $_.FullyQualifiedErrorId | Should be "ArgumentOutOfRange,Microsoft.PowerShell.Commands.GetAliasCommand"
         }
@@ -154,7 +154,7 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             $result.Definition| Should Be "foo"
             $result.Description| Should Be ""
             $result.Options| Should Be "None"
-            
+
             $result=Get-Alias -Name ABCD -scope "0"
             $result.Name| Should Be "ABCD"
             $result.Definition| Should Be "foo"
@@ -166,7 +166,7 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
         $returnObject = Get-Alias -Definition Get-Command
         For($i = 0; $i -lt $returnObject.Length;$i++)
         {
-            $returnObject[$i] | Should Not BeNullOrEmpty 
+            $returnObject[$i] | Should Not BeNullOrEmpty
             $returnObject[$i].CommandType | Should Be 'Alias'
             $returnObject[$i].Definition | Should Be 'Get-Command'
         }
@@ -214,14 +214,14 @@ Describe "Get-Alias" -Tags "CI" {
 
 Describe "Get-Alias null tests" -Tags "CI" {
 
-  $testCases = 
+  $testCases =
     @{ data = $null; value = 'null' },
     @{ data = [String]::Empty; value = 'empty string' }
 
   Context 'Check null or empty value to the -Name parameter' {
     It 'Should throw if <value> is passed to -Name parameter' -TestCases $testCases {
       param($data)
-      try 
+      try
       {
           Get-Alias -Name $data
           throw "No Exception!"
@@ -232,7 +232,7 @@ Describe "Get-Alias null tests" -Tags "CI" {
   Context 'Check null or empty value to the -Name parameter via pipeline' {
     It 'Should throw if <value> is passed through pipeline to -Name parameter' -TestCases $testCases {
       param($data)
-      try 
+      try
       {
           $data | Get-Alias -ErrorAction Stop
           throw "No Exception!"

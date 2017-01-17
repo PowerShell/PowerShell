@@ -12,7 +12,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The parameter binder for native commands.
     /// </summary>
-    /// 
+    ///
     internal class NativeCommandParameterBinder : ParameterBinderBase
     {
         #region ctor
@@ -20,11 +20,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a NativeCommandParameterBinder
         /// </summary>
-        /// 
+        ///
         /// <param name="command">
         /// The NativeCommand to bind to.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// <paramref name="command"/>.Context is null
         /// </exception>
@@ -190,7 +190,7 @@ namespace System.Management.Automation
                         // actually have quotes in different places, but the Win32 command line=>argv parser
                         // erases those differences.
                         //
-                        // We need to check quotes that the win32 argument parser checks which is currently 
+                        // We need to check quotes that the win32 argument parser checks which is currently
                         // just the normal double quotes, no other special quotes.  Also note that mismatched
                         // quotes are supported.
 

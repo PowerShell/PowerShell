@@ -6,7 +6,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
 {
     #region Enums
     internal enum POLICY_INFORMATION_CLASS
-    { 
+    {
         PolicyAuditLogInformation        = 1,
         PolicyAuditEventsInformation,
         PolicyPrimaryDomainInformation,
@@ -52,15 +52,15 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         SidTypeComputer,
         SidTypeLabel
     }
-  
-    internal enum LSA_USER_ACCOUNT_TYPE  
-    {  
-        UnknownUserAccountType = 0,  
-        LocalUserAccountType,  
-        PrimaryDomainUserAccountType,  
-        ExternalDomainUserAccountType,  
-        LocalConnectedUserAccountType,  // Microsoft Account  
-        AADUserAccountType,  
+
+    internal enum LSA_USER_ACCOUNT_TYPE
+    {
+        UnknownUserAccountType = 0,
+        LocalUserAccountType,
+        PrimaryDomainUserAccountType,
+        ExternalDomainUserAccountType,
+        LocalConnectedUserAccountType,  // Microsoft Account
+        AADUserAccountType,
         InternetUserAccountType,        // Generic internet User (eg. if the SID supplied is MSA's internet SID)
         MSAUserAccountType      // !!! NOT YET IN THE ENUM SPECIFIED IN THE C API !!!
 
@@ -352,7 +352,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         // The system call level is not correct.
         //
         internal const int ERROR_INVALID_LEVEL          = 124;
-        
+
         //
         // MessageId: ERROR_INVALID_FLAGS
         //
@@ -379,7 +379,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         // Unable to update the password. The value provided for the new password does not meet the length, complexity, or history requirements of the domain.
         //
         internal const UInt32 ERROR_PASSWORD_RESTRICTION    = 1325;
-        
+
         //
         // MessageText:
         //
@@ -414,7 +414,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         #endregion Constants
 
         #region Win32 Functions
-        [DllImport(PInvokeDllNames.LookupAccountSidDllName, CharSet = CharSet.Unicode, SetLastError = true)]  
+        [DllImport(PInvokeDllNames.LookupAccountSidDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern bool LookupAccountSid(string systemName,
                                                      byte[] accountSid,
                                                      StringBuilder accountName,

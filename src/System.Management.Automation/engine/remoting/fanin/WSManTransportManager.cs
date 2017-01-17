@@ -5,7 +5,7 @@
 /*
  * Common file that contains implementation for both server and client transport
  * managers based on WSMan protocol.
- * 
+ *
  */
 
 using System.Management.Automation.Tracing;
@@ -121,7 +121,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             PSRemotingTransportException e;
 
-            //For the first two special error conditions, it is remotely possible that the wsmanSessionTM is null when the failures are returned 
+            //For the first two special error conditions, it is remotely possible that the wsmanSessionTM is null when the failures are returned
             //as part of command TM operations (could be returned because of RC retries under the hood)
             //Not worth to handle these cases separately as there are very corner scenarios, but need to make sure wsmanSessionTM is not referenced
 
@@ -178,10 +178,10 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// Helper method that escapes powershell parser recognized strings like "@{" from the error message 
+        /// Helper method that escapes powershell parser recognized strings like "@{" from the error message
         /// string. This is needed to make error messages look authentic. Some WSMan error messages provide a
         /// command line to run to fix certain issues. WSMan command line has syntax that allows use of @{}.
-        /// PowerShell parser treats them differently..and so when user cut and paste the command line in a 
+        /// PowerShell parser treats them differently..and so when user cut and paste the command line in a
         /// PowerShell console, it wont work. This escape logic works around the issue.
         /// </summary>
         /// <param name="errorMessage"></param>
@@ -197,13 +197,13 @@ namespace System.Management.Automation.Remoting.Client
             string result = errorMessage.Replace("@{", "'@{").Replace("}", "}'");
             return result;
 
-            /* 
+            /*
              * Use this pattern if we need to escape other characters.
-             * 
+             *
             try
             {
                 StringBuilder msgSB = new StringBuilder(errorMessage);
-                
+
                 Collection<PSParseError> parserErrors = new Collection<PSParseError>();
                 Collection<PSToken> tokens = PSParser.Tokenize(errorMessage, out parserErrors);
                 if (parserErrors.Count > 0)
@@ -217,7 +217,7 @@ namespace System.Management.Automation.Remoting.Client
                 {
                     PSToken currentToken = tokens[index];
                     switch(currentToken.Type)
-                    {                        
+                    {
                         case PSTokenType.GroupStart:
                             msgSB.Insert(currentToken.StartColumn - 1, "'", 1);
                             break;
@@ -233,7 +233,7 @@ namespace System.Management.Automation.Remoting.Client
                             break;
                     }
                 }
-             
+
                 return msgSB.ToString();
             }
             // ignore possible exceptions manipulating the string.
@@ -277,7 +277,7 @@ namespace System.Management.Automation.Remoting.Client
             return defaultFQEID;
         }
 
-        #endregion        
+        #endregion
     }
 
     /// <summary>
@@ -548,7 +548,7 @@ namespace System.Management.Automation.Remoting.Client
         /// send data to the server.
         /// </summary>
         /// <param name="runspacePoolInstanceId">
-        /// This is used for logging trace/operational crimson messages. Having this id in the logs 
+        /// This is used for logging trace/operational crimson messages. Having this id in the logs
         /// helps a user to map which transport is created for which runspace.
         /// </param>
         /// <param name="connectionInfo">
@@ -833,7 +833,7 @@ namespace System.Management.Automation.Remoting.Client
             uint uIdleTimeout = (ConnectionInfo.IdleTimeout > 0) ?
                 (uint)ConnectionInfo.IdleTimeout : UseServerDefaultIdleTimeoutUInt;
 
-            // startup info 
+            // startup info
             WSManNativeApi.WSManShellDisconnectInfo disconnectInfo = new WSManNativeApi.WSManShellDisconnectInfo(uIdleTimeout);
 
             //Add ETW traces
@@ -936,7 +936,7 @@ namespace System.Management.Automation.Remoting.Client
                 additionalData = dataToBeSent.ReadOrRegisterCallback(null, out additionalDataType);
                 if (additionalData != null)
                 {
-                    //Negotiation payload does not fit in ConnectShell. bail out. 
+                    //Negotiation payload does not fit in ConnectShell. bail out.
                     //Assert for now. should be replaced with raising an exception so upper layers can catch.
                     Dbg.Assert(false, "Negotiation payload does not fit in ConnectShell");
                     return;
@@ -1060,7 +1060,7 @@ namespace System.Management.Automation.Remoting.Client
             uint uIdleTimeout = (ConnectionInfo.IdleTimeout > 0) ?
                 (uint)ConnectionInfo.IdleTimeout : UseServerDefaultIdleTimeoutUInt;
 
-            // startup info           
+            // startup info
             WSManNativeApi.WSManShellStartupInfo_ManToUn startupInfo =
                 new WSManNativeApi.WSManShellStartupInfo_ManToUn(WSManAPIData.InputStreamSet,
                 WSManAPIData.OutputStreamSet,
@@ -1241,7 +1241,7 @@ namespace System.Management.Automation.Remoting.Client
 
         /// <summary>
         /// Adjusts for any variations in different protocol versions. Following changes are considered
-        /// - In V2, default max envelope size is 150KB while in V3 it has been changed to 500KB. 
+        /// - In V2, default max envelope size is 150KB while in V3 it has been changed to 500KB.
         ///   With default configuration remoting from V3 client to V2 server will break as V3 client can send upto 500KB in a single Send packet
         ///   So if server version is known to be V2, we'll downgrade the max env size to 150KB (V2's default) if the current value is 500KB (V3 default)
         /// </summary>
@@ -1284,7 +1284,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <summary>
         /// Used by callers to prepare the session transportmanager for a URI redirection.
         /// This must be called only after Create callback (or Error form create) is received.
-        /// This will close the internal WSMan Session handle. Callers must catch the close 
+        /// This will close the internal WSMan Session handle. Callers must catch the close
         /// completed event and call Redirect to perform the redirection.
         /// </summary>
         internal override void PrepareForRedirection()
@@ -1390,7 +1390,7 @@ namespace System.Management.Automation.Remoting.Client
                 connectionStr = string.Format(CultureInfo.InvariantCulture,
                     "{0}?PSVersion={1}{2}",
                     // Trimming the last '/' as this will allow WSMan to
-                    // properly apply URLPrefix. 
+                    // properly apply URLPrefix.
                     // Ex: http://localhost?PSVersion=2.0 will be converted
                     // to http://localhost:<port>/<urlprefix>?PSVersion=2.0
                     // by WSMan
@@ -1522,7 +1522,7 @@ namespace System.Management.Automation.Remoting.Client
             _noCompression = !connectionInfo.UseCompression;
             _noMachineProfile = connectionInfo.NoMachineProfile;
 
-            // set other WSMan session related defaults            
+            // set other WSMan session related defaults
             if (isSSLSpecified)
             {
                 // WSMan Port DCR related changes - BUG 542726
@@ -1696,7 +1696,7 @@ namespace System.Management.Automation.Remoting.Client
         /// <param name="privateData">ConnectionStatusEventArgs</param>
         internal override void ProcessPrivateData(object privateData)
         {
-            // Raise the Robust 
+            // Raise the Robust
             ConnectionStatusEventArgs rcArgs = privateData as ConnectionStatusEventArgs;
             if (rcArgs != null)
             {
@@ -1747,7 +1747,7 @@ namespace System.Management.Automation.Remoting.Client
         internal WSManConnectionInfo ConnectionInfo { get; private set; }
 
         /// <summary>
-        /// Examine the session create error code and if the error is one where a 
+        /// Examine the session create error code and if the error is one where a
         /// session create/connect retry attempt may be beneficial then do the
         /// retry attempt.
         /// </summary>
@@ -1844,7 +1844,7 @@ namespace System.Management.Automation.Remoting.Client
                 PSOpcode.Connect, PSTask.None, PSKeyword.Transport | PSKeyword.UseAlwaysAnalytic,
                 sessionTM.RunspacePoolInstanceId.ToString());
 
-            // TODO: 188098 wsManShellOperationHandle should be populated by WSManCreateShellEx, 
+            // TODO: 188098 wsManShellOperationHandle should be populated by WSManCreateShellEx,
             // but there is a thread timing bug in WSMan layer causing the callback to
             // be called before WSManCreateShellEx returns. since we already validated the
             // shell context exists, safely assigning the shellOperationHandle to shell transport manager.
@@ -1871,7 +1871,7 @@ namespace System.Management.Automation.Remoting.Client
                     // Test error code for possible session connection retry.
                     if (sessionTM.RetrySessionCreation(errorStruct.errorCode))
                     {
-                        // If a connection retry is being attempted (on 
+                        // If a connection retry is being attempted (on
                         // another thread) then return without processing error.
                         return;
                     }
@@ -1892,7 +1892,7 @@ namespace System.Management.Automation.Remoting.Client
             //check if the session supports disconnect
             sessionTM.SupportsDisconnect = ((flags & (int)WSManNativeApi.WSManCallbackFlags.WSMAN_FLAG_CALLBACK_SHELL_SUPPORTS_DISCONNECT) != 0) ? true : false;
 
-            // openContent is used by redirection ie., while redirecting to 
+            // openContent is used by redirection ie., while redirecting to
             // a new machine.. this is not needed anymore as the connection
             // is successfully established.
             if (null != sessionTM._openContent)
@@ -2043,7 +2043,7 @@ namespace System.Management.Automation.Remoting.Client
                 sessionTM.EnqueueAndStartProcessingThread(null, null,
                     new CompletionEventArgs(CompletionNotification.DisconnectCompleted));
 
-                //Log ETW traces                
+                //Log ETW traces
             }
 
             return;
@@ -2233,7 +2233,7 @@ namespace System.Management.Automation.Remoting.Client
             // successfully made a connection. Now report this by raising the ConnectCompleted event.
             // Microsoft's PS 3.0 Server will return all negotiation related data in one shot in connect Data
             // Note that we are not starting to receive data yet. the DSHandlers above will do that when the session
-            // gets to an established state. 
+            // gets to an established state.
             sessionTM.RaiseConnectCompleted();
         }
 
@@ -2287,7 +2287,7 @@ namespace System.Management.Automation.Remoting.Client
             {
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
 
-                // Ignore operation aborted error. operation aborted is raised by WSMan to 
+                // Ignore operation aborted error. operation aborted is raised by WSMan to
                 // notify operation complete. PowerShell protocol has its own
                 // way of notifying the same using state change events.
                 if ((errorStruct.errorCode != 0) && (errorStruct.errorCode != 995))
@@ -2477,7 +2477,7 @@ namespace System.Management.Automation.Remoting.Client
 
             DisposeWSManAPIDataAsync();
 
-            // openContent is used by redirection ie., while redirecting to 
+            // openContent is used by redirection ie., while redirecting to
             // a new machine and hence this is cleared only when the session
             // is disposing.
             if (isDisposing && (null != _openContent))
@@ -2497,7 +2497,7 @@ namespace System.Management.Automation.Remoting.Client
         {
             tracer.WriteLine("Clearing session with session context: {0} Operation Context: {1}", _sessionContextID, _wsManShellOperationHandle);
 
-            // Taking a copy of session handle as we should call WSManCloseSession only once and 
+            // Taking a copy of session handle as we should call WSManCloseSession only once and
             // clear the original value. This will protect us if Dispose() is called twice.
             IntPtr tempWSManSessionHandle = _wsManSessionHandle;
             _wsManSessionHandle = IntPtr.Zero;
@@ -2524,8 +2524,8 @@ namespace System.Management.Automation.Remoting.Client
                 _closeSessionCompleted = null;
             }
 
-            // Dispose the create session completed callback here, since it is 
-            // used for periodic robust connection retry/auto-disconnect 
+            // Dispose the create session completed callback here, since it is
+            // used for periodic robust connection retry/auto-disconnect
             // notifications while the shell is active.
             if (null != _createSessionCallback)
             {
@@ -2541,7 +2541,7 @@ namespace System.Management.Automation.Remoting.Client
                 _connectSessionCallback = null;
             }
 
-            // Reset the session context Id to zero so that a new one will be generated for 
+            // Reset the session context Id to zero so that a new one will be generated for
             // any following redirected session.
             _sessionContextID = 0;
         }
@@ -2552,7 +2552,7 @@ namespace System.Management.Automation.Remoting.Client
             if (tempWSManApiData == null) { return; }
             WSManAPIData = null;
 
-            // Dispose and de-initialize the WSManAPIData instance object on separate worker thread to ensure 
+            // Dispose and de-initialize the WSManAPIData instance object on separate worker thread to ensure
             // it is not run on a WinRM thread (which will fail).
             // Note that WSManAPIData.Dispose() method is thread safe.
             System.Threading.ThreadPool.QueueUserWorkItem(
@@ -2893,7 +2893,7 @@ namespace System.Management.Automation.Remoting.Client
             Dbg.Assert(!isClosed, "object already disposed");
             ReceivedDataCollection.PrepareForStreamConnect();
 
-            // Empty the serializedPipeline data that contains PowerShell command information created in the 
+            // Empty the serializedPipeline data that contains PowerShell command information created in the
             // constructor.  We are connecting to an existing command on the server and don't want to send
             // information on a new command.
             serializedPipeline.Read();
@@ -2934,7 +2934,7 @@ namespace System.Management.Automation.Remoting.Client
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <exception cref="PSRemotingTransportException">
         /// WSManRunShellCommandEx failed.
@@ -3288,7 +3288,7 @@ namespace System.Management.Automation.Remoting.Client
                 cmdTM._createCmdCompleted = null;
             }
 
-            // TODO: 188098 wsManCmdOperationHandle should be populated by WSManRunShellCommandEx, 
+            // TODO: 188098 wsManCmdOperationHandle should be populated by WSManRunShellCommandEx,
             // but there is a thread timing bug in WSMan layer causing the callback to
             // be called before WSManRunShellCommandEx returns. since we already validated the
             // cmd context exists, safely assigning the commandOperationHandle to cmd transport manager.
@@ -3522,7 +3522,7 @@ namespace System.Management.Automation.Remoting.Client
             // release the resources related to send
             cmdTM.ClearReceiveOrSendResources(flags, true);
 
-            // if the transport manager is already closed..ignore the errors and return           
+            // if the transport manager is already closed..ignore the errors and return
             if (cmdTM.isClosed)
             {
                 tracer.WriteLine("Client Command TM: Transport manager is closed. So returning");
@@ -3538,7 +3538,7 @@ namespace System.Management.Automation.Remoting.Client
             if (IntPtr.Zero != error)
             {
                 WSManNativeApi.WSManError errorStruct = WSManNativeApi.WSManError.UnMarshal(error);
-                // Ignore Command aborted error. Command aborted is raised by WSMan to 
+                // Ignore Command aborted error. Command aborted is raised by WSMan to
                 // notify command operation complete. PowerShell protocol has its own
                 // way of notifying the same using state change events.
                 if ((errorStruct.errorCode != 0) && (errorStruct.errorCode != 995))
@@ -3598,7 +3598,7 @@ namespace System.Management.Automation.Remoting.Client
             // release the resources related to receive
             cmdTM.ClearReceiveOrSendResources(flags, false);
 
-            // if the transport manager is already closed..ignore the errors and return            
+            // if the transport manager is already closed..ignore the errors and return
             if (cmdTM.isClosed)
             {
                 tracer.WriteLine("Client Command TM: Transport manager is closed. So returning");
@@ -3697,7 +3697,7 @@ namespace System.Management.Automation.Remoting.Client
                 }
             }
 
-            // The command may have been disconnected before all input was read or 
+            // The command may have been disconnected before all input was read or
             // the returned command data started to be received.
             cmdTM._shouldStartReceivingData = true;
             cmdTM.SendOneItem();
@@ -3756,7 +3756,7 @@ namespace System.Management.Automation.Remoting.Client
                 cmdTM._signalCmdCompleted = null;
             }
 
-            // if the transport manager is already closed..ignore the errors and return            
+            // if the transport manager is already closed..ignore the errors and return
             if (cmdTM.isClosed)
             {
                 tracer.WriteLine("Client Command TM: Transport manager is closed. So returning");

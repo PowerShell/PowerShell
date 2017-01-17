@@ -55,7 +55,7 @@ namespace Microsoft.Management.UI.Internal
             {
                 return finalSize;
             }
-            
+
             return base.ArrangeOverride(finalSize);
         }
 

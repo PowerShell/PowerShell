@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// Creates an instance of the ShowCommandCommandInfo class based on a CommandInfo object
         /// </summary>
-        /// 
+        ///
         /// <param name="other">
         /// The object to wrap.
         /// </param>
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// Creates an instance of the ShowCommandCommandInfo class based on a PSObject object
         /// </summary>
-        /// 
+        ///
         /// <param name="other">
         /// The object to wrap.
         /// </param>
@@ -106,7 +106,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandExtension
         /// <summary>
         /// Builds a strongly typed IEnumerable{object} out of an IEnumerable
         /// </summary>
-        /// 
+        ///
         /// <param name="enumerable">
         /// The object to enumerate.
         /// </param>

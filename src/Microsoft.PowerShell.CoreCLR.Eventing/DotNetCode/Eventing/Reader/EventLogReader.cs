@@ -2,8 +2,8 @@
 /*============================================================
 **
 **
-** Purpose: 
-** This public class is used for reading event records from event log. 
+** Purpose:
+** This public class is used for reading event records from event log.
 **
 ============================================================*/
 
@@ -13,7 +13,7 @@ using System.Collections.Generic;
 namespace System.Diagnostics.Eventing.Reader
 {
     /// <summary>
-    /// This public class is used for reading event records from event log.  
+    /// This public class is used for reading event records from event log.
     /// </summary>
     public class EventLogReader : IDisposable
     {
@@ -22,7 +22,7 @@ namespace System.Diagnostics.Eventing.Reader
         private int _batchSize;
 
         //
-        // access to the data member reference is safe, while 
+        // access to the data member reference is safe, while
         // invoking methods on it is marked SecurityCritical as appropriate.
         //
         private EventLogHandle _handle;
@@ -47,7 +47,7 @@ namespace System.Diagnostics.Eventing.Reader
         private bool _isEof;
 
         /// <summary>
-        /// Maintains cached display / metadata information returned from 
+        /// Maintains cached display / metadata information returned from
         /// EventRecords that were obtained from this reader.
         /// </summary>
         private ProviderMetadataCachedInformation _cachedMetadataInformation;
@@ -233,7 +233,7 @@ namespace System.Diagnostics.Eventing.Reader
             // modify offset that we're going to send to service to account for the
             // fact that we've already read some events in our buffer that the user
             // hasn't seen yet.
-            //  
+            //
             offset = offset - (_eventCount - _currentIndex);
 
             SeekReset();
@@ -282,7 +282,7 @@ namespace System.Diagnostics.Eventing.Reader
                         //we can reuse elements in the batch.
                         if (_currentIndex + offset < _eventCount)
                         {
-                            // 
+                            //
                             // We don't call Seek here, we can reposition within the batch.
                             //
 

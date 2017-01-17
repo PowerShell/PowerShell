@@ -29,97 +29,97 @@ namespace Microsoft.PowerShell.Commands
     ///          object before transmitting it to the remote end
     ///          so that it can be run on constrained runspaces in
     ///          the no language mode
-    /// 
-    /// In general, the command script block is executed as if 
-    /// the user had typed it at the command line. The output of the 
-    /// command is the output of the cmdlet. However, since 
+    ///
+    /// In general, the command script block is executed as if
+    /// the user had typed it at the command line. The output of the
+    /// command is the output of the cmdlet. However, since
     /// invoke-command is a cmdlet, it will unravel its output:
     ///     - if the command outputs an empty array, invoke-command
     ///     will output $null
     ///     - if the command outputs a single-element array, invoke-command
     ///     will output that single element.
-    ///     
+    ///
     ///     Additionally, the command will be run on a remote system.
-    /// 
+    ///
     /// This cmdlet can be called in the following different ways:
-    /// 
-    /// Execute a command in a remote machine by specifying the command 
+    ///
+    /// Execute a command in a remote machine by specifying the command
     /// and machine name
     ///     invoke-command -Command {get-process} -computername "server1"
-    /// 
-    /// Execute a command in a set of remote machines by specifying the 
+    ///
+    /// Execute a command in a set of remote machines by specifying the
     /// command and the list of machines
     ///     $servers = 1..10 | %{"Server${_}"}
     ///     invoke-command -command {get-process} -computername $servers
-    /// 
+    ///
     /// Create a new runspace and use it to execute a command on a remote machine
     ///     $runspace = New-PSSession -computername "Server1"
     ///     $credential = get-credential "user01"
     ///     invoke-command -command {get-process} -Session $runspace -credential $credential
-    /// 
+    ///
     /// Execute a command in a set of remote machines by specifying the
     /// complete uri for the machines
     ///     $uri = "http://hostedservices.microsoft.com/someservice"
     ///     invoke-command -command { get-mail } - uri $uri
-    /// 
-    /// Create a collection of runspaces and use it to execute a command on a set 
+    ///
+    /// Create a collection of runspaces and use it to execute a command on a set
     /// of remote machines
-    /// 
+    ///
     ///     $serveruris = 1..8 | %{"http://Server${_}/"}
     ///     $runspaces = New-PSSession -URI $serveruris
     ///     invoke-command -command {get-process} -Session $runspaces
-    /// 
-    /// The cmdlet can also be invoked in the asynchronous mode. 
-    /// 
+    ///
+    /// The cmdlet can also be invoked in the asynchronous mode.
+    ///
     ///     invoke-command -command {get-process} -computername $servers -asjob
-    /// 
+    ///
     /// When the -AsJob switch is used, the cmdlet will emit an PSJob Object.
     /// The user can then use the other job cmdlets to work with this object
-    /// 
-    /// Note there are two types of errors: 
-    ///     1. Remote invocation errors 
-    ///     2. Local errors. 
-    /// 
-    /// Both types of errors will be available when the user invokes 
+    ///
+    /// Note there are two types of errors:
+    ///     1. Remote invocation errors
+    ///     2. Local errors.
+    ///
+    /// Both types of errors will be available when the user invokes
     /// a receive operation.
-    /// 
-    /// The PSJob object has its own throttling mechanism. 
-    /// The result object will be stored in a global cache. If a user wants to 
-    /// retrieve data from the result object the user should be able to do so 
+    ///
+    /// The PSJob object has its own throttling mechanism.
+    /// The result object will be stored in a global cache. If a user wants to
+    /// retrieve data from the result object the user should be able to do so
     /// using the Receive-PSJob cmdlet
-    /// 
-    /// The following needs to be noted about exception/error reporting in this 
+    ///
+    /// The following needs to be noted about exception/error reporting in this
     /// cmdlet:
-    ///     The exception objects that are thrown by underlying layers will be 
+    ///     The exception objects that are thrown by underlying layers will be
     ///     written as errors, to avoid stopping the entire cmdlet in case of
-    ///     multi-computername or multi-Session usage (for consistency, this  
+    ///     multi-computername or multi-Session usage (for consistency, this
     ///     is true even when done using one computername or runspace)
-    /// 
+    ///
     /// Only one expression may be executed at a time in any single runspace.
-    /// Attempts to invoke an expression on a runspace that is already executing 
-    /// an expression shall return an error with ErrorCategory ResourceNotAvailable 
+    /// Attempts to invoke an expression on a runspace that is already executing
+    /// an expression shall return an error with ErrorCategory ResourceNotAvailable
     /// and notify the user that the runspace is currently busy.
-    /// 
+    ///
     /// Some additional notes:
-    /// - invoke-command issues a single scriptblock to the computer or 
-    /// runspace. If a runspace is specified and a command is already running 
+    /// - invoke-command issues a single scriptblock to the computer or
+    /// runspace. If a runspace is specified and a command is already running
     /// in that runspace, then the second command will fail
-    /// - The files necessary to execute the command (cmdlets, scripts, data 
-    /// files, etc) must be present on the remote system; the cmdlet is not 
+    /// - The files necessary to execute the command (cmdlets, scripts, data
+    /// files, etc) must be present on the remote system; the cmdlet is not
     /// responsible for copying them over
     /// - The entire input stream is collected and sent to the remote system
     /// before execution of the command begins (no input streaming)
-    /// - Input shall be available as $input.  Remote Runspaces must reference 
+    /// - Input shall be available as $input.  Remote Runspaces must reference
     /// $input explicitly (input will not automatically be available)
-    /// - Output from the command streams back to the client as it is 
+    /// - Output from the command streams back to the client as it is
     /// available
     /// - Ctrl-C and pause/resume are supported; the client will send a
-    /// message to the remote powershell instance. 
+    /// message to the remote powershell instance.
     /// - By default if no -credential is specified, the host will impersonate
     /// the current user on the client when executing the command
-    /// - The standard output of invoke-command is the output of the 
+    /// - The standard output of invoke-command is the output of the
     /// last element of the remote pipeline, with some extra properties added
-    /// - If -Shell is not specified, then the value of the environment 
+    /// - If -Shell is not specified, then the value of the environment
     /// variable DEFAULTREMOTESHELLNAME is used. If this is not set, then
     /// "Microsoft.PowerShell" is used.
     /// </summary>
@@ -153,10 +153,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This parameter represents the address(es) of the remote
         /// computer(s). The following formats are supported:
-        ///      (a) Computer name 
+        ///      (a) Computer name
         ///      (b) IPv4 address : 132.3.4.5
         ///      (c) IPv6 address: 3ffe:8311:ffff:f70f:0:5efe:172.30.162.18
-        /// 
+        ///
         /// </summary>
         [Parameter(Position = 0,
                    ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
@@ -177,10 +177,10 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Specifies the credentials of the user to impersonate in the 
-        /// remote machine. If this parameter is not specified then the 
+        /// Specifies the credentials of the user to impersonate in the
+        /// remote machine. If this parameter is not specified then the
         /// credentials of the current user process will be assumed.
-        /// </summary>     
+        /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Port specifies the alternate port to be used in case the 
+        /// Port specifies the alternate port to be used in case the
         /// default ports are not used for the transport mechanism
         /// (port 80 for http and port 443 for useSSL)
         /// </summary>
@@ -261,12 +261,12 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// For WSMan session:
         /// If this parameter is not specified then the value specified in
-        /// the environment variable DEFAULTREMOTESHELLNAME will be used. If 
+        /// the environment variable DEFAULTREMOTESHELLNAME will be used. If
         /// this is not set as well, then Microsoft.PowerShell is used.
         ///
         /// For VM/Container sessions:
         /// If this parameter is not specified then no configuration is used.
-        /// </summary>      
+        /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
@@ -351,7 +351,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// A complete URI(s) specified for the remote computer and shell to 
+        /// A complete URI(s) specified for the remote computer and shell to
         /// connect to and create runspace for
         /// </summary>
         [Parameter(Position = 0,
@@ -489,7 +489,7 @@ namespace Microsoft.PowerShell.Commands
         private String _name = String.Empty;
 
         /// <summary>
-        /// The script block that the user has specified in the 
+        /// The script block that the user has specified in the
         /// cmdlet. This will be converted to a powershell before
         /// its actually sent to the remote end
         /// </summary>
@@ -539,7 +539,7 @@ namespace Microsoft.PowerShell.Commands
         public SwitchParameter NoNewScope { get; set; }
 
         /// <summary>
-        /// The script block that the user has specified in the 
+        /// The script block that the user has specified in the
         /// cmdlet. This will be converted to a powershell before
         /// its actually sent to the remote end
         /// </summary>
@@ -598,7 +598,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Extended Session Options for controlling the session creation. Use 
+        /// Extended Session Options for controlling the session creation. Use
         /// "New-WSManSessionOption" cmdlet to supply value for this parameter.
         /// </summary>
         [Parameter(ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
@@ -638,8 +638,8 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// When set and in loopback scenario (localhost) this enables creation of WSMan
-        /// host process with the user interactive token, allowing PowerShell script network access, 
-        /// i.e., allows going off box.  When this property is true and a PSSession is disconnected, 
+        /// host process with the user interactive token, allowing PowerShell script network access,
+        /// i.e., allows going off box.  When this property is true and a PSSession is disconnected,
         /// reconnection is allowed only if reconnecting from a PowerShell session on the same box.
         /// </summary>
         [Parameter(ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
@@ -905,7 +905,7 @@ namespace Microsoft.PowerShell.Commands
                         // Win8 Bug:898011 - We are restricting remote steppable pipeline because
                         // of this bug in Win8 where hangs can occur during data piping.
                         // We are reverting to Win7 behavior for {icm | icm} and {proxycommand | proxycommand}
-                        // cases. For ICM | % ICM case, we are using remote steppable pipeline. 
+                        // cases. For ICM | % ICM case, we are using remote steppable pipeline.
                         if ((MyInvocation != null) && (MyInvocation.PipelinePosition == 1) && (MyInvocation.ExpectingInput == false))
                         {
                             PSPrimitiveDictionary table = (object)runspaceInfo.ApplicationPrivateData[PSVersionInfo.PSVersionTableName] as PSPrimitiveDictionary;
@@ -1056,7 +1056,7 @@ namespace Microsoft.PowerShell.Commands
                                 }
                                 break;
                         } // switch ...
-                    } // else ...            
+                    } // else ...
                 }
             } // if (!pipelineinvoked...
 
@@ -1086,11 +1086,11 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// InvokeAsync would have been called in ProcessRecord. Wait here
-        /// for all the results to become available. 
+        /// for all the results to become available.
         /// </summary>
         protected override void EndProcessing()
         {
-            // close the input stream on all the pipelines 
+            // close the input stream on all the pipelines
             if (!_needToCollect)
             {
                 CloseAllInputStreams();
@@ -1152,8 +1152,8 @@ namespace Microsoft.PowerShell.Commands
                         if (_needToCollect && ParameterSetName.Equals(InvokeCommandCommand.SessionParameterSet))
                         {
                             // if job was null, then its because the invoke-command
-                            // was collecting or ProcessRecord() was not called. 
-                            // If we are collecting, then 
+                            // was collecting or ProcessRecord() was not called.
+                            // If we are collecting, then
                             // we would have collected until this point
                             // so now start the execution with the collected
                             // input
@@ -1198,13 +1198,13 @@ namespace Microsoft.PowerShell.Commands
         } // EndProcessing
 
         /// <summary>
-        /// This method is called when the user sends a stop signal to the 
+        /// This method is called when the user sends a stop signal to the
         /// cmdlet. The cmdlet will not exit until it has completed
         /// executing the command on all the runspaces. However, when a stop
         /// signal is sent, execution needs to be stopped on the pipelines
         /// corresponding to these runspaces
         /// </summary>
-        /// <remarks>This is called from a separate thread so need to worry 
+        /// <remarks>This is called from a separate thread so need to worry
         /// about concurrency issues
         /// </remarks>
         protected override void StopProcessing()
@@ -1248,7 +1248,7 @@ namespace Microsoft.PowerShell.Commands
         #region Private Methods
 
         /// <summary>
-        /// Handle event from the throttle manager indicating that all 
+        /// Handle event from the throttle manager indicating that all
         /// operations are complete
         /// </summary>
         /// <param name="sender"></param>
@@ -1551,7 +1551,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!nonblocking)
                     {
-                        // we need to wait until results arrive 
+                        // we need to wait until results arrive
                         // before we attempt to read. This will
                         // ensure that the thread blocks. Else
                         // the thread will spin leading to a CPU
@@ -1678,7 +1678,7 @@ namespace Microsoft.PowerShell.Commands
                     else if (ParameterSetName == InvokeCommandCommand.ComputerNameParameterSet ||
                              ParameterSetName == InvokeCommandCommand.FilePathComputerNameParameterSet)
                     {
-                        // Create disconnected sessions for each PowerShell in job that was disconnected, 
+                        // Create disconnected sessions for each PowerShell in job that was disconnected,
                         // and add them to the local repository.
                         List<PSSession> discSessions = GetDisconnectedSessions(_job);
                         foreach (PSSession session in discSessions)
@@ -1802,20 +1802,20 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Determine if we have to throw for a 
+        /// Determine if we have to throw for a
         /// "throw" statement from scripts
         ///  This means that the local pipeline will be terminated as well
         /// </summary>
         /// <remarks>
-        /// This is valid when only one pipeline is 
+        /// This is valid when only one pipeline is
         /// existing. Which means, there can be only one of the following:
         ///     1. A single computer name
         ///     2. A single session
         ///     3. A single uri
-        ///     
+        ///
         /// It can be used in conjunction with a filepath or a script block parameter
-        /// 
-        /// It doesn't take effect with the -AsJob parameter        
+        ///
+        /// It doesn't take effect with the -AsJob parameter
         /// </remarks>
         private void DetermineThrowStatementBehavior()
         {
@@ -1888,8 +1888,8 @@ namespace Microsoft.PowerShell.Commands
         // throttle manager for handling all throttling operations
         private ManualResetEvent _operationsComplete = new ManualResetEvent(true);
         private ManualResetEvent _disconnectComplete;
-        // the initial state is true because when no 
-        // operations actually take place as in case of a 
+        // the initial state is true because when no
+        // operations actually take place as in case of a
         // parameter binding exception, then Dispose is
         // called. Since Dispose waits on this handler
         // it is set to true initially and is Reset() in

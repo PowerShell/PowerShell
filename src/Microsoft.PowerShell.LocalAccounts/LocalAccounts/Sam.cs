@@ -1416,7 +1416,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                 type = context.type
                                             }
                                             );
-                    
+
             }
             finally
             {
@@ -1513,7 +1513,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             var rv = new List<Exception>();
             Exception ex = null;
             try
-            {                
+            {
                 var sid = member.SID;
                 var binarySid = new byte[sid.BinaryLength];
 
@@ -2760,7 +2760,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             if (error == Win32.ERROR_SUCCESS)
             {
                 // Bug: 7407413 :
-                // If accountname is in the format domain1\user1, 
+                // If accountname is in the format domain1\user1,
                 //then AccountName.ToString() will return domain1\domain1\user1
                 // Ideally , accountname should be processed to hold only account name (without domain)
                 // as we are keeping the domain in 'DomainName' variable.
@@ -2931,7 +2931,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                 case NtStatus.STATUS_SPECIAL_GROUP:     // The group specified is a special group and cannot be operated on in the requested fashion.
                 //case NtStatus.STATUS_SPECIAL_ALIAS: // referred to in source for SAM api, but not in ntstatus.h!!!
-                                                    
+
                     return new InvalidOperationException(StringUtil.Format(Strings.InvalidForGroup, context.ObjectName));
 
                 case NtStatus.STATUS_SPECIAL_USER:  // The user specified is a special user and cannot be operated on in the requested fashion.
@@ -3015,7 +3015,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
             // Use LsaLookupUserAccountType for Windows 10 and later.
             // Earlier versions of the OS will leave the property NULL because
-            // it is too error prone to attempt to replicate the decisions of 
+            // it is too error prone to attempt to replicate the decisions of
             // LsaLookupUserAccountType.
             var os = GetOperatingSystem();
             if (os.Version.Major >= 10)
@@ -3113,7 +3113,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
         [DllImport(PInvokeDllNames.GetVersionExDllName, CharSet = CharSet.Unicode, SetLastError = true)]
         internal static extern bool GetVersionEx(ref OSVERSIONINFOEX osVerEx);
-        
+
         private static volatile OperatingSystem localOs;
 
         /// <summary>

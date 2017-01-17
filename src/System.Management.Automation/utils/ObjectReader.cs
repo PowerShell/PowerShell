@@ -105,7 +105,7 @@ namespace System.Management.Automation.Internal
         /// <value>true if the underlying stream is open, otherwise; false.</value>
         /// <remarks>
         /// The underlying stream may be readable after it is closed if data remains in the
-        /// internal buffer. Check <see cref="EndOfPipeline"/> to determine if 
+        /// internal buffer. Check <see cref="EndOfPipeline"/> to determine if
         /// the underlying stream is closed and contains no data.
         /// </remarks>
         public override bool IsOpen
@@ -178,7 +178,7 @@ namespace System.Management.Automation.Internal
         /// <param name="args">standard event args.</param>
         private void OnDataReady(object sender, EventArgs args)
         {
-            // call any event handlers on this, replacing the 
+            // call any event handlers on this, replacing the
             // ObjectStream sender with 'this' since receivers
             // are expecting a PipelineReader<object>
             InternalDataReady.SafeInvoke(this, args);
@@ -290,7 +290,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// This method performs a read of all objects currently in the
         /// stream. The method will block until exclusive access to the
-        /// stream is acquired.  If there are no objects in the stream, 
+        /// stream is acquired.  If there are no objects in the stream,
         /// an empty collection is returned.
         /// </remarks>
         public override Collection<object> NonBlockingRead()
@@ -305,7 +305,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// This method performs a read of objects currently in the
         /// stream. The method will block until exclusive access to the
-        /// stream is acquired.  If there are no objects in the stream, 
+        /// stream is acquired.  If there are no objects in the stream,
         /// an empty collection is returned.
         /// </remarks>
         /// <param name="maxRequested">
@@ -400,7 +400,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// This method performs a read of all objects currently in the
         /// stream. The method will block until exclusive access to the
-        /// stream is acquired.  If there are no objects in the stream, 
+        /// stream is acquired.  If there are no objects in the stream,
         /// an empty collection is returned.
         /// </remarks>
         public override Collection<PSObject> NonBlockingRead()
@@ -415,7 +415,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// This method performs a read of objects currently in the
         /// stream. The method will block until exclusive access to the
-        /// stream is acquired.  If there are no objects in the stream, 
+        /// stream is acquired.  If there are no objects in the stream,
         /// an empty collection is returned.
         /// </remarks>
         /// <param name="maxRequested">
@@ -481,7 +481,7 @@ namespace System.Management.Automation.Internal
     /// <remarks>
     /// PSDataCollection is introduced after 1.0. PSDataCollection is
     /// used to store data which can be used with different
-    /// commands concurrently. 
+    /// commands concurrently.
     /// Only Read() operation is supported currently.
     /// </remarks>
     internal class PSDataCollectionReader<DataStoreType, ReturnType>
@@ -639,7 +639,7 @@ namespace System.Management.Automation.Internal
     /// <remarks>
     /// PSDataCollection is introduced after 1.0. PSDataCollection is
     /// used to store data which can be used with different
-    /// commands concurrently. 
+    /// commands concurrently.
     /// Only Read() operation is supported currently.
     /// </remarks>
     internal class PSDataCollectionPipelineReader<DataStoreType, ReturnType>
@@ -710,7 +710,7 @@ namespace System.Management.Automation.Internal
             {
                 Collection<DataStoreType> resultCollection = _datastore.ReadAndRemove(1);
 
-                // ReadAndRemove returns a Collection<DataStoreType> type but we 
+                // ReadAndRemove returns a Collection<DataStoreType> type but we
                 // just want the single object contained in the collection.
                 if (resultCollection.Count == 1)
                 {

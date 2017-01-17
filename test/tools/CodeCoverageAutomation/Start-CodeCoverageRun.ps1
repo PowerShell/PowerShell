@@ -59,7 +59,7 @@ try
 
     Write-LogPassThru -Message "Expansion complete."
 
-    Import-Module "$openCoverPath\OpenCover" -force
+    Import-Module "$openCoverPath\OpenCover"
     Install-OpenCover -TargetDirectory $openCoverTargetDirectory -force
     Write-LogPassThru -Message "OpenCover installed."
 

@@ -1,5 +1,5 @@
 ﻿Describe 'Line endings' -Tags "CI" {
-    BeforeAll {        
+    BeforeAll {
         $lf = "`n"
         $cr = "`r"
         $crlf="`r`n"
@@ -8,7 +8,7 @@
         $hereDB = "@`""
         $hereDE = "`"@"
         $hereSB = "@'"
-        $hereSE = "'@"    
+        $hereSE = "'@"
         }
 
     $testData = @(
@@ -105,8 +105,8 @@
     )
 
     It '<Name> in expression' -TestCases:$testData {
-        param([string]$Name, $Begin, $End, $NewLine)       
-        # build the content string                   
+        param([string]$Name, $Begin, $End, $NewLine)
+        # build the content string
         $expected = "This$($newline)is$($newline)a$($newline)multi$($newline)line$($newline)string"
 
         # wrap the content in the specified begin and end quoting characters.
@@ -114,15 +114,15 @@
         $actual = iex $content
 
         # $actual should be the content string ($expected) without the begin and end quoting characters.
-        $actual | Should Be $expected        
+        $actual | Should Be $expected
     }
 
     It '<Name> in ps file' -TestCases:$testData {
         param([string]$Name, $Begin, $End)
-        
+
         $fileName = $Name.Replace(' ', '') + '.ps1'
 
-        # build the content string                   
+        # build the content string
         $expected = "This$($newline)is$($newline)a$($newline)multi$($newline)line$($newline)string"
 
         # wrap the content in the specified begin and end quoting characters.
@@ -133,7 +133,7 @@
         $actual = &( "TESTDRIVE:\$fileName")
 
         # $actual should be the content string ($expected) without the begin and end quoting characters.
-        $actual | Should Be $expected        
+        $actual | Should Be $expected
     }
 }
 

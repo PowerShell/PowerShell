@@ -716,7 +716,7 @@ namespace Microsoft.PowerShell.Commands
         public string Source { get; set; }
 
         /// <summary>
-        /// String which represents One of the EventLogEntryType values. 
+        /// String which represents One of the EventLogEntryType values.
         /// </summary>
         [Parameter(Position = 3)]
         [Alias("ET")]
@@ -725,7 +725,7 @@ namespace Microsoft.PowerShell.Commands
         public EventLogEntryType EntryType { get; set; } = EventLogEntryType.Information;
 
         /// <summary>
-        /// The application-specific subcategory associated with the message. 
+        /// The application-specific subcategory associated with the message.
         /// </summary>
         [Parameter]
         public Int16 Category { get; set; } = 1;
@@ -1103,22 +1103,22 @@ namespace Microsoft.PowerShell.Commands
 
     # region NewEventLogCommand
     /// <summary>
-    /// This cmdlet creates the new event log .This cmdlet can also be used to 
-    /// configure a new source for writing entries to an event log on the local 
+    /// This cmdlet creates the new event log .This cmdlet can also be used to
+    /// configure a new source for writing entries to an event log on the local
     /// computer or a remote computer.
-    /// You can create an event source for an existing event log or a new event log. 
-    /// When you create a new source for a new event log, the system registers the 
-    /// source for that log, but the log is not created until the first entry is 
+    /// You can create an event source for an existing event log or a new event log.
+    /// When you create a new source for a new event log, the system registers the
+    /// source for that log, but the log is not created until the first entry is
     /// written to it.
-    /// The operating system stores event logs as files. The associated file is 
-    /// stored in the %SystemRoot%\System32\Config directory on the specified 
-    /// computer. The file name is set by appending the first 8 characters of the 
+    /// The operating system stores event logs as files. The associated file is
+    /// stored in the %SystemRoot%\System32\Config directory on the specified
+    /// computer. The file name is set by appending the first 8 characters of the
     /// Log property with the ".evt" file name extension.
-    /// You can register the event source with localized resource file(s) for your 
-    /// event category and message strings. Your application can write event log 
-    /// entries using resource identifiers, rather than specifying the actual 
-    /// string. You can register a separate file for event categories, messages and 
-    /// parameter insertion strings, or you can register the same resource file for 
+    /// You can register the event source with localized resource file(s) for your
+    /// event category and message strings. Your application can write event log
+    /// entries using resource identifiers, rather than specifying the actual
+    /// string. You can register a separate file for event categories, messages and
+    /// parameter insertion strings, or you can register the same resource file for
     /// all three types of strings.
     /// </summary>
 
@@ -1128,7 +1128,7 @@ namespace Microsoft.PowerShell.Commands
         # region Parameter
         /// <summary>
         /// The following is the definition of the input parameter "CategoryResourceFile".
-        /// Specifies the path of the resource file that contains category strings for 
+        /// Specifies the path of the resource file that contains category strings for
         /// the source
         /// Resource File is expected to be present in Local/Remote Machines
         /// </summary>
@@ -1150,7 +1150,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The following is the definition of the input parameter "LogName".
         /// Specifies the name of the log
-        /// 
+        ///
         /// </summary>
         [Parameter(Mandatory = true,
                    Position = 0)]
@@ -1160,7 +1160,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "MessageResourceFile".
-        /// Specifies the path of the message resource file that contains message 
+        /// Specifies the path of the message resource file that contains message
         /// formatting strings for the source
         /// Resource File is expected to be present in Local/Remote Machines
         /// </summary>
@@ -1171,7 +1171,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "ParameterResourceFile".
-        /// Specifies the path of the resource file that contains message parameter 
+        /// Specifies the path of the resource file that contains message parameter
         /// strings for the source
         /// Resource File is expected to be present in Local/Remote Machines
         /// </summary>
@@ -1269,8 +1269,8 @@ namespace Microsoft.PowerShell.Commands
 
     #region RemoveEventLogCommand
     /// <summary>
-    /// This cmdlet is used to delete the specified event log from the specified 
-    /// computer. This can also be used to Clear the entries of the specified event 
+    /// This cmdlet is used to delete the specified event log from the specified
+    /// computer. This can also be used to Clear the entries of the specified event
     /// log and also to unregister the Source associated with the eventlog.
     /// </summary>
 
@@ -1304,11 +1304,11 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "RemoveSource".
-        /// Specifies either to remove the event log and and associated source or 
+        /// Specifies either to remove the event log and and associated source or
         /// source. alone.
-        /// When this parameter is not specified, the cmdlet uses Delete Method which 
-        /// clears the eventlog and also the source associated with it. 
-        /// When this parameter value is true, then this cmdlet uses DeleteEventSource 
+        /// When this parameter is not specified, the cmdlet uses Delete Method which
+        /// clears the eventlog and also the source associated with it.
+        /// When this parameter value is true, then this cmdlet uses DeleteEventSource
         /// Method to delete the Source alone.
         /// </summary>
         [Parameter(ParameterSetName = "Source")]

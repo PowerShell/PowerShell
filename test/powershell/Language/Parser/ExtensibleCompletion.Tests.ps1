@@ -85,7 +85,7 @@ function Test-Completions
     param(
         [Parameter(ValueFromPipeline)]
         [CompletionTestCase[]]$TestCases)
-    
+
     process
     {
         foreach ($test in $TestCases)

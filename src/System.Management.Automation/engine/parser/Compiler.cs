@@ -627,7 +627,7 @@ namespace System.Management.Automation.Language
             return Expression.Convert(expr, type);
         }
 
-#if ENABLE_BINDER_DEBUG_LOGGING 
+#if ENABLE_BINDER_DEBUG_LOGGING
         internal static string ToDebugString(this Expression expr)
         {
             using (var writer = new StringWriter(CultureInfo.InvariantCulture))
@@ -2237,7 +2237,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Bake types and creates a dynamic assembly. 
+        /// Bake types and creates a dynamic assembly.
         /// This method should be called only for rootAsts (i.e. script file root ScriptBlockAst).
         /// </summary>
         /// <param name="rootForDefiningTypes"></param>
@@ -2245,7 +2245,7 @@ namespace System.Management.Automation.Language
         /// <returns>Assembly with defined types</returns>
         internal static Assembly DefinePowerShellTypes(Ast rootForDefiningTypes, TypeDefinitionAst[] typeAsts)
         {
-            // TODO(sevoroby): this Diagnostic is conceptually right. 
+            // TODO(sevoroby): this Diagnostic is conceptually right.
             // BUT It triggers, when we define type in an InitialSessionState and use it later in two different PowerShell instances.
             // Diagnostics.Assert(typeAsts[0].Type == null, "We must not call DefinePowerShellTypes twice for the same TypeDefinitionAsts");
 
@@ -2803,7 +2803,7 @@ namespace System.Management.Automation.Language
                         (pipeAst != null && pipeAst.PipelineElements.Count == 1 &&
                          pipeAst.PipelineElements[0] is CommandExpressionAst))
                     {
-                        // If the RHS of the assign was an expression, 
+                        // If the RHS of the assign was an expression,
                         exprList.Add(s_setDollarQuestionToTrue);
                     }
                 }
@@ -3130,7 +3130,7 @@ namespace System.Management.Automation.Language
             //       funcContext._outputPipe = oldPipe;
             //   }
             //
-            // In the above psuedo-code, any of {outputFileRedirection, nonOutputFileRedirection, mergingRedirection} may 
+            // In the above psuedo-code, any of {outputFileRedirection, nonOutputFileRedirection, mergingRedirection} may
             // not exist, but the order is preserved, so that file redirections go before merging redirections (so that
             // funcContext._outputPipe has the correct value when setting up merging.)
 
@@ -3262,8 +3262,8 @@ namespace System.Management.Automation.Language
 
             if (oldPipe != null)
             {
-                // If a temporary pipe was created at the beginning, we should restore the original pipe in the 
-                // very end of the finally block. Otherwise, _getCurrentPipe may be messed up by the following 
+                // If a temporary pipe was created at the beginning, we should restore the original pipe in the
+                // very end of the finally block. Otherwise, _getCurrentPipe may be messed up by the following
                 // file redirection unbind operation.
                 // For example:
                 //    function foo
@@ -5219,7 +5219,7 @@ namespace System.Management.Automation.Language
 
             // SubExpression and ParenExpression are two special cases for handling the partial output while exception
             // is thrown. For example, the output of $(1; throw 2) should be 1 and the error record with message '2';
-            // but the output of $(1; throw 2).Length should just be the error record with message '2'. 
+            // but the output of $(1; throw 2).Length should just be the error record with message '2'.
             bool shouldPreserveResultInCaseofException = subExpressionAst.ShouldPreserveOutputInCaseOfException();
             return CaptureAstResults(subExpressionAst.SubExpression,
                                      shouldPreserveResultInCaseofException
@@ -5551,7 +5551,7 @@ namespace System.Management.Automation.Language
 
             // SubExpression and ParenExpression are two special cases for handling the partial output while exception
             // is thrown. For example, function bar { 1; throw 2 }, the output of (bar) should be 1 and the error record with message '2';
-            // but the output of (bar).Length should just be the error record with message '2'. 
+            // but the output of (bar).Length should just be the error record with message '2'.
             bool shouldPreserveOutputInCaseOfException = parenExpressionAst.ShouldPreserveOutputInCaseOfException();
             return CaptureStatementResults(pipe,
                                            shouldPreserveOutputInCaseOfException

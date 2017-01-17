@@ -28,9 +28,9 @@ namespace Microsoft.WSMan.Management.Activities
         /// Gets the fully qualified name of the command invoked by this activity.
         /// </summary>
         public override string PSCommandName { get { return "Microsoft.WSMan.Management\\Invoke-WSManAction"; } }
-        
+
         // Arguments
-        
+
         /// <summary>
         /// Provides access to the Action parameter.
         /// </summary>
@@ -47,7 +47,7 @@ namespace Microsoft.WSMan.Management.Activities
 
         /// <summary>
         /// Provides access to the ComputerName parameter.
-        /// </summary>        
+        /// </summary>
         [ParameterSpecificCategory]
         [DefaultValue(null)]
         public InArgument<System.String> ComputerName { get; set; }
@@ -138,15 +138,15 @@ namespace Microsoft.WSMan.Management.Activities
 
         /// <summary>
         /// Declares that this activity supports its own remoting.
-        /// </summary>        
+        /// </summary>
         protected override bool SupportsCustomRemoting { get { return true; } }
 
 
         // Module defining this command
-        
+
 
         // Optional custom code for this activity
-        
+
 
         /// <summary>
         /// Returns a configured instance of System.Management.Automation.PowerShell, pre-populated with the command to run.
@@ -160,7 +160,7 @@ namespace Microsoft.WSMan.Management.Activities
             System.Management.Automation.PowerShell targetCommand = invoker.AddCommand(PSCommandName);
 
             // Initialize the arguments
-            
+
             if(Action.Expression != null)
             {
                 targetCommand.AddParameter("Action", Action.Get(context));
@@ -175,7 +175,7 @@ namespace Microsoft.WSMan.Management.Activities
             {
                 targetCommand.AddParameter("ComputerName", ComputerName.Get(context));
             }
-            
+
             if(ConnectionURI.Expression != null)
             {
                 targetCommand.AddParameter("ConnectionURI", ConnectionURI.Get(context));

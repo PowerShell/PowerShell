@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -33,7 +33,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     public class GetCimAssociatedInstanceCommand : CimBaseCommand
     {
         #region constructor
-        
+
         /// <summary>
         /// constructor
         /// </summary>
@@ -42,7 +42,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
         }
-        
+
         #endregion
 
         #region parameters
@@ -175,7 +175,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 base.SetParameter(value, nameResourceUri);
             }
         }
-        private Uri resourceUri;        
+        private Uri resourceUri;
 
         /// <summary>
         /// <para>
@@ -311,7 +311,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Noun of current cmdlet
         /// </summary>
-        internal const string Noun = @"CimAssociatedInstance";        
+        internal const string Noun = @"CimAssociatedInstance";
 
         #endregion
 
@@ -324,7 +324,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         // internal const string nameOperationTimeoutSec = "OperationTimeoutSec";
         internal const string nameComputerName = "ComputerName";
         internal const string nameCimSession = "CimSession";
-        internal const string nameResourceUri = "ResourceUri";        
+        internal const string nameResourceUri = "ResourceUri";
         // internal const string nameKeyOnly = "KeyOnly";
         #endregion
 
@@ -340,19 +340,19 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             },
             {
                 nameCimSession, new HashSet<ParameterDefinitionEntry> {
-                                    new ParameterDefinitionEntry(CimBaseCommand.SessionSetName, true),                                  
+                                    new ParameterDefinitionEntry(CimBaseCommand.SessionSetName, true),
                                  }
             },
             {
                 nameCimInstance, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.ComputerSetName, true),
-                                    new ParameterDefinitionEntry(CimBaseCommand.SessionSetName, true),                                  
+                                    new ParameterDefinitionEntry(CimBaseCommand.SessionSetName, true),
                                  }
             },
             {
                 nameResourceUri, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.ComputerSetName, false),
-                                    new ParameterDefinitionEntry(CimBaseCommand.SessionSetName, false),                                  
+                                    new ParameterDefinitionEntry(CimBaseCommand.SessionSetName, false),
                                  }
             },
         };

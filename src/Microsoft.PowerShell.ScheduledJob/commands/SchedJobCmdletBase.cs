@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Returns a single ScheduledJobDefinition object from the local 
+        /// Returns a single ScheduledJobDefinition object from the local
         /// scheduled job definition repository corresponding to the provided id.
         /// </summary>
         /// <param name="id">Local repository scheduled job definition id</param>
@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Returns an array of ScheduledJobDefinition objects from the local 
+        /// Returns an array of ScheduledJobDefinition objects from the local
         /// scheduled job definition repository corresponding to the provided Ids.
         /// </summary>
         /// <param name="ids">Local repository scheduled job definition ids</param>
@@ -297,8 +297,8 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="definitionName">ScheduledJobDefinition name</param>
         /// <param name="errorObject">Error object</param>
         internal void WriteTriggerNotFoundError(
-            Int32 notFoundId, 
-            string definitionName, 
+            Int32 notFoundId,
+            string definitionName,
             object errorObject)
         {
             string msg = StringUtil.Format(ScheduledJobErrorStrings.TriggerNotFound, notFoundId, definitionName);
@@ -429,7 +429,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         /// <summary>
         /// Validates the job definition object retrieved from store by syncing
-        /// its data with the corresponding Task Scheduler task.  If no task 
+        /// its data with the corresponding Task Scheduler task.  If no task
         /// is found then validation fails.
         /// </summary>
         /// <param name="definition"></param>

@@ -42,7 +42,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
             $result | should be $j
         }
         It "Stop-Job will stop a job" -pending {
-            Stop-Job -id $j.id 
+            Stop-Job -id $j.id
             $j.Status |Should be Stopped
         }
     }

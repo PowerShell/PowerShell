@@ -32,7 +32,7 @@ namespace Microsoft.Management.UI.Internal
         private delegate void FocusChildDelegate();
 
         /// <summary>
-        /// Responds to the condition in which the value of the IsOpen property changes from false to true. 
+        /// Responds to the condition in which the value of the IsOpen property changes from false to true.
         /// </summary>
         /// <param name="e">The event arguments.</param>
         protected override void OnOpened(EventArgs e)
@@ -51,7 +51,7 @@ namespace Microsoft.Management.UI.Internal
 
 
         /// <summary>
-        /// Responds when the value of the IsOpen property changes from to true to false. 
+        /// Responds when the value of the IsOpen property changes from to true to false.
         /// </summary>
         /// <param name="e">The event arguments.</param>
         protected override void OnClosed(EventArgs e)

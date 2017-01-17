@@ -241,7 +241,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 scArray[k] = GenerateMultiLineRowField(values[validColumnArray[k]], validColumnArray[k],
                                                                         alignment[validColumnArray[k]], ds);
 
-                // NOTE: the following padding operations assume that we 
+                // NOTE: the following padding operations assume that we
                 // pad with a blank (or any character that ALWAYS maps to a single screen cell
                 if (k > 0)
                 {
@@ -335,7 +335,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 int newRowIndex = sb.Length;
 
-                // NOTE: the following padding operations assume that we 
+                // NOTE: the following padding operations assume that we
                 // pad with a blank (or any character that ALWAYS maps to a single screen cell
                 if (k > 0)
                 {
@@ -407,7 +407,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         case TextAlignment.Right:
                             {
-                                // get from "abcdef" to "...f"    
+                                // get from "abcdef" to "...f"
                                 int tailCount = dc.GetTailSplitLength(s, truncationDisplayLength);
                                 s = s.Substring(s.Length - tailCount);
                                 s = ellipsis + s;

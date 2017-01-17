@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The base class for the SetAliasCommand and NewAliasCommand
     /// </summary>
-    /// 
+    ///
     public class WriteAliasCommandBase : PSCmdlet
     {
         #region Parameters
@@ -19,30 +19,30 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The Name parameter for the command
         /// </summary>
-        /// 
+        ///
         [Parameter(Position = 0, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string Name { get; set; }
 
         /// <summary>
         /// The Value parameter for the command
         /// </summary>
-        /// 
+        ///
         [Parameter(Position = 1, Mandatory = true, ValueFromPipelineByPropertyName = true)]
         public string Value { get; set; }
 
         /// <summary>
         /// The description for the alias.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public string Description { get; set; } = String.Empty;
 
         /// <summary>
-        /// The Option parameter allows the alias to be set to 
+        /// The Option parameter allows the alias to be set to
         /// ReadOnly (for existing aliases) and/or Constant (only
         /// for new aliases).
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public ScopedItemOptions Option { get; set; } = ScopedItemOptions.None;
 
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         /// If set to true, the alias that is set is passed to the
         /// pipeline.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public SwitchParameter PassThru
         {
@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands
         /// The scope parameter for the command determines
         /// which scope the alias is set in.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public string Scope { get; set; }
 
@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
         /// If set to true and an existing alias of the same name exists
         /// and is ReadOnly, the alias will be overwritten.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public SwitchParameter Force
         {

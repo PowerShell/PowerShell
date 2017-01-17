@@ -450,7 +450,7 @@ namespace Microsoft.PowerShell.Workflow
             string funcName = activityPosition.Name;
 
             //
-            // PSWorkflowInstance.PSWorkflowDefinition may be null when debugger 
+            // PSWorkflowInstance.PSWorkflowDefinition may be null when debugger
             // object is created.  Lazily check and create Xaml related info when
             // needed.
             //
@@ -473,8 +473,8 @@ namespace Microsoft.PowerShell.Workflow
             UpdateScriptInfo(funcName);
 
             // Update call stack with current WF function.
-            if (!UpdateCallStack(activityPosition)) 
-            { 
+            if (!UpdateCallStack(activityPosition))
+            {
                 return;
             }
 
@@ -654,7 +654,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         private bool CheckLineBreakpoint(
-            LineBreakpoint bp, 
+            LineBreakpoint bp,
             int activityLine)
         {
             if (bp == null || !bp.Enabled) { return false; }
@@ -794,13 +794,13 @@ namespace Microsoft.PowerShell.Workflow
 
             InvocationInfo invocationInfo = InvocationInfo.Create(
                 new WorkflowInfo(
-                    cmdName, 
-                    script, 
-                    ScriptBlock.Create(script), 
+                    cmdName,
+                    script,
+                    ScriptBlock.Create(script),
                     (_xamlDefinition != null) ? _xamlDefinition : _outerFnXamlDefinition,
                     null),
                 new ScriptExtent(
-                    scriptStartPosition, 
+                    scriptStartPosition,
                     scriptEndPosition)
                 );
 
@@ -814,7 +814,7 @@ namespace Microsoft.PowerShell.Workflow
 
         private void AddBreakpoint(Breakpoint bp)
         {
-            // Keep track of all script breakpoints from the parent so 
+            // Keep track of all script breakpoints from the parent so
             // that *-PSBreakpoint commands can properly reflect this.
             if (!_initalParentBreakpoints.ContainsKey(bp.Id))
             {
@@ -951,7 +951,7 @@ namespace Microsoft.PowerShell.Workflow
 
         private void ParseScriptForMap(
             Dictionary<string, DebugSource> funcToSourceMap,
-            string script, 
+            string script,
             DebugSource debugSource)
         {
             ScriptBlock sb = ScriptBlock.Create(script);
@@ -1003,7 +1003,7 @@ namespace Microsoft.PowerShell.Workflow
 
                     funcToSourceMap.Add(fName, debugSource);
 
-                    // Call this recursively for all statements in the workflow function to pick 
+                    // Call this recursively for all statements in the workflow function to pick
                     // up any WF functions defined inside this WF function.
                     if (fAst.Body.BeginBlock != null)
                     {
@@ -1200,7 +1200,7 @@ namespace Microsoft.PowerShell.Workflow
             if (callStack.Count > 0)
             {
                 if ((_host != null) && (_host.UI != null) &&
-                    !(_host.GetType().FullName).Equals("System.Management.Automation.Remoting.ServerRemoteHost", 
+                    !(_host.GetType().FullName).Equals("System.Management.Automation.Remoting.ServerRemoteHost",
                         StringComparison.OrdinalIgnoreCase))
                 {
                     // Use Out-Default to stream and format call stack data.
@@ -1225,7 +1225,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         private DebuggerCommandResults RunPowerShellCommand(
-            PSCommand command, 
+            PSCommand command,
             PSDataCollection<object> input,
             PSDataCollection<PSObject> output,
             bool addToHistory,
@@ -1318,7 +1318,7 @@ namespace Microsoft.PowerShell.Workflow
                     RemoveBreakpoint(e.Breakpoint.Id);
                     break;
             }
-            
+
             // Forward update to parent.
             RaiseBreakpointUpdatedEvent(e);
         }
@@ -1432,7 +1432,7 @@ namespace Microsoft.PowerShell.Workflow
         /// isn't supported.  Write error message to host.
         /// </summary>
         private bool CheckForWorkflowVariableChange(
-            PSCommand command, 
+            PSCommand command,
             PSDataCollection<PSObject> output,
             out ErrorRecord errorRecord)
         {

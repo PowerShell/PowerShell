@@ -2,10 +2,10 @@
 /*============================================================
 **
 **
-** Purpose: 
+** Purpose:
 ** This public abstract class defines the methods / properties
-** that all events should support. 
-** 
+** that all events should support.
+**
 ============================================================*/
 
 using System.Collections.Generic;
@@ -15,7 +15,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace System.Diagnostics.Eventing.Reader
 {
     /// <summary>
-    /// Represents an event obtained from an EventReader.    
+    /// Represents an event obtained from an EventReader.
     /// </summary>
     public abstract class EventRecord : IDisposable
     {

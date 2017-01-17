@@ -11,7 +11,7 @@ using System.Reflection.Emit;
 namespace System.Management.Automation.Language
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public interface ICustomAstVisitor
     {

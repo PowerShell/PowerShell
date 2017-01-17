@@ -41,7 +41,7 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
-                <CheckBox x:Name="CaseSensitive" Margin="5" Grid.Row="0" Grid.Column="0" Content="{x:Static this:HelpWindowResources.CaseSensitiveTitle}"></CheckBox>                
+                <CheckBox x:Name="CaseSensitive" Margin="5" Grid.Row="0" Grid.Column="0" Content="{x:Static this:HelpWindowResources.CaseSensitiveTitle}"></CheckBox>
                 <CheckBox x:Name="WholeWord" Margin="5" Grid.Row="1" Grid.Column="0" Content="{x:Static this:HelpWindowResources.WholeWordTitle}"></CheckBox>
             </Grid>
         </GroupBox>

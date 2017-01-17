@@ -12,17 +12,17 @@ using System.Management.Automation.Provider;
 using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis; 
+using System.Diagnostics.CodeAnalysis;
 
 
 
 namespace Microsoft.WSMan.Management
 {
     /// <summary>
-    /// Executes action on a target object specified by RESOURCE_URI, where 
+    /// Executes action on a target object specified by RESOURCE_URI, where
     /// parameters are specified by key value pairs.
     /// eg., Call StartService method on the spooler service
-    /// Invoke-WSManAction -Action StartService -ResourceURI wmicimv2/Win32_Service  
+    /// Invoke-WSManAction -Action StartService -ResourceURI wmicimv2/Win32_Service
     /// -SelectorSet {Name=Spooler}
     /// </summary>
 
@@ -31,7 +31,7 @@ namespace Microsoft.WSMan.Management
     {
         /// <summary>
         /// The following is the definition of the input parameter "Action".
-        /// Indicates the method which needs to be executed on the management object 
+        /// Indicates the method which needs to be executed on the management object
         /// specified by the ResourceURI and selectors
         /// </summary>
         [Parameter(Mandatory = true,
@@ -59,8 +59,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
-        /// Executes the management operation on the specified computer(s). The default 
-        /// is the local computer. Type the fully qualified domain name, NETBIOS name or 
+        /// Executes the management operation on the specified computer(s). The default
+        /// is the local computer. Type the fully qualified domain name, NETBIOS name or
         /// IP address to indicate the remote host(s)
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
@@ -75,15 +75,15 @@ namespace Microsoft.WSMan.Management
                 {
                     computername = "localhost";
                 }
-               
+
             }
         }
         private String computername = null;
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
-        /// Specifies the transport, server, port, and ApplicationName of the new 
-        /// runspace. The format of this string is: 
+        /// Specifies the transport, server, port, and ApplicationName of the new
+        /// runspace. The format of this string is:
         /// transport://server:port/ApplicationName.
         /// </summary>
         [Parameter(ParameterSetName = "URI")]
@@ -99,7 +99,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "FilePath".
-        /// Updates the management resource specified by the ResourceURI and SelectorSet 
+        /// Updates the management resource specified by the ResourceURI and SelectorSet
         /// via this input file
         /// </summary>
         [Parameter]
@@ -113,7 +113,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "OptionSet".
-        /// OptionSet is a hashtable  and is used to pass a set of switches to the 
+        /// OptionSet is a hashtable  and is used to pass a set of switches to the
         /// service to modify or refine the nature of the request.
         /// </summary>
         [Parameter(ValueFromPipeline = true,
@@ -130,7 +130,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "Port".
-        /// Specifies the port to be used when connecting to the ws management service. 
+        /// Specifies the port to be used when connecting to the ws management service.
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
         [ValidateNotNullOrEmpty]
@@ -144,8 +144,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "SelectorSet".
-        /// SelectorSet is a hash table which helps in identify an instance of the 
-        /// management resource if there are are more than 1 instance of the resource 
+        /// SelectorSet is a hash table which helps in identify an instance of the
+        /// management resource if there are are more than 1 instance of the resource
         /// class
         /// </summary>
         [Parameter(Position = 2,
@@ -162,7 +162,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "SessionOption".
-        /// Defines a set of extended options for the WSMan session. This hashtable can 
+        /// Defines a set of extended options for the WSMan session. This hashtable can
         /// be created using New-WSManSessionOption
         /// </summary>
         [Parameter]
@@ -178,8 +178,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
-        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to 
-        /// the remote computer. If SSL is not available on the port specified by the 
+        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to
+        /// the remote computer. If SSL is not available on the port specified by the
         /// Port parameter, the command fails.
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
@@ -193,7 +193,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "ValueSet".
-        /// ValueSet is a hahs table which helps to modify resource represented by the 
+        /// ValueSet is a hahs table which helps to modify resource represented by the
         /// ResourceURI and SelectorSet.
         /// </summary>
         [Parameter]
@@ -228,7 +228,7 @@ namespace Microsoft.WSMan.Management
         IWSManEx m_wsmanObject = (IWSManEx)new WSManClass();
         IWSManSession m_session = null;
         string connectionStr = string.Empty;
-        
+
 
         /// <summary>
         /// BeginProcessing method.

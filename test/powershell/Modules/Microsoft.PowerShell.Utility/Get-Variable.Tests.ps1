@@ -1,22 +1,22 @@
 
 Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
-	It "Get-Variable of not existing variable Name should throw ItemNotFoundException"{	
-		try { 
+	It "Get-Variable of not existing variable Name should throw ItemNotFoundException"{
+		try {
 			Get-Variable -EA Stop -Name nonexistingVariableName
 			Throw "Execution OK"
-		} 
+		}
 		catch {
 			$_.FullyQualifiedErrorId | Should be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 		}
 	}
-	
+
 	It "Get-Variable of existing variable Name with include and bogus exclude should work"{
 		Set-Variable newVar testing
 		$var1=get-variable -Name newVar -Include newVar -Exclude bogus
 		$var1.Name|Should Be "newVar"
 		$var1.Value|Should Be "testing"
 	}
-	
+
 	It "Get-Variable of existing variable Name with Description and Option should work"{
 		Set-Variable newVar testing -Option ReadOnly -Description "testing description"
 		$var1=get-variable -Name newVar
@@ -25,7 +25,7 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 		$var1.Options|Should Be "ReadOnly"
 		$var1.Description|Should Be "testing description"
 	}
-	
+
 	It "Get-Variable of existing variable Globbing Name should work"{
 		Set-Variable abcaVar testing
 		Set-Variable bcdaVar "another test"
@@ -39,13 +39,13 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 		$var1[2].Name|Should Be "bcdaVar"
 		$var1[2].Value|Should Be "another test"
 	}
-	
+
 	It "Get-Variable of existing private variable Name should throw ItemNotFoundException"{
-		try { 
+		try {
 			Set-Variable newVar testing -Option Private
 			&{Get-Variable -Name newVar -EA Stop}
 			Throw "Execution OK"
-		} 
+		}
 		catch {
 			$_.FullyQualifiedErrorId | Should be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 		}

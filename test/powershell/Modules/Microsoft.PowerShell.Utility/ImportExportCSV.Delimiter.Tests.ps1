@@ -1,8 +1,8 @@
 ﻿Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tags "Feature" {
     BeforeAll {
         # note, we will not use "," as that's the default for CSV
-        $delimiters = "/", " ", "@", "#", "$", "\", "&", "(", ")", 
-              "{", "}", "|", "<", ">", ";", "'", 
+        $delimiters = "/", " ", "@", "#", "$", "\", "&", "(", ")",
+              "{", "}", "|", "<", ">", ";", "'",
               '"', "~", "!", "%", "^", "*", "_", "+", ":",
               "?", "-", "=", "[", "]", "."
         $defaultDelimiter = [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator
@@ -33,7 +33,7 @@
             [System.Globalization.CultureInfo]::CurrentCulture = $enCulture
         }
         else {
-            [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator = $defaultDelimiter 
+            [System.Globalization.CultureInfo]::CurrentCulture.TextInfo.ListSeparator = $defaultDelimiter
         }
         remove-item -force -ea silentlycontinue TESTDRIVE:/file.csv
     }

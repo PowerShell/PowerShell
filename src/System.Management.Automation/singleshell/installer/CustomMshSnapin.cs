@@ -15,26 +15,26 @@ using System.Management.Automation.Runspaces;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Raw mshsnapin is a class for allowing mshsnapin developers to directly 
+    ///
+    /// Raw mshsnapin is a class for allowing mshsnapin developers to directly
     /// specify the set of cmdlets, providers, types, formats, assemblies
-    /// available in the mshsnapin. 
-    /// 
+    /// available in the mshsnapin.
+    ///
     /// To use this class, mshsnapin developers will drive from it and fill
-    /// in details about cmdlet, provider, type, format, assemblies. 
-    /// 
-    /// This class will also facilitate the registration of the mshsnapin 
-    /// through installutil.exe. 
-    /// 
-    /// This class will be built with monad core engine dll. 
+    /// in details about cmdlet, provider, type, format, assemblies.
+    ///
+    /// This class will also facilitate the registration of the mshsnapin
+    /// through installutil.exe.
+    ///
+    /// This class will be built with monad core engine dll.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
-    /// Developers should derive from this class to implement their own 
-    /// custom mshsnapins. 
-    /// 
+    /// Developers should derive from this class to implement their own
+    /// custom mshsnapins.
+    ///
     /// Derived mshsnapins should be denoted with [RunInstaller] attribute
-    /// so that installutil.exe can directly install the mshsnapin into registry. 
+    /// so that installutil.exe can directly install the mshsnapin into registry.
     /// </remarks>
     public abstract class CustomPSSnapIn : PSSnapInInstaller
     {
@@ -52,7 +52,7 @@ namespace System.Management.Automation
         /// Gets the cmdlets defined in custom mshsnapin.
         /// </summary>
         /// <remarks>
-        /// This member can be derived to provide the list of cmdlets to be included for this mshsnapin. 
+        /// This member can be derived to provide the list of cmdlets to be included for this mshsnapin.
         /// </remarks>
         public virtual Collection<CmdletConfigurationEntry> Cmdlets
         {
@@ -65,7 +65,7 @@ namespace System.Management.Automation
         /// Gets the providers defined in custom mshsnapin.
         /// </summary>
         /// <remarks>
-        /// This member can be derived to provide the list of providers to be included for this mshsnapin. 
+        /// This member can be derived to provide the list of providers to be included for this mshsnapin.
         /// </remarks>
         public virtual Collection<ProviderConfigurationEntry> Providers
         {
@@ -78,7 +78,7 @@ namespace System.Management.Automation
         /// Gets the types defined in custom mshsnapin.
         /// </summary>
         /// <remarks>
-        /// This member can be derived to provide the list of types to be included for this mshsnapin. 
+        /// This member can be derived to provide the list of types to be included for this mshsnapin.
         /// </remarks>
         public virtual Collection<TypeConfigurationEntry> Types
         {
@@ -91,7 +91,7 @@ namespace System.Management.Automation
         /// Gets the formatsdefined in raw mshsnapin.
         /// </summary>
         /// <remarks>
-        /// This member can be derived to provide the list of formats to be included for this mshsnapin. 
+        /// This member can be derived to provide the list of formats to be included for this mshsnapin.
         /// </remarks>
         public virtual Collection<FormatConfigurationEntry> Formats
         {
@@ -101,7 +101,7 @@ namespace System.Management.Automation
         private Dictionary<String, object> _regValues = null;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal override Dictionary<String, object> RegValues
         {

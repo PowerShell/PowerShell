@@ -10,7 +10,7 @@ namespace Microsoft.Management.UI.Internal
     using System.Windows.Data;
 
     /// <summary>
-    /// The ValidatingValueToGenericParameterTypeConverter class is responsible for 
+    /// The ValidatingValueToGenericParameterTypeConverter class is responsible for
     /// converting a <see cref="ValidatingValue{T}"/> to its generic parameter T.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]

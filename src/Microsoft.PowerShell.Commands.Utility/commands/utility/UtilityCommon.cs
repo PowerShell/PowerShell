@@ -221,7 +221,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 UInt32 charCounter = 0;
 
-                // ToString() in invoked thrice by the F&O for the same content. 
+                // ToString() in invoked thrice by the F&O for the same content.
                 // Hence making sure that Offset is not getting incremented thrice for the same bytes being displayed.
                 Offset = _initialOffSet;
 

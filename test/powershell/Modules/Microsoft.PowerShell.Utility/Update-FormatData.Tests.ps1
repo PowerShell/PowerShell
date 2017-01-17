@@ -21,7 +21,7 @@ Describe "Update-FormatData" -Tags "CI" {
 	    It "Should validly load formatting data" {
 	        Get-FormatData -typename System.Diagnostics.Process | Export-FormatData -Path $path
             $null = $ps.AddScript("Update-FormatData -prependPath $path")
-            $ps.Invoke() 
+            $ps.Invoke()
             $ps.HadErrors | Should be $false
 	    }
     }
@@ -40,8 +40,8 @@ Describe "Update-FormatData basic functionality" -Tags "CI" {
                             <PropertySet>
                                 <Name>PropertySetName</Name>
                                 <ReferencedProperties>
-                                    <Name>FirstName</Name> 
-                                    <Name>LastName</Name> 
+                                    <Name>FirstName</Name>
+                                    <Name>LastName</Name>
                                 </ReferencedProperties>
                             </PropertySet>
                         </Members>
@@ -50,7 +50,7 @@ Describe "Update-FormatData basic functionality" -Tags "CI" {
 "@
 		$xmlContent > $testfile
     }
-	
+
 	It "Update-FormatData with WhatIf should work"{
 
         { Update-FormatData -Append $testfile -WhatIf } | Should Not Throw

@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             InitializeComponent();
             this.Loaded += new System.Windows.RoutedEventHandler(this.ImageButton_Loaded);
         }
-        
+
         /// <summary>
         /// Copies the automation id from the parent control to the inner button
         /// </summary>

@@ -3,7 +3,7 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
   BeforeAll {
     $StartingLocation = Get-Location
   }
-  AfterEach { 
+  AfterEach {
     Set-Location $StartingLocation
   }
   It "should output multiple paths when called with multiple -Path targets" {

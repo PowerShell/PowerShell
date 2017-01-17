@@ -36,7 +36,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This is queue of all the state change event which have occured for
-        /// this pipeline. RaisePipelineStateEvents raises event for each 
+        /// this pipeline. RaisePipelineStateEvents raises event for each
         /// item in this queue. We don't raise the event with in SetPipelineState
         /// because often SetPipelineState is called with in a lock.
         /// Raising event in lock introduces chances of deadlock in GUI applications.
@@ -96,11 +96,11 @@ namespace System.Management.Automation
             SetCommandCollection(_commands);
 
             //Create event which will be signalled when pipeline execution
-            //is completed/failed/stoped. 
+            //is completed/failed/stoped.
             //Note:Runspace.Close waits for all the running pipeline
-            //to finish.  This Event must be created before pipeline is 
+            //to finish.  This Event must be created before pipeline is
             //added to list of running pipelines. This avoids the race condition
-            //where Close is called after pipeline is added to list of 
+            //where Close is called after pipeline is added to list of
             //running pipeline but before event is created.
             PipelineFinishedEvent = new ManualResetEvent(false);
         }
@@ -370,7 +370,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Stream for providing input to PipelineProcessor. Host will write on
-        /// ObjectWriter of this stream. PipelineProcessor will read from 
+        /// ObjectWriter of this stream. PipelineProcessor will read from
         /// ObjectReader of this stream.
         /// </summary>
         protected PSDataCollectionStream<object> InputStream
@@ -409,16 +409,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Invoke the pipeline, synchronously, returning the results as an 
+        /// Invoke the pipeline, synchronously, returning the results as an
         /// array of objects.
         /// </summary>
         /// <param name="input">an array of input objects to pass to the pipeline.
         /// Array may be empty but may not be null</param>
         /// <returns>An array of zero or more result objects</returns>
         /// <remarks>Caller of synchronous exectute should not close
-        /// input objectWriter. Synchronous invoke will always close the input 
+        /// input objectWriter. Synchronous invoke will always close the input
         /// objectWriter.
-        /// 
+        ///
         /// On Synchronous Invoke if output is throttled and no one is reading from
         /// output pipe, Execution will block after buffer is full.
         /// </remarks>
@@ -483,7 +483,7 @@ namespace System.Management.Automation
                 throw e;
             }
 
-            // PowerShell object will return empty results if it was provided an alternative object to 
+            // PowerShell object will return empty results if it was provided an alternative object to
             // collect output in.  Check to see if the output was collected in a member variable.
             if (results.Count == 0)
             {
@@ -554,7 +554,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Stop the pipeline asynchronously. 
+        /// Stop the pipeline asynchronously.
         /// This method calls the BeginStop on the underlying
         /// powershell and so any exception will be
         /// thrown on the same thread.
@@ -594,14 +594,14 @@ namespace System.Management.Automation
                         returnResult = false;
                         break;
 
-                    //If pipeline execution has failed or completed or 
-                    //stoped, return silently. 
+                    //If pipeline execution has failed or completed or
+                    //stoped, return silently.
                     case PipelineState.Stopped:
                     case PipelineState.Completed:
                     case PipelineState.Failed:
                         return false;
 
-                    //If pipeline is in Stopping state, ignore the second 
+                    //If pipeline is in Stopping state, ignore the second
                     //stop.
                     case PipelineState.Stopping:
                         isAlreadyStopping = true;
@@ -636,7 +636,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Disposes the pipeline
         /// </summary>
-        /// <param name="disposing">true, when called on Dispose()</param>       
+        /// <param name="disposing">true, when called on Dispose()</param>
         protected override void Dispose(bool disposing)
         {
             try
@@ -719,13 +719,13 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="state">the new state</param>
         /// <param name="reason">
-        /// An exception indicating that state change is the result of an error, 
+        /// An exception indicating that state change is the result of an error,
         /// otherwise; null.
         /// </param>
         /// <remarks>
         /// Sets the internal execution state information member variable. It
         /// also adds PipelineStateInfo to a queue. RaisePipelineStateEvents
-        /// raises event for each item in this queue.  
+        /// raises event for each item in this queue.
         /// </remarks>
         private void SetPipelineState(PipelineState state, Exception reason)
         {
@@ -765,10 +765,10 @@ namespace System.Management.Automation
                 _pipelineStateInfo = new PipelineStateInfo(copyState, reason);
                 copyStateInfo = _pipelineStateInfo;
 
-                //Add _pipelineStateInfo to _executionEventQueue. 
+                //Add _pipelineStateInfo to _executionEventQueue.
                 //RaisePipelineStateEvents will raise event for each item
                 //in this queue.
-                //Note:We are doing clone here instead of passing the member 
+                //Note:We are doing clone here instead of passing the member
                 //_pipelineStateInfo because we donot want outside
                 //to change pipeline state.
                 RunspaceAvailability previousAvailability = _runspace.RunspaceAvailability;
@@ -783,9 +783,9 @@ namespace System.Management.Automation
                         _runspace.RunspaceAvailability));
             } // lock...
 
-            // using the copyStateInfo here as this piece of code is 
+            // using the copyStateInfo here as this piece of code is
             // outside of lock and _pipelineStateInfo might get changed
-            // by two threads running concurrently..so its value is 
+            // by two threads running concurrently..so its value is
             // not guaranteed to be the same for this entire method call.
             // copyStateInfo is a local variable.
             if (copyStateInfo.State == PipelineState.Completed ||
@@ -817,8 +817,8 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    //Clear the events if there are no EventHandlers. This 
-                    //ensures that events do not get called for state 
+                    //Clear the events if there are no EventHandlers. This
+                    //ensures that events do not get called for state
                     //changes prior to their registration.
                     _executionEventQueue.Clear();
                 }
@@ -854,8 +854,8 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes the underlying PowerShell object after verifying
         /// if the pipeline is in a state where it can be invoked.
-        /// If invokeAndDisconnect is true then the remote PowerShell 
-        /// command will be immediately disconnected after it begins 
+        /// If invokeAndDisconnect is true then the remote PowerShell
+        /// command will be immediately disconnected after it begins
         /// running.
         /// </summary>
         /// <param name="syncCall">true if called from a sync call</param>
@@ -906,8 +906,8 @@ namespace System.Management.Automation
                                                         PipelineState.Disconnected);
             }
 
-            // The connect may be from the same Pipeline that disconnected and in this case 
-            // the Pipeline state already exists.  Or this could be a new Pipeline object 
+            // The connect may be from the same Pipeline that disconnected and in this case
+            // the Pipeline state already exists.  Or this could be a new Pipeline object
             // (connect reconstruction case) and new state is created.
 
             // Check to see if this pipeline already exists in the runspace.
@@ -1013,7 +1013,7 @@ namespace System.Management.Automation
         #region Internal Methods/Properties
 
         /// <summary>
-        /// ManualResetEvent which is signaled when pipeline execution is 
+        /// ManualResetEvent which is signaled when pipeline execution is
         /// completed/failed/stoped.
         /// </summary>
         internal ManualResetEvent PipelineFinishedEvent { get; }
@@ -1036,11 +1036,11 @@ namespace System.Management.Automation
         /// <param name="syncCall">True if method is called from Invoke, false
         /// if called from InvokeAsync</param>
         /// <exception cref="InvalidOperationException">
-        /// 1) A pipeline is already executing. Pipeline cannot execute 
+        /// 1) A pipeline is already executing. Pipeline cannot execute
         /// concurrently.
-        /// 2) InvokeAsync is called on nested pipeline. Nested pipeline 
+        /// 2) InvokeAsync is called on nested pipeline. Nested pipeline
         /// cannot be executed Asynchronously.
-        /// 3) Attempt is made to invoke a nested pipeline directly. Nested 
+        /// 3) Attempt is made to invoke a nested pipeline directly. Nested
         /// pipeline must be invoked from a running pipeline.
         /// </exception>
         internal void DoConcurrentCheck(bool syncCall)
@@ -1054,7 +1054,7 @@ namespace System.Management.Automation
                     ((RemoteRunspace)_runspace).RunspaceAvailability != RunspaceAvailability.Busy &&
                     ((RemoteRunspace)_runspace).RunspaceAvailability != RunspaceAvailability.RemoteDebug)
                 {
-                    // We can add a new pipeline to the runspace only if it is 
+                    // We can add a new pipeline to the runspace only if it is
                     // available (not busy).
                     return;
                 }
@@ -1112,7 +1112,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The underlying powershell object on which this remote pipeline 
+        /// The underlying powershell object on which this remote pipeline
         /// is created
         /// </summary>
         internal PowerShell PowerShell

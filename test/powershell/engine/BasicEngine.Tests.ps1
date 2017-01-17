@@ -7,7 +7,7 @@ Describe 'Basic engine APIs' -Tags "CI" {
         It "can load the default snapin 'Microsoft.WSMan.Management'" -skip:(-not $IsWindows) {
             $ps = [powershell]::Create()
             $ps.AddScript("Get-Command -Name Test-WSMan") > $null
-            
+
             $result = $ps.Invoke()
             $result.Count | Should Be 1
             $result[0].PSSnapIn.Name | Should Be "Microsoft.WSMan.Management"

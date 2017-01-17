@@ -211,7 +211,7 @@ namespace Microsoft.PowerShell
                         int size = LengthInBufferCells(charToRender);
                         totalBytes += size;
 
-                        //if there is no enough space for the character at the edge, fill in spaces at the end and 
+                        //if there is no enough space for the character at the edge, fill in spaces at the end and
                         //put the character to next line.
                         int filling = totalBytes > bufferWidth ? (totalBytes - bufferWidth) % size : 0;
                         for (int f = 0; f < filling; f++)
@@ -547,7 +547,7 @@ namespace Microsoft.PowerShell
                     y++;
                 }
             }
-            
+
             return new COORD {X = (short)x, Y = (short)y};
         }
 

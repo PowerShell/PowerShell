@@ -34,7 +34,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Gets a the error for the async operation.  This field is only valid if 
+        /// Gets a the error for the async operation.  This field is only valid if
         /// OperationInProgress is false.  null indicates there was no error.
         /// </summary>
         Exception OperationError

@@ -20,7 +20,7 @@ namespace Microsoft.Management.UI.Internal
     using System.Windows.Controls;
     using System.Windows.Input;
     using System.Windows.Media;
-    
+
     /// <summary>
     /// OutGridViewWindow definition for PowerShell command out-gridview.
     /// </summary>
@@ -42,7 +42,7 @@ namespace Microsoft.Management.UI.Internal
         /// Min ZoomLevel
         /// </summary>
         private const double ZOOM_MIN = 0.5;
-        
+
         /// <summary>
         /// Window for gridView.
         /// </summary>
@@ -63,25 +63,25 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         private AutoResetEvent gridViewWindowLoaded;
 
-    
+
         /// <summary> Is used to store any Management list calls exceptions. </summary>
         private Exception exception = null;
-        
+
         /// <summary>
         /// Is used to block thread of the pipeline.
         /// </summary>
         private AutoResetEvent closedEvent;
-        
+
         /// <summary>
         /// OK Button's content.
         /// </summary>
         private static readonly string OKButtonContent = XamlLocalizableResources.OutGridView_Button_OK;
-        
+
         /// <summary>
         /// Cancel Button's content.
         /// </summary>
         private static readonly string CancelButtonContent = XamlLocalizableResources.OutGridView_Button_Cancel;
-        
+
         /// <summary>
         /// Used to store selected items in the ok processing
         /// </summary>
@@ -97,11 +97,11 @@ namespace Microsoft.Management.UI.Internal
         /// </summary>
         private double zoomLevel = 1.0;
 
-       
+
         #endregion private Fields
 
         #region internal Constructors
-        
+
         /// <summary>
         /// Constructor for OutGridView.
         /// </summary>
@@ -255,16 +255,16 @@ namespace Microsoft.Management.UI.Internal
         private ManagementList CreateManagementList(string outputMode)
         {
             ManagementList newList = new ManagementList();
-            
+
             newList.ViewSaverUserActionState = UserActionState.Hidden;
             newList.ViewManagerUserActionState = UserActionState.Hidden;
             newList.List.VerticalAlignment = VerticalAlignment.Stretch;
             newList.List.SetValue(Grid.RowProperty, 0);
             newList.List.SelectionMode = (outputMode == "Single") ? SelectionMode.Single : SelectionMode.Extended;
-            
+
             return newList;
         }
-        
+
         /// <summary>
         /// Creates a new main grid for window.
         /// </summary>
@@ -289,7 +289,7 @@ namespace Microsoft.Management.UI.Internal
 
             return mainGrid;
         }
-        
+
         /// <summary>
         /// Creates a OK button.
         /// </summary>
@@ -308,14 +308,14 @@ namespace Microsoft.Management.UI.Internal
             buttonGrid.ColumnDefinitions[1].SharedSizeGroup = "okCancel";
             buttonGrid.HorizontalAlignment = HorizontalAlignment.Right;
             buttonGrid.SetValue(Grid.RowProperty, 1);
-            
+
             //// This will add OK and Cancel button to buttonGrid.
             buttonGrid.Children.Add(CreateOKButton());
             buttonGrid.Children.Add(CreateCancelButton());
-            
+
             return buttonGrid;
         }
-        
+
         /// <summary>
         /// Creates a OK button.
         /// </summary>
@@ -332,7 +332,7 @@ namespace Microsoft.Management.UI.Internal
             ok.Click += new RoutedEventHandler(OK_Click);
             return ok;
         }
-        
+
         /// <summary>
         /// Creates a Cancel button.
         /// </summary>
@@ -349,7 +349,7 @@ namespace Microsoft.Management.UI.Internal
             cancel.Click += new RoutedEventHandler(Cancel_Click);
             return cancel;
         }
-        
+
         /// <summary>
         /// Store the selected items for use in EndProcessing
         /// </summary>
@@ -378,7 +378,7 @@ namespace Microsoft.Management.UI.Internal
         {
             this.gridViewWindow.Close();
         }
-        
+
         /// <summary>
         /// Gets selected items from List.
         /// </summary>
@@ -485,7 +485,7 @@ namespace Microsoft.Management.UI.Internal
         /// <summary>
         /// Add an item to ObservableCollection.
         /// </summary>
-        /// <param name="value">PSObject of comlet data.</param>  
+        /// <param name="value">PSObject of comlet data.</param>
         [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "The method is called using reflection.")]
         private void AddItem(PSObject value)
         {
@@ -572,7 +572,7 @@ namespace Microsoft.Management.UI.Internal
                 catch(ObjectDisposedException)
                 {
                     // we tried to avoid this exception with "&& !this.closedEvent.SafeWaitHandle.IsClosed"
-                    // but since this runs in a different thread the if condition could be evaluated and after that 
+                    // but since this runs in a different thread the if condition could be evaluated and after that
                     // the handle disposed
                 }
             }
@@ -585,7 +585,7 @@ namespace Microsoft.Management.UI.Internal
         /// <param name="e">RoutedEvent Args.</param>
         private void GridViewWindowLoaded(object sender, RoutedEventArgs e)
         {
-            // signal the main thread 
+            // signal the main thread
             this.gridViewWindowLoaded.Set();
 
             // Make gridview window as active window

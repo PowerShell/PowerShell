@@ -2,21 +2,21 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 // This file contains the definitions for the objects
-// used in the communication protocol between formatting 
+// used in the communication protocol between formatting
 // and output commands. the format/xxx commands instantiate
 // these objects and write them to the pipeline. The out-xxx
 // commands read them from the pipeline.
 //
 // NOTE:
 // Since format/xxx and out-xxx commands can be separated by
-// serialization boundaries, the structure of these objects 
+// serialization boundaries, the structure of these objects
 // must adhere to the Monad serialization constraints.
 //
 // Since the out-xxx commands heavily access these objects and
 // there is an up front need for protocol validation, the out-xxx
-// commands do deserialize the objects back from the property bag 
+// commands do deserialize the objects back from the property bag
 // representation that mig have been introduced by serialization.
-// 
+//
 // There is also the need to preserve type information across serialization
 // boundaries, therefore the objects provide a GUID based machanism to
 // preserve the information.
@@ -203,7 +203,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// desired number of columns on the screen.
         /// Advisory, the outputter can decide otherwise
-        /// 
+        ///
         /// A zero value signifies let the outputter get the
         /// best fit on the screen (possibly blocking until the end)
         /// </summary>

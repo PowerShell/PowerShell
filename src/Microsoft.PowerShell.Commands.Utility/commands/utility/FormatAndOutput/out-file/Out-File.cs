@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Encoding optional flag
         /// </summary>
-        /// 
+        ///
         [Parameter(Position = 1)]
         [ValidateNotNullOrEmpty]
         [ValidateSetAttribute(new string[] {
@@ -166,7 +166,7 @@ namespace Microsoft.PowerShell.Commands
             // set up the Scree Host interface
             OutputManagerInner outInner = (OutputManagerInner)this.implementation;
 
-            // NOTICE: if any exception is thrown from here to the end of the method, the 
+            // NOTICE: if any exception is thrown from here to the end of the method, the
             // cleanup code will be called in IDisposable.Dispose()
             outInner.LineOutput = InstantiateLineOutputInterface();
 
@@ -255,7 +255,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // NOTICE: if any exception is thrown, the 
+            // NOTICE: if any exception is thrown, the
             // cleanup code will be called in IDisposable.Dispose()
             base.ProcessRecord();
             _sw.Flush();
@@ -267,10 +267,10 @@ namespace Microsoft.PowerShell.Commands
         protected override void EndProcessing()
         {
             // When the Out-File is used in a redirection pipelineProcessor,
-            // its ProcessRecord method may not be called when nothing is written to the 
+            // its ProcessRecord method may not be called when nothing is written to the
             // output pipe, for example:
             //     Write-Error error > test.txt
-            // In this case, the EndProcess method should return immediately as if it's 
+            // In this case, the EndProcess method should return immediately as if it's
             // never been called. The cleanup work will be done in IDisposable.Dispose()
             if (!_processRecordExecuted)
             {
@@ -282,7 +282,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // NOTICE: if any exception is thrown, the 
+            // NOTICE: if any exception is thrown, the
             // cleanup code will be called in IDisposable.Dispose()
             base.EndProcessing();
 
@@ -292,7 +292,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void InternalDispose()
         {
@@ -329,10 +329,10 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// indicate whether the ProcessRecord method was executed.
         /// When the Out-File is used in a redirection pipelineProcessor,
-        /// its ProcessRecord method may not be called when nothing is written to the 
+        /// its ProcessRecord method may not be called when nothing is written to the
         /// output pipe, for example:
         ///     Write-Error error > test.txt
-        /// In this case, the EndProcess method should return immediately as if it's 
+        /// In this case, the EndProcess method should return immediately as if it's
         /// never been called.
         /// </summary>
         private bool _processRecordExecuted = false;

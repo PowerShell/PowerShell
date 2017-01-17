@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             // invoke callback if available
-            if (null != _callback) 
+            if (null != _callback)
                 _callback(this);
         }
 
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Workflow
         #region Overrides
 
         /// <summary>
-        /// Whether the operation represented by this method is 
+        /// Whether the operation represented by this method is
         /// completed
         /// </summary>
         public bool IsCompleted
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Workflow
     /// host processes until all of them are used after which
     /// it will start queueing requests
     /// </summary>
-    /// <remarks>Whether this class needs to remain public should be 
+    /// <remarks>Whether this class needs to remain public should be
     /// evaluated</remarks>
     internal sealed class PSOutOfProcessActivityController : PSActivityHostController
     {
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Workflow
 
             _requests.Enqueue(invoker);
             CheckAndStartServicingThread();
-        }        
+        }
 
         /// <summary>
         /// This is a helper method which should only be called
@@ -246,7 +246,7 @@ namespace Microsoft.PowerShell.Workflow
             {
                 ActivityHostProcess process = CreateNewActivityHostProcess();
                 _hostProcesses.Add(process);
-            }                        
+            }
         }
 
         private ActivityHostProcess CreateNewActivityHostProcess()
@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Workflow
             ActivityHostProcess process = sender as ActivityHostProcess;
             Debug.Assert(process != null, "ActivityHostProcess did not raise event correctly");
             Debug.Assert(process.Busy, "When ProcessCrashed is raised busy should not be reset");
-            process.MarkForRemoval = true;                
+            process.MarkForRemoval = true;
 
             if (e.FailureOnSetup)
             {
@@ -284,7 +284,7 @@ namespace Microsoft.PowerShell.Workflow
 
             // Below call is added to fix the race condition:
             // When OOP host process is crashed, ProcessCrashed() method sets the process as MarkForRemoval, context switch happened at this time
-            // and another process has finished and started the servicing thread, which checks the above process as MarkForRemoval and disposes it. 
+            // and another process has finished and started the servicing thread, which checks the above process as MarkForRemoval and disposes it.
             // ProcessFinished event handler is unregistered from the process and ActivityHostProcess.HandleTransportError will not be able to raise
             // process finished event, resulting inconsistent _busyHost count.
             //
@@ -292,14 +292,14 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         private void ProcessFinished(object sender, EventArgs e)
-        {     
+        {
             DecrementHostCountAndStartThreads();
         }
 
         private void DecrementHostCountAndStartThreads()
         {
             Interlocked.Decrement(ref _busyHosts);
-    
+
             PerfCountersMgr.UpdateCounterByValue(
                 PSWorkflowPerformanceCounterSetInfo.CounterSetId,
                 PSWorkflowPerformanceCounterIds.ActivityHostMgrBusyProcessesCount,
@@ -357,7 +357,7 @@ namespace Microsoft.PowerShell.Workflow
                 foreach(var process in toRemove)
                 {
                     SafelyDisposeProcess(process);
-                }                
+                }
 
                 ActivityInvoker invoker;
                 // first service previously failed request
@@ -405,7 +405,7 @@ namespace Microsoft.PowerShell.Workflow
                 if (processed) continue;
 
                 ActivityHostProcess hostProcess = CreateNewActivityHostProcess();
-                _hostProcesses.Add(hostProcess);                
+                _hostProcesses.Add(hostProcess);
                 RunInProcess(invoker, hostProcess);
             }
 
@@ -422,7 +422,7 @@ namespace Microsoft.PowerShell.Workflow
             }
         }
 
-        
+
         /// <summary>
         /// Unregisters all wait handles and disposes a process
         /// </summary>
@@ -444,7 +444,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// Method called by servicing thread. This method will run the command in the 
+        /// Method called by servicing thread. This method will run the command in the
         /// specified process on a separate thread
         /// </summary>
         /// <param name="invoker"></param>
@@ -483,8 +483,8 @@ namespace Microsoft.PowerShell.Workflow
         /// <param name="callback">optional callback</param>
         /// <param name="state">optional caller specified state</param>
         /// <returns>IAsyncResult</returns>
-        internal IAsyncResult BeginInvokePowerShell(System.Management.Automation.PowerShell command, 
-            PSDataCollection<PSObject> input, PSDataCollection<PSObject> output, PSActivityEnvironment policy, 
+        internal IAsyncResult BeginInvokePowerShell(System.Management.Automation.PowerShell command,
+            PSDataCollection<PSObject> input, PSDataCollection<PSObject> output, PSActivityEnvironment policy,
                 AsyncCallback callback, object state)
         {
             if (command == null)
@@ -527,7 +527,7 @@ namespace Microsoft.PowerShell.Workflow
         {
             ConnectionAsyncResult result = asyncResult as ConnectionAsyncResult;
 
-            if (result == null) 
+            if (result == null)
             {
                 throw new PSInvalidOperationException(Resources.AsyncResultNotValid);
             }
@@ -608,7 +608,7 @@ namespace Microsoft.PowerShell.Workflow
                                     : PowerShell.BeginInvoke(Input, Output);
 
                     // _invoked should bet set here as powershell object can be disposed before runspace assignment due to cancelling an activity
-                    // 
+                    //
                     _invoked = true;
                 } // end of lock
 

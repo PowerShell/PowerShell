@@ -1,6 +1,6 @@
 //
 // Copyright (c) 2007 Microsoft Corporation. All rights reserved.
-// 
+//
 
 
 using System;
@@ -12,7 +12,7 @@ using System.ComponentModel;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Create the PowerShell snap-in used to register the 
+    /// Create the PowerShell snap-in used to register the
     /// Get-WinEvent cmdlet. Declaring the PSSnapIn class identifies
     /// this .cs file as a PowerShell snap-in.
     /// </summary>
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Get resource information for vendor. This is a string of format: resourceBaseName,resourceName. 
+        /// Get resource information for vendor. This is a string of format: resourceBaseName,resourceName.
         /// </summary>
         public override string VendorResource
         {
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Get resource information for description. This is a string of format: resourceBaseName,resourceName. 
+        /// Get resource information for description. This is a string of format: resourceBaseName,resourceName.
         /// </summary>
         public override string DescriptionResource
         {

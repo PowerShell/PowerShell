@@ -14,7 +14,7 @@
 
             class TestData
             {
-                [string] $testName 
+                [string] $testName
                 [hashtable] $parameters
 
                 TestData($name, $parameters)
@@ -29,13 +29,13 @@
             $testcases += [TestData]::new('literalpath with absolute paths', @{LiteralPath = $fileName.FullName; XPath = 'Root'})
             $testcases += [TestData]::new('literalpath with path with dots', @{LiteralPath = $fileNameWithDots; XPath = 'Root'})
             if ( ! $IsCoreCLR ) {
-                $testcases += [TestData]::new('literalpath with network path', @{LiteralPath = $fileNameAsNetworkPath; XPath = 'Root'})                                            
+                $testcases += [TestData]::new('literalpath with network path', @{LiteralPath = $fileNameAsNetworkPath; XPath = 'Root'})
             }
             $testcases += [TestData]::new('path with relative paths', @{Path = $fileName.Name; XPath = 'Root'})
             $testcases += [TestData]::new('path with absolute paths', @{Path = $fileName.FullName; XPath = 'Root'})
             $testcases += [TestData]::new('path with path with dots', @{Path = $fileNameWithDots; XPath = 'Root'})
             if ( ! $IsCoreCLR ) {
-                $testcases += [TestData]::new('path with network path', @{Path = $fileNameAsNetworkPath; XPath = 'Root'}) 
+                $testcases += [TestData]::new('path with network path', @{Path = $fileNameAsNetworkPath; XPath = 'Root'})
             }
         }
 
@@ -43,9 +43,9 @@
             Remove-Item -LiteralPath $fileName -Force -ErrorAction SilentlyContinue
             Pop-Location
         }
-        
+
         $testcases | % {
-            
+
             $params = $_.parameters
 
             It $_.testName {
@@ -57,12 +57,12 @@
             $__data = "abcdefg"
             Select-XML -literalPath variable:__data "Root" -ErrorVariable selectXmlError -ErrorAction SilentlyContinue
             $selectXmlError.FullyQualifiedErrorId | Should Be 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'
-        }       
-        
+        }
+
         It "path with non filesystem path" {
             $__data = "abcdefg"
             Select-XML -Path variable:\__data "Root" -ErrorVariable selectXmlError -ErrorAction SilentlyContinue
             $selectXmlError.FullyQualifiedErrorId | Should Be 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand'
-        } 
+        }
     }
 }

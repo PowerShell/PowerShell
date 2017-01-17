@@ -44,9 +44,9 @@ namespace Microsoft.PowerShell.Commands
         #region Job Matches
 
         /// <summary>
-        /// Find the jobs in repository which match matching the specified names 
+        /// Find the jobs in repository which match matching the specified names
         /// </summary>
-        /// 
+        ///
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned). </param>
         /// <param name="writeErrorOnNoMatch">write error if no match is found</param>
@@ -177,9 +177,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Find the jobs in repository which match  the specified instanceid 
+        /// Find the jobs in repository which match  the specified instanceid
         /// </summary>
-        /// 
+        ///
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned). </param>
         /// <param name="writeErrorOnNoMatch">write error if no match is found</param>
@@ -234,7 +234,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool jobFound = false;
 
-            // Most likely users will ask for top level jobs. 
+            // Most likely users will ask for top level jobs.
             // So in order to be more efficient, first look
             // into the top level jobs and only if a match is
             // not found in the top level jobs, recurse. This
@@ -293,9 +293,9 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Find the jobs in repository which match the specified session ids 
+        /// Find the jobs in repository which match the specified session ids
         /// </summary>
-        /// 
+        ///
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned). </param>
         /// <param name="writeErrorOnNoMatch">write error if no match is found</param>
@@ -344,7 +344,7 @@ namespace Microsoft.PowerShell.Commands
         {
             bool jobFound = false;
 
-            // Most likely users will ask for top level jobs. 
+            // Most likely users will ask for top level jobs.
             // So in order to be more efficient, first look
             // into the top level jobs and only if a match is
             // not found in the top level jobs, recurse. This
@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell.Commands
                             matches.Add(job);
                         }
 
-                        // session id will be unique for every session, so 
+                        // session id will be unique for every session, so
                         // can break after the first match
                         break;
                     }
@@ -399,7 +399,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Find the jobs in repository which match the specified command
         /// </summary>
-        /// 
+        ///
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned). </param>
         /// <returns>list of matching jobs</returns>
@@ -452,7 +452,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Find the jobs in repository which match the specified state
         /// </summary>
-        /// 
+        ///
         /// <param name="writeobject">if true, method writes the object instead of returning it
         /// in list (an empty list is returned). </param>
         /// <returns>list of matching jobs</returns>
@@ -546,7 +546,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Copies the jobs to list. 
+        /// Copies the jobs to list.
         /// </summary>
         /// <param name="jobs"></param>
         /// <param name="writeobject">if true, method writes the object instead of returning it
@@ -618,7 +618,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         private String[] _names;
 
@@ -643,7 +643,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         private Guid[] _instanceIds;
 
@@ -669,7 +669,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         private int[] _sessionIds;
 
@@ -692,7 +692,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         private JobState _jobstate;
 
@@ -715,7 +715,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         private String[] _commands;
 
@@ -759,7 +759,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This cmdlet removes the Job object from the runspace
     /// wide Job repository.
-    /// 
+    ///
     /// Once the Job object is removed, it will not be available
     /// through get-psjob command.
     /// </summary>
@@ -1008,7 +1008,7 @@ namespace Microsoft.PowerShell.Commands
         #region Dispose
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public void Dispose()
         {
@@ -1017,7 +1017,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)

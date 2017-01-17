@@ -3,7 +3,7 @@ using namespace System.Management.Automation
 Describe "Generics support" -Tags "CI" {
     # list and stack are in different assemblies, and dictionary
     # takes more than one type parameter.
-    
+
     It 'Type list[Int] works properly' {
         $x = [list[int]]::New()
         $x.Add(42)
@@ -78,8 +78,8 @@ Describe "Generics support" -Tags "CI" {
        class TestClass {
             [string] $name = "default"
             [int] $port = 80
-            [string] $scriptText = "1..6" 
-                       
+            [string] $scriptText = "1..6"
+
             TestClass([string] $name1, [int] $port1, [string] $scriptText1)
             {
                 $this.name = $name1
@@ -88,8 +88,8 @@ Describe "Generics support" -Tags "CI" {
             }
         }
 
-        $x = [TestClass]::New("default1", 90, "1...5") 
-        $x.scriptText = "1...4"       
+        $x = [TestClass]::New("default1", 90, "1...5")
+        $x.scriptText = "1...4"
         $x.name | Should Be 'default1'
         $x.port | Should Be 90
         $x.scriptText | Should Be "1...4"

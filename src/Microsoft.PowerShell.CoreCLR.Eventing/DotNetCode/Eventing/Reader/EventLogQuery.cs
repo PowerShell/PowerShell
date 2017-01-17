@@ -2,24 +2,24 @@
 /*============================================================
 **
 **
-** Purpose: 
+** Purpose:
 ** This public class allows a user to define events of interest.
 ** An instance of this class is passed to an EventReader to actually
-** obtain the EventRecords.   The EventLogQuery can be as 
+** obtain the EventRecords.   The EventLogQuery can be as
 ** simple specifying that all events are of interest, or it can contain
-** query / xpath expressions that indicate exactly what characteristics 
-** events should have. 
+** query / xpath expressions that indicate exactly what characteristics
+** events should have.
 **
 ============================================================*/
 
 namespace System.Diagnostics.Eventing.Reader
 {
     /// <summary>
-    /// Allows a user to define events of interest. An instance of this 
-    /// class is passed to an EventReader to actually obtain the EventRecords.   
-    /// The EventLogQuery can be as simple specifying that all events are of 
+    /// Allows a user to define events of interest. An instance of this
+    /// class is passed to an EventReader to actually obtain the EventRecords.
+    /// The EventLogQuery can be as simple specifying that all events are of
     /// interest, or it can contain query / xpath expressions that indicate exactly
-    /// what characteristics events should have. 
+    /// what characteristics events should have.
     /// </summary>
     public class EventLogQuery
     {

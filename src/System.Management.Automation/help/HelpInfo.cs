@@ -7,22 +7,22 @@ using System.Collections.ObjectModel;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
+    ///
     /// Class HelpInfo keeps track of help information to be returned by help system.
-    /// 
-    /// HelpInfo includes information in following aspect, 
-    /// 
+    ///
+    /// HelpInfo includes information in following aspect,
+    ///
     ///     a. Name: the target name for help
     ///     b. Category: what category the help belongs to
-    /// This class will be derived to track help info for different help categories like, 
+    /// This class will be derived to track help info for different help categories like,
     ///     AliasHelpInfo
     ///     CommandHelpInfo
     ///     ProviderHelpInfo
-    /// 
+    ///
     /// etc.
-    /// 
+    ///
     /// In general, there will be a specific helpInfo child class for each kind of help provider.
-    /// 
+    ///
     /// </summary>
     internal abstract class HelpInfo
     {
@@ -91,8 +91,8 @@ namespace System.Management.Automation
         /// Forward help category for this help info
         /// </summary>
         /// <remarks>
-        /// If this is not HelpCategory.None, then some other help provider 
-        /// (as specified in the HelpCategory bit pattern) need 
+        /// If this is not HelpCategory.None, then some other help provider
+        /// (as specified in the HelpCategory bit pattern) need
         /// to process this helpInfo before it can be returned to end user.
         /// </remarks>
         /// <value>Help category to forward this helpInfo to</value>
@@ -101,17 +101,17 @@ namespace System.Management.Automation
         /// <summary>
         /// Target object in forward-help-provider that should process this HelpInfo.
         /// This will serve as auxiliary information to be passed to forward help provider.
-        /// 
-        /// In the case of AliasHelpInfo, for example, it needs to be forwarded to 
+        ///
+        /// In the case of AliasHelpInfo, for example, it needs to be forwarded to
         /// CommandHelpProvider to fill in detailed helpInfo. In that case, ForwardHelpCategory
-        /// will be HelpCategory.Command and the help target is the cmdlet name that matches this 
+        /// will be HelpCategory.Command and the help target is the cmdlet name that matches this
         /// alias.
         /// </summary>
         /// <value>forward target object name</value>
         internal string ForwardTarget { get; set; } = "";
 
         /// <summary>
-        /// Full help object for this help item. 
+        /// Full help object for this help item.
         /// </summary>
         /// <value>Full help object for this help item</value>
         internal abstract PSObject FullHelp
@@ -120,7 +120,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Short help object for this help item. 
+        /// Short help object for this help item.
         /// </summary>
         /// <value>Short help object for this help item</value>
         internal PSObject ShortHelp
@@ -157,7 +157,7 @@ namespace System.Management.Automation
         /// online.
         /// </summary>
         /// <returns>
-        /// Null if no Uri is specified by the helpinfo or a 
+        /// Null if no Uri is specified by the helpinfo or a
         /// valid Uri.
         /// </returns>
         /// <exception cref="InvalidOperationException">
@@ -170,7 +170,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns true if help content in help info matches the
-        /// pattern contained in <paramref name="pattern"/>. 
+        /// pattern contained in <paramref name="pattern"/>.
         /// The underlying code will usually run pattern.IsMatch() on
         /// content it wants to search.
         /// </summary>
@@ -185,18 +185,18 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add common help properties to the helpObject which is in PSObject format.
-        /// 
+        ///
         /// Intrinsic help properties include properties like,
-        ///     Name, 
+        ///     Name,
         ///     Synopsis
-        ///     HelpCategory 
-        /// etc. 
-        /// 
-        /// Since help object from different help category has different format, it is 
+        ///     HelpCategory
+        /// etc.
+        ///
+        /// Since help object from different help category has different format, it is
         /// needed that we generate these basic information uniformly in the help object
         /// itself.
-        /// 
-        /// This function is normally called at the end of each child class constructor. 
+        ///
+        /// This function is normally called at the end of each child class constructor.
         /// </summary>
         /// <returns></returns>
         protected void AddCommonHelpProperties()
@@ -261,7 +261,7 @@ namespace System.Management.Automation
         #region Error handling
 
         /// <summary>
-        /// This is for tracking the set of errors happened during the parsing of 
+        /// This is for tracking the set of errors happened during the parsing of
         /// of this helpinfo.
         /// </summary>
         /// <value></value>

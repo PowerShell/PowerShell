@@ -18,7 +18,7 @@ using System.Windows;
 
 namespace Microsoft.Management.UI.Internal
 {
-    
+
     /// <summary>
     /// Provides attached properties for TextBlock control.
     /// </summary>
@@ -36,7 +36,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the IsTextTrimmed dependency property.
         /// </summary>
         public static readonly DependencyProperty IsTextTrimmedProperty = IsTextTrimmedPropertyKey.DependencyProperty;
-        
+
         /// <summary>
         /// Gets the value for IsTextTrimmedProperty that is attached to the element.
         /// </summary>
@@ -48,7 +48,7 @@ namespace Microsoft.Management.UI.Internal
         {
             return (bool) element.GetValue(IsTextTrimmedProperty);
         }
-        
+
         /// <summary>
         /// Sets the value for IsTextTrimmedProperty that is attached to the element.
         /// </summary>
@@ -58,14 +58,14 @@ namespace Microsoft.Management.UI.Internal
         {
             element.SetValue(IsTextTrimmedPropertyKey,BooleanBoxes.Box(value));
         }
-        
+
         static private void IsTextTrimmedProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             IsTextTrimmedProperty_PropertyChangedImplementation(o, e);
         }
-        
+
         static partial void IsTextTrimmedProperty_PropertyChangedImplementation(DependencyObject o, DependencyPropertyChangedEventArgs e);
-        
+
         //
         // IsTextTrimmedExternally dependency property
         //
@@ -73,7 +73,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the IsTextTrimmedExternally dependency property.
         /// </summary>
         public static readonly DependencyProperty IsTextTrimmedExternallyProperty = DependencyProperty.RegisterAttached( "IsTextTrimmedExternally", typeof(bool), typeof(TextBlockService), new PropertyMetadata( BooleanBoxes.FalseBox, IsTextTrimmedExternallyProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets a value indicating that the Text has been trimmed external to the element.
         /// </summary>
@@ -85,7 +85,7 @@ namespace Microsoft.Management.UI.Internal
         {
             return (bool) element.GetValue(IsTextTrimmedExternallyProperty);
         }
-        
+
         /// <summary>
         /// Sets a value indicating that the Text has been trimmed external to the element.
         /// </summary>
@@ -95,14 +95,14 @@ namespace Microsoft.Management.UI.Internal
         {
             element.SetValue(IsTextTrimmedExternallyProperty,BooleanBoxes.Box(value));
         }
-        
+
         static private void IsTextTrimmedExternallyProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             IsTextTrimmedExternallyProperty_PropertyChangedImplementation(o, e);
         }
-        
+
         static partial void IsTextTrimmedExternallyProperty_PropertyChangedImplementation(DependencyObject o, DependencyPropertyChangedEventArgs e);
-        
+
         //
         // IsTextTrimmedMonitoringEnabled dependency property
         //
@@ -110,7 +110,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the IsTextTrimmedMonitoringEnabled dependency property.
         /// </summary>
         public static readonly DependencyProperty IsTextTrimmedMonitoringEnabledProperty = DependencyProperty.RegisterAttached( "IsTextTrimmedMonitoringEnabled", typeof(bool), typeof(TextBlockService), new PropertyMetadata( BooleanBoxes.FalseBox, IsTextTrimmedMonitoringEnabledProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets the value for IsTextTrimMonitoringEnabled that is attached to the element.
         /// </summary>
@@ -122,7 +122,7 @@ namespace Microsoft.Management.UI.Internal
         {
             return (bool) element.GetValue(IsTextTrimmedMonitoringEnabledProperty);
         }
-        
+
         /// <summary>
         /// Sets the value for IsTextTrimMonitoringEnabled that is attached to the element.
         /// </summary>
@@ -132,14 +132,14 @@ namespace Microsoft.Management.UI.Internal
         {
             element.SetValue(IsTextTrimmedMonitoringEnabledProperty,BooleanBoxes.Box(value));
         }
-        
+
         static private void IsTextTrimmedMonitoringEnabledProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             IsTextTrimmedMonitoringEnabledProperty_PropertyChangedImplementation(o, e);
         }
-        
+
         static partial void IsTextTrimmedMonitoringEnabledProperty_PropertyChangedImplementation(DependencyObject o, DependencyPropertyChangedEventArgs e);
-        
+
         //
         // UntrimmedText dependency property
         //
@@ -147,7 +147,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the UntrimmedText dependency property.
         /// </summary>
         public static readonly DependencyProperty UntrimmedTextProperty = DependencyProperty.RegisterAttached( "UntrimmedText", typeof(string), typeof(TextBlockService), new PropertyMetadata( String.Empty, UntrimmedTextProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets the untrimmed text.
         /// </summary>
@@ -159,7 +159,7 @@ namespace Microsoft.Management.UI.Internal
         {
             return (string) element.GetValue(UntrimmedTextProperty);
         }
-        
+
         /// <summary>
         /// Sets the untrimmed text.
         /// </summary>
@@ -169,14 +169,14 @@ namespace Microsoft.Management.UI.Internal
         {
             element.SetValue(UntrimmedTextProperty,value);
         }
-        
+
         static private void UntrimmedTextProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             UntrimmedTextProperty_PropertyChangedImplementation(o, e);
         }
-        
+
         static partial void UntrimmedTextProperty_PropertyChangedImplementation(DependencyObject o, DependencyPropertyChangedEventArgs e);
-        
+
     }
 }
 #endregion

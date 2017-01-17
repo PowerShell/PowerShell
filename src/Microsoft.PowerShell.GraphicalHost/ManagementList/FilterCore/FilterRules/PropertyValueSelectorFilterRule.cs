@@ -11,8 +11,8 @@ namespace Microsoft.Management.UI.Internal
     using System.Diagnostics;
 
     /// <summary>
-    /// The PropertyValueSelectorFilterRule class supports filtering against a 
-    /// property of an object. Based on the type of the property a collection of 
+    /// The PropertyValueSelectorFilterRule class supports filtering against a
+    /// property of an object. Based on the type of the property a collection of
     /// filter rules are available to be used.
     /// </summary>
     /// <typeparam name="T">
@@ -25,7 +25,7 @@ namespace Microsoft.Management.UI.Internal
         #region Properties
 
         /// <summary>
-        /// Gets the name of the property on the item to evaluate which holds 
+        /// Gets the name of the property on the item to evaluate which holds
         /// the real value which should be evaluated.
         /// </summary>
         public string PropertyName
@@ -42,7 +42,7 @@ namespace Microsoft.Management.UI.Internal
         /// Creates a new PropertyValueSelectorFilterRule instance.
         /// </summary>
         /// <param name="propertyName">
-        /// Gets the name of the property on the item to evaluate which holds 
+        /// Gets the name of the property on the item to evaluate which holds
         /// the real value which should be evaluated.
         /// </param>
         /// <param name="propertyDisplayName">
@@ -58,7 +58,7 @@ namespace Microsoft.Management.UI.Internal
         /// Creates a new PropertyValueSelectorFilterRule instance.
         /// </summary>
         /// <param name="propertyName">
-        /// The propertyName on the item to evaluate which holds the real 
+        /// The propertyName on the item to evaluate which holds the real
         /// value which should be evaluated.
         /// </param>
         /// <param name="propertyDisplayName">

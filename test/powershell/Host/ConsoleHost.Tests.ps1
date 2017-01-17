@@ -2,12 +2,12 @@ using namespace System.Diagnostics
 
 # Minishell (Singleshell) is a powershell concept.
 # Its primary use-case is when somebody executes a scriptblock in the new powershell process.
-# The objects are automatically marshelled to the child process and 
+# The objects are automatically marshelled to the child process and
 # back to the parent session, so users can avoid custom
 # serialization to pass objects between two processes.
 
 Describe 'minishell for native executables' -Tag 'CI' {
-    
+
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
     }
@@ -82,14 +82,14 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             }
         }
     }
-    
+
     AfterEach {
         $Error.Clear()
     }
 
     Context "ShellInterop" {
         It "Verify Parsing Error Output Format Single Shell should throw exception" {
-            try 
+            try
             {
                 & $powershell -outp blah -comm { $input }
                 Throw "Test execution should not reach here!"
@@ -99,7 +99,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
                 $_.FullyQualifiedErrorId | Should Be "IncorrectValueForFormatParameter"
             }
         }
-        
+
         It "Verify Validate Dollar Error Populated should throw exception" {
             $origEA = $ErrorActionPreference
             $ErrorActionPreference = "Stop"
@@ -119,16 +119,16 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
                 $ErrorActionPreference = $origEA
             }
         }
-        
+
         It "Verify Validate Output Format As Text Explicitly Child Single Shell should works" {
             {
                 $a="blahblah"
                 $a | & $powershell -noprofile -out text -com { $input }
             } | Should Not Throw
         }
-        
+
         It "Verify Parsing Error Input Format Single Shell should throw exception" {
-            try 
+            try
             {
                 & $powershell -input blah -comm { $input }
                 Throw "Test execution should not reach here!"
@@ -373,7 +373,7 @@ foo
 Describe "Console host api tests" -Tag CI {
     Context "String escape sequences" {
         $esc = [char]0x1b
-        $testCases = 
+        $testCases =
             @{InputObject = "abc"; Length = 3; Name = "No escapes"},
             @{InputObject = "${esc} [31mabc"; Length = 9; Name = "Malformed escape - extra space"},
             @{InputObject = "${esc}abc"; Length = 4; Name = "Malformed escape - no csi"},

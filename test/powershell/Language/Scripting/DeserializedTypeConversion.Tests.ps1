@@ -1,5 +1,5 @@
 ﻿Describe "Tests conversion of deserialized types to original type using object properties." -Tags "CI" {
-    BeforeAll {    
+    BeforeAll {
         # Create new types and test functions.
         $type1,$type2,$type3,$type4 = Add-Type -PassThru -TypeDefinition @'
         public class test1
@@ -81,10 +81,10 @@
                 scriptText = scriptText + " Computed";
             }
         }
-'@  
-    }    
+'@
+    }
 
-    Context 'Type conversion and parameter binding of deserialized Type case 1: type definition contains public fields' { 
+    Context 'Type conversion and parameter binding of deserialized Type case 1: type definition contains public fields' {
         BeforeAll {
             $t1 = new-object test1 -Property @{name="TestName1";port=80;scriptText="1..5"}
             $s = [System.Management.Automation.PSSerializer]::Serialize($t1)
@@ -114,9 +114,9 @@
         BeforeAll {
             $t2 = new-object test2 -Property @{Name="TestName2";Port=80;ScriptText="1..5"}
             $s = [System.Management.Automation.PSSerializer]::Serialize($t2)
-            $dst2 = [System.Management.Automation.PSSerializer]::Deserialize($s) 
+            $dst2 = [System.Management.Automation.PSSerializer]::Deserialize($s)
         }
-        It 'Type casts should succeed.' {                   
+        It 'Type casts should succeed.' {
             { $tc2 = [test2]$dst2 } | Should Not Throw
         }
 
@@ -132,17 +132,17 @@
             }
             { test-2 $dst2 } | Should Not Throw
         }
-    }    
+    }
 
     Context 'Type conversion and parameter binding of deserialized Type case 1: type definition contains 2 public properties and 1 read only property' {
         BeforeAll {
             $t3 = new-object test3 -Property @{Name="TestName3";Port=80}
             $s = [System.Management.Automation.PSSerializer]::Serialize($t3)
             $dst3 = [System.Management.Automation.PSSerializer]::Deserialize($s)
-        }      
+        }
 
         It 'Type casts should fail.' {
-        
+
             try
             {
                 $tc3 = [test3]$dst3
@@ -154,7 +154,7 @@
         }
 
         It 'Parameter bindings should fail.' {
-            
+
             function test-3
             {
                 param(
@@ -176,14 +176,14 @@
         }
     }
 
-    Context 'Type conversion and parameter binding of deserialized Type case 1: type definition contains 2 public properties' {        
+    Context 'Type conversion and parameter binding of deserialized Type case 1: type definition contains 2 public properties' {
         BeforeAll {
-            $t4 = new-object test4 -Property @{Name="TestName4";Port=80}      
+            $t4 = new-object test4 -Property @{Name="TestName4";Port=80}
             $s = [System.Management.Automation.PSSerializer]::Serialize($t4)
             $dst4 = [System.Management.Automation.PSSerializer]::Deserialize($s)
         }
-                
-        It 'Type casts should succeed.' {                   
+
+        It 'Type casts should succeed.' {
             { $tc4 = [test4]$dst4 } | Should Not Throw
         }
 
@@ -196,7 +196,7 @@
                 )
 
                 $test | Format-List | Out-String
-            } 
+            }
             { test-4 $dst4 } | Should Not Throw
         }
     }
@@ -213,9 +213,9 @@
             $s = [System.Management.Automation.PSSerializer]::Serialize($t5)
             $dst5 = [System.Management.Automation.PSSerializer]::Deserialize($s)
         }
-                
-        It 'Type casts should succeed.' {            
-                               
+
+        It 'Type casts should succeed.' {
+
             { $tc5 = [PSClass1]$dst5 } | Should Not Throw
         }
 
@@ -251,8 +251,8 @@
             $s = [System.Management.Automation.PSSerializer]::Serialize($t6)
             $dst6 = [System.Management.Automation.PSSerializer]::Deserialize($s)
         }
-                
-        It 'Type casts should succeed.' {                   
+
+        It 'Type casts should succeed.' {
             { $tc6 = [PSClass2]$dst6 } | Should Not Throw
         }
 

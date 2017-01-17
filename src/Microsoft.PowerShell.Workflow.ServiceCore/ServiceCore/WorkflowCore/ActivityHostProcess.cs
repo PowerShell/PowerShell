@@ -27,7 +27,7 @@ namespace Microsoft.PowerShell.Workflow
     /// <summary>
     /// Encapsulates an out of process activity host
     /// </summary>
-    /// <remarks>This class is not thread safe. Caller has to 
+    /// <remarks>This class is not thread safe. Caller has to
     /// ensure thread safety of accessing internal properties</remarks>
     internal class ActivityHostProcess : IDisposable
     {
@@ -70,16 +70,16 @@ namespace Microsoft.PowerShell.Workflow
         {
             [CmdletBinding()]
             param(
-        
+
                 [Parameter(Position=0)]
                 [string[]]
                 $Name,
-        
+
                 [Parameter(Position=1)]
                 [object[]]
-                $Value        
+                $Value
             )
-    
+
             for($i=0; $i -lt $Name.Count; $i++)
             {
                 microsoft.powershell.utility\set-variable -name $Name[$i] -value $Value[$i] -scope global
@@ -189,7 +189,7 @@ namespace Microsoft.PowerShell.Workflow
         /// <summary>
         /// Opens the specified runspace. If there are any errors in
         /// opening the runspace, the method just eats them so that
-        /// an unhandled exception in the background thread in which this 
+        /// an unhandled exception in the background thread in which this
         /// method is invoked does not lead to a process crash
         /// </summary>
         /// <param name="runspace">runspace to open</param>
@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Workflow
             }
             catch (PSRemotingTransportRedirectException)
             {
-                // we should not be getting this exception 
+                // we should not be getting this exception
                 // in the normal case
                 _tracer.WriteMessage("Opening runspace threw  PSRemotingTransportRedirectException", _runspace.InstanceId.ToString());
                 Debug.Assert(false, "We should not get a redirect exception under normal circumstances");
@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.Workflow
         /// <returns>true if setting up of runspace from policy succeeded</returns>
         private void ImportModulesFromPolicy(Runspace runspace, ICollection<string> modules)
         {
-            // If any modules are specified, load them into the runspace. 
+            // If any modules are specified, load them into the runspace.
             // In general, autoloading should be preferred to explicitly loading a module
             // at startup time...
             if (modules.Count <= 0)
@@ -269,7 +269,7 @@ namespace Microsoft.PowerShell.Workflow
         {
             using (System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create())
             {
-                ps.Runspace = runspace;                
+                ps.Runspace = runspace;
                 ps.AddScript(SetVariableFunction);
                 ps.Invoke();
 
@@ -308,9 +308,9 @@ namespace Microsoft.PowerShell.Workflow
             lock(_syncObject)
             {
                 // Process state should not be set to false if it is already marked for removal
-                // Process is marked for removal in two cases: 
-                // 1) When PSRemotingTransportException is received in PrepareAndRun, in this case Server process is already crashed/exited. 
-                // If busy state is set to false, this process can be assigned to another activity by the servicing thread. 
+                // Process is marked for removal in two cases:
+                // 1) When PSRemotingTransportException is received in PrepareAndRun, in this case Server process is already crashed/exited.
+                // If busy state is set to false, this process can be assigned to another activity by the servicing thread.
                 // Instead of adding separate boolean variable in PrepareAndRun to call ResetBusy we are checking for not marked for removal here.
                 // 2) When idle time of 5 min elapsed, process is marked for removal so that server process can be killed. After this, ResetBusy is never called.
                 //
@@ -365,7 +365,7 @@ namespace Microsoft.PowerShell.Workflow
             if (ProcessCrashed != null)
             {
                 ActivityHostCrashedEventArgs eventArgs = new ActivityHostCrashedEventArgs
-                                                         {FailureOnSetup = onSetup, 
+                                                         {FailureOnSetup = onSetup,
                                                           Invoker = _currentInvoker};
                 ProcessCrashed(this, eventArgs);
             }
@@ -407,9 +407,9 @@ namespace Microsoft.PowerShell.Workflow
                 Runspace runspace = null;
                 // Retry for 10 times if runspace is in Broken state
                 //
-                // Runspace can be broken, when a remote runspace is getting closed during the next activity execution, 
-                // the close ack is getting timedout and that close ack is received by the newly created remote runspace for 
-                // the next activity since stdoutput stream of server process is not cleared/discarded, 
+                // Runspace can be broken, when a remote runspace is getting closed during the next activity execution,
+                // the close ack is getting timedout and that close ack is received by the newly created remote runspace for
+                // the next activity since stdoutput stream of server process is not cleared/discarded,
                 // that is why during new runspace is in broken state while it is being opened.
                 //
                 for (int i = 1; (i <= 10) && !invoker.IsCancelled; i++)
@@ -447,8 +447,8 @@ namespace Microsoft.PowerShell.Workflow
                     _tracer.WriteMessage("END Setting up runspace from policy ", _runspace.InstanceId.ToString());
                 }
 
-                // Prepare phase is completed without any issues. 
-                // setupSucceeded flag is used in HandleTransportError method to enqueue the current activity for retry. 
+                // Prepare phase is completed without any issues.
+                // setupSucceeded flag is used in HandleTransportError method to enqueue the current activity for retry.
                 // If there is any PSRemotingTransportException during InvokePowershell current activity will not be enqueued to setup failed requests in ActivityHostManager.
                 //
                 setupSucceeded = true;
@@ -456,7 +456,7 @@ namespace Microsoft.PowerShell.Workflow
                 // at this point we assume we have a clean runspace to
                 // run the command
                 // if the runspace is broken then the invocation will
-                // result in an error either ways            
+                // result in an error either ways
                 invoker.InvokePowerShell(runspace);
             }
             catch (PSRemotingTransportException transportException)
@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Workflow
             }
             catch (Exception e)
             {
-                // at this point there is an exception other than a 
+                // at this point there is an exception other than a
                 // transport exception that is caused by trying to
                 // setup the runspace. Release the asyncresult
                 // accordingly
@@ -502,10 +502,10 @@ namespace Microsoft.PowerShell.Workflow
         /// Indicates that the associated process crashed and this object
         /// needs to be removed by ActivityHostManager
         /// </summary>
-        internal bool MarkForRemoval { 
+        internal bool MarkForRemoval {
             get
             {
-                // _processInstance.HasExited can not be used to tell as marked for removal 
+                // _processInstance.HasExited can not be used to tell as marked for removal
                 // as it will cause inconsistent busy host count
                 //
                 return _markForRemoval;
@@ -522,7 +522,7 @@ namespace Microsoft.PowerShell.Workflow
         #region IDisposable
 
         /// <summary>
-        /// Dispose 
+        /// Dispose
         /// </summary>
         public void Dispose()
         {
@@ -560,5 +560,5 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         #endregion IDisposable
-    } 
+    }
 }

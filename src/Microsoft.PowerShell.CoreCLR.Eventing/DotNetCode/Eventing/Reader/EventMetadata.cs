@@ -2,11 +2,11 @@
 /*============================================================
 **
 **
-** Purpose: 
-** This public class describes the metadata for a specific event 
-** raised by Provider. An instance of this class is obtained from 
+** Purpose:
+** This public class describes the metadata for a specific event
+** raised by Provider. An instance of this class is obtained from
 ** ProviderMetadata class.
-** 
+**
 ============================================================*/
 
 using System.Collections.Generic;
@@ -49,13 +49,13 @@ namespace System.Diagnostics.Eventing.Reader
 
         //
         // Max value will be UINT32.MaxValue - it is a long because this property
-        // is really a UINT32.  The legacy API allows event message ids to be declared 
-        // as UINT32 and these event/messages may be migrated into a Provider's 
-        // manifest as UINT32.  Note that EventRecord ids are 
+        // is really a UINT32.  The legacy API allows event message ids to be declared
+        // as UINT32 and these event/messages may be migrated into a Provider's
+        // manifest as UINT32.  Note that EventRecord ids are
         // still declared as int, because those ids max value is UINT16.MaxValue
-        // and rest of the bits of the legacy event id would be stored in 
+        // and rest of the bits of the legacy event id would be stored in
         // Qualifiers property.
-        // 
+        //
         public long Id
         {
             get

@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "set-alias" cmdlet
     /// </summary>
-    /// 
+    ///
     [Cmdlet(VerbsCommon.Set, "Alias", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113390")]
     [OutputType(typeof(AliasInfo))]
     public class SetAliasCommand : WriteAliasCommandBase
@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The main processing loop of the command.
         /// </summary>
-        /// 
+        ///
         protected override void ProcessRecord()
         {
             // Create the alias info
