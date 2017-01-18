@@ -725,3 +725,45 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
     }
 }
 
+Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
+
+    function SearchEngineIsOnline
+    {
+        param (
+            [ValidateNotNullOrEmpty()]
+            $webAddress
+        )
+        $ping = new-object System.Net.NetworkInformation.Ping
+        $sendPing = $ping.SendPingAsync($webAddress)
+        return ($sendPing.Result.Status -eq "Success")
+    }
+
+    # Make sure either www.bing.com or www.google.com are online to send a request.
+    $endPointToUse = $null
+    foreach ($uri in @("www.bing.com", "www.google.com"))
+    {
+        if (SearchEngineIsOnline $uri)
+        {
+            $endPointToUse = $uri
+            break
+        }
+    }
+
+    # If neither www.bing.com nor www.google.com are online, then skip the tests.
+    $skipTests = ($endPointToUse -eq $null)
+    $finalUri = $endPointToUse + "?q=how+many+feet+in+a+mile"
+
+    It "Execute Invoke-WebRequest --> 'iwr -URI $finalUri'" -Skip:$skipTests {
+        $result = iwr -URI $finalUri -TimeoutSec 5
+        $result.StatusCode | Should Be "200"
+        $result.Links | Should Not Be $null
+    }
+
+    It "Execute Invoke-RestMethod --> 'irm -URI $finalUri'" -Skip:$skipTests {
+        $result = irm -URI $finalUri -TimeoutSec 5
+        foreach ($word in @("200", "how", "many", "feet", "in", "mile"))
+        {
+            $result | Should Match $word
+        }
+    }
+}
