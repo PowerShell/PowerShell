@@ -18,10 +18,11 @@ Describe "Out-File DRT Unit Tests" -Tags "CI" {
 }
 
 Describe "Out-File" -Tags "CI" {
-    $expectedContent = "some test text"
-    $inObject = New-Object psobject -Property @{text=$expectedContent}
-    $testfile = Join-Path -Path $TestDrive -ChildPath outfileTest.txt
-
+    BeforeAll {
+	    $expectedContent = "some test text"
+	    $inObject = New-Object psobject -Property @{text=$expectedContent}
+        $testfile = Join-Path -Path $TestDrive -ChildPath outfileTest.txt
+	}
     AfterEach {
 	Remove-Item -Path $testfile -Force
     }
@@ -128,7 +129,7 @@ Describe "Out-File" -Tags "CI" {
 	Set-ItemProperty -Path $testfile -Name IsReadOnly -Value $false
     }
     
-	It "Should be able to use the 'Path' alias for the 'FilePath' parameter" {
+    It "Should be able to use the 'Path' alias for the 'FilePath' parameter" {
     { Out-File -Path $testfile } | Should Not Throw
     }
 
