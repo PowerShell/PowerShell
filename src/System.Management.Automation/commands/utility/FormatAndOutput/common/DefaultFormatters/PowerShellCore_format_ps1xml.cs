@@ -243,10 +243,6 @@ namespace System.Management.Automation.Runspaces
                 ViewsOf_Microsoft_PowerShell_Commands_WebResponseObject());
 
             yield return new ExtendedTypeDefinition(
-                "Microsoft.Powershell.Utility.FileHash",
-                ViewsOf_Microsoft_Powershell_Utility_FileHash());
-
-            yield return new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.Commands.PSRunspaceDebug",
                 ViewsOf_Microsoft_PowerShell_Commands_PSRunspaceDebug());
         }
@@ -1293,21 +1289,6 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"RawContentLength")
                     .EndEntry()
                 .EndList());
-        }
-
-        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_Powershell_Utility_FileHash()
-        {
-            yield return new FormatViewDefinition("Microsoft.Powershell.Utility.FileHash",
-                TableControl.Create()
-                    .AddHeader(Alignment.Left, width: 15)
-                    .AddHeader(Alignment.Left, width: 70)
-                    .AddHeader()
-                    .StartRowDefinition()
-                        .AddPropertyColumn("Algorithm")
-                        .AddPropertyColumn("Hash")
-                        .AddPropertyColumn("Path")
-                    .EndRowDefinition()
-                .EndTable());
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_PSRunspaceDebug()
