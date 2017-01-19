@@ -2,120 +2,123 @@
 ## PowerShell Invoke-Command -RemoteDebug Tests
 ##
 
-if (-not (Get-Module TestRemoting -ErrorAction SilentlyContinue))
+if ($IsWindows)
 {
-    $remotingModule = Join-Path $PSScriptRoot "../Common/TestRemoting.psm1"
-    Import-Module $remotingModule
-}
-
-$typeDef = @'
-using System;
-using System.Globalization;
-using System.Management.Automation;
-using System.Management.Automation.Runspaces;
-using System.Management.Automation.Host;
-
-namespace TestRunner
-{
-    public class DummyHost : PSHost, IHostSupportsInteractiveSession
+    if (-not (Get-Module TestRemoting -ErrorAction SilentlyContinue))
     {
-        public Runspace _runspace;
-        private Guid _instanceId = Guid.NewGuid();
-
-        public override CultureInfo CurrentCulture
-        {
-            get { return CultureInfo.CurrentCulture; }
-        }
-        public override CultureInfo CurrentUICulture
-        {
-            get { return CultureInfo.CurrentUICulture; }
-        }
-        public override Guid InstanceId
-        {
-            get { return _instanceId; }
-        }
-        public override string Name
-        {
-            get { return "DummyTestHost"; }
-        }
-        public override PSHostUserInterface UI
-        {
-            get { return null; }
-        }
-        public override Version Version
-        {
-            get { return new Version(1, 0); }
-        }
-        public override void EnterNestedPrompt() { }
-        public override void ExitNestedPrompt() { }
-        public override void NotifyBeginApplication() { }
-        public override void NotifyEndApplication() { }
-        public override void SetShouldExit(int exitCode) { }
-        public void PushRunspace(Runspace runspace) { }
-        public void PopRunspace() { }
-        public bool IsRunspacePushed { get { return false; } }
-        public Runspace Runspace { get { return _runspace; } private set { _runspace = value; } }
+        $remotingModule = Join-Path $PSScriptRoot "../Common/TestRemoting.psm1"
+        Import-Module $remotingModule
     }
 
-    public class TestDebugger : Debugger
+    $typeDef = @'
+    using System;
+    using System.Globalization;
+    using System.Management.Automation;
+    using System.Management.Automation.Runspaces;
+    using System.Management.Automation.Host;
+
+    namespace TestRunner
     {
-        private Runspace _runspace;
-        public int DebugStopCount
+        public class DummyHost : PSHost, IHostSupportsInteractiveSession
         {
-            private set;
-            get;
-        }
-        public int RunspaceDebugProcessingCount
-        {
-            private set;
-            get;
-        }
-        public bool RunspaceDebugProcessCancelled
-        {
-            private set;
-            get;
+            public Runspace _runspace;
+            private Guid _instanceId = Guid.NewGuid();
+
+            public override CultureInfo CurrentCulture
+            {
+                get { return CultureInfo.CurrentCulture; }
+            }
+            public override CultureInfo CurrentUICulture
+            {
+                get { return CultureInfo.CurrentUICulture; }
+            }
+            public override Guid InstanceId
+            {
+                get { return _instanceId; }
+            }
+            public override string Name
+            {
+                get { return "DummyTestHost"; }
+            }
+            public override PSHostUserInterface UI
+            {
+                get { return null; }
+            }
+            public override Version Version
+            {
+                get { return new Version(1, 0); }
+            }
+            public override void EnterNestedPrompt() { }
+            public override void ExitNestedPrompt() { }
+            public override void NotifyBeginApplication() { }
+            public override void NotifyEndApplication() { }
+            public override void SetShouldExit(int exitCode) { }
+            public void PushRunspace(Runspace runspace) { }
+            public void PopRunspace() { }
+            public bool IsRunspacePushed { get { return false; } }
+            public Runspace Runspace { get { return _runspace; } private set { _runspace = value; } }
         }
 
-        private void HandleDebuggerStop(object sender, DebuggerStopEventArgs args)
+        public class TestDebugger : Debugger
         {
-            DebugStopCount++;
-            var debugger = sender as Debugger;
-            var command = new PSCommand();
-            command.AddScript("prompt");
-            var output = new PSDataCollection<PSObject>();
-            debugger.ProcessCommand(command, output);
-        }
-        private void HandleProcessRunspaceDebug(object sender, ProcessRunspaceDebugEventArgs args)
-        {
-            args.HandleInternally = true;
-            RunspaceDebugProcessingCount++;
-        }
-        private void HandleCancelProcessRunspaceDebug(object sender, EventArgs args)
-        {
-            RunspaceDebugProcessCancelled = true;
-        }
-        public TestDebugger(Runspace runspace)
-        {
-            _runspace = runspace;
-            _runspace.Debugger.DebuggerStop += HandleDebuggerStop;
-            _runspace.Debugger.ProcessRunspaceDebug += HandleProcessRunspaceDebug;
-            _runspace.Debugger.CancelProcessRunspaceDebug += HandleCancelProcessRunspaceDebug;
-        }
-        public void Release()
-        {
-            if (_runspace == null) { return; }
-            _runspace.Debugger.DebuggerStop -= HandleDebuggerStop;
-            _runspace.Debugger.ProcessRunspaceDebug -= HandleProcessRunspaceDebug;
-            _runspace.Debugger.CancelProcessRunspaceDebug -= HandleCancelProcessRunspaceDebug;
-        }
+            private Runspace _runspace;
+            public int DebugStopCount
+            {
+                private set;
+                get;
+            }
+            public int RunspaceDebugProcessingCount
+            {
+                private set;
+                get;
+            }
+            public bool RunspaceDebugProcessCancelled
+            {
+                private set;
+                get;
+            }
 
-        public override DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output) { return null; }
-        public override void SetDebuggerAction(DebuggerResumeAction resumeAction) { }
-        public override DebuggerStopEventArgs GetDebuggerStopArgs() { return null; }
-        public override void StopProcessCommand() { }
+            private void HandleDebuggerStop(object sender, DebuggerStopEventArgs args)
+            {
+                DebugStopCount++;
+                var debugger = sender as Debugger;
+                var command = new PSCommand();
+                command.AddScript("prompt");
+                var output = new PSDataCollection<PSObject>();
+                debugger.ProcessCommand(command, output);
+            }
+            private void HandleProcessRunspaceDebug(object sender, ProcessRunspaceDebugEventArgs args)
+            {
+                args.HandleInternally = true;
+                RunspaceDebugProcessingCount++;
+            }
+            private void HandleCancelProcessRunspaceDebug(object sender, EventArgs args)
+            {
+                RunspaceDebugProcessCancelled = true;
+            }
+            public TestDebugger(Runspace runspace)
+            {
+                _runspace = runspace;
+                _runspace.Debugger.DebuggerStop += HandleDebuggerStop;
+                _runspace.Debugger.ProcessRunspaceDebug += HandleProcessRunspaceDebug;
+                _runspace.Debugger.CancelProcessRunspaceDebug += HandleCancelProcessRunspaceDebug;
+            }
+            public void Release()
+            {
+                if (_runspace == null) { return; }
+                _runspace.Debugger.DebuggerStop -= HandleDebuggerStop;
+                _runspace.Debugger.ProcessRunspaceDebug -= HandleProcessRunspaceDebug;
+                _runspace.Debugger.CancelProcessRunspaceDebug -= HandleCancelProcessRunspaceDebug;
+            }
+
+            public override DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output) { return null; }
+            public override void SetDebuggerAction(DebuggerResumeAction resumeAction) { }
+            public override DebuggerStopEventArgs GetDebuggerStopArgs() { return null; }
+            public override void StopProcessCommand() { }
+        }
     }
-}
 '@
+}
 
 Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
 
@@ -125,32 +128,33 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
         {
             $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
             $PSDefaultParameterValues["it:skip"] = $true
-            return
         }
-
-        $sb = [scriptblock]::Create(@'
-        "Hello!"
+        else
+        {
+            $sb = [scriptblock]::Create(@'
+            "Hello!"
 '@)
 
-        Add-Type -TypeDefinition $typeDef -ReferencedAssemblies "System.Globalization","System.Management.Automation"
+            Add-Type -TypeDefinition $typeDef -ReferencedAssemblies "System.Globalization","System.Management.Automation"
 
-        $dummyHost = [TestRunner.DummyHost]::new()
-        [runspace] $rs = [runspacefactory]::CreateRunspace($dummyHost)
-        $rs.Open()
-        $dummyHost._runspace = $rs
+            $dummyHost = [TestRunner.DummyHost]::new()
+            [runspace] $rs = [runspacefactory]::CreateRunspace($dummyHost)
+            $rs.Open()
+            $dummyHost._runspace = $rs
 
-        $testDebugger = [TestRunner.TestDebugger]::new($rs)
+            $testDebugger = [TestRunner.TestDebugger]::new($rs)
 
-        [runspace] $rs2 = [runspacefactory]::CreateRunspace()
-        $rs2.Open()
+            [runspace] $rs2 = [runspacefactory]::CreateRunspace()
+            $rs2.Open()
 
-        [powershell] $ps = [powershell]::Create()
-        $ps.Runspace = $rs
+            [powershell] $ps = [powershell]::Create()
+            $ps.Runspace = $rs
 
-        [powershell] $ps2 = [powershell]::Create()
-        $ps2.Runspace = $rs2
+            [powershell] $ps2 = [powershell]::Create()
+            $ps2.Runspace = $rs2
 
-        $remoteSession = New-RemoteRunspace
+            $remoteSession = New-RemoteRunspace
+        }
     }
 
     AfterAll {
@@ -158,25 +162,26 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
         if (!$IsWindows)
         {
             $global:PSDefaultParameterValues = $originalDefaultParameterValues
-            return
         }
-
-        if ($testDebugger -ne $null) { $testDebugger.Release() }
-        if ($ps -ne $null) { $ps.Dispose() }
-        if ($ps2 -ne $null) { $ps2.Dispose() }
-        if ($rs -ne $null) { $rs.Dispose() }
-        if ($rs2 -ne $null) { $rs2.Dispose() }
-        if ($remoteSession -ne $null) { Remove-PSSession $remoteSession -ErrorAction SilentlyContinue }
+        else
+        {
+            if ($testDebugger -ne $null) { $testDebugger.Release() }
+            if ($ps -ne $null) { $ps.Dispose() }
+            if ($ps2 -ne $null) { $ps2.Dispose() }
+            if ($rs -ne $null) { $rs.Dispose() }
+            if ($rs2 -ne $null) { $rs2.Dispose() }
+            if ($remoteSession -ne $null) { Remove-PSSession $remoteSession -ErrorAction SilentlyContinue }
+        }
     }
 
-    It "Verifies that asynchronous Invoke-Command -RemoteDebug is ignored" {
+    It "Verifies that asynchronous 'Invoke-Command -RemoteDebug' is ignored" {
 
         $ps.AddCommand("Invoke-Command").AddParameter("Session", $remoteSession).AddParameter("ScriptBlock", $sb).AddParameter("RemoteDebug", $true).AddParameter("AsJob", $true)
         $result = $ps.Invoke()
         $testDebugger.DebugStopCount | Should Be 0
     }
 
-    It "Verifies that synchronous Invoke-Command -RemoteDebug invokes debugger" {
+    It "Verifies that synchronous 'Invoke-Command -RemoteDebug' invokes debugger" {
 
         $ps.Commands.Clear()
         $ps.AddCommand("Invoke-Command").AddParameter("Session", $remoteSession).AddParameter("ScriptBlock", $sb).AddParameter("RemoteDebug", $true)
@@ -185,13 +190,13 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
         $testDebugger.DebugStopCount | Should Be 1
     }
 
-    It "Verifies the debugger CancelDebuggerProcessing API method" {
+    It "Verifies the debugger 'CancelDebuggerProcessing' API method" {
 
         $rs.Debugger.CancelDebuggerProcessing()
         $testDebugger.RunspaceDebugProcessCancelled | Should Be $true
     }
 
-    It "Verifies that Invoke-Command -RemoteDebug running in a runspace without PSHost is ignored" {
+    It "Verifies that 'Invoke-Command -RemoteDebug' running in a runspace without PSHost is ignored" {
 
         $ps2.AddCommand("Invoke-Command").AddParameter("Session", $remoteSession).AddParameter("ScriptBlock", $sb).AddParameter("RemoteDebug", $true)
         $result = $ps2.Invoke()
