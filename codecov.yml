@@ -1,0 +1,3 @@
+# name: codecov.yml
+fixes:
+    - "master/Powershell-master::"
