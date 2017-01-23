@@ -3141,6 +3141,13 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        internal void CleanupRunspaceDebugging(Runspace runspace)
+        {
+            if ((runspace == null) || (runspace.Debugger == null)) { return; }
+
+            runspace.Debugger.DebuggerStop -= HandleDebuggerStop;
+        }
+
         private void HandleDebuggerStop(object sender, DebuggerStopEventArgs args)
         {
             PipelineRunspace.Debugger.DebuggerStop -= HandleDebuggerStop;
@@ -3282,6 +3289,8 @@ namespace Microsoft.PowerShell.Commands
         /// raises this operation complete</param>
         private void RaiseOperationCompleteEvent(EventArgs baseEventArgs)
         {
+            CleanupRunspaceDebugging(PipelineRunspace);
+
             if (pipeline != null)
             {
                 // Dispose the pipeline object and release data and remoting resources.
