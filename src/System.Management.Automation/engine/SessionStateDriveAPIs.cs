@@ -508,12 +508,13 @@ namespace System.Management.Automation
 
             if (result == null && automount)
             {
-                result = AutomountBuiltInDrive(name);
-            }
-
-            if (result == null && this == ExecutionContext.TopLevelSessionState)
-            {
+                // first try to automount as a file system drive
                 result = AutomountFileSystemDrive(name);
+                // if it didn't work, then try automounting as a BuiltIn drive (e.g. "Cert"/"Certificate"/"WSMan")
+                if (result == null)
+                {
+                    result = AutomountBuiltInDrive(name); // internally this calls GetDrive(name, false)
+                }
             }
 
             if (result == null)
