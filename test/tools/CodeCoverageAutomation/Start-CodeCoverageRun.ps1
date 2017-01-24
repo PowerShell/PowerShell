@@ -162,7 +162,7 @@ try
     Invoke-RestMethod 'https://codecov.io/bash' -OutFile $bashScript
     Write-BashInvokerScript -path $bashScriptInvoker
 
-    if(Test-Path $bashScriptInvoker -and $bashScript -and $cygwinPath)
+    if(Test-Path $bashScriptInvoker -and $bashScript -and $cygwinLocation)
     {
         Write-LogPassThru -Message "Uploading to CodeCov"
         $cygwinPath = "/cygdrive/" + $outputLog.Replace("\", "/").Replace(":","")
