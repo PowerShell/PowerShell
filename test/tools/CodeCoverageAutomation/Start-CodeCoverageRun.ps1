@@ -1,6 +1,6 @@
 ﻿param(
     [Parameter(Mandatory = $true, Position = 0)] $coverallsToken
-    )
+)
 
 function Write-LogPassThru
 {
@@ -34,6 +34,8 @@ $openCoverTargetDirectory = "$outputBaseFolder\OpenCoverToolset"
 $outputLog = "$outputBaseFolder\CodeCoverageOutput.xml"
 $psCodeZip = "$outputBaseFolder\PSCode.zip"
 $psCodePath = "$outputBaseFolder\PSCode"
+$elevatedLogs = "$outputBaseFolder\TestResults_Elevated.xml"
+$unelevatedLogs = "$outputBaseFolder\TestResults_Unelevated.xml"
 
 try
 {
@@ -59,19 +61,23 @@ try
 
     Write-LogPassThru -Message "Expansion complete."
 
-    Import-Module "$openCoverPath\OpenCover"
+    Import-Module "$openCoverPath\OpenCover" -Force
     Install-OpenCover -TargetDirectory $openCoverTargetDirectory -force
     Write-LogPassThru -Message "OpenCover installed."
 
     Write-LogPassThru -Message "TestDirectory : $testPath"
     Write-LogPassThru -Message "openCoverPath : $openCoverTargetDirectory\OpenCover"
     Write-LogPassThru -Message "psbinpath : $psBinPath"
+    Write-LogPassThru -Message "elevatedLog : $elevatedLogs"
+    Write-LogPassThru -Message "unelevatedLog : $unelevatedLogs"
 
     $openCoverParams = @{outputlog = $outputLog;
-                         TestDirectory = $testPath;
-                         OpenCoverPath = "$openCoverTargetDirectory\OpenCover";
-                         PowerShellExeDirectory = "$psBinPath\publish"
-                        }
+        TestDirectory = $testPath;
+        OpenCoverPath = "$openCoverTargetDirectory\OpenCover";
+        PowerShellExeDirectory = "$psBinPath\publish";
+        PesterLogElevated = $elevatedLogs;
+        PesterLogUnelevated = $unelevatedLogs;
+    }
 
     $openCoverParams | Out-String | Write-LogPassThru
     Write-LogPassThru -Message "Starting test run."
@@ -99,16 +105,16 @@ try
 
     $coverallsExe = Join-Path $coverallsPath "tools\csmacnz.Coveralls.exe"
     $coverallsParams = @("--opencover",
-                        "-i $outputLog",
-                        "--repoToken $coverallsToken",
-                        "--commitId $commitId",
-                        "--commitBranch master",
-                        "--commitAuthor `"$author`"",
-                        "--commitEmail $email",
-                        "--commitMessage `"$message`""
-                        )
+        "-i $outputLog",
+        "--repoToken $coverallsToken",
+        "--commitId $commitId",
+        "--commitBranch master",
+        "--commitAuthor `"$author`"",
+        "--commitEmail $email",
+        "--commitMessage `"$message`""
+    )
 
-    $coverallsParams | % { Write-LogPassThru -Message $_ }
+    $coverallsParams | ForEach-Object { Write-LogPassThru -Message $_ }
 
     & $coverallsExe """$coverallsParams"""
 
@@ -120,6 +126,15 @@ catch
 }
 finally
 {
-    Remove-Item -recurse -force -path $outputBaseFolder
+    ## See if Azure log directory is mounted
+    if(Test-Path "L:")
+    {
+        Copy-Item $elevatedLogs "L:\" -Force -ErrorAction SilentlyContinue
+        Copy-Item $unelevatedLogs "L:\" -Force -ErrorAction SilentlyContinue
+        Copy-Item $OutputLog "L:\" -Force -ErrorAction SilentlyContinue
+    }
+
+    ## Disable the cleanup till we stabilize.
+    #Remove-Item -recurse -force -path $outputBaseFolder
     $ErrorActionPreference = $oldErrorActionPreference
 }
