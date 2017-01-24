@@ -120,20 +120,6 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             InitHasher(Algorithm);
-
-            if (ParameterSetName == StreamParameterSet)
-            {
-                byte[] bytehash = null;
-                String hash = null;
-
-                bytehash = hasher.ComputeHash(InputStream);
-
-                hash = BitConverter.ToString(bytehash).Replace("-","");
-                WriteHashResult(Algorithm, hash, "");
-
-                return;
-            }
-
         }
 
         /// <summary>
@@ -222,9 +208,27 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Perform common error checks
+        /// Populate source code
+        /// </summary>
+        protected override void EndProcessing()
+        {
+            if (ParameterSetName == StreamParameterSet)
+            {
+                byte[] bytehash = null;
+                String hash = null;
+
+                bytehash = hasher.ComputeHash(InputStream);
+
+                hash = BitConverter.ToString(bytehash).Replace("-","");
+                WriteHashResult(Algorithm, hash, "");
+            }
+        }
+
+        /// <summary>
         /// Create FileHashInfo object and output it
         /// </summary>
-        private void WriteHashResult(String Algorithm, String hash, String path)
+        private void WriteHashResult(string Algorithm, string hash, string path)
         {
             FileHashInfo result = new FileHashInfo();
             result.Algorithm = Algorithm;
