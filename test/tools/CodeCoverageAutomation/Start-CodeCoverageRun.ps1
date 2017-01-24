@@ -1,5 +1,7 @@
 ﻿param(
-    [Parameter(Mandatory = $true, Position = 0)] $coverallsToken
+    [Parameter(Mandatory = $true, Position = 0)] $coverallsToken,
+    [Parameter(Mandatory = $true, Position = 1)] $codecovToken,
+    [Parameter(Position = 2)] $azureLogDrive = "L:\"
 )
 
 function Write-LogPassThru
@@ -12,6 +14,30 @@ function Write-LogPassThru
 
     $message = "{0:d} - {0:t} : {1}" -f ([datetime]::now),$message
     Add-Content -Path $Path -Value $Message -PassThru -Force
+}
+
+function Write-BashInvokerScript
+{
+    param($path)
+
+    $scriptContent =
+    @'
+    @echo off
+    setlocal
+
+    if not exist "%~dpn0.sh" echo Script "%~dpn0.sh" not found & exit 2
+
+    set _CYGBIN=C:\cygwin64\bin
+    if not exist "%_CYGBIN%" echo Couldn't find Cygwin at "%_CYGBIN%" & exit 3
+
+    :: Resolve ___.sh to /cygdrive based *nix path and store in %_CYGSCRIPT%
+    for /f "delims=" %%A in ('%_CYGBIN%\cygpath.exe "%~dpn0.sh"') do set _CYGSCRIPT=%%A
+
+    :: Throw away temporary env vars and invoke script, passing any args that were passed to us
+    endlocal & %_CYGBIN%\bash --login "%_CYGSCRIPT%" %*
+'@
+
+    $scriptContent | Out-File $path -Force
 }
 
 Write-LogPassThru -Message "***** New Run *****"
@@ -82,6 +108,11 @@ try
     $openCoverParams | Out-String | Write-LogPassThru
     Write-LogPassThru -Message "Starting test run."
 
+    if(Test-Path $outputLog)
+    {
+        Remove-Item $outputLog -Force
+    }
+
     Invoke-OpenCover @openCoverParams
 
     if(Test-Path $outputLog)
@@ -116,7 +147,36 @@ try
 
     $coverallsParams | ForEach-Object { Write-LogPassThru -Message $_ }
 
+    Write-LogPassThru -Message "Uploading to CoverAlls"
     & $coverallsExe """$coverallsParams"""
+
+    $bashScriptInvoker = "$PSScriptRoot\CodecovUploader.cmd"
+    $bashScript = "$PSScriptRoot\CodecovUploader.sh"
+    $cygwinLocation = "$env:SystemDrive\cygwin*"
+
+    if($bashScript)
+    {
+        Remove-Item $bashScript -Force
+    }
+
+    Invoke-RestMethod 'https://codecov.io/bash' -OutFile $bashScript
+    Write-BashInvokerScript -path $bashScriptInvoker
+
+    if(Test-Path $bashScriptInvoker -and $bashScript -and $cygwinPath)
+    {
+        Write-LogPassThru -Message "Uploading to CodeCov"
+        $cygwinPath = "/cygdrive/" + $outputLog.Replace("\", "/").Replace(":","")
+
+        $codecovParmeters = @(
+            "-f $cygwinPath"
+            "-X gcov",
+            "-B master",
+            "-C $commitId")
+
+        $codecovParmetersString = $codecovParmeters -join ' '
+
+        & $bashScriptInvoker $codecovParmetersString
+    }
 
     Write-LogPassThru -Message "Upload complete."
 }
@@ -127,11 +187,11 @@ catch
 finally
 {
     ## See if Azure log directory is mounted
-    if(Test-Path "L:")
+    if(Test-Path $azureLogDrive)
     {
-        Copy-Item $elevatedLogs "L:\" -Force -ErrorAction SilentlyContinue
-        Copy-Item $unelevatedLogs "L:\" -Force -ErrorAction SilentlyContinue
-        Copy-Item $OutputLog "L:\" -Force -ErrorAction SilentlyContinue
+        $destinationPath = Join-Path $env:Temp ("CodeCoverageLogs-{0:yyyy/mm/dd}-{0:hh:mm:ss}.zip" -f [datetime]::Now)
+        Compress-Archive -Path $elevatedLogs,$unelevatedLogs,$outputLog -DestinationPath $destinationPath
+        Copy-Item $destinationPath $azureLogDrive -Force -ErrorAction SilentlyContinue
     }
 
     ## Disable the cleanup till we stabilize.
