@@ -199,9 +199,14 @@ finally
     ## See if Azure log directory is mounted
     if(Test-Path $azureLogDrive)
     {
-        $destinationPath = Join-Path $env:Temp ("CodeCoverageLogs-{0:yyyy/mm/dd}-{0:hh:mm:ss}.zip" -f [datetime]::Now)
+        ##Create yyyy-dd folder
+        $monthFolder = "{0:yyyy-mm}" -f [datetime]::Now
+        $monthFolderFullPath = New-Item -Path (Join-Path $azureLogDrive $monthFolder) -ItemType Directory -Force
+        $windowsFolderPath = New-Item (Join-Path $monthFolderFullPath "Windows") -ItemType Directory -Force
+
+        $destinationPath = Join-Path $env:Temp ("CodeCoverageLogs-{0:yyyy_MM_dd}-{0:hh_mm_ss}.zip" -f [datetime]::Now)
         Compress-Archive -Path $elevatedLogs,$unelevatedLogs,$outputLog -DestinationPath $destinationPath
-        Copy-Item $destinationPath $azureLogDrive -Force -ErrorAction SilentlyContinue
+        Copy-Item $destinationPath $windowsFolderPath -Force -ErrorAction SilentlyContinue
     }
 
     ## Disable the cleanup till we stabilize.
