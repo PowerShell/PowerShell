@@ -162,27 +162,7 @@ namespace Microsoft.PowerShell.Commands
                     foreach (string path in _paths)
                     {
                         string newPath = Context.SessionState.Path.GetUnresolvedProviderPathFromPSPath(path);
-
-                        // Unlike 'GetResolvedProviderPathFromPSPath'
-                        // 'GetUnresolvedProviderPathFromPSPath' does not check a file existence
-                        // so do that explicity
-                        if (File.Exists(newPath))
-                        {
-                            pathsToProcess.Add(newPath);
-                        }
-                        else
-                        {
-                            ItemNotFoundException pathNotFound =
-                                new ItemNotFoundException(
-                                    newPath,
-                                    "PathNotFound",
-                                    SessionStateStrings.PathNotFound);
-                            ErrorRecord errorRecord = new ErrorRecord(pathNotFound,
-                                "FileNotFound",
-                                ErrorCategory.ObjectNotFound,
-                                path);
-                            WriteError(errorRecord);
-                        }
+                        pathsToProcess.Add(newPath);
                     }
                     break;
             }
@@ -200,9 +180,13 @@ namespace Microsoft.PowerShell.Commands
                     hash = BitConverter.ToString(bytehash).Replace("-","");
                     WriteHashResult(Algorithm, hash, path);
                 }
-                catch
+                catch (FileNotFoundException ex)
                 {
-
+                    ErrorRecord errorRecord = new ErrorRecord(ex,
+                        "FileNotFound",
+                        ErrorCategory.ObjectNotFound,
+                        path);
+                    WriteError(errorRecord);
                 }
             }
         }

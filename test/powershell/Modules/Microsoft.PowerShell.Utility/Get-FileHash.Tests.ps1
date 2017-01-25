@@ -1,7 +1,8 @@
 Describe "Get-FileHash" -Tags "CI" {
 
     BeforeAll {
-        New-Variable testDocument -Value (Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath testablescript.ps1) -Force
+        $testDocument = Join-Path -Path $PSScriptRoot -ChildPath assets testablescript.ps1
+        Write-Host $testDocument
     }
 
     Context "Default result tests" {
