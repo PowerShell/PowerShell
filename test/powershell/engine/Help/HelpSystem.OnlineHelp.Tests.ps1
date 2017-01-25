@@ -3,23 +3,16 @@
     # The csv files (V2Cmdlets.csv and V3Cmdlets.csv) contain a list of cmdlets and expected HelpURIs.
     # The HelpURI is part of the cmdlet metadata, and when the user runs 'get-help <cmdletName> -online'
     # the browser navigates to the address in the HelpURI. However, if a help file is present, the HelpURI
-    # on the file take precedence over the one in the cmdlet metadata. Therefore, the help content
-    # in the box needs to be deleted before running the tests, because otherwise, the HelpURI
-    # (when calling get-help -online) might not matched the one in the csv file.
+    # on the file take precedence over the one in the cmdlet metadata.
 
     BeforeAll {
         $SavedProgressPreference = $ProgressPreference
         $ProgressPreference = "SilentlyContinue"
 
-        # Enable the test hook
+        # Enable the test hook. This does the following:
+        # 1) get-help will not find a help file; instead, it will generate a metadata driven object.
+        # 2) get-help -online <cmdletName>  will return the helpuri instead of opening the default web browser.
         [system.management.automation.internal.internaltesthooks]::SetTestHook('BypassOnlineHelpRetrieval', $true)
-
-        # Remove the help content
-        Write-Verbose "Deleting help content for get-help -online tests" -Verbose
-        foreach ($path in @("$pshome\en-US", "$pshome\Modules"))
-        {
-            Get-ChildItem $path -Include "*help.xml" -Recurse -ea SilentlyContinue | Remove-Item -Force -ErrorAction SilentlyContinue
-        }
     }
 
     AfterAll {
