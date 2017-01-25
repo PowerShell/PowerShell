@@ -37,7 +37,7 @@ function Write-BashInvokerScript
     endlocal & %_CYGBIN%\bash --login "%_CYGSCRIPT%" %*
 '@
 
-    $scriptContent | Out-File $path -Force
+    $scriptContent | Out-File $path -Force -Encoding ascii
 }
 
 Write-LogPassThru -Message "***** New Run *****"
@@ -110,7 +110,7 @@ try
 
     if(Test-Path $outputLog)
     {
-        Remove-Item $outputLog -Force
+        Remove-Item $outputLog -Force -ErrorAction SilentlyContinue
     }
 
     Invoke-OpenCover @openCoverParams
@@ -156,13 +156,16 @@ try
 
     if($bashScript)
     {
-        Remove-Item $bashScript -Force
+        Remove-Item $bashScript -Force -ErrorAction SilentlyContinue
     }
 
     Invoke-RestMethod 'https://codecov.io/bash' -OutFile $bashScript
     Write-BashInvokerScript -path $bashScriptInvoker
 
-    if(Test-Path $bashScriptInvoker -and $bashScript -and $cygwinLocation)
+    if((Test-Path $bashScriptInvoker) -and
+        (Test-Path $bashScript) -and
+        (Test-Path $cygwinLocation)
+    )
     {
         Write-LogPassThru -Message "Uploading to CodeCov"
         $cygwinPath = "/cygdrive/" + $outputLog.Replace("\", "/").Replace(":","")
@@ -176,6 +179,13 @@ try
         $codecovParmetersString = $codecovParmeters -join ' '
 
         & $bashScriptInvoker $codecovParmetersString
+    }
+    else
+    {
+        Write-LogPassThru -Message "BashScript: $bashScript"
+        Write-LogPassThru -Message "BashScriptInvoke: $bashScriptInvoker"
+        Write-LogPassThru -Message "CygwinPath : $cygwinPath"
+        Write-LogPassThru -Message "Cannot upload to codecov as some paths are not existent"
     }
 
     Write-LogPassThru -Message "Upload complete."
