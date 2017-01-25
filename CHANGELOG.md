@@ -1,6 +1,20 @@
 Changelog
 =========
 
+v6.0.0-alpha.15 - 2016-01-18
+----------------------------
+- Use parens around file length for offline files
+- Fix issues with the Windows console mode (terminal emulation) and native executables
+- Fix error recovery with `using module`
+- Report `PlatformNotSupported` on IoT for Get/Import/Export-Counter
+- Add `-Group` parameter to `Get-Verb`
+- Use MB instead of KB for memory columns of `Get-Process`
+- Add new escape character for ESC: `` `e``
+- Fix a small parsing issue with a here string
+- Improve tab completion of types that use type accelerators
+- `Invoke-RestMethod` improvements for non-XML non-JSON input
+- PSRP remoting now works on CentOS without addition setup
+
 v6.0.0-alpha.14 - 2016-12-14
 ----------------------------
 - Moved to .NET Core 1.1

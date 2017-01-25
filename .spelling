@@ -76,9 +76,11 @@ exe
 init
 labeled
 toolset
-alpha.14
+alpha.7
+alpha.8
+alpha.9
+alpha.15
  - demos/Azure/README.md
-alpha.12
 AzureRM.NetCore.Preview
 AzureRM.Profile.NetCore.Preview
 AzureRM.Resources.NetCore.Preview
@@ -91,7 +93,6 @@ Get-CronJob
 Remove-CronJob
 New-CronJob
  - demos/DSC/readme.md
-alpha.8
  - demos/install/README.md
 download.sh
  - demos/powershellget/README.md
@@ -199,7 +200,6 @@ build.psm1
 SS64.com
 PoshCode
 v6.0.0
-alpha.9
 TypeGen
  - docs/git/submodules.md
 GoogleTest
@@ -256,7 +256,6 @@ Schwartzmeyer
 andschwa
  - docs/maintainers/releasing.md
 v6
-alpha.7
 Toolset
 WiX
 2012r2
@@ -727,7 +726,6 @@ fullclr
 shebang
  - CHANGELOG.md
 v6.0.0
-alpha.13
  - test/tools/CodeCoverageAutomation/README.md
 Start-CodeCoverageRun
 Coveralls.io.
