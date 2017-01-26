@@ -1680,6 +1680,7 @@ function Publish-NuGetFeed
     @(
 'Microsoft.PowerShell.Commands.Management',
 'Microsoft.PowerShell.Commands.Utility',
+'Microsoft.PowerShell.Commands.Diagnostics',
 'Microsoft.PowerShell.ConsoleHost',
 'Microsoft.PowerShell.Security',
 'System.Management.Automation',
