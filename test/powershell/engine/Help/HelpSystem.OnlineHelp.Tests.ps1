@@ -54,29 +54,25 @@
 Describe 'Get-Help -Online opens the default web browser and navigates to the cmdlet help content' -Tags "Feature" {
 
     $skipTest = [System.Management.Automation.Platform]::IsIoT -or
-                [System.Management.Automation.Platform]::IsNanoServer
+    [System.Management.Automation.Platform]::IsNanoServer
+
+    if($IsWindows)
+    {
+        $regKey = "HKEY_CURRENT_USER\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice"
+        $progId = [Microsoft.Win32.Registry]::GetValue($regKey, "ProgId", $null)
+        if($progId)
+        {
+            $browserKey = [Microsoft.Win32.Registry]::ClassesRoot.OpenSubKey('AppXq0fevzme2pys62n3e0fbqa7peapykr8v\shell\open\command', $false)
+            $browserExe = $browserKey.GetValue($null)
+            if($browserExe -notmatch '.exe')
+            {
+                $skipTest = $true
+            }
+        }
+    }
 
     It "Get-Help get-process -online" -skip:$skipTest {
-        try
-        {
-            Get-Help get-process -Online
-            $nothingThrown = $true
-        }
-        catch
-        {
-            if($_.FullyQualifiedErrorId -eq 'InvalidOperation,Microsoft.PowerShell.Commands.GetHelpCommand')
-            {
-                $errorCanBeSkipped = $true
-                $errorThrown = $_
-            }
-        }
-        finally
-        {
-            if((-not $errorCanBeSkipped) -and (-not $nothingThrown))
-            {
-                { throw $errorThrown } | Should Not Throw
-            }
-        }
+        { Get-Help get-process -online } | Should Not Throw
     }
 }
 
