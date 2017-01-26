@@ -54,7 +54,7 @@
 Describe 'Get-Help -Online opens the default web browser and navigates to the cmdlet help content' -Tags "Feature" {
 
     $skipTest = [System.Management.Automation.Platform]::IsIoT -or
-    [System.Management.Automation.Platform]::IsNanoServer
+                [System.Management.Automation.Platform]::IsNanoServer
 
     if($IsWindows)
     {
