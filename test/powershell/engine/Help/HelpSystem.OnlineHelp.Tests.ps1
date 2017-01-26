@@ -59,22 +59,31 @@ Describe 'Get-Help -Online opens the default web browser and navigates to the cm
     if($IsWindows)
     {
         $regKey = "HKEY_CURRENT_USER\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice"
-        $progId = [Microsoft.Win32.Registry]::GetValue($regKey, "ProgId", $null)
-        if($progId)
+
+        try
         {
-            $browserKey = [Microsoft.Win32.Registry]::ClassesRoot.OpenSubKey("$progId\shell\open\command", $false)
-            if($browserKey)
+            $progId = [Microsoft.Win32.Registry]::GetValue($regKey, "ProgId", $null)
+            if($progId)
             {
-                $browserExe = $browserKey.GetValue($null)
-                if($browserExe -notmatch '.exe')
+                $browserKey = [Microsoft.Win32.Registry]::ClassesRoot.OpenSubKey("$progId\shell\open\command", $false)
+                if($browserKey)
+                {
+                    $browserExe = $browserKey.GetValue($null)
+                    if($browserExe -notmatch '.exe')
+                    {
+                        $skipTest = $true
+                    }
+                }
+                else
                 {
                     $skipTest = $true
                 }
             }
-            else
-            {
-                $skipTest = $true
-            }
+        }
+        catch
+        {
+            # We are not able to access Registry, skipping test.
+            $skipTest = $true
         }
     }
 
