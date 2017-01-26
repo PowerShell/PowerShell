@@ -174,7 +174,8 @@ try
             "-f $cygwinPath"
             "-X gcov",
             "-B master",
-            "-C $commitId")
+            "-C $commitId",
+            "-X network")
 
         $codecovParmetersString = $codecovParmeters -join ' '
 
