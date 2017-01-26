@@ -1294,9 +1294,9 @@ function Start-PSPackage {
     if ($IsWindows) {
         # Add the server name to the $RunTime. $runtime produced by dotnet is same for client or server
         switch ($Runtime) {
-            'win81-x64' {$NameSuffix = 'win81-win2k12r2-x64'}
-            'win10-x64' {$NameSuffix = 'win10-win2k16-x64'}
-            'win7-x64'  {$NameSuffix = 'win7-win2k8r2-x64'}
+            'win81-x64' {$NameSuffix = 'win81-win2012r2-x64'}
+            'win10-x64' {$NameSuffix = 'win10-win2016-x64'}
+            'win7-x64'  {$NameSuffix = 'win7-win2008r2-x64'}
             Default {$NameSuffix = $Runtime}
         }
     }
