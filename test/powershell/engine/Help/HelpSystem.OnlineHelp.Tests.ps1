@@ -57,8 +57,26 @@ Describe 'Get-Help -Online opens the default web browser and navigates to the cm
                 [System.Management.Automation.Platform]::IsNanoServer
 
     It "Get-Help get-process -online" -skip:$skipTest {
-
-        { Get-Help get-process -online } | Should Not Throw
+        try
+        {
+            Get-Help get-process -Online
+            $nothingThrown = $true
+        }
+        catch
+        {
+            if($_.FullyQualifiedErrorId -eq 'InvalidOperation,Microsoft.PowerShell.Commands.GetHelpCommand')
+            {
+                $errorCanBeSkipped = $true
+                $errorThrown = $_
+            }
+        }
+        finally
+        {
+            if((-not $errorCanBeSkipped) -and (-not $nothingThrown))
+            {
+                { throw $errorThrown } | Should Not Throw
+            }
+        }
     }
 }
 
