@@ -689,7 +689,7 @@ namespace Microsoft.PowerShell
             }
 
             ArrayList result = new ArrayList();
-            string border = new string(' ', maxWidth);
+            string border = StringUtil.Padding(maxWidth);
 
             result.Add(border);
             RenderHelper(result, _topLevelNodes, 0, maxWidth, rawUI);

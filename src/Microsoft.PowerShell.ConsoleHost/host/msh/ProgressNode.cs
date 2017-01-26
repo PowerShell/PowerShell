@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell
         void
         RenderFull(ArrayList strCollection, int indentation, int maxWidth, PSHostRawUserInterface rawUI, bool isFullPlus)
         {
-            string indent = new string(' ', indentation);
+            string indent = StringUtil.Padding(indentation);
 
             // First line: the activity
 
@@ -180,7 +180,7 @@ namespace Microsoft.PowerShell
                     rawUI, StringUtil.Format(" {0}{1} ", indent, this.Activity), maxWidth));
 
             indentation += 3;
-            indent = new string(' ', indentation);
+            indent = StringUtil.Padding(indentation);
 
             // Second line: the status description
 
@@ -209,7 +209,7 @@ namespace Microsoft.PowerShell
                             " {0}[{1}{2}] ",
                             indent,
                             new string('o', mercuryWidth),
-                            new string(' ', thermoWidth - mercuryWidth)),
+                            StringUtil.Padding(thermoWidth - mercuryWidth)),
                         maxWidth));
             }
 
@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell
         void
         RenderCompact(ArrayList strCollection, int indentation, int maxWidth, PSHostRawUserInterface rawUI)
         {
-            string indent = new string(' ', indentation);
+            string indent = StringUtil.Padding(indentation);
 
             // First line: the activity
 
@@ -301,7 +301,7 @@ namespace Microsoft.PowerShell
                     StringUtil.Format(" {0}{1} ", indent, this.Activity), maxWidth));
 
             indentation += 3;
-            indent = new string(' ', indentation);
+            indent = StringUtil.Padding(indentation);
 
             // Second line: the status description with percentage and time remaining, if applicable.
 
@@ -372,7 +372,7 @@ namespace Microsoft.PowerShell
         void
         RenderMinimal(ArrayList strCollection, int indentation, int maxWidth, PSHostRawUserInterface rawUI)
         {
-            string indent = new string(' ', indentation);
+            string indent = StringUtil.Padding(indentation);
 
             // First line: Everything mushed into one line
 
@@ -512,7 +512,7 @@ namespace Microsoft.PowerShell
             // Start with 1 for the Activity
             int lines = 1;
             // Use 5 spaces as the heuristic indent. 5 spaces stand for the indent for the CurrentOperation of the first-level child node
-            var indent = new string(' ', 5);
+            var indent = StringUtil.Padding(5);
             var temp = new ArrayList();
 
             if (isFullPlus)
