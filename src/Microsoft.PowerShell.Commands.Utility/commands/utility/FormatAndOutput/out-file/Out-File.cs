@@ -38,6 +38,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// mandatory file name to write to
         /// </summary>
+        [Alias("Path")]
         [Parameter(Mandatory = true, Position = 0, ParameterSetName = "ByPath")]
         public string FilePath
         {
