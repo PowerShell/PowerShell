@@ -1,3 +1,3 @@
 # name: codecov.yml
 fixes:
-    - "master/PowerShell-master::"
+    - "projects/powershell-*::"

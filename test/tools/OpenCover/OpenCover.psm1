@@ -26,8 +26,8 @@ function Get-CodeCoverageChange($r1, $r2)
     $h = @{}
     $Deltas = new-object "System.Collections.ArrayList"
 
-    $r1.assembly | % { $h[$_.assemblyname] = @($_) }
-    $r2.assembly | % {
+    $r1.assembly | ForEach-Object { $h[$_.assemblyname] = @($_) }
+    $r2.assembly | ForEach-Object {
                         if($h.ContainsKey($_.assemblyname))
                         {
                             $h[$_.assemblyname] += $_
@@ -91,7 +91,7 @@ function Get-CoverageData($xmlPath)
 
     $assemblies = New-Object System.Collections.ArrayList
 
-    foreach( $module in $CoverageXml.CoverageSession.modules.module|?{$_.skippedDueTo -ne "MissingPdb"}) {
+    foreach( $module in $CoverageXml.CoverageSession.modules.module| Where-Object {$_.skippedDueTo -ne "MissingPdb"}) {
         $assemblies.Add((Get-AssemblyCoverageData -element $module)) | Out-Null
     }
 
@@ -380,6 +380,9 @@ function Invoke-OpenCover
         [parameter()]$TestDirectory = "$($script:psRepoPath)/test/powershell",
         [parameter()]$OpenCoverPath = "~/OpenCover",
         [parameter()]$PowerShellExeDirectory = "$($script:psRepoPath)/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win10-x64",
+        [parameter()]$PesterLogElevated = "$pwd/TestResultsElevated.xml",
+        [parameter()]$PesterLogUnelevated = "$pwd/TestResultsUnelevated.xml",
+        [parameter()]$PesterLogFormat = "NUnitXml",
         [switch]$CIOnly
         )
 
@@ -408,14 +411,26 @@ function Invoke-OpenCover
 
     if ( $CIOnly )
     {
-        $targetArgs += "-excludeTag @('Feature','Scenario','Slow','RequireAdminOnWindows')"
+        $targetArgsElevated = $targetArgs + @("-excludeTag @('Feature','Scenario','Slow')", "-Tag @('RequireAdminOnWindows')")
+        $targetArgsUnelevated = $targetArgs + @("-excludeTag @('Feature','Scenario','Slow','RequireAdminOnWindows')")
+    }
+    else
+    {
+        $targetArgsElevated = $targetArgs + @("-Tag @('RequireAdminOnWindows')")
+        $targetArgsUnelevated = $targetArgs + @("-excludeTag @('RequireAdminOnWindows')")
     }
 
-    $targetArgString = $targetArgs -join " "
-    # the order seems to be important. Always keep -targetargs as the last parameter.
-    $openCoverArgs = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all","-targetargs:`"$targetArgString`""
+    $targetArgsElevated += @("-OutputFile $PesterLogElevated", "-OutputFormat $PesterLogFormat", "-Quiet")
+    $targetArgsUnelevated += @("-OutputFile $PesterLogUnelevated", "-OutputFormat $PesterLogFormat", "-Quiet")
 
-    if ( $PSCmdlet.ShouldProcess("$OpenCoverBin $openCoverArgs")  )
+    $targetArgStringElevated = $targetArgsElevated -join " "
+    $targetArgStringUnelevated  = $targetArgsUnelevated -join " "
+    # the order seems to be important. Always keep -targetargs as the last parameter.
+    $openCoverArgsElevated = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all","-mergebyhash","-targetargs:`"$targetArgStringElevated`""
+    $openCoverArgsUnelevated = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all", "-mergebyhash", "-targetargs:`"$targetArgStringUnelevated`""
+    $openCoverArgsUnelevatedString = $openCoverArgsUnelevated -join " "
+
+    if ( $PSCmdlet.ShouldProcess("$OpenCoverBin $openCoverArgsUnelevated")  )
     {
         try
         {
@@ -428,13 +443,34 @@ function Invoke-OpenCover
                 throw "${env:psmodulepath} does not exist"
             }
 
-            # invoke OpenCover
-            & $OpenCoverBin $openCoverArgs
+            # invoke OpenCover elevated
+            & $OpenCoverBin $openCoverArgsElevated
+
+            # invoke OpenCover unelevated and poll for completion
+            "$openCoverBin $openCoverArgsUnelevatedString" | Out-File -FilePath "$env:temp\unelevated.ps1" -Force
+            runas.exe /trustlevel:0x20000 "powershell.exe -file $env:temp\unelevated.ps1"
+            # wait for process to start
+            Start-Sleep -Seconds 5
+            # poll for process exit every 30 seconds
+            # timeout of 3 hours
+            $timeOut = ([datetime]::Now).AddHours(3)
+            while([datetime]::Now -lt $timeOut)
+            {
+                Start-Sleep -Seconds 30
+                $openCoverProcess = Get-Process "OpenCover.Console" -ErrorAction SilentlyContinue
+
+                if(-not $openCoverProcess)
+                {
+                    #run must have completed.
+                    break
+                }
+            }
         }
         finally
         {
             # set it back
             $env:PSModulePath = $saveModPath
+            Remove-Item "$env:temp\unelevated.ps1" -force -ErrorAction SilentlyContinue
         }
     }
 }
