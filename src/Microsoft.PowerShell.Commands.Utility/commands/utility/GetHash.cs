@@ -4,59 +4,9 @@ using System.Management.Automation;
 using System.Collections.ObjectModel;
 using System.Security.Cryptography;
 using System.IO;
-using System.Text;
 
 namespace Microsoft.PowerShell.Commands
 {
-    /// <summary>
-    /// This class implements Get-StringHash
-    /// </summary>
-    [Cmdlet(VerbsCommon.Get, "StringHash", HelpUri = "")]
-    [OutputType(typeof(String))]
-    public class GetStringHashCommand : HashCmdletBase
-    {
-        /// <summary>
-        /// InputString parameter
-        /// Calculate a hash of the string
-        /// </summary>
-        /// <value></value>
-        [Parameter(Mandatory = true, Position = 0, ValueFromPipeline = true)]
-        [AllowNull()]
-        [AllowEmptyString()]
-        public String[] InputString { get; set; }
-
-        /// <summary>
-        /// BeginProcessing() override
-        /// Hash function init
-        /// </summary>
-        protected override void BeginProcessing()
-        {
-            InitHasher(Algorithm);
-        }
-
-        /// <summary>
-        /// ProcessRecord() override
-        /// Processing strings from pipeline
-        /// </summary>
-        protected override void ProcessRecord()
-        {
-            // For null input string the result hash is 'null'
-            if (InputString != null)
-            {
-                foreach (string str in InputString)
-                {
-                    byte[] bytehash = null;
-                    String hash = null;
-                    bytehash = hasher.ComputeHash(Encoding.UTF8.GetBytes(str));
-                    hash = BitConverter.ToString(bytehash).Replace("-","");
-                    WriteObject(hash);
-                }
-            }
-        }
-    }
-
-
-
     /// <summary>
     /// This class implements Get-FileHash
     /// </summary>
