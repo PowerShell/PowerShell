@@ -1752,7 +1752,7 @@ namespace Microsoft.PowerShell
                         // is overridden by the tab
                         char charUnderCursor = GetCharacterUnderCursor(c);
 
-                        Write(new string(' ', leftover));
+                        Write(StringUtil.Padding(leftover));
                         RawUI.CursorPosition = c;
 
                         restOfLine = s[i] + (charUnderCursor + s.Substring(i + 1));

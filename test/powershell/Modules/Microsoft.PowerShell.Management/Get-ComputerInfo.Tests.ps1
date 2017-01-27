@@ -203,7 +203,8 @@ function Get-PropertyNamesForComputerInfoTest
         "WindowsRegisteredOrganization",
         "WindowsRegisteredOwner",
         "WindowsSystemRoot",
-        "WindowsVersion")
+        "WindowsVersion",
+        "WindowsUBR")
 
     if ([System.Management.Automation.Platform]::IsIoT)
     {
@@ -975,6 +976,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             "WindowsRegisteredOrganization" {return Get-WinNtCurrentVersion RegisteredOrganization}
             "WindowsRegisteredOwner" {return Get-WinNtCurrentVersion RegisteredOwner}
             "WindowsVersion" {return Get-WinNtCurrentVersion ReleaseId}
+            "WindowsUBR" {return Get-WinNtCurrentVersion UBR}
 
             "WindowsSystemRoot" {return [System.Environment]::GetEnvironmentVariable("SystemRoot")}
 

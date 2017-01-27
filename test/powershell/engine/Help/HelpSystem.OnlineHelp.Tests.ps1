@@ -36,16 +36,15 @@
         foreach ($cmdlet in $cmdletList)
         {
             # If the cmdlet is not preset in CoreCLR, skip it.
-            if (Get-Command $cmdlet.TopicTitle -ea SilentlyContinue)
-            {
-                # TopicTitle - is the cmdlet name in the csv file
-                # HelpURI - is the expected help URI in the csv file
+            $skipTest = (Get-Command $cmdlet.TopicTitle -ea SilentlyContinue) -eq $null
 
-                It "Validate 'get-help $($cmdlet.TopicTitle) -Online'" {
-                    $actualURI = Get-Help $cmdlet.TopicTitle -Online
-                    $actualURI = $actualURI.Replace("Help URI: ","")
-                    $actualURI | Should Be $cmdlet.HelpURI
-                }
+            # TopicTitle - is the cmdlet name in the csv file
+            # HelpURI - is the expected help URI in the csv file
+
+            It "Validate 'get-help $($cmdlet.TopicTitle) -Online'" -Skip:$skipTest {
+                $actualURI = Get-Help $cmdlet.TopicTitle -Online
+                $actualURI = $actualURI.Replace("Help URI: ","")
+                $actualURI | Should Be $cmdlet.HelpURI
             }
         }
     }

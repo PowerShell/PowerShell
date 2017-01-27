@@ -180,6 +180,14 @@ See [Contributing to documentation related to PowerShell](#contributing-to-docum
   a simple "Looks good to me" or "LGTM" will suffice.
   This way we know someone has already taken a look at it!
 
+* When updating your pull request, please **create new commits**
+  and **don't rewrite the commits history**. This way it's very easy for
+  the reviewers to see diff between iterations.
+  If you rewrite the history in the pull request, review could be much slower.
+  Once the review is done, you can rewrite the history to make it prettier,
+  if you like.
+  Otherwise it's likely would be squashed on merge to master.
+
 * Once the code review is done,
   all merge conflicts are resolved,
   and the CI system build status is passing,

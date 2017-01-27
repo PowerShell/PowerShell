@@ -46,7 +46,7 @@ Describe "Unblock-File" -Tags "CI" {
         }
     }
 
-    It "With -LiteralPath': no file exist" {
+    It "With '-LiteralPath': no file exist" {
         try {
             Unblock-File -LiteralPath nofileexist.ttt -ErrorAction Stop
             throw "No Exception!"

@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Management.Automation.Internal;
 using System.Text;
 
 namespace System.Management.Automation.Language
@@ -1236,7 +1237,7 @@ namespace System.Management.Automation.Language
 
         internal virtual string ToDebugString(int indent)
         {
-            return string.Format(CultureInfo.InvariantCulture, "{0}{1}: <{2}>", new string(' ', indent), _kind, Text);
+            return string.Format(CultureInfo.InvariantCulture, "{0}{1}: <{2}>", StringUtil.Padding(indent), _kind, Text);
         }
     }
 
@@ -1256,7 +1257,7 @@ namespace System.Management.Automation.Language
         internal override string ToDebugString(int indent)
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <{2}> Value:<{3}> Type:<{4}>", new string(' ', indent), Kind, Text, _value, _value.GetType().Name);
+                "{0}{1}: <{2}> Value:<{3}> Type:<{4}>", StringUtil.Padding(indent), Kind, Text, _value, _value.GetType().Name);
         }
 
         /// <summary>
@@ -1298,7 +1299,7 @@ namespace System.Management.Automation.Language
         internal override string ToDebugString(int indent)
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <-{2}{3}>", new string(' ', indent), Kind, _parameterName, _usedColon ? ":" : "");
+                "{0}{1}: <-{2}{3}>", StringUtil.Padding(indent), Kind, _parameterName, _usedColon ? ":" : "");
         }
     }
 
@@ -1326,7 +1327,7 @@ namespace System.Management.Automation.Language
         internal override string ToDebugString(int indent)
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <{2}> Name:<{3}>", new string(' ', indent), Kind, Text, Name);
+                "{0}{1}: <{2}> Name:<{3}>", StringUtil.Padding(indent), Kind, Text, Name);
         }
     }
 
@@ -1349,7 +1350,7 @@ namespace System.Management.Automation.Language
         internal override string ToDebugString(int indent)
         {
             return string.Format(CultureInfo.InvariantCulture,
-                "{0}{1}: <{2}> Value:<{3}>", new string(' ', indent), Kind, Text, Value);
+                "{0}{1}: <{2}> Value:<{3}>", StringUtil.Padding(indent), Kind, Text, Value);
         }
     }
 
