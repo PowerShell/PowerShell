@@ -13,6 +13,8 @@
  *
  * ***************************************************************************/
 
+
+using System.Collections.Concurrent;
 #if !CLR2
 using BigInt = System.Numerics.BigInteger;
 #endif
@@ -22,7 +24,8 @@ using BigInt = System.Numerics.BigInteger;
 using System.Reflection;
 #endif
 
-using System.Collections.Generic;
+using System.Runtime.CompilerServices;
+using System.Threading;
 
 //using Microsoft.Scripting.Math;
 
@@ -30,45 +33,34 @@ namespace System.Management.Automation.Interpreter
 {
     internal abstract class InstructionFactory
     {
-        // TODO: weak table for types in a collectible assembly?
-        private static Dictionary<Type, InstructionFactory> s_factories;
+        private static ConditionalWeakTable<Type, InstructionFactory> s_factories;
 
         internal static InstructionFactory GetFactory(Type type)
         {
             if (s_factories == null)
             {
-                s_factories = new Dictionary<Type, InstructionFactory>() {
-                    { typeof(object), InstructionFactory<object>.Factory },
-                    { typeof(bool), InstructionFactory<bool>.Factory },
-                    { typeof(byte), InstructionFactory<byte>.Factory },
-                    { typeof(sbyte), InstructionFactory<sbyte>.Factory },
-                    { typeof(short), InstructionFactory<short>.Factory },
-                    { typeof(ushort), InstructionFactory<ushort>.Factory },
-                    { typeof(int), InstructionFactory<int>.Factory },
-                    { typeof(uint), InstructionFactory<uint>.Factory },
-                    { typeof(long), InstructionFactory<long>.Factory },
-                    { typeof(ulong), InstructionFactory<ulong>.Factory },
-                    { typeof(float), InstructionFactory<float>.Factory },
-                    { typeof(double), InstructionFactory<double>.Factory },
-                    { typeof(char), InstructionFactory<char>.Factory },
-                    { typeof(string), InstructionFactory<string>.Factory },
-#if !CLR2
-                    { typeof(BigInt), InstructionFactory<BigInt>.Factory },
-#endif
-                    //{ typeof(BigInteger), InstructionFactory<BigInteger>.Factory }
-                };
+                var factories = new ConditionalWeakTable<Type, InstructionFactory>();
+                factories.Add(typeof(object), InstructionFactory<object>.Factory);
+                factories.Add(typeof(bool), InstructionFactory<bool>.Factory);
+                factories.Add(typeof(byte), InstructionFactory<byte>.Factory);
+                factories.Add(typeof(sbyte), InstructionFactory<sbyte>.Factory);
+                factories.Add(typeof(short), InstructionFactory<short>.Factory);
+                factories.Add(typeof(ushort), InstructionFactory<ushort>.Factory);
+                factories.Add(typeof(int), InstructionFactory<int>.Factory);
+                factories.Add(typeof(uint), InstructionFactory<uint>.Factory);
+                factories.Add(typeof(long), InstructionFactory<long>.Factory);
+                factories.Add(typeof(ulong), InstructionFactory<ulong>.Factory);
+                factories.Add(typeof(float), InstructionFactory<float>.Factory);
+                factories.Add(typeof(double), InstructionFactory<double>.Factory);
+                factories.Add(typeof(char), InstructionFactory<char>.Factory);
+                factories.Add(typeof(string), InstructionFactory<string>.Factory);
+                factories.Add(typeof(BigInt), InstructionFactory<BigInt>.Factory);
+
+                Interlocked.CompareExchange(ref s_factories, factories, null);
             }
 
-            lock (s_factories)
-            {
-                InstructionFactory factory;
-                if (!s_factories.TryGetValue(type, out factory))
-                {
-                    factory = (InstructionFactory)typeof(InstructionFactory<>).MakeGenericType(type).GetField("Factory").GetValue(null);
-                    s_factories[type] = factory;
-                }
-                return factory;
-            }
+            return s_factories.GetValue(type,
+                t => (InstructionFactory)typeof(InstructionFactory<>).MakeGenericType(t).GetField("Factory").GetValue(null));
         }
 
         protected internal abstract Instruction GetArrayItem();
@@ -91,6 +83,10 @@ namespace System.Management.Automation.Interpreter
         private Instruction _defaultValue;
         private Instruction _newArray;
         private Instruction _typeAs;
+        private Instruction[] _newArrayInit;
+        // This number is somewhat arbitrary - trying to avoid some gc without keeping
+        // objects (instructions) around that aren't used that often.
+        private const int MaxArrayInitElementCountCache = 32;
 
         private InstructionFactory() { }
 
@@ -126,6 +122,15 @@ namespace System.Management.Automation.Interpreter
 
         protected internal override Instruction NewArrayInit(int elementCount)
         {
+            if (elementCount < MaxArrayInitElementCountCache)
+            {
+                if (_newArrayInit == null)
+                {
+                    _newArrayInit = new Instruction[MaxArrayInitElementCountCache];
+                }
+
+                return _newArrayInit[elementCount] ?? (_newArrayInit[elementCount] = new NewArrayInitInstruction<T>(elementCount));
+            }
             return new NewArrayInitInstruction<T>(elementCount);
         }
     }

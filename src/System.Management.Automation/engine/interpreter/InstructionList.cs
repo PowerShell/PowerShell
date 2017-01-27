@@ -749,7 +749,28 @@ namespace System.Management.Automation.Interpreter
 
         public void EmitNewArrayInit(Type elementType, int elementCount)
         {
-            Emit(InstructionFactory.GetFactory(elementType).NewArrayInit(elementCount));
+            // To avoid lock contention in InstructionFactory.GetFactory, we special case the most common
+            // types of arrays that the compiler creates.
+            if (elementType == typeof(CommandParameterInternal))
+            {
+                Emit(InstructionFactory<CommandParameterInternal>.Factory.NewArrayInit(elementCount));
+            }
+            else if (elementType == typeof(CommandParameterInternal[]))
+            {
+                Emit(InstructionFactory<CommandParameterInternal[]>.Factory.NewArrayInit(elementCount));
+            }
+            else if (elementType == typeof(object))
+            {
+                Emit(InstructionFactory<object>.Factory.NewArrayInit(elementCount));
+            }
+            else if (elementType == typeof(string))
+            {
+                Emit(InstructionFactory<string>.Factory.NewArrayInit(elementCount));
+            }
+            else
+            {
+                Emit(InstructionFactory.GetFactory(elementType).NewArrayInit(elementCount));
+            }
         }
 
         #endregion
