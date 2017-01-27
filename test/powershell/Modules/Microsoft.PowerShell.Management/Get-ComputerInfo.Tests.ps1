@@ -750,18 +750,25 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         param([string]$propertyName)
 
         $key = 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\'
-        $regValue = (Get-ItemProperty -Path $key -Name $propertyName).$propertyName
-        if ($propertyName -eq "InstallDate")
+        $regKey = Get-ItemProperty -Path $key -Name $propertyName -ErrorAction SilentlyContinue
+
+        ### Skip if property is not found
+        if($regKey)
         {
-            # more complicated case: InstallDate
-            if ($regValue)
+            $regValue = $regKey.$propertyName
+
+            if ($propertyName -eq "InstallDate")
             {
-                return Get-UnixSecondsToDateTime $regValue
+                # more complicated case: InstallDate
+                if ($regValue)
+                {
+                    return Get-UnixSecondsToDateTime $regValue
+                }
             }
-        }
-        else
-        {
-            return $regValue
+            else
+            {
+                return $regValue
+            }
         }
     }
 
