@@ -956,7 +956,7 @@ function Install-Dotnet {
             # This is the library shipped with .NET Core
             # This is allowed to fail as the user may have installed other versions of dotnet
             Write-Warning ".NET Core links the incorrect OpenSSL, correcting .NET CLI libraries..."
-            find $env:HOME/.dotnet -name System.Security.Cryptography.Native.dylib | % { sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib $_ }
+            find $env:HOME/.dotnet -name System.Security.Cryptography.Native.OpenSsl.dylib | % { sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib $_ }
         }
     } elseif ($IsWindows) {
         Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
