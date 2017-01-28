@@ -71,10 +71,10 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 		$functionDefinition>$functionDefinitionFile
 
         $PowerShell = [powershell]::Create()
+        $PowerShell.AddScript(". $functionDefinitionFile").Invoke()
         function ExecuteCommand {
             param ([string]$command)
             try {
-				$PowerShell.AddScript(". $functionDefinitionFile").Invoke()
                 $PowerShell.AddScript($command).Invoke()
             }
             finally {
