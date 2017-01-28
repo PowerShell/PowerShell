@@ -1845,7 +1845,7 @@ namespace System.Management.Automation.Remoting
                 {
                     foreach (var roleCapabilityFilePath in roleCapabilityFiles)
                     {
-                        if (!Path.GetExtension(roleCapabilityFilePath).Equals(psrcExtenstion, StringComparison.OrdinalIgnoreCase))
+                        if (!Path.GetExtension(roleCapabilityFilePath).Equals(PSRCExtension, StringComparison.OrdinalIgnoreCase))
                         {
                             string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleCapabilityFileExtension, roleCapabilityFilePath);
                             PSInvalidOperationException ioe = new PSInvalidOperationException(message);
