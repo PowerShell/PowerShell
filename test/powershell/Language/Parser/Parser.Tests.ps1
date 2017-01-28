@@ -72,6 +72,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 
         $PowerShell = [powershell]::Create()
         $PowerShell.AddScript(". $functionDefinitionFile").Invoke()
+        $PowerShell.Commands.Clear()
         function ExecuteCommand {
             param ([string]$command)
             try {
@@ -101,8 +102,6 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 		"">$testdirfile2
 	}
     AfterEach {
-        $PowerShell.Commands.Clear()
-		$PowerShell.Streams.Error.Clear()
 		if(Test-Path $testfile)
 		{
 			Remove-Item $testfile
@@ -167,6 +166,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
     }
 
 	It "Throws an CommandNotFoundException exception if using a label in front of an if statement is not allowed. (line 225)"{
+        $PowerShell.Streams.Error.Clear()
         ExecuteCommand ":foo if ($x -eq 3) { 1 }"
 		$PowerShell.HadErrors | should be $true
         $PowerShell.Streams.Error.FullyQualifiedErrorId | should be "CommandNotFoundException"
@@ -518,6 +518,8 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 
 	It "Test that functions are resolved before cmdlets. (line 1678)"{
         $result = ExecuteCommand 'function testcmd-parserBVT { 3 };testcmd-parserBVT'
+        $PowerShell.AddScript(". $functionDefinitionFile").Invoke()
+        $PowerShell.Commands.Clear()
 		$result | should be "3"
     }
 
@@ -738,6 +740,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
     }
 
 	It 'Tests accessing using null as index. (line 2648)'{
+        $PowerShell.Streams.Error.Clear()
 		ExecuteCommand '$A=$(testcmd-parserBVT -returntype array); $A[$NONEXISTING_VARIABLE];'
         $PowerShell.HadErrors | should be $true
         $PowerShell.Streams.Error.FullyQualifiedErrorId | should be "NullArrayIndex"
