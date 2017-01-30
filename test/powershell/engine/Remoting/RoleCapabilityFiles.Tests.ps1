@@ -43,11 +43,19 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
         try
         {
             $iss = [initialsessionstate]::CreateFromSessionConfigurationFile($PSSessionConfigFile, { $true })
-            throw 'Should have thrown CouldNotFindRoleCapabilityFile exception'
+            throw 'No Exception!'
         }
-        catch [System.Management.Automation.MethodInvocationException]
+        catch
         {
-            ([System.Management.Automation.PSInvalidOperationException] $_.Exception.InnerException).ErrorRecord.FullyQualifiedErrorId | Should Be 'CouldNotFindRoleCapabilityFile'
+            [System.Management.Automation.MethodInvocationException] $expectedException = [System.Management.Automation.MethodInvocationException] $_.Exception
+            if ($expectedException -ne $null)
+            {
+                ([System.Management.Automation.PSInvalidOperationException] $expectedException.InnerException).ErrorRecord.FullyQualifiedErrorId | Should Be 'CouldNotFindRoleCapabilityFile'
+            }
+            else
+            {
+                throw 'Unexpected Exception'
+            }
         }
     }
 
@@ -60,25 +68,51 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
         try
         {
             $iss = [initialsessionstate]::CreateFromSessionConfigurationFile($PSSessionConfigFile, { $true })
-            throw 'Should have thrown InvalidRoleCapabilityFileExtension exception'
+            throw 'No Exception!'
         }
-        catch [System.Management.Automation.MethodInvocationException]
+        catch
         {
-            ([System.Management.Automation.PSInvalidOperationException] $_.Exception.InnerException).ErrorRecord.FullyQualifiedErrorId | Should Be 'InvalidRoleCapabilityFileExtension'
+            [System.Management.Automation.MethodInvocationException] $expectedException = [System.Management.Automation.MethodInvocationException] $_.Exception
+            if ($expectedException -ne $null)
+            {
+                ([System.Management.Automation.PSInvalidOperationException] $expectedException.InnerException).ErrorRecord.FullyQualifiedErrorId | Should Be 'InvalidRoleCapabilityFileExtension'
+            }
+            else
+            {
+                throw 'Unexpected Exception'
+            }
         }
     }
 
-    It "Verifies good role capability file" {
+    It "Verifies restriction on good role capability file" {
 
         New-PSSessionConfigurationFile -Path $PSSessionConfigFile -RoleDefinitions @{
             Administrators = @{ RoleCapabilityFiles = "$GoodRoleCapFile" }
         }
 
+        # 'Get-Service' is not included in the session.
         $iss = [initialsessionstate]::CreateFromSessionConfigurationFile($PSSessionConfigFile, { $true })
         [powershell] $ps = [powershell]::Create($iss)
-        $result = $ps.AddCommand('Get-Process').AddParameter('Name', 'PowerShell*').Invoke()
+        $null = $ps.AddCommand('Get-Service')
 
-        $result.Count | Should Not Be 0
+        try
+        {
+            $ps.Invoke()
+            throw 'No Exception!'
+        }
+        catch
+        {
+            [System.Management.Automation.MethodInvocationException] $expectedException = [System.Management.Automation.MethodInvocationException] $_.Exception
+            if ($expectedException -ne $null)
+            {
+                ($expectedException.InnerException.GetType().FullName) | Should Be 'System.Management.Automation.CommandNotFoundException'
+            }
+            else
+            {
+                throw 'Unexpected Exception'
+            }
+        }
+
         $ps.Dispose()
     }
 }
