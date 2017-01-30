@@ -89,26 +89,35 @@ namespace Microsoft.PowerShell.Commands
 
             Collection<string> paths = new Collection<string>();
 
+            bool _ShouldProcess = false;
+
             if (Path != null)
             {
                 foreach (string p in Path)
                 {
                     foreach (PathInfo tempPath in SessionState.Path.GetResolvedPSPathFromPSPath(p))
                     {
-                        paths.Add(tempPath.ProviderPath);
+                        if (ShouldProcess(tempPath.ProviderPath))
+                        {
+                            paths.Add(tempPath.ProviderPath);
+                            _ShouldProcess = true;
+                        }
                     }
                 }
             }
 
-            string drive = null;
-
-            // resolve catalog destination Path
-            if (!SessionState.Path.IsPSAbsolute(catalogFilePath, out drive) && !System.IO.Path.IsPathRooted(catalogFilePath))
+            if (_ShouldProcess)
             {
-                catalogFilePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(catalogFilePath);
-            }
+                string drive = null;
 
-            PerformAction(paths, catalogFilePath);
+                // resolve catalog destination Path
+                if (!SessionState.Path.IsPSAbsolute(catalogFilePath, out drive) && !System.IO.Path.IsPathRooted(catalogFilePath))
+                {
+                    catalogFilePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(catalogFilePath);
+                }
+
+                PerformAction(paths, catalogFilePath);
+            }
         }
 
         /// <summary>
