@@ -3,8 +3,8 @@ FROM microsoft/nanoserver
 LABEL Readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md",`
       Description="This Dockerfile will install the latest milestone release of PS."
 
-ARG POWERSHELL_ZIP=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.14/powershell-6.0.0-alpha.14-win10-x64.zip
-ARG POWERSHELL_SHA256=3F5FD873B6E3062D9741B019BC645E6F20999BE66B2FDAA4374495FEBEDD0E03
+ARG POWERSHELL_ZIP=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.15/PowerShell_6.0.0-alpha.15-win10-win2k16-x64.zip
+ARG POWERSHELL_SHA256=4297C4ADBF93133CD343B7A4248FAEE225060E3A739A38D9368E1AA2086381BB
 
 # Prepare shell environment to Log-to > C:\Dockerfile.log
 SHELL ["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe","-command","$ErrorActionPreference = 'Stop';","$ConfirmPreference = 'None';",`
@@ -15,8 +15,8 @@ SHELL ["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe","-comman
 WORKDIR /
 
 # Install PowerShell package and clean up
-ADD $POWERSHELL_ZIP /PowerShell-win10-x64.zip
-RUN [System.IO.FileInfo]$ZipFile = Get-Item -Path ./powershell-win10-x64.zip;`
+ADD $POWERSHELL_ZIP /PowerShell-win10-win2k16-x64.zip
+RUN [System.IO.FileInfo]$ZipFile = Get-Item -Path ./powershell-win10-win2k16-x64.zip;`
     [String]$ZipHash = (Get-FileHash  -Path $ZipFile -Algorithm SHA256 | select -ExpandProperty Hash);`
     If ($ZipHash -notmatch $Env:POWERSHELL_SHA256){`
         Throw [String]$('['+$ZipHash+'] does not match ['+$Env:POWERSHELL_SHA256+']!')`
