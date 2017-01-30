@@ -517,10 +517,11 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
     }
 
 	It "Test that functions are resolved before cmdlets. (line 1678)"{
-        $result = ExecuteCommand 'function testcmd-parserBVT { 3 };testcmd-parserBVT'
-        $PowerShell.AddScript(". $functionDefinitionFile").Invoke()
+        $result_cmdlet = $PowerShell.AddScript('function test-parserfunc { [CmdletBinding()] Param() PROCESS { "cmdlet" } };test-parserfunc').Invoke()
+        $result_func = ExecuteCommand 'function test-parserfunc { "func" };test-parserfunc'
         $PowerShell.Commands.Clear()
-		$result | should be "3"
+        $result_cmdlet | should be "cmdlet"
+        $result_func | should be "func"
     }
 
 	It "Check that a command that uses shell execute can be run from the command line and that no exception is thrown. (line 1702)" {
