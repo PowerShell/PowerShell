@@ -56,8 +56,9 @@ Describe 'Get-Help -Online opens the default web browser and navigates to the cm
     $skipTest = [System.Management.Automation.Platform]::IsIoT -or
                 [System.Management.Automation.Platform]::IsNanoServer
 
-    if($IsWindows)
+    if((-not ($skipTest)) -and $IsWindows)
     {
+        $skipTest = $true
         $regKey = "HKEY_CURRENT_USER\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice"
 
         try
@@ -68,22 +69,21 @@ Describe 'Get-Help -Online opens the default web browser and navigates to the cm
                 $browserKey = [Microsoft.Win32.Registry]::ClassesRoot.OpenSubKey("$progId\shell\open\command", $false)
                 if($browserKey)
                 {
-                    $browserExe = $browserKey.GetValue($null)
-                    if($browserExe -notmatch '.exe')
+                    $browserExe = ($browserKey.GetValue($null) -replace '"', '') -split " "
+
+                    if ($browserExe.count -ge 1)
                     {
-                        $skipTest = $true
+                        if($browserExe[0] -match '.exe')
+                        {
+                            $skipTest = $false
+                        }
                     }
-                }
-                else
-                {
-                    $skipTest = $true
                 }
             }
         }
         catch
         {
             # We are not able to access Registry, skipping test.
-            $skipTest = $true
         }
     }
 
