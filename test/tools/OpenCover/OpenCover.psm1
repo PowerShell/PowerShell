@@ -426,8 +426,8 @@ function Invoke-OpenCover
     $targetArgStringElevated = $targetArgsElevated -join " "
     $targetArgStringUnelevated  = $targetArgsUnelevated -join " "
     # the order seems to be important. Always keep -targetargs as the last parameter.
-    $openCoverArgsElevated = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all","-mergebyhash","-targetargs:`"$targetArgStringElevated`""
-    $openCoverArgsUnelevated = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all", "-mergebyhash", "-targetargs:`"$targetArgStringUnelevated`""
+    $openCoverArgsElevated = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all","-mergeoutput","-targetargs:`"$targetArgStringElevated`""
+    $openCoverArgsUnelevated = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all", "-mergeoutput", "-targetargs:`"$targetArgStringUnelevated`""
     $openCoverArgsUnelevatedString = $openCoverArgsUnelevated -join " "
 
     if ( $PSCmdlet.ShouldProcess("$OpenCoverBin $openCoverArgsUnelevated")  )
