@@ -5109,7 +5109,7 @@ end
                     new SessionStateAliasEntry("sv",
                         "Set-Variable",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     // Web cmdlets aliases
-                     new SessionStateAliasEntry("irm",
+                    new SessionStateAliasEntry("irm",
                         "Invoke-RestMethod",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("iwr",
                         "Invoke-WebRequest",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
