@@ -168,7 +168,7 @@ try
 }
 catch
 {
-    $_
+    Write-LogPassThru -Message $_
 }
 finally
 {
