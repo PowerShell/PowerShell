@@ -27,9 +27,9 @@ function Get-DailyBadge
 # the status of cron_job builds, but it doesn't, so we have this
 function Set-DailyBuildBadge
 {
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param ( [Parameter(Mandatory=$true,Position=0)]$content )
     $method = "PUT"
-    $headerDate = '2014-02-14'
     $headerDate = '2015-12-11'
 
     $storageAccountName = $Env:TestResultAccountName
@@ -51,36 +51,38 @@ function Set-DailyBuildBadge
 
     $contentType = "image/svg+xml"
     # more info: https://docs.microsoft.com/en-us/rest/api/storageservices/fileservices/put-blob
-    $signatureString = "$method`n" +
-        "`n" +
-        "`n" +
-        "$contentLength`n" +
-        "`n" +
-        "${contentType}`n" +
-        "`n" +
-        "`n" +
-        "`n" +
-        "`n" +
-        "`n" +
-        "`n"
+    $sb = [text.stringbuilder]::new()
+    # can't use AppendLine because the `r`n causes the command to fail, it must be `n and only `n
+    $null = $sb.Append("$method`n")
+    $null = $sb.Append("`n")
+    $null = $sb.Append("`n")
+    $null = $sb.Append("$contentLength`n")
+    $null = $sb.Append("`n")
+    $null = $sb.Append("$contentType`n")
+    $null = $sb.Append("`n")
+    $null = $sb.Append("`n")
+    $null = $sb.Append("`n")
+    $null = $sb.Append("`n")
+    $null = $sb.Append("`n")
+    $null = $sb.Append("`n")
 
-    #Add CanonicalizedHeaders
-    $signatureString += "x-ms-blob-type:" + $headers["x-ms-blob-type"] + "`n"
-    $signatureString += "x-ms-date:" + $headers["x-ms-date"] + "`n"
-    $signatureString += "x-ms-version:" + $headers["x-ms-version"] + "`n"
-    #Add CanonicalizedResource
-    $uri = New-Object System.Uri -ArgumentList $url
-    $signatureString += "/" + $storageAccountName + $uri.AbsolutePath
+    $null = $sb.Append("x-ms-blob-type:" + $headers["x-ms-blob-type"] + "`n")
+    $null = $sb.Append("x-ms-date:" + $headers["x-ms-date"] + "`n")
+    $null = $sb.Append("x-ms-version:" + $headers["x-ms-version"] + "`n")
+    $null = $sb.Append("/" + $storageAccountName + ([System.Uri]::new($url).AbsolutePath))
 
-    $dataToMac = [System.Text.Encoding]::UTF8.GetBytes($signatureString)
+    $dataToMac = [System.Text.Encoding]::UTF8.GetBytes($sb.ToString())
     $accountKeyBytes = [System.Convert]::FromBase64String($storageAccountKey)
-    $hmac = new-object System.Security.Cryptography.HMACSHA256((,$accountKeyBytes))
+    $hmac = [System.Security.Cryptography.HMACSHA256]::new($accountKeyBytes)
     $signature = [System.Convert]::ToBase64String($hmac.ComputeHash($dataToMac))
 
     $headers["Authorization"]  = "SharedKey " + $storageAccountName + ":" + $signature
 
-    write-verbose $signatureString
-    $response = Invoke-RestMethod -Uri $Url -Method $method -headers $headers -Body $body -ContentType "image/svg+xml"
+    if ( $PSCmdlet.ShouldProcess("$signaturestring")) 
+    {
+        # if this fails, it will throw, you can't check the response for a success code
+        $response = Invoke-RestMethod -Uri $Url -Method $method -headers $headers -Body $body -ContentType "image/svg+xml"
+    }
 }
 
 
