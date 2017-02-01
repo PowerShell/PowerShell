@@ -154,7 +154,7 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Event raised when operation runspace enters a debugger stopped state.
         /// </summary>
-        internal event EventHandler<ProcessRunspaceDebugEventArgs> RunspaceDebugStop;
+        internal event EventHandler<StartRunspaceDebugProcessingEventArgs> RunspaceDebugStop;
 
         /// <summary>
         /// RaiseRunspaceDebugStopEvent
@@ -162,7 +162,7 @@ namespace System.Management.Automation.Remoting
         /// <param name="runspace">Runspace</param>
         internal void RaiseRunspaceDebugStopEvent(System.Management.Automation.Runspaces.Runspace runspace)
         {
-            RunspaceDebugStop.SafeInvoke(this, new ProcessRunspaceDebugEventArgs(runspace));
+            RunspaceDebugStop.SafeInvoke(this, new StartRunspaceDebugProcessingEventArgs(runspace));
         }
 
 

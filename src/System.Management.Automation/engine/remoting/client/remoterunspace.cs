@@ -1351,12 +1351,7 @@ namespace System.Management.Automation
                     var psVersionTable = psApplicationPrivateData[PSVersionInfo.PSVersionTableName] as PSPrimitiveDictionary;
                     if (psVersionTable.ContainsKey(PSVersionInfo.PSVersionName))
                     {
-                        var psVersionInfo = psVersionTable[PSVersionInfo.PSVersionName];
-                        var baseValue = PSObject.Base(psVersionInfo);
-                        if (baseValue != null)
-                        {
-                            ServerVersion = baseValue as Version;
-                        }
+                        ServerVersion = PSObject.Base(psVersionTable[PSVersionInfo.PSVersionName]) as Version;
                     }
                 }
             }

@@ -87,12 +87,12 @@ if ($IsWindows)
                 var output = new PSDataCollection<PSObject>();
                 debugger.ProcessCommand(command, output);
             }
-            private void HandleProcessRunspaceDebug(object sender, ProcessRunspaceDebugEventArgs args)
+            private void HandleStartRunspaceDebugProcessing(object sender, StartRunspaceDebugProcessingEventArgs args)
             {
-                args.HandleInternally = true;
+                args.UseDefaultProcessing = true;
                 RunspaceDebugProcessingCount++;
             }
-            private void HandleCancelProcessRunspaceDebug(object sender, EventArgs args)
+            private void HandleCancelRunspaceDebugProcessing(object sender, EventArgs args)
             {
                 RunspaceDebugProcessCancelled = true;
             }
@@ -100,15 +100,15 @@ if ($IsWindows)
             {
                 _runspace = runspace;
                 _runspace.Debugger.DebuggerStop += HandleDebuggerStop;
-                _runspace.Debugger.ProcessRunspaceDebug += HandleProcessRunspaceDebug;
-                _runspace.Debugger.CancelProcessRunspaceDebug += HandleCancelProcessRunspaceDebug;
+                _runspace.Debugger.StartRunspaceDebugProcessing += HandleStartRunspaceDebugProcessing;
+                _runspace.Debugger.CancelRunspaceDebugProcessing += HandleCancelRunspaceDebugProcessing;
             }
             public void Release()
             {
                 if (_runspace == null) { return; }
                 _runspace.Debugger.DebuggerStop -= HandleDebuggerStop;
-                _runspace.Debugger.ProcessRunspaceDebug -= HandleProcessRunspaceDebug;
-                _runspace.Debugger.CancelProcessRunspaceDebug -= HandleCancelProcessRunspaceDebug;
+                _runspace.Debugger.StartRunspaceDebugProcessing -= HandleStartRunspaceDebugProcessing;
+                _runspace.Debugger.CancelRunspaceDebugProcessing -= HandleCancelRunspaceDebugProcessing;
             }
 
             public override DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output) { return null; }
@@ -127,7 +127,7 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
         if (!$IsWindows)
         {
             $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
+            $PSDefaultParameterValues["it:Pending"] = $true
         }
         else
         {
@@ -176,7 +176,11 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
 
     It "Verifies that asynchronous 'Invoke-Command -RemoteDebug' is ignored" {
 
-        $ps.AddCommand("Invoke-Command").AddParameter("Session", $remoteSession).AddParameter("ScriptBlock", $sb).AddParameter("RemoteDebug", $true).AddParameter("AsJob", $true)
+        $ps.AddCommand("Invoke-Command").
+            AddParameter("Session", $remoteSession).
+            AddParameter("ScriptBlock", $sb).
+            AddParameter("RemoteDebug", $true).
+            AddParameter("AsJob", $true)
         $result = $ps.Invoke()
         $testDebugger.DebugStopCount | Should Be 0
     }
@@ -184,7 +188,10 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
     It "Verifies that synchronous 'Invoke-Command -RemoteDebug' invokes debugger" {
 
         $ps.Commands.Clear()
-        $ps.AddCommand("Invoke-Command").AddParameter("Session", $remoteSession).AddParameter("ScriptBlock", $sb).AddParameter("RemoteDebug", $true)
+        $ps.AddCommand("Invoke-Command").
+            AddParameter("Session", $remoteSession).
+            AddParameter("ScriptBlock", $sb).
+            AddParameter("RemoteDebug", $true)
         $result = $ps.Invoke()
         $testDebugger.RunspaceDebugProcessingCount | Should Be 1
         $testDebugger.DebugStopCount | Should Be 1
@@ -198,7 +205,10 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
 
     It "Verifies that 'Invoke-Command -RemoteDebug' running in a runspace without PSHost is ignored" {
 
-        $ps2.AddCommand("Invoke-Command").AddParameter("Session", $remoteSession).AddParameter("ScriptBlock", $sb).AddParameter("RemoteDebug", $true)
+        $ps2.AddCommand("Invoke-Command").
+            AddParameter("Session", $remoteSession).
+            AddParameter("ScriptBlock", $sb).
+            AddParameter("RemoteDebug", $true)
         $result = $ps2.Invoke()
         $result | Should Be "Hello!"
     }

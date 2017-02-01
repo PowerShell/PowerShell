@@ -1379,7 +1379,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void HandleRunspaceDebugStop(object sender, ProcessRunspaceDebugEventArgs args)
+        private void HandleRunspaceDebugStop(object sender, StartRunspaceDebugProcessingEventArgs args)
         {
             var operation = sender as IThrottleOperation;
             operation.RunspaceDebugStop -= HandleRunspaceDebugStop;

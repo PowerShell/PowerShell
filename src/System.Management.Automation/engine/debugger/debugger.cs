@@ -263,13 +263,11 @@ namespace System.Management.Automation
     #region Runspace Debug Processing
 
     /// <summary>
-    /// ProcessRunspaceDebug event arguments
+    /// StartRunspaceDebugProcessing event arguments
     /// </summary>
-    public sealed class ProcessRunspaceDebugEventArgs : EventArgs
+    public sealed class StartRunspaceDebugProcessingEventArgs : EventArgs
     {
-        /// <summary>
-        /// The runspace to process
-        /// </summary>
+        /// <summary> The runspace to process </summary>
         public Runspace Runspace
         {
             get;
@@ -277,10 +275,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// When set to true this will cause PowerShell to handle this runspace debug session internally through its
-        /// internal script debugger
+        /// When set to true this will cause PowerShell to process this runspace debug session through its
+        /// script debugger.  To use the default processing return from this event call after setting
+        /// this property to true.
         /// </summary>
-        public bool HandleInternally
+        public bool UseDefaultProcessing
         {
             get;
             set;
@@ -289,7 +288,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor
         /// </summary>
-        public ProcessRunspaceDebugEventArgs(Runspace runspace)
+        public StartRunspaceDebugProcessingEventArgs(Runspace runspace)
         {
             if (runspace == null) { throw new PSArgumentNullException("runspace"); }
 
@@ -402,19 +401,20 @@ namespace System.Management.Automation
         #region Runspace Debug Processing Events
 
         /// <summary>
-        /// Event raised when a runspace debugger needs breakpoint processing
+        /// Event raised when a runspace debugger needs breakpoint processing.
         /// </summary>
-        public event EventHandler<ProcessRunspaceDebugEventArgs> ProcessRunspaceDebug;
+        public event EventHandler<StartRunspaceDebugProcessingEventArgs> StartRunspaceDebugProcessing;
 
         /// <summary>
-        /// Event raised when a runspace debugger is finished being processed internally.
+        /// Event raised when a runspace debugger is finished being processed.
         /// </summary>
-        public event EventHandler<ProcessRunspaceDebugEndEventArgs> ProcessRunspaceDebugEnd;
+        public event EventHandler<ProcessRunspaceDebugEndEventArgs> RunspaceDebugProcessingCompleted;
 
         /// <summary>
-        /// Event raised when debugging session is over and runspace debuggers queued for processing should be released
+        /// Event raised to indicate that the debugging session is over and runspace debuggers queued for 
+        /// processing should be released.
         /// </summary>
-        public event EventHandler<EventArgs> CancelProcessRunspaceDebug;
+        public event EventHandler<EventArgs> CancelRunspaceDebugProcessing;
 
         #endregion
 
@@ -563,41 +563,30 @@ namespace System.Management.Automation
 
         #region Runspace Debug Processing
 
-        /// <summary>
-        /// RaiseProcessRunspaceDebugEvent
-        /// </summary>
-        /// <param name="args">ProcessRunspaceDebugEventArgs</param>
-        protected void RaiseProcessRunspaceDebugEvent(ProcessRunspaceDebugEventArgs args)
+        /// <summary/>
+        protected void RaiseStartRunspaceDebugProcessingEvent(StartRunspaceDebugProcessingEventArgs args)
         {
             if (args == null) { throw new PSArgumentNullException("args"); }
-            ProcessRunspaceDebug.SafeInvoke<ProcessRunspaceDebugEventArgs>(this, args);
+            StartRunspaceDebugProcessing.SafeInvoke<StartRunspaceDebugProcessingEventArgs>(this, args);
         }
 
-        /// <summary>
-        /// RaiseProcessRunspaceDebugEndEvent
-        /// </summary>
-        /// <param name="args">ProcessRunspaceDebugEndEventArgs</param>
-        protected void RaiseProcessRunspaceDebugEndEvent(ProcessRunspaceDebugEndEventArgs args)
+        /// <summary/>
+        protected void RaiseRunspaceProcessingCompletedEvent(ProcessRunspaceDebugEndEventArgs args)
         {
             if (args == null) { throw new PSArgumentNullException("args"); }
-            ProcessRunspaceDebugEnd.SafeInvoke<ProcessRunspaceDebugEndEventArgs>(this, args);
+            RunspaceDebugProcessingCompleted.SafeInvoke<ProcessRunspaceDebugEndEventArgs>(this, args);
         }
 
-        /// <summary>
-        /// IsProcessRunspaceDebugEventSubscribed
-        /// </summary>
-        /// <returns>True if event subscription exists</returns>
+        /// <summary/>
         protected bool IsProcessRunspaceDebugEventSubscribed()
         {
-            return (ProcessRunspaceDebug != null);
+            return (StartRunspaceDebugProcessing != null);
         }
 
-        /// <summary>
-        /// RaiseCancelProcessDebuggerEvent
-        /// </summary>
-        protected void RaiseCancelProcessRunspaceDebugEvent()
+        /// <summary/>
+        protected void RaiseCancelRunspaceDebugProcessingEvent()
         {
-            CancelProcessRunspaceDebug.SafeInvoke<EventArgs>(this, null);
+            CancelRunspaceDebugProcessing.SafeInvoke<EventArgs>(this, null);
         }
 
         #endregion
@@ -848,7 +837,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Adds the provided Runspace object to the runspace debugger processing queue.
-        /// The queue will then raise the ProcessRunspaceDebug events for each runspace to allow
+        /// The queue will then raise the StartRunspaceDebugProcessing events for each runspace to allow
         /// a host script debugger implementation to provide an active debugging session.
         /// </summary>
         /// <param name="runspace">Runspace to debug</param>
@@ -1732,7 +1721,7 @@ namespace System.Management.Automation
         private ManualResetEventSlim _preserveDebugStopEvent;
 
         // Process runspace debugger
-        private Lazy<ConcurrentQueue<ProcessRunspaceDebugEventArgs>> _runspaceDebugQueue = new Lazy<ConcurrentQueue<ProcessRunspaceDebugEventArgs>>();
+        private Lazy<ConcurrentQueue<StartRunspaceDebugProcessingEventArgs>> _runspaceDebugQueue = new Lazy<ConcurrentQueue<StartRunspaceDebugProcessingEventArgs>>();
         private volatile Int32 _processingRunspaceDebugQueue;
         private ManualResetEventSlim _runspaceDebugCompleteEvent;
 
@@ -2799,17 +2788,15 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Adds the provided Runspace object to the runspace debugger processing queue.
-        /// The queue will then raise the ProcessRunspaceDebug events for each runspace to allow
+        /// The queue will then raise the StartRunspaceDebugProcessing events for each runspace to allow
         /// a host script debugger implementation to provide an active debugging session.
         /// </summary>
         /// <param name="runspace">Runspace to debug</param>
         internal override void QueueRunspaceForDebug(Runspace runspace)
         {
-            if (runspace == null) { throw new PSArgumentNullException("runspace"); }
-
             runspace.StateChanged += RunspaceStateChangedHandler;
             runspace.AvailabilityChanged += RunspaceAvailabilityChangedHandler;
-            _runspaceDebugQueue.Value.Enqueue(new ProcessRunspaceDebugEventArgs(runspace));
+            _runspaceDebugQueue.Value.Enqueue(new StartRunspaceDebugProcessingEventArgs(runspace));
             StartRunspaceForDebugQueueProcessing();
         }
 
@@ -2819,14 +2806,15 @@ namespace System.Management.Automation
         /// </summary>
         public override void CancelDebuggerProcessing()
         {
+            // Empty runspace debugger processing queue and then notify any subscribers.
+            ReleaseInternalRunspaceDebugProcessing(null, true);
+
             try
             {
-                RaiseCancelProcessRunspaceDebugEvent();
+                RaiseCancelRunspaceDebugProcessingEvent();
             }
             catch (Exception)
             { }
-
-            ReleaseInternalRunspaceDebugProcessing(null, true);
         }
 
         private void ReleaseInternalRunspaceDebugProcessing(object sender, bool emptyQueue = false)
@@ -2840,7 +2828,7 @@ namespace System.Management.Automation
 
             if (emptyQueue && _runspaceDebugQueue.IsValueCreated)
             {
-                ProcessRunspaceDebugEventArgs args;
+                StartRunspaceDebugProcessingEventArgs args;
                 while (_runspaceDebugQueue.Value.TryDequeue(out args))
                 {
                     args.Runspace.StateChanged -= RunspaceStateChangedHandler;
@@ -3189,10 +3177,6 @@ namespace System.Management.Automation
                             _steppingMode = SteppingMode.StepIn;
                             _overOrOutFrame = _nestedRunningFrame;
                             _nestedRunningFrame = null;
-                            if (_lastActiveDebuggerAction == DebuggerResumeAction.StepOut)
-                            {
-                                CancelDebuggerProcessingAsNeeded(poppedDebugger);
-                            }
                             break;
 
                         case DebuggerResumeAction.Stop:
@@ -3213,20 +3197,6 @@ namespace System.Management.Automation
             }
 
             return poppedDebugger;
-        }
-
-        private void CancelDebuggerProcessingAsNeeded(Debugger debugger)
-        {
-            NestedRunspaceDebugger nestedDebugger = debugger as NestedRunspaceDebugger;
-            if (nestedDebugger != null)
-            {
-                var callstack = nestedDebugger.GetRSCallStack();
-                if (callstack.Count == 1)
-                {
-                    // A final frame step-out should clear any runspace debug processing.
-                    CancelDebuggerProcessing();
-                }
-            }
         }
 
         private void HandleActiveJobDebuggerStop(object sender, DebuggerStopEventArgs args)
@@ -3881,25 +3851,25 @@ namespace System.Management.Automation
 
         private void DebuggerQueueThreadProc()
         {
-            ProcessRunspaceDebugEventArgs runspaceDebugProcessArgs;
+            StartRunspaceDebugProcessingEventArgs runspaceDebugProcessArgs;
             while (_runspaceDebugQueue.Value.TryDequeue(out runspaceDebugProcessArgs))
             {
                 if (IsProcessRunspaceDebugEventSubscribed())
                 {
                     try
                     {
-                        RaiseProcessRunspaceDebugEvent(runspaceDebugProcessArgs);
+                        RaiseStartRunspaceDebugProcessingEvent(runspaceDebugProcessArgs);
                     }
                     catch (Exception) { }
                 }
                 else
                 {
                     // If there are no ProcessDebugger event subscribers then default to handling internally.
-                    runspaceDebugProcessArgs.HandleInternally = true;
+                    runspaceDebugProcessArgs.UseDefaultProcessing = true;
                 }
 
                 // Check for internal handling request.
-                if (runspaceDebugProcessArgs.HandleInternally)
+                if (runspaceDebugProcessArgs.UseDefaultProcessing)
                 {
                     try
                     {
@@ -3938,7 +3908,7 @@ namespace System.Management.Automation
 
             StopDebugRunspace(runspace);
 
-            RaiseProcessRunspaceDebugEndEvent(
+            RaiseRunspaceProcessingCompletedEvent(
                 new ProcessRunspaceDebugEndEventArgs(runspace));
         }
 
