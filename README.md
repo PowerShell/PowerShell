@@ -80,9 +80,9 @@ If you have any problems building, please consult the developer [FAQ][].
 
 ### Build status of nightly builds
 
-| AppVeyor (Windows)       | Code Coverage Status |
-|--------------------------|----------------------|
-| [![av-nightly-image][]][av-nightly-site] | [![cc-image][]][cc-site] |
+| AppVeyor (Windows)       | Travis CI (Linux / macOS) | Code Coverage Status |
+|--------------------------|---------------------------|----------------------|
+| [![av-nightly-image][]][av-nightly-site] | [![tv-nightly-image][]][tv-site] | [![cc-image][]][cc-site] |
 
 [bd-linux]: docs/building/linux.md
 [bd-windows]: docs/building/windows-core.md
@@ -94,6 +94,7 @@ If you have any problems building, please consult the developer [FAQ][].
 [tv-site]: https://travis-ci.org/PowerShell/PowerShell/branches
 [av-image]: https://ci.appveyor.com/api/projects/status/nsng9iobwa895f98/branch/master?svg=true
 [av-site]: https://ci.appveyor.com/project/PowerShell/powershell
+[tv-nightly-image]: https://jimtru1979.blob.core.windows.net/badges/DailyBuildStatus.svg
 [av-nightly-image]: https://ci.appveyor.com/api/projects/status/46yd4jogtm2jodcq?svg=true
 [av-nightly-site]: https://ci.appveyor.com/project/PowerShell/powershell-f975h
 [cc-site]: https://coveralls.io/github/PowerShell/PowerShell?branch=master
