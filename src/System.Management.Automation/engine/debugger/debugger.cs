@@ -578,7 +578,7 @@ namespace System.Management.Automation
         }
 
         /// <summary/>
-        protected bool IsProcessRunspaceDebugEventSubscribed()
+        protected bool IsStartRunspaceDebugProcessingEventSubscribed()
         {
             return (StartRunspaceDebugProcessing != null);
         }
@@ -3854,7 +3854,7 @@ namespace System.Management.Automation
             StartRunspaceDebugProcessingEventArgs runspaceDebugProcessArgs;
             while (_runspaceDebugQueue.Value.TryDequeue(out runspaceDebugProcessArgs))
             {
-                if (IsProcessRunspaceDebugEventSubscribed())
+                if (IsStartRunspaceDebugProcessingEventSubscribed())
                 {
                     try
                     {
