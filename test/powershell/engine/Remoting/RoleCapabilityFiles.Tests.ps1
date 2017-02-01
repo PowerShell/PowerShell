@@ -47,15 +47,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
         }
         catch
         {
-            [System.Management.Automation.MethodInvocationException] $expectedException = [System.Management.Automation.MethodInvocationException] $_.Exception
-            if ($expectedException -ne $null)
-            {
-                ([System.Management.Automation.PSInvalidOperationException] $expectedException.InnerException).ErrorRecord.FullyQualifiedErrorId | Should Be 'CouldNotFindRoleCapabilityFile'
-            }
-            else
-            {
-                throw 'Unexpected Exception'
-            }
+            ([System.Management.Automation.PSInvalidOperationException] ($_.Exception).InnerException).ErrorRecord.FullyQualifiedErrorId | Should Be 'CouldNotFindRoleCapabilityFile'
         }
     }
 
@@ -72,15 +64,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
         }
         catch
         {
-            [System.Management.Automation.MethodInvocationException] $expectedException = [System.Management.Automation.MethodInvocationException] $_.Exception
-            if ($expectedException -ne $null)
-            {
-                ([System.Management.Automation.PSInvalidOperationException] $expectedException.InnerException).ErrorRecord.FullyQualifiedErrorId | Should Be 'InvalidRoleCapabilityFileExtension'
-            }
-            else
-            {
-                throw 'Unexpected Exception'
-            }
+            ([System.Management.Automation.PSInvalidOperationException] ($_.Exception).InnerException).ErrorRecord.FullyQualifiedErrorId | Should Be 'InvalidRoleCapabilityFileExtension'
         }
     }
 
@@ -102,15 +86,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
         }
         catch
         {
-            [System.Management.Automation.MethodInvocationException] $expectedException = [System.Management.Automation.MethodInvocationException] $_.Exception
-            if ($expectedException -ne $null)
-            {
-                ($expectedException.InnerException.GetType().FullName) | Should Be 'System.Management.Automation.CommandNotFoundException'
-            }
-            else
-            {
-                throw 'Unexpected Exception'
-            }
+            ($_.Exception).InnerException.GetType().FullName | Should Be 'System.Management.Automation.CommandNotFoundException'
         }
 
         $ps.Dispose()
