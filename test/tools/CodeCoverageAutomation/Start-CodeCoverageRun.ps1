@@ -16,31 +16,42 @@ function Write-LogPassThru
     Add-Content -Path $Path -Value $Message -PassThru -Force
 }
 
-function Write-BashInvokerScript
+function Push-CodeCovData
 {
-    param($path)
+    param (
+        [Parameter(Mandatory=$true)]$file,
+        [Parameter(Mandatory=$true)]$CommitID,
+        [Parameter(Mandatory=$false)]$token,
+        [Parameter(Mandatory=$false)]$Branch = "master"
+    )
+    $VERSION="64c1150"
+    $url="https://codecov.io"
 
-    $scriptContent =
-    @'
-    @echo off
-    setlocal
+    $query = "package=bash-${VERSION}&token=${token}&branch=${Branch}&commit=${CommitID}&build=&build_url=&tag=&slug=&yaml=&service=&flags=&pr=&job="
 
-    if not exist "%~dpn0.sh" echo Script "%~dpn0.sh" not found & exit 2
+    $CodeCovHeader = @{ Accept = "text/plain" }
+    $uri = "$url/upload/v4?${query}"
+    $response = Invoke-WebRequest -Method POST -Uri $uri -Headers $CodeCovHeader
+    if ( $response.StatusCode -ne 200 )
+    {
+        Write-LogPassThru -Message "Could not get upload url for request $uri"
+        throw "Could not get upload url"
+    }
+    $uploaduri = $response.content.split("`n")[-1]
 
-    set _CYGBIN=C:\cygwin64\bin
-    if not exist "%_CYGBIN%" echo Couldn't find Cygwin at "%_CYGBIN%" & exit 3
-
-    :: Resolve ___.sh to /cygdrive based *nix path and store in %_CYGSCRIPT%
-    for /f "delims=" %%A in ('%_CYGBIN%\cygpath.exe "%~dpn0.sh"') do set _CYGSCRIPT=%%A
-
-    :: Throw away temporary env vars and invoke script, passing any args that were passed to us
-    endlocal & %_CYGBIN%\bash --login "%_CYGSCRIPT%" %*
-'@
-
-    $scriptContent | Out-File $path -Force -Encoding ascii
+    $UploadHeader  = @{ "Content-Type" = "text/plain"; "x-amz-acl" = "public-read"; "x-amz-storage-class" = "REDUCED_REDUNDANCY" }
+    $response = Invoke-WebRequest -Method Put -Uri $uploaduri -InFile $file -Headers $UploadHeader
+    if ( $response.StatusCode -ne 200 )
+    {
+        Write-LogPassThru -Message "Upload failed for upload uri: $uploaduri"
+        throw "upload failed"
+    }
 }
 
 Write-LogPassThru -Message "***** New Run *****"
+
+Write-LogPassThru -Message "Forcing winrm quickconfig as it is required for remoting tests."
+winrm quickconfig -force
 
 $codeCoverageZip = 'https://ci.appveyor.com/api/projects/PowerShell/powershell-f975h/artifacts/CodeCoverage.zip'
 $testContentZip = 'https://ci.appveyor.com/api/projects/PowerShell/powershell-f975h/artifacts/tests.zip'
@@ -150,50 +161,14 @@ try
     Write-LogPassThru -Message "Uploading to CoverAlls"
     & $coverallsExe """$coverallsParams"""
 
-    $bashScriptInvoker = "$PSScriptRoot\CodecovUploader.cmd"
-    $bashScript = "$PSScriptRoot\CodecovUploader.sh"
-    $cygwinLocation = "$env:SystemDrive\cygwin*"
-
-    if($bashScript)
-    {
-        Remove-Item $bashScript -Force -ErrorAction SilentlyContinue
-    }
-
-    Invoke-RestMethod 'https://codecov.io/bash' -OutFile $bashScript
-    Write-BashInvokerScript -path $bashScriptInvoker
-
-    if((Test-Path $bashScriptInvoker) -and
-        (Test-Path $bashScript) -and
-        (Test-Path $cygwinLocation)
-    )
-    {
-        Write-LogPassThru -Message "Uploading to CodeCov"
-        $cygwinPath = "/cygdrive/" + $outputLog.Replace("\", "/").Replace(":","")
-
-        $codecovParmeters = @(
-            "-f $cygwinPath"
-            "-X gcov",
-            "-B master",
-            "-C $commitId",
-            "-X network")
-
-        $codecovParmetersString = $codecovParmeters -join ' '
-
-        & $bashScriptInvoker $codecovParmetersString
-    }
-    else
-    {
-        Write-LogPassThru -Message "BashScript: $bashScript"
-        Write-LogPassThru -Message "BashScriptInvoke: $bashScriptInvoker"
-        Write-LogPassThru -Message "CygwinPath : $cygwinPath"
-        Write-LogPassThru -Message "Cannot upload to codecov as some paths are not existent"
-    }
+    Write-LogPassThru -Message "Uploading to CodeCov"
+    Push-CodeCovData -file $outputLog -CommitID $commitId -token $codecovToken -Branch 'master'
 
     Write-LogPassThru -Message "Upload complete."
 }
 catch
 {
-    $_
+    Write-LogPassThru -Message $_
 }
 finally
 {
@@ -201,13 +176,15 @@ finally
     if(Test-Path $azureLogDrive)
     {
         ##Create yyyy-dd folder
-        $monthFolder = "{0:yyyy-mm}" -f [datetime]::Now
+        $monthFolder = "{0:yyyy-MM}" -f [datetime]::Now
         $monthFolderFullPath = New-Item -Path (Join-Path $azureLogDrive $monthFolder) -ItemType Directory -Force
         $windowsFolderPath = New-Item (Join-Path $monthFolderFullPath "Windows") -ItemType Directory -Force
 
         $destinationPath = Join-Path $env:Temp ("CodeCoverageLogs-{0:yyyy_MM_dd}-{0:hh_mm_ss}.zip" -f [datetime]::Now)
         Compress-Archive -Path $elevatedLogs,$unelevatedLogs,$outputLog -DestinationPath $destinationPath
         Copy-Item $destinationPath $windowsFolderPath -Force -ErrorAction SilentlyContinue
+
+        Remove-Item -Path $destinationPath -Force -ErrorAction SilentlyContinue
     }
 
     ## Disable the cleanup till we stabilize.
