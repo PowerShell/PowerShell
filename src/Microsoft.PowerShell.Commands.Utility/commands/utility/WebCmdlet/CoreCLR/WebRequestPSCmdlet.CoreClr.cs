@@ -280,10 +280,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     // open the input file
-                    using (FileStream fs = new FileStream(InFile, FileMode.Open))
-                    {
-                        SetRequestContent(request, fs);
-                    }
+                    SetRequestContent(request, new FileStream(InFile, FileMode.Open));
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -331,55 +328,57 @@ namespace Microsoft.PowerShell.Commands
                 // Set cmdlet context for write progress
                 ValidateParameters();
                 PrepareSession();
-                HttpClient client = GetHttpClient();
-                HttpRequestMessage request = GetRequest(Uri);
-                FillRequestStream(request);
 
-                try
+                using (HttpClient client = GetHttpClient())
+                using (HttpRequestMessage request = GetRequest(Uri))
                 {
-                    long requestContentLength = 0;
-                    if (request.Content != null)
-                        requestContentLength = request.Content.Headers.ContentLength.Value;
-
-                    string reqVerboseMsg = String.Format(CultureInfo.CurrentCulture,
-                        "{0} {1} with {2}-byte payload",
-                        request.Method,
-                        request.RequestUri,
-                        requestContentLength);
-                    WriteVerbose(reqVerboseMsg);
-
-                    HttpResponseMessage response = GetResponse(client, request);
-                    response.EnsureSuccessStatusCode();
-
-                    string contentType = ContentHelper.GetContentType(response);
-                    string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
-                        "received {0}-byte response of content type {1}",
-                        response.Content.Headers.ContentLength,
-                        contentType);
-                    WriteVerbose(respVerboseMsg);
-                    ProcessResponse(response);
-                    UpdateSession(response);
-
-                    // If we hit our maximum redirection count, generate an error.
-                    // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
-                    // impossible to detect programmatically when we hit this limit. By handling this ourselves
-                    // (and still writing out the result), users can debug actual HTTP redirect problems.
-                    if (WebSession.MaximumRedirection == 0) // Indicate "HttpClientHandler.AllowAutoRedirect == false"
+                    FillRequestStream(request);
+                    try
                     {
-                        if (response.StatusCode == HttpStatusCode.Found ||
-                            response.StatusCode == HttpStatusCode.Moved ||
-                            response.StatusCode == HttpStatusCode.MovedPermanently)
+                        long requestContentLength = 0;
+                        if (request.Content != null)
+                            requestContentLength = request.Content.Headers.ContentLength.Value;
+
+                        string reqVerboseMsg = String.Format(CultureInfo.CurrentCulture,
+                            "{0} {1} with {2}-byte payload",
+                            request.Method,
+                            request.RequestUri,
+                            requestContentLength);
+                        WriteVerbose(reqVerboseMsg);
+
+                        HttpResponseMessage response = GetResponse(client, request);
+                        response.EnsureSuccessStatusCode();
+
+                        string contentType = ContentHelper.GetContentType(response);
+                        string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
+                            "received {0}-byte response of content type {1}",
+                            response.Content.Headers.ContentLength,
+                            contentType);
+                        WriteVerbose(respVerboseMsg);
+                        ProcessResponse(response);
+                        UpdateSession(response);
+
+                        // If we hit our maximum redirection count, generate an error.
+                        // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
+                        // impossible to detect programmatically when we hit this limit. By handling this ourselves
+                        // (and still writing out the result), users can debug actual HTTP redirect problems.
+                        if (WebSession.MaximumRedirection == 0) // Indicate "HttpClientHandler.AllowAutoRedirect == false"
                         {
-                            ErrorRecord er = new ErrorRecord(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
-                            er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
-                            WriteError(er);
+                            if (response.StatusCode == HttpStatusCode.Found ||
+                                response.StatusCode == HttpStatusCode.Moved ||
+                                response.StatusCode == HttpStatusCode.MovedPermanently)
+                            {
+                                ErrorRecord er = new ErrorRecord(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
+                                er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
+                                WriteError(er);
+                            }
                         }
                     }
-                }
-                catch (HttpRequestException ex)
-                {
-                    ErrorRecord er = new ErrorRecord(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
-                    ThrowTerminatingError(er);
+                    catch (HttpRequestException ex)
+                    {
+                        ErrorRecord er = new ErrorRecord(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                        ThrowTerminatingError(er);
+                    }
                 }
             }
             catch (CryptographicException ex)
