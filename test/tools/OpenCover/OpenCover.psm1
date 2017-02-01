@@ -8,11 +8,13 @@ if ((Get-Command -Name 'git' -ErrorAction Ignore) -ne $Null) {
 function Get-AssemblyCoverageData([xml.xmlelement] $element)
 {
     $coverageSummary = (Get-CoverageSummary -element $element.Summary)
+    $classCoverage = Get-ClassCoverageData $element
     $AssemblyCoverageData = [PSCustomObject] @{
         AssemblyName = $element.ModuleName
         CoverageSummary = $coverageSummary
         Branch = $coverageSummary.BranchCoverage
         Sequence = $coverageSummary.SequenceCoverage
+        ClassCoverage = $classCoverage
     }
 
     $AssemblyCoverageData | Add-Member -MemberType ScriptMethod -Name ToString -Value { "{0} ({1})" -f $this.AssemblyName,$this.CoverageSummary.BranchCoverage } -Force
@@ -21,11 +23,45 @@ function Get-AssemblyCoverageData([xml.xmlelement] $element)
     return $AssemblyCoverageData
 }
 
-function Get-CodeCoverageChange($r1, $r2)
+function Get-ClassCoverageData([xml.xmlelement]$element)
+{
+    $classes = [system.collections.arraylist]::new()
+    foreach ( $class in $element.classes.class )
+    {
+        # skip classes with names like <>f__AnonymousType6`4
+        if ( $class.fullname -match "<>" ) { continue }
+        $name = $class.fullname
+        $branch = $class.summary.branchcoverage
+        $sequence = $class.summary.sequenceCoverage
+        $o = [pscustomobject]@{ ClassName = $name; Branch = $branch; Sequence = $sequence}
+        $o.psobject.TypeNames.Insert(0, "ClassCoverageData")
+        $null = $classes.Add($o)
+    }
+    return $classes
+}
+
+function Get-CodeCoverageChange($r1, $r2, [string[]]$ClassName)
 {
     $h = @{}
     $Deltas = new-object "System.Collections.ArrayList"
 
+    if ( $ClassName ) {
+        foreach ( $Class in $ClassName ) {
+            $c1 = $r1.Assembly.ClassCoverage | ?{$_.ClassName -eq $Class }
+            $c2 = $r2.Assembly.ClassCoverage | ?{$_.ClassName -eq $Class }
+            $ClassCoverageChange = [pscustomobject]@{
+                ClassName     = $Class
+                Branch        = $c2.Branch
+                BranchDelta   = $c2.Branch - $c1.Branch
+                Sequence      = $c2.Sequence
+                SequenceDelta = $c2.Sequence - $c1.sequence
+            }
+            $ClassCoverageChange.psobject.typenames.insert(0,"ClassCoverageDelta")
+            Write-Output $ClassCoverageChange
+        }
+        return
+    }
+    
     $r1.assembly | ForEach-Object { $h[$_.assemblyname] = @($_) }
     $r2.assembly | ForEach-Object {
                         if($h.ContainsKey($_.assemblyname))
@@ -42,16 +78,16 @@ function Get-CodeCoverageChange($r1, $r2)
     {
         $runs = @($h[$kvPair.Name])
         $assemblyCoverageChange = (Get-AssemblyCoverageChange -r1 $runs[0] -r2 $runs[1])
-        $Deltas.Add($assemblyCoverageChange) | Out-Null
+        $null = $Deltas.Add($assemblyCoverageChange)
     }
 
     $CoverageChange = [PSCustomObject] @{
         Run1 = $r1
         Run2 = $r2
-        Branch = $r2.Summary.BranchCoverage
-        Sequence = $r2.Summary.SequenceCoverage
-        BranchDelta = [double] ($r2.Summary.BranchCoverage - $r1.Summary.BranchCoverage)
-        SequenceDelta = [double] ($r2.Summary.SequenceCoverage - $r1.Summary.SequenceCoverage)
+        Branch = $r2.CoverageSummary.BranchCoverage
+        Sequence = $r2.CoverageSummary.SequenceCoverage
+        BranchDelta = [double] ($r2.CoverageSummary.BranchCoverage - $r1.CoverageSummary.BranchCoverage)
+        SequenceDelta = [double] ($r2.CoverageSummary.SequenceCoverage - $r1.CoverageSummary.SequenceCoverage)
         Deltas = $Deltas
     }
     $CoverageChange.PSTypeNames.Insert(0,"OpenCover.CoverageChange")
@@ -80,7 +116,6 @@ function Get-AssemblyCoverageChange($r1, $r2)
         SequenceDelta = $r2.Sequence - $r1.Sequence
     }
     $AssemblyCoverageChange.PSTypeNames.Insert(0,"OpenCover.AssemblyCoverageChange")
-
     return $AssemblyCoverageChange
 }
 
@@ -96,11 +131,12 @@ function Get-CoverageData($xmlPath)
     }
 
     $CoverageData = [PSCustomObject] @{
+        CoverageLogFile = $xmlPath
         CoverageSummary = (Get-CoverageSummary -element $CoverageXml.CoverageSession.Summary)
         Assembly = $assemblies
     }
     $CoverageData.PSTypeNames.Insert(0,"OpenCover.CoverageData")
-
+    Add-Member -InputObject $CoverageData -MemberType ScriptMethod -Name GetClassCoverage -Value { param ( $name ) $this.assembly.classcoverage | ?{$_.classname -match $name } }
     $null = $CoverageXml
 
     ## Adding explicit garbage collection as the $CoverageXml object tends to be very large, in order of 1 GB.
@@ -292,7 +328,9 @@ function Compare-CodeCoverage
         [Parameter(Mandatory=$true,Position=0,ParameterSetName="file")][string]$RunFile1,
         [Parameter(Mandatory=$true,Position=1,ParameterSetName="file")][string]$RunFile2,
         [Parameter(Mandatory=$true,Position=0,ParameterSetName="coverage")][Object]$Run1,
-        [Parameter(Mandatory=$true,Position=1,ParameterSetName="coverage")][Object]$Run2
+        [Parameter(Mandatory=$true,Position=1,ParameterSetName="coverage")][Object]$Run2,
+        [Parameter()][String[]]$ClassName,
+        [Parameter()][switch]$Summary
         )
 
     if ( $PSCmdlet.ParameterSetName -eq "file" )
@@ -304,7 +342,15 @@ function Compare-CodeCoverage
         $Run2 = (Get-CoverageData -xmlPath $xmlPath2)
     }
 
-    (Get-CodeCoverageChange -r1 $Run1 -r2 $Run2)
+    $change = Get-CodeCoverageChange -r1 $Run1 -r2 $Run2 -Class $ClassName
+    if ( $Summary -or $ClassName ) 
+    { 
+        $change 
+    }
+    else
+    { 
+        $change.Deltas 
+    }
 }
 
 <#
