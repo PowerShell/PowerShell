@@ -347,7 +347,20 @@ namespace Microsoft.PowerShell.Commands
                         WriteVerbose(reqVerboseMsg);
 
                         HttpResponseMessage response = GetResponse(client, request);
-                        response.EnsureSuccessStatusCode();
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            using(var reader = new StreamReader(StreamHelper.GetResponseStream(response)))
+                            {
+                                var detailMsg = reader.ReadToEnd();
+                                var msg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.NotSuccessStatusCode, response.StatusCode, response.ReasonPhrase);
+                                ErrorRecord er = new ErrorRecord(new WebException(msg) { Response = response }, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                                if (!String.IsNullOrEmpty(detailMsg))
+                                {
+                                    er.ErrorDetails = new ErrorDetails(detailMsg);
+                                }
+                                ThrowTerminatingError(er);
+                            }
+                        }
 
                         string contentType = ContentHelper.GetContentType(response);
                         string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,

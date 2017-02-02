@@ -399,6 +399,20 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
         $result.Error | Should BeNullOrEmpty
     }
+
+    It "Invoke-WebRequest should read content if status is unsuccessful" {
+
+        $command = "Invoke-WebRequest http://httpbin.org/status/418"
+        $result = ExecuteWebCommand -command $command
+        $result.Error.ErrorDetails.Message | Should Match "\-=\[ teapot \]"
+    }
+
+    It "Invoke-WebRequest should return status code if status is unsuccessful" {
+
+        $command = "Invoke-WebRequest http://httpbin.org/status/500"
+        $result = ExecuteWebCommand -command $command
+        $result.Error.Exception.Response.StatusCode | Should be 500
+    }
 }
 
 Describe "Invoke-RestMethod tests" -Tags "Feature" {

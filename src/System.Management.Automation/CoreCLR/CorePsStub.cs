@@ -11,6 +11,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Win32;
 using System.Management.Automation.Remoting;
+using System.Net.Http;
 
 #pragma warning disable 1591, 1572, 1571, 1573, 1587, 1570, 0067
 
@@ -471,6 +472,23 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     /// </summary>
     public sealed class AppDomainUnloadedException : Exception
     {
+    }
+
+    /// <summary>
+    /// Stub for WebException
+    /// </summary>
+    public sealed class WebException : Exception
+    {
+        /// <summary>
+        /// Creates a new instance of the <see cref='System.Net.WebException'/>
+        /// </summary>
+        /// <param name="message"></param>
+        public WebException(string message) : base(message) { }
+
+        /// <summary>
+        /// Gets the error message returned from the remote host.
+        /// </summary>
+        public HttpResponseMessage Response { get; set; }
     }
 
     #endregion Exception_Related
