@@ -4,6 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System.Management.Automation.Provider;
 using System.Xml;
+using System.Management.Automation.Internal;
 
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -51,6 +52,13 @@ namespace System.Management.Automation
         /// </summary>
         internal MamlCommandHelpInfo GetProviderSpecificHelpInfo(string helpItemName)
         {
+            if (InternalTestHooks.BypassOnlineHelpRetrieval)
+            {
+                // By returning null, we force get-help to return generic help
+                // which includes a helpUri that points to the fwlink defined in the cmdlet code.
+                return null;
+            }
+
             // Get the provider.
             ProviderInfo providerInfo = null;
             PSDriveInfo driveInfo = null;
