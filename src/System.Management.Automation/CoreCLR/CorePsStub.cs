@@ -480,7 +480,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     public sealed class WebException : Exception
     {
         /// <summary>
-        /// Creates a new instance of the <see cref='System.Net.WebException'/>
+        /// Creates a new instance of the WebException
         /// </summary>
         /// <param name="message"></param>
         public WebException(string message) : base(message) { }
