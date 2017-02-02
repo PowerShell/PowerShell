@@ -40,6 +40,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
             Administrators = @{ RoleCapabilityFiles = "$RoleCapDirectory\NoFile.psrc" }
         }
 
+        $fullyQualifiedErrorId = ""
         try
         {
             $iss = [initialsessionstate]::CreateFromSessionConfigurationFile($PSSessionConfigFile, { $true })
@@ -47,7 +48,12 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
         }
         catch
         {
-            ([System.Management.Automation.PSInvalidOperationException] ($_.Exception).InnerException).ErrorRecord.FullyQualifiedErrorId | Should Be 'CouldNotFindRoleCapabilityFile'
+            $psioe = [System.Management.Automation.PSInvalidOperationException] ($_.Exception).InnerException
+            if ($psioe -ne $null)
+            {
+                $fullyQualifiedErrorId = $psioe.ErrorRecord.FullyQualifiedErrorId
+            }
+            $fullyQualifiedErrorId | Should Be 'CouldNotFindRoleCapabilityFile'
         }
     }
 
@@ -57,6 +63,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
             Administrators = @{ RoleCapabilityFiles = "$BadRoleCapFile" }
         }
 
+        $fullyQualifiedErrorId = ""
         try
         {
             $iss = [initialsessionstate]::CreateFromSessionConfigurationFile($PSSessionConfigFile, { $true })
@@ -64,7 +71,12 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
         }
         catch
         {
-            ([System.Management.Automation.PSInvalidOperationException] ($_.Exception).InnerException).ErrorRecord.FullyQualifiedErrorId | Should Be 'InvalidRoleCapabilityFileExtension'
+            $psioe = [System.Management.Automation.PSInvalidOperationException] ($_.Exception).InnerException
+            if ($psioe -ne $null)
+            {
+                $fullyQualifiedErrorId = $psioe.ErrorRecord.FullyQualifiedErrorId
+            }
+            $fullyQualifiedErrorId | Should Be 'InvalidRoleCapabilityFileExtension'
         }
     }
 
@@ -79,6 +91,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
         [powershell] $ps = [powershell]::Create($iss)
         $null = $ps.AddCommand('Get-Service')
 
+        $exceptionTypeName = ""
         try
         {
             $ps.Invoke()
@@ -86,7 +99,11 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
         }
         catch
         {
-            ($_.Exception).InnerException.GetType().FullName | Should Be 'System.Management.Automation.CommandNotFoundException'
+            if ($_.Exception.InnerException -ne $null)
+            {
+                $exceptionTypeName = $_.Exception.InnerException.GetType().FullName
+            }
+            $exceptionTypeName | Should Be 'System.Management.Automation.CommandNotFoundException'
         }
 
         $ps.Dispose()
