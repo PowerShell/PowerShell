@@ -55,8 +55,39 @@ Describe 'Get-Help -Online opens the default web browser and navigates to the cm
     $skipTest = [System.Management.Automation.Platform]::IsIoT -or
                 [System.Management.Automation.Platform]::IsNanoServer
 
-    It "Get-Help get-process -online" -skip:$skipTest {
+    # this code is a workaround for issue: https://github.com/PowerShell/PowerShell/issues/3079
+    if((-not ($skipTest)) -and $IsWindows)
+    {
+        $skipTest = $true
+        $regKey = "HKEY_CURRENT_USER\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice"
 
+        try
+        {
+            $progId = [Microsoft.Win32.Registry]::GetValue($regKey, "ProgId", $null)
+            if($progId)
+            {
+                $browserKey = [Microsoft.Win32.Registry]::ClassesRoot.OpenSubKey("$progId\shell\open\command", $false)
+                if($browserKey)
+                {
+                    $browserExe = ($browserKey.GetValue($null) -replace '"', '') -split " "
+
+                    if ($browserExe.count -ge 1)
+                    {
+                        if($browserExe[0] -match '.exe')
+                        {
+                            $skipTest = $false
+                        }
+                    }
+                }
+            }
+        }
+        catch
+        {
+            # We are not able to access Registry, skipping test.
+        }
+    }
+
+    It "Get-Help get-process -online" -skip:$skipTest {
         { Get-Help get-process -online } | Should Not Throw
     }
 }
