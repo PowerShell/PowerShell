@@ -2731,6 +2731,14 @@ function Start-CrossGen {
         }
     }
 
+    # Common assemblies used by Add-Type to crossgen
+    $commonAssembliesForAddType = @(
+        "Microsoft.CodeAnalysis.CSharp.dll"
+        "Microsoft.CodeAnalysis.dll"
+        "Microsoft.CodeAnalysis.VisualBasic.dll"
+        "Microsoft.CSharp.dll"
+    )
+
     # Common PowerShell libraries to crossgen
     $psCoreAssemblyList = @(
         "Microsoft.PowerShell.Commands.Utility.dll",
@@ -2754,7 +2762,9 @@ function Start-CrossGen {
         )
     }
 
-    foreach ($assemblyName in $psCoreAssemblyList) {
+    $fullAssemblyList = $commonAssembliesForAddType + $psCoreAssemblyList
+
+    foreach ($assemblyName in $fullAssemblyList) {
         $assemblyPath = Join-Path $PublishPath $assemblyName
         Generate-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
     }
@@ -2766,12 +2776,19 @@ function Start-CrossGen {
     # PS assemblies, but with the same IL assembly names.
     #
     Write-Verbose "PowerShell Ngen assemblies have been generated. Deploying ..." -Verbose
-    foreach ($assemblyName in $psCoreAssemblyList) {
+    foreach ($assemblyName in $fullAssemblyList) {
+
         # Remove the IL assembly and its symbols.
         $assemblyPath = Join-Path $PublishPath $assemblyName
         $symbolsPath = [System.IO.Path]::ChangeExtension($assemblyPath, ".pdb")
+
         Remove-Item $assemblyPath -Force -ErrorAction Stop
-        Remove-Item $symbolsPath -Force -ErrorAction Stop
+
+        # No symbols are available for Microsoft.CodeAnalysis.CSharp.dll, Microsoft.CodeAnalysis.dll,
+        # Microsoft.CodeAnalysis.VisualBasic.dll, and Microsoft.CSharp.dll.
+        if ($commonAssembliesForAddType -notcontains $assemblyName) {
+            Remove-Item $symbolsPath -Force -ErrorAction Stop
+        }
 
         # Rename the corresponding ni.dll assembly to be the same as the IL assembly
         $niAssemblyPath = [System.IO.Path]::ChangeExtension($assemblyPath, "ni.dll")
