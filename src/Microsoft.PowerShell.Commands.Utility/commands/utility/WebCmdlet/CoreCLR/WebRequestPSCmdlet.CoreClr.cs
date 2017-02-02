@@ -16,6 +16,7 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Xml;
+using Microsoft.PowerShell.CoreClr.Stubs;
 
 namespace Microsoft.PowerShell.Commands
 {
