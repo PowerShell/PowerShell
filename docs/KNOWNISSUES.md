@@ -74,6 +74,7 @@ This means that a command like `ls *.txt` will fail because the asterisk will no
 expanded to match file names. 
 You can work around this by doing `ls (gci *.txt | % name)` or, more simply, 
 `gci *.txt` using the PowerShell built-in equivalent to `ls`.
+[RFC0009](https://github.com/PowerShell/PowerShell-RFC/issues/33)
 
 .NET Framework vs .NET Core Framework
 -----------------
@@ -89,6 +90,8 @@ Redirection Issues
 ------------------
 
 Input redirection is not supported in PowerShell on any platform. 
+[Issue #1629](https://github.com/PowerShell/PowerShell/issues/1629)
+
 Use either `Get-Content` to write the contents of a file into the pipeline.
 
 PowerShell does not currently support "direct pipelining" external commands. 
@@ -149,8 +152,8 @@ Command Availability
 The following table lists commands that are known not to work in PowerShell on Linux/macOS.
 
 <table>
-<th>Commands<td><b>Operational State<td><b>Notes</th>
-<Tr>
+<th>Commands</th><th>Operational State</th><th>Notes</th>
+<tr>
 <td>Get-Service New-Service Restart-Service Resume-Service Set-Service Start-Service Stop-Service Suspend-Service
 <td>Not available.
 <td>These commands will not be recognized. This will be fixed in a future release.
@@ -168,11 +171,6 @@ The following table lists commands that are known not to work in PowerShell on L
 <tr>
 <td>Wait-Process
 <td>Available, doesn't work properly. <td>For example `Start-Process gvim -PassThru | Wait-Process` doesn't work; it fails to wait for the process.
-</tr>
-<tr>
-<td>Update-Help
-<td>Available but doesn't work.
-<td>`CabinetExtractorFactory` generates an `InvalidOperation` exception. These will be fixed in a future release.
 </tr>
 <tr>
 <td>Register-PSSessionConfiguration, Unregister-PSSessionConfiguration, Get-PSSessionConfiguration
