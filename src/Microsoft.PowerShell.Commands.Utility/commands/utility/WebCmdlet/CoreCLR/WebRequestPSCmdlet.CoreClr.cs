@@ -350,17 +350,7 @@ namespace Microsoft.PowerShell.Commands
                         HttpResponseMessage response = GetResponse(client, request);
                         if (!response.IsSuccessStatusCode)
                         {
-                            using(var reader = new StreamReader(StreamHelper.GetResponseStream(response)))
-                            {
-                                var detailMsg = reader.ReadToEnd();
-                                var msg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.NotSuccessStatusCode, response.StatusCode, response.ReasonPhrase);
-                                ErrorRecord er = new ErrorRecord(new WebException(msg) { Response = response }, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
-                                if (!String.IsNullOrEmpty(detailMsg))
-                                {
-                                    er.ErrorDetails = new ErrorDetails(detailMsg);
-                                }
-                                ThrowTerminatingError(er);
-                            }
+                            ThrowNotSuccessStatusCodeError(request, response);
                         }
 
                         string contentType = ContentHelper.GetContentType(response);
@@ -421,6 +411,21 @@ namespace Microsoft.PowerShell.Commands
         #endregion Overrides
 
         #region Helper Methods
+
+        private void ThrowNotSuccessStatusCodeError(HttpRequestMessage request, HttpResponseMessage response)
+        {
+            using(var reader = new StreamReader(StreamHelper.GetResponseStream(response)))
+            {
+                var detailMsg = reader.ReadToEnd();
+                var msg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.NotSuccessStatusCode, response.StatusCode, response.ReasonPhrase);
+                ErrorRecord er = new ErrorRecord(new WebException(msg) { Response = response }, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                if (!String.IsNullOrEmpty(detailMsg))
+                {
+                    er.ErrorDetails = new ErrorDetails(detailMsg);
+                }
+                ThrowTerminatingError(er);
+            }
+        }
 
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
