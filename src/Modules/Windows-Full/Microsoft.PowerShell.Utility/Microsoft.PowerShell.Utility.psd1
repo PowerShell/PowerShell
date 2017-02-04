@@ -2,7 +2,7 @@
 GUID="1DA87E53-152B-403E-98DC-74D7B4D63D59"
 Author="Microsoft Corporation"
 CompanyName="Microsoft Corporation"
-Copyright="© Microsoft Corporation. All rights reserved."
+Copyright="Â© Microsoft Corporation. All rights reserved."
 ModuleVersion="3.1.0.0"
 PowerShellVersion="3.0"
 CLRVersion="4.0"
@@ -22,10 +22,10 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Clear-Variable", "Export-Clixml", "Import-Clixml", "ConvertTo-Xml", "Select-Xml", "Write-Debug",
     "Write-Verbose", "Write-Warning", "Write-Error", "Write-Information", "Write-Output", "Set-PSBreakpoint", "Get-PSBreakpoint",
     "Remove-PSBreakpoint", "Enable-PSBreakpoint", "Disable-PSBreakpoint", "Get-PSCallStack",
-    "Send-MailMessage", "Get-TraceSource", "Set-TraceSource", "Trace-Command", "Show-Command", "Unblock-File",
+    "Send-MailMessage", "Get-TraceSource", "Set-TraceSource", "Trace-Command", "Show-Command", "Unblock-File", "Get-FileHash",
     "Get-Runspace", "Debug-Runspace", "Enable-RunspaceDebug", "Disable-RunspaceDebug", "Get-RunspaceDebug", "Wait-Debugger",
     "ConvertFrom-String", "Convert-String" , "Get-Uptime", "New-TemporaryFile", "Get-Verb"
-FunctionsToExport= "Get-FileHash", "Format-Hex", "Import-PowerShellDataFile", "ConvertFrom-SddlString"
+FunctionsToExport= "Format-Hex", "Import-PowerShellDataFile", "ConvertFrom-SddlString"
 AliasesToExport= "CFS", "fhx"
 NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=390787'
