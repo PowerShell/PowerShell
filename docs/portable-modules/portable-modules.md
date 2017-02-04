@@ -48,7 +48,7 @@ I can see several possible solutions, in roughly decreasing order of preference:
   These assemblies can be installed in either the GAC or alongside `powershell.exe`.
 
 * We can require module authors to package the facade assemblies with their module.
-  This is undesriable because the entire module is not portable because the facade assemblies will not work on PowerShell Core.
+  This is undesirable because the entire module is not portable because the facade assemblies will not work on PowerShell Core.
 
 MSBuild has the same issue as PowerShell - tasks are similar to modules.
 See this [issue](https://github.com/Microsoft/msbuild/issues/1542) for discussion on what they are doing.
