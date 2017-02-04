@@ -74,6 +74,7 @@ namespace Microsoft.PowerShell
             this.RecordType = record.RecordType;
             this.Style = RenderStyle.FullPlus;
             this.SourceId = sourceId;
+            this.ProgressCharacter = record.ProgressCharacter;
         }
 
 
@@ -208,7 +209,7 @@ namespace Microsoft.PowerShell
                         StringUtil.Format(
                             " {0}[{1}{2}] ",
                             indent,
-                            new string('o', mercuryWidth),
+                            new string(this.ProgressCharacter, mercuryWidth),
                             StringUtil.Padding(thermoWidth - mercuryWidth)),
                         maxWidth));
             }

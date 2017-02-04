@@ -142,6 +142,16 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public int SourceId { get; set; }
 
+        /// <summary>
+        ///
+        /// Character used to display progress.
+        ///
+        /// </summary>
+        /// <value></value>
+
+        [Parameter]
+        public char ProgressCharacter { get; set; } = 'o';
+
 
         /// <summary>
         ///
@@ -159,6 +169,7 @@ namespace Microsoft.PowerShell.Commands
             pr.SecondsRemaining = SecondsRemaining;
             pr.CurrentOperation = CurrentOperation;
             pr.RecordType = this.Completed ? ProgressRecordType.Completed : ProgressRecordType.Processing;
+            pr.ProgressCharacter = ProgressCharacter;
 
             WriteProgress(SourceId, pr);
         }
