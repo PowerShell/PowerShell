@@ -288,10 +288,19 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
+                // resolve the path so slashes are in the right direction
+                CmdletProviderContext cmdContext = new CmdletProviderContext(this);
+                Collection<PathInfo> pathInfos = SessionState.Path.GetResolvedPSPathFromPSPath(path, cmdContext);
+
+                foreach (PathInfo pathInfo in pathInfos)
+                {
+                    path = pathInfo.Path;
+                }
+
                 if (!System.IO.Path.IsPathRooted(path))
                 {
                     // we assume the relative path is under module scope, otherwise we will throw error anyway.
-                    path = System.IO.Path.GetFullPath(module.ModuleBase + "\\" + path);
+                    path = System.IO.Path.GetFullPath(module.ModuleBase + System.IO.Path.DirectorySeparatorChar + path);
                 }
 
                 // First, we validate if the path  does exist.
