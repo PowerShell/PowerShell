@@ -1,5 +1,14 @@
-﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
-Import-Module $PSScriptRoot\..\..\Common\TestHostCS.psm1
+﻿if ( ! (get-module -ea silentlycontinue Test.Helpers ))
+{
+    $hostmodule = Join-Path $PSScriptRoot "../../Common/Test.Helpers.psm1"
+    import-module $hostmodule
+}
+
+if ( ! (get-module -ea silentlycontinue TestHostCS ))
+{
+    $hostmodule = Join-Path $PSScriptRoot "../../Common/TestHostCS.psm1"
+    import-module $hostmodule
+}
 
 Describe "Tests for parameter binding" -Tags "CI" {
     Context 'Test of Mandatory parameters' {
