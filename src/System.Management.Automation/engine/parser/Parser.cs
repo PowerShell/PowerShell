@@ -3909,7 +3909,7 @@ namespace System.Management.Automation.Language
                 if (rCurly.Kind != TokenKind.RCurly)
                 {
                     UngetToken(rCurly);
-                    ReportIncompleteInput(lastExtent, () => ParserStrings.MissingEndCurlyBrace);
+                    ReportIncompleteInput(ExtentOf(lastExtent,rCurly.Extent), () => ParserStrings.MissingEndCurlyBrace);
                 }
                 else
                 {
