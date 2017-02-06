@@ -251,7 +251,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
 Describe 'Negative Parsing Tests' -Tags "CI" {
     ShouldBeParseError 'class' MissingNameAfterKeyword 5
     ShouldBeParseError 'class foo' MissingTypeBody 9
-    ShouldBeParseError 'class foo {' MissingEndCurlyBrace 10
+    ShouldBeParseError 'class foo {' MissingEndCurlyBrace 11
     ShouldBeParseError 'class foo { [int] }' IncompleteMemberDefinition 17
     ShouldBeParseError 'class foo { $private: }' InvalidVariableReference 12
     ShouldBeParseError 'class foo { [int]$global: }' InvalidVariableReference 17
