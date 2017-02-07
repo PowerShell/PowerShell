@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Static Data and Constants
         private const string activity = "Get-ComputerInfo";
-        private const string localMachineName = "localhost";
+        private const string localMachineName = null;
         #endregion Static Data and Constants
 
         #region Instance Data
