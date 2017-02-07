@@ -5,6 +5,8 @@ This example project demonstrates how to build your own C# cmdlet for PowerShell
 When built in the following manner, the resulting DLL can be imported everywhere:
 Windows PowerShell with Desktop .NET (FullCLR) and PowerShell on Windows, Linux, and macOS with .NET Core (CoreCLR).
 
+More involved modules may require extra work, see [this document](../portable-modules/portable-modules.md) for more details.
+
 Setup
 -----
 
