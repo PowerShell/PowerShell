@@ -291,11 +291,15 @@ namespace Microsoft.PowerShell.Commands
                 // resolve the path so slashes are in the right direction
                 CmdletProviderContext cmdContext = new CmdletProviderContext(this);
                 Collection<PathInfo> pathInfos = SessionState.Path.GetResolvedPSPathFromPSPath(path, cmdContext);
-
-                foreach (PathInfo pathInfo in pathInfos)
+                if (pathInfos.Count != 1)
                 {
-                    path = pathInfo.Path;
+                    string message = StringUtil.Format(Modules.InvalidModuleManifestPath, path);
+                    InvalidOperationException ioe = new InvalidOperationException(message);
+                    ErrorRecord er = new ErrorRecord(ioe, "Modules_InvalidModuleManifestPath", ErrorCategory.InvalidArgument, path);
+                    ThrowTerminatingError(er);                    
                 }
+
+                path = pathInfos[0].Path;
 
                 if (!System.IO.Path.IsPathRooted(path))
                 {
