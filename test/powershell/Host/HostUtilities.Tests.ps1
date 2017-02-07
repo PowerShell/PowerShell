@@ -1,8 +1,5 @@
-﻿if (-not (Get-Module TestRemoting -ErrorAction SilentlyContinue))
-{
-    $remotingModule = Join-Path $PSScriptRoot "../Common/TestRemoting.psm1"
-    Import-Module $remotingModule
-}
+﻿$remotingModule = Join-Path $PSScriptRoot "../Common/TestRemoting.psm1"
+Import-Module $remotingModule
 
 Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
 

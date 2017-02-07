@@ -1,12 +1,6 @@
-
-if ( ! (get-module -ea silentlycontinue TestHostCS ))
-{
-    # this is sensitive to the location of this test and the common directory"
-    $pestertestroot = resolve-path "$psscriptroot/../.."
-    $common = join-path $pestertestroot Common
-    $hostmodule = join-path $common TestHostCS.psm1
-    import-module $hostmodule
-}
+# this is sensitive to the location of this test and the common directory"
+$hostmodule = Join-Path $PSScriptRoot "../../Common/TestHostCS.psm1"
+import-module $hostmodule
 
 Describe "Out-Host Tests" -tag CI {
     BeforeAll {

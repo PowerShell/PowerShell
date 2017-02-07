@@ -304,7 +304,7 @@ function New-TestHost
     }
 
     if ( ! ("TestHost.TestHost" -as "type" )) {
-       $t = add-Type -pass $definition -ref $references -WarningAction SilentlyContinue 
+       $t = add-Type -pass $definition -ref $references
     }
 
     [TestHost.TestHost]::New()

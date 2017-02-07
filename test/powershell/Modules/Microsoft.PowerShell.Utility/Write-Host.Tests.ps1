@@ -4,9 +4,9 @@
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
 
         $testData = @(
-            @{ Name = '-Separator';Command = "Write-Host a,b,c -Separator '+'"; returnCount = 1; returnValue = @("a+b+c") }
-            @{ Name = '-NoNewline=true';Command = "Write-Host a,b -NoNewline:`$true;Write-Host a,b"; returnCount = 1; returnValue = @("a ba b") }
-            @{ Name = '-NoNewline=false';Command = "Write-Host a1,b1;Write-Host a2,b2"; returnCount = 2; returnValue = @("a1 b1","a2 b2") }
+            @{ Name = '-Separator';       Command = "Write-Host a,b,c -Separator '+'";                 returnCount = 1; returnValue = @("a+b+c") }
+            @{ Name = '-NoNewline=true';  Command = "Write-Host a,b -NoNewline:`$true;Write-Host a,b"; returnCount = 1; returnValue = @("a ba b") }
+            @{ Name = '-NoNewline=false'; Command = "Write-Host a1,b1;Write-Host a2,b2";               returnCount = 2; returnValue = @("a1 b1","a2 b2") }
         )
     }
 
@@ -24,8 +24,8 @@ Describe "Write-Host test wrong colors" -Tags "CI" {
 
     BeforeAll {
         $testWrongColor = @(
-            @{ ForegroundColor = -1; BackgroundColor = 'Red' }
-            @{ ForegroundColor = 16; BackgroundColor = 'Red' }
+            @{ ForegroundColor = -1;    BackgroundColor = 'Red' }
+            @{ ForegroundColor = 16;    BackgroundColor = 'Red' }
             @{ ForegroundColor = 'Red'; BackgroundColor = -1 }
             @{ ForegroundColor = 'Red'; BackgroundColor = 16 }
         )
@@ -45,10 +45,8 @@ Describe "Write-Host test wrong colors" -Tags "CI" {
 Describe "Write-Host test with TestHostCS" -Tags "CI" {
 
     BeforeAll {
-        if ( -not (get-module -ea SilentlyContinue TestHostCS )) {
-            $hostmodule = Join-Path $PSScriptRoot "../../Common/TestHostCS.psm1"
-            import-module $hostmodule
-        }
+        $hostmodule = Join-Path $PSScriptRoot "../../Common/TestHostCS.psm1"
+        import-module $hostmodule
         $th = New-TestHost
         $rs = [runspacefactory]::Createrunspace($th)
         $rs.open()
@@ -56,11 +54,11 @@ Describe "Write-Host test with TestHostCS" -Tags "CI" {
         $ps.Runspace = $rs
 
         $testHostCSData = @(
-            @{ Name = 'defaults';Command = "Write-Host a,b,c"; returnCount = 1; returnValue = @("White:Black:a b c:NewLine") }
-            @{ Name = '-Separator';Command = "Write-Host a,b,c -Separator '+'"; returnCount = 1; returnValue = @("White:Black:a+b+c:NewLine") }
-            @{ Name = '-Separator, colors and -NoNewLine';Command = "Write-Host a,b,c -Separator ',' -ForegroundColor Yellow -BackgroundColor DarkBlue -NoNewline"; returnCount = 1; returnValue = @("Yellow:DarkBlue:a,b,c:NoNewLine") }
-            @{ Name = '-NoNewline:$true and colors';Command = "Write-Host a,b -NoNewline:`$true -ForegroundColor Red -BackgroundColor Green;Write-Host a,b"; returnCount = 2; returnValue = @("Red:Green:a b:NoNewLine", "White:Black:a b:NewLine") }
-            @{ Name = '-NoNewline:$false and colors';Command = "Write-Host a,b -NoNewline:`$false -ForegroundColor Red -BackgroundColor Green;Write-Host a,b"; returnCount = 2; returnValue = @("Red:Green:a b:NewLine","White:Black:a b:NewLine") }
+            @{ Name = 'defaults';                          Command = "Write-Host a,b,c";                                                                             returnCount = 1; returnValue = @("White:Black:a b c:NewLine") }
+            @{ Name = '-Separator';                        Command = "Write-Host a,b,c -Separator '+'";                                                              returnCount = 1; returnValue = @("White:Black:a+b+c:NewLine") }
+            @{ Name = '-Separator, colors and -NoNewLine'; Command = "Write-Host a,b,c -Separator ',' -ForegroundColor Yellow -BackgroundColor DarkBlue -NoNewline"; returnCount = 1; returnValue = @("Yellow:DarkBlue:a,b,c:NoNewLine") }
+            @{ Name = '-NoNewline:$true and colors';       Command = "Write-Host a,b -NoNewline:`$true -ForegroundColor Red -BackgroundColor Green;Write-Host a,b";  returnCount = 2; returnValue = @("Red:Green:a b:NoNewLine", "White:Black:a b:NewLine") }
+            @{ Name = '-NoNewline:$false and colors';      Command = "Write-Host a,b -NoNewline:`$false -ForegroundColor Red -BackgroundColor Green;Write-Host a,b"; returnCount = 2; returnValue = @("Red:Green:a b:NewLine","White:Black:a b:NewLine") }
         )
 
     }
