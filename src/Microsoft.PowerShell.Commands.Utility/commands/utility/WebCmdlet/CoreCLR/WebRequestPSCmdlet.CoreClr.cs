@@ -414,17 +414,30 @@ namespace Microsoft.PowerShell.Commands
 
         private void ThrowNotSuccessStatusCodeError(HttpRequestMessage request, HttpResponseMessage response)
         {
-            using(var reader = new StreamReader(StreamHelper.GetResponseStream(response)))
+            var detailMsg = "";
+            var reader = new StreamReader(StreamHelper.GetResponseStream(response));
+            try
             {
-                var detailMsg = reader.ReadToEnd();
-                var msg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.NotSuccessStatusCode, response.StatusCode, response.ReasonPhrase);
-                ErrorRecord er = new ErrorRecord(new WebException(msg) { Response = response }, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
-                if (!String.IsNullOrEmpty(detailMsg))
-                {
-                    er.ErrorDetails = new ErrorDetails(detailMsg);
-                }
-                ThrowTerminatingError(er);
+                detailMsg = reader.ReadToEnd();
             }
+            catch (IOException)
+            {
+            }
+            catch (ArgumentException)
+            {
+            }
+            finally
+            {
+                reader.Dispose();
+            }
+
+            var msg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.NotSuccessStatusCode, (int) response.StatusCode, response.ReasonPhrase);
+            ErrorRecord er = new ErrorRecord(new WebException(msg) { Response = response }, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+            if (!String.IsNullOrEmpty(detailMsg))
+            {
+                er.ErrorDetails = new ErrorDetails(detailMsg);
+            }
+            ThrowTerminatingError(er);
         }
 
         /// <summary>
