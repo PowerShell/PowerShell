@@ -257,7 +257,7 @@ New-Object Foo
         It "report an error on incomplete using input" {
             $err = Get-ParseResults "using module @{ModuleName = 'FooWithManifest'; FooWithManifest = 1." # missing closing bracket
             $err.Count | Should Be 2
-            $err[0].ErrorId | Should Be 'IncompleteHashLiteral'
+            $err[0].ErrorId | Should Be 'MissingEndCurlyBrace'
             $err[1].ErrorId | Should Be 'RequiresModuleInvalid'
         }
 

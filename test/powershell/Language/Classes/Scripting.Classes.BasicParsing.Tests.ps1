@@ -307,6 +307,8 @@ Describe 'Negative Parsing Tests' -Tags "CI" {
     ShouldBeParseError 'class C { static [int]$i; [void] foo() {$i = 10} }' MissingTypeInStaticPropertyAssignment 40
 
     ShouldBeParseError 'class C : B' MissingTypeBody 11
+
+    ShouldBeParseError 'Class foo { q(){} w(){}' MissingEndCurlyBrace 11
 }
 
 Describe 'Negative methods Tests' -Tags "CI" {

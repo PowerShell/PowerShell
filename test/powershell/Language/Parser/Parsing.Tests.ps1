@@ -300,3 +300,7 @@ Describe 'expressions parsing' -Tags "CI" {
     ShouldBeParseError '[int][ref]$x' ReferenceNeedsToBeLastTypeInTypeConversion 5
     ShouldBeParseError '[int][ref]$x = 42' ReferenceNeedsToBeByItselfInTypeConstraint 5
 }
+
+Describe 'Hash Expression parsing' -Tags "CI" {
+    ShouldBeParseError '@{ a=1;b=2;c=3;' MissingEndCurlyBrace 2
+}
