@@ -11,13 +11,11 @@ dist: trusty
 osx_image: xcode7.3
 
 matrix:
-  allow_failures:
-    - os: osx
   fast_finish: true
 
 addons:
   artifacts:
-    paths: 
+    paths:
       - $(ls powershell*{deb,pkg} | tr "\n" ":")
       - pester-tests.xml
 
