@@ -6394,7 +6394,7 @@ namespace System.Management.Automation.Language
                     ? (() => (ParserStrings.MissingEqualsInPropertyAssignmentBlock))
                     : (Expression<Func<string>>)(() => ParserStrings.MissingEqualsInHashLiteral);
                 ReportError(errorExtent, errorMessageExpression);
-                SyncOnError(true, TokenKind.RCurly, TokenKind.Semi, TokenKind.NewLine);
+                SyncOnError(false, TokenKind.RCurly, TokenKind.Semi, TokenKind.NewLine);
                 return new KeyValuePair(key, new ErrorStatementAst(errorExtent));
             }
 
