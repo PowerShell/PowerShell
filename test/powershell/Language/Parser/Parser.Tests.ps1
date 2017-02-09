@@ -71,10 +71,11 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 		$functionDefinition>$functionDefinitionFile
 
         $PowerShell = [powershell]::Create()
+        $PowerShell.AddScript(". $functionDefinitionFile").Invoke()
+        $PowerShell.Commands.Clear()
         function ExecuteCommand {
             param ([string]$command)
             try {
-				$PowerShell.AddScript(". $functionDefinitionFile").Invoke()
                 $PowerShell.AddScript($command).Invoke()
             }
             finally {
@@ -101,8 +102,6 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 		"">$testdirfile2
 	}
     AfterEach {
-        $PowerShell.Commands.Clear()
-		$PowerShell.Streams.Error.Clear()
 		if(Test-Path $testfile)
 		{
 			Remove-Item $testfile
@@ -167,6 +166,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
     }
 
 	It "Throws an CommandNotFoundException exception if using a label in front of an if statement is not allowed. (line 225)"{
+        $PowerShell.Streams.Error.Clear()
         ExecuteCommand ":foo if ($x -eq 3) { 1 }"
 		$PowerShell.HadErrors | should be $true
         $PowerShell.Streams.Error.FullyQualifiedErrorId | should be "CommandNotFoundException"
@@ -517,8 +517,11 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
     }
 
 	It "Test that functions are resolved before cmdlets. (line 1678)"{
-        $result = ExecuteCommand 'function testcmd-parserBVT { 3 };testcmd-parserBVT'
-		$result | should be "3"
+        $result_cmdlet = $PowerShell.AddScript('function test-parserfunc { [CmdletBinding()] Param() PROCESS { "cmdlet" } };test-parserfunc').Invoke()
+        $result_func = ExecuteCommand 'function test-parserfunc { "func" };test-parserfunc'
+        $PowerShell.Commands.Clear()
+        $result_cmdlet | should be "cmdlet"
+        $result_func | should be "func"
     }
 
 	It "Check that a command that uses shell execute can be run from the command line and that no exception is thrown. (line 1702)" {
@@ -738,6 +741,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
     }
 
 	It 'Tests accessing using null as index. (line 2648)'{
+        $PowerShell.Streams.Error.Clear()
 		ExecuteCommand '$A=$(testcmd-parserBVT -returntype array); $A[$NONEXISTING_VARIABLE];'
         $PowerShell.HadErrors | should be $true
         $PowerShell.Streams.Error.FullyQualifiedErrorId | should be "NullArrayIndex"
