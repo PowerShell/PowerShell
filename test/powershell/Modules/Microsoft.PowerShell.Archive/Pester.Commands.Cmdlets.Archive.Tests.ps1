@@ -12,9 +12,8 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
     }
     BeforeAll {
         # remove the archive module forcefully, to be sure we get the correct version
-        if ( Get-Module Microsoft.PowerShell.Archive. ) {
-            Remove-Module Microsoft.PowerShell.Archive -force
-        }
+        Remove-Module Microsoft.PowerShell.Archive -Force -ErrorAction SilentlyContinue
+
         # Version comparisons should use a System.Version rather than SemanticVersion
         $PSVersion = $PSVersionTable.PSVersion -as [Version]
         # Write-Progress not supported yet on Core
