@@ -4,11 +4,8 @@
 
 if ($IsWindows)
 {
-    if (-not (Get-Module TestRemoting -ErrorAction SilentlyContinue))
-    {
-        $remotingModule = Join-Path $PSScriptRoot "../Common/TestRemoting.psm1"
-        Import-Module $remotingModule
-    }
+    $remotingModule = Join-Path $PSScriptRoot "../Common/TestRemoting.psm1"
+    Import-Module $remotingModule -ErrorAction SilentlyContinue
 
     $typeDef = @'
     using System;
@@ -174,6 +171,11 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
         }
     }
 
+    AfterEach {
+        $ps.Commands.Clear()
+        $ps2.Commands.Clear()
+    }
+
     It "Verifies that asynchronous 'Invoke-Command -RemoteDebug' is ignored" {
 
         $ps.AddCommand("Invoke-Command").
@@ -187,7 +189,6 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
 
     It "Verifies that synchronous 'Invoke-Command -RemoteDebug' invokes debugger" {
 
-        $ps.Commands.Clear()
         $ps.AddCommand("Invoke-Command").
             AddParameter("Session", $remoteSession).
             AddParameter("ScriptBlock", $sb).
