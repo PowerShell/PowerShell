@@ -1,0 +1,14 @@
+﻿<Properties StartupConfiguration="{9F0760E6-18AC-4B3F-A6B2-7157404C4276}|Default">
+  <MonoDevelop.Ide.Workbench ActiveDocument="src/Microsoft.PowerShell.Commands.Management/commands/management/TestConnectionCommand.cs">
+    <Files>
+      <File FileName="src/Microsoft.PowerShell.Commands.Management/commands/management/TestConnectionCommand.cs" Line="128" Column="44" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="WINDOWS" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.powershell PreferredExecutionTarget="MonoDevelop.Default" />
+  <MultiItemStartupConfigurations />
+</Properties>

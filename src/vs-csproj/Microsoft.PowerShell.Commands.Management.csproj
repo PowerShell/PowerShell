@@ -312,6 +312,9 @@
     <Compile Include="..\Microsoft.PowerShell.Commands.Management\singleshell\installer\MshManagementMshSnapin.cs">
       <Link>singleshell\installer\MshManagementMshSnapin.cs</Link>
     </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\TestConnectionCommand.cs">
+      <Link>commands\management\TestConnectionCommand.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Microsoft.PowerShell.Commands.Management\map.json">
