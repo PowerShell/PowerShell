@@ -3908,6 +3908,13 @@ namespace System.Management.Automation
 
             StopDebugRunspace(runspace);
 
+            // If we return to local script execution in step mode then ensure the debugger is enabled.
+            _nestedDebuggerStop = false;
+            if ((_steppingMode == SteppingMode.StepIn) && (_currentDebuggerAction != DebuggerResumeAction.Stop) && (_context._debuggingMode == 0))
+            {
+                SetInternalDebugMode(InternalDebugMode.Enabled);
+            }
+
             RaiseRunspaceProcessingCompletedEvent(
                 new ProcessRunspaceDebugEndEventArgs(runspace));
         }
