@@ -1,6 +1,6 @@
 # this is sensitive to the location of this test and the common directory"
 $hostmodule = Join-Path $PSScriptRoot "../../Common/TestHostCS.psm1"
-import-module $hostmodule
+import-module $hostmodule -ErrorAction SilentlyContinue
 
 Describe "Out-Host Tests" -tag CI {
     BeforeAll {
