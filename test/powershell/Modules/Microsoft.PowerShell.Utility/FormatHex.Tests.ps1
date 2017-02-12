@@ -151,6 +151,7 @@ Describe "FormatHex" -tags "CI" {
         $i32 = 2147483647 # an int32
         $i64 = 9223372036854775807 # an int64
         $result = $b,$i16,$i32,$i64 | format-Hex
+        $result | Should Not BeNullOrEmpty
         $result.GetType().Name |  should be 'ByteCollection'
         $actualResult = $result.ToString()
         $actualResult | should Match "00000000   41 FF 7F FF FF FF 7F FF FF FF FF FF FF FF 7F     A"
@@ -164,6 +165,7 @@ Describe "FormatHex" -tags "CI" {
         $i64 = 9223372036854775807 # an int64
         # this will cause 2 lines to be emitted
         $result = $b,$i16,$i32,$i64 | format-Hex -Raw
+        $result | Should Not BeNullOrEmpty
         $result[0].GetType().Name |  should be 'ByteCollection'
         $result[1].GetType().Name |  should be 'ByteCollection'
         $result0 = $result[0].ToString()

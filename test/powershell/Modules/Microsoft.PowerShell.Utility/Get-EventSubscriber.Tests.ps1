@@ -9,7 +9,7 @@ Describe "Get-EventSubscriber" -Tags "CI" {
 	It "Should return System.Management.Automation.PSEventSubscriber as return type of New-Event" {
 	    $pesterobject = (New-Object System.Collections.ObjectModel.ObservableCollection[object])
 	    Register-ObjectEvent -InputObject $pesterobject -EventName CollectionChanged -SourceIdentifier PesterTestRegister
-	    (Get-EventSubscriber).GetType() | Should Be System.Management.Automation.PSEventSubscriber
+	    Get-EventSubscriber | Should BeOfType System.Management.Automation.PSEventSubscriber
 	}
     }
 

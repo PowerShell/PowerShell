@@ -30,7 +30,8 @@ bazz = 2
     }
 
     It "Should return a hashtable" {
-	$(ConvertFrom-StringData -StringData 'a=b').GetType().Name | Should Be "Hashtable"
+	$result = ConvertFrom-StringData -StringData 'a=b'
+    $result | Should BeOfType Hashtable
     }
 
     It "Should throw if not in x=y format" {

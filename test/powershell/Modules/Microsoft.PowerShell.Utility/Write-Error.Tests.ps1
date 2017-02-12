@@ -5,6 +5,7 @@ Describe "Write-Error DRT Unit Tests" -Tags "CI" {
         $e.GetType().Name | Should Be 'ErrorRecord'
 
         #Exception verification
+        $e.Exception | Should Not BeNullOrEmpty
         $e.Exception.GetType().Name | Should Be 'WriteErrorException'
         $e.Exception.Message | Should Be 'myerrortext'
         $e.Exception.Data.Count | Should Be 0

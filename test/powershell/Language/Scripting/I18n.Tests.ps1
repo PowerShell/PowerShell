@@ -52,6 +52,7 @@ Describe 'Testing of script internationalization' -Tags "CI" {
 
         import-localizedData mydata -uiculture nl-NL -ea SilentlyContinue -ev ev
 
+        $ev | Should Not BeNullOrEmpty
         $ev[0].Exception.GetType() | Should Be System.Management.Automation.PSInvalidOperationException
     }
 
@@ -110,6 +111,7 @@ Describe 'Testing of script internationalization' -Tags "CI" {
             import-localizedData mydata -filename bad
           }
 
+        $script:exception.exception | Should Not BeNullOrEmpty
         $script:exception.exception.gettype() | Should Be System.management.automation.psinvalidoperationexception
         }
 

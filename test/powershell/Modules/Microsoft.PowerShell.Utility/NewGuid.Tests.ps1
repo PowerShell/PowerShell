@@ -2,7 +2,7 @@
 
     It "returns a new guid" {
         $guid = New-Guid
-        $guid.GetType().FullName | Should Be "System.Guid"
+        $guid | Should BeOfType System.Guid
     }
 
     It "should not be all zeros" {

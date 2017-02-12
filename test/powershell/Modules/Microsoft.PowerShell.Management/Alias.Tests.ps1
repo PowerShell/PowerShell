@@ -50,7 +50,7 @@ Describe "Basic Alias Provider Tests" -Tags "CI" {
 
     It "Test executing the new alias" {
         $result = Invoke-Expression $testAliasName
-        $result.GetType().Name | Should Be "DateTime"
+        $result | Should BeOfType DateTime
     }
 }
 

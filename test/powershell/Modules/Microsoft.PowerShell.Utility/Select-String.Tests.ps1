@@ -13,9 +13,11 @@ Describe "Select-String" -Tags "CI" {
 	    { $testinputone | sls -Pattern "hello" } | Should Not Throw
 	}
 
-	it "Should return an array data type when multiple matches are found" {
-	    ( $testinputtwo | Select-String -Pattern "hello").gettype().basetype | Should Be Array
-	}
+    it "Should return an array data type when multiple matches are found" {
+        $result = $testinputtwo | Select-String -Pattern "hello"
+        $result | Should Not BeNullOrEmpty
+        $result.gettype().basetype | Should Be Array
+    }
 
 	it "Should return the same result for the alias sls and Select-String " {
 	    $firstMatch = $testinputone | Select-String -Pattern "hello"
@@ -26,11 +28,15 @@ Describe "Select-String" -Tags "CI" {
 	}
 
 	it "Should return an object type when one match is found" {
-	    ( $testinputtwo | Select-String -Pattern "hello" -CaseSensitive).gettype().basetype | Should Be System.Object
+	    $result = $testinputtwo | Select-String -Pattern "hello" -CaseSensitive
+        $result | Should Not BeNullOrEmpty
+        $result.gettype().basetype | Should Be System.Object
 	}
 
 	it "Should return matchinfo type" {
-	    ( $testinputtwo | Select-String -Pattern "hello" -CaseSensitive).gettype().name | Should Be MatchInfo
+	    $result = $testinputtwo | Select-String -Pattern "hello" -CaseSensitive
+        $result | Should Not BeNullOrEmpty
+        $result.gettype().name | Should Be MatchInfo
 	}
 
 	it "Should be called without an error using ca for casesensitive " {
@@ -54,7 +60,9 @@ Describe "Select-String" -Tags "CI" {
 	}
 
 	it "Should return system.object when the input object switch is used on a collection" {
-	    ( Select-String -InputObject "some stuff", "other stuff" -pattern "other" ).gettype().basetype | Should Be System.Object
+	    $result = Select-String -InputObject "some stuff", "other stuff" -pattern "other"
+        $result | Should Not BeNullOrEmpty
+        $result.gettype().basetype | Should Be System.Object
 	}
 
 	it "Should return null or empty when the input object switch is used on a collection and the pattern does not exist" {
@@ -99,12 +107,16 @@ Describe "Select-String" -Tags "CI" {
 	}
 
 	It "Should return an object when a match is found is the file on only one line" {
-	    (Select-String $testInputFile -Pattern "string").GetType().BaseType | Should be System.Object
+	    $result = Select-String $testInputFile -Pattern "string"
+        $result | Should Not BeNullOrEmpty
+        $result.GetType().BaseType | Should be System.Object
 	}
 
 	It "Should return an array when a match is found is the file on several lines" {
-	    (Select-String $testInputFile -Pattern "in").GetType().BaseType | Should be array
-	    (Select-String $testInputFile -Pattern "in")[0].GetType().Name  | Should Be MatchInfo
+	    $result = Select-String $testInputFile -Pattern "in"
+        $result | Should Not BeNullOrEmpty
+        $result.GetType().BaseType | Should be array
+	    $result[0].GetType().Name  | Should Be MatchInfo
 	}
 
 	It "Should return the name of the file and the string that 'string' is found if there is only one lines that has a match" {

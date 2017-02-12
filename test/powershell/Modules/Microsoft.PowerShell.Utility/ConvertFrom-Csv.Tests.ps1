@@ -20,7 +20,8 @@ a,b,c
 	$csvContent   = Get-Content $testcsv
 	$actualresult = $csvContent | ConvertFrom-Csv
 
-	$actualresult.GetType().BaseType.Name | Should Be "Array"
+	$actualresult | Should Not BeNullOrEmpty
+    $actualresult.GetType().BaseType.Name | Should Be "Array"
 	$actualresult[0].GetType().Name          | Should Be "PSCustomObject"
 
 	#Should have a name property in the result
@@ -35,7 +36,8 @@ a,b,c
 	$csvContent   = Get-Content $testcsv
 	$actualresult = $csvContent | ConvertFrom-Csv -Delimiter ";"
 
-	$actualresult.GetType().BaseType.Name    | Should Be "Array"
+	$actualresult | Should Not BeNullOrEmpty
+    $actualresult.GetType().BaseType.Name    | Should Be "Array"
 	$actualresult[0].GetType().Name          | Should Be "PSCustomObject"
 
 	# ConvertFrom-Csv takes the first line of the input as a header by default

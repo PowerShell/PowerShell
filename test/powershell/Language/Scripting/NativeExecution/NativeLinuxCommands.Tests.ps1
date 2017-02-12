@@ -9,8 +9,10 @@ else {
 }
 Describe "NativeLinuxCommands" -tags "CI" {
     It "Should return a type of System.Object for hostname cmdlet" {
-        (hostname).GetType().BaseType | Should Be 'System.Object'
-        (hostname).GetType().Name | Should Be String
+        $result = hostname
+        $result | Should Not BeNullOrEmpty
+        $result.GetType().BaseType | Should Be 'System.Object'
+        $result.GetType().Name | Should Be String
     }
 
     It "Should find Application grep" @PesterSkipOrPending {

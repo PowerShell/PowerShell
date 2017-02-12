@@ -38,13 +38,15 @@ Describe "Group-Object" -Tags "CI" {
     It "Should create a collection when the inputObject parameter is used" {
 	$actualParam = Group-Object -InputObject $testObject
 
-	$actualParam.Group.GetType().Name | Should Be "Collection``1"
+    $actualParam.Group | Should Not BeNullOrEmpty
+    $actualParam.Group.GetType().Name | Should Be "Collection``1"
     }
 
     It "Should output an array when piped input is used" {
-	$actual = $testObject | Group-Object
+        $actual = $testObject | Group-Object
 
-	$actual.Group.GetType().BaseType | Should Be Array
+        $actual.Group | Should Not BeNullOrEmpty
+        $actual.Group.GetType().BaseType | Should Be Array
     }
 
     It "Should have the same output between the group alias and the group-object cmdlet" {
@@ -79,9 +81,10 @@ Describe "Group-Object" -Tags "CI" {
     }
 
     It "Should be able to output a hashtable datatype" {
-	$actual = $testObject | Group-Object -AsHashTable
+        $actual = $testObject | Group-Object -AsHashTable
 
-	$actual.GetType().Name | Should be "Hashtable"
+        $actual | Should Not BeNullOrEmpty
+        $actual.GetType().Name | Should be "Hashtable"
     }
 
     It "Should be able to access when output as hash table" {

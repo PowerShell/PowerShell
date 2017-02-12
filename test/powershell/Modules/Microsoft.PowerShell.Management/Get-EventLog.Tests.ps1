@@ -12,12 +12,14 @@
     #CmdLets are not yet implemented, so these cases are -Pending:($True) for now...
     It "should return an array of eventlogs objects when called with -AsString parameter" -Pending:($True) {
       {$result=Get-EventLog -AsString -ea stop}    | Should Not Throw
+      $result | Should Not BeNullOrEmpty
       $result.GetType().BaseType.Name              | Should Be "Array"
       $result -eq "Application"                    | Should Be "Application"
       $result.Count -ge 3                          | Should Be $true
     }
     It "should return a list of eventlog objects when called with -List parameter" -Pending:($True) {
       {$result=Get-EventLog -List -ea stop}        | Should Not Throw
+      $result | Should Not BeNullOrEmpty
       $result.GetType().BaseType.Name              | Should Be "array"
       {$logs=$result|Select -ExpandProperty Log}  | Should Not Throw
       $logs -eq "System"                           | Should Be "System"
