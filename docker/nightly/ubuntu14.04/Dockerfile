@@ -1,7 +1,12 @@
 FROM microsoft/powershell:ubuntu14.04
-MAINTAINER Andrew Schwartzmeyer <andschwa@microsoft.com>
-LABEL Readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
-LABEL Description="This Dockerfile will install and build the latest release of PS."
+
+# Metadata as defined at http://label-schema.org
+# Additional labels are inherited from microsoft/powershell:ubuntu14.04
+ARG VCS_REF
+ARG BUILD_DATE
+LABEL org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.docker.cmd="docker run -it microsoft/powershell-nightly:ubuntu14.04"
 
 ARG fork=PowerShell
 ARG branch=master
