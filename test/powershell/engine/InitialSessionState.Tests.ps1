@@ -55,3 +55,48 @@ Describe "InitialSessionState capacity" -Tags CI {
         $ps.Streams.Error | Should Be $null
     }
 }
+
+##
+## A reused InitialSessionState created from a TypeTable should not have duplicate types.
+##
+Describe "TypeTable duplicate types in reused runspace InitialSessionState" -Tags 'Feature' {
+
+    BeforeAll {
+
+        $typeTable = [System.Management.Automation.Runspaces.TypeTable]::new([string[]](Join-Path $PSScriptRoot "../Common/TestTypeFile.ps1xml"))
+        [initialsessionstate] $iss = [initialsessionstate]::Create()
+        $iss.Types.Add($typeTable)
+        [runspace] $rs1 = [runspacefactory]::CreateRunspace($iss)
+
+        # Process TypeTable types from ISS
+        $rs1.Open()
+
+        # Get processed ISS from runspace.
+        $issReused = $rs1.InitialSessionState.Clone()
+        $issReused.ThrowOnRunspaceOpenError = $true
+
+        # Create new runspace with reused ISS.
+        $rs2 = [runspacefactory]::CreateRunspace($issReused)
+    }
+
+    AfterAll {
+
+        if ($rs1 -ne $null) { $rs1.Dispose() }
+        if ($rs2 -ne $null) { $rs2.Dispose() }
+    }
+
+    It "Verifies that a reused InitialSessionState object created from a TypeTable object does not have duplicate types" {
+
+        $errs = $null
+        try
+        {
+            $rs2.Open()
+        }
+        catch
+        {
+            $errs = $_
+        }
+
+        $errs | Should Be $null
+    }
+}
