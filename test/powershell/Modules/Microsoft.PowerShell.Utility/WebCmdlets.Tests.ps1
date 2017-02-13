@@ -399,6 +399,23 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
         $result.Error | Should BeNullOrEmpty
     }
+
+    It "Validate StandardMethod and CustomMethod parameter sets" {
+        
+        #Validate that parameter sets are functioning correctly
+        $command = "Invoke-RestMethod -Uri 'http://sandbox.lee.io/method.php' -Method GET -CustomMethod 'TEST'"
+        $result = ExecuteWebCommand -command $command
+        $result.Error | Should Not BeNullOrEmpty
+    }
+
+    It "Validate CustomMethod parameter set method is passed" {
+        
+        #Validate that parameter sets are functioning correctly
+        $command = "Invoke-RestMethod -Uri 'http://sandbox.lee.io/method.php' -CustomMethod 'TEST'"
+        $result = ExecuteWebCommand -command $command
+        $result.Error | Should BeNullOrEmpty
+        ($result.Output | ConvertFrom-Json).method | Should Be "TEST"
+    }
 }
 
 Describe "Invoke-RestMethod tests" -Tags "Feature" {

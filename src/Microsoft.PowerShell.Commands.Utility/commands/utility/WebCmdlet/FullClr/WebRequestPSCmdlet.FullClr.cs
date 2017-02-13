@@ -84,10 +84,22 @@ namespace Microsoft.PowerShell.Commands
                 request.Proxy = WebSession.Proxy;
             }
 
-            // set the method if the parameter was provided
-            if (WebRequestMethod.Default != Method)
+            switch (ParameterSetName)
             {
-                request.Method = Method.ToString().ToUpperInvariant();
+                case "StandardMethod":
+                    if (WebRequestMethod.Default != Method)
+                    {
+                        // set the method if the parameter was provided
+                        request.Method = Method.ToString().ToUpperInvariant();
+                    }
+                    break;
+                case "CustomMethod":
+                    // set the method if the parameter was provided
+                    if (!string.IsNullOrEmpty(CustomMethod))
+                    {
+                        request.Method = CustomMethod.ToUpperInvariant();
+                    }
+                    break;
             }
 
             // pull in http specific properties
@@ -248,7 +260,7 @@ namespace Microsoft.PowerShell.Commands
                 request.ContentType = ContentType;
             }
             // ContentType == null
-            else if (Method == WebRequestMethod.Post)
+            else if (Method == WebRequestMethod.Post || (!string.IsNullOrEmpty(CustomMethod) && CustomMethod.ToUpper() == "POST"))
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
                 if (String.IsNullOrEmpty(request.ContentType))
