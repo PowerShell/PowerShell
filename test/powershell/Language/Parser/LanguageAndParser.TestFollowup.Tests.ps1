@@ -4,7 +4,7 @@ Describe "Clone array" -Tags "CI" {
     It "Cast in target expr" {
         (([int[]](42)).clone()) | Should Be 42
         (([int[]](1..5)).clone()).Length | Should Be 5
-        (([int[]](1..5)).clone()) | Should BeOfType [int[]]
+        (([int[]](1..5)).clone()).GetType() | Should Be ([int[]])
 
     }
     It "Cast not in target expr" {
