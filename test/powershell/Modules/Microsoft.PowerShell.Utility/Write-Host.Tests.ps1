@@ -57,12 +57,12 @@ Describe "Write-Host with TestHostCS" -Tags "CI" {
         $ps.Runspace = $rs
 
         $testHostCSData = @(
-            @{ Name = 'defaults';                          Command = "Write-Host a,b,c";                                                                             returnCount = 1; returnValue = @("White:Black:a b c:NewLine") }
-            @{ Name = '-Object';                           Command = "Write-Host -Object a,b,c";                                                                     returnCount = 1; returnValue = @("White:Black:a b c:NewLine") }
-            @{ Name = '-Separator';                        Command = "Write-Host a,b,c -Separator '+'";                                                              returnCount = 1; returnValue = @("White:Black:a+b+c:NewLine") }
-            @{ Name = '-Separator, colors and -NoNewLine'; Command = "Write-Host a,b,c -Separator ',' -ForegroundColor Yellow -BackgroundColor DarkBlue -NoNewline"; returnCount = 1; returnValue = @("Yellow:DarkBlue:a,b,c:NoNewLine") }
-            @{ Name = '-NoNewline:$true and colors';       Command = "Write-Host a,b -NoNewline:`$true -ForegroundColor Red -BackgroundColor Green;Write-Host a,b";  returnCount = 2; returnValue = @("Red:Green:a b:NoNewLine", "White:Black:a b:NewLine") }
-            @{ Name = '-NoNewline:$false and colors';      Command = "Write-Host a,b -NoNewline:`$false -ForegroundColor Red -BackgroundColor Green;Write-Host a,b"; returnCount = 2; returnValue = @("Red:Green:a b:NewLine","White:Black:a b:NewLine") }
+            @{ Name = 'defaults';                          Command = "Write-Host a,b,c";                                                                             returnCount = 1; returnValue = @("White:Black:a b c:NewLine"); returnInfo = @("a b c") }
+            @{ Name = '-Object';                           Command = "Write-Host -Object a,b,c";                                                                     returnCount = 1; returnValue = @("White:Black:a b c:NewLine"); returnInfo = @("a b c") }
+            @{ Name = '-Separator';                        Command = "Write-Host a,b,c -Separator '+'";                                                              returnCount = 1; returnValue = @("White:Black:a+b+c:NewLine"); returnInfo = @("a+b+c") }
+            @{ Name = '-Separator, colors and -NoNewLine'; Command = "Write-Host a,b,c -Separator ',' -ForegroundColor Yellow -BackgroundColor DarkBlue -NoNewline"; returnCount = 1; returnValue = @("Yellow:DarkBlue:a,b,c:NoNewLine"); returnInfo = @("a,b,c") }
+            @{ Name = '-NoNewline:$true and colors';       Command = "Write-Host a,b -NoNewline:`$true -ForegroundColor Red -BackgroundColor Green;Write-Host a,b";  returnCount = 2; returnValue = @("Red:Green:a b:NoNewLine", "White:Black:a b:NewLine"); returnInfo = @("a b", "a b") }
+            @{ Name = '-NoNewline:$false and colors';      Command = "Write-Host a,b -NoNewline:`$false -ForegroundColor Red -BackgroundColor Green;Write-Host a,b"; returnCount = 2; returnValue = @("Red:Green:a b:NewLine","White:Black:a b:NewLine"); returnInfo = @("a b", "a b") }
         )
 
     }
@@ -79,19 +79,17 @@ Describe "Write-Host with TestHostCS" -Tags "CI" {
     }
 
     It "Write-Host works with <Name>" -TestCases:$testHostCSData {
-        param($Command, $returnCount, $returnValue)
+        param($Command, $returnCount, $returnValue, $returnInfo)
         $ps.AddScript($Command).Invoke()
+
         $result = $th.ui.Streams.ConsoleOutput
 
-        # I wonder that a console output is duplicated in Information Stream - Is it by design?
-        $th.ui.Streams.Information.Count | Should Be $returnCount
-        $th.ui.Streams.Information[0] | Should Be $returnValue[0]
-        $th.ui.Streams.Information[1] | Should Be $returnValue[1]
+        $result.Count | Should Be $returnCount
+        (Compare-Object $result $returnValue -SyncWindow 0).length -eq 0 | Should Be $true
+
+        $result = $th.ui.Streams.Information
 
         $result.Count | Should Be $returnCount
-        foreach ($i in 0..($returnCount - 1))
-        {
-            $result[$i] | Should Be $returnValue[$i]
-        }
+        (Compare-Object $result $returnInfo -SyncWindow 0).length -eq 0 | Should Be $true
     }
 }

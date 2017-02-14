@@ -169,6 +169,12 @@ namespace TestHost
             return ss;
         }
 
+        // Cmdlets call 'Write' and 'WriteLine' methods implicitly.
+        // To see difference between 'Write' and 'WriteLine' with and w/o colors in the debug output
+        // we need use a meta information.
+        // So we make a output string as:
+        // <Foregraund color name> : <Background color name> : <'user value'> : <'NewLine' or 'NoNewLine'>
+        //
         public override void Write(string value)
         {
             Streams.ConsoleOutput.Add("::"+value+":NoNewLine");
