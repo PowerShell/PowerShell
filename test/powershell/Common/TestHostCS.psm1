@@ -169,14 +169,25 @@ namespace TestHost
             return ss;
         }
 
+        // Cmdlets call 'Write' and 'WriteLine' methods implicitly.
+        // To see difference between 'Write' and 'WriteLine' with and w/o colors in the debug output
+        // we need use a meta information.
+        // So we make a output string as:
+        // <Foregraund color name> : <Background color name> : <'user value'> : <'NewLine' or 'NoNewLine'>
+        //
         public override void Write(string value)
         {
-            Streams.ConsoleOutput.Add(value);
+            Streams.ConsoleOutput.Add("::"+value+":NoNewLine");
         }
 
         public override void Write(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
         {
-            Streams.ConsoleOutput.Add(value);
+            Streams.ConsoleOutput.Add(foregroundColor+":"+backgroundColor+":"+value+":NoNewLine");
+        }
+
+        public override void WriteLine(ConsoleColor foregroundColor, ConsoleColor backgroundColor, string value)
+        {
+            Streams.ConsoleOutput.Add(foregroundColor+":"+backgroundColor+":"+value+":NewLine");
         }
 
         public override void WriteDebugLine(string message)
@@ -191,7 +202,7 @@ namespace TestHost
 
         public override void WriteLine(string value)
         {
-            Streams.ConsoleOutput.Add(value);
+            Streams.ConsoleOutput.Add("::"+value+":NewLine");
         }
 
         public override void WriteProgress(long sourceId, ProgressRecord record)
@@ -207,6 +218,15 @@ namespace TestHost
         public override void WriteWarningLine(string message)
         {
             Streams.Warning.Add(message);
+        }
+
+        public override void WriteInformation(InformationRecord record)
+        {
+            HostInformationMessage hostOutput = record.MessageData as HostInformationMessage;
+            if (hostOutput != null) {
+                 string message = hostOutput.Message;
+                 Streams.Information.Add(message);
+            }
         }
     }
 
