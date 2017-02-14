@@ -735,7 +735,7 @@ namespace Microsoft.PowerShell.Commands
                 if (_roleDefinitions == null)
                 {
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.RoleDefinitions, RemotingErrorIdStrings.DISCRoleDefinitionsComment,
-                        "@{ 'CONTOSO\\SqlAdmins' = @{ RoleCapabilities = 'SqlAdministration' }; 'CONTOSO\\ServerMonitors' = @{ VisibleCmdlets = 'Get-Process' } } ", streamWriter, true));
+                        "@{ 'CONTOSO\\SqlAdmins' = @{ RoleCapabilities = 'SqlAdministration' }; 'CONTOSO\\SqlManaged' = @{ RoleCapabilityFiles = 'C:\\RoleCapability\\SqlManaged.psrc' }; 'CONTOSO\\ServerMonitors' = @{ VisibleCmdlets = 'Get-Process' } } ", streamWriter, true));
                 }
                 else
                 {
