@@ -8,6 +8,9 @@
 # This 'Describe' is for tests that were converted from utscripts (SDXROOT/admin/monad/tests/monad/DRT/utscripts)
 # and C# tests (SDXROOT/admin/monad/tests/monad/DRT/commands/utility/UnitTests) to Pester.
 #
+
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "Json Tests" -Tags "Feature" {
 
     BeforeAll {
@@ -41,17 +44,8 @@ Describe "Json Tests" -Tags "Feature" {
             # Test follow-up for bug WinBlue: 163372 - ConvertTo-JSON has hard coded english error message.
             $process = Get-Process -Id $PID
             $hash = @{ $process = "def" }
-            $expectedFullyQualifiedErrorId = "NonStringKeyInDictionary,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
 
-            try
-            {
-                ConvertTo-Json -InputObject $hash
-                throw "CodeExecuted"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | should be $expectedFullyQualifiedErrorId
-            }
+            { ConvertTo-Json -InputObject $hash } | ShouldBeErrorId "NonStringKeyInDictionary,Microsoft.PowerShell.Commands.ConvertToJsonCommand"
         }
 
         It "ConvertTo-Json should handle terms with double quotes" {
@@ -1369,7 +1363,7 @@ Describe "Json Bug fixes"  -Tags "Feature" {
                 Next = $null
             }
 
-            ($($testCase.NumberOfElements)-1)..$start | foreach {
+            ($($testCase.NumberOfElements)-1)..$start | ForEach-Object {
                 $current = @{
                     Depth = $_
                     Next = $previous
@@ -1379,15 +1373,7 @@ Describe "Json Bug fixes"  -Tags "Feature" {
 
             if ($testCase.ShouldThrow)
             {
-                try
-                {
-                    $previous | ConvertTo-Json -Depth $testCase.MaxDepth
-                    throw "CodeExecuted"
-                }
-                catch
-                {
-                    $_.FullyQualifiedErrorId | Should Be $testCase.FullyQualifiedErrorId
-                }
+                { $previous | ConvertTo-Json -Depth $testCase.MaxDepth } | ShouldBeErrorId $testCase.FullyQualifiedErrorId
             }
             else
             {

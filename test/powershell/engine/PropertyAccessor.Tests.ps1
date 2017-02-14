@@ -3,6 +3,7 @@
 # The properties files are supported on non-Windows OSes, but the tests are specific to
 # Windows so that file IO can be verified using supported cmdlets.
 #
+Import-Module $PSScriptRoot\..\Common\Test.Helpers.psm1
 
 try {
     # Skip these tests when run against "InBox" PowerShell
@@ -69,13 +70,8 @@ try {
             Get-ExecutionPolicy -Scope CurrentUser | Should Be "Undefined"
 
             # Verify the file was not created during the test
-            try {
-                $propFile = Get-Item $userPropertiesFile -ErrorAction Stop
-                throw "Properties file genererated during read operation"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
-            }
+            { $propFile = Get-Item $userPropertiesFile -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
+
         }
 
         It "Verify Queries for Non-Existant Properties Return Default Value" {

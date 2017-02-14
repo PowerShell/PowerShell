@@ -57,12 +57,13 @@ function ShouldBeErrorId
 
         try
         {
-            & $sb
-            Throw "Exception expected, execution should not have reached here"
+            & $sb | Out-Null
+            Throw "No Exception!"
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be $FullyQualifiedErrorId
+            $_.FullyQualifiedErrorId | Should Be $FullyQualifiedErrorId | Out-Null
+            Write-Output $PSItem
         }
 }
 

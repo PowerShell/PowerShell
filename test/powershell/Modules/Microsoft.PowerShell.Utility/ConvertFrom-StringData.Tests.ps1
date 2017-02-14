@@ -1,3 +1,5 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "ConvertFrom-StringData DRT Unit Tests" -Tags "CI" {
     It "Should able to throw error when convert invalid line" {
         $str =@"
@@ -6,15 +8,8 @@ abc
 #comments here
 def=content of def
 "@
-        try
-        {
-            ConvertFrom-StringData $str
-            Throw "we expect 'InvalidOperation' exception"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should be "InvalidOperation,Microsoft.PowerShell.Commands.ConvertFromStringDataCommand"
-        }
+
+        { ConvertFrom-StringData $str } | ShouldBeErrorId "InvalidOperation,Microsoft.PowerShell.Commands.ConvertFromStringDataCommand"
     }
 }
 

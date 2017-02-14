@@ -1,3 +1,5 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Try {
     if ( ! $IsWindows ) {
         $PSDefaultParameterValues['it:pending'] = $true
@@ -26,13 +28,7 @@ Try {
            $instance.GetCimSessionInstanceId() | Should BeOfType "Guid"
         }
         It "should produce an error for a non-existing classname" {
-            try {
-                get-ciminstance -classname thisnameshouldnotexist -ea stop
-                throw "expected error did not occur"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | should be "HRESULT 0x80041010,Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand"
-            }
+            { get-ciminstance -classname thisnameshouldnotexist -ErrorAction Stop } | ShouldBeErrorId "HRESULT 0x80041010,Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand"
         }
     }
 }

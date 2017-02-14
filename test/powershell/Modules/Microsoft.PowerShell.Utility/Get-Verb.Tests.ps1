@@ -1,4 +1,6 @@
-﻿Describe "Get-Verb" -Tags "CI" {
+﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
+Describe "Get-Verb" -Tags "CI" {
 
     It "Should get a list of Verbs" {
         Get-Verb | Should not be $null
@@ -32,13 +34,7 @@
     }
 
     It "Should not accept Groups that are not in the validate set" {
-        try{
-            Get-Verb -Group FakeGroupNeverExists -ErrorAction Stop
-            throw "Expected error did not occur"
-        }
-        Catch{
-            $PSItem.FullyQualifiedErrorId | Should be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetVerbCommand'
-        }
+        { Get-Verb -Group FakeGroupNeverExists -ErrorAction Stop } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetVerbCommand"
     }
 
     It "Accept all valid verb groups" {

@@ -3,6 +3,8 @@
  # Provides Pester tests for the Import-Counter cmdlet.
  ############################################################################################>
 
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 $cmdletName = "Import-Counter"
 
 . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
@@ -210,7 +212,7 @@ function RunExpectedFailureTest($testCase)
             {
                 $sb = [ScriptBlock]::Create($cmd)
                 &$sb
-                throw "Did not throw expected exception"
+                throw "No Exception!"
             }
             catch
             {
@@ -468,14 +470,6 @@ Describe "Import-Counter cmdlet does not run on IoT" -Tags "CI" {
 
     It "Import-Counter throws PlatformNotSupportedException" -Skip:$(-not [System.Management.Automation.Platform]::IsIoT)  {
 
-        try
-        {
-            Import-Counter -Path "$testDrive\ProcessorData.blg"
-            throw "'Import-Counter -Path $testDrive\ProcessorData.blg' on IoT is expected to throw a PlatformNotSupportedException, and it did not."
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | should be "System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.ImportCounterCommand"
-        }
+        { Import-Counter -Path "$testDrive\ProcessorData.blg" } | ShouldBeErrorId "System.PlatformNotSupportedException,Microsoft.PowerShell.Commands.ImportCounterCommand"
     }
 }

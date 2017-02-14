@@ -1,3 +1,5 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 . (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
 
 Describe "Select-Object" -Tags "CI" {
@@ -18,11 +20,11 @@ Describe "Select-Object" -Tags "CI" {
     }
 
     It "Should be able to use the alias" {
-	{ $dirObject | select } | Should Not Throw
+	{ $dirObject | Select-Object } | Should Not Throw
     }
 
     It "Should have same result when using alias" {
-	$result   = $dirObject | select
+	$result   = $dirObject | Select-Object
 	$expected = $dirObject | Select-Object
 
 	$result | Should Be $expected
@@ -121,18 +123,12 @@ Describe "Select-Object DRT basic functionality" -Tags "CI" {
                             [pscustomobject]@{"FirstName"="edmund"; "LastName"="bush"; "YearsInMS"=9}
 	}
 
-	It "Select-Object with empty script block property should throw"{
-		try
-		{
-			"bar" | select-object -Prop {} -EA Stop
-			Throw "Execution OK"
-		}
-		catch
-		{
-			$_.CategoryInfo | Should Match "PSArgumentException"
-			$_.FullyQualifiedErrorId | Should be "EmptyScriptBlockAndNoName,Microsoft.PowerShell.Commands.SelectObjectCommand"
-		}
-	}
+    It "Select-Object with empty script block property should throw"{
+        $exc = {
+            "bar" | select-object -Prop {} -EA Stop
+        } | ShouldBeErrorId "EmptyScriptBlockAndNoName,Microsoft.PowerShell.Commands.SelectObjectCommand"
+        $exc.CategoryInfo | Should Match "PSArgumentException"
+    }
 
 	It "Select-Object with string property should work"{
 		$result = "bar" | select-object -Prop foo | Measure-Object

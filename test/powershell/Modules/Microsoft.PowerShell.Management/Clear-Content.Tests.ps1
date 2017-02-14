@@ -1,3 +1,5 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "Clear-Content cmdlet tests" -Tags "CI" {
   $file1 = "file1.txt"
   Setup -File "$file1"
@@ -12,15 +14,15 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
       $result | Should BeExactly $null
     }
     It "should throw `"Cannot bind argument to parameter 'Path'`" when -Path is `$null" {
-      {clear-content -path $null -ea stop} | Should Throw "Cannot bind argument to parameter 'Path'"
+      { clear-content -path $null -ErrorAction Stop } | ShouldBeErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ClearContentCommand"
     }
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 903880)]
     It "should throw `"Cannot bind argument to parameter 'Path'`" when -Path is `$()" {
-      {clear-content -path $() -ea stop} | Should Throw "Cannot bind argument to parameter 'Path'"
+      { clear-content -path $() -ErrorAction Stop } | ShouldBeErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.ClearContentCommand"
     }
     #[DRT][BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
     It "should throw 'PSNotSupportedException' when you set-content to an unsupported provider" -Skip:($IsLinux -Or $IsOSX) {
-      {clear-content -path HKLM:\\software\\microsoft -ea stop} | Should Throw "IContentCmdletProvider interface is not implemented"
+      { clear-content -path HKLM:\\software\\microsoft -ErrorAction Stop } | ShouldBeErrorId "NotSupported,Microsoft.PowerShell.Commands.ClearContentCommand"
     }
   }
 }

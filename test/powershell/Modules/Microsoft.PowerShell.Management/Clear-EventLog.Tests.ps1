@@ -1,3 +1,5 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "Clear-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
 
     BeforeAll {
@@ -21,12 +23,10 @@ Describe "Clear-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
       {Remove-EventLog -LogName TestLog -ea Stop}                 | Should Not Throw
     }
     It "should throw 'The Log name 'MissingTestLog' does not exist' when asked to clear a log that does not exist" -Pending:($True) {
-      Remove-EventLog -LogName MissingTestLog -ea Ignore
-      try {Clear-EventLog -LogName MissingTestLog -ea stop; Throw "Previous statement unexpectedly succeeded..."
-      } catch {$_.FullyQualifiedErrorId      | Should Be "Microsoft.PowerShell.Commands.ClearEventLogCommand"}
+      Remove-EventLog -LogName MissingTestLog -ErrorAction Ignore -Force
+      {Clear-EventLog -LogName MissingTestLog -ErrorAction Stop } | ShouldBeErrorId "Microsoft.PowerShell.Commands.ClearEventLogCommand"
     }
     It "should throw 'System.InvalidOperationException' when asked to clear a log that does not exist" -Pending:($True) {
-      try {Clear-EventLog -LogName MissingTestLog -ea stop; Throw "Previous statement unexpectedly succeeded..."
-      } catch {$_.FullyQualifiedErrorId      | Should Be "Microsoft.PowerShell.Commands.ClearEventLogCommand"}
+      {Clear-EventLog -LogName MissingTestLog -ErrorAction Stop } | ShouldBeErrorId "Microsoft.PowerShell.Commands.ClearEventLogCommand"
     }
 }

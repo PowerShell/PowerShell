@@ -14,6 +14,8 @@
            [snippet] Both StandardName and DaylightName are localized according to the current user default UI language.
 #>
 
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 try {
 
     $defaultParamValues = $PSdefaultParameterValues.Clone()
@@ -164,15 +166,7 @@ Describe "Set-Timezone test cases" -Tags @('Feature', 'RequireAdminOnWindows') {
     }
 
     It "Call Set-TimeZone with invalid Id" {
-        try
-        {
-            Set-TimeZone -Id "zzInvalidID"
-            throw "No Exception!"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
-        }
+        { Set-TimeZone -Id "zzInvalidID" } | ShouldBeErrorId "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
     }
 
     It "Call Set-TimeZone by Name" {
@@ -193,15 +187,7 @@ Describe "Set-Timezone test cases" -Tags @('Feature', 'RequireAdminOnWindows') {
     }
 
     It "Call Set-TimeZone with invalid Name" {
-        try
-        {
-            Set-TimeZone -Name "zzINVALID_Name"
-            throw "No Exception!"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
-        }
+        { Set-TimeZone -Name "zzINVALID_Name" } | ShouldBeErrorId "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
     }
 
     It "Verify that alias 'stz' exists" {

@@ -1,3 +1,5 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 try {
     # Get-CimClass works only on windows right now
     if ( ! $IsWindows ) {
@@ -13,22 +15,10 @@ try {
         }
 
         It 'produces an error when a non-existent class is used' {
-            try {
-                Get-CimClass -ClassName thisclasstypedoesnotexist -ea stop
-                throw "Expected error did not occur"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | should be "HRESULT 0x80041002,Microsoft.Management.Infrastructure.CimCmdlets.GetCimClassCommand"
-            }
+            { Get-CimClass -ClassName thisclasstypedoesnotexist -ErrorAction Stop } | ShouldBeErrorId "HRESULT 0x80041002,Microsoft.Management.Infrastructure.CimCmdlets.GetCimClassCommand"
         }
         It 'produces an error when an improper namespace is used' {
-            try {
-                Get-CimClass -ClassName CIM_OperatingSystem -Namespace badnamespace -ea stop
-                throw "Expected error did not occur"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | should be "HRESULT 0x8004100e,Microsoft.Management.Infrastructure.CimCmdlets.GetCimClassCommand"
-            }
+            { Get-CimClass -ClassName CIM_OperatingSystem -Namespace badnamespace -ErrorAction Stop } | ShouldBeErrorId "HRESULT 0x8004100e,Microsoft.Management.Infrastructure.CimCmdlets.GetCimClassCommand"
         }
     }
 

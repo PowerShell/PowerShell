@@ -3,7 +3,10 @@
  # Commands.Cmdlets.ArchiveTests suite contains Tests that are
  # used for validating Microsoft.PowerShell.Archive module.
  ############################################################################################>
+
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 $script:TestSourceRoot = $PSScriptRoot
+
 Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
 
     AfterAll {
@@ -65,15 +68,8 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             [string] $compressionLevel = "Optimal"
         )
 
-        try
-        {
-            Compress-Archive -Path $path -DestinationPath $destinationPath -CompressionLevel $compressionLevel
-            throw "ValidateNotNullOrEmpty attribute is missing on one of parameters belonging to Path parameterset."
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationError,Compress-Archive"
-        }
+        { Compress-Archive -Path $path -DestinationPath $destinationPath -CompressionLevel $compressionLevel
+        } | ShouldBeErrorId "ParameterArgumentValidationError,Compress-Archive"
     }
 
     function CompressArchiveLiteralPathParameterSetValidator {
@@ -84,17 +80,9 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             [string] $compressionLevel = "Optimal"
         )
 
-        try
-        {
-            Compress-Archive -LiteralPath $literalPath -DestinationPath $destinationPath -CompressionLevel $compressionLevel
-            throw "ValidateNotNullOrEmpty attribute is missing on one of parameters belonging to LiteralPath parameterset."
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationError,Compress-Archive"
-        }
+        { Compress-Archive -LiteralPath $literalPath -DestinationPath $destinationPath -CompressionLevel $compressionLevel
+        } | ShouldBeErrorId "ParameterArgumentValidationError,Compress-Archive"
     }
-
 
     function CompressArchiveInValidPathValidator {
         param
@@ -105,15 +93,8 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             [string] $expectedFullyQualifiedErrorId
         )
 
-        try
-        {
-            Compress-Archive -Path $path -DestinationPath $destinationPath
-            throw "Failed to validate that an invalid Path $invalidPath was supplied as input to Compress-Archive cmdlet."
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be $expectedFullyQualifiedErrorId
-        }
+        { Compress-Archive -Path $path -DestinationPath $destinationPath
+        } | ShouldBeErrorId $expectedFullyQualifiedErrorId
     }
 
     function CompressArchiveInValidArchiveFileExtensionValidator {
@@ -124,15 +105,8 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             [string] $invalidArchiveFileExtension
         )
 
-        try
-        {
-            Compress-Archive -Path $path -DestinationPath $destinationPath
-            throw "Failed to validate that an invalid archive file format $invalidArchiveFileExtension was supplied as input to Compress-Archive cmdlet."
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be "NotSupportedArchiveFileExtension,Compress-Archive"
-        }
+        { Compress-Archive -Path $path -DestinationPath $destinationPath
+        } | ShouldBeErrorId "NotSupportedArchiveFileExtension,Compress-Archive"
     }
 
     function Validate-ArchiveEntryCount {
@@ -180,7 +154,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             $zipArchiveArgs = @($archiveFileStream, [System.IO.Compression.ZipArchiveMode]::Read, $false)
             $zipArchive = New-Object -TypeName System.IO.Compression.ZipArchive -ArgumentList $zipArchiveArgs
 
-            $entryToBeUpdated = $zipArchive.Entries | ? {$_.FullName -eq $entryFileName}
+            $entryToBeUpdated = $zipArchive.Entries | Where-Object {$_.FullName -eq $entryFileName}
 
             if($entryToBeUpdated -ne $null)
             {
@@ -193,7 +167,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             }
             else
             {
-                throw "Failed to find the file $entryFileName in the archive file $path"
+                { throw "Failed to find the file $entryFileName in the archive file $path" } | Should Not Throw
             }
         }
         finally
@@ -218,7 +192,6 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             [string] $expectedFullyQualifiedErrorId
         )
 
-        try
         {
             if($isLiteralPathParameterSet)
             {
@@ -229,12 +202,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
                 Expand-Archive -Path $path -DestinationPath $destinationPath
             }
 
-            throw "Expand-Archive did NOT throw expected error"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be $expectedFullyQualifiedErrorId
-        }
+        } | ShouldBeErrorId $expectedFullyQualifiedErrorId
     }
 
     Context "Compress-Archive - Parameter validation test cases" {
@@ -293,16 +261,11 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             $sourcePath = "$TestDrive/SourceDir"
             $destinationPath = "$TestDrive/ValidateErrorWhenUpdateNotSpecified.zip"
 
-            try
+
             {
                 "Some Data" > $destinationPath
                 Compress-Archive -Path $sourcePath -DestinationPath $destinationPath
-                throw "Failed to validate that an archive file format $destinationPath already exists and -Update switch parameter is not specified while running Compress-Archive command."
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be "ArchiveFileExists,Compress-Archive"
-            }
+            } | ShouldBeErrorId "ArchiveFileExists,Compress-Archive"
         }
 
         It "Validate error from Compress-Archive when duplicate paths are supplied as input to Path parameter" {
@@ -311,15 +274,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
                 "$TestDrive/SourceDir/Sample-1.txt")
             $destinationPath = "$TestDrive/DuplicatePaths.zip"
 
-            try
-            {
-                Compress-Archive -Path $sourcePath -DestinationPath $destinationPath
-                throw "Failed to detect that duplicate Path $sourcePath is supplied as input to Path parameter."
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be "DuplicatePathFound,Compress-Archive"
-            }
+            { Compress-Archive -Path $sourcePath -DestinationPath $destinationPath } | ShouldBeErrorId "DuplicatePathFound,Compress-Archive"
         }
 
         It "Validate error from Compress-Archive when duplicate paths are supplied as input to LiteralPath parameter" {
@@ -328,15 +283,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
                 "$TestDrive/SourceDir/Sample-1.txt")
             $destinationPath = "$TestDrive/DuplicatePaths.zip"
 
-            try
-            {
-                Compress-Archive -LiteralPath $sourcePath -DestinationPath $destinationPath
-                throw "Failed to detect that duplicate Path $sourcePath is supplied as input to LiteralPath parameter."
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be "DuplicatePathFound,Compress-Archive"
-            }
+            { Compress-Archive -LiteralPath $sourcePath -DestinationPath $destinationPath } | ShouldBeErrorId "DuplicatePathFound,Compress-Archive"
         }
 
         It "Validate that relative path can be specified as Path parameter of Compress-Archive cmdlet" {
@@ -408,19 +355,16 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
 
             $destinationPath = "$TestDrive/SampleDir/Child-*/SampleChidArchive.zip"
             $sourcePath = "$TestDrive/SampleDir/Test.txt"
-            try
+
             {
-                Compress-Archive -Path $sourcePath -DestinationPath $destinationPath
-                throw "Failed to detect that destination $destinationPath can resolve to multiple paths"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be "InvalidArchiveFilePath,Compress-Archive"
-            }
-            finally
-            {
-                Remove-Item -LiteralPath $TestDrive/SampleDir -Force -Recurse
-            }
+                try {
+                    Compress-Archive -Path $sourcePath -DestinationPath $destinationPath
+                }
+                finally
+                {
+                    Remove-Item -LiteralPath $TestDrive/SampleDir -Force -Recurse
+                }
+            } | ShouldBeErrorId "InvalidArchiveFilePath,Compress-Archive"
         }
         It "Validate that Compress-Archive cmdlet works when DestinationPath has wild card pattern and resolves to a single valid path" {
 
@@ -647,15 +591,8 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
         It "Validate non existing archive -Path throws expected error message" {
             $sourcePath = "$TestDrive/SourceDir"
             $destinationPath = "$TestDrive/ExpandedArchive"
-            try
-            {
-                Expand-Archive -Path $sourcePath -DestinationPath $destinationPath
-        		throw "Expand-Archive succeeded for non existing archive path"
-            }
-            catch
-            {
-        		$_.FullyQualifiedErrorId | Should Be "PathNotFound,Expand-Archive"
-            }
+
+            { Expand-Archive -Path $sourcePath -DestinationPath $destinationPath } | ShouldBeErrorId "PathNotFound,Expand-Archive"
         }
 
         It "Validate errors from Expand-Archive with NULL & EMPTY values for Path, LiteralPath, DestinationPath parameters" {
@@ -685,20 +622,16 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
         }
 
         It "Validate errors from Expand-Archive when invalid path (non-existing path / non-filesystem path) is supplied for Path or LiteralPath parameters" {
-            try { Expand-Archive -Path "$TestDrive/NonExistingArchive" -DestinationPath "$TestDrive/SourceDir"; throw "Expand-Archive did NOT throw expected error" }
-            catch { $_.FullyQualifiedErrorId | Should Be "ArchiveCmdletPathNotFound,Expand-Archive" }
+            { Expand-Archive -Path "$TestDrive/NonExistingArchive" -DestinationPath "$TestDrive/SourceDir" } | ShouldBeErrorId "ArchiveCmdletPathNotFound,Expand-Archive"
 
             if ( ! $IsCoreCLR ) {
-                try { Expand-Archive -Path "HKLM:/SOFTWARE" -DestinationPath "$TestDrive/SourceDir"; throw "Expand-Archive did NOT throw expected error" }
-                catch { $_.FullyQualifiedErrorId | Should Be "PathNotFound,Expand-Archive" }
+                { Expand-Archive -Path "HKLM:/SOFTWARE" -DestinationPath "$TestDrive/SourceDir" } | ShouldBeErrorId "PathNotFound,Expand-Archive"
             }
 
-            try { Expand-Archive -LiteralPath "$TestDrive/NonExistingArchive" -DestinationPath "$TestDrive/SourceDir"; throw "Expand-Archive did NOT throw expected error" }
-            catch { $_.FullyQualifiedErrorId | Should Be "ArchiveCmdletPathNotFound,Expand-Archive" }
+            { Expand-Archive -LiteralPath "$TestDrive/NonExistingArchive" -DestinationPath "$TestDrive/SourceDir" } | ShouldBeErrorId "ArchiveCmdletPathNotFound,Expand-Archive"
 
             if ( ! $IsCoreCLR ) {
-                try { Expand-Archive -LiteralPath "HKLM:/SOFTWARE" -DestinationPath "$TestDrive/SourceDir"; throw "Expand-Archive did NOT throw expected error" }
-                catch { $_.FullyQualifiedErrorId | Should Be "PathNotFound,Expand-Archive" }
+                { Expand-Archive -LiteralPath "HKLM:/SOFTWARE" -DestinationPath "$TestDrive/SourceDir" } | ShouldBeErrorId "PathNotFound,Expand-Archive"
             }
         }
 
@@ -707,8 +640,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             # $destinationPath = "HKLM:/SOFTWARE"
             $destinationPath = "Variable:/"
 
-            try { Expand-Archive -Path $sourcePath -DestinationPath $destinationPath; throw "Expand-Archive did NOT throw expected error" }
-            catch { $_.FullyQualifiedErrorId | Should Be "InvalidDirectoryPath,Expand-Archive" }
+            { Expand-Archive -Path $sourcePath -DestinationPath $destinationPath } | ShouldBeErrorId "InvalidDirectoryPath,Expand-Archive"
         }
     }
 
@@ -743,19 +675,17 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
 
             $destinationPath = [io.path]::Combine("$TestDrive","$testbasename","Child-*")
             $sourcePath = join-path "$TestDrive" "SamplePreCreatedArchive.zip"
-            try
+
             {
-                Expand-Archive -Path $sourcePath -DestinationPath $destinationPath
-                throw "Failed to detect that destination $destinationPath can resolve to multiple paths"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be "InvalidDestinationPath,Expand-Archive"
-            }
-            finally
-            {
-                Remove-Item -LiteralPath "$TestDrive/$testbasename" -Force -Recurse
-            }
+                try
+                {
+                    Expand-Archive -Path $sourcePath -DestinationPath $destinationPath
+                }
+                finally
+                {
+                    Remove-Item -LiteralPath "$TestDrive/$testbasename" -Force -Recurse
+                }
+            } | ShouldBeErrorId "InvalidDestinationPath,Expand-Archive"
         }
         It "Validate that Expand-Archive cmdlet works when DestinationPath resolves has wild card pattern and resolves to a single valid path" {
             $testbasename = "TargetDir"
@@ -851,15 +781,8 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
         It "Invoke Expand-Archive with unsupported archive format" {
             $sourcePath = "$TestDrive/Sample.cab"
             $destinationPath = "$TestDrive/UnsupportedArchiveFormatDir"
-            try
-            {
-                Expand-Archive -Path $sourcePath -DestinationPath $destinationPath -Force
-                throw "Failed to detect unsupported archive format at $sourcePath"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be "NotSupportedArchiveFileExtension,Expand-Archive"
-            }
+
+            { Expand-Archive -Path $sourcePath -DestinationPath $destinationPath -Force } | ShouldBeErrorId "NotSupportedArchiveFileExtension,Expand-Archive"
         }
 
         It "Invoke Expand-Archive with archive file containing multiple files, directories with subdirectories and empty directories" {

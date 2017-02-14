@@ -1,4 +1,6 @@
-﻿Describe "Command Discovery tests" -Tags "CI" {
+﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
+Describe "Command Discovery tests" -Tags "CI" {
 
     BeforeAll {
         setup -f testscript.ps1 -content "'This script should not run. Running from testscript.ps1'"
@@ -15,15 +17,7 @@
 
     It "<testName>" -TestCases $TestCasesCommandNotFound {
         param($command)
-        try
-        {
-            & $command
-            throw "Should not have found command: '$command'"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be 'CommandNotFoundException'
-        }
+        { & $command } | ShouldBeErrorId 'CommandNotFoundException'
     }
 
     It "Command lookup with duplicate paths" {
@@ -55,32 +49,20 @@
     }
 
     It "Cyclic aliases - direct" {
-        try
         {
             Set-Alias CyclicAliasA CyclicAliasB -Force
             Set-Alias CyclicAliasB CyclicAliasA -Force
             & CyclicAliasA
-            throw "Execution should not reach here. '& CyclicAliasA' should have thrown."
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be 'CommandNotFoundException'
-        }
+        } | ShouldBeErrorId 'CommandNotFoundException'
     }
 
     It "Cyclic aliases - indirect" {
-        try
         {
             Set-Alias CyclicAliasA CyclicAliasB -Force
             Set-Alias CyclicAliasB CyclicAliasC -Force
             Set-Alias CyclicAliasC CyclicAliasA -Force
             & CyclicAliasA
-            throw "Execution should not reach here. '& CyclicAliasA' should have thrown."
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be 'CommandNotFoundException'
-        }
+        } | ShouldBeErrorId 'CommandNotFoundException'
     }
 
     It "Get-Command should return only CmdletInfo, FunctionInfo, AliasInfo or FilterInfo" {

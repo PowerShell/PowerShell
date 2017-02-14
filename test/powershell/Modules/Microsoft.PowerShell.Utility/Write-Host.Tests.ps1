@@ -1,4 +1,6 @@
-﻿Describe "Write-Host with default Console Host" -Tags "Slow","Feature" {
+﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
+Describe "Write-Host with default Console Host" -Tags "Slow","Feature" {
 
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
@@ -36,12 +38,10 @@ Describe "Write-Host with wrong colors" -Tags "CI" {
 
     It 'Should throw if color is invalid: ForegroundColor = <ForegroundColor>; BackgroundColor = <BackgroundColor>' -TestCases:$testWrongColor {
       param($ForegroundColor, $BackgroundColor)
-      try
+
       {
           Write-Host "No output from Write-Host" -ForegroundColor $ForegroundColor -BackgroundColor $BackgroundColor
-          throw "No Exception!"
-      }
-      catch { $_.FullyQualifiedErrorId | Should Be 'CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.WriteHostCommand' }
+      } | ShouldBeErrorId "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.WriteHostCommand"
     }
 }
 

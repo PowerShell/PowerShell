@@ -1,5 +1,7 @@
 using namespace System.Diagnostics
 
+Import-Module $PSScriptRoot\..\Common\Test.Helpers.psm1
+
 # Minishell (Singleshell) is a powershell concept.
 # Its primary use-case is when somebody executes a scriptblock in the new powershell process.
 # The objects are automatically marshelled to the child process and
@@ -90,15 +92,10 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
     Context "ShellInterop" {
         It "Verify Parsing Error Output Format Single Shell should throw exception" {
-            try
             {
                 & $powershell -outp blah -comm { $input }
-                Throw "Test execution should not reach here!"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be "IncorrectValueForFormatParameter"
-            }
+            } | ShouldBeErrorId "IncorrectValueForFormatParameter"
+
         }
 
         It "Verify Validate Dollar Error Populated should throw exception" {
@@ -106,14 +103,11 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $ErrorActionPreference = "Stop"
             try
             {
-                $a = 1,2,3
-                $a | & $powershell -noprofile -command { wgwg-wrwrhqwrhrh35h3h3}
-                Throw "Test execution should not reach here!"
-            }
-            catch
-            {
-                $_.ToString() | Should Match "wgwg-wrwrhqwrhrh35h3h3"
-                $_.FullyQualifiedErrorId | Should Be "CommandNotFoundException"
+                $exc = {
+                    $a = 1,2,3
+                    $a | & $powershell -noprofile -command { wgwg-wrwrhqwrhrh35h3h3}
+                } | ShouldBeErrorId "CommandNotFoundException"
+                $exc.ToString() | Should Match "wgwg-wrwrhqwrhrh35h3h3"
             }
             finally
             {
@@ -129,15 +123,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
 
         It "Verify Parsing Error Input Format Single Shell should throw exception" {
-            try
-            {
-                & $powershell -input blah -comm { $input }
-                Throw "Test execution should not reach here!"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be "IncorrectValueForFormatParameter"
-            }
+            { & $powershell -input blah -comm { $input } } | ShouldBeErrorId "IncorrectValueForFormatParameter"
         }
     }
     Context "CommandLine" {
@@ -358,15 +344,7 @@ foo
                 recurse $args
             }
 
-            try
-            {
-                recurse "args"
-                Throw "Incorrect exception"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be "CallDepthOverflow"
-            }
+            { recurse "args" } | ShouldBeErrorId "CallDepthOverflow"
         }
     }
 }

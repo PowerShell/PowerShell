@@ -1,4 +1,6 @@
-﻿Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
+﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
+Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         BeforeAll {
             $orgin = $GLOBAL:errorActionPreference
         }
@@ -33,28 +35,25 @@
 
         It 'action preference of Ignore cannot be set as a preference variable' {
             try {
-                $GLOBAL:errorActionPreference = "Ignore"
-                Get-Process -Name asdfasdfasdf
-                Throw "Exception expected, execution should not have reached here"
-             } catch {
-                     $_.CategoryInfo.Reason | Should Be NotSupportedException
-             } finally {
+                { $GLOBAL:errorActionPreference = "Ignore" } | Should Not Throw
+                $exc = { Get-Process -Name asdfasdfasdf } | ShouldBeErrorId "System.NotSupportedException,Microsoft.PowerShell.Commands.GetProcessCommand"
+                $exc.exception.Message | Should Match "Ignore .* ActionPreference"
+            }
+            finally {
                 $GLOBAL:errorActionPreference = $orgin
-             }
-
+            }
         }
 
         It 'action preference of Suspend cannot be set as a preference variable' {
             try {
-                    $GLOBAL:errorActionPreference = "Suspend"
-                    Get-Process -Name asdfasdfasdf
-                    Throw "Exception expected, execution should not have reached here"
-                } catch {
-                    $_.CategoryInfo.Reason | Should Be ArgumentTransformationMetadataException
-                }
-                finally {
-                    $GLOBAL:errorActionPreference = $orgin
-                }
+                    $exc = {
+                        $GLOBAL:errorActionPreference = "Suspend"
+                    } | ShouldBeErrorId "RuntimeException"
+                    $exc.exception.Message | Should Match "Suspend .* ActionPreference"
+            }
+            finally {
+                $GLOBAL:errorActionPreference = $orgin
+            }
         }
 
         It 'enum disambiguation works' {
@@ -76,35 +75,15 @@
                 "Hello"
             }
 
-            try
-            {
-                MyHelperFunction -ErrorAction Suspend
-                Throw "Exception expected, execution should not have reached here"
-            } catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,MyHelperFunction"
-            }
+            { MyHelperFunction -ErrorAction Suspend } | ShouldBeErrorId "ParameterBindingFailed,MyHelperFunction"
         }
 
         It 'ErrorAction = Suspend does not work on cmdlets' {
-            try
-            {
-                Get-Process -ErrorAction Suspend
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
-            }
+            { Get-Process -ErrorAction Suspend } | ShouldBeErrorId "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
         }
 
         It 'WarningAction = Suspend does not work' {
-            try
-            {
-                Get-Process -WarningAction Suspend
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
-            }
+            { Get-Process -WarningAction Suspend } | ShouldBeErrorId "ParameterBindingFailed,Microsoft.PowerShell.Commands.GetProcessCommand"
         }
 
         #issue 2076

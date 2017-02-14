@@ -1,4 +1,6 @@
-﻿Describe "Tests conversion of deserialized types to original type using object properties." -Tags "CI" {
+﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
+Describe "Tests conversion of deserialized types to original type using object properties." -Tags "CI" {
     BeforeAll {
         # Create new types and test functions.
         $type1,$type2,$type3,$type4 = Add-Type -PassThru -TypeDefinition @'
@@ -142,15 +144,7 @@
         }
 
         It 'Type casts should fail.' {
-
-            try
-            {
-                $tc3 = [test3]$dst3
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be 'InvalidCastConstructorException'
-            }
+            { $tc3 = [test3]$dst3 } | ShouldBeErrorId 'InvalidCastConstructorException'
         }
 
         It 'Parameter bindings should fail.' {
@@ -165,14 +159,7 @@
                 $test | Format-List | Out-String
             }
 
-            try
-            {
-                test-3 $dst3
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be 'ParameterArgumentTransformationError,test-3'
-            }
+            { test-3 $dst3 } | ShouldBeErrorId 'ParameterArgumentTransformationError,test-3'
         }
     }
 

@@ -6,6 +6,8 @@
 # Note: These tests use data from http://httpbin.org/
 #
 
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 # Invokes the given command via script block invocation.
 #
 function ExecuteWebCommand
@@ -693,15 +695,7 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
         It "<Name>" -TestCases $testCases {
             param ($scriptblock, $expectedFullyQualifiedErrorId)
 
-            try
-            {
-                & $scriptblock
-                throw "No Exception!"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | should be $ExpectedFullyQualifiedErrorId
-            }
+            $scriptblock | ShouldBeErrorId $ExpectedFullyQualifiedErrorId
         }
     }
 

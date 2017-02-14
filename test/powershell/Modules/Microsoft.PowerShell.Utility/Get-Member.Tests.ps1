@@ -1,3 +1,5 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "Get-Member" -Tags "CI" {
     It "Should be able to be called on string objects, ints, arrays, etc" {
 	$a = 1 #test numbers
@@ -149,15 +151,7 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
         Update-TypeData -AppendPath $fileToDeleteName
 
         It "Fail to get member without any input" {
-            try
-            {
-                Get-Member -MemberType All -ErrorAction Stop
-                Throw "Execution OK"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be 'NoObjectInGetMember,Microsoft.PowerShell.Commands.GetMemberCommand'
-            }
+            { Get-Member -MemberType All -ErrorAction Stop } | ShouldBeErrorId "NoObjectInGetMember,Microsoft.PowerShell.Commands.GetMemberCommand"
         }
 
         It 'Get the expected Properties of "Employee" object' {

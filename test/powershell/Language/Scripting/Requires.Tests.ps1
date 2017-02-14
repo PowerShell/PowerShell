@@ -1,3 +1,5 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "Requires tests" -Tags "CI" {
     Context "Parser error" {
 
@@ -13,15 +15,7 @@ Describe "Requires tests" -Tags "CI" {
 
         It "throws ParserException - <testname>" -TestCases $testcases {
             param($command)
-            try
-            {
-                [scriptblock]::Create($command)
-                throw "'$command' should have thrown ParserError"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be "ParseException"
-            }
+            { [scriptblock]::Create($command) } | ShouldBeErrorId "ParseException"
         }
     }
 

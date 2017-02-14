@@ -1,6 +1,8 @@
 using namespace System.Diagnostics
 using namespace System.Management.Automation.Internal
 
+Import-Module $PSScriptRoot\..\Common\Test.Helpers.psm1
+
 Describe "PowerShell Command Debugging" -tags "CI" {
 
     BeforeAll {
@@ -203,13 +205,7 @@ Describe "Runspace Debugging API tests" -tag CI {
         }
 
         It "PSStandaloneMonitorRunspaceInfo should throw when called with a null argument to the constructor" {
-            try {
-                [PSStandaloneMonitorRunspaceInfo]::new($null)
-                throw "Execution should have thrown"
-            }
-            Catch {
-                $_.FullyQualifiedErrorId | should be PSArgumentNullException
-            }
+            { [PSStandaloneMonitorRunspaceInfo]::new($null) } | ShouldBeErrorId "PSArgumentNullException"
         }
 
         it "PSStandaloneMonitorRunspaceInfo properties should have proper values" {
@@ -237,45 +233,18 @@ Describe "Runspace Debugging API tests" -tag CI {
         }
 
         It "DebuggerUtils StartMonitoringRunspace requires non-null debugger" {
-            try {
-                [DebuggerUtils]::StartMonitoringRunspace($null,$runspaceInfo)
-                throw "Execution should have thrown"
-            }
-            catch {
-                $_.fullyqualifiederrorid | should be PSArgumentNullException
-            }
+            { [DebuggerUtils]::StartMonitoringRunspace($null,$runspaceInfo) } | ShouldBeErrorId "PSArgumentNullException"
         }
+
         It "DebuggerUtils StartMonitoringRunspace requires non-null runspaceInfo" {
-            try {
-                [DebuggerUtils]::StartMonitoringRunspace($runspace.Debugger,$null)
-                throw "Execution should have thrown"
-            }
-            catch {
-                $_.fullyqualifiederrorid | should be PSArgumentNullException
-            }
+            { [DebuggerUtils]::StartMonitoringRunspace($runspace.Debugger,$null) } | ShouldBeErrorId "PSArgumentNullException"
         }
 
         It "DebuggerUtils EndMonitoringRunspace requires non-null debugger" {
-            try {
-                [DebuggerUtils]::EndMonitoringRunspace($null,$runspaceInfo)
-                throw "Execution should have thrown"
-            }
-            catch {
-                $_.fullyqualifiederrorid | should be PSArgumentNullException
-            }
+            { [DebuggerUtils]::EndMonitoringRunspace($null,$runspaceInfo) } | ShouldBeErrorId "PSArgumentNullException"
         }
         It "DebuggerUtils EndMonitoringRunspace requires non-null runspaceInfo" {
-            try {
-                [DebuggerUtils]::EndMonitoringRunspace($runspace.Debugger,$null)
-                throw "Execution should have thrown"
-            }
-            catch {
-                $_.fullyqualifiederrorid | should be PSArgumentNullException
-            }
+            { [DebuggerUtils]::EndMonitoringRunspace($runspace.Debugger,$null) } | ShouldBeErrorId "PSArgumentNullException"
         }
-
     }
 }
-
-
-

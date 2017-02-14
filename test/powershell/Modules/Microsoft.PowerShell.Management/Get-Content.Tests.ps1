@@ -1,3 +1,5 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "Get-Content" -Tags "CI" {
   $testString = "This is a test content for a file"
   $nl         = [Environment]::NewLine
@@ -19,13 +21,7 @@ Describe "Get-Content" -Tags "CI" {
     Remove-Item -Path $testPath2 -Force
   }
   It "Should throw an error on a directory  " {
-        try {
-            Get-Content . -ErrorAction Stop
-            throw "No Exception!"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | should be "GetContentReaderUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetContentCommand"
-        }
+        { Get-Content . -ErrorAction Stop } | ShouldBeErrorId "GetContentReaderUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetContentCommand"
   }
   It "Should return an Object when listing only a single line and the correct information from a file" {
         $content = (Get-Content -Path $testPath)
@@ -63,15 +59,15 @@ Describe "Get-Content" -Tags "CI" {
 	  Get-Content -Path $testPath2 -Last 1 | Should Be $fifthline
   }
   It "Should be able to get content within a different drive" {
-	  pushd env:
+	  Push-Location env:
 	  $expectedoutput = [Environment]::GetEnvironmentVariable("PATH");
     { Get-Content PATH } | Should Not Throw
 	  Get-Content PATH     | Should Be $expectedoutput
-  	popd
+  	Pop-Location
   }
   #[BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
   It "should throw 'PSNotSupportedException' when you set-content to an unsupported provider" -Skip:($IsLinux -Or $IsOSX) {
-     {get-content -path HKLM:\\software\\microsoft -ea stop} | Should Throw "IContentCmdletProvider interface is not implemented"
+     { get-content -path HKLM:\\software\\microsoft -ErrorAction Stop } | ShouldBeErrorId "NotSupported,Microsoft.PowerShell.Commands.GetContentCommand"
   }
   It "should Get-Content with a variety of -Tail and -ReadCount values" {#[DRT]
     set-content -path $testPath "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"

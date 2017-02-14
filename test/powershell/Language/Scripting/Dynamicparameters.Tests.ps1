@@ -1,4 +1,6 @@
-﻿Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
+﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
+Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
     BeforeAll {
         Class MyTestParameter {
             [parameter(ParameterSetName = 'pset1', position=0, mandatory=1)]
@@ -62,12 +64,7 @@
     }
 
     It "When the dynamic parameter is not available, and raises an error when specified" {
-        try {
-            foo-bar -path def -dp1 42
-            Throw "Exception expected, execution should not have reached here"
-        } catch {
-            $_.FullyQualifiedErrorId | Should Be "NamedParameterNotFound,foo-bar"
-        }
+        { foo-bar -path def -dp1 42 } | ShouldBeErrorId "NamedParameterNotFound,foo-bar"
     }
 
     It "No dynamic parameter shouldn't cause an errr " {

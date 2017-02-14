@@ -1,15 +1,13 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "New-Alias DRT Unit Tests" -Tags "CI" {
-	It "New-Alias Constant should throw SessionStateUnauthorizedAccessException"{
-		try {
-			New-Alias -Name "ABCD" -Value "foo" -Option "Constant" -Force:$true
-			New-Alias -Name "ABCD" -Value "foo" -Force:$true -ErrorAction Stop
-			Throw "Execution OK"
-		}
-		catch {
-			$_.CategoryInfo| Should Match "SessionStateUnauthorizedAccessException"
-			$_.FullyQualifiedErrorId | Should be "AliasNotWritable,Microsoft.PowerShell.Commands.NewAliasCommand"
-		}
-	}
+    It "New-Alias Constant should throw SessionStateUnauthorizedAccessException"{
+        $exc = {
+            New-Alias -Name "ABCD" -Value "foo" -Option "Constant" -Force:$true
+            New-Alias -Name "ABCD" -Value "foo" -Force:$true -ErrorAction Stop
+        } | ShouldBeErrorId "AliasNotWritable,Microsoft.PowerShell.Commands.NewAliasCommand"
+        $exc.CategoryInfo | Should Match "SessionStateUnauthorizedAccessException"
+    }
 
 	It "New-Alias NamePositional And Value Valid" {
 			New-Alias ABCD -Value "MyCommand" -Scope "0"

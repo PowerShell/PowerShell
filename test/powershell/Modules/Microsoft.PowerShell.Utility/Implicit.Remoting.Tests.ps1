@@ -1,5 +1,5 @@
-﻿$remotingModule = Join-Path $PSScriptRoot "../../Common/TestRemoting.psm1"
-Import-Module $remotingModule -ErrorAction SilentlyContinue
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+Import-Module $PSScriptRoot\..\..\Common\TestRemoting.psm1
 
 Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature" {
 
@@ -80,12 +80,7 @@ Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy
     }
 
     It "Verifies security error when Certificate parameter is not used" -Skip:$skipTest {
-        try {
-            $importedModule = Import-PSSession $session Get-Variable -Prefix Remote -AllowClobber
-            throw "expect Import-PSSession to throw"
-        } catch {
-            $_.FullyQualifiedErrorId | Should Be "InvalidOperation,Microsoft.PowerShell.Commands.ImportPSSessionCommand"
-        }
+        { $importedModule = Import-PSSession $session Get-Variable -Prefix Remote -AllowClobber } | ShouldbeErrorId "InvalidOperation,Microsoft.PowerShell.Commands.ImportPSSessionCommand"
     }
 }
 
@@ -319,15 +314,15 @@ Describe "Tests Export-PSSession" -tags "Feature" {
     }
 
     It "Verifies Export-PSSession creates a psd1 file" -Skip:$skipTest {
-        ($results | ?{ $_.Name -like "*$(Split-Path -Leaf $file).psd1" }) | Should Be $true
+        ($results | Where-Object { $_.Name -like "*$(Split-Path -Leaf $file).psd1" }) | Should Be $true
     }
 
     It "Verifies Export-PSSession creates a psm1 file" -Skip:$skipTest {
-        ($results | ?{ $_.Name -like "*.psm1" }) | Should Be $true
+        ($results | Where-Object { $_.Name -like "*.psm1" }) | Should Be $true
     }
 
     It "Verifies Export-PSSession creates a ps1xml file" -Skip:$skipTest {
-        ($results | ?{ $_.Name -like "*.ps1xml" }) | Should Be $true
+        ($results | Where-Object { $_.Name -like "*.ps1xml" }) | Should Be $true
     }
 
     It "Verifies that Export-PSSession fails when a module directory already exists" -Skip:$skipTest {
@@ -626,7 +621,7 @@ Describe "Import-PSSession with FormatAndTypes" -tags "Feature" {
         BeforeAll {
             if ($skipTest) { return }
 
-            $formattingScript = { new-object System.Management.Automation.Host.Size | %{ $_.Width = 123; $_.Height = 456; $_ } | Out-String }
+            $formattingScript = { new-object System.Management.Automation.Host.Size | ForEach-Object{ $_.Width = 123; $_.Height = 456; $_ } | Out-String }
             $originalLocalFormatting = & $formattingScript
 
             # Original local and remote formatting should be equal (sanity check)
@@ -803,7 +798,7 @@ Describe "Import-PSSession functional tests" -tags "Feature" {
             # The loop below works around the fact that PSEventManager uses threadpool worker to queue event handler actions to process later.
             # Usage of threadpool means that it is impossible to predict when the event handler will run (this is Windows 8 Bugs: #882977).
             $i = 0
-            while ( ($i -lt 20) -and ($null -ne (Get-Module | ? { $_.Path -eq $module.Path })) )
+            while ( ($i -lt 20) -and ($null -ne (Get-Module | Where-Object { $_.Path -eq $module.Path })) )
             {
                 $i++
                 Start-Sleep -Milliseconds 50
@@ -811,7 +806,7 @@ Describe "Import-PSSession functional tests" -tags "Feature" {
         }
 
         It "Temporary module should be automatically removed after runspace is closed" -Skip:$skipTest {
-            ((Get-Module | ? { $_.Path -eq $module.Path }) -eq $null) | Should Be $true
+            ((Get-Module | Where-Object { $_.Path -eq $module.Path }) -eq $null) | Should Be $true
         }
 
         It "Temporary psm1 file should be automatically removed after runspace is closed" -Skip:$skipTest {
@@ -876,7 +871,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
                         $ipaddress
                     )
 
-                    "Bound parameter: $($myInvocation.BoundParameters.Keys | sort)"
+                    "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
                 }
             }
 
@@ -958,7 +953,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
                         $ipaddress
                     )
 
-                    "Bound parameter: $($myInvocation.BoundParameters.Keys | sort)"
+                    "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
                 }
             }
 
@@ -1009,14 +1004,14 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
                         $PriorityClass
                     )
 
-                    "Bound parameter: $($myInvocation.BoundParameters.Keys | sort)"
+                    "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
                 }
             }
 
             # Sanity checks.
-            Invoke-Command $session {gps -pid $pid | foo} | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
-            Invoke-Command $session {gps -pid $pid | foo -Total 5} | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
-            Invoke-Command $session {gps -pid $pid | foo -Priority normal} | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
+            Invoke-Command $session {Get-Process -pid $pid | foo} | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
+            Invoke-Command $session {Get-Process -pid $pid | foo -Total 5} | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
+            Invoke-Command $session {Get-Process -pid $pid | foo -Priority normal} | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
 
             $module = Import-PSSession $session foo -AllowClobber
         }
@@ -1027,15 +1022,15 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
         }
 
         It "Pipeline binding works by property name" -Skip:$skipTest {
-            (gps -id $pid | foo) | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
+            (Get-Process -id $pid | foo) | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
         }
 
         It "Pipeline binding works by property name" -Skip:$skipTest {
-            (gps -id $pid | foo -Total 5) | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
+            (Get-Process -id $pid | foo -Total 5) | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
         }
 
         It "Pipeline binding works by property name" -Skip:$skipTest {
-            (gps -id $pid | foo -Priority normal) | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
+            (Get-Process -id $pid | foo -Priority normal) | Should Be "Bound parameter: PriorityClass TotalProcessorTime"
         }
     }
 
@@ -1055,7 +1050,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
                         $ipaddress
                     )
 
-                    "Bound parameter: $($myInvocation.BoundParameters.Keys | sort)"
+                    "Bound parameter: $($myInvocation.BoundParameters.Keys | Sort-Object)"
                 }
             }
 
@@ -1620,7 +1615,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
         }
 
         It "'Completed' progress record should be present" -Skip:$skipTest {
-            ($powerShell.Streams.Progress | select -last 1).RecordType.ToString() | Should Be "Completed"
+            ($powerShell.Streams.Progress | Select-Object -last 1).RecordType.ToString() | Should Be "Completed"
         }
     }
 
@@ -1653,7 +1648,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
 
     It "Strange parameter names should trigger an error" -Skip:$skipTest {
         try {
-            Invoke-Command $session { function attack(${foo="$(calc)"}){echo "It is done."}}
+            Invoke-Command $session { function attack(${foo="$(calc)"}){Write-Output "It is done."}}
             $module = Import-PSSession -Session $session -CommandName attack -ErrorAction SilentlyContinue -ErrorVariable expectedError -AllowClobber
             $expectedError | Should Not Be NullOrEmpty
         } finally {
@@ -1694,19 +1689,23 @@ Describe "Implicit remoting tests" -tags "Feature" {
     }
 
     It "Get-Command returns something that is not CommandInfo" -Skip:$skipTest {
-        try {
+        $exc = {
+            try
+            {
             Invoke-Command $session { $oldGetCommand = ${function:Get-Command} }
             Invoke-Command $session { function Get-Command { Microsoft.PowerShell.Utility\Get-Variable } }
 
             $module = Import-PSSession -Session $session -AllowClobber
-            throw "Import-PSSession should throw"
-        } catch {
-            $msg = [string]($_)
-            $msg.Contains("Get-Command") | Should Be $true
-        } finally {
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
-            Invoke-Command $session { ${function:Get-Command} = $oldGetCommand }
-        }
+            }
+            finally
+            {
+                if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+                Invoke-Command $session { ${function:Get-Command} = $oldGetCommand }
+            }
+        } | ShouldbeErrorId "ErrorMalformedDataFromRemoteCommand,Microsoft.PowerShell.Commands.ImportPSSessionCommand"
+        $exc.Exception.Message | Should Match "Get-Command"
+            #$msg = [string]($_)
+            #$msg.Contains("Get-Command") | Should Be $true
     }
 
     # Test order of remote commands (alias > function > cmdlet > external script)
@@ -1983,9 +1982,9 @@ Describe "Implicit remoting with disconnected session" -tags "Feature" {
     It "Should have a new session when the disconnected session cannot be re-connected" -Pending {
         ## Disconnect session and make it un-connectable.
         Disconnect-PSSession $session
-        start powershell -arg 'Get-PSSession -cn localhost -name Session102 | Connect-PSSession' -Wait
+        Start-Process powershell -arg 'Get-PSSession -cn localhost -name Session102 | Connect-PSSession' -Wait
 
-        sleep 3
+        Start-Sleep 3
 
         ## This time a new session is created because the old one is unavailable.
         $dSessionPid = Get-RemoteVariable pid

@@ -1,30 +1,32 @@
 ##
 ## SSH Remoting cmdlet tests
 ##
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "SSHTransport switch parameter value" -Tags 'Feature' {
 
     BeforeAll {
 
         $TestCasesSSHTransport = @(
-            @{scriptBlock = {New-PSSession -HostName localhost -UserName UserA -SSHTransport:$false}; testName = 'New-PSSession SSHTransport parameter cannot have false value'}
-            @{scriptBlock = {Enter-PSSession -HostName localhost -UserName UserA -SSHTransport:$false}; testName = 'Enter-PSSession SSHTransport parameter cannot have false value'}
-            @{scriptBlock = {Invoke-Command -ScriptBlock {"Hello"} -HostName localhost -UserName UserA -SSHTransport:$false}; testName = 'Invoke-Command SSHTransport parameter cannot have false value'}
+            @{ scriptBlock = {New-PSSession -HostName localhost -UserName UserA -SSHTransport:$false};
+               testName = 'New-PSSession SSHTransport parameter cannot have false value';
+               ErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.NewPSSessionCommand"
+            }
+            @{ scriptBlock = {Enter-PSSession -HostName localhost -UserName UserA -SSHTransport:$false};
+               testName = 'Enter-PSSession SSHTransport parameter cannot have false value';
+               ErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.EnterPSSessionCommand"
+            }
+            @{ scriptBlock = {Invoke-Command -ScriptBlock {"Hello"} -HostName localhost -UserName UserA -SSHTransport:$false};
+               testName = 'Invoke-Command SSHTransport parameter cannot have false value';
+               ErrorId = "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.InvokeCommandCommand"
+            }
         )
     }
 
     It "<testName>" -TestCases $TestCasesSSHTransport {
+        param($scriptBlock, $ErrorId)
 
-        param($scriptBlock)
-        try
-        {
-            & $scriptBlock
-            throw "Parameter argument should not be valid"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Match "ParameterArgumentValidationError"
-        }
+        $scriptBlock | ShouldBeErrorId $ErrorId
     }
 }
 
@@ -44,14 +46,7 @@ Describe "SSHConnection parameter hashtable error conditions" -Tags 'Feature' {
 
     It "<testName>" -TestCases $TestCasesSSHConnection {
         param ($scriptBlock)
-        try
-        {
-            & $scriptBlock
-            throw "Parameter set should not be valid"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Match "Argument,Microsoft.PowerShell.Commands.NewPSSessionCommand"
-        }
+
+        $scriptBlock | ShouldBeErrorId "Argument,Microsoft.PowerShell.Commands.NewPSSessionCommand"
     }
 }

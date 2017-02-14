@@ -1,28 +1,21 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "SSH Remoting API Tests" -Tags "Feature" {
 
     Context "SSHConnectionInfo Class Tests" {
 
         It "SSHConnectionInfo constructor should throw null argument exception for null HostName parameter" {
-
-            try
             {
                 [System.Management.Automation.Runspaces.SSHConnectionInfo]::new(
                     "UserName",
                     [System.Management.Automation.Internal.AutomationNull]::Value,
                     [System.Management.Automation.Internal.AutomationNull]::Value)
-
-                throw "No Exception!"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be "PSArgumentNullException"
-            }
+            } | ShouldBeErrorId "PSArgumentNullException"
         }
 
         It "SSHConnectionInfo should throw file not found exception for invalid key file path" {
 
-            try
-            {
+            $exc = {
                 $sshConnectionInfo = [System.Management.Automation.Runspaces.SSHConnectionInfo]::new(
                     "UserName",
                     "localhost",
@@ -30,13 +23,10 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
 
                 $rs = [runspacefactory]::CreateRunspace($sshConnectionInfo)
                 $rs.Open()
-
-                throw "No Exception!"
-            }
-            catch
-            {
-                $_.Exception.InnerException.InnerException | Should BeOfType System.IO.FileNotFoundException
-            }
+            } | ShouldBeErrorId "PSRemotingDataStructureException"
+            $expectedFileNotFoundException = $exc.Exception.InnerException.InnerException
+            $expectedFileNotFoundException | Should Not BeNullOrEmpty
+            $expectedFileNotFoundException | Should BeOfType System.IO.FileNotFoundException
         }
     }
 }

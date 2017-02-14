@@ -1,3 +1,5 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "Start-Process" -Tags @("CI","SLOW") {
     $pingCommand = (Get-Command -CommandType Application ping)[0].Definition
     $pingDirectory = Split-Path $pingCommand -Parent
@@ -71,16 +73,8 @@ Describe "Start-Process" -Tags @("CI","SLOW") {
     }
 
     It "Should give an error when Verb parameter is used" -Skip:(-not $IsCoreClr) {
-        try
-        {
-            Start-Process -Verb runas -FilePath $pingCommand -ArgumentList $pingParam
-            throw "No Exception!"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should be "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand"
-            $_.Exception.Message | Should match '-Verb'
-        }
+        $exc = { Start-Process -Verb runas -FilePath $pingCommand -ArgumentList $pingParam } | ShouldBeErrorId "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand" -PassThru
+        $exc.Exception.Message | Should match '-Verb'
     }
     Remove-Item -Path $tempFile -Force
 }

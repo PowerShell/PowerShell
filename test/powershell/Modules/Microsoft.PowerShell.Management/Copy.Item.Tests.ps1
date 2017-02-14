@@ -4,6 +4,8 @@
 #
 #
 
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 # If PS Remoting is not available, do not run the suite.
 function ShouldRun
 {
@@ -323,15 +325,7 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             $destinationFolderPath = Join-Path $destinationFolderPath "A\B\C\D\E"
             $expectedFullyQualifiedErrorId = 'RemotePathNotFound,Microsoft.PowerShell.Commands.CopyItemCommand'
 
-            try
-            {
-                Copy-Item -Path $filePath -ToSession $s -Destination $destinationFolderPath -ErrorAction Stop
-                throw "CodeExecuted"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | should be $expectedFullyQualifiedErrorId
-            }
+            { Copy-Item -Path $filePath -ToSession $s -Destination $destinationFolderPath -ErrorAction Stop } | ShouldBeErrorId $expectedFullyQualifiedErrorId
         }
 
         It "Copy folder to remote session recursively works even if the target directory does not exist." {
@@ -414,15 +408,8 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             $destinationFolderPath = GetDestinationFolderPath
             $destinationFolderPath = Join-Path $destinationFolderPath "A\B\C\D\E"
             $expectedFullyQualifiedErrorId = 'CopyItemRemotelyIOError,Microsoft.PowerShell.Commands.CopyItemCommand'
-            try
-            {
-                Copy-Item -Path $filePath -FromSession $s -Destination $destinationFolderPath -ErrorAction Stop
-                throw "CodeExecuted"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | should be $expectedFullyQualifiedErrorId
-            }
+
+            { Copy-Item -Path $filePath -FromSession $s -Destination $destinationFolderPath -ErrorAction Stop } | ShouldBeErrorId  $expectedFullyQualifiedErrorId
         }
 
         It "Copy folder from remote session recursively works even if the target directory does not exist." {
@@ -540,29 +527,13 @@ Describe "Validate Copy-Item Remotely" -Tags "CI" {
             if ($fromSession)
             {
                 It "Copy-Item FromSession -Path '$path' throws $expectedFullyQualifiedErrorId" {
-                    try
-                    {
-                        Copy-Item -Path $path -FromSession $s -Destination $destination -ErrorAction Stop
-                        throw "CodeExecuted"
-                    }
-                    catch
-                    {
-                        $_.FullyQualifiedErrorId | should be $expectedFullyQualifiedErrorId
-                    }
+                    { Copy-Item -Path $path -FromSession $s -Destination $destination -ErrorAction Stop } | ShouldBeErrorId $expectedFullyQualifiedErrorId
                 }
             }
             else
             {
                 It "Copy-Item ToSession -Destination '$path' throws $expectedFullyQualifiedErrorId" {
-                    try
-                    {
-                        Copy-Item -Path $path -ToSession $s -Destination $destination -ErrorAction Stop
-                        throw "CodeExecuted"
-                    }
-                    catch
-                    {
-                        $_.FullyQualifiedErrorId | should be $expectedFullyQualifiedErrorId
-                    }
+                    { Copy-Item -Path $path -ToSession $s -Destination $destination -ErrorAction Stop } | ShouldBeErrorId $expectedFullyQualifiedErrorId
                 }
             }
         }
@@ -708,26 +679,10 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
         It "Copy-Item throws 'SessionIsNotInFullLanguageMode' error for a session in '$languageMode'" {
 
             # FromSession
-            try
-            {
-                Copy-Item -Path $testFilePath -FromSession $session -Destination $destination -Force -Verbose -ea Stop
-                throw "CodeExecuted"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | should be "SessionIsNotInFullLanguageMode,Microsoft.PowerShell.Commands.CopyItemCommand"
-            }
+            { Copy-Item -Path $testFilePath -FromSession $session -Destination $destination -Force -Verbose -ErrorAction Stop } | ShouldBeErrorId "SessionIsNotInFullLanguageMode,Microsoft.PowerShell.Commands.CopyItemCommand"
 
             # ToSession
-            try
-            {
-                Copy-Item -Path $testFilePath -ToSession $session -Destination $destination -Force -Verbose -ea Stop
-                throw "CodeExecuted"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | should be "SessionIsNotInFullLanguageMode,Microsoft.PowerShell.Commands.CopyItemCommand"
-            }
+            { Copy-Item -Path $testFilePath -ToSession $session -Destination $destination -Force -Verbose -ErrorAction Stop } | ShouldBeErrorId "SessionIsNotInFullLanguageMode,Microsoft.PowerShell.Commands.CopyItemCommand"
         }
     }
 }

@@ -1,4 +1,6 @@
-﻿Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
+﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
+Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
         BeforeAll {
             set-strictmode -v 2
             function list {
@@ -24,16 +26,7 @@
 
         It 'Check default variables' {
 
-            try
-            {
-                {2+$a}.CheckRestrictedLanguage($null, $null, $false)
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be 'ParseException'
-            }
-
+            { {2+$a}.CheckRestrictedLanguage($null, $null, $false) } | ShouldBeErrorId 'ParseException'
         }
 
         It 'Check union of default + one allowed variables' {
@@ -53,28 +46,12 @@
 
         It 'Check union of default + one disallowed variables' {
 
-            try
-            {
-                { $a + $b + $c }.CheckRestrictedLanguage($null, (list a b), $false)   # fail
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be 'ParseException'
-            }
+            { { $a + $b + $c }.CheckRestrictedLanguage($null, (list a b), $false) } | ShouldBeErrorId 'ParseException'
         }
 
         It 'Check union of default + one allowed variable and but not allow environment variable' {
 
-            try
-            {
-                { 2 + $a + $env:foo }.CheckRestrictedLanguage($null, (list a), $false)   # fail
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be 'ParseException'
-            }
+            { { 2 + $a + $env:foo }.CheckRestrictedLanguage($null, (list a), $false) } | ShouldBeErrorId 'ParseException'
         }
 
         It 'Check union of default + one allowed variable name and allow environment variable ' {
@@ -89,15 +66,7 @@
 
         It 'Check for restricted commands' {
 
-            try
-            {
-                {get-date}.CheckRestrictedLangauge($null, $null, $false)
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be 'MethodNotFound'
-            }
+            { {get-date}.CheckRestrictedLangauge($null, $null, $false) } | ShouldBeErrorId 'MethodNotFound'
         }
 
         It 'Check for allowed commands and variables' {

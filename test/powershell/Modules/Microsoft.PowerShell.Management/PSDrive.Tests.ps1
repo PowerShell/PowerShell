@@ -1,3 +1,5 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "Basic Alias Provider Tests" -Tags "CI" {
     Context "Validate basic PSDrive Cmdlets" {
         BeforeAll {
@@ -70,11 +72,7 @@ Describe "Extended Alias Provider Tests" -Tags "Feature" {
 
         It "Verify WhatIf" {
             New-PSDrive -Name $psDriveName -PSProvider FileSystem -Root $psDriveRoot -WhatIf > $null
-            try {
-                Get-PSDrive -Name $psDriveName -ErrorAction Stop
-                throw "Expected exception not thrown"
-            }
-            catch { $_.FullyQualifiedErrorId | Should Be "GetLocationNoMatchingDrive,Microsoft.PowerShell.Commands.GetPSDriveCommand" }
+            { Get-PSDrive -Name $psDriveName -ErrorAction Stop } | ShouldBeErrorId "GetLocationNoMatchingDrive,Microsoft.PowerShell.Commands.GetPSDriveCommand"
         }
 
         It "Verify Scope" {

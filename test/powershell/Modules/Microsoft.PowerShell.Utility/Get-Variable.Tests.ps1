@@ -1,14 +1,9 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
-	It "Get-Variable of not existing variable Name should throw ItemNotFoundException"{
-		try {
-			Get-Variable -EA Stop -Name nonexistingVariableName
-			Throw "Execution OK"
-		}
-		catch {
-			$_.FullyQualifiedErrorId | Should be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
-		}
-	}
+    It "Get-Variable of not existing variable Name should throw ItemNotFoundException"{
+        { Get-Variable -EA Stop -Name nonexistingVariableName } | ShouldBeErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+    }
 
 	It "Get-Variable of existing variable Name with include and bogus exclude should work"{
 		Set-Variable newVar testing
@@ -40,16 +35,12 @@ Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
 		$var1[2].Value|Should Be "another test"
 	}
 
-	It "Get-Variable of existing private variable Name should throw ItemNotFoundException"{
-		try {
-			Set-Variable newVar testing -Option Private
-			&{Get-Variable -Name newVar -EA Stop}
-			Throw "Execution OK"
-		}
-		catch {
-			$_.FullyQualifiedErrorId | Should be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
-		}
-	}
+    It "Get-Variable of existing private variable Name should throw ItemNotFoundException"{
+        {
+            Set-Variable newVar testing -Option Private
+            &{Get-Variable -Name newVar -ErrorAction Stop}
+        } | ShouldBeErrorId "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
+    }
 }
 
 Describe "Get-Variable" -Tags "CI" {

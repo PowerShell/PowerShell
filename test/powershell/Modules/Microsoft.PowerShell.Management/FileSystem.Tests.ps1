@@ -1,3 +1,5 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     BeforeAll {
         $testDir = "TestDir"
@@ -229,11 +231,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
 
         It "Verify Directory + Whatif" {
             New-Item -Path . -ItemType Directory -Name $testDir -WhatIf > $null
-            try {
-                Get-Item -Path $testDir -ErrorAction Stop
-                throw "Expected exception not thrown"
-            }
-            catch { $_.FullyQualifiedErrorId | Should Be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand" }
+            { Get-Item -Path $testDir -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
 
         It "Verify Directory + Confirm bypass" {
@@ -298,11 +296,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
 
         It "Verify WhatIf" -Skip:$true { #Skipped until issue #2385 gets resolved
             Move-Item -Path $testFile -Destination $altTestFile -WhatIf
-            try {
-                Get-Item -Path $altTestFile -ErrorAction Stop
-                throw "Expected exception not thrown"
-            }
-            catch { $_.FullyQualifiedErrorId | Should Be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand" }
+            { Get-Item -Path $altTestFile -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
 
         It "Verify Include and Exclude Intersection" -Skip:$true { #Skipped until issue #2385 gets resolved
@@ -329,11 +323,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
 
         It "Verify WhatIf" {
             Rename-Item -Path $testFile -NewName $newFile -WhatIf
-            try {
-                Get-Item -Path $newFile -ErrorAction Stop
-                throw "Expected exception not thrown"
-            }
-            catch { $_.FullyQualifiedErrorId | Should Be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand" }
+            { Get-Item -Path $newFile -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
 
         It "Verify Confirm can be bypassed" {
@@ -354,20 +344,12 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
 
         It "Verify Confirm can be bypassed" {
             Remove-Item $testFile -Confirm:$false
-            try {
-                Get-Item $testFile -ErrorAction Stop
-                throw "Expected exception not thrown"
-            }
-            catch { $_.FullyQualifiedErrorId | Should Be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand" }
+            { Get-Item $testFile -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
 
         It "Verify LiteralPath" {
             Remove-Item -LiteralPath "TestDrive:\$testFile" -Recurse
-            try {
-                Get-Item $testFile -ErrorAction Stop
-                throw "Expected exception not thrown"
-            }
-            catch { $_.FullyQualifiedErrorId | Should Be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand" }
+            { Get-Item $testFile -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
 
         It "Verify Filter" {
@@ -378,11 +360,7 @@ Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature
 
         It "Verify Include" {
             Remove-Item "TestDrive:\*" -Include "*2.txt"
-            try {
-                Get-Item $testFile2 -ErrorAction Stop
-                throw "Expected exception not thrown"
-            }
-            catch { $_.FullyQualifiedErrorId | Should Be "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand" }
+            { Get-Item $testFile2 -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.GetItemCommand"
         }
 
         It "Verify Include and Exclude Intersection" {
@@ -608,11 +586,7 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
         }
 
         It "WhatIf is Not Supported" {
-            try {
-                Set-Location $level1_0 -WhatIf
-                throw "Expected exception not thrown"
-            }
-            catch { $_.FullyQualifiedErrorId | Should Be "NamedParameterNotFound,Microsoft.PowerShell.Commands.SetLocationCommand" }
+            { Set-Location $level1_0 -WhatIf } | ShouldBeErrorId "NamedParameterNotFound,Microsoft.PowerShell.Commands.SetLocationCommand"
         }
     }
 
@@ -660,11 +634,7 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
         }
 
         It "Verify Pop + Invalid Stack Name" {
-            try {
-                Pop-Location -StackName UnknownStackName -ErrorAction Stop
-                throw "Expected exception not thrown"
-            }
-            catch { $_.FullyQualifiedErrorId | Should Be "Argument,Microsoft.PowerShell.Commands.PopLocationCommand" }
+            { Pop-Location -StackName UnknownStackName -ErrorAction Stop } | ShouldBeErrorId "Argument,Microsoft.PowerShell.Commands.PopLocationCommand"
         }
     }
 }

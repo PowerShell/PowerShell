@@ -1,14 +1,9 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Set-Alias DRT Unit Tests" -Tags "CI" {
-	It "Set-Alias Invalid Scope Name should throw PSArgumentException"{
-		try {
-			Set-Alias -Name "ABCD" -Value "foo" -Scope "bogus"
-			Throw "Execution OK"
-		}
-		catch {
-			$_.FullyQualifiedErrorId | Should be "Argument,Microsoft.PowerShell.Commands.SetAliasCommand"
-		}
-	}
+    It "Set-Alias Invalid Scope Name should throw PSArgumentException"{
+        { Set-Alias -Name "ABCD" -Value "foo" -Scope "bogus" } | ShouldBeErrorId "Argument,Microsoft.PowerShell.Commands.SetAliasCommand"
+    }
 
 	It "Set-Alias ReadOnly Force"{
 			Set-Alias -Name ABCD -Value "foo" -Option ReadOnly -Force:$true
@@ -72,15 +67,10 @@ Describe "Set-Alias DRT Unit Tests" -Tags "CI" {
 			$result.Description| Should Be ""
 			$result.Options| Should Be "None"
 	}
-	It "Set-Alias Expose Bug 1062958, BugId:905449"{
-		try {
-			Set-Alias -Name "ABCD" -Value "foo" -Scope "-1"
-			Throw "Execution OK"
-		}
-		catch {
-			$_.FullyQualifiedErrorId | Should be "ArgumentOutOfRange,Microsoft.PowerShell.Commands.SetAliasCommand"
-		}
-	}
+
+    It "Set-Alias Expose Bug 1062958, BugId:905449"{
+        { Set-Alias -Name "ABCD" -Value "foo" -Scope "-1" } | ShouldBeErrorId "ArgumentOutOfRange,Microsoft.PowerShell.Commands.SetAliasCommand"
+    }
 }
 
 Describe "Set-Alias" -Tags "CI" {
@@ -96,14 +86,12 @@ Describe "Set-Alias" -Tags "CI" {
     }
 
     It "Should be able to use the sal alias" {
-	{ sal gd Get-Date } | Should Not Throw
+        { Set-Alias gd Get-Date } | Should Not Throw
     }
 
     It "Should have the same output between the sal alias and the original set-alias cmdlet" {
-	sal -Name gd -Value Get-Date
-
-	Set-Alias -Name gd2 -Value Get-Date
-
-	gd2 | Should Be $(gd)
+        Set-Alias -Name gd -Value Get-Date
+        Set-Alias -Name gd2 -Value Get-Date
+        gd2 | Should Be $(gd)
     }
 }

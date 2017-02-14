@@ -1,3 +1,5 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "Job Cmdlet Tests" -Tag "CI" {
     Context "Simple Jobs" {
         AfterEach {
@@ -14,13 +16,7 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
         }
         It "Remove-Job can remove a job" {
             remove-job $j -force
-            try {
-                get-job $j -ea Stop
-                throw "Execution OK"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | should be "JobWithSpecifiedNameNotFound,Microsoft.PowerShell.Commands.GetJobCommand"
-            }
+            { get-job $j -ErrorAction Stop } | ShouldBeErrorId "JobWithSpecifiedNameNotFound,Microsoft.PowerShell.Commands.GetJobCommand"
         }
         It "Receive-Job can retrieve job results" -pending {
             $waitjob = Wait-Job -Timeout 10 -id $j.id

@@ -1,14 +1,16 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "Format-Table" -Tags "CI" {
 		It "Should call format table on piped input without error" {
 				{ Get-Date | Format-Table } | Should Not Throw
 
-				{ Get-Date | ft } | Should Not Throw
+				{ Get-Date | Format-Table } | Should Not Throw
 		}
 
 		It "Should return a format object data type" {
-				$val = (Get-Date | Format-Table | gm )
+				$val = (Get-Date | Format-Table | Get-Member )
 
-				$val2 = (Get-Date | Format-Table | gm )
+				$val2 = (Get-Date | Format-Table | Get-Member )
 
 				$val.TypeName | Should Match "Microsoft.Powershell.Commands.Internal.Format"
 
@@ -20,9 +22,9 @@ Describe "Format-Table" -Tags "CI" {
 				$v2 = (Get-Date | Format-Table -Property Hour)
 				$v3 = (Get-Date | Format-Table -GroupBy Hour)
 
-				$v12 = (Get-Date | ft *)
-				$v22 = (Get-Date | ft -Property Hour)
-				$v32 = (Get-Date | ft -GroupBy Hour)
+				$v12 = (Get-Date | Format-Table *)
+				$v22 = (Get-Date | Format-Table -Property Hour)
+				$v32 = (Get-Date | Format-Table -GroupBy Hour)
 
 		}
 }
@@ -30,17 +32,12 @@ Describe "Format-Table" -Tags "CI" {
 
 Describe "Format-Table DRT Unit Tests" -Tags "CI" {
 		It "Format-Table with not existing table with force should throw PipelineStoppedException"{
-				$obj = New-Object -typename PSObject
-				try
-				{
-						$obj | Format-Table -view bar -force -EA Stop
-						Throw "Execution OK"
-				}
-				catch
-				{
-						$_.CategoryInfo | Should Match "PipelineStoppedException"
-						$_.FullyQualifiedErrorId | Should be "FormatViewNotFound,Microsoft.PowerShell.Commands.FormatTableCommand"
-				}
+			$obj = New-Object -typename PSObject
+
+			$exc = {
+					$obj | Format-Table -view bar -force -EA Stop
+			} | ShouldBeErrorId "FormatViewNotFound,Microsoft.PowerShell.Commands.FormatTableCommand"
+			$exc.CategoryInfo | Should Match "PipelineStoppedException"
 		}
 
 		It "Format-Table with array should work" {

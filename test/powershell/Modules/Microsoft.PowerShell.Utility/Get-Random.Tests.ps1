@@ -1,3 +1,5 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "Get-Random DRT Unit Tests" -Tags "CI" {
     $testData = @(
         @{ Name = 'no params'; Maximum = $null; Minimum = $null; GreaterThan = -1; LessThan = ([int32]::MaxValue); Type = 'System.Int32' }
@@ -71,15 +73,8 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
 
     It "Should be able to throw error when '<Name>'" -TestCases $testDataForError {
         param($maximum, $minimum)
-        try
-        {
-            Get-Random -Minimum $minimum -Maximum $maximum
-            throw "OK"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be "MinGreaterThanOrEqualMax,Microsoft.PowerShell.Commands.GetRandomCommand"
-        }
+
+        { Get-Random -Minimum $minimum -Maximum $maximum } | ShouldBeErrorId "MinGreaterThanOrEqualMax,Microsoft.PowerShell.Commands.GetRandomCommand"
     }
 
     It "Tests for setting the seed" {
@@ -169,6 +164,6 @@ Describe "Get-Random" -Tags "CI" {
 	$firstRandomNumber | Should Be @secondRandomNumber
     }
     It "Should throw an error because the hexadecimal number is to large " {
-	{ Get-Random 0x07FFFFFFFFFFFFFFFF } | Should Throw "Value was either too large or too small for a UInt32"
+	{ Get-Random 0x07FFFFFFFFFFFFFFFF } | ShouldBeErrorId "InvalidCastFromStringToInteger,Microsoft.PowerShell.Commands.GetRandomCommand"
     }
 }

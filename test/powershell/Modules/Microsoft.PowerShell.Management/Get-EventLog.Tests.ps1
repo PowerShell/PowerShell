@@ -1,4 +1,6 @@
-﻿Describe "Get-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
+﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
+Describe "Get-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
 
     BeforeAll {
         $defaultParamValues = $PSdefaultParameterValues.Clone()
@@ -11,38 +13,38 @@
 
     #CmdLets are not yet implemented, so these cases are -Pending:($True) for now...
     It "should return an array of eventlogs objects when called with -AsString parameter" -Pending:($True) {
-      {$result=Get-EventLog -AsString -ea stop}    | Should Not Throw
-      $result | Should Not BeNullOrEmpty
-      ,$result                                     | Should BeOfType "System.Array"
-      $result -eq "Application"                    | Should Be "Application"
-      $result.Count -ge 3                          | Should Be $true
+      $result=$null
+      {$result=Get-EventLog -AsString -ErrorAction Stop}    | Should Not Throw
+      ,$result                                              | Should BeOfType "System.Array"
+      $result                                               | Should Be "Application"
+      $result.Count                                         | Should BeGreaterThan 2
     }
     It "should return a list of eventlog objects when called with -List parameter" -Pending:($True) {
-      {$result=Get-EventLog -List -ea stop}        | Should Not Throw
-      $result | Should Not BeNullOrEmpty
-      ,$result                                     | Should BeOfType "System.Array"
-      {$logs=$result|Select -ExpandProperty Log}   | Should Not Throw
-      $logs -eq "System"                           | Should Be "System"
-      $logs.Count -ge 3                            | Should Be $true
+      $result=$null
+      {$result=Get-EventLog -List -ErrorAction Stop}        | Should Not Throw
+      ,$result                                              | Should BeOfType "System.Array"
+      {$logs=$result|Select -ExpandProperty Log}            | Should Not Throw
+      $logs                                                 | Should Be "System"
+      $result.Count                                         | Should BeGreaterThan 2
     }
     It "should be able to Get-EventLog -LogName Application -Newest 100" -Pending:($True) {
-      {$result=get-eventlog -LogName Application -Newest 100 -ea stop} | Should Not Throw
-      $result                                      | Should Not BeNullOrEmpty
-      $result.Length -le 100                       | Should Be $true
-      $result[0]                                   | Should BeOfType "EventLogEntry"
+      $result=$null
+      {$result=get-eventlog -LogName Application -Newest 100 -ErrorAction Stop} | Should Not Throw
+      $result                                               | Should Not BeNullOrEmpty
+      $result.Length                                        | Should BeLessThan 101
+      $result[0]                                            | Should BeOfType "EventLogEntry"
     }
     It "should throw 'AmbiguousParameterSetException' when called with both -LogName and -List parameters" -Pending:($True) {
-      try {Get-EventLog -LogName System -List -ea stop; Throw "Previous statement unexpectedly succeeded..."
-      } catch {echo $_.FullyQualifiedErrorId       | Should Be "AmbiguousParameterSet,Microsoft.PowerShell.Commands.GetEventLogCommand"}
+      {Get-EventLog -LogName System -List -ErrorAction Stop} | ShouldBeErrorId "AmbiguousParameterSet,Microsoft.PowerShell.Commands.GetEventLogCommand"
     }
     It "should be able to Get-EventLog -LogName * with multiple matches" -Pending:($True) {
-      {$result=get-eventlog -LogName *  -ea stop}  | Should Not Throw
-      $result                                      | Should Not BeNullOrEmpty
-      $result -eq "Security"                       | Should Be "Security"
-      $result.Count -ge 3                          | Should Be $true
+      $result=$null
+      {$result=get-eventlog -LogName * -ErrorAction Stop}   | Should Not Throw
+      $result                                               | Should Not BeNullOrEmpty
+      $result                                               | Should Be "Security"
+      $result.Count                                         | Should BeGreaterThan 2
     }
     It "should throw 'InvalidOperationException' when asked to get a log that does not exist" -Pending:($True) {
-      try {Get-EventLog  -LogName MissingTestLog -ea stop; Throw "Previous statement unexpectedly succeeded..."
-      } catch {echo $_.FullyQualifiedErrorId      | Should Be "System.InvalidOperationException,Microsoft.PowerShell.Commands.GetEventLogCommand"}
+      {Get-EventLog  -LogName MissingTestLog -ErrorAction Stop} | ShouldBeErrorId "System.InvalidOperationException,Microsoft.PowerShell.Commands.GetEventLogCommand"
     }
 }

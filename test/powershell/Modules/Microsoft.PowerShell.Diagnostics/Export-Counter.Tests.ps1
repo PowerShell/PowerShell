@@ -2,6 +2,9 @@
  # File: Export-Counter.Tests.ps1
  # Provides Pester tests for the Export-Counter cmdlet.
  ############################################################################################>
+
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 $cmdletName = "Export-Counter"
 
 . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
@@ -91,16 +94,10 @@ function RunTest($testCase)
             else
             {
                 # Here we expect and want the command to fail
-                try
                 {
                     $sb = [ScriptBlock]::Create($cmd)
                     &$sb
-                    throw "Did not throw expected exception"
-                }
-                catch
-                {
-                    $_.FullyQualifiedErrorId | Should Be $testCase.ExpectedErrorId
-                }
+                } | ShouldBeErrorId $testCase.ExpectedErrorId
             }
         }
         finally
