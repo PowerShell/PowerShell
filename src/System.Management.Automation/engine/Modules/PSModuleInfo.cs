@@ -1378,7 +1378,10 @@ namespace System.Management.Automation
                     // Only copy simple mutable variables...
                     if (v.Options == ScopedItemOptions.None && !(v is NullVariable))
                     {
-                        PSVariable newVar = new PSVariable(v.Name, v.Value, v.Options, v.Attributes, v.Description);
+                        PSVariable newVar = new PSVariable(v.Name, v.Value, v.Options, v.Description);
+                        // The variable is already defined/set in the scope, and that means the attributes
+                        // have already been checked if it was needed, so we don't do it again.
+                        newVar.AddParameterAttributesNoChecks(v.Attributes);
                         SessionState.Internal.NewVariable(newVar, false);
                     }
                 }
