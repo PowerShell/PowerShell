@@ -181,6 +181,7 @@
                 "System.Net.NetworkInformation": "4.3.0",
                 "System.Reflection.Emit": "4.3.0",
                 "System.Reflection.Emit.Lightweight": "4.3.0",
+                "System.Reflection.Metadata": "1.4.2",
                 "System.Security.AccessControl": "4.3.0",
                 "System.Security.Cryptography.Algorithms": "4.3.0",
                 "System.Security.Cryptography.X509Certificates": "4.3.0",
