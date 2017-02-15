@@ -82,7 +82,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Default keyword resource name -- TODO: This might be better as null
         /// </summary>
-        public static readonly string DefaultResourceName = String.Empty;
+        public static readonly string DefaultResourceName = null;
 
         /// <summary>
         /// Keyword defaults to being a marshalled call
@@ -536,36 +536,6 @@ namespace System.Management.Automation.Language
         #region static properties/functions
 
         /// <summary>
-        /// Defines a dictionary of dynamic keywords, stored in thread-local storage.
-        /// </summary>
-        private static Dictionary<string, DynamicKeyword> DynamicKeywords
-        {
-            get
-            {
-                return t_dynamicKeywords ??
-                       (t_dynamicKeywords = new Dictionary<string, DynamicKeyword>(StringComparer.OrdinalIgnoreCase));
-            }
-        }
-
-        [ThreadStatic]
-        private static Dictionary<string, DynamicKeyword> t_dynamicKeywords;
-
-        /// <summary>
-        /// stack of DynamicKeywords Cache
-        /// </summary>
-        ///
-        private static Stack<Dictionary<string, DynamicKeyword>> DynamicKeywordsStack
-        {
-            get
-            {
-                return t_dynamicKeywordsStack ??
-                       (t_dynamicKeywordsStack = new Stack<Dictionary<string, DynamicKeyword>>());
-            }
-        }
-        [ThreadStatic]
-        private static Stack<Dictionary<string, DynamicKeyword>> t_dynamicKeywordsStack;
-
-        /// <summary>
         /// Stack defining a cache of DynamicKeywordNamespaces. Note that this may behave strangely if
         /// pushed or popped while in a scope -- this may need to be looked at (TODO)
         /// </summary>
@@ -577,7 +547,7 @@ namespace System.Management.Automation.Language
                     (t_dynamicKeywordNamespaceStack = new Stack<DynamicKeywordNamespace>());
             }
         }
-        [ThreadStatic]
+        //[ThreadStatic]
         private static Stack<DynamicKeywordNamespace> t_dynamicKeywordNamespaceStack;
 
         /// <summary>
@@ -591,7 +561,7 @@ namespace System.Management.Automation.Language
                     (t_currentDynamicKeywordNamespace = new DynamicKeywordNamespace());
             }
         }
-        [ThreadStatic]
+        //[ThreadStatic]
         private static DynamicKeywordNamespace t_currentDynamicKeywordNamespace;
 
         /// <summary>
