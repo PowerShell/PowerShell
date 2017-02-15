@@ -24,7 +24,7 @@ namespace System.Management.Automation
     /// the KeywordParameterAttribute will be parameters, while properties with the KeywordPropertyAttribute will
     /// be keyword properties.
     /// </summary>
-    public abstract class Keyword : InternalCommand
+    public abstract class Keyword
     {
         /// <summary>
         /// Constructs a keyword with null runtime delegates. This is intended to be overridden.
@@ -46,7 +46,8 @@ namespace System.Management.Automation
         public Func<DynamicKeywordStatementAst, ParseError[]> PostParse { get; set; }
 
         /// <summary>
-        /// Specifies the call to run on a DynamicKeyword statement AST node at semantic check time
+        /// Specifies the call to run on a DynamicKeyword statement AST node at semantic check time (to perform
+        /// any user-specified semantic checks)
         /// </summary>
         public Func<DynamicKeywordStatementAst, ParseError[]> SemanticCheck { get; set; }
     }
@@ -61,8 +62,37 @@ namespace System.Management.Automation
     [AttributeUsage(AttributeTargets.Class)]
     public class KeywordAttribute : ParsingBaseAttribute
     {
+        // Default attribute parameter values
+
+        /// <summary>
+        /// Default keyword name mode
+        /// </summary>
         public const DynamicKeywordNameMode DefaultNameMode = DynamicKeywordNameMode.NoName;
+
+        /// <summary>
+        /// Default keyword body mode
+        /// </summary>
         public const DynamicKeywordBodyMode DefaultBodyMode = DynamicKeywordBodyMode.Command;
+        
+        /// <summary>
+        /// Default keyword use mode
+        /// </summary>
+        public const DynamicKeywordUseMode DefaultUseMode = DynamicKeywordUseMode.OptionalMany;
+
+        /// <summary>
+        /// Default keyword resource name -- TODO: This might be better as null
+        /// </summary>
+        public static readonly string DefaultResourceName = String.Empty;
+
+        /// <summary>
+        /// Keyword defaults to being a marshalled call
+        /// </summary>
+        public const bool DefaultIsDirectCall = false;
+
+        /// <summary>
+        /// Keyword defaults to being part of the AST
+        /// </summary>
+        public const bool DefaultIsMetaStatement = false;
 
         /// <summary>
         /// Construct a KeywordAttribute with default values
@@ -80,6 +110,26 @@ namespace System.Management.Automation
         /// Specifies the body type of the DynamicKeyword
         /// </summary>
         public DynamicKeywordBodyMode Body { get; set; } = DefaultBodyMode;
+
+        /// <summary>
+        /// Specifies how many times the keyword may be used
+        /// </summary>
+        public DynamicKeywordUseMode Use { get; set; } = DefaultUseMode;
+
+        /// <summary>
+        /// The DSC resource name of the keyword, if it is a DSC dynamic keyword
+        /// </summary>
+        public string ResourceName { get; set; } = DefaultResourceName;
+
+        /// <summary>
+        /// Indicates whether a keyword uses a marshalled call or is a direct function call, for DSC node keywords
+        /// </summary>
+        public bool DirectCall { get; set; } = DefaultIsDirectCall;
+
+        /// <summary>
+        /// Indicates that the keyword should not be added to the AST (and therefore should do nothing at runtime) if true
+        /// </summary>
+        public bool MetaStatement { get; set; } = DefaultIsMetaStatement;
     }
 
     /// <summary>
@@ -88,6 +138,9 @@ namespace System.Management.Automation
     [AttributeUsage(AttributeTargets.Property)]
     public class KeywordParameterAttribute : ParsingBaseAttribute
     {
+        /// <summary>
+        /// Parameters are not mandatory by default
+        /// </summary>
         public const bool NotMandatory = false;
 
         /// <summary>
@@ -109,6 +162,9 @@ namespace System.Management.Automation
     [AttributeUsage(AttributeTargets.Property)]
     public class KeywordPropertyAttribute : ParsingBaseAttribute
     {
+        /// <summary>
+        /// Properties are not mandatory by default
+        /// </summary>
         public const bool NotMandatory = false;
 
         /// <summary>
@@ -130,6 +186,274 @@ namespace System.Management.Automation
 namespace System.Management.Automation.Language
 {
     #region Dynamic Keyword Parser Datastructures
+
+    /// <summary>
+    /// Defines a scoped namespace for Dynamic Keywords. This class is intended to both
+    /// encapsulate nested dynamic keyword scoping, and be the first step toward making
+    /// DynamicKeyword storage parser local instead of thread static
+    /// </summary>
+    internal class DynamicKeywordNamespace
+    {
+        /// <summary>
+        /// Keeps track of the DynamicKeyword scope by storing enclosing
+        /// DynamicKeywords on the stack
+        /// </summary>
+        private Stack<DynamicKeyword> DynamicKeywordScope
+        {
+            get
+            {
+                return _dynamicKeywordScope ??
+                    (_dynamicKeywordScope = new Stack<DynamicKeyword>());
+            }
+        }
+        private Stack<DynamicKeyword> _dynamicKeywordScope;
+
+        /// <summary>
+        /// Keep track of keywords that have been seen so that UseMode semantics can be checked
+        /// </summary>
+        private Stack<HashSet<DynamicKeyword>> ScopeSeenDynamicKeywords
+        {
+            get
+            {
+                return _scopeSeenDynamicKeywords ??
+                    (_scopeSeenDynamicKeywords = new Stack<HashSet<DynamicKeyword>>(new [] { new HashSet<DynamicKeyword>() }));
+            }
+        }
+        private Stack<HashSet<DynamicKeyword>> _scopeSeenDynamicKeywords;
+
+        /// <summary>
+        /// Keywords available at the top level
+        /// </summary>
+        private IDictionary<string, DynamicKeyword> GlobalKeywords
+        {
+            get
+            {
+                return _globalKeywords ??
+                    (_globalKeywords = new Dictionary<string, DynamicKeyword>(StringComparer.OrdinalIgnoreCase));
+            }
+        }
+        private IDictionary<string, DynamicKeyword> _globalKeywords;
+
+        /// <summary>
+        /// Look for a globally defined DynamicKeyword. Returns null if none corresponds to the name
+        /// </summary>
+        /// <param name="name"></param>
+        /// <returns>the keyword with the given name, or null if no such keyword exists</returns>
+        public DynamicKeyword GetGlobalDynamicKeyword(string name)
+        {
+            DynamicKeyword keyword;
+            GlobalKeywords.TryGetValue(name, out keyword);
+            return keyword;
+        }
+
+        /// <summary>
+        /// Get a list of all globally defined keywords
+        /// </summary>
+        /// <returns>a list of all globally defined keywords</returns>
+        public List<DynamicKeyword>GetGlobalDynamicKeyword()
+        {
+            return new List<DynamicKeyword>(GlobalKeywords.Values);
+        }
+
+        /// <summary>
+        /// Remove a globally defined keyword from the namespace. This is theoretically
+        /// still a valid action while inside that keyword's scope, since it will remain
+        /// on the stack
+        /// </summary>
+        /// <param name="name">the name of the keyword to remove</param>
+        /// <returns>true if the keyword existed, otherwise false</returns>
+        public bool RemoveGlobalDynamicKeyword(string name)
+        {
+            if (String.IsNullOrEmpty(name))
+            {
+                throw new PSArgumentException(nameof(name));
+            }
+
+            return GlobalKeywords.Remove(name);
+        }
+
+        /// <summary>
+        /// Add a dynamic keyword to the global namespace, so that it is defined everywhere
+        /// </summary>
+        /// <param name="keywordToAdd">the keyword to add</param>
+        /// <returns>true if an older keyword was overwritten, false otherwise</returns>
+        public bool AddGlobalDynamicKeyword(DynamicKeyword keywordToAdd)
+        {
+            if (keywordToAdd == null)
+            {
+                throw new PSArgumentException(nameof(keywordToAdd));
+            }
+
+            string name = keywordToAdd.Keyword;
+            if (String.IsNullOrEmpty(name))
+            {
+                throw new PSArgumentException(nameof(keywordToAdd.Keyword));
+            }
+
+            bool result = GlobalKeywords.Remove(name);
+            GlobalKeywords.Add(name, keywordToAdd);
+            return result;
+        }
+
+        /// <summary>
+        /// Check whether a keyword by the given name is globally defined
+        /// </summary>
+        /// <param name="name">the name of the keyword to check</param>
+        /// <returns>true if a keyword with the given name exists in the global namespace, false otherwise</returns>
+        public bool IsGloballyDefined(string name)
+        {
+            return GlobalKeywords.ContainsKey(name);
+        }
+
+        /// <summary>
+        /// Get a keyword that is defined inside any of the current enclosing scopes by name,
+        /// including the global namespace, or null if no such keyword exists
+        /// </summary>
+        /// <param name="name">the name of the keyword to search for</param>
+        /// <returns>the keyword of the given name, or null if no such keyword exists</returns>
+        public DynamicKeyword GetScopedDynamicKeyword(string name)
+        {
+            DynamicKeyword keyword;
+
+            // First search upward through the enclosing scopes
+            foreach (var enclosingKeyword in DynamicKeywordScope)
+            {
+                enclosingKeyword.InnerKeywords.TryGetValue(name, out keyword);
+                if (keyword != null)
+                {
+                    return keyword;
+                }
+            }
+
+            // Then search the global namespace
+            keyword = GetGlobalDynamicKeyword(name);
+            if (keyword != null)
+            {
+                return keyword;
+            }
+
+            // Admit defeat
+            return null;
+        }
+
+        /// <summary>
+        /// Check whether a keyword of the given name is defined in any of the
+        /// current enclosing scopes, including the global namespace
+        /// </summary>
+        /// <param name="name">the name of the keyword to search for</param>
+        /// <returns>true if the keyword exists in an enclosing scope or the global namespace, otherwise false</returns>
+        public bool IsKeywordDefinedInCurrentScope(string name)
+        {
+            return IsGloballyDefined(name) || DynamicKeywordScope.Any(kw => kw.InnerKeywords.ContainsKey(name));
+        }
+
+        /// <summary>
+        /// Enter into a keyword's scope by pushing a fresh keyword "seen" record
+        /// and pushing this keyword onto the stack, bringing its inner keywords into scope
+        /// </summary>
+        /// <param name="invokedKeyword">the invoked keyword to push onto the stack</param>
+        public void EnterScope(DynamicKeyword invokedKeyword)
+        {
+            ScopeSeenDynamicKeywords.Push(new HashSet<DynamicKeyword>());
+            DynamicKeywordScope.Push(invokedKeyword);
+        }
+
+        /// <summary>
+        /// Leave the scope of a keyword by popping it from the stack
+        /// and also popping the keyword "seen" record
+        /// </summary>
+        public void LeaveScope()
+        {
+            DynamicKeywordScope.Pop();
+            ScopeSeenDynamicKeywords.Pop();
+        }
+
+        /// <summary>
+        /// Record that we have seen a keyword if we are trying to keep track of its use. Note that
+        /// this does not enforce use semantics of higher-scoped keywords for now. (TODO)
+        /// </summary>
+        /// <param name="keyword">the keyword that we've seen</param>
+        /// <returns>true if we should continue, false if we should throw an error about violating the keyword use semantics</returns>
+        public bool TryRecordKeywordUse(DynamicKeyword keyword)
+        {
+            if (ScopeSeenDynamicKeywords.Count == 0)
+            {
+                throw new PSInvalidOperationException(String.Format("Tried to peek {0} with nothing on the stack", nameof(ScopeSeenDynamicKeywords)));
+            }
+
+            HashSet<DynamicKeyword> currentScopeSeenKeywords = ScopeSeenDynamicKeywords.Peek();
+            switch (keyword.UseMode)
+            {
+                case DynamicKeywordUseMode.Optional:
+                case DynamicKeywordUseMode.Required:
+                    return currentScopeSeenKeywords.Add(keyword);
+
+                case DynamicKeywordUseMode.RequiredMany:
+                    // Record this because we want to enforce usage when we leave the scope
+                    currentScopeSeenKeywords.Add(keyword);
+                    return true;
+
+                case DynamicKeywordUseMode.OptionalMany:
+                    // We don't care about OptionalMany keywords, so it's more efficient to just move on
+                    return true;
+
+                default:
+                    throw PSTraceSource.NewArgumentException(nameof(keyword.UseMode));
+            }
+        }
+
+        /// <summary>
+        /// Get a list of all the keywords we were required to see in this scope block
+        /// but did not. Note that "required" only checks keywords at this scope level;
+        /// if a keyword from a higher scope is invoked it is not counted. (TODO)
+        /// </summary>
+        /// <returns>a (possibly empty) enumeration of all keywords we "required" the use of</returns>
+        public IEnumerable<DynamicKeyword> GetUnusedRequiredKeywords()
+        {
+            // If the scope is empty, then we can't require anything
+            if (DynamicKeywordScope.Count == 0)
+            {
+                yield break;
+            }
+
+            // If we've run out of "seen" records to check, something has gone wrong
+            if (ScopeSeenDynamicKeywords.Count == 0)
+            {
+                throw new PSInvalidOperationException(String.Format("Tried to pop {0} when it was empty while counting unused required keywords", nameof(ScopeSeenDynamicKeywords)));
+            }
+
+            // Check all the "required" keywords in this scope were seen
+            foreach (var keyword in DynamicKeywordScope.Peek().InnerKeywords.Values)
+            {
+                switch (keyword.UseMode)
+                {
+                    case DynamicKeywordUseMode.Required:
+                    case DynamicKeywordUseMode.RequiredMany:
+                        if (!ScopeSeenDynamicKeywords.Peek().Contains(keyword))
+                        {
+                            yield return keyword;
+                        }
+                        break;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Wipe this namespace clean. If this is tried while in a scope, we will be in an
+        /// invalid state, hence it is disallowed
+        /// </summary>
+        public void Reset()
+        {
+            if (DynamicKeywordScope.Count > 0)
+            {
+                throw new PSInvalidOperationException("Cannot reset the DynamicKeyword namespace while in a DynamicKeyword scope");
+            }
+
+            _dynamicKeywordScope = new Stack<DynamicKeyword>();
+            _scopeSeenDynamicKeywords = new Stack<HashSet<DynamicKeyword>>(new[] { new HashSet<DynamicKeyword>() });
+            _globalKeywords = new Dictionary<string, DynamicKeyword>();
+        }
+    }
 
     /// <summary>
     /// Defines the name modes for a dynamic keyword. A name expression may be required, optional or not permitted.
@@ -178,6 +502,32 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
+    /// Defines the use semantics of a dynamic keyword for a given block
+    /// </summary>
+    public enum DynamicKeywordUseMode
+    {
+        /// <summary>
+        /// The keyword must be used exactly once in a block
+        /// </summary>
+        Required = 0,
+
+        /// <summary>
+        /// The keyword must be used at least once in a block
+        /// </summary>
+        RequiredMany = 1,
+
+        /// <summary>
+        /// The keyword may be used 0 or 1 times in a block
+        /// </summary>
+        Optional = 2,
+
+        /// <summary>
+        /// The keyword may be used zero or more times in a block (i.e. there are no use restrictions)
+        /// </summary>
+        OptionalMany = 3,
+    }
+
+    /// <summary>
     /// Defines the schema/behaviour for a dynamic keyword.
     /// a constrained
     /// </summary>
@@ -216,11 +566,40 @@ namespace System.Management.Automation.Language
         private static Stack<Dictionary<string, DynamicKeyword>> t_dynamicKeywordsStack;
 
         /// <summary>
+        /// Stack defining a cache of DynamicKeywordNamespaces. Note that this may behave strangely if
+        /// pushed or popped while in a scope -- this may need to be looked at (TODO)
+        /// </summary>
+        private static Stack<DynamicKeywordNamespace> DynamicKeywordNamespaceStack
+        {
+            get
+            {
+                return t_dynamicKeywordNamespaceStack ??
+                    (t_dynamicKeywordNamespaceStack = new Stack<DynamicKeywordNamespace>());
+            }
+        }
+        [ThreadStatic]
+        private static Stack<DynamicKeywordNamespace> t_dynamicKeywordNamespaceStack;
+
+        /// <summary>
+        /// The current dynamic keyword namespace
+        /// </summary>
+        private static DynamicKeywordNamespace CurrentDynamicKeywordNamespace
+        {
+            get
+            {
+                return t_currentDynamicKeywordNamespace ??
+                    (t_currentDynamicKeywordNamespace = new DynamicKeywordNamespace());
+            }
+        }
+        [ThreadStatic]
+        private static DynamicKeywordNamespace t_currentDynamicKeywordNamespace;
+
+        /// <summary>
         /// Reset the keyword table to a new empty collection.
         /// </summary>
         public static void Reset()
         {
-            t_dynamicKeywords = new Dictionary<string, DynamicKeyword>(StringComparer.OrdinalIgnoreCase);
+            t_currentDynamicKeywordNamespace = new DynamicKeywordNamespace();
         }
 
         /// <summary>
@@ -228,7 +607,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public static void Push()
         {
-            DynamicKeywordsStack.Push(t_dynamicKeywords);
+            DynamicKeywordNamespaceStack.Push(t_currentDynamicKeywordNamespace);
             Reset();
         }
 
@@ -237,7 +616,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         public static void Pop()
         {
-            t_dynamicKeywords = DynamicKeywordsStack.Pop();
+            t_currentDynamicKeywordNamespace = DynamicKeywordNamespaceStack.Pop();
         }
 
         /// <summary>
@@ -247,9 +626,7 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         public static DynamicKeyword GetKeyword(string name)
         {
-            DynamicKeyword keywordToReturn;
-            DynamicKeyword.DynamicKeywords.TryGetValue(name, out keywordToReturn);
-            return keywordToReturn;
+            return CurrentDynamicKeywordNamespace.GetGlobalDynamicKeyword(name);
         }
 
         /// <summary>
@@ -258,23 +635,17 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         public static List<DynamicKeyword> GetKeyword()
         {
-            return new List<DynamicKeyword>(DynamicKeyword.DynamicKeywords.Values);
+            return CurrentDynamicKeywordNamespace.GetGlobalDynamicKeyword();
         }
 
         /// <summary>
-        ///
+        /// Checks whether a DynamicKeyword of the given name is defined globally
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
         public static bool ContainsKeyword(string name)
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("name");
-                throw e;
-            }
-
-            return DynamicKeyword.DynamicKeywords.ContainsKey(name);
+            return CurrentDynamicKeywordNamespace.IsGloballyDefined(name);
         }
 
         /// <summary>
@@ -283,21 +654,7 @@ namespace System.Management.Automation.Language
         /// <param name="keywordToAdd"></param>
         public static void AddKeyword(DynamicKeyword keywordToAdd)
         {
-            if (keywordToAdd == null)
-            {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("keywordToAdd");
-                throw e;
-            }
-
-            // Allow overwriting of the existing entries
-            string name = keywordToAdd.Keyword;
-            if (string.IsNullOrEmpty(name))
-            {
-                throw PSTraceSource.NewArgumentNullException("keywordToAdd.Keyword");
-            }
-
-            DynamicKeyword.DynamicKeywords.Remove(name);
-            DynamicKeyword.DynamicKeywords.Add(name, keywordToAdd);
+            CurrentDynamicKeywordNamespace.AddGlobalDynamicKeyword(keywordToAdd);
         }
 
         /// <summary>
@@ -307,12 +664,67 @@ namespace System.Management.Automation.Language
         /// <param name="name"></param>
         public static void RemoveKeyword(string name)
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                PSArgumentNullException e = PSTraceSource.NewArgumentNullException("name");
-                throw e;
-            }
-            DynamicKeyword.DynamicKeywords.Remove(name);
+            CurrentDynamicKeywordNamespace.RemoveGlobalDynamicKeyword(name);
+        }
+
+        /// <summary>
+        /// Check whether a keyword of the given name is defined in any of the enclosing scopes
+        /// or globally
+        /// </summary>
+        /// <param name="name">the name of the keyword to search for</param>
+        /// <returns>true if the keyword is found, false otherwise</returns>
+        public static bool IsDefinedInCurrentScope(string name)
+        {
+            return CurrentDynamicKeywordNamespace.IsKeywordDefinedInCurrentScope(name);
+        }
+
+        /// <summary>
+        /// Get a DynamicKeyword from the enclosing scopes, or null if no keyword
+        /// of the given name is defined
+        /// </summary>
+        /// <param name="name">the name of the keyword to get</param>
+        /// <returns>the keyword, if one by the given name exists, otherwise null</returns>
+        public static DynamicKeyword GetScopeDefinedKeyword(string name)
+        {
+            return CurrentDynamicKeywordNamespace.GetScopedDynamicKeyword(name);
+        }
+
+        /// <summary>
+        /// Enter into the scope of an invoked DynamicKeyword
+        /// </summary>
+        /// <param name="invokedKeyword"></param>
+        public static void EnterScope(DynamicKeyword invokedKeyword)
+        {
+            CurrentDynamicKeywordNamespace.EnterScope(invokedKeyword);
+        }
+
+        /// <summary>
+        /// Leave the current DynamicKeyword scope
+        /// </summary>
+        public static void LeaveScope()
+        {
+            CurrentDynamicKeywordNamespace.LeaveScope();
+        }
+
+        /// <summary>
+        /// Register a keyword as having been used in the most local scope,
+        /// return false if its use was a semantic violation, true otherwise
+        /// </summary>
+        /// <param name="seenKeyword">the keyword to be recorded</param>
+        /// <returns>false if there was a semantic violation, true otherwise</returns>
+        public static bool TryRecordKeywordUse(DynamicKeyword seenKeyword)
+        {
+            return CurrentDynamicKeywordNamespace.TryRecordKeywordUse(seenKeyword);
+        }
+
+        /// <summary>
+        /// Return a list of all the required(many) keywords that belong in the most
+        /// local scope but have not been seen so far
+        /// </summary>
+        /// <returns>an enumeration of all required keywords that have not been seen</returns>
+        public static IEnumerable<DynamicKeyword> GetUnusedRequiredKeywords()
+        {
+            return CurrentDynamicKeywordNamespace.GetUnusedRequiredKeywords();
         }
 
         /// <summary>
@@ -341,38 +753,56 @@ namespace System.Management.Automation.Language
         #endregion
 
         /// <summary>
+        /// Default constructor
+        /// </summary>
+        public DynamicKeyword()
+        {
+        }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="other">the keyword to copy</param>
+        public DynamicKeyword(DynamicKeyword other)
+        {
+            ImplementingModule = other.ImplementingModule;
+            ImplementingModuleVersion = other.ImplementingModuleVersion;
+            ImplementingModuleInfo = other.ImplementingModuleInfo;
+            Keyword = other.Keyword;
+            ResourceName = other.ResourceName;
+            BodyMode = other.BodyMode;
+            DirectCall = other.DirectCall;
+            NameMode = other.NameMode;
+            UseMode = other.UseMode;
+            MetaStatement = other.MetaStatement;
+            IsReservedKeyword = other.IsReservedKeyword;
+            HasReservedProperties = other.HasReservedProperties;
+            PreParse = other.PreParse;
+            PostParse = other.PostParse;
+            SemanticCheck = other.SemanticCheck;
+            IsNested = other.IsNested;
+
+            foreach (KeyValuePair<string, DynamicKeywordProperty> entry in other.Properties)
+            {
+                Properties.Add(entry.Key, entry.Value);
+            }
+            foreach (KeyValuePair<string, DynamicKeywordParameter> entry in other.Parameters)
+            {
+                Parameters.Add(entry.Key, entry.Value);
+            }
+            foreach (KeyValuePair<string, DynamicKeyword> entry in other.InnerKeywords)
+            {
+                InnerKeywords.Add(entry.Key, entry.Value);
+            }
+        }
+
+        /// <summary>
         /// Duplicates the DynamicKeyword
         /// </summary>
         /// <returns>A copy of the DynamicKeyword</returns>
-        public DynamicKeyword Copy()
+        public virtual DynamicKeyword Copy()
         {
-            DynamicKeyword keyword = new DynamicKeyword()
-            {
-                ImplementingModule = this.ImplementingModule,
-                ImplementingModuleVersion = this.ImplementingModuleVersion,
-                ImplementingModuleInfo = this.ImplementingModuleInfo,
-                Keyword = this.Keyword,
-                ResourceName = this.ResourceName,
-                BodyMode = this.BodyMode,
-                DirectCall = this.DirectCall,
-                NameMode = this.NameMode,
-                MetaStatement = this.MetaStatement,
-                IsReservedKeyword = this.IsReservedKeyword,
-                HasReservedProperties = this.HasReservedProperties,
-                PreParse = this.PreParse,
-                PostParse = this.PostParse,
-                SemanticCheck = this.SemanticCheck,
-                IsNested = this.IsNested,
-            };
-            foreach (KeyValuePair<string, DynamicKeywordProperty> entry in this.Properties)
-            {
-                keyword.Properties.Add(entry.Key, entry.Value);
-            }
-            foreach (KeyValuePair<string, DynamicKeywordParameter> entry in this.Parameters)
-            {
-                keyword.Parameters.Add(entry.Key, entry.Value);
-            }
-            return keyword;
+            return new DynamicKeyword(this);
         }
 
         /// <summary>
@@ -419,6 +849,11 @@ namespace System.Management.Automation.Language
         /// This allows you to specify if the keyword takes a name argument and if so, what form that takes.
         /// </summary>
         public DynamicKeywordNameMode NameMode { get; set; }
+
+        /// <summary>
+        /// Specifies how many times a keyword may be used per block
+        /// </summary>
+        public DynamicKeywordUseMode UseMode { get; set; }
 
         /// <summary>
         /// Indicate that the nothing should be added to the AST for this
@@ -475,7 +910,7 @@ namespace System.Management.Automation.Language
             get
             {
                 return _innerKeywords ??
-                    (_innerKeywords = new Dictionary<string, DynamicKeyword>());
+                    (_innerKeywords = new Dictionary<string, DynamicKeyword>(StringComparer.OrdinalIgnoreCase));
             }
         }
         private Dictionary<string, DynamicKeyword> _innerKeywords;
@@ -621,6 +1056,8 @@ namespace System.Management.Automation.Language
 
     internal class DynamicKeywordDllModuleMetadataReader
     {
+        private const string CtorName = ".ctor";
+
         private readonly PSModuleInfo _moduleInfo;
 
         private MetadataReader _metadataReader;
@@ -763,7 +1200,6 @@ namespace System.Management.Automation.Language
                     yield return keyword;
                 }
             }
-            yield break;
         }
 
         /// <summary>
@@ -776,6 +1212,12 @@ namespace System.Management.Automation.Language
         private DynamicKeyword ReadKeywordSpecification(TypeDefinition typeDef, CustomAttribute keywordAttribute, bool isNested = false)
         {
             string keywordName = _metadataReader.GetString(typeDef.Name);
+
+            if (!HasZeroArgumentConstructor(typeDef))
+            {
+                var msg = String.Format("The keyword '{0}' does not have a zero-argument constructor to generate it with", keywordName);
+                throw new RuntimeException(msg);
+            }
 
             // Make sure keywords by the same name are not already defined in enclosing scopes -- C# only prevents direct ancestors
             foreach (var enclosingScope in _keywordDefinitionStack)
@@ -791,9 +1233,7 @@ namespace System.Management.Automation.Language
             _keywordDefinitionStack.Peek().Add(keywordName);
 
             // Set the keyword properties -- note the defaults are set here, since reading metadata does not execute default attribute setters
-            DynamicKeywordNameMode nameMode = KeywordAttribute.DefaultNameMode;
-            DynamicKeywordBodyMode bodyMode = KeywordAttribute.DefaultBodyMode;
-            ReadKeywordAttributeParameters(keywordAttribute, ref nameMode, ref bodyMode);
+            DynamicKeywordAttributeValueData attributeData = ReadKeywordAttributeParameters(keywordAttribute);
 
             // Read in enum definitions in the local scope
             _enumDefStack.Push(ReadEnumDefinitions(typeDef.GetNestedTypes().Select(tdHandle => _metadataReader.GetTypeDefinition(tdHandle)).Where(t => IsEnum(t))));
@@ -816,8 +1256,9 @@ namespace System.Management.Automation.Language
 
                     if (IsKeywordParameterAttribute(keywordMemberAttribute))
                     {
+                        // TODO: Should this apply to ScriptBlock-bodied keywords too?
                         // Hashtable-bodied keyword cannot take parameters
-                        if (bodyMode == DynamicKeywordBodyMode.Hashtable)
+                        if (attributeData.BodyMode == DynamicKeywordBodyMode.Hashtable)
                         {
                             var msg = String.Format("Keyword '{0}' has a Hashtable body, but must use another body mode to take parameters", keywordName);
                         }
@@ -827,9 +1268,9 @@ namespace System.Management.Automation.Language
                     if (IsKeywordPropertyAttribute(keywordMemberAttribute))
                     {
                         // Only Hashtable-bodied keywords can have properties
-                        if (bodyMode != DynamicKeywordBodyMode.Hashtable)
+                        if (attributeData.BodyMode != DynamicKeywordBodyMode.Hashtable)
                         {
-                            var msg = String.Format("Keyword '{0}' has body mode '{1}', but must have a Hashtable body mode to have properties assigned", keywordName, bodyMode);
+                            var msg = String.Format("Keyword '{0}' has body mode '{1}', but must have a Hashtable body mode to have properties assigned", keywordName, attributeData.BodyMode);
                             throw new RuntimeException(msg);
                         }
                         keywordProperties.Add(ReadPropertySpecifiction(propertyDef, keywordMemberAttribute));
@@ -842,7 +1283,7 @@ namespace System.Management.Automation.Language
             var innerKeywords = new List<DynamicKeyword>();
             foreach (var innerTypeDefHandle in typeDef.GetNestedTypes())
             {
-                if (bodyMode == DynamicKeywordBodyMode.Command)
+                if (attributeData.BodyMode == DynamicKeywordBodyMode.Command)
                 {
                     var msg = String.Format("Keyword '{0}' is a command-bodied keyword, and cannot contain other keywords", keywordName);
                 }
@@ -863,8 +1304,12 @@ namespace System.Management.Automation.Language
             var keyword = new DynamicKeyword()
             {
                 Keyword = keywordName,
-                NameMode = nameMode,
-                BodyMode = bodyMode,
+                NameMode = attributeData.NameMode,
+                BodyMode = attributeData.BodyMode,
+                UseMode = attributeData.UseMode,
+                ResourceName = attributeData.ResourceName,
+                DirectCall = attributeData.IsDirectCall,
+                MetaStatement = attributeData.IsMetaStatement,
                 ImplementingModule = _moduleInfo.Name,
                 ImplementingModuleVersion = _moduleInfo.Version,
                 ImplementingModuleInfo = _moduleInfo,
@@ -891,10 +1336,15 @@ namespace System.Management.Automation.Language
         /// Read the parameters in a KeywordAttribute declaration, to pass on the the DynamicKeyword object that is created
         /// </summary>
         /// <param name="keywordAttribute">the KeywordAttribute metadata</param>
-        /// <param name="nameMode">the name mode of the keyword</param>
-        /// <param name="bodyMode">the body mode of the keyword</param>
-        private void ReadKeywordAttributeParameters(CustomAttribute keywordAttribute, ref DynamicKeywordNameMode nameMode, ref DynamicKeywordBodyMode bodyMode)
+        private DynamicKeywordAttributeValueData ReadKeywordAttributeParameters(CustomAttribute keywordAttribute)
         {
+            DynamicKeywordNameMode nameMode = KeywordAttribute.DefaultNameMode;
+            DynamicKeywordBodyMode bodyMode = KeywordAttribute.DefaultBodyMode;
+            DynamicKeywordUseMode useMode = KeywordAttribute.DefaultUseMode;
+            string resourceName = KeywordAttribute.DefaultResourceName;
+            bool isDirectCall = KeywordAttribute.DefaultIsDirectCall;
+            bool isMetaStatement = KeywordAttribute.DefaultIsMetaStatement;
+
             CustomAttributeValue<Type> keywordValue = keywordAttribute.DecodeValue(_knownTypeTypeProvider);
 
             foreach (var attributeParameter in keywordValue.NamedArguments)
@@ -906,17 +1356,35 @@ namespace System.Management.Automation.Language
                         break;
 
                     case nameof(KeywordAttribute.Body):
-                            bodyMode = (DynamicKeywordBodyMode)attributeParameter.Value;
-                            break;
-                    }
+                        bodyMode = (DynamicKeywordBodyMode)attributeParameter.Value;
+                        break;
+
+                    case nameof(KeywordAttribute.Use):
+                        useMode = (DynamicKeywordUseMode)attributeParameter.Value;
+                        break;
+
+                    case nameof(KeywordAttribute.ResourceName):
+                        resourceName = (string)attributeParameter.Value;
+                        break;
+
+                    case nameof(KeywordAttribute.DirectCall):
+                        isDirectCall = (bool)attributeParameter.Value;
+                        break;
+
+                    case nameof(KeywordAttribute.MetaStatement):
+                        isMetaStatement = (bool)attributeParameter.Value;
+                        break;
                 }
+            }
+
+            return new DynamicKeywordAttributeValueData(nameMode, bodyMode, useMode, resourceName, isDirectCall, isMetaStatement);
         }
 
         /// <summary>
         /// Read in a DynamicKeywordParameter object from dll metadata, using the C# property definition and its parameter attribute
         /// </summary>
-        /// <param name="propertyDef"></param>
-        /// <param name="keywordParameterAttribute"></param>
+        /// <param name="propertyDef">the property metadata being read in as a dynamic keyword parameter</param>
+        /// <param name="keywordParameterAttribute">the attribute on the property defining its parameters and declaring it as a parameter</param>
         /// <returns></returns>
         private DynamicKeywordParameter ReadParameterSpecification(PropertyDefinition propertyDef, CustomAttribute keywordParameterAttribute)
         {
@@ -989,7 +1457,7 @@ namespace System.Management.Automation.Language
         /// representing the KeywordAttribute
         /// </summary>
         /// <param name="typeDef">the type definition metadata to check</param>
-        /// <param name="keywordAttribute">the custom attribute representing the KeywordAttribute</param>
+        /// <param name="keywordAttribute">the custom attribute representing the <see cref="KeywordAttribute"/></param>
         /// <returns>
         /// true if the type definition represents a keyword specification (and sets <paramref name="keywordAttribute"/>),
         /// otherwise false (and does not set <paramref name="keywordAttribute"/>)
@@ -1111,6 +1579,31 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
+        /// Check if a given type definition has a zero-argument constructor -- without which we cannot build it
+        /// </summary>
+        /// <param name="typeDef">the type definition to look for the constructor on</param>
+        /// <returns>true if a zero-arg constructor is found, false otherwise</returns>
+        private bool HasZeroArgumentConstructor(TypeDefinition typeDef)
+        {
+            foreach (MethodDefinitionHandle methodHandle in typeDef.GetMethods())
+            {
+                MethodDefinition methodDef = _metadataReader.GetMethodDefinition(methodHandle);
+
+                if (_metadataReader.GetString(methodDef.Name) != CtorName)
+                {
+                    continue;
+                }
+
+                MethodSignature<string> methodSignature = methodDef.DecodeSignature(_namingTypeProvider, _currentNamingGenericContext);
+                if (methodSignature.RequiredParameterCount == 0)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /// <summary>
         /// Look through all the enums defined so far up the scope stack for an enum with the given name, and return
         /// all the values defined by that enum if it exists
         /// </summary>
@@ -1159,8 +1652,57 @@ namespace System.Management.Automation.Language
         /// <returns>true if the type definition inherits from enum, false otherwise</returns>
         private bool IsEnum(TypeDefinition typeDef)
         {
-            var baseType = _metadataReader.GetTypeReference((TypeReferenceHandle)typeDef.BaseType);
-            return String.Join(".", _metadataReader.GetString(baseType.Namespace), _metadataReader.GetString(baseType.Name)) == nameof(System.Enum);
+            if (typeDef.BaseType.IsNil)
+            {
+                return false;
+            }
+
+            switch (typeDef.BaseType.Kind)
+            {
+                case HandleKind.TypeReference:
+                    var baseType = _metadataReader.GetTypeReference((TypeReferenceHandle)typeDef.BaseType);
+                    return String.Join(".", _metadataReader.GetString(baseType.Namespace), _metadataReader.GetString(baseType.Name)) == nameof(System.Enum);
+
+                default:
+                    return false;
+            }
+        }
+
+        /// <summary>
+        /// A value-passing object for seting Dynamic Keyword attributes
+        /// </summary>
+        private class DynamicKeywordAttributeValueData
+        {
+            public readonly DynamicKeywordNameMode NameMode;
+            public readonly DynamicKeywordBodyMode BodyMode;
+            public readonly DynamicKeywordUseMode UseMode;
+            public readonly string ResourceName;
+            public readonly bool IsDirectCall;
+            public readonly bool IsMetaStatement;
+
+            /// <summary>
+            /// Create a new object to pass values with
+            /// </summary>
+            /// <param name="nameMode">the name mode of the dynamic keyword</param>
+            /// <param name="bodyMode">the body mode of the dynamic keyword</param>
+            /// <param name="useMode">the use mode of the dynamic keyword</param>
+            /// <param name="resourceName">the resource name, for a DSC keyword</param>
+            /// <param name="isDirectCall">true if the keyword is called directly and not marshalled</param>
+            /// <param name="isMetaStatement">true if the keyword does not get added to the AST</param>
+            public DynamicKeywordAttributeValueData(DynamicKeywordNameMode nameMode,
+                DynamicKeywordBodyMode bodyMode,
+                DynamicKeywordUseMode useMode,
+                string resourceName,
+                bool isDirectCall,
+                bool isMetaStatement)
+            {
+                NameMode = nameMode;
+                BodyMode = bodyMode;
+                UseMode = useMode;
+                ResourceName = resourceName;
+                IsDirectCall = isDirectCall;
+                IsMetaStatement = isMetaStatement;
+            }
         }
     }
 
@@ -1574,7 +2116,7 @@ namespace System.Management.Automation.Language
         {
             string typeName = type.Replace('/', '+');
 
-            if (typeName == nameof(DynamicKeywordNameMode) || typeName == nameof(DynamicKeywordBodyMode))
+            if (typeName == nameof(DynamicKeywordNameMode) || typeName == nameof(DynamicKeywordBodyMode) || typeName == nameof(DynamicKeywordUseMode))
             {
                 return PrimitiveTypeCode.Int32;
             }
@@ -1862,27 +2404,9 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         public PrimitiveTypeCode GetUnderlyingEnumType(Type type)
         {
-            Type underlyingType = type.GetEnumUnderlyingType();
-
-            if (underlyingType == typeof(int))
+            if (type.Name == nameof(DynamicKeywordNameMode) || type.Name == nameof(DynamicKeywordBodyMode) || type.Name == nameof(DynamicKeywordUseMode))
             {
                 return PrimitiveTypeCode.Int32;
-            }
-            else if (underlyingType == typeof(byte))
-            {
-                return PrimitiveTypeCode.Byte;
-            }
-            else if (underlyingType == typeof(long))
-            {
-                return PrimitiveTypeCode.Int64;
-            }
-            else if (underlyingType == typeof(short))
-            {
-                return PrimitiveTypeCode.Int16;
-            }
-            else if (underlyingType == typeof(char))
-            {
-                return PrimitiveTypeCode.Char;
             }
 
             throw new ArgumentOutOfRangeException("Not a known enum type");

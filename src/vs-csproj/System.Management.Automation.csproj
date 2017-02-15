@@ -1038,6 +1038,9 @@
     <Compile Include="..\System.Management.Automation\engine\parser\DebugViewWriter.cs">
       <Link>engine\parser\DebugViewWriter.cs</Link>
     </Compile>
+    <Compile Include="..\System.Management.Automation\engine\parser\DynamicKeyword.cs">
+        <Link>engine\parser\DynamicKeyword.cs</Link>
+    </Compile>
     <Compile Include="..\System.Management.Automation\engine\parser\FusionAssemblyIdentity.cs">
       <Link>engine\parser\FusionAssemblyIdentity.cs</Link>
     </Compile>
@@ -2331,7 +2334,6 @@
     <Compile Include="..\System.Management.Automation\utils\Verbs.cs">
       <Link>utils\Verbs.cs</Link>
     </Compile>
-    <Compile Include="engine\parser\DynamicKeyword.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\System.Management.Automation\map.json">
