@@ -5,7 +5,7 @@
     <Name>System.Array</Name>
     <Members>
       <AliasProperty>
-        <Name>Count</Name>
+        <Name>Counts</Name>
         <ReferencedMemberName>Length</ReferencedMemberName>
       </AliasProperty>
     </Members>

@@ -59,44 +59,85 @@ Describe "InitialSessionState capacity" -Tags CI {
 ##
 ## A reused InitialSessionState created from a TypeTable should not have duplicate types.
 ##
-Describe "TypeTable duplicate types in reused runspace InitialSessionState" -Tags 'Feature' {
+Describe "TypeTable duplicate types in reused runspace InitialSessionState TypeTable" -Tags 'Feature' {
 
-    BeforeAll {
+    Context "No duplicate types test" {
 
-        $typeTable = [System.Management.Automation.Runspaces.TypeTable]::new([string[]](Join-Path $PSScriptRoot "../Common/TestTypeFile.ps1xml"))
-        [initialsessionstate] $iss = [initialsessionstate]::Create()
-        $iss.Types.Add($typeTable)
-        [runspace] $rs1 = [runspacefactory]::CreateRunspace($iss)
+        BeforeAll {
 
-        # Process TypeTable types from ISS
-        $rs1.Open()
+            $typeTable = [System.Management.Automation.Runspaces.TypeTable]::new([string[]](Join-Path $PSScriptRoot "../Common/TestTypeFile.ps1xml"))
+            [initialsessionstate] $iss = [initialsessionstate]::Create()
+            $iss.Types.Add($typeTable)
+            [runspace] $rs1 = [runspacefactory]::CreateRunspace($iss)
 
-        # Get processed ISS from runspace.
-        $issReused = $rs1.InitialSessionState.Clone()
-        $issReused.ThrowOnRunspaceOpenError = $true
+            # Process TypeTable types from ISS
+            $rs1.Open()
 
-        # Create new runspace with reused ISS.
-        $rs2 = [runspacefactory]::CreateRunspace($issReused)
-    }
+            # Get processed ISS from runspace.
+            $issReused = $rs1.InitialSessionState.Clone()
+            $issReused.ThrowOnRunspaceOpenError = $true
 
-    AfterAll {
-
-        if ($rs1 -ne $null) { $rs1.Dispose() }
-        if ($rs2 -ne $null) { $rs2.Dispose() }
-    }
-
-    It "Verifies that a reused InitialSessionState object created from a TypeTable object does not have duplicate types" {
-
-        $errs = $null
-        try
-        {
-            $rs2.Open()
-        }
-        catch
-        {
-            $errs = $_
+            # Create new runspace with reused ISS.
+            $rs2 = [runspacefactory]::CreateRunspace($issReused)
         }
 
-        $errs | Should Be $null
+        AfterAll {
+
+            if ($rs1 -ne $null) { $rs1.Dispose() }
+            if ($rs2 -ne $null) { $rs2.Dispose() }
+        }
+
+        It "Verifies that a reused InitialSessionState object created from a TypeTable object does not have duplicate types" {
+
+            $errs = $null
+            try
+            {
+                $rs2.Open()
+            }
+            catch
+            {
+                $errs = $_
+            }
+
+            $errs | Should Be $null
+        }
+    }
+
+    Context "Cannot use shared TypeTable in ISS test" {
+
+        BeforeAll {
+
+            # Create default ISS and add shared TypeTable.
+            $typeTable = [System.Management.Automation.Runspaces.TypeTable]::new([string[]](Join-Path $PSScriptRoot "../Common/TestTypeFile.ps1xml"))
+            [initialsessionstate] $iss = [initialsessionstate]::CreateDefault2()
+            $iss.Types.Add($typeTable)
+            $iss.ThrowOnRunspaceOpenError = $true
+            [runspace] $rs = [runspacefactory]::CreateRunspace($iss)
+        }
+
+        AfterAll {
+
+            if ($rs -ne $null) { $rs.Dispose() }
+        }
+
+        It "Verifies that shared TypeTable is not allowed in ISS" {
+
+            # Process TypeTable types from ISS.
+            $errorId = ""
+            try
+            {
+                $rs.Open()
+                throw "No Exception!"
+            }
+            catch
+            {
+                if ($_.Exception.InnerException -ne $null)
+                {
+                    $errorId = $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId
+                }
+            }
+
+            $errorId | Should Be "ErrorsUpdatingTypes"
+        }
     }
 }
