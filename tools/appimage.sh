@@ -103,6 +103,7 @@ Terminal=true
 EOF
 
 cp ../../assets/Powershell_256.png $APP.png
+cp ../../assets/AppImageThirdPartyNotices.txt ThirdPartyNotices.txt
 
 cat > ./AppRun <<\EOF
 #!/bin/sh
