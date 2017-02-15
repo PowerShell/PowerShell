@@ -11,7 +11,7 @@ You should *never* run a script without reading it first!
 Please **read the [download][] script first**, and then if you want to run it, use:
 
 ```sh
-bash <(curl -fsSL https://raw.githubusercontent.com/PowerShell/PowerShell/v6.0.0-alpha.15/tools/download.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/PowerShell/PowerShell/v6.0.0-alpha.16/tools/download.sh)
 ```
 
 Once the package is installed, run `powershell` from a terminal.
@@ -20,19 +20,19 @@ Once the package is installed, run `powershell` from a terminal.
 [u16]: #ubuntu-1604
 [cos]: #centos-7
 [osx]: #os-x-1011
-[download]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-alpha.15/tools/download.sh
+[download]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-alpha.16/tools/download.sh
 
 Ubuntu 14.04
 ============
 
 Using [Ubuntu 14.04][], download the Debian package
-`powershell_6.0.0-alpha.15-1ubuntu1.14.04.1_amd64.deb`
+`powershell_6.0.0-alpha.16-1ubuntu1.14.04.1_amd64.deb`
 from the [releases][] page onto the Ubuntu machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo dpkg -i powershell_6.0.0-alpha.15-1ubuntu1.14.04.1_amd64.deb
+sudo dpkg -i powershell_6.0.0-alpha.16-1ubuntu1.14.04.1_amd64.deb
 sudo apt-get install -f
 ```
 
@@ -52,13 +52,13 @@ Ubuntu 16.04
 ============
 
 Using [Ubuntu 16.04][], download the Debian package
-`powershell_6.0.0-alpha.15-1ubuntu1.16.04.1_amd64.deb`
+`powershell_6.0.0-alpha.16-1ubuntu1.16.04.1_amd64.deb`
 from the [releases][] page onto the Ubuntu machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo dpkg -i powershell_6.0.0-alpha.15-1ubuntu1.16.04.1_amd64.deb
+sudo dpkg -i powershell_6.0.0-alpha.16-1ubuntu1.16.04.1_amd64.deb
 sudo apt-get install -f
 ```
 
@@ -80,19 +80,19 @@ CentOS 7
 ========
 
 Using [CentOS 7][], download the RPM package
-`powershell-6.0.0_alpha.15-1.el7.centos.x86_64.rpm`
+`powershell-6.0.0_alpha.16-1.el7.centos.x86_64.rpm`
 from the [releases][] page onto the CentOS machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo yum install ./powershell-6.0.0_alpha.15-1.el7.centos.x86_64.rpm
+sudo yum install ./powershell-6.0.0_alpha.16-1.el7.centos.x86_64.rpm
 ```
 
 You can also install the RPM without the intermediate step of downloading it:
 
 ```sh
-sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.15/powershell-6.0.0_alpha.15-1.el7.centos.x86_64.rpm
+sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.16/powershell-6.0.0_alpha.16-1.el7.centos.x86_64.rpm
 ```
 
 > This package works on Oracle Linux 7. It should work on Red Hat Enterprise Linux 7 too.
@@ -109,14 +109,14 @@ macOS 10.11
 ===========
 
 Using macOS 10.11, download the PKG package
-`powershell-6.0.0-alpha.15.pkg`
+`powershell-6.0.0-alpha.16.pkg`
 from the [releases][] page onto the macOS machine.
 
 Either double-click the file and follow the prompts,
 or install it from the terminal:
 
 ```sh
-sudo installer -pkg powershell-6.0.0-alpha.15.pkg -target /
+sudo installer -pkg powershell-6.0.0-alpha.16.pkg -target /
 ```
 
 **Uninstallation**
@@ -184,7 +184,7 @@ You *can* run this command manually if you're having trouble with .NET Core's cr
 Paths
 =====
 
-* `$PSHOME` is `/opt/microsoft/powershell/6.0.0-alpha.15/`
+* `$PSHOME` is `/opt/microsoft/powershell/6.0.0-alpha.16/`
 * User profiles will be read from `~/.config/powershell/profile.ps1`
 * Default profiles will be read from `$PSHOME/profile.ps1`
 * User modules will be read from `~/.local/share/powershell/Modules`
@@ -200,7 +200,7 @@ On Linux and macOS, the [XDG Base Directory Specification][xdg-bds] is respected
 
 Note that because macOS is a derivation of BSD,
 instead of `/opt`, the prefix used is `/usr/local`.
-Thus, `$PSHOME` is `/usr/local/microsoft/powershell/6.0.0-alpha.15/`,
+Thus, `$PSHOME` is `/usr/local/microsoft/powershell/6.0.0-alpha.16/`,
 and the symlink is placed at `/usr/local/bin/powershell`.
 
 [releases]: https://github.com/PowerShell/PowerShell/releases/latest

@@ -4,7 +4,7 @@ MAINTAINER brycem@microsoft.com
 LABEL Readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
 LABEL Description="This Dockerfile will install the latest release of PS."
 
-ARG POWERSHELL_MSI=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.14/PowerShell_6.0.0.14-alpha.14-win10-x64.msi
+ARG POWERSHELL_MSI=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.16/PowerShell_6.0.0-alpha.16-win10-win2016-x64.msi
 ARG POWERSHELL_SHA256=503F3AD52223699765895D3E9615FBD7988194693BCB725BE90C9EF0CD594447
 
 # Setup PowerShell - Log-to > C:\Docker.log
