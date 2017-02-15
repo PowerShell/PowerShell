@@ -35,12 +35,6 @@ function Get-RuntimeError
     {
         return $_.Exception.InnerException.ErrorRecord
     }
-    finally
-    {
-        if ( $ps -ne $null ) {
-            $ps.dispose()
-        }
-    }
 }
 
 function position_message
