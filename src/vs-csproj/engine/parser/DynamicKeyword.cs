@@ -61,8 +61,13 @@ namespace System.Management.Automation
     [AttributeUsage(AttributeTargets.Class)]
     public class KeywordAttribute : ParsingBaseAttribute
     {
+        // Default attribute parameter values
         public const DynamicKeywordNameMode DefaultNameMode = DynamicKeywordNameMode.NoName;
         public const DynamicKeywordBodyMode DefaultBodyMode = DynamicKeywordBodyMode.Command;
+        public const DynamicKeywordUseMode DefaultUseMode = DynamicKeywordUseMode.OptionalMany;
+        public static readonly string DefaultResourceName = String.Empty;
+        public const bool DefaultIsDirectCall = false;
+        public const bool DefaultIsMetaStatement = false;
 
         /// <summary>
         /// Construct a KeywordAttribute with default values
@@ -80,6 +85,26 @@ namespace System.Management.Automation
         /// Specifies the body type of the DynamicKeyword
         /// </summary>
         public DynamicKeywordBodyMode Body { get; set; } = DefaultBodyMode;
+
+        /// <summary>
+        /// Specifies how many times the keyword may be used
+        /// </summary>
+        public DynamicKeywordUseMode Use { get; set; } = DefaultUseMode;
+
+        /// <summary>
+        /// The DSC resource name of the keyword, if it is a DSC dynamic keyword
+        /// </summary>
+        public string ResourceName { get; set; } = DefaultResourceName;
+
+        /// <summary>
+        /// Indicates whether a keyword uses a marshalled call or is a direct function call, for DSC node keywords
+        /// </summary>
+        public bool DirectCall { get; set; } = DefaultIsDirectCall;
+
+        /// <summary>
+        /// Indicates that the keyword should not be added to the AST (and therefore should do nothing at runtime) if true
+        /// </summary>
+        public bool MetaStatement { get; set; } = DefaultIsMetaStatement;
     }
 
     /// <summary>
@@ -175,6 +200,32 @@ namespace System.Management.Automation.Language
         /// The keyword has hashtable body
         /// </summary>
         Hashtable = 2,
+    }
+
+    /// <summary>
+    /// Defines the use semantics of a dynamic keyword for a given block
+    /// </summary>
+    public enum DynamicKeywordUseMode
+    {
+        /// <summary>
+        /// The keyword must be used exactly once in a block
+        /// </summary>
+        Required = 0,
+
+        /// <summary>
+        /// The keyword must be used at least once in a block
+        /// </summary>
+        RequiredMany = 1,
+
+        /// <summary>
+        /// The keyword may be used 0 or 1 times in a block
+        /// </summary>
+        Optional = 2,
+
+        /// <summary>
+        /// The keyword may be used zero or more times in a block (i.e. there are no use restrictions)
+        /// </summary>
+        OptionalMany = 3,
     }
 
     /// <summary>
@@ -341,38 +392,56 @@ namespace System.Management.Automation.Language
         #endregion
 
         /// <summary>
+        /// Default constructor
+        /// </summary>
+        public DynamicKeyword()
+        {
+        }
+
+        /// <summary>
+        /// Copy constructor
+        /// </summary>
+        /// <param name="other">the keyword to copy</param>
+        public DynamicKeyword(DynamicKeyword other)
+        {
+            ImplementingModule = other.ImplementingModule;
+            ImplementingModuleVersion = other.ImplementingModuleVersion;
+            ImplementingModuleInfo = other.ImplementingModuleInfo;
+            Keyword = other.Keyword;
+            ResourceName = other.ResourceName;
+            BodyMode = other.BodyMode;
+            DirectCall = other.DirectCall;
+            NameMode = other.NameMode;
+            UseMode = other.UseMode;
+            MetaStatement = other.MetaStatement;
+            IsReservedKeyword = other.IsReservedKeyword;
+            HasReservedProperties = other.HasReservedProperties;
+            PreParse = other.PreParse;
+            PostParse = other.PostParse;
+            SemanticCheck = other.SemanticCheck;
+            IsNested = other.IsNested;
+
+            foreach (KeyValuePair<string, DynamicKeywordProperty> entry in other.Properties)
+            {
+                Properties.Add(entry.Key, entry.Value);
+            }
+            foreach (KeyValuePair<string, DynamicKeywordParameter> entry in other.Parameters)
+            {
+                Parameters.Add(entry.Key, entry.Value);
+            }
+            foreach (KeyValuePair<string, DynamicKeyword> entry in other.InnerKeywords)
+            {
+                InnerKeywords.Add(entry.Key, entry.Value);
+            }
+        }
+
+        /// <summary>
         /// Duplicates the DynamicKeyword
         /// </summary>
         /// <returns>A copy of the DynamicKeyword</returns>
-        public DynamicKeyword Copy()
+        public virtual DynamicKeyword Copy()
         {
-            DynamicKeyword keyword = new DynamicKeyword()
-            {
-                ImplementingModule = this.ImplementingModule,
-                ImplementingModuleVersion = this.ImplementingModuleVersion,
-                ImplementingModuleInfo = this.ImplementingModuleInfo,
-                Keyword = this.Keyword,
-                ResourceName = this.ResourceName,
-                BodyMode = this.BodyMode,
-                DirectCall = this.DirectCall,
-                NameMode = this.NameMode,
-                MetaStatement = this.MetaStatement,
-                IsReservedKeyword = this.IsReservedKeyword,
-                HasReservedProperties = this.HasReservedProperties,
-                PreParse = this.PreParse,
-                PostParse = this.PostParse,
-                SemanticCheck = this.SemanticCheck,
-                IsNested = this.IsNested,
-            };
-            foreach (KeyValuePair<string, DynamicKeywordProperty> entry in this.Properties)
-            {
-                keyword.Properties.Add(entry.Key, entry.Value);
-            }
-            foreach (KeyValuePair<string, DynamicKeywordParameter> entry in this.Parameters)
-            {
-                keyword.Parameters.Add(entry.Key, entry.Value);
-            }
-            return keyword;
+            return new DynamicKeyword(this);
         }
 
         /// <summary>
@@ -419,6 +488,11 @@ namespace System.Management.Automation.Language
         /// This allows you to specify if the keyword takes a name argument and if so, what form that takes.
         /// </summary>
         public DynamicKeywordNameMode NameMode { get; set; }
+
+        /// <summary>
+        /// Specifies how many times a keyword may be used per block
+        /// </summary>
+        public DynamicKeywordUseMode UseMode { get; set; }
 
         /// <summary>
         /// Indicate that the nothing should be added to the AST for this
@@ -799,9 +873,7 @@ namespace System.Management.Automation.Language
             _keywordDefinitionStack.Peek().Add(keywordName);
 
             // Set the keyword properties -- note the defaults are set here, since reading metadata does not execute default attribute setters
-            DynamicKeywordNameMode nameMode = KeywordAttribute.DefaultNameMode;
-            DynamicKeywordBodyMode bodyMode = KeywordAttribute.DefaultBodyMode;
-            ReadKeywordAttributeParameters(keywordAttribute, ref nameMode, ref bodyMode);
+            DynamicKeywordAttributeValueData attributeData = ReadKeywordAttributeParameters(keywordAttribute);
 
             // Read in enum definitions in the local scope
             _enumDefStack.Push(ReadEnumDefinitions(typeDef.GetNestedTypes().Select(tdHandle => _metadataReader.GetTypeDefinition(tdHandle)).Where(t => IsEnum(t))));
@@ -824,8 +896,9 @@ namespace System.Management.Automation.Language
 
                     if (IsKeywordParameterAttribute(keywordMemberAttribute))
                     {
+                        // TODO: Should this apply to ScriptBlock-bodied keywords too?
                         // Hashtable-bodied keyword cannot take parameters
-                        if (bodyMode == DynamicKeywordBodyMode.Hashtable)
+                        if (attributeData.BodyMode == DynamicKeywordBodyMode.Hashtable)
                         {
                             var msg = String.Format("Keyword '{0}' has a Hashtable body, but must use another body mode to take parameters", keywordName);
                         }
@@ -835,9 +908,9 @@ namespace System.Management.Automation.Language
                     if (IsKeywordPropertyAttribute(keywordMemberAttribute))
                     {
                         // Only Hashtable-bodied keywords can have properties
-                        if (bodyMode != DynamicKeywordBodyMode.Hashtable)
+                        if (attributeData.BodyMode != DynamicKeywordBodyMode.Hashtable)
                         {
-                            var msg = String.Format("Keyword '{0}' has body mode '{1}', but must have a Hashtable body mode to have properties assigned", keywordName, bodyMode);
+                            var msg = String.Format("Keyword '{0}' has body mode '{1}', but must have a Hashtable body mode to have properties assigned", keywordName, attributeData.BodyMode);
                             throw new RuntimeException(msg);
                         }
                         keywordProperties.Add(ReadPropertySpecifiction(propertyDef, keywordMemberAttribute));
@@ -850,7 +923,7 @@ namespace System.Management.Automation.Language
             var innerKeywords = new List<DynamicKeyword>();
             foreach (var innerTypeDefHandle in typeDef.GetNestedTypes())
             {
-                if (bodyMode == DynamicKeywordBodyMode.Command)
+                if (attributeData.BodyMode == DynamicKeywordBodyMode.Command)
                 {
                     var msg = String.Format("Keyword '{0}' is a command-bodied keyword, and cannot contain other keywords", keywordName);
                 }
@@ -871,8 +944,12 @@ namespace System.Management.Automation.Language
             var keyword = new DynamicKeyword()
             {
                 Keyword = keywordName,
-                NameMode = nameMode,
-                BodyMode = bodyMode,
+                NameMode = attributeData.NameMode,
+                BodyMode = attributeData.BodyMode,
+                UseMode = attributeData.UseMode,
+                ResourceName = attributeData.ResourceName,
+                DirectCall = attributeData.IsDirectCall,
+                MetaStatement = attributeData.IsMetaStatement,
                 ImplementingModule = _moduleInfo.Name,
                 ImplementingModuleVersion = _moduleInfo.Version,
                 ImplementingModuleInfo = _moduleInfo,
@@ -901,8 +978,15 @@ namespace System.Management.Automation.Language
         /// <param name="keywordAttribute">the KeywordAttribute metadata</param>
         /// <param name="nameMode">the name mode of the keyword</param>
         /// <param name="bodyMode">the body mode of the keyword</param>
-        private void ReadKeywordAttributeParameters(CustomAttribute keywordAttribute, ref DynamicKeywordNameMode nameMode, ref DynamicKeywordBodyMode bodyMode)
+        private DynamicKeywordAttributeValueData ReadKeywordAttributeParameters(CustomAttribute keywordAttribute)
         {
+            DynamicKeywordNameMode nameMode = KeywordAttribute.DefaultNameMode;
+            DynamicKeywordBodyMode bodyMode = KeywordAttribute.DefaultBodyMode;
+            DynamicKeywordUseMode useMode = KeywordAttribute.DefaultUseMode;
+            string resourceName = KeywordAttribute.DefaultResourceName;
+            bool isDirectCall = KeywordAttribute.DefaultIsDirectCall;
+            bool isMetaStatement = KeywordAttribute.DefaultIsMetaStatement;
+
             CustomAttributeValue<Type> keywordValue = keywordAttribute.DecodeValue(_knownTypeTypeProvider);
 
             foreach (var attributeParameter in keywordValue.NamedArguments)
@@ -914,17 +998,35 @@ namespace System.Management.Automation.Language
                         break;
 
                     case nameof(KeywordAttribute.Body):
-                            bodyMode = (DynamicKeywordBodyMode)attributeParameter.Value;
-                            break;
-                    }
+                        bodyMode = (DynamicKeywordBodyMode)attributeParameter.Value;
+                        break;
+
+                    case nameof(KeywordAttribute.Use):
+                        useMode = (DynamicKeywordUseMode)attributeParameter.Value;
+                        break;
+
+                    case nameof(KeywordAttribute.ResourceName):
+                        resourceName = (string)attributeParameter.Value;
+                        break;
+
+                    case nameof(KeywordAttribute.DirectCall):
+                        isDirectCall = (bool)attributeParameter.Value;
+                        break;
+
+                    case nameof(KeywordAttribute.MetaStatement):
+                        isMetaStatement = (bool)attributeParameter.Value;
+                        break;
                 }
+            }
+
+            return new DynamicKeywordAttributeValueData(nameMode, bodyMode, useMode, resourceName, isDirectCall, isMetaStatement);
         }
 
         /// <summary>
         /// Read in a DynamicKeywordParameter object from dll metadata, using the C# property definition and its parameter attribute
         /// </summary>
-        /// <param name="propertyDef"></param>
-        /// <param name="keywordParameterAttribute"></param>
+        /// <param name="propertyDef">the property metadata being read in as a dynamic keyword parameter</param>
+        /// <param name="keywordParameterAttribute">the attribute on the property defining its parameters and declaring it as a parameter</param>
         /// <returns></returns>
         private DynamicKeywordParameter ReadParameterSpecification(PropertyDefinition propertyDef, CustomAttribute keywordParameterAttribute)
         {
@@ -1194,6 +1296,43 @@ namespace System.Management.Automation.Language
         {
             var baseType = _metadataReader.GetTypeReference((TypeReferenceHandle)typeDef.BaseType);
             return String.Join(".", _metadataReader.GetString(baseType.Namespace), _metadataReader.GetString(baseType.Name)) == nameof(System.Enum);
+        }
+
+        /// <summary>
+        /// A value-passing object for seting Dynamic Keyword attributes
+        /// </summary>
+        private class DynamicKeywordAttributeValueData
+        {
+            public readonly DynamicKeywordNameMode NameMode;
+            public readonly DynamicKeywordBodyMode BodyMode;
+            public readonly DynamicKeywordUseMode UseMode;
+            public readonly string ResourceName;
+            public readonly bool IsDirectCall;
+            public readonly bool IsMetaStatement;
+
+            /// <summary>
+            /// Create a new object to pass values with
+            /// </summary>
+            /// <param name="nameMode">the name mode of the dynamic keyword</param>
+            /// <param name="bodyMode">the body mode of the dynamic keyword</param>
+            /// <param name="useMode">the use mode of the dynamic keyword</param>
+            /// <param name="resourceName">the resource name, for a DSC keyword</param>
+            /// <param name="isDirectCall">true if the keyword is called directly and not marshalled</param>
+            /// <param name="isMetaStatement">true if the keyword does not get added to the AST</param>
+            public DynamicKeywordAttributeValueData(DynamicKeywordNameMode nameMode,
+                DynamicKeywordBodyMode bodyMode,
+                DynamicKeywordUseMode useMode,
+                string resourceName,
+                bool isDirectCall,
+                bool isMetaStatement)
+            {
+                NameMode = nameMode;
+                BodyMode = bodyMode;
+                UseMode = useMode;
+                ResourceName = resourceName;
+                IsDirectCall = isDirectCall;
+                IsMetaStatement = isMetaStatement;
+            }
         }
     }
 
