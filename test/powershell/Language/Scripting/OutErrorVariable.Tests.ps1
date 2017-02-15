@@ -301,7 +301,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
         It '$get_item_err.count and $get_item_err[0].exception' {
             $get_item_err.count | Should Be 1
             $get_item_err[0].exception | Should Not BeNullOrEmpty
-            $get_item_err[0].exception.GetType() | Should Be 'System.Management.Automation.ItemNotFoundException'
+            $get_item_err[0].exception | Should BeOftype 'System.Management.Automation.ItemNotFoundException'
         }
     }
 

@@ -74,7 +74,7 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
             [A]::b = "bla"
             throw "No Exception!"
         } catch {
-            $_.Exception | Should BeOfType SetValueInvocationException
+            $_.Exception | Should BeOfType 'System.Management.Automation.SetValueInvocationException'
         }
     }
 }
@@ -419,7 +419,7 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
             [B]::new(101)
             throw "No Exception!"
         } catch {
-            $_.Exception | Should BeOfType MethodException
+            $_.Exception | Should BeOfType "System.Management.Automation.MethodException"
         }
     }
 

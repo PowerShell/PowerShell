@@ -16,21 +16,22 @@ Describe 'minishell for native executables' -Tag 'CI' {
 
         It 'gets a hashtable object from minishell' {
             $output = & $powershell -noprofile { @{'a' = 'b'} }
-            ($output | measure).Count | Should Be 1
-            ($output.GetType().Name) | Should Be 'Hashtable'
+            ($output | Measure-Object).Count | Should Be 1
+            $output | Should BeOfType 'Hashtable'
             $output['a'] | Should Be 'b'
         }
 
         It 'gets the error stream from minishell' {
             $output = & $powershell -noprofile { Write-Error 'foo' } 2>&1
-            ($output | measure).Count | Should Be 1
-            ($output.GetType().Name) | Should Be 'ErrorRecord'
+            ($output | Measure-Object).Count | Should Be 1
+            $output | Should BeOfType 'System.Management.Automation.ErrorRecord'
             $output.FullyQualifiedErrorId | Should Be 'Microsoft.PowerShell.Commands.WriteErrorException'
         }
 
         It 'gets the information stream from minishell' {
             $output = & $powershell -noprofile { Write-Information 'foo' } 6>&1
-            ($output.GetType().Name) | Should Be 'InformationRecord'
+            ($output | Measure-Object).Count | Should Be 1
+            $output | Should BeOfType 'System.Management.Automation.InformationRecord'
             $output | Should Be 'foo'
         }
     }
@@ -150,7 +151,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
         foreach ($x in "--help", "-help", "-h", "-?", "--he", "-hel", "--HELP", "-hEl") {
             It "Accepts '$x' as a parameter for help" {
-                & $powershell -noprofile $x | ?{ $_ -match "PowerShell[.exe] -Help | -? | /?" } | Should Not BeNullOrEmpty
+                & $powershell -noprofile $x | Where-Object { $_ -match "PowerShell[.exe] -Help | -? | /?" } | Should Not BeNullOrEmpty
             }
         }
 

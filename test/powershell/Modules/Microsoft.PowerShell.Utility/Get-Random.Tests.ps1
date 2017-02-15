@@ -65,7 +65,7 @@ Describe "Get-Random DRT Unit Tests" -Tags "CI" {
         $result = Get-Random -Maximum $maximum -Minimum $minimum
         $result | Should BeGreaterThan $greaterThan
         $result | Should BeLessThan $lessThan
-        $result.GetType().FullName | Should Be $type
+        $result | Should BeOfType $type
 
     }
 
@@ -124,7 +124,7 @@ Describe "Get-Random" -Tags "CI" {
     It "Should return an array " {
 	$randomNumber = Get-Random -InputObject 1, 2, 3, 5, 8, 13 -Count 3
     $randomNumber.Count | Should Be 3
-	$randomNumber.GetType().BaseType | Should Be array
+	,$randomNumber | Should BeOfType "System.Array"
     }
 
     It "Should return three random numbers for array of 1,2,3,5,8,13 " {

@@ -30,12 +30,13 @@ Describe "Get-Content" -Tags "CI" {
   It "Should return an Object when listing only a single line and the correct information from a file" {
         $content = (Get-Content -Path $testPath)
         $content | Should Be $testString
-        $content.GetType().BaseType.Name | Should Be "Object"
+        $content.Count | Should Be 1
+        $content | Should BeOfType "System.String"
   }
   It "Should deliver an array object when listing a file with multiple lines and the correct information from a file" {
         $content = (Get-Content -Path $testPath2)
         @(Compare-Object $content $testString2.Split($nl) -SyncWindow 0).Length | Should Be 0
-        $content.GetType().BaseType.Name | Should Be "Array"
+        ,$content | Should BeOfType "System.Array"
   }
   It "Should be able to return a specific line from a file" {
 	  (Get-Content -Path $testPath2)[1] | Should be $secondline

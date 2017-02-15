@@ -4,8 +4,7 @@ Describe "Get-FormatData" -Tags "CI" {
 
         It "Should return an object[] as the return type" {
             $result = Get-FormatData
-            $result.Count  | Should BeGreaterThan 0
-            $result.GetType() | Should be System.Object[]
+            ,$result | Should BeOfType "System.Object[]"
         }
     }
 }

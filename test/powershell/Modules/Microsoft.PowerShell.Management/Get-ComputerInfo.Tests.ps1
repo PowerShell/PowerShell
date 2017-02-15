@@ -1333,7 +1333,7 @@ try {
 
         It "(special case) Test for property = OsLocalDateTime" -Pending:$true {
             $computerInfo = Get-ComputerInfo
-            $computerInfo.GetType().Name | Should Be "ComputerInfo"
+            $computerInfo | Should BeOfType "ComputerInfo"
         }
 
         It "(special case) Test for property = OsMaxNumberOfProcesses" {

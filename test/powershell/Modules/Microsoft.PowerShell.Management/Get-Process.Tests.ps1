@@ -10,9 +10,7 @@ Describe "Get-Process" -Tags "CI" {
         $ps = Get-Process
     }
     It "Should return a type of Object[] for Get-Process cmdlet" -Pending:$IsOSX {
-        $ps | Should Not BeNullOrEmpty
-        $ps.GetType().BaseType | Should Be 'array'
-        $ps.GetType().Name | Should Be Object[]
+        ,$ps | Should BeOfType "System.Object[]"
     }
 
     It "Should have not empty Name flags set for Get-Process object" -Pending:$IsOSX {

@@ -53,7 +53,7 @@ Describe "Split-Path" -Tags "CI" {
         $actual.Count                   | Should Be 2
         $actual[0]                      | Should Be $testFile1
         $actual[1]                      | Should Be $testFile2
-        $actual.GetType().BaseType.Name | Should Be "Array"
+        ,$actual                        | Should BeOfType "System.Array"
     }
 
     It "Should be able to tell if a given path is an absolute path" {

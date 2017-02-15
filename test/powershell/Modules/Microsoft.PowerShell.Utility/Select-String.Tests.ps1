@@ -15,8 +15,7 @@ Describe "Select-String" -Tags "CI" {
 
     it "Should return an array data type when multiple matches are found" {
         $result = $testinputtwo | Select-String -Pattern "hello"
-        $result | Should Not BeNullOrEmpty
-        $result.gettype().basetype | Should Be Array
+        ,$result | Should BeOfType "System.Array"
     }
 
 	it "Should return the same result for the alias sls and Select-String " {
@@ -27,17 +26,15 @@ Describe "Select-String" -Tags "CI" {
 	    $equal | Should Be True
 	}
 
-	it "Should return an object type when one match is found" {
-	    $result = $testinputtwo | Select-String -Pattern "hello" -CaseSensitive
-        $result | Should Not BeNullOrEmpty
-        $result.gettype().basetype | Should Be System.Object
-	}
+    it "Should return an object type when one match is found" {
+        $result = $testinputtwo | Select-String -Pattern "hello" -CaseSensitive
+        ,$result | Should BeOfType "System.Object"
+    }
 
-	it "Should return matchinfo type" {
-	    $result = $testinputtwo | Select-String -Pattern "hello" -CaseSensitive
-        $result | Should Not BeNullOrEmpty
-        $result.gettype().name | Should Be MatchInfo
-	}
+    it "Should return matchinfo type" {
+        $result = $testinputtwo | Select-String -Pattern "hello" -CaseSensitive
+        ,$result | Should BeOfType "Microsoft.PowerShell.Commands.MatchInfo"
+    }
 
 	it "Should be called without an error using ca for casesensitive " {
 	    {$testinputone | Select-String -Pattern "hello" -ca } | Should Not Throw
@@ -59,19 +56,18 @@ Describe "Select-String" -Tags "CI" {
 	    { Select-String -InputObject "some stuff", "other stuff" -Pattern "other" } | Should Not Throw
 	}
 
-	it "Should return system.object when the input object switch is used on a collection" {
-	    $result = Select-String -InputObject "some stuff", "other stuff" -pattern "other"
-        $result | Should Not BeNullOrEmpty
-        $result.gettype().basetype | Should Be System.Object
-	}
+    it "Should return system.object when the input object switch is used on a collection" {
+        $result = Select-String -InputObject "some stuff", "other stuff" -pattern "other"
+        ,$result | Should BeOfType "System.Object"
+    }
 
 	it "Should return null or empty when the input object switch is used on a collection and the pattern does not exist" {
 	    Select-String -InputObject "some stuff", "other stuff" -Pattern "neither" | Should BeNullOrEmpty
 	}
 
-	it "Should return a bool type when the quiet switch is used" {
-	    ($testinputtwo | Select-String -Quiet "hello" -CaseSensitive).gettype() | Should Be Bool
-	}
+    it "Should return a bool type when the quiet switch is used" {
+        ,($testinputtwo | Select-String -Quiet "hello" -CaseSensitive) | Should BeOfType "System.Boolean"
+    }
 
 	it "Should be true when select string returns a positive result when the quiet switch is used" {
 	    ($testinputtwo | Select-String -Quiet "hello" -CaseSensitive) | Should Be $True
@@ -106,18 +102,16 @@ Describe "Select-String" -Tags "CI" {
 	    Remove-Item $testInputFile -Force
 	}
 
-	It "Should return an object when a match is found is the file on only one line" {
-	    $result = Select-String $testInputFile -Pattern "string"
-        $result | Should Not BeNullOrEmpty
-        $result.GetType().BaseType | Should be System.Object
-	}
+    It "Should return an object when a match is found is the file on only one line" {
+        $result = Select-String $testInputFile -Pattern "string"
+        ,$result | Should BeOfType "System.Object"
+    }
 
-	It "Should return an array when a match is found is the file on several lines" {
-	    $result = Select-String $testInputFile -Pattern "in"
-        $result | Should Not BeNullOrEmpty
-        $result.GetType().BaseType | Should be array
-	    $result[0].GetType().Name  | Should Be MatchInfo
-	}
+    It "Should return an array when a match is found is the file on several lines" {
+        $result = Select-String $testInputFile -Pattern "in"
+        ,$result | Should BeOfType "System.Array"
+        $result[0] | Should BeOfType "Microsoft.PowerShell.Commands.MatchInfo"
+    }
 
 	It "Should return the name of the file and the string that 'string' is found if there is only one lines that has a match" {
 	    $expected = $testInputFile + ":1:This is a text string, and another string"
