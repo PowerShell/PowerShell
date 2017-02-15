@@ -24,7 +24,7 @@ namespace System.Management.Automation
     /// the KeywordParameterAttribute will be parameters, while properties with the KeywordPropertyAttribute will
     /// be keyword properties.
     /// </summary>
-    public abstract class Keyword : InternalCommand
+    public abstract class Keyword
     {
         /// <summary>
         /// Constructs a keyword with null runtime delegates. This is intended to be overridden.
@@ -46,7 +46,8 @@ namespace System.Management.Automation
         public Func<DynamicKeywordStatementAst, ParseError[]> PostParse { get; set; }
 
         /// <summary>
-        /// Specifies the call to run on a DynamicKeyword statement AST node at semantic check time
+        /// Specifies the call to run on a DynamicKeyword statement AST node at semantic check time (to perform
+        /// any user-specified semantic checks)
         /// </summary>
         public Func<DynamicKeywordStatementAst, ParseError[]> SemanticCheck { get; set; }
     }

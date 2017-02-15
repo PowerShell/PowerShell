@@ -14,6 +14,7 @@ using System.Management.Automation.Runspaces;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using Microsoft.PowerShell.Commands;
 #if !CORECLR
 using Microsoft.CodeAnalysis;
 #endif
@@ -49,6 +50,42 @@ namespace System.Management.Automation.Language
 
         internal const string VERBATIM_ARGUMENT = "--%";
         internal const string VERBATIM_PARAMETERNAME = "-%";  // Same as VERBATIM_ARGUMENT w/o the first '-'.
+
+        [ThreadStatic]
+        private static PowerShell t_usingStatementResolvePowerShell;
+
+        private static PowerShell UsingStatementResolvePowerShell
+        {
+            get
+            {
+                // The goal is to re-use runspaces, because creating runspace is an expensive part in creating PowerShell instance.
+                if (t_usingStatementResolvePowerShell == null)
+                {
+                    if (Runspace.DefaultRunspace != null)
+                    {
+                        t_usingStatementResolvePowerShell = PowerShell.Create(RunspaceMode.CurrentRunspace);
+                    }
+                    else
+                    {
+                        // Create empty iss and populate only commands, that we want to use.
+                        InitialSessionState iss = InitialSessionState.Create();
+                        iss.Commands.Add(new SessionStateCmdletEntry("Get-Module", typeof(GetModuleCommand), null));
+                        var sessionStateProviderEntry = new SessionStateProviderEntry(FileSystemProvider.ProviderName, typeof(FileSystemProvider), null);
+                        var snapin = PSSnapInReader.ReadEnginePSSnapIns().FirstOrDefault(snapIn => snapIn.Name.Equals("Microsoft.PowerShell.Core", StringComparison.OrdinalIgnoreCase));
+                        sessionStateProviderEntry.SetPSSnapIn(snapin);
+                        iss.Providers.Add(sessionStateProviderEntry);
+                        t_usingStatementResolvePowerShell = PowerShell.Create(iss);
+                    }
+                }
+                else if (Runspace.DefaultRunspace != null && t_usingStatementResolvePowerShell.Runspace != Runspace.DefaultRunspace)
+                {
+                    t_usingStatementResolvePowerShell = PowerShell.Create(RunspaceMode.CurrentRunspace);
+                }
+
+                return t_usingStatementResolvePowerShell;
+            }
+        }
+
 
         internal Parser()
         {
@@ -827,6 +864,98 @@ namespace System.Management.Automation.Language
 
             return result;
         }
+
+        /// <summary>
+        /// Resolves using module to a collection of PSModuleInfos. Doesn't throw.
+        /// PSModuleInfo objects are returned in the right order: i.e. if multiply versions of the module
+        /// is presented on the system and user didn't specify version, we will return all of them, but newer one would go first.
+        /// </summary>
+        /// <param name="usingStatementAst">using statement</param>
+        /// <param name="exception">If exception happens, return exception object.</param>
+        /// <param name="wildcardCharactersUsed">
+        /// True if in the module name uses wildcardCharacter.
+        /// We don't want to resolve any wild-cards in using module.
+        /// </param>
+        /// <param name="isConstant">True if module hashtable contains constant value (it's our requirement).</param>
+        /// <returns>Modules, if can resolve it. null if any problems happens.</returns>
+        public Collection<PSModuleInfo> GetModulesFromUsingModule(UsingStatementAst usingStatementAst, out Exception exception, out bool wildcardCharactersUsed, out bool isConstant)
+        {
+            exception = null;
+            wildcardCharactersUsed = false;
+            isConstant = true;
+
+            // fullyQualifiedName can be string or hashtable
+            object fullyQualifiedName;
+            if (usingStatementAst.ModuleSpecification != null)
+            {
+                object resultObject;
+                if (!IsConstantValueVisitor.IsConstant(usingStatementAst.ModuleSpecification, out resultObject, forAttribute: false, forRequires: true))
+                {
+                    isConstant = false;
+                    return null;
+                }
+
+                var hashtable = resultObject as System.Collections.Hashtable;
+                var ms = new ModuleSpecification();
+                exception = ModuleSpecification.ModuleSpecificationInitHelper(ms, hashtable);
+                if (exception != null)
+                {
+                    return null;
+                }
+
+                if (WildcardPattern.ContainsWildcardCharacters(ms.Name))
+                {
+                    wildcardCharactersUsed = true;
+                    return null;
+                }
+
+                fullyQualifiedName = ms;
+            }
+            else
+            {
+                string fullyQualifiedNameStr = usingStatementAst.Name.Value;
+
+                if (WildcardPattern.ContainsWildcardCharacters(fullyQualifiedNameStr))
+                {
+                    wildcardCharactersUsed = true;
+                    return null;
+                }
+
+                // case 1: relative path. Relative for file in the same folder should include .\
+                bool isPath = fullyQualifiedNameStr.Contains(@"\");
+                if (isPath && !LocationGlobber.IsAbsolutePath(fullyQualifiedNameStr))
+                {
+                    string rootPath = Path.GetDirectoryName(_fileName);
+                    if (rootPath != null)
+                    {
+                        fullyQualifiedNameStr = Path.Combine(rootPath, fullyQualifiedNameStr);
+                    }
+                }
+
+                // case 2: Module by name
+                // case 3: Absolute Path
+                // We don't need to do anything for these cases, FullyQualifiedName already handle it.
+
+                fullyQualifiedName = fullyQualifiedNameStr;
+            }
+
+            var commandInfo = new CmdletInfo("Get-Module", typeof(GetModuleCommand));
+            // TODO(sevoroby): we should consider an async call with cancellation here.
+            UsingStatementResolvePowerShell.Commands.Clear();
+            try
+            {
+                return UsingStatementResolvePowerShell.AddCommand(commandInfo)
+                    .AddParameter("FullyQualifiedName", fullyQualifiedName)
+                    .AddParameter("ListAvailable", true)
+                    .Invoke<PSModuleInfo>();
+            }
+            catch (Exception e)
+            {
+                exception = e;
+                return null;
+            }
+        }
+
 
         private ParamBlockAst ParamBlockRule()
         {
@@ -4505,14 +4634,57 @@ namespace System.Management.Automation.Language
 
             RequireStatementTerminator();
 
+            UsingStatementAst usingStmtAst;
             if (htAst == null)
             {
-                return new UsingStatementAst(ExtentOf(usingToken, itemAst), kind, (StringConstantExpressionAst)itemAst);
+                usingStmtAst = new UsingStatementAst(ExtentOf(usingToken, itemAst), kind, (StringConstantExpressionAst)itemAst);
             }
             else
             {
-                return new UsingStatementAst(ExtentOf(usingToken, itemAst), htAst);
+                usingStmtAst = new UsingStatementAst(ExtentOf(usingToken, itemAst), htAst);
             }
+
+            // We are now done parsing the using statments, but want to load data from any modules that describe
+            // Dynamic Keywords, since we want them at parse-time for intellisense/discovery
+
+            Exception moduleImportException;
+            bool usesWildcard;
+            bool isConstant;
+            Collection<PSModuleInfo> moduleInfos = GetModulesFromUsingModule(usingStmtAst, out moduleImportException, out usesWildcard, out isConstant);
+
+            // These results will be checked and reported properly by the symbol resolver -- we just want to do our work quietly
+            if (moduleImportException == null && isConstant && !usesWildcard && moduleInfos?.Count > 0)
+            {
+                // First in the list is first on module path -- others are shadowed
+                var module = moduleInfos[0];
+
+                // Assume an assembly module ends with ".dll" -- TODO: this may be an invalid assumption
+                if (module.Path.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                {
+                    // Only try loading the module if it has an assembly format
+                    try
+                    {
+                        ClrFacade.GetAssemblyName(module.Path);
+                    }
+                    catch (BadImageFormatException)
+                    {
+                        return usingStmtAst;
+                    }
+
+                    var keywordReader = new DynamicKeywordDllModuleMetadataReader(module);
+                    IEnumerable<DynamicKeyword> keywords = keywordReader.ReadDynamicKeywordSpecificationModule();
+
+                    // TODO: look at moving this later perhaps? (Although the delegates are for parse-time)
+                    (new DynamicKeywordLoader(keywords)).Load();
+
+                    foreach (var keyword in keywords)
+                    {
+                        DynamicKeyword.AddKeyword(keyword);
+                    }
+                }
+            }
+
+            return usingStmtAst;
         }
 
         private StringConstantExpressionAst ResolveUsingAssembly(StringConstantExpressionAst name)
