@@ -2076,7 +2076,7 @@ namespace System.Management.Automation.Language
         {
             string typeName = type.Replace('/', '+');
 
-            if (typeName == nameof(DynamicKeywordNameMode) || typeName == nameof(DynamicKeywordBodyMode))
+            if (typeName == nameof(DynamicKeywordNameMode) || typeName == nameof(DynamicKeywordBodyMode) || typeName == nameof(DynamicKeywordUseMode))
             {
                 return PrimitiveTypeCode.Int32;
             }
@@ -2364,27 +2364,9 @@ namespace System.Management.Automation.Language
         /// <returns></returns>
         public PrimitiveTypeCode GetUnderlyingEnumType(Type type)
         {
-            Type underlyingType = type.GetEnumUnderlyingType();
-
-            if (underlyingType == typeof(int))
+            if (type.Name == nameof(DynamicKeywordNameMode) || type.Name == nameof(DynamicKeywordBodyMode) || type.Name == nameof(DynamicKeywordUseMode))
             {
                 return PrimitiveTypeCode.Int32;
-            }
-            else if (underlyingType == typeof(byte))
-            {
-                return PrimitiveTypeCode.Byte;
-            }
-            else if (underlyingType == typeof(long))
-            {
-                return PrimitiveTypeCode.Int64;
-            }
-            else if (underlyingType == typeof(short))
-            {
-                return PrimitiveTypeCode.Int16;
-            }
-            else if (underlyingType == typeof(char))
-            {
-                return PrimitiveTypeCode.Char;
             }
 
             throw new ArgumentOutOfRangeException("Not a known enum type");
