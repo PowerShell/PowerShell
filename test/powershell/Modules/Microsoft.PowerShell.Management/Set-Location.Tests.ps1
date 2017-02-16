@@ -1,13 +1,20 @@
 Describe "Set-Location" -Tags "CI" {
-    $startDirectory = Get-Location
 
-    if ($IsWindows)
-    {
-        $target = "C:\"
+    BeforeAll {
+        $startDirectory = Get-Location
+
+        if ($IsWindows)
+        {
+            $target = "C:\"
+        }
+        else
+        {
+            $target = "/"
+        }
     }
-    else
-    {
-        $target = "/"
+
+    AfterAll {
+        Set-Location $startDirectory
     }
 
     It "Should be able to be called without error" {
@@ -19,40 +26,10 @@ Describe "Set-Location" -Tags "CI" {
         { Set-Location env: }   | Should Not Throw
     }
 
-    It "Should be able use the cd alias without error" {
-        { cd $target } | Should Not Throw
-    }
-
-    It "Should be able to use the chdir alias without error" {
-        { chdir $target } | Should Not Throw
-    }
-
-    It "Should be able to use the sl alias without error" {
-        { sl $target } | Should Not Throw
-    }
-
     It "Should have the correct current location when using the set-location cmdlet" {
         Set-Location $startDirectory
 
         $(Get-Location).Path | Should Be $startDirectory.Path
-    }
-
-    It "Should have the correct current location when using the cd alias" {
-        cd $target
-
-        $(Get-Location).Path | Should Be $target
-    }
-
-    It "Should have the correct current location when using the chdir alias" {
-        chdir $target
-
-        $(Get-Location).Path | Should Be $target
-    }
-
-    It "Should have the correct current location when using the chdir alias" {
-        sl $target
-
-        $(Get-Location).Path | Should Be $target
     }
 
     It "Should be able to use the Path switch" {
@@ -60,23 +37,22 @@ Describe "Set-Location" -Tags "CI" {
     }
 
     It "Should generate a pathinfo object when using the Passthru switch" {
-        $(Set-Location $target -PassThru).GetType().Name | Should Be PathInfo
+        $result = Set-Location $target -PassThru
+        $result | Should BeOfType System.Management.Automation.PathInfo
     }
 
-    Context 'cd with no arguments' {
+    Context 'Set-Location with no arguments' {
 
-        It 'Should go to $env:HOME when cd run with no arguments from FileSystem provider' {
+        It 'Should go to $env:HOME when Set-Location run with no arguments from FileSystem provider' {
             Set-Location 'TestDrive:\'
-            cd
+            Set-Location
             (Get-Location).Path | Should Be (Get-PSProvider FileSystem).Home
         }
 
-        It 'Should go to $env:HOME when cd run with no arguments from Env: provider' {
+        It 'Should go to $env:HOME when Set-Location run with no arguments from Env: provider' {
             Set-Location 'Env:'
-            cd
+            Set-Location
             (Get-Location).Path | Should Be (Get-PSProvider FileSystem).Home
         }
     }
-
-    Set-Location $startDirectory
 }

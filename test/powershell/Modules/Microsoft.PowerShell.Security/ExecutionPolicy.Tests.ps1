@@ -9,7 +9,7 @@ Describe "ExecutionPolicy" -Tags "CI" {
         }
 
         It "Should return Microsoft.Powershell.ExecutionPolicy PSObject on Windows" -Skip:($IsLinux -Or $IsOSX) {
-            (Get-ExecutionPolicy).GetType() | Should Be Microsoft.Powershell.ExecutionPolicy
+            Get-ExecutionPolicy | Should BeOfType Microsoft.Powershell.ExecutionPolicy
         }
     }
 
@@ -504,6 +504,8 @@ ZoneId=$FileType
                     {
                         $exception = $_
                     }
+
+                    $exception.Exception | Should Not BeNullOrEmpty
 
                     $exceptionType = $exception.Exception.getType()
                     $result = $exceptionType

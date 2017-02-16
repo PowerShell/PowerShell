@@ -1,11 +1,10 @@
 Describe "Write-Error DRT Unit Tests" -Tags "CI" {
     It "Should be works with command: write-error myerrortext" {
         $e = Write-Error myerrortext 2>&1
-        $e | Should Not BeNullOrEmpty
-        $e.GetType().Name | Should Be 'ErrorRecord'
+        $e | Should BeOfType 'System.Management.Automation.ErrorRecord'
 
         #Exception verification
-        $e.Exception.GetType().Name | Should Be 'WriteErrorException'
+        $e.Exception | Should BeOfType 'Microsoft.PowerShell.Commands.WriteErrorException'
         $e.Exception.Message | Should Be 'myerrortext'
         $e.Exception.Data.Count | Should Be 0
         $e.Exception.InnerException | Should BeNullOrEmpty
@@ -34,11 +33,10 @@ Describe "Write-Error DRT Unit Tests" -Tags "CI" {
         $exception = New-Object -TypeName System.ArgumentNullException -ArgumentList paramname
         $e = Write-Error -Message myerrortext -Exception $exception -ErrorId myerrorid -Category syntaxerror -TargetObject TargetObject -CategoryActivity myactivity -CategoryReason myreason -CategoryTargetName mytargetname -CategoryTargetType mytargettype -RecommendedAction myrecommendedaction 2>&1
         $e | Should Not BeNullOrEmpty
-        $e.GetType().Name | Should Be 'ErrorRecord'
+        $e | Should BeOfType 'System.Management.Automation.ErrorRecord'
 
         #Exception verification
-        $e.Exception | Should Not BeNullOrEmpty
-        $e.Exception.GetType().Name | Should Be 'ArgumentNullException'
+        $e.Exception | Should BeOfType 'System.ArgumentNullException'
         $e.Exception.ParamName | Should Be 'paramname'
         $e.Exception.Data.Count | Should Be 0
         $e.Exception.InnerException | Should BeNullOrEmpty

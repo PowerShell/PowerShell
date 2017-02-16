@@ -7,12 +7,15 @@ Describe "Group-Object DRT Unit Tests" -Tags "CI" {
         $results.Group.Count | Should Be 4
         $results.Name | Should Be aA,AA
         $results.Group | Should Be aA,aA,AA,AA
-        $results.Group.GetType().BaseType | Should Be Array
+        ,$results | Should BeOfType "System.Array"
     }
 }
 
 Describe "Group-Object" -Tags "CI" {
-    $testObject = Get-ChildItem
+
+    BeforeAll {
+        $testObject = Get-ChildItem
+    }
 
     It "Should be called using an object as piped without error with no switches" {
 	{$testObject | Group-Object } | Should Not Throw
@@ -32,28 +35,31 @@ Describe "Group-Object" -Tags "CI" {
     }
 
     It "Should use the group alias" {
-	{ group -InputObject $testObject } | Should Not Throw
+        { Group-Object -InputObject $testObject } | Should Not Throw
     }
 
     It "Should create a collection when the inputObject parameter is used" {
-	$actualParam = Group-Object -InputObject $testObject
+        $actualParam = Group-Object -InputObject $testObject
+        $actualParam.Group.Gettype().Name | Should Be 'Collection`1'
+    }
 
-	$actualParam.Group.GetType().Name | Should Be "Collection``1"
+    It "Should return object of 'GroupInfo' type" {
+        $actualParam = Group-Object -InputObject $testObject
+        $actualParam | Should BeOfType "Microsoft.PowerShell.Commands.GroupInfo"
     }
 
     It "Should output an array when piped input is used" {
-	$actual = $testObject | Group-Object
+        $actual = $testObject | Group-Object
 
-	$actual.Group.GetType().BaseType | Should Be Array
+        ,$actual | Should BeOfType "System.Array"
     }
 
     It "Should have the same output between the group alias and the group-object cmdlet" {
-	$actualAlias = group -InputObject $testObject
-	$actualCmdlet = Group-Object -InputObject $testObject
+        $actualAlias = Group-Object -InputObject $testObject
+        $actualCmdlet = Group-Object -InputObject $testObject
 
-	$actualAlias.Name[0] | Should Be $actualCmdlet.Name[0]
-	$actualAlias.Group[0] | Should Be $actualCmdlet.Group[0]
-
+        $actualAlias.Name[0] | Should Be $actualCmdlet.Name[0]
+        $actualAlias.Group[0] | Should Be $actualCmdlet.Group[0]
     }
 
     It "Should be able to use the property switch without error" {
@@ -79,9 +85,10 @@ Describe "Group-Object" -Tags "CI" {
     }
 
     It "Should be able to output a hashtable datatype" {
-	$actual = $testObject | Group-Object -AsHashTable
+        $actual = $testObject | Group-Object -AsHashTable
 
-	$actual.GetType().Name | Should be "Hashtable"
+        $actual | Should Not BeNullOrEmpty
+        $actual | Should BeOfType "System.Collections.Hashtable"
     }
 
     It "Should be able to access when output as hash table" {

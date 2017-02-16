@@ -2,9 +2,9 @@ Describe "New-Event" -Tags "CI" {
 
     Context "Check return type of New-Event" {
 
-	It "Should return PSEventArgs as return type of New-Event" {
-	    (New-Event -SourceIdentifier a).GetType() | Should Be System.Management.Automation.PSEventArgs
-	}
+        It "Should return PSEventArgs as return type of New-Event" {
+            New-Event -SourceIdentifier a | Should BeOfType System.Management.Automation.PSEventArgs
+        }
     }
 
     Context "Check New-Event can register an event"{

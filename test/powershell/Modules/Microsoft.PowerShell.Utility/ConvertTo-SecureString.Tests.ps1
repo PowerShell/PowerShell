@@ -4,7 +4,7 @@ Describe "ConvertTo-SecureString" -Tags "CI" {
 
 	It "Should return System.Security.SecureString after converting plaintext variable"{
 	    $PesterTestConvert = (ConvertTo-SecureString "plaintextpester" -AsPlainText -force)
-	    ($PesterTestConvert).GetType() | Should Be securestring
+	    $PesterTestConvert | Should BeOfType securestring
 
 	}
     }

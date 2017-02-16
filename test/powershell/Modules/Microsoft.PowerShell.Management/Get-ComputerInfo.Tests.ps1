@@ -1194,7 +1194,7 @@ try {
 
         It "Verify type returned by Get-ComputerInfo" {
             $computerInfo = Get-ComputerInfo
-            $computerInfo.GetType().Name | Should Be "ComputerInfo"
+            $computerInfo | Should BeOfType Microsoft.PowerShell.Commands.ComputerInfo
         }
     }
 
@@ -1331,9 +1331,9 @@ try {
             ($observed.OsFreeVirtualMemory -gt 0) | Should Be $true
         }
 
-        It "(special case) Test for property = OsLocalDateTime" {
+        It "(special case) Test for property = OsLocalDateTime" -Pending:$true {
             $computerInfo = Get-ComputerInfo
-            $computerInfo.GetType().Name | Should Be "ComputerInfo"
+            $computerInfo | Should BeOfType "ComputerInfo"
         }
 
         It "(special case) Test for property = OsMaxNumberOfProcesses" {
@@ -1356,7 +1356,7 @@ try {
         It "(special case) Test for Filter Property - Property filter with special wild card * and fixed" {
             $propertyFilter = @("BiosC*","*")
             $computerInfo = Get-ComputerInfo -Property $propertyFilter
-            $computerInfo.GetType().Name | Should Be "ComputerInfo"
+            $computerInfo | Should BeOfType Microsoft.PowerShell.Commands.ComputerInfo
         }
     }
 }

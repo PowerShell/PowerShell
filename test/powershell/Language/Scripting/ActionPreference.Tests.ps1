@@ -19,9 +19,9 @@
 
             It '$err.Count' { $err.Count | Should Be 1 }
             It '$err[0] should not be $null' { $err[0] | Should Not Be $null }
-            It '$err[0].GetType().Name' { $err[0].GetType().Name | Should Be ActionPreferenceStopException }
+            It '$err[0].GetType().Name' { $err[0] | Should BeOfType "System.Management.Automation.ActionPreferenceStopException" }
             It '$err[0].ErrorRecord' { $err[0].ErrorRecord | Should not BeNullOrEmpty }
-            It '$err[0].ErrorRecord.Exception.GetType().Name' { $err[0].ErrorRecord.Exception.GetType().Name | Should Be ItemNotFoundException }
+            It '$err[0].ErrorRecord.Exception.GetType().Name' { $err[0].ErrorRecord.Exception | Should BeOfType "System.Management.Automation.ItemNotFoundException" }
         }
 
         It 'ActionPreference Ignore Works' {

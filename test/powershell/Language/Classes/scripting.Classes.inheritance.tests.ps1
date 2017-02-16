@@ -72,12 +72,10 @@ Describe 'Classes inheritance syntax' -Tags "CI" {
         [A]::b = [B]::new()
         try {
             [A]::b = "bla"
+            throw "No Exception!"
         } catch {
-            $_.Exception.GetType().Name | Should Be SetValueInvocationException
-            return
+            $_.Exception | Should BeOfType 'System.Management.Automation.SetValueInvocationException'
         }
-        # Fail, if come heres
-        '' | Should Be "Exception expected"
     }
 }
 
@@ -419,12 +417,10 @@ Describe 'Classes inheritance ctors' -Tags "CI" {
 
         try {
             [B]::new(101)
+            throw "No Exception!"
         } catch {
-            $_.Exception.GetType().Name | Should Be MethodException
-            return
+            $_.Exception | Should BeOfType "System.Management.Automation.MethodException"
         }
-        # Fail
-        '' | Should Be "Exception expected"
     }
 
     It 'call default base ctor implicitly' {

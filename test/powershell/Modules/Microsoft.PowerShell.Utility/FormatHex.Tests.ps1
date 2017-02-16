@@ -30,7 +30,7 @@ Describe "FormatHex" -tags "CI" {
         # the input data should be treated as string.
         $result = $inputText1 | Format-Hex
         $result | Should Not Be $null
-        $result.GetType().Name | Should Be 'ByteCollection'
+        ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         $actualResult = $result.ToString()
         ($actualResult -match $inputText1) | Should Be $true
     }
@@ -44,7 +44,7 @@ Describe "FormatHex" -tags "CI" {
 
         $result =  Format-Hex -InputObject $inputBytes
         $result | Should Not Be $null
-        $result.GetType().Name | Should Be 'ByteCollection'
+        ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         $actualResult = $result.ToString()
         ($actualResult -match $inputText1) | Should Be $true
     }
@@ -54,7 +54,7 @@ Describe "FormatHex" -tags "CI" {
 
         $result =  Format-Hex -Path $inputFile1
         $result | Should Not Be $null
-        $result.GetType().Name | Should Be 'ByteCollection'
+        ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         $actualResult = $result.ToString()
         ($actualResult -match $inputText1) | Should Be $true
     }
@@ -64,7 +64,7 @@ Describe "FormatHex" -tags "CI" {
 
         $result =  Format-Hex $inputFile1
         $result | Should Not BeNullOrEmpty
-        $result.GetType().Name | Should Be 'ByteCollection'
+        ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         $actualResult = $result.ToString()
         ($actualResult -match $inputText1) | Should Be $true
     }
@@ -74,7 +74,7 @@ Describe "FormatHex" -tags "CI" {
 
         $result =  Format-Hex -LiteralPath $inputFile1
         $result | Should Not BeNullOrEmpty
-        $result.GetType().Name | Should Be 'ByteCollection'
+        ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         $actualResult = $result.ToString()
         ($actualResult -match $inputText1) | Should Be $true
     }
@@ -84,7 +84,7 @@ Describe "FormatHex" -tags "CI" {
 
         $result = Get-ChildItem $inputFile1 | Format-Hex
         $result | Should Not BeNullOrEmpty
-        $result.GetType().Name | Should Be 'ByteCollection'
+        ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         $actualResult = $result.ToString()
         ($actualResult -match $inputText1) | Should Be $true
     }
@@ -94,7 +94,7 @@ Describe "FormatHex" -tags "CI" {
 
         $result =  Format-Hex -InputObject $inputText1 -Encoding ASCII
         $result | Should Not BeNullOrEmpty
-        $result.GetType().Name | Should Be 'ByteCollection'
+        ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         $actualResult = $result.ToString()
         ($actualResult -match $inputText1) | Should Be $true
     }
@@ -104,7 +104,7 @@ Describe "FormatHex" -tags "CI" {
 
         $result = 1,2,3,4 | Format-Hex
         $result | Should Not BeNullOrEmpty
-        $result.GetType().Name | Should Be 'ByteCollection'
+        ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         $actualResult = $result.ToString()
         # whitespace sensitive
         $actualResult | should be "00000000   01 02 03 04                                      ....            "
@@ -116,7 +116,7 @@ Describe "FormatHex" -tags "CI" {
 
         $result = 65..68 | Format-Hex
         $result | Should Not BeNullOrEmpty
-        $result.GetType().Name | Should Be 'ByteCollection'
+        ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         $actualResult = $result.ToString()
         # whitespace sensitive
         $actualResult | should be "00000000   41 42 43 44                                      ABCD            "
@@ -127,7 +127,7 @@ Describe "FormatHex" -tags "CI" {
 
         $result = 1,2,3,4 | Format-Hex -Raw
         $result | Should Not BeNullOrEmpty
-        $result.GetType().Name | Should Be 'ByteCollection'
+        ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         $actualResult = $result.ToString()
         # whitespace sensitive
         $actualResult | should be "00000000   01 00 00 00 02 00 00 00 03 00 00 00 04 00 00 00  ................"
@@ -138,7 +138,7 @@ Describe "FormatHex" -tags "CI" {
 
         $result = [int64]::MaxValue | Format-Hex
         $result | Should Not BeNullOrEmpty
-        $result.GetType().Name | Should Be 'ByteCollection'
+        ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         $actualResult = $result.ToString()
         # whitespace sensitive
         $actualResult | Should Match "00000000   FF FF FF FF FF FF FF 7F                          ."
@@ -151,7 +151,8 @@ Describe "FormatHex" -tags "CI" {
         $i32 = 2147483647 # an int32
         $i64 = 9223372036854775807 # an int64
         $result = $b,$i16,$i32,$i64 | format-Hex
-        $result.GetType().Name |  should be 'ByteCollection'
+        $result | Should Not BeNullOrEmpty
+        ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         $actualResult = $result.ToString()
         $actualResult | should Match "00000000   41 FF 7F FF FF FF 7F FF FF FF FF FF FF FF 7F     A"
     }
@@ -164,8 +165,9 @@ Describe "FormatHex" -tags "CI" {
         $i64 = 9223372036854775807 # an int64
         # this will cause 2 lines to be emitted
         $result = $b,$i16,$i32,$i64 | format-Hex -Raw
-        $result[0].GetType().Name |  should be 'ByteCollection'
-        $result[1].GetType().Name |  should be 'ByteCollection'
+        $result | Should Not BeNullOrEmpty
+        $result[0] | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+        $result[1] | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         $result0 = $result[0].ToString()
         $result0 | should match "00000000   41 00 00 00 FF 7F 00 00 FF FF FF 7F FF FF FF FF  A"
         $result1 = $result[1].ToString()
@@ -176,7 +178,7 @@ Describe "FormatHex" -tags "CI" {
     It "ValidateEachBufferHasCorrectContentForStreamingText" {
         $result = "a" * 30 | Format-Hex
         $result | Should Not BeNullOrEmpty
-        $result.GetType().Name | Should Be 'ByteCollection'
+        ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         $actualResult = $result.ToString() -split "`r`n"
         $actualResult.Count | should be 2
         $actualResult[0].ToString() | Should be "00000000   61 61 61 61 61 61 61 61 61 61 61 61 61 61 61 61  aaaaaaaaaaaaaaaa"
@@ -198,7 +200,7 @@ Describe "FormatHex" -tags "CI" {
     It "ValidateStreamOfBytesFromFileHasProperOutput" {
         $result = Get-Content $InputFile1 -Encoding Byte | Format-Hex
         $result | Should Not BeNullOrEmpty
-        $result.GetType().Name | Should Be "ByteCollection"
+        ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         if ( $IsCoreCLR ) {
             $result.ToString() | Should be    "00000000   48 65 6C 6C 6F 20 57 6F 72 6C 64                 Hello World     "
         }

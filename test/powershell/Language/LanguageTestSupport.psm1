@@ -126,7 +126,7 @@ function Test-ErrorStmt
         $ast = Get-ParseResults $src -Ast
         $asts = @(Flatten-Ast $ast.EndBlock.Statements[0])
 
-        It 'Type is ErrorStatementAst' { $asts[0].GetType() | Should Be System.Management.Automation.Language.ErrorStatementAst }
+        It 'Type is ErrorStatementAst' { $asts[0] | Should BeOfType System.Management.Automation.Language.ErrorStatementAst }
         It "`$asts.count" { $asts.Count | Should Be ($a.Count + 1) }
         It "`$asts[0].Extent.Text" { $asts[0].Extent.Text | Should Be $errorStmtExtent }
         for ($i = 0; $i -lt $a.Count; ++$i)
@@ -159,7 +159,7 @@ function Test-Ast
         $ast = Get-ParseResults $src -Ast
         $ast = $ast.EndBlock.Statements[0]
         Context "Ast Validation: <<$src>>" {
-            $ast.GetType() | Should Be System.Management.Automation.Language.ErrorStatementAst
+            $ast | Should BeOfType System.Management.Automation.Language.ErrorStatementAst
             $ast.Flags.ContainsKey($flagName) | Should be $true
 
             $asts = @(Flatten-Ast $ast.Flags[$flagName].Item2)

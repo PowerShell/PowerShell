@@ -7,10 +7,10 @@ Describe "Job Cmdlet Tests" -Tag "CI" {
             $j = start-job -scriptblock { 1 + 1 }
         }
         It "Start-Job produces a job object" {
-            $j.gettype().fullname | should be "System.Management.Automation.PSRemotingJob"
+            $j | Should BeOfType System.Management.Automation.Job
         }
         It "Get-Job retrieves a job object" {
-            (Get-Job -id $j.id).gettype().fullname | should be "System.Management.Automation.PSRemotingJob"
+            (Get-Job -id $j.id) | Should BeOfType System.Management.Automation.Job
         }
         It "Remove-Job can remove a job" {
             remove-job $j -force
