@@ -4677,7 +4677,7 @@ namespace System.Management.Automation.Language
                     IEnumerable<DynamicKeyword> keywords = keywordReader.ReadDynamicKeywordSpecificationModule(out keywordErrors);
 
                     // If there were errors reading the keywords, report them and return without adding any keywords
-                    if (keywordErrors.Any())
+                    if (keywords == null || keywordErrors.Any())
                     {
                         foreach (ParseErrorContainer keywordError in keywordErrors)
                         {

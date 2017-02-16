@@ -8,6 +8,8 @@ public class CommandBodyKeyword : Keyword
 [Keyword(Body = DynamicKeywordBodyMode.Hashtable)]
 public class HashtableBodyKeyword : Keyword
 {
+    [KeywordProperty()]
+    public string StringProperty { get; set; }
 }
 
 [Keyword(Body = DynamicKeywordBodyMode.ScriptBlock)]

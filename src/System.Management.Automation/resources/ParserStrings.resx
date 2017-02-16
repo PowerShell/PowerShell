@@ -1477,6 +1477,9 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="DynamicKeywordLoaderKeywordModuleIsNull" xml:space="preserve">
     <value>The keyword '{0}' has no module information and cannot be loaded.</value>
   </data>
+  <data name="DynamicKeywordMetadataGlobalKeywordsMustBeOptionalMany" xml:space="preserve">
+    <value>The globally defined keyword '{0}' has use mode '{1}', but global keywords may only have body mode '{2}'</value>
+  </data>
   <data name="DynamicKeywordMetadataKeywordAlreadyDefinedInScope" xml:space="preserve">
     <value>The keyword '{0}' conflicts with another keyword of the same name defined in a parent scope.</value>
   </data>

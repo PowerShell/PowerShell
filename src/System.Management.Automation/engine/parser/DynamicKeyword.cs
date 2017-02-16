@@ -1,19 +1,23 @@
+/********************************************************************++
+Copyright (c) Microsoft Corporation.  All rights reserved.
+--********************************************************************/
+
 using System.Linq;
-using System;
 using System.IO;
 using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Reflection.Metadata;
-using System.Reflection.Metadata.Ecma335;
 using System.Reflection.PortableExecutable;
-using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 using System.Reflection;
 using System.Linq.Expressions;
+
+// Keyword and its attributes are in the Automation namespace to make them consistent
+// with Cmdlet and its attributes; although Keyword does not currently inherit from
+// InternalCommand, it conceivably will when appropriate
 
 namespace System.Management.Automation
 {
@@ -184,9 +188,14 @@ namespace System.Management.Automation
     #endregion
 }
 
+// The remainder of the DynamicKeyword functionality is parser specific,
+// and is placed in the Automation.Language namespace because DynamicKeyword is there
+
 namespace System.Management.Automation.Language
 {
     #region Dynamic Keyword Parser Datastructures
+
+    #region Dynamic Keyword Namespacing
 
     /// <summary>
     /// Defines a scoped namespace for Dynamic Keywords. This class is intended to both
@@ -251,7 +260,7 @@ namespace System.Management.Automation.Language
         /// Get a list of all globally defined keywords
         /// </summary>
         /// <returns>a list of all globally defined keywords</returns>
-        public List<DynamicKeyword>GetGlobalDynamicKeyword()
+        public List<DynamicKeyword> GetGlobalDynamicKeyword()
         {
             return new List<DynamicKeyword>(GlobalKeywords.Values);
         }
@@ -455,6 +464,8 @@ namespace System.Management.Automation.Language
             _globalKeywords = new Dictionary<string, DynamicKeyword>();
         }
     }
+
+    #endregion /* Dynamic Keyword Namespacing */
 
     /// <summary>
     /// Defines the name modes for a dynamic keyword. A name expression may be required, optional or not permitted.
@@ -1073,6 +1084,14 @@ namespace System.Management.Automation.Language
         private Stack<HashSet<string>> _keywordDefinitionStack;
 
         /// <summary>
+        /// Indicates if the load has failed. If so, we want to continue parsing the metadata looking for errors, but
+        /// not actually add any more keyword data to the list to return; since writing/compiling/parsing/loading keyword
+        /// specifications is a lengthy task for the user, we want to give them as much information about what to fix as possible
+        /// before returning. But, we also want to prevent allocating big lists of keywords if we can help it.
+        /// </summary>
+        private bool _hasFailed;
+
+        /// <summary>
         /// Construct a new DLL reader from a loaded module, whose information is
         /// described by a PSModuleInfo object
         /// </summary>
@@ -1083,6 +1102,7 @@ namespace System.Management.Automation.Language
             _parseErrors = new List<ParseErrorContainer>();
             _knownTypeTypeProvider = new KnownTypeTypeProvider();
             _namingTypeProvider = new NamingTypeProvider();
+            _hasFailed = false;
         }
 
         /// <summary>
@@ -1100,7 +1120,6 @@ namespace System.Management.Automation.Language
                 {
                     if (!peReader.HasMetadata)
                     {
-                        errors = _parseErrors;
                         return null;
                     }
 
@@ -1108,18 +1127,29 @@ namespace System.Management.Automation.Language
                     _enumDefStack = new Stack<Dictionary<string, List<string>>>();
                     _keywordDefinitionStack = new Stack<HashSet<string>>();
 
-                    errors = _parseErrors;
-                    globalDynamicKeywords = ReadGlobalDynamicKeywords().ToList();
+                    // Since module writing/compiling/loading is a long process for the user,
+                    // we want to collect as many errors as we can before failing. So this will
+                    // keep reading keywords even if we hit errors -- in the event of errors, we'll just not load anything
+                    foreach (var globalKeyword in ReadGlobalDynamicKeywords())
+                    {
+                        if (globalKeyword != null)
+                        {
+                            globalDynamicKeywords.Add(globalKeyword);
+                        }
+                    }
                 }
             }
             catch (BadImageFormatException)
             {
                 // If the DLL is somehow invalid, we just ignore it
-                errors = _parseErrors;
                 return null;
             }
+            finally
+            {
+                errors = _parseErrors;
+            }
 
-            if (globalDynamicKeywords.Count == 0)
+            if (_hasFailed || globalDynamicKeywords.Count == 0)
             {
                 return null;
             }
@@ -1200,6 +1230,10 @@ namespace System.Management.Automation.Language
                 if (declaringType.IsNil && IsKeywordSpecification(typeDef, ref keywordAttribute))
                 {
                     DynamicKeyword keyword = ReadKeywordSpecification(typeDef, keywordAttribute.Value);
+                    if (keyword == null)
+                    {
+                        continue;
+                    }
                     yield return keyword;
                 }
             }
@@ -1219,14 +1253,16 @@ namespace System.Management.Automation.Language
             if (!HasZeroArgumentConstructor(typeDef))
             {
                 _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataNoZeroArgCtor, keywordName));
+                _hasFailed = true;
             }
 
             // Make sure keywords by the same name are not already defined in enclosing scopes -- C# only prevents direct ancestors
             foreach (var enclosingScope in _keywordDefinitionStack)
             {
-                if (enclosingScope.Contains(keywordName))
+                if (enclosingScope.Contains(keywordName) || DynamicKeyword.ContainsKeyword(keywordName))
                 {
                     _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataKeywordAlreadyDefinedInScope, keywordName));
+                    _hasFailed = true;
                 }
             }
 
@@ -1235,6 +1271,13 @@ namespace System.Management.Automation.Language
 
             // Set the keyword properties -- note the defaults are set here, since reading metadata does not execute default attribute setters
             DynamicKeywordAttributeValueData attributeData = ReadKeywordAttributeParameters(keywordAttribute);
+
+            // In global scope, we don't enforce UseMode -- so throw an error if a global keyword is not OptionalMany so the user knows this doesn't make sense
+            if (!isNested && attributeData.UseMode != DynamicKeywordUseMode.OptionalMany)
+            {
+                _parseErrors.Add(new ParseErrorContainer(
+                    () => ParserStrings.DynamicKeywordMetadataGlobalKeywordsMustBeOptionalMany, keywordName, attributeData.UseMode, DynamicKeywordUseMode.OptionalMany));
+            }
 
             // Read in enum definitions in the local scope
             _enumDefStack.Push(ReadEnumDefinitions(typeDef.GetNestedTypes().Select(tdHandle => _metadataReader.GetTypeDefinition(tdHandle)).Where(t => IsEnum(t))));
@@ -1262,8 +1305,13 @@ namespace System.Management.Automation.Language
                         if (attributeData.BodyMode != DynamicKeywordBodyMode.Command)
                         {
                             _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataNonCommandKeywordHasParameters, keywordName));
+                            _hasFailed = true;
                         }
-                        keywordParameters.Add(ReadParameterSpecification(propertyDef, keywordMemberAttribute));
+
+                        if (!_hasFailed)
+                        {
+                            keywordParameters.Add(ReadParameterSpecification(propertyDef, keywordMemberAttribute));
+                        }
                     }
 
                     if (IsKeywordPropertyAttribute(keywordMemberAttribute))
@@ -1271,9 +1319,14 @@ namespace System.Management.Automation.Language
                         // Only Hashtable-bodied keywords can have properties
                         if (attributeData.BodyMode != DynamicKeywordBodyMode.Hashtable)
                         {
-                            _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataNonHashtableKeywordHasProperties, keywordName, attributeData));
+                            _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataNonHashtableKeywordHasProperties, keywordName, attributeData.BodyMode));
+                            _hasFailed = true;
                         }
-                        keywordProperties.Add(ReadPropertySpecifiction(propertyDef, keywordMemberAttribute));
+
+                        if (!_hasFailed)
+                        {
+                            keywordProperties.Add(ReadPropertySpecifiction(propertyDef, keywordMemberAttribute));
+                        }
                     }
                 }
             }
@@ -1285,20 +1338,30 @@ namespace System.Management.Automation.Language
             {
                 if (attributeData.BodyMode == DynamicKeywordBodyMode.Command)
                 {
-                    var msg = String.Format("Keyword '{0}' is a command-bodied keyword, and cannot contain other keywords", keywordName);
+                    _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataCommandKeywordHasNestedKeywords, keywordName));
+                    _hasFailed = true;
                 }
 
                 var innerTypeDef = _metadataReader.GetTypeDefinition(innerTypeDefHandle);
                 CustomAttribute? innerKeywordAttribute = null; 
                 if (IsKeywordSpecification(innerTypeDef, ref innerKeywordAttribute))
                 {
-                    innerKeywords.Add(ReadKeywordSpecification(innerTypeDef, innerKeywordAttribute.Value, isNested: true));
+                    DynamicKeyword innerKeyword = ReadKeywordSpecification(innerTypeDef, innerKeywordAttribute.Value, isNested: true);
+                    if (!_hasFailed && innerKeyword != null)
+                    {
+                        innerKeywords.Add(innerKeyword);
+                    }
                 }
             }
 
             // Leave the definition scope of this keyword
             _keywordDefinitionStack.Pop();
             _enumDefStack.Pop();
+
+            if (_hasFailed)
+            {
+                return null;
+            }
 
             // Finally, construct the keyword -- this is designed so the keyword can be constructed as readonly
             var keyword = new DynamicKeyword()
@@ -1464,41 +1527,43 @@ namespace System.Management.Automation.Language
         /// </returns>
         private bool IsKeywordSpecification(TypeDefinition typeDef, ref CustomAttribute? keywordAttribute)
         {
-            // First, check the type definition inherits from Keyword
-            EntityHandle baseTypeHandle = typeDef.BaseType;
-            if (baseTypeHandle.IsNil)
-            {
-                return false;
-            }
-            switch (baseTypeHandle.Kind)
-            {
-                case HandleKind.TypeReference:
-                    TypeReference typeRef = _metadataReader.GetTypeReference((TypeReferenceHandle)baseTypeHandle);
-                    if (_metadataReader.GetString(typeRef.Name) != nameof(Keyword))
-                    {
-                        return false;
-                    }
-                    if (_metadataReader.GetString(typeRef.Namespace) != typeof(Keyword).Namespace)
-                    {
-                        return false;
-                    }
-                    break;
-
-                default:
-                    return false;
-            }
-
-            // Now make sure it carries the KeywordAttribute attribute
+            // First check the type defininition has the KeywordAttribute
+            bool hasKeywordAttribute = false;
             foreach (CustomAttributeHandle attrHandle in typeDef.GetCustomAttributes())
             {
                 CustomAttribute customAttribute = _metadataReader.GetCustomAttribute(attrHandle);
                 if (IsKeywordAttribute(customAttribute))
                 {
                     keywordAttribute = customAttribute;
-                    return true;
+                    hasKeywordAttribute = true;
                 }
             }
 
+            if (!hasKeywordAttribute)
+            {
+                return false;
+            }
+
+            // Now check the type definition inherits from Keyword
+            EntityHandle baseTypeHandle = typeDef.BaseType;
+            if (!baseTypeHandle.IsNil)
+            {
+                switch (baseTypeHandle.Kind)
+                {
+                    case HandleKind.TypeReference:
+                        TypeReference typeRef = _metadataReader.GetTypeReference((TypeReferenceHandle)baseTypeHandle);
+                        if (_metadataReader.GetString(typeRef.Name) == nameof(Keyword) && _metadataReader.GetString(typeRef.Namespace) == typeof(Keyword).Namespace)
+                        {
+                            return true;
+                        }
+                        break;
+                }
+            }
+
+            // If we've gotten here, the class has the KeywordAttribute but does not inherit from Keyword
+            // So the parse has failed and we must tell the user what the problem is
+            _hasFailed = true;
+            _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataKeywordDoesNotInheritKeyword, _metadataReader.GetString(typeDef.Name)));
             return false;
         }
 
@@ -2443,6 +2508,14 @@ namespace System.Management.Automation.Language
         private IImmutableDictionary<DynamicKeyword, Assembly> _keywordAssemblies;
 
         /// <summary>
+        /// If the load fails for some reason, we still want to keep scanning the data to give
+        /// users helpful error messages, but we also don't want to load invalid keywords. This
+        /// flag indicates that we should keep reading data and collecting errors, but not do
+        /// anything else
+        /// </summary>
+        private bool _hasFailed;
+
+        /// <summary>
         /// Construct a fresh DynamicKeywordLoader around a list of keywords to load
         /// </summary>
         /// <param name="keywordsToLoad"></param>
@@ -2450,6 +2523,7 @@ namespace System.Management.Automation.Language
         {
             _errors = new List<ParseErrorContainer>();
             _topLevelKeywordsToLoad = keywordsToLoad.ToImmutableList();
+            _hasFailed = false;
         }
 
         /// <summary>
@@ -2538,6 +2612,7 @@ namespace System.Management.Automation.Language
             if (definingType == null)
             {
                 _errors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordLoaderKeywordNotFound, keyword, _keywordAssemblies[keyword].Location));
+                _hasFailed = true;
             }
 
             // Now check the keyword instance type actually inherits from Keyword
@@ -2545,15 +2620,54 @@ namespace System.Management.Automation.Language
             if (definitionInstance == null)
             {
                 _errors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordLoaderKeywordDoesNotInheritFromKeyword, keyword));
+                _hasFailed = true;
             }
 
             // Finally, add the pair for loading
-            loadPairs.Add(new KeyValuePair<DynamicKeyword, Keyword>(keyword, definitionInstance));
+            if (!_hasFailed)
+            {
+                loadPairs.Add(new KeyValuePair<DynamicKeyword, Keyword>(keyword, definitionInstance));
+            }
 
             // Now recurse to child keywords
             foreach (var innerKeyword in keyword.InnerKeywords.Values)
             {
-                PrepareKeywordLoad(innerKeyword, loadPairs);
+                PrepareNestedKeywordLoad(innerKeyword, _keywordAssemblies[keyword], definingType, loadPairs);
+            }
+        }
+
+        /// <summary>
+        /// Perform the keyword load preparations as in <see cref="PrepareKeywordLoad(DynamicKeyword, List{KeyValuePair{DynamicKeyword, Keyword}})"/>,
+        /// but with the assumption that a nested keyword will be defined in the same assembly, and under the parent type
+        /// </summary>
+        /// <param name="keyword">the keyword we want to load (the child keyword)</param>
+        /// <param name="definingAssembly">the assembly defining the keyword (only used for error message data)</param>
+        /// <param name="parentType">the keyword under which this keyword is defined</param>
+        /// <param name="loadPairs">the list of keyword data/instance pairs to load</param>
+        private void PrepareNestedKeywordLoad(DynamicKeyword keyword, Assembly definingAssembly, Type parentType, List<KeyValuePair<DynamicKeyword, Keyword>> loadPairs)
+        {
+            Type childType = parentType.GetNestedType(keyword.Keyword, BindingFlags.Public | BindingFlags.NonPublic);
+            if (childType == null)
+            {
+                _errors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordLoaderKeywordNotFound, keyword, definingAssembly.Location));
+                _hasFailed = true;
+            }
+
+            Keyword definitionInstance = Activator.CreateInstance(childType) as Keyword;
+            if (definitionInstance == null)
+            {
+                _errors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordLoaderKeywordDoesNotInheritFromKeyword, keyword));
+                _hasFailed = true;
+            }
+
+            if (!_hasFailed)
+            {
+                loadPairs.Add(new KeyValuePair<DynamicKeyword, Keyword>(keyword, definitionInstance));
+            }
+
+            foreach (var innerKeyword in keyword.InnerKeywords.Values)
+            {
+                PrepareNestedKeywordLoad(innerKeyword, definingAssembly, childType, loadPairs);
             }
         }
 
