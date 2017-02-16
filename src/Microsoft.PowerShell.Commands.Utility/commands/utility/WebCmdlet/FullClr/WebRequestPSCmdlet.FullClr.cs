@@ -95,10 +95,7 @@ namespace Microsoft.PowerShell.Commands
                     break;
                 case "CustomMethod":
                     // set the method if the parameter was provided
-                    if (!string.IsNullOrEmpty(CustomMethod))
-                    {
-                        request.Method = CustomMethod.ToUpperInvariant();
-                    }
+                    request.Method = CustomMethod.ToUpperInvariant();
                     break;
             }
 
@@ -260,7 +257,8 @@ namespace Microsoft.PowerShell.Commands
                 request.ContentType = ContentType;
             }
             // ContentType == null
-            else if (Method == WebRequestMethod.Post || (!string.IsNullOrEmpty(CustomMethod) && CustomMethod.ToUpper() == "POST"))
+            else if ((IsStandardMethodSet() && Method == WebRequestMethod.Post)
+                      || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "POST"))
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
                 if (String.IsNullOrEmpty(request.ContentType))

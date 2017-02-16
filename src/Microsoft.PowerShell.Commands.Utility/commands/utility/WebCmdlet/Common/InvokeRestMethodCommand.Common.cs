@@ -27,6 +27,8 @@ namespace Microsoft.PowerShell.Commands
         /// gets or sets the parameter CustomMethod
         /// </summary>
         [Parameter(ParameterSetName = "CustomMethod")]
+        [Alias("CM")]
+        [ValidateNotNullOrEmpty]
         public override string CustomMethod
         {
             get { return base.CustomMethod; }

@@ -159,6 +159,8 @@ namespace Microsoft.PowerShell.Commands
         /// gets or sets the CustomMethod property
         /// </summary>
         [Parameter(ParameterSetName = "CustomMethod")]
+        [Alias("CM")]
+        [ValidateNotNullOrEmpty]
         public virtual string CustomMethod
         {
             get { return _customMethod; }
@@ -559,7 +561,7 @@ namespace Microsoft.PowerShell.Commands
             LanguagePrimitives.TryConvertTo<IDictionary>(Body, out bodyAsDictionary);
             if ((null != bodyAsDictionary)
                 && ((IsStandardMethodSet() && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get))
-                     || (IsCustomMethodSet() && (string.IsNullOrEmpty(CustomMethod) || CustomMethod.ToUpper() == "GET"))))
+                     || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET")))
             {
                 UriBuilder uriBuilder = new UriBuilder(uri);
                 if (uriBuilder.Query != null && uriBuilder.Query.Length > 1)
