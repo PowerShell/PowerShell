@@ -121,13 +121,8 @@ Describe "TypeTable duplicate types in reused runspace InitialSessionState TypeT
             }
             catch
             {
-                if ($_.Exception.InnerException -ne $null)
-                {
-                    $errorId = $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId
-                }
+                $_.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should Be "ErrorsUpdatingTypes"
             }
-
-            $errorId | Should Be "ErrorsUpdatingTypes"
         }
     }
 }
