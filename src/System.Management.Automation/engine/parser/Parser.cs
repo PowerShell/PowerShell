@@ -2451,7 +2451,7 @@ namespace System.Management.Automation.Language
                     {
                         endErrorStatement = fileNameExpr.Extent;
                         condition = new PipelineAst(fileNameExpr.Extent,
-                                                    new CommandExpressionAst(fileNameExpr.Extent, fileNameExpr, null));
+                                                    new CommandExpressionAst(fileNameExpr.Extent, fileNameExpr, null), false);
 
                         if (!specifiedFlags.ContainsKey("file"))
                         {
@@ -5182,6 +5182,7 @@ namespace System.Management.Automation.Language
 
             Token pipeToken = null;
             bool scanning = true;
+            bool backgroundProcess = false;
             while (scanning)
             {
                 CommandBaseAst commandAst;
@@ -5293,6 +5294,11 @@ namespace System.Management.Automation.Language
                     case TokenKind.EndOfInput:
                         scanning = false;
                         continue;
+                    case TokenKind.Ampersand:
+                        SkipToken();
+                        scanning = false;
+                        backgroundProcess = true;
+                        break;
                     case TokenKind.Pipe:
                         SkipToken();
                         SkipNewlines();
@@ -5328,7 +5334,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            return new PipelineAst(ExtentOf(startExtent, pipelineElements[pipelineElements.Count - 1]), pipelineElements);
+            return new PipelineAst(ExtentOf(startExtent, pipelineElements[pipelineElements.Count - 1]), pipelineElements, backgroundProcess);
         }
 
         private RedirectionAst RedirectionRule(RedirectionToken redirectionToken, RedirectionAst[] redirections, ref IScriptExtent extent)
@@ -5672,15 +5678,10 @@ namespace System.Management.Automation.Language
                         case TokenKind.Semi:
                         case TokenKind.AndAnd:
                         case TokenKind.OrOr:
+                        case TokenKind.Ampersand:
                             UngetToken(token);
                             scanning = false;
                             continue;
-
-                        case TokenKind.Ampersand:
-                            // ErrorRecovery: just ignore the token.
-                            endExtent = token.Extent;
-                            ReportError(token.Extent, () => ParserStrings.AmpersandNotAllowed);
-                            break;
 
                         case TokenKind.MinusMinus:
                             endExtent = token.Extent;

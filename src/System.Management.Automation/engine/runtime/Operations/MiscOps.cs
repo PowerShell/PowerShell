@@ -403,31 +403,80 @@ namespace System.Management.Automation
 
                 CommandProcessorBase commandProcessor = null;
                 CommandRedirection[] commandRedirection = null;
-                for (int i = 0; i < pipeElements.Length; i++)
-                {
-                    commandRedirection = commandRedirections != null ? commandRedirections[i] : null;
-                    commandProcessor = AddCommand(pipelineProcessor, pipeElements[i], pipeElementAsts[i],
-                                                  commandRedirection, context);
-                }
 
-                var cmdletInfo = commandProcessor?.CommandInfo as CmdletInfo;
-                if (cmdletInfo?.ImplementingType == typeof(OutNullCommand))
+                var pipelineAst = (PipelineAst)pipeElementAsts[0].Parent;
+                if (pipelineAst.BackgroundProcess)
                 {
-                    var commandsCount = pipelineProcessor.Commands.Count;
-                    if (commandsCount == 1)
+                    // For background jobs rewrite the pipeline as a Start-Job command
+                    var scriptblockBodyString = ((PipelineAst)pipeElementAsts[0].Parent).Extent.Text;
+                    var pipelineOffset = pipelineAst.Extent.StartOffset;
+                    var variables = pipelineAst.FindAll(x => x is VariableExpressionAst, true);
+                    // Used to make sure that the job runs in the current directory
+                    const string cmdPrefix = @"Microsoft.PowerShell.Management\Set-Location $using:pwd; ";
+                    // Minimize allocations by initializing the stringbuilder to the size of the source string + prefix + space for ${using:} * 2
+                    System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(cmdPrefix.Length + scriptblockBodyString.Length + 18);
+                    updatedScriptblock.Append(cmdPrefix);
+                    int position = 0;
+                    // Prefix variables in the scriptblock with $using: 
+                    foreach (var v in variables)
                     {
-                        // Out-Null is the only command, bail without running anything
-                        return;
+                        var vName = ((VariableExpressionAst) v).VariablePath.UserPath;
+                        // Skip variables that don't exist
+                        if (funcContext._executionContext.EngineSessionState.GetVariable(vName) == null)
+                            continue;
+                        // Skip PowerShell magic variables
+                        if (Regex.Match(vName,
+                                "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$", 
+                                    RegexOptions.IgnoreCase|RegexOptions.CultureInvariant).Success == false
+                        )
+                        {
+                            updatedScriptblock.Append(scriptblockBodyString.Substring(position, v.Extent.StartOffset - pipelineOffset - position));
+                            updatedScriptblock.Append("${using:");
+                            updatedScriptblock.Append(vName);
+                            updatedScriptblock.Append('}');
+                            position = v.Extent.EndOffset - pipelineOffset;
+                        }
                     }
-
-                    // Out-Null is the last command, rewrite command before Out-Null to a null pipe, but
-                    // only if it didn't redirect anything, e.g. `Get-Stuff > o.txt | Out-Null`
-                    var nextToLastCommand = pipelineProcessor.Commands[commandsCount - 2];
-                    if (!nextToLastCommand.CommandRuntime.OutputPipe.IsRedirected)
+                    updatedScriptblock.Append(scriptblockBodyString.Substring(position));
+                    var sb = ScriptBlock.Create(updatedScriptblock.ToString());
+                    var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
+                    commandProcessor = context.CommandDiscovery.LookupCommandProcessor(
+                        commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
+                    var parameter = CommandParameterInternal.CreateParameterWithArgument(
+                        pipelineAst.Extent, "ScriptBlock", null,
+                        pipelineAst.Extent, sb,
+                        false);
+                    commandProcessor.AddParameter(parameter);
+                    pipelineProcessor.Add(commandProcessor);
+                }
+                else
+                {
+                    for (int i = 0; i < pipeElements.Length; i++)
                     {
-                        pipelineProcessor.Commands.RemoveAt(commandsCount - 1);
-                        commandProcessor = nextToLastCommand;
-                        nextToLastCommand.CommandRuntime.OutputPipe = new Pipe {NullPipe = true};
+                        commandRedirection = commandRedirections != null ? commandRedirections[i] : null;
+                        commandProcessor = AddCommand(pipelineProcessor, pipeElements[i], pipeElementAsts[i],
+                                                      commandRedirection, context);
+                    }
+    
+                    var cmdletInfo = commandProcessor?.CommandInfo as CmdletInfo;
+                    if (cmdletInfo?.ImplementingType == typeof(OutNullCommand))
+                    {
+                        var commandsCount = pipelineProcessor.Commands.Count;
+                        if (commandsCount == 1)
+                        {
+                            // Out-Null is the only command, bail without running anything
+                            return;
+                        }
+    
+                        // Out-Null is the last command, rewrite command before Out-Null to a null pipe, but
+                        // only if it didn't redirect anything, e.g. `Get-Stuff > o.txt | Out-Null`
+                        var nextToLastCommand = pipelineProcessor.Commands[commandsCount - 2];
+                        if (!nextToLastCommand.CommandRuntime.OutputPipe.IsRedirected)
+                        {
+                            pipelineProcessor.Commands.RemoveAt(commandsCount - 1);
+                            commandProcessor = nextToLastCommand;
+                            nextToLastCommand.CommandRuntime.OutputPipe = new Pipe {NullPipe = true};
+                        }
                     }
                 }
 
@@ -716,7 +765,7 @@ namespace System.Management.Automation
         internal static void Nop() { }
     }
 
-    #region Redirections
+#region Redirections
 
     internal abstract class CommandRedirection
     {
@@ -1105,7 +1154,7 @@ namespace System.Management.Automation
         }
     }
 
-    #endregion Redirections
+#endregion Redirections
 
     internal static class FunctionOps
     {

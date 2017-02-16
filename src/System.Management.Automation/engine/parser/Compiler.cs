@@ -1942,7 +1942,8 @@ namespace System.Management.Automation.Language
             }
 
             var pipelineAst = stmt as PipelineAst;
-            if (pipelineAst != null)
+            // If it's a pipeline that isn't being backgrounded, try to optimize expression
+            if (pipelineAst != null && ! pipelineAst.BackgroundProcess)
             {
                 var expr = pipelineAst.GetPureExpression();
                 if (expr != null) { return Compile(expr); }
@@ -2985,7 +2986,8 @@ namespace System.Management.Automation.Language
 
             var pipeElements = pipelineAst.PipelineElements;
             var firstCommandExpr = (pipeElements[0] as CommandExpressionAst);
-            if (firstCommandExpr != null && pipeElements.Count == 1)
+
+            if (firstCommandExpr != null && pipeElements.Count == 1 && ! pipelineAst.BackgroundProcess)
             {
                 if (firstCommandExpr.Redirections.Count > 0)
                 {
@@ -3001,7 +3003,7 @@ namespace System.Management.Automation.Language
                 Expression input;
                 int i, commandsInPipe;
 
-                if (firstCommandExpr != null)
+                if (firstCommandExpr != null  && !pipelineAst.BackgroundProcess)
                 {
                     if (firstCommandExpr.Redirections.Count > 0)
                     {
@@ -3074,8 +3076,9 @@ namespace System.Management.Automation.Language
                 Expression invokePipe = Expression.Call(
                     CachedReflectionInfo.PipelineOps_InvokePipeline,
                     input.Cast(typeof(object)),
-                    firstCommandExpr != null ? ExpressionCache.FalseConstant : ExpressionCache.TrueConstant,
-                    Expression.NewArrayInit(typeof(CommandParameterInternal[]), pipelineExprs),
+                    firstCommandExpr != null && !pipelineAst.BackgroundProcess ? ExpressionCache.FalseConstant : ExpressionCache.TrueConstant,
+                    Expression.NewArrayInit(typeof(CommandParameterInternal[]), 
+                        !pipelineAst.BackgroundProcess ? pipelineExprs : Utils.EmptyArray<Expression>()),
                     Expression.Constant(pipeElementAsts),
                     redirectionExpr,
                     _functionContext);
