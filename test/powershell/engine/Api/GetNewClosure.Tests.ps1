@@ -1,6 +1,10 @@
 Describe "ScriptBlock.GetNewClosure()" -tags "CI" {
     
     BeforeAll {
+
+        ## No error should occur when calling GetNewClosure because:
+        ## 1. ValidateAttributes are not evaluated on parameter default values
+        ## 2. GetNewClosure no longer forces validation on existing variables
         function SimpleFunction_GetNewClosure
         {
             param([ValidateNotNull()] $Name)
@@ -36,4 +40,3 @@ Describe "ScriptBlock.GetNewClosure()" -tags "CI" {
         $result[1] | Should Be ""
     }
 }
-
