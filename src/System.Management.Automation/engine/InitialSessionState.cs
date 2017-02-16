@@ -1331,7 +1331,7 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         internal void AddTypeTableTypesInfo(IEnumerable<T> items)
         {
-            if (!(items is IEnumerable<SessionStateTypeEntry>)) { throw new PSInvalidOperationException(); }
+            if (typeof(T) != typeof(SessionStateTypeEntry)) { throw new PSInvalidOperationException(); }
 
             lock (_syncObject)
             {

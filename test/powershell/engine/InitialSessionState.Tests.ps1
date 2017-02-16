@@ -89,17 +89,7 @@ Describe "TypeTable duplicate types in reused runspace InitialSessionState TypeT
 
         It "Verifies that a reused InitialSessionState object created from a TypeTable object does not have duplicate types" {
 
-            $errs = $null
-            try
-            {
-                $rs2.Open()
-            }
-            catch
-            {
-                $errs = $_
-            }
-
-            $errs | Should Be $null
+            { $rs2.Open() } | Should Not Throw
         }
     }
 
