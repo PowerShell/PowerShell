@@ -1039,7 +1039,7 @@
       <Link>engine\parser\DebugViewWriter.cs</Link>
     </Compile>
     <Compile Include="..\System.Management.Automation\engine\parser\DynamicKeyword.cs">
-        <Link>engine\parser\DynamicKeyword.cs</Link>
+      <Link>engine\parser\DynamicKeyword.cs</Link>
     </Compile>
     <Compile Include="..\System.Management.Automation\engine\parser\FusionAssemblyIdentity.cs">
       <Link>engine\parser\FusionAssemblyIdentity.cs</Link>

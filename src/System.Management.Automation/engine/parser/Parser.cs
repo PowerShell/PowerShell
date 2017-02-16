@@ -4653,7 +4653,7 @@ namespace System.Management.Automation.Language
             Collection<PSModuleInfo> moduleInfos = GetModulesFromUsingModule(usingStmtAst, out moduleImportException, out usesWildcard, out isConstant);
 
             // These results will be checked and reported properly by the symbol resolver -- we just want to do our work quietly
-            if (moduleImportException == null && isConstant && !usesWildcard && moduleInfos?.Count > 0)
+            if (moduleImportException == null && isConstant && !usesWildcard && moduleInfos != null && moduleInfos.Any())
             {
                 // First in the list is first on module path -- others are shadowed
                 var module = moduleInfos[0];
@@ -4671,12 +4671,34 @@ namespace System.Management.Automation.Language
                         return usingStmtAst;
                     }
 
+                    IEnumerable<ParseErrorContainer> keywordErrors;
+
                     var keywordReader = new DynamicKeywordDllModuleMetadataReader(module);
-                    IEnumerable<DynamicKeyword> keywords = keywordReader.ReadDynamicKeywordSpecificationModule();
+                    IEnumerable<DynamicKeyword> keywords = keywordReader.ReadDynamicKeywordSpecificationModule(out keywordErrors);
+
+                    // If there were errors reading the keywords, report them and return without adding any keywords
+                    if (keywordErrors.Any())
+                    {
+                        foreach (ParseErrorContainer keywordError in keywordErrors)
+                        {
+                            ReportError(usingStmtAst.Extent, keywordError.ErrorExpr, keywordError.Args);
+                        }
+                        return usingStmtAst;
+                    }
 
                     // TODO: look at moving this later perhaps? (Although the delegates are for parse-time)
-                    (new DynamicKeywordLoader(keywords)).Load();
+                    (new DynamicKeywordLoader(keywords)).Load(out keywordErrors);
 
+                    if (keywordErrors.Any())
+                    {
+                        foreach (ParseErrorContainer keywordError in keywordErrors)
+                        {
+                            ReportError(usingStmtAst.Extent, keywordError.ErrorExpr, keywordError.Args);
+                        }
+                        return usingStmtAst;
+                    }
+
+                    // If there were errors loading the keywords, report them and return without adding any keywords
                     foreach (var keyword in keywords)
                     {
                         DynamicKeyword.AddKeyword(keyword);

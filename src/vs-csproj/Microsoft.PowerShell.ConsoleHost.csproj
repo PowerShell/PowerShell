@@ -158,6 +158,7 @@
     <None Include="..\Microsoft.PowerShell.ConsoleHost\project.json">
       <Link>project.json</Link>
     </None>
+    <None Include="app.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\Microsoft.PowerShell.ConsoleHost\resources\CommandLineParameterParserStrings.resx">

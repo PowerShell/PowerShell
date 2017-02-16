@@ -13,6 +13,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using Microsoft.PowerShell.DesiredStateConfiguration.Internal;
 using System.Reflection;
+using System.Linq.Expressions;
 
 namespace System.Management.Automation
 {
@@ -1024,25 +1025,53 @@ namespace System.Management.Automation.Language
 
     #region Dynamic Keyword Metadata Reader
 
+    /// <summary>
+    /// Class to pass metadata reading errors back to the parser to be reported
+    /// </summary>
+    internal class ParseErrorContainer
+    {
+        /// <summary>
+        /// The parser string expression to invoke
+        /// </summary>
+        public Expression<Func<string>> ErrorExpr { get; }
+        /// <summary>
+        /// Any arguments to the parser string
+        /// </summary>
+        public object[] Args { get; }
+
+        /// <summary>
+        /// Construct a new ParseError value to pass up
+        /// </summary>
+        /// <param name="errorExpr">the string expression</param>
+        /// <param name="args">any arguments to the string expression</param>
+        public ParseErrorContainer(Expression<Func<string>> errorExpr, params object[] args)
+        {
+            ErrorExpr = errorExpr;
+            Args = args;
+        }
+    }
+
     internal class DynamicKeywordDllModuleMetadataReader
     {
         private const string CtorName = ".ctor";
 
         private readonly PSModuleInfo _moduleInfo;
+        private readonly List<ParseErrorContainer> _parseErrors;
+
+        // Type providers to resolve metadata into strings for method/constructor signatures.
+        // Strings are used when a user has defined a type, since using Type would require loading the assembly,
+        // which is what the metadata reader is trying to avoid
+        private readonly ITypeProvider<string, IGenericContext<string>> _namingTypeProvider;
+        private IGenericContext<string> _currentNamingGenericContext;
+
+        // Type provider to resolve data from types that are known because they belong to the PowerShell assemblies
+        // This never uses the generic context, so we don't bother instantiating it
+        private readonly ITypeProvider<Type, IGenericContext<Type>> _knownTypeTypeProvider;
 
         private MetadataReader _metadataReader;
         private Stack<Dictionary<string, List<string>>> _enumDefStack;
         private Stack<HashSet<string>> _keywordDefinitionStack;
 
-        // Type providers to resolve metadata into strings for method/constructor signatures.
-        // Strings are used when a user has defined a type, since using Type would require loading the assembly,
-        // which is what the metadata reader is trying to avoid
-        private ITypeProvider<string, IGenericContext<string>> _namingTypeProvider;
-        private IGenericContext<string> _currentNamingGenericContext;
-
-        // Type provider to resolve data from types that are known because they belong to the PowerShell assemblies
-        private ITypeProvider<Type, IGenericContext<Type>> _knownTypeTypeProvider;
-        
         /// <summary>
         /// Construct a new DLL reader from a loaded module, whose information is
         /// described by a PSModuleInfo object
@@ -1051,6 +1080,7 @@ namespace System.Management.Automation.Language
         public DynamicKeywordDllModuleMetadataReader(PSModuleInfo moduleInfo)
         {
             _moduleInfo = moduleInfo;
+            _parseErrors = new List<ParseErrorContainer>();
             _knownTypeTypeProvider = new KnownTypeTypeProvider();
             _namingTypeProvider = new NamingTypeProvider();
         }
@@ -1059,7 +1089,7 @@ namespace System.Management.Automation.Language
         /// Parse all globally defined keywords in the keyword specification by recursive descent
         /// </summary>
         /// <returns>An enumerable of top level keywords that have been parsed</returns>
-        public IEnumerable<DynamicKeyword> ReadDynamicKeywordSpecificationModule()
+        public IEnumerable<DynamicKeyword> ReadDynamicKeywordSpecificationModule(out IEnumerable<ParseErrorContainer> errors)
         {
             var globalDynamicKeywords = new List<DynamicKeyword>();
 
@@ -1070,6 +1100,7 @@ namespace System.Management.Automation.Language
                 {
                     if (!peReader.HasMetadata)
                     {
+                        errors = _parseErrors;
                         return null;
                     }
 
@@ -1077,12 +1108,14 @@ namespace System.Management.Automation.Language
                     _enumDefStack = new Stack<Dictionary<string, List<string>>>();
                     _keywordDefinitionStack = new Stack<HashSet<string>>();
 
+                    errors = _parseErrors;
                     globalDynamicKeywords = ReadGlobalDynamicKeywords().ToList();
                 }
             }
             catch (BadImageFormatException)
             {
                 // If the DLL is somehow invalid, we just ignore it
+                errors = _parseErrors;
                 return null;
             }
 
@@ -1185,8 +1218,7 @@ namespace System.Management.Automation.Language
 
             if (!HasZeroArgumentConstructor(typeDef))
             {
-                var msg = String.Format("The keyword '{0}' does not have a zero-argument constructor to generate it with", keywordName);
-                throw new RuntimeException(msg);
+                _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataNoZeroArgCtor, keywordName));
             }
 
             // Make sure keywords by the same name are not already defined in enclosing scopes -- C# only prevents direct ancestors
@@ -1194,8 +1226,7 @@ namespace System.Management.Automation.Language
             {
                 if (enclosingScope.Contains(keywordName))
                 {
-                    var msg = String.Format("The keyword '{0}' is already defined in an enclosing scope", keywordName);
-                    throw new RuntimeException(msg);
+                    _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataKeywordAlreadyDefinedInScope, keywordName));
                 }
             }
 
@@ -1228,9 +1259,9 @@ namespace System.Management.Automation.Language
                     {
                         // TODO: Should this apply to ScriptBlock-bodied keywords too?
                         // Hashtable-bodied keyword cannot take parameters
-                        if (attributeData.BodyMode == DynamicKeywordBodyMode.Hashtable)
+                        if (attributeData.BodyMode != DynamicKeywordBodyMode.Command)
                         {
-                            var msg = String.Format("Keyword '{0}' has a Hashtable body, but must use another body mode to take parameters", keywordName);
+                            _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataNonCommandKeywordHasParameters, keywordName));
                         }
                         keywordParameters.Add(ReadParameterSpecification(propertyDef, keywordMemberAttribute));
                     }
@@ -1240,8 +1271,7 @@ namespace System.Management.Automation.Language
                         // Only Hashtable-bodied keywords can have properties
                         if (attributeData.BodyMode != DynamicKeywordBodyMode.Hashtable)
                         {
-                            var msg = String.Format("Keyword '{0}' has body mode '{1}', but must have a Hashtable body mode to have properties assigned", keywordName, attributeData.BodyMode);
-                            throw new RuntimeException(msg);
+                            _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataNonHashtableKeywordHasProperties, keywordName, attributeData));
                         }
                         keywordProperties.Add(ReadPropertySpecifiction(propertyDef, keywordMemberAttribute));
                     }
@@ -2406,6 +2436,9 @@ namespace System.Management.Automation.Language
     {
         // Global keywords to be loaded in (which may contain inner keywords to be loaded)
         private readonly ImmutableList<DynamicKeyword> _topLevelKeywordsToLoad;
+        // Errors encountered while loading
+        private readonly List<ParseErrorContainer> _errors;
+
         // Dictionary to record where a given keyword should be loaded from
         private IImmutableDictionary<DynamicKeyword, Assembly> _keywordAssemblies;
 
@@ -2415,23 +2448,35 @@ namespace System.Management.Automation.Language
         /// <param name="keywordsToLoad"></param>
         public DynamicKeywordLoader(IEnumerable<DynamicKeyword> keywordsToLoad)
         {
+            _errors = new List<ParseErrorContainer>();
             _topLevelKeywordsToLoad = keywordsToLoad.ToImmutableList();
         }
 
         /// <summary>
         /// Perform the loading process
         /// </summary>
-        public void Load()
+        public void Load(out IEnumerable<ParseErrorContainer> errors)
         {
             // Make sure we do no loading if there are no keywords to load
-            if (_topLevelKeywordsToLoad.Count == 0)
+            if (!_topLevelKeywordsToLoad.Any())
             {
+                errors = _errors;
                 return;
             }
 
             ValidateKeywords();
-            LoadModules();
-            LoadKeywords();
+
+            if (!_errors.Any())
+            {
+                LoadModules();
+            }
+
+            if (!_errors.Any())
+            {
+                LoadKeywords();
+            }
+
+            errors = _errors;
         }
 
         /// <summary>
@@ -2492,16 +2537,14 @@ namespace System.Management.Automation.Language
             Type definingType = _keywordAssemblies[keyword].GetType(keyword.Keyword);
             if (definingType == null)
             {
-                var msg = String.Format("The keyword '{0}' could not be loaded from the assembly at '{1}' -- check that it has not been modified", keyword, _keywordAssemblies[keyword].Location);
-                throw new RuntimeException(msg);
+                _errors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordLoaderKeywordNotFound, keyword, _keywordAssemblies[keyword].Location));
             }
 
             // Now check the keyword instance type actually inherits from Keyword
             Keyword definitionInstance = Activator.CreateInstance(definingType) as Keyword;
             if (definitionInstance == null)
             {
-                var msg = String.Format("The keyword instance for '{0}' does not inherit from the required type '{1}'", keyword, nameof(Keyword));
-                throw new RuntimeException(msg);
+                _errors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordLoaderKeywordDoesNotInheritFromKeyword, keyword));
             }
 
             // Finally, add the pair for loading
@@ -2527,8 +2570,7 @@ namespace System.Management.Automation.Language
             {
                 if (keyword.ImplementingModuleInfo != topLevelKeywordModule)
                 {
-                    var msg = String.Format("Keyword '{0}' has a different moduleInfo to its top level keyword '{1}'", keyword, parent);
-                    throw new RuntimeException(msg);
+                    _errors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordLoaderChildKeywordFromDifferentModule, keyword, parent));
                 }
             };
 
@@ -2538,8 +2580,7 @@ namespace System.Management.Automation.Language
             {
                 if (seenKeywords.Contains(keyword))
                 {
-                    var msg = String.Format("Keyword '{0}' contains a cyclic reference to itself", keyword);
-                    throw new RuntimeException(msg);
+                    _errors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordLoaderInnerKeywordCycle, keyword));
                 }
                 seenKeywords.Add(keyword);
             };
@@ -2549,8 +2590,7 @@ namespace System.Management.Automation.Language
                 // Also make sure the parent keywords have a module
                 if (keyword.ImplementingModuleInfo == null)
                 {
-                    var msg = String.Format("Keyword '{0}' does not have a module defined and cannot be loaded", keyword);
-                    throw new RuntimeException(msg);
+                    _errors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordLoaderKeywordModuleIsNull, keyword));
                 }
 
                 // Perform the checks

@@ -1447,4 +1447,37 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="PsDscRunAsCredentialMergeErrorForCompositeResources" xml:space="preserve">
     <value>Conflict in using PsDscRunAsCredential for Resource {0} because it already specifies PsDscRunAsCredential value. We can only use one PsDscRunAsCredential for the composite resource. </value>
   </data>
+  <data name="DynamicKeywordLoaderChildKeywordFromDifferentModule" xml:space="preserve">
+    <value>The keyword '{0}' comes from a different module to its parent '{1}', which is not supported.</value>
+  </data>
+  <data name="DynamicKeywordLoaderInnerKeywordCycle" xml:space="preserve">
+    <value>The keyword '{0}' contains itself as an inner keyword.</value>
+  </data>
+  <data name="DynamicKeywordLoaderKeywordDoesNotInheritFromKeyword" xml:space="preserve">
+    <value>The keyword '{0}' could not be loaded because it does not inherit from System.Management.Automation.Keyword.</value>
+  </data>
+  <data name="DynamicKeywordLoaderKeywordNotFound" xml:space="preserve">
+    <value>The keyword '{0}' could not be found in its assigned module at path: {1}</value>
+  </data>
+  <data name="DynamicKeywordMetadataCommandKeywordHasNestedKeywords" xml:space="preserve">
+    <value>The keyword '{0}' is declared as a Command-bodied keyword, but has inner keywords declared.</value>
+  </data>
+  <data name="DynamicKeywordMetadataKeywordDoesNotInheritKeyword" xml:space="preserve">
+    <value>The keyword '{0}' is declared as a keyword, but does not inherit from System.Management.Automation.Keyword.</value>
+  </data>
+  <data name="DynamicKeywordMetadataNonCommandKeywordHasParameters" xml:space="preserve">
+    <value>The keyword '{0}' is not declared as a Command-bodied keyword, but has parameters declared.</value>
+  </data>
+  <data name="DynamicKeywordMetadataNonHashtableKeywordHasProperties" xml:space="preserve">
+    <value>The keyword '{0}' is declared as a {1}-bodied keyword, but has Hashtable properties declared.</value>
+  </data>
+  <data name="DynamicKeywordMetadataNoZeroArgCtor" xml:space="preserve">
+    <value>The keyword '{0}' must have a 0-argument constructor to be added as a DynamicKeyword.</value>
+  </data>
+  <data name="DynamicKeywordLoaderKeywordModuleIsNull" xml:space="preserve">
+    <value>The keyword '{0}' has no module information and cannot be loaded.</value>
+  </data>
+  <data name="DynamicKeywordMetadataKeywordAlreadyDefinedInScope" xml:space="preserve">
+    <value>The keyword '{0}' conflicts with another keyword of the same name defined in a parent scope.</value>
+  </data>
 </root>
