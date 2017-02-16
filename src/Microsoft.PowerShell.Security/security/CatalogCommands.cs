@@ -89,8 +89,6 @@ namespace Microsoft.PowerShell.Commands
 
             Collection<string> paths = new Collection<string>();
 
-            bool _ShouldProcess = false;
-
             if (Path != null)
             {
                 foreach (string p in Path)
@@ -100,13 +98,13 @@ namespace Microsoft.PowerShell.Commands
                         if (ShouldProcess(tempPath.ProviderPath))
                         {
                             paths.Add(tempPath.ProviderPath);
-                            _ShouldProcess = true;
                         }
                     }
                 }
             }
 
-            if (_ShouldProcess)
+            // We add 'paths.Count > 0' to support 'ShouldProcess()'
+            if (paths.Count > 0 )
             {
                 string drive = null;
 
