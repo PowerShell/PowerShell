@@ -1,7 +1,22 @@
 Changelog
 =========
 
-v6.0.0-alpha.15 - 2016-01-18
+v6.0.0-alpha.16 - 2017-02-15
+----------------------------
+- Add `WindowsUBR` property to `Get-ComputerInfo` result
+- Cache padding strings to speed up formatting a little
+- Add alias `Path` to the `-FilePath` parameter of `Out-File`
+- Fix the `-InFile` parameter of `Invoke-WebRequest`
+- Add the default help content to powershell core
+- Speed up `Add-Type` by crossgen'ing its dependency assemblies
+- Convert `Get-FileHash` from script to C# implementation
+- Fix lock contention when compiling the code to run in interpreter
+- Avoid going through WinRM remoting stack when using `Get-ComputerInfo` locally
+- Fix native parameter auto-completion for tokens that begin with a single "Dash"
+- Fix parser error reporting for incompleted input to allow defining class in interactive host
+- Add the `RoleCapabilityFiles` keyword for JEA support on Windows
+
+v6.0.0-alpha.15 - 2017-01-18
 ----------------------------
 - Use parens around file length for offline files
 - Fix issues with the Windows console mode (terminal emulation) and native executables
