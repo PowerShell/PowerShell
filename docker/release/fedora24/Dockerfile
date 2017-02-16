@@ -1,5 +1,4 @@
 FROM fedora:24
-MAINTAINER Andrew Schwartzmeyer <andschwa@microsoft.com>
 
 # TODO: Until a release of PowerShell for Fedora 24 is available,
 # this Dockerfile installs the CentOS 7 version for compatibility.
@@ -14,8 +13,24 @@ ARG LIBICU50_SOURCE=https://www.mirrorservice.org/sites/mirror.centos.org/7.2.15
 ARG LIBICU50_PACKAGE=libicu-50.1.2-15.el7.x86_64.rpm
 ARG LIBICU50_PACKAGE_MD5=c3c1ebaabc8d1619377d535698784953
 
-# Install the English language pack first
+# Maintainer label and metadata as defined at http://label-schema.org
+ARG VCS_REF
+ARG BUILD_DATE
+LABEL maintainer="Andrew Schwartzmeyer <andschwa@microsoft.com>" \
+      org.label-schema.schema-version="1.0" \
+      org.label-schema.vendor="Microsoft" \
+      org.label-schema.name="PowerShell" \
+      org.label-schema.version=$POWERSHELL_VERSION \
+      org.label-schema.license="MIT" \
+      org.label-schema.description="PowerShell is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework that works well with existing tools and is optimized for dealing with structured data, REST APIs, and object models. It includes a command-line shell, an associated scripting language and a framework for processing cmdlets." \
+      org.label-schema.url="https://microsoft.com/powershell" \
+      org.label-schema.usage="https://github.com/PowerShell/PowerShell/tree/master/docs/learning-powershell" \
+      org.label-schema.build-date=$BUILD_DATE \
+      org.label-schema.vcs-url="https://github.com/PowerShell/PowerShell.git" \
+      org.label-schema.vcs-ref=$VCS_REF \
+      org.label-schema.docker.cmd="docker run -it microsoft/powershell:fedora24"
 
+# Install the English language pack first
 RUN dnf install -y glibc glibc-langpack-en glibc-locale-source
 
 ENV LANG en_US.UTF-8

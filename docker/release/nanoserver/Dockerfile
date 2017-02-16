@@ -1,11 +1,26 @@
 # escape=`
 FROM microsoft/nanoserver
-MAINTAINER brycem@microsoft.com
-LABEL Readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
-LABEL Description="This Dockerfile will install the latest release of PS."
 
+ARG POWERSHELL_VERSION=6.0.0-alpha.14
 ARG POWERSHELL_ZIP=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.14/powershell-6.0.0-alpha.14-win10-x64.zip
 ARG POWERSHELL_SHA256=3F5FD873B6E3062D9741B019BC645E6F20999BE66B2FDAA4374495FEBEDD0E03
+
+# Maintainer label and metadata as defined at http://label-schema.org
+ARG VCS_REF
+ARG BUILD_DATE
+LABEL maintainer="brycem@microsoft.com" `
+      org.label-schema.schema-version="1.0" `
+      org.label-schema.vendor="Microsoft" `
+      org.label-schema.name="PowerShell" `
+      org.label-schema.version=$POWERSHELL_VERSION `
+      org.label-schema.license="MIT" `
+      org.label-schema.description="PowerShell is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework that works well with existing tools and is optimized for dealing with structured data, REST APIs, and object models. It includes a command-line shell, an associated scripting language and a framework for processing cmdlets." `
+      org.label-schema.url="https://microsoft.com/powershell" `
+      org.label-schema.usage="https://github.com/PowerShell/PowerShell/tree/master/docs/learning-powershell" `
+      org.label-schema.build-date=$BUILD_DATE `
+      org.label-schema.vcs-url="https://github.com/PowerShell/PowerShell.git" `
+      org.label-schema.vcs-ref=$VCS_REF `
+      org.label-schema.docker.cmd="docker run -it microsoft/powershell:nanoserver"
 
 # Setup PowerShell - Log-to > C:\Docker.log
 SHELL ["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-command"]
