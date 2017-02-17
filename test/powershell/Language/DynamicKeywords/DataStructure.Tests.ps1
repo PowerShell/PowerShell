@@ -3,7 +3,7 @@ Import-Module $PSScriptRoot/DynamicKeywordTestSupport.psm1
 Describe "Keyword loading into the global keyword namespace" -Tags "CI" {
     BeforeAll {
         $savedModPath = $env:PSModulePath
-        $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
+        $env:PSModulePath = New-PathEntry -ModulePath $TestDrive -PathString $env:PSModulePath
     }
 
     AfterAll {

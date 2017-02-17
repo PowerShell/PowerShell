@@ -53,3 +53,10 @@ function Convert-TestCasesToSerialized
 
     ($TestCases | ForEach-Object { $tmp = $_; ($Keys | ForEach-Object { $tmp.$_ }) -join $EntrySeparator }) -join $TableSeparator
 }
+
+function New-PathEntry
+{
+    param($PathString, $ModulePath)
+
+    $ModulePath + [System.IO.Path]::DirectorySeparatorChar + [System.IO.Path]::PathSeparator + $PathString
+}
