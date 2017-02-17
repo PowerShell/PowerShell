@@ -1,13 +1,16 @@
-enum OuterType
+using System.Management.Automation;
+using System.Management.Automation.Language;
+
+public enum OuterType
 {
     OuterOne,
     OuterTwo,
 }
 
 [Keyword(Body = DynamicKeywordBodyMode.Hashtable)]
-public class PropertyKeyword
+public class PropertyKeyword : Keyword
 {
-    enum InnerType
+    public enum InnerType
     {
         InnerOne,
         InnerTwo,
@@ -24,4 +27,7 @@ public class PropertyKeyword
 
     [KeywordProperty()]
     public InnerType InnerProperty { get; set; }
+
+    [KeywordProperty(Mandatory = true)]
+    public string MandatoryProperty { get; set; }
 }

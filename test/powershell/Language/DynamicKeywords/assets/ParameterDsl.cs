@@ -26,4 +26,10 @@ public class ParameterKeyword : Keyword
     
     [KeywordParameter()]
     public InnerType InnerParameter { get; set; }
+
+    [KeywordParameter()]
+    public SwitchParameter Switch { get; set; }
+
+    [KeywordParameter(Mandatory = true)]
+    public string MandatoryParameter { get; set; }
 }

@@ -1483,4 +1483,10 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
   <data name="DynamicKeywordMetadataKeywordAlreadyDefinedInScope" xml:space="preserve">
     <value>The keyword '{0}' conflicts with another keyword of the same name defined in a parent scope.</value>
   </data>
+  <data name="DynamicKeywordRequiredButNotUsed" xml:space="preserve">
+    <value>The dynamic keyword '{0}' has use mode '{1}' and must be used in the body of parent keyword '{2}'</value>
+  </data>
+  <data name="DynamicKeywordUsedMoreThanAllowed" xml:space="preserve">
+    <value>The dynamic keyword '{0}' has use mode '{1}' and was used too many times in the body of parent keyword '{2}'</value>
+  </data>
 </root>

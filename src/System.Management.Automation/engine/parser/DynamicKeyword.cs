@@ -418,12 +418,12 @@ namespace System.Management.Automation.Language
         /// if a keyword from a higher scope is invoked it is not counted. (TODO)
         /// </summary>
         /// <returns>a (possibly empty) enumeration of all keywords we "required" the use of</returns>
-        public IEnumerable<DynamicKeyword> GetUnusedRequiredKeywords()
+        public List<DynamicKeyword> GetUnusedRequiredKeywords()
         {
             // If the scope is empty, then we can't require anything
             if (DynamicKeywordScope.Count == 0)
             {
-                yield break;
+                return null;
             }
 
             // If we've run out of "seen" records to check, something has gone wrong
@@ -431,6 +431,8 @@ namespace System.Management.Automation.Language
             {
                 throw new PSInvalidOperationException(String.Format("Tried to pop {0} when it was empty while counting unused required keywords", nameof(ScopeSeenDynamicKeywords)));
             }
+
+            var unusedKeywords = new List<DynamicKeyword>();
 
             // Check all the "required" keywords in this scope were seen
             foreach (var keyword in DynamicKeywordScope.Peek().InnerKeywords.Values)
@@ -441,11 +443,13 @@ namespace System.Management.Automation.Language
                     case DynamicKeywordUseMode.RequiredMany:
                         if (!ScopeSeenDynamicKeywords.Peek().Contains(keyword))
                         {
-                            yield return keyword;
+                            unusedKeywords.Add(keyword);
                         }
                         break;
                 }
             }
+
+            return unusedKeywords;
         }
 
         /// <summary>
@@ -1338,16 +1342,16 @@ namespace System.Management.Automation.Language
             var innerKeywords = new List<DynamicKeyword>();
             foreach (var innerTypeDefHandle in typeDef.GetNestedTypes())
             {
-                if (attributeData.BodyMode == DynamicKeywordBodyMode.Command)
-                {
-                    _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataCommandKeywordHasNestedKeywords, keywordName));
-                    _hasFailed = true;
-                }
-
                 var innerTypeDef = _metadataReader.GetTypeDefinition(innerTypeDefHandle);
                 CustomAttribute? innerKeywordAttribute = null; 
                 if (IsKeywordSpecification(innerTypeDef, ref innerKeywordAttribute))
                 {
+                    if (attributeData.BodyMode == DynamicKeywordBodyMode.Command)
+                    {
+                        _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataCommandKeywordHasNestedKeywords, keywordName));
+                        _hasFailed = true;
+                    }
+
                     DynamicKeyword innerKeyword = ReadKeywordSpecification(innerTypeDef, innerKeywordAttribute.Value, isNested: true);
                     if (!_hasFailed && innerKeyword != null)
                     {
@@ -1469,12 +1473,28 @@ namespace System.Management.Automation.Language
                 }
             }
 
+            // Metadata types may be qualified with assembly names like "[System.Management.Automation]System.Management.Automation.SwitchParameter"
+            // So we try to remove the part in square brackets to align with C# <type>.FullName
+            if (parameterType.StartsWith("["))
+            {
+                int asmEnd = parameterType.IndexOf(']');
+                if (asmEnd != -1)
+                {
+                    parameterType = parameterType.Remove(0, asmEnd + 1);
+                }
+                else
+                {
+                    // Something weird has happened, since type names can't have rogue '['s in them...
+                    throw PSTraceSource.NewArgumentOutOfRangeException(nameof(parameterType), parameterType);
+                }
+            }
+
             var keywordParameter = new DynamicKeywordParameter()
             {
                 Name = parameterName,
                 TypeConstraint = parameterType,
                 Mandatory = mandatory,
-                Switch = parameterType == nameof(SwitchParameter),
+                Switch = parameterType == typeof(SwitchParameter).FullName,
             };
             // If the parameter has an enum type, set the values it can take
             TrySetMemberEnumType(keywordParameter);
@@ -1728,7 +1748,7 @@ namespace System.Management.Automation.Language
             {
                 case HandleKind.TypeReference:
                     var baseType = _metadataReader.GetTypeReference((TypeReferenceHandle)typeDef.BaseType);
-                    return String.Join(".", _metadataReader.GetString(baseType.Namespace), _metadataReader.GetString(baseType.Name)) == nameof(System.Enum);
+                    return String.Join(".", _metadataReader.GetString(baseType.Namespace), _metadataReader.GetString(baseType.Name)) == typeof(System.Enum).FullName;
 
                 default:
                     return false;

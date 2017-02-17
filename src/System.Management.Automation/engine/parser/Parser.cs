@@ -3544,6 +3544,13 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
+            // Make sure we are allowed to use this keyword according to its UseMode
+            if (!DynamicKeyword.TryRecordKeywordUse(keywordData))
+            {
+                ReportError(functionName.Extent, () => ParserStrings.DynamicKeywordUsedMoreThanAllowed, keywordData);
+                return null;
+            }
+
             string elementName = string.Empty;
 
             DynamicKeywordStatementAst dynamicKeywordAst;
@@ -3729,8 +3736,10 @@ namespace System.Management.Automation.Language
                 // if a scriptblock or a hashtable is expected.
                 //
                 ExpressionAst body = null;
+                IEnumerable<DynamicKeyword> unusedRequiredKeywords = null;
                 if (keywordData.BodyMode == DynamicKeywordBodyMode.ScriptBlock)
                 {
+                    DynamicKeyword.EnterScope(keywordData);
                     var oldInConfiguration = _inConfiguration;
                     try
                     {
@@ -3740,24 +3749,43 @@ namespace System.Management.Automation.Language
                     finally
                     {
                         _inConfiguration = oldInConfiguration;
+                        unusedRequiredKeywords = DynamicKeyword.GetUnusedRequiredKeywords();
+                        DynamicKeyword.LeaveScope();
                     }
                 }
                 else if (keywordData.BodyMode == DynamicKeywordBodyMode.Hashtable)
                 {
                     // Resource property value could be set to nested DSC resources except Script resource
                     bool isScriptResource = String.Compare(functionName.Text, @"Script", StringComparison.OrdinalIgnoreCase) == 0;
+                    DynamicKeyword.EnterScope(keywordData);
                     try
                     {
                         if (isScriptResource)
+                        {
                             DynamicKeyword.Push();
+                        }
                         body = HashExpressionRule(lCurly, true /* parsingSchemaElement */);
                     }
                     finally
                     {
                         if (isScriptResource)
+                        {
                             DynamicKeyword.Pop();
+                        }
+                        unusedRequiredKeywords = DynamicKeyword.GetUnusedRequiredKeywords();
+                        DynamicKeyword.LeaveScope();
                     }
                 }
+
+                // If body is null, it makes no sense to complain that a keyword wasn't used properly in it
+                if (body != null && unusedRequiredKeywords != null && unusedRequiredKeywords.Any())
+                {
+                    foreach (DynamicKeyword unusedKeyword in unusedRequiredKeywords)
+                    {
+                        ReportError(body.Extent, () => ParserStrings.DynamicKeywordRequiredButNotUsed, unusedKeyword, unusedKeyword.UseMode, keywordData);
+                    }
+                }
+
                 // commandast
                 // elements: instancename/dynamickeyword/hashtable or scripblockexpress
                 if (body == null)
