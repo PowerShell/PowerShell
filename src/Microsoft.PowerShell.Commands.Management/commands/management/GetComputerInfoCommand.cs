@@ -743,7 +743,7 @@ namespace Microsoft.PowerShell.Commands
                 output.BiosOtherTargetOS = bios.OtherTargetOS;
                 output.BiosPrimaryBIOS = bios.PrimaryBIOS;
                 output.BiosReleaseDate = bios.ReleaseDate;
-                output.BiosSeralNumber = bios.SerialNumber;
+                output.BiosSerialNumber = bios.SerialNumber;
                 output.BiosSMBIOSBIOSVersion = bios.SMBIOSBIOSVersion;
                 output.BiosSMBIOSMajorVersion = bios.SMBIOSMajorVersion;
                 output.BiosSMBIOSMinorVersion = bios.SMBIOSMinorVersion;
@@ -2363,7 +2363,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Assigned serial number of the BIOS
         /// </summary>
-        public string BiosSeralNumber { get; internal set; }
+        public string BiosSerialNumber { get; internal set; }
 
         /// <summary>
         /// BIOS version as reported by SMBIOS
