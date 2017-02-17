@@ -44,11 +44,12 @@ function Get-ScriptBlockResultInNewProcess
     }
 
     $result = & $powershellExe -NoProfile -NonInteractive -OutputFormat XML -Command $ScriptBlock -args $Arguments
-
-    if ($result -is [psobject] -or $result -is [object[]])
-    {
-        return $result
-    }
-
     $result
+}
+
+function Convert-TestCasesToSerialized
+{
+    param([hashtable[]] $TestCases, [string[]] $Keys, [string] $TableSeparator=';', [string] $EntrySeparator=',')
+
+    ($TestCases | ForEach-Object { $tmp = $_; ($Keys | ForEach-Object { $tmp.$_ }) -join $EntrySeparator }) -join $TableSeparator
 }

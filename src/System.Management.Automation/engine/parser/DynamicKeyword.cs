@@ -1245,7 +1245,7 @@ namespace System.Management.Automation.Language
         /// <param name="typeDef">the type definition defining the keyword</param>
         /// <param name="keywordAttribute">the attribute decorating the class specifying its properties</param>
         /// <param name="isNested">whether the keyword is nested inside another keyword or not</param>
-        /// <returns></returns>
+        /// <returns>A fully-described DynamicKeyword data object</returns>
         private DynamicKeyword ReadKeywordSpecification(TypeDefinition typeDef, CustomAttribute keywordAttribute, bool isNested = false)
         {
             string keywordName = _metadataReader.GetString(typeDef.Name);
@@ -1259,7 +1259,9 @@ namespace System.Management.Automation.Language
             // Make sure keywords by the same name are not already defined in enclosing scopes -- C# only prevents direct ancestors
             foreach (var enclosingScope in _keywordDefinitionStack)
             {
-                if (enclosingScope.Contains(keywordName) || DynamicKeyword.ContainsKeyword(keywordName))
+                // Note: This could also include `|| DynamicKeyword.Contains(keywordName)`, but this shows errors when reloading a module
+                //       For now, a more local keyword will shadow a global one anyway (as you might expect)
+                if (enclosingScope.Contains(keywordName))
                 {
                     _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataKeywordAlreadyDefinedInScope, keywordName));
                     _hasFailed = true;
