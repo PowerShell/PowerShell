@@ -2,6 +2,9 @@ Import-Module $PSScriptRoot/DynamicKeywordTestSupport.psm1
 
 Describe "DynamicKeyword metadata reader error checking" -Tags "CI" {
     BeforeAll {
+        $savedModPath = $env:PSModulePath
+        $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
+
         $testCases = @(
             @{ dslName = "ErrorDoubleDefinitionDsl"; expectedErrorId = "DynamicKeywordMetadataKeywordAlreadyDefinedInScope" },
             @{ dslName = "ErrorGlobalBadUseModeDsl"; expectedErrorId = "DynamicKeywordMetadataGlobalKeywordsMustBeOptionalMany" },
@@ -36,6 +39,10 @@ Describe "DynamicKeyword metadata reader error checking" -Tags "CI" {
         $testInput = Convert-TestCasesToSerialized -TestCases $testCases -Keys "dslName","expectedErrorId"
 
         $results = Get-ScriptBlockResultInNewProcess -TestDrive $TestDrive -ModuleName ($testCases | ForEach-Object {$_.dslName}) -ScriptBlock $command -Arguments $testInput
+    }
+
+    AfterAll {
+        $env:PSModulePath = $savedModPath
     }
 
     It "throws <expectedErrorId> when reading the metadata for <dslName>" -TestCases $testCases {

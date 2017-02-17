@@ -1,4 +1,5 @@
 using System.Management.Automation;
+using System.Management.Automation.Language;
 
 [Keyword(Body = DynamicKeywordBodyMode.Command)]
 public class CommandBodyKeyword : Keyword

@@ -2,6 +2,9 @@ Import-Module $PSScriptRoot/DynamicKeywordTestSupport.psm1
 
 Describe "Dynamic Keyword parse time delegate execution" -Tags "CI" {
     BeforeAll {
+        $savedModPath = $env:PSModulePath
+        $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
+
         $testCases = @(
             @{ keyword = "SimplePreParse"; invocation = "SimplePreParseKeyword"; expectedError = "SuccessfulPreParse" },
             @{ keyword = "SimplePostParse"; invocation = "SimplePostParseKeyword"; expectedError = "SuccessfulPostParse" },
@@ -34,6 +37,10 @@ Describe "Dynamic Keyword parse time delegate execution" -Tags "CI" {
         $testInput = Convert-TestCasesToSerialized -TestCases $TestCases -Keys "keyword","invocation","expectedError"
 
         $results = Get-ScriptBlockResultInNewProcess -TestDrive $TestDrive -ModuleName "ParserDelegateDsl" -ScriptBlock $command -Arguments $testInput
+    }
+
+    AfterAll {
+        $env:PSModulePath = $savedModPath
     }
 
     It "throws the error with ID <expectedError> when <keyword>Keyword is invoked" -TestCases $testCases {
