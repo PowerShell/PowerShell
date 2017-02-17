@@ -153,6 +153,14 @@ namespace System.Management.Automation
             }
         }
 
+        internal static string GitCommitId
+        {
+            get
+            {
+                return (string)GetPSVersionTable()["GitCommitId"];
+            }
+        }
+
         internal static Version CLRVersion
         {
             get

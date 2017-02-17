@@ -524,7 +524,6 @@ namespace Microsoft.PowerShell
                     _noInteractive = true;
                     _skipUserInit = true;
                     _noExit = false;
-                    _commandLineCommand = "'powershell ' + $psversiontable.gitcommitid";
                     break;
                 }
 
@@ -571,7 +570,6 @@ namespace Microsoft.PowerShell
                 {
                     _sshServerMode = true;
                 }
-
                 else if (MatchSwitch(switchKey, "configurationname", "config"))
                 {
                     ++i;

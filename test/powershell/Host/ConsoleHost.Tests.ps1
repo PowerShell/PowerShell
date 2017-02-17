@@ -175,9 +175,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed = & $powershell -version -command get-date
             # no extraneous output
             $observed | should be $currentVersion
-            
         }
-
     }
 
     Context "Pipe to/from powershell" {
