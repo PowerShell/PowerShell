@@ -1,3 +1,4 @@
+# get a random string of characters a-z and A-Z
 function Get-RandomString
 {
     param ( [int]$length = 8 )
@@ -5,6 +6,7 @@ function Get-RandomString
     ([char[]]($chars | get-random -count $length)) -join ""
 }
 
+# get a random string which is not the name of an existing provider
 function Get-NonExistantProviderName
 {
    param ( [int]$length = 8 )
@@ -14,6 +16,7 @@ function Get-NonExistantProviderName
    $providerName
 }
 
+# get a random string which is not the name of an existing drive
 function Get-NonExistantDriveName
 {
     param ( [int]$length = 8 )
@@ -23,6 +26,7 @@ function Get-NonExistantDriveName
     $drivename
 }
 
+# get a random string which is not the name of an existing function
 function Get-NonExistantFunctionName
 {
     param ( [int]$length = 8 )
