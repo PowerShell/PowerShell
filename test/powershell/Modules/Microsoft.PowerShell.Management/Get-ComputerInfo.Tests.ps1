@@ -47,7 +47,7 @@ function Get-PropertyNamesForComputerInfoTest
         "BiosOtherTargetOS",
         "BiosPrimaryBIOS",
         "BiosReleaseDate",
-        "BiosSeralNumber",
+        "BiosSerialNumber",
         "BiosSMBIOSBIOSVersion",
         "BiosSMBIOSPresent",
         "BiosSMBIOSMajorVersion",
@@ -794,7 +794,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             "BiosOtherTargetOS" {return Get-CimClassPropVal Win32_bios OtherTargetOS}
             "BiosPrimaryBIOS" {return Get-CimClassPropVal Win32_bios PrimaryBIOS}
             "BiosReleaseDate" {return Get-CimClassPropVal Win32_bios ReleaseDate}
-            "BiosSeralNumber" {return Get-CimClassPropVal Win32_bios SerialNumber}
+            "BiosSerialNumber" {return Get-CimClassPropVal Win32_bios SerialNumber}
             "BiosSMBIOSBIOSVersion" {return Get-CimClassPropVal Win32_bios SMBIOSBIOSVersion}
             "BiosSMBIOSPresent" {return Get-CimClassPropVal Win32_bios SMBIOSPresent}
             "BiosSMBIOSMajorVersion" {return Get-CimClassPropVal Win32_bios SMBIOSMajorVersion}
