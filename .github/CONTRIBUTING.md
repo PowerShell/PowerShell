@@ -169,29 +169,29 @@ See [Contributing to documentation related to PowerShell](#contributing-to-docum
 
 #### Pull Request - Code Review
 
-* Author, Reviewer and Assignee of a PR
+* Author, Reviewer, and Assignee of a PR
   * Reviewer and Assignee are two separate roles of a PR.
     * A Reviewer can be anyone from the collaborators.
-      Reviewer reviews the change of a PR,
-      leaves comments for Author to address,
+      A Reviewer reviews the change of a PR,
+      leaves comments for the Author to address,
       and approve the PR when the change looks good.
-    * An Assignee must be a maintainer, who monitors progress of the PR,
+    * An Assignee must be a maintainer, who monitors the progress of the PR,
       coordinates the review process, and merges the PR after it's approved.
-      Assignee may or may not be a Reviewer of the PR at the same time.
-  * Author is encouraged to choose Reviewer(s) and Assignee for the PR.
-    If no Assignee is chosen, one of maintainers will be assigned to it.
-    If no Reviewer is chosen, Assignee will choose Reviewer(s) as appropriate.
-    * If Author is a [PowerShell Team](https://github.com/orgs/PowerShell/people) member,
-      then Author **is required** to choose Reviewer(s) and Assignee of the PR.
-  * Assignee may be re-assigned by maintainers,
+      The Assignee may or may not be a Reviewer of the PR at the same time.
+  * An Author is encouraged to choose Reviewer(s) and Assignee for the PR.
+    If no Assignee is chosen, one of maintainers shall be assigned to it.
+    If no Reviewer is chosen, Assignee shall choose Reviewer(s) as appropriate.
+    * If an Author is a [PowerShell Team](https://github.com/orgs/PowerShell/people) member,
+      then the Author **is required** to choose Reviewer(s) and Assignee of the PR.
+  * The Assignee may be re-assigned by maintainers,
     and more Reviewer(s) may be added by Assignee as appropriate.
 
-* Author **is responsible** to drive the PR to the Approved state.
+* An Author **is responsible** for driving the PR to the Approved state.
   After a successful test pass, Reviewer(s) can start a code review,
   commenting on any changes that might need to be made.
-  Author addresses the comments, and ping Reviewer(s) to start the nexe iteration.
+  The Author addresses the comments, and pings Reviewer(s) to start the next iteration.
   If the review is making no progress (or very slow),
-  Author can always ask Assignee to help coordinate the process and keep it moving.
+  the Author can always ask the Assignee to help coordinate the process and keep it moving.
 
 * Additional feedback is always welcome!
   Even if you are not designated as a Reviewer,
