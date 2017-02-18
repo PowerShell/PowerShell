@@ -63,7 +63,8 @@ function ShouldBeErrorId
         catch
         {
             $_.FullyQualifiedErrorId | Should Be $FullyQualifiedErrorId | Out-Null
-            Write-Output $PSItem
+            # Write the exception to output that allow us to check later other properies of the exception
+            Write-Output $_
         }
 }
 
