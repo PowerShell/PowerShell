@@ -174,7 +174,7 @@ See [Contributing to documentation related to PowerShell](#contributing-to-docum
     * A Reviewer can be anyone from the collaborators.
       A Reviewer reviews the change of a PR,
       leaves comments for the Author to address,
-      and approve the PR when the change looks good.
+      and approves the PR when the change looks good.
     * An Assignee must be a maintainer, who monitors the progress of the PR,
       coordinates the review process, and merges the PR after it's approved.
       The Assignee may or may not be a Reviewer of the PR at the same time.
