@@ -4698,6 +4698,10 @@ namespace System.Management.Automation.Language
                     {
                         return usingStmtAst;
                     }
+                    catch (FileNotFoundException)
+                    {
+                        return usingStmtAst;
+                    }
 
                     IEnumerable<ParseErrorContainer> keywordErrors;
 
