@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
 using Microsoft.PowerShell.Commands;
+
 #if !CORECLR
 using Microsoft.CodeAnalysis;
 #endif

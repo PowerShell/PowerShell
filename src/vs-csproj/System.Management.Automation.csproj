@@ -2342,8 +2342,6 @@
     <None Include="..\System.Management.Automation\project.json">
       <Link>project.json</Link>
     </None>
-    <None Include="app.config" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="..\System.Management.Automation\resources\Authenticode.resx">

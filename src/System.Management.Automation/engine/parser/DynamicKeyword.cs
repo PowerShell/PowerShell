@@ -563,7 +563,7 @@ namespace System.Management.Automation.Language
                     (t_dynamicKeywordNamespaceStack = new Stack<DynamicKeywordNamespace>());
             }
         }
-        //[ThreadStatic]
+        [ThreadStatic]
         private static Stack<DynamicKeywordNamespace> t_dynamicKeywordNamespaceStack;
 
         /// <summary>
@@ -577,7 +577,7 @@ namespace System.Management.Automation.Language
                     (t_currentDynamicKeywordNamespace = new DynamicKeywordNamespace());
             }
         }
-        //[ThreadStatic]
+        [ThreadStatic]
         private static DynamicKeywordNamespace t_currentDynamicKeywordNamespace;
 
         /// <summary>
