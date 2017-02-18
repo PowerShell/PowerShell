@@ -23,7 +23,7 @@ Describe "Keyword loading into the global keyword namespace" -Tags "CI" {
 Describe "Adding keyword attributes to the DynamicKeyword data structure" -Tags "CI" {
     BeforeAll {
         $savedModPath = $env:PSModulePath
-        $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
+        $env:PSModulePath = New-PathEntry -ModulePath $TestDrive -PathString $env:PSModulePath
 
         $attrTestCases = @(
             @{ module = "BasicDsl"; keyword = "BasicKeyword"; attr = "NameMode"; expected = "NoName" },
@@ -115,7 +115,7 @@ Describe "Adding keyword attributes to the DynamicKeyword data structure" -Tags 
 Describe "Adding Properties to keywords" -Tags "CI" {
     BeforeAll {
         $savedModPath = $env:PSModulePath
-        $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
+        $env:PSModulePath = New-PathEntry -ModulePath $TestDrive -PathString $env:PSModulePath
 
         $testCases = @(
            @{ property = "StringProperty"; type = "string"; values = $null },
@@ -174,7 +174,7 @@ Describe "Adding Properties to keywords" -Tags "CI" {
 Describe "Adding Parameters to keywords" -Tags "CI" {
     BeforeAll {
         $savedModPath = $env:PSModulePath
-        $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
+        $env:PSModulePath = New-PathEntry -ModulePath $TestDrive -PathString $env:PSModulePath
 
         $testCases = @(
            @{ parameter = "StringParameter"; type = "string"; values = $null },

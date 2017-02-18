@@ -58,5 +58,5 @@ function New-PathEntry
 {
     param($PathString, $ModulePath)
 
-    $ModulePath,$PathString -join [System.IO.Path]::PathSeparator.ToString()
+    $ModulePath,$PathString -join [System.IO.Path]::PathSeparator
 }
