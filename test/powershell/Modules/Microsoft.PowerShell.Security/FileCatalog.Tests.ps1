@@ -42,6 +42,27 @@ Describe "Test suite for NewFileCatalogAndTestFileCatalogCmdlets" -Tags "CI" {
 
     Context "NewAndTestCatalogTests PositiveTestCases when validation Succeeds" {
 
+        It "NewFileCatalogWithSingleFile with WhatIf" {
+
+            $sourcePath = Join-Path $testDataPath '\CatalogTestFile1.mof'
+            # use existant Path for the directory when .cat file name is not specified
+            $catalogPath = $testDataPath
+            $catalogFile = $catalogPath + "\catalog.cat"
+
+            try
+            {
+                $null = New-FileCatalog -Path $sourcePath -CatalogFilePath $catalogPath -WhatIf
+                $result = Test-Path -Path $catalogFile
+            }
+            finally
+            {
+                Remove-Item $catalogFile -Force -ErrorAction SilentlyContinue
+            }
+
+            # Validate result properties
+            $result | Should Be $false
+        }
+
         It "NewFileCatalogFolder" {
 
             $sourcePath = Join-Path $testDataPath 'UserConfigProv\DSCResources\scriptdsc'
