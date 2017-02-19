@@ -20,4 +20,41 @@ Describe 'conversion syntax' -Tags "CI" {
         # This test relies on the fact that there are overloads (at least 2) for ToString method.
         ([System.Management.Automation.ActionPreference]"Stop").ToString() | Should Be "Stop"
     }
+
+    Context "Cast object[] to more narrow generic collection" {
+        BeforeAll {
+            $testCases = @(
+                @{ Command = {$result = [Collections.Generic.List[int]]@(1)};      CollectionType = 'List`1'; ElementType = "Int32";  Count = 1; Elements = @(1) }
+                @{ Command = {$result = [Collections.Generic.List[int]]@(1,2)};    CollectionType = 'List`1'; ElementType = "Int32";  Count = 2; Elements = @(1,2) }
+                @{ Command = {$result = [Collections.Generic.List[int]]"4"};       CollectionType = 'List`1'; ElementType = "Int32";  Count = 1; Elements = @(4) }
+                @{ Command = {$result = [Collections.Generic.List[string]]@(1)};   CollectionType = 'List`1'; ElementType = "String"; Count = 1; Elements = @("1") }
+                @{ Command = {$result = [Collections.Generic.List[string]]@(1,2)}; CollectionType = 'List`1'; ElementType = "String"; Count = 2; Elements = @("1","2") }
+                @{ Command = {$result = [Collections.Generic.List[string]]1};      CollectionType = 'List`1'; ElementType = "String"; Count = 1; Elements = @("1") }
+
+                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1)};   CollectionType = 'Collection`1'; ElementType = "Int32"; Count = 1; Elements = @(1) }
+                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1,2)}; CollectionType = 'Collection`1'; ElementType = "Int32"; Count = 2; Elements = @(1,2) }
+                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]"4"};    CollectionType = 'Collection`1'; ElementType = "Int32"; Count = 1; Elements = @(4) }
+            )
+        }
+
+        It "<Command>" -TestCases $testCases {
+            param($Command, $CollectionType, $ElementType, $Count, $Elements)
+
+            $result = $null
+            . $Command
+
+            $result | Should Not BeNullOrEmpty
+            $result.GetType().Name | Should Be $CollectionType
+
+            $genericArgs = $result.GetType().GetGenericArguments()
+            $genericArgs.Length | Should Be 1
+            $genericArgs[0].Name | Should Be $ElementType
+
+            $result.Count | Should Be $Count
+            for ($i = 0; $i -lt $Count; $i++)
+            {
+                $result[$i] | Should Be $Elements[$i]
+            }
+        }
+    }
 }

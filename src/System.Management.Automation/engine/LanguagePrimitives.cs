@@ -3581,20 +3581,20 @@ namespace System.Management.Automation
                                     TypeTable backupTable)
             {
                 IList resultAsList = null;
-                int listSize = 0;
                 Array array = null;
 
                 try
                 {
-                    // typeof(Array).IsAssignableFrom(typeof(object[])) == true
-                    if ((IsScalar) || (!(valueToConvert is Array)))
+                    int listSize = 0;
+                    if (IsScalar)
                     {
                         listSize = 1;
                     }
                     else
                     {
-                        array = (Array)valueToConvert;
-                        listSize = array.Length;
+                        // typeof(Array).IsAssignableFrom(typeof(object[])) == true
+                        array = valueToConvert as Array;
+                        listSize = array != null ? array.Length : 1;
                     }
 
                     resultAsList = ListCtorLambda(listSize);
@@ -3610,7 +3610,7 @@ namespace System.Management.Automation
                 {
                     resultAsList.Add(valueToConvert);
                 }
-                else if (listSize == 1)
+                else if (array == null)
                 {
                     object convertedValue = LanguagePrimitives.ConvertTo(valueToConvert, ElementType, formatProvider);
                     resultAsList.Add(convertedValue);
