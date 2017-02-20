@@ -169,7 +169,7 @@ See [Contributing to documentation related to PowerShell](#contributing-to-docum
 
 #### Pull Request - Code Review
 
-* Author, Reviewer, and Assignee of a PR
+* Roles of a PR: Author, Reviewer, and Assignee
   * Reviewer and Assignee are two separate roles of a PR.
     * A Reviewer can be anyone from the collaborators.
       A Reviewer reviews the change of a PR,
