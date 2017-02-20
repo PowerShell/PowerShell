@@ -29,7 +29,7 @@ Get-NetIPAddress | Where-Object {$_.AddressFamily -eq 'IPv4'} | ForEach-Object I
 ```
 As before, save the file as .\NetIP.ps1 and execute within a PowerShell environment.
 Note: If you are using Windows, make sure you set the PowerShell's execution policy to "RemoteSigned" in this case.
-See [Running PowerShell Scripts Is as Easy as 1-2-3](run-ps) for more details.
+See [Running PowerShell Scripts Is as Easy as 1-2-3][run-ps] for more details.
 
 ```PowerShell
 PS C:\> NetIP.ps1
