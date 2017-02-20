@@ -38,13 +38,11 @@ Describe 'conversion syntax' -Tags "CI" {
 
             $testCases2 = @(
                 @{ Command = {$result = [Collections.Generic.List[System.IO.FileInfo]]@('TestFile')};
-                   CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile') }
-
+                    CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile') }
                 @{ Command = {$result = [Collections.Generic.List[System.IO.FileInfo]]@('TestFile1', 'TestFile2')};
-                   CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile1', 'TestFile2') }
-
+                    CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile1', 'TestFile2') }
                 @{ Command = {$result = [Collections.Generic.List[System.IO.FileInfo]]'TestFile'};
-                   CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile') }
+                    CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile') }
             )
         }
 
@@ -62,10 +60,7 @@ Describe 'conversion syntax' -Tags "CI" {
             $genericArgs[0].Name | Should Be $ElementType
 
             $result.Count | Should Be $Elements.Length
-            for ($i=0; $i -lt $Elements.Length; $i++)
-            {
-                $result[$i] | Should Be $Elements[$i]
-            }
+            $result -join ";" | Should Be ($Elements -join ";")
         }
 
         It "<Command>" -TestCases $testCases2 {
@@ -82,10 +77,7 @@ Describe 'conversion syntax' -Tags "CI" {
             $genericArgs[0].Name | Should Be $ElementType
 
             $result.Count | Should Be $Elements.Length
-            for ($i=0; $i -lt $Elements.Length; $i++)
-            {
-                $result[$i].Name | Should Be $Elements[$i]
-            }
+            @($result.Name) -join ";" | Should Be ($Elements -join ";")
         }
     }
 }
