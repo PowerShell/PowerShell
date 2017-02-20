@@ -23,22 +23,33 @@ Describe 'conversion syntax' -Tags "CI" {
 
     Context "Cast object[] to more narrow generic collection" {
         BeforeAll {
-            $testCases = @(
-                @{ Command = {$result = [Collections.Generic.List[int]]@(1)};      CollectionType = 'List`1'; ElementType = "Int32";  Count = 1; Elements = @(1) }
-                @{ Command = {$result = [Collections.Generic.List[int]]@(1,2)};    CollectionType = 'List`1'; ElementType = "Int32";  Count = 2; Elements = @(1,2) }
-                @{ Command = {$result = [Collections.Generic.List[int]]"4"};       CollectionType = 'List`1'; ElementType = "Int32";  Count = 1; Elements = @(4) }
-                @{ Command = {$result = [Collections.Generic.List[string]]@(1)};   CollectionType = 'List`1'; ElementType = "String"; Count = 1; Elements = @("1") }
-                @{ Command = {$result = [Collections.Generic.List[string]]@(1,2)}; CollectionType = 'List`1'; ElementType = "String"; Count = 2; Elements = @("1","2") }
-                @{ Command = {$result = [Collections.Generic.List[string]]1};      CollectionType = 'List`1'; ElementType = "String"; Count = 1; Elements = @("1") }
+            $testCases1 = @(
+                @{ Command = {$result = [Collections.Generic.List[int]]@(1)};      CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(1) }
+                @{ Command = {$result = [Collections.Generic.List[int]]@(1,2)};    CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(1,2) }
+                @{ Command = {$result = [Collections.Generic.List[int]]"4"};       CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(4) }
+                @{ Command = {$result = [Collections.Generic.List[string]]@(1)};   CollectionType = 'List`1'; ElementType = "String"; Elements = @("1") }
+                @{ Command = {$result = [Collections.Generic.List[string]]@(1,2)}; CollectionType = 'List`1'; ElementType = "String"; Elements = @("1","2") }
+                @{ Command = {$result = [Collections.Generic.List[string]]1};      CollectionType = 'List`1'; ElementType = "String"; Elements = @("1") }
 
-                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1)};   CollectionType = 'Collection`1'; ElementType = "Int32"; Count = 1; Elements = @(1) }
-                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1,2)}; CollectionType = 'Collection`1'; ElementType = "Int32"; Count = 2; Elements = @(1,2) }
-                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]"4"};    CollectionType = 'Collection`1'; ElementType = "Int32"; Count = 1; Elements = @(4) }
+                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1)};   CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(1) }
+                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1,2)}; CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(1,2) }
+                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]"4"};    CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(4) }
+            )
+
+            $testCases2 = @(
+                @{ Command = {$result = [Collections.Generic.List[System.IO.FileInfo]]@('TestFile')};
+                   CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile') }
+
+                @{ Command = {$result = [Collections.Generic.List[System.IO.FileInfo]]@('TestFile1', 'TestFile2')};
+                   CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile1', 'TestFile2') }
+
+                @{ Command = {$result = [Collections.Generic.List[System.IO.FileInfo]]'TestFile'};
+                   CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile') }
             )
         }
 
-        It "<Command>" -TestCases $testCases {
-            param($Command, $CollectionType, $ElementType, $Count, $Elements)
+        It "<Command>" -TestCases $testCases1 {
+            param($Command, $CollectionType, $ElementType, $Elements)
 
             $result = $null
             . $Command
@@ -50,10 +61,30 @@ Describe 'conversion syntax' -Tags "CI" {
             $genericArgs.Length | Should Be 1
             $genericArgs[0].Name | Should Be $ElementType
 
-            $result.Count | Should Be $Count
-            for ($i = 0; $i -lt $Count; $i++)
+            $result.Count | Should Be $Elements.Length
+            for ($i=0; $i -lt $Elements.Length; $i++)
             {
                 $result[$i] | Should Be $Elements[$i]
+            }
+        }
+
+        It "<Command>" -TestCases $testCases2 {
+            param($Command, $CollectionType, $ElementType, $Elements)
+
+            $result = $null
+            . $Command
+
+            $result | Should Not BeNullOrEmpty
+            $result.GetType().Name | Should Be $CollectionType
+
+            $genericArgs = $result.GetType().GetGenericArguments()
+            $genericArgs.Length | Should Be 1
+            $genericArgs[0].Name | Should Be $ElementType
+
+            $result.Count | Should Be $Elements.Length
+            for ($i=0; $i -lt $Elements.Length; $i++)
+            {
+                $result[$i].Name | Should Be $Elements[$i]
             }
         }
     }
