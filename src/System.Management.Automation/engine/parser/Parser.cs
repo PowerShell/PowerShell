@@ -3548,7 +3548,7 @@ namespace System.Management.Automation.Language
             // Make sure we are allowed to use this keyword according to its UseMode
             if (!DynamicKeyword.TryRecordKeywordUse(keywordData))
             {
-                ReportError(functionName.Extent, () => ParserStrings.DynamicKeywordUsedMoreThanAllowed, keywordData);
+                ReportError(functionName.Extent, () => ParserStrings.DynamicKeywordUsedMoreThanAllowed, keywordData, keywordData.UseMode);
                 return null;
             }
 

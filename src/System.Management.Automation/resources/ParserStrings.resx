@@ -1487,6 +1487,6 @@ ModuleVersion : Version of module to import. If used, ModuleName must represent 
     <value>The dynamic keyword '{0}' has use mode '{1}' and must be used in the body of parent keyword '{2}'</value>
   </data>
   <data name="DynamicKeywordUsedMoreThanAllowed" xml:space="preserve">
-    <value>The dynamic keyword '{0}' has use mode '{1}' and was used too many times in the body of parent keyword '{2}'</value>
+    <value>The dynamic keyword '{0}' has use mode '{1}' and was used too many times in the current block</value>
   </data>
 </root>
