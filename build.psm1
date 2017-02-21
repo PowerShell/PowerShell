@@ -1226,7 +1226,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, OS X, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "appx", "zip")]
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "appx", "zip", "AppImage")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -1339,6 +1339,13 @@ function Start-PSPackage {
                 AssetsPath = "$PSScriptRoot\assets"
             }
             New-AppxPackage @Arguments
+        }
+        "AppImage" {
+            if ($IsUbuntu14) {
+                Start-NativeExecution { bash -iex "$PSScriptRoot/tools/appimage.sh" }
+            } else {
+                Write-Warning "Ignoring AppImage type for non Ubuntu Trusty platform"
+            }
         }
         default {
             $Arguments = @{

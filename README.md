@@ -29,6 +29,7 @@ You can download and install a PowerShell package for any of the following platf
 | Ubuntu 16.04                       | [.deb][rl-ubuntu16]    | [Instructions][in-ubuntu16]   |
 | Ubuntu 14.04                       | [.deb][rl-ubuntu14]    | [Instructions][in-ubuntu14]   |
 | CentOS 7                           | [.rpm][rl-centos]      | [Instructions][in-centos]     |
+| Many Linux distributions           | [.AppImage][rl-ai]     | [Instructions][in-appimage]   |
 | macOS 10.11                        | [.pkg][rl-macos]       | [Instructions][in-macos]      |
 | Docker                             |                        | [Instructions][in-docker]     |
 
@@ -39,6 +40,7 @@ You can download and install a PowerShell package for any of the following platf
 [rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.16/powershell_6.0.0-alpha.16-1ubuntu1.16.04.1_amd64.deb
 [rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.16/powershell_6.0.0-alpha.16-1ubuntu1.14.04.1_amd64.deb
 [rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.16/powershell-6.0.0_alpha.16-1.el7.centos.x86_64.rpm
+[rl-ai]: TODO: Post link when available
 [rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.16/powershell-6.0.0-alpha.16.pkg
 
 [installation]: docs/installation
@@ -46,6 +48,7 @@ You can download and install a PowerShell package for any of the following platf
 [in-ubuntu14]: docs/installation/linux.md#ubuntu-1404
 [in-ubuntu16]: docs/installation/linux.md#ubuntu-1604
 [in-centos]: docs/installation/linux.md#centos-7
+[in-appimage]: docs/installation/linux.md#linux-appimage
 [in-macos]: docs/installation/linux.md#macos-1011
 [in-docker]: docker
 
