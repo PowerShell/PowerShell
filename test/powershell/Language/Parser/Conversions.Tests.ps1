@@ -34,9 +34,7 @@ Describe 'conversion syntax' -Tags "CI" {
                 @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1)};   CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(1) }
                 @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1,2)}; CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(1,2) }
                 @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]"4"};    CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(4) }
-            )
 
-            $testCases2 = @(
                 @{ Command = {$result = [Collections.Generic.List[System.IO.FileInfo]]@('TestFile')};
                     CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile') }
                 @{ Command = {$result = [Collections.Generic.List[System.IO.FileInfo]]@('TestFile1', 'TestFile2')};
@@ -61,23 +59,6 @@ Describe 'conversion syntax' -Tags "CI" {
 
             $result.Count | Should Be $Elements.Length
             $result -join ";" | Should Be ($Elements -join ";")
-        }
-
-        It "<Command>" -TestCases $testCases2 {
-            param($Command, $CollectionType, $ElementType, $Elements)
-
-            $result = $null
-            . $Command
-
-            $result | Should Not BeNullOrEmpty
-            $result.GetType().Name | Should Be $CollectionType
-
-            $genericArgs = $result.GetType().GetGenericArguments()
-            $genericArgs.Length | Should Be 1
-            $genericArgs[0].Name | Should Be $ElementType
-
-            $result.Count | Should Be $Elements.Length
-            @($result.Name) -join ";" | Should Be ($Elements -join ";")
         }
     }
 }
