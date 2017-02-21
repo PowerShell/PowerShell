@@ -2,12 +2,12 @@ Import-Module $PSScriptRoot/DynamicKeywordTestSupport.psm1
 
 Describe "Keyword loading into the global keyword namespace" -Tags "CI" {
     BeforeAll {
-        $savedModPath = $env:PSModulePath
-        $env:PSModulePath = New-PathEntry -ModulePath $TestDrive -PathString $env:PSModulePath
+        $savedModPath = $env:PSMODULEPATH
+        $env:PSMODULEPATH = New-PathEntry -ModulePath $TestDrive -PathString $env:PSMODULEPATH
     }
 
     AfterAll {
-        $env:PSModulePath = $savedModPath
+        $env:PSMODULEPATH = $savedModPath
     }
 
     It "loads a basic dynamic keyword in" {
@@ -22,8 +22,8 @@ Describe "Keyword loading into the global keyword namespace" -Tags "CI" {
 
 Describe "Adding keyword attributes to the DynamicKeyword data structure" -Tags "CI" {
     BeforeAll {
-        $savedModPath = $env:PSModulePath
-        $env:PSModulePath = New-PathEntry -ModulePath $TestDrive -PathString $env:PSModulePath
+        $savedModPath = $env:PSMODULEPATH
+        $env:PSMODULEPATH = New-PathEntry -ModulePath $TestDrive -PathString $env:PSMODULEPATH
 
         $attrTestCases = @(
             @{ module = "BasicDsl"; keyword = "BasicKeyword"; attr = "NameMode"; expected = "NoName" },
@@ -95,7 +95,7 @@ Describe "Adding keyword attributes to the DynamicKeyword data structure" -Tags 
     }
 
     AfterAll {
-        $env:PSModulePath = $savedModPath
+        $env:PSMODULEPATH = $savedModPath
     }
 
     It "<keyword> has attribute <attr> with value <expected>" -TestCases $attrTestCases {
@@ -114,8 +114,8 @@ Describe "Adding keyword attributes to the DynamicKeyword data structure" -Tags 
 
 Describe "Adding Properties to keywords" -Tags "CI" {
     BeforeAll {
-        $savedModPath = $env:PSModulePath
-        $env:PSModulePath = New-PathEntry -ModulePath $TestDrive -PathString $env:PSModulePath
+        $savedModPath = $env:PSMODULEPATH
+        $env:PSMODULEPATH = New-PathEntry -ModulePath $TestDrive -PathString $env:PSMODULEPATH
 
         $testCases = @(
            @{ property = "StringProperty"; type = "string"; values = $null },
@@ -146,7 +146,7 @@ Describe "Adding Properties to keywords" -Tags "CI" {
     }
 
     AfterAll {
-        $env:PSModulePath = $savedModPath
+        $env:PSMODULEPATH = $savedModPath
     }
 
     It "contains property <property>" -TestCases $testCases {
@@ -173,8 +173,8 @@ Describe "Adding Properties to keywords" -Tags "CI" {
 
 Describe "Adding Parameters to keywords" -Tags "CI" {
     BeforeAll {
-        $savedModPath = $env:PSModulePath
-        $env:PSModulePath = New-PathEntry -ModulePath $TestDrive -PathString $env:PSModulePath
+        $savedModPath = $env:PSMODULEPATH
+        $env:PSMODULEPATH = New-PathEntry -ModulePath $TestDrive -PathString $env:PSMODULEPATH
 
         $testCases = @(
            @{ parameter = "StringParameter"; type = "string"; values = $null },
@@ -206,7 +206,7 @@ Describe "Adding Parameters to keywords" -Tags "CI" {
     }
 
     AfterAll {
-        $env:PSModulePath = $savedModPath
+        $env:PSMODULEPATH = $savedModPath
     }
 
     It "adds the parameter <parameter>" -TestCases $testCases {
@@ -231,8 +231,8 @@ Describe "Adding Parameters to keywords" -Tags "CI" {
 
 Describe "Adding inner keywords to keywords" -Tags "CI" {
     BeforeAll {
-        $savedModPath = $env:PSModulePath
-        $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
+        $savedModPath = $env:PSMODULEPATH
+        $env:PSMODULEPATH += [System.IO.Path]::PathSeparator + $TestDrive
 
         $testCases = @(
             @{ keyword = "NestedKeyword1"; path = @("NestedKeyword") },
@@ -282,7 +282,7 @@ Describe "Adding inner keywords to keywords" -Tags "CI" {
     }
 
     AfterAll {
-        $env:PSModulePath = $savedModPath
+        $env:PSMODULEPATH = $savedModPath
     }
 
     It "defines an inner keyword <keyword> within the keyword path <path>" -TestCases $testCases {

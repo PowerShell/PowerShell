@@ -2,8 +2,8 @@ Import-Module $PSScriptRoot\DynamicKeywordTestSupport.psm1
 
 Describe "Creates the correct AST for keywords" -Tags "CI" {
     BeforeAll {
-        $savedModPath = $env:PSModulePath
-        $env:PSModulePath = New-PathEntry -ModulePath $TestDrive -PathString $env:PSModulePath
+        $savedModPath = $env:PSMODULEPATH
+        $env:PSMODULEPATH = New-PathEntry -ModulePath $TestDrive -PathString $env:PSMODULEPATH
 
         $testCases = @(
             @{ keyword = "CommandBodyKeyword"; body = "NONE" },
@@ -38,7 +38,7 @@ Describe "Creates the correct AST for keywords" -Tags "CI" {
     }
 
     AfterAll {
-        $env:PSModulePath = $savedModPath
+        $env:PSMODULEPATH = $savedModPath
     }
 
     It "<keyword> has body type of <body>" -TestCases $testCases {

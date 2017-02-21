@@ -2,8 +2,8 @@ Import-Module $PSScriptRoot/DynamicKeywordTestSupport.psm1
 
 Describe "DynamicKeyword metadata reader error checking" -Tags "CI" {
     BeforeAll {
-        $savedModPath = $env:PSModulePath
-        $env:PSModulePath += [System.IO.Path]::PathSeparator + $TestDrive
+        $savedModPath = $env:PSMODULEPATH
+        $env:PSMODULEPATH += [System.IO.Path]::PathSeparator + $TestDrive
 
         $testCases = @(
             @{ dslName = "ErrorDoubleDefinitionDsl"; expectedErrorId = "DynamicKeywordMetadataKeywordAlreadyDefinedInScope" },
@@ -42,7 +42,7 @@ Describe "DynamicKeyword metadata reader error checking" -Tags "CI" {
     }
 
     AfterAll {
-        $env:PSModulePath = $savedModPath
+        $env:PSMODULEPATH = $savedModPath
     }
 
     It "throws <expectedErrorId> when reading the metadata for <dslName>" -TestCases $testCases {
