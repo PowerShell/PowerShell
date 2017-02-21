@@ -35,7 +35,7 @@ Contributing to Issues
   [open a new issue](https://github.com/PowerShell/PowerShell/issues/new),
   making sure to follow the directions as best you can.
 * If the issue is marked as [`Up-for-Grabs`][up-for-grabs],
-  the PowerShell maintainers are looking for help with the issue.
+  the PowerShell Maintainers are looking for help with the issue.
 
 Contributing to Documentation
 -----------------------------
@@ -127,7 +127,7 @@ See [Contributing to documentation related to PowerShell](#contributing-to-docum
   either update the changelog in your pull request or
   add a comment in the PR description saying that the change may warrant a note in the changelog.
   New changes always go into the **Unreleased** section.
-  Keeping the changelog up-to-date simplifies the release process for maintainers.
+  Keeping the changelog up-to-date simplifies the release process for Maintainers.
   An example:
     ```
     Unreleased
@@ -169,27 +169,29 @@ See [Contributing to documentation related to PowerShell](#contributing-to-docum
 
 #### Pull Request - Code Review
 
-* Roles of a PR: Author, Reviewer, and Assignee
+* Roles and Responsibilities of a PR: Author, Reviewer, and Assignee
   * Reviewer and Assignee are two separate roles of a PR.
-    * A Reviewer can be anyone from the collaborators.
+    * A Reviewer can be anyone who wants to contribute.
       A Reviewer reviews the change of a PR,
       leaves comments for the Author to address,
       and approves the PR when the change looks good.
-    * An Assignee must be a maintainer, who monitors the progress of the PR,
-      coordinates the review process, and merges the PR after it's approved.
+    * An Assignee must be a [Maintainer](../docs/maintainers), who monitors the progress of the PR,
+      coordinates the review process, and merges the PR after it's been approved.
       The Assignee may or may not be a Reviewer of the PR at the same time.
   * An Author is encouraged to choose Reviewer(s) and Assignee for the PR.
-    If no Assignee is chosen, one of maintainers shall be assigned to it.
+    If no Assignee is chosen, one of Maintainers shall be assigned to it.
     If no Reviewer is chosen, Assignee shall choose Reviewer(s) as appropriate.
     * If an Author is a [PowerShell Team](https://github.com/orgs/PowerShell/people) member,
       then the Author **is required** to choose Reviewer(s) and Assignee of the PR.
-  * The Assignee may be re-assigned by maintainers,
-    and more Reviewer(s) may be added by Assignee as appropriate.
+  * For a PR to be merged, it must be approved by at least one PowerShell Team member or Collaborator,
+    so additional Reviewer(s) may be added by Assignee as appropriate.
+    The Assignee may also be re-assigned by Maintainers.
 
-* An Author **is responsible** for driving the PR to the Approved state.
-  After a successful test pass, Reviewer(s) can start a code review,
-  commenting on any changes that might need to be made.
-  The Author addresses the comments, and pings Reviewer(s) to start the next iteration.
+* A Reviewer can postpone the code review if CI builds fail,
+  but also can start the code review early regardless of the CI builds.
+
+* The Author **is responsible** for driving the PR to the Approved state.
+  The Author addresses review comments, and pings Reviewer(s) to start the next iteration.
   If the review is making no progress (or very slow),
   the Author can always ask the Assignee to help coordinate the process and keep it moving.
 
@@ -213,7 +215,7 @@ See [Contributing to documentation related to PowerShell](#contributing-to-docum
   and the CI system build status is passing,
   the PR Assignee will merge your changes.
 
-* For more information on the the PowerShell maintainers' process,
+* For more information on the the PowerShell Maintainers' process,
   see the [documentation](../docs/maintainers).
 
 Making Breaking Changes
