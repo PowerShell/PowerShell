@@ -24,16 +24,20 @@ Describe 'conversion syntax' -Tags "CI" {
     Context "Cast object[] to more narrow generic collection" {
         BeforeAll {
             $testCases1 = @(
-                @{ Command = {$result = [Collections.Generic.List[int]]@(1)};      CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(1) }
-                @{ Command = {$result = [Collections.Generic.List[int]]@(1,2)};    CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(1,2) }
-                @{ Command = {$result = [Collections.Generic.List[int]]"4"};       CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(4) }
-                @{ Command = {$result = [Collections.Generic.List[string]]@(1)};   CollectionType = 'List`1'; ElementType = "String"; Elements = @("1") }
-                @{ Command = {$result = [Collections.Generic.List[string]]@(1,2)}; CollectionType = 'List`1'; ElementType = "String"; Elements = @("1","2") }
-                @{ Command = {$result = [Collections.Generic.List[string]]1};      CollectionType = 'List`1'; ElementType = "String"; Elements = @("1") }
+                @{ Command = {$result = [Collections.Generic.List[int]]@(1)};       CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(1) }
+                @{ Command = {$result = [Collections.Generic.List[int]]@(1,2)};     CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(1,2) }
+                @{ Command = {$result = [Collections.Generic.List[int]]"4"};        CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(4) }
+                @{ Command = {$result = [Collections.Generic.List[int]]@("4","5")}; CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(4,5) }
 
-                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1)};   CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(1) }
-                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1,2)}; CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(1,2) }
-                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]"4"};    CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(4) }
+                @{ Command = {$result = [Collections.Generic.List[string]]@(1)};    CollectionType = 'List`1'; ElementType = "String"; Elements = @("1") }
+                @{ Command = {$result = [Collections.Generic.List[string]]@(1,2)};  CollectionType = 'List`1'; ElementType = "String"; Elements = @("1","2") }
+                @{ Command = {$result = [Collections.Generic.List[string]]1};       CollectionType = 'List`1'; ElementType = "String"; Elements = @("1") }
+                @{ Command = {$result = [Collections.Generic.List[string]]@("4")};  CollectionType = 'List`1'; ElementType = "String"; Elements = @("4") }
+
+                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1)};       CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(1) }
+                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@(1,2)};     CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(1,2) }
+                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]"4"};        CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(4) }
+                @{ Command = {$result = [System.Collections.ObjectModel.Collection[int]]@("4","5")}; CollectionType = 'Collection`1'; ElementType = "Int32"; Elements = @(4,5) }
 
                 @{ Command = {$result = [Collections.Generic.List[System.IO.FileInfo]]@('TestFile')};
                     CollectionType = 'List`1'; ElementType = "FileInfo";  Elements = @('TestFile') }
