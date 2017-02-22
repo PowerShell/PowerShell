@@ -24,6 +24,13 @@ Describe 'conversion syntax' -Tags "CI" {
     Context "Cast object[] to more narrow generic collection" {
         BeforeAll {
             $testCases1 = @(
+                ## It's intentional to have 'Command' to be `{$result = ...}` and run it with `. $Command`.
+                ## This is because `$result = & {[List[int]]@(1,2)}` will cause the resulted List to be unraveled,
+                ## and in that case `$result` would be just an object array.
+                ## To prevent unraveling, Command needs to be `{, [List[int]]@(1,2)}`, but then the test case title
+                ## would become `, [List[int]]@(1,2)`, which is more confusing than `$result = [List[int]]@(1,2)`.
+                ## This is why the current form of `$result = [List[int]]@(1,2)` is used intentionally here.
+
                 @{ Command = {$result = [Collections.Generic.List[int]]@(1)};       CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(1) }
                 @{ Command = {$result = [Collections.Generic.List[int]]@(1,2)};     CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(1,2) }
                 @{ Command = {$result = [Collections.Generic.List[int]]"4"};        CollectionType = 'List`1'; ElementType = "Int32";  Elements = @(4) }
