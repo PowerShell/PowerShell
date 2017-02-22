@@ -1,9 +1,9 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "Test-ModuleManifest tests" -tags "CI" {
 
     AfterEach {
-        if (Test-Path testdrive:/module) {
-            Remove-Item -Recurse -Force testdrive:/module
-        }
+        Remove-Item -Recurse -Force -ErrorAction SilentlyContinue testdrive:/module
     }
 
     It "module manifest containing paths with backslashes or forwardslashes are resolved correctly" {
@@ -11,8 +11,8 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         New-Item -ItemType Directory -Path testdrive:/module
         New-Item -ItemType Directory -Path testdrive:/module/foo
         New-Item -ItemType Directory -Path testdrive:/module/bar
-        "" > testdrive:/module/foo/bar.psm1
-        "" > testdrive:/module/bar/foo.psm1
+        Set-Content -Value "" -Path testdrive:/module/foo/bar.psm1
+        Set-Content -Value "" -Path testdrive:/module/bar/foo.psm1
         $testModulePath = "testdrive:/module/test.psd1"
         $fileList = "foo\bar.psm1","bar/foo.psm1"
 
@@ -20,6 +20,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
         Test-Path $testModulePath | Should Be $true
 
+        # use -ErrorAction Stop to cause test to fail if Test-ModuleManifest writes to error stream
         Test-ModuleManifest -Path $testModulePath -ErrorAction Stop | Should BeOfType System.Management.Automation.PSModuleInfo
     }
 
@@ -27,7 +28,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
         New-Item -ItemType Directory -Path testdrive:/module
         New-Item -ItemType Directory -Path testdrive:/module/foo
-        "" > testdrive:/module/foo/bar.psm1
+        Set-Content -Value "" -Path testdrive:/module/foo/bar.psm1
         $testModulePath = "testdrive:/module/test.psd1"
 
         $parametersAndErrors = @{"RequiredAssemblies"="Modules_InvalidRequiredAssembliesInModuleManifest";
@@ -37,22 +38,17 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
             "ModuleList"="Modules_InvalidModuleListinModuleManifest";
             "TypesToProcess"="Modules_InvalidManifest";
             "FormatsToProcess"="Modules_InvalidManifest";
-            "RootModule"="Modules_InvalidManifest";
+            #"RootModule"="Modules_InvalidManifest";
             "ScriptsToProcess"="Modules_InvalidManifest"
         }
-        foreach ($parameter in $parametersAndExecptions.Keys) {
+        foreach ($parameter in $parametersAndErrors.Keys) {
+            Write-Warning "Testing $parameter"
             $args = @{$parameter = "doesnotexist.psm1"}
             New-ModuleManifest -Path $testModulePath @args
             Test-Path $testModulePath | Should Be $true
-            $errorId = $parametersAndErrors[$parameter]
+            [string]$errorId = $parametersAndErrors[$parameter] + ",Microsoft.PowerShell.Commands.TestModuleManifestCommand"
 
-            try {
-                Test-ModuleManifest -Path $testModulePath -ErrorAction Stop | Should BeOfType System.Management.Automation.PSModuleInfo
-                throw "Test-ModuleManifest did not throw $errorId"         
-            }
-            catch {
-                $_.FullQulaifiedErrorId | Should Match "$errorId"
-            }
+            { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId $errorId
             Remove-Item -Recurse -Force $testModulePath
         }
     }

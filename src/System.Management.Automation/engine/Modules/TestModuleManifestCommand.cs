@@ -147,18 +147,8 @@ namespace Microsoft.PowerShell.Commands
                                     && !IsValidFilePath(nestedModule.Name + StringLiterals.PowerShellModuleFileExtension, module, true)
                                     && !IsValidGacAssembly(nestedModule.Name))
                                 {
-                                    // The nested module could be dependencies. We compare if it can be loaded by loadmanifest
-                                    bool isDependency = false;
-                                    foreach (PSModuleInfo loadedNestedModule in module.NestedModules)
-                                    {
-                                        if (string.Equals(loadedNestedModule.Name, nestedModule.Name, StringComparison.OrdinalIgnoreCase))
-                                        {
-                                            isDependency = true;
-                                            break;
-                                        }
-                                    }
-
-                                    if (!isDependency)
+                                    Collection<PSModuleInfo> modules = GetModuleIfAvailable(nestedModule);
+                                    if (0 == modules.Count)
                                     {
                                         string errorMsg = StringUtil.Format(Modules.InvalidNestedModuleinModuleManifest, nestedModule.Name, filePath);
                                         var errorRecord = new ErrorRecord(new DirectoryNotFoundException(errorMsg), "Modules_InvalidNestedModuleinModuleManifest",
@@ -288,6 +278,12 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
+                if (!System.IO.Path.IsPathRooted(path))
+                {
+                    // we assume the relative path is under module scope, otherwise we will throw error anyway.
+                    path = System.IO.Path.GetFullPath(module.ModuleBase + System.IO.Path.DirectorySeparatorChar + path);
+                }
+
                 // resolve the path so slashes are in the right direction
                 CmdletProviderContext cmdContext = new CmdletProviderContext(this);
                 Collection<PathInfo> pathInfos = SessionState.Path.GetResolvedPSPathFromPSPath(path, cmdContext);
@@ -298,14 +294,7 @@ namespace Microsoft.PowerShell.Commands
                     ErrorRecord er = new ErrorRecord(ioe, "Modules_InvalidModuleManifestPath", ErrorCategory.InvalidArgument, path);
                     ThrowTerminatingError(er);                    
                 }
-
                 path = pathInfos[0].Path;
-
-                if (!System.IO.Path.IsPathRooted(path))
-                {
-                    // we assume the relative path is under module scope, otherwise we will throw error anyway.
-                    path = System.IO.Path.GetFullPath(module.ModuleBase + System.IO.Path.DirectorySeparatorChar + path);
-                }
 
                 // First, we validate if the path  does exist.
                 if (!File.Exists(path) && !Directory.Exists(path))
@@ -321,7 +310,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception exception)
             {
-                if (exception is ArgumentException || exception is ArgumentNullException || exception is NotSupportedException || exception is PathTooLongException)
+                if (exception is ArgumentException || exception is ArgumentNullException || exception is NotSupportedException || exception is PathTooLongException || exception is ItemNotFoundException)
                 {
                     return false;
                 }
@@ -337,6 +326,9 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         private bool IsValidGacAssembly(string assemblyName)
         {
+#if UNIX
+            return false;
+#else
             string gacPath = System.Environment.GetEnvironmentVariable("windir") + "\\Microsoft.NET\\assembly";
             string assemblyFile = assemblyName;
             string ngenAssemblyFile = assemblyName;
@@ -364,6 +356,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return true;
+#endif
         }
     }
 
