@@ -183,7 +183,7 @@ See [Contributing to documentation related to PowerShell](#contributing-to-docum
     If no Reviewer is chosen, the Assignee shall choose Reviewer(s) as appropriate.
     * If an Author is a [PowerShell Team](https://github.com/orgs/PowerShell/people) member,
       then the Author **is required** to choose Reviewer(s) and an Assignee for the PR.
-  * For a PR to be merged, it must be approved by at least one PowerShell Team member or collaborator,
+  * For a PR to be merged, it must be approved by at least one PowerShell Team member or Collaborator,
     so additional Reviewer(s) may be added by the Assignee as appropriate.
     The Assignee may also be re-assigned by Maintainers.
 
