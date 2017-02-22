@@ -73,13 +73,13 @@ Describe "Format-Custom DRT basic functionality" -Tags "CI" {
         $result | Should Match "one"
         $result | Should Match "two"
     }
-	
+
 	It "Format-Custom with Tree Object should work" {
 		$expectedResult=@"
 class MyContainer1
 {
   data1 = data 1
-  children = 
+  children =
     [
       class MyLeaf1
       {
@@ -92,14 +92,14 @@ class MyContainer1
         name = leaf 2
       }
     ]
-    
+
   name = container 1
 }
 
 class MyContainer2
 {
   data2 = data 2
-  children = 
+  children =
     [
       class MyLeaf1
       {
@@ -112,19 +112,19 @@ class MyContainer2
         name = leaf 2
       }
     ]
-    
+
   name = container 2
 }
 
 class MyContainer2
 {
   data2 = data 2 deep
-  children = 
+  children =
     [
       class MyContainer1
       {
         data1 = cx data
-        children = 
+        children =
           [
             class MyLeaf1
             {
@@ -137,18 +137,18 @@ class MyContainer2
               name = leaf 2
             }
           ]
-          
+
         name = cx
       }
     ]
-    
+
   name = container 2 deep
 }
 
 class MyContainer1
 {
   data1 = cx data
-  children = 
+  children =
     [
       class MyLeaf1
       {
@@ -161,7 +161,7 @@ class MyContainer1
         name = leaf 2
       }
     ]
-    
+
   name = cx
 }
 "@
@@ -202,7 +202,7 @@ class MyContainer1
 		$expectedResult = $expectedResult -replace "[{} `n\r]",""
 		$result | Should Be $expectedResult
 	}
-	
+
 	It "Format-Custom with Empty Data Tree Object should work" {
 		$expectedResult=@"
 class MyContainer1
@@ -218,13 +218,13 @@ class MyContainer1
 		$c.data1 = $null
 		$c.children = $null
 		$objectList = @($c)
-		
+
 		$result = $objectList | Format-Custom | Out-String
 		$result = $result -replace "[{} `n\r]",""
 		$expectedResult = $expectedResult -replace "[{} `n\r]",""
 		$result | Should Be $expectedResult
 	}
-	
+
 	It "Format-Custom with Back Pointers Tree Object should work" {
 		$expectedResult=@"
 class MyContainer1
@@ -261,13 +261,13 @@ class MyContainer1
 		$root.name = "ROOT"
 		$root.children.Add($root)
 		$objectList = @($root)
-		
+
 		$result = $objectList | Format-Custom | Out-String
 		$result = $result -replace "[{} `n\r]",""
 		$expectedResult = $expectedResult -replace "[{} `n\r]",""
 		$result | Should Be $expectedResult
 	}
-	
+
 	It "Format-Custom with Leaf Only Data should work" {
 		$expectedResult=@"
 class MyLeaf1

@@ -35,7 +35,7 @@ namespace System.Management.Automation
     /// <summary>
     /// ClrFacade contains all diverging code (different implementation for FullCLR and CoreCLR using if/def).
     /// It exposes common APIs that can be used by the rest of the code base.
-    /// </summary>    
+    /// </summary>
     internal static class ClrFacade
     {
         /// <summary>
@@ -258,7 +258,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="namespaceQualifiedTypeName">
         /// In CoreCLR context, if it's for string-to-type conversion and the namespace qualified type name is known, pass it in so that
-        /// powershell can load the necessary TPA if the target type is from an unloaded TPA. 
+        /// powershell can load the necessary TPA if the target type is from an unloaded TPA.
         /// </param>
         internal static IEnumerable<Assembly> GetAssemblies(string namespaceQualifiedTypeName = null)
         {
@@ -404,7 +404,7 @@ namespace System.Management.Automation
 #else
                 uint oemCp = NativeMethods.GetOEMCP();
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
-#endif   
+#endif
             }
             return s_oemEncoding;
         }
@@ -427,7 +427,7 @@ namespace System.Management.Automation
             if (Utils.NativeFileExists(urlmonPath))
             {
                 return MapSecurityZoneWithUrlmon(filePath);
-            }	
+            }
             return MapSecurityZoneWithoutUrlmon(filePath);
 #else
             return MapSecurityZoneWithUrlmon(filePath);
@@ -443,10 +443,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// The algorithm is as follows:
-        /// 
+        ///
         /// 1. Alternate data stream "Zone.Identifier" is checked first. If this alternate data stream has content, then the content is parsed to determine the SecurityZone.
         /// 2. If the alternate data stream "Zone.Identifier" doesn't exist, or its content is not expected, then the file path will be analyzed to determine the SecurityZone.
-        /// 
+        ///
         /// For #1, the parsing rules are observed as follows:
         ///   A. Read content of the data stream line by line. Each line is trimmed.
         ///   B. Try to match the current line with '^\[ZoneTransfer\]'.
@@ -457,7 +457,7 @@ namespace System.Management.Automation
         ///        - if not matching, then continue to do step (#C) with the next line.
         ///   D. Reach EOF, then return 'NoZone'.
         /// After #1, if the returned SecurityZone is 'NoZone', then proceed with #2. Otherwise, return it as the mapping result.
-        /// 
+        ///
         /// For #2, the analysis rules are observed as follows:
         ///   A. If the path is a UNC path, then
         ///       - if the host name of the UNC path is IP address, then mapping it to "Internet" zone.
@@ -467,7 +467,7 @@ namespace System.Management.Automation
         ///       - if the drive is CDRom, mapping it to "Untrusted" zone
         ///       - if the drive is Network, mapping it to "Intranet" zone
         ///       - otherwise, mapping it to "MyComputer" zone.
-        /// 
+        ///
         /// The above algorithm has two changes comparing to the behavior of "Zone.CreateFromUrl" I observed:
         ///   (1) If a file downloaded from internet (ZoneId=3) is not on the local machine, "Zone.CreateFromUrl" won't respect the MOTW.
         ///       I think it makes more sense for powershell to always check the MOTW first, even for files not on local box.
@@ -479,7 +479,7 @@ namespace System.Management.Automation
             SecurityZone reval = ReadFromZoneIdentifierDataStream(filePath);
             if (reval != SecurityZone.NoZone) { return reval; }
 
-            // If it reaches here, then we either couldn't get the ZoneId information, or the ZoneId is invalid. 
+            // If it reaches here, then we either couldn't get the ZoneId information, or the ZoneId is invalid.
             // In this case, we try to determine the SecurityZone by analyzing the file path.
             Uri uri = new Uri(filePath);
             if (uri.IsUnc)
@@ -570,7 +570,7 @@ namespace System.Management.Automation
             }
             catch (FileNotFoundException)
             {
-                // FileNotFoundException may be thrown by AlternateDataStreamUtilities.CreateFileStream when the data stream 'Zone.Identifier' 
+                // FileNotFoundException may be thrown by AlternateDataStreamUtilities.CreateFileStream when the data stream 'Zone.Identifier'
                 // does not exist, or when the underlying file system doesn't support alternate data stream.
             }
 
@@ -756,11 +756,11 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Facade for FormatterServices.GetUninitializedObject.
-        /// 
+        ///
         /// In CORECLR, there are two peculiarities with its implementation that affect our own:
         /// 1. Structures cannot be instantiated using GetConstructor, so they must be filtered out.
         /// 2. Classes must have a default constructor implemented for GetConstructor to work.
-        /// 
+        ///
         /// See RemoteHostEncoder.IsEncodingAllowedForClassOrStruct for a list of the required types.
         /// </summary>
         /// <param name="type"></param>

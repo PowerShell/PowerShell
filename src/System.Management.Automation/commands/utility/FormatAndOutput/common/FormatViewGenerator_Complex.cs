@@ -227,7 +227,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     FormatEntry feFrame = new FormatEntry();
                     feFrame.frameInfo = new FrameInfo();
 
-                    // add the frame info 
+                    // add the frame info
                     feFrame.frameInfo.firstLine = ft.frameInfoDefinition.firstLine;
                     feFrame.frameInfo.leftIndentation = ft.frameInfoDefinition.leftIndentation;
                     feFrame.frameInfo.rightIndentation = ft.frameInfoDefinition.rightIndentation;
@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // get the property from the object
                     object val = null;
 
-                    // if no expression was specified, just use the 
+                    // if no expression was specified, just use the
                     // object itself
                     if (cpt.expression == null || string.IsNullOrEmpty(cpt.expression.expressionValue))
                     {
@@ -746,7 +746,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             FormatEntry feFrame = new FormatEntry();
             feFrame.frameInfo = new FrameInfo();
 
-            // add the frame info 
+            // add the frame info
             feFrame.frameInfo.firstLine = 0;
             feFrame.frameInfo.leftIndentation = _indentationStep;
             feFrame.frameInfo.rightIndentation = 0;

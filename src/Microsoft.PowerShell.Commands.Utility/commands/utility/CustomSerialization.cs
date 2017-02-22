@@ -48,7 +48,7 @@ namespace System.Management.Automation
         /// should the type information to be shown.
         /// </param>
         /// <param name="depth">
-        /// depth to be used for serialization. If this value is specified, 
+        /// depth to be used for serialization. If this value is specified,
         /// depth from types.xml is not used.
         /// </param>
         internal CustomSerialization(XmlWriter writer, bool notypeinformation, int depth)
@@ -136,7 +136,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Writes the start of root element 
+        /// Writes the start of root element
         /// </summary>
         private void Start()
         {
@@ -285,7 +285,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            //Note: We donot use containers in depth calculation. i.e even if the 
+            //Note: We donot use containers in depth calculation. i.e even if the
             //current depth is zero, we serialize the container. All contained items will
             //get serialized with depth zero.
             if (HandleKnownContainerTypes(source, property, depth))
@@ -399,15 +399,15 @@ namespace System.Management.Automation
                     break;
             }
 
-            //An object which is original enumerable becomes an PSObject 
+            //An object which is original enumerable becomes an PSObject
             //with arraylist on deserialization. So on roundtrip it will show up
-            //as List. 
+            //as List.
             //We serialize properties of enumerable and on deserialization mark the object
             //as Deserialized. So if object is marked deserialized, we should write properties.
             //Note: we do not serialize the properties of IEnumerable if depth is zero.
             if (depth != 0 && (ct == ContainerType.Enumerable || (mshSource != null && mshSource.isDeserialized)))
             {
-                //Note:Depth is the depth for serialization of baseObject. 
+                //Note:Depth is the depth for serialization of baseObject.
                 //Depth for serialization of each property is one less.
                 WritePSObjectProperties(PSObject.AsPSObject(source), depth);
             }
@@ -430,7 +430,7 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// Checks if source is known container type and returns appropriate 
+        /// Checks if source is known container type and returns appropriate
         /// information
         /// </summary>
         /// <param name="source"></param>
@@ -547,7 +547,7 @@ namespace System.Management.Automation
         /// it can be different. <see cref="HandlePSObjectAsString"/> for more info.
         /// </param>
         /// <param name="pktInfo">
-        /// TypeSerializationInfo for the primitive. 
+        /// TypeSerializationInfo for the primitive.
         /// </param>
         /// <param name="property"></param>
         /// <param name="depth"></param>
@@ -560,7 +560,7 @@ namespace System.Management.Automation
         {
             Dbg.Assert(source != null, "caller should validate the parameter");
 
-            //Write start of PSObject. Since baseobject is primitive known 
+            //Write start of PSObject. Since baseobject is primitive known
             //type, we do not need TypeName information.
             WriteStartOfPSObject(source, property, source.ToStringFromDeserialization != null);
 
@@ -664,7 +664,7 @@ namespace System.Management.Automation
         #region membersets
 
         /// <summary>
-        /// Returns true if PSObject has notes. 
+        /// Returns true if PSObject has notes.
         /// </summary>
         /// <param name="source"></param>
         /// <returns>
@@ -679,7 +679,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Serialize member set. This method serializes without writing 
+        /// Serialize member set. This method serializes without writing
         /// enclosing tags and attributes.
         /// </summary>
         /// <param name="me">
@@ -757,7 +757,7 @@ namespace System.Management.Automation
             {
                 Dbg.Assert(prop != null, "propertyCollection should only have member of type PSProperty");
                 object value = AutomationNull.Value;
-                //PSObject throws GetValueException if it cannot 
+                //PSObject throws GetValueException if it cannot
                 //get value for a property.
                 try
                 {
@@ -790,7 +790,7 @@ namespace System.Management.Automation
         /// Name for enclosing element tag
         /// </param>
         /// <param name="depth">
-        /// depth to which each property should be 
+        /// depth to which each property should be
         /// serialized
         /// </param>
         private void SerializeProperties(
@@ -807,7 +807,7 @@ namespace System.Management.Automation
                 Dbg.Assert(prop != null, "propertyCollection should only have member of type PSProperty");
 
                 object value = AutomationNull.Value;
-                //PSObject throws GetValueException if it cannot 
+                //PSObject throws GetValueException if it cannot
                 //get value for a property.
                 try
                 {
@@ -946,11 +946,11 @@ namespace System.Management.Automation
         /// Gets the string from PSObject using the information from
         /// types.ps1xml. This string is used for serializing the PSObject.
         /// </summary>
-        /// 
+        ///
         /// <param name="source">
         /// PSObject to be converted to string
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// string value to use for serializing this PSObject.
         /// </returns>

@@ -99,7 +99,7 @@ namespace System.Diagnostics
 		CountPerTimeInterval64 = 4523264,
 
 		/// <summary>
-		/// An instantaneous percentage counter that shows the ratio of a subset 
+		/// An instantaneous percentage counter that shows the ratio of a subset
 		/// to its set as a percentage. For example, it compares the number of bytes
 		/// in use on a disk to the total number of bytes on the disk.
 		/// Counters of this type display the current percentage only, not an average
@@ -115,7 +115,7 @@ namespace System.Diagnostics
 		RawBase = 1073939459,
 
 		/// <summary>
-		/// An average counter that measures the time it takes, on average, to 
+		/// An average counter that measures the time it takes, on average, to
 		/// complete a process or operation. Counters of this type display a
 		/// ratio of the total elapsed time of the sample interval to the number
 		/// of processes or operations completed during that time. This counter
@@ -155,7 +155,7 @@ namespace System.Diagnostics
 
 		/// <summary>
 		/// A base counter that stores the number of sampling interrupts taken
-		/// and is used as a denominator in the sampling fraction. The sampling 
+		/// and is used as a denominator in the sampling fraction. The sampling
 		/// fraction is the number of samples that were 1 (or true) for a sample
 		/// interrupt. Check that this value is greater than zero before using
 		/// it as the denominator in a calculation of SampleFraction.

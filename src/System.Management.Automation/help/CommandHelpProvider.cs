@@ -210,15 +210,21 @@ namespace System.Management.Automation
             string moduleDir = null;
             string nestedModulePath = null;
 
+            // When InternalTestHooks.BypassOnlineHelpRetrieval is enable, we force get-help to generate a metadata
+            // driven object, which includes a helpUri that points to the fwlink defined in the cmdlet code.
+            // This means that we are not going to load the help content from the GetFromCommandCache and
+            // we are not going to read the help file.
+
             // Only gets help for Cmdlet or script command
             if (!isCmdlet && !isScriptCommand)
                 return null;
 
             // Check if the help of the command is already in the cache.
             // If not, try load the file specified by HelpFile property and retrieve help.
-            if (isCmdlet)
+            if (isCmdlet && !InternalTestHooks.BypassOnlineHelpRetrieval)
             {
                 result = GetFromCommandCache(cmdletInfo.ModuleName, cmdletInfo.Name, cmdletInfo.HelpCategory);
+
                 if (null == result)
                 {
                     // Try load the help file specified by CmdletInfo.HelpFile property
@@ -291,7 +297,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    if (!String.IsNullOrEmpty(helpFile))
+                    if (!String.IsNullOrEmpty(helpFile) && !InternalTestHooks.BypassOnlineHelpRetrieval)
                     {
                         if (!_helpFiles.Contains(helpFile))
                         {
@@ -306,7 +312,7 @@ namespace System.Management.Automation
             // in the appropriate UI culture subfolder of ModuleBase, and retrieve help
             // If still not able to get help, try search for a file called <NestedModuleName>-Help.xml
             // under the ModuleBase and the NestedModule's directory, and retrieve help
-            if (null == result)
+            if (null == result && !InternalTestHooks.BypassOnlineHelpRetrieval)
             {
                 // Get the name and ModuleBase directory of the command's module
                 // and the nested module that implements the command
@@ -542,6 +548,13 @@ namespace System.Management.Automation
         /// <returns></returns>
         private string FindHelpFile(CmdletInfo cmdletInfo)
         {
+            if (InternalTestHooks.BypassOnlineHelpRetrieval)
+            {
+                // By returning null, we force get-help to generate a metadata driven help object,
+                // which includes a helpUri that points to the fwlink defined in the cmdlet code.
+                return null;
+            }
+
             if (cmdletInfo == null)
             {
                 throw PSTraceSource.NewArgumentNullException("cmdletInfo");

@@ -558,7 +558,7 @@ namespace System.Management.Automation.Language
         /// Check that flow doesn't leave finally.
         /// </summary>
         /// <param name="ast"></param>
-        /// <param name="label">If label is null, either it's a break/continue to an unknown label 
+        /// <param name="label">If label is null, either it's a break/continue to an unknown label
         /// (and unknown does not mean not specified, it means it's an expression we can't evaluate) or we have a return statement.
         /// </param>
         private void CheckForFlowOutOfFinally(Ast ast, string label)
@@ -1578,7 +1578,7 @@ namespace System.Management.Automation.Language
 
             if (allowedVariables != null)
             {
-                // A single '*' allows any variable to be used. The use of a single '*' aligns with the 
+                // A single '*' allows any variable to be used. The use of a single '*' aligns with the
                 // way SessionState.Applications and SessionState.Scripts lists work.
                 var allowedVariablesList = allowedVariables as IList<string> ?? allowedVariables.ToList();
                 if (allowedVariablesList.Count == 1 && allowedVariablesList.Contains("*"))
@@ -1999,7 +1999,7 @@ namespace System.Management.Automation.Language
 
             if (_allowEnvironmentVariables)
             {
-                // Allow access to environment when processing module manifests            
+                // Allow access to environment when processing module manifests
                 if (varPath.IsDriveQualified && varPath.DriveName.Equals("env", StringComparison.OrdinalIgnoreCase))
                     return AstVisitAction.Continue;
             }

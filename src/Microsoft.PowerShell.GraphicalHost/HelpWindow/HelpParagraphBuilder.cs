@@ -27,7 +27,7 @@ namespace Microsoft.Management.UI.Internal
         internal const int IndentSize = 4;
 
         /// <summary>
-        /// new line separators 
+        /// new line separators
         /// </summary>
         private static readonly string[] Separators = new string[] { "\r\n", "\n" };
 
@@ -440,8 +440,8 @@ namespace Microsoft.Management.UI.Internal
                 }
 
                 string commonParametersText = String.Format(
-                    CultureInfo.CurrentCulture, 
-                    "[<{0}>]\r\n\r\n", 
+                    CultureInfo.CurrentCulture,
+                    "[<{0}>]\r\n\r\n",
                     HelpWindowResources.CommonParameters);
 
                 this.AddText(commonParametersText, false);
@@ -532,9 +532,9 @@ namespace Microsoft.Management.UI.Internal
                 }
 
                 string codeLine = String.Format(
-                    CultureInfo.CurrentCulture, 
-                    "{0}{1}\r\n\r\n", 
-                    introductionText, 
+                    CultureInfo.CurrentCulture,
+                    "{0}{1}\r\n\r\n",
+                    introductionText,
                     codeText);
 
                 this.AddText(HelpParagraphBuilder.AddIndent(codeLine), false);
@@ -565,7 +565,7 @@ namespace Microsoft.Management.UI.Internal
         {
             if(!setting || String.IsNullOrEmpty(sectionTitle))
                 return;
-            
+
             PSObject memberRootObject = HelpParagraphBuilder.GetPropertyObject(this.psObj, "Members") as PSObject;
             if (memberRootObject == null)
                 return;
@@ -608,7 +608,7 @@ namespace Microsoft.Management.UI.Internal
                     }
                 }
                 else if (String.Compare("method", type, StringComparison.OrdinalIgnoreCase) == 0)
-                {   
+                {
                     FormatMethodData(member, name, out memberText, out description);
                 }
 
@@ -634,10 +634,10 @@ namespace Microsoft.Management.UI.Internal
             description = null;
 
             if (member == null || String.IsNullOrEmpty(name))
-            {   
+            {
                 return;
             }
-            
+
             string returnType = null;
             StringBuilder parameterText = new StringBuilder();
 
@@ -658,7 +658,7 @@ namespace Microsoft.Management.UI.Internal
                 {
                     description = GetPropertyString(methodDescription, "Text");
 
-                    //If we get an text we do not need to iterate more. 
+                    //If we get an text we do not need to iterate more.
                     if (!String.IsNullOrEmpty(description))
                         break;
                 }
@@ -717,7 +717,7 @@ namespace Microsoft.Management.UI.Internal
                 return;
             }
 
-            PSObject parameterRootObject = HelpParagraphBuilder.GetPropertyObject(this.psObj, paramPropertyName) as PSObject;            
+            PSObject parameterRootObject = HelpParagraphBuilder.GetPropertyObject(this.psObj, paramPropertyName) as PSObject;
             if (parameterRootObject == null)
             {
                 return;
@@ -881,11 +881,11 @@ namespace Microsoft.Management.UI.Internal
             {
                 string text = GetPropertyString(linkObject, "linkText");
                 string uri = GetPropertyString(linkObject, "uri");
-                
+
                 string linkLine = String.IsNullOrEmpty(uri) ? text : String.Format(
                     CultureInfo.CurrentCulture,
-                    HelpWindowResources.LinkTextFormat, 
-                    text, 
+                    HelpWindowResources.LinkTextFormat,
+                    text,
                     uri);
 
                 this.AddText(HelpParagraphBuilder.AddIndent(linkLine), false);

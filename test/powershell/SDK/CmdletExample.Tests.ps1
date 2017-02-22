@@ -1,4 +1,4 @@
-# Looking at pester internal to get tag filter and ExcludeTagFilter 
+# Looking at pester internal to get tag filter and ExcludeTagFilter
 # This seems like the most stable way to do this
 # other options like testing for tags seems more likely to break
 
@@ -9,7 +9,7 @@ InModuleScope Pester {
     }
 }
 Describe 'SDK Send Greeting Sample Tests' -Tag CI {
-    
+
     try {
         $enlistmentRoot = Join-Path $PSScriptRoot "../../../"
         $enlistmentRoot = Resolve-Path $enlistmentRoot | % Path
@@ -18,14 +18,14 @@ Describe 'SDK Send Greeting Sample Tests' -Tag CI {
         $sampleCopy = Join-Path $TestDrive 'sendgreeting'
         $fullSampleCopyPath = Join-Path $sampleCopy 'cmdlet-example'
         $powershell = (Get-Process -id $PID).MainModule.FileName
-        if(!(Test-Path $sampleCopy)) 
+        if(!(Test-Path $sampleCopy))
         {
             New-Item -ItemType Directory -Path $sampleCopy
         }
 
         Copy-Item -Recurse -Path $docLocation -Destination $sampleCopy -Force
         Get-ChildItem -Recurse $sampleCopy | %{ Write-Verbose "sc: $($_.FullName)"}
-         
+
         $pesterCommand = "Invoke-Pester $sampleCopy -PassThru"
         if($global:__PesterTags)
         {
@@ -35,14 +35,14 @@ Describe 'SDK Send Greeting Sample Tests' -Tag CI {
         if($global:__PesterExcludeTags)
         {
             $pesterCommand += " -ExcludeTag $(@($global:__PesterExcludeTags) -join ',')"
-        } 
+        }
 
         $importPesterCommand = 'Import-module Pester'
         if($IsCoreCLR)
         {
             $importPesterCommand = "Import-Module $(Join-Path -path $PSHOME -child '/Modules/Pester')"
         }
- 
+
         $command = @"
 Push-Location -Path $fullSampleCopyPath
 $importPesterCommand
@@ -53,7 +53,7 @@ $pesterCommand | Export-Clixml -Path $testResultPath
         $bytes = [System.Text.Encoding]::Unicode.GetBytes($command)
         $encodedCommand = [Convert]::ToBase64String($bytes)
         &$powershell -encodedCommand $encodedCommand
-        
+
         it "Should have test results file" {
             $testResultPath | should exist
             $script:results = Import-Clixml $testResultPath

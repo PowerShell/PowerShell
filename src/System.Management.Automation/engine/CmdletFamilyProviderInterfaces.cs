@@ -37,7 +37,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="cmdlet"/> is null.
         /// </exception>
-        /// 
+        ///
         internal ProviderIntrinsics(Cmdlet cmdlet)
         {
             if (cmdlet == null)
@@ -119,7 +119,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The object that exposes the verbs for the item propertyvalue for Cmdlet Providers
         /// </summary>
-        /// 
+        ///
         public PropertyValueCmdletProviderIntrinsics PropertyValue
         {
             get { return propertyValue; }
@@ -137,7 +137,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The object that exposes the verbs for the relationship providers
         /// </summary>
-        /// 
+        ///
         public RelationshipProviderIntrinsics Relationship
         {
             get { return relationship; }

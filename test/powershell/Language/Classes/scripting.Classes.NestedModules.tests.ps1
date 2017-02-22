@@ -1,32 +1,32 @@
 Describe 'NestedModules' -Tags "CI" {
-    
+
     Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
 
     function New-TestModule {
         param(
-            [string]$Name, 
+            [string]$Name,
             [string]$Content,
             [string[]]$NestedContents
         )
-        
-        new-item -type directory -Force "TestDrive:\$Name" > $null    
+
+        new-item -type directory -Force "TestDrive:\$Name" > $null
         $manifestParams = @{
             Path = "TestDrive:\$Name\$Name.psd1"
         }
-        
+
         if ($Content) {
             Set-Content -Path "${TestDrive}\$Name\$Name.psm1" -Value $Content
             $manifestParams['RootModule'] = "$Name.psm1"
         }
 
         if ($NestedContents) {
-            $manifestParams['NestedModules'] = 1..$NestedContents.Count | % { 
+            $manifestParams['NestedModules'] = 1..$NestedContents.Count | % {
                 $null = new-item -type directory TestDrive:\$Name\Nested$_
                 $null = Set-Content -Path "${TestDrive}\$Name\Nested$_\Nested$_.psm1" -Value $NestedContents[$_ - 1]
                 "Nested$_"
             }
         }
-        
+
         New-ModuleManifest @manifestParams
 
         $resolvedTestDrivePath = Split-Path ((get-childitem TestDrive:\)[0].FullName)
@@ -38,8 +38,8 @@ Describe 'NestedModules' -Tags "CI" {
     $originalPSMODULEPATH = $env:PSMODULEPATH
 
     try {
-        
-        
+
+
         # Create modules in TestDrive:\
         New-TestModule -Name NoRoot -NestedContents @(
             'class A { [string] foo() { return "A1"} }',

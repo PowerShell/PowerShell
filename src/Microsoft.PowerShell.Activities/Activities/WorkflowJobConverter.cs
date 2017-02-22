@@ -369,7 +369,7 @@ namespace Microsoft.PowerShell.Workflow
                     }
                     catch (ParseException e)
                     {
-                        errorList.AddRange(e.Errors);                        
+                        errorList.AddRange(e.Errors);
                     }
                 }
             }
@@ -448,7 +448,7 @@ namespace Microsoft.PowerShell.Workflow
             {
                 functionDefinition = helpContent.GetCommentBlock() + functionDefinition;
             }
-                
+
             var sb = ScriptBlock.Create(functionDefinition);
             sb.DebuggerHidden = true;
 
@@ -460,7 +460,7 @@ namespace Microsoft.PowerShell.Workflow
         static internal IEnumerable<string> GetRequiredAssembliesFromInitialSessionState(
             InitialSessionState initialSessionState,
             System.Management.Automation.PowerShell invoker)
-        {          
+        {
             var getModuleCommand = new CmdletInfo("Get-Module", typeof(GetModuleCommand));
             invoker.Commands.Clear();
             invoker.AddCommand(getModuleCommand)
@@ -634,7 +634,7 @@ namespace Microsoft.PowerShell.Workflow
                 {
                 case AstToXamlConverter.ActivityKind.InlineScript:
                     return AstToXamlConverter.GetAvailableProperties(typeof(InlineScript), null);
-                    
+
                 case AstToXamlConverter.ActivityKind.Persist:
                     // The checkpoint-workflow activity accepts no parameters
                     return null;
@@ -657,7 +657,7 @@ namespace Microsoft.PowerShell.Workflow
                     return new Dictionary<string, Type> {{"TypeName", typeof (string)}};
 
                 case AstToXamlConverter.ActivityKind.RegularCommand:
-                    // If the command resolved to a script, the command metadata has all of it's parameters,                
+                    // If the command resolved to a script, the command metadata has all of it's parameters,
                     if ((command != null) && (command.CommandType & (CommandTypes.ExternalScript | CommandTypes.Workflow | CommandTypes.Function | CommandTypes.Filter | CommandTypes.Configuration)) != 0)
                     {
                         return null;
@@ -840,12 +840,12 @@ namespace Microsoft.PowerShell.Workflow
             get { return parameterValidation; }
         }
         private Dictionary<string, ParameterAst> parameterValidation = new Dictionary<string, ParameterAst>(StringComparer.OrdinalIgnoreCase);
-        
+
         private bool disableSymbolGeneration = false;
         private string name = null;
         private PSModuleInfo definingModule = null;
         private readonly Ast scriptWorkflowAstRoot;
-        private int _currentIndentLevel;      
+        private int _currentIndentLevel;
         private Scope scope;
         private System.Management.Automation.PowerShell invoker;
 
@@ -874,7 +874,7 @@ namespace Microsoft.PowerShell.Workflow
     xmlns:sad=""clr-namespace:System.Activities.Debugger;assembly=System.Activities""
     xmlns:local=""clr-namespace:Microsoft.PowerShell.DynamicActivities""
     xmlns:mva=""clr-namespace:Microsoft.VisualBasic.Activities;assembly=System.Activities""
-    mva:VisualBasic.Settings=""Assembly references and imported namespaces serialized as XML namespaces"" 
+    mva:VisualBasic.Settings=""Assembly references and imported namespaces serialized as XML namespaces""
     xmlns:x=""http://schemas.microsoft.com/winfx/2006/xaml""";
 
         private const string xamlFooter = @"</Activity>";
@@ -882,7 +882,7 @@ namespace Microsoft.PowerShell.Workflow
         private const string GenericTypesKey = @"Activity-GenericTypes";
         private const string MemberTemplate = @"<Variable Name=""{0}"" x:TypeArguments=""{1}"" {2}/>";
         private const string M3PKeyForThrowStatement = @"__Microsoft.PowerShell.Activities.Throw";
-        
+
         // PseudoCommands that only work in the script workflow
         // Please keep in sync with the System.Management.Automation.CompletionCompleter.PseudoCommands
         private const string CheckpointWorkflow = "Checkpoint-Workflow";
@@ -957,11 +957,11 @@ namespace Microsoft.PowerShell.Workflow
             {
                 throw new ParseException(errors);
             }
-            return (FunctionDefinitionAst)block.EndBlock.Statements[0];            
+            return (FunctionDefinitionAst)block.EndBlock.Statements[0];
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="definition"></param>
@@ -1386,7 +1386,7 @@ namespace Microsoft.PowerShell.Workflow
                     scriptBlockAst.ParamBlock.Visit(this);
                 }
 
-                // Initialize the 'result' reference parameter with empty collection, without this result parameter is generating 
+                // Initialize the 'result' reference parameter with empty collection, without this result parameter is generating
                 // wrong results if it is first used in a += operation in Powershell value activity.
                 if(members.ContainsKey("result") && typeof(PSDataCollection<PSObject>).IsAssignableFrom(members["result"].Type))
                 {
@@ -1506,7 +1506,7 @@ namespace Microsoft.PowerShell.Workflow
             // workflow.
             if (parameterAst.DefaultValue != null)
             {
-                bool areParameterAndDefaultCompatible = 
+                bool areParameterAndDefaultCompatible =
                     (parameterAst.StaticType == typeof(object)) ||
                     (parameterAst.StaticType == typeof(bool)) ||
                     (parameterAst.StaticType == parameterAst.DefaultValue.StaticType);
@@ -1574,7 +1574,7 @@ namespace Microsoft.PowerShell.Workflow
         {
             actualVariableName = name;
             if (name == null) { return false; }
-            
+
             if (!isParameter)
             {
                 // Allow the "WORKFLOW:" scope qualifier in nested scopes
@@ -1680,7 +1680,7 @@ namespace Microsoft.PowerShell.Workflow
                     // See if it's the variable we're looking for
                     // Variable = <Expression>
                     string workingVariableName = detectedVariableName;
-                    
+
                     // Allow the "WORKFLOW:" scope qualifier in nested scopes
                     if (workingVariableName.StartsWith("WORKFLOW:", StringComparison.OrdinalIgnoreCase))
                     {
@@ -1793,7 +1793,7 @@ namespace Microsoft.PowerShell.Workflow
             }
             else if (detectedTypes.Contains(typeof(PSDataCollection<PSObject>)))
             {
-                // When we see that a variable is storing the result of an activity call, 
+                // When we see that a variable is storing the result of an activity call,
                 // we can't have the detected type be an Object, as Workflow doesn't allow that.
                 // So we just return PSDataCollection<PSObject> in that case.
                 return typeof(PSDataCollection<PSObject>);
@@ -1901,7 +1901,7 @@ namespace Microsoft.PowerShell.Workflow
         /// Block variable scope prefix like "$GLOBAL:" and "$SCRIPT:". In script workflow,
         /// the only valid scope prefix is "$WORKFLOW:". When generating expression for the
         /// PowerShellValue activity, we need to remove the $WORKFLOW part. Otherwise it will
-        /// generate error during execution, because the prefix "WORKFLOW" is not actually 
+        /// generate error during execution, because the prefix "WORKFLOW" is not actually
         /// supported in the PowerShell.
         /// </summary>
         /// <param name="expression"></param>
@@ -1915,7 +1915,7 @@ namespace Microsoft.PowerShell.Workflow
                 {
                     return false;
                 }
-                
+
                 string variableName = variableExpr.VariablePath.ToString();
                 if (variableName.IndexOf(':') != -1 && !variableName.StartsWith("ENV:", StringComparison.OrdinalIgnoreCase))
                 {
@@ -2061,7 +2061,7 @@ namespace Microsoft.PowerShell.Workflow
         /// This needs to be propagated to the synthesized driver function .
         /// </summary>
         internal string CmdletAttributeText { get; set; }
-        
+
         object ICustomAstVisitor.VisitParamBlock(ParamBlockAst paramBlockAst)
         {
             foreach (ParameterAst parameter in paramBlockAst.Parameters)
@@ -2102,8 +2102,8 @@ namespace Microsoft.PowerShell.Workflow
 
         object ICustomAstVisitor.VisitStatementBlock(StatementBlockAst statementBlockAst)
         {
-            // If the statement block is the body of a parallel block statement, we enclose each 
-            // statement in a Try/Catch block, so that: 
+            // If the statement block is the body of a parallel block statement, we enclose each
+            // statement in a Try/Catch block, so that:
             //   1. the activities generated for each statement will be executed sequentially.
             //   2. the terminating exception thrown from one statement will not terminate other statements that
             //      are running in parallel.
@@ -2206,7 +2206,7 @@ namespace Microsoft.PowerShell.Workflow
             {
                 WriteLine("<If.Else>");
                 IndentLevel();
-                
+
                 WriteLine("<Sequence>");
                 IndentLevel();
 
@@ -2432,7 +2432,7 @@ namespace Microsoft.PowerShell.Workflow
                 UnaryExpressionAst unaryExpression = value as UnaryExpressionAst;
 
                 if ((
-                    (rightExpression != null) && (!(rightExpression.Expression is SubExpressionAst)) && 
+                    (rightExpression != null) && (!(rightExpression.Expression is SubExpressionAst)) &&
                     ((rightExpression.Expression is ConvertExpressionAst) || !(rightExpression.Expression is AttributedExpressionAst))
                     ) ||
                     (unaryExpression != null)
@@ -2594,7 +2594,7 @@ namespace Microsoft.PowerShell.Workflow
             resultVariables.Pop();
         }
 
-        
+
         private StorageVariable GetVariableToUse()
         {
             if (resultVariables != null && resultVariables.Count > 0)
@@ -2624,7 +2624,7 @@ namespace Microsoft.PowerShell.Workflow
         {
             string trimmedExpression = expression.Trim();
 
-            if (trimmedExpression.StartsWith("{", StringComparison.OrdinalIgnoreCase) && 
+            if (trimmedExpression.StartsWith("{", StringComparison.OrdinalIgnoreCase) &&
                 trimmedExpression.EndsWith("}", StringComparison.OrdinalIgnoreCase))
             {
                 trimmedExpression = trimmedExpression.Remove(0, 1);
@@ -2695,7 +2695,7 @@ namespace Microsoft.PowerShell.Workflow
 
             return visitor.ExpressionHasSideEffects;
         }
-        
+
         object ICustomAstVisitor.VisitPipeline(PipelineAst pipelineAst)
         {
             // If it's one command, generate the call alone
@@ -2740,7 +2740,7 @@ namespace Microsoft.PowerShell.Workflow
                 // foreach($a2 in A)
                 // {
                 //      $psPipelineResults = @( @{} )
-                //      
+                //
                 //      $psPipelineResults = foreach($item in $psPipelineResults)
                 //      {
                 //          foreach($output in Command1)
@@ -2808,7 +2808,7 @@ namespace Microsoft.PowerShell.Workflow
                                 }
 
                                 boundParameter = parameterName;
-                                
+
                                 // DisplayName can also be used as a Activity.DisplayName in that case DisplayName param value is not treated as a PipelineVariable
                                 if (String.Equals(parameterName, "DisplayName", StringComparison.OrdinalIgnoreCase) &&
                                     !Regex.IsMatch(currentPipelineVariable, "^[a-zA-Z][a-zA-Z0-9-_]*$"))
@@ -3500,7 +3500,7 @@ namespace Microsoft.PowerShell.Workflow
                     {
                         ReportError("OperatorRequiresVariable", ActivityResources.OperatorRequiresVariable, unaryExpressionAst.Extent);
                     }
-                        
+
                     break;
                 case TokenKind.Minus:
                 case TokenKind.Plus:
@@ -3823,11 +3823,11 @@ namespace Microsoft.PowerShell.Workflow
 
             // Remove the ")" from the end
             string newParamBlock = paramBlock.Substring(0, paramBlock.Length - 2);
-            
+
             StringBuilder actualParamBlock = new StringBuilder();
             actualParamBlock.Append(newParamBlock);
             actualParamBlock.Append(additionalParameters);
-            
+
             // Add the ")" at the end
             actualParamBlock.Append("\n)");
 
@@ -3915,7 +3915,7 @@ namespace Microsoft.PowerShell.Workflow
             StringBuilder newFunctionCall = null;
             int baseOffset = command.Extent.StartOffset;
             int commandTextRelativeStartOffset = 0;
-            
+
             foreach (Ast ast in variableExprs)
             {
                 var variableExpr = ast as VariableExpressionAst;
@@ -4389,7 +4389,7 @@ namespace Microsoft.PowerShell.Workflow
             Sequence undoSequenceInCatch = new Sequence() { Activities = { } };
 
             Collection<Variable> savedHostDefaults = new Collection<Variable>();
-            
+
             // Go through all the properties in PSRemotingActivity they use, and add them as
             // virtual properties to this activity
             foreach (PropertyInfo field in propertiesToUse)
@@ -4752,7 +4752,7 @@ namespace Microsoft.PowerShell.Workflow
 
                 // Update the activity map with the full name to support users specifying
                 // an activity with full name.
-                // If the activity map already contains an assembly with this full name, 
+                // If the activity map already contains an assembly with this full name,
                 // set the value to NULL as is done for Name key.
                 if (activityMap.ContainsKey(type.FullName))
                 {
@@ -5117,7 +5117,7 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             StaticBindingResult bindingResult = StaticParameterBinder.BindCommand(commandAst, false);
-            
+
             // Remove the first positional element (the script) if there is one
             if (bindingResult.BoundParameters.ContainsKey("0"))
             {
@@ -5233,8 +5233,8 @@ namespace Microsoft.PowerShell.Workflow
 
         private void SetVariableArgumentValue(CommandArgumentInfo argument, ref object argumentValue)
         {
-            System.Diagnostics.Debug.Assert(argumentValue != null, "argumentValue should not be null"); 
-            
+            System.Diagnostics.Debug.Assert(argumentValue != null, "argumentValue should not be null");
+
             if (argument != null)
             {
                 argumentValue = "$" + argument.OriginalValue;
@@ -5387,7 +5387,7 @@ namespace Microsoft.PowerShell.Workflow
                 variableToUseDefinition = GetVariableDefinition(variableToUse);
                 variableToUseDefinition = variableToUseDefinition ?? members[variableToUse];
             }
-            
+
             string appendOutput = String.Empty;
             string actualAggregatingVariable = String.Empty;
             bool needAggregationVariable = false;
@@ -5696,7 +5696,7 @@ namespace Microsoft.PowerShell.Workflow
                                 // of the properties for them.
                                 List<string> completeProperties = new List<string>(availableProperties.Keys);
 
-                                // If this is a workflow calling workflow, add in the virtual properties that don't exist, since they may not 
+                                // If this is a workflow calling workflow, add in the virtual properties that don't exist, since they may not
                                 // have been actually compiled (if they were not used).
                                 foreach(PropertyInfo psRemotingProperty in typeof(PSRemotingActivity).GetProperties())
                                 {
@@ -5736,7 +5736,7 @@ namespace Microsoft.PowerShell.Workflow
                             }
                         }
                     }
-                    
+
                     // Check if multiple specified parameters can be resolved to the same actual parameter
                     if (!boundParameters.Contains(parameterName))
                     {
@@ -6056,8 +6056,8 @@ namespace Microsoft.PowerShell.Workflow
                 //   --- 'ResolveGenericParameterType' returns null if we cannot find the actual type of the specified generic parameter,
                 //       in that case, we use the "actualPropertyType" directly
                 Type parameterType = ResolveGenericParameterType(actualPropertyType, genericTypeMap, parameterName, extent);
-                actualPropertyType = !this.validateOnly 
-                                         ? parameterType 
+                actualPropertyType = !this.validateOnly
+                                         ? parameterType
                                          : (parameterType ?? actualPropertyType);
             }
             else if (actualPropertyType.IsGenericType && actualPropertyType.ContainsGenericParameters)
@@ -6256,7 +6256,7 @@ namespace Microsoft.PowerShell.Workflow
 
         // The list of parameters that need to be ignored.
         static List<string> ignoredParameters;
-        
+
         private static bool IsNotSupportedCommonParameter(string parameterName)
         {
             return ignoredParameters.Contains(parameterName, StringComparer.OrdinalIgnoreCase);
@@ -7062,7 +7062,7 @@ namespace Microsoft.PowerShell.Workflow
             // And the statement body
             WriteLine("<Sequence>");
             IndentLevel();
-            
+
             if (isParallel)
             {
                 EnterScope();
@@ -7366,7 +7366,7 @@ namespace Microsoft.PowerShell.Workflow
                 foreach (CatchClauseAst catchClause in tryStatementAst.CatchClauses)
                 {
                     List<Type> catchTypes = new List<Type>();
-                    
+
                     if (catchClause.IsCatchAll)
                     {
                         catchTypes.Add(typeof(System.Exception));
@@ -7401,7 +7401,7 @@ namespace Microsoft.PowerShell.Workflow
                         WriteLine(@"<DelegateInArgument x:TypeArguments=""" + friendlyTypeName + @""" Name=""_"" />");
                         UnindentLevel();
                         WriteLine(@"</ActivityAction.Argument>");
-                        
+
 
                         WriteLine("<Sequence>");
                         IndentLevel();
@@ -7568,7 +7568,7 @@ namespace Microsoft.PowerShell.Workflow
                         LeaveStorage();
                     }
 
-                    // Check if the exception is thrown by the 'Throw' statement. If not, add the special key-value pair to 
+                    // Check if the exception is thrown by the 'Throw' statement. If not, add the special key-value pair to
                     // the 'Data' property. Then we re-throw the exception.
                     GenerateXamlForThrowStatement(rethrowExceptionName, isRethrow: true);
                 }
@@ -7592,7 +7592,7 @@ namespace Microsoft.PowerShell.Workflow
                     string errorTemplate = ActivityResources.ThrowStatementCannotInvokeActivities;
                     ReportError("ThrowStatementCannotInvokeActivities", errorTemplate, throwStatementAst.Pipeline.Extent);
                 }
-                
+
                 if (isInParallelBlock)
                 {
                     // Define the temp variable
@@ -7614,7 +7614,7 @@ namespace Microsoft.PowerShell.Workflow
                         LeaveStorage();
                     }
 
-                    // Check if the exception is thrown by the 'Throw' statement. If not, add the special key-value pair to 
+                    // Check if the exception is thrown by the 'Throw' statement. If not, add the special key-value pair to
                     // the 'Data' property. Then we throw the exception.
                     GenerateXamlForThrowStatement(throwExceptionName, isRethrow: false);
                 }
@@ -7695,7 +7695,7 @@ namespace Microsoft.PowerShell.Workflow
             IndentLevel();
 
             AddOrRemoveSpecialKey(variableName, addKey: true);
-            
+
             UnindentLevel();
             WriteLine(@"</If.Then>");
             UnindentLevel();
@@ -8001,7 +8001,7 @@ namespace Microsoft.PowerShell.Workflow
         /// This indicates if the variable is one that will aggregate results from a parallel/sequence/foreach block.
         /// For example:
         ///     workflow bar { $a = parallel { Get-Process -Name powershell; Get-Service -Name Dhcp } }
-        /// $a here will contain all results generated from the parallel block, including a process object "powershell" 
+        /// $a here will contain all results generated from the parallel block, including a process object "powershell"
         /// and a service object "Dhcp". We call $a an aggregating variable.
         /// </summary>
         internal bool IsAggregatingVariable { get; set; }
@@ -8034,7 +8034,7 @@ namespace Microsoft.PowerShell.Workflow
         StackTrace = 8,
         PID = 9
     }
-    
+
     internal class ExpressionHasUnsupportedVariableOrSideEffectsVisitor : AstVisitor
     {
         internal bool ExpressionHasSideEffects { get; set; }

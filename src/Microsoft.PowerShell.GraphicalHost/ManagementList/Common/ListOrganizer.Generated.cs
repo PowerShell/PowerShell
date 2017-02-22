@@ -23,17 +23,17 @@ using System.Windows.Input;
 
 namespace Microsoft.Management.UI.Internal
 {
-    
+
     /// <summary>
     /// This control presents a dropdown listbox with associated organizing actions that can be performed on it.
     /// </summary>
     /// <remarks>
-    /// 
-    /// 
+    ///
+    ///
     /// If a custom template is provided for this control, then the template MUST provide the following template parts:
-    /// 
+    ///
     /// 	PART_Picker - A required template part which must be of type PickerBase.  This control provides basic functionality for Picker-like controls.
-    /// 
+    ///
     /// </remarks>
     [TemplatePart(Name="PART_Picker", Type=typeof(PickerBase))]
     [Localizability(LocalizationCategory.None)]
@@ -43,7 +43,7 @@ namespace Microsoft.Management.UI.Internal
         // Fields
         //
         private PickerBase picker;
-        
+
         //
         // ItemDeleted RoutedEvent
         //
@@ -51,7 +51,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the ItemDeleted RoutedEvent.
         /// </summary>
         public static readonly RoutedEvent ItemDeletedEvent = EventManager.RegisterRoutedEvent("ItemDeleted",RoutingStrategy.Bubble,typeof(EventHandler<DataRoutedEventArgs<object>>),typeof(ListOrganizer));
-        
+
         /// <summary>
         /// Occurs when an item is deleted from the list.
         /// </summary>
@@ -66,7 +66,7 @@ namespace Microsoft.Management.UI.Internal
                 RemoveHandler(ItemDeletedEvent,value);
             }
         }
-        
+
         //
         // ItemSelected RoutedEvent
         //
@@ -74,7 +74,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the ItemSelected RoutedEvent.
         /// </summary>
         public static readonly RoutedEvent ItemSelectedEvent = EventManager.RegisterRoutedEvent("ItemSelected",RoutingStrategy.Bubble,typeof(EventHandler<DataRoutedEventArgs<object>>),typeof(ListOrganizer));
-        
+
         /// <summary>
         /// Occurs when an item is selected in the list.
         /// </summary>
@@ -89,7 +89,7 @@ namespace Microsoft.Management.UI.Internal
                 RemoveHandler(ItemSelectedEvent,value);
             }
         }
-        
+
         //
         // DeleteItem routed command
         //
@@ -97,13 +97,13 @@ namespace Microsoft.Management.UI.Internal
         /// Informs the ListOrganizer that it should delete the item passed.
         /// </summary>
         public static readonly RoutedCommand DeleteItemCommand = new RoutedCommand("DeleteItem",typeof(ListOrganizer));
-        
+
         static private void DeleteItemCommand_CommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             ListOrganizer obj = (ListOrganizer) sender;
             obj.OnDeleteItemExecuted( e );
         }
-        
+
         /// <summary>
         /// Called when DeleteItem executes.
         /// </summary>
@@ -114,9 +114,9 @@ namespace Microsoft.Management.UI.Internal
         {
             OnDeleteItemExecutedImplementation(e);
         }
-        
+
         partial void OnDeleteItemExecutedImplementation(ExecutedRoutedEventArgs e);
-        
+
         //
         // SelectItem routed command
         //
@@ -124,13 +124,13 @@ namespace Microsoft.Management.UI.Internal
         /// Informs the ListOrganizer that it should select the item passed.
         /// </summary>
         public static readonly RoutedCommand SelectItemCommand = new RoutedCommand("SelectItem",typeof(ListOrganizer));
-        
+
         static private void SelectItemCommand_CommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             ListOrganizer obj = (ListOrganizer) sender;
             obj.OnSelectItemExecuted( e );
         }
-        
+
         /// <summary>
         /// Called when SelectItem executes.
         /// </summary>
@@ -141,9 +141,9 @@ namespace Microsoft.Management.UI.Internal
         {
             OnSelectItemExecutedImplementation(e);
         }
-        
+
         partial void OnSelectItemExecutedImplementation(ExecutedRoutedEventArgs e);
-        
+
         //
         // DropDownButtonTemplate dependency property
         //
@@ -151,7 +151,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the DropDownButtonTemplate dependency property.
         /// </summary>
         public static readonly DependencyProperty DropDownButtonTemplateProperty = DependencyProperty.Register( "DropDownButtonTemplate", typeof(ControlTemplate), typeof(ListOrganizer), new PropertyMetadata( null, DropDownButtonTemplateProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets a value that controls the visual tree of the DropDown button.
         /// </summary>
@@ -170,18 +170,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(DropDownButtonTemplateProperty,value);
             }
         }
-        
+
         static private void DropDownButtonTemplateProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ListOrganizer obj = (ListOrganizer) o;
             obj.OnDropDownButtonTemplateChanged( new PropertyChangedEventArgs<ControlTemplate>((ControlTemplate)e.OldValue, (ControlTemplate)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when DropDownButtonTemplate property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<ControlTemplate>> DropDownButtonTemplateChanged;
-        
+
         /// <summary>
         /// Called when DropDownButtonTemplate property changes.
         /// </summary>
@@ -190,9 +190,9 @@ namespace Microsoft.Management.UI.Internal
             OnDropDownButtonTemplateChangedImplementation(e);
             RaisePropertyChangedEvent(DropDownButtonTemplateChanged, e);
         }
-        
+
         partial void OnDropDownButtonTemplateChangedImplementation(PropertyChangedEventArgs<ControlTemplate> e);
-        
+
         //
         // DropDownStyle dependency property
         //
@@ -200,7 +200,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the DropDownStyle dependency property.
         /// </summary>
         public static readonly DependencyProperty DropDownStyleProperty = DependencyProperty.Register( "DropDownStyle", typeof(Style), typeof(ListOrganizer), new PropertyMetadata( null, DropDownStyleProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets the style of the drop-down.
         /// </summary>
@@ -219,18 +219,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(DropDownStyleProperty,value);
             }
         }
-        
+
         static private void DropDownStyleProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ListOrganizer obj = (ListOrganizer) o;
             obj.OnDropDownStyleChanged( new PropertyChangedEventArgs<Style>((Style)e.OldValue, (Style)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when DropDownStyle property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<Style>> DropDownStyleChanged;
-        
+
         /// <summary>
         /// Called when DropDownStyle property changes.
         /// </summary>
@@ -239,9 +239,9 @@ namespace Microsoft.Management.UI.Internal
             OnDropDownStyleChangedImplementation(e);
             RaisePropertyChangedEvent(DropDownStyleChanged, e);
         }
-        
+
         partial void OnDropDownStyleChangedImplementation(PropertyChangedEventArgs<Style> e);
-        
+
         //
         // HighlightedItem dependency property
         //
@@ -249,7 +249,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the HighlightedItem dependency property.
         /// </summary>
         public static readonly DependencyProperty HighlightedItemProperty = DependencyProperty.Register( "HighlightedItem", typeof(object), typeof(ListOrganizer), new PropertyMetadata( null, HighlightedItemProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets a value that controls the highlighted item in the list.
         /// </summary>
@@ -268,18 +268,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(HighlightedItemProperty,value);
             }
         }
-        
+
         static private void HighlightedItemProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ListOrganizer obj = (ListOrganizer) o;
             obj.OnHighlightedItemChanged( new PropertyChangedEventArgs<object>((object)e.OldValue, (object)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when HighlightedItem property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<object>> HighlightedItemChanged;
-        
+
         /// <summary>
         /// Called when HighlightedItem property changes.
         /// </summary>
@@ -288,9 +288,9 @@ namespace Microsoft.Management.UI.Internal
             OnHighlightedItemChangedImplementation(e);
             RaisePropertyChangedEvent(HighlightedItemChanged, e);
         }
-        
+
         partial void OnHighlightedItemChangedImplementation(PropertyChangedEventArgs<object> e);
-        
+
         //
         // ItemsSource dependency property
         //
@@ -298,7 +298,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the ItemsSource dependency property.
         /// </summary>
         public static readonly DependencyProperty ItemsSourceProperty = DependencyProperty.Register( "ItemsSource", typeof(IEnumerable), typeof(ListOrganizer), new PropertyMetadata( null, ItemsSourceProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets a value that controls the items in the list.
         /// </summary>
@@ -317,18 +317,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(ItemsSourceProperty,value);
             }
         }
-        
+
         static private void ItemsSourceProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ListOrganizer obj = (ListOrganizer) o;
             obj.OnItemsSourceChanged( new PropertyChangedEventArgs<IEnumerable>((IEnumerable)e.OldValue, (IEnumerable)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when ItemsSource property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<IEnumerable>> ItemsSourceChanged;
-        
+
         /// <summary>
         /// Called when ItemsSource property changes.
         /// </summary>
@@ -337,9 +337,9 @@ namespace Microsoft.Management.UI.Internal
             OnItemsSourceChangedImplementation(e);
             RaisePropertyChangedEvent(ItemsSourceChanged, e);
         }
-        
+
         partial void OnItemsSourceChangedImplementation(PropertyChangedEventArgs<IEnumerable> e);
-        
+
         //
         // NoItemsText dependency property
         //
@@ -347,7 +347,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the NoItemsText dependency property.
         /// </summary>
         public static readonly DependencyProperty NoItemsTextProperty = DependencyProperty.Register( "NoItemsText", typeof(string), typeof(ListOrganizer), new PropertyMetadata( String.Empty, NoItemsTextProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets a value that appears to inform the user that there are no items in the list.
         /// </summary>
@@ -366,18 +366,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(NoItemsTextProperty,value);
             }
         }
-        
+
         static private void NoItemsTextProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ListOrganizer obj = (ListOrganizer) o;
             obj.OnNoItemsTextChanged( new PropertyChangedEventArgs<string>((string)e.OldValue, (string)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when NoItemsText property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<string>> NoItemsTextChanged;
-        
+
         /// <summary>
         /// Called when NoItemsText property changes.
         /// </summary>
@@ -386,9 +386,9 @@ namespace Microsoft.Management.UI.Internal
             OnNoItemsTextChangedImplementation(e);
             RaisePropertyChangedEvent(NoItemsTextChanged, e);
         }
-        
+
         partial void OnNoItemsTextChangedImplementation(PropertyChangedEventArgs<string> e);
-        
+
         //
         // TextContentPropertyName dependency property
         //
@@ -396,7 +396,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the TextContentPropertyName dependency property.
         /// </summary>
         public static readonly DependencyProperty TextContentPropertyNameProperty = DependencyProperty.Register( "TextContentPropertyName", typeof(string), typeof(ListOrganizer), new PropertyMetadata( String.Empty, TextContentPropertyNameProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets a value which dictates what binding is used to provide content for the items in the list.
         /// </summary>
@@ -415,18 +415,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(TextContentPropertyNameProperty,value);
             }
         }
-        
+
         static private void TextContentPropertyNameProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ListOrganizer obj = (ListOrganizer) o;
             obj.OnTextContentPropertyNameChanged( new PropertyChangedEventArgs<string>((string)e.OldValue, (string)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when TextContentPropertyName property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<string>> TextContentPropertyNameChanged;
-        
+
         /// <summary>
         /// Called when TextContentPropertyName property changes.
         /// </summary>
@@ -435,9 +435,9 @@ namespace Microsoft.Management.UI.Internal
             OnTextContentPropertyNameChangedImplementation(e);
             RaisePropertyChangedEvent(TextContentPropertyNameChanged, e);
         }
-        
+
         partial void OnTextContentPropertyNameChangedImplementation(PropertyChangedEventArgs<string> e);
-        
+
         /// <summary>
         /// Called when a property changes.
         /// </summary>
@@ -448,11 +448,11 @@ namespace Microsoft.Management.UI.Internal
                 eh(this,e);
             }
         }
-        
+
         //
         // OnApplyTemplate
         //
-        
+
         /// <summary>
         /// Called when ApplyTemplate is called.
         /// </summary>
@@ -463,15 +463,15 @@ namespace Microsoft.Management.UI.Internal
             this.picker = WpfHelp.GetTemplateChild<PickerBase>(this,"PART_Picker");
             PostOnApplyTemplate();
         }
-        
+
         partial void PreOnApplyTemplate();
-        
+
         partial void PostOnApplyTemplate();
-        
+
         //
         // Static constructor
         //
-        
+
         /// <summary>
         /// Called when the type is initialized.
         /// </summary>
@@ -482,9 +482,9 @@ namespace Microsoft.Management.UI.Internal
             CommandManager.RegisterClassCommandBinding( typeof(ListOrganizer), new CommandBinding( ListOrganizer.SelectItemCommand, SelectItemCommand_CommandExecuted ));
             StaticConstructorImplementation();
         }
-        
+
         static partial void StaticConstructorImplementation();
-        
+
     }
 }
 #endregion

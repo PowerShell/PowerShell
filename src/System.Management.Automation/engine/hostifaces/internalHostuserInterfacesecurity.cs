@@ -13,9 +13,9 @@ namespace System.Management.Automation.Internal.Host
     class InternalHostUserInterface : PSHostUserInterface
     {
         /// <summary>
-        /// 
+        ///
         /// See base class
-        /// 
+        ///
         /// </summary>
 
         public override
@@ -35,9 +35,9 @@ namespace System.Management.Automation.Internal.Host
         }
 
         /// <summary>
-        /// 
+        ///
         /// See base class
-        /// 
+        ///
         /// </summary>
 
         public override
@@ -64,8 +64,8 @@ namespace System.Management.Automation.Internal.Host
             }
             catch (PipelineStoppedException)
             {
-                //PipelineStoppedException is thrown by host when it wants 
-                //to stop the pipeline. 
+                //PipelineStoppedException is thrown by host when it wants
+                //to stop the pipeline.
                 LocalPipeline lpl = (LocalPipeline)((RunspaceBase)_parent.Context.CurrentRunspace).GetCurrentlyRunningPipeline();
                 if (lpl == null)
                 {

@@ -56,7 +56,7 @@ namespace Microsoft.PowerShell.Commands
         #region Command code
 
         /// <summary>
-        /// Parses the specified path and returns the portion determined by the 
+        /// Parses the specified path and returns the portion determined by the
         /// boolean parameters.
         /// </summary>
         protected override void ProcessRecord()

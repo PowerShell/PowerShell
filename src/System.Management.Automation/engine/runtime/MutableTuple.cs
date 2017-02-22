@@ -1,11 +1,11 @@
 /* ****************************************************************************
  *
- * Copyright (c) Microsoft Corporation. 
+ * Copyright (c) Microsoft Corporation.
  *
- * This source code is subject to terms and conditions of the Microsoft Public License. A 
- * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Microsoft Public License, please send an email to 
- * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
+ * This source code is subject to terms and conditions of the Microsoft Public License. A
+ * copy of the license can be found in the License.html file at the root of this distribution. If
+ * you cannot locate the  Microsoft Public License, please send an email to
+ * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Microsoft Public License.
  *
  * You must not remove this notice, or any other, from this software.
@@ -247,10 +247,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a generic tuple with the specified types.  
-        /// 
-        /// If the number of slots fits within the maximum tuple size then we simply 
-        /// create a single tuple.  If it's greater then we create nested tuples 
+        /// Creates a generic tuple with the specified types.
+        ///
+        /// If the number of slots fits within the maximum tuple size then we simply
+        /// create a single tuple.  If it's greater then we create nested tuples
         /// (e.g. a Tuple`2 which contains a Tuple`128 and a Tuple`8 if we had a size of 136).
         /// </summary>
         public static Type MakeTupleType(params Type[] types)
@@ -368,7 +368,7 @@ namespace System.Management.Automation
             // inner most tuples.  The mask is initialized to mask the upper bits and adjust is initialized
             // and adjust is the value we need to divide by to get the index in the least significant bits.
             // As we go through we shift the mask and adjust down each loop to pull out the inner slot.  Logically
-            // everything in here is shifting bits (not multiplying or dividing) because NewTuple.MaxSize is a 
+            // everything in here is shifting bits (not multiplying or dividing) because NewTuple.MaxSize is a
             // power of 2.
             int depth = 0;
             int mask = MutableTuple.MaxSize - 1;

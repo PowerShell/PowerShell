@@ -16,7 +16,7 @@ namespace System.Management.Automation
     /// This is the interface between the NativeCommandProcessor and the
     /// parameter binders required to bind parameters to a minishell.
     /// </summary>
-    /// 
+    ///
     internal class MinishellParameterBinderController : NativeCommandParameterBinderController
     {
         #region ctor
@@ -25,11 +25,11 @@ namespace System.Management.Automation
         /// Initializes the parameter binder controller for
         /// the specified native command and engine context
         /// </summary>
-        /// 
+        ///
         /// <param name="command">
         /// The command that the parameters will be bound to.
         /// </param>
-        /// 
+        ///
         internal MinishellParameterBinderController(
             NativeCommand command)
             : base(command)
@@ -43,11 +43,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Override of parent class which should not be used.
         /// </summary>
-        /// 
+        ///
         /// <param name="parameters">
         /// The parameters to bind.
         /// </param>
-        /// 
+        ///
         /// <remarks>
         /// For any parameters that do not have a name, they are added to the command
         /// line arguments for the command
@@ -78,24 +78,24 @@ namespace System.Management.Automation
         /// <summary>
         /// Binds the specified parameters to the native command
         /// </summary>
-        /// 
+        ///
         /// <param name="parameters">
         /// The parameters to bind.
         /// </param>
-        /// 
+        ///
         /// <param name="outputRedirected">
         /// true if minishell output is redirected.
         /// </param>
-        /// 
+        ///
         /// <param name="hostName">
-        /// name of the calling host. 
+        /// name of the calling host.
         /// </param>
-        /// 
+        ///
         /// <remarks>
         /// For any parameters that do not have a name, they are added to the command
         /// line arguments for the command
         /// </remarks>
-        /// 
+        ///
         internal Collection<CommandParameterInternal> BindParameters(Collection<CommandParameterInternal> parameters, bool outputRedirected, string hostName)
         {
             MinishellParameters seen = 0;
@@ -113,7 +113,7 @@ namespace System.Management.Automation
                     {
                         HandleSeenParameter(ref seen, MinishellParameters.Command, CommandParameter);
 
-                        // Value must be specified for -Command parameter. 
+                        // Value must be specified for -Command parameter.
                         if (i + 1 >= parameters.Count)
                         {
                             throw NewParameterBindingException(null, ErrorCategory.InvalidArgument, CommandParameter,
@@ -244,8 +244,8 @@ namespace System.Management.Automation
                 ? NativeCommandIOFormat.Xml
                 : NativeCommandIOFormat.Text;
 
-            // Note if a minishell is invoked from a non-console host, we need to 
-            // pass -nonInteractive flag. Our console host's name is "ConsoleHost". 
+            // Note if a minishell is invoked from a non-console host, we need to
+            // pass -nonInteractive flag. Our console host's name is "ConsoleHost".
             // Correct check would be see if current host has access to console and
             // pass noninteractive flag if doesn't.
             if (string.IsNullOrEmpty(hostName) || !hostName.Equals("ConsoleHost", StringComparison.OrdinalIgnoreCase))

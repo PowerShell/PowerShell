@@ -18,7 +18,7 @@ namespace System.Management.Automation
         /// <param name="stackName">
         /// The name of the stack.
         /// </param>
-        /// 
+        ///
         /// <param name="locationStack">
         /// A stack object containing PathInfo objects
         /// </param>
@@ -26,11 +26,11 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="locationStack"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="stackName"/> is null or empty.
         /// </exception>
-        /// 
+        ///
         internal PathInfoStack(string stackName, Stack<PathInfo> locationStack) : base()
         {
             if (locationStack == null)
@@ -47,7 +47,7 @@ namespace System.Management.Automation
 
             // Since the Stack<T> constructor takes an IEnumerable and
             // not a Stack<T> the stack actually gets enumerated in the
-            // wrong order.  I have to push them on manually in the 
+            // wrong order.  I have to push them on manually in the
             // appropriate order.
 
             PathInfo[] stackContents = new PathInfo[locationStack.Count];

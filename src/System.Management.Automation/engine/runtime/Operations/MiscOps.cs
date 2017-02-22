@@ -919,7 +919,7 @@ namespace System.Management.Automation
             {
                 case RedirectionStream.All:
                     // Since a temp output pipe is going to be used, we should pass along the error and warning variable list.
-                    // Normally, context.CurrentCommandProcessor will not be null. But in legacy DRTs from ParserTest.cs, 
+                    // Normally, context.CurrentCommandProcessor will not be null. But in legacy DRTs from ParserTest.cs,
                     // a scriptblock may be invoked through 'DoInvokeReturnAsIs' using .NET reflection. In that case,
                     // context.CurrentCommandProcessor will be null. We don't try passing along variable lists in such case.
                     if (context.CurrentCommandProcessor != null)
@@ -1280,7 +1280,7 @@ namespace System.Management.Automation
         /// <remarks>
         /// The ranking number for each type represent how many other
         /// types from the array derive from it.
-        /// For example, 0 means no other types in the array derive from 
+        /// For example, 0 means no other types in the array derive from
         /// the corresponding type, while 3 means there are 3 other types
         /// in the array actually derive from the corresponding type.
         /// 'CatchAll' is considered to be derived by all exception types.
@@ -1658,7 +1658,7 @@ namespace System.Management.Automation
         /// <returns>The preference the user selected</returns>
         /// <remarks>
         /// Error action is decided by error action preference. If preference is inquire, we will
-        /// prompt user for their preference. 
+        /// prompt user for their preference.
         /// </remarks>
         internal static ActionPreference QueryForAction(RuntimeException rte, string message, ExecutionContext context)
         {
@@ -1681,7 +1681,7 @@ namespace System.Management.Automation
         /// <param name="context">The execution context</param>
         /// <returns></returns>
         /// <remarks>
-        /// This method will allow user to enter suspend mode. 
+        /// This method will allow user to enter suspend mode.
         /// </remarks>
         internal static ActionPreference InquireForActionPreference(string message, ExecutionContext context)
         {
@@ -2084,22 +2084,22 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Add types to the current scope. 
+        /// Add types to the current scope.
         /// This method called at runtime after types are created at compile time.
         /// This method should be called for every ScriptBlockAst that defines types.
-        /// 
+        ///
         /// I.e.
-        /// 
+        ///
         /// class C1 {}
         /// function foo { class C2 {} }
         /// 1..10 | % { foo }
-        /// 
+        ///
         /// DefinePowerShellTypes() would be called for two TypeDefinitionAsts at the same time and Types for C1 and C2 would be created at the same assembly.
-        /// AddPowerShellTypesToTheScope() would be called for root script first and then for foo\C2, once we call function foo. 
+        /// AddPowerShellTypesToTheScope() would be called for root script first and then for foo\C2, once we call function foo.
         /// Note that AddPowerShellTypesToTheScope() would be call on every foo call, 10 times.
-        /// 
+        ///
         /// This method also should be called for 'using module' statements. Then added types would have a different name.
-        /// 
+        ///
         /// </summary>
         /// <param name="types"></param>
         /// <param name="context"></param>
@@ -2353,7 +2353,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="enumerator">The enumerator over the collection to search</param>
         /// <param name="expressionSB">
-        /// A ScriptBlock where its result is treated as a boolean, or null to 
+        /// A ScriptBlock where its result is treated as a boolean, or null to
         /// return all collection objects with WhereOperatorSelectionMode.
         /// </param>
         /// <param name="selectionMode">
@@ -2552,7 +2552,7 @@ namespace System.Management.Automation
                 }
                 else if (selectionMode == WhereOperatorSelectionMode.Until)
                 {
-                    // no match so in the until case, we add the value until the count is reached 
+                    // no match so in the until case, we add the value until the count is reached
                     matches.Add(ie == null ? null : PSObject.AsPSObject(ie));
                     if (numberToReturn > 0 && matches.Count >= numberToReturn)
                     {
@@ -2640,7 +2640,7 @@ namespace System.Management.Automation
                         while (MoveNext(context, enumerator))
                         {
                             object current = Current(enumerator);
-                            // Let the PSObject method invocation mechanism take care of 
+                            // Let the PSObject method invocation mechanism take care of
                             // any required conversions, etc.
                             resultCollection.Add(current);
                         }
@@ -2655,7 +2655,7 @@ namespace System.Management.Automation
                     while (MoveNext(context, enumerator))
                     {
                         object current = Current(enumerator);
-                        // Let the PSObject method invocation mechanism take care of 
+                        // Let the PSObject method invocation mechanism take care of
                         // any required conversions, etc.
                         resultCollection.Add(current);
                     }
@@ -2701,7 +2701,7 @@ namespace System.Management.Automation
             }
             else
             {
-                // Deal with member gets, sets and invokes 
+                // Deal with member gets, sets and invokes
                 string name = ParserOps.ConvertTo<string>(expression, null);
                 var numArgs = arguments.Length;
                 var languageMode = context.LanguageMode;

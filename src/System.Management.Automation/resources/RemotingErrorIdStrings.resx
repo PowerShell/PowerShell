@@ -936,7 +936,7 @@ Do you want to continue?</value>
     <value>{0} may need to restart the WinRM service if a configuration using this name has recently been unregistered, certain system data structures may still be cached. In that case, a restart of WinRM may be required.
 All WinRM sessions connected to Windows PowerShell session configurations, such as Microsoft.PowerShell and session configurations that are created with the Register-PSSessionConfiguration cmdlet, are disconnected.</value>
   </data>
-   <data name="WinRMForceRestartWarning" xml:space="preserve">
+  <data name="WinRMForceRestartWarning" xml:space="preserve">
     <value>You are running in a remote session and have selected the Force option which means the WinRM service may restart.If the WinRM service restarts then this remote session will be terminated and you will need to create a new session to continue</value>
   </data>
   <data name="JobSourceAdapterCannotSaveNullJob" xml:space="preserve">
@@ -1635,5 +1635,11 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   </data>
   <data name="SSHConnectionDuplicateKeyPath" xml:space="preserve">
     <value>The provided SSHConnection hashtable contains both a KeyFilePath and IdentityFilePath parameter.  Only one can be specified.</value>
+  </data>
+  <data name="CouldNotFindRoleCapabilityFile" xml:space="preserve">
+    <value>Could not find the provided role capability file {0}.</value>
+  </data>
+  <data name="InvalidRoleCapabilityFileExtension" xml:space="preserve">
+    <value>The provided role capability file {0} does not have the required .psrc extension.</value>
   </data>
 </root>

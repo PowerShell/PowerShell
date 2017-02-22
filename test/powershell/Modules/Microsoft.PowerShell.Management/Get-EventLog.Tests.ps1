@@ -12,22 +12,24 @@
     #CmdLets are not yet implemented, so these cases are -Pending:($True) for now...
     It "should return an array of eventlogs objects when called with -AsString parameter" -Pending:($True) {
       {$result=Get-EventLog -AsString -ea stop}    | Should Not Throw
-      $result.GetType().BaseType.Name              | Should Be "Array"
-      $result -eq "Application"                    | Should Be "Application" 
+      $result | Should Not BeNullOrEmpty
+      ,$result                                     | Should BeOfType "System.Array"
+      $result -eq "Application"                    | Should Be "Application"
       $result.Count -ge 3                          | Should Be $true
     }
     It "should return a list of eventlog objects when called with -List parameter" -Pending:($True) {
       {$result=Get-EventLog -List -ea stop}        | Should Not Throw
-      $result.GetType().BaseType.Name              | Should Be "array"
-      {$logs=$result|Select -ExpandProperty Log}  | Should Not Throw
-      $logs -eq "System"                           | Should Be "System" 
+      $result | Should Not BeNullOrEmpty
+      ,$result                                     | Should BeOfType "System.Array"
+      {$logs=$result|Select -ExpandProperty Log}   | Should Not Throw
+      $logs -eq "System"                           | Should Be "System"
       $logs.Count -ge 3                            | Should Be $true
     }
     It "should be able to Get-EventLog -LogName Application -Newest 100" -Pending:($True) {
       {$result=get-eventlog -LogName Application -Newest 100 -ea stop} | Should Not Throw
       $result                                      | Should Not BeNullOrEmpty
       $result.Length -le 100                       | Should Be $true
-      $result[0].GetType().Name                    | Should Be "EventLogEntry"
+      $result[0]                                   | Should BeOfType "EventLogEntry"
     }
     It "should throw 'AmbiguousParameterSetException' when called with both -LogName and -List parameters" -Pending:($True) {
       try {Get-EventLog -LogName System -List -ea stop; Throw "Previous statement unexpectedly succeeded..."
@@ -36,7 +38,7 @@
     It "should be able to Get-EventLog -LogName * with multiple matches" -Pending:($True) {
       {$result=get-eventlog -LogName *  -ea stop}  | Should Not Throw
       $result                                      | Should Not BeNullOrEmpty
-      $result -eq "Security"                       | Should Be "Security" 
+      $result -eq "Security"                       | Should Be "Security"
       $result.Count -ge 3                          | Should Be $true
     }
     It "should throw 'InvalidOperationException' when asked to get a log that does not exist" -Pending:($True) {

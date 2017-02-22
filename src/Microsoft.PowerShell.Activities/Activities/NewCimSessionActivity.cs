@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Activities
         public override System.Type TypeImplementingCmdlet { get { return typeof(Microsoft.Management.Infrastructure.CimCmdlets.NewCimSessionCommand); } }
 
         // Arguments
-        
+
         /// <summary>
         /// Provides access to the Authentication parameter.
         /// </summary>

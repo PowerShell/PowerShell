@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
 {
     ///
     /// Class that implements the Get-Counter cmdlet.
-    /// 
+    ///
     [Cmdlet(VerbsData.Export, "Counter", DefaultParameterSetName = "ExportCounterSet", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=138337")]
     public sealed class ExportCounterCommand : PSCmdlet
     {
@@ -150,9 +150,14 @@ namespace Microsoft.PowerShell.Commands
         //
         protected override void BeginProcessing()
         {
-            _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
 
 #if CORECLR
+            if (Platform.IsIoT)
+            {
+                // IoT does not have the '$env:windir\System32\pdh.dll' assembly which is required by this cmdlet.
+                throw new PlatformNotSupportedException();
+            }
+
             // PowerShell Core requires at least Windows 7,
             // so no version test is needed
             _pdhHelper = new PdhHelper(false);
@@ -172,6 +177,7 @@ namespace Microsoft.PowerShell.Commands
 
             _pdhHelper = new PdhHelper(osVersion.Major < 6);
 #endif
+            _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
 
             //
             // Validate the Format and CounterSamples arguments

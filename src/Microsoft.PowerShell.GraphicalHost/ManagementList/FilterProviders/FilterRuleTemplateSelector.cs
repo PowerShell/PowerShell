@@ -12,7 +12,7 @@ namespace Microsoft.Management.UI.Internal
     using System.Windows.Controls;
 
     /// <summary>
-    /// The FilterRuleTemplateSelector class selects a template based upon the type of 
+    /// The FilterRuleTemplateSelector class selects a template based upon the type of
     /// the item and the corresponding template that is registered in the TemplateDictionary.
     /// </summary>
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.MSInternal", "CA903:InternalNamespaceShouldNotContainPublicTypes")]
@@ -29,7 +29,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Selects a template based upon the type of the item and and the 
+        /// Selects a template based upon the type of the item and and the
         /// corresponding template that is registered in the TemplateDictionary.
         /// </summary>
         /// <param name="item">
@@ -69,7 +69,7 @@ namespace Microsoft.Management.UI.Internal
                 }
 
                 type = type.BaseType;
-            } 
+            }
             while (null != type);
 
             return base.SelectTemplate(item, container);

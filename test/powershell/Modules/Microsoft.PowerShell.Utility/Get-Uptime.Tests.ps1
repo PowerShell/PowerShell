@@ -17,19 +17,17 @@ Describe "Get-Uptime" -Tags "CI" {
     }
     It "Get-Uptime return timespan (default -Timespan)" {
         $upt = Get-Uptime
-        $upt | Should Not Be $null
-        ($upt).Gettype().Name | Should Be "Timespan"
+        $upt | Should BeOfType "Timespan"
     }
     It "Get-Uptime -Since return DateTime" {
         $upt = Get-Uptime -Since
-        $upt | Should Not Be $null
-        ($upt).Gettype().Name | Should Be "DateTime"
+        $upt | Should BeOfType "DateTime"
     }
     It "Get-Uptime throw if IsHighResolution == false" {
         try
         {
             # Enable the test hook
-            [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsNotHighResolution', $true) 
+            [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsNotHighResolution', $true)
 
             Get-Uptime
             throw "No Exception!"
@@ -41,7 +39,7 @@ Describe "Get-Uptime" -Tags "CI" {
         finally
         {
             # Disable the test hook
-            [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsHighResolutionIsFalse', $false) 
+            [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsHighResolutionIsFalse', $false)
         }
     }
 }

@@ -1,12 +1,6 @@
-
-if ( ! (get-module -ea silentlycontinue TestHostCS ))
-{
-    # this is sensitive to the location of this test and the common directory"
-    $pestertestroot = resolve-path "$psscriptroot/../.."
-    $common = join-path $pestertestroot Common
-    $hostmodule = join-path $common TestHostCS.psm1
-    import-module $hostmodule
-}
+# this is sensitive to the location of this test and the common directory"
+$hostmodule = Join-Path $PSScriptRoot "../../Common/TestHostCS.psm1"
+import-module $hostmodule -ErrorAction SilentlyContinue
 
 Describe "Out-Host Tests" -tag CI {
     BeforeAll {
@@ -27,8 +21,9 @@ Describe "Out-Host Tests" -tag CI {
     }
     It "Out-Host writes to host output" {
         $stringToWrite = "thing to write"
+        $stringExpected = "::$($stringToWrite):NewLine"
         $result = $ps.AddScript("Out-Host -inputobject '$stringToWrite'").Invoke()
         $th.UI.Streams.ConsoleOutput.Count | should be 1
-        $th.UI.Streams.ConsoleOutput[0] | should be $stringToWrite
+        $th.UI.Streams.ConsoleOutput[0] | should be $stringExpected
     }
 }

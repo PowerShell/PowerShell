@@ -355,8 +355,8 @@ namespace System.Management.Automation.Remoting
             // if so, then do the following:
             //        (a) check if any of the field descriptions
             //            correspond to PSCredential
-            //        (b) if field descriptions correspond to 
-            //            PSCredential modify the caption and 
+            //        (b) if field descriptions correspond to
+            //            PSCredential modify the caption and
             //            message as in the previous case above
             else if (MethodId == RemoteHostMethodId.Prompt)
             {
@@ -415,8 +415,8 @@ namespace System.Management.Automation.Remoting
 
             // check if the incoming call is GetBufferContents
             // if so do the following:
-            //      (a) Specify a warning message that the server is 
-            //          attempting to read the screen buffer contents 
+            //      (a) Specify a warning message that the server is
+            //          attempting to read the screen buffer contents
             //          on screen and it has been blocked
             //      (b) Modify the message so that call is not executed
             else if (MethodId == RemoteHostMethodId.GetBufferContents)
@@ -452,11 +452,11 @@ namespace System.Management.Automation.Remoting
         /// <summary>
         /// Provides the modified message for the given one
         /// Used in ensuring that remote prompt messages
-        /// contain a warning that they originate from a 
+        /// contain a warning that they originate from a
         /// different computer
         /// </summary>
         /// <param name="message">original message to modify</param>
-        /// <param name="computerName">computername to include in the 
+        /// <param name="computerName">computername to include in the
         /// message</param>
         /// <returns>message which contains a warning as well</returns>
         private String ModifyMessage(string message, string computerName)
@@ -470,8 +470,8 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Creates a warning message which displays to the user a 
-        /// warning stating that the remote host computer is 
+        /// Creates a warning message which displays to the user a
+        /// warning stating that the remote host computer is
         /// actually attempting to read a line as a secure string
         /// </summary>
         /// <param name="computerName">computer name to include

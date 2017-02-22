@@ -20,8 +20,8 @@ using System.Security.Permissions;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The exception that is thrown when there is no help category matching 
-    /// a specific input string. 
+    /// The exception that is thrown when there is no help category matching
+    /// a specific input string.
     /// </summary>
     [Serializable]
     public class HelpCategoryInvalidException : ArgumentException, IContainsErrorRecord
@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
         private ErrorRecord _errorRecord;
 
         /// <summary>
-        /// Gets ErrorRecord embedded in this exception. 
+        /// Gets ErrorRecord embedded in this exception.
         /// </summary>
         /// <value>ErrorRecord instance</value>
         public ErrorRecord ErrorRecord

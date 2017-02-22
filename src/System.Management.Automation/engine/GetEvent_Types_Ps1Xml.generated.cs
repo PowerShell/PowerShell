@@ -75,9 +75,9 @@ namespace System.Management.Automation.Runspaces
                 new ScriptPropertyData(@"Readings", GetScriptBlock(@"$strPaths = """"
           foreach ($ctr in $this.CounterSamples)
           {
-              $strPaths += ($ctr.Path + "" :"" + ""`n"")	
-              $strPaths += ($ctr.CookedValue.ToString() + ""`n`n"")     
-          }                   
+              $strPaths += ($ctr.Path + "" :"" + ""`n"")
+              $strPaths += ($ctr.CookedValue.ToString() + ""`n`n"")
+          }
           return $strPaths"), null));
             yield return td7;
 #endif

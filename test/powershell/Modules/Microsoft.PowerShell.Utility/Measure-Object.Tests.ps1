@@ -192,7 +192,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
                             [pscustomobject]@{"FirstName"="mary jo"; "LastName"="soe"; "YearsInMS"=5},
                             [pscustomobject]@{"FirstName"="edmund`todd `n"; "LastName"="bush"; "YearsInMS"=9}
 	}
-	
+
     It "Measure-Object with Generic enum value options combination should work"{
         $flags = [TestMeasureGeneric]0
 		$property = "FirstName"
@@ -224,7 +224,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
 			{
 				$result.Sum | Should BeNullOrEmpty
 			}
-			
+
 			if($testAverage)
 			{
 				$result.Average | Should Be 11
@@ -233,7 +233,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
 			{
 				$result.Average | Should BeNullOrEmpty
 			}
-			
+
 			if($testMax)
 			{
 				$result.Maximum | Should Be 15
@@ -242,7 +242,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
 			{
 				$result.Maximum | Should BeNullOrEmpty
 			}
-			
+
 			if($testMin)
 			{
 				$result.Minimum | Should Be 5
@@ -253,7 +253,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
 			}
 		}
     }
-	
+
 	It "Measure-Object with Text combination should work"{
 		for ($i = 1; $i -lt 8 * 2; $i++)
         {
@@ -264,7 +264,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
 			$testWord = ($flags -band [TestMeasureText]::TestWord) -gt 0
 			$testLine = ($flags -band [TestMeasureText]::TestLine) -gt 0
 			$result = $employees | Measure-Object -IgnoreWhiteSpace:$testIgnoreWS -Character:$testCharacter -Word:$testWord -Line:$testLine -Prop $property
-			
+
 			if($testCharacter)
 			{
 				if($testIgnoreWS)
@@ -280,7 +280,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
 			{
 				$result.Characters | Should BeNullOrEmpty
 			}
-			
+
 			if($testWord)
 			{
 				$result.Words | Should Be 6
@@ -289,7 +289,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
 			{
 				$result.Words | Should BeNullOrEmpty
 			}
-			
+
 			if($testLine)
 			{
 				$result.Lines | Should Be 4
@@ -300,7 +300,7 @@ Describe "Measure-Object DRT basic functionality" -Tags "CI" {
 			}
 		}
     }
-	
+
 	It "Measure-Object with multiple lines should work"{
 		$result = "123`n4"|measure-object -line
 		$result.Lines | Should Be 2

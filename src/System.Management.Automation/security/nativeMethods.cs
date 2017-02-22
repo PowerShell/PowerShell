@@ -183,7 +183,7 @@ namespace System.Management.Automation.Security
         bool CertGetEnhancedKeyUsage(IntPtr pCertContext, // PCCERT_CONTEXT
                                       DWORD dwFlags,
                                       IntPtr pUsage,       // PCERT_ENHKEY_USAGE
-                                      out int pcbUsage);  // DWORD* 
+                                      out int pcbUsage);  // DWORD*
 
         [DllImport("Crypt32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern
@@ -1120,7 +1120,7 @@ namespace System.Management.Automation.Security
 
         [DllImport("wintrust.dll", SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern
-            IntPtr // CRYPT_PROVIDER_CERT* 
+            IntPtr // CRYPT_PROVIDER_CERT*
             WTHelperGetProvCertFromChain(
                 IntPtr pSgnr, // CRYPT_PROVIDER_SGNR*
                 DWORD idxCert
@@ -1953,7 +1953,7 @@ namespace System.Management.Automation.Security
         }
     }
 
-    // Constants needed for Catalog Error Handling 
+    // Constants needed for Catalog Error Handling
     internal partial class NativeConstants
     {
         // CRYPTCAT_E_AREA_HEADER = "0x00000000";
@@ -1971,7 +1971,7 @@ namespace System.Management.Automation.Security
         // CRYPTCAT_E_CDF_DUPLICATE = "0x00000002";
         public const int CRYPTCAT_E_CDF_DUPLICATE = 2;
 
-        // CRYPTCAT_E_CDF_TAGNOTFOUND = "0x00000004";    
+        // CRYPTCAT_E_CDF_TAGNOTFOUND = "0x00000004";
         public const int CRYPTCAT_E_CDF_TAGNOTFOUND = 4;
 
         // CRYPTCAT_E_CDF_MEMBER_FILE_PATH = "0x00010001";
@@ -1980,13 +1980,13 @@ namespace System.Management.Automation.Security
         // CRYPTCAT_E_CDF_MEMBER_INDIRECTDATA = "0x00010002";
         public const int CRYPTCAT_E_CDF_MEMBER_INDIRECTDATA = 65538;
 
-        // CRYPTCAT_E_CDF_MEMBER_FILENOTFOUND = "0x00010004";    
+        // CRYPTCAT_E_CDF_MEMBER_FILENOTFOUND = "0x00010004";
         public const int CRYPTCAT_E_CDF_MEMBER_FILENOTFOUND = 65540;
 
-        // CRYPTCAT_E_CDF_BAD_GUID_CONV = "0x00020001";    
+        // CRYPTCAT_E_CDF_BAD_GUID_CONV = "0x00020001";
         public const int CRYPTCAT_E_CDF_BAD_GUID_CONV = 131073;
 
-        // CRYPTCAT_E_CDF_ATTR_TOOFEWVALUES = "0x00020002";    
+        // CRYPTCAT_E_CDF_ATTR_TOOFEWVALUES = "0x00020002";
         public const int CRYPTCAT_E_CDF_ATTR_TOOFEWVALUES = 131074;
 
         // CRYPTCAT_E_CDF_ATTR_TYPECOMBO = "0x00020004";
@@ -1995,7 +1995,7 @@ namespace System.Management.Automation.Security
 
     /// <summary>
     /// pinvoke methods from wintrust.dll
-    /// These are added to Generate and Validate Window Catalog Files 
+    /// These are added to Generate and Validate Window Catalog Files
     /// </summary>
     internal static partial class NativeMethods
     {

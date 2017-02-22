@@ -62,7 +62,7 @@ namespace System.Management.Automation
         #region Help Provider Interface
 
         /// <summary>
-        /// Do exact match help based on the target. 
+        /// Do exact match help based on the target.
         /// </summary>
         /// <param name="helpRequest">help request object</param>
         internal override IEnumerable<HelpInfo> ExactMatchHelp(HelpRequest helpRequest)
@@ -75,10 +75,10 @@ namespace System.Management.Automation
             }
             catch (ProviderNotFoundException e)
             {
-                // We distinguish two cases here, 
+                // We distinguish two cases here,
                 //      a. If the "Provider" is the only category to search for in this case,
                 //         an error will be written.
-                //      b. Otherwise, no errors will be written since in end user's mind, 
+                //      b. Otherwise, no errors will be written since in end user's mind,
                 //         he may mean to search for provider help.
                 if (this.HelpSystem.LastHelpCategory == HelpCategory.Provider)
                 {
@@ -132,10 +132,10 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This is a hashtable to track which help files are loaded already. 
-        /// 
-        /// This will avoid one help file getting loaded again and again. 
-        /// (Which should not happen unless some provider is pointing 
+        /// This is a hashtable to track which help files are loaded already.
+        ///
+        /// This will avoid one help file getting loaded again and again.
+        /// (Which should not happen unless some provider is pointing
         /// to a help file that actually doesn't contain the help for it).
         ///
         /// </summary>
@@ -259,13 +259,13 @@ namespace System.Management.Automation
         /// <summary>
         /// Search for provider help based on a search target.
         /// </summary>
-        /// <param name="helpRequest">help request object</param>   
+        /// <param name="helpRequest">help request object</param>
         /// <param name="searchOnlyContent">
-        /// If true, searches for pattern in the help content. Individual 
+        /// If true, searches for pattern in the help content. Individual
         /// provider can decide which content to search in.
-        /// 
+        ///
         /// If false, searches for pattern in the command names.
-        /// </param>        
+        /// </param>
         /// <returns></returns>
         internal override IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent)
         {
@@ -370,12 +370,12 @@ namespace System.Management.Automation
         /// Process a helpInfo forwarded from other providers (normally commandHelpProvider)
         /// </summary>
         /// <remarks>
-        /// For command help info, this will 
+        /// For command help info, this will
         ///     1. check whether provider-specific commandlet help exists.
         ///     2. merge found provider-specific help with commandlet help provided.
         /// </remarks>
         /// <param name="helpInfo">helpInfo forwarded in</param>
-        /// <param name="helpRequest">help request object</param>        
+        /// <param name="helpRequest">help request object</param>
         /// <returns>The help info object after processing</returns>
         override internal HelpInfo ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
@@ -413,8 +413,8 @@ namespace System.Management.Automation
 #endif
 
         /// <summary>
-        /// This will reset the help cache. Normally this corresponds to a 
-        /// help culture change. 
+        /// This will reset the help cache. Normally this corresponds to a
+        /// help culture change.
         /// </summary>
         internal override void Reset()
         {

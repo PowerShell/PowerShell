@@ -57,10 +57,10 @@ namespace Microsoft.PowerShell.Commands
         #region private Data
 
         /// <summary>
-        /// This bool is used to determine if the path 
+        /// This bool is used to determine if the path
         /// parameter was specified on the command line or via the pipeline.
         /// </summary>
-        /// 
+        ///
         private bool _pipingPaths;
 
         /// <summary>
@@ -119,7 +119,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!_contentWritersOpen)
             {
-                // Since the paths are being pipelined in, we have 
+                // Since the paths are being pipelined in, we have
                 // to get new content writers for the new paths
                 string[] paths = GetAcceptedPaths(Path, currentContext);
 
@@ -193,7 +193,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Closes all the content writers
         /// </summary>
-        /// 
+        ///
         protected override void EndProcessing()
         {
             Dispose(true);
@@ -208,24 +208,24 @@ namespace Microsoft.PowerShell.Commands
         /// from the provider. If the current position needs to be changed before writing
         /// the content, this method should be overridden to do that.
         /// </summary>
-        /// 
+        ///
         /// <param name="contentHolders">
         /// The content holders that contain the writers to be moved.
         /// </param>
-        /// 
+        ///
         internal virtual void SeekContentPosition(List<ContentHolder> contentHolders)
         {
-            // default does nothing.  
+            // default does nothing.
         } // SeekContentPosition
 
         /// <summary>
-        /// Called by the base class before the streams are open for the path. 
+        /// Called by the base class before the streams are open for the path.
         /// </summary>
-        /// 
+        ///
         /// <param name="paths">
         /// The path to the items that will be opened for writing content.
         /// </param>
-        /// 
+        ///
         internal virtual void BeforeOpenStreams(string[] paths)
         {
         }
@@ -235,16 +235,16 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -257,11 +257,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the IContentWriters for the current path(s)
         /// </summary>
-        /// 
+        ///
         /// <returns>
         /// An array of IContentWriters for the current path(s)
         /// </returns>
-        /// 
+        ///
         internal List<ContentHolder> GetContentWriters(
             string[] writerPaths,
             CmdletProviderContext currentCommandContext)

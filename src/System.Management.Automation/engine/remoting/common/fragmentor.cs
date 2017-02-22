@@ -16,12 +16,12 @@ namespace System.Management.Automation.Remoting
 {
     /// <summary>
     /// This class is used to hold a fragment of remoting PSObject for transporting to remote computer.
-    /// 
+    ///
     /// A large remoting PSObject will be broken into fragments. Each fragment has a ObjectId and a FragmentId.
-    /// The first fragment has a StartFragment marker. The last fragment also an EndFragment marker. 
+    /// The first fragment has a StartFragment marker. The last fragment also an EndFragment marker.
     /// These fragments can be reassembled on the receiving
     /// end by sequencing the fragment ids.
-    /// 
+    ///
     /// Currently control objects (Control-C for stopping a pipeline execution) is not
     /// really fragmented. These objects are small. They are just wrapped into a single
     /// fragment.
@@ -173,13 +173,13 @@ namespace System.Management.Automation.Remoting
         ///       0x1 if IsStartOfFragment is true: This is called S-flag.
         ///       0x2 if IsEndOfFragment is true: This is called the E-flag.
         ///       0x4 if IsControl is true: This is called the C-flag.
-        ///                                        
-        ///       The other bits are reserved for future use. 
-        ///       Now they must be zero when sending, 
+        ///
+        ///       The other bits are reserved for future use.
+        ///       Now they must be zero when sending,
         ///       and they are ignored when receiving.
         /// BlobLength: 4 bytes as int, byte order is big-endian. this value can only be non-negative.
         /// Blob: BlobLength number of bytes.
-        /// 
+        ///
         ///     0                   1                   2                   3
         ///     0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1 2 3 4 5 6 7 8 9 0 1
         ///     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
@@ -191,13 +191,13 @@ namespace System.Management.Automation.Remoting
         ///     +-+-+-+-+-+-+-+-        FragmentId              +-+-+-+-+-+-+-+-+
         ///     |                                                               |
         ///     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
-        ///     |reserved |C|E|S|                    
+        ///     |reserved |C|E|S|
         ///     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         ///     |                        BlobLength                             |
         ///     +-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+
         ///     |     Blob ...
         ///     +-+-+-+-+-+-+-+-
-        /// 
+        ///
         /// </summary>
         /// <returns>
         /// The binary encoded FragmentedRemoteObject to be ready to pass to WinRS Send API.
@@ -421,8 +421,8 @@ namespace System.Management.Automation.Remoting
 
     /// <summary>
     /// A stream used to store serialized data. This stream holds serialized data in the
-    /// form of fragments. Every "fragment size" data will hold a blob identifying the fragment. 
-    /// The blob has "ObjectId","FragmentId","Properties like Start,End","BlobLength"   
+    /// form of fragments. Every "fragment size" data will hold a blob identifying the fragment.
+    /// The blob has "ObjectId","FragmentId","Properties like Start,End","BlobLength"
     /// </summary>
     internal class SerializedDataStream : Stream, IDisposable
     {
@@ -666,7 +666,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="buffer"></param>
         /// <param name="offset"></param>
@@ -884,15 +884,15 @@ namespace System.Management.Automation.Remoting
         #region Stream Overrides
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override bool CanRead { get { return true; } }
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override bool CanSeek { get { return false; } }
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override bool CanWrite { get { return true; } }
         /// <summary>
@@ -900,7 +900,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public override long Length { get { return _length; } }
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override long Position
         {
@@ -908,14 +908,14 @@ namespace System.Management.Automation.Remoting
             set { throw new NotSupportedException(); }
         }
         /// <summary>
-        /// This is a No-Op intentionally as there is nothing 
+        /// This is a No-Op intentionally as there is nothing
         /// to flush.
         /// </summary>
         public override void Flush()
         {
         }
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="offset"></param>
         /// <param name="origin"></param>
@@ -925,7 +925,7 @@ namespace System.Management.Automation.Remoting
             throw new NotSupportedException();
         }
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="value"></param>
         public override void SetLength(long value)
@@ -953,9 +953,9 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    /// This class performs the fragmentation as well as defragmentation operations of large objects to be sent 
-    /// to the other side. A large remoting PSObject will be broken into fragments. Each fragment has a ObjectId 
-    /// and a FragmentId. The last fragment also has an end of fragment marker. These fragments can be reassembled 
+    /// This class performs the fragmentation as well as defragmentation operations of large objects to be sent
+    /// to the other side. A large remoting PSObject will be broken into fragments. Each fragment has a ObjectId
+    /// and a FragmentId. The last fragment also has an end of fragment marker. These fragments can be reassembled
     /// on the receiving end by sequencing the fragment ids.
     /// </summary>
     internal class Fragmentor
@@ -1005,7 +1005,7 @@ namespace System.Management.Automation.Remoting
         /// The object to be fragmented. Caller should make sure this is not null.
         /// </param>
         /// <param name="dataToBeSent">
-        /// Caller specified dataToStore to which the fragments are added 
+        /// Caller specified dataToStore to which the fragments are added
         /// one-by-one
         /// </param>
         internal void Fragment<T>(RemoteDataObject<T> obj, SerializedDataStream dataToBeSent)

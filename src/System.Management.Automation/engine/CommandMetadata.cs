@@ -28,14 +28,14 @@ namespace System.Management.Automation
     {
         /// <summary>
         /// Session with <see cref="RemoteServer"/> capabilities can be made available on a server
-        /// that wants to provide a full user experience to PowerShell clients.  
-        /// Clients connecting to the server will be able to use implicit remoting 
+        /// that wants to provide a full user experience to PowerShell clients.
+        /// Clients connecting to the server will be able to use implicit remoting
         /// (Import-PSSession, Export-PSSession) as well as interactive remoting (Enter-PSSession, Exit-PSSession).
         /// </summary>
         RemoteServer = 0x1,
 
         /// <summary>
-        /// Session with <see cref="WorkflowServer"/> capabilities can be made available on 
+        /// Session with <see cref="WorkflowServer"/> capabilities can be made available on
         /// a server that wants to provide workflow hosting capabilities in the
         /// specified end points. All jobs commands as well as commands for
         /// implicit remoting and interactive remoting will be made available
@@ -208,7 +208,7 @@ namespace System.Management.Automation
                 }
             }
 
-            // not copying those fields/members as they are untouched (and left set to null) 
+            // not copying those fields/members as they are untouched (and left set to null)
             // by public constructors, so we can't rely on those fields/members to be set
             // when CommandMetadata comes from a user
             _staticCommandParameterMetadata = null;
@@ -294,40 +294,40 @@ namespace System.Management.Automation
         /// Gets the metadata for the specified cmdlet from the cache or creates
         /// a new instance if its not in the cache.
         /// </summary>
-        /// 
+        ///
         /// <param name="commandName">
         /// The name of the command that this metadata represents.
         /// </param>
-        /// 
+        ///
         /// <param name="cmdletType">
         /// The cmdlet to get the metadata for.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The current engine context.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The CommandMetadata for the specified cmdlet.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="commandName"/> is null or empty.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="cmdletType"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ParsingMetadataException">
         /// If more than int.MaxValue parameter-sets are defined for the command.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="MetadataException">
         /// If a parameter defines the same parameter-set name multiple times.
         /// If the attributes could not be read from a property or field.
         /// </exception>
-        /// 
+        ///
         internal static CommandMetadata Get(string commandName, Type cmdletType, ExecutionContext context)
         {
             if (String.IsNullOrEmpty(commandName))
@@ -360,35 +360,35 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs an instance of CommandMetadata using reflection against a bindable object
         /// </summary>
-        /// 
+        ///
         /// <param name="commandName">
         /// The name of the command that this metadata represents.
         /// </param>
-        /// 
+        ///
         /// <param name="cmdletType">
         /// An instance of an object type that can be used to bind MSH parameters. A type is
         /// considered bindable if it has at least one field and/or property that is decorated
         /// with the ParameterAttribute.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The current engine context. If null, the command and type metadata will be generated
         /// and will not be cached.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="cmdletType"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ParsingMetadataException">
         /// If more than int.MaxValue parameter-sets are defined for the command.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="MetadataException">
         /// If a parameter defines the same parameter-set name multiple times.
         /// If the attributes could not be read from a property or field.
         /// </exception>
-        /// 
+        ///
         internal CommandMetadata(string commandName, Type cmdletType, ExecutionContext context)
         {
             if (String.IsNullOrEmpty(commandName))
@@ -410,28 +410,28 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Constructor for creating command metadata from a script block. 
+        /// Constructor for creating command metadata from a script block.
         /// </summary>
         /// <param name="scriptblock"></param>
         /// <param name="context"></param>
         /// <param name="commandName"></param>
         /// <remarks>
         /// Unlike cmdlet based on a C# type where cmdlet metadata and parameter
-        /// metadata is created through reflecting the implementation type, script 
-        /// cmdlet has different way for constructing metadata. 
-        /// 
-        ///     1. Metadata for cmdlet itself comes from cmdlet statement, which 
-        ///        is parsed into CmdletDeclarationNode and then converted into 
-        ///        a CmdletAttribute object. 
-        ///     2. Metadata for parameter comes from parameter declaration statement, 
-        ///        which is parsed into parameter nodes with parameter annotations. 
-        ///        Information in ParameterNodes is eventually transformed into a 
+        /// metadata is created through reflecting the implementation type, script
+        /// cmdlet has different way for constructing metadata.
+        ///
+        ///     1. Metadata for cmdlet itself comes from cmdlet statement, which
+        ///        is parsed into CmdletDeclarationNode and then converted into
+        ///        a CmdletAttribute object.
+        ///     2. Metadata for parameter comes from parameter declaration statement,
+        ///        which is parsed into parameter nodes with parameter annotations.
+        ///        Information in ParameterNodes is eventually transformed into a
         ///        dictionary of RuntimeDefinedParameters.
-        /// 
-        /// By the time this constructor is called, information about CmdletAttribute 
+        ///
+        /// By the time this constructor is called, information about CmdletAttribute
         /// and RuntimeDefinedParameters for the script block has been setup with
-        /// the scriptblock object. 
-        /// 
+        /// the scriptblock object.
+        ///
         /// </remarks>
         internal CommandMetadata(ScriptBlock scriptblock, string commandName, ExecutionContext context)
         {
@@ -642,7 +642,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the bit in the parameter set map for the default parameter set.
         /// </summary>
-        /// 
+        ///
         internal uint DefaultParameterSetFlag
         {
             get { return _defaultParameterSetFlag; }
@@ -684,11 +684,11 @@ namespace System.Management.Automation
         /// Constructs the command metadata by using reflection against the
         /// CLR type.
         /// </summary>
-        /// 
+        ///
         /// <exception cref="ParsingMetadataException">
         /// If more than int.MaxValue parameter-sets are defined for the command.
         /// </exception>
-        /// 
+        ///
         private void ConstructCmdletMetadataUsingReflection()
         {
             Diagnostics.Assert(
@@ -730,19 +730,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Extracts the cmdlet data from the CmdletAttribute
         /// </summary>
-        /// 
+        ///
         /// <param name="attribute">
         /// The CmdletAttribute to process
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="attribute"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ParsingMetadataException">
         /// If more than int.MaxValue parameter-sets are defined for the command.
         /// </exception>
-        /// 
+        ///
         private void ProcessCmdletAttribute(CmdletCommonMetadataAttribute attribute)
         {
             if (attribute == null)
@@ -1144,7 +1144,7 @@ end
             // 1b. otoh common parameters are going to be present anyway on all proxy functions
             //     that the host generates for its cmdlets that need cmdletbinding, so
             //     we should make sure that common parameters are safe, not hide them
-            // 2. otoh without cmdletbinding() unspecified parameters get bound to $null which might 
+            // 2. otoh without cmdletbinding() unspecified parameters get bound to $null which might
             //    unnecessarily trigger validation attribute failures - see bug Windows 7: #477218
 
             CommandMetadata metadata = new CommandMetadata(
@@ -1200,7 +1200,7 @@ end
 
             return GetRestrictedCmdlet(
                 "Get-Command",
-                null, // defaultParameterSet 
+                null, // defaultParameterSet
                 "https://go.microsoft.com/fwlink/?LinkID=113309", // helpUri
                 nameParameter,
                 moduleParameter,
@@ -1228,7 +1228,7 @@ end
             // remote Get-Help is called when help for implicit remoting proxy tries to fetch help content for a remote command
 
             // This should only be called with 1 "safe" command name (unless ipsn is called with -Force)
-            // (it seems ok to disallow getting help for "unsafe" commands [possible when ipsn is called with -Force] 
+            // (it seems ok to disallow getting help for "unsafe" commands [possible when ipsn is called with -Force]
             //  - host can always generate its own proxy for Get-Help if it cares about "unsafe" command names)
             ParameterMetadata nameParameter = new ParameterMetadata("Name", typeof(string));
             nameParameter.Attributes.Add(new ValidatePatternAttribute(isSafeNameOrIdentifierRegex));
@@ -1244,7 +1244,7 @@ end
 
         private static CommandMetadata GetRestrictedSelectObject()
         {
-            // remote Select-Object is called by Import/Export-PSSession to 
+            // remote Select-Object is called by Import/Export-PSSession to
             // 1) restrict what properties are serialized
             // 2) artificially increase serialization depth of selected properties (especially "Parameters" property)
 
@@ -1312,13 +1312,13 @@ end
         /// <summary>
         /// Returns a dictionary from a command name to <see cref="CommandMetadata"/> describing
         /// how that command can be restricted to limit attack surface while still being usable
-        /// by features included in <paramref name="sessionCapabilities"/>. 
-        /// 
-        /// For example the implicit remoting feature 
-        /// (included in <see cref="SessionCapabilities.RemoteServer"/>) 
-        /// doesn't use all parameters of Get-Help 
+        /// by features included in <paramref name="sessionCapabilities"/>.
+        ///
+        /// For example the implicit remoting feature
+        /// (included in <see cref="SessionCapabilities.RemoteServer"/>)
+        /// doesn't use all parameters of Get-Help
         /// and uses only a limited set of argument values for the parameters it does use.
-        /// 
+        ///
         /// <see cref="CommandMetadata"/> can be passed to <see cref="ProxyCommand.Create(CommandMetadata)"/> method to generate
         /// a body of a proxy function that forwards calls to the actual cmdlet, while exposing only the parameters
         /// listed in <see cref="CommandMetadata"/>.  Exposing only the restricted proxy function while making
@@ -1373,7 +1373,7 @@ end
 #if !CORECLR    // Not referenced on CSS
         private static Collection<CommandMetadata> GetRestrictedJobCommands()
         {
-            // all the job cmdlets take a Name parameter. This needs to be 
+            // all the job cmdlets take a Name parameter. This needs to be
             // restricted to safenames in order to allow only valid wildcards
 
             // construct the parameterset metadata
@@ -1461,7 +1461,7 @@ end
             ParameterMetadata jobParameter2 = new ParameterMetadata(emptyCollection, false, JobCmdletBase.JobParameter,
                                                                     parameterSets, typeof(Job[]));
 
-            // Start-Job is not really required since the user will be using the name 
+            // Start-Job is not really required since the user will be using the name
             // of the workflow to launch them
             Collection<CommandMetadata> restrictedJobCommands = new Collection<CommandMetadata>();
 

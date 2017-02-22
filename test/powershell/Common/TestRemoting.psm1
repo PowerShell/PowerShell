@@ -46,7 +46,7 @@ function New-RemoteSession
     if ($ConfigurationName) {
         $parameters["ConfigurationName"] = $ConfigurationName
     }
-    
+
     if ($SessionOption) {
         $parameters["SessionOption"] = $SessionOption
     }

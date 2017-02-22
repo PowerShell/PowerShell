@@ -9,7 +9,7 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Out-File", "Out-String", "Get-FormatData", "Export-FormatData", "ConvertFrom-Json", "ConvertTo-Json",
     "Invoke-RestMethod", "Invoke-WebRequest", "Register-ObjectEvent", "Register-EngineEvent",
     "Wait-Event", "Get-Event", "Remove-Event", "Get-EventSubscriber", "Unregister-Event", "New-Guid",
-    "New-Event", "Add-Member", "Add-Type", "Compare-Object", "ConvertTo-Html", "ConvertFrom-StringData", 
+    "New-Event", "Add-Member", "Add-Type", "Compare-Object", "ConvertTo-Html", "ConvertFrom-StringData",
     "Export-Csv", "Import-Csv", "ConvertTo-Csv", "ConvertFrom-Csv", "Export-Alias", "Invoke-Expression",
     "Get-Alias", "Get-Culture", "Get-Date", "Get-Host", "Get-Member", "Get-Random", "Get-UICulture",
     "Get-Unique", "Export-PSSession", "Import-PSSession", "Import-Alias", "Import-LocalizedData",
@@ -20,10 +20,10 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Clear-Variable", "Export-Clixml", "Import-Clixml", "Import-PowerShellDataFile", "ConvertTo-Xml", "Select-Xml", "Write-Debug",
     "Write-Verbose", "Write-Warning", "Write-Error", "Write-Information", "Write-Output", "Set-PSBreakpoint",
     "Get-PSBreakpoint", "Remove-PSBreakpoint", "Enable-PSBreakpoint", "Disable-PSBreakpoint", "Get-PSCallStack",
-    "Get-TraceSource", "Set-TraceSource", "Trace-Command",
+    "Get-TraceSource", "Set-TraceSource", "Trace-Command", "Get-FileHash",
     "Get-Runspace", "Debug-Runspace", "Enable-RunspaceDebug", "Disable-RunspaceDebug",
     "Get-RunspaceDebug", "Wait-Debugger" , "Get-Uptime", "New-TemporaryFile", "Get-Verb"
-FunctionsToExport= "Get-FileHash", "Format-Hex", "Import-PowerShellDataFile"
+FunctionsToExport= "Format-Hex", "Import-PowerShellDataFile"
 AliasesToExport= "fhx"
 NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=390787'

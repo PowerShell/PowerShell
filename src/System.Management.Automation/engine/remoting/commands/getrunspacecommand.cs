@@ -17,30 +17,30 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet is used to retrieve runspaces from the global cache
     /// and write it to the pipeline. The runspaces are wrapped and
     /// returned as PSSession objects.
-    /// 
+    ///
     /// The cmdlet can be used in the following ways:
-    /// 
+    ///
     /// List all the available runspaces
     ///     get-pssession
-    /// 
+    ///
     /// Get the PSSession from session name
     ///     get-pssession -Name sessionName
-    /// 
+    ///
     /// Get the PSSession for the specified ID
     ///     get-pssession -Id sessionId
-    ///     
+    ///
     /// Get the PSSession for the specified instance Guid
     ///     get-pssession -InstanceId sessionGuid
-    ///     
+    ///
     /// Get PSSessions from remote computer.  Optionally filter on state, session instanceid or session name.
     ///     get-psession -ComputerName computerName -StateFilter Disconnected
-    /// 
+    ///
     /// Get PSSessions from virtual machine. Optionally filter on state, session instanceid or session name.
     ///     get-psession -VMName vmName -Name sessionName
-    ///     
+    ///
     /// Get PSSessions from container. Optionally filter on state, session instanceid or session name.
     ///     get-psession -ContainerId containerId -InstanceId instanceId
-    ///     
+    ///
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "PSSession", DefaultParameterSetName = PSRunspaceCmdlet.NameParameterSet,
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135219", RemotingCapability = RemotingCapability.OwnedByCommand)]
@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
         private String _appName;
 
         /// <summary>
-        /// A complete URI(s) specified for the remote computer and shell to 
+        /// A complete URI(s) specified for the remote computer and shell to
         /// connect to and create a runspace for.
         /// </summary>
         [Parameter(Position = 0, Mandatory = true,
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// For WSMan sessions:
         /// If this parameter is not specified then the value specified in
-        /// the environment variable DEFAULTREMOTESHELLNAME will be used. If 
+        /// the environment variable DEFAULTREMOTESHELLNAME will be used. If
         /// this is not set as well, then Microsoft.PowerShell is used.
         ///
         /// For VM/Container sessions:
@@ -186,8 +186,8 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Specifies the credentials of the user to impersonate in the 
-        /// remote machine. If this parameter is not specified then the 
+        /// Specifies the credentials of the user to impersonate in the
+        /// remote machine. If this parameter is not specified then the
         /// credentials of the current user process will be assumed.
         /// </summary>
         [Parameter(ParameterSetName = GetPSSessionCommand.ComputerNameParameterSet)]
@@ -229,7 +229,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Specifies the certificate thumbprint to be used to impersonate the user on the 
+        /// Specifies the certificate thumbprint to be used to impersonate the user on the
         /// remote machine.
         /// </summary>
         [Parameter(ParameterSetName = GetPSSessionCommand.ComputerNameParameterSet)]
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Port specifies the alternate port to be used in case the 
+        /// Port specifies the alternate port to be used in case the
         /// default ports are not used for the transport mechanism
         /// (port 80 for http and port 443 for useSSL)
         /// </summary>
@@ -384,7 +384,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void QueryForRemoteSessions()
         {
-            // Get collection of connection objects for each computer name or 
+            // Get collection of connection objects for each computer name or
             // connection uri.
             Collection<WSManConnectionInfo> connectionInfos = GetConnectionObjects();
 

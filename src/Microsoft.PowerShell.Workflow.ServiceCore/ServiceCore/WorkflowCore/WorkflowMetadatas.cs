@@ -20,12 +20,12 @@ namespace Microsoft.PowerShell.Workflow
         /// The ubiquitous parameters, which are also passed to the engine.
         /// </summary>
         private Dictionary<string, object> _psWorkflowCommonParameters;
-     
+
         /// <summary>
         /// The metadata, which contains all the information related to job and client like, job-id, connection-id and application-id etc.
         /// </summary>
         private Dictionary<string, object> jobMetadata;
-        
+
         /// <summary>
         /// The metadata, which is specific to the caller and doesn't contain any information related to workflow execution.
         /// </summary>

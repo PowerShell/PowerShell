@@ -148,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
                         //catch (PlatformNotSupportedException) // thrown (indirectly) by SecurityIdentifier.Translate (on Win95 only?)
                         //{ catch not needed - this is already caught as SystemException
                         //}
-                        //catch (UnauthorizedAccessException) // thrown (indirectly) by SecurityIdentifier.Translate 
+                        //catch (UnauthorizedAccessException) // thrown (indirectly) by SecurityIdentifier.Translate
                         //{ catch not needed - this is already caught as SystemException
                         //}
                     }

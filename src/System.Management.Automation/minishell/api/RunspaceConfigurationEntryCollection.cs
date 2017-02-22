@@ -15,21 +15,21 @@ namespace System.Management.Automation.Runspaces
     internal delegate void RunspaceConfigurationEntryUpdateEventHandler();
 
     /// <summary>
-    /// Define class for runspace configuration entry collection. 
+    /// Define class for runspace configuration entry collection.
     /// </summary>
     /// <!--
-    /// Runspace configuration entry collection is used for handling following 
-    /// problems for runspace configuration entries. 
-    /// 
+    /// Runspace configuration entry collection is used for handling following
+    /// problems for runspace configuration entries.
+    ///
     ///     1. synchronization. Since multiple runspaces may be sharing the same
     ///        runspace configuration, it is essential all the entry collections
-    ///        (cmdlets, providers, assemblies, types, formats) are thread-safe. 
-    ///     2. prepending/appending. Data for types and formats are order 
-    ///        sensitive. It is required for supporting prepending/appending to 
-    ///        the list and ability to remove the prepended/appended items. 
+    ///        (cmdlets, providers, assemblies, types, formats) are thread-safe.
+    ///     2. prepending/appending. Data for types and formats are order
+    ///        sensitive. It is required for supporting prepending/appending to
+    ///        the list and ability to remove the prepended/appended items.
     ///     3. update. Update to the data needs to be communicated to other monad
-    ///        components. For example, if cmdlets/providers list is updated, it 
-    ///        has to be communicated to engine. 
+    ///        components. For example, if cmdlets/providers list is updated, it
+    ///        has to be communicated to engine.
     /// -->
 #if CORECLR
     internal
@@ -59,7 +59,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         private Collection<T> _data = new Collection<T>();
-        private int _builtInEnd = 0; // this is the index of first after item. 
+        private int _builtInEnd = 0; // this is the index of first after item.
 
         private Collection<T> _updateList = new Collection<T>();
         internal Collection<T> UpdateList
@@ -340,7 +340,7 @@ namespace System.Management.Automation.Runspaces
         /// <!--
         /// Enumerator work is not thread safe by default. Any code trying
         /// to do enumeration on this collection should lock it first.
-        /// 
+        ///
         /// Need to document this.
         /// -->
         IEnumerator System.Collections.IEnumerable.GetEnumerator()
@@ -355,7 +355,7 @@ namespace System.Management.Automation.Runspaces
         /// <!--
         /// Enumerator work is not thread safe by default. Any code trying
         /// to do enumeration on this collection should lock it first.
-        /// 
+        ///
         /// Need to document this.
         /// -->
         IEnumerator<T> System.Collections.Generic.IEnumerable<T>.GetEnumerator()
@@ -364,7 +364,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Update others about the collection change. 
+        /// Update others about the collection change.
         /// </summary>
         public void Update()
         {
@@ -425,7 +425,7 @@ namespace System.Management.Automation.Runspaces
         private object _syncObject = new object();
 
         /// <summary>
-        /// OnUpdate handler should lock the object itself. 
+        /// OnUpdate handler should lock the object itself.
         /// </summary>
         internal event RunspaceConfigurationEntryUpdateEventHandler OnUpdate;
     }

@@ -429,7 +429,7 @@ namespace System.Management.Automation.Language
         /// <param name="usingStatementAst">using statement</param>
         /// <param name="exception">If exception happens, return exception object.</param>
         /// <param name="wildcardCharactersUsed">
-        /// True if in the module name uses wildcardCharacter. 
+        /// True if in the module name uses wildcardCharacter.
         /// We don't want to resolve any wild-cards in using module.
         /// </param>
         /// <param name="isConstant">True if module hashtable contains constant value (it's our requirement).</param>

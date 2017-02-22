@@ -37,12 +37,12 @@ namespace System.Management.Automation
     /// <summary>
     /// Defines a base class implemented when you need to customize the type conversion for a target class.
     /// </summary>
-    /// <remarks> 
+    /// <remarks>
     /// There are two ways of associating the PSTypeConverter with its target class:
     ///     - Through the type configuration file.
     ///     - By applying a TypeConverterAttribute to the target class.
-    ///     
-    /// Unlike System.ComponentModel.TypeConverter, PSTypeConverter can be applied to a family of types (like all types derived from System.Enum). 
+    ///
+    /// Unlike System.ComponentModel.TypeConverter, PSTypeConverter can be applied to a family of types (like all types derived from System.Enum).
     /// PSTypeConverter has two main differences from TypeConverter:
     ///     - It can be applied to a family of types and not only the one type as in TypeConverter. In order to do that
     /// ConvertFrom and CanConvertFrom receive destinationType to know to which type specifically we are converting sourceValue.
@@ -233,7 +233,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The ranking of versions for comparison purposes (used in overload resolution.)
     /// A larger value means the conversion is better.
-    /// 
+    ///
     /// Note that the lower nibble is all ones for named conversion ranks.  This allows for
     /// conversions with rankings in between the named values.  For example, int=>string[]
     /// is value dependent, if the conversion from int=>string succeeds, then an array is
@@ -604,7 +604,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="first">first object</param>
         /// <param name="second">object to compare first to</param>
-        /// <param name="ignoreCase">used only if first and second are strings 
+        /// <param name="ignoreCase">used only if first and second are strings
         /// to specify the type of string comparison </param>
         /// <returns>true if first is equal to the second</returns>
         public static bool Equals(object first, object second, bool ignoreCase)
@@ -617,10 +617,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="first">first object</param>
         /// <param name="second">object to compare first to</param>
-        /// <param name="ignoreCase">used only if first and second are strings 
+        /// <param name="ignoreCase">used only if first and second are strings
         /// to specify the type of string comparison </param>
-        /// <param name="formatProvider">the format/culture to be used. If this parameter is null, 
-        /// CultureInfo.InvariantCulture will be used. 
+        /// <param name="formatProvider">the format/culture to be used. If this parameter is null,
+        /// CultureInfo.InvariantCulture will be used.
         /// </param>
         /// <returns>true if first is equal to the second</returns>
         public static bool Equals(object first, object second, bool ignoreCase, IFormatProvider formatProvider)
@@ -712,7 +712,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="first">first comparison value</param>
         /// <param name="second">second comparison value</param>
-        /// <returns>less than zero if first is smaller than second, more than 
+        /// <returns>less than zero if first is smaller than second, more than
         /// zero if it is greater or zero if they are the same</returns>
         /// <exception cref="System.ArgumentException">
         /// <paramref name="first"/> does not implement IComparable or <paramref name="second"/> cannot be converted
@@ -730,7 +730,7 @@ namespace System.Management.Automation
         /// <param name="first">first comparison value</param>
         /// <param name="second">second comparison value</param>
         /// <param name="ignoreCase">Used if both values are strings</param>
-        /// <returns>less than zero if first is smaller than second, more than 
+        /// <returns>less than zero if first is smaller than second, more than
         /// zero if it is greater or zero if they are the same</returns>
         /// <exception cref="System.ArgumentException">
         /// <paramref name="first"/> does not implement IComparable or <paramref name="second"/> cannot be converted
@@ -749,7 +749,7 @@ namespace System.Management.Automation
         /// <param name="second">second comparison value</param>
         /// <param name="ignoreCase">Used if both values are strings</param>
         /// <param name="formatProvider">Used in type conversions and if both values are strings</param>
-        /// <returns>less than zero if first is smaller than second, more than 
+        /// <returns>less than zero if first is smaller than second, more than
         /// zero if it is greater or zero if they are the same</returns>
         /// <exception cref="System.ArgumentException">
         /// <paramref name="first"/> does not implement IComparable or <paramref name="second"/> cannot be converted
@@ -930,7 +930,7 @@ namespace System.Management.Automation
 
                 // if the result is an array of length 1, treat it as a scalar...
                 case 1:
-                    // A possible implementation would be just 
+                    // A possible implementation would be just
                     // return IsTrue(objectArray[0]);
                     // but since we don't want this to recurse indefinitely
                     // we explicitly check the case where it would recurse
@@ -993,16 +993,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Table of the largest safe type to which both types can be converted without exceptions. 
+        /// Table of the largest safe type to which both types can be converted without exceptions.
         /// This table is used for numeric comparisons.
         /// The 4 entries marked as not used, are explicitly dealt with in NumericCompareDecimal.
-        /// NumericCompareDecimal exists because doubles and singles can throw 
+        /// NumericCompareDecimal exists because doubles and singles can throw
         /// an exception when converted to decimal.
         /// The order of lines and columns cannot be changed since NumericCompare depends on it.
         /// </summary>
         internal static Type[][] LargestTypeTable = new Type[][]
         {
-            //                                       System.Int16            System.Int32            System.Int64            System.UInt16           System.UInt32           System.UInt64           System.SByte            System.Byte             System.Single           System.Double           System.Decimal        
+            //                                       System.Int16            System.Int32            System.Int64            System.UInt16           System.UInt32           System.UInt64           System.SByte            System.Byte             System.Single           System.Double           System.Decimal
             /* System.Int16   */new Type[] { typeof(System.Int16),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Double),  typeof(System.Int16),   typeof(System.Int16),   typeof(System.Single),  typeof(System.Double),  typeof(System.Decimal) },
             /* System.Int32   */new Type[] { typeof(System.Int32),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Int32),   typeof(System.Int64),   typeof(System.Double),  typeof(System.Int32),   typeof(System.Int32),   typeof(System.Double),  typeof(System.Double),  typeof(System.Decimal) },
             /* System.Int64   */new Type[] { typeof(System.Int64),   typeof(System.Int64),   typeof(System.Int64),   typeof(System.Int64),   typeof(System.Int64),   typeof(System.Decimal), typeof(System.Int64),   typeof(System.Int64),   typeof(System.Double),  typeof(System.Double),  typeof(System.Decimal) },
@@ -1047,7 +1047,7 @@ namespace System.Management.Automation
         private static int NumericCompare(object number1, object number2, int index1, int index2)
         {
             // Conversion from single or double to decimal might throw
-            // if the double is greater than the decimal's maximum so 
+            // if the double is greater than the decimal's maximum so
             // we special case it in NumericCompareDecimal
             if ((index1 == 10) && ((index2 == 8) || (index2 == 9)))
             {
@@ -1266,7 +1266,7 @@ namespace System.Management.Automation
         /// Verifies if type is one of boolean or switch parameter types
         /// </summary>
         /// <param name="type">type to check</param>
-        /// <returns>true if type if one of boolean or switch parameter types, 
+        /// <returns>true if type if one of boolean or switch parameter types,
         /// false otherwise</returns>
         internal static bool IsBoolOrSwitchParameterType(Type type)
         {
@@ -1278,10 +1278,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Do the necessary conversions when using property or array assignment to a generic dictionary:
-        /// 
+        ///
         ///     $dict.Prop = value
         ///     $dict[$Prop] = value
-        ///     
+        ///
         /// The property typically won't need conversion, but it could.  The value is more likely in
         /// need of conversion.
         /// </summary>
@@ -1353,7 +1353,7 @@ namespace System.Management.Automation
         }
 
         /// backupTypeTable:
-        /// Used by Remoting Rehydration Logic. While Deserializing a remote object, 
+        /// Used by Remoting Rehydration Logic. While Deserializing a remote object,
         /// LocalPipeline.ExecutionContextFromTLS() might return null..In which case this
         /// TypeTable will be used to do the conversion.
         internal static object GetConverter(Type type, TypeTable backupTypeTable)
@@ -1436,7 +1436,7 @@ namespace System.Management.Automation
         /// <summary>
         /// BUGBUG - brucepay Mar. 2013 - I don't think this is general enough for dynamic keywords to support arbitrary target
         /// languages with arbitrary type representations so we may need an extension point here...
-        /// 
+        ///
         /// Maps a .NET or CIM type name string (e.g. SInt32) to the form expected by PowerShell users, namely "[typename]"
         /// If there is no mapping, then it returns null.
         /// If the string to convert is null or empty then the function returns "[object]" as the default typeless type.
@@ -1515,14 +1515,14 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// A null valueToConvert can be converted to :
-        ///     string          -   returns "" 
+        ///     string          -   returns ""
         ///     char            -   returns '\0'
         ///     numeric types   -   returns 0 converted to the appropriate type
         ///     boolean         -   returns LanguagePrimitives.IsTrue(null)
-        ///     PSObject       -   returns new PSObject()) 
+        ///     PSObject       -   returns new PSObject())
         ///     array           -   returns an array with null in array[0]
         ///     non value types -   returns null
-        /// 
+        ///
         /// The following conversions are considered language standard and cannot be customized:
         ///     - from derived to base class            -   returns valueToConvert intact
         ///     - to PSObject                          -   returns PSObject.AsPSObject(valueToConvert)
@@ -1530,11 +1530,11 @@ namespace System.Management.Automation
         ///     - from array/IEnumerable to array       -   tries to convert array/IEnumerable elements
         ///     - from object of type X to array of X   -   returns an array with object as its only element
         ///     - to bool                               -   returns LanguagePrimitives.IsTrue(valueToConvert)
-        ///     - to string                             -   returns a string representation of the object. 
-        ///                                                 In the particular case of a number to string, 
+        ///     - to string                             -   returns a string representation of the object.
+        ///                                                 In the particular case of a number to string,
         ///                                                 the conversion is culture invariant.
         ///     - from IDictionary to Hashtable         -   uses the Hashtable constructor
-        ///     - to XmlDocument                        -   creates a new XmlDocument with the 
+        ///     - to XmlDocument                        -   creates a new XmlDocument with the
         ///                                                 string representation of valueToConvert
         ///     - from string to char[]                 -   returns ((string)valueToConvert).ToCharArray()
         ///     - from string to RegEx                  -   creates a new RegEx with the string
@@ -1543,7 +1543,7 @@ namespace System.Management.Automation
         ///     - from string to numeric                -   returns a culture invariant conversion
         ///     - from ScriptBlock to Delegate          -   returns a delegate wrapping that scriptblock.
         ///     - from Integer to Enumeration           -   Uses Enum.ToObject
-        ///     - to WMI                                -   Instantiate a WMI instance using 
+        ///     - to WMI                                -   Instantiate a WMI instance using
         ///                                                 System.Management.ManagementObject
         ///     - to WMISearcher                        -   returns objects from running WQL query with the
         ///                                                 string representation of valueToConvert. The
@@ -1554,16 +1554,16 @@ namespace System.Management.Automation
         ///                                                 string representation of valueToConvert.
         ///     - to ADSISearcher                       -   return DirectorySearcher represented by the
         ///                                                 string representation of valueToConvert.
-        /// 
+        ///
         /// If none of the cases above is true, the following is considered in order:
-        /// 
+        ///
         ///    1) TypeConverter and PSTypeConverter
         ///    2) the Parse methods if the valueToConvert is a string
         ///    3) Constructors in resultType that take one parameter with type valueToConvert.GetType()
         ///    4) Implicit and explicit cast operators
         ///    5) IConvertible
-        /// 
-        ///  If any operation above throws an exception, this exception will be wrapped into a 
+        ///
+        ///  If any operation above throws an exception, this exception will be wrapped into a
         ///  PSInvalidCastException and thrown resulting in no further conversion attempt.
         /// </remarks>
         /// <param name="valueToConvert">value to be converted and returned</param>
@@ -1581,14 +1581,14 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// A null valueToConvert can be converted to :
-        ///     string          -   returns "" 
+        ///     string          -   returns ""
         ///     char            -   returns '\0'
         ///     numeric types   -   returns 0 converted to the appropriate type
         ///     boolean         -   returns LanguagePrimitives.IsTrue(null)
-        ///     PSObject       -   returns new PSObject()) 
+        ///     PSObject       -   returns new PSObject())
         ///     array           -   returns an array with null in array[0]
         ///     non value types -   returns null
-        /// 
+        ///
         /// The following conversions are considered language standard and cannot be customized:
         ///     - from derived to base class            -   returns valueToConvert intact
         ///     - to PSObject                          -   returns PSObject.AsPSObject(valueToConvert)
@@ -1596,11 +1596,11 @@ namespace System.Management.Automation
         ///     - from array/IEnumerable to array       -   tries to convert array/IEnumerable elements
         ///     - from object of type X to array of X   -   returns an array with object as its only element
         ///     - to bool                               -   returns LanguagePrimitives.IsTrue(valueToConvert)
-        ///     - to string                             -   returns a string representation of the object. 
-        ///                                                 In the particular case of a number to string, 
+        ///     - to string                             -   returns a string representation of the object.
+        ///                                                 In the particular case of a number to string,
         ///                                                 the conversion is culture invariant.
         ///     - from IDictionary to Hashtable         -   uses the Hashtable constructor
-        ///     - to XmlDocument                        -   creates a new XmlDocument with the 
+        ///     - to XmlDocument                        -   creates a new XmlDocument with the
         ///                                                 string representation of valueToConvert
         ///     - from string to char[]                 -   returns ((string)valueToConvert).ToCharArray()
         ///     - from string to RegEx                  -   creates a new RegEx with the string
@@ -1609,16 +1609,16 @@ namespace System.Management.Automation
         ///     - from string to numeric                -   returns a culture invariant conversion
         ///     - from ScriptBlock to Delegate          -   returns a delegate wrapping that scriptblock.
         ///     - from Integer to Enumeration           -   Uses Enum.ToObject
-        /// 
+        ///
         /// If none of the cases above is true, the following is considered in order:
-        /// 
+        ///
         ///    1) TypeConverter and PSTypeConverter
         ///    2) the Parse methods if the valueToConvert is a string
         ///    3) Constructors in resultType that take one parameter with type valueToConvert.GetType()
         ///    4) Implicit and explicit cast operators
         ///    5) IConvertible
-        /// 
-        ///  If any operation above throws an exception, this exception will be wrapped into a 
+        ///
+        ///  If any operation above throws an exception, this exception will be wrapped into a
         ///  PSInvalidCastException and thrown resulting in no further conversion attempt.
         /// </remarks>
         /// <param name="valueToConvert">value to be converted and returned</param>
@@ -1671,7 +1671,7 @@ namespace System.Management.Automation
         /// Sets result to valueToConvert converted to resultType.
         /// </summary>
         /// <remarks>
-        /// This method is a variant of ConvertTo that does not throw exceptions if the conversion fails. 
+        /// This method is a variant of ConvertTo that does not throw exceptions if the conversion fails.
         /// </remarks>
         /// <param name="valueToConvert">value to be converted and returned</param>
         /// <param name="result">result of the conversion. This is valid only if the return is true.</param>
@@ -1686,11 +1686,11 @@ namespace System.Management.Automation
             return TryConvertTo(valueToConvert, CultureInfo.InvariantCulture, out result);
         }
         /// <summary>
-        /// Sets result to valueToConvert converted to resultType considering formatProvider 
-        /// for custom conversions, calling the Parse method and calling Convert.ChangeType. 
+        /// Sets result to valueToConvert converted to resultType considering formatProvider
+        /// for custom conversions, calling the Parse method and calling Convert.ChangeType.
         /// </summary>
         /// <remarks>
-        /// This method is a variant of ConvertTo that does not throw exceptions if the conversion fails. 
+        /// This method is a variant of ConvertTo that does not throw exceptions if the conversion fails.
         /// </remarks>
         /// <param name="valueToConvert">value to be converted and returned</param>
         /// <param name="formatProvider">governing conversion of types</param>
@@ -1718,7 +1718,7 @@ namespace System.Management.Automation
         /// Sets result to valueToConvert converted to resultType.
         /// </summary>
         /// <remarks>
-        /// This method is a variant of ConvertTo that does not throw exceptions if the conversion fails. 
+        /// This method is a variant of ConvertTo that does not throw exceptions if the conversion fails.
         /// </remarks>
         /// <param name="valueToConvert">value to be converted and returned</param>
         /// <param name="resultType">type to convert valueToConvert</param>
@@ -1730,11 +1730,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Sets result to valueToConvert converted to resultType considering formatProvider 
-        /// for custom conversions, calling the Parse method and calling Convert.ChangeType. 
+        /// Sets result to valueToConvert converted to resultType considering formatProvider
+        /// for custom conversions, calling the Parse method and calling Convert.ChangeType.
         /// </summary>
         /// <remarks>
-        /// This method is a variant of ConvertTo that does not throw exceptions if the conversion fails. 
+        /// This method is a variant of ConvertTo that does not throw exceptions if the conversion fails.
         /// </remarks>
         /// <param name="valueToConvert">value to be converted and returned</param>
         /// <param name="resultType">type to convert valueToConvert</param>
@@ -1902,7 +1902,7 @@ namespace System.Management.Automation
                     if (enumHashEntry.hasFlagsAttribute)
                     {
                         // This expression will result in a "1 bit" for bits that are
-                        // set in enumValueInt64 but not set in enumHashEntry.allValues, 
+                        // set in enumValueInt64 but not set in enumHashEntry.allValues,
                         // and a "0 bit" otherwise. Any "bit 1" in the result, indicates this is not defined.
                         isDefined = ((enumValueUInt64 | enumHashEntry.allValues) ^ enumHashEntry.allValues) == 0;
                     }
@@ -1921,7 +1921,7 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Throws if the enumType enumeration has no negative values, but the enumValue is not 
+            /// Throws if the enumType enumeration has no negative values, but the enumValue is not
             /// defined in enumType.
             /// </summary>
             /// <param name="enumType">some enumeration</param>
@@ -1933,8 +1933,8 @@ namespace System.Management.Automation
             }
 
             /// <summary>
-            /// Throws if the enumType enumeration has no negative values, but the enumValue is not 
-            /// defined in enumType. 
+            /// Throws if the enumType enumeration has no negative values, but the enumValue is not
+            /// defined in enumType.
             /// </summary>
             /// <param name="errorId">The error id to be used when throwing an exception</param>
             /// <param name="enumValue">value to validate</param>
@@ -1943,7 +1943,7 @@ namespace System.Management.Automation
             /// <remarks>
             /// <paramref name="valueToUseToThrow"/> is used by those callers who want the exception
             /// to contain a different value than the one that is validated.
-            /// This will enable callers to take different forms of input -> convert to enum using 
+            /// This will enable callers to take different forms of input -> convert to enum using
             /// Enum.Object -> then validate using this method.
             /// </remarks>
             internal static void ThrowForUndefinedEnum(string errorId, object enumValue, object valueToUseToThrow, Type enumType)
@@ -2113,8 +2113,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// There might be many cast operators in a Type A that take Type A. Each operator will have a 
-        /// different return type. Because of that we cannot call GetMethod since it would cause a 
+        /// There might be many cast operators in a Type A that take Type A. Each operator will have a
+        /// different return type. Because of that we cannot call GetMethod since it would cause a
         /// AmbiguousMatchException. This auxiliary method calls GetMember to find the right method
         /// </summary>
         /// <param name="methodName">Either op_Explicit or op_Implicit, at the moment</param>
@@ -2273,7 +2273,7 @@ namespace System.Management.Automation
             {
                 ManagementClass wmiClass = new System.Management.ManagementClass(valueToConvertString);
 
-                // ManagementClass will not throw if the path specified is not 
+                // ManagementClass will not throw if the path specified is not
                 // a valid class.
                 if (wmiClass.SystemProperties["__CLASS"] == null)
                 {
@@ -2458,7 +2458,7 @@ namespace System.Management.Automation
         }
 
         /// backupTypeTable:
-        /// Used by Remoting Rehydration Logic. While Deserializing a remote object, 
+        /// Used by Remoting Rehydration Logic. While Deserializing a remote object,
         /// LocalPipeline.ExecutionContextFromTLS() might return null..In which case this
         /// TypeTable will be used to do the conversion.
         private static bool IsCustomTypeConversion(object valueToConvert,
@@ -2725,7 +2725,7 @@ namespace System.Management.Automation
         /// declared: [TypeConverter(typeof(UriTypeConverter))], so the conversion from 'string' to 'Uri' is
         /// actually taken care of by 'UriTypeConverter'. However, the type 'UriTypeConverter' is not available
         /// in CoreCLR, and thus the conversion from 'string' to 'Uri' would show a different behavior.
-        /// 
+        ///
         /// Therefore, we just add this built-in string-to-uri converter using the same logic 'UriTypeConverter'
         /// is using in FullCLR, so the conversion behavior will be the same on desktop powershell and powershell core.
         /// </summary>
@@ -2776,7 +2776,7 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                // This catch has one extra reason to be generic (Exception e). 
+                // This catch has one extra reason to be generic (Exception e).
                 // integerConverter.ConvertFrom warps its exceptions in a System.Exception.
                 if (e.InnerException != null)
                 {
@@ -3364,9 +3364,9 @@ namespace System.Management.Automation
             catch (ArgumentException e)
             {
                 typeConversion.WriteLine("Enum.Parse Exception: \"{0}\".", e.Message);
-                // Enum.Parse will always throw this kind of exception. 
+                // Enum.Parse will always throw this kind of exception.
                 // Even when no map exists. We want to try without case sensitivity
-                // If it works, we will return it, otherwise a new exception will 
+                // If it works, we will return it, otherwise a new exception will
                 // be thrown and we will use it to set exceptionToWrap
                 try
                 {
@@ -3435,7 +3435,7 @@ namespace System.Management.Automation
                 if (current == null)
                 {
                     // If the object wasn't a string, then we'll try and convert it into an enum value,
-                    // then convert the enum back to a string and finally append it to the string builder to 
+                    // then convert the enum back to a string and finally append it to the string builder to
                     // preserve consistent semantics between quoted and unquoted lists...
                     object tempResult = ConvertTo(e.Current, resultType, recursion, formatProvider, backupTable);
                     if (tempResult != null)
@@ -4497,14 +4497,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="valueToConvert">the same as in the public version</param>
         /// <param name="resultType">the same as in the public version</param>
         /// <param name="recursion">true if we should perform any recursive calls to ConvertTo</param>
         /// <param name="formatProvider">governing conversion of types</param>
         /// <param name="backupTypeTable">
-        /// Used by Remoting Rehydration Logic. While Deserializing a remote object, 
+        /// Used by Remoting Rehydration Logic. While Deserializing a remote object,
         /// LocalPipeline.ExecutionContextFromTLS() might return null..In which case this
         /// TypeTable will be used to do the conversion.
         /// </param>
@@ -5117,7 +5117,7 @@ namespace System.Management.Automation
         // PS C:\> $ps = [pscustomobject]@{a=10;b=5}
         // PS C:\> $ps = [pscustomobject][ordered]@{a=10;b=5}
         // Whenever we see a conversion to PSCustomObject, we represent it as a conversion to InternalPSCustomObject
-        // This is introduced to avoid breaking PSObject behavior. 
+        // This is introduced to avoid breaking PSObject behavior.
         // (Because PSCustomObject is a typeaccelerator for PSObject, we needed a separate type to represent type conversions to PSCustomObject)
         internal class InternalPSCustomObject
         {
@@ -5177,13 +5177,13 @@ namespace System.Management.Automation
                     }
                 }
             }
-#if CORECLR 
+#if CORECLR
             // Assemblies in CoreCLR might not allow reflection execution on their internal types.
             TypeInfo typeInfo = toType.GetTypeInfo();
             if (!TypeResolver.IsPublic(typeInfo) && DotNetAdapter.DisallowPrivateReflection(typeInfo))
             {
                 // If the type is non-public and reflection execution is not allowed on it, then we return
-                // 'ConvertNoConversion', because we won't be able to invoke constructor, methods or set 
+                // 'ConvertNoConversion', because we won't be able to invoke constructor, methods or set
                 // properties on an instance of this type through reflection.
                 return CacheConversion(fromType, toType, ConvertNoConversion, ConversionRank.None);
             }
@@ -5234,7 +5234,7 @@ namespace System.Management.Automation
                                 // We need to call the null argument constructor only if the following 2 conditions satisfy
                                 //  1) if the fromType is either a hashtable or OrderedDictionary
                                 //  2) if the ToType does not already have a constructor that takes a hashtable or OrderedDictionary. (This is to avoid breaking existing apps.)
-                                // If the ToType has a constructor that takes a hashtable or OrderedDictionary, 
+                                // If the ToType has a constructor that takes a hashtable or OrderedDictionary,
                                 // then it would have been returned as the constructor during FigureConstructorConversion
                                 // So, we need to check only for the first condition
                                 ConstructorInfo resultConstructor = toType.GetConstructor(PSTypeExtensions.EmptyTypes);

@@ -1,22 +1,32 @@
+$testroot = resolve-path (join-path $psscriptroot ../../..)
+$common = join-path $testroot Common
+$helperModule = join-path $common Test.Helpers.psm1
+
 Describe 'native commands lifecycle' -tags 'Feature' {
 
     BeforeAll {
+        Import-Module $helperModule
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
     }
 
-    #Marking this test as Pending due to issue # https://github.com/PowerShell/PowerShell/issues/2802
-    It "native | ps | native doesn't block" -Pending {
-        $first = $true
-        & $powershell -command '1..10 | % {Start-Sleep -mill 100; $_}' | %{$_} | & $powershell -command '$input' | % {
-            if ($first)
-            {
-                $first = $false
-                $firstTime = [datetime]::Now
-            }
-            $lastTime = [datetime]::Now
-        }
+    It "native | ps | native doesn't block" {
+        $iss = [initialsessionstate]::CreateDefault2();
+        $rs = [runspacefactory]::CreateRunspace($iss)
+        $rs.Open()
 
-        $lastTime - $firstTime | Should BeGreaterThan ([timespan]::new(0, 0, 0, 0, 100)) # 100 milliseconds
+        $ps = [powershell]::Create()
+        $ps.Runspace = $rs
+
+        $ps.AddScript("& $powershell -noprofile -command '100;
+            Start-Sleep -Seconds 100' |
+            %{ if (`$_ -eq 100) { 'foo'; exit; }}").BeginInvoke()
+
+        # waiting 30 seconds, because powershell startup time could be long on the slow machines,
+        # such as CI
+        Wait-UntilTrue { $rs.RunspaceAvailability -eq 'Available' } -timeout 30000 -interval 100 | Should Be $true
+
+        $ps.Stop()
+        $rs.ResetRunspaceState()
     }
 }
 
@@ -39,7 +49,7 @@ Describe "Native Command Processor" -tags "Feature" {
         # make sure no test processes are running
         # on Linux, the Process class truncates the name so filter using Where-Object
         Get-Process | Where-Object {$_.Name -like 'createchildproc*'} | Stop-Process
-        
+
         [int] $numToCreate = 2
 
         $ps = [PowerShell]::Create().AddCommand($createchildprocess)
@@ -50,7 +60,7 @@ Describe "Native Command Processor" -tags "Feature" {
         [bool] $childrenCreated = $false
         while (-not $childrenCreated)
         {
-            $childprocesses = Get-Process | Where-Object {$_.Name -like 'createchildproc*'} 
+            $childprocesses = Get-Process | Where-Object {$_.Name -like 'createchildproc*'}
             if ($childprocesses.count -eq $numToCreate+1)
             {
                 $childrenCreated = $true
@@ -68,7 +78,7 @@ Describe "Native Command Processor" -tags "Feature" {
             }
         }
         $childprocesses = Get-Process | Where-Object {$_.Name -like 'createchildproc*'}
-        $count = $childprocesses.count 
+        $count = $childprocesses.count
         $childprocesses | Stop-Process
         $count | Should Be 0
     }

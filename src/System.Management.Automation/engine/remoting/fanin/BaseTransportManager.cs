@@ -2,9 +2,9 @@
  * Copyright (c) Microsoft Corporation.  All rights reserved.
  * --********************************************************************/
 /*
- * Common file that contains interface definitions for generic server and client 
+ * Common file that contains interface definitions for generic server and client
  * transport managers.
- * 
+ *
  */
 
 using System.Management.Automation.Tracing;
@@ -147,8 +147,8 @@ namespace System.Management.Automation.Remoting
 
         #region Global Constants
 
-        // KeepAlive: Server 4 minutes, Client 3 minutes 
-        // The server timeout value has to be bigger than the client timeout value. 
+        // KeepAlive: Server 4 minutes, Client 3 minutes
+        // The server timeout value has to be bigger than the client timeout value.
         // This is due to the WinRM implementation on the Listener.
         // So We added a 1 minute network delay to count for this.
         internal const int ServerDefaultKeepAliveTimeoutMs = 4 * 60 * 1000; // milliseconds = 4 minutes
@@ -224,7 +224,7 @@ namespace System.Management.Automation.Remoting
         internal Fragmentor Fragmentor { get; set; }
 
         /// <summary>
-        /// This is needed to deserialize objects coming from the network. 
+        /// This is needed to deserialize objects coming from the network.
         /// This may be null..in which case type rehydration does not happen.
         /// At construction time we may not have typetable (server runspace
         /// is created only when a request from the client)..so this is
@@ -245,7 +245,7 @@ namespace System.Management.Automation.Remoting
         /// </param>
         /// <param name="stream">
         /// priority stream this data belongs to
-        /// </param>        
+        /// </param>
         internal virtual void ProcessRawData(byte[] data, string stream)
         {
             try
@@ -268,7 +268,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="data">
         /// data to process
@@ -320,7 +320,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="remoteObject"></param>
         /// <exception cref="Exception">
@@ -455,7 +455,7 @@ namespace System.Management.Automation.Remoting.Client
         /// connection, the event handler should complete processing as fast as possible.
         /// Importantly the event handler should not generate any call that results in a
         /// user request like host.ReadLine().
-        /// 
+        ///
         /// Errors (occurred during connection attempt) are reported through WSManTransportErrorOccured
         /// event.
         /// </summary>
@@ -466,7 +466,7 @@ namespace System.Management.Automation.Remoting.Client
         /// connection, the event handler should complete processing as fast as possible.
         /// Importantly the event handler should not generate any call that results in a
         /// user request like host.ReadLine().
-        /// 
+        ///
         /// Errors (occurred during connection attempt) are reported through WSManTransportErrorOccured
         /// event.
         /// </summary>
@@ -477,7 +477,7 @@ namespace System.Management.Automation.Remoting.Client
 
         /// <summary>
         /// Indicated successful completion of a connect operation on transport
-        /// 
+        ///
         /// Errors are reported through WSManTransportErrorOccured
         /// event.
         /// </summary>
@@ -485,7 +485,7 @@ namespace System.Management.Automation.Remoting.Client
 
         /// <summary>
         /// Indicated successful completion of a disconnect operation on transport
-        /// 
+        ///
         /// Errors are reported through WSManTransportErrorOccured
         /// event.
         /// </summary>
@@ -493,7 +493,7 @@ namespace System.Management.Automation.Remoting.Client
 
         /// <summary>
         /// Indicated successful completion of a reconnect operation on transport
-        /// 
+        ///
         /// Errors are reported through WSManTransportErrorOccured
         /// event.
         /// </summary>
@@ -501,7 +501,7 @@ namespace System.Management.Automation.Remoting.Client
 
         /// <summary>
         /// Indicates that the transport/command is ready for a disconnect operation.
-        /// 
+        ///
         /// Errors are reported through WSManTransportErrorOccured event.
         /// </summary>
         internal event EventHandler<EventArgs> ReadyForDisconnect;
@@ -513,7 +513,7 @@ namespace System.Management.Automation.Remoting.Client
 
         /// <summary>
         /// Indicates successful processing of a delay stream request on a receive operation
-        /// 
+        ///
         /// this event is useful when PS wants to invoke a pipeline in disconnected mode
         /// </summary>
         internal event EventHandler<EventArgs> DelayStreamRequestProcessed;
@@ -538,7 +538,7 @@ namespace System.Management.Automation.Remoting.Client
 
         /// <summary>
         /// Raise the Connect completed handler
-        /// </summary>        
+        /// </summary>
         internal void RaiseCreateCompleted(CreateCompleteEventArgs eventArgs)
         {
             CreateCompleted.SafeInvoke(this, eventArgs);
@@ -561,7 +561,7 @@ namespace System.Management.Automation.Remoting.Client
 
         /// <summary>
         /// Raise the close completed handler
-        /// </summary>        
+        /// </summary>
         internal void RaiseCloseCompleted()
         {
             CloseCompleted.SafeInvoke(this, EventArgs.Empty);
@@ -655,7 +655,7 @@ namespace System.Management.Automation.Remoting.Client
             }
             catch (Exception exception)
             {
-                // Enqueue an Exception to process in a thread-pool thread. Processing 
+                // Enqueue an Exception to process in a thread-pool thread. Processing
                 // Exception in a thread pool thread is important as calling
                 // WSManCloseShell/Command from a Receive callback results in a deadlock.
                 tracer.WriteLine("Exception processing data. {0}", exception.Message);
@@ -819,7 +819,7 @@ namespace System.Management.Automation.Remoting.Client
                     CallbackNotificationInformation rcvdDataInfo = null;
                     lock (_callbackNotificationQueue)
                     {
-                        // If queue is empty or if queue servicing is suspended 
+                        // If queue is empty or if queue servicing is suspended
                         // then break out of loop.
                         if (_callbackNotificationQueue.Count <= 0 || _suspendQueueServicing)
                         {
@@ -1263,7 +1263,7 @@ namespace System.Management.Automation.Remoting.Server
         /// </param>
         internal void SendDataToClient<T>(RemoteDataObject<T> data, bool flush, bool reportPending = false)
         {
-            // make sure only one data packet can be sent in its entirety at any 
+            // make sure only one data packet can be sent in its entirety at any
             // given point of time using this transport manager.
             lock (_syncObject)
             {
@@ -1281,7 +1281,7 @@ namespace System.Management.Automation.Remoting.Server
                 //        Update-TypeData -TypeName Microsoft.PowerShell.Test.Bug491001 -MemberType ScriptProperty -MemberName zname -Value {( 1..10kb | % { get-random -min 97 -max 122 | %  { [char]$psitem } }) -join ""}
                 //        $a
                 //   }
-                // 1. The value of "name" property is huge 50kb and cannot fit in one fragment (with fragment size 32kb)   
+                // 1. The value of "name" property is huge 50kb and cannot fit in one fragment (with fragment size 32kb)
                 // 2. The value of "Verbose" is actually writing a progress record
                 // 3. The value of "zname" property is also huge
                 // 4. Notice the ascending order of property names. This is because serializer serializes properties in sort order
@@ -1424,7 +1424,7 @@ namespace System.Management.Automation.Remoting.Server
         #region Abstract interfaces
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="data"></param>
         /// <param name="flush">
@@ -1439,12 +1439,12 @@ namespace System.Management.Automation.Remoting.Server
         protected abstract void SendDataToClient(byte[] data, bool flush, bool reportAsPending, bool reportAsDataBoundary);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal abstract void ReportExecutionStatusAsRunning();
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="reasonForClose">
         /// message describing why the transport manager must be closed
@@ -1453,8 +1453,8 @@ namespace System.Management.Automation.Remoting.Server
 
         /// <summary>
         /// Prepare the transport manager to send data (because a command
-        /// is about to start). This is used by underlying infrastructure 
-        /// to send ACK to client..so client can start sending input and 
+        /// is about to start). This is used by underlying infrastructure
+        /// to send ACK to client..so client can start sending input and
         /// other data to server.
         /// </summary>
         internal virtual void Prepare()
@@ -1469,7 +1469,7 @@ namespace System.Management.Automation.Remoting.Server
     }
 
     /// <summary>
-    /// This represents an abstraction for server session transport manager. 
+    /// This represents an abstraction for server session transport manager.
     /// </summary>
     internal abstract class AbstractServerSessionTransportManager : AbstractServerTransportManager
     {
@@ -1508,8 +1508,8 @@ namespace System.Management.Automation.Remoting.Server
         #region Public Helper Methods
 
         /// <summary>
-        /// A helper method to extract a base-64 encoded XML element from a specified input 
-        /// buffer. The calls required are not compatible with the Managed C++ CoreCLR 
+        /// A helper method to extract a base-64 encoded XML element from a specified input
+        /// buffer. The calls required are not compatible with the Managed C++ CoreCLR
         /// mscorlib, but this operation is supported as managed C# code.
         /// </summary>
         /// <param name="xmlBuffer">The input buffer to search. It must be base-64 encoded XML.</param>

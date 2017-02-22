@@ -2,12 +2,12 @@ using namespace System.Diagnostics
 
 # Minishell (Singleshell) is a powershell concept.
 # Its primary use-case is when somebody executes a scriptblock in the new powershell process.
-# The objects are automatically marshelled to the child process and 
+# The objects are automatically marshelled to the child process and
 # back to the parent session, so users can avoid custom
 # serialization to pass objects between two processes.
 
 Describe 'minishell for native executables' -Tag 'CI' {
-    
+
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
     }
@@ -16,21 +16,22 @@ Describe 'minishell for native executables' -Tag 'CI' {
 
         It 'gets a hashtable object from minishell' {
             $output = & $powershell -noprofile { @{'a' = 'b'} }
-            ($output | measure).Count | Should Be 1
-            ($output.GetType().Name) | Should Be 'Hashtable'
+            ($output | Measure-Object).Count | Should Be 1
+            $output | Should BeOfType 'Hashtable'
             $output['a'] | Should Be 'b'
         }
 
         It 'gets the error stream from minishell' {
             $output = & $powershell -noprofile { Write-Error 'foo' } 2>&1
-            ($output | measure).Count | Should Be 1
-            ($output.GetType().Name) | Should Be 'ErrorRecord'
+            ($output | Measure-Object).Count | Should Be 1
+            $output | Should BeOfType 'System.Management.Automation.ErrorRecord'
             $output.FullyQualifiedErrorId | Should Be 'Microsoft.PowerShell.Commands.WriteErrorException'
         }
 
         It 'gets the information stream from minishell' {
             $output = & $powershell -noprofile { Write-Information 'foo' } 6>&1
-            ($output.GetType().Name) | Should Be 'InformationRecord'
+            ($output | Measure-Object).Count | Should Be 1
+            $output | Should BeOfType 'System.Management.Automation.InformationRecord'
             $output | Should Be 'foo'
         }
     }
@@ -82,14 +83,14 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             }
         }
     }
-    
+
     AfterEach {
         $Error.Clear()
     }
 
     Context "ShellInterop" {
         It "Verify Parsing Error Output Format Single Shell should throw exception" {
-            try 
+            try
             {
                 & $powershell -outp blah -comm { $input }
                 Throw "Test execution should not reach here!"
@@ -99,7 +100,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
                 $_.FullyQualifiedErrorId | Should Be "IncorrectValueForFormatParameter"
             }
         }
-        
+
         It "Verify Validate Dollar Error Populated should throw exception" {
             $origEA = $ErrorActionPreference
             $ErrorActionPreference = "Stop"
@@ -119,16 +120,16 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
                 $ErrorActionPreference = $origEA
             }
         }
-        
+
         It "Verify Validate Output Format As Text Explicitly Child Single Shell should works" {
             {
                 $a="blahblah"
                 $a | & $powershell -noprofile -out text -com { $input }
             } | Should Not Throw
         }
-        
+
         It "Verify Parsing Error Input Format Single Shell should throw exception" {
-            try 
+            try
             {
                 & $powershell -input blah -comm { $input }
                 Throw "Test execution should not reach here!"
@@ -150,7 +151,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
         foreach ($x in "--help", "-help", "-h", "-?", "--he", "-hel", "--HELP", "-hEl") {
             It "Accepts '$x' as a parameter for help" {
-                & $powershell -noprofile $x | ?{ $_ -match "PowerShell[.exe] -Help | -? | /?" } | Should Not BeNullOrEmpty
+                & $powershell -noprofile $x | Where-Object { $_ -match "PowerShell[.exe] -Help | -? | /?" } | Should Not BeNullOrEmpty
             }
         }
 
@@ -373,7 +374,7 @@ foo
 Describe "Console host api tests" -Tag CI {
     Context "String escape sequences" {
         $esc = [char]0x1b
-        $testCases = 
+        $testCases =
             @{InputObject = "abc"; Length = 3; Name = "No escapes"},
             @{InputObject = "${esc} [31mabc"; Length = 9; Name = "Malformed escape - extra space"},
             @{InputObject = "${esc}abc"; Length = 4; Name = "Malformed escape - no csi"},

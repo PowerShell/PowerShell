@@ -15,7 +15,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>
-    /// Client-side filtering for 
+    /// Client-side filtering for
     /// 1) filtering that cannot be translated into a server-side query (i.e. when CimQuery.WildcardToWqlLikeOperand reports that it cannot translate into WQL)
     /// 2) detecting if all expected results have been received and giving friendly user errors otherwise (i.e. could not find process with name='foo';  details in Windows 8 Bugs: #60926)
     /// </summary>

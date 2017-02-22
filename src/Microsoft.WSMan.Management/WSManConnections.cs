@@ -29,7 +29,7 @@ namespace Microsoft.WSMan.Management
     {
         /// <summary>
         /// The following is the definition of the input parameter "Credential".
-        /// Specifies a user account that has permission to perform this action. The 
+        /// Specifies a user account that has permission to perform this action. The
         /// default is the current user.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -39,8 +39,8 @@ namespace Microsoft.WSMan.Management
         public virtual PSCredential Credential
         {
             get { return credential; }
-            set 
-            { 
+            set
+            {
                 credential = value;
                 ValidateSpecifiedAuthentication();
             }
@@ -49,17 +49,17 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "Authentication".
-        /// This parameter takes a set of authentication methods the user can select 
-        /// from. The available method are an enum called Authentication in the 
-        /// System.Management.Automation.Runspaces  namespace. The available options 
+        /// This parameter takes a set of authentication methods the user can select
+        /// from. The available method are an enum called Authentication in the
+        /// System.Management.Automation.Runspaces  namespace. The available options
         /// should be as follows:
-        /// - Default : Use the default authentication (ad defined by the underlying 
+        /// - Default : Use the default authentication (ad defined by the underlying
         /// protocol) for establishing a remote connection.
         /// - Negotiate
         /// - Kerberos
         /// - Basic:  Use basic authentication for establishing a remote connection.
-        /// -CredSSP: Use CredSSP authentication for establishing a remote connection 
-        /// which will enable the user to perform credential delegation. (i.e. second 
+        /// -CredSSP: Use CredSSP authentication for establishing a remote connection
+        /// which will enable the user to perform credential delegation. (i.e. second
         /// hop)
         /// </summary>
         [Parameter]
@@ -68,8 +68,8 @@ namespace Microsoft.WSMan.Management
         public virtual AuthenticationMechanism Authentication
         {
             get { return authentication; }
-            set 
-            { 
+            set
+            {
                 authentication = value;
                 ValidateSpecifiedAuthentication();
             }
@@ -77,8 +77,8 @@ namespace Microsoft.WSMan.Management
         private AuthenticationMechanism authentication = AuthenticationMechanism.Default;
 
         /// <summary>
-        /// Specifies the certificate thumbprint to be used to impersonate the user on the 
-        /// remote machine. 
+        /// Specifies the certificate thumbprint to be used to impersonate the user on the
+        /// remote machine.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -129,11 +129,11 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
-        /// Executes the management operation on the specified computer(s). The default 
-        /// is the local computer. Type the fully qualified domain name, NETBIOS name or 
+        /// Executes the management operation on the specified computer(s). The default
+        /// is the local computer. Type the fully qualified domain name, NETBIOS name or
         /// IP address to indicate the remote host(s)
         /// </summary>
-        [Parameter(ParameterSetName = "ComputerName", Position = 0)]        
+        [Parameter(ParameterSetName = "ComputerName", Position = 0)]
         [Alias("cn")]
         public String ComputerName
         {
@@ -151,8 +151,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "ConnectionURI".
-        /// Specifies the transport, server, port, and ApplicationName of the new 
-        /// runspace. The format of this string is: 
+        /// Specifies the transport, server, port, and ApplicationName of the new
+        /// runspace. The format of this string is:
         /// transport://server:port/ApplicationName.
         /// </summary>
         [Parameter(ParameterSetName = "URI")]
@@ -167,7 +167,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "OptionSet".
-        /// OptionSet is a hash table and is used to pass a set of switches to the 
+        /// OptionSet is a hash table and is used to pass a set of switches to the
         /// service to modify or refine the nature of the request.
         /// </summary>
         [Parameter]
@@ -183,7 +183,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "Port".
-        /// Specifies the port to be used when connecting to the ws management service. 
+        /// Specifies the port to be used when connecting to the ws management service.
         /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
@@ -198,7 +198,7 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "SessionOption".
-        /// Defines a set of extended options for the WSMan session.  This hashtable can 
+        /// Defines a set of extended options for the WSMan session.  This hashtable can
         /// be created using New-WSManSessionOption
         /// </summary>
         [Parameter]
@@ -214,8 +214,8 @@ namespace Microsoft.WSMan.Management
 
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
-        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to 
-        /// the remote computer. If SSL is not available on the port specified by the 
+        /// Uses the Secure Sockets Layer (SSL) protocol to establish a connection to
+        /// the remote computer. If SSL is not available on the port specified by the
         /// Port parameter, the command fails.
         /// </summary>
         [Parameter(ParameterSetName = "ComputerName")]
@@ -262,7 +262,7 @@ namespace Microsoft.WSMan.Management
                 helper.AssertError(helper.GetResourceMsgFromResourcetext("ConnectFailure"), false, computername);
             }
             helper.CreateWsManConnection(ParameterSetName, connectionuri, port, computername, applicationname, usessl.IsPresent, Authentication, sessionoption, Credential, CertificateThumbprint);
-        }//End BeginProcessing()    
+        }//End BeginProcessing()
 
     }//end class
     #endregion
@@ -270,8 +270,8 @@ namespace Microsoft.WSMan.Management
     # region Disconnect-WSMAN
     /// <summary>
     /// The following is the definition of the input parameter "ComputerName".
-    /// Executes the management operation on the specified computer(s). The default 
-    /// is the local computer. Type the fully qualified domain name, NETBIOS name or 
+    /// Executes the management operation on the specified computer(s). The default
+    /// is the local computer. Type the fully qualified domain name, NETBIOS name or
     /// IP address to indicate the remote host(s)
     /// </summary>
 
@@ -280,11 +280,11 @@ namespace Microsoft.WSMan.Management
     {
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
-        /// Executes the management operation on the specified computer(s). The default 
-        /// is the local computer. Type the fully qualified domain name, NETBIOS name or 
+        /// Executes the management operation on the specified computer(s). The default
+        /// is the local computer. Type the fully qualified domain name, NETBIOS name or
         /// IP address to indicate the remote host(s)
         /// </summary>
-        [Parameter(Position = 0)]        
+        [Parameter(Position = 0)]
         public String ComputerName
         {
             get { return computername; }

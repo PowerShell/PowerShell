@@ -35,7 +35,7 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="context"/> is null.
         /// </exception>
-        /// 
+        ///
         internal EngineIntrinsics(ExecutionContext context)
         {
             if (context == null)

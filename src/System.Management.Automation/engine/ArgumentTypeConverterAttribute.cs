@@ -55,7 +55,7 @@ namespace System.Management.Automation
                 {
                     if (bindingParameters)
                     {
-                        // We should not be doing a conversion here if [ref] is the last type. 
+                        // We should not be doing a conversion here if [ref] is the last type.
                         // When [ref] appears in an argument list, it is used for checking only.
                         // No Conversion should be done.
                         if (_convertTypes[i].Equals(typeof(System.Management.Automation.PSReference)))
@@ -84,7 +84,7 @@ namespace System.Management.Automation
                             else
                                 temp = result;
 
-                            // If a non-ref type is expected but currently passed in is a ref, do an implicit dereference. 
+                            // If a non-ref type is expected but currently passed in is a ref, do an implicit dereference.
                             PSReference reference = temp as PSReference;
 
                             if (reference != null)

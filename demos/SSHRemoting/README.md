@@ -67,7 +67,7 @@ Setup on Linux (Ubuntu 14.04) Machine:
       + RSAAuthentication yes
       + PubkeyAuthentication yes
 1.  Restart the sshd service
-    - sudo service ssh restart
+    - sudo service sshd restart
 
 [PowerShell for Linux]: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/linux.md#ubuntu-1404
 [Ubuntu SSH]: https://help.ubuntu.com/lts/serverguide/openssh-server.html

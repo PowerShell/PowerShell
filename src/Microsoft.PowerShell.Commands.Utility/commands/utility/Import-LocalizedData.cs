@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "import-localizeddata" cmdlet
     /// </summary>
-    /// 
+    ///
     [Cmdlet(VerbsData.Import, "LocalizedData", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113342")]
     public sealed class ImportLocalizedData : PSCmdlet
     {
@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The path from which to import the aliases
         /// </summary>
-        /// 
+        ///
         [Parameter(Position = 0)]
         [Alias("Variable")]
         [ValidateNotNullOrEmpty]
@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The scope to import the aliases to.
         /// </summary>
-        /// 
+        ///
         [Parameter(Position = 1)]
         public string UICulture
         {
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The scope to import the aliases to.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public string BaseDirectory
         {
@@ -82,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The scope to import the aliases to.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public string FileName
         {
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The main processing loop of the command.
         /// </summary>
-        /// 
+        ///
         protected override void ProcessRecord()
         {
             string path = GetFilePath();

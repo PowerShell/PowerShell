@@ -37,7 +37,7 @@ namespace System.Management.Automation
         {
 #if CORECLR
             Instance = Platform.IsInbox
-                            ? (ConfigPropertyAccessor) new RegistryAccessor() 
+                            ? (ConfigPropertyAccessor) new RegistryAccessor()
                             : new JsonConfigFileAccessor();
 #else
             Instance = new RegistryAccessor();
@@ -71,7 +71,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Existing Key = HKLM:\System\CurrentControlSet\Control\Session Manager\Environment
         /// Proposed value = %ProgramFiles%\PowerShell\Modules by default
-        /// 
+        ///
         /// Note: There is no setter because this value is immutable.
         /// </summary>
         /// <returns>Module path values from the config file.</returns>
@@ -119,7 +119,7 @@ namespace System.Management.Automation
     /// <summary>
     /// JSON configuration file accessor
     ///
-    /// Reads from and writes to configuration files. The values stored were 
+    /// Reads from and writes to configuration files. The values stored were
     /// originally stored in the Windows registry.
     /// </summary>
     internal class JsonConfigFileAccessor : ConfigPropertyAccessor
@@ -145,7 +145,7 @@ namespace System.Management.Automation
 
             //
             // Sets the per-user configuration directory
-            // Note: This directory may or may not exist depending upon the 
+            // Note: This directory may or may not exist depending upon the
             // execution scenario. Writes will attempt to create the directory
             // if it does not already exist.
             //
@@ -160,7 +160,7 @@ namespace System.Management.Automation
         internal override string GetModulePath(PropertyScope scope)
         {
             string scopeDirectory = psHomeConfigDirectory;
-            
+
             // Defaults to system wide.
             if (PropertyScope.CurrentUser == scope)
             {
@@ -180,12 +180,12 @@ namespace System.Management.Automation
         /// <summary>
         /// Existing Key = HKCU and HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds\Microsoft.PowerShell
         /// Proposed value = Existing default execution policy if not already specified
-        /// 
+        ///
         /// Schema:
         /// {
         ///     "shell ID string","ExecutionPolicy" : "execution policy string"
         /// }
-        /// 
+        ///
         /// TODO: In a single config file, it might be better to nest this. It is unnecessary complexity until a need arises for more nested values.
         /// </summary>
         /// <param name="scope">Whether this is a system-wide or per-user setting.</param>
@@ -251,7 +251,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell\1\ShellIds
         /// Proposed value = existing default. Probably "1"
-        /// 
+        ///
         /// Schema:
         /// {
         ///     "ConsolePrompting" : bool
@@ -273,7 +273,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Existing Key = HKLM\SOFTWARE\Microsoft\PowerShell
         /// Proposed value = Existing default. Probably "0"
-        /// 
+        ///
         /// Schema:
         /// {
         ///     "DisablePromptToUpdateHelp" : bool
@@ -295,7 +295,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Existing Key = HKCU and HKLM\Software\Policies\Microsoft\Windows\PowerShell\UpdatableHelp
         /// Proposed value = blank.This should be supported though
-        /// 
+        ///
         /// Schema:
         /// {
         ///     "DefaultSourcePath" : "path to local updatable help location"
@@ -347,7 +347,7 @@ namespace System.Management.Automation
             }
             catch (FileNotFoundException)
             {
-                // The file doesn't exist. Treat this the same way as if the 
+                // The file doesn't exist. Treat this the same way as if the
                 // key was not present in the file.
             }
             catch (DirectoryNotFoundException)
@@ -387,7 +387,7 @@ namespace System.Management.Automation
                     JObject jsonObject = null;
 
                     // UTF8, BOM detection, and bufferSize are the same as the basic stream constructor.
-                    // The most important parameter here is the last one, which keeps the StreamReader 
+                    // The most important parameter here is the last one, which keeps the StreamReader
                     // (and FileStream) open during Dispose so that it can be reused for the write
                     // operation.
                     using (StreamReader streamRdr = new StreamReader(fs, Encoding.UTF8, true, 1024, true))
@@ -425,7 +425,7 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            // The file doesn't already exist and we want to write to it 
+                            // The file doesn't already exist and we want to write to it
                             // or it exists with no content.
                             // A new file will be created that contains only this value.
                             // If the file doesn't exist and a we don't want to write to it, no
@@ -441,7 +441,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    // Reset the stream position to the beginning so that the 
+                    // Reset the stream position to the beginning so that the
                     // changes to the file can be written to disk
                     fs.Seek(0, SeekOrigin.Begin);
 
@@ -454,7 +454,7 @@ namespace System.Management.Automation
                         jsonObject.WriteTo(jsonWriter);
 
                         // This trims the file if the file shrank. If the file grew,
-                        // it is a no-op. The purpose is to trim extraneous characters 
+                        // it is a no-op. The purpose is to trim extraneous characters
                         // from the file stream when the resultant JObject is smaller
                         // than the input JObject.
                         fs.SetLength(fs.Position);
@@ -527,7 +527,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="scope"></param>
         /// <param name="shellId"></param>
@@ -599,7 +599,7 @@ namespace System.Management.Automation
 
             if (null != tempPrompt)
             {
-                return Convert.ToBoolean(tempPrompt, CultureInfo.InvariantCulture); 
+                return Convert.ToBoolean(tempPrompt, CultureInfo.InvariantCulture);
             }
             else
             {
@@ -685,8 +685,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Reads a DWORD from the Registry. Exceptions are intentionally allowed to pass through to 
-        /// the caller because different classes and methods within the code base handle Registry 
+        /// Reads a DWORD from the Registry. Exceptions are intentionally allowed to pass through to
+        /// the caller because different classes and methods within the code base handle Registry
         /// exceptions differently. Some suppress exceptions and others pass them to the user.
         /// </summary>
         /// <param name="rootKey"></param>
@@ -719,8 +719,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Exceptions are intentionally allowed to pass through to 
-        /// the caller because different classes and methods within the code base handle Registry 
+        /// Exceptions are intentionally allowed to pass through to
+        /// the caller because different classes and methods within the code base handle Registry
         /// exceptions differently. Some suppress exceptions and others pass them to the user.
         /// </summary>
         /// <param name="rootKey"></param>
@@ -739,8 +739,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Exceptions are intentionally allowed to pass through to 
-        /// the caller because different classes and methods within the code base handle Registry 
+        /// Exceptions are intentionally allowed to pass through to
+        /// the caller because different classes and methods within the code base handle Registry
         /// exceptions differently. Some suppress exceptions and others pass them to the user.
         /// </summary>
         /// <param name="rootKey"></param>
@@ -776,8 +776,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Exceptions are intentionally allowed to pass through to 
-        /// the caller because different classes and methods within the code base handle Registry 
+        /// Exceptions are intentionally allowed to pass through to
+        /// the caller because different classes and methods within the code base handle Registry
         /// exceptions differently. Some suppress exceptions and others pass them to the user.
         /// </summary>
         /// <param name="rootKey"></param>

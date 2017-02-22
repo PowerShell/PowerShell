@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion parameters
 
         /// <summary>
-        /// For each record, execute it, and push the results into the 
+        /// For each record, execute it, and push the results into the
         /// success stream.
         /// </summary>
         protected override void ProcessRecord()

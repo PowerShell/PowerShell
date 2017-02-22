@@ -8,10 +8,10 @@ using System.Xml;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Class ProviderHelpInfo keeps track of help information to be returned by 
+    ///
+    /// Class ProviderHelpInfo keeps track of help information to be returned by
     /// command help provider.
-    /// 
+    ///
     /// </summary>
     internal class ProviderHelpInfo : HelpInfo
     {
@@ -156,10 +156,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns true if help content in help info matches the
-        /// pattern contained in <paramref name="pattern"/>. 
+        /// pattern contained in <paramref name="pattern"/>.
         /// The underlying code will usually run pattern.IsMatch() on
         /// content it wants to search.
-        /// Provider help info looks for pattern in Synopsis and 
+        /// Provider help info looks for pattern in Synopsis and
         /// DetailedDescription
         /// </summary>
         /// <param name="pattern"></param>
@@ -210,7 +210,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Load provider-specific commandlet helps from xmlNode stored in _fullHelpObject. 
+        /// Load provider-specific commandlet helps from xmlNode stored in _fullHelpObject.
         /// Result will be stored in a hashtable.
         /// </summary>
         private void LoadCmdletHelps()
@@ -231,7 +231,7 @@ namespace System.Management.Automation
             if (cmdlets == null)
                 return;
 
-            if (cmdlets.Properties["Cmdlet"] == null || 
+            if (cmdlets.Properties["Cmdlet"] == null ||
                 cmdlets.Properties["Cmdlet"].Value == null)
                 return;
 
@@ -291,7 +291,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Load provider-specific dynamic parameter helps from xmlNode stored in _fullHelpObject. 
+        /// Load provider-specific dynamic parameter helps from xmlNode stored in _fullHelpObject.
         /// Result will be stored in a hashtable.
         /// </summary>
         private void LoadDynamicParameterHelps()

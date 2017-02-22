@@ -31,7 +31,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Overrides Visual.GetVisualChild, and returns a child at the specified index from a collection of child elements. 
+        /// Overrides Visual.GetVisualChild, and returns a child at the specified index from a collection of child elements.
         /// </summary>
         /// <param name="index">The zero-based index of the requested child element in the collection. </param>
         /// <returns>The requested child element. This should not return null; if the provided index is out of range, an exception is thrown.</returns>
@@ -70,7 +70,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// When overridden in a derived class, positions child elements and determines a size for a FrameworkElement derived class. 
+        /// When overridden in a derived class, positions child elements and determines a size for a FrameworkElement derived class.
         /// </summary>
         /// <param name="finalSize">The final area within the parent that this element should use to arrange itself and its children.</param>
         /// <returns>The actual size used.</returns>

@@ -10,12 +10,12 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
     using System;
     using System.Windows;
     using System.Windows.Input;
-  
+
 
     /// <summary>
     /// Interaction logic for CmdletGUI.xaml
     /// </summary>
-    public partial class ShowAllModulesWindow : Window 
+    public partial class ShowAllModulesWindow : Window
     {
 
         /// <summary>
@@ -70,13 +70,13 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 CommandBindings.Add(new CommandBinding(plusSettings, ZoomEventHandlerPlus));
             }
             catch (NotSupportedException)
-            { 
+            {
                 //localized has a problematic string - going to default
                 plusSettings.InputGestures.Add((KeyGesture)keyGestureConverter.ConvertFromString("Ctrl+Add"));
                 plusSettings.InputGestures.Add((KeyGesture)keyGestureConverter.ConvertFromString("Ctrl+Plus"));
                 CommandBindings.Add(new CommandBinding(plusSettings, ZoomEventHandlerPlus));
-            };  
-            
+            };
+
 
             RoutedCommand minusSettings = new RoutedCommand();
             try

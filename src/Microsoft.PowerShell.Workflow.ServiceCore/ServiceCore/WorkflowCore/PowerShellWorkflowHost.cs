@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.Workflow
         {
             _configuration = new PSWorkflowConfigurationProvider();
             _configuration.Runtime = this;
-            PSCounterSetRegistrar registrar = 
+            PSCounterSetRegistrar registrar =
                 new PSCounterSetRegistrar(
                     PSWorkflowPerformanceCounterSetInfo.ProviderId,
                     PSWorkflowPerformanceCounterSetInfo.CounterSetId,

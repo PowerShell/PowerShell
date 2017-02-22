@@ -71,7 +71,7 @@ Get-TypeData System.Void
         It "Remove type that doesn't exist" {
             $typeName = "TypeThatDoesNotExistsAnywhere" + (Get-Random)
             $ps.AddScript("Remove-TypeData -TypeName $typeName").Invoke()
-            $ps.Streams.Error[0].FullyQualifiedErrorId | Should Be "TypesDynamicRemoveException,Microsoft.PowerShell.Commands.RemoveTypeDataCommand" 
+            $ps.Streams.Error[0].FullyQualifiedErrorId | Should Be "TypesDynamicRemoveException,Microsoft.PowerShell.Commands.RemoveTypeDataCommand"
         }
 
         ##{ All of the following It blocks are intended to run in sequence, so don't reorder them.

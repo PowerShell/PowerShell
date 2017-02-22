@@ -79,7 +79,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Static Data and Constants
         private const string activity = "Get-ComputerInfo";
-        private const string localMachineName = "localhost";
+        private const string localMachineName = null;
         #endregion Static Data and Constants
 
         #region Instance Data
@@ -639,6 +639,7 @@ namespace Microsoft.PowerShell.Commands
                 output.WindowsRegisteredOwner = regCurVer.RegisteredOwner;
                 output.WindowsSystemRoot = regCurVer.SystemRoot;
                 output.WindowsVersion = regCurVer.ReleaseId;
+                output.WindowsUBR = regCurVer.UBR;
             }
 
             var os = osInfo.os;
@@ -742,7 +743,7 @@ namespace Microsoft.PowerShell.Commands
                 output.BiosOtherTargetOS = bios.OtherTargetOS;
                 output.BiosPrimaryBIOS = bios.PrimaryBIOS;
                 output.BiosReleaseDate = bios.ReleaseDate;
-                output.BiosSeralNumber = bios.SerialNumber;
+                output.BiosSerialNumber = bios.SerialNumber;
                 output.BiosSMBIOSBIOSVersion = bios.SMBIOSBIOSVersion;
                 output.BiosSMBIOSMajorVersion = bios.SMBIOSMajorVersion;
                 output.BiosSMBIOSMinorVersion = bios.SMBIOSMinorVersion;
@@ -1261,7 +1262,8 @@ namespace Microsoft.PowerShell.Commands
                         RegisteredOrganization = (string)key.GetValue("RegisteredOrganization"),
                         RegisteredOwner = (string)key.GetValue("RegisteredOwner"),
                         SystemRoot = (string)key.GetValue("SystemRoot"),
-                        ReleaseId = (string)key.GetValue("ReleaseId")
+                        ReleaseId = (string)key.GetValue("ReleaseId"),
+                        UBR = (int?)key.GetValue("UBR")
                     };
                 }
             }
@@ -1955,6 +1957,7 @@ namespace Microsoft.PowerShell.Commands
         public string RegisteredOwner;
         public string SystemRoot;
         public string ReleaseId;
+        public int? UBR;
     }
     #endregion Other Intermediate classes
 
@@ -2230,6 +2233,11 @@ namespace Microsoft.PowerShell.Commands
         /// The Windows ReleaseId, from the Windows Registry.
         /// </summary>
         public string WindowsVersion { get; internal set; }
+
+        /// <summary>
+        /// The Windows Update Build Revision (UBR), from the Windows Registry.
+        /// </summary>
+        public int? WindowsUBR { get; internal set; }
         #endregion Registry
 
         #region BIOS
@@ -2355,7 +2363,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Assigned serial number of the BIOS
         /// </summary>
-        public string BiosSeralNumber { get; internal set; }
+        public string BiosSerialNumber { get; internal set; }
 
         /// <summary>
         /// BIOS version as reported by SMBIOS
@@ -2954,7 +2962,7 @@ namespace Microsoft.PowerShell.Commands
         /// operating system.
         /// </summary>
         /// <remarks>
-        /// This value does not necessarily indicate the true amount of 
+        /// This value does not necessarily indicate the true amount of
         /// physical memory, but what is reported to the operating system
         /// as available to it.
         /// </remarks>
@@ -3687,7 +3695,7 @@ namespace Microsoft.PowerShell.Commands
         BackupDomainController = 4,
 
         /// <summary>
-        /// Primary Domain Controller 
+        /// Primary Domain Controller
         /// </summary>
         PrimaryDomainController = 5
     }
@@ -4094,7 +4102,7 @@ namespace Microsoft.PowerShell.Commands
         ServerForSmallBusinessEdition = 24,
 
         /// <summary>
-        /// SKU is Small Business Server Premium Edition 
+        /// SKU is Small Business Server Premium Edition
         /// </summary>
         SmallBusinessServerPremiumEdition = 25,
 
@@ -4732,7 +4740,7 @@ namespace Microsoft.PowerShell.Commands
         FullPower = 1,
 
         /// <summary>
-        /// Power Save - Low Power mode 
+        /// Power Save - Low Power mode
         /// </summary>
         PowerSaveLowPowerMode = 2,
 
@@ -4784,7 +4792,7 @@ namespace Microsoft.PowerShell.Commands
         Other = 1,
 
         /// <summary>
-        /// Processor type is 
+        /// Processor type is
         /// </summary>
         Unknown = 2,
 
@@ -5099,22 +5107,22 @@ namespace Microsoft.PowerShell.Commands
         [DllImport(PInvokeDllNames.LCIDToLocaleNameDllName, SetLastError = true, CharSet = CharSet.Unicode)]
         public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuilder localeName, int localeNameSize, int flags);
 
-        /// <summary>    
+        /// <summary>
         /// Gets the data specified for the passed in property name from the
         /// Software Licensing API
         /// </summary>
-        /// <param name="licenseProperty">Name of the licensing property to get.</param>    
-        /// <param name="propertyValue">Out parameter for the value.</param>    
-        /// <returns>An hresult indicating success or failure.</returns>    
+        /// <param name="licenseProperty">Name of the licensing property to get.</param>
+        /// <param name="propertyValue">Out parameter for the value.</param>
+        /// <returns>An hresult indicating success or failure.</returns>
         [DllImport("slc.dll", CharSet = CharSet.Unicode)]
         internal static extern int SLGetWindowsInformationDWORD(string licenseProperty, out int propertyValue);
-        /*                               
-         * SLGetWindowsInformationDWORD function returns  
-         * S_OK (0x00000000): If the method succeeds  
-         * SL_E_RIGHT_NOT_GRANTED (0xC004F013): The caller does not have the permissions necessary to call this function.  
-         * SL_E_DATATYPE_MISMATCHED (0xC004F013): The value portion of the name-value pair is not a DWORD.                               
-        [DllImport("Slc.dll", EntryPoint = "SLGetWindowsInformationDWORD", CharSet = CharSet.Unicode)]  
-        public static extern UInt32 SLGetWindowsInformationDWORD(string pwszValueName, ref int pdwValue);  
+        /*
+         * SLGetWindowsInformationDWORD function returns
+         * S_OK (0x00000000): If the method succeeds
+         * SL_E_RIGHT_NOT_GRANTED (0xC004F013): The caller does not have the permissions necessary to call this function.
+         * SL_E_DATATYPE_MISMATCHED (0xC004F013): The value portion of the name-value pair is not a DWORD.
+        [DllImport("Slc.dll", EntryPoint = "SLGetWindowsInformationDWORD", CharSet = CharSet.Unicode)]
+        public static extern UInt32 SLGetWindowsInformationDWORD(string pwszValueName, ref int pdwValue);
          */
     }
     #endregion Native

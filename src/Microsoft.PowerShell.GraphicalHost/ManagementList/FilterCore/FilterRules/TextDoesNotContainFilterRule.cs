@@ -9,7 +9,7 @@ namespace Microsoft.Management.UI.Internal
     using System;
 
     /// <summary>
-    /// The TextDoesNotContainFilterRule class evaluates a string item to 
+    /// The TextDoesNotContainFilterRule class evaluates a string item to
     /// check if it is does not contain the rule's value within it.
     /// </summary>
     [Serializable]

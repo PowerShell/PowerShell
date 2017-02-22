@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell
             return ss;
         }
 
-#if !CORECLR        
+#if !CORECLR
         /// <summary>
         /// get plain text string from a SecureString
         ///
@@ -120,9 +120,9 @@ namespace Microsoft.PowerShell
         ///
         /// -- X509Certificate2.Import (String, String, X509KeyStorageFlags)
         ///    (DCR #33007 in the DevDiv Schedule db)
-        ///    
+        ///
         /// -- NetworkCredential(string, string);
-        ///    
+        ///
         /// </summary>
         ///
         /// <param name="ss"> input data </param>
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell
                 string userName = null;
                 FileSystemRights rights = 0;
                 AccessControlType aceType = 0;
-            
+
                 rules = sd.GetAccessRules(true, false, typeof(NTAccount));
 
                 foreach (FileSystemAccessRule r in rules)

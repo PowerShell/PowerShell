@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Specifies the files names to be attached to the email.
-        /// If the filename specified can not be found, then the relevant error  
+        /// If the filename specified can not be found, then the relevant error
         /// message should be thrown.
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         private String[] _attachments;
 
         /// <summary>
-        /// Specifies the address collection that contains the 
+        /// Specifies the address collection that contains the
         /// blind carbon copy (BCC) recipients for the e-mail message.
         /// </summary>
         [Parameter]
@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.Commands
         private SwitchParameter _bodyashtml;
 
         /// <summary>
-        /// Specifies the encoding used for the content of the body and also the subject. 
+        /// Specifies the encoding used for the content of the body and also the subject.
         /// </summary>
         [Parameter()]
         [Alias("BE")]
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Commands
         private Encoding _encoding = new ASCIIEncoding();
 
         /// <summary>
-        /// Specifies the address collection that contains the 
+        /// Specifies the address collection that contains the
         /// carbon copy (CC) recipients for the e-mail message.
         /// </summary>
         [Parameter]
@@ -123,8 +123,8 @@ namespace Microsoft.PowerShell.Commands
         private String[] _cc;
 
         /// <summary>
-        /// Specifies the delivery notifications options for the e-mail message. The various 
-        /// option available for this parameter are None, OnSuccess, OnFailure, Delay and  Never 
+        /// Specifies the delivery notifications options for the e-mail message. The various
+        /// option available for this parameter are None, OnSuccess, OnFailure, Delay and  Never
         /// </summary>
         [Parameter()]
         [Alias("DNO")]
@@ -140,8 +140,8 @@ namespace Microsoft.PowerShell.Commands
         private DeliveryNotificationOptions _deliverynotification;
 
         /// <summary>
-        /// Specifies the from address for this e-mail message. The default value for 
-        /// this parameter is the email address of the currently logged on user 
+        /// Specifies the from address for this e-mail message. The default value for
+        /// this parameter is the email address of the currently logged on user
         /// </summary>
         [Parameter(Mandatory = true)]
         [ValidateNotNullOrEmpty]
@@ -156,8 +156,8 @@ namespace Microsoft.PowerShell.Commands
         private String _from;
 
         /// <summary>
-        /// Specifies the name of the Host used to send the email. This host name will be assigned  
-        /// to the Powershell variable PSEmailServer,if this host can not reached an appropriate error 
+        /// Specifies the name of the Host used to send the email. This host name will be assigned
+        /// to the Powershell variable PSEmailServer,if this host can not reached an appropriate error
         /// message will be displayed.
         /// </summary>
         [Parameter(Position = 3)]
@@ -332,7 +332,7 @@ namespace Microsoft.PowerShell.Commands
         {
             try
             {
-                // Set the sender address of the mail message                                  
+                // Set the sender address of the mail message
                 _mMailMessage.From = new MailAddress(_from);
             }
             catch (FormatException e)
@@ -342,10 +342,10 @@ namespace Microsoft.PowerShell.Commands
                 // return;
             }
 
-            // Set the recipient address of the mail message 
+            // Set the recipient address of the mail message
             AddAddressesToMailMessage(_to, "to");
 
-            // Set the BCC address of the mail message 
+            // Set the BCC address of the mail message
             if (_bcc != null)
             {
                 AddAddressesToMailMessage(_bcc, "bcc");
@@ -423,7 +423,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
-            //add the attachments 
+            //add the attachments
             if (_attachments != null)
             {
                 string filepath = string.Empty;
@@ -492,7 +492,7 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// To make it easier to specify -Encoding parameter, we add an ArgumentTransformationAttribute here.
-    /// When the input data is of type string and is valid to be converted to System.Text.Encoding, we do 
+    /// When the input data is of type string and is valid to be converted to System.Text.Encoding, we do
     /// the conversion and return the converted value. Otherwise, we just return the input data.
     /// </summary>
     internal sealed class ArgumentToEncodingNameTransformationAttribute : ArgumentTransformationAttribute
@@ -513,7 +513,7 @@ namespace Microsoft.PowerShell.Commands
                     string.Equals(encodingName, EncodingConversion.Default, StringComparison.OrdinalIgnoreCase) ||
                     string.Equals(encodingName, EncodingConversion.OEM, StringComparison.OrdinalIgnoreCase))
                 {
-                    // the encodingName is guaranteed to be valid, so it is safe to pass null to method 
+                    // the encodingName is guaranteed to be valid, so it is safe to pass null to method
                     // Convert(Cmdlet cmdlet, string encoding) as the value of 'cmdlet'.
                     return EncodingConversion.Convert(null, encodingName);
                 }

@@ -10,7 +10,7 @@ namespace Microsoft.Management.UI.Internal
     using System.Diagnostics;
 
     /// <summary>
-    /// The EqualsFilterRule class evaluates an IComparable item to 
+    /// The EqualsFilterRule class evaluates an IComparable item to
     /// check if it is equal to the rule's value.
     /// </summary>
     /// <typeparam name="T">

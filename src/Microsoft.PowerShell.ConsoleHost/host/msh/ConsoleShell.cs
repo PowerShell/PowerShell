@@ -39,31 +39,31 @@ namespace Microsoft.PowerShell
 #endif
 
         /// <summary>
-        /// 
+        ///
         /// Entry point in to ConsoleShell. This method is called from the native or managed exe host application
-        /// 
+        ///
         /// </summary>
         /// <param name="configuration">
         /// Configuration information which is used to create Runspace.
         /// </param>
-        /// 
+        ///
         /// <param name="bannerText">
         /// Banner text to be displayed by ConsoleHost
         /// </param>
-        /// 
+        ///
         /// <param name="helpText">
         /// Help text for minishell. This is displayed on 'minishell -?'.
         /// </param>
-        /// 
+        ///
         /// <param name="preStartWarning">
         /// Warning occurred prior to this point, for example, a snap-in fails to load beforehand.
         /// This string will be printed out.
         /// </param>
-        /// 
+        ///
         /// <param name="args">
         /// Commandline parameters specified by user.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An integer value which should be used as exit code for the
         /// process.

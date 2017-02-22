@@ -16,7 +16,7 @@ namespace System.Management.Automation
     /// WriteObject implementation on the instance of the class implementing this interface will be
     /// called. The Monad implementation provides a default implementation of this class for use with
     /// standalone cmdlets as well as the implementation provided for running in the monad engine itself.
-    /// 
+    ///
     /// If you do want to run Cmdlet instances standalone and capture their output with more
     /// fidelity than is provided for with the default implementation, then you should create your own
     /// implementation of this class and pass it to cmdlets before calling the Cmdlet Invoke() or
@@ -94,11 +94,11 @@ namespace System.Management.Automation
         /// Use WriteProgress to display progress information about
         /// the activity of your Task, when the operation of your Task
         /// could potentially take a long time.
-        /// 
+        ///
         /// By default, progress output will
         /// be displayed, although this can be configured with the
         /// ProgressPreference shell variable.
-        /// 
+        ///
         /// The implementation of the API should display these progress records
         /// in a fashion appropriate for the application. For example, a GUI application
         /// would implement this as a progress bar of some sort.
@@ -134,7 +134,7 @@ namespace System.Management.Automation
         /// not be displayed, although this can be configured with the
         /// VerbosePreference shell variable
         /// or the -Verbose and -Debug command-line options.
-        /// 
+        ///
         /// The implementation of this API should display this addition information
         /// in an appropriate manner e.g. in a different color in a console application
         /// or in a separate window in a GUI application.
@@ -154,7 +154,7 @@ namespace System.Management.Automation
         /// be displayed, although this can be configured with the
         /// WarningPreference shell variable
         /// or the -Verbose and -Debug command-line options.
-        /// 
+        ///
         /// The implementation of this API should display this addition information
         /// in an appropriate manner e.g. in a different color in a console application
         /// or in a separate window in a GUI application.
@@ -169,9 +169,9 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="text">text to be written to log</param>
         /// <remarks>
-        /// Use WriteCommandDetail to write important information about cmdlet execution to 
-        /// pipeline execution log. 
-        /// 
+        /// Use WriteCommandDetail to write important information about cmdlet execution to
+        /// pipeline execution log.
+        ///
         /// If LogPipelineExecutionDetail is turned on, this information will be written
         /// to monad log under log category "Pipeline execution detail"
         /// </remarks>
@@ -197,7 +197,7 @@ namespace System.Management.Automation
         /// If ShouldProcess returns true, the operation should be performed.
         /// If ShouldProcess returns false, the operation should not be
         /// performed, and the Cmdlet should move on to the next target resource.
-        /// 
+        ///
         /// An implementation should prompt the user in an appropriate manner
         /// and return true or false. An alternative trivial implementation
         /// would be to just return true all the time.
@@ -206,11 +206,11 @@ namespace System.Management.Automation
         /// A Cmdlet should declare
         /// [Cmdlet( SupportsShouldProcess = true )]
         /// if-and-only-if it calls ShouldProcess before making changes.
-        /// 
+        ///
         /// ShouldProcess may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// ShouldProcess will take into account command-line settings
         /// and preference variables in determining what it should return
         /// and whether it should prompt the user.
@@ -227,7 +227,7 @@ namespace System.Management.Automation
         /// (e.g. delete files, stop services etc.) should call ShouldProcess
         /// to give the user the opportunity to confirm that the operation
         /// should actually be performed.
-        /// 
+        ///
         /// This variant allows the caller to specify text for both the
         /// target resource and the action.
         /// </summary>
@@ -243,7 +243,7 @@ namespace System.Management.Automation
         /// If ShouldProcess returns true, the operation should be performed.
         /// If ShouldProcess returns false, the operation should not be
         /// performed, and the Cmdlet should move on to the next target resource.
-        /// 
+        ///
         /// An implementation should prompt the user in an appropriate manner
         /// and return true or false. An alternative trivial implementation
         /// would be to just return true all the time.
@@ -252,11 +252,11 @@ namespace System.Management.Automation
         /// A Cmdlet should declare
         /// [Cmdlet( SupportsShouldProcess = true )]
         /// if-and-only-if it calls ShouldProcess before making changes.
-        /// 
+        ///
         /// ShouldProcess may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// ShouldProcess will take into account command-line settings
         /// and preference variables in determining what it should return
         /// and whether it should prompt the user.
@@ -273,7 +273,7 @@ namespace System.Management.Automation
         /// (e.g. delete files, stop services etc.) should call ShouldProcess
         /// to give the user the opportunity to confirm that the operation
         /// should actually be performed.
-        /// 
+        ///
         /// This variant allows the caller to specify the complete text
         /// describing the operation, rather than just the name and action.
         /// </summary>
@@ -302,15 +302,15 @@ namespace System.Management.Automation
         /// A Cmdlet should declare
         /// [Cmdlet( SupportsShouldProcess = true )]
         /// if-and-only-if it calls ShouldProcess before making changes.
-        /// 
+        ///
         /// ShouldProcess may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// ShouldProcess will take into account command-line settings
         /// and preference variables in determining what it should return
         /// and whether it should prompt the user.
-        /// 
+        ///
         /// An implementation should prompt the user in an appropriate manner
         /// and return true or false. An alternative trivial implementation
         /// would be to just return true all the time.
@@ -327,7 +327,7 @@ namespace System.Management.Automation
         /// (e.g. delete files, stop services etc.) should call ShouldProcess
         /// to give the user the opportunity to confirm that the operation
         /// should actually be performed.
-        /// 
+        ///
         /// This variant allows the caller to specify the complete text
         /// describing the operation, rather than just the name and action.
         /// </summary>
@@ -362,15 +362,15 @@ namespace System.Management.Automation
         /// A Cmdlet should declare
         /// [Cmdlet( SupportsShouldProcess = true )]
         /// if-and-only-if it calls ShouldProcess before making changes.
-        /// 
+        ///
         /// ShouldProcess may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// ShouldProcess will take into account command-line settings
         /// and preference variables in determining what it should return
         /// and whether it should prompt the user.
-        /// 
+        ///
         /// An implementation should prompt the user in an appropriate manner
         /// and return true or false. An alternative trivial implementation
         /// would be to just return true all the time.
@@ -409,16 +409,16 @@ namespace System.Management.Automation
         /// and ShouldProcess.
         /// If this is not done, it will be difficult to use the Cmdlet
         /// from scripts and non-interactive hosts.
-        /// 
+        ///
         /// Cmdlets using ShouldContinue must still verify operations
         /// which will make changes using ShouldProcess.
         /// This will assure that settings such as -WhatIf work properly.
         /// You may call ShouldContinue either before or after ShouldProcess.
-        /// 
+        ///
         /// ShouldContinue may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// Cmdlets may have different "classes" of confirmations.  For example,
         /// "del" confirms whether files in a particular directory should be
         /// deleted, whether read-only files should be deleted, etc.
@@ -428,7 +428,7 @@ namespace System.Management.Automation
         /// ShouldProcess offers YesToAll/NoToAll automatically,
         /// but answering YesToAll or NoToAll applies to all subsequent calls
         /// to ShouldProcess for the Cmdlet instance.
-        /// 
+        ///
         /// An implementation should prompt the user in an appropriate manner
         /// and return true or false. An alternative trivial implementation
         /// would be to just return true all the time.
@@ -474,16 +474,16 @@ namespace System.Management.Automation
         /// and ShouldProcess.
         /// If this is not done, it will be difficult to use the Cmdlet
         /// from scripts and non-interactive hosts.
-        /// 
+        ///
         /// Cmdlets using ShouldContinue must still verify operations
         /// which will make changes using ShouldProcess.
         /// This will assure that settings such as -WhatIf work properly.
         /// You may call ShouldContinue either before or after ShouldProcess.
-        /// 
+        ///
         /// ShouldContinue may only be called during a call to this Cmdlet's
         /// implementation of ProcessRecord, BeginProcessing or EndProcessing,
         /// and only from that thread.
-        /// 
+        ///
         /// Cmdlets may have different "classes" of confirmations.  For example,
         /// "del" confirms whether files in a particular directory should be
         /// deleted, whether read-only files should be deleted, etc.
@@ -493,7 +493,7 @@ namespace System.Management.Automation
         /// ShouldProcess offers YesToAll/NoToAll automatically,
         /// but answering YesToAll or NoToAll applies to all subsequent calls
         /// to ShouldProcess for the Cmdlet instance.
-        /// 
+        ///
         /// An implementation should prompt the user in an appropriate manner
         /// and return true or false. An alternative trivial implementation
         /// would be to just return true all the time.
@@ -533,7 +533,7 @@ namespace System.Management.Automation
         /// terminates the command, where
         /// <see cref="System.Management.Automation.ICommandRuntime.WriteError"/>
         /// allows the command to continue.
-        /// 
+        ///
         /// The cmdlet can also terminate the command by simply throwing
         /// any exception.  When the cmdlet's implementation of
         /// <see cref="System.Management.Automation.Cmdlet.ProcessRecord"/>,
@@ -546,7 +546,7 @@ namespace System.Management.Automation
         /// so that the additional information in
         /// <see cref="System.Management.Automation.ErrorRecord"/>
         /// is available.
-        /// 
+        ///
         /// It is up to the implementation of this routine to determine what
         /// if any information is to be added. It should encapsulate the
         /// error record into an exception and then throw that exception.

@@ -25,7 +25,7 @@ namespace System.Management.Automation
     #region Event Args
 
     /// <summary>
-    /// Possible actions for the debugger after hitting a breakpoint/step 
+    /// Possible actions for the debugger after hitting a breakpoint/step
     /// </summary>
     public enum DebuggerResumeAction
     {
@@ -52,12 +52,12 @@ namespace System.Management.Automation
     };
 
     /// <summary>
-    /// Arguments for the DebuggerStop event. 
+    /// Arguments for the DebuggerStop event.
     /// </summary>
     public class DebuggerStopEventArgs : EventArgs
     {
         /// <summary>
-        /// Initializes the DebuggerStopEventArgs 
+        /// Initializes the DebuggerStopEventArgs
         /// </summary>
         internal DebuggerStopEventArgs(InvocationInfo invocationInfo, List<Breakpoint> breakpoints)
         {
@@ -88,7 +88,7 @@ namespace System.Management.Automation
         public InvocationInfo InvocationInfo { get; internal set; }
 
         /// <summary>
-        /// The breakpoint(s) hit 
+        /// The breakpoint(s) hit
         /// </summary>
         /// <remarks>
         /// Note there may be more than one breakpoint on the same object (line, variable, command). A single event is
@@ -107,7 +107,7 @@ namespace System.Management.Automation
     };
 
     /// <summary>
-    /// Kinds of breakpoint updates 
+    /// Kinds of breakpoint updates
     /// </summary>
     public enum BreakpointUpdateType
     {
@@ -130,12 +130,12 @@ namespace System.Management.Automation
     };
 
     /// <summary>
-    /// Arguments for the BreakpointUpdated event. 
+    /// Arguments for the BreakpointUpdated event.
     /// </summary>
     public class BreakpointUpdatedEventArgs : EventArgs
     {
         /// <summary>
-        /// Initializes the BreakpointUpdatedEventArgs 
+        /// Initializes the BreakpointUpdatedEventArgs
         /// </summary>
         internal BreakpointUpdatedEventArgs(Breakpoint breakpoint, BreakpointUpdateType updateType, int breakpointCount)
         {
@@ -163,7 +163,7 @@ namespace System.Management.Automation
     #region PSJobStartEventArgs
 
     /// <summary>
-    /// Arguments for the script job start callback event. 
+    /// Arguments for the script job start callback event.
     /// </summary>
     public sealed class PSJobStartEventArgs : EventArgs
     {
@@ -269,7 +269,7 @@ namespace System.Management.Automation
         None = 0x0,
 
         /// <summary>
-        /// Default setting for original PowerShell script debugging.  
+        /// Default setting for original PowerShell script debugging.
         /// Compatible with PowerShell Versions 2 and 3.
         /// </summary>
         Default = 0x1,
@@ -475,7 +475,7 @@ namespace System.Management.Automation
         #region Public Methods
 
         /// <summary>
-        /// Evaluates provided command either as a debugger specific command 
+        /// Evaluates provided command either as a debugger specific command
         /// or a PowerShell command.
         /// </summary>
         /// <param name="command">PowerShell command</param>
@@ -617,7 +617,7 @@ namespace System.Management.Automation
         /// Sets up debugger to debug provided job or its child jobs.
         /// </summary>
         /// <param name="job">
-        /// Job object that is either a debuggable job or a container 
+        /// Job object that is either a debuggable job or a container
         /// of debuggable child jobs.
         /// </param>
         internal virtual void DebugJob(Job job)
@@ -728,7 +728,7 @@ namespace System.Management.Automation
     #region ScriptDebugger class
 
     /// <summary>
-    /// Holds the debugging information for a Monad Shell session 
+    /// Holds the debugging information for a Monad Shell session
     /// </summary>
     internal sealed class ScriptDebugger : Debugger, IDisposable
     {
@@ -1964,7 +1964,7 @@ namespace System.Management.Automation
         {
             get
             {
-                // The debugger can be enabled if we are not in DebugMode.None and if we are 
+                // The debugger can be enabled if we are not in DebugMode.None and if we are
                 // not in a local session set only to RemoteScript.
                 return !((DebugMode == DebugModes.RemoteScript) && IsLocalSession) && (DebugMode != DebugModes.None);
             }
@@ -2427,9 +2427,9 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Sets how the debugger deals with breakpoint events that are not handled.
-        ///  Ignore - This is the default behavior and ignores any breakpoint event 
+        ///  Ignore - This is the default behavior and ignores any breakpoint event
         ///           if there is no handler.  Releases any preserved event.
-        ///  Wait   - This mode preserves a breakpoint event until a handler is 
+        ///  Wait   - This mode preserves a breakpoint event until a handler is
         ///           subscribed.
         /// </summary>
         internal override UnhandledBreakpointProcessingMode UnhandledBreakpointMode
@@ -2460,7 +2460,7 @@ namespace System.Management.Automation
         /// Sets up debugger to debug provided job or its child jobs.
         /// </summary>
         /// <param name="job">
-        /// Job object that is either a debuggable job or a container 
+        /// Job object that is either a debuggable job or a container
         /// of debuggable child jobs.
         /// </param>
         internal override void DebugJob(Job job)
@@ -2475,7 +2475,7 @@ namespace System.Management.Automation
                 }
             }
 
-            // If a debuggable job was passed in then add it to the 
+            // If a debuggable job was passed in then add it to the
             // job running list.
             bool jobsAdded = TryAddDebugJob(job);
             if (!jobsAdded)
@@ -2684,8 +2684,8 @@ namespace System.Management.Automation
             }
 
             // At this point the script debugger stack frame must be the Workflow execution function which is DebuggerHidden.
-            // The internal debugger resume action is set to StepOut, *if* the user selected StepIn, so as to skip this frame 
-            // since debugging the workflow execution function is turned off.  We look at the previous resume action to see 
+            // The internal debugger resume action is set to StepOut, *if* the user selected StepIn, so as to skip this frame
+            // since debugging the workflow execution function is turned off.  We look at the previous resume action to see
             // what the user intended.  If it is StepIn then we start the workflow job debugger in step mode.
             Diagnostics.Assert(_callStack.LastFunctionContext()._debuggerHidden, "Current stack frame must be WF function DebuggerHidden");
             DebuggerResumeAction startAction = (_previousDebuggerAction == DebuggerResumeAction.StepInto) ?
@@ -2998,7 +2998,7 @@ namespace System.Management.Automation
 
         private CallStackInfo FixUpCallStack()
         {
-            // Remove the top level call stack item, which is 
+            // Remove the top level call stack item, which is
             // the PS script that starts the workflow.  The workflow
             // debugger will add its call stack in its GetCallStack()
             // override.
@@ -3150,7 +3150,7 @@ namespace System.Management.Automation
             {
                 if (detachCommand)
                 {
-                    // Exit command means to cancel the nested debugger session.  This needs to be done by the 
+                    // Exit command means to cancel the nested debugger session.  This needs to be done by the
                     // owner of the session so we raise an event and release the debugger stop.
                     UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Ignore;
                     RaiseNestedDebuggingCancelEvent();
@@ -3233,7 +3233,7 @@ namespace System.Management.Automation
 #if !CORECLR // Workflow Not Supported on OneCore PS
         private void EnableRunningWorkflowJobsForStepping()
         {
-            // Make sure workflow job start callback is set to pick 
+            // Make sure workflow job start callback is set to pick
             // up any newly starting jobs.
             if (!_wfStartEventSubscribed)
             {
@@ -4014,7 +4014,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Checks to see if the runspace debugger is in a preserved debug
-        /// stop state, and if so then allows the debugger stop event to 
+        /// stop state, and if so then allows the debugger stop event to
         /// continue processing and raise the event.
         /// </summary>
         internal void CheckStateAndRaiseStopEvent()
@@ -4032,7 +4032,7 @@ namespace System.Management.Automation
             }
             else
             {
-                // If this is a remote server debugger then we want to convert the pending remote 
+                // If this is a remote server debugger then we want to convert the pending remote
                 // debugger stop to a local debugger stop event for this Debug-Runspace to handle.
                 ServerRemoteDebugger serverRemoteDebugger = this._wrappedDebugger as ServerRemoteDebugger;
                 if (serverRemoteDebugger != null)
@@ -4134,8 +4134,8 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Wrapper class for runspace debugger where the runspace is being used in an 
-    /// embedded scenario such as Workflow InlineScript or Invoke-Command command 
+    /// Wrapper class for runspace debugger where the runspace is being used in an
+    /// embedded scenario such as Workflow InlineScript or Invoke-Command command
     /// inside script.
     /// </summary>
     internal sealed class EmbeddedRunspaceDebugger : NestedRunspaceDebugger
@@ -4310,7 +4310,7 @@ namespace System.Management.Automation
         {
             if (parentStackFrame == null) { return null; }
 
-            // Attempt to find parent script file create script block with Ast to 
+            // Attempt to find parent script file create script block with Ast to
             // find correct line and offset adjustments.
             if ((_parentScriptBlockAst == null) &&
                 !string.IsNullOrEmpty(parentStackFrame.ScriptName) &&
@@ -4888,7 +4888,7 @@ namespace System.Management.Automation
     #region PSDebugContext class
 
     /// <summary>
-    /// This class exposes the information about the debugger that is available via $PSDebugContext 
+    /// This class exposes the information about the debugger that is available via $PSDebugContext
     /// </summary>
     public class PSDebugContext
     {
@@ -4914,7 +4914,7 @@ namespace System.Management.Automation
         public InvocationInfo InvocationInfo { get; private set; }
 
         /// <summary>
-        /// If not empty, indicates that the execution was suspended because one or more breakpoints 
+        /// If not empty, indicates that the execution was suspended because one or more breakpoints
         /// were hit. Otherwise, the execution was suspended as part of a step operation.
         /// </summary>
         public Breakpoint[] Breakpoints { get; private set; }
@@ -5100,7 +5100,7 @@ namespace System.Management.Automation.Internal
             {
                 microsoft.powershell.utility\set-variable -Name $key -Value $Variables[$key] -Scope global
             }
-    
+
             Set-StrictMode -Off
         }";
 

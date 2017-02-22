@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
             set { this.description = value; }
         }
         private string description;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "Disabled".
         /// Specifies whether this user account is enabled or disabled.
@@ -89,10 +89,10 @@ namespace Microsoft.PowerShell.Commands
             set { this.disabled = value; }
         }
         private System.Management.Automation.SwitchParameter disabled;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "FullName".
-        /// Specifies the full name of the user account. This is different from the 
+        /// Specifies the full name of the user account. This is different from the
         /// username of the user account.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -103,10 +103,10 @@ namespace Microsoft.PowerShell.Commands
             set { this.fullname = value; }
         }
         private string fullname;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "Name".
-        /// Specifies the user name for the local user account. This can be a local user 
+        /// Specifies the user name for the local user account. This can be a local user
         /// account or a local user account that is connected to a Microsoft Account.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "Password".
-        /// Specifies the password for the local user account. A password can contain up 
+        /// Specifies the password for the local user account. A password can contain up
         /// to 127 characters.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -167,7 +167,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "UserMayNotChangePassword".
-        /// Specifies whether the user is allowed to change the password on this 
+        /// Specifies whether the user is allowed to change the password on this
         /// account. The default value is True.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true)]
@@ -178,9 +178,9 @@ namespace Microsoft.PowerShell.Commands
         }
         private System.Management.Automation.SwitchParameter usermaynotchangepassword;
         #endregion Parameter Properties
-      
-      
-      
+
+
+
         #region Cmdlet Overrides
         /// <summary>
         /// BeginProcessing method.
@@ -250,7 +250,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        
+
         /// <summary>
         /// EndProcessing method.
         /// </summary>

@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         #region Public Properties
 
         /// <summary>
-        /// Contains information needed to run the job such as script parameters, 
+        /// Contains information needed to run the job such as script parameters,
         /// job definition, user credentials, etc.
         /// </summary>
         public JobInvocationInfo InvocationInfo
@@ -92,7 +92,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// An array of trigger objects that specify a time/condition 
+        /// An array of trigger objects that specify a time/condition
         /// for when the job is run.
         /// </summary>
         public List<ScheduledJobTrigger> JobTriggers
@@ -218,7 +218,7 @@ namespace Microsoft.PowerShell.ScheduledJob
             _invocationInfo = invocationInfo;
 
             SetTriggers(triggers, false);
-            _options = (options != null) ? new ScheduledJobOptions(options) : 
+            _options = (options != null) ? new ScheduledJobOptions(options) :
                                            new ScheduledJobOptions();
             _options.JobDefinition = this;
 
@@ -314,10 +314,10 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Compares the current ScheduledJobDefinition task scheduler information
         /// with the corresponding information stored in Task Scheduler.  If the
-        /// information is different then the task scheduler information in this 
+        /// information is different then the task scheduler information in this
         /// object is updated to match what is in Task Scheduler, since that information
         /// takes precedence.
-        /// 
+        ///
         /// Task Scheduler information:
         /// - Triggers
         /// - Options
@@ -653,7 +653,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 }
             }
         }
-   
+
         /// <summary>
         /// Handles known Task Scheduler COM error codes.
         /// </summary>
@@ -713,7 +713,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             if (notFoundEx != null)
             {
-                // There is no corresponding Task Scheduler item for this 
+                // There is no corresponding Task Scheduler item for this
                 // scheduled job definition.  Remove this definition from
                 // the job store for consistency.
                 Remove(true);
@@ -778,7 +778,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             try
             {
-                // Remove old named Task Scheduler task.  
+                // Remove old named Task Scheduler task.
                 // This also stops any existing running job.
                 RemoveFromWTS(true);
 
@@ -914,7 +914,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 corruptedFile = !(e.FQEID.Equals(ScheduledJobStore.ScheduledJobDefExistsFQEID, StringComparison.OrdinalIgnoreCase));
                 ex = e;
             }
-            
+
             if (ex != null)
             {
                 if (corruptedFile)
@@ -982,8 +982,8 @@ namespace Microsoft.PowerShell.ScheduledJob
                 // Clean up job store.
                 RemoveFromJobStore();
 
-                string msg = StringUtil.Format(ScheduledJobErrorStrings.ErrorRegisteringDefinitionTask, 
-                    this.Name, 
+                string msg = StringUtil.Format(ScheduledJobErrorStrings.ErrorRegisteringDefinitionTask,
+                    this.Name,
                     (string.IsNullOrEmpty(ex.Message) == false) ? ex.Message : string.Empty);
                 throw new ScheduledJobException(msg, ex);
             }
@@ -1087,8 +1087,8 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         /// <summary>
         /// Removes this definition object:
-        ///  a) Removes from the Task Scheduler 
-        ///      or fails if an instance is currently running. 
+        ///  a) Removes from the Task Scheduler
+        ///      or fails if an instance is currently running.
         ///      or stops any running instances if force is true.
         ///  b) Removes from the scheduled job definition store.
         ///  c) Removes from the local repository.
@@ -1158,7 +1158,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Starts the scheduled job immediately.  A ScheduledJob object is 
+        /// Starts the scheduled job immediately.  A ScheduledJob object is
         /// returned that represents the running command, and this returned
         /// job is also added to the local job repository.  Job results are
         /// not written to the job store.
@@ -1504,7 +1504,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             // options == null is allowed and signals the use default
             // Task Scheduler options.
-            _options = (options != null) ? new ScheduledJobOptions(options) : 
+            _options = (options != null) ? new ScheduledJobOptions(options) :
                                            new ScheduledJobOptions();
             _options.JobDefinition = this;
 
@@ -1666,7 +1666,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     }
                 }
             }
- 
+
             // Next add definition items not in local repository.
             foreach (string jobDefinitionName in jobDefinitionNamesHash)
             {
@@ -1753,7 +1753,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <param name="definitionPath">Path to definition file.</param>
         /// <returns>ScheduledJobDefinition object.</returns>
         public static ScheduledJobDefinition LoadFromStore(
-            string definitionName, 
+            string definitionName,
             string definitionPath)
         {
             if (string.IsNullOrEmpty(definitionName))
@@ -1829,12 +1829,12 @@ namespace Microsoft.PowerShell.ScheduledJob
 
                 // Throw exception for not found job definition.
                 throw new ScheduledJobException(
-                    StringUtil.Format(ScheduledJobErrorStrings.CannotFindJobDefinition, definitionName), 
+                    StringUtil.Format(ScheduledJobErrorStrings.CannotFindJobDefinition, definitionName),
                     ex);
             }
 
-            // Make sure the deserialized ScheduledJobDefinition object contains the same 
-            // Task Scheduler information that is stored in Task Scheduler.  
+            // Make sure the deserialized ScheduledJobDefinition object contains the same
+            // Task Scheduler information that is stored in Task Scheduler.
             definition.SyncWithWTS();
 
             return definition;
@@ -1885,7 +1885,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         }
 
         /// <summary>
-        /// Starts a scheduled job based on definition name and returns the 
+        /// Starts a scheduled job based on definition name and returns the
         /// running job object.  Returned job is also added to the local
         /// job repository.  Job results are not written to store.
         /// </summary>
@@ -2098,14 +2098,14 @@ namespace Microsoft.PowerShell.ScheduledJob
                 lock (_syncObject)
                 {
                     // Sort returned list by Ids.
-                    List<ScheduledJobDefinition> rtnList = 
+                    List<ScheduledJobDefinition> rtnList =
                             new List<ScheduledJobDefinition>(_definitions.Values);
 
                     rtnList.Sort((firstJob, secondJob) =>
                         {
-                            if (firstJob.Id > secondJob.Id) 
-                            { 
-                                return 1; 
+                            if (firstJob.Id > secondJob.Id)
+                            {
+                                return 1;
                             }
                             else if (firstJob.Id < secondJob.Id)
                             {
@@ -2237,7 +2237,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
     /// <summary>
     /// Exception thrown for errors in Scheduled Jobs.
-    /// </summary> 
+    /// </summary>
     [Serializable]
     public class ScheduledJobException : SystemException
     {
@@ -2267,7 +2267,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// Creates a new instance of ScheduledJobException class.
         /// </summary>
         /// <param name="message">
-        /// The error message that explains the reason for the exception. 
+        /// The error message that explains the reason for the exception.
         /// </param>
         /// <param name="innerException">
         /// The exception that is the cause of the current exception.
@@ -2315,7 +2315,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// <summary>
     /// This class defines the JobInvocationInfo class for PowerShell jobs
     /// for job scheduling.  The following parameters are supported:
-    /// 
+    ///
     ///  "ScriptBlock"             -> ScriptBlock
     ///  "FilePath"                -> String
     ///  "InitializationScript"    -> ScriptBlock

@@ -11,7 +11,7 @@ Describe "Get-Event" -Tags "CI" {
     Context "Check return type of Get-Event" {
 
 	It "Should return PSEventArgs as return type of Get-Event" {
-	    { ( Get-Event -SourceIdentifier PesterTestEvent ).GetType() | Should Be System.Management.Automation.PSEventArgs }
+	    Get-Event -SourceIdentifier PesterTestEvent | Should BeOfType System.Management.Automation.PSEventArgs
 	}
     }
 

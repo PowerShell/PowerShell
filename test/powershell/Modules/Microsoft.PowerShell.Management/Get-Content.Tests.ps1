@@ -9,7 +9,7 @@ Describe "Get-Content" -Tags "CI" {
   $testString2 = $firstline + $nl + $secondline + $nl + $thirdline + $nl + $fourthline + $nl + $fifthline
   $testPath   = Join-Path -Path $TestDrive -ChildPath testfile1
   $testPath2  = Join-Path -Path $TestDrive -ChildPath testfile2
-  
+
   BeforeEach {
     New-Item -Path $testPath -ItemType file -Force -Value $testString
     New-Item -Path $testPath2 -ItemType file -Force -Value $testString2
@@ -18,30 +18,25 @@ Describe "Get-Content" -Tags "CI" {
     Remove-Item -Path $testPath -Force
     Remove-Item -Path $testPath2 -Force
   }
-  It "Should throw an error on a directory  " {# also tests that -erroraction SilentlyContinue will work.
-    Get-Content . -ErrorAction SilentlyContinue | Should Throw
+  It "Should throw an error on a directory  " {
+        try {
+            Get-Content . -ErrorAction Stop
+            throw "No Exception!"
+        }
+        catch {
+            $_.FullyQualifiedErrorId | should be "GetContentReaderUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetContentCommand"
+        }
   }
-  It "Should return an Object when listing only a single line" {
-	  (Get-Content -Path $testPath).GetType().BaseType.Name | Should Be "Object"
+  It "Should return an Object when listing only a single line and the correct information from a file" {
+        $content = (Get-Content -Path $testPath)
+        $content | Should Be $testString
+        $content.Count | Should Be 1
+        $content | Should BeOfType "System.String"
   }
-  It "Should deliver an array object when listing a file with multiple lines" {
-	  (Get-Content -Path $testPath2).GetType().BaseType.Name | Should Be "Array"
-  }
-  It "Should return the correct information from a file" {
-	  (Get-Content -Path $testPath) | Should Be $testString
-  }
-  It "Should be able to call using the gc alias" {
-	  { gc -Path $testPath } | Should Not Throw
-  }
-  It "Should be able to call using the type alias" {
-	  { type -Path $testPath } | Should Not Throw
-  }
-  It "Should return the same values for aliases" {
-	  $getContentAlias = Get-Content -Path $testPath
-	  $gcAlias         = gc -Path $testPath
-	  $typeAlias       = type -Path $testPath
-    $getContentAlias | Should Be $gcAlias
-    $getContentAlias | Should Be $typeAlias
+  It "Should deliver an array object when listing a file with multiple lines and the correct information from a file" {
+        $content = (Get-Content -Path $testPath2)
+        @(Compare-Object $content $testString2.Split($nl) -SyncWindow 0).Length | Should Be 0
+        ,$content | Should BeOfType "System.Array"
   }
   It "Should be able to return a specific line from a file" {
 	  (Get-Content -Path $testPath2)[1] | Should be $secondline
@@ -125,10 +120,10 @@ Describe "Get-Content" -Tags "CI" {
   #[BugId(BugDatabase.WindowsOutOfBandReleases, 905829)]
   It "should get-content that matches the input string"{
     set-content $testPath "Hello,llllWorlld","Hello2,llllWorlld2"
-    $result=get-content $testPath -delimiter "ll" 
+    $result=get-content $testPath -delimiter "ll"
     $result.Length    | Should Be 9
     if ($IsWindows) {$expected = "Hell","o,ll","ll","Worll","d`r`nHell","o2,ll","ll","Worll","d2`r`n"
-    } else {$expected = "Hell","o,ll","ll","Worll","d`nHell","o2,ll","ll","Worll","d2`n"}  
+    } else {$expected = "Hell","o,ll","ll","Worll","d`nHell","o2,ll","ll","Worll","d2`n"}
     for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
   }
 }

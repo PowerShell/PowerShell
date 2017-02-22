@@ -1,4 +1,4 @@
-﻿<############################################################################################ 
+﻿<############################################################################################
  # File: Pester.Commands.Cmdlets.ArchiveTests.ps1
  # Commands.Cmdlets.ArchiveTests suite contains Tests that are
  # used for validating Microsoft.PowerShell.Archive module.
@@ -8,13 +8,12 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
 
     AfterAll {
         $global:ProgressPreference = $_progressPreference
-        $env:PSMODULEPATH = $_modulePath 
+        $env:PSMODULEPATH = $_modulePath
     }
     BeforeAll {
         # remove the archive module forcefully, to be sure we get the correct version
-        if ( Get-Module Microsoft.PowerShell.Archive. ) {
-            Remove-Module Microsoft.PowerShell.Archive -force
-        }
+        Remove-Module Microsoft.PowerShell.Archive -Force -ErrorAction SilentlyContinue
+
         # Version comparisons should use a System.Version rather than SemanticVersion
         $PSVersion = $PSVersionTable.PSVersion -as [Version]
         # Write-Progress not supported yet on Core
@@ -24,12 +23,12 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
         $powershellexe = (get-process -pid $PID).MainModule.FileName
         $env:PSMODULEPATH = join-path ([io.path]::GetDirectoryName($powershellexe)) Modules
         if ( $IsCoreCLR ) { $global:ProgressPreference = "SilentlyContinue" }
-        
+
         Setup -d SourceDir
         Setup -d SourceDir/ChildDir-1
         Setup -d SourceDir/ChildDir-2
         Setup -d SourceDir/ChildEmptyDir
-        
+
         $content = "Some Data"
         $Files = ( [io.path]::Combine("SourceDir","Sample-1.txt")), ([io.path]::Combine("SourceDir","Sample-2.txt")),
             ([io.path]::Combine("SourceDir","ChildDir-1","Sample-3.txt")), ([io.path]::Combine("SourceDir","ChildDir-1","Sample-4.txt")),
@@ -59,7 +58,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
     }
 
     function CompressArchivePathParameterSetValidator {
-        param 
+        param
         (
             [string[]] $path,
             [string] $destinationPath,
@@ -78,7 +77,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
     }
 
     function CompressArchiveLiteralPathParameterSetValidator {
-        param 
+        param
         (
             [string[]] $literalPath,
             [string] $destinationPath,
@@ -96,19 +95,19 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
         }
     }
 
-    
+
     function CompressArchiveInValidPathValidator {
-        param 
+        param
         (
             [string[]] $path,
             [string] $destinationPath,
             [string] $invalidPath,
             [string] $expectedFullyQualifiedErrorId
         )
-        
+
         try
-        {   
-            Compress-Archive -Path $path -DestinationPath $destinationPath           
+        {
+            Compress-Archive -Path $path -DestinationPath $destinationPath
             throw "Failed to validate that an invalid Path $invalidPath was supplied as input to Compress-Archive cmdlet."
         }
         catch
@@ -118,7 +117,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
     }
 
     function CompressArchiveInValidArchiveFileExtensionValidator {
-        param 
+        param
         (
             [string[]] $path,
             [string] $destinationPath,
@@ -127,7 +126,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
 
         try
         {
-            Compress-Archive -Path $path -DestinationPath $destinationPath             
+            Compress-Archive -Path $path -DestinationPath $destinationPath
             throw "Failed to validate that an invalid archive file format $invalidArchiveFileExtension was supplied as input to Compress-Archive cmdlet."
         }
         catch
@@ -137,7 +136,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
     }
 
     function Validate-ArchiveEntryCount {
-        param 
+        param
         (
             [string] $path,
             [int] $expectedEntryCount
@@ -148,10 +147,10 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
         {
             $archiveFileStreamArgs = @($path, [System.IO.FileMode]::Open)
             $archiveFileStream = New-Object -TypeName System.IO.FileStream -ArgumentList $archiveFileStreamArgs
-    
+
             $zipArchiveArgs = @($archiveFileStream, [System.IO.Compression.ZipArchiveMode]::Read, $false)
             $zipArchive = New-Object -TypeName System.IO.Compression.ZipArchive -ArgumentList $zipArchiveArgs
-    
+
             $actualEntryCount = $zipArchive.Entries.Count
             $actualEntryCount | Should Be $expectedEntryCount
         }
@@ -161,28 +160,28 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             if ($null -ne $archiveFileStream) { $archiveFileStream.Dispose() }
         }
     }
-    
+
     function ArchiveFileEntryContentValidator {
-        param 
+        param
         (
             [string] $path,
             [string] $entryFileName,
             [string] $expectedEntryFileContent
         )
-        
+
         Add-CompressionAssemblies
         try
         {
             $destFile = "$TestDrive/ExpandedFile"+([System.Guid]::NewGuid().ToString())+".txt"
-    
+
             $archiveFileStreamArgs = @($path, [System.IO.FileMode]::Open)
             $archiveFileStream = New-Object -TypeName System.IO.FileStream -ArgumentList $archiveFileStreamArgs
-    
+
             $zipArchiveArgs = @($archiveFileStream, [System.IO.Compression.ZipArchiveMode]::Read, $false)
             $zipArchive = New-Object -TypeName System.IO.Compression.ZipArchive -ArgumentList $zipArchiveArgs
-    
+
             $entryToBeUpdated = $zipArchive.Entries | ? {$_.FullName -eq $entryFileName}
-            
+
             if($entryToBeUpdated -ne $null)
             {
                 $srcStream = $entryToBeUpdated.Open()
@@ -211,7 +210,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
     }
 
     function ExpandArchiveInvalidParameterValidator {
-        param 
+        param
         (
             [boolean] $isLiteralPathParameterSet,
             [string[]] $path,
@@ -226,7 +225,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
                 Expand-Archive -LiteralPath $literalPath -DestinationPath $destinationPath
             }
             else
-            { 
+            {
                 Expand-Archive -Path $path -DestinationPath $destinationPath
             }
 
@@ -239,7 +238,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
     }
 
     Context "Compress-Archive - Parameter validation test cases" {
-        
+
         It "Validate errors from Compress-Archive with NULL & EMPTY values for Path, LiteralPath, DestinationPath, CompressionLevel parameters" {
             $sourcePath = "$TestDrive/SourceDir"
             $destinationPath = "$TestDrive/SampleSingleFile.zip"
@@ -267,7 +266,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             CompressArchiveLiteralPathParameterSetValidator $sourcePath $destinationPath $null
             CompressArchiveLiteralPathParameterSetValidator $sourcePath $destinationPath ""
         }
-        
+
         It "Validate errors from Compress-Archive when invalid path (non-existing path / non-filesystem path) is supplied for Path or LiteralPath parameters" {
             CompressArchiveInValidPathValidator "$TestDrive/InvalidPath" $TestDrive "$TestDrive/InvalidPath" "ArchiveCmdletPathNotFound,Compress-Archive"
             if ( ! $IsCoreCLR ) {
@@ -285,7 +284,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
 
             $invalidUnZipFileFormat = "$TestDrive/Sample.unzip"
             CompressArchiveInValidArchiveFileExtensionValidator $TestDrive "$invalidUnZipFileFormat" ".unzip"
-            
+
             $invalidcabZipFileFormat = "$TestDrive/Sample.cab"
             CompressArchiveInValidArchiveFileExtensionValidator $TestDrive "$invalidcabZipFileFormat" ".cab"
         }
@@ -308,13 +307,13 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
 
         It "Validate error from Compress-Archive when duplicate paths are supplied as input to Path parameter" {
             $sourcePath = @(
-                "$TestDrive/SourceDir/Sample-1.txt", 
+                "$TestDrive/SourceDir/Sample-1.txt",
                 "$TestDrive/SourceDir/Sample-1.txt")
             $destinationPath = "$TestDrive/DuplicatePaths.zip"
 
             try
             {
-                Compress-Archive -Path $sourcePath -DestinationPath $destinationPath         
+                Compress-Archive -Path $sourcePath -DestinationPath $destinationPath
                 throw "Failed to detect that duplicate Path $sourcePath is supplied as input to Path parameter."
             }
             catch
@@ -325,7 +324,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
 
         It "Validate error from Compress-Archive when duplicate paths are supplied as input to LiteralPath parameter" {
             $sourcePath = @(
-                "$TestDrive/SourceDir/Sample-1.txt", 
+                "$TestDrive/SourceDir/Sample-1.txt",
                 "$TestDrive/SourceDir/Sample-1.txt")
             $destinationPath = "$TestDrive/DuplicatePaths.zip"
 
@@ -488,8 +487,8 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
         }
         It "Validate that multiple files can be compressed using Compress-Archive cmdlet" {
             $sourcePath = @(
-                "$TestDrive/SourceDir/ChildDir-1/Sample-3.txt", 
-                "$TestDrive/SourceDir/ChildDir-1/Sample-4.txt", 
+                "$TestDrive/SourceDir/ChildDir-1/Sample-3.txt",
+                "$TestDrive/SourceDir/ChildDir-1/Sample-4.txt",
                 "$TestDrive/SourceDir/ChildDir-2/Sample-5.txt",
                 "$TestDrive/SourceDir/ChildDir-2/Sample-6.txt")
             $destinationPath = "$TestDrive/SampleMultipleFiles.zip"
@@ -498,9 +497,9 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
         }
         It "Validate that multiple files and directories can be compressed using Compress-Archive cmdlet" {
             $sourcePath = @(
-                "$TestDrive/SourceDir/Sample-1.txt", 
-                "$TestDrive/SourceDir/Sample-2.txt", 
-                "$TestDrive/SourceDir/ChildDir-1", 
+                "$TestDrive/SourceDir/Sample-1.txt",
+                "$TestDrive/SourceDir/Sample-2.txt",
+                "$TestDrive/SourceDir/ChildDir-1",
                 "$TestDrive/SourceDir/ChildDir-2")
             $destinationPath = "$TestDrive/SampleMultipleFilesAndDirs.zip"
             Compress-Archive -Path $sourcePath -DestinationPath $destinationPath
@@ -520,8 +519,8 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
         }
         It "Validate that a single directory & multiple files can be compressed using Compress-Archive cmdlet" {
             $sourcePath = @(
-                "$TestDrive/SourceDir/ChildDir-1", 
-                "$TestDrive/SourceDir/Sample-1.txt", 
+                "$TestDrive/SourceDir/ChildDir-1",
+                "$TestDrive/SourceDir/Sample-1.txt",
                 "$TestDrive/SourceDir/Sample-2.txt")
             $destinationPath = "$TestDrive/SampleMultipleFilesAndSingleDir.zip"
             Compress-Archive -Path $sourcePath -DestinationPath $destinationPath
@@ -557,7 +556,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
 
         It "Validate that all CompressionLevel values can be used with Compress-Archive cmdlet" {
             $sourcePath = "$TestDrive/SourceDir/Sample-1.txt"
-            
+
             $destinationPath = "$TestDrive/FastestCompressionLevel.zip"
             Compress-Archive -Path $sourcePath -DestinationPath $destinationPath -CompressionLevel Fastest
             Test-Path $destinationPath | Should Be $true
@@ -576,12 +575,12 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
 
             $initialContent = "Initial Content"
             $modifiedContent = "Modified Content"
-    
+
             $initialContent | Set-Content $filePath
-    
+
             $sourcePath = "$TestDrive/SourceDir"
             $destinationPath = "$TestDrive/UpdatingModifiedFile.zip"
-                    
+
             Compress-Archive -Path $sourcePath -DestinationPath $destinationPath
             Test-Path $destinationPath | Should Be $True
 
@@ -589,10 +588,10 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
 
             Compress-Archive -Path $sourcePath -DestinationPath $destinationPath -Update
             Test-Path $destinationPath | Should Be $True
-    
+
             ArchiveFileEntryContentValidator "$destinationPath" ([io.path]::Combine("SourceDir","ChildDir-1","Sample-3.txt")) $modifiedContent
         }
-        
+
         It "Validate Compress-Archive cmdlet in pipeline scenario" {
             $destinationPath = "$TestDrive/CompressArchiveFromPipeline.zip"
 
@@ -624,9 +623,9 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
         It "Validate that Compress-Archive generates Verbose messages" {
             $sourcePath = "$TestDrive/SourceDir"
             $destinationPath = "$TestDrive/Compress-Archive generates VerboseMessages.zip"
-            
+
             try
-            {   
+            {
                 $ps=[PowerShell]::Create()
                 $ps.Streams.Error.Clear()
                 $ps.Streams.Verbose.Clear()
@@ -649,7 +648,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             $sourcePath = "$TestDrive/SourceDir"
             $destinationPath = "$TestDrive/ExpandedArchive"
             try
-            {   
+            {
                 Expand-Archive -Path $sourcePath -DestinationPath $destinationPath
         		throw "Expand-Archive succeeded for non existing archive path"
             }
@@ -729,10 +728,10 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
                 $expandedFile = Join-Path $destinationPath -ChildPath $currentFile
                 Test-Path $expandedFile | Should Be $True
 
-                # We are validating to make sure that time stamps are preserved in the 
-                # compressed archive are reflected back when the file is expanded. 
+                # We are validating to make sure that time stamps are preserved in the
+                # compressed archive are reflected back when the file is expanded.
                 (dir $expandedFile).LastWriteTime.CompareTo($fileCreationTimeStamp) | Should Be 0
-                
+
                 Get-Content $expandedFile | Should Be $content
             }
         }
@@ -769,7 +768,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             {
                 Expand-Archive -Path $sourcePath -DestinationPath $destinationPath
                 $expandedFiles = Get-ChildItem $destinationPath -Recurse
-                $expandedFiles.Length | Should BeGreaterThan 1       
+                $expandedFiles.Length | Should BeGreaterThan 1
             }
             finally
             {
@@ -791,10 +790,10 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
                 $expandedFile = Join-Path $destinationPath -ChildPath $currentFile
                 Test-Path -LiteralPath $expandedFile | Should Be $True
 
-                # We are validating to make sure that time stamps are preserved in the 
-                # compressed archive are reflected back when the file is expanded. 
+                # We are validating to make sure that time stamps are preserved in the
+                # compressed archive are reflected back when the file is expanded.
                 (dir -LiteralPath $expandedFile).LastWriteTime.CompareTo($fileCreationTimeStamp) | Should Be 0
-                
+
                 Get-Content -LiteralPath $expandedFile | Should Be $content
             }
         }
@@ -804,7 +803,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             try
             {
                 Push-Location $TestDrive
-                
+
                 Expand-Archive -Path $sourcePath -DestinationPath $destinationPath -Force
                 $expandedFiles = Get-ChildItem $destinationPath -Recurse
                 $expandedFiles.Length | Should Be 2
@@ -821,7 +820,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             try
             {
                 Push-Location $TestDrive
-                
+
                 Expand-Archive -LiteralPath $sourcePath -DestinationPath $destinationPath -Force
                 $expandedFiles = Get-ChildItem $destinationPath -Recurse
                 $expandedFiles.Length | Should Be 2
@@ -838,7 +837,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             try
             {
                 Push-Location $TestDrive
-                
+
                 Expand-Archive -Path $sourcePath -DestinationPath $destinationPath -Force
                 $expandedFiles = Get-ChildItem $destinationPath -Recurse
                 $expandedFiles.Length | Should Be 2
@@ -898,9 +897,9 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
         It "Validate that Expand-Archive generates Verbose messages" {
             $sourcePath = "$TestDrive/SamplePreCreatedArchive.zip"
             $destinationPath = "$TestDrive/VerboseMessagesInExpandArchive"
-            
+
             try
-            {   
+            {
                 $ps=[PowerShell]::Create()
                 $ps.Streams.Error.Clear()
                 $ps.Streams.Verbose.Clear()
@@ -920,9 +919,9 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
         It "Validate that without -Force parameter Expand-Archive generates non-terminating errors without overwriting existing files" {
             $sourcePath = "$TestDrive/SamplePreCreatedArchive.zip"
             $destinationPath = "$TestDrive/NoForceParameterExpandArchive"
-            
+
             try
-            {   
+            {
                 $ps=[PowerShell]::Create()
                 $ps.Streams.Error.Clear()
                 $ps.Streams.Verbose.Clear()
@@ -943,11 +942,11 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             $archivePath = "$TestDrive/NoDestinationPathParameter.zip"
             $destinationPath = "$TestDrive/NoDestinationPathParameter"
             copy-item $sourcePath $archivePath -Force
-            
+
             try
             {
                 Push-Location $TestDrive
-                
+
                 Expand-Archive -Path $archivePath
                 (dir $destinationPath).Count | Should Be 2
             }
@@ -963,11 +962,11 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
             $destinationPath = "$TestDrive/NoDestinationPathParameterDirExists"
             copy-item $sourcePath $archivePath -Force
             New-Item -Path $destinationPath -ItemType Directory | Out-Null
-            
+
             try
             {
                 Push-Location $TestDrive
-                
+
                 Expand-Archive -Path $archivePath
                 (dir $destinationPath).Count | Should Be 2
             }

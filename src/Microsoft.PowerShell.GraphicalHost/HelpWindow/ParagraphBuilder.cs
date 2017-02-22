@@ -18,7 +18,7 @@ namespace Microsoft.Management.UI.Internal
 
     /// <summary>
     /// Builds a paragraph based on Text + Bold + Highlight information.
-    /// Bold are the segments of thexct that should be bold, and Highlight are 
+    /// Bold are the segments of thexct that should be bold, and Highlight are
     /// the segments of thext that should be highlighted (like search results).
     /// </summary>
     internal class ParagraphBuilder : INotifyPropertyChanged
@@ -68,7 +68,7 @@ namespace Microsoft.Management.UI.Internal
         #endregion
 
         /// <summary>
-        /// Gets the number of highlights. 
+        /// Gets the number of highlights.
         /// </summary>
         internal int HighlightCount
         {
@@ -90,7 +90,7 @@ namespace Microsoft.Management.UI.Internal
         ///    1) characters in this.textBuilder
         ///    2) spans in this.boldSpans
         ///    3) spans in this.highlightedSpans
-        /// And adds the minimal number of Inlines to the paragraph so that all 
+        /// And adds the minimal number of Inlines to the paragraph so that all
         /// characters that should be bold and/or highlighted are.
         /// </summary>
         internal void BuildParagraph()
@@ -158,7 +158,7 @@ namespace Microsoft.Management.UI.Internal
             while ((match = text.IndexOf(search, start, comparison)) != -1)
             {
                 // false loop
-                do 
+                do
                 {
                     if (wholeWord)
                     {
@@ -174,7 +174,7 @@ namespace Microsoft.Management.UI.Internal
                     }
 
                     this.AddHighlight(match, search.Length);
-                } 
+                }
                 while (false);
 
                 start = match + search.Length;
@@ -249,9 +249,9 @@ namespace Microsoft.Management.UI.Internal
         /// This is an auxiliar method in BuildParagraph to move the current bold or highlighted spans
         /// according to the <paramref name="caracterPosition"/>
         /// The current bold and highlighted span should be ending ahead of the current position.
-        /// Moves <paramref name="currentSpanIndex"/> and <paramref name="currentSpan"/> to the 
+        /// Moves <paramref name="currentSpanIndex"/> and <paramref name="currentSpan"/> to the
         /// propper span in <paramref name="allSpans"/> according to the <paramref name="caracterPosition"/>
-        /// This is an auxiliar method in BuildParagraph. 
+        /// This is an auxiliar method in BuildParagraph.
         /// </summary>
         /// <param name="currentSpanIndex">current index within <paramref name="allSpans"/></param>
         /// <param name="currentSpan">current span within <paramref name="allSpans"/></param>
@@ -315,7 +315,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// A text span used to mark bold and highlighted segments 
+        /// A text span used to mark bold and highlighted segments
         /// </summary>
         internal struct TextSpan
         {

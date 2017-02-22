@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
     {
         #region Parameters
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
         internal CultureInfo _cultureInfo = null;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <value></value>
         [Parameter]
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [Parameter(ValueFromPipeline = true)]
         public PSObject InputObject { set; get; } = AutomationNull.Value;
@@ -137,7 +137,7 @@ namespace Microsoft.PowerShell.Commands
         #region Internal Properties
 
         /// <summary>
-        /// Specifies sorting order. 
+        /// Specifies sorting order.
         /// </summary>
         internal SwitchParameter DescendingOrder
         {
@@ -162,9 +162,9 @@ namespace Microsoft.PowerShell.Commands
         #endregion Internal Properties
 
         /// <summary>
-        /// 
+        ///
         /// Simply accumulates the incoming objects
-        /// 
+        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -682,7 +682,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // NOTE: the size of the boolean array will determine the max width of the 
+            // NOTE: the size of the boolean array will determine the max width of the
             // vectors to check
             return new OrderByPropertyComparer(ascending, cultureInfo, caseSensitive);
         }

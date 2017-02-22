@@ -9,20 +9,20 @@
 //------------------------------------------------------------------------------
 
 namespace Microsoft.Management.UI.Internal.ShowCommand {
-    
-    
+
+
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.Editors.SettingsDesigner.SettingsSingleFileGenerator", "10.0.0.0")]
     internal sealed partial class ShowCommandSettings : global::System.Configuration.ApplicationSettingsBase {
-        
+
         private static ShowCommandSettings defaultInstance = ((ShowCommandSettings)(global::System.Configuration.ApplicationSettingsBase.Synchronized(new ShowCommandSettings())));
-        
+
         public static ShowCommandSettings Default {
             get {
                 return defaultInstance;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
@@ -34,7 +34,7 @@ namespace Microsoft.Management.UI.Internal.ShowCommand {
                 this["ShowOneCommandTop"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
@@ -46,7 +46,7 @@ namespace Microsoft.Management.UI.Internal.ShowCommand {
                 this["ShowOneCommandLeft"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
@@ -58,7 +58,7 @@ namespace Microsoft.Management.UI.Internal.ShowCommand {
                 this["ShowOneCommandWidth"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
@@ -70,7 +70,7 @@ namespace Microsoft.Management.UI.Internal.ShowCommand {
                 this["ShowOneCommandHeight"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
@@ -82,7 +82,7 @@ namespace Microsoft.Management.UI.Internal.ShowCommand {
                 this["ShowCommandsTop"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
@@ -94,7 +94,7 @@ namespace Microsoft.Management.UI.Internal.ShowCommand {
                 this["ShowCommandsLeft"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
@@ -106,7 +106,7 @@ namespace Microsoft.Management.UI.Internal.ShowCommand {
                 this["ShowCommandsWidth"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("-1")]
@@ -118,7 +118,7 @@ namespace Microsoft.Management.UI.Internal.ShowCommand {
                 this["ShowCommandsHeight"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]
@@ -130,7 +130,7 @@ namespace Microsoft.Management.UI.Internal.ShowCommand {
                 this["ShowCommandsWindowMaximized"] = value;
             }
         }
-        
+
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("False")]

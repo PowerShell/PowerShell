@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     public sealed class SpecialNameAttribute : Attribute
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public SpecialNameAttribute() { }
     }
@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     public sealed class SerializableAttribute : Attribute
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public SerializableAttribute() { }
     }
@@ -54,7 +54,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     public sealed class NonSerializedAttribute : Attribute
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public NonSerializedAttribute() { }
     }
@@ -88,7 +88,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     public sealed class TypeLibTypeAttribute : Attribute
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="flags"></param>
         public TypeLibTypeAttribute(short flags) { }
@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     public sealed class ReliabilityContractAttribute : Attribute
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public ReliabilityContractAttribute(Consistency consistencyGuarantee, Cer cer)
         {
@@ -213,12 +213,12 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     public sealed class SerializationInfo
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public SerializationInfo() { }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
@@ -228,7 +228,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
@@ -238,7 +238,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="value"></param>
@@ -259,7 +259,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <param name="type"></param>
@@ -270,7 +270,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -280,7 +280,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -300,7 +300,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="type"></param>
         public void SetType(System.Type type)
@@ -309,7 +309,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="name"></param>
         /// <returns></returns>
@@ -329,7 +329,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     public interface ISerializable
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="info"></param>
         /// <param name="context"></param>
@@ -342,7 +342,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     public interface ICloneable
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         object Clone();
@@ -354,7 +354,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     public interface IObjectReference
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="context"></param>
         /// <returns></returns>
@@ -367,12 +367,12 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     public interface IRuntimeVariables
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         int Count { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="index"></param>
         /// <returns></returns>
@@ -510,7 +510,7 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         /// <summary>
         /// Constructor
         /// </summary>
-        protected SafeHandleMinusOneIsInvalid(bool ownsHandle) 
+        protected SafeHandleMinusOneIsInvalid(bool ownsHandle)
             : base(new IntPtr(-1), ownsHandle)
         {
         }
@@ -641,7 +641,7 @@ namespace System
     internal sealed class AppDomain
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public static System.AppDomain CreateDomain(string friendlyName)
         {
@@ -649,7 +649,7 @@ namespace System
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public static void Unload(System.AppDomain domain)
         {
@@ -659,7 +659,7 @@ namespace System
 
 namespace System.Net
 {
-    internal class WebClient //: Component 
+    internal class WebClient //: Component
     {
         public WebClient() { }
 
@@ -674,8 +674,8 @@ namespace System.Security
     using System.Text;
 
     /// <summary>
-    /// 
-    /// </summary>  
+    ///
+    /// </summary>
     sealed public class SecurityElement
     {
         private static readonly string[] s_escapeStringPairs = new string[]
@@ -691,7 +691,7 @@ namespace System.Security
 
         /// <summary>
         /// Replaces invalid XML characters in a string with their valid XML equivalent.
-        /// </summary>  
+        /// </summary>
         public static string Escape(string str)
         {
             if (str == null)
@@ -760,7 +760,7 @@ namespace System.Management.Automation
     #region PSTransaction
 
     /// <summary>
-    /// We don't need PSTransaction related types on CSS because System.Transactions 
+    /// We don't need PSTransaction related types on CSS because System.Transactions
     /// namespace is not available in CoreCLR
     /// </summary>
     public sealed class PSTransactionContext : IDisposable
@@ -842,7 +842,7 @@ namespace System.Management.Automation
 namespace System.Management.Automation.Internal
 {
     /// <summary>
-    /// We don't need PSTransaction related types on CSS because System.Transactions 
+    /// We don't need PSTransaction related types on CSS because System.Transactions
     /// namespace is not available in CoreCLR
     /// </summary>
     internal sealed class PSTransactionManager : IDisposable
@@ -997,7 +997,7 @@ namespace System.Management.Automation.ComInterop
     internal class VarEnumSelector
     {
         private static readonly Dictionary<VarEnum, Type> _ComToManagedPrimitiveTypes = CreateComToManagedPrimitiveTypes();
-        
+
         internal static Type GetTypeForVarEnum(VarEnum vt)
         {
             Type type;
@@ -1055,9 +1055,9 @@ namespace System.Management.Automation.ComInterop
         /// <summary>
         /// Gets the managed type that an object needs to be coverted to in order for it to be able
         /// to be represented as a Variant.
-        /// 
+        ///
         /// In general, there is a many-to-many mapping between Type and VarEnum. However, this method
-        /// returns a simple mapping that is needed for the current implementation. The reason for the 
+        /// returns a simple mapping that is needed for the current implementation. The reason for the
         /// many-to-many relation is:
         /// 1. Int32 maps to VT_I4 as well as VT_ERROR, and Decimal maps to VT_DECIMAL and VT_CY. However,
         ///    this changes if you throw the wrapper types into the mix.
@@ -1155,7 +1155,7 @@ namespace System.Management.Automation.ComInterop
                 case VarEnum.VT_BSTR:
 
                 // *** END GENERATED CODE ***
-                    
+
                     return true;
             }
 
@@ -1372,11 +1372,11 @@ namespace System.Management.Automation
 
     #endregion
 
-    #region Environment 
+    #region Environment
 
     internal static partial class Environment
     {
-        //TODO:CORECLR Need to be removed once we decide what will be the replacement 
+        //TODO:CORECLR Need to be removed once we decide what will be the replacement
         internal static void Exit(int exitCode)
         {
         }
@@ -1444,13 +1444,13 @@ namespace System.Management.Automation.Tracing
     using System.Management.Automation.Internal;
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public abstract class EtwActivity
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="activityId"></param>
         /// <returns></returns>
@@ -1460,7 +1460,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public static Guid CreateActivityId()
@@ -1469,7 +1469,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public static Guid GetActivityId()
@@ -1587,17 +1587,17 @@ namespace System.Management.Automation.Tracing
         ManagedPlugIn = 0x100,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         UseAlwaysDebug = 0x2000000000000000,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         UseAlwaysOperational = 0x8000000000000000,
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         UseAlwaysAnalytic = 0x4000000000000000,
     }
@@ -1675,7 +1675,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="message1"></param>
         /// <param name="message2"></param>
@@ -1686,7 +1686,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="message"></param>
         /// <param name="instanceId"></param>
@@ -1698,7 +1698,7 @@ namespace System.Management.Automation.Tracing
 
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="className"></param>
         /// <param name="methodName"></param>
@@ -1712,7 +1712,7 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="className"></param>
         /// <param name="methodName"></param>
@@ -1738,10 +1738,10 @@ namespace System.Management.Automation.Tracing
     public static class PowerShellTraceSourceFactory
     {
         /// <summary>
-        /// Returns an instance of BaseChannelWriter. 
+        /// Returns an instance of BaseChannelWriter.
         /// If the Etw is not supported by the platform it will return NullWriter.Instance
-        /// 
-        /// A Task and a set of Keywords can be specified in the GetTraceSource method (See overloads).  
+        ///
+        /// A Task and a set of Keywords can be specified in the GetTraceSource method (See overloads).
         ///    The supplied task and keywords are used to pass to the Etw provider in case they are
         /// not defined in the manifest file.
         /// </summary>
@@ -1751,10 +1751,10 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Returns an instance of BaseChannelWriter. 
+        /// Returns an instance of BaseChannelWriter.
         /// If the Etw is not supported by the platform it will return NullWriter.Instance
-        /// 
-        /// A Task and a set of Keywords can be specified in the GetTraceSource method (See overloads).  
+        ///
+        /// A Task and a set of Keywords can be specified in the GetTraceSource method (See overloads).
         ///    The supplied task and keywords are used to pass to the Etw provider in case they are
         /// not defined in the manifest file.
         /// </summary>
@@ -1764,10 +1764,10 @@ namespace System.Management.Automation.Tracing
         }
 
         /// <summary>
-        /// Returns an instance of BaseChannelWriter. 
+        /// Returns an instance of BaseChannelWriter.
         /// If the Etw is not supported by the platform it will return NullWriter.Instance
-        /// 
-        /// A Task and a set of Keywords can be specified in the GetTraceSource method (See overloads).  
+        ///
+        /// A Task and a set of Keywords can be specified in the GetTraceSource method (See overloads).
         ///    The supplied task and keywords are used to pass to the Etw provider in case they are
         /// not defined in the manifest file.
         /// </summary>

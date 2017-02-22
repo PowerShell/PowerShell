@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScheduledJobDefinition.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, 
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true,
                    ParameterSetName = DisableScheduledJobDefinitionBase.DefinitionParameterSet)]
         [ValidateNotNull]
         public ScheduledJobDefinition InputObject
@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScheduledJobDefinition Id.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, 
+        [Parameter(Position = 0, Mandatory = true,
                    ParameterSetName = DisableScheduledJobDefinitionBase.DefinitionIdParameterSet)]
         public Int32 Id
         {
@@ -58,7 +58,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScheduledJobDefinition Name.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, 
+        [Parameter(Position = 0, Mandatory = true,
                    ParameterSetName = DisableScheduledJobDefinitionBase.DefinitionNameParameterSet)]
         [ValidateNotNullOrEmpty]
         public string Name

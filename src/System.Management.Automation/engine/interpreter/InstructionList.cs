@@ -1,11 +1,11 @@
 /* ****************************************************************************
  *
- * Copyright (c) Microsoft Corporation. 
+ * Copyright (c) Microsoft Corporation.
  *
- * This source code is subject to terms and conditions of the Apache License, Version 2.0. A 
- * copy of the license can be found in the License.html file at the root of this distribution. If 
- * you cannot locate the  Apache License, Version 2.0, please send an email to 
- * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound 
+ * This source code is subject to terms and conditions of the Apache License, Version 2.0. A
+ * copy of the license can be found in the License.html file at the root of this distribution. If
+ * you cannot locate the  Apache License, Version 2.0, please send an email to
+ * dlr@microsoft.com. By using this source code in any fashion, you are agreeing to be bound
  * by the terms of the Apache License, Version 2.0.
  *
  * You must not remove this notice, or any other, from this software.
@@ -749,7 +749,28 @@ namespace System.Management.Automation.Interpreter
 
         public void EmitNewArrayInit(Type elementType, int elementCount)
         {
-            Emit(InstructionFactory.GetFactory(elementType).NewArrayInit(elementCount));
+            // To avoid lock contention in InstructionFactory.GetFactory, we special case the most common
+            // types of arrays that the compiler creates.
+            if (elementType == typeof(CommandParameterInternal))
+            {
+                Emit(InstructionFactory<CommandParameterInternal>.Factory.NewArrayInit(elementCount));
+            }
+            else if (elementType == typeof(CommandParameterInternal[]))
+            {
+                Emit(InstructionFactory<CommandParameterInternal[]>.Factory.NewArrayInit(elementCount));
+            }
+            else if (elementType == typeof(object))
+            {
+                Emit(InstructionFactory<object>.Factory.NewArrayInit(elementCount));
+            }
+            else if (elementType == typeof(string))
+            {
+                Emit(InstructionFactory<string>.Factory.NewArrayInit(elementCount));
+            }
+            else
+            {
+                Emit(InstructionFactory.GetFactory(elementType).NewArrayInit(elementCount));
+            }
         }
 
         #endregion

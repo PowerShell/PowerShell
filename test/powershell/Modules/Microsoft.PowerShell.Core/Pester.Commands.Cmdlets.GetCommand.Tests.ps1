@@ -32,7 +32,7 @@ Describe "Tests Get-Command with relative paths and wildcards" -Tag "CI" {
         $result | Should Not Be $null
         $result | Should Be WildCardCommandA.exe
     }
-    
+
     It "Test with PowerShell wildcard and relative path" {
         push-location $TestDrive
 

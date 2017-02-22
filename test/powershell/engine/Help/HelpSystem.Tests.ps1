@@ -19,7 +19,7 @@ function UpdateHelpFromLocalContentPath
     }
     else
     {
-        Update-Help -Module $ModuleName -Force -Verbose -ErrorAction Stop
+        Update-Help -Module $ModuleName -Force -ErrorAction Stop
     }
 }
 
@@ -59,6 +59,17 @@ function RunTestCase
                 break
             }
         }
+    }
+}
+
+Describe "Validate that <pshome>/<culture>/default.help.txt is present" -Tags @('CI') {
+
+    It "Get-Help returns information about the help system." {
+
+        $help = Get-Help
+        $help.Name | Should Be "default"
+        $help.Category | Should Be "HelpFile"
+        $help.Synopsis | Should Match "SHORT DESCRIPTION"
     }
 }
 

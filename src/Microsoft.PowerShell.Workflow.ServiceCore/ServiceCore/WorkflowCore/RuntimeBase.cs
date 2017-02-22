@@ -42,12 +42,12 @@ namespace Microsoft.PowerShell.Workflow
         Definition = 4,
 
         /// <summary>
-        /// Timers 
+        /// Timers
         /// </summary>
         Timer = 8,
 
         /// <summary>
-        /// JobState 
+        /// JobState
         /// </summary>
         JobState = 16,
 
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Workflow
         /// InProcess
         /// </summary>
         InProcess = 0,
-        
+
         /// <summary>
         /// OutOfProcess
         /// </summary>
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Workflow
         /// </summary>
         /// <param name="components"></param>
         protected abstract void DoSave(IEnumerable<object> components);
-        
+
         #endregion Save
 
         #region Load  Methods
@@ -247,7 +247,7 @@ namespace Microsoft.PowerShell.Workflow
             }
 
             IEnumerable<object> loadedComponents = DoLoad(componentsToLoad);
-            
+
             foreach (object loadedComponent in loadedComponents)
             {
                 Type componentType = loadedComponent.GetType();
@@ -341,7 +341,7 @@ namespace Microsoft.PowerShell.Workflow
         #region Private Members
 
         /// <summary>
-        /// _syncLock 
+        /// _syncLock
         /// </summary>
         private object _syncLock = new object();
 
@@ -478,7 +478,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// Dispose 
+        /// Dispose
         /// </summary>
         protected virtual void Dispose(bool disposing)
         {
@@ -634,7 +634,7 @@ namespace Microsoft.PowerShell.Workflow
 
         internal virtual bool SaveStreamsIfNecessary()
         {
-            return false;            
+            return false;
         }
 
         #endregion Internal Members
@@ -825,7 +825,7 @@ namespace Microsoft.PowerShell.Workflow
         /// </summary>
         public virtual void DisposeStreams()
         {
-            
+
         }
 
         #endregion Public Members

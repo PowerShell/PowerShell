@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="formatFiles"></param>
         /// <param name="isShared"></param>
@@ -155,7 +155,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// Update a shared formatting database with formatData of 'ExtendedTypeDefinition' type.
-        /// This method should only be called from the FormatTable, where are shared formatting 
+        /// This method should only be called from the FormatTable, where are shared formatting
         /// database is created.
         /// </summary>
         /// <param name="formatData">

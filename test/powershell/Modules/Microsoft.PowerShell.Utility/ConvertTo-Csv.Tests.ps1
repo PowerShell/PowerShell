@@ -1,7 +1,7 @@
 Describe "ConvertTo-Csv DRT Unit Tests" -Tags "CI" {
-    $inputObject = [pscustomobject]@{ First = 1; Second = 2 } 
+    $inputObject = [pscustomobject]@{ First = 1; Second = 2 }
 
-    It "Test convertto-csv with psobject pipelined" {        
+    It "Test convertto-csv with psobject pipelined" {
         $returnObject = $inputObject | ConvertTo-Csv
         $returnObject.Count | Should Be 3
         $returnObject[0] | Should Be "#TYPE System.Management.Automation.PSCustomObject"
@@ -45,9 +45,8 @@ Describe "ConvertTo-Csv" -Tags "CI" {
     }
 
     It "Should output an array of objects" {
-	$result = $testObject | ConvertTo-Csv
-
-	$result.GetType().BaseType.Name | Should Be "Array"
+        $result = $testObject | ConvertTo-Csv
+        ,$result | Should BeOfType "System.Array"
     }
 
     It "Should return the type of data in the first element of the output array" {

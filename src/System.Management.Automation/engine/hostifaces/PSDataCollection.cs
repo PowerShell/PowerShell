@@ -144,7 +144,7 @@ namespace System.Management.Automation
         private bool _blockingEnumerator = false;
 
         /// <summary>
-        /// whether the ref count was incremented when 
+        /// whether the ref count was incremented when
         /// BlockingEnumerator was updated
         /// </summary>
         private bool _refCountIncrementedForBlockingEnumerator = false;
@@ -165,7 +165,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates a PSDataCollection that includes all the items in the IEnumerable and invokes Complete(). 
+        /// Creates a PSDataCollection that includes all the items in the IEnumerable and invokes Complete().
         /// </summary>
         /// <param name="items">
         /// Items used to initialize the collection
@@ -189,7 +189,7 @@ namespace System.Management.Automation
         /// store.
         /// </param>
         /// <remarks>
-        /// Capacity is the number of elements that the PSDataCollection can 
+        /// Capacity is the number of elements that the PSDataCollection can
         /// store before resizing is required.
         /// </remarks>
         public PSDataCollection(int capacity) : this(new List<T>(capacity))
@@ -518,7 +518,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Completes insertions to the buffer. 
+        /// Completes insertions to the buffer.
         /// Subsequent Inserts to the buffer will result in an InvalidOperationException
         /// </summary>
         public void Complete()
@@ -573,7 +573,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Indicates whether the data collection should 
+        /// Indicates whether the data collection should
         /// have a blocking enumerator by default. Currently
         /// only when a PowerShell object is associated with
         /// the data collection, a reference count is added
@@ -630,14 +630,14 @@ namespace System.Management.Automation
         #region IList Generic Overrides
 
         /// <summary>
-        /// Gets or sets the element at the specified index. 
+        /// Gets or sets the element at the specified index.
         /// </summary>
         /// <param name="index">
         /// The zero-based index of the element to get or set.
         /// </param>
         /// <exception cref="InvalidOperationException">
-        /// Objects cannot be added to a closed buffer. 
-        /// Make sure the buffer is open for Add and Insert 
+        /// Objects cannot be added to a closed buffer.
+        /// Make sure the buffer is open for Add and Insert
         /// operations to succeed.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
@@ -674,13 +674,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Determines the index of a specific item in the buffer. 
+        /// Determines the index of a specific item in the buffer.
         /// </summary>
         /// <param name="item">
         /// The object to locate in the buffer.
         /// </param>
         /// <returns>
-        /// The index of item if found in the buffer; otherwise, -1. 
+        /// The index of item if found in the buffer; otherwise, -1.
         /// </returns>
         public int IndexOf(T item)
         {
@@ -691,7 +691,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Inserts an item to the buffer at the specified index. 
+        /// Inserts an item to the buffer at the specified index.
         /// </summary>
         /// <param name="index">
         /// The zero-based index at which item should be inserted.
@@ -700,12 +700,12 @@ namespace System.Management.Automation
         /// The object to insert into the buffer.
         /// </param>
         /// <exception cref="InvalidOperationException">
-        /// Objects cannot be added to a closed buffer. 
-        /// Make sure the buffer is open for Add and Insert 
+        /// Objects cannot be added to a closed buffer.
+        /// Make sure the buffer is open for Add and Insert
         /// operations to succeed.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// The index specified is less than zero or greater 
+        /// The index specified is less than zero or greater
         /// than Count.
         /// </exception>
         public void Insert(int index, T item)
@@ -779,8 +779,8 @@ namespace System.Management.Automation
         /// item to add
         /// </param>
         /// <exception cref="InvalidOperationException">
-        /// Objects cannot be added to a closed buffer. 
-        /// Make sure the buffer is open for Add and Insert 
+        /// Objects cannot be added to a closed buffer.
+        /// Make sure the buffer is open for Add and Insert
         /// operations to succeed.
         /// </exception>
         public void Add(T item)
@@ -790,7 +790,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Removes all items from the buffer
-        /// </summary>       
+        /// </summary>
         public void Clear()
         {
             lock (SyncObject)
@@ -803,13 +803,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Determines whether the buffer contains an element with a specific value. 
+        /// Determines whether the buffer contains an element with a specific value.
         /// </summary>
         /// <param name="item">
         /// The object to locate in the buffer.
         /// </param>
         /// <returns>
-        /// true if the element value is found in the buffer; otherwise false. 
+        /// true if the element value is found in the buffer; otherwise false.
         /// </returns>
         public bool Contains(T item)
         {
@@ -834,11 +834,11 @@ namespace System.Management.Automation
         /// The zero-based index in the array at which copying begins.
         /// </param>
         /// <exception cref="ArgumentException">
-        /// array is multidimensional. 
+        /// array is multidimensional.
         /// (or)
-        /// arrayIndex is equal to or greater than the length of array. 
+        /// arrayIndex is equal to or greater than the length of array.
         /// (or)
-        /// The number of elements in the source buffer is greater than the 
+        /// The number of elements in the source buffer is greater than the
         /// available space from arrayIndex to the end of the destination array.
         /// (or)
         /// Type T cannot be cast automatically to the type of the destination array.
@@ -858,13 +858,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Removes the first occurrence of a specified item from the buffer. 
+        /// Removes the first occurrence of a specified item from the buffer.
         /// </summary>
         /// <param name="item">
         /// The object to remove from the buffer.
         /// </param>
         /// <returns>
-        /// true if item was successfully removed from the buffer; otherwise, false. 
+        /// true if item was successfully removed from the buffer; otherwise, false.
         /// </returns>
         public bool Remove(T item)
         {
@@ -886,7 +886,7 @@ namespace System.Management.Automation
         #region IEnumerable Generic Overrides
 
         /// <summary>
-        /// Returns an enumerator that iterates through the 
+        /// Returns an enumerator that iterates through the
         /// elements of the buffer.
         /// </summary>
         /// <returns>
@@ -908,11 +908,11 @@ namespace System.Management.Automation
         /// The object to add to the buffer.
         /// </param>
         /// <returns>
-        /// The position into which the new element was inserted. 
+        /// The position into which the new element was inserted.
         /// </returns>
         /// <exception cref="InvalidOperationException">
-        /// Objects cannot be added to a closed buffer. 
-        /// Make sure the buffer is open for Add and Insert 
+        /// Objects cannot be added to a closed buffer.
+        /// Make sure the buffer is open for Add and Insert
         /// operations to succeed.
         /// </exception>
         /// <exception cref="ArgumentException">
@@ -931,14 +931,14 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Determines whether the collection contains an 
-        /// element with a specific value. 
+        /// Determines whether the collection contains an
+        /// element with a specific value.
         /// </summary>
         /// <param name="value">
         /// The object to locate in the collection
         /// </param>
         /// <returns>
-        /// true if the element value is found in the collection; 
+        /// true if the element value is found in the collection;
         /// otherwise false.
         /// </returns>
         /// <exception cref="ArgumentException">
@@ -953,13 +953,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Determines the zero-based index of an element in the buffer. 
+        /// Determines the zero-based index of an element in the buffer.
         /// </summary>
         /// <param name="value">
         /// The element in the buffer whose index is being determined.
         /// </param>
         /// <returns>
-        /// The index of the value if found in the buffer; otherwise, -1. 
+        /// The index of the value if found in the buffer; otherwise, -1.
         /// </returns>
         /// <exception cref="ArgumentException">
         /// value reference is null.
@@ -973,7 +973,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Inserts an object into the buffer at a specified index. 
+        /// Inserts an object into the buffer at a specified index.
         /// </summary>
         /// <param name="index">
         /// The zero-based index at which value is to be inserted.
@@ -997,7 +997,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Removes the first occurrence of a specified object
-        /// as an element from the buffer. 
+        /// as an element from the buffer.
         /// </summary>
         /// <param name="value">
         /// The object to be removed from the buffer.
@@ -1036,7 +1036,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the element at the specified index. 
+        /// Gets or sets the element at the specified index.
         /// </summary>
         /// <param name="index">
         /// The zero-based index of the element to get or set.
@@ -1091,8 +1091,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Copies the elements of the collection to a specified array, 
-        /// starting at a particular index. 
+        /// Copies the elements of the collection to a specified array,
+        /// starting at a particular index.
         /// </summary>
         /// <param name="array">
         /// The destination Array for the elements of type T copied
@@ -1102,11 +1102,11 @@ namespace System.Management.Automation
         /// The zero-based index in the array at which copying begins.
         /// </param>
         /// <exception cref="ArgumentException">
-        /// array is multidimensional. 
+        /// array is multidimensional.
         /// (or)
-        /// arrayIndex is equal to or greater than the length of array. 
+        /// arrayIndex is equal to or greater than the length of array.
         /// (or)
-        /// The number of elements in the source buffer is greater than the 
+        /// The number of elements in the source buffer is greater than the
         /// available space from arrayIndex to the end of the destination array.
         /// </exception>
         /// <exception cref="ArgumentNullException">
@@ -1145,7 +1145,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Makes a shallow copy of all the elements currently in this collection
         /// and clears them from this collection. This will not result in a blocking call.
-        /// 
+        ///
         /// Calling this method might have side effects on the enumerator. When this
         /// method is called, the behavior of the enumerator is not defined.
         /// </summary>
@@ -1160,7 +1160,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Makes a shallow copy of all the elements currently in this collection
         /// and clears them from this collection. This will not result in a blocking call.
-        /// 
+        ///
         /// Calling this method might have side effects on the enumerator. When this
         /// method is called, the behavior of the enumerator is not defined.
         /// </summary>
@@ -1204,7 +1204,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        // reset the handle so that future 
+                        // reset the handle so that future
                         // threads will block
                         _readWaitHandle.Reset();
                     }
@@ -1235,7 +1235,7 @@ namespace System.Management.Automation
         #region Protected Virtual Methods
 
         /// <summary>
-        /// Inserts an item into the buffer at a specified index. 
+        /// Inserts an item into the buffer at a specified index.
         /// </summary>
         /// <param name="psInstanceId">
         /// InstanceId of PowerShell instance adding this data.
@@ -1248,7 +1248,7 @@ namespace System.Management.Automation
         /// The object to be inserted into the buffer.
         /// </param>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// The index specified is less than zero or greater 
+        /// The index specified is less than zero or greater
         /// than Count.
         /// </exception>
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "ps", Justification = "PS signifies PowerShell and is used at many places in the product.")]
@@ -1271,7 +1271,7 @@ namespace System.Management.Automation
         /// The zero-based index of the buffer where the object is to be removed.
         /// </param>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// The index specified is less than zero or greater 
+        /// The index specified is less than zero or greater
         /// than the number of items in the buffer.
         /// </exception>
         protected virtual void RemoveItem(int index)
@@ -1320,7 +1320,7 @@ namespace System.Management.Automation
                     {
                         if (null == _readWaitHandle)
                         {
-                            // Create the handle signaled if there are objects in the buffer 
+                            // Create the handle signaled if there are objects in the buffer
                             // or the buffer has been closed.
                             _readWaitHandle = new ManualResetEvent(_data.Count > 0 || !_isOpen);
                         }
@@ -1358,7 +1358,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        // reset the handle so that future 
+                        // reset the handle so that future
                         // threads will block
                         _readWaitHandle.Reset();
                     }
@@ -1416,7 +1416,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Inserts an item into the buffer at a specified index. 
+        /// Inserts an item into the buffer at a specified index.
         /// The caller should make sure the method call is
         /// synchronized.
         /// </summary>
@@ -1432,12 +1432,12 @@ namespace System.Management.Automation
         /// The object to be inserted into the buffer.
         /// </param>
         /// <exception cref="InvalidOperationException">
-        /// Objects cannot be added to a closed buffer. 
-        /// Make sure the buffer is open for Add and Insert 
+        /// Objects cannot be added to a closed buffer.
+        /// Make sure the buffer is open for Add and Insert
         /// operations to succeed.
         /// </exception>
         /// <exception cref="ArgumentOutOfRangeException">
-        /// The index specified is less than zero or greater 
+        /// The index specified is less than zero or greater
         /// than Count.
         /// </exception>
         private void InternalInsertItem(Guid psInstanceId, int index, T item)
@@ -1461,8 +1461,8 @@ namespace System.Management.Automation
         /// item to add
         /// </param>
         /// <exception cref="InvalidOperationException">
-        /// Objects cannot be added to a closed buffer. 
-        /// Make sure the buffer is open for Add and Insert 
+        /// Objects cannot be added to a closed buffer.
+        /// Make sure the buffer is open for Add and Insert
         /// operations to succeed.
         /// </exception>
         internal void InternalAdd(Guid psInstanceId, T item)
@@ -1487,13 +1487,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Adds the elements of an ICollection to the end of the buffer. 
+        /// Adds the elements of an ICollection to the end of the buffer.
         /// </summary>
         /// <param name="psInstanceId">
         /// InstanceId of PowerShell instance adding this data.
         /// </param>
         /// <param name="collection">
-        /// The ICollection whose elements should be added to the end of 
+        /// The ICollection whose elements should be added to the end of
         /// the buffer.
         /// </param>
         /// <exception cref="ArgumentNullException">
@@ -1551,7 +1551,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Decrement counter to keep track of active PowerShell instances
-        /// using this buffer. This is used only internally. 
+        /// using this buffer. This is used only internally.
         /// </summary>
         internal void DecrementRef()
         {
@@ -1570,14 +1570,14 @@ namespace System.Management.Automation
 
                 // release any threads to notify refCount is 0. Enumerator
                 // blocks on this syncObject and it needs to be notified
-                // when the count becomes 0. 
+                // when the count becomes 0.
                 Monitor.PulseAll(SyncObject);
             }
         }
 
         /// <summary>
         /// Returns the index of first occurrence of <paramref name="item"/>
-        /// in the buffer. 
+        /// in the buffer.
         /// This method is not thread safe.
         /// </summary>
         /// <param name="item">
@@ -1821,7 +1821,7 @@ namespace System.Management.Automation
     #region PSDataCollectionEnumerator
 
     /// <summary>
-    /// Enumerator for PSDataCollection. This enumerator blocks until 
+    /// Enumerator for PSDataCollection. This enumerator blocks until
     /// either all the PowerShell operations are completed or the
     /// PSDataCollection is closed.
     /// </summary>
@@ -1867,7 +1867,7 @@ namespace System.Management.Automation
         #region IEnumerator Overrides
 
         /// <summary>
-        /// Gets the element in the collection at the current position 
+        /// Gets the element in the collection at the current position
         /// of the enumerator.
         /// </summary>
         /// <remarks>
@@ -1884,7 +1884,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets the element in the collection at the current position 
+        /// Gets the element in the collection at the current position
         /// of the enumerator.
         /// </summary>
         /// <remarks>
@@ -1904,11 +1904,11 @@ namespace System.Management.Automation
         /// Advances the enumerator to the next element in the collection.
         /// </summary>
         /// <returns>
-        /// true if the enumerator successfully advanced to the next element; 
+        /// true if the enumerator successfully advanced to the next element;
         /// otherwise, false.
         /// </returns>
         /// <remarks>
-        /// This will block if the original collection is attached to any 
+        /// This will block if the original collection is attached to any
         /// active PowerShell instances and the original collection is not
         /// closed.
         /// </remarks>
@@ -1921,7 +1921,7 @@ namespace System.Management.Automation
         /// Advances the enumerator to the next element in the collection.
         /// </summary>
         /// <returns>
-        /// true if the enumerator successfully advanced to the next element; 
+        /// true if the enumerator successfully advanced to the next element;
         /// otherwise, false.
         /// </returns>
         /// <param name="block">true - to block when no elements are available</param>
@@ -1972,8 +1972,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Resets the enumerator to its initial position, 
-        /// which is before the first element in the collection. 
+        /// Resets the enumerator to its initial position,
+        /// which is before the first element in the collection.
         /// </summary>
         public void Reset()
         {
@@ -1982,7 +1982,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         void IDisposable.Dispose()
         {
@@ -1994,8 +1994,8 @@ namespace System.Management.Automation
     #endregion
 
     /// <summary>
-    /// Class that represents various informational buffers like 
-    /// verbose, debug, warning, progress, information used with command invocation. 
+    /// Class that represents various informational buffers like
+    /// verbose, debug, warning, progress, information used with command invocation.
     /// </summary>
     internal sealed class PSInformationalBuffers
     {
