@@ -178,13 +178,13 @@ See [Contributing to documentation related to PowerShell](#contributing-to-docum
     * An Assignee must be a [Maintainer](../docs/maintainers), who monitors the progress of the PR,
       coordinates the review process, and merges the PR after it's been approved.
       The Assignee may or may not be a Reviewer of the PR at the same time.
-  * An Author is encouraged to choose Reviewer(s) and Assignee for the PR.
-    If no Assignee is chosen, one of Maintainers shall be assigned to it.
-    If no Reviewer is chosen, Assignee shall choose Reviewer(s) as appropriate.
+  * An Author is encouraged to choose Reviewer(s) and an Assignee for the PR.
+    If no Assignee is chosen, one of the Maintainers shall be assigned to it.
+    If no Reviewer is chosen, the Assignee shall choose Reviewer(s) as appropriate.
     * If an Author is a [PowerShell Team](https://github.com/orgs/PowerShell/people) member,
-      then the Author **is required** to choose Reviewer(s) and Assignee of the PR.
-  * For a PR to be merged, it must be approved by at least one PowerShell Team member or Collaborator,
-    so additional Reviewer(s) may be added by Assignee as appropriate.
+      then the Author **is required** to choose Reviewer(s) and an Assignee for the PR.
+  * For a PR to be merged, it must be approved by at least one PowerShell Team member or collaborator,
+    so additional Reviewer(s) may be added by the Assignee as appropriate.
     The Assignee may also be re-assigned by Maintainers.
 
 * A Reviewer can postpone the code review if CI builds fail,
