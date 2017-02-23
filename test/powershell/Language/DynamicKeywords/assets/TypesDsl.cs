@@ -1,18 +1,12 @@
 using System.Management.Automation;
 using System.Management.Automation.Language;
 
-[Keyword(Body = DynamicKeywordBodyMode.ScriptBlock)]
+[Keyword(Name = DynamicKeywordNameMode.NameRequired, Body = DynamicKeywordBodyMode.ScriptBlock)]
 public class TypeExtension : Keyword
 {
-    [KeywordParameter(Mandatory = true)]
-    public string Name { get; set; }
-
-    [Keyword()]
+    [Keyword(DirectCall = true)]
     public class Method : Keyword
     {
-        [KeywordParameter(Mandatory = true)]
-        public string Name { get; set; }
-
         [KeywordParameter()]
         public ScriptBlock ScriptMethod { get; set; }
 
@@ -23,12 +17,9 @@ public class TypeExtension : Keyword
         public string ReferencedType { get; set; }
     }
 
-    [Keyword()]
+    [Keyword(DirectCall = true)]
     public class Property : Keyword
     {
-        [KeywordParameter(Mandatory = true)]
-        public string Name { get; set; }
-
         [KeywordParameter()]
         public string Alias { get; set; }
 

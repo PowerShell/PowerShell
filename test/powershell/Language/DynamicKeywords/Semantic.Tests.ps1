@@ -3,7 +3,7 @@ Import-Module $PSScriptRoot/DynamicKeywordTestSupport.psm1
 Describe "Dynamic Keyword parse time delegate execution" -Tags "CI" {
     BeforeAll {
         $savedModPath = $env:PSMODULEPATH
-        $env:PSMODULEPATH += [System.IO.Path]::PathSeparator + $TestDrive
+        $env:PSMODULEPATH = New-PathEntry -ModulePath $TestDrive -PathString $env:PSMODULEPATH
 
         $testCases = @(
             @{ keyword = "SimplePreParse"; invocation = "SimplePreParseKeyword"; expectedError = "SuccessfulPreParse" },
@@ -60,5 +60,24 @@ Describe "Dynamic Keyword parse time delegate execution" -Tags "CI" {
         $result = Get-ScriptBlockResultInNewProcess -TestDrive $TestDrive -ModuleName "ParserDelegateDsl" -ScriptBlock $preParseCommand
 
         $result.Greeting.Name | Should Be "Greeting"
+    }
+}
+
+Describe "Extends runtime types using a dsl" -Tags "CI" {
+    BeforeAll {
+        $savedModulePath = $env:PSMODULEPATH
+        $env:PSMODULEPATH = New-PathEntry -ModulePath $TestDrive -PathString $env:PSMODULEPATH
+
+        $testCases = @(
+            @{ invocation = "@(8,5,2).Sum()"; expected = 15 }
+        )
+
+        $command = {
+            $results = @{}
+        }
+    }
+
+    AfterAll {
+        $env:PSMODULEPATH = $savedModulePath
     }
 }

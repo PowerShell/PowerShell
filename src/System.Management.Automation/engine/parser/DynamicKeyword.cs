@@ -563,7 +563,7 @@ namespace System.Management.Automation.Language
                     (t_dynamicKeywordNamespaceStack = new Stack<DynamicKeywordNamespace>());
             }
         }
-        [ThreadStatic]
+        //[ThreadStatic]
         private static Stack<DynamicKeywordNamespace> t_dynamicKeywordNamespaceStack;
 
         /// <summary>
@@ -577,7 +577,7 @@ namespace System.Management.Automation.Language
                     (t_currentDynamicKeywordNamespace = new DynamicKeywordNamespace());
             }
         }
-        [ThreadStatic]
+        //[ThreadStatic]
         private static DynamicKeywordNamespace t_currentDynamicKeywordNamespace;
 
         /// <summary>
@@ -1369,7 +1369,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            // Finally, construct the keyword -- this is designed so the keyword can be constructed as readonly
+            // Finally, construct the keyword -- this is designed so the keyword can be constructed as readonly if the constructor is changed
             var keyword = new DynamicKeyword()
             {
                 Keyword = keywordName,

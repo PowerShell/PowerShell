@@ -7189,7 +7189,7 @@ namespace System.Management.Automation.Language
                             typeof(System.Management.Automation.Language.DynamicKeyword).FullName)),
                     new StringConstantExpressionAst(
                         FunctionName.Extent,
-                        "GetKeyword",
+                        "GetScopeDefinedKeyword",
                         StringConstantType.BareWord),
                     new List<ExpressionAst>
                         {
@@ -7242,6 +7242,16 @@ namespace System.Management.Automation.Language
                             sourceMetadata,
                             StringConstantType.BareWord),
                         lastValidCommandToken.Extent));
+            }
+
+            // Command-bodied keywords are generated using the CommandRule,
+            // which adds any parameters passed. So we should pass them through
+            if (Keyword.BodyMode == DynamicKeywordBodyMode.Command)
+            {
+                foreach (var commandArgument in CommandElements.Skip(1))
+                {
+                    cea.Add(CopyElement(commandArgument));
+                }
             }
 
             //

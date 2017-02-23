@@ -2088,7 +2088,7 @@ namespace System.Management.Automation.Language
                     }
                     goto default;
                 case TokenKind.DynamicKeyword:
-                    DynamicKeyword keywordData = DynamicKeyword.GetKeyword(token.Text);
+                    DynamicKeyword keywordData = DynamicKeyword.GetScopeDefinedKeyword(token.Text);
                     statement = DynamicKeywordStatementRule(token, keywordData);
                     break;
                 case TokenKind.Class:
