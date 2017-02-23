@@ -476,6 +476,7 @@ cd ..
 
 # NOTE: REPLACE THIS WITH A MIRRORED COPY OF APPIMAGETOOL
 wget -c https://github.com/probonopd/AppImageKit/releases/download/8/appimagetool-x86_64.AppImage
+chmod a+x appimagetool-x86_64.AppImage
 ./appimagetool-x86_64.AppImage ./powershell.AppDir
 cp ./*AppImage ..
 
