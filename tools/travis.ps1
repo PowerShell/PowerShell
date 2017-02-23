@@ -113,6 +113,7 @@ Start-PSPester @pesterParam
 if (-not $isPr) {
     # Only build packages for branches, not pull requests
     Start-PSPackage
+    Start-PSPackage -Type AppImage
     try {
         # this throws if there was an error
         Test-PSPesterResults

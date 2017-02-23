@@ -16,7 +16,7 @@ matrix:
 addons:
   artifacts:
     paths:
-      - $(ls powershell*{deb,pkg} | tr "\n" ":")
+      - $(ls powershell*{deb,pkg,AppImage} | tr "\n" ":")
       - pester-tests.xml
 
 install:
@@ -37,5 +37,5 @@ script:
   - powershell -File tools/travis.ps1
   # spellcheck
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
-      mdspell "**/*.md" --ignore-numbers --ignore-acronyms --report;
+      mdspell '**/*.md' '!powershell/**/*.md' --ignore-numbers --ignore-acronyms --report;
     fi
