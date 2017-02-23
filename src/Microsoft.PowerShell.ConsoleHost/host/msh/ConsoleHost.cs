@@ -190,6 +190,15 @@ namespace Microsoft.PowerShell
 
                 s_cpp.Parse(tempArgs);
 
+                if (s_cpp.ShowVersion)
+                {
+                    // Alternatively, we could call s_theConsoleHost.UI.WriteLine(s_theConsoleHost.Version.ToString());
+                    // or start up the engine and retrieve the information via $psversiontable.GitCommitId
+                    // but this returns the semantic version and avoids executing a script
+                    s_theConsoleHost.UI.WriteLine("powershell " + PSVersionInfo.GitCommitId);
+                    return 0;
+                }
+
                 // Servermode parameter validation check.
                 if ((s_cpp.ServerMode && s_cpp.NamedPipeServerMode) || (s_cpp.ServerMode && s_cpp.SocketServerMode) || (s_cpp.NamedPipeServerMode && s_cpp.SocketServerMode))
                 {

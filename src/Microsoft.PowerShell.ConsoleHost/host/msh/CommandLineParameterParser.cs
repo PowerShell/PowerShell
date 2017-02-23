@@ -316,6 +316,14 @@ namespace Microsoft.PowerShell
             }
         }
 
+        internal bool ShowVersion
+        {
+            get
+            {
+                return _showVersion;
+            }
+        }
+
         internal Serialization.DataFormat OutputFormat
         {
             get
@@ -500,7 +508,6 @@ namespace Microsoft.PowerShell
 
                 // chop off the first character so that we're agnostic wrt specifying / or -
                 // in front of the switch name.
-
                 switchKey = switchKey.Substring(1);
 
                 // chop off the second dash so we're agnostic wrt specifying - or --
@@ -508,6 +515,18 @@ namespace Microsoft.PowerShell
                 {
                     switchKey = switchKey.Substring(1);
                 }
+
+                // If version is in the commandline, don't continue to look at any other parameters
+                if (MatchSwitch(switchKey, "version", "v"))
+                {
+                    _showVersion = true;
+                    _showBanner = false;
+                    _noInteractive = true;
+                    _skipUserInit = true;
+                    _noExit = false;
+                    break;
+                }
+
 
                 if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
                 {
@@ -1091,6 +1110,7 @@ namespace Microsoft.PowerShell
         private bool _serverMode;
         private bool _namedPipeServerMode;
         private bool _sshServerMode;
+        private bool _showVersion;
         private string _configurationName;
         private PSHostUserInterface _hostUI;
         private bool _showHelp;

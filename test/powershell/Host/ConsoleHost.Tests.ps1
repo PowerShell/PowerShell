@@ -164,6 +164,18 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $actual | Should Be $expected
         }
 
+        It "-Version should return the engine version" {
+            $currentVersion = "powershell " + $PSVersionTable.GitCommitId.ToString()
+            $observed = & $powershell -version
+            $observed | should be $currentVersion
+        }
+
+        It "-Version should ignore other parameters" {
+            $currentVersion = "powershell " + $PSVersionTable.GitCommitId.ToString()
+            $observed = & $powershell -version -command get-date
+            # no extraneous output
+            $observed | should be $currentVersion
+        }
     }
 
     Context "Pipe to/from powershell" {
