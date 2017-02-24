@@ -518,28 +518,35 @@ namespace System.Management.Automation
                 keywordAst = parameterAst.Parent as DynamicKeywordStatementAst;
             }
 
-            // If parent is DynamicKeywordStatementAst - 'Import-DscResource',
-            // then customize the auto completion results
-            if (keywordAst != null && String.Equals(keywordAst.Keyword.Keyword, "Import-DscResource", StringComparison.OrdinalIgnoreCase)
-                && !String.IsNullOrWhiteSpace(context.WordToComplete) && context.WordToComplete.StartsWith("-", StringComparison.OrdinalIgnoreCase))
+            if (keywordAst != null && !String.IsNullOrWhiteSpace(context.WordToComplete) && context.WordToComplete.StartsWith("-", StringComparison.OrdinalIgnoreCase))
             {
-                var lastAst = context.RelatedAsts.Last();
-                var wordToMatch = context.WordToComplete.Substring(1) + "*";
-                var pattern = WildcardPattern.Get(wordToMatch, WildcardOptions.IgnoreCase);
-                var parameterNames = keywordAst.CommandElements.Where(ast => ast is CommandParameterAst).Select(ast => (ast as CommandParameterAst).ParameterName);
-                foreach (var parameterName in s_parameterNamesOfImportDSCResource)
+                // If parent is DynamicKeywordStatementAst - 'Import-DscResource',
+                // then customize the auto completion results
+                if (String.Equals(keywordAst.Keyword.Keyword, "Import-DscResource", StringComparison.OrdinalIgnoreCase))
                 {
-                    if (pattern.IsMatch(parameterName) && !parameterNames.Contains(parameterName, StringComparer.OrdinalIgnoreCase))
+                    var lastAst = context.RelatedAsts.Last();
+                    var wordToMatch = context.WordToComplete.Substring(1) + "*";
+                    var pattern = WildcardPattern.Get(wordToMatch, WildcardOptions.IgnoreCase);
+                    var parameterNames = keywordAst.CommandElements.Where(ast => ast is CommandParameterAst).Select(ast => (ast as CommandParameterAst).ParameterName);
+                    foreach (var parameterName in s_parameterNamesOfImportDSCResource)
                     {
-                        string tooltip = "[String] " + parameterName;
-                        result.Add(new CompletionResult("-" + parameterName, parameterName, CompletionResultType.ParameterName, tooltip));
+                        if (pattern.IsMatch(parameterName) && !parameterNames.Contains(parameterName, StringComparer.OrdinalIgnoreCase))
+                        {
+                            string tooltip = "[String] " + parameterName;
+                            result.Add(new CompletionResult("-" + parameterName, parameterName, CompletionResultType.ParameterName, tooltip));
+                        }
+                    }
+                    if (result.Count > 0)
+                    {
+                        context.ReplacementLength = context.WordToComplete.Length;
+                        context.ReplacementIndex = lastAst.Extent.StartOffset;
                     }
                 }
-                if (result.Count > 0)
+                else
                 {
-                    context.ReplacementLength = context.WordToComplete.Length;
-                    context.ReplacementIndex = lastAst.Extent.StartOffset;
+                    result.AddRange(CompletionAnalysis.GetDynamicKeywordParameterResult(context, keywordAst));
                 }
+
                 return result;
             }
 
