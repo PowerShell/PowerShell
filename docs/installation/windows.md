@@ -29,48 +29,32 @@ In both cases, you will need the Windows 10 x64 Zip release package and will nee
 ## Offline Deployment of PowerShell Core
 
 1. Use your favorite zip utility to unzip the package to a directory within the mounted Nano Server image.
-2. Unmount the image and boot it
-3. Connect to the inbox instance of Windows PowerShell
-3. Follow the instructions to create a remoting endpoint using the "Executed by another instance of PowerShell on behalf of the instance that it will register" technique and reconnect to the new remoting endpoint on your Nano Server instance. In this case, the "absolute path the the instance's `$PSHOME`" is the directory where it was unzipped.
+2. Unmount the image and boot it.
+3. Connect to the inbox instance of Windows PowerShell.
+4. Follow the instructions to create a remoting endpoint using the [another instance technique](#executed-by-another-instance-of-powershell-on-behalf-of-the-instance-that-it-will-register). 
 
 ## Online Deployment of PowerShell Core
 
-The following steps will guide you through deployment of PowerShell Core to a running instance of Nano Server and configuration of its remote endpoint.
+The following steps will guide you through the deployment of PowerShell Core to a running instance of Nano Server and the configuration of its remote endpoint.
 
 1. Connect to the inbox instance of Windows PowerShell
-
 ```powershell
 $session = New-PSSession -ComputerName <Nano Server IP address> -Credential <An Administrator account on the system>
 ```
-
 2. Copy the file to the Nano Server instance
-
 ```powershell
-Copy-Item <local PS Core download location>\powershell-6.0.0-<version>-win10-x64.zip c:\ -ToSession $session
+Copy-Item <local PS Core download location>\powershell-<version>-win10-win2016-x64.zip c:\ -ToSession $session
 ```
-
 3. Enter the session
-
 ```powershell
 Enter-PSSession $session
 ```
-
-4. Create a target directory
-
+4. Extract the Zip file
 ```powershell
-# Insert the appropriate version
-$tgtDir = "C:\PowerShellCore_<version>"; mkdir $tgtDir
+# Insert the appropriate version.
+Expand-Archive -Path C:\powershell-<version>-win10-win2016-x64.zip -DestinationPath "C:\PowerShellCore_<version>"
 ```
-
-5. Extract the Zip file
-
-```powershell
-[system.io.compression.zipfile]::ExtractToDirectory("c:\powershell-6.0.0-alpha.9-win10-x64.zip","$tgtDir")
-```
-
-6. Follow the instructions to create a remoting endpoint using the "Executed by another instance of PowerShell on behalf of the instance that it will register" technique and reconnect to the new remoting endpoint on your Nano Server instance. In this case, the "absolute path the the instance's `$PSHOME`" is `$tgtDir`
-
-**NOTE:** The remoting registration script will restart WinRM, so `$session` will terminate immediately after the script is run. 
+5. Follow the instructions to create a remoting endpoint using the [another instance technique](#executed-by-another-instance-of-powershell-on-behalf-of-the-instance-that-it-will-register). 
 
 # Instructions to Create a Remoting Endpoint
 
@@ -79,10 +63,10 @@ These files enable PowerShell to accept incoming PowerShell remote connections w
 
 ## Motivation
 
-An installation of PowerShell can establish PowerShell sessions to remote computers using ```New-PSSession``` and ```Enter-PSSession```. 
+An installation of PowerShell can establish PowerShell sessions to remote computers using `New-PSSession` and `Enter-PSSession`. 
 To enable it to accept incoming PowerShell remote connections, the user must create a WinRM remoting endpoint. 
 This is an explicit opt-in scenario where the user runs Install-PowerShellRemoting.ps1 to create the WinRM endpoint. 
-The installation script is a short-term solution until we add additional functionality to ```Enable-PSRemoting``` to perform the same action. 
+The installation script is a short-term solution until we add additional functionality to `Enable-PSRemoting` to perform the same action. 
 For more details, please see issue [#1193](https://github.com/PowerShell/PowerShell/issues/1193).
 
 ## Script Actions
@@ -95,13 +79,14 @@ The script
 4. Registers that plug-in with WinRM
 
 ## Registration
+
 The script must be executed within an Administrator-level PowerShell session and runs in two modes.
 
-* Executed by the instance of PowerShell that it will register
+### Executed by the instance of PowerShell that it will register
 ``` powershell
 Install-PowerShellRemoting.ps1
-``` 
-* Executed by another instance of PowerShell on behalf of the instance that it will register.
+```
+### Executed by another instance of PowerShell on behalf of the instance that it will register
 ``` powershell
 <path to powershell>\Install-PowerShellRemoting.ps1 -PowerShellHome "<absolute path to the instance's $PSHOME>" -PowerShellVersion "<the powershell version tag>"
 ```
@@ -109,6 +94,7 @@ For Example:
 ``` powershell
 C:\Program Files\PowerShell\6.0.0.9\Install-PowerShellRemoting.ps1 -PowerShellHome "C:\Program Files\PowerShell\6.0.0.9\" -PowerShellVersion "6.0.0-alpha.9" 
 ```
+**NOTE:** The remoting registration script will restart WinRM, so all existing PSRP sessions will terminate immediately after the script is run. If run during a remote session, this will terminate the connection.
 
 ## How to Connect to the New Endpoint
 
