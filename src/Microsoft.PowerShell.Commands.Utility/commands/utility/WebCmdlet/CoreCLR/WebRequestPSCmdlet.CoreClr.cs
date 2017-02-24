@@ -391,7 +391,6 @@ namespace Microsoft.PowerShell.Commands
                         WriteVerbose(reqVerboseMsg);
 
                         HttpResponseMessage response = GetResponse(client, request);
-                        response.EnsureSuccessStatusCode();
 
                         string contentType = ContentHelper.GetContentType(response);
                         string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
@@ -399,12 +398,17 @@ namespace Microsoft.PowerShell.Commands
                             response.Content.Headers.ContentLength,
                             contentType);
                         WriteVerbose(respVerboseMsg);
+
+                        if (!response.IsSuccessStatusCode)
+                        {
                             string message = String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
                                 response.StatusCode.ToString(), response.ReasonPhrase);
                             HttpResponseException httpEx = new HttpResponseException(message);
                             httpEx.Response = response;
                             ErrorRecord er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
                             er.ErrorDetails = new ErrorDetails(message);
+                            ThrowTerminatingError(er);
+                        }
                         ProcessResponse(response);
                         UpdateSession(response);
 
