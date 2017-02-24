@@ -22,45 +22,23 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Exception class for webcmdlets to enable returning HTTP error response
     /// </summary>    
-    public class HttpResponseException : Exception
+    public sealed class HttpResponseException : Exception
     {
-        private HttpResponseMessage _response;
-        private HttpStatusCode _status;
-        private HttpResponseHeaders _headers;
-
         /// <summary>
         /// Constructor for HttpResponseException
         /// </summary>
         /// <param name="message">Message for the exception</param>
-        public HttpResponseException (string message) : base(message)
-        {}
+        /// <param name="response">Response from the HTTP server</param>
+        public HttpResponseException (string message, HttpResponseMessage response) : base(message)
+        {
+            Response = response;
+        }
 
         /// <summary>
         /// HTTP error response
         /// </summary>
-        public HttpResponseMessage Response
-        {
-            get { return _response; }
-            set { _response = value; }
-        }
+        public HttpResponseMessage Response { get; set; }
 
-        /// <summary>
-        /// HTTP error status code
-        /// </summary>
-        public HttpStatusCode Status
-        {
-            get { return _status; }
-            set { _status = value; }
-        }
-
-        /// <summary>
-        /// HTTP error headers
-        /// </summary>
-        public HttpResponseHeaders Headers
-        {
-            get { return _headers; }
-            set { _headers = value; }
-        }
     }
 
     /// <summary>
@@ -403,8 +381,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             string message = String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
                                 response.StatusCode.ToString(), response.ReasonPhrase);
-                            HttpResponseException httpEx = new HttpResponseException(message);
-                            httpEx.Response = response;
+                            HttpResponseException httpEx = new HttpResponseException(message, response);
                             ErrorRecord er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
                             er.ErrorDetails = new ErrorDetails(message);
                             ThrowTerminatingError(er);
