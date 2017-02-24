@@ -648,6 +648,10 @@ namespace System.Management.Automation
                                 bool matched;
                                 result = GetResultForIdentifierInConfiguration(completionContext, configAst, keywordAst, out matched);
                             }
+                            else if (keywordAst != null)
+                            {
+                                result = GetInnerDynamicKeywordResult(completionContext, keywordAst);
+                            }
                         }
                     }
                     else if (completionContext.TokenAtCursor == null)
@@ -688,6 +692,12 @@ namespace System.Management.Automation
                                         bool unused;
                                         result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty,
                                             ref replacementIndex, ref replacementLength, out unused);
+                                    }
+                                    break;
+                                case TokenKind.DynamicKeyword:
+                                    if (lastAst.Parent is DynamicKeywordStatementAst)
+                                    {
+                                        result = GetDynamicKeywordParameterResult(completionContext, (DynamicKeywordStatementAst)lastAst.Parent);
                                     }
                                     break;
                                 default:
@@ -1338,6 +1348,26 @@ namespace System.Management.Automation
             }
 #endif
 
+            return results;
+        }
+
+        private List<CompletionResult> GetInnerDynamicKeywordResult(CompletionContext context, DynamicKeywordStatementAst parentKeywordAst)
+        {
+            var results = new List<CompletionResult>();
+            foreach (var keyword in parentKeywordAst.Keyword.InnerKeywords.Values)
+            {
+                results.Add(new CompletionResult(keyword.Keyword, keyword.Keyword, CompletionResultType.Keyword, keyword.Keyword));
+            }
+            return results;
+        }
+
+        private List<CompletionResult> GetDynamicKeywordParameterResult(CompletionContext context, DynamicKeywordStatementAst keywordAst)
+        {
+            var results = new List<CompletionResult>();
+            foreach (var param in keywordAst.Keyword.Parameters.Values)
+            {
+                results.Add(new CompletionResult("-" + param.Name, param.Name, CompletionResultType.ParameterName, param.Name + ": " + param.TypeConstraint));
+            }
             return results;
         }
 

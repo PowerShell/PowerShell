@@ -1002,6 +1002,15 @@ namespace System.Management.Automation
                 if (paramAst != null)
                 {
                     commandAst = paramAst.Parent as CommandAst;
+
+                    if (commandAst == null)
+                    {
+                        DynamicKeywordStatementAst keywordAst = paramAst.Parent as DynamicKeywordStatementAst;
+                        if (keywordAst != null)
+                        {
+                            result = GetKeywordParameterValueResult(context, paramAst, keywordAst);
+                        }
+                    }
                 }
                 else
                 {
@@ -1377,6 +1386,23 @@ namespace System.Management.Automation
             }
 
             return null;
+        }
+
+        private static List<CompletionResult> GetKeywordParameterValueResult(CompletionContext context, CommandParameterAst paramAst, DynamicKeywordStatementAst keywordAst)
+        {
+            var results = new List<CompletionResult>();
+            DynamicKeywordParameter param;
+            if (!keywordAst.Keyword.Parameters.TryGetValue(paramAst.ParameterName, out param))
+            {
+                return results;
+            }
+
+            foreach (var paramVal in param.Values)
+            {
+                results.Add(new CompletionResult(paramVal, paramVal, CompletionResultType.ParameterValue, paramVal));
+            }
+
+            return results;
         }
 
         /// <summary>
