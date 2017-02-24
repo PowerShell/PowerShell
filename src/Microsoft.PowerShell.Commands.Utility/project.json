@@ -108,39 +108,6 @@
                 "Microsoft.CodeAnalysis.CSharp": "2.0.0-rc",
                 "System.Diagnostics.TextWriterTraceListener": "4.3.0"
             }
-        },
-        "net451": {            
-            "frameworkAssemblies": {
-                "System.Drawing": "",
-                "System.Web": "",
-                "System.Web.Extensions": "",
-                "Microsoft.JScript": ""
-            },
-
-            "dependencies": {
-                "Microsoft.mshtml": "1.0.0"
-            },
-
-            "buildOptions": {
-                "define": [ "FULLCLR" ],
-                "compile": {
-                    "exclude": [
-                        "commands/utility/WebCmdlet/CoreCLR/BasicHtmlWebResponseObject.CoreClr.cs",
-                        "commands/utility/WebCmdlet/CoreCLR/ContentHelper.CoreClr.cs",
-                        "commands/utility/WebCmdlet/CoreCLR/HtmlWebResponseObject.CoreClr.cs",
-                        "commands/utility/WebCmdlet/CoreCLR/HttpKnownHeaderNames.cs",
-                        "commands/utility/WebCmdlet/CoreCLR/InvokeRestMethodCommand.CoreClr.cs",
-                        "commands/utility/WebCmdlet/CoreCLR/InvokeWebRequestCommand.CoreClr.cs",
-                        "commands/utility/WebCmdlet/CoreCLR/Resources.cs",
-                        "commands/utility/WebCmdlet/CoreCLR/WebProxy.cs",
-                        "commands/utility/WebCmdlet/CoreCLR/WebRequestPSCmdlet.CoreClr.cs",
-                        "commands/utility/WebCmdlet/CoreCLR/WebResponseHelper.CoreClr.cs",
-                        "commands/utility/WebCmdlet/CoreCLR/WebResponseObject.CoreClr.cs",
-                        "commands/utility/WebCmdlet/CoreCLR/WebResponseObjectFactory.CoreClr.cs"
-                    ]
-                },
-                "debugType": "full"
-            }
         }
     }
 }

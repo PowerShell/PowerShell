@@ -44,16 +44,6 @@
                 "define": [ "CORECLR" ]
             },
             "imports": [ "dnxcore50", "portable-net45+win8" ]
-        },
-        "net451": {
-            "frameworkAssemblies": {
-                "System.Windows.Forms": {
-                    "type": "build"
-                }
-            },
-            "buildOptions": {
-                "debugType": "full"
-            }
         }
     }
 }

@@ -72,11 +72,9 @@ include(coreclr_defs.cmake)
 # Default of BUILD_ONECORE should be ON once it is supported 
 option(BUILD_ONECORE "Compile the OneCore version of the binaries" ON)
 
-# Build the common library that powershell.exe and pwrshplugin.dll depend on
+# Build the common library that powershell.exe (not built in this repo) and pwrshplugin.dll depend on
 add_subdirectory(nativemsh/pwrshcommon)
 
 # Build pwrshplugin.dll
 add_subdirectory(nativemsh/pwrshplugin)
 
-# Build powershell.exe
-add_subdirectory(nativemsh/pwrshexe)

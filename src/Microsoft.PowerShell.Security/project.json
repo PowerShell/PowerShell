@@ -64,11 +64,6 @@
                     ]
                 }
             }
-        },
-        "net451": {
-            "buildOptions": {
-                "debugType": "full"
-            }
         }
     }
 }

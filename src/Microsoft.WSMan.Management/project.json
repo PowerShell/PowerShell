@@ -49,14 +49,6 @@
                     ]
                 }
             }
-        },
-        "net451": {
-            "frameworkAssemblies": {
-                "System.ServiceProcess": ""
-            },
-            "buildOptions": {
-                "debugType": "full"
-            }
         }
     }
 }

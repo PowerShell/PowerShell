@@ -97,32 +97,6 @@
                 "System.Net.NameResolution": "4.3.0",
                 "System.Net.Ping": "4.3.0"
             }
-        },
-        "net451": {
-            "frameworkAssemblies": {
-                "System.ServiceProcess": "",
-                "System.Windows.Forms": "",
-                "System.Drawing": "",
-                "System.Web.Services": ""
-            },
-            "dependencies": {
-                "Microsoft.WSMan.Management": "6.0.0-*"
-            },
-            "buildOptions": {
-                "compile": {
-                    "exclude": [
-                        "commands/management/ControlPanelItemCommand.cs",
-
-                        "gen/ControlPanelResources.cs"
-                    ]
-                },
-                "embed": {
-                    "exclude": [
-                        "resources/ControlPanelResources.resx"
-                    ]
-                },
-                "debugType": "full"
-            }
         }
     }
 }

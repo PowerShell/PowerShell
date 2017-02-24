@@ -20,11 +20,6 @@
                 "define": [ "CORECLR" ],
                 "debugType": "portable"
             }
-        },
-        "net451": {
-            "frameworkAssemblies": {
-                "System": ""
-            }
         }
     }
 }
