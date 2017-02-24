@@ -44,15 +44,12 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
 
         $args = @{$parameter = "doesnotexist.psm1"}
         New-ModuleManifest -Path $testModulePath @args
-        Test-Path $testModulePath | Should Be $true
         [string]$errorId = "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
 
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId $errorId
     }
 
-    It "module manifest containing valid rootmodule succeeds" -TestCases `
-        @{rootModuleValue = $null},
-        @{rootModuleValue = ""},
+    It "module manifest containing valid rootmodule file succeeds" -TestCases `
         @{rootModuleValue = "foo.psm1"},
         @{rootModuleValue = "foo.dll"} {
 
@@ -61,37 +58,50 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         New-Item -ItemType Directory -Path testdrive:/module
         $testModulePath = "testdrive:/module/test.psd1"
 
-        if ($rootModuleValue -ne $null -and $rootModuleValue -ne "")
-        {
-            New-Item -ItemType File -Path testdrive:/module/$rootModuleValue
-        }
+        New-Item -ItemType File -Path testdrive:/module/$rootModuleValue
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
-        Test-Path $testModulePath | Should Be $true
         $moduleManifest = Test-ModuleManifest -Path $testModulePath -ErrorAction Stop
         $moduleManifest | Should BeOfType System.Management.Automation.PSModuleInfo
-        if ($rootModuleValue -eq $null -or $rootModuleValue -eq "") {
-            $moduleManifest.RootModule | Should BeNullOrEmpty
-        }
-        else {
-            $moduleManifest.RootModule | Should Be $rootModuleValue
-        }
+        $moduleManifest.RootModule | Should Be $rootModuleValue
     }
 
-    It "module manifest containing invalid rootmodule returns error" -TestCases `
-        @{rootModuleValue = "foo.psd1"; error = "Modules_InvalidManifest"},
-        @{rootModuleValue = "doesnotexist.psm1"; error = "Modules_InvalidRootModuleInModuleManifest"} {
+    It "module manifest containing empty rootmodule succeeds" -TestCases `
+        @{rootModuleValue = $null},
+        @{rootModuleValue = ""} {
 
-        param($rootModuleValue, $error)
+        param($rootModuleValue)
 
         New-Item -ItemType Directory -Path testdrive:/module
         $testModulePath = "testdrive:/module/test.psd1"
 
-        if ($rootModuleValue -ne "doesnotexist.psm1")
-        {
-            New-Item -ItemType File -Path testdrive:/module/$rootModuleValue
-        }
         New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
-        Test-Path $testModulePath | Should Be $true
+        $moduleManifest = Test-ModuleManifest -Path $testModulePath -ErrorAction Stop
+        $moduleManifest | Should BeOfType System.Management.Automation.PSModuleInfo
+        $moduleManifest.RootModule | Should BeNullOrEmpty
+    }
+
+    It "module manifest containing invalid rootmodule returns error" -TestCases `
+        @{rootModuleValue = "foo.psd1"; error = "Modules_InvalidManifest"} {
+
+        param($rootModuleValue, $error)
+
+        $testModulePath = "testdrive:/module/test.psd1"
+        New-Item -ItemType Directory -Path testdrive:/module
+        New-Item -ItemType File -Path testdrive:/module/$rootModuleValue
+
+        New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
+        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
+    }
+
+    It "module manifest containing non-existing rootmodule returns error" -TestCases `
+        @{rootModuleValue = "doesnotexist.psm1"; error = "Modules_InvalidRootModuleInModuleManifest"} {
+
+        param($rootModuleValue, $error)
+
+        $testModulePath = "testdrive:/module/test.psd1"
+        New-Item -ItemType Directory -Path testdrive:/module
+
+        New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
     }
 }
