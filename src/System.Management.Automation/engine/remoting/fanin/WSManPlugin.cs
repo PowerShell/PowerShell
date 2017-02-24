@@ -473,15 +473,13 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            SetThreadProperties(mgdShellSession.creationRequestDetails);
             // update the internal data store only if this is not receive operation.
             if (!context.isReceiveOperation)
             {
                 DeleteFromActiveShellSessions(context.shellContext);
             }
 
-            string errorMsg = StringUtil.Format(RemotingErrorIdStrings.WSManPluginOperationClose);
-            System.Exception reasonForClose = new System.Exception(errorMsg);
+            System.Exception reasonForClose = new System.Exception(RemotingErrorIdStrings.WSManPluginOperationClose);
             mgdShellSession.CloseOperation(context, reasonForClose);
         }
 
@@ -502,7 +500,7 @@ namespace System.Management.Automation.Remoting
                 //Dbg.Assert(false, "context.shellContext not matched");
                 return;
             }
-            SetThreadProperties(mgdShellSession.creationRequestDetails);
+
             mgdShellSession.CloseCommandOperation(context);
         }
 
