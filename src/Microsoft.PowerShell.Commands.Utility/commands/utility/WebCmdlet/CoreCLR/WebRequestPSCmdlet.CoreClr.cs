@@ -20,6 +20,50 @@ using System.Xml;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
+    /// Exception class for webcmdlets to enable returning HTTP error response
+    /// </summary>    
+    public class HttpResponseException : Exception
+    {
+        private HttpResponseMessage _response;
+        private HttpStatusCode _status;
+        private HttpResponseHeaders _headers;
+
+        /// <summary>
+        /// Constructor for HttpResponseException
+        /// </summary>
+        /// <param name="message">Message for the exception</param>
+        public HttpResponseException (string message) : base(message)
+        {}
+
+        /// <summary>
+        /// HTTP error response
+        /// </summary>
+        public HttpResponseMessage Response
+        {
+            get { return _response; }
+            set { _response = value; }
+        }
+
+        /// <summary>
+        /// HTTP error status code
+        /// </summary>
+        public HttpStatusCode Status
+        {
+            get { return _status; }
+            set { _status = value; }
+        }
+
+        /// <summary>
+        /// HTTP error headers
+        /// </summary>
+        public HttpResponseHeaders Headers
+        {
+            get { return _headers; }
+            set { _headers = value; }
+        }
+    }
+
+    /// <summary>
     /// Base class for Invoke-RestMethod and Invoke-WebRequest commands.
     /// </summary>
     public abstract partial class WebRequestPSCmdlet : PSCmdlet
@@ -355,6 +399,12 @@ namespace Microsoft.PowerShell.Commands
                             response.Content.Headers.ContentLength,
                             contentType);
                         WriteVerbose(respVerboseMsg);
+                            string message = String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
+                                response.StatusCode.ToString(), response.ReasonPhrase);
+                            HttpResponseException httpEx = new HttpResponseException(message);
+                            httpEx.Response = response;
+                            ErrorRecord er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                            er.ErrorDetails = new ErrorDetails(message);
                         ProcessResponse(response);
                         UpdateSession(response);
 
