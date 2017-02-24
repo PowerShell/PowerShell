@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 

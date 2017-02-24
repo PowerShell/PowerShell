@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Get-Member" -Tags "CI" {
     It "Should be able to be called on string objects, ints, arrays, etc" {

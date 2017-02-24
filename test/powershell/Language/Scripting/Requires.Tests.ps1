@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Requires tests" -Tags "CI" {
     Context "Parser error" {

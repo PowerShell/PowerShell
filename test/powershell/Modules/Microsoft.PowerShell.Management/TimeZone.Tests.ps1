@@ -14,7 +14,6 @@
            [snippet] Both StandardName and DaylightName are localized according to the current user default UI language.
 #>
 
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 try {
 

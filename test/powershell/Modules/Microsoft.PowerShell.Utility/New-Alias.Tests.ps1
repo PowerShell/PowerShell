@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "New-Alias DRT Unit Tests" -Tags "CI" {
     It "New-Alias Constant should throw SessionStateUnauthorizedAccessException"{

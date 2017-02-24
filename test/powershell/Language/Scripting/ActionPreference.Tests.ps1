@@ -1,5 +1,4 @@
-﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
-
+﻿
 Describe "Tests for (error, warning, etc) action preference" -Tags "CI" {
         BeforeAll {
             $orgin = $GLOBAL:errorActionPreference

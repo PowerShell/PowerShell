@@ -1,5 +1,4 @@
-﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
-
+﻿
 Describe 'Online help tests for PowerShell Core Cmdlets' -Tags "CI" {
 
     # The csv files (V2Cmdlets.csv and V3Cmdlets.csv) contain a list of cmdlets and expected HelpURIs.

@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
     $testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory

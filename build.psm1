@@ -723,9 +723,11 @@ function Start-PSPester {
     }
     $startParams = @{binDir=$binDir}
 
+    $TestHelpersModule = "$PSScriptRoot/test/tools/Modules/Test.Helpers.psm1"
+
     if(!$FullCLR)
     {
-        $Command += "Import-Module '$Pester'; "
+        $Command += "Import-Module '$Pester','$TestHelpersModule'; "
     }
 
     if ($Unelevate)

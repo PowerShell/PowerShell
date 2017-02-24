@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Get-Variable DRT Unit Tests" -Tags "CI" {
     It "Get-Variable of not existing variable Name should throw ItemNotFoundException"{

@@ -1,5 +1,4 @@
-﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
-
+﻿
 Describe "Dynamic parameter support in script cmdlets." -Tags "CI" {
     BeforeAll {
         Class MyTestParameter {

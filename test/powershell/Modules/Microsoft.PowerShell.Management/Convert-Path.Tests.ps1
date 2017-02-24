@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Convert-Path tests" -Tag CI {
     It "Convert-Path should handle provider qualified paths" {

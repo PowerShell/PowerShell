@@ -4,7 +4,6 @@
  # used for validating Microsoft.PowerShell.Archive module.
  ############################################################################################>
 
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 $script:TestSourceRoot = $PSScriptRoot
 
 Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {

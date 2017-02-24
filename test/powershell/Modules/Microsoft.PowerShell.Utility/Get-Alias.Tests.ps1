@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
     It "Get-Alias Bogus Scope Name should throw PSArgumentException"{

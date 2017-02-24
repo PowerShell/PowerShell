@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Get-Random DRT Unit Tests" -Tags "CI" {
     $testData = @(

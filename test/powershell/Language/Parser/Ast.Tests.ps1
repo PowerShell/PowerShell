@@ -1,6 +1,5 @@
 using Namespace System.Management.Automation.Language
 
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "The SafeGetValue method on AST returns safe values" -Tags "CI" {
     It "A hashtable is returned from a HashtableAst" {

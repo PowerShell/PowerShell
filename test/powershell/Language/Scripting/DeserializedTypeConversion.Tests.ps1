@@ -1,5 +1,4 @@
-﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
-
+﻿
 Describe "Tests conversion of deserialized types to original type using object properties." -Tags "CI" {
     BeforeAll {
         # Create new types and test functions.

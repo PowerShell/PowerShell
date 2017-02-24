@@ -1,5 +1,4 @@
-﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
-
+﻿
 Describe "Tests for the Import-PowerShellDataFile cmdlet" -Tags "CI" {
 
     It "Validates error on a missing path" {

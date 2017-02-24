@@ -1,5 +1,4 @@
-﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
-
+﻿
 Describe "Common parameters support for script cmdlets" -Tags "CI" {
     BeforeEach {
         $rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace()

@@ -1,5 +1,4 @@
-﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
-
+﻿
 Describe "Add-Member DRT Unit Tests" -Tags "CI" {
 
     It "Mandatory parameters should not be null nor empty" {

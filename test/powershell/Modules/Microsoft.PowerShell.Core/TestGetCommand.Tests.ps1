@@ -1,5 +1,4 @@
-﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
-
+﻿
 Describe "Get-Command Tests" -Tags "CI" {
     BeforeAll {
         function TestGetCommand-DynamicParametersDCR

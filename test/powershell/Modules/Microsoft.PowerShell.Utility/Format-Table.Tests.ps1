@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Format-Table" -Tags "CI" {
 		It "Should call format table on piped input without error" {

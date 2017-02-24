@@ -1,5 +1,4 @@
-﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
-
+﻿
 Describe "Write-Progress DRT Unit Tests" -Tags "CI" {
     It "Should be able to throw exception when missing mandatory parameters" {
         { Write-Progress $null } | ShouldBeErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.WriteProgressCommand"

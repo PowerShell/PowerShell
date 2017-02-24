@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "ConvertFrom-StringData DRT Unit Tests" -Tags "CI" {
     It "Should able to throw error when convert invalid line" {

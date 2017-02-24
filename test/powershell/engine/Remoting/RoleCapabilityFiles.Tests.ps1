@@ -2,7 +2,6 @@
 ## PowerShell Remoting Endpoint Role Capability Files Tests
 ##
 
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tests" -Tags "Feature" {
 

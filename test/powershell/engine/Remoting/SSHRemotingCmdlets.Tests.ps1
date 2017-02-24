@@ -1,7 +1,6 @@
 ##
 ## SSH Remoting cmdlet tests
 ##
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "SSHTransport switch parameter value" -Tags 'Feature' {
 

@@ -9,7 +9,6 @@
 # and C# tests (SDXROOT/admin/monad/tests/monad/DRT/commands/utility/UnitTests) to Pester.
 #
 
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Json Tests" -Tags "Feature" {
 

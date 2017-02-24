@@ -3,7 +3,6 @@
  # Provides Pester tests for the Get-Counter cmdlet.
  ############################################################################################>
 
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 $cmdletName = "Get-Counter"
 

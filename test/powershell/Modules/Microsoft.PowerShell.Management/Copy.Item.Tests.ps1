@@ -4,7 +4,6 @@
 #
 #
 
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 # If PS Remoting is not available, do not run the suite.
 function ShouldRun

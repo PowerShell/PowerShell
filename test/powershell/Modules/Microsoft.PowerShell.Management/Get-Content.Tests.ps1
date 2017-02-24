@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Get-Content" -Tags "CI" {
   $testString = "This is a test content for a file"

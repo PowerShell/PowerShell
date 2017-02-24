@@ -6,7 +6,6 @@
 # Note: These tests use data from http://httpbin.org/
 #
 
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 # Invokes the given command via script block invocation.
 #

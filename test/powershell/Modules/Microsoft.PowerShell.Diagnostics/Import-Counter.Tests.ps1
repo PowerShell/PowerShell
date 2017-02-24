@@ -3,7 +3,6 @@
  # Provides Pester tests for the Import-Counter cmdlet.
  ############################################################################################>
 
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 $cmdletName = "Import-Counter"
 

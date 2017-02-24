@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "New-Object" -Tags "CI" {
     It "should create an object with 4 fields" {

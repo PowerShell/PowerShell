@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Basic Alias Provider Tests" -Tags "CI" {
     Context "Validate basic PSDrive Cmdlets" {

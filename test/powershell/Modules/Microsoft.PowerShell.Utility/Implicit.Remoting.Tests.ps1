@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 Import-Module $PSScriptRoot\..\..\Common\TestRemoting.psm1
 
 Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature" {

@@ -1,6 +1,5 @@
 using namespace System.Diagnostics
 
-Import-Module $PSScriptRoot\..\Common\Test.Helpers.psm1
 
 # Minishell (Singleshell) is a powershell concept.
 # Its primary use-case is when somebody executes a scriptblock in the new powershell process.

@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Out-File DRT Unit Tests" -Tags "CI" {
     It "Should be able to write the contents into a file with -pspath" {

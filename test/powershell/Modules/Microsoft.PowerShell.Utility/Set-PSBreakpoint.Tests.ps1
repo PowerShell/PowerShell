@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 $ps = Join-Path -Path $PsHome -ChildPath "powershell"
 

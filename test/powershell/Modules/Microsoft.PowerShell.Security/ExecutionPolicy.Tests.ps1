@@ -2,7 +2,6 @@
 # These are general tests that verify non-Windows behavior
 #
 
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "ExecutionPolicy" -Tags "CI" {
 

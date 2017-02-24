@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Clear-EventLog cmdlet tests" -Tags @('CI', 'RequireAdminOnWindows') {
 

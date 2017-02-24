@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Validate basic Variable provider cmdlets" -Tags "CI" {
     BeforeAll {

@@ -1,7 +1,6 @@
 ﻿using namespace system.collections.generic
 using namespace System.Management.Automation
 
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Generics support" -Tags "CI" {
     # list and stack are in different assemblies, and dictionary

@@ -1,7 +1,6 @@
 using namespace System.Diagnostics
 using namespace System.Management.Automation.Internal
 
-Import-Module $PSScriptRoot\..\Common\Test.Helpers.psm1
 
 Describe "PowerShell Command Debugging" -tags "CI" {
 

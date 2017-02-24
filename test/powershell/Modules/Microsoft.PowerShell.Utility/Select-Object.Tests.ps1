@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 . (Join-Path -Path $PSScriptRoot -ChildPath Test-Mocks.ps1)
 

@@ -2,7 +2,6 @@
 #
 # Copyright (c) Microsoft Corporation, 2015
 
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 function RemoveTestGroups
 {

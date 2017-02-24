@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Start-Process" -Tags @("CI","SLOW") {
     $pingCommand = (Get-Command -CommandType Application ping)[0].Definition

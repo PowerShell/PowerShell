@@ -1,5 +1,4 @@
-﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
-
+﻿
 Describe "Test restricted language check method on scriptblocks" -Tags "CI" {
         BeforeAll {
             set-strictmode -v 2

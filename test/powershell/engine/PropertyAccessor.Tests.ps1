@@ -3,7 +3,6 @@
 # The properties files are supported on non-Windows OSes, but the tests are specific to
 # Windows so that file IO can be verified using supported cmdlets.
 #
-Import-Module $PSScriptRoot\..\Common\Test.Helpers.psm1
 
 try {
     # Skip these tests when run against "InBox" PowerShell
