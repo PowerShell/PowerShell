@@ -399,6 +399,18 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
         $result.Error | Should BeNullOrEmpty
     }
+
+    It "Validate Invoke-WebRequest returns HTTP errors in exception" {
+
+        $command = "Invoke-WebRequest -Uri http://httpstat.us/418"
+        $result = ExecuteWebCommand -command $command
+
+        $result.Error.Exception | Should BeOfType Microsoft.PowerShell.Commands.HttpResponseException
+        $result.Error.Exception.Response.StatusCode | Should Be 418
+        $result.Error.Exception.Response.ReasonPhrase | Should Be "I'm a teapot"
+        $result.Error.Exception.Message | Should Be "Response status code does not indicate success: 418 (I'm a teapot)."
+        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+    }
 }
 
 Describe "Invoke-RestMethod tests" -Tags "Feature" {
@@ -641,6 +653,17 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $command = "Invoke-RestMethod -Uri 'http://httpbin.org/encoding/utf8'"
         $result = ExecuteWebCommand -command $command
         $result.Error | Should BeNullOrEmpty
+    }
+
+    It "Validate Invoke-RestMethod returns HTTP errors in exception" {
+
+        $command = "Invoke-RestMethod -Uri http://httpstat.us/418"
+        $result = ExecuteWebCommand -command $command
+        $result.Error.Exception | Should BeOfType Microsoft.PowerShell.Commands.HttpResponseException
+        $result.Error.Exception.Response.StatusCode | Should Be 418
+        $result.Error.Exception.Response.ReasonPhrase | Should Be "I'm a teapot"
+        $result.Error.Exception.Message | Should Be "Response status code does not indicate success: 418 (I'm a teapot)."
+        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 }
 

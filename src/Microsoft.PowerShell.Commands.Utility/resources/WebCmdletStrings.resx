@@ -210,4 +210,7 @@
   <data name="JsonDeserializationFailed" xml:space="preserve">
     <value>Conversion from JSON failed with error: {0}</value>
   </data>
+  <data name="ResponseStatusCodeFailure" xml:space="preserve">
+    <value>Response status code does not indicate success: {0} ({1}).</value>
+  </data>
 </root>
