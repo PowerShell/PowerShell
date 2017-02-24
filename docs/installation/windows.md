@@ -37,24 +37,24 @@ In both cases, you will need the Windows 10 x64 Zip release package and will nee
 
 The following steps will guide you through the deployment of PowerShell Core to a running instance of Nano Server and the configuration of its remote endpoint.
 
-1. Connect to the inbox instance of Windows PowerShell
+* Connect to the inbox instance of Windows PowerShell
 ```powershell
 $session = New-PSSession -ComputerName <Nano Server IP address> -Credential <An Administrator account on the system>
 ```
-2. Copy the file to the Nano Server instance
+* Copy the file to the Nano Server instance
 ```powershell
 Copy-Item <local PS Core download location>\powershell-<version>-win10-win2016-x64.zip c:\ -ToSession $session
 ```
-3. Enter the session
+* Enter the session
 ```powershell
 Enter-PSSession $session
 ```
-4. Extract the Zip file
+* Extract the Zip file
 ```powershell
 # Insert the appropriate version.
 Expand-Archive -Path C:\powershell-<version>-win10-win2016-x64.zip -DestinationPath "C:\PowerShellCore_<version>"
 ```
-5. Follow the instructions to create a remoting endpoint using the [another instance technique](#executed-by-another-instance-of-powershell-on-behalf-of-the-instance-that-it-will-register). 
+* Follow the instructions to create a remoting endpoint using the [another instance technique](#executed-by-another-instance-of-powershell-on-behalf-of-the-instance-that-it-will-register). 
 
 # Instructions to Create a Remoting Endpoint
 
