@@ -22,7 +22,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Exception class for webcmdlets to enable returning HTTP error response
     /// </summary>    
-    public sealed class HttpResponseException : Exception
+    public sealed class HttpResponseException : HttpRequestException
     {
         /// <summary>
         /// Constructor for HttpResponseException
@@ -37,7 +37,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// HTTP error response
         /// </summary>
-        public HttpResponseMessage Response { get; set; }
+        public HttpResponseMessage Response { get; private set; }
     }
 
     /// <summary>
@@ -379,10 +379,16 @@ namespace Microsoft.PowerShell.Commands
                         if (!response.IsSuccessStatusCode)
                         {
                             string message = String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
-                                response.StatusCode.ToString(), response.ReasonPhrase);
+                                Convert.ToInt32(response.StatusCode).ToString(), response.ReasonPhrase);
                             HttpResponseException httpEx = new HttpResponseException(message, response);
                             ErrorRecord er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
-                            er.ErrorDetails = new ErrorDetails(message);
+                            string detailMsg = "";
+                            using (StreamReader reader = new StreamReader(StreamHelper.GetResponseStream(response)))
+                            {
+                                // remove HTML tags making it easier to read
+                                detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>","");
+                            }
+                            er.ErrorDetails = new ErrorDetails(detailMsg);
                             ThrowTerminatingError(er);
                         }
                         ProcessResponse(response);
