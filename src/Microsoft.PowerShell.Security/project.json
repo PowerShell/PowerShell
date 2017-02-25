@@ -57,9 +57,6 @@
                         "resources/SecurityMshSnapinResources.resx"
                     ]
                 }
-            },
-            "dependencies": {
-                "System.Security.Cryptography.Pkcs": "4.3.0"
             }
         },
         "net451": {
