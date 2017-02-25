@@ -396,7 +396,10 @@ namespace Microsoft.PowerShell.Commands
                             }
                             finally
                             {
-                                reader.Dispose();
+                                if (reader != null)
+                                {
+                                    reader.Dispose();
+                                }
                             }
                             if (!String.IsNullOrEmpty(detailMsg))
                             {
@@ -404,6 +407,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             ThrowTerminatingError(er);
                         }
+
                         ProcessResponse(response);
                         UpdateSession(response);
 
