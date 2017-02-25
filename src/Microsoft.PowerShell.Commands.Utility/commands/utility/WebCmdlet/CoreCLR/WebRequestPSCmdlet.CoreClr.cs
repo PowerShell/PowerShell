@@ -16,6 +16,7 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Threading;
 using System.Xml;
+using Microsoft.PowerShell.CoreClr.Stubs;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -347,7 +348,10 @@ namespace Microsoft.PowerShell.Commands
                         WriteVerbose(reqVerboseMsg);
 
                         HttpResponseMessage response = GetResponse(client, request);
-                        response.EnsureSuccessStatusCode();
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            ThrowNotSuccessStatusCodeError(request, response);
+                        }
 
                         string contentType = ContentHelper.GetContentType(response);
                         string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
@@ -407,6 +411,34 @@ namespace Microsoft.PowerShell.Commands
         #endregion Overrides
 
         #region Helper Methods
+
+        private void ThrowNotSuccessStatusCodeError(HttpRequestMessage request, HttpResponseMessage response)
+        {
+            var detailMsg = "";
+            var reader = new StreamReader(StreamHelper.GetResponseStream(response));
+            try
+            {
+                detailMsg = reader.ReadToEnd();
+            }
+            catch (IOException)
+            {
+            }
+            catch (ArgumentException)
+            {
+            }
+            finally
+            {
+                reader.Dispose();
+            }
+
+            var msg = string.Format(CultureInfo.CurrentCulture, WebCmdletStrings.NotSuccessStatusCode, (int) response.StatusCode, response.ReasonPhrase);
+            ErrorRecord er = new ErrorRecord(new WebException(msg) { Response = response }, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+            if (!String.IsNullOrEmpty(detailMsg))
+            {
+                er.ErrorDetails = new ErrorDetails(detailMsg);
+            }
+            ThrowTerminatingError(er);
+        }
 
         /// <summary>
         /// Sets the ContentLength property of the request and writes the specified content to the request's RequestStream.
