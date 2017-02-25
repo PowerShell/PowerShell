@@ -379,16 +379,28 @@ namespace Microsoft.PowerShell.Commands
                         if (!response.IsSuccessStatusCode)
                         {
                             string message = String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
-                                Convert.ToInt32(response.StatusCode).ToString(), response.ReasonPhrase);
+                                (int)response.StatusCode, response.ReasonPhrase);
                             HttpResponseException httpEx = new HttpResponseException(message, response);
                             ErrorRecord er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
                             string detailMsg = "";
-                            using (StreamReader reader = new StreamReader(StreamHelper.GetResponseStream(response)))
+                            StreamReader reader = new StreamReader(StreamHelper.GetResponseStream(response));
+                            try
                             {
                                 // remove HTML tags making it easier to read
                                 detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>","");
                             }
-                            er.ErrorDetails = new ErrorDetails(detailMsg);
+                            catch (Exception)
+                            {
+                                // catch all
+                            }
+                            finally
+                            {
+                                reader.Dispose();
+                            }
+                            if (!String.IsNullOrEmpty(detailMsg))
+                            {
+                                er.ErrorDetails = new ErrorDetails(detailMsg);
+                            }
                             ThrowTerminatingError(er);
                         }
                         ProcessResponse(response);
