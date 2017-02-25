@@ -694,13 +694,12 @@ namespace System.Management.Automation
                                             ref replacementIndex, ref replacementLength, out unused);
                                     }
                                     break;
-                                case TokenKind.DynamicKeyword:
-                                    if (lastAst.Parent is DynamicKeywordStatementAst)
-                                    {
-                                        result = GetDynamicKeywordParameterResult(completionContext, (DynamicKeywordStatementAst)lastAst.Parent);
-                                    }
-                                    break;
                                 default:
+                                    DynamicKeywordStatementAst keywordAst = Ast.GetAncestorAst<DynamicKeywordStatementAst>(lastAst);
+                                    if (keywordAst != null)
+                                    {
+                                        result = GetDynamicKeywordParameterResult(completionContext, keywordAst);
+                                    }
                                     break;
                             }
                         }
@@ -1386,36 +1385,36 @@ namespace System.Management.Automation
         internal static List<CompletionResult> GetDynamicKeywordParameterResult(CompletionContext context, DynamicKeywordStatementAst keywordAst)
         {
             var results = new List<CompletionResult>();
-            if (String.IsNullOrEmpty(context?.WordToComplete) || !context.WordToComplete.StartsWith("-"))
-            {
-                foreach (var param in keywordAst.Keyword.Parameters.Values)
-                {
-                    string typeConstraint = param.TypeConstraint;
-                    Type paramType = Type.GetType(param.TypeConstraint);
-                    if (paramType != null)
-                    {
-                        string acceleratedType = TypeAccelerators.FindBuiltinAccelerator(paramType);
-                        if (!String.IsNullOrEmpty(acceleratedType))
-                        {
-                            typeConstraint = acceleratedType;
-                        }
-                    }
 
-                    string tooltip = "[" + typeConstraint + "]" + param.Name;
-                    results.Add(new CompletionResult("-" + param.Name, param.Name, CompletionResultType.ParameterName, tooltip));
-                }
+            string toComplete;
+            if (context?.WordToComplete?.StartsWith("-") ?? false)
+            {
+                toComplete = context.WordToComplete.Substring(1);
             }
             else
             {
-                string toComplete = context.WordToComplete.Substring(1);
-                foreach (var param in keywordAst.Keyword.Parameters.Values)
+                toComplete = "";
+            }
+            foreach (var param in keywordAst.Keyword.Parameters.Values)
+            {
+                if (!param.Name.StartsWith(toComplete))
                 {
-                    if (param.Name.StartsWith(toComplete, StringComparison.OrdinalIgnoreCase))
+                    continue;
+                }
+
+                string typeConstraint = param.TypeConstraint;
+                Type paramType = Type.GetType(param.TypeConstraint);
+                if (paramType != null)
+                {
+                    string acceleratedType = TypeAccelerators.FindBuiltinAccelerator(paramType);
+                    if (!String.IsNullOrEmpty(acceleratedType))
                     {
-                        string tooltip = "[" + param.TypeConstraint + "]" + param.Name;
-                        results.Add(new CompletionResult("-" + param.Name, param.Name, CompletionResultType.ParameterName, tooltip));
+                        typeConstraint = acceleratedType;
                     }
                 }
+
+                string tooltip = "[" + typeConstraint + "]" + param.Name;
+                results.Add(new CompletionResult("-" + param.Name, param.Name, CompletionResultType.ParameterName, tooltip));
             }
 
             return results;
