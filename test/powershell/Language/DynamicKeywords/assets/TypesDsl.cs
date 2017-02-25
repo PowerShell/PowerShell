@@ -30,6 +30,18 @@ public class TypeExtension : Keyword
         public object NoteProperty { get; set; }
 
         [KeywordParameter()]
-        public string ReferencedType { get; set; }
+        public string CodeReference { get; set; }
+    }
+
+    [Keyword(DirectCall = true)]
+    public class PropertySet : Keyword
+    {
+        [KeywordParameter()]
+        public string[] ReferencedProperties { get; set; }
+    }
+
+    [Keyword(Name = DynamicKeywordNameMode.NameRequired, Body = DynamicKeywordBodyMode.ScriptBlock)]
+    public class MemberSet : Keyword
+    {
     }
 }

@@ -77,8 +77,8 @@ function TypesDsl\TypeExtension
 function TypesDsl\Method
 {
     param($KeywordData, $Name, $Value, $SourceMetadata,
-          [Parameter(ParameterSetName="ScriptMethod")][scriptblock]$ScriptMethod,
-          [Parameter(ParameterSetName="CodeReference")][string]$CodeReference)
+          [Parameter(ParameterSetName="ScriptMethod", Mandatory=$true)][scriptblock]$ScriptMethod,
+          [Parameter(ParameterSetName="CodeReference", Mandatory=$true)][string]$CodeReference)
 
     if ($ScriptMethod -ne $null)
     {
@@ -102,10 +102,10 @@ function TypesDsl\Method
 function TypesDsl\Property
 {
     param($KeywordData, $Name, $Value, $SourceMetadata,
-          [Parameter(ParameterSetName="Alias")][string]$Alias,
-          [Parameter(ParameterSetName="ScriptProperty")][scriptblock]$ScriptProperty,
-          [Parameter(ParameterSetName="NoteProperty")][object]$NoteProperty,
-          [Parameter(ParameterSetName="CodeReference")][string]$CodeReference)
+          [Parameter(ParameterSetName="Alias", Mandatory=$true)][string]$Alias,
+          [Parameter(ParameterSetName="ScriptProperty", Mandatory=$true)][scriptblock]$ScriptProperty,
+          [Parameter(ParameterSetName="NoteProperty", Mandatory=$true)][object]$NoteProperty,
+          [Parameter(ParameterSetName="CodeReference", Mandatory=$true)][string]$CodeReference)
 
     if (-not [string]::IsNullOrEmpty($Alias))
     {
@@ -139,5 +139,36 @@ function TypesDsl\Property
             Name = $Name
             Value = [System.Management.Automation.Runspaces.ScriptPropertyData]::new($Name, $ScriptProperty)
         }
+    }
+}
+
+function TypesDsl\PropertySet
+{
+    param($KeywordData, $Name, $Value, $SourceMetadata,
+          [Parameter(Mandatory=$true)][string[]]$ReferencedProperties)
+
+    return @{
+        Name = $Name
+        Value = [System.Management.Automation.Runspaces.PropertySetData]::new($Name, $ReferencedProperties)
+    }
+}
+
+function TypesDsl\MemberSet
+{
+    param($KeywordData, $Name, $Value, $SourceMetadata)
+
+    $members = [System.Collections.ObjectModel.Collection[System.Management.Automation.Runspaces.TypeMemberData]]::new()
+    foreach ($memberKV in (& $Value))
+    {
+        $member = $memberKV.Value -as [System.Management.Automation.Runspaces.TypeMemberData]
+        if ($member -ne $null)
+        {
+            $members.Add($member)
+        }
+    }
+
+    return @{
+        Name = $Name
+        Value = [System.Management.Automation.Runspaces.MemberSetData]::new($Name, $members)
     }
 }
