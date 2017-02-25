@@ -383,9 +383,10 @@ namespace Microsoft.PowerShell.Commands
                             HttpResponseException httpEx = new HttpResponseException(message, response);
                             ErrorRecord er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
                             string detailMsg = "";
-                            StreamReader reader = new StreamReader(StreamHelper.GetResponseStream(response));
+                            StreamReader reader = null;
                             try
                             {
+                                reader = new StreamReader(StreamHelper.GetResponseStream(response));
                                 // remove HTML tags making it easier to read
                                 detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>","");
                             }
