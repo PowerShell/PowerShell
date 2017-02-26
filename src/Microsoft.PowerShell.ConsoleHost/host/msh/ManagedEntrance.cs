@@ -106,12 +106,13 @@ namespace Microsoft.PowerShell
                     RunspaceConfigForSingleShell.Create(consoleFilePath, out warning);
             }
             int exitCode = 0;
+            string systemYear = DateTime.Now.Year.ToString();
             try
             {
 #if CORECLR
-                    var banner = ManagedEntranceStrings.ShellBannerNonWindowsPowerShell;
+                    var banner = string.Format(ManagedEntranceStrings.ShellBannerNonWindowsPowerShell, systemYear);
 #else
-                var banner = ManagedEntranceStrings.ShellBanner;
+                var banner = string.Format(ManagedEntranceStrings.ShellBanner, systemYear);
 #endif
                 exitCode = Microsoft.PowerShell.ConsoleShell.Start(
                     configuration,
