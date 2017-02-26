@@ -683,7 +683,8 @@ function Start-PSPester {
         [string]$powershell = (Join-Path $binDir 'powershell'),
         [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester")),
         [switch]$Unelevate,
-        [switch]$Quiet
+        [switch]$Quiet,
+        [switch]$PassThru
     )
 
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
@@ -746,6 +747,9 @@ function Start-PSPester {
     # doing a daily build as the log file is too large
     if ( $Quiet ) {
         $Command += "-Quiet "
+    }
+    if ( $PassThru ) {
+        $Command += "-PassThru "
     }
 
     $Command += "'" + $Path + "'"
