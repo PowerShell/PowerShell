@@ -9,7 +9,7 @@
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should be "PathNotFound,Microsoft.PowerShell.Commands.ResolvePathCommand"
+            $_.FullyQualifiedErrorId | Should be "PathNotFound,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
         }
     }
 
@@ -22,7 +22,7 @@
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should be "CouldNotParseAsPowerShellDataFile,Import-PowerShellDataFile"
+            $_.FullyQualifiedErrorId | Should be "PathNotFound,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
         }
 
     }
@@ -37,7 +37,7 @@
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should be "InvalidOperationException,Import-PowerShellDataFile"
+            $_.FullyQualifiedErrorId | Should be "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
         }
     }
 
@@ -51,7 +51,7 @@
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should be "CouldNotParseAsPowerShellDataFileNoHashtableRoot,Import-PowerShellDataFile"
+            $_.FullyQualifiedErrorId | Should be "CouldNotParseAsPowerShellDataFileNoHashtableRoot,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
         }
     }
 
