@@ -512,7 +512,7 @@
     <value>The variable '{0}' was not imported because there is a member with the same name in the current scope.</value>
   </data>
   <data name="WildCardNotAllowedInModuleToProcessAndInNestedModules" xml:space="preserve">
-    <value>Wildcard characters are not allowed in members 'ModuleToProcess', 'RootModule', or 'NestedModule' in the module manifest '{0}'.</value>
+    <value>Wildcard characters are not allowed in members 'ModuleToProcess', 'RootModule', or 'NestedModules' in the module manifest '{0}'.</value>
   </data>
   <data name="CoreModuleCannotBeRemoved" xml:space="preserve">
     <value>The module '{0}' is a core module for Windows PowerShell. Add the Force parameter to your command to remove core modules.</value>
