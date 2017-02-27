@@ -5733,7 +5733,7 @@ namespace System.Management.Automation.Language
                         break;
 
                     case TokenKind.Generic:
-                        if ((context & CommandArgumentContext.CommandName) != 0)
+                        if ((context & CommandArgumentContext.CommandName) != 0 && token.Kind != TokenKind.DynamicKeyword)
                         {
                             token.TokenFlags |= TokenFlags.CommandName;
                         }
