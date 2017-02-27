@@ -473,8 +473,7 @@ sed -i -e 's|^echo|# echo|g' usr/bin/$APP.wrapper # Make less verbose
 # Go out of AppImage
 cd ..
 
-# NOTE: REPLACE THIS WITH A MIRRORED COPY OF APPIMAGETOOL
-wget -c https://github.com/probonopd/AppImageKit/releases/download/8/appimagetool-x86_64.AppImage
+wget -c https://psgithub.file.core.windows.net/psgithub/appimagetool-x86_64.AppImage
 chmod a+x appimagetool-x86_64.AppImage
 ./appimagetool-x86_64.AppImage ./powershell.AppDir
 cp ./PowerShell*AppImage ..
