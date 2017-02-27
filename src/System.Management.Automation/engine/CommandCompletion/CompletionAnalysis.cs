@@ -648,6 +648,10 @@ namespace System.Management.Automation
                                 bool matched;
                                 result = GetResultForIdentifierInConfiguration(completionContext, configAst, keywordAst, out matched);
                             }
+                            else if (keywordAst != null)
+                            {
+                                result = GetInnerDynamicKeywordResult(completionContext, keywordAst);
+                            }
                         }
                     }
                     else if (completionContext.TokenAtCursor == null)
@@ -691,6 +695,11 @@ namespace System.Management.Automation
                                     }
                                     break;
                                 default:
+                                    DynamicKeywordStatementAst keywordAst = Ast.GetAncestorAst<DynamicKeywordStatementAst>(lastAst);
+                                    if (keywordAst != null)
+                                    {
+                                        result = GetDynamicKeywordParameterResult(completionContext, keywordAst);
+                                    }
                                     break;
                             }
                         }
@@ -989,6 +998,7 @@ namespace System.Management.Automation
                             DynamicKeywordProperty property;
                             if (keywordAst.Keyword.Properties.TryGetValue(propertyNameAst.Value, out property))
                             {
+                                result = new List<CompletionResult>();
                                 List<String> existingValues = null;
                                 WildcardPattern wildcardPattern = null;
                                 bool isDependsOnProperty = String.Equals(property.Name, @"DependsOn", StringComparison.OrdinalIgnoreCase);
@@ -1037,7 +1047,6 @@ namespace System.Management.Automation
                                     completionContext.ReplacementIndex = replacementIndex;
                                     string matchString = stringToComplete + "*";
                                     wildcardPattern = WildcardPattern.Get(matchString, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
-                                    result = new List<CompletionResult>();
                                 }
 
                                 Diagnostics.Assert(isCursorInString || (!hasNewLine), "hasNoQuote and hasNewLine cannot be true at the same time");
@@ -1112,6 +1121,13 @@ namespace System.Management.Automation
                                                     resource));
                                             }
                                         }
+                                    }
+                                }
+                                else
+                                {
+                                    foreach (var propertyValue in property.Values)
+                                    {
+                                        result.Add(new CompletionResult(propertyValue, propertyValue, CompletionResultType.Text, propertyValue));
                                     }
                                 }
                             }
@@ -1341,6 +1357,69 @@ namespace System.Management.Automation
             return results;
         }
 
+        internal static List<CompletionResult> GetInnerDynamicKeywordResult(CompletionContext context, DynamicKeywordStatementAst parentKeywordAst)
+        {
+            var results = new List<CompletionResult>();
+
+            if (String.IsNullOrEmpty(context.WordToComplete))
+            {
+                foreach (var keyword in parentKeywordAst.Keyword.InnerKeywords.Values)
+                {
+                    results.Add(new CompletionResult(keyword.Keyword, keyword.Keyword, CompletionResultType.Keyword, keyword.Keyword));
+                }
+            }
+            else
+            {
+                foreach (var keyword in parentKeywordAst.Keyword.InnerKeywords.Values)
+                {
+                    if (keyword.Keyword.StartsWith(context.WordToComplete))
+                    {
+                        results.Add(new CompletionResult(keyword.Keyword, keyword.Keyword, CompletionResultType.Keyword, keyword.Keyword));
+                    }
+                }
+            }
+
+            return results;
+        }
+
+        internal static List<CompletionResult> GetDynamicKeywordParameterResult(CompletionContext context, DynamicKeywordStatementAst keywordAst)
+        {
+            var results = new List<CompletionResult>();
+
+            string toComplete;
+            if (context?.WordToComplete?.StartsWith("-") ?? false)
+            {
+                toComplete = context.WordToComplete.Substring(1);
+            }
+            else
+            {
+                toComplete = "";
+            }
+            foreach (var param in keywordAst.Keyword.Parameters.Values)
+            {
+                if (!param.Name.StartsWith(toComplete))
+                {
+                    continue;
+                }
+
+                string typeConstraint = param.TypeConstraint;
+                Type paramType = Type.GetType(param.TypeConstraint);
+                if (paramType != null)
+                {
+                    string acceleratedType = TypeAccelerators.FindBuiltinAccelerator(paramType);
+                    if (!String.IsNullOrEmpty(acceleratedType))
+                    {
+                        typeConstraint = acceleratedType;
+                    }
+                }
+
+                string tooltip = "[" + typeConstraint + "]" + param.Name;
+                results.Add(new CompletionResult("-" + param.Name, param.Name, CompletionResultType.ParameterName, tooltip));
+            }
+
+            return results;
+        }
+
         private List<CompletionResult> GetResultForIdentifier(CompletionContext completionContext, ref int replacementIndex, ref int replacementLength, bool isQuotedString)
         {
             var tokenAtCursor = completionContext.TokenAtCursor;
@@ -1510,6 +1589,12 @@ namespace System.Management.Automation
                     // Current token is within ConfigurationDefinitionAst or DynamicKeywordStatementAst
                     keywordResult = GetResultForIdentifierInConfiguration(completionContext, configureAst, keywordAst, out matched);
                 }
+                else if (keywordAst != null)
+                {
+                    // Lie so keywords appear when commands are also possible
+                    matched = true;
+                    keywordResult = GetInnerDynamicKeywordResult(completionContext, keywordAst);
+                }
 
                 // Handle the file completion before command name completion
                 result = CompleteFileNameAsCommand(completionContext);
@@ -1521,14 +1606,18 @@ namespace System.Management.Automation
                     result.AddRange(commandNameResult);
                 }
 
-                if (matched && keywordResult != null)
+                if (keywordResult != null)
                 {
-                    result.InsertRange(0, keywordResult);
+                    if (matched)
+                    {
+                        result.InsertRange(0, keywordResult);
+                    }
+                    else if (commandNameResult.Count == 0)
+                    {
+                        result.AddRange(keywordResult);
+                    }
                 }
-                else if (!matched && keywordResult != null && commandNameResult.Count == 0)
-                {
-                    result.AddRange(keywordResult);
-                }
+
                 return result;
             }
 
