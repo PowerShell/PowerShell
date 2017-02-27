@@ -11,10 +11,10 @@ RUN locale-gen $LANG && update-locale
 # Install dependencies and clean up
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-		apt-utils \
-		ca-certificates \		
-		curl \       
-		apt-transport-https \		
+        apt-utils \
+        ca-certificates \
+        curl \
+        apt-transport-https \	
     && rm -rf /var/lib/apt/lists/*
 
 # Import the public repository GPG keys for Microsoft
