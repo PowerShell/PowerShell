@@ -25,4 +25,9 @@
         $ObjArray = [System.Management.Automation.LanguagePrimitives]::ConvertTo($col, [object[]])
         $ObjArray.Length | Should Be $col.Count
     }
+
+    It "Casting recursive array to bool should not cause crash" {
+        $a[0] = $a = [PSObject](,1)
+        [System.Management.Automation.LanguagePrimitives]::IsTrue($a) | Should Be $true
+    }
 }
