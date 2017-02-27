@@ -383,7 +383,7 @@ namespace Microsoft.PowerShell
                 return;
             }
 
-            if ((token.TokenFlags & TokenFlags.CommandName) != 0 && token.Kind != TokenKind.DynamicKeyword)
+            if ((token.TokenFlags & TokenFlags.CommandName) != 0)
             {
                 foregroundColor = _options.CommandForegroundColor;
                 backgroundColor = _options.CommandBackgroundColor;

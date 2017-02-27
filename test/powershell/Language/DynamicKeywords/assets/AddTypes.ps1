@@ -22,5 +22,5 @@ TypeExtension System.Collections.Hashtable
 
     Property NumElements -Alias Count
 
-    Property Greeting -NoteProperty Hello
+    Property Greeting -NoteProperty "Hello"
 }
