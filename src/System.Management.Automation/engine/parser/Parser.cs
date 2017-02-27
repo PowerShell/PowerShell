@@ -5773,7 +5773,10 @@ namespace System.Management.Automation.Language
                         {
                             case CommandArgumentContext.CommandName:
                             case CommandArgumentContext.CommandNameAfterInvocationOperator:
-                                token.TokenFlags |= TokenFlags.CommandName;
+                                if (token.Kind != TokenKind.DynamicKeyword)
+                                {
+                                    token.TokenFlags |= TokenFlags.CommandName;
+                                }
                                 break;
                             case CommandArgumentContext.FileName:
                             case CommandArgumentContext.CommandArgument:
