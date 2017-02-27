@@ -1045,24 +1045,34 @@ namespace System.Management.Automation.Language
     /// </summary>
     internal class ParseErrorContainer
     {
+        private string ErrorId { get; }
+
         /// <summary>
-        /// The parser string expression to invoke
+        /// The error message, to be formatted
         /// </summary>
-        public Expression<Func<string>> ErrorExpr { get; }
+        private string ErrorMessage { get; }
+
         /// <summary>
-        /// Any arguments to the parser string
+        /// Any arguments to the error message
         /// </summary>
-        public object[] Args { get; }
+        private object[] ErrorMessageArgs { get; }
 
         /// <summary>
         /// Construct a new ParseError value to pass up
         /// </summary>
         /// <param name="errorExpr">the string expression</param>
         /// <param name="args">any arguments to the string expression</param>
-        public ParseErrorContainer(Expression<Func<string>> errorExpr, params object[] args)
+        public ParseErrorContainer(string errorId, string errorExpr, params object[] args)
         {
-            ErrorExpr = errorExpr;
-            Args = args;
+            ErrorId = errorId;
+            ErrorMessage = errorExpr;
+            ErrorMessageArgs = args;
+        }
+
+        public ParseError GenerateParseError(IScriptExtent importExtent)
+        {
+            string msg = String.Format(ErrorMessage, ErrorMessageArgs);
+            return new ParseError(importExtent, ErrorId, msg);
         }
     }
 
@@ -1256,7 +1266,7 @@ namespace System.Management.Automation.Language
 
             if (!HasZeroArgumentConstructor(typeDef))
             {
-                _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataNoZeroArgCtor, keywordName));
+                _parseErrors.Add(new ParseErrorContainer(nameof(ParserStrings.DynamicKeywordMetadataNoZeroArgCtor), ParserStrings.DynamicKeywordMetadataNoZeroArgCtor, keywordName));
                 _hasFailed = true;
             }
 
@@ -1267,7 +1277,8 @@ namespace System.Management.Automation.Language
                 //       For now, a more local keyword will shadow a global one anyway (as you might expect)
                 if (enclosingScope.Contains(keywordName))
                 {
-                    _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataKeywordAlreadyDefinedInScope, keywordName));
+                    _parseErrors.Add(new ParseErrorContainer(nameof(ParserStrings.DynamicKeywordMetadataKeywordAlreadyDefinedInScope),
+                        ParserStrings.DynamicKeywordMetadataKeywordAlreadyDefinedInScope, keywordName));
                     _hasFailed = true;
                 }
             }
@@ -1281,8 +1292,8 @@ namespace System.Management.Automation.Language
             // In global scope, we don't enforce UseMode -- so throw an error if a global keyword is not OptionalMany so the user knows this doesn't make sense
             if (!isNested && attributeData.UseMode != DynamicKeywordUseMode.OptionalMany)
             {
-                _parseErrors.Add(new ParseErrorContainer(
-                    () => ParserStrings.DynamicKeywordMetadataGlobalKeywordsMustBeOptionalMany, keywordName, attributeData.UseMode, DynamicKeywordUseMode.OptionalMany));
+                _parseErrors.Add(new ParseErrorContainer(nameof(ParserStrings.DynamicKeywordMetadataGlobalKeywordsMustBeOptionalMany),
+                    ParserStrings.DynamicKeywordMetadataGlobalKeywordsMustBeOptionalMany, keywordName, attributeData.UseMode, DynamicKeywordUseMode.OptionalMany));
             }
 
             // Read in enum definitions in the local scope
@@ -1310,7 +1321,8 @@ namespace System.Management.Automation.Language
                         // Hashtable-bodied keyword cannot take parameters
                         if (attributeData.BodyMode != DynamicKeywordBodyMode.Command)
                         {
-                            _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataNonCommandKeywordHasParameters, keywordName));
+                            _parseErrors.Add(new ParseErrorContainer(nameof(ParserStrings.DynamicKeywordMetadataNonCommandKeywordHasParameters),
+                                ParserStrings.DynamicKeywordMetadataNonCommandKeywordHasParameters, keywordName));
                             _hasFailed = true;
                         }
 
@@ -1325,7 +1337,8 @@ namespace System.Management.Automation.Language
                         // Only Hashtable-bodied keywords can have properties
                         if (attributeData.BodyMode != DynamicKeywordBodyMode.Hashtable)
                         {
-                            _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataNonHashtableKeywordHasProperties, keywordName, attributeData.BodyMode));
+                            _parseErrors.Add(new ParseErrorContainer(nameof(ParserStrings.DynamicKeywordMetadataNonHashtableKeywordHasProperties),
+                                ParserStrings.DynamicKeywordMetadataNonHashtableKeywordHasProperties, keywordName, attributeData.BodyMode));
                             _hasFailed = true;
                         }
 
@@ -1348,7 +1361,8 @@ namespace System.Management.Automation.Language
                 {
                     if (attributeData.BodyMode == DynamicKeywordBodyMode.Command)
                     {
-                        _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataCommandKeywordHasNestedKeywords, keywordName));
+                        _parseErrors.Add(new ParseErrorContainer(nameof(ParserStrings.DynamicKeywordMetadataCommandKeywordHasNestedKeywords),
+                            ParserStrings.DynamicKeywordMetadataCommandKeywordHasNestedKeywords, keywordName));
                         _hasFailed = true;
                     }
 
@@ -1585,7 +1599,8 @@ namespace System.Management.Automation.Language
             // If we've gotten here, the class has the KeywordAttribute but does not inherit from Keyword
             // So the parse has failed and we must tell the user what the problem is
             _hasFailed = true;
-            _parseErrors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordMetadataKeywordDoesNotInheritKeyword, _metadataReader.GetString(typeDef.Name)));
+            _parseErrors.Add(new ParseErrorContainer(nameof(ParserStrings.DynamicKeywordMetadataKeywordDoesNotInheritKeyword),
+                ParserStrings.DynamicKeywordMetadataKeywordDoesNotInheritKeyword, _metadataReader.GetString(typeDef.Name)));
             return false;
         }
 
@@ -2633,7 +2648,8 @@ namespace System.Management.Automation.Language
             Type definingType = _keywordAssemblies[keyword].GetType(keyword.Keyword);
             if (definingType == null)
             {
-                _errors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordLoaderKeywordNotFound, keyword, _keywordAssemblies[keyword].Location));
+                _errors.Add(new ParseErrorContainer(nameof(ParserStrings.DynamicKeywordLoaderKeywordNotFound),
+                    ParserStrings.DynamicKeywordLoaderKeywordNotFound, keyword, _keywordAssemblies[keyword].Location));
                 _hasFailed = true;
             }
 
@@ -2641,7 +2657,8 @@ namespace System.Management.Automation.Language
             Keyword definitionInstance = Activator.CreateInstance(definingType) as Keyword;
             if (definitionInstance == null)
             {
-                _errors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordLoaderKeywordDoesNotInheritFromKeyword, keyword));
+                _errors.Add(new ParseErrorContainer(nameof(ParserStrings.DynamicKeywordLoaderKeywordDoesNotInheritFromKeyword),
+                    ParserStrings.DynamicKeywordLoaderKeywordDoesNotInheritFromKeyword, keyword));
                 _hasFailed = true;
             }
 
@@ -2671,14 +2688,16 @@ namespace System.Management.Automation.Language
             Type childType = parentType.GetNestedType(keyword.Keyword, BindingFlags.Public | BindingFlags.NonPublic);
             if (childType == null)
             {
-                _errors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordLoaderKeywordNotFound, keyword, definingAssembly.Location));
+                _errors.Add(new ParseErrorContainer(nameof(ParserStrings.DynamicKeywordLoaderKeywordNotFound),
+                    ParserStrings.DynamicKeywordLoaderKeywordNotFound, keyword, definingAssembly.Location));
                 _hasFailed = true;
             }
 
             Keyword definitionInstance = Activator.CreateInstance(childType) as Keyword;
             if (definitionInstance == null)
             {
-                _errors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordLoaderKeywordDoesNotInheritFromKeyword, keyword));
+                _errors.Add(new ParseErrorContainer(nameof(ParserStrings.DynamicKeywordLoaderKeywordDoesNotInheritFromKeyword),
+                    ParserStrings.DynamicKeywordLoaderKeywordDoesNotInheritFromKeyword, keyword));
                 _hasFailed = true;
             }
 
@@ -2706,7 +2725,8 @@ namespace System.Management.Automation.Language
             {
                 if (keyword.ImplementingModuleInfo != topLevelKeywordModule)
                 {
-                    _errors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordLoaderChildKeywordFromDifferentModule, keyword, parent));
+                    _errors.Add(new ParseErrorContainer(nameof(ParserStrings.DynamicKeywordLoaderChildKeywordFromDifferentModule),
+                        ParserStrings.DynamicKeywordLoaderChildKeywordFromDifferentModule, keyword, parent));
                 }
             };
 
@@ -2716,7 +2736,8 @@ namespace System.Management.Automation.Language
             {
                 if (seenKeywords.Contains(keyword))
                 {
-                    _errors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordLoaderInnerKeywordCycle, keyword));
+                    _errors.Add(new ParseErrorContainer(nameof(ParserStrings.DynamicKeywordLoaderInnerKeywordCycle),
+                        ParserStrings.DynamicKeywordLoaderInnerKeywordCycle, keyword));
                 }
                 seenKeywords.Add(keyword);
             };
@@ -2726,7 +2747,8 @@ namespace System.Management.Automation.Language
                 // Also make sure the parent keywords have a module
                 if (keyword.ImplementingModuleInfo == null)
                 {
-                    _errors.Add(new ParseErrorContainer(() => ParserStrings.DynamicKeywordLoaderKeywordModuleIsNull, keyword));
+                    _errors.Add(new ParseErrorContainer(nameof(ParserStrings.DynamicKeywordLoaderKeywordModuleIsNull),
+                        ParserStrings.DynamicKeywordLoaderKeywordModuleIsNull, keyword));
                 }
 
                 // Perform the checks

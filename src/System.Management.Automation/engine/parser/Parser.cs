@@ -4714,7 +4714,7 @@ namespace System.Management.Automation.Language
                     {
                         foreach (ParseErrorContainer keywordError in keywordErrors)
                         {
-                            ReportError(usingStmtAst.Extent, keywordError.ErrorExpr, keywordError.Args);
+                            ReportError(keywordError.GenerateParseError(usingStmtAst.Extent));
                         }
                         return usingStmtAst;
                     }
@@ -4726,7 +4726,7 @@ namespace System.Management.Automation.Language
                     {
                         foreach (ParseErrorContainer keywordError in keywordErrors)
                         {
-                            ReportError(usingStmtAst.Extent, keywordError.ErrorExpr, keywordError.Args);
+                            ReportError(keywordError.GenerateParseError(usingStmtAst.Extent));
                         }
                         return usingStmtAst;
                     }
