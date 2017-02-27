@@ -29,4 +29,5 @@ RUN apt-get update \
 	powershell
 
 # Use PowerShell as the default shell
+# Use array to avoid Docker prepending /bin/sh -c
 ENTRYPOINT [ "powershell" ]
