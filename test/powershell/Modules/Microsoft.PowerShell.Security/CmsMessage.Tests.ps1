@@ -67,10 +67,6 @@ Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
         $certLocation | Should Not BeNullOrEmpty | Out-Null
     }
 
-    AfterAll {
-        Remove-Item $certLocation -Force
-    }
-
     It "Verify Get-PfxCertificate -FilePath" {
         $cert = Get-PfxCertificate -FilePath $certLocation
         $cert.Subject | Should Be "CN=MyDataEnciphermentCert"
@@ -165,11 +161,6 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
         if ($importedCert)
         {
             Remove-Item (Join-Path Cert:\CurrentUser\My $importedCert.Thumbprint)
-        }
-
-        if ($certLocation)
-        {
-            Remove-Item $certLocation -Force
         }
     }
 
