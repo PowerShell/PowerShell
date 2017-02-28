@@ -49,7 +49,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId $errorId
     }
 
-    It "module manifest containing valid rootmodule file succeeds" -TestCases `
+    It "module manifest containing valid unprocessed rootmodule file type succeeds" -TestCases `
         @{rootModuleValue = "foo.psm1"},
         @{rootModuleValue = "foo.dll"} {
 
@@ -63,6 +63,20 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         $moduleManifest = Test-ModuleManifest -Path $testModulePath -ErrorAction Stop
         $moduleManifest | Should BeOfType System.Management.Automation.PSModuleInfo
         $moduleManifest.RootModule | Should Be $rootModuleValue
+    }
+
+    It "module manifest containing valid processed empty rootmodule file type fails" -TestCases `
+        @{rootModuleValue = "foo.cdxml"; error = "System.Xml.XmlException"},  # fails when cmdlet tries to read it as XML
+        @{rootModuleValue = "foo.xaml"; error = "NotSupported"} {  # not supported on PowerShell Core
+
+        param($rootModuleValue, $error)
+
+        New-Item -ItemType Directory -Path testdrive:/module
+        $testModulePath = "testdrive:/module/test.psd1"
+
+        New-Item -ItemType File -Path testdrive:/module/$rootModuleValue
+        New-ModuleManifest -Path $testModulePath -RootModule $rootModuleValue
+        { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
     }
 
     It "module manifest containing empty rootmodule succeeds" -TestCases `
