@@ -23,11 +23,6 @@ namespace System.Management.Automation.Runspaces
         {
             TypeData td;
 
-            var td1 = new TypeData(@"System.Array", true);
-            td1.Members.Add("Count",
-                new AliasPropertyData("Count", "Length"));
-            yield return td1;
-
             var td2 = new TypeData(@"System.Xml.XmlNode", true);
             td2.Members.Add("ToString",
                 new CodeMethodData("ToString", GetMethodInfo(typeof(Microsoft.PowerShell.ToStringCodeMethods), @"XmlNode")));
