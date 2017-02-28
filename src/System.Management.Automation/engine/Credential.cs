@@ -273,9 +273,10 @@ namespace System.Management.Automation
                 if (IsValidUserName(_userName, out user, out domain))
                 {
 #if CORECLR
-                    // NetworkCredential constructor only accepts plain string password in CoreCLR
-                    // Since user can already access the plain text password via PSCredential.GetNetworkCredential().Password,
-                    // this change won't be a security issue for PS on CSS.
+                    // NetworkCredential constructor only accepts plain string password in .NET Core.
+                    // TODO: This raises security concerns about having the plain string password in memory
+                    // for an indefinite period of time. So we need to change back to the constructor that 
+                    // takes a SecureString password once it becomes available in .NET Core.
                     IntPtr unmanagedPtr = IntPtr.Zero;
                     try
                     {

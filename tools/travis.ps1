@@ -96,7 +96,20 @@ Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild=
 
 Start-PSBootstrap -Package:(-not $isPr)
 $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
-Start-PSBuild -CrossGen -PSModuleRestore
+
+# CrossGen'ed assemblies cause a hang to happen intermittently when running powershell class
+# basic parsing tests in Linux/OSX. The hang seems to happen when generating dynamic assemblies.
+# This issue has been reported to CoreCLR team. We need to work around it for now because
+# the Travis CI build failures caused by this is draining our builder resource and severely
+# affect our daily work. The workaround is:
+#  1. For pull request and push commit, build without '-CrossGen' and run the parsing tests
+#  2. For nightly build, build with '-CrossGen' but don't run the parsing tests
+# With this workaround, CI builds triggered by pull request and push commit will exercise
+# the parsing tests with IL assemblies, while nightly builds will exercise CrossGen'ed assemblies
+# without running those class parsing tests so as to avoid the hang.
+# NOTE: this change should be reverted once the 'CrossGen' issue is fixed by CoreCLR. The issue
+#       is tracked by https://github.com/dotnet/coreclr/issues/9745
+Start-PSBuild -CrossGen:$isFullBuild -Publish -PSModuleRestore
 
 $pesterParam = @{ 'binDir' = $output }
 
@@ -111,6 +124,9 @@ if ($isFullBuild) {
 Start-PSPester @pesterParam
 
 if (-not $isPr) {
+    # Run 'CrossGen' for push commit, so that we can generate package.
+    # It won't rebuild powershell, but only CrossGen the already built assemblies.
+    if (-not $isFullBuild) { Start-PSBuild -CrossGen }
     # Only build packages for branches, not pull requests
     Start-PSPackage
     Start-PSPackage -Type AppImage

@@ -20,6 +20,27 @@ using System.Xml;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
+    /// Exception class for webcmdlets to enable returning HTTP error response
+    /// </summary>    
+    public sealed class HttpResponseException : HttpRequestException
+    {
+        /// <summary>
+        /// Constructor for HttpResponseException
+        /// </summary>
+        /// <param name="message">Message for the exception</param>
+        /// <param name="response">Response from the HTTP server</param>
+        public HttpResponseException (string message, HttpResponseMessage response) : base(message)
+        {
+            Response = response;
+        }
+
+        /// <summary>
+        /// HTTP error response
+        /// </summary>
+        public HttpResponseMessage Response { get; private set; }
+    }
+
+    /// <summary>
     /// Base class for Invoke-RestMethod and Invoke-WebRequest commands.
     /// </summary>
     public abstract partial class WebRequestPSCmdlet : PSCmdlet
@@ -347,7 +368,6 @@ namespace Microsoft.PowerShell.Commands
                         WriteVerbose(reqVerboseMsg);
 
                         HttpResponseMessage response = GetResponse(client, request);
-                        response.EnsureSuccessStatusCode();
 
                         string contentType = ContentHelper.GetContentType(response);
                         string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
@@ -355,6 +375,39 @@ namespace Microsoft.PowerShell.Commands
                             response.Content.Headers.ContentLength,
                             contentType);
                         WriteVerbose(respVerboseMsg);
+
+                        if (!response.IsSuccessStatusCode)
+                        {
+                            string message = String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
+                                (int)response.StatusCode, response.ReasonPhrase);
+                            HttpResponseException httpEx = new HttpResponseException(message, response);
+                            ErrorRecord er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                            string detailMsg = "";
+                            StreamReader reader = null;
+                            try
+                            {
+                                reader = new StreamReader(StreamHelper.GetResponseStream(response));
+                                // remove HTML tags making it easier to read
+                                detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>","");
+                            }
+                            catch (Exception)
+                            {
+                                // catch all
+                            }
+                            finally
+                            {
+                                if (reader != null)
+                                {
+                                    reader.Dispose();
+                                }
+                            }
+                            if (!String.IsNullOrEmpty(detailMsg))
+                            {
+                                er.ErrorDetails = new ErrorDetails(detailMsg);
+                            }
+                            ThrowTerminatingError(er);
+                        }
+
                         ProcessResponse(response);
                         UpdateSession(response);
 

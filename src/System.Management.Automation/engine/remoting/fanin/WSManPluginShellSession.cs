@@ -698,6 +698,8 @@ namespace System.Management.Automation.Remoting
                 }
             }
 
+            WSManPluginInstance.SetThreadProperties(creationRequestDetails);
+
             bool isRcvOpShuttingDown = (context.isShuttingDown) && (context.isReceiveOperation);
             bool isRcvOp = context.isReceiveOperation;
             bool isShuttingDown = context.isShuttingDown;
@@ -796,6 +798,8 @@ namespace System.Management.Automation.Remoting
                     isClosed = true;
                 }
             }
+
+            WSManPluginInstance.SetThreadProperties(creationRequestDetails);
 
             bool isRcvOp = context.isReceiveOperation;
             // only one thread will be here.
