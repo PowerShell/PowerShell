@@ -4,7 +4,7 @@ Import-Module $PSScriptRoot\TypesDsl.psm1
 
 TypeExtension System.Array
 {
-    Method Sum -ScriptMethod {
+    Method -Name Sum -ScriptMethod {
         $acc = $null
         foreach ($e in $this)
         {
@@ -13,14 +13,14 @@ TypeExtension System.Array
         $acc
     }
 
-    Method All -CodeReference System.Array::TrueForAll
+    Method -Name All -CodeReference System.Array::TrueForAll
 }
 
 TypeExtension System.Collections.Hashtable
 {
-    Property TwiceCount -ScriptProperty { 2 * $this.Count }
+    Property -Name TwiceCount -ScriptProperty { 2 * $this.Count }
 
-    Property NumElements -Alias Count
+    Property -Name NumElements -Alias Count
 
-    Property Greeting -NoteProperty "Hello"
+    Property -Name Greeting -NoteProperty "Hello"
 }

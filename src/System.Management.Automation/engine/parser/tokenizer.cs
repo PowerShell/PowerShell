@@ -305,7 +305,7 @@ namespace System.Management.Automation.Language
             {
                 return true;
             }
-            if (DynamicKeyword.IsDefinedInCurrentScope(str) && !DynamicKeyword.IsHiddenKeyword(str))
+            if (DynamicKeyword.IsInScope(str) && !DynamicKeyword.IsHiddenKeyword(str))
             {
                 return true;
             }
@@ -2466,7 +2466,7 @@ namespace System.Management.Automation.Language
             }
             Release(formatSb);
 
-            if (DynamicKeyword.IsDefinedInCurrentScope(str) && !DynamicKeyword.IsHiddenKeyword(str))
+            if (DynamicKeyword.IsInScope(str) && !DynamicKeyword.IsHiddenKeyword(str))
             {
                 return NewToken(TokenKind.DynamicKeyword);
             }
@@ -3091,7 +3091,7 @@ namespace System.Management.Automation.Language
                     if (tokenKind != TokenKind.InlineScript || InWorkflowContext)
                         return NewToken(tokenKind);
                 }
-                if (DynamicKeyword.IsDefinedInCurrentScope(ident) && !DynamicKeyword.IsHiddenKeyword(ident))
+                if (DynamicKeyword.IsInScope(ident) && !DynamicKeyword.IsHiddenKeyword(ident))
                 {
                     return NewToken(TokenKind.DynamicKeyword);
                 }

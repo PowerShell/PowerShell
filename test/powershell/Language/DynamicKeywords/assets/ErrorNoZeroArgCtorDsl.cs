@@ -1,4 +1,4 @@
-using System.Management.Automation;
+using System.Management.Automation.Language;
 
 [Keyword()]
 public class ErrorNoZeroArgCtorKeyword : Keyword
