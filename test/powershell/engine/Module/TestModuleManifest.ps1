@@ -24,7 +24,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         Test-ModuleManifest -Path $testModulePath -ErrorAction Stop | Should BeOfType System.Management.Automation.PSModuleInfo
     }
 
-    It "module manifest containing missing files returns error" -TestCases `
+    It "module manifest containing missing files returns error" -TestCases (
         @{parameter = "RequiredAssemblies"; error = "Modules_InvalidRequiredAssembliesInModuleManifest"},
         @{parameter = "NestedModules"; error = "Modules_InvalidNestedModuleinModuleManifest"},
         @{parameter = "RequiredModules"; error = "Modules_InvalidRequiredModulesinModuleManifest"},
@@ -33,7 +33,8 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         @{parameter = "TypesToProcess"; error = "Modules_InvalidManifest"},
         @{parameter = "FormatsToProcess"; error = "Modules_InvalidManifest"},
         @{parameter = "RootModule"; error = "Modules_InvalidRootModuleInModuleManifest"},
-        @{parameter = "ScriptsToProcess"; error = "Modules_InvalidManifest"} {
+        @{parameter = "ScriptsToProcess"; error = "Modules_InvalidManifest"}
+     ) {
 
         param ($parameter, $error)
 
@@ -49,9 +50,10 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId $errorId
     }
 
-    It "module manifest containing valid unprocessed rootmodule file type succeeds" -TestCases `
+    It "module manifest containing valid unprocessed rootmodule file type succeeds" -TestCases (
         @{rootModuleValue = "foo.psm1"},
-        @{rootModuleValue = "foo.dll"} {
+        @{rootModuleValue = "foo.dll"}
+    ) {
 
         param($rootModuleValue)
 
@@ -65,9 +67,10 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         $moduleManifest.RootModule | Should Be $rootModuleValue
     }
 
-    It "module manifest containing valid processed empty rootmodule file type fails" -TestCases `
+    It "module manifest containing valid processed empty rootmodule file type fails" -TestCases (
         @{rootModuleValue = "foo.cdxml"; error = "System.Xml.XmlException"},  # fails when cmdlet tries to read it as XML
-        @{rootModuleValue = "foo.xaml"; error = "NotSupported"} {  # not supported on PowerShell Core
+        @{rootModuleValue = "foo.xaml"; error = "NotSupported"}   # not supported on PowerShell Core
+    ) {
 
         param($rootModuleValue, $error)
 
@@ -79,9 +82,10 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
     }
 
-    It "module manifest containing empty rootmodule succeeds" -TestCases `
+    It "module manifest containing empty rootmodule succeeds" -TestCases (
         @{rootModuleValue = $null},
-        @{rootModuleValue = ""} {
+        @{rootModuleValue = ""}
+    ) {
 
         param($rootModuleValue)
 
@@ -94,8 +98,9 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         $moduleManifest.RootModule | Should BeNullOrEmpty
     }
 
-    It "module manifest containing invalid rootmodule returns error" -TestCases `
-        @{rootModuleValue = "foo.psd1"; error = "Modules_InvalidManifest"} {
+    It "module manifest containing invalid rootmodule returns error" -TestCases (
+        @{rootModuleValue = "foo.psd1"; error = "Modules_InvalidManifest"}
+    ) {
 
         param($rootModuleValue, $error)
 
@@ -107,8 +112,9 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
     }
 
-    It "module manifest containing non-existing rootmodule returns error" -TestCases `
-        @{rootModuleValue = "doesnotexist.psm1"; error = "Modules_InvalidRootModuleInModuleManifest"} {
+    It "module manifest containing non-existing rootmodule returns error" -TestCases (
+        @{rootModuleValue = "doesnotexist.psm1"; error = "Modules_InvalidRootModuleInModuleManifest"}
+    ) {
 
         param($rootModuleValue, $error)
 
