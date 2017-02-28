@@ -109,11 +109,16 @@ sudo yum remove powershell
 
 Arch Linux
 ==========
-Powershell is available from the [Arch Linux][] User Repository (AUR) as a [release](https://aur.archlinux.org/packages/powershell/) or the [latest development build](https://aur.archlinux.org/packages/powershell-git).
+
+PowerShell is available from the [Arch Linux][] User Repository (AUR) as a [release][arch-release] or the [latest development build][arch-git].
+
+Packages in the AUR are community maintained - there is no official support.
 
 For more information on installing packages from the AUR, see the [Arch Linux wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages).
 
 [Arch Linux]: https://www.archlinux.org/download/
+[arch-release]: https://aur.archlinux.org/packages/powershell/
+[arch-git]: https://aur.archlinux.org/packages/powershell-git/
 
 Linux AppImage
 ==============
