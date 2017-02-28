@@ -25,6 +25,7 @@ RUN yum install -y \
         which \
         curl \
         git \
+        less \
     && yum clean all
 
 # Install PowerShell package and clean up
