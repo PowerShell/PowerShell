@@ -60,34 +60,33 @@ OksttXT1kXf+aez9EzDlsgQU4ck78h0WTy01zHLwSKNWK4wFFQM=
 }
 
 
-Describe "CmsMessage cmdlets basic tests" -Tags "CI" {
+Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
     
     BeforeAll {
-        if ($IsWindows)
-        {
-            $certLocation = Create-TestCertificate
-        }
-        else
-        {
-            # Skip for non-Windows platforms
-            $defaultParamValues = $PSdefaultParameterValues.Clone()
-            $PSdefaultParameterValues = @{ "it:skip" = $true }
-        }
+        $certLocation = Create-TestCertificate
+        $certLocation | Should Not BeNullOrEmpty | Out-Null
     }
 
     AfterAll {
-        if ($defaultParamValues)
-        {
-            $PSdefaultParameterValues = $defaultParamValues
-        }
-
-        if ($certLocation)
-        {
-            Remove-Item $certLocation -Force
-        }
+        Remove-Item $certLocation -Force
     }
 
-    It "Verify message recipient resolution by path" {
+    It "Verify Get-PfxCertificate -FilePath" {
+        $cert = Get-PfxCertificate -FilePath $certLocation
+        $cert.Subject | Should Be "CN=MyDataEnciphermentCert"
+    }
+
+    It "Verify Get-PfxCertificate -LiteralPath" {
+        $cert = Get-PfxCertificate -LiteralPath $certLocation
+        $cert.Subject | Should Be "CN=MyDataEnciphermentCert"
+    }
+
+    It "Verify Get-PfxCertificate positional argument" {
+        $cert = Get-PfxCertificate $certLocation
+        $cert.Subject | Should Be "CN=MyDataEnciphermentCert"
+    }
+
+    It "Verify CMS message recipient resolution by path" -Skip:(!$IsWindows) {
         $ers = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] $certLocation
         $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $ers)
@@ -95,7 +94,7 @@ Describe "CmsMessage cmdlets basic tests" -Tags "CI" {
         $recipient.Certificates[0].Subject | Should Match 'CN=MyDataEnciphermentCert'
     }
 
-    It "Verify message recipient resolution by cert" {
+    It "Verify CMS message recipient resolution by cert" -Skip:(!$IsWindows) {
         $ers = $null
         $cert = Get-PfxCertificate $certLocation
         $recipient = [System.Management.Automation.CmsMessageRecipient] $cert
@@ -104,7 +103,7 @@ Describe "CmsMessage cmdlets basic tests" -Tags "CI" {
         $recipient.Certificates[0].Subject | Should Match 'CN=MyDataEnciphermentCert'
     }
 
-    It "Verify a message can be protected / unprotected" {
+    It "Verify a CMS message can be protected / unprotected" -Skip:(!$IsWindows) {
         $protected = "Hello World","How are you?" | Protect-CmsMessage -To $certLocation
         $protected.IndexOf("-----BEGIN CMS-----") | Should Be 0
 
@@ -126,6 +125,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
         if ($IsWindows)
         {
             $certLocation = Create-TestCertificate
+            $certLocation | Should Not BeNullOrEmpty | Out-Null
 
             if ($IsCoreCLR)
             {
