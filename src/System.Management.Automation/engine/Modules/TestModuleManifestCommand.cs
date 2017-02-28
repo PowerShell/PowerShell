@@ -131,13 +131,15 @@ namespace Microsoft.PowerShell.Commands
                             }
                         }
 
-                        //RootModule can be null, empty string or point to a valid .psm1, or .dll.  Anything else is invalid.
+                        //RootModule can be null, empty string or point to a valid .psm1, , .cdxml, .xaml or .dll.  Anything else is invalid.
                         if (module.RootModule != null && module.RootModule != "")
                         {
                             string rootModuleExt = System.IO.Path.GetExtension(module.RootModule);
                             if ((!IsValidFilePath(module.RootModule, module, true) && !IsValidGacAssembly(module.RootModule)) ||
                                 (!rootModuleExt.Equals(StringLiterals.PowerShellModuleFileExtension, StringComparison.OrdinalIgnoreCase) &&
-                                !rootModuleExt.Equals(".dll", StringComparison.OrdinalIgnoreCase))
+                                !rootModuleExt.Equals(".dll", StringComparison.OrdinalIgnoreCase) &&
+                                !rootModuleExt.Equals(".cdxml", StringComparison.OrdinalIgnoreCase) &&
+                                !rootModuleExt.Equals(".xaml", StringComparison.OrdinalIgnoreCase))
                             )
                             {
                                 string errorMsg = StringUtil.Format(Modules.InvalidModuleManifest, module.RootModule, filePath);

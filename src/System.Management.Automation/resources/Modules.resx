@@ -154,8 +154,7 @@
     <value>No custom object was returned for module '{0}' because the -AsCustomObject parameter can only be used with script modules.</value>
   </data>
   <data name="InvalidModuleManifest" xml:space="preserve">
-    <value>The module manifest '{0}' could not be processed because it is not a valid Windows PowerShell restricted language file. Remove the elements that are not permitted by the restricted language:
-{1}</value>
+    <value>The module manifest '{0}' could not be processed because it is not a valid PowerShell module manifest file. Remove the elements that are not permitted: {1}</value>
   </data>
   <data name="EmptyModuleManifest" xml:space="preserve">
     <value>Processing the module manifest file '{0}' did not result in a valid manifest object. Update the file to contain a valid Windows PowerShell module manifest. A valid manifest can be created using the New-ModuleManifest cmdlet.</value>
