@@ -1582,8 +1582,8 @@
     <Compile Include="..\System.Management.Automation\engine\TypesV3_Ps1Xml.generated.cs">
       <Link>engine\TypesV3_Ps1Xml.generated.cs</Link>
     </Compile>
-    <Compile Include="..\System.Management.Automation\engine\Types_Ps1Xml.generated.cs">
-      <Link>engine\Types_Ps1Xml.generated.cs</Link>
+    <Compile Include="..\System.Management.Automation\engine\Types_Ps1Xml.cs">
+      <Link>engine\Types_Ps1Xml.cs</Link>
     </Compile>
     <Compile Include="..\System.Management.Automation\engine\TypeTable.cs">
       <Link>engine\TypeTable.cs</Link>
