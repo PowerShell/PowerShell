@@ -161,7 +161,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
         {
             if ($importedCert)
             {
-                Remove-Item (Join-Path Cert:\CurrentUser\My $importedCert.Thumbprint) -Force
+                Remove-Item (Join-Path Cert:\CurrentUser\My $importedCert.Thumbprint) -Force -ErrorAction SilentlyContinue
             }
         }
         else
