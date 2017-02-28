@@ -83,19 +83,21 @@ Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
     }
 
     It "Verify CMS message recipient resolution by path" -Skip:(!$IsWindows) {
-        $ers = $null
+        $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] $certLocation
-        $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $ers)
+        $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $errors)
 
+        $recipient.Certificates.Count | Should Be 1
         $recipient.Certificates[0].Subject | Should Match 'CN=MyDataEnciphermentCert'
     }
 
     It "Verify CMS message recipient resolution by cert" -Skip:(!$IsWindows) {
-        $ers = $null
+        $errors = $null
         $cert = Get-PfxCertificate $certLocation
         $recipient = [System.Management.Automation.CmsMessageRecipient] $cert
-        $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $ers)
+        $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $errors)
 
+        $recipient.Certificates.Count | Should Be 1
         $recipient.Certificates[0].Subject | Should Match 'CN=MyDataEnciphermentCert'
     }
 
@@ -104,13 +106,15 @@ Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
         $protected.IndexOf("-----BEGIN CMS-----") | Should Be 0
 
         $message = $protected | Get-CmsMessage
+        $message.Recipients.Count | Should Be 1
         $message.Recipients[0].IssuerName | Should Be "CN=MyDataEnciphermentCert"
 
+        $expected = "Hello World" + [System.Environment]::NewLine + "How are you?"
         $decrypted = $message | Unprotect-CmsMessage -To $certLocation
-        $decrypted | Should Be "Hello World`r`nHow are you?"
+        $decrypted | Should Be $expected
 
         $decrypted = $protected | Unprotect-CmsMessage -To $certLocation
-        $decrypted | Should Be "Hello World`r`nHow are you?"
+        $decrypted | Should Be $expected
     }
 }
 
@@ -153,14 +157,16 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     }
 
     AfterAll {
-        if ($defaultParamValues)
+        if ($IsWindows)
+        {
+            if ($importedCert)
+            {
+                Remove-Item (Join-Path Cert:\CurrentUser\My $importedCert.Thumbprint)
+            }
+        }
+        else
         {
             $PSdefaultParameterValues = $defaultParamValues
-        }
-
-        if ($importedCert)
-        {
-            Remove-Item (Join-Path Cert:\CurrentUser\My $importedCert.Thumbprint)
         }
     }
 
@@ -189,26 +195,27 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
             -----END CERTIFICATE-----
             "
 
-            $ers = $null
+            $errors = $null
             $recipient = [System.Management.Automation.CmsMessageRecipient] $certContent
-            $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $ers)
+            $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $errors)
 
+            $recipient.Certificates.Count | Should Be 1
             $recipient.Certificates[0].Subject | Should Match 'CN=MyDataEnciphermentCert'
     }
 
     It "Verify wildcarded recipient resolution by path [Decryption]" {
-        $ers = $null
+        $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] ($certLocation + "*")
-        $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $ers)
+        $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $errors)
 
         # Should have resolved single cert
         $recipient.Certificates.Count | Should Be 1
     }
 
     It "Verify wildcarded recipient resolution by path [Encryption]" {
-        $ers = $null
+        $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] ($certLocation + "*")
-        $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $ers)
+        $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $errors)
 
         $recipient.Certificates.Count | Should Be 1
     }
@@ -220,63 +227,68 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
         Copy-Item $certLocation (Join-Path $protectedEventLoggingCertPath "SecondCert.pfx")
         Copy-Item $certLocation (Join-Path $protectedEventLoggingCertPath "ThirdCert.pfx")
 
-        $ers = $null
+        $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] $protectedEventLoggingCertPath
-        $recipient.Resolve($executionContext.SessionState, "Decryption", [ref] $ers)
+        $recipient.Resolve($executionContext.SessionState, "Decryption", [ref] $errors)
 
         $recipient.Certificates.Count | Should Be 1
     }
 
     It "Verify resolution by thumbprint" {
-        $ers = $null
+        $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] $importedCert.Thumbprint
-        $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $ers)
+        $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $errors)
 
         # "Should have certs from thumbprint in 'My' store"
+        $recipient.Certificates.Count | Should Be 1
         $recipient.Certificates[0].Thumbprint | Should Be $importedCert.Thumbprint
     }
 
     It "Verify resolution by subject name" {
-        $ers = $null
+        $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] $importedCert.Subject
-        $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $ers)
+        $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $errors)
 
+        $recipient.Certificates.Count | Should Be 1
         $recipient.Certificates[0].Thumbprint | Should Be $importedCert.Thumbprint
     }
 
     It "Verify error when no cert found in encryption for encryption" {
-        $ers = $null
+        $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] "SomeCertificateThatDoesNotExist*"
-        $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $ers)
+        $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $errors)
 
-        $ers[0].FullyQualifiedErrorId | Should Be "NoCertificateFound"
+        $errors.Count | Should Be 1
+        $errors[0].FullyQualifiedErrorId | Should Be "NoCertificateFound"
     }
 
     It "Verify error when encrypting to non-wildcarded identifier for decryption" {
-        $ers = $null
+        $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] "SomeCertificateThatDoesNotExist"
-        $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $ers)
+        $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $errors)
 
-        $ers[0].FullyQualifiedErrorId | Should Be "NoCertificateFound"
+        $errors.Count | Should Be 1
+        $errors[0].FullyQualifiedErrorId | Should Be "NoCertificateFound"
     }
 
     It "Verify error when encrypting to wrong cert" {
-        $ers = $null
+        $errors = $null
         $goodCerts = @(Get-ChildItem Cert:\currentuser\My -DocumentEncryptionCert | ForEach-Object Thumbprint)
         $badCert = Get-ChildItem Cert:\currentuser\My | ? { $_.Thumbprint -notin $goodCerts } | Select -First 1
 
         $recipient = [System.Management.Automation.CmsMessageRecipient] $badCert.Thumbprint
-        $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $ers)
+        $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $errors)
 
-        $ers[0].FullyQualifiedErrorId | Should Be "CertificateCannotBeUsedForEncryption"
+        $errors.Count | Should Be 1
+        $errors[0].FullyQualifiedErrorId | Should Be "CertificateCannotBeUsedForEncryption"
     }
 
     It "Verify no error when encrypting to wildcarded identifier for decryption" {
-        $ers = $null
+        $errors = $null
         $recipient = [System.Management.Automation.CmsMessageRecipient] "SomeCertificateThatDoesNotExist*"
-        $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $ers)
+        $recipient.Resolve($ExecutionContext.SessionState, "Decryption", [ref] $errors)
 
-        $ers | Should Be $null
+        $errors | Should Be $null
         $recipient.Certificates.Count | Should Be 0
     }
 
@@ -299,13 +311,15 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
             Protect-CmsMessage -Path $tempPath -To $certLocation -OutFile $encryptedPath
 
             $message = Get-CmsMessage -LiteralPath $encryptedPath
+            $message.Recipients.Count | Should Be 1
             $message.Recipients[0].IssuerName | Should Be "CN=MyDataEnciphermentCert"
 
+            $expected = "Hello World" + [System.Environment]::NewLine + "How are you?" + [System.Environment]::NewLine
             $decrypted = $message | Unprotect-CmsMessage -To $certLocation
-            $decrypted | Should Be "Hello World`r`nHow are you?`r`n"
+            $decrypted | Should Be $expected
 
             $decrypted = Unprotect-CmsMessage -Path $encryptedPath -To $certLocation
-            $decrypted | Should Be "Hello World`r`nHow are you?`r`n"
+            $decrypted | Should Be $expected
         } finally {
             Remove-Item $tempPath, $encryptedPath -Force -ErrorAction SilentlyContinue
         }
@@ -356,16 +370,15 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
 
     It "Verify Unprotect-CmsMessage lets you include context" {
         $protected = "Hello World" | Protect-CmsMessage -To $certLocation
-        $adjustedProtected = "Pre content`r`n" + $protected + "`r`nPost content"
+        $adjustedProtected = "Pre content" + [System.Environment]::NewLine + $protected + [System.Environment]::NewLine + "Post content"
 
         $decryptedNoContext = $adjustedProtected | Unprotect-CmsMessage -To $certLocation
         $decryptedWithContext = $adjustedProtected | Unprotect-CmsMessage -To $certLocation -IncludeContext
 
         $decryptedNoContext | Should Be "Hello World"
 
-        $decryptedWithContext | Should Match "Pre content"
-        $decryptedWithContext | Should Match "World"
-        $decryptedWithContext | Should Match "Post content"
+        $expected = "Pre content" + [System.Environment]::NewLine + "Hello World" + [System.Environment]::NewLine + "Post content"
+        $decryptedWithContext | Should Be $expected
     }
 
     It "Verify Unprotect-CmsMessage treats event logs as a first class citizen" {
@@ -374,19 +387,23 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
         $savedId = $virtualEventLog.Id
         $virtualEventLog.Message = $protected
 
+        $expected = "Encrypted Message1" + [System.Environment]::NewLine + "Encrypted Message2"
         $decrypted = $virtualEventLog | Unprotect-CmsMessage -To $certLocation
-        $decrypted | Should Be "Encrypted Message1`r`nEncrypted Message2"
+        $decrypted | Should Be $expected
 
         $processed = $virtualEventLog | Unprotect-CmsMessage -To $certLocation -IncludeContext
         $processed.Id | Should Be $savedId
-        $processed.Message | Should Be "Encrypted Message1`r`nEncrypted Message2"
+        $processed.Message | Should Be $expected
     }
 
     It "Verify -DocumentEncryptionCert parameter works" {
         $foundCerts = Get-ChildItem Cert:\CurrentUser -Recurse -DocumentEncryptionCert
 
         # Validate they all match the EKU
-        $correctMatching = $foundCerts | ? { $_.EnhancedKeyUsageList[0].ObjectId -eq '1.3.6.1.4.1.311.80.1' }
+        $correctMatching = $foundCerts | ? {
+            ($_.EnhancedKeyUsageList.Count -gt 0) -and 
+            ($_.EnhancedKeyUsageList[0].ObjectId -eq '1.3.6.1.4.1.311.80.1')
+        }
         # "All Document Encryption Cert should have had correct EKU"
         @($foundCerts).Count | Should Be @($correctMatching).Count
     }
