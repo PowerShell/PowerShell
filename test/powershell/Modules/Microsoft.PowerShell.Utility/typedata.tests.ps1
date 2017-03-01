@@ -1,9 +1,5 @@
 ﻿Describe "TestData cmdlets" -Tags "CI" {
     Context "Get-TypeData" {
-        It "System.Array" {
-            Get-TypeData System.Array | Should Be $null
-        }
-
         It "System.DateTime" {
             (Get-TypeData System.DateTime).TypeName | Should Be System.DateTime
             # Supports pipelining?
