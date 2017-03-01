@@ -49,27 +49,9 @@ namespace Microsoft.PowerShell {
         /// <param name="process"></param>
         /// <returns>the pid of the parent process</returns>
 #if UNIX
-        internal static int GetParentPid(Process process)
+		internal static int GetParentPid(Process process)
         {
-            // read /proc/<pid>/stat
-            // 4th column will contain the ppid, 92 in the example below
-            // ex: 93 (bash) S 92 93 2 4294967295 ...
-
-            var path = $"/proc/{process.Id}/stat";
-            try
-            {
-                var stat = System.IO.File.ReadAllText(path);
-                var parts = stat.Split(new[] { ' ' }, 5);
-                if (parts.Length < 5)
-                {
-                    return InvalidProcessId;
-                }
-                return Int32.Parse(parts[3]);
-            }
-            catch (Exception)
-            {
-                return InvalidProcessId;
-            }
+            return Platform.NonWindowsGetProcessParentPid(process.Id);
         }
 #else
         internal static int GetParentPid(Process process)
