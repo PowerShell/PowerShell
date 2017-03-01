@@ -1,107 +1,100 @@
-function Get-PropertyValue
-{
-    param($Object, $PropertyName)
-
-    $bindingFlags = [System.Reflection.BindingFlags]::NonPublic -bor
-        [System.Reflection.BindingFlags]::Instance
-
-    $property = $Object.GetType().GetProperty($PropertyName, $bindingFlags)
-    $property.GetValue($Object)
-}
-
 function Get-MethodInfo
 {
-    param([type] $Type, $MethodName)
+    param([string]$TypeExprStr)
 
-    $bindingFlags = [System.Reflection.BindingFlags]::NonPublic -bor
-        [System.Reflection.BindingFlags]::Public -bor
-        [System.Reflection.BindingFlags]::Instance
-
-    $Type.GetMethod($MethodName, $bindingFlags)
-}
-
-# Expects a string like "System.Management.Automation.Language.DynamicKeyword::GetKeyword"
-function Get-CodeReferenceMethod
-{
-    param([string]$CodeReference)
-
-    $typeParts = $CodeReference -split "::"
-
-    if ($typeParts.Count -ne 2)
+    $typeParts = $TypeExprStr -split "::"
+    if ($typeParts.Length -ne 2)
     {
-        throw "Syntax error in code reference '$CodeReference'; the reference should look like 'FullTypeName::MethodName'"
+        throw "Syntax error: Expected a code reference like '<type-name>::<method-name>'"
     }
 
-    $type = [type]::GetType($typeParts[0])
+    [type]$type = $typeParts[0].TrimStart("[").TrimEnd("]") -as [type]
     if ($type -eq $null)
     {
-        throw "No type '$($typeParts[0])' is defined"
+        throw "The type '$($typeParts[0])' could not be found"
     }
 
-    $method = Get-MethodInfo -Type $type -MethodName $typeParts[1]
+    $method = $type.GetMethod($typeParts[1])
     if ($method -eq $null)
     {
-        throw "No method '$($typeParts[1])' is present on type '$($typeParts[0])'"
+        throw "Type '$($type.Name)' has no method '$($typeParts[1])'"
     }
 
-    $method
+    $method[0]
+}
+
+function Set-DisplayProperties
+{
+    param([string]$TypeName, [hashtable]$DisplayProperties)
+
+    foreach ($displayKind in $DisplayProperties.Keys)
+    {
+        switch ($displayKind)
+        {
+            "WideDefaultDisplayProperty" { Update-TypeData -TypeName $TypeName -DefaultDisplayProperty $DisplayProperties.$displayKind }
+            "ListDefaultDisplayProperties" { Update-TypeData -TypeName $TypeName -DefaultDisplayPropertySet $DisplayProperties.$displayKind }
+            "DefaultSortPropertyKeys" { Update-TypeData -TypeName $TypeName -DefaultKeyPropertySet $DisplayProperties.$displayKind }
+            default { throw "Unknown display option: '$displayKind'" }
+        }
+    }
 }
 
 function TypesDsl\TypeExtension
 {
-    param($KeywordData, $Name, $Value, $SourceMetadata)
+    param($KeywordData, $Name, [scriptblock]$Value, $SourceMetadata)
 
     if ([type]::GetType($Name) -eq $null)
     {
-        throw "The type '$Name' is not known"
+        throw "Unable to find type '$Name'"
     }
-
-    $typeData = [System.Management.Automation.Runspaces.TypeData]::new($Name)
 
     foreach ($typeAddition in (& $Value))
     {
-        $typeData.Members.Add($typeAddition.Name, $typeAddition.Value)
+        switch ($typeAddition.Kind)
+        {
+            "ScriptMethod" { Update-TypeData -MemberType ScriptMethod -TypeName $Name -MemberName $typeAddition.Name -Value $typeAddition.ScriptMethod }
+            "CodeMethod" { Update-TypeData -MemberType CodeMethod -TypeName $Name -MemberName $typeAddition.Name -Value $typeAddition.MemberInfo }
+
+            "ScriptProperty" { Update-TypeData -MemberType ScriptProperty -TypeName $Name -MemberName $typeAddition.Name -Value $typeAddition.ScriptProperty }
+            "NoteProperty" { Update-TypeData -MemberType NoteProperty -TypeName $Name -MemberName $typeAddition.Name -Value $typeAddition.NoteProperty }
+            "AliasProperty" { Update-TypeData -MemberType AliasProperty -TypeName $Name -MemberName $typeAddition.Name -Value $typeAddition.AliasProperty }
+            "CodeProperty" { Update-TypeData -MemberType CodeProperty -TypeName $Name -MemberName $typeAddition.Name -Value $typeAddition.MemberInfo }
+
+            "DisplayProperties" { Set-DisplayProperties -TypeName $Name -DisplayProperties $typeAddition.DisplayProperties }
+        }
     }
-
-    $errors = [System.Collections.Concurrent.ConcurrentBag`1[string]]::new()
-
-    $ssi = Get-PropertyValue -Object $ExecutionContext.SessionState -PropertyName "Internal"
-    $ec = Get-PropertyValue -Object $ssi -PropertyName "ExecutionContext"
-    $typeTable = Get-PropertyValue -Object $ec -PropertyName "TypeTable"
-
-    $processType = Get-MethodInfo -Type $typeTable.GetType() -MethodName "ProcessTypeDataToAdd"
-
-    $processType.Invoke($typeTable, @($errors, $typeData))
 }
 
 function TypesDsl\Method
 {
-    param($KeywordData, $Name, $Value, $SourceMetadata,
+    param($KeywordData, [Parameter(Position=0)]$InstanceName, $Value, $SourceMetadata,
           [Parameter(ParameterSetName="ScriptMethod", Mandatory=$true)][scriptblock]$ScriptMethod,
           [Parameter(ParameterSetName="CodeReference", Mandatory=$true)][string]$CodeReference)
 
     if ($ScriptMethod -ne $null)
     {
         return @{
-            Name = $Name
-            Value = [System.Management.Automation.Runspaces.ScriptMethodData]::new($Name, $ScriptMethod)
+            Kind = "ScriptMethod"
+            Name = $InstanceName
+            ScriptMethod = $ScriptMethod
         }
     }
 
     if ($CodeReference -ne $null)
     {
-        $method = Get-CodeReferenceMethod -CodeReference $CodeReference
+        $memberInfo = Get-MethodInfo -TypeExprStr $CodeReference
 
         return @{
-            Name = $Name
-            Value = [System.Management.Automation.Runspaces.CodeMethodData]::new($Name, $method)
+            Kind = "CodeMethod"
+            Name = $InstanceName
+            MemberInfo = $memberInfo
         }
     }
 }
 
 function TypesDsl\Property
 {
-    param($KeywordData, $Name, $Value, $SourceMetadata,
+    param($KeywordData, [Parameter(Position=0)]$InstanceName, $Value, $SourceMetadata,
           [Parameter(ParameterSetName="Alias", Mandatory=$true)][string]$Alias,
           [Parameter(ParameterSetName="ScriptProperty", Mandatory=$true)][scriptblock]$ScriptProperty,
           [Parameter(ParameterSetName="NoteProperty", Mandatory=$true)][object]$NoteProperty,
@@ -110,65 +103,48 @@ function TypesDsl\Property
     if (-not [string]::IsNullOrEmpty($Alias))
     {
         return @{
-            Name = $Name
-            Value = [System.Management.Automation.Runspaces.AliasPropertyData]::new($Name, $Alias)
+            Kind = "AliasProperty"
+            Name = $InstanceName
+            AliasProperty = $Alias
         }
     }
 
     if (-not [string]::IsNullOrEmpty($CodeReference))
     {
-        $method = Get-CodeReferenceMethod -CodeReference $CodeReference
+        $memberInfo = Get-MethodInfo -TypeExprStr $CodeReference
 
         return @{
-            Name = $Name
-            Value = [System.Management.Automation.Runspaces.CodeMethodData]::new($Name, $method)
+            Kind = "CodeProperty"
+            Name = $InstanceName
+            MemberInfo = $memberInfo
         }
     }
 
     if ($NoteProperty -ne $null)
     {
         return @{
-            Name = $Name
-            Value = [System.Management.Automation.Runspaces.NotePropertyData]::new($Name, $NoteProperty)
+            Kind = "NoteProperty"
+            Name = $InstanceName
+            NoteProperty = $NoteProperty
         }
     }
 
     if ($ScriptProperty -ne $null)
     {
         return @{
-            Name = $Name
-            Value = [System.Management.Automation.Runspaces.ScriptPropertyData]::new($Name, $ScriptProperty)
+            Kind = "ScriptProperty"
+            Name = $InstanceName
+            ScriptProperty = $ScriptProperty
         }
     }
 }
 
-function TypesDsl\PropertySet
+function TypesDsl\DisplayProperty
 {
-    param($KeywordData, $Name, $Value, $SourceMetadata,
-          [Parameter(Mandatory=$true)][string[]]$ReferencedProperties)
+    param($KeywordData, $Name, [hashtable]$Value, $SourceMetadata)
 
     return @{
-        Name = $Name
-        Value = [System.Management.Automation.Runspaces.PropertySetData]::new($Name, $ReferencedProperties)
-    }
-}
-
-function TypesDsl\MemberSet
-{
-    param($KeywordData, $Name, $Value, $SourceMetadata)
-
-    $members = [System.Collections.ObjectModel.Collection[System.Management.Automation.Runspaces.TypeMemberData]]::new()
-    foreach ($memberKV in (& $Value))
-    {
-        $member = $memberKV.Value -as [System.Management.Automation.Runspaces.TypeMemberData]
-        if ($member -ne $null)
-        {
-            $members.Add($member)
-        }
-    }
-
-    return @{
-        Name = $Name
-        Value = [System.Management.Automation.Runspaces.MemberSetData]::new($Name, $members)
+        Name = "DisplayProperties"
+        DisplayProperties = $Value
     }
 }

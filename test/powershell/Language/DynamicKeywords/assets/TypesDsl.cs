@@ -1,9 +1,10 @@
+using System.Management.Automation;
 using System.Management.Automation.Language;
 
 [Keyword(Name = DynamicKeywordNameMode.NameRequired, Body = DynamicKeywordBodyMode.ScriptBlock)]
 public class TypeExtension : Keyword
 {
-    [Keyword(DirectCall = true)]
+    [Keyword(Name = DynamicKeywordNameMode.NameRequired, DirectCall = true)]
     public class Method : Keyword
     {
         [KeywordParameter()]
@@ -16,7 +17,7 @@ public class TypeExtension : Keyword
         public string ReferencedType { get; set; }
     }
 
-    [Keyword(DirectCall = true)]
+    [Keyword(Name = DynamicKeywordNameMode.NameRequired, DirectCall = true)]
     public class Property : Keyword
     {
         [KeywordParameter()]
@@ -32,15 +33,16 @@ public class TypeExtension : Keyword
         public string CodeReference { get; set; }
     }
 
-    [Keyword(DirectCall = true)]
-    public class PropertySet : Keyword
+    [Keyword(Body = DynamicKeywordBodyMode.Hashtable)]
+    public class DisplayProperties : Keyword
     {
-        [KeywordParameter()]
-        public string[] ReferencedProperties { get; set; }
-    }
+        [KeywordProperty()]
+        public string WideDefaultDisplayProperty { get; set; }
 
-    [Keyword(Name = DynamicKeywordNameMode.NameRequired, Body = DynamicKeywordBodyMode.ScriptBlock)]
-    public class MemberSet : Keyword
-    {
+        [KeywordProperty()]
+        public string[] ListDefaultDisplayProperties { get; set; }
+
+        [KeywordProperty()]
+        public string[] DefaultSortPropertyKeys { get; set; }
     }
 }
