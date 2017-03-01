@@ -837,7 +837,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            // Win8: 264471 - Error message for New-ModuleManifest –ProcessorArchitecture is obsolete.
+            // Win8: 264471 - Error message for New-ModuleManifest -ProcessorArchitecture is obsolete.
             // If an undefined value is passed for the ProcessorArchitecture parameter, the error message from parameter binder includes all the values from the enum. 
             // The value 'IA64' for ProcessorArchitecture is not supported. But since we do not own the enum System.Reflection.ProcessorArchitecture, we cannot control the values in it.
             // So, we add a separate check in our code to give an error if user specifies IA64

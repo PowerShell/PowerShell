@@ -2632,7 +2632,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Time delay before a reboot is initiated, in milliseconds.
         /// It is used after a system power cycle, local or remote system reset,
-        /// and automatic system reset. A value of –1 (minus one) indicates that
+        /// and automatic system reset. A value of -1 (minus one) indicates that
         /// the pause value is unknown
         /// </summary>
         public Int64? CsPauseAfterReset { get; internal set; }
@@ -2699,13 +2699,13 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Number of automatic resets since the last reset.
-        /// A value of –1 (minus one) indicates that the count is unknown
+        /// A value of -1 (minus one) indicates that the count is unknown
         /// </summary>
         public Int16? CsResetCount { get; internal set; }
 
         /// <summary>
         /// Number of consecutive times a system reset is attempted.
-        /// A value of –1 (minus one) indicates that the limit is unknown
+        /// A value of -1 (minus one) indicates that the limit is unknown
         /// </summary>
         public Int16? CsResetLimit { get; internal set; }
 

@@ -2788,7 +2788,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// A variable-length array of process identifiers returned by this call. 
-        /// Array elements 0 through NumberOfProcessIdsInList– 1 
+        /// Array elements 0 through NumberOfProcessIdsInList-1 
         /// contain valid process identifiers.
         /// </summary>
         public IntPtr ProcessIdList;

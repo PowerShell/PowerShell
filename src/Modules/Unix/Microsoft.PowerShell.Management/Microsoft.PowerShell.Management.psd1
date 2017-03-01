@@ -1,8 +1,8 @@
-@{
+﻿@{
 GUID="EEFCB906-B326-4E99-9F54-8B4BB6EF3C6D"
 Author="Microsoft Corporation"
 CompanyName="Microsoft Corporation"
-Copyright="� Microsoft Corporation. All rights reserved."
+Copyright="© Microsoft Corporation. All rights reserved."
 ModuleVersion="3.1.0.0"
 PowerShellVersion="3.0"
 NestedModules="Microsoft.PowerShell.Commands.Management.dll"

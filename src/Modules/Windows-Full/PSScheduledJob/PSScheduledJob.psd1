@@ -1,4 +1,4 @@
-@{
+﻿@{
 
 ModuleToProcess = 'Microsoft.PowerShell.ScheduledJob.dll'
 
@@ -10,7 +10,7 @@ Author = 'Microsoft Corporation'
 
 CompanyName = 'Microsoft Corporation'
 
-Copyright = '� Microsoft Corporation. All rights reserved.'
+Copyright = '© Microsoft Corporation. All rights reserved.'
 
 PowerShellVersion = '3.0'
 
