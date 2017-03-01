@@ -130,6 +130,44 @@ namespace System.Management.Automation.Remoting
             }
         }
         private bool _ignoreStop = false;
+
+        #region Runspace Debug
+
+        /// <summary>
+        /// When true enables runspace debugging for operations involving runspaces.
+        /// </summary>
+        internal bool RunspaceDebuggingEnabled
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// When true configures runspace debugging to stop at first opportunity.
+        /// </summary>
+        internal bool RunspaceDebugStepInEnabled
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Event raised when operation runspace enters a debugger stopped state.
+        /// </summary>
+        internal event EventHandler<StartRunspaceDebugProcessingEventArgs> RunspaceDebugStop;
+
+        /// <summary>
+        /// RaiseRunspaceDebugStopEvent
+        /// </summary>
+        /// <param name="runspace">Runspace</param>
+        internal void RaiseRunspaceDebugStopEvent(System.Management.Automation.Runspaces.Runspace runspace)
+        {
+            RunspaceDebugStop.SafeInvoke(this, new StartRunspaceDebugProcessingEventArgs(runspace));
+        }
+
+
+        #endregion
+
     } // IThrottleOperation
 
     #endregion IThrottleOperation
