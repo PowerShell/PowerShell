@@ -348,24 +348,28 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
         }
     }
 
-    It "Verify failure to extract Ascii armor generates an error" {
+    It "Verify failure to extract Ascii armor generates an error [Unprotect-CmsMessage]" {
         try {
             "Hello World" | Unprotect-CmsMessage -ErrorAction Stop
             throw "No Exception!"
         } catch {
             $_.FullyQualifiedErrorId | Should Be "InputContainedNoEncryptedContentIncludeContext,Microsoft.PowerShell.Commands.UnprotectCmsMessageCommand"
         }
+    }
 
-        # Should have round-tripped content
-        $result = "Hello World" | Unprotect-CmsMessage -IncludeContext
-        $result | Should Be "Hello World"
-
+    It "Verify failure to extract Ascii armor generates an error [Get-CmsMessage]" {
         try {
             "Hello World" | Get-CmsMessage -ErrorAction Stop
             throw "No Exception!"
         } catch {
             $_.FullyQualifiedErrorId | Should Be "InputContainedNoEncryptedContent,Microsoft.PowerShell.Commands.GetCmsMessageCommand"
         }
+    }
+
+    It "Verify 'Unprotect-CmsMessage -IncludeContext' with no encrypted input" {
+        # Should have round-tripped content
+        $result = "Hello World" | Unprotect-CmsMessage -IncludeContext
+        $result | Should Be "Hello World"
     }
 
     It "Verify Unprotect-CmsMessage lets you include context" {
