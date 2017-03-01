@@ -47,19 +47,13 @@
                 "define": [ "CORECLR" ],
                 "compile": {
                     "exclude": [
-                        "security/CertificateCommands.cs",
-                        "security/CmsCommands.cs",
                         "singleshell/installer/MshSecurityMshSnapin.cs",
 
-                        "gen/CertificateCommands.cs",
-                        "gen/CmsCommands.cs",
                         "gen/SecurityMshSnapinResources.cs"
                     ]
                 },
                 "embed": {
                     "exclude": [
-                        "resources/CertificateCommands.resx",
-                        "resources/CmsCommands.resx",
                         "resources/SecurityMshSnapinResources.resx"
                     ]
                 }

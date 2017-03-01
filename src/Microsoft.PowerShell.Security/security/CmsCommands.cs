@@ -3,19 +3,14 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using System.IO;
 using System.Management.Automation;
 using System.Text;
-using System.Security;
-using System.Security.Cryptography;
 using System.Globalization;
 using System.Security.Cryptography.Pkcs;
 using System.Security.Cryptography.X509Certificates;
 using System.Diagnostics.CodeAnalysis;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
-using System.Management.Automation.Security;
-using System.Diagnostics.Eventing.Reader;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -279,7 +274,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_contentBuffer.Length > 0)
                 {
-                    _contentBuffer.Append(Environment.NewLine);
+                    _contentBuffer.Append(System.Environment.NewLine);
                 }
 
                 _contentBuffer.Append(Content);
@@ -456,7 +451,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_contentBuffer.Length > 0)
                 {
-                    _contentBuffer.Append(Environment.NewLine);
+                    _contentBuffer.Append(System.Environment.NewLine);
                 }
 
                 _contentBuffer.Append(Content);

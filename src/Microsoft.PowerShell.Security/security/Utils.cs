@@ -5,21 +5,9 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.IO;
 using System.Management.Automation;
-using Microsoft.PowerShell.Commands;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
 using System.Security;
-using System.Security.Principal;
-using System.Security.AccessControl;
-using System.Security.Cryptography;
-using System.Security.Cryptography.X509Certificates;
-
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Runtime.InteropServices;
-using DWORD = System.UInt32;
-using BOOL = System.UInt32;
-using FILETIME = System.Runtime.InteropServices.ComTypes.FILETIME;
 
 namespace Microsoft.PowerShell
 {
@@ -47,44 +35,6 @@ namespace Microsoft.PowerShell
             return size;
         }
 
-#if false
-        /// <summary>
-        /// throw if file is smaller than 4 bytes in length
-        /// </summary>
-        ///
-        /// <param name="filePath"> path to file </param>
-        ///
-        /// <returns> Does not return a value </returns>
-        ///
-        /// <remarks>  </remarks>
-        ///
-        internal static void CheckIfFileSmallerThan4Bytes(string filePath)
-        {
-            if (GetFileSize(filePath) < 4)
-            {
-                string message =
-                    StringUtil.Format(
-                        UtilsStrings.FileSmallerThan4Bytes,
-                        new object[] { filePath }
-                    );
-
-                throw PSTraceSource.NewArgumentException(message, "path");
-                /*
-                // 2004/10/22-JonN The above form of the constructor
-                //  no longer exists.  This should probably be as below,
-                //  however I have not tested this.  This method is not
-                //  used so I have removed it.
-                throw PSTraceSource.NewArgumentException(
-                        "path",
-                        "Utils",
-                        "FileSmallerThan4Bytes",
-                        filePath
-                        );
-                */
-            }
-        }
-#endif
-
         /// <summary>
         /// present a prompt for a SecureString data
         /// </summary>
@@ -108,74 +58,6 @@ namespace Microsoft.PowerShell
 
             return ss;
         }
-
-#if !CORECLR
-        /// <summary>
-        /// get plain text string from a SecureString
-        ///
-        /// This function will not be required once all of the methods
-        /// that we call accept a SecureString. The list below has
-        /// classes/methods that will be changed to accept a SecureString
-        /// after Whidbey beta1
-        ///
-        /// -- X509Certificate2.Import (String, String, X509KeyStorageFlags)
-        ///    (DCR #33007 in the DevDiv Schedule db)
-        ///
-        /// -- NetworkCredential(string, string);
-        ///
-        /// </summary>
-        ///
-        /// <param name="ss"> input data </param>
-        ///
-        /// <returns> a string representing clear-text equivalent of ss  </returns>
-        ///
-        /// <remarks>  </remarks>
-        ///
-        [ArchitectureSensitive]
-        internal static string GetStringFromSecureString(SecureString ss)
-        {
-            IntPtr p = Marshal.SecureStringToGlobalAllocUnicode(ss);
-            string s = Marshal.PtrToStringUni(p);
-
-            Marshal.ZeroFreeGlobalAllocUnicode(p);
-
-            return s;
-        }
-#endif
-
-        /*
-        /// <summary>
-        /// display sec-desc of a file
-        /// </summary>
-        ///
-        /// <param name="sd"> file security descriptor </param>
-        ///
-        /// <returns> Does not return a value </returns>
-        ///
-        /// <remarks>  </remarks>
-        ///
-        internal static void ShowFileSd(FileSecurity sd)
-        {
-                string userName = null;
-                FileSystemRights rights = 0;
-                AccessControlType aceType = 0;
-
-                rules = sd.GetAccessRules(true, false, typeof(NTAccount));
-
-                foreach (FileSystemAccessRule r in rules)
-                {
-                    userName = r.IdentityReference.ToString();
-                    aceType  = r.AccessControlType;
-                    rights = r.FileSystemRights;
-
-                    Console.WriteLine("{0} : {1} : {2}",
-                                      userName,
-                                      aceType.ToString(),
-                                      rights.ToString());
-                }
-            }
-        }
-        */
 
         /// <summary>
         ///
