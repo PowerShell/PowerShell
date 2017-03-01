@@ -1,8 +1,7 @@
-FROM ubuntu:trusty
-MAINTAINER Andrew Schwartzmeyer <andschwa@microsoft.com>
+# Docker image file that describes an Ubuntu14.04 image with PowerShell installed from Microsoft APT Repo
 
-ARG POWERSHELL_RELEASE=v6.0.0-alpha.16
-ARG POWERSHELL_PACKAGE=powershell_6.0.0-alpha.16-1ubuntu1.14.04.1_amd64.deb
+FROM ubuntu:trusty
+MAINTAINER Raghu Shantha <raghus@microsoft.com>
 
 # Setup the locale
 ENV LANG en_US.UTF-8
@@ -12,25 +11,23 @@ RUN locale-gen $LANG && update-locale
 # Install dependencies and clean up
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
-        libc6 \
-        libcurl3 \
+        apt-utils \
         ca-certificates \
-        libgcc1 \
-        libicu52 \
-        libssl1.0.0 \
-        libstdc++6 \
-        libtinfo5 \
-        libunwind8 \
-        libuuid1 \
-        zlib1g \
         curl \
-        git \
+        apt-transport-https \	
     && rm -rf /var/lib/apt/lists/*
 
-# Install PowerShell package and clean up
-RUN curl -SLO https://github.com/PowerShell/PowerShell/releases/download/$POWERSHELL_RELEASE/$POWERSHELL_PACKAGE \
-    && dpkg -i $POWERSHELL_PACKAGE \
-    && rm $POWERSHELL_PACKAGE
+# Import the public repository GPG keys for Microsoft
+RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
+	
+# Register the Microsoft Ubuntu 14.04 repository
+RUN curl https://packages.microsoft.com/config/ubuntu/14.04/prod.list | tee /etc/apt/sources.list.d/microsoft.list
 
+# Install powershell from Microsoft Repo
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends \
+	powershell
+
+# Use PowerShell as the default shell
 # Use array to avoid Docker prepending /bin/sh -c
 ENTRYPOINT [ "powershell" ]
