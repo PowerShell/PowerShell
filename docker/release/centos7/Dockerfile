@@ -1,8 +1,7 @@
-FROM centos:7
-MAINTAINER Andrew Schwartzmeyer <andschwa@microsoft.com>
+# Docker image file that describes an Centos7 image with PowerShell installed from Microsoft YUM Repo
 
-ARG POWERSHELL_RELEASE=v6.0.0-alpha.16
-ARG POWERSHELL_PACKAGE=powershell-6.0.0_alpha.16-1.el7.centos.x86_64.rpm
+FROM centos:7
+MAINTAINER Raghu Shantha <raghus@microsoft.com>
 
 # Setup the locale
 ENV LANG en_US.UTF-8
@@ -10,27 +9,17 @@ ENV LC_ALL $LANG
 RUN localedef --charmap=UTF-8 --inputfile=en_US $LANG
 
 # Install dependencies and clean up
-RUN yum install -y \
-        glibc \
-        libcurl \
-        ca-certificates \
-        libgcc \
-        libicu \
-        openssl \
-        libstdc++ \
-        ncurses-base \
-        libunwind \
-        uuid \
-        zlib \
-        which \
+RUN yum install -y \       
         curl \
-        git \
     && yum clean all
 
-# Install PowerShell package and clean up
-RUN curl -SLO https://github.com/PowerShell/PowerShell/releases/download/$POWERSHELL_RELEASE/$POWERSHELL_PACKAGE \
-    && yum install -y $POWERSHELL_PACKAGE \
-    && rm $POWERSHELL_PACKAGE
+# Download and configure Microsoft Repository config file
+RUN curl https://packages.microsoft.com/config/rhel/7/prod.repo | tee /etc/yum.repos.d/microsoft.repo
 
+# Install latest powershell from Microsoft YUM Repo
+RUN yum install -y \
+        powershell
+
+# Use PowerShell as the default shell
 # Use array to avoid Docker prepending /bin/sh -c
 ENTRYPOINT [ "powershell" ]

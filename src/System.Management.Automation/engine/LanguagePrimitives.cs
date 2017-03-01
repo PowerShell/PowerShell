@@ -935,7 +935,7 @@ namespace System.Management.Automation
                     // but since we don't want this to recurse indefinitely
                     // we explicitly check the case where it would recurse
                     // and deal with it.
-                    IList firstElement = objectArray[0] as IList;
+                    IList firstElement = PSObject.Base(objectArray[0]) as IList;
 
                     if (firstElement == null)
                     {
