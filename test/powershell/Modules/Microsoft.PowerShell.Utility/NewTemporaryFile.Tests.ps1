@@ -20,7 +20,7 @@ Describe "NewTemporaryFile" -Tags "CI" {
         $tempFile = New-TemporaryFile
 
         Test-Path $tempFile | Should be $true
-        $tempFile.GetType().Name | Should be "FileInfo"
+        $tempFile | Should BeOfType System.IO.FileInfo
 
         if(Test-Path $tempFile)
         {

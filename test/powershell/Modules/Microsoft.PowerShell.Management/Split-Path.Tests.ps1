@@ -1,9 +1,14 @@
 Describe "Split-Path" -Tags "CI" {
 
     It "Should return a string object when invoked" {
-	( Split-Path . ).GetType().Name          | Should Be "String"
-	( Split-Path . -Leaf ).GetType().Name    | Should Be "String"
-	( Split-Path . -Resolve ).GetType().Name | Should Be "String"
+        $result = Split-Path .
+        $result | Should BeOfType String
+
+        $result = Split-Path . -Leaf
+        $result | Should BeOfType String
+
+        $result = Split-Path . -Resolve
+        $result | Should BeOfType String
     }
 
     It "Should return the name of the drive when the qualifier switch is used" {
@@ -33,21 +38,22 @@ Describe "Split-Path" -Tags "CI" {
     }
 
     It "Should be able to accept regular expression input and output an array for multiple objects" {
-	$testDir = $TestDrive
-	$testFile1     = "testfile1.ps1"
-	$testFile2     = "testfile2.ps1"
-	$testFilePath1 = Join-Path -Path $testDir -ChildPath $testFile1
-	$testFilePath2 = Join-Path -Path $testDir -ChildPath $testFile2
+        $testDir = $TestDrive
+        $testFile1     = "testfile1.ps1"
+        $testFile2     = "testfile2.ps1"
+        $testFilePath1 = Join-Path -Path $testDir -ChildPath $testFile1
+        $testFilePath2 = Join-Path -Path $testDir -ChildPath $testFile2
 
-	New-Item -ItemType file -Path $testFilePath1, $testFilePath2 -Force
+        New-Item -ItemType file -Path $testFilePath1, $testFilePath2 -Force
 
-	Test-Path $testFilePath1 | Should Be $true
-	Test-Path $testFilePath2 | Should Be $true
+        Test-Path $testFilePath1 | Should Be $true
+        Test-Path $testFilePath2 | Should Be $true
 
-	$actual = ( Split-Path (Join-Path -Path $testDir -ChildPath "*file*.ps1") -Leaf -Resolve ) | Sort-Object
-	$actual.GetType().BaseType.Name | Should Be "Array"
-	$actual[0]                      | Should Be $testFile1
-	$actual[1]                      | Should Be $testFile2
+        $actual = ( Split-Path (Join-Path -Path $testDir -ChildPath "testfile*.ps1") -Leaf -Resolve ) | Sort-Object
+        $actual.Count                   | Should Be 2
+        $actual[0]                      | Should Be $testFile1
+        $actual[1]                      | Should Be $testFile2
+        ,$actual                        | Should BeOfType "System.Array"
     }
 
     It "Should be able to tell if a given path is an absolute path" {

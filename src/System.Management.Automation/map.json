@@ -230,7 +230,7 @@
     "monad/src/engine/ComInterop/IDispatchComObject.cs":  "engine/ComInterop/IDispatchComObject.cs",
     "monad/src/engine/remoting/commands/ConnectPSSession.cs":  "engine/remoting/commands/ConnectPSSession.cs",
     "monad/src/engine/resources/Logging.resx":  "resources/Logging.resx",
-    "monad/src/engine/Types_Ps1Xml.generated.cs":  "engine/Types_Ps1Xml.generated.cs",
+    "monad/src/engine/Types_Ps1Xml.cs":  "engine/Types_Ps1Xml.cs",
     "monad/src/engine/remoting/common/WireDataFormat/EncodeAndDecode.cs":  "engine/remoting/common/WireDataFormat/EncodeAndDecode.cs",
     "monad/src/commands/utility/FormatAndOutput/out-console/OutConsole.cs":  "commands/utility/FormatAndOutput/out-console/OutConsole.cs",
     "monad/src/engine/debugger/debugger.cs":  "engine/debugger/debugger.cs",

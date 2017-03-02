@@ -260,7 +260,7 @@ Describe "Json Tests" -Tags "Feature" {
             $json = "[1,2,3,4,5,6]"
             $result = ConvertFrom-Json $json
             $result.Count | Should Be 6
-            $result.GetType().BaseType.fullname | Should Be "System.Array"
+            ,$result | Should BeOfType "System.Array"
         }
 
         It "ConvertFrom-Json with a float value" {
@@ -1350,6 +1350,30 @@ Describe "Validate Json serialization" -Tags "CI" {
 '@
             $expectedNoWhiteSpace = $expected -replace "\s"
             $actual | Should Be $expectedNoWhiteSpace
+        }
+    }
+
+
+    Context "Validate Json output is either Pretty or Compressed" {
+
+        It "Should print a pretty Array" {
+            $array = 'one', 'two', 'three'
+            $response = $array | ConvertTo-Json
+            ($response -split "\r?\n")[1] | Should Be '  "one",'
+        }
+
+        It "Should print a pretty dictionary" {
+            $dictionary = [Ordered]@{
+                'one' = 1
+                'two' = 2
+                'three' = 3
+            }       
+            $response2 = $dictionary | ConvertTo-Json
+            ($response2 -split "\r?\n")[1] | Should Be '  "one": 1,'
+        }
+        
+        It "Should minify Json with Compress switch" {
+            (@{ a = 1 } | ConvertTo-Json -Compress).Length | Should Be 7
         }
     }
 }

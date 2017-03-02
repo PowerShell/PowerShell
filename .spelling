@@ -73,6 +73,7 @@ nuspec
 hashtables
 nunit
 exe
+AppImage
 init
 labeled
 toolset
@@ -726,6 +727,7 @@ fullclr
 shebang
  - CHANGELOG.md
 v6.0.0
+alpha.16
  - test/tools/CodeCoverageAutomation/README.md
 Start-CodeCoverageRun
 Coveralls.io.

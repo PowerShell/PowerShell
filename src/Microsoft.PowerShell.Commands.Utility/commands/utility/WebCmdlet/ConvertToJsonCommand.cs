@@ -121,7 +121,13 @@ namespace Microsoft.PowerShell.Commands
                 // values cannot be evaluated are treated as having the value null.
                 object preprocessedObject = ProcessValue(objectToProcess, 0);
 #if CORECLR
-                string output = JsonConvert.SerializeObject(preprocessedObject, new JsonSerializerSettings() { TypeNameHandling = TypeNameHandling.None, MaxDepth = 1024 });
+                JsonSerializerSettings jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 1024 };
+                if (!Compress)
+                {
+                    jsonSettings.Formatting = Formatting.Indented;
+                }
+                string output = JsonConvert.SerializeObject(preprocessedObject, jsonSettings);
+                WriteObject(output);
 #else
                 // In Full CLR, we use the JavaScriptSerializer for which RecursionLimit was set to the default value of 100 (the actual recursion limit is 99 since
                 // at 100 the exception is thrown). See https://msdn.microsoft.com/en-us/library/system.web.script.serialization.javascriptserializer.recursionlimit(v=vs.110).aspx
@@ -131,8 +137,8 @@ namespace Microsoft.PowerShell.Commands
                 JavaScriptSerializer helper = new JavaScriptSerializer() { RecursionLimit = (maxDepthAllowed + 2) };
                 helper.MaxJsonLength = Int32.MaxValue;
                 string output = helper.Serialize(preprocessedObject);
-#endif
                 WriteObject(Compress ? output : ConvertToPrettyJsonString(output));
+#endif
             }
         }
 
@@ -296,7 +302,7 @@ namespace Microsoft.PowerShell.Commands
             bool headChar = true;
             bool beforeQuote = true;
             int newSpaceCount = 0;
-            const int spaceCountAfterQuoteMark = 2;
+            const int spaceCountAfterQuoteMark = 1;
 
             for (int i = index; i < json.Length; i++)
             {
@@ -327,7 +333,7 @@ namespace Microsoft.PowerShell.Commands
                         int end = ConvertQuotedString(json, i + 1, result);
                         if (beforeQuote)
                         {
-                            newSpaceCount += (end - i + 1);
+                            newSpaceCount = 0;
                         }
                         i = end;
                         headChar = false;
@@ -335,7 +341,6 @@ namespace Microsoft.PowerShell.Commands
                     case ':':
                         result.Append(json[i]);
                         AddSpaces(spaceCountAfterQuoteMark, result);
-                        newSpaceCount += 3;
                         headChar = false;
                         beforeQuote = false;
                         break;
@@ -373,7 +378,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="result"></param>
         private void AddIndentations(int numberOfTabsToReturn, StringBuilder result)
         {
-            int realNumber = numberOfTabsToReturn * 4;
+            int realNumber = numberOfTabsToReturn * 2;
             for (int i = 0; i < realNumber; i++)
             {
                 result.Append(' ');

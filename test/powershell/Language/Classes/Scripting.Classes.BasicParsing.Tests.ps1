@@ -3,6 +3,20 @@
 #
 Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
 
+try {
+#
+# CrossGen'ed assemblies cause a hang to happen intermittently when running this test suite in Linux and OSX.
+# The issue has been reported to CoreCLR team. We need to work around it for now with the following approach:
+#  1. For pull request and push commit, build without '-CrossGen' and run the parsing tests
+#  2. For nightly build, build with '-CrossGen' but don't run the parsing tests
+# In this way, we will continue to exercise these parsing tests for each CI build, and skip them for nightly
+# build to avoid a hang.
+# Note: this change should be reverted once the 'CrossGen' issue is fixed by CoreCLR.
+#
+$isFullBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
+$defaultParamValues = $PSdefaultParameterValues.Clone()
+$PSDefaultParameterValues["it:skip"] = (!$IsWindows -and $isFullBuild)
+
 Describe 'Positive Parse Properties Tests' -Tags "CI" {
     It 'PositiveParsePropertiesTest' {
         # Just a bunch of random basic things here
@@ -251,7 +265,7 @@ Describe 'Positive Parse Properties Tests' -Tags "CI" {
 Describe 'Negative Parsing Tests' -Tags "CI" {
     ShouldBeParseError 'class' MissingNameAfterKeyword 5
     ShouldBeParseError 'class foo' MissingTypeBody 9
-    ShouldBeParseError 'class foo {' MissingEndCurlyBrace 10
+    ShouldBeParseError 'class foo {' MissingEndCurlyBrace 11
     ShouldBeParseError 'class foo { [int] }' IncompleteMemberDefinition 17
     ShouldBeParseError 'class foo { $private: }' InvalidVariableReference 12
     ShouldBeParseError 'class foo { [int]$global: }' InvalidVariableReference 17
@@ -307,6 +321,8 @@ Describe 'Negative Parsing Tests' -Tags "CI" {
     ShouldBeParseError 'class C { static [int]$i; [void] foo() {$i = 10} }' MissingTypeInStaticPropertyAssignment 40
 
     ShouldBeParseError 'class C : B' MissingTypeBody 11
+
+    ShouldBeParseError 'Class foo { q(){} w(){}' MissingEndCurlyBrace 11
 }
 
 Describe 'Negative methods Tests' -Tags "CI" {
@@ -831,4 +847,8 @@ Describe 'variable analysis' -Tags "CI" {
 
         [B]::getA().getFoo() | Should Be 'foo'
     }
+}
+
+} finally {
+    $global:PSdefaultParameterValues = $defaultParamValues
 }

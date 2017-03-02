@@ -347,9 +347,6 @@ Possible matches are</value>
   <data name="MissingExpressionInNamedArgument" xml:space="preserve">
     <value>Missing statement after '=' in named argument.</value>
   </data>
-  <data name="IncompleteHashLiteral" xml:space="preserve">
-    <value>The hash literal was incomplete.</value>
-  </data>
   <data name="MissingPropertyTerminator" xml:space="preserve">
     <value>Missing ';' or end-of-line in property definition.</value>
   </data>

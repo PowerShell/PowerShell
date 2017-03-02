@@ -566,10 +566,11 @@ namespace System.Management.Automation
 
             PseudoBindingInfo pseudoBinding = new PseudoParameterBinder()
                                                 .DoPseudoParameterBinding(commandAst, null, parameterAst, PseudoParameterBinder.BindingType.ParameterCompletion);
-            // The command cannot be found or it's not a cmdlet, not a script cmdlet, not a function
+            // The command cannot be found or it's not a cmdlet, not a script cmdlet, not a function.
+            // Try completing as if it the parameter is a command argument for native command completion.
             if (pseudoBinding == null)
             {
-                return result;
+                return CompleteCommandArgument(context);
             }
 
             switch (pseudoBinding.InfoType)

@@ -290,12 +290,19 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
 
     Context 'Error variable in multi-command pipeline (with native cmdlet)' {
 
-        (get-foo -ev foo_err | get-item -ev get_item_err ) 2>&1 > $null
+        BeforeAll {
+            (get-foo -ev foo_err | get-item -ev get_item_err ) 2>&1 > $null
+        }
 
-        $foo_err | Should Be "foo-error"
+        It '$foo_err should be "foo-error"' {
+            $foo_err | Should Be "foo-error"
+        }
 
-        It '$get_item_err.count' { $get_item_err.count | Should Be 1 }
-        It '$get_item_err[0].exception' { $get_item_err[0].exception.GetType() | Should Be 'System.Management.Automation.ItemNotFoundException' }
+        It '$get_item_err.count and $get_item_err[0].exception' {
+            $get_item_err.count | Should Be 1
+            $get_item_err[0].exception | Should Not BeNullOrEmpty
+            $get_item_err[0].exception | Should BeOftype 'System.Management.Automation.ItemNotFoundException'
+        }
     }
 
     It 'Multi-command pipeline with nested commands' {

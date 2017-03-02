@@ -23,12 +23,12 @@ Describe "Get-Member" -Tags "CI" {
 	$e = "anoeduntodeu" #test strings
 	$f = 'asntoheusth' #test strings
 
-	$a.GetType().Name | Should Be 'Int32'
-	$b.GetType().Name | Should Be 'Double'
-	$c.GetType().Name | Should Be 'Boolean'
-	$d.GetType().Name | Should Be 'Object[]'
-	$e.GetType().Name | Should Be 'String'
-	$f.GetType().Name | Should Be 'String'
+	$a | Should BeOfType 'Int32'
+	$b | Should BeOfType 'Double'
+	$c | Should BeOfType 'Boolean'
+	,$d | Should BeOfType 'Object[]'
+	$e | Should BeOfType 'String'
+	$f | Should BeOfType 'String'
     }
 
     It "Should be able to be called on a newly created PSObject" {

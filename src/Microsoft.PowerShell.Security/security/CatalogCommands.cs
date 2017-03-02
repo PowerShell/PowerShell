@@ -95,20 +95,27 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (PathInfo tempPath in SessionState.Path.GetResolvedPSPathFromPSPath(p))
                     {
-                        paths.Add(tempPath.ProviderPath);
+                        if (ShouldProcess(tempPath.ProviderPath))
+                        {
+                            paths.Add(tempPath.ProviderPath);
+                        }
                     }
                 }
             }
 
-            string drive = null;
-
-            // resolve catalog destination Path
-            if (!SessionState.Path.IsPSAbsolute(catalogFilePath, out drive) && !System.IO.Path.IsPathRooted(catalogFilePath))
+            // We add 'paths.Count > 0' to support 'ShouldProcess()'
+            if (paths.Count > 0 )
             {
-                catalogFilePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(catalogFilePath);
-            }
+                string drive = null;
 
-            PerformAction(paths, catalogFilePath);
+                // resolve catalog destination Path
+                if (!SessionState.Path.IsPSAbsolute(catalogFilePath, out drive) && !System.IO.Path.IsPathRooted(catalogFilePath))
+                {
+                    catalogFilePath = SessionState.Path.GetUnresolvedProviderPathFromPSPath(catalogFilePath);
+                }
+
+                PerformAction(paths, catalogFilePath);
+            }
         }
 
         /// <summary>

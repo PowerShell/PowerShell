@@ -85,7 +85,7 @@ Describe 'Basic enum errors' -Tags "CI" {
     ShouldBeParseError 'enum foo' MissingTypeBody 8
     ShouldBeParseError 'enum foo {' MissingEndCurlyBrace 10
     ShouldBeParseError 'enum foo { x = }' ExpectedValueExpression 14
-    ShouldBeParseError 'enum foo { x =' ExpectedValueExpression,MissingEndCurlyBrace  14,14
+    ShouldBeParseError 'enum foo { x =' ExpectedValueExpression,MissingEndCurlyBrace  14,10
     ShouldBeParseError 'enum foo {} enum foo {}' MemberAlreadyDefined 12
     ShouldBeParseError 'enum foo { x; x }' MemberAlreadyDefined 14 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo { X; x }' MemberAlreadyDefined 14 -SkipAndCheckRuntimeError
@@ -94,4 +94,5 @@ Describe 'Basic enum errors' -Tags "CI" {
     ShouldBeParseError 'enum foo { e = [int]::MaxValue + 1 }' EnumeratorValueTooLarge 15 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo { e = $foo }' EnumeratorValueMustBeConstant 15 -SkipAndCheckRuntimeError
     ShouldBeParseError 'enum foo { e = "hello" }' CannotConvertValue 15 -SkipAndCheckRuntimeError
+    ShouldBeParseError 'enum foo { a;b;c;' MissingEndCurlyBrace 10
 }

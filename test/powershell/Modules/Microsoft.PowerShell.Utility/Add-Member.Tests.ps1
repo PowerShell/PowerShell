@@ -132,13 +132,13 @@
 
     It "Successful alias, no type" {
         $results = Add-Member -InputObject a -MemberType AliasProperty -Name Cnt -Value Length -passthru
-        $results.Cnt.GetType().Name | Should Be 'Int32'
+        $results.Cnt | Should BeOfType Int32
         $results.Cnt | Should Be 1
     }
 
     It "Successful alias, with type" {
         $results = add-member -InputObject a -MemberType AliasProperty -Name Cnt -Value Length -SecondValue String -passthru
-        $results.Cnt.GetType().Name | Should Be 'String'
+        $results.Cnt | Should BeOfType String
         $results.Cnt | Should Be '1'
     }
 

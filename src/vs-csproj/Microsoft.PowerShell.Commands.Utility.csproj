@@ -580,7 +580,12 @@
     <Compile Include="..\Microsoft.PowerShell.Commands.Utility\singleshell\installer\MshUtilityMshSnapin.cs">
       <Link>singleshell\installer\MshUtilityMshSnapin.cs</Link>
     </Compile>
-    <Compile Include="commands\utility\GetVerbCommand.cs" />
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\GetVerbCommand.cs">
+          <Link>commands\utility\GetVerbCommand.cs</Link>
+    </Compile>
+    <Compile Include="..\Microsoft.PowerShell.Commands.Utility\commands\utility\ImportPowerShellDataFile.cs">
+      <Link>commands\utility\ImportPowerShellDataFile.cs</Link>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\Microsoft.PowerShell.Commands.Utility\map.json">

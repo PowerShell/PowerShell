@@ -104,6 +104,13 @@ namespace System.Management.Automation
         /// DebuggerAction.StepToLine is only valid when debugging an script.
         /// </remarks>
         public DebuggerResumeAction ResumeAction { get; set; }
+
+        /// <summary>
+        /// This property is used internally for remote debug stops only.  It is used to signal the remote debugger proxy
+        /// that it should *not* send a resume action to the remote debugger.  This is used by runspace debug processing to
+        /// leave pending runspace debug sessions suspended until a debugger is attached.
+        /// </summary>
+        internal bool SuspendRemote { get; set; }
     };
 
     /// <summary>
@@ -253,6 +260,70 @@ namespace System.Management.Automation
 
     #endregion
 
+    #region Runspace Debug Processing
+
+    /// <summary>
+    /// StartRunspaceDebugProcessing event arguments
+    /// </summary>
+    public sealed class StartRunspaceDebugProcessingEventArgs : EventArgs
+    {
+        /// <summary> The runspace to process </summary>
+        public Runspace Runspace
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// When set to true this will cause PowerShell to process this runspace debug session through its
+        /// script debugger.  To use the default processing return from this event call after setting
+        /// this property to true.
+        /// </summary>
+        public bool UseDefaultProcessing
+        {
+            get;
+            set;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public StartRunspaceDebugProcessingEventArgs(Runspace runspace)
+        {
+            if (runspace == null) { throw new PSArgumentNullException("runspace"); }
+
+            Runspace = runspace;
+        }
+    }
+
+    /// <summary>
+    /// ProcessRunspaceDebugEnd event arguments
+    /// </summary>
+    public sealed class ProcessRunspaceDebugEndEventArgs : EventArgs
+    {
+        /// <summary>
+        /// The runspace where internal debug processing has ended
+        /// </summary>
+        public Runspace Runspace
+        {
+            get;
+            private set;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="runspace"></param>
+        public ProcessRunspaceDebugEndEventArgs(Runspace runspace)
+        {
+            if (runspace == null) { throw new PSArgumentNullException("runspace"); }
+
+            Runspace = runspace;
+        }
+    }
+
+    #endregion
+
     #endregion
 
     #region Enums
@@ -326,6 +397,26 @@ namespace System.Management.Automation
         /// Event raised when nested debugging is cancelled.
         /// </summary>
         internal event EventHandler<EventArgs> NestedDebuggingCancelledEvent;
+
+        #region Runspace Debug Processing Events
+
+        /// <summary>
+        /// Event raised when a runspace debugger needs breakpoint processing.
+        /// </summary>
+        public event EventHandler<StartRunspaceDebugProcessingEventArgs> StartRunspaceDebugProcessing;
+
+        /// <summary>
+        /// Event raised when a runspace debugger is finished being processed.
+        /// </summary>
+        public event EventHandler<ProcessRunspaceDebugEndEventArgs> RunspaceDebugProcessingCompleted;
+
+        /// <summary>
+        /// Event raised to indicate that the debugging session is over and runspace debuggers queued for 
+        /// processing should be released.
+        /// </summary>
+        public event EventHandler<EventArgs> CancelRunspaceDebugProcessing;
+
+        #endregion
 
         #endregion
 
@@ -469,6 +560,36 @@ namespace System.Management.Automation
         {
             return (BreakpointUpdated != null);
         }
+
+        #region Runspace Debug Processing
+
+        /// <summary/>
+        protected void RaiseStartRunspaceDebugProcessingEvent(StartRunspaceDebugProcessingEventArgs args)
+        {
+            if (args == null) { throw new PSArgumentNullException("args"); }
+            StartRunspaceDebugProcessing.SafeInvoke<StartRunspaceDebugProcessingEventArgs>(this, args);
+        }
+
+        /// <summary/>
+        protected void RaiseRunspaceProcessingCompletedEvent(ProcessRunspaceDebugEndEventArgs args)
+        {
+            if (args == null) { throw new PSArgumentNullException("args"); }
+            RunspaceDebugProcessingCompleted.SafeInvoke<ProcessRunspaceDebugEndEventArgs>(this, args);
+        }
+
+        /// <summary/>
+        protected bool IsStartRunspaceDebugProcessingEventSubscribed()
+        {
+            return (StartRunspaceDebugProcessing != null);
+        }
+
+        /// <summary/>
+        protected void RaiseCancelRunspaceDebugProcessingEvent()
+        {
+            CancelRunspaceDebugProcessing.SafeInvoke<EventArgs>(this, null);
+        }
+
+        #endregion
 
         #endregion
 
@@ -708,6 +829,30 @@ namespace System.Management.Automation
                     {
                     }
                 });
+        }
+
+        #endregion
+
+        #region Runspace Debug Processing Methods
+
+        /// <summary>
+        /// Adds the provided Runspace object to the runspace debugger processing queue.
+        /// The queue will then raise the StartRunspaceDebugProcessing events for each runspace to allow
+        /// a host script debugger implementation to provide an active debugging session.
+        /// </summary>
+        /// <param name="runspace">Runspace to debug</param>
+        internal virtual void QueueRunspaceForDebug(Runspace runspace)
+        {
+            throw new PSNotImplementedException();
+        }
+
+        /// <summary>
+        /// Causes the CancelRunspaceDebugProcessing event to be raised which notifies subscribers that current debugging
+        /// sessions should be cancelled.
+        /// </summary>
+        public virtual void CancelDebuggerProcessing()
+        {
+            throw new PSNotImplementedException();
         }
 
         #endregion
@@ -1574,6 +1719,11 @@ namespace System.Management.Automation
         private const int _runspaceCallStackOffset = 1;
         private bool _preserveUnhandledDebugStopEvent;
         private ManualResetEventSlim _preserveDebugStopEvent;
+
+        // Process runspace debugger
+        private Lazy<ConcurrentQueue<StartRunspaceDebugProcessingEventArgs>> _runspaceDebugQueue = new Lazy<ConcurrentQueue<StartRunspaceDebugProcessingEventArgs>>();
+        private volatile Int32 _processingRunspaceDebugQueue;
+        private ManualResetEventSlim _runspaceDebugCompleteEvent;
 
         private static readonly string s_processDebugPromptMatch;
 
@@ -2634,6 +2784,95 @@ namespace System.Management.Automation
 
         #endregion
 
+        #region Runspace Debug Processing
+
+        /// <summary>
+        /// Adds the provided Runspace object to the runspace debugger processing queue.
+        /// The queue will then raise the StartRunspaceDebugProcessing events for each runspace to allow
+        /// a host script debugger implementation to provide an active debugging session.
+        /// </summary>
+        /// <param name="runspace">Runspace to debug</param>
+        internal override void QueueRunspaceForDebug(Runspace runspace)
+        {
+            runspace.StateChanged += RunspaceStateChangedHandler;
+            runspace.AvailabilityChanged += RunspaceAvailabilityChangedHandler;
+            _runspaceDebugQueue.Value.Enqueue(new StartRunspaceDebugProcessingEventArgs(runspace));
+            StartRunspaceForDebugQueueProcessing();
+        }
+
+        /// <summary>
+        /// Causes the CancelRunspaceDebugProcessing event to be raised which notifies subscribers that these debugging
+        /// sessions should be cancelled.
+        /// </summary>
+        public override void CancelDebuggerProcessing()
+        {
+            // Empty runspace debugger processing queue and then notify any subscribers.
+            ReleaseInternalRunspaceDebugProcessing(null, true);
+
+            try
+            {
+                RaiseCancelRunspaceDebugProcessingEvent();
+            }
+            catch (Exception)
+            { }
+        }
+
+        private void ReleaseInternalRunspaceDebugProcessing(object sender, bool emptyQueue = false)
+        {
+            Runspace runspace = sender as Runspace;
+            if (runspace != null)
+            {
+                runspace.StateChanged -= RunspaceStateChangedHandler;
+                runspace.AvailabilityChanged -= RunspaceAvailabilityChangedHandler;
+            }
+
+            if (emptyQueue && _runspaceDebugQueue.IsValueCreated)
+            {
+                StartRunspaceDebugProcessingEventArgs args;
+                while (_runspaceDebugQueue.Value.TryDequeue(out args))
+                {
+                    args.Runspace.StateChanged -= RunspaceStateChangedHandler;
+                    args.Runspace.AvailabilityChanged -= RunspaceAvailabilityChangedHandler;
+                    try
+                    {
+                        args.Runspace.Debugger.UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Ignore;
+                    }
+                    catch (Exception) { }
+                }
+            }
+
+            if (_runspaceDebugCompleteEvent != null)
+            {
+                try
+                {
+                    _runspaceDebugCompleteEvent.Set();
+                }
+                catch (ObjectDisposedException) { }
+            }
+        }
+
+        private void RunspaceStateChangedHandler(object sender, RunspaceStateEventArgs args)
+        {
+            switch (args.RunspaceStateInfo.State)
+            {
+                case RunspaceState.Closed:
+                case RunspaceState.Broken:
+                case RunspaceState.Disconnected:
+                    ReleaseInternalRunspaceDebugProcessing(sender);
+                    break;
+            }
+        }
+
+        private void RunspaceAvailabilityChangedHandler(object sender, RunspaceAvailabilityEventArgs args)
+        {
+            if (args.RunspaceAvailability == RunspaceAvailability.Available)
+            {
+                ReleaseInternalRunspaceDebugProcessing(sender);
+            }
+        }
+
+        #endregion
+
         #endregion
 
         #region Job debugger integration
@@ -3037,6 +3276,7 @@ namespace System.Management.Automation
             }
 
             Debugger senderDebugger = sender as Debugger;
+            bool pushSucceeded = false;
             lock (_syncActiveDebuggerStopObject)
             {
                 Debugger activeDebugger = null;
@@ -3055,11 +3295,14 @@ namespace System.Management.Automation
                     }
                 }
 
-                if (PushActiveDebugger(senderDebugger, _jobCallStackOffset))
-                {
-                    // Forward the debug stop event.
-                    HandleActiveJobDebuggerStop(sender, args);
-                }
+                pushSucceeded = PushActiveDebugger(senderDebugger, _jobCallStackOffset);
+            }
+
+            // Handle debugger stop outside lock.
+            if (pushSucceeded)
+            {
+                // Forward the debug stop event.
+                HandleActiveJobDebuggerStop(sender, args);
             }
         }
 
@@ -3436,6 +3679,7 @@ namespace System.Management.Automation
             if (sender == null || args == null) { return; }
 
             Debugger senderDebugger = sender as Debugger;
+            bool pushSucceeded = false;
             lock (_syncActiveDebuggerStopObject)
             {
                 Debugger activeDebugger;
@@ -3491,12 +3735,15 @@ namespace System.Management.Automation
                 args.InvocationInfo = nestedDebugger.FixupInvocationInfo(args.InvocationInfo);
 
                 // Finally push the runspace debugger.
-                if (PushActiveDebugger(senderDebugger, _runspaceCallStackOffset))
-                {
-                    // Forward the debug stop event.
-                    // This method will always pop the debugger after debugger stop completes.
-                    HandleActiveRunspaceDebuggerStop(sender, args);
-                }
+                pushSucceeded = PushActiveDebugger(senderDebugger, _runspaceCallStackOffset);
+            }
+
+            // Handle debugger stop outside lock.
+            if (pushSucceeded)
+            {
+                // Forward the debug stop event.
+                // This method will always pop the debugger after debugger stop completes.
+                HandleActiveRunspaceDebuggerStop(sender, args);
             }
         }
 
@@ -3584,6 +3831,125 @@ namespace System.Management.Automation
             }
 
             return false;
+        }
+
+        #endregion
+
+        #region Runspace Debug Processing
+
+        private void StartRunspaceForDebugQueueProcessing()
+        {
+            Int32 startThread = Interlocked.CompareExchange(ref _processingRunspaceDebugQueue, 1, 0);
+
+            if (startThread == 0)
+            {
+                var thread = new System.Threading.Thread(
+                    new ThreadStart(DebuggerQueueThreadProc));
+                thread.Start();
+            }
+        }
+
+        private void DebuggerQueueThreadProc()
+        {
+            StartRunspaceDebugProcessingEventArgs runspaceDebugProcessArgs;
+            while (_runspaceDebugQueue.Value.TryDequeue(out runspaceDebugProcessArgs))
+            {
+                if (IsStartRunspaceDebugProcessingEventSubscribed())
+                {
+                    try
+                    {
+                        RaiseStartRunspaceDebugProcessingEvent(runspaceDebugProcessArgs);
+                    }
+                    catch (Exception) { }
+                }
+                else
+                {
+                    // If there are no ProcessDebugger event subscribers then default to handling internally.
+                    runspaceDebugProcessArgs.UseDefaultProcessing = true;
+                }
+
+                // Check for internal handling request.
+                if (runspaceDebugProcessArgs.UseDefaultProcessing)
+                {
+                    try
+                    {
+                        ProcessRunspaceDebugInternally(runspaceDebugProcessArgs.Runspace);
+                    }
+                    catch (Exception) { }
+                }
+            }
+
+            Interlocked.CompareExchange(ref _processingRunspaceDebugQueue, 0, 1);
+
+            if (_runspaceDebugQueue.Value.Count > 0)
+            {
+                StartRunspaceForDebugQueueProcessing();
+            }
+        }
+
+        private void ProcessRunspaceDebugInternally(Runspace runspace)
+        {
+            WaitForReadyDebug();
+
+            DebugRunspace(runspace);
+
+            // Block this event thread until debugging has ended.
+            WaitForDebugComplete();
+
+            // Ensure runspace debugger is not stopped in break mode.
+            if (runspace.Debugger.InBreakpoint)
+            {
+                try
+                {
+                    runspace.Debugger.UnhandledBreakpointMode = UnhandledBreakpointProcessingMode.Ignore;
+                }
+                catch (Exception) { }
+            }
+
+            StopDebugRunspace(runspace);
+
+            // If we return to local script execution in step mode then ensure the debugger is enabled.
+            _nestedDebuggerStop = false;
+            if ((_steppingMode == SteppingMode.StepIn) && (_currentDebuggerAction != DebuggerResumeAction.Stop) && (_context._debuggingMode == 0))
+            {
+                SetInternalDebugMode(InternalDebugMode.Enabled);
+            }
+
+            RaiseRunspaceProcessingCompletedEvent(
+                new ProcessRunspaceDebugEndEventArgs(runspace));
+        }
+
+        private void WaitForReadyDebug()
+        {
+            // Wait up to ten seconds
+            System.Threading.Thread.Sleep(500);
+            int count = 0;
+            bool debugReady = false;
+            do
+            {
+                System.Threading.Thread.Sleep(250);
+                debugReady = IsDebuggerReady();
+            } while (!debugReady && (count++ < 40));
+
+            if (!debugReady) { throw new PSInvalidOperationException(); }
+        }
+
+        private bool IsDebuggerReady()
+        {
+            return (!this.IsPushed && !this.InBreakpoint && (this._context._debuggingMode > -1) && (this._context.InternalHost.NestedPromptCount == 0));
+        }
+
+        private void WaitForDebugComplete()
+        {
+            if (_runspaceDebugCompleteEvent == null)
+            {
+                _runspaceDebugCompleteEvent = new ManualResetEventSlim(false);
+            }
+            else
+            {
+                _runspaceDebugCompleteEvent.Reset();
+            }
+            _runspaceDebugCompleteEvent.Wait();
         }
 
         #endregion
@@ -3753,6 +4119,7 @@ namespace System.Management.Automation
     {
         #region Members
 
+        private bool _isDisposed;
         protected Runspace _runspace;
         protected Debugger _wrappedDebugger;
 
@@ -3821,6 +4188,8 @@ namespace System.Management.Automation
         /// <returns>DebuggerCommandResults</returns>
         public override DebuggerCommandResults ProcessCommand(PSCommand command, PSDataCollection<PSObject> output)
         {
+            if (_isDisposed) { return new DebuggerCommandResults(null, false); }
+
             // Preprocess debugger commands.
             String cmd = command.Commands[0].CommandText.Trim();
 
@@ -3909,6 +4278,8 @@ namespace System.Management.Automation
         /// </summary>
         public virtual void Dispose()
         {
+            _isDisposed = true;
+
             if (_wrappedDebugger != null)
             {
                 _wrappedDebugger.BreakpointUpdated -= HandleBreakpointUpdated;
@@ -4042,6 +4413,21 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// Gets the callstack of the nested runspace.
+        /// </summary>
+        /// <returns></returns>
+        internal PSDataCollection<PSObject> GetRSCallStack()
+        {
+            // Get call stack from wrapped debugger
+            PSCommand cmd = new PSCommand();
+            cmd.AddCommand("Get-PSCallStack");
+            PSDataCollection<PSObject> callStackOutput = new PSDataCollection<PSObject>();
+            _wrappedDebugger.ProcessCommand(cmd, callStackOutput);
+
+            return callStackOutput;
+        }
+
         #endregion
     }
 
@@ -4069,11 +4455,7 @@ namespace System.Management.Automation
 
         protected override DebuggerCommandResults HandleCallStack(PSDataCollection<PSObject> output)
         {
-            // Get call stack from wrapped debugger
-            PSCommand cmd = new PSCommand();
-            cmd.AddCommand("Get-PSCallStack");
-            PSDataCollection<PSObject> callStackOutput = new PSDataCollection<PSObject>();
-            _wrappedDebugger.ProcessCommand(cmd, callStackOutput);
+            PSDataCollection<PSObject> callStackOutput = GetRSCallStack();
 
             // Display call stack info as formatted.
             using (PowerShell ps = PowerShell.Create())
@@ -4087,7 +4469,7 @@ namespace System.Management.Automation
 
         protected override void HandleDebuggerStop(object sender, DebuggerStopEventArgs e)
         {
-            PowerShell runningCmd = null;
+            object runningCmd = null;
 
             try
             {
@@ -4104,29 +4486,46 @@ namespace System.Management.Automation
 
         #region Private Methods
 
-        private PowerShell DrainAndBlockRemoteOutput()
+        private object DrainAndBlockRemoteOutput()
         {
-            // We only do this for remote runspaces.
+            // We do this only for remote runspaces.
             RemoteRunspace remoteRunspace = _runspace as RemoteRunspace;
             if (remoteRunspace == null) { return null; }
 
-            PowerShell runningCmd = remoteRunspace.GetCurrentBasePowerShell();
-            if (runningCmd != null)
+            var runningPowerShell = remoteRunspace.GetCurrentBasePowerShell();
+            if (runningPowerShell != null)
             {
-                runningCmd.WaitForServicingComplete();
-                runningCmd.SuspendIncomingData();
-
-                return runningCmd;
+                runningPowerShell.WaitForServicingComplete();
+                runningPowerShell.SuspendIncomingData();
+                return runningPowerShell;
+            }
+            else
+            {
+                var runningPipe = remoteRunspace.GetCurrentlyRunningPipeline();
+                if (runningPipe != null)
+                {
+                    runningPipe.DrainIncomingData();
+                    runningPipe.SuspendIncomingData();
+                    return runningPipe;
+                }
             }
 
             return null;
         }
 
-        private void RestoreRemoteOutput(PowerShell runningCmd)
+        private void RestoreRemoteOutput(object runningCmd)
         {
-            if (runningCmd != null)
+            if (runningCmd == null) { return; }
+
+            var runningPowerShell = runningCmd as PowerShell;
+            if (runningPowerShell != null)
             {
-                runningCmd.ResumeIncomingData();
+                runningPowerShell.ResumeIncomingData();
+            }
+            else
+            {
+                var runningPipe = runningCmd as Pipeline;
+                runningPipe?.ResumeIncomingData();
             }
         }
 

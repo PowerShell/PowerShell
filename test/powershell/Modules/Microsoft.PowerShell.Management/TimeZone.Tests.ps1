@@ -42,26 +42,26 @@ Describe "Get-Timezone test case no switches" -Tags "CI" {
 Describe "Get-Timezone test cases" -Tags "CI" {
 
     It "Call without ListAvailable switch returns an object of type TimeZoneInfo" {
-        $result = (Get-TimeZone).GetType().Name
-        $result | Should Be "TimeZoneInfo"
+        $result = Get-TimeZone
+        $result | Should BeOfType TimeZoneInfo
     }
 
     It "Call WITH ListAvailable switch returns ArrayList of TimeZoneInfo objects where the list is greater than 0 item" {
         $list = Get-TimeZone -ListAvailable
         $list.Count -gt 0 | Should Be $true
 
-        $list.GetType().Name | Should Be "Object[]"
-        $list[0].GetType().Name | Should Be "TimeZoneInfo"
+        ,$list | Should BeOfType "Object[]"
+        $list[0] | Should BeOfType "TimeZoneInfo"
     }
 
     It "Call with ListAvailable switch returns a list containing TimeZoneInfo.Local" {
-        $observedIdList = Get-TimeZone -ListAvailable | select -ExpandProperty Id
+        $observedIdList = Get-TimeZone -ListAvailable | Select-Object -ExpandProperty Id
         $oneExpectedId = ([System.TimeZoneInfo]::Local).Id
         $observedIdList -contains $oneExpectedId | Should Be $true
     }
 
     It "Call with ListAvailable switch returns a list containing one returned by Get-TimeZone" {
-        $observedIdList = Get-TimeZone -ListAvailable | select -ExpandProperty Id
+        $observedIdList = Get-TimeZone -ListAvailable | Select-Object -ExpandProperty Id
         $oneExpectedId = (Get-TimeZone).Id
         $observedIdList -contains $oneExpectedId | Should Be $true
     }
@@ -85,7 +85,7 @@ Describe "Get-Timezone test cases" -Tags "CI" {
 
     It "Call Get-TimeZone using ID param and multiple items, one is wild card but error action ignore works as expected" {
         $result = Get-TimeZone -Id @("Cape Verde Standard Time","Morocco Standard Time","*","Azores Standard Time") `
-                               -ErrorAction SilentlyContinue | % Id
+                               -ErrorAction SilentlyContinue | ForEach-Object Id
         $expectedIdList = @("Cape Verde Standard Time","Morocco Standard Time","Azores Standard Time")
         Assert-ListsSame $expectedIdList $result
     }

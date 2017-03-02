@@ -322,11 +322,11 @@ Describe "Exception from initializer" -Tags "CI" {
     It "static member w/ ctor" {
         try {
             $null = [MSFT_6397334c]::a
-            throw "[MSFT_6397334c]::a should have thrown"
+            throw "No Exception!"
         }
         catch
         {
-            $_.Exception.GetType().FullName | Should Be System.TypeInitializationException
+            $_.Exception | Should BeOfType System.TypeInitializationException
             $e  = $_.Exception.InnerException.InnerException.ErrorRecord
             $e.FullyQualifiedErrorId | Should Be InvalidCastFromStringToInteger
             $e.InvocationInfo.Line | Should Match 'a = "zz"'
@@ -336,11 +336,11 @@ Describe "Exception from initializer" -Tags "CI" {
     It "static member w/o ctor" {
         try {
             $null = [MSFT_6397334d]::a
-            throw "[MSFT_6397334d]::a should have thrown"
+            throw "No Exception!"
         }
         catch
         {
-            $_.Exception.GetType().FullName | Should Be System.TypeInitializationException
+            $_.Exception | Should BeOfType System.TypeInitializationException
             $e  = $_.Exception.InnerException.InnerException.ErrorRecord
             $e.FullyQualifiedErrorId | Should Be InvalidCastFromStringToInteger
             $e.InvocationInfo.Line | Should Match 'a = "zz"'

@@ -17,13 +17,13 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Start-Sleep", "Tee-Object", "Measure-Command", "Update-TypeData", "Update-FormatData",
     "Remove-TypeData", "Get-TypeData", "Write-Host", "Write-Progress", "New-Object", "Select-Object",
     "Group-Object", "Sort-Object", "Get-Variable", "New-Variable", "Set-Variable", "Remove-Variable",
-    "Clear-Variable", "Export-Clixml", "Import-Clixml", "ConvertTo-Xml", "Select-Xml", "Write-Debug",
+    "Clear-Variable", "Export-Clixml", "Import-Clixml", "Import-PowerShellDataFile","ConvertTo-Xml", "Select-Xml", "Write-Debug",
     "Write-Verbose", "Write-Warning", "Write-Error", "Write-Information", "Write-Output", "Set-PSBreakpoint",
     "Get-PSBreakpoint", "Remove-PSBreakpoint", "New-TemporaryFile", "Enable-PSBreakpoint", "Disable-PSBreakpoint", "Get-PSCallStack",
     "Get-TraceSource", "Set-TraceSource", "Trace-Command", "Get-FileHash",
     "Unblock-File", "Get-Runspace", "Debug-Runspace", "Enable-RunspaceDebug", "Disable-RunspaceDebug",
     "Get-RunspaceDebug", "Wait-Debugger" , "Get-Uptime", "Get-Verb"
-FunctionsToExport= "Format-Hex", "Import-PowerShellDataFile", "ConvertFrom-SddlString"
+FunctionsToExport= "Format-Hex", "ConvertFrom-SddlString"
 AliasesToExport= "fhx"
 NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=390787'

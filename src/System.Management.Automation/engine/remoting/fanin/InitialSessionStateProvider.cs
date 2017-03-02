@@ -947,6 +947,7 @@ namespace System.Management.Automation.Remoting
         internal static readonly string ScriptsToProcess = "ScriptsToProcess";
         internal static readonly string SessionType = "SessionType";
         internal static readonly string RoleCapabilities = "RoleCapabilities";
+        internal static readonly string RoleCapabilityFiles = "RoleCapabilityFiles";
         internal static readonly string RunAsVirtualAccount = "RunAsVirtualAccount";
         internal static readonly string RunAsVirtualAccountGroups = "RunAsVirtualAccountGroups";
         internal static readonly string TranscriptDirectory = "TranscriptDirectory";
@@ -981,6 +982,7 @@ namespace System.Management.Automation.Remoting
             new ConfigTypeEntry(PowerShellVersion,              new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
             new ConfigTypeEntry(RequiredGroups,                 new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValidationCallback)),
             new ConfigTypeEntry(RoleCapabilities,               new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
+            new ConfigTypeEntry(RoleCapabilityFiles,            new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
             new ConfigTypeEntry(RoleDefinitions,                new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValidationCallback)),
             new ConfigTypeEntry(RunAsVirtualAccount,            new ConfigTypeEntry.TypeValidationCallback(BooleanTypeValidationCallback)),
             new ConfigTypeEntry(RunAsVirtualAccountGroups,      new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
@@ -1391,6 +1393,7 @@ namespace System.Management.Automation.Remoting
         private static readonly HashSet<string> s_allowedRoleCapabilityKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "RoleCapabilities",
+            "RoleCapabilityFiles",
             "ModulesToImport",
             "VisibleAliases",
             "VisibleCmdlets",
@@ -1808,8 +1811,11 @@ namespace System.Management.Automation.Remoting
         }
 
         // Takes the "RoleCapabilities" node in the config hash, and merges its values into the base configuration.
+        private const string PSRCExtension = ".psrc";
         private void MergeRoleCapabilitiesIntoConfigHash()
         {
+            List<string> psrcFiles = new List<string>();
+
             if (_configHash.ContainsKey(ConfigFileConstants.RoleCapabilities))
             {
                 string[] roleCapabilities = TryGetStringArray(_configHash[ConfigFileConstants.RoleCapabilities]);
@@ -1821,17 +1827,50 @@ namespace System.Management.Automation.Remoting
                         string roleCapabilityPath = GetRoleCapabilityPath(roleCapability);
                         if (String.IsNullOrEmpty(roleCapabilityPath))
                         {
-                            string message = StringUtil.Format(RemotingErrorIdStrings.CouldNotFindRoleCapability, roleCapability, roleCapability + ".psrc");
+                            string message = StringUtil.Format(RemotingErrorIdStrings.CouldNotFindRoleCapability, roleCapability, roleCapability + PSRCExtension);
                             PSInvalidOperationException ioe = new PSInvalidOperationException(message);
                             ioe.SetErrorId("CouldNotFindRoleCapability");
                             throw ioe;
                         }
 
-                        DISCPowerShellConfiguration roleCapabilityConfiguration = new DISCPowerShellConfiguration(roleCapabilityPath, null);
-                        IDictionary roleCapabilityConfigurationItems = roleCapabilityConfiguration.ConfigHash;
-                        MergeConfigHashIntoConfigHash(roleCapabilityConfigurationItems);
+                        psrcFiles.Add(roleCapabilityPath);
                     }
                 }
+            }
+
+            if (ConfigHash.ContainsKey(ConfigFileConstants.RoleCapabilityFiles))
+            {
+                string[] roleCapabilityFiles = TryGetStringArray(ConfigHash[ConfigFileConstants.RoleCapabilityFiles]);
+                if (roleCapabilityFiles != null)
+                {
+                    foreach (var roleCapabilityFilePath in roleCapabilityFiles)
+                    {
+                        if (!Path.GetExtension(roleCapabilityFilePath).Equals(PSRCExtension, StringComparison.OrdinalIgnoreCase))
+                        {
+                            string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleCapabilityFileExtension, roleCapabilityFilePath);
+                            PSInvalidOperationException ioe = new PSInvalidOperationException(message);
+                            ioe.SetErrorId("InvalidRoleCapabilityFileExtension");
+                            throw ioe;
+                        }
+
+                        if (!File.Exists(roleCapabilityFilePath))
+                        {
+                            string message = StringUtil.Format(RemotingErrorIdStrings.CouldNotFindRoleCapabilityFile, roleCapabilityFilePath);
+                            PSInvalidOperationException ioe = new PSInvalidOperationException(message);
+                            ioe.SetErrorId("CouldNotFindRoleCapabilityFile");
+                            throw ioe;
+                        }
+
+                        psrcFiles.Add(roleCapabilityFilePath);
+                    }
+                }
+            }
+
+            foreach (var roleCapabilityFile in psrcFiles)
+            {
+                DISCPowerShellConfiguration roleCapabilityConfiguration = new DISCPowerShellConfiguration(roleCapabilityFile, null);
+                IDictionary roleCapabilityConfigurationItems = roleCapabilityConfiguration.ConfigHash;
+                MergeConfigHashIntoConfigHash(roleCapabilityConfigurationItems);
             }
         }
 

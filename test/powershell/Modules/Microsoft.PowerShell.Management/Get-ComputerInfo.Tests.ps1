@@ -47,7 +47,7 @@ function Get-PropertyNamesForComputerInfoTest
         "BiosOtherTargetOS",
         "BiosPrimaryBIOS",
         "BiosReleaseDate",
-        "BiosSeralNumber",
+        "BiosSerialNumber",
         "BiosSMBIOSBIOSVersion",
         "BiosSMBIOSPresent",
         "BiosSMBIOSMajorVersion",
@@ -794,7 +794,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             "BiosOtherTargetOS" {return Get-CimClassPropVal Win32_bios OtherTargetOS}
             "BiosPrimaryBIOS" {return Get-CimClassPropVal Win32_bios PrimaryBIOS}
             "BiosReleaseDate" {return Get-CimClassPropVal Win32_bios ReleaseDate}
-            "BiosSeralNumber" {return Get-CimClassPropVal Win32_bios SerialNumber}
+            "BiosSerialNumber" {return Get-CimClassPropVal Win32_bios SerialNumber}
             "BiosSMBIOSBIOSVersion" {return Get-CimClassPropVal Win32_bios SMBIOSBIOSVersion}
             "BiosSMBIOSPresent" {return Get-CimClassPropVal Win32_bios SMBIOSPresent}
             "BiosSMBIOSMajorVersion" {return Get-CimClassPropVal Win32_bios SMBIOSMajorVersion}
@@ -1194,7 +1194,7 @@ try {
 
         It "Verify type returned by Get-ComputerInfo" {
             $computerInfo = Get-ComputerInfo
-            $computerInfo.GetType().Name | Should Be "ComputerInfo"
+            $computerInfo | Should BeOfType Microsoft.PowerShell.Commands.ComputerInfo
         }
     }
 
@@ -1331,9 +1331,9 @@ try {
             ($observed.OsFreeVirtualMemory -gt 0) | Should Be $true
         }
 
-        It "(special case) Test for property = OsLocalDateTime" {
+        It "(special case) Test for property = OsLocalDateTime" -Pending:$true {
             $computerInfo = Get-ComputerInfo
-            $computerInfo.GetType().Name | Should Be "ComputerInfo"
+            $computerInfo | Should BeOfType "ComputerInfo"
         }
 
         It "(special case) Test for property = OsMaxNumberOfProcesses" {
@@ -1356,7 +1356,7 @@ try {
         It "(special case) Test for Filter Property - Property filter with special wild card * and fixed" {
             $propertyFilter = @("BiosC*","*")
             $computerInfo = Get-ComputerInfo -Property $propertyFilter
-            $computerInfo.GetType().Name | Should Be "ComputerInfo"
+            $computerInfo | Should BeOfType Microsoft.PowerShell.Commands.ComputerInfo
         }
     }
 }

@@ -1,7 +1,7 @@
 Describe "Acl cmdlets are available and operate properly" -Tag CI {
     It "Get-Acl returns an ACL object" -pending:(!$IsWindows) {
         $ACL = get-acl $TESTDRIVE
-        $ACL.gettype().FullName | Should be "System.Security.AccessControl.DirectorySecurity"
+        $ACL | Should BeOfType "System.Security.AccessControl.DirectorySecurity"
     }
     It "Set-Acl can set the ACL of a directory" -pending {
         Setup -d testdir

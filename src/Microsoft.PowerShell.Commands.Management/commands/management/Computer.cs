@@ -128,6 +128,14 @@ namespace Microsoft.PowerShell.Commands
         public Int32 BufferSize { get; set; } = 32;
 
         /// <summary>
+        /// The following is the definition of the input parameter "TimeOut".
+        /// Time-out value in milliseconds. If a response is not received in this time, no response is assumed. The default is 1000 milliseconds.
+        /// </summary>
+        [Parameter]
+        [ValidateRange((int)1, Int32.MaxValue)]
+        public Int32 TimeOut { get; set; } = 1000;
+
+        /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
         /// Value of the address requested. The form of the value can be either the
         /// computer name ("wxyz1234"), IPv4 address ("192.168.177.124"), or IPv6
@@ -399,6 +407,9 @@ namespace Microsoft.PowerShell.Commands
             FilterString.Append(" And ");
             FilterString.Append("BufferSize=");
             FilterString.Append(BufferSize);
+            FilterString.Append(" And ");
+            FilterString.Append("TimeOut=");
+            FilterString.Append(TimeOut);
             FilterString.Append(")");
             return FilterString.ToString();
         }
@@ -612,6 +623,7 @@ namespace Microsoft.PowerShell.Commands
 
                         using (CimSession cimSession = RemoteDiscoveryHelper.CreateCimSession(sourceComp, this.Credential, WsmanAuthentication, cancel.Token, this))
                         {
+                            WriteVerbose(String.Format("WMI query {0} sent to {1}", querystring, sourceComp));
                             for (int echoRequestCount = 0; echoRequestCount < Count; echoRequestCount++)
                             {
                                 IEnumerable<CimInstance> mCollection = cimSession.QueryInstances(

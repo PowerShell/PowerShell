@@ -3909,7 +3909,7 @@ namespace System.Management.Automation.Language
                 if (rCurly.Kind != TokenKind.RCurly)
                 {
                     UngetToken(rCurly);
-                    ReportIncompleteInput(lastExtent, () => ParserStrings.MissingEndCurlyBrace);
+                    ReportIncompleteInput(After(lCurly), rCurly.Extent, () => ParserStrings.MissingEndCurlyBrace);
                 }
                 else
                 {
@@ -4269,7 +4269,7 @@ namespace System.Management.Automation.Language
             if (rCurly.Kind != TokenKind.RCurly)
             {
                 UngetToken(rCurly);
-                ReportIncompleteInput(After(lastExtent), () => ParserStrings.MissingEndCurlyBrace);
+                ReportIncompleteInput(After(lCurly), rCurly.Extent, () => ParserStrings.MissingEndCurlyBrace);
             }
 
             var startExtent = customAttributes != null && customAttributes.Count > 0
@@ -6344,8 +6344,8 @@ namespace System.Management.Automation.Language
                 // Note -  the error handling function inspects the error message body to extra the ParserStrings property name. It uses this value as the errorid.
                 var errorMessageExpression = parsingSchemaElement ?
                     (Expression<Func<string>>)(() => ParserStrings.IncompletePropertyAssignmentBlock)
-                    : (Expression<Func<string>>)(() => ParserStrings.IncompleteHashLiteral);
-                ReportIncompleteInput(keyValuePairs.Any() ? After(keyValuePairs.Last().Item2) : After(atCurlyToken), rCurly.Extent, errorMessageExpression);
+                    : (Expression<Func<string>>)(() => ParserStrings.MissingEndCurlyBrace);
+                ReportIncompleteInput(After(atCurlyToken), rCurly.Extent, errorMessageExpression);
                 endExtent = Before(rCurly);
             }
             else
@@ -6394,7 +6394,7 @@ namespace System.Management.Automation.Language
                     ? (() => (ParserStrings.MissingEqualsInPropertyAssignmentBlock))
                     : (Expression<Func<string>>)(() => ParserStrings.MissingEqualsInHashLiteral);
                 ReportError(errorExtent, errorMessageExpression);
-                SyncOnError(true, TokenKind.RCurly, TokenKind.Semi, TokenKind.NewLine);
+                SyncOnError(false, TokenKind.RCurly, TokenKind.Semi, TokenKind.NewLine);
                 return new KeyValuePair(key, new ErrorStatementAst(errorExtent));
             }
 
