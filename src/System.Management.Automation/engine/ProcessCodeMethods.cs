@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell {
         /// <param name="process"></param>
         /// <returns>the pid of the parent process</returns>
 #if UNIX
-		internal static int GetParentPid(Process process)
+        internal static int GetParentPid(Process process)
         {
             return Platform.NonWindowsGetProcessParentPid(process.Id);
         }
