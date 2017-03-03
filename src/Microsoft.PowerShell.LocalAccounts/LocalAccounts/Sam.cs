@@ -1271,6 +1271,14 @@ namespace System.Management.Automation.SecurityAccountsManager
                                             },
                                             userHandle);
             }
+            catch (Exception)
+            {
+                if (IntPtr.Zero != userHandle)
+                {
+                    SamApi.SamDeleteUser(userHandle);
+                }
+                throw;
+            }
             finally
             {
                 if (buffer != IntPtr.Zero)
