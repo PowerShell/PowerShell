@@ -1114,7 +1114,13 @@ namespace System.Management.Automation
         public RegexOptions Options { set; get; } = RegexOptions.IgnoreCase;
 
         /// <summary>
-        /// Gets or sets the custom error message that is displayed to the user
+        /// Gets or sets the custom error message pattern that is displayed to the user.
+        /// 
+        /// The text representation of the object being validated and the validating regex is passed as
+        /// the first and second formatting parameters to the ErrorMessage formatting pattern.
+        /// <example>
+        /// [ValidatePattern("\s+", ErrorMessage="The text '{0}' did not pass validation of regex '{1}'")]
+        /// </example>
         /// </summary>
         public string ErrorMessage { get; set; }
 
@@ -1170,7 +1176,14 @@ namespace System.Management.Automation
     public sealed class ValidateScriptAttribute : ValidateEnumeratedArgumentsAttribute
     {
         /// <summary>
-        /// Gets or sets the custom error message that is displayed to the user
+        /// Gets or sets the custom error message that is displayed to the user.
+        /// 
+        /// The item being validated and the validating scriptblock is passed as the first and second
+        /// formatting argument.
+        /// 
+        /// <example>
+        /// [ValidateScript("$_ % 2", ErrorMessage = "The item '{0}' did not pass validation of script '{1}'")]
+        /// </example>
         /// </summary>
         public string ErrorMessage { get; set; }
 
@@ -1350,6 +1363,13 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the custom error message that is displayed to the user
+        /// 
+        /// The item being validated and a text representation of the validation set
+        /// is passed as the first and second formatting argument to the ErrorMessage formatting pattern.
+        /// 
+        /// <example>
+        /// [ValidateSet("A","B","C", ErrorMessage="The item '{0}' is not part of the set '{1}'.")
+        /// </example>
         /// </summary>
         public string ErrorMessage { get; set; }
 
