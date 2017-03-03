@@ -348,6 +348,17 @@ try {
             VerifyFailingTest $sb "InvalidPassword,Microsoft.PowerShell.Commands.NewLocalUserCommand"
         }
 
+        It "User should not be created when invalid password is provided" {
+            $sb = {
+                New-LocalUser TestUserNew1 -Password (ConvertTo-SecureString ("A"*257) -AsPlainText -Force)
+            }
+            VerifyFailingTest $sb "InvalidPassword,Microsoft.PowerShell.Commands.NewLocalUserCommand"
+            $sb1 = {
+                Get-LocalUser TestUserNew1
+            }
+            VerifyFailingTest $sb1 "UserNotFound,Microsoft.PowerShell.Commands.GetLocalUserCommand"
+        }
+
         It "Can set UserMayNotChangePassword" {
             $result = New-LocalUser TestUserNew1 -NoPassword -UserMayNotChangePassword
 
