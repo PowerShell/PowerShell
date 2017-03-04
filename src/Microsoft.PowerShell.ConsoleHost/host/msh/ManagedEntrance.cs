@@ -3,12 +3,15 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
+using System.Diagnostics;
 using System.Reflection;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Globalization;
+using System.IO;
+
 #if CORECLR
 using System.Runtime.InteropServices;
 #endif
@@ -106,13 +109,12 @@ namespace Microsoft.PowerShell
                     RunspaceConfigForSingleShell.Create(consoleFilePath, out warning);
             }
             int exitCode = 0;
-            string systemYear = DateTime.Now.Year.ToString();
             try
             {
 #if CORECLR
-                    var banner = string.Format(ManagedEntranceStrings.ShellBannerNonWindowsPowerShell, systemYear);
+                var banner = string.Format(ManagedEntranceStrings.ShellBannerNonWindowsPowerShell);
 #else
-                var banner = string.Format(ManagedEntranceStrings.ShellBanner, systemYear);
+                var banner = string.Format(ManagedEntranceStrings.ShellBanner);
 #endif
                 exitCode = Microsoft.PowerShell.ConsoleShell.Start(
                     configuration,
