@@ -3,14 +3,12 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System;
-using System.Diagnostics;
 using System.Reflection;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Globalization;
-using System.IO;
 
 #if CORECLR
 using System.Runtime.InteropServices;
@@ -112,9 +110,9 @@ namespace Microsoft.PowerShell
             try
             {
 #if CORECLR
-                var banner = string.Format(ManagedEntranceStrings.ShellBannerNonWindowsPowerShell);
+                var banner = ManagedEntranceStrings.ShellBannerNonWindowsPowerShell;
 #else
-                var banner = string.Format(ManagedEntranceStrings.ShellBanner);
+                var banner = ManagedEntranceStrings.ShellBanner;
 #endif
                 exitCode = Microsoft.PowerShell.ConsoleShell.Start(
                     configuration,
