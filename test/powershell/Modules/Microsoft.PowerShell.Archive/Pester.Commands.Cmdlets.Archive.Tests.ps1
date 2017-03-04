@@ -8,7 +8,7 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
 
     AfterAll {
         $global:ProgressPreference = $_progressPreference
-        $env:PSMODULEPATH = $_modulePath
+        $env:PSModulePath = $_modulePath
     }
     BeforeAll {
         # remove the archive module forcefully, to be sure we get the correct version
@@ -19,9 +19,9 @@ Describe "Test suite for Microsoft.PowerShell.Archive module" -Tags "CI" {
         # Write-Progress not supported yet on Core
         $_progressPreference = $ProgressPreference
         # we need to be sure that we get the correct archive module
-        $_modulePath = $env:PSMODULEPATH
+        $_modulePath = $env:PSModulePath
         $powershellexe = (get-process -pid $PID).MainModule.FileName
-        $env:PSMODULEPATH = join-path ([io.path]::GetDirectoryName($powershellexe)) Modules
+        $env:PSModulePath = join-path ([io.path]::GetDirectoryName($powershellexe)) Modules
         if ( $IsCoreCLR ) { $global:ProgressPreference = "SilentlyContinue" }
 
         Setup -d SourceDir

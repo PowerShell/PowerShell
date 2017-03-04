@@ -481,12 +481,12 @@ function Invoke-OpenCover
         try
         {
             # check to be sure that the module path is present
-            # this isn't done earlier because there's no need to change env:psmodulepath unless we're going to really run tests
-            $saveModPath = $env:psmodulepath
-            $env:psmodulepath = "${PowerShellExeDirectory}\Modules"
-            if ( ! (test-path $env:psmodulepath) )
+            # this isn't done earlier because there's no need to change env:PSModulePath unless we're going to really run tests
+            $saveModPath = $env:PSModulePath
+            $env:PSModulePath = "${PowerShellExeDirectory}\Modules"
+            if ( ! (test-path $env:PSModulePath) )
             {
-                throw "${env:psmodulepath} does not exist"
+                throw "${env:PSModulePath} does not exist"
             }
 
             # invoke OpenCover elevated

@@ -3933,7 +3933,7 @@ namespace Microsoft.PowerShell.Workflow
                     }
                     else
                     {
-                        continue; // Something like $env:psmodulepath
+                        continue; // Something like $env:PSModulePath
                     }
                 }
                 else

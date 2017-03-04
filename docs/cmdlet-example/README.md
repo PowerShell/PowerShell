@@ -110,7 +110,7 @@ This build/restore process should work anywhere .NET Core works, including Windo
 Deployment
 ----------
 
-In PowerShell, check `$env:PSMODULEPATH` and install the new cmdlet in its own
+In PowerShell, check `$env:PSModulePath` and install the new cmdlet in its own
 module folder, such as, on Linux,
 `~/.powershell/Modules/SendGreeting/SendGreeting.dll`.
 

@@ -763,7 +763,7 @@ function Start-PSPester {
     }
     else {
         try {
-            $originalModulePath = $env:PSMODULEPATH
+            $originalModulePath = $env:PSModulePath
             if ($Unelevate)
             {
                 Start-UnelevatedProcess -process $powershell -arguments @('-noprofile', '-c', $Command)
@@ -793,7 +793,7 @@ function Start-PSPester {
                 & $powershell -noprofile -c $Command
             }
         } finally {
-            $env:PSMODULEPATH = $originalModulePath
+            $env:PSModulePath = $originalModulePath
             if ($Unelevate)
             {
                 Remove-Item $outputBufferFilePath
@@ -1733,7 +1733,7 @@ function Start-DevPowerShell {
             if (-not $Command) {
                 $ArgumentList = @('-NoExit') + $ArgumentList
             }
-            $Command = '$env:PSMODULEPATH = Join-Path $env:DEVPATH Modules; ' + $Command
+            $Command = '$env:PSModulePath = Join-Path $env:DEVPATH Modules; ' + $Command
         }
 
         if ($Command) {

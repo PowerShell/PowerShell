@@ -133,14 +133,14 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
                 $fullPowerShell = Join-Path "$env:SystemRoot" "System32\WindowsPowerShell\v1.0\powershell.exe"
 
                 try {
-                    $modulePathCopy = $env:PSMODULEPATH
-                    $env:PSMODULEPATH = $null
+                    $modulePathCopy = $env:PSModulePath
+                    $env:PSModulePath = $null
 
                     $importedCertPath = & $fullPowerShell -NoProfile -NonInteractive `
                                                           -Command "Import-PfxCertificate $certLocation -CertStoreLocation cert:\CurrentUser\My | % PSPath"
                     $importedCert = Get-ChildItem $importedCertPath
                 } finally {
-                    $env:PSMODULEPATH = $modulePathCopy
+                    $env:PSModulePath = $modulePathCopy
                 }
             }
             else

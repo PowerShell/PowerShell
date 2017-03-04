@@ -518,11 +518,11 @@ namespace System.Management.Automation
         {
             if (PropertyScope.CurrentUser == scope)
             {
-                return ModuleIntrinsics.GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.User);
+                return ModuleIntrinsics.GetExpandedEnvironmentVariable("PSModulePath", EnvironmentVariableTarget.User);
             }
             else
             {
-                return ModuleIntrinsics.GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.Machine);
+                return ModuleIntrinsics.GetExpandedEnvironmentVariable("PSModulePath", EnvironmentVariableTarget.Machine);
             }
         }
 
