@@ -740,3 +740,6 @@ Coveralls.net
 powershell.version
 csmacnz
 Coveralls.exe
+Microsoft.PowerShell.Core
+Microsoft.PowerShell.Utility
+Microsoft.PowerShell.Management
