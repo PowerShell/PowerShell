@@ -662,6 +662,36 @@ namespace System.Management.Automation
         #region Misc
 
         /// <summary>
+        /// Facade for Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks)
+        /// Inserts line breaks after every 76 characters in the string representation.
+        /// </summary>
+        internal static string ToBase64StringWithLineBreaks(byte[] bytes)
+        {
+#if CORECLR
+            // Inserts line breaks after every 76 characters in the string representation.
+            string encodedRawString = Convert.ToBase64String(bytes);
+            if (encodedRawString.Length <= 76)
+                return encodedRawString;
+            
+            StringBuilder builder = new StringBuilder(encodedRawString.Length);
+            int index = 0, remainingLen = encodedRawString.Length;
+            while (remainingLen > 76)
+            {
+                builder.Append(encodedRawString, index, 76);
+                builder.Append(System.Environment.NewLine);
+
+                index += 76;
+                remainingLen -= 76;
+            }
+
+            builder.Append(encodedRawString, index, remainingLen);
+            return builder.ToString();
+#else
+            return Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);
+#endif
+        }
+
+        /// <summary>
         /// Facade for RemotingServices.IsTransparentProxy(object)
         /// </summary>
         [MethodImpl(MethodImplOptions.AggressiveInlining)]

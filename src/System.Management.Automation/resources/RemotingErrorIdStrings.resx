@@ -1359,9 +1359,6 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   <data name="ReceivePSSessionInDebugMode" xml:space="preserve">
     <value>The remote session command is currently stopped in the debugger.  Use the Enter-PSSession cmdlet to connect interactively to the remote session and automatically enter into the console debugger.</value>
   </data>
-  <data name="RCDisconnectDebug" xml:space="preserve">
-    <value>Session {0} with instance ID {1} on computer {2} has been disconnected because the script running on the session has stopped at a breakpoint. Use the Enter-PSSession cmdlet on this session to connect back to the session and begin interactive debugging.</value>
-  </data>
   <data name="RemoteDebuggingEndpointVersionError" xml:space="preserve">
     <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running Windows PowerShell {0} or greater.</value>
   </data>

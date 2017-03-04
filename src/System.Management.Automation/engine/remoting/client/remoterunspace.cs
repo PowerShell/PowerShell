@@ -1351,7 +1351,7 @@ namespace System.Management.Automation
                     var psVersionTable = psApplicationPrivateData[PSVersionInfo.PSVersionTableName] as PSPrimitiveDictionary;
                     if (psVersionTable.ContainsKey(PSVersionInfo.PSVersionName))
                     {
-                        ServerVersion = psVersionTable[PSVersionInfo.PSVersionName] as Version;
+                        ServerVersion = PSObject.Base(psVersionTable[PSVersionInfo.PSVersionName]) as Version;
                     }
                 }
             }
@@ -2435,7 +2435,7 @@ namespace System.Management.Automation
                         finally
                         {
                             _handleDebuggerStop = false;
-                            if (!_detachCommand)
+                            if (!_detachCommand && !args.SuspendRemote)
                             {
                                 SetDebuggerAction(args.ResumeAction);
                             }
@@ -2468,7 +2468,7 @@ namespace System.Management.Automation
             finally
             {
                 // Restore runspace availability.
-                if (restoreAvailability)
+                if (restoreAvailability && (_runspace.RunspaceAvailability == RunspaceAvailability.RemoteDebug))
                 {
                     SetRemoteDebug(false, prevAvailability);
                 }

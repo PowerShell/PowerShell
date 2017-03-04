@@ -183,6 +183,7 @@
                 "System.Reflection.Emit.Lightweight": "4.3.0",
                 "System.Security.AccessControl": "4.3.0",
                 "System.Security.Cryptography.Algorithms": "4.3.0",
+                "System.Security.Cryptography.Pkcs": "4.3.0",
                 "System.Security.Cryptography.X509Certificates": "4.3.0",
                 "System.Threading.Thread": "4.3.0",
                 "System.Threading.Tasks.Parallel": "4.3.0",

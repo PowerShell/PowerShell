@@ -2,7 +2,7 @@ Package installation instructions
 =================================
 
 Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16],
-[CentOS 7][cos], [many Linux distributions (AppImage)][lai], and [macOS 10.11][mac].
+[CentOS 7][cos], [Arch Linux][arch], [many Linux distributions (AppImage)][lai], and [macOS 10.11][mac].
 All packages are available on our GitHub [releases][] page.
 
 All of these steps can be done automatically by the [`download.sh`][download] script.
@@ -19,6 +19,7 @@ Once the package is installed, run `powershell` from a terminal.
 [u14]: #ubuntu-1404
 [u16]: #ubuntu-1604
 [cos]: #centos-7
+[arch]: #arch-linux
 [lai]: #linux-appimage
 [mac]: #macos-1011
 [download]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-alpha.16/tools/download.sh
@@ -105,6 +106,19 @@ sudo yum remove powershell
 ```
 
 [CentOS 7]: https://www.centos.org/download/
+
+Arch Linux
+==========
+
+PowerShell is available from the [Arch Linux][] User Repository (AUR) as a [release][arch-release] or the [latest development build][arch-git].
+
+Packages in the AUR are community maintained - there is no official support.
+
+For more information on installing packages from the AUR, see the [Arch Linux wiki](https://wiki.archlinux.org/index.php/Arch_User_Repository#Installing_packages).
+
+[Arch Linux]: https://www.archlinux.org/download/
+[arch-release]: https://aur.archlinux.org/packages/powershell/
+[arch-git]: https://aur.archlinux.org/packages/powershell-git/
 
 Linux AppImage
 ==============

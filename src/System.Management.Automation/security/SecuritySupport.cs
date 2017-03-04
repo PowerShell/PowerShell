@@ -1012,17 +1012,11 @@ namespace Microsoft.PowerShell.Commands
 
 namespace System.Management.Automation
 {
-#if !CORECLR
-
     using System.Security.Cryptography.Pkcs;
 
     /// <summary>
     /// Utility class for CMS (Cryptographic Message Syntax) related operations
     /// </summary>
-    /// <remarks>
-    /// The namespace 'System.Security.Cryptography.Pkcs' is not available in CoreCLR,
-    /// so the Cryptographic Message Syntax (CMS) will not be supported on OneCore PS.
-    /// </remarks>
     internal static class CmsUtils
     {
         internal static string Encrypt(byte[] contentBytes, CmsMessageRecipient[] recipients, SessionState sessionState, out ErrorRecord error)
@@ -1086,8 +1080,7 @@ namespace System.Management.Automation
             StringBuilder output = new StringBuilder();
             output.AppendLine(BEGIN_CMS_SIGIL);
 
-            string encodedString = Convert.ToBase64String(
-                bytes, Base64FormattingOptions.InsertLineBreaks);
+            string encodedString = ClrFacade.ToBase64StringWithLineBreaks(bytes);
             output.AppendLine(encodedString);
             output.Append(END_CMS_SIGIL);
 
@@ -1130,8 +1123,6 @@ namespace System.Management.Automation
             return messageBytes;
         }
     }
-
-#endif
 
     /// <summary>
     /// Represents a message recipient for the Cms cmdlets.
@@ -1271,7 +1262,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            List<X509Certificate2> certificatesToProcess = new List<X509Certificate2>(); ;
+            List<X509Certificate2> certificatesToProcess = new List<X509Certificate2>();
             try
             {
                 X509Certificate2 newCertificate = new X509Certificate2(messageBytes);
