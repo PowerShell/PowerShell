@@ -419,12 +419,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         
         $command = "Invoke-WebRequest -Uri 'http://httpbin.org/post' -CustomMethod POST -Body 'testparam=testvalue'"
         $result = ExecuteWebCommand -command $command
-        ($result.Output.Content | ConvertFrom-Json).headers.'Content-Type' | Should Be "application/x-www-form-urlencoded"
+        ($result.Output.Content | ConvertFrom-Json).form.testparam | Should Be "testvalue"
     }
 
     It "Validate Invoke-WebRequest body is converted to query params for CustomMethod GET" {
         
-        $command = "Invoke-WebRequest -Uri 'http://httpbin.org/get' -Method GET -Body @{'testparam'='testvalue'}"
+        $command = "Invoke-WebRequest -Uri 'http://httpbin.org/get' -CustomMethod GET -Body @{'testparam'='testvalue'}"
         $result = ExecuteWebCommand -command $command
         ($result.Output.Content | ConvertFrom-Json).args.testparam | Should Be "testvalue"
     }
@@ -696,12 +696,12 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         
         $command = "Invoke-RestMethod -Uri 'http://httpbin.org/post' -CustomMethod POST -Body 'testparam=testvalue'"
         $result = ExecuteWebCommand -command $command
-        $result.Output.headers.'Content-Type' | Should Be "application/x-www-form-urlencoded"
+        $result.Output.form.testparam | Should Be "testvalue"
     }
 
     It "Validate Invoke-RestMethod body is converted to query params for CustomMethod GET" {
         
-        $command = "Invoke-RestMethod -Uri 'http://httpbin.org/get' -Method GET -Body @{'testparam'='testvalue'}"
+        $command = "Invoke-RestMethod -Uri 'http://httpbin.org/get' -CustomMethod GET -Body @{'testparam'='testvalue'}"
         $result = ExecuteWebCommand -command $command
         $result.Output.args.testparam | Should Be "testvalue"
     }
