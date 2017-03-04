@@ -56,6 +56,11 @@ You can download and install a PowerShell package for any of the following platf
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 
+Community Dashboard
+-------------------
+
+[Dashboard](https://aka.ms/psgithubbi) with visualizations for community contributions and project status using PowerShell, Azure, and PowerBI.
+
 Chat Room
 ---------
 
