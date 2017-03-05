@@ -243,6 +243,9 @@ ForEach-Object
  - docs/maintainers/issue-management.md
 omi
 PackageManagement
+Microsoft.PowerShell.Core
+Microsoft.PowerShell.Utility
+Microsoft.PowerShell.Management
  - docs/maintainers/pull-request-process.md
 ci-system
  - docs/maintainers/README.md
