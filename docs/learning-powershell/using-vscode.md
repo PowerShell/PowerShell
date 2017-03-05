@@ -18,9 +18,9 @@ Editing with Visual Studio Code
 
 * **macOS**: follow the installation instructions on the [Running VS Code on macOS](https://code.visualstudio.com/docs/setup/mac) page
 
-  **NOTE:** On OS X you must install OpenSSL for the PowerShell extension to work correctly.  The easiest way to
-            accomplish this is to install [Homebrew](http://brew.sh/) and then run `brew install openssl`.  The PowerShell extension
-            will now be able to load successfully.
+  **NOTE:** On OS X you must install OpenSSL for the PowerShell extension to work correctly.
+            The easiest way to accomplish this is to install [Homebrew](http://brew.sh/) and then run `brew install openssl`.
+            The PowerShell extension will now be able to load successfully.
 
 * **Windows**: follow the installation instructions on the [Running VS Code on Windows](https://code.visualstudio.com/docs/setup/windows) page
 
@@ -34,12 +34,14 @@ Editing with Visual Studio Code
 
 - Launch **Quick Open** by pressing **Ctrl+P** (**Cmd+P** on Mac).
 - In Quick Open, type **ext install powershell** and hit **Enter**.
-- The **Extensions** view will open on the Side Bar. Select the PowerShell extension from Microsoft. You will see something like below:
+- The **Extensions** view will open on the Side Bar. Select the PowerShell extension from Microsoft.
+  You will see something like below:
 
   ![VSCode](vscode.png)
 
 - Click the **Install** button on the PowerShell extension from Microsoft.
--	After the install, you will see the **Install** button turns to **Reload**. Click on **Reload**.
+-	After the install, you will see the **Install** button turns to **Reload**.
+  Click on **Reload**.
 -	After Visual Studio Code has reload, you are ready for editing.
 
 For example, to create a new file, click **File->New**.
@@ -49,13 +51,11 @@ To exit Visual Studio Code, **File->Exit**.
 
 #### Using a specific installed version of PowerShell
 
-If you wish to use a specific installation of PowerShell with Visual Studio Code,
-you will need to add a new variable to your user settings file.
+If you wish to use a specific installation of PowerShell with Visual Studio Code, you will need to add a new variable to your user settings file.
 
 1. Click **File -> Preferences -> User Settings**
-2. Two editor panes will appear.  In the right-most pane (`settings.json`), insert the setting below
-   appropriate for your OS somewhere between the two curly brackets (`{` and `}`) and replace *<version>*
-   with the installed PowerShell version:
+2. Two editor panes will appear.
+   In the right-most pane (`settings.json`), insert the setting below appropriate for your OS somewhere between the two curly brackets (`{` and `}`) and replace *<version>* with the installed PowerShell version:
 
   ```json
     // On Windows:
@@ -74,12 +74,17 @@ you will need to add a new variable to your user settings file.
 Debugging with Visual Studio Code
 ----
 ### No-workspace debugging
-As of Visual Studio Code version 1.9 you can debug PowerShell scripts without having to open the folder containing the PowerShell script. Simply open the PowerShell script file with **File->Open File...**, set a breakpoint on a line (press F9) and then press F5 to start debugging. You will see the Debug actions pane appear. This allows you to break into the debugger, step, resume and stop debugging.
+As of Visual Studio Code version 1.9 you can debug PowerShell scripts without having to open the folder containing the PowerShell script.
+Simply open the PowerShell script file with **File->Open File...**, set a breakpoint on a line (press F9) and then press F5 to start debugging.
+You will see the Debug actions pane appear which allows you to break into the debugger, step, resume and stop debugging.
 
 ### Workspace debugging
-Workspace debugging refers to debugging in the context of a folder that you have opened in Visual Studio Code using **Open Folder...** from the **File** menu. The folder you open is typically your PowerShell project folder and/or the root of your Git repository.
+Workspace debugging refers to debugging in the context of a folder that you have opened in Visual Studio Code using **Open Folder...** from the **File** menu.
+The folder you open is typically your PowerShell project folder and/or the root of your Git repository.
 
-Even in this mode, you can start debugging the currently selected PowerShell script by simply pressing F5.  However, workspace debugging allows you to define multiple debug configurations other than just debugging the currently open file.  For instance, you can add a configurations to:
+Even in this mode, you can start debugging the currently selected PowerShell script by simply pressing F5.
+However, workspace debugging allows you to define multiple debug configurations other than just debugging the currently open file.
+For instance, you can add a configurations to:
 
 * Launch Pester tests in the debugger
 * Launch a specific file with arguments in the debugger
@@ -92,7 +97,9 @@ Follow these steps to create your debug configuration file:
 3. Visual Studio Code will prompt you to **Select Environment**.
 Choose **PowerShell**.
 
-   When you do this, Visual Studio Code creates a directory and a file **.vscode\launch.json** in the root of your workspace folder.  This is where your debug configuration is stored. If your files are in a Git repository, you will typically want to commit the launch.json file.  The contents of the launch.json file are:
+   When you do this, Visual Studio Code creates a directory and a file **.vscode\launch.json** in the root of your workspace folder.
+   This is where your debug configuration is stored. If your files are in a Git repository, you will typically want to commit the launch.json file.
+   The contents of the launch.json file are:
 
 ```json
 {
@@ -123,7 +130,10 @@ Choose **PowerShell**.
 }
 
 ```
-This represents the common debug scenarios.  However, when you open this file in the editor, you will see an **Add Configuration...** button.  You can press this button to add more PowerShell debug configurations. One handy configuration to add is **PowerShell: Launch Script**.  With this configuration, you can specify a specific file with optional arguments that should be launched whenever you press F5 no matter which file is currently active in the editor.
+This represents the common debug scenarios.
+However, when you open this file in the editor, you will see an **Add Configuration...** button.
+You can press this button to add more PowerShell debug configurations. One handy configuration to add is **PowerShell: Launch Script**.
+With this configuration, you can specify a specific file with optional arguments that should be launched whenever you press F5 no matter which file is currently active in the editor.
 
 Once the debug configuration is established, you can select which configuration you want to use during a debug session by selecting one from the debug configuration dropdown in the **Debug** view's toolbar.
 
