@@ -380,9 +380,12 @@ namespace System.Management.Automation
             if (s_defaultEncoding == null)
             {
 #if CORECLR     // Encoding.Default is not in CoreCLR
-                // As suggested by CoreCLR team (tarekms), use latin1 (ISO-8859-1, CodePage 28591) as the default encoding.
-                // We will revisit this if it causes any failures when running tests on Core PS.
-                s_defaultEncoding = Encoding.GetEncoding(28591);
+                // Suggested by CoreCLR team (tarekms), use latin1 (ISO-8859-1, CodePage 28591) as the default encoding.
+                // However, printable characters in the codepoint range 0x80-0x9F are unavailable.  Logical choice is to
+                // use Windows-1252 which is a superset of ISO-8859-1 and adopted by HTML5 which treats ISO-8859-1 as
+                // mismarked Windows-1252 encoding.
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+                s_defaultEncoding = Encoding.GetEncoding(1252);
 #else
                 s_defaultEncoding = Encoding.Default;
 #endif

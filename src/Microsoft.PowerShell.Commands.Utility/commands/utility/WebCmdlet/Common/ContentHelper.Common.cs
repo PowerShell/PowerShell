@@ -17,6 +17,8 @@ namespace Microsoft.PowerShell.Commands
         private static readonly char[] s_contentTypeParamSeparator = { ';' };
 
         // default codepage encoding for web content.  See RFC 2616.
+        // since HTML5 which is commonly used now treats ISO-8859-1 the same as Windows-1252,
+        // we should be fine leaving this as ISO-8859-1 for compatibility reasons
         private const string _defaultCodePage = "ISO-8859-1";
 
         #endregion Constants

@@ -15,7 +15,7 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
             $result| Should be "$file1"
         }
     }
-    Context "Set-Content/Get-Content should set/get the content of an exisiting file" {
+    Context "Set-Content/Get-Content should set/get the content of an existing file" {
         BeforeAll {
           New-Item -Path $filePath1 -ItemType File -Force
         }
@@ -106,5 +106,15 @@ Describe "Set-Content should work for PSDrive with UNC path as root" -Tags @('CI
             Remove-PSDrive -Name Foo
             net share testshare /delete
         }
+    }
+}
+
+Describe "Set-Content encoding tests" -Tags @('CI') {
+    It "Should correct use Windows-1252 encoding by default" {
+        # this character is not available in ISO-8859-1 which is a subset of Windows-1252
+        [char]$char = [Convert]::ToChar(8364) # '€'
+
+        $char | Set-Content -Path testdrive:/test.txt
+        [int][char](Get-Content -Path testdrive:/test.txt) | Should Be ([int]($char))
     }
 }
