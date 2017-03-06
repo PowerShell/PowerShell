@@ -1,4 +1,3 @@
-return
 try {
     if ( ! $IsWindows ) {
         $PSDefaultParameterValues['it:skip'] = $true
