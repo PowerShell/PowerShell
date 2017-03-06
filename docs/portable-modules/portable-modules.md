@@ -5,6 +5,9 @@ It is possible to build a module that targets Windows PowerShell and PowerShell 
 
 One simply needs to target `netstandard1.3` and include an appropriate reference assembly for `System.Management.Automation`, see this [example](https://github.com/Jaykul/NetCoreModuleProof).
 
+`NetStandard` is the formal specification of the .Net apis that are supported by any implementation of .Net that supports that version of the standard.
+Different implementations of .Net include Desktop, Core, and Mono.
+
 Unfortunately, many (most?) non-trivial modules will not work in with Windows PowerShell unless some [facade assemblies](https://github.com/dotnet/standard/blob/6051a7df6d86353f900c46a64f104593647d2904/docs/history/evolution-of-design-time-assemblies.md) are installed.
 
 .Net Core refactored the assemblies so that commonly used types from `mscorlib.dll` are now in `System.Runtime.dll` and less commonly used types are in other assemblies.
@@ -44,7 +47,7 @@ I can see several possible solutions, in roughly decreasing order of preference:
 * `PowerShellGet` could detect read the metadata from binary modules it is installing and automatically install the facade assemblies that are required.
   Installation should ideally go in a the GAC or alongside `powershell.exe`, but that requires elevation, so installing along with the module is an option.
 
-* We can chose a set of facade assemblies to install on older versions of Windows.
+* We can choose a set of facade assemblies to install on older versions of Windows.
   These assemblies can be installed in either the GAC or alongside `powershell.exe`.
 
 * We can require module authors to package the facade assemblies with their module.
