@@ -400,6 +400,35 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Error | Should BeNullOrEmpty
     }
 
+    It "Validate Invoke-WebRequest StandardMethod and CustomMethod parameter sets" {
+        
+        #Validate that parameter sets are functioning correctly
+        $errorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        { Invoke-WebRequest -Uri 'http://http.lee.io/method' -Method GET -CustomMethod TEST } | ShouldBeErrorId $errorId
+    }
+
+    It "Validate Invoke-WebRequest CustomMethod method is used" {
+        
+        $command = "Invoke-WebRequest -Uri 'http://http.lee.io/method' -CustomMethod TEST"
+        $result = ExecuteWebCommand -command $command
+        $result.Error | Should BeNullOrEmpty
+        ($result.Output.Content | ConvertFrom-Json).output.method | Should Be "TEST"
+    }
+
+    It "Validate Invoke-WebRequest default ContentType for CustomMethod POST" {
+        
+        $command = "Invoke-WebRequest -Uri 'http://httpbin.org/post' -CustomMethod POST -Body 'testparam=testvalue'"
+        $result = ExecuteWebCommand -command $command
+        ($result.Output.Content | ConvertFrom-Json).form.testparam | Should Be "testvalue"
+    }
+
+    It "Validate Invoke-WebRequest body is converted to query params for CustomMethod GET" {
+        
+        $command = "Invoke-WebRequest -Uri 'http://httpbin.org/get' -CustomMethod GET -Body @{'testparam'='testvalue'}"
+        $result = ExecuteWebCommand -command $command
+        ($result.Output.Content | ConvertFrom-Json).args.testparam | Should Be "testvalue"
+    }
+    
     It "Validate Invoke-WebRequest returns HTTP errors in exception" {
 
         $command = "Invoke-WebRequest -Uri http://httpbin.org/status/418"
@@ -647,6 +676,34 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $command = "Invoke-RestMethod -Uri 'http://httpbin.org/response-headers?Content-Type='"
         $result = ExecuteWebCommand -command $command
         $result.Error | Should BeNullOrEmpty
+    }
+
+    It "Validate Invoke-RestMethod StandardMethod and CustomMethod parameter sets" {
+
+        $errorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        { Invoke-RestMethod -Uri 'http://http.lee.io/method' -Method GET -CustomMethod TEST } | ShouldBeErrorId $errorId
+    }
+
+    It "Validate CustomMethod method is used" {
+        
+        $command = "Invoke-RestMethod -Uri 'http://http.lee.io/method' -CustomMethod TEST"
+        $result = ExecuteWebCommand -command $command
+        $result.Error | Should BeNullOrEmpty
+        $result.Output.output.method | Should Be "TEST"
+    }
+
+    It "Validate Invoke-RestMethod default ContentType for CustomMethod POST" {
+        
+        $command = "Invoke-RestMethod -Uri 'http://httpbin.org/post' -CustomMethod POST -Body 'testparam=testvalue'"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.form.testparam | Should Be "testvalue"
+    }
+
+    It "Validate Invoke-RestMethod body is converted to query params for CustomMethod GET" {
+        
+        $command = "Invoke-RestMethod -Uri 'http://httpbin.org/get' -CustomMethod GET -Body @{'testparam'='testvalue'}"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.args.testparam | Should Be "testvalue"
     }
 
     It "Invoke-RestMethod supports request that returns plain text response." {

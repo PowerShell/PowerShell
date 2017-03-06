@@ -154,7 +154,22 @@ namespace Microsoft.PowerShell.Commands
         internal virtual HttpRequestMessage GetRequest(Uri uri)
         {
             Uri requestUri = PrepareUri(uri);
-            HttpMethod httpMethod = GetHttpMethod(Method);
+            HttpMethod httpMethod = null;
+          
+            switch (ParameterSetName)
+            {
+                case "StandardMethod":
+                    // set the method if the parameter was provided
+                    httpMethod = GetHttpMethod(Method);
+                    break;
+                case "CustomMethod":
+                    if (!string.IsNullOrEmpty(CustomMethod))
+                    {
+                        // set the method if the parameter was provided
+                        httpMethod = new HttpMethod(CustomMethod.ToString().ToUpperInvariant());
+                    }
+                    break;
+            }
 
             // create the base WebRequest object
             var request = new HttpRequestMessage(httpMethod, requestUri);
@@ -229,7 +244,7 @@ namespace Microsoft.PowerShell.Commands
                 //request
             }
             // ContentType == null
-            else if (Method == WebRequestMethod.Post)
+            else if (Method == WebRequestMethod.Post || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "POST"))
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
                 string contentType = null;
