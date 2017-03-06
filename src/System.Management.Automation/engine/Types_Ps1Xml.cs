@@ -272,6 +272,8 @@ namespace System.Management.Automation.Runspaces
                 new AliasPropertyData("NPM", "NonpagedSystemMemorySize64"));
             td26.Members.Add("Path",
                 new ScriptPropertyData(@"Path", GetScriptBlock(@"$this.Mainmodule.FileName"), null));
+            td26.Members.Add("Parent",
+                new CodePropertyData("Parent", GetMethodInfo(typeof(Microsoft.PowerShell.ProcessCodeMethods), @"GetParentProcess")));
             td26.Members.Add("Company",
                 new ScriptPropertyData(@"Company", GetScriptBlock(@"$this.Mainmodule.FileVersionInfo.CompanyName"), null));
             td26.Members.Add("CPU",

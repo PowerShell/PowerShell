@@ -1081,6 +1081,9 @@
     <Compile Include="..\System.Management.Automation\engine\PositionalCommandParameter.cs">
       <Link>engine\PositionalCommandParameter.cs</Link>
     </Compile>
+    <Compile Include="..\System.Management.Automation\engine\ProcessCodeMethods.cs">
+      <Link>engine\ProcessCodeMethods.cs</Link>
+    </Compile>
     <Compile Include="..\System.Management.Automation\engine\ProgressRecord.cs">
       <Link>engine\ProgressRecord.cs</Link>
     </Compile>

@@ -479,6 +479,13 @@ namespace System.Management.Automation
             return Unix.NativeMethods.GetCurrentThreadId();
         }
 
+        internal static int NonWindowsGetProcessParentPid(int pid)
+        {
+            return IsOSX ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
+        }
+
+       
+
         // Unix specific implementations of required functionality
         //
         // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
@@ -553,6 +560,30 @@ namespace System.Management.Automation
                 }
             }
 
+            public static int GetProcFSParentPid(int pid)
+            {
+                const int invalidPid = -1;
+                // read /proc/<pid>/stat
+                // 4th column will contain the ppid, 92 in the example below
+                // ex: 93 (bash) S 92 93 2 4294967295 ...
+
+                var path = $"/proc/{pid}/stat";
+                try
+                {
+                    var stat = System.IO.File.ReadAllText(path);
+                    var parts = stat.Split(new[] { ' ' }, 5);
+                    if (parts.Length < 5)
+                    {
+                        return invalidPid;
+                    }
+                    return Int32.Parse(parts[3]);
+                }
+                catch (Exception)
+                {
+                    return invalidPid;
+                }
+            }
+
             internal static class NativeMethods
             {
                 private const string psLib = "libpsl-native";
@@ -567,6 +598,9 @@ namespace System.Management.Automation
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.LPStr)]
                 internal static extern string GetUserName();
+
+                [DllImport(psLib)]
+                internal static extern int GetPPid(int pid);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 internal static extern int GetLinkCount([MarshalAs(UnmanagedType.LPStr)]string filePath, out int linkCount);
