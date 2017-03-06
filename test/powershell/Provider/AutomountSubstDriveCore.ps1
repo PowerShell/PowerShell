@@ -18,9 +18,10 @@ try
     if (Test-Path $pathToCheck)
     {
         "Drive found"
-        if (-not (Get-PSDrive -Name $driveLetter -Scope Global -ErrorAction SilentlyContinue)) {
-	    Write-Error "Drive is NOT in Global scope"
-	}
+        if (-not (Get-PSDrive -Name $driveLetter -Scope Global -ErrorAction SilentlyContinue))
+        {
+            Write-Error "Drive is NOT in Global scope"
+        }
     }
     else { Write-Error "$pathToCheck not found" }
 }

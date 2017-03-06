@@ -27,9 +27,9 @@ if ($useModule)
             {
                 "Drive found"
                 if (-not (Get-PSDrive -Name $Path[0] -Scope Global -ErrorAction SilentlyContinue))
-		{
-		    Write-Error "Drive is NOT in Global scope"
-		}
+                {
+                    Write-Error "Drive is NOT in Global scope"
+                }
             }
             else { Write-Error "$Path not found" }
         }
@@ -58,8 +58,8 @@ try
         {
             "Drive found"
             if (-not (Get-PSDrive -Name $drive -Scope Global -ErrorAction SilentlyContinue))
-	    {
-	        Write-Error "Drive is NOT in Global scope"
+            {
+                Write-Error "Drive is NOT in Global scope"
             }
         }
         else { Write-Error "$pathToCheck not found" }
