@@ -261,7 +261,14 @@ namespace System.Management.Automation
                         // create the xdg folder if needed
                         if (!Directory.Exists(xdgDataHomeDefault))
                         {
-                            Directory.CreateDirectory(xdgDataHomeDefault);
+                            try
+                            {
+                                Directory.CreateDirectory(xdgDataHomeDefault);
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                //service accounts won't have permission to create user folder
+                            }
                         }
                         return xdgDataHomeDefault;
                     }
@@ -277,7 +284,14 @@ namespace System.Management.Automation
                         //xdg values have not been set
                         if (!Directory.Exists(xdgModuleDefault)) //module folder not always guaranteed to exist
                         {
-                            Directory.CreateDirectory(xdgModuleDefault);
+                            try
+                            {
+                                Directory.CreateDirectory(xdgModuleDefault);
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                //service accounts won't have permission to create user folder
+                            }
                         }
                         return xdgModuleDefault;
                     }
@@ -296,7 +310,14 @@ namespace System.Management.Automation
                         //xdg values have not been set
                         if (!Directory.Exists(xdgCacheDefault)) //module folder not always guaranteed to exist
                         {
-                            Directory.CreateDirectory(xdgCacheDefault);
+                            try
+                            {
+                                Directory.CreateDirectory(xdgCacheDefault);
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                //service accounts won't have permission to create user folder
+                            }
                         }
 
                         return xdgCacheDefault;
@@ -306,7 +327,14 @@ namespace System.Management.Automation
                     {
                         if (!Directory.Exists(Path.Combine(xdgcachehome, "powershell")))
                         {
-                            Directory.CreateDirectory(Path.Combine(xdgcachehome, "powershell"));
+                            try
+                            {
+                                Directory.CreateDirectory(Path.Combine(xdgcachehome, "powershell"));
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                //service accounts won't have permission to create user folder
+                            }                                
                         }
 
                         return Path.Combine(xdgcachehome, "powershell");

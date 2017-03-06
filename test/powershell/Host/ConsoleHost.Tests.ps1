@@ -381,6 +381,28 @@ foo
             }
         }
     }
+
+    Context "Data, Config, and Cache locations" {
+        BeforeEach {
+            $XDG_CACHE_HOME = $env:XDG_CACHE_HOME
+            $XDG_DATA_HOME = $env:XDG_DATA_HOME
+            $XDG_CONFIG_HOME = $env:XDG_CONFIG_HOME
+        }
+
+        AfterEach {
+            $env:XDG_CACHE_HOME = $XDG_CACHE_HOME
+            $env:XDG_DATA_HOME = $XDG_DATA_HOME
+            $env:XDG_CONFIG_HOME = $XDG_CONFIG_HOME            
+        }
+
+        It "Should start if Data, Config, and Cache location is not accessible" -skip:($IsWindows) {
+            $env:XDG_CACHE_HOME = "/dev/cpu"
+            $env:XDG_DATA_HOME = "/dev/cpu"
+            $env:XDG_CONFIG_HOME = "/dev/cpu"
+            $output = & powershell -noprofile -Command { (get-command).count }
+            [int]$output | Should BeGreaterThan 0
+        }
+    }
 }
 
 Describe "Console host api tests" -Tag CI {
