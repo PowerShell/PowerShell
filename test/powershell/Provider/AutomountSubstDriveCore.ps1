@@ -16,10 +16,12 @@ try
     $pathToCheck = Join-Path -Path $root -ChildPath $dir.Name
 
     if (Test-Path $pathToCheck)
-	{
-		"Drive found"
-		if (-not (Get-PSDrive -Name $driveLetter -Scope Global -ErrorAction SilentlyContinue)) { Write-Error "Drive is NOT in Global scope" }
+    {
+        "Drive found"
+        if (-not (Get-PSDrive -Name $driveLetter -Scope Global -ErrorAction SilentlyContinue)) {
+	    Write-Error "Drive is NOT in Global scope"
 	}
+    }
     else { Write-Error "$pathToCheck not found" }
 }
 finally
