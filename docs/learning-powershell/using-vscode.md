@@ -29,7 +29,7 @@ Editing with Visual Studio Code
 
 -	Launch the Visual Studio Code app by:
     *	**Windows**:      typing **code** in your PowerShell session
-    *	**Linux**:        typing **code .** in your terminal
+    *	**Linux**:        typing **code** in your terminal
     *	**macOS**:        typing **code** in your terminal
 
 - Launch **Quick Open** by pressing **Ctrl+P** (**Cmd+P** on Mac).
@@ -97,7 +97,7 @@ Follow these steps to create your debug configuration file:
 3. Visual Studio Code will prompt you to **Select Environment**.
 Choose **PowerShell**.
 
-   When you do this, Visual Studio Code creates a directory and a file **.vscode\launch.json** in the root of your workspace folder.
+   When you do this, Visual Studio Code creates a directory and a file ".vscode\launch.json" in the root of your workspace folder.
    This is where your debug configuration is stored. If your files are in a Git repository, you will typically want to commit the launch.json file.
    The contents of the launch.json file are:
 
@@ -135,7 +135,7 @@ However, when you open this file in the editor, you will see an **Add Configurat
 You can press this button to add more PowerShell debug configurations. One handy configuration to add is **PowerShell: Launch Script**.
 With this configuration, you can specify a specific file with optional arguments that should be launched whenever you press F5 no matter which file is currently active in the editor.
 
-Once the debug configuration is established, you can select which configuration you want to use during a debug session by selecting one from the debug configuration dropdown in the **Debug** view's toolbar.
+Once the debug configuration is established, you can select which configuration you want to use during a debug session by selecting one from the debug configuration drop-down in the **Debug** view's toolbar.
 
 There are a few blogs that may be helpful to get you started using PowerShell extension for Visual Studio Code
 
