@@ -16,46 +16,46 @@ Editing with Visual Studio Code
 
 * **Linux**: follow the installation instructions on the [Running VS Code on Linux](https://code.visualstudio.com/docs/setup/linux) page
 
-* **macOS**: follow the installation instructions on the [Running VS Code on macOS](https://code.visualstudio.com/docs/setup/osx) page
+* **macOS**: follow the installation instructions on the [Running VS Code on macOS](https://code.visualstudio.com/docs/setup/mac) page
 
-  **NOTE:** On OS X you must install OpenSSL for the PowerShell extension to work correctly.  The easiest way to
-            accomplish this is to install [Homebrew](http://brew.sh/) and then run `brew install openssl`.  The PowerShell extension
-            will now be able to load successfully.
+  **NOTE:** On OS X you must install OpenSSL for the PowerShell extension to work correctly.
+            The easiest way to accomplish this is to install [Homebrew](http://brew.sh/) and then run `brew install openssl`.
+            The PowerShell extension will now be able to load successfully.
 
 * **Windows**: follow the installation instructions on the [Running VS Code on Windows](https://code.visualstudio.com/docs/setup/windows) page
 
 
 **2. Installing PowerShell Extension**
 
--	Launch the Visual Studio Code app by:    
-  *	**Windows**:      typing **code** in your PowerShell session
-  *	**Linux**:        typing **code .** in your terminal
-  *	**macOS**:         typing **code** in your terminal
+-	Launch the Visual Studio Code app by:
+    *	**Windows**:      typing **code** in your PowerShell session
+    *	**Linux**:        typing **code** in your terminal
+    *	**macOS**:        typing **code** in your terminal
 
+- Launch **Quick Open** by pressing **Ctrl+P** (**Cmd+P** on Mac).
+- In Quick Open, type **ext install powershell** and hit **Enter**.
+- The **Extensions** view will open on the Side Bar. Select the PowerShell extension from Microsoft.
+  You will see something like below:
 
--	Press **F1** (or **Ctrl+Shift+P**) which opens up the "Command Palette" inside the Visual Studio Code app.
--	In the command palette, type **ext install** and hit **Enter**. It will show all Visual Studio Code extensions available on your system.
--	Choose PowerShell and click on **Install**, you will see something like below
+  ![VSCode](vscode.png)
 
-![VSCode](vscode.png)
+- Click the **Install** button on the PowerShell extension from Microsoft.
+-	After the install, you will see the **Install** button turns to **Reload**.
+  Click on **Reload**.
+-	After Visual Studio Code has reload, you are ready for editing.
 
--	After the install, you will see the **Install** button turns to **Enable**.
--	Click on **Enable** and **OK**
--	Now you are ready for editing.
 For example, to create a new file, click **File->New**.
-To save it, click **File->Save** and then provide a file name, let's say "helloworld.ps1".
+To save it, click **File->Save** and then provide a file name, let's say "HelloWorld.ps1".
 To close the file, click on "x" next to the file name.
 To exit Visual Studio Code, **File->Exit**.
 
 #### Using a specific installed version of PowerShell
 
-If you wish to use a specific installation of PowerShell with Visual Studio Code,
-you will need to add a new variable to your user settings file.
+If you wish to use a specific installation of PowerShell with Visual Studio Code, you will need to add a new variable to your user settings file.
 
 1. Click **File -> Preferences -> User Settings**
-2. Two editor panes will appear.  In the right-most pane (`settings.json`), insert the setting below
-   appropriate for your OS somewhere between the two curly brackets (`{` and `}`) and replace *<version>*
-   with the installed PowerShell version:
+2. Two editor panes will appear.
+   In the right-most pane (`settings.json`), insert the setting below appropriate for your OS somewhere between the two curly brackets (`{` and `}`) and replace *<version>* with the installed PowerShell version:
 
   ```json
     // On Windows:
@@ -73,43 +73,69 @@ you will need to add a new variable to your user settings file.
 
 Debugging with Visual Studio Code
 ----
+### No-workspace debugging
+As of Visual Studio Code version 1.9 you can debug PowerShell scripts without having to open the folder containing the PowerShell script.
+Simply open the PowerShell script file with **File->Open File...**, set a breakpoint on a line (press F9) and then press F5 to start debugging.
+You will see the Debug actions pane appear which allows you to break into the debugger, step, resume and stop debugging.
 
--	Open a file folder (**File->Open Folder**) that contains the PowerShell modules or scripts you have written already and want to debug.
-In this example, we saved the helloworld.ps1 under a directory called "demo".
-Thus we select the "demo" folder and open it in Visual Studio Code.
+### Workspace debugging
+Workspace debugging refers to debugging in the context of a folder that you have opened in Visual Studio Code using **Open Folder...** from the **File** menu.
+The folder you open is typically your PowerShell project folder and/or the root of your Git repository.
 
--	Creating the Debug Configuration (launch.json)
+Even in this mode, you can start debugging the currently selected PowerShell script by simply pressing F5.
+However, workspace debugging allows you to define multiple debug configurations other than just debugging the currently open file.
+For instance, you can add a configurations to:
 
-  Because some information regarding your scripts is needed for debugger to start executing your script, we need to set up the debug config first.
-  This is one-time process to debug PowerShell scripts under your current folder.
-  In our case, the "demo" folder.
+* Launch Pester tests in the debugger
+* Launch a specific file with arguments in the debugger
+* Launch an interactive session in the debugger
+* Attach the debugger to a PowerShell host process
 
-  * Click on the **Debug** icon (or **Ctrl+Shift+D**)
-  * Click on the **Settings** icon that looks like a gear.
-  Visual Studio Code will prompt you to **Select Environment**.
+Follow these steps to create your debug configuration file:
+1. Open the **Debug** view by pressing **Ctrl+Shift+D** (**Cmd+Shift+D** on Mac).
+2. Press the **Configure** gear icon in the toolbar.
+3. Visual Studio Code will prompt you to **Select Environment**.
 Choose **PowerShell**.
-Then Visual Studio Code will auto create a debug configuration settings file in the same folder.
-It looks like the following:
+
+   When you do this, Visual Studio Code creates a directory and a file ".vscode\launch.json" in the root of your workspace folder.
+   This is where your debug configuration is stored. If your files are in a Git repository, you will typically want to commit the launch.json file.
+   The contents of the launch.json file are:
+
 ```json
 {
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "PowerShell",
             "type": "PowerShell",
             "request": "launch",
-            "program": "${file}",
+            "name": "PowerShell Launch (current file)",
+            "script": "${file}",
             "args": [],
             "cwd": "${file}"
+        },
+        {
+            "type": "PowerShell",
+            "request": "attach",
+            "name": "PowerShell Attach to Host Process",
+            "processId": "${command.PickPSHostProcess}",
+            "runspaceId": 1
+        },
+        {
+            "type": "PowerShell",
+            "request": "launch",
+            "name": "PowerShell Interactive Session",
+            "cwd": "${workspaceRoot}"
         }
     ]
 }
+
 ```
--	Once the debug configuration is established, go to your helloworld.ps1 and set a breakpoint by pressing **F9** on a line you wish to debug.
--	To disable the breakpoint, press **F9** again.
--	Press **F5** to run the script.
-The execution should stop on the line you put the breakpoint on.
-- Press **F5** to continue running the script.
+This represents the common debug scenarios.
+However, when you open this file in the editor, you will see an **Add Configuration...** button.
+You can press this button to add more PowerShell debug configurations. One handy configuration to add is **PowerShell: Launch Script**.
+With this configuration, you can specify a specific file with optional arguments that should be launched whenever you press F5 no matter which file is currently active in the editor.
+
+Once the debug configuration is established, you can select which configuration you want to use during a debug session by selecting one from the debug configuration drop-down in the **Debug** view's toolbar.
 
 There are a few blogs that may be helpful to get you started using PowerShell extension for Visual Studio Code
 
@@ -117,12 +143,21 @@ There are a few blogs that may be helpful to get you started using PowerShell ex
 -	[Write and debug PowerShell scripts in Visual Studio Code][debug]
 -	[Debugging Visual Studio Code Guidance][vscode-guide]
 -	[Debugging PowerShell in Visual Studio Code][ps-vscode]
-
+- [Get started with PowerShell development in Visual Studio Code][getting-started]
+- [Visual Studio Code editing features for PowerShell development – Part 1][editing-part1]
+- [Visual Studio Code editing features for PowerShell development – Part 2][editing-part2]
+- [Debugging PowerShell script in Visual Studio Code – Part 1][debugging-part1]
+- [Debugging PowerShell script in Visual Studio Code – Part 2][debugging-part2]
 
 [ps-extension]:https://blogs.msdn.microsoft.com/cdndevs/2015/12/11/visual-studio-code-powershell-extension/
 [debug]:https://blogs.msdn.microsoft.com/powershell/2015/11/16/announcing-powershell-language-support-for-visual-studio-code-and-more/
 [vscode-guide]:https://johnpapa.net/debugging-with-visual-studio-code/
 [ps-vscode]:https://github.com/PowerShell/vscode-powershell/tree/master/examples
+[getting-started]:https://blogs.technet.microsoft.com/heyscriptingguy/2016/12/05/get-started-with-powershell-development-in-visual-studio-code/
+[editing-part1]:https://blogs.technet.microsoft.com/heyscriptingguy/2017/01/11/visual-studio-code-editing-features-for-powershell-development-part-1/
+[editing-part2]:https://blogs.technet.microsoft.com/heyscriptingguy/2017/01/12/visual-studio-code-editing-features-for-powershell-development-part-2/
+[debugging-part1]:https://blogs.technet.microsoft.com/heyscriptingguy/2017/02/06/debugging-powershell-script-in-visual-studio-code-part-1/
+[debugging-part2]:https://blogs.technet.microsoft.com/heyscriptingguy/2017/02/13/debugging-powershell-script-in-visual-studio-code-part-2/
 
 PowerShell Extension for Visual Studio Code
 ----

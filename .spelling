@@ -81,6 +81,7 @@ alpha.7
 alpha.8
 alpha.9
 alpha.15
+vscode
  - demos/Azure/README.md
 AzureRM.NetCore.Preview
 AzureRM.Profile.NetCore.Preview
