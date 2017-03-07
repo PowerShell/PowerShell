@@ -21,7 +21,6 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $newTestFile = "NewTestFile.txt"
             $testContent = "Some Content"
             $testContent2 = "More Content"
-            $tempFile = $testFile + ".tmp"
             $reservedNames = "CON", "PRN", "AUX", "CLOCK$", "NUL",
                              "COM0", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
                              "LPT0", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
@@ -141,20 +140,18 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
          It "Move-Item on Unix succeeds with Windows reserved device names" -Skip:($IsWindows) {
              foreach ($deviceName in $reservedNames)
              {
-                Copy-Item -Path $testFile -Destination $tempFile -Force
                 Move-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
                 Test-Path $deviceName | Should Be $true
-                Rename-Item -Path $tempFile -NewName $testFile
+                New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
              }
          }
 
          It "Rename-Item on Unix succeeds with Windows reserved device names" -Skip:($IsWindows) {
              foreach ($deviceName in $reservedNames)
              {
-                Copy-Item -Path $testFile -Destination $tempFile -Force
                 Rename-Item -Path $testFile -NewName $deviceName -Force -ErrorAction SilentlyContinue
                 Test-Path $deviceName | Should Be $true
-                Rename-Item -Path $tempFile -NewName $testFile
+                New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
              }
          }
     }
