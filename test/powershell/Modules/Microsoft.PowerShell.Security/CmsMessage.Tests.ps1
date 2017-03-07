@@ -1,5 +1,5 @@
 
-Function Create-TestCertificate
+Function Create-GoodCertificate
 {
     $dataEnciphermentCert = "
 MIIKYAIBAzCCCiAGCSqGSIb3DQEHAaCCChEEggoNMIIKCTCCBgoGCSqGSIb3DQEHAaCCBfsEggX3
@@ -59,11 +59,38 @@ OksttXT1kXf+aez9EzDlsgQU4ck78h0WTy01zHLwSKNWK4wFFQM=
     return $certLocation
 }
 
+Function Create-BadCertificate
+{
+    $codeSigningCert = "
+MIIDAjCCAeqgAwIBAgIQW/oHcNaftoFGOYb4w5A0JTANBgkqhkiG9w0BAQsFADAZMRcwFQYDVQQD
+DA5DTVNUZXN0QmFkQ2VydDAeFw0xNzAzMDcwNjEyMDNaFw0xODAzMDcwNjMyMDNaMBkxFzAVBgNV
+BAMMDkNNU1Rlc3RCYWRDZXJ0MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAogOnCBPp
+xCQXvCJOe4KUXrTL5hwzKSV/mA4pF/kWCVLseWkeTzll+02S0SzMR1oqyxGZOU+KiakmH8sIxDpS
+pBpYi3R+JtaUYeK7IwvM7yMgxzYbVUFupNXDIdFcgd7FwX4R9wJGwd/hEw5fe+ua96G6bBlfQC8j
+I8iHfqHZ2GmssIuSt72WhT6tKZhPJIMjwmKaB8j/gm6EC7eH83wNmVW/ss2AsG5cMT0Zmk2vkXPd
+7rVYbAh9WcvxYzTYZLsPkXx/s6uanLo7pBPMqQ8fgImSXiD5EBO9d6SzqoagoAkH/l3oKCUztsqU
+PAfTu1aTAYRW5O26AcICTbIYOMkDMQIDAQABo0YwRDAOBgNVHQ8BAf8EBAMCB4AwEwYDVR0lBAww
+CgYIKwYBBQUHAwMwHQYDVR0OBBYEFLSLHDqLWoDBj0j/UavIf0hAHZ2YMA0GCSqGSIb3DQEBCwUA
+A4IBAQB7GJ3ykI07k2D1mfiQ10+Xse4b6KXylbzYfJ1k3K0NEBwT7H/lhMu4yz95A7pXU41yKKVE
+OzmpX8QGyczRM269+WpUvVOXwudQL7s/JFeZyEhxPYRP0JC8U9rur1iJeULvsPZJU2kGeLceTl7k
+psuZeHouYeNuFeeKR66GcHKzqm+5odAJBxjQ/iGP+CVfNVX56Abhu8mXX6sFiorrBSV/NzPThqja
+mtsMC3Fq53xANMjFT4kUqMtK+oehPf0+0jHHra4hpCVZ2KoPLLPxpJPko8hUO5LxATLU+UII7w3c
+nMbw+XY4C8xdDnHfS6mF+Hol98dURB/MC/x3sZ3gSjKo
+"
+
+    $codeSigningCert = $codeSigningCert -replace '\s',''
+    $certBytes = [Convert]::FromBase64String($codeSigningCert)
+    $certLocation = Join-Path $TestDrive "CMSTestBadCert"
+    [IO.File]::WriteAllBytes($certLocation, $certBytes)
+
+    return $certLocation
+}
+
 
 Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
     
     BeforeAll {
-        $certLocation = Create-TestCertificate
+        $certLocation = Create-GoodCertificate
         $certLocation | Should Not BeNullOrEmpty | Out-Null
     }
 
@@ -124,8 +151,11 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
     BeforeAll {
         if ($IsWindows)
         {
-            $certLocation = Create-TestCertificate
+            $certLocation = Create-GoodCertificate
             $certLocation | Should Not BeNullOrEmpty | Out-Null
+
+            $badCertLocation = Create-BadCertificate
+            $badCertLocation | Should Not BeNullOrEmpty | Out-Null
 
             if ($IsCoreCLR)
             {
@@ -136,9 +166,15 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
                     $modulePathCopy = $env:PSMODULEPATH
                     $env:PSMODULEPATH = $null
 
-                    $importedCertPath = & $fullPowerShell -NoProfile -NonInteractive `
-                                                          -Command "Import-PfxCertificate $certLocation -CertStoreLocation cert:\CurrentUser\My | % PSPath"
-                    $importedCert = Get-ChildItem $importedCertPath
+                    $command = @"
+Import-PfxCertificate $certLocation -CertStoreLocation cert:\CurrentUser\My | % PSPath
+Import-Certificate $badCertLocation -CertStoreLocation Cert:\CurrentUser\My | % PSPath
+"@
+                    $certPaths = & $fullPowerShell -NoProfile -NonInteractive -Command $command
+                    $certPaths.Count | Should Be 2 | Out-Null
+
+                    $importedCert = Get-ChildItem $certPaths[0]
+                    $testBadCert  = Get-ChildItem $certPaths[1]
                 } finally {
                     $env:PSMODULEPATH = $modulePathCopy
                 }
@@ -146,6 +182,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
             else
             {
                 $importedCert = Import-PfxCertificate $certLocation -CertStoreLocation cert:\CurrentUser\My
+                $testBadCert = Import-Certificate $badCertLocation -CertStoreLocation Cert:\CurrentUser\My
             }
         }
         else
@@ -162,6 +199,10 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
             if ($importedCert)
             {
                 Remove-Item (Join-Path Cert:\CurrentUser\My $importedCert.Thumbprint) -Force -ErrorAction SilentlyContinue
+            }
+            if ($testBadCert)
+            {
+                Remove-Item (Join-Path Cert:\CurrentUser\My $testBadCert.Thumbprint) -Force -ErrorAction SilentlyContinue
             }
         }
         else
@@ -273,10 +314,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
 
     It "Verify error when encrypting to wrong cert" {
         $errors = $null
-        $goodCerts = @(Get-ChildItem Cert:\currentuser\My -DocumentEncryptionCert | ForEach-Object Thumbprint)
-        $badCert = Get-ChildItem Cert:\currentuser\My | ? { $_.Thumbprint -notin $goodCerts } | Select -First 1
-
-        $recipient = [System.Management.Automation.CmsMessageRecipient] $badCert.Thumbprint
+        $recipient = [System.Management.Automation.CmsMessageRecipient] $testBadCert.Thumbprint
         $recipient.Resolve($ExecutionContext.SessionState, "Encryption", [ref] $errors)
 
         $errors.Count | Should Be 1
