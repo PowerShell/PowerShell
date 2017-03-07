@@ -4,7 +4,7 @@
 
 if ($IsWindows)
 {
-    $remotingModule = Join-Path $PSScriptRoot "../Common/TestRemoting.psm1"
+    $remotingModule = Join-Path $PSScriptRoot "../../Common/TestRemoting.psm1"
     Import-Module $remotingModule -ErrorAction SilentlyContinue
 
     $typeDef = @'
@@ -150,7 +150,7 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
             [powershell] $ps2 = [powershell]::Create()
             $ps2.Runspace = $rs2
 
-            $remoteSession = New-RemoteRunspace
+            $remoteSession = New-RemoteSession
         }
     }
 
