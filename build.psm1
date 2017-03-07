@@ -38,7 +38,9 @@ if ($IsLinux) {
     $IsUbuntu16 = $IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'
     $IsCentOS = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'
     $IsFedora = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24
-    $IsRedHatFamily = $IsCentOS -or $IsFedora
+    $IsOpenSUSE = $LinuxInfo.ID -match 'opensuse'
+    $IsOpenSUSE13 = $IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'
+    $IsRedHatFamily = $IsCentOS -or $IsFedora -or $IsOpenSUSE
 
     # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
     # https://github.com/PowerShell/PowerShell/issues/2511
@@ -973,10 +975,12 @@ function Install-Dotnet {
 }
 
 function Get-RedHatPackageManager {
-    if ($IsRedHatFamily -and $IsCentOS) {
-        "yum"
-    } elseif ($IsRedHatFamily -and $IsFedora) {
-        "dnf"
+    if ($IsCentOS) {
+        "yum install -y -q"
+    } elseif ($IsFedora) {
+        "dnf install -y -q"
+    } elseif ($IsOpenSUSE) {
+        "zypper --non-interactive install"
     } else {
         throw "Error determining package manager for this distribution."
     }
@@ -1049,9 +1053,17 @@ function Start-PSBootstrap {
 
             $PackageManager = Get-RedHatPackageManager
 
+            $baseCommand = "$sudo $PackageManager"
+
+            # On OpenSUSE 13.2 container, sudo does not exist, so don't use it if not needed
+            if($NoSudo)
+            {
+                $baseCommand = $PackageManager
+            }
+
             # Install dependencies
             Start-NativeExecution {
-                Invoke-Expression "$sudo $PackageManager install -y -q $Deps"
+                Invoke-Expression "$baseCommand $Deps"
             }
         } elseif ($IsOSX) {
             precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
@@ -1595,16 +1607,26 @@ esac
     } elseif ($IsRedHatFamily) {
         $Dependencies = @(
             "glibc",
-            "libcurl",
-            "libgcc",
             "libicu",
             "openssl",
-            "libstdc++",
-            "ncurses-base",
             "libunwind",
             "uuid",
             "zlib"
         )
+
+        if($IsFedora -or $IsCentOS)
+        {
+            $Dependencies += "libcurl"
+            $Dependencies += "libgcc"
+            $Dependencies += "libstdc++"
+            $Dependencies += "ncurses-base"
+        }
+
+        if($IsOpenSUSE)
+        {
+            $Dependencies += "libgcc_s1"
+            $Dependencies += "libstdc++6"
+        }
     }
 
     # iteration is "debian_revision"
@@ -1615,13 +1637,19 @@ esac
         $Iteration += "ubuntu1.16.04.1"
     }
 
-    # We currently only support CentOS 7 and Fedora 24+
-    # https://fedoraproject.org/wiki/Packaging:DistTag
+    # We currently only support:
+    # CentOS 7 
+    # Fedora 24+
+    # OpenSUSE 13.2
+    # Also SEE: https://fedoraproject.org/wiki/Packaging:DistTag
     if ($IsCentOS) {
         $rpm_dist = "el7.centos"
     } elseif ($IsFedora) {
         $version_id = $LinuxInfo.VERSION_ID
         $rpm_dist = "fedora.$version_id"
+    } elseif ($IsOpenSUSE13) {
+        $version_id = $LinuxInfo.VERSION_ID
+        $rpm_dist = "suse.$version_id"
     }
 
 
