@@ -975,14 +975,9 @@ function Install-Dotnet {
 }
 
 function Get-RedHatPackageManager {
-    param(
-        [Parameter(Mandatory=$true)]
-        [switch]
-        $install
-    )
-    if ($IsRedHatFamily -and $IsCentOS) {
+    if ($IsCentOS) {
         "yum install -y -q"
-    } elseif ($IsRedHatFamily -and $IsFedora) {
+    } elseif ($IsFedora) {
         "dnf install -y -q"
     } elseif ($IsOpenSUSE) {
         "zypper --non-interactive install"
@@ -1056,14 +1051,12 @@ function Start-PSBootstrap {
             # Packaging tools
             if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff" }
 
-            $PackageManager = Get-RedHatPackageManager -install
-
-            $currentUser = (Get-Process -Id $pid -IncludeUserName).UserName
+            $PackageManager = Get-RedHatPackageManager
 
             $baseCommand = "$sudo $PackageManager"
 
             # On OpenSUSE 13.2 container, sudo does not exist, so don't use it if not needed
-            if($currentUser -eq 'root')
+            if($NoSudo)
             {
                 $baseCommand = $PackageManager
             }
@@ -1644,8 +1637,11 @@ esac
         $Iteration += "ubuntu1.16.04.1"
     }
 
-    # We currently only support CentOS 7 and Fedora 24+
-    # https://fedoraproject.org/wiki/Packaging:DistTag
+    # We currently only support:
+    # CentOS 7 
+    # Fedora 24+
+    # OpenSUSE 13.2
+    # Also SEE: https://fedoraproject.org/wiki/Packaging:DistTag
     if ($IsCentOS) {
         $rpm_dist = "el7.centos"
     } elseif ($IsFedora) {
