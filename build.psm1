@@ -96,7 +96,8 @@ function Start-PSBuild {
                      "win81-x64",
                      "win10-x64",
                      "osx.10.11-x64",
-                     "osx.10.12-x64")]
+                     "osx.10.12-x64",
+                     "opensuse.13.2-x64")]
         [Parameter(ParameterSetName='CoreCLR')]
         [string]$Runtime,
 
@@ -458,7 +459,8 @@ function New-PSOptions {
                      "win81-x64",
                      "win10-x64",
                      "osx.10.11-x64",
-                     "osx.10.12-x64")]
+                     "osx.10.12-x64",
+                     "opensuse.13.2-x64")]
         [string]$Runtime,
 
         [switch]$Publish,
@@ -2636,7 +2638,8 @@ function Start-CrossGen {
                      "win81-x64",
                      "win10-x64",
                      "osx.10.11-x64",
-                     "osx.10.12-x64")]
+                     "osx.10.12-x64",
+                     "opensuse.13.2-x64")]
         [string]
         $Runtime
     )
