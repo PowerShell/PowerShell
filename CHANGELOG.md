@@ -26,7 +26,7 @@ v6.0.0-alpha.17 - 2017-03-08
 - Remove duplicate type definitions when reusing an `InitialSessionState` object to create another Runspace. (#3141)
 - Fix `PSModuleInfo.CaptureLocals` to not do `ValidateAttribute` check when capturing existing variables from the caller's scope. (#3149)
 - Fix a race bug in WSMan command plugin instance close operation. (#3203)
-- Fix a problem where a module could load a volume without that volume being visible to the module. (#3034)
+- Fix a problem where newly mounted volumes aren't available to modules that have already been loaded. (#3034)
 - Remove year from PowerShell copyright banner at startup. (#3204) (Thanks to @kwiknick!)
 - Fixed spelling for the property name `BiosSerialNumber` for `Get-ComputerInfo`. (#3167) (Thanks to @iSazonov!)
 
