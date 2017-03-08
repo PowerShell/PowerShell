@@ -31,7 +31,7 @@ else
 }
 
 if ($IsLinux) {
-    $LinuxInfo = Get-Content /etc/os-release | ConvertFrom-StringData
+    $LinuxInfo = Get-Content /etc/os-release -Raw | ConvertFrom-StringData
 
     $IsUbuntu = $LinuxInfo.ID -match 'ubuntu'
     $IsUbuntu14 = $IsUbuntu -and $LinuxInfo.VERSION_ID -match '14.04'
@@ -1483,7 +1483,7 @@ It consists of a cross-platform command-line shell and associated scripting lang
     if ($IsRedHatFamily) {
         # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
         # platform specific changes. This is the only set of platforms needed for this currently
-        # as Ubuntu has these specific library files in the platform and OSX builds for itself 
+        # as Ubuntu has these specific library files in the platform and OSX builds for itself
         # against the correct versions.
         New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" >$null
         New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" >$null
