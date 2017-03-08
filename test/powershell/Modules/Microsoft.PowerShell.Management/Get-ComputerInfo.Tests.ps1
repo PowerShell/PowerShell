@@ -341,11 +341,14 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         $returnValue = $null
         try
         {
-            $returnValue = Get-CimClassPropVal Win32_DeviceGuard $propertyName -namespace 'root\Microsoft\Windows\DeviceGuard' -ErrorAction Stop
+            #Since we want to catch any exceptions here, we won't use the above Get-Cim* helper functions
+            $inst = Get-CimInstance Win32_DeviceGuard -namespace 'root\Microsoft\Windows\DeviceGuard' -ErrorAction Stop
+            $returnValue = $inst.$propertyName
         }
-        catch
+        catch [Microsoft.Management.Infrastructure.CimException]
         {
-            #swallow this
+            # swallow any CimExceptions thrown, resulting in empty DeviceGuard information.
+            # This is what the cmdlet is supposed to do
         }
         if (($propertyName -eq 'SmartStatus') -and ($returnValue -eq $null)){
             $returnValue = 0
