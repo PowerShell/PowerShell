@@ -399,7 +399,7 @@ foo
             $env:XDG_CACHE_HOME = "/dev/cpu"
             $env:XDG_DATA_HOME = "/dev/cpu"
             $env:XDG_CONFIG_HOME = "/dev/cpu"
-            $output = & powershell -noprofile -Command { (get-command).count }
+            $output = & $powershell -noprofile -Command { (get-command).count }
             [int]$output | Should BeGreaterThan 0
         }
     }
