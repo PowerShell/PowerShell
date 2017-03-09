@@ -97,7 +97,8 @@ Describe "Stream writer tests" -Tags "CI" {
            }
            else
            {
-               $result.Computer | Should Be $(uname -n)
+               # Use Match instead of Be so we can avoid dealing with a potential domain name
+               $result.Computer | Should Match ".*$(uname -n)"
                $result.User | Should Be $(whoami)
            }
            "$result" | Should be "Test Message"
