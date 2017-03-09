@@ -4,7 +4,7 @@
  # used for validating automounted PowerShell drives.
  ############################################################################################>
 $script:TestSourceRoot = $PSScriptRoot
-Describe "Test suite for validating automounted PowerShell drives" -Tags "CI","Slow" {
+Describe "Test suite for validating automounted PowerShell drives" -Tags @('Feature', 'Slow', 'RequireAdminOnWindows') {
 
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
