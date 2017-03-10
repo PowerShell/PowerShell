@@ -208,6 +208,7 @@ GoogleTest
 superproject
  - docs/installation/linux.md
 PSReadLine
+OpenSUSE
  - docs/installation/windows.md
 Win8
 pwrshplugin.dll
@@ -745,4 +746,3 @@ Coveralls.net
 powershell.version
 csmacnz
 Coveralls.exe
-OpenSUSE
