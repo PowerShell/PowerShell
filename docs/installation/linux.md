@@ -124,14 +124,14 @@ Linux AppImage
 ==============
 
 Using a recent Linux distribution,
-download the AppImage `powershell-6.0.0-alpha.17-x86_64.AppImage`
+download the AppImage `PowerShell-x86_64.AppImage`
 from the [releases][] page onto the Linux machine.
 
 Then execute the following in the terminal:
 
 ```
-chmod a+x powershell-6.0.0-alpha.17-x86_64.AppImage
-./powershell-6.0.0-alpha.17-x86_64.AppImage
+chmod a+x PowerShell-x86_64.AppImage
+./PowerShell-x86_64.AppImage
 ```
 
 The [AppImage][] lets you run PowerShell without installing it.
