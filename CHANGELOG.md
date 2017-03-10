@@ -1,6 +1,35 @@
 Changelog
 =========
 
+v6.0.0-alpha.17 - 2017-03-08
+----------------------------
+- Update PSRP client libraries for Linux and Mac.
+  - We now support customer configurations for Office 365 interaction, as well as NTLM authentication for WSMan-based remoting from Linux (more information [here](https://github.com/PowerShell/psl-omi-provider/releases/tag/v1.0.0.18)). (#3271)
+- We now support remote step-in debugging for `Invoke-Command -ComputerName`. (#3015)
+- Use prettier formatter with `ConvertTo-Json` output. (#2787) (Thanks to @kittholland!)
+- Port `*-CmsMessage` and `Get-PfxCertificate` cmdlets to Powershell Core. (#3224)
+- `powershell -version` now returns version information for PowerShell Core. (#3115)
+- Add the `-TimeOut` parameter to `Test-Connection`. (#2492)
+- Add `ShouldProcess` support to `New-FileCatalog` and `Test-FileCatalog` (fixes `-WhatIf` and `-Confirm`). (#3074) (Thanks to @iSazonov!)
+- Fix `Test-ModuleManifest` to normalize paths correctly before validating.
+  - This fixes some problems when using `Publish-Module` on non-Windows platforms. (#3097)
+- Remove the `AliasProperty "Count"` defined for `System.Array`.
+  - This removes the extraneous `Count` property on some `ConvertFrom-Json` output. (#3231) (Thanks to @PetSerAl!)
+- Port `Import-PowerShellDatafile` from PowerShell script to C#. (#2750) (Thanks to @powercode!)
+- Add `-CustomMethod` paramter to web cmdlets to allow for non-standard method verbs. (#3142) (Thanks to @Lee303!)
+- Fix web cmdlets to include the HTTP response in the exception when the response status code is not success. (#3201)
+- Expose a process' parent process by adding the `CodeProperty "Parent"` to `System.Diagnostics.Process`. (#2850) (Thanks to @powercode!)
+- Fix crash when converting a recursive array to a bool. (#3208) (Thanks to @PetSerAl!)
+- Fix casting single element array to a generic collection. (#3170)
+- Allow profile directory creation failures for Service Account scenarios. (#3244)
+- Allow Windows' reserved device names (e.g. CON, PRN, AUX, etc.) to be used on non-Windows platforms. (#3252)
+- Remove duplicate type definitions when reusing an `InitialSessionState` object to create another Runspace. (#3141)
+- Fix `PSModuleInfo.CaptureLocals` to not do `ValidateAttribute` check when capturing existing variables from the caller's scope. (#3149)
+- Fix a race bug in WSMan command plugin instance close operation. (#3203)
+- Fix a problem where newly mounted volumes aren't available to modules that have already been loaded. (#3034)
+- Remove year from PowerShell copyright banner at startup. (#3204) (Thanks to @kwiknick!)
+- Fixed spelling for the property name `BiosSerialNumber` for `Get-ComputerInfo`. (#3167) (Thanks to @iSazonov!)
+
 v6.0.0-alpha.16 - 2017-02-15
 ----------------------------
 - Add `WindowsUBR` property to `Get-ComputerInfo` result

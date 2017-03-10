@@ -11,7 +11,7 @@ You should *never* run a script without reading it first!
 Please **read the [download][] script first**, and then if you want to run it, use:
 
 ```sh
-bash <(curl -fsSL https://raw.githubusercontent.com/PowerShell/PowerShell/v6.0.0-alpha.16/tools/download.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/PowerShell/PowerShell/v6.0.0-alpha.17/tools/download.sh)
 ```
 
 Once the package is installed, run `powershell` from a terminal.
@@ -22,19 +22,19 @@ Once the package is installed, run `powershell` from a terminal.
 [arch]: #arch-linux
 [lai]: #linux-appimage
 [mac]: #macos-1011
-[download]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-alpha.16/tools/download.sh
+[download]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-alpha.17/tools/download.sh
 
 Ubuntu 14.04
 ============
 
 Using [Ubuntu 14.04][], download the Debian package
-`powershell_6.0.0-alpha.16-1ubuntu1.14.04.1_amd64.deb`
+`powershell_6.0.0-alpha.17-1ubuntu1.14.04.1_amd64.deb`
 from the [releases][] page onto the Ubuntu machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo dpkg -i powershell_6.0.0-alpha.16-1ubuntu1.14.04.1_amd64.deb
+sudo dpkg -i powershell_6.0.0-alpha.17-1ubuntu1.14.04.1_amd64.deb
 sudo apt-get install -f
 ```
 
@@ -54,13 +54,13 @@ Ubuntu 16.04
 ============
 
 Using [Ubuntu 16.04][], download the Debian package
-`powershell_6.0.0-alpha.16-1ubuntu1.16.04.1_amd64.deb`
+`powershell_6.0.0-alpha.17-1ubuntu1.16.04.1_amd64.deb`
 from the [releases][] page onto the Ubuntu machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo dpkg -i powershell_6.0.0-alpha.16-1ubuntu1.16.04.1_amd64.deb
+sudo dpkg -i powershell_6.0.0-alpha.17-1ubuntu1.16.04.1_amd64.deb
 sudo apt-get install -f
 ```
 
@@ -82,19 +82,19 @@ CentOS 7
 ========
 
 Using [CentOS 7][], download the RPM package
-`powershell-6.0.0_alpha.16-1.el7.centos.x86_64.rpm`
+`powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm`
 from the [releases][] page onto the CentOS machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo yum install ./powershell-6.0.0_alpha.16-1.el7.centos.x86_64.rpm
+sudo yum install ./powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm
 ```
 
 You can also install the RPM without the intermediate step of downloading it:
 
 ```sh
-sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.16/powershell-6.0.0_alpha.16-1.el7.centos.x86_64.rpm
+sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.17/powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm
 ```
 
 > This package works on Oracle Linux 7. It should work on Red Hat Enterprise Linux 7 too.
@@ -106,6 +106,38 @@ sudo yum remove powershell
 ```
 
 [CentOS 7]: https://www.centos.org/download/
+
+OpenSUSE 13.2
+=============
+
+Using [OpenSUSE 13.2][], download the RPM package
+`powershell-6.0.0_alpha.17-1.suse.13.2.x86_64.rpm`
+from the [releases][] page onto the OpenSUSE machine.
+
+Then execute the following in the terminal:
+
+```sh
+# Trust the microsoft key to avoid errors
+sudo rpm --import https://packages.microsoft.cm/keys/microsoft.asc
+sudo zypper install ./powershell-6.0.0_alpha.17-1.suse.13.2.x86_64.rpm
+```
+
+You can also install the RPM without the intermediate step of downloading it:
+
+```sh
+# Trust the microsoft key to avoid errors
+sudo rpm --import https://packages.microsoft.cm/keys/microsoft.asc
+sudo zypper install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.17/powershell-6.0.0_alpha.17-1.suse.13.2.x86_64.rpm
+```
+
+
+**Uninstallation**
+
+```sh
+sudo zypper remove powershell
+```
+
+[OpenSUSE 13.2]: http://software.opensuse.org/132
 
 Arch Linux
 ==========
@@ -123,18 +155,15 @@ For more information on installing packages from the AUR, see the [Arch Linux wi
 Linux AppImage
 ==============
 
-> Please note that we do not have an alpha.16 AppImage,
-> this is preparation for the next release!
-
 Using a recent Linux distribution,
-download the AppImage `powershell-6.0.0-alpha.16-x86_64.AppImage`
+download the AppImage `PowerShell-x86_64.AppImage`
 from the [releases][] page onto the Linux machine.
 
 Then execute the following in the terminal:
 
 ```
-chmod a+x powershell-6.0.0-alpha.16-x86_64.AppImage
-./powershell-6.0.0-alpha.16-x86_64.AppImage
+chmod a+x PowerShell-x86_64.AppImage
+./PowerShell-x86_64.AppImage
 ```
 
 The [AppImage][] lets you run PowerShell without installing it.
@@ -149,14 +178,14 @@ macOS 10.11
 ===========
 
 Using macOS 10.11, download the PKG package
-`powershell-6.0.0-alpha.16.pkg`
+`powershell-6.0.0-alpha.17.pkg`
 from the [releases][] page onto the macOS machine.
 
 Either double-click the file and follow the prompts,
 or install it from the terminal:
 
 ```sh
-sudo installer -pkg powershell-6.0.0-alpha.16.pkg -target /
+sudo installer -pkg powershell-6.0.0-alpha.17.pkg -target /
 ```
 
 **Uninstallation**
@@ -224,7 +253,7 @@ You *can* run this command manually if you're having trouble with .NET Core's cr
 Paths
 =====
 
-* `$PSHOME` is `/opt/microsoft/powershell/6.0.0-alpha.16/`
+* `$PSHOME` is `/opt/microsoft/powershell/6.0.0-alpha.17/`
 * User profiles will be read from `~/.config/powershell/profile.ps1`
 * Default profiles will be read from `$PSHOME/profile.ps1`
 * User modules will be read from `~/.local/share/powershell/Modules`
@@ -240,7 +269,7 @@ On Linux and macOS, the [XDG Base Directory Specification][xdg-bds] is respected
 
 Note that because macOS is a derivation of BSD,
 instead of `/opt`, the prefix used is `/usr/local`.
-Thus, `$PSHOME` is `/usr/local/microsoft/powershell/6.0.0-alpha.16/`,
+Thus, `$PSHOME` is `/usr/local/microsoft/powershell/6.0.0-alpha.17/`,
 and the symlink is placed at `/usr/local/bin/powershell`.
 
 [releases]: https://github.com/PowerShell/PowerShell/releases/latest

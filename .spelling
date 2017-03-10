@@ -208,6 +208,7 @@ GoogleTest
 superproject
  - docs/installation/linux.md
 PSReadLine
+OpenSUSE
  - docs/installation/windows.md
 Win8
 pwrshplugin.dll
@@ -732,6 +733,7 @@ shebang
  - CHANGELOG.md
 v6.0.0
 alpha.16
+alpha.17
  - test/tools/CodeCoverageAutomation/README.md
 Start-CodeCoverageRun
 Coveralls.io.
