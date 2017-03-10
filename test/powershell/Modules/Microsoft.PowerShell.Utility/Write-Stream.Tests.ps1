@@ -89,9 +89,9 @@ Describe "Stream writer tests" -Tags "CI" {
             $result.NativeThreadId | Should Not Be 0
             $result.ProcessId | Should Be $pid
             $result | Should BeOfType System.Management.Automation.InformationRecord
-            
+
             # Use Match instead of Be so we can avoid dealing with a potential domain name
-            $result.Computer | Should Match "^[environment]::MachineName"
+            $result.Computer | Should Match "^($([environment]::MachineName)){1}(\.[a-zA-Z0-9]+)*$"
             if ($IsWindows)
             {
                 $result.User | Should Match ".*${env:USERNAME}"
