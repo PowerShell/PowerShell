@@ -44,6 +44,14 @@ case "$OSTYPE" in
                         exit 2
                 esac
                 ;;
+            opensuse)
+                if ! hash curl 2>/dev/null; then
+                    echo "curl not found, installing..."
+                    sudo zypper install -y curl
+                fi
+
+                package=powershell-6.0.0_alpha.17-1.suse.13.2.x86_64.rpm
+                ;;
             *)
                 echo "$NAME is not supported!" >&2
                 exit 2
@@ -82,6 +90,12 @@ case "$OSTYPE" in
                 sudo dpkg -i "./$package" &> /dev/null
                 # Resolve dependencies
                 sudo apt-get install -f
+                ;;
+            opensuse)
+                # Install the Microsoft public key so that zypper trusts the package
+                sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+                # zypper automatically resolves dependencies for local packages
+                sudo zypper --non-interactive install "./$package" &> /dev/null
                 ;;
             *)
         esac
