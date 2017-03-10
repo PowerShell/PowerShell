@@ -149,8 +149,6 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
 
             [powershell] $ps2 = [powershell]::Create()
             $ps2.Runspace = $rs2
-
-            $remoteSession = New-RemoteSession
         }
     }
 
@@ -171,9 +169,18 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
         }
     }
 
+    BeforeEach {
+
+        $remoteSession = New-RemoteSession
+    }
+
     AfterEach {
+
         $ps.Commands.Clear()
         $ps2.Commands.Clear()
+
+        Remove-PSSession $remoteSession -ErrorAction SilentlyContinue
+        $remoteSession = $null
     }
 
     It "Verifies that asynchronous 'Invoke-Command -RemoteDebug' is ignored" {
