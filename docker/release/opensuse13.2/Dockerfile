@@ -1,6 +1,6 @@
 # Docker image file that describes an OpenSUSE 13.2 (AKA harlequin) image with PowerShell installed from PowerShell Release
 FROM opensuse:harlequin
-LABEL maintaner Travis Plunk <travis.plunk@microsoft.com>
+LABEL maintainer Travis Plunk <travis.plunk@microsoft.com>
 
 ARG POWERSHELL_VERSION=6.0.0_alpha.17
 ARG POWERSHELL_RELEASE=v6.0.0-alpha.17
