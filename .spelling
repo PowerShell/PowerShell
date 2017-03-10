@@ -208,6 +208,7 @@ GoogleTest
 superproject
  - docs/installation/linux.md
 PSReadLine
+OpenSUSE
  - docs/installation/windows.md
 Win8
 pwrshplugin.dll
