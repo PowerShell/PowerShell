@@ -569,6 +569,7 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
         $level1_0 = "Level1_0"
         $level2_0 = "Level2_0"
         $level2_1 = "Level2_1"
+        $fileExt = ".ext"
         $root = Join-Path "TestDrive:" "" #adds correct / or \
         $level1_0Full = Join-Path $root $level1_0
         $level2_0Full = Join-Path $level1_0Full $level2_0
@@ -627,6 +628,22 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
         It "Validate Leaf" {
             $result = Split-Path -Path $level1_0Full -Leaf
             $result | Should Be $level1_0
+        }
+        
+        It 'Validate LeafBase' {
+            $result = Split-Path -Path "$level2_1Full$fileExt" -LeafBase
+            $result | Should Be $level2_1
+        }
+
+        It 'Validate LeafBase is not over-zealous' {
+            
+            $result = Split-Path -Path "$level2_1Full$fileExt$fileExt" -LeafBase
+            $result | Should Be "$level2_1$fileExt"
+        }
+
+        It 'Validate LeafBase' {
+            $result = Split-Path -Path "$level2_1Full$fileExt" -Extension
+            $result | Should Be $fileExt
         }
 
         It "Validate NoQualifier" {
