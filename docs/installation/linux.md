@@ -118,7 +118,7 @@ Then execute the following in the terminal:
 
 ```sh
 # Trust the microsoft key to avoid errors
-sudo rpm --import https://packages.microsoft.cm/keys/microsoft.asc
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo zypper install ./powershell-6.0.0_alpha.17-1.suse.13.2.x86_64.rpm
 ```
 
@@ -126,7 +126,7 @@ You can also install the RPM without the intermediate step of downloading it:
 
 ```sh
 # Trust the microsoft key to avoid errors
-sudo rpm --import https://packages.microsoft.cm/keys/microsoft.asc
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo zypper install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.17/powershell-6.0.0_alpha.17-1.suse.13.2.x86_64.rpm
 ```
 
