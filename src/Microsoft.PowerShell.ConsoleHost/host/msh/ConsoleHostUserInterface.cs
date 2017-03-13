@@ -1390,9 +1390,10 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-                    // lock (_instanceLock) is moved into HandleIncomingProgressRecord
-                    // to exclude unneeded locks
-                    HandleIncomingProgressRecord(sourceId, record);
+                    lock (_instanceLock)
+                    {
+                        HandleIncomingProgressRecord(sourceId, record);
+                    }
                 }
             }
         }

@@ -90,17 +90,13 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            if (progPaneUpdateFlag)
+            if (progPaneUpdateFlag || record.RecordType == ProgressRecordType.Completed)
             {
-                // Update the progress pane only when the timer set up the flag
-                // as a result, we do not block WriteProgress and whole script
-                // and eliminate unnecessary console locks and updates
-                lock (_instanceLock)
-                {
-                    _pendingProgress?.Update(sourceId, record);
-                    _progPane?.Show(_pendingProgress);
-                    progPaneUpdateFlag = false;
-                }
+                // Update the progress pane only when the timer set up the update flag or WriteProgress is completed.
+                // As a result, we do not block WriteProgress and whole script and eliminate unnecessary console locks and updates.
+                _pendingProgress.Update(sourceId, record);
+                _progPane.Show(_pendingProgress);
+                progPaneUpdateFlag = false;
             }
         }
 
