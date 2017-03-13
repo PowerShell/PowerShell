@@ -6513,7 +6513,7 @@ namespace System.Management.Automation.Language
             }
 
             var psMethod = methodInfo as PSMethod;
-            if (psMethod != null)
+            if (psMethod != null && !IsListForeachMagicMethod(methodInfo, target, args))
             {
                 var data = (DotNetAdapter.MethodCacheEntry)psMethod.adapterData;
 
@@ -6584,6 +6584,15 @@ namespace System.Management.Automation.Language
                                            Expression.Constant(typeForMessage.FullName), Expression.Constant(Name)),
                 restrictions).WriteToDebugLog(this);
         }
+
+		private bool IsListForeachMagicMethod(PSMethodInfo methodInfo, DynamicMetaObject target, DynamicMetaObject[] args)
+		{
+			return methodInfo.Name == "ForEach" &&
+				target.RuntimeType.Name == "List`1" &&
+				target.RuntimeType.Namespace == "System.Collections.Generic" &&
+				(args.Length != 1 || !args[0].RuntimeType.FullName.StartsWith("System.Action"));
+		}
+
 
         internal static DynamicMetaObject InvokeDotNetMethod(
             CallInfo callInfo,
