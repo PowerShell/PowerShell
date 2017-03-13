@@ -2731,6 +2731,8 @@ function Start-CrossGen {
             "rhel.7-x64"
         } elseif ($IsFedora) {
             "fedora.24-x64"
+        } elseif ($IsOpenSUSE13) {
+            "opensuse.13.2-x64"
         }
     } elseif ($IsOSX) {
         "osx.10.10-x64"
