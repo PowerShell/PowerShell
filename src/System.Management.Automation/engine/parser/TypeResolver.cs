@@ -67,7 +67,12 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private static Type LookForTypeInAssemblies(TypeName typeName, IEnumerable<Assembly> assemblies, TypeResolutionState typeResolutionState, bool reportAmbiguousException, out Exception exception)
+        private static Type LookForTypeInAssemblies(TypeName typeName,
+                                                    IEnumerable<Assembly> assemblies,
+                                                    HashSet<string> searchedAssemblies,
+                                                    TypeResolutionState typeResolutionState,
+                                                    bool reportAmbiguousException,
+                                                    out Exception exception)
         {
             exception = null;
             string alternateNameToFind = typeResolutionState.GetAlternateTypeName(typeName.Name);
@@ -75,9 +80,12 @@ namespace System.Management.Automation.Language
             Type foundType2 = null;
             foreach (Assembly assembly in assemblies)
             {
+                // Skip the assemblies that we already searched and found no matching type.
+                if (searchedAssemblies.Contains(assembly.FullName)) { continue; }
+
                 try
                 {
-                    Type targetType = LookForTypeInSingleAssembly(assembly, typeName.Name); ;
+                    Type targetType = LookForTypeInSingleAssembly(assembly, typeName.Name);
                     if (targetType == null && alternateNameToFind != null)
                     {
                         targetType = LookForTypeInSingleAssembly(assembly, alternateNameToFind);
@@ -108,6 +116,10 @@ namespace System.Management.Automation.Language
                                 foundType = targetType;
                             }
                         }
+                    }
+                    else
+                    {
+                        searchedAssemblies.Add(assembly.FullName);
                     }
                 }
                 catch (Exception) // Assembly.GetType might throw unadvertised exceptions
@@ -158,34 +170,43 @@ namespace System.Management.Automation.Language
             return true;
         }
 
-        private static Type ResolveTypeNameWorker(TypeName typeName, SessionStateScope currentScope, IEnumerable<Assembly> loadedAssemblies, TypeResolutionState typeResolutionState, bool reportAmbiguousException, out Exception exception)
+        private static Type ResolveTypeNameWorker(TypeName typeName, SessionStateScope currentScope,
+                                                  IEnumerable<Assembly> loadedAssemblies,
+                                                  HashSet<string> searchedAssemblies,
+                                                  TypeResolutionState typeResolutionState,
+                                                  bool onlySearchInGivenAssemblies,
+                                                  bool reportAmbiguousException,
+                                                  out Exception exception)
         {
             Type result;
             exception = null;
-            while (currentScope != null)
+
+            if (!onlySearchInGivenAssemblies)
             {
-                result = currentScope.LookupType(typeName.Name);
-                if (result != null)
+                while (currentScope != null)
+                {
+                    result = currentScope.LookupType(typeName.Name);
+                    if (result != null)
+                    {
+                        return result;
+                    }
+                    currentScope = currentScope.Parent;
+                }
+
+                if (TypeAccelerators.builtinTypeAccelerators.TryGetValue(typeName.Name, out result))
                 {
                     return result;
                 }
-                currentScope = currentScope.Parent;
             }
 
-            if (TypeAccelerators.builtinTypeAccelerators.TryGetValue(typeName.Name, out result))
-            {
-                return result;
-            }
-
-            exception = null;
-            result = LookForTypeInAssemblies(typeName, loadedAssemblies, typeResolutionState, reportAmbiguousException, out exception);
+            result = LookForTypeInAssemblies(typeName, loadedAssemblies, searchedAssemblies, typeResolutionState, reportAmbiguousException, out exception);
             if (exception != null)
             {
                 // skip the rest of lookups, if exception reported.
                 return result;
             }
 
-            if (result == null)
+            if (!onlySearchInGivenAssemblies && result == null)
             {
                 lock (TypeAccelerators.userTypeAccelerators)
                 {
@@ -284,8 +305,6 @@ namespace System.Management.Automation.Language
             // If nothing is found, we search again, this time applying any 'using namespace ...' declarations including the implicit 'using namespace System'.
             // We must search all using aliases and REPORT an error if there is an ambiguity.
 
-            var assemList = assemblies ?? ClrFacade.GetAssemblies(typeResolutionState, typeName);
-
             if (context == null)
             {
                 context = LocalPipeline.GetExecutionContextFromTLS();
@@ -302,10 +321,28 @@ namespace System.Management.Automation.Language
                 return typeName._typeDefinitionAst.Type;
             }
 
-            result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, typeResolutionState, /* reportAmbiguousException */ true, out exception);
+            var assemList = assemblies ?? ClrFacade.GetAssemblies(typeResolutionState, typeName);
+            // A set of assembly names that we have searched from but found no matching type.
+            // This set will be updated within ResolveTypeNameWorker.
+            var searchedAssemblies = new HashSet<string>();
+
+            result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, searchedAssemblies, typeResolutionState,
+                                           /*onlySearchInGivenAssemblies*/ false, /* reportAmbiguousException */ true, out exception);
             if (exception == null && result == null)
             {
-                result = ResolveTypeNameWorker(typeName, currentScope, assemList, typeResolutionState, /* reportAmbiguousException */ false, out exception);
+                if (context != null && assemblies == null)
+                {
+                    // If the assemblies to search from is not specified by the caller, then we search our assembly cache first,
+                    // so as to give preference to resolving the type against assemblies explicitly loaded by powershell.
+                    result = ResolveTypeNameWorker(typeName, currentScope, context.AssemblyCache.Values, searchedAssemblies, typeResolutionState,
+                                                   /*onlySearchInGivenAssemblies*/ true, /* reportAmbiguousException */ false, out exception);
+                }
+
+                if (result == null)
+                {
+                    result = ResolveTypeNameWorker(typeName, currentScope, assemList, searchedAssemblies, typeResolutionState,
+                                                   /*onlySearchInGivenAssemblies*/ true, /* reportAmbiguousException */ false, out exception);
+                }
             }
 
             if (result != null)
@@ -322,6 +359,8 @@ namespace System.Management.Automation.Language
                     newTypeNameToSearch = typeResolutionState.GetAlternateTypeName(newTypeNameToSearch) ??
                                           newTypeNameToSearch;
                     var newTypeName = new TypeName(typeName.Extent, newTypeNameToSearch);
+                    // TypeName has changed, so we need to search all assemblies again.
+                    searchedAssemblies.Clear();
 #if CORECLR
                     if (assemblies == null)
                     {
@@ -330,10 +369,23 @@ namespace System.Management.Automation.Language
                         assemList = ClrFacade.GetAssemblies(typeResolutionState, newTypeName);
                     }
 #endif
-                    var newResult = ResolveTypeNameWorker(newTypeName, currentScope, typeResolutionState.assemblies, typeResolutionState, /* reportAmbiguousException */ true, out exception);
+                    var newResult = ResolveTypeNameWorker(newTypeName, currentScope, typeResolutionState.assemblies, searchedAssemblies, typeResolutionState,
+                                                          /*onlySearchInGivenAssemblies*/ false, /* reportAmbiguousException */ true, out exception);
                     if (exception == null && newResult == null)
                     {
-                        newResult = ResolveTypeNameWorker(newTypeName, currentScope, assemList, typeResolutionState, /* reportAmbiguousException */ false, out exception);
+                        if (context != null && assemblies == null)
+                        {
+                            // If the assemblies to search from is not specified by the caller, then we search our assembly cache first,
+                            // so as to give preference to resolving the type against assemblies explicitly loaded by powershell.
+                            newResult = ResolveTypeNameWorker(newTypeName, currentScope, context.AssemblyCache.Values, searchedAssemblies, typeResolutionState,
+                                                              /*onlySearchInGivenAssemblies*/ true, /* reportAmbiguousException */ false, out exception);
+                        }
+
+                        if (newResult == null)
+                        {
+                            newResult = ResolveTypeNameWorker(newTypeName, currentScope, assemList, searchedAssemblies, typeResolutionState,
+                                                              /*onlySearchInGivenAssemblies*/ true, /* reportAmbiguousException */ false, out exception);
+                        }
                     }
 
                     if (exception != null)
