@@ -1625,7 +1625,8 @@ namespace System.Management.Automation.Internal
         /// TODO: In .NET Core, managed threads are all eagerly initialized with MTA mode, so to call 'ShellExecuteEx' from a STA thread, we
         /// need to create a native thread using 'CreateThread' function and initialize COM with STA on that thread. Currently we are calling
         /// ShellExecuteEx directly on MTA thread, and it works for things like openning a folder in File Explorer, openning a PDF/DOCX file,
-        /// openning URL in web browser and etc, but it's not guaranteed to work in all ShellExecution scenarios.
+        /// openning URL in web browser and etc, but it's not guaranteed to work in all ShellExecution scenarios. Github issue #2969 is used
+        /// to track the "invoke-on-STA-thread" work.
         /// </remarks>
         internal static Process Start(ProcessStartInfo startInfo, ProcessWindowStyle windowStyle, string verb)
         {

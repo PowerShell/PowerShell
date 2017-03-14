@@ -107,7 +107,7 @@ Describe "Start-Process" -Tags @("CI","SLOW") {
         $process | Stop-Process
     }
 
-    It "Should open the application that associates with extension '.txt'" {
+    It "Should open the application that associates with extension '.txt'" -Skip:(!$isFullWin) {
         $txtFile = Join-Path $TestDrive "TxtTest.txt"
         New-Item $txtFile -ItemType File -Force
         $process = Start-Process $txtFile -PassThru -WindowStyle Normal
