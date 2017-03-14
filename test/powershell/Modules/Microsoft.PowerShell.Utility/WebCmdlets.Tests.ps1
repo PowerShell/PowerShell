@@ -441,6 +441,16 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Error.Exception.Message | Should Match ": 418 \(I'm a teapot\)\."
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
+
+    It "Validate Invoke-WebRequest returns native HTTPS error message in exception" {
+
+        $command = "Invoke-WebRequest -Uri https://incomplete.chain.badssl.com"
+        $result = ExecuteWebCommand -command $command
+
+        # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
+        $result.Error.ErrorDetails.Message | Should Match $result.Error.Exception.InnerException.Message
+        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+    }
 }
 
 Describe "Invoke-RestMethod tests" -Tags "Feature" {
@@ -725,6 +735,16 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result.Error.Exception.Message | Should Match ": 418 \(I'm a teapot\)\."
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
+
+    It "Validate Invoke-RestMethod returns native HTTPS error message in exception" {
+
+        $command = "Invoke-RestMethod -Uri https://incomplete.chain.badssl.com"
+        $result = ExecuteWebCommand -command $command
+
+        # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
+        $result.Error.ErrorDetails.Message | Should Match $result.Error.Exception.InnerException.Message
+        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+    }    
 }
 
 Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Feature" {

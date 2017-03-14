@@ -445,6 +445,10 @@ namespace Microsoft.PowerShell.Commands
                     catch (HttpRequestException ex)
                     {
                         ErrorRecord er = new ErrorRecord(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                        if (ex.InnerException != null)
+                        {
+                            er.ErrorDetails = new ErrorDetails(ex.InnerException.Message);
+                        }
                         ThrowTerminatingError(er);
                     }
                 }
