@@ -1428,6 +1428,23 @@ function New-UnixPackage {
 
     foreach ($Dependency in "fpm", "ronn") {
         if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
+            # These tools are not added to the path automatically on OpenSUSE 13.2
+            # try adding them to the path and re-tesing first
+            [string] $gemsPath = $null
+            [string] $depenencyPath = $null
+            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems   | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName  
+            if($gemsPath) {
+                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse  | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName  
+                $originalPath = $env:PATH
+                $env:PATH = $ENV:PATH +":" + $depenencyPath
+                if((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
+                    continue
+                }
+                else {
+                    $env:PATH = $originalPath
+                }
+            }
+            
             throw "Dependency precheck failed!"
         }
     }
@@ -2731,6 +2748,8 @@ function Start-CrossGen {
             "rhel.7-x64"
         } elseif ($IsFedora) {
             "fedora.24-x64"
+        } elseif ($IsOpenSUSE13) {
+            "opensuse.13.2-x64"
         }
     } elseif ($IsOSX) {
         "osx.10.10-x64"
