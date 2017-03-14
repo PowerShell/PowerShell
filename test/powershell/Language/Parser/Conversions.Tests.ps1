@@ -73,3 +73,57 @@ Describe 'conversion syntax' -Tags "CI" {
         }
     }
 }
+
+Describe "Type resolution should prefer assemblies in powershell assembly cache" -Tags "Feature" {
+
+    BeforeAll {
+        $cmdletCode = @'
+namespace TestTypeResolution {
+    using System.Management.Automation;
+    [Cmdlet("Test", "TypeResolution")]
+    public class TestTypeResolutionCommand : PSCmdlet {
+        [Parameter()]
+        public string Name { get; set; }
+
+        protected override void BeginProcessing() {
+            WriteObject(Name);
+        }
+    }
+
+    public class TestTypeFoo {
+        public string Foo { get; set; }
+    }
+}
+'@
+        $dupTypeCode = @'
+namespace TestTypeResolution {
+    public class TestTypeFoo {
+        public string Bar { get; set; }
+    }
+}
+'@
+
+        $cmdletDllDir  = Join-Path $TestDrive "cmdlet"
+        $dupTypeDllDir = Join-Path $TestDrive "dupType"
+
+        $null = New-Item -Path $cmdletDllDir, $dupTypeDllDir -ItemType Directory -Force
+
+        $cmdletDllPath  = Join-Path $cmdletDllDir "TestCmdlet.dll"
+        $dupTypeDllPath = Join-Path $dupTypeDllDir "TestType.dll"
+
+        Add-Type $cmdletCode -OutputAssembly $cmdletDllPath
+        Add-Type $dupTypeCode -OutputAssembly $dupTypeDllPath
+
+        $powershell = Join-Path $PSHOME "powershell"
+    }
+
+    It "validate Type resolution should prefer the assembly loaded by Import-Module" {
+        $command = @"
+            Add-Type -Path $dupTypeDllPath
+            Import-Module $cmdletDllPath
+            [TestTypeResolution.TestTypeFoo].Assembly.Location
+"@
+        $location = & $powershell -noprofile -command $command
+        $location | Should Be $cmdletDllPath
+    }
+}
