@@ -1,6 +1,7 @@
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
+#if !UNIX // Not built on Unix
 
 using System;
 using System.Collections.Generic;
@@ -2419,3 +2420,4 @@ namespace Microsoft.PowerShell.Commands
     #endregion NativeMethods
 }
 
+#endif // Not built on Unix

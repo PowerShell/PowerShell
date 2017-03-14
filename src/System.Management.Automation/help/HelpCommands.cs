@@ -638,20 +638,17 @@ namespace Microsoft.PowerShell.Commands
                 browserProcess.StartInfo.Arguments = uriToLaunch.OriginalString;
                 browserProcess.Start();
 #elif CORECLR
-                // On FullCLR, ProcessStartInfo.UseShellExecute is true by default. This means that the shell will be used when starting the process.
-                // On CoreCLR, UseShellExecute is not supported. To work around this, we check if there is a default browser in the system.
-                // If there is, we lunch it to open the HelpURI. If there isn't, we error out.
-                string webBrowserPath = GetDefaultWebBrowser();
-                if (webBrowserPath == null)
+                if (Platform.IsNanoServer || Platform.IsIoT)
                 {
+                    // We cannot open the URL in browser on headless SKUs.
                     wrapCaughtException = false;
                     exception = PSTraceSource.NewInvalidOperationException(HelpErrors.CannotLaunchURI, uriToLaunch.OriginalString);
                 }
                 else
                 {
-                    browserProcess.StartInfo = new ProcessStartInfo(webBrowserPath);
-                    browserProcess.StartInfo.Arguments = "\"" + uriToLaunch.OriginalString + "\"";
-                    browserProcess.Start();
+                    // We can call ShellExecute directly on Full Windows.
+                    browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
+                    ShellExecuteHelper.Start(browserProcess.StartInfo);
                 }
 #else
                 browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
@@ -675,46 +672,6 @@ namespace Microsoft.PowerShell.Commands
                     throw exception;
             }
         }
-
-#if !UNIX
-        /// <summary>
-        /// Gets the path to the default browser by querying the Windows registry.
-        /// </summary>
-        /// <returns></returns>
-        private string GetDefaultWebBrowser()
-        {
-            // Check if there is a default browser in the system.
-            const string httpRegkey = @"HKEY_CURRENT_USER\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice";
-            object progId = Registry.GetValue(httpRegkey, "ProgId", null);
-            if (progId != null)
-            {
-                // Query the registry to find the web browser path.
-                using (RegistryKey browserRegKey = Registry.ClassesRoot.OpenSubKey(progId + "\\shell\\open\\command", false))
-                {
-                    string browserPath = browserRegKey?.GetValue(null)?.ToString().Replace(/* remove the quotes */ "\"", "");
-                    if (!string.IsNullOrEmpty(browserPath))
-                    {
-                        const string exeExtension = ".exe";
-                        if (!browserPath.EndsWith(exeExtension, StringComparison.OrdinalIgnoreCase))
-                        {
-                            // Remove any extra chars in the path after ".exe".
-                            int extIndex = browserPath.LastIndexOf(exeExtension, StringComparison.OrdinalIgnoreCase);
-                            browserPath = extIndex > 0 ? browserPath.Substring(0, extIndex + exeExtension.Length) : string.Empty;
-                        }
-
-                        // Make sure the path to the default browser exists.
-                        if (File.Exists(browserPath))
-                        {
-                            return browserPath;
-                        }
-                    }
-                }
-            }
-
-            // By default, return null.
-            return null;
-        }
-#endif
 
         #endregion
 

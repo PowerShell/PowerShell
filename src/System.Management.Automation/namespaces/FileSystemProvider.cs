@@ -1330,7 +1330,19 @@ namespace Microsoft.PowerShell.Commands
                 invokeProcess.StartInfo.Arguments = path;
                 invokeProcess.Start();
 #elif CORECLR
-                throw new PlatformNotSupportedException();
+                try
+                {
+                    // Try Process.Start first. This works for executables even on headless SKUs.
+                    invokeProcess.StartInfo.FileName = path;
+                    invokeProcess.Start();
+                }
+                catch (Win32Exception)
+                {
+                    // If it's headless SKUs, rethrow.
+                    if (Platform.IsNanoServer || Platform.IsIoT) { throw; }
+                    // If it's full Windows, then try ShellExecute.
+                    ShellExecuteHelper.Start(invokeProcess.StartInfo);
+                }
 #else
                 invokeProcess.StartInfo.FileName = path;
                 invokeProcess.Start();
