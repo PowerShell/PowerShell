@@ -81,7 +81,8 @@ namespace System.Management.Automation.Language
             foreach (Assembly assembly in assemblies)
             {
                 // Skip the assemblies that we already searched and found no matching type.
-                if (searchedAssemblies.Contains(assembly.FullName)) { continue; }
+                // Don't skip any dynamic assemblies as it's possible there are different dynamic assemblies with identical names.
+                if (!assembly.IsDynamic && searchedAssemblies.Contains(assembly.FullName)) { continue; }
 
                 try
                 {
@@ -119,8 +120,9 @@ namespace System.Management.Automation.Language
                     }
                     else if (!assembly.IsDynamic)
                     {
-                        // It's possible to have different dynamic assemblies with identical names.
-                        // So we only record the non-dynamic assemblies that we already searched from.
+                        // We didn't find a match from the current assembly, so update the searchedAssemblies set.
+                        // It's possible to have different dynamic assemblies with identical names, so we only record
+                        // the non-dynamic assemblies.
                         searchedAssemblies.Add(assembly.FullName);
                     }
                 }
@@ -220,11 +222,12 @@ namespace System.Management.Automation.Language
             return result;
         }
 
-        // A set of assembly names that we have searched from but found no matching type.
+        // A set of assembly names that we have searched from but found no matching type. By checking this set, we
+        // can avoid searching in some assemblies multiple times. It's possible there are different dynamic assemblies
+        // with identical names, so we should not put dynamic assembly names in this set.
         // This set gets cleared every time before we do a full search, and is updated within ResolveTypeNameWorker.
-        // It's intentional to make the set case-sensitive, so we don't accidentally skip searching a different assembly.
         [ThreadStatic]
-        private static HashSet<string> searchedAssemblies = new HashSet<string>();
+        private static HashSet<string> s_searchedAssemblies = null;
 
         /// <summary>
         /// A helper method to call ResolveTypeNameWorker in steps.
@@ -236,12 +239,20 @@ namespace System.Management.Automation.Language
                                                             TypeResolutionState typeResolutionState,
                                                             out Exception exception)
         {
-            // Clear the set before starting a full search.
-            searchedAssemblies.Clear();
+            if (s_searchedAssemblies == null)
+            {
+                // It's intentional to make the set case-sensitive, so we don't accidentally skip searching a different assembly.
+                s_searchedAssemblies = new HashSet<string>();
+            }
+            else
+            {
+                // Clear the set before starting a full search.
+                s_searchedAssemblies.Clear();
+            }
 
             exception = null;
             var currentScope = context != null ? context.EngineSessionState.CurrentScope : null;
-            Type result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, searchedAssemblies, typeResolutionState,
+            Type result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, s_searchedAssemblies, typeResolutionState,
                                                 /*onlySearchInGivenAssemblies*/ false, /* reportAmbiguousException */ true, out exception);
             if (exception == null && result == null)
             {
@@ -250,14 +261,14 @@ namespace System.Management.Automation.Language
                     // If the assemblies to search from is not specified by the caller of 'ResolveTypeNameWithContext',
                     // then we search our assembly cache first, so as to give preference to resolving the type against
                     // assemblies explicitly loaded by powershell, for example, via importing module/snapin.
-                    result = ResolveTypeNameWorker(typeName, currentScope, context.AssemblyCache.Values, searchedAssemblies, typeResolutionState,
+                    result = ResolveTypeNameWorker(typeName, currentScope, context.AssemblyCache.Values, s_searchedAssemblies, typeResolutionState,
                                                    /*onlySearchInGivenAssemblies*/ true, /* reportAmbiguousException */ false, out exception);
                 }
 
                 if (result == null)
                 {
                     // Search from the assembly list passed in.
-                    result = ResolveTypeNameWorker(typeName, currentScope, assemblies, searchedAssemblies, typeResolutionState,
+                    result = ResolveTypeNameWorker(typeName, currentScope, assemblies, s_searchedAssemblies, typeResolutionState,
                                                    /*onlySearchInGivenAssemblies*/ true, /* reportAmbiguousException */ false, out exception);
                 }
             }
