@@ -42,8 +42,7 @@
         "netstandard1.6": {
             "buildOptions": {
                 "define": [ "CORECLR" ]
-            },
-            "imports": [ "portable-net45+win8" ]
+            }
         },
         "net451": {
             "frameworkAssemblies": {
