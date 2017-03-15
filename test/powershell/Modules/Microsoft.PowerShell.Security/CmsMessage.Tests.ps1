@@ -163,8 +163,8 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
                 $fullPowerShell = Join-Path "$env:SystemRoot" "System32\WindowsPowerShell\v1.0\powershell.exe"
 
                 try {
-                    $modulePathCopy = $env:PSMODULEPATH
-                    $env:PSMODULEPATH = $null
+                    $modulePathCopy = $env:PSModulePath
+                    $env:PSModulePath = $null
 
                     $command = @"
 Import-PfxCertificate $certLocation -CertStoreLocation cert:\CurrentUser\My | % PSPath
@@ -176,7 +176,7 @@ Import-Certificate $badCertLocation -CertStoreLocation Cert:\CurrentUser\My | % 
                     $importedCert = Get-ChildItem $certPaths[0]
                     $testBadCert  = Get-ChildItem $certPaths[1]
                 } finally {
-                    $env:PSMODULEPATH = $modulePathCopy
+                    $env:PSModulePath = $modulePathCopy
                 }
             }
             else

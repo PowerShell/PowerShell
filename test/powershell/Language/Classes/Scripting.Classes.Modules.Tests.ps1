@@ -24,12 +24,12 @@ Describe 'use of a module from two runspaces' -Tags "CI" {
         }
         New-ModuleManifest @manifestParams
 
-        if ($env:PSMODULEPATH -notlike "*$TestModulePath*") {
-            $env:PSMODULEPATH += "$([System.IO.Path]::PathSeparator)$TestModulePath"
+        if ($env:PSModulePath -notlike "*$TestModulePath*") {
+            $env:PSModulePath += "$([System.IO.Path]::PathSeparator)$TestModulePath"
         }
     }
 
-    $originalPSMODULEPATH = $env:PSMODULEPATH
+    $originalPSModulePath = $env:PSModulePath
     try {
 
         New-TestModule -Name 'Random' -Content @'
@@ -67,7 +67,7 @@ Import-Module Random
         }
 
     } finally {
-        $env:PSMODULEPATH = $originalPSMODULEPATH
+        $env:PSModulePath = $originalPSModulePath
     }
 
 }
