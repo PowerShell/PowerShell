@@ -50,18 +50,6 @@
                     ]
                 }
             }
-        },
-        
-        "net451": {
-            "buildOptions": {
-                "compile": {
-                    "excludeFiles": [
-                        "CoreCLR/Stubs.cs",
-                        "gen/GetEventResources.cs"
-                    ]
-                },
-                "debugType": "full"
-            }
         }
     }
 }

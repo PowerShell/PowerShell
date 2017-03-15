@@ -191,31 +191,6 @@
                 "System.Xml.XmlDocument": "4.3.0",
                 "System.Xml.XmlSerializer": "4.3.0"
             }
-        },
-        "net451": {
-            "buildOptions": {
-                "compile": {
-                    "exclude": [ "gen/CoreClrStubResources.cs" ]
-                },
-                "embed": {
-                    "exclude": [ "resources/CoreClrStubResources.resx" ]
-                },
-                "debugType": "full"
-            },
-            "frameworkAssemblies": {
-                "System.Runtime": "",
-                "System.Xml": "",
-                "System.Xml.Linq": "",
-                "System.Numerics": "",
-                "System.Data": "",
-                "System.DirectoryServices": "",
-                "System.Security": "",
-                "System.Transactions": "",
-                "System.Runtime.Serialization": "",
-                "System.Management": "",
-                "System.Configuration": "",
-                "System.Configuration.Install": ""
-            }
         }
     }
 }
