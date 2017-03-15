@@ -103,7 +103,7 @@
                     ]
                 }
             },
-            "imports": [ "dnxcore50", "portable-net45+win8" ],
+            "imports": [ "portable-net45+win8" ],
             "dependencies": {
                 "Microsoft.CodeAnalysis.CSharp": "2.0.0-rc",
                 "System.Diagnostics.TextWriterTraceListener": "4.3.0"
