@@ -363,7 +363,7 @@ function Install-OpenCover
 {
     param (
         [parameter()][string]$Version = "4.6.519",
-        [parameter()][string]$TargetDirectory = "~/",
+        [parameter()][string]$TargetDirectory = "$home",
         [parameter()][switch]$Force
         )
 
@@ -422,10 +422,10 @@ function Invoke-OpenCover
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param (
-        [parameter()]$OutputLog = "$pwd/OpenCover.xml",
+        [parameter()]$OutputLog = "$home/Documents/OpenCover.xml",
         [parameter()]$TestDirectory = "$($script:psRepoPath)/test/powershell",
-        [parameter()]$OpenCoverPath = "~/OpenCover",
-        [parameter()]$PowerShellExeDirectory = "$($script:psRepoPath)/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win10-x64",
+        [parameter()]$OpenCoverPath = "$home/OpenCover",
+        [parameter()]$PowerShellExeDirectory = "$($script:psRepoPath)/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win10-x64/publish",
         [parameter()]$PesterLogElevated = "$pwd/TestResultsElevated.xml",
         [parameter()]$PesterLogUnelevated = "$pwd/TestResultsUnelevated.xml",
         [parameter()]$PesterLogFormat = "NUnitXml",
