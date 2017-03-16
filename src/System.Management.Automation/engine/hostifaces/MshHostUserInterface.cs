@@ -453,7 +453,11 @@ namespace System.Management.Automation.Host
                     psVersionInfo.AppendLine(versionKey + ": " + valueString);
                 }
             }
-
+            string psConfigurationName = string.Empty;
+            if (senderInfo != null && !string.IsNullOrEmpty(senderInfo.ConfigurationName))
+            {
+                psConfigurationName = senderInfo.ConfigurationName;
+            }
             // Transcribe the transcript header
             string format = InternalHostUserInterfaceStrings.TranscriptPrologue;
             string line =
@@ -463,6 +467,7 @@ namespace System.Management.Automation.Host
                     DateTime.Now,
                     username,
                     runAsUser,
+                    psConfigurationName,
                     Environment.MachineName,
                     Environment.OSVersion.VersionString,
                     String.Join(" ", Environment.GetCommandLineArgs()),

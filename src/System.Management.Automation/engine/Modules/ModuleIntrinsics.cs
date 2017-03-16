@@ -14,6 +14,11 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
+    internal static class Constants
+    {
+        public const string PSModulePathEnvVar = "PSModulePath";
+    }
+
     /// <summary>
     /// Encapsulates the basic module operations for a PowerShell engine instance...
     /// </summary>
@@ -710,7 +715,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Check if the current powershell is likely running in following scenarios:
-        ///  - sxs ps started on windows [machine-wide env:psmodulepath will influence]
+        ///  - sxs ps started on windows [machine-wide env:PSModulePath will influence]
         ///  - sxs ps started from full ps
         ///  - sxs ps started from inbox nano/iot ps
         ///  - full ps started from sxs ps
@@ -734,8 +739,8 @@ namespace System.Management.Automation
                 // so if the current process module path contains any of them, it's likely that the sxs
                 // ps was started directly on windows, or from full ps. The same goes for the legacy personal
                 // and shared module paths.
-                string hklmModulePath = GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.Machine);
-                string hkcuModulePath = GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.User);
+                string hklmModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Machine);
+                string hkcuModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.User);
                 string legacyPersonalModulePath = personalModulePath.Replace(winSxSModuleDirectory, winLegacyModuleDirectory);
                 string legacyProgramFilesModulePath = sharedModulePath.Replace(winSxSModuleDirectory, winLegacyModuleDirectory);
 
@@ -824,7 +829,7 @@ namespace System.Management.Automation
                 NeedToClearProcessModulePath(currentProcessModulePath, personalModulePath, sharedModulePath, runningSxS))
             {
                 // Clear the current process module path in the following cases
-                //  - start sxs ps on windows [machine-wide env:psmodulepath will influence]
+                //  - start sxs ps on windows [machine-wide env:PSModulePath will influence]
                 //  - start sxs ps from full ps
                 //  - start sxs ps from inbox nano/iot ps
                 //  - start full ps from sxs ps
@@ -971,7 +976,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static string GetModulePath()
         {
-            string currentModulePath = GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.Process);
+            string currentModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
             return currentModulePath;
         }
         /// <summary>
@@ -981,7 +986,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static string SetModulePath()
         {
-            string currentModulePath = GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.Process);
+            string currentModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
             string systemWideModulePath = ConfigPropertyAccessor.Instance.GetModulePath(ConfigPropertyAccessor.PropertyScope.SystemWide);
             string personalModulePath = ConfigPropertyAccessor.Instance.GetModulePath(ConfigPropertyAccessor.PropertyScope.CurrentUser);
 
@@ -990,7 +995,7 @@ namespace System.Management.Automation
             if (!string.IsNullOrEmpty(newModulePathString))
             {
                 // Set the environment variable...
-                Environment.SetEnvironmentVariable("PSMODULEPATH", newModulePathString);
+                Environment.SetEnvironmentVariable(Constants.PSModulePathEnvVar, newModulePathString);
             }
 
             return newModulePathString;
@@ -1013,7 +1018,7 @@ namespace System.Management.Automation
         /// <returns>The module path as an array of strings</returns>
         internal static IEnumerable<string> GetModulePath(bool includeSystemModulePath, ExecutionContext context)
         {
-            string modulePathString = Environment.GetEnvironmentVariable("PSMODULEPATH") ?? SetModulePath();
+            string modulePathString = Environment.GetEnvironmentVariable(Constants.PSModulePathEnvVar) ?? SetModulePath();
 
             HashSet<string> processedPathSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 

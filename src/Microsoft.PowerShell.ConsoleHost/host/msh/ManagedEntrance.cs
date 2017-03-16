@@ -9,6 +9,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Globalization;
+
 #if CORECLR
 using System.Runtime.InteropServices;
 #endif
@@ -109,7 +110,7 @@ namespace Microsoft.PowerShell
             try
             {
 #if CORECLR
-                    var banner = ManagedEntranceStrings.ShellBannerNonWindowsPowerShell;
+                var banner = ManagedEntranceStrings.ShellBannerNonWindowsPowerShell;
 #else
                 var banner = ManagedEntranceStrings.ShellBanner;
 #endif

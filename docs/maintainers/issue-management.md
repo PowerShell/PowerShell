@@ -33,7 +33,9 @@ When an issue is resolved, the following labels are used to describe the resolut
 These labels describe what feature area of PowerShell that an issue affects:
 
 * `Area-Build`: build issues
-* `Area-Cmdlets`: cmdlets in any module
+* `Area-Cmdlets-Core`: cmdlets in the Microsoft.PowerShell.Core module
+* `Area-Cmdlets-Utility`: cmdlets in the Microsoft.PowerShell.Utility module
+* `Area-Cmdlets-Management`: cmdlets in the Microsoft.PowerShell.Management module
 * `Area-Console`: the console experience
 * `Area-Debugging`: debugging PowerShell script
 * `Area-Demo`: a demo or sample
@@ -48,8 +50,10 @@ These labels describe what feature area of PowerShell that an issue affects:
 * `Area-Performance`: a performance issue
 * `Area-Portability`: anything affecting script portability
 * `Area-PowerShellGet`: PowerShellGet related issues
+* `Area-Providers`: PowerShell providers like FileSystem, Certificates, Registry, etc...
 * `Area-PSReadline`: PSReadLine related issues
 * `Area-Remoting`: PSRP issues with any transport layer
+* `Area-Security`: security related areas like [JEA](https://github.com/powershell/JEA)
 * `Area-SideBySide`: side by side support
 * `Area-Test`: issues in a test or in test infrastructure
 

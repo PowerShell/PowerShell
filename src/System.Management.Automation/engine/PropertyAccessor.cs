@@ -169,7 +169,7 @@ namespace System.Management.Automation
 
             string fileName = Path.Combine(scopeDirectory, configFileName);
 
-            string modulePath = ReadValueFromFile<string>(fileName, "PsModulePath");
+            string modulePath = ReadValueFromFile<string>(fileName, Constants.PSModulePathEnvVar);
             if (!string.IsNullOrEmpty(modulePath))
             {
                 modulePath = Environment.ExpandEnvironmentVariables(modulePath);
@@ -518,11 +518,11 @@ namespace System.Management.Automation
         {
             if (PropertyScope.CurrentUser == scope)
             {
-                return ModuleIntrinsics.GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.User);
+                return ModuleIntrinsics.GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.User);
             }
             else
             {
-                return ModuleIntrinsics.GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.Machine);
+                return ModuleIntrinsics.GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Machine);
             }
         }
 

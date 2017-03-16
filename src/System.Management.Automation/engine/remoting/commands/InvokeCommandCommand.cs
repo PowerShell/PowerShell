@@ -739,6 +739,35 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
+        #region Remote Debug Parameters
+
+        /// <summary>
+        /// When selected this parameter causes a debugger Step-Into action for each running remote session.
+        /// </summary>
+        [Parameter(ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.SessionParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.UriParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathComputerNameParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSessionParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathUriParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.VMIdParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.VMNameParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.ContainerIdParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMIdParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathVMNameParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathContainerIdParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostHashParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.FilePathSSHHostHashParameterSet)]
+        public virtual SwitchParameter RemoteDebug
+        {
+            get;
+            set;
+        }
+
+        #endregion
+
         #endregion Parameters
 
         #region Overrides
@@ -765,6 +794,19 @@ namespace Microsoft.PowerShell.Commands
             if (MyInvocation.BoundParameters.ContainsKey("SessionName") && !this.InvokeAndDisconnect)
             {
                 throw new InvalidOperationException(RemotingErrorIdStrings.SessionNameWithoutInvokeDisconnected);
+            }
+
+            // Adjust RemoteDebug value based on current state
+            var hostDebugger = GetHostDebugger();
+            if (hostDebugger == null)
+            {
+                // Do not allow RemoteDebug if there is no host debugger available.  Otherwise script will hang indefinitely.
+                RemoteDebug = false;
+            }
+            else if (hostDebugger.IsDebuggerSteppingEnabled)
+            {
+                // If host debugger is in step-in mode then always make RemoteDebug true
+                RemoteDebug = true;
             }
 
             // Checking session's availability and reporting errors in early stage, unless '-AsJob' is specified.
@@ -985,7 +1027,7 @@ namespace Microsoft.PowerShell.Commands
                     _inputStreamClosed = true;
                 }
 
-                if (!ParameterSetName.Equals("InProcess"))
+                if (!ParameterSetName.Equals(InProcParameterSet))
                 {
                     // at this point there is nothing to do for
                     // inproc case. The script block is executed
@@ -1209,6 +1251,17 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         protected override void StopProcessing()
         {
+            // Ensure that any runspace debug processing is ended
+            var hostDebugger = GetHostDebugger();
+            if (hostDebugger != null)
+            {
+                try
+                {
+                    hostDebugger.CancelDebuggerProcessing();
+                }
+                catch (PSNotImplementedException) { }
+            }
+
             if (!ParameterSetName.Equals(InvokeCommandCommand.InProcParameterSet))
             {
                 if (!_asjob)
@@ -1246,6 +1299,20 @@ namespace Microsoft.PowerShell.Commands
         #endregion Overrides
 
         #region Private Methods
+
+        private Debugger GetHostDebugger()
+        {
+            Debugger hostDebugger = null;
+            try
+            {
+                System.Management.Automation.Internal.Host.InternalHost chost =
+                    this.Host as System.Management.Automation.Internal.Host.InternalHost;
+                hostDebugger = chost.Runspace.Debugger;
+            }
+            catch (PSNotImplementedException) { }
+
+            return hostDebugger;
+        }
 
         /// <summary>
         /// Handle event from the throttle manager indicating that all
@@ -1298,8 +1365,29 @@ namespace Microsoft.PowerShell.Commands
                     // Add robust connection retry notification handler.
                     AddConnectionRetryHandler(_job);
 
+                    // Enable all Invoke-Command synchronous jobs for remote debugging (in case Wait-Debugger or
+                    // or line breakpoints are set in script).
+                    foreach (var operation in Operations)
+                    {
+                        operation.RunspaceDebuggingEnabled = true;
+                        operation.RunspaceDebugStepInEnabled = RemoteDebug;
+                        operation.RunspaceDebugStop += HandleRunspaceDebugStop;
+                    }
+
                     _job.StartOperations(Operations);
                 }
+            }
+        }
+
+        private void HandleRunspaceDebugStop(object sender, StartRunspaceDebugProcessingEventArgs args)
+        {
+            var operation = sender as IThrottleOperation;
+            operation.RunspaceDebugStop -= HandleRunspaceDebugStop;
+
+            var hostDebugger = GetHostDebugger();
+            if (hostDebugger != null)
+            {
+                hostDebugger.QueueRunspaceForDebug(args.Runspace);
             }
         }
 
@@ -1617,8 +1705,6 @@ namespace Microsoft.PowerShell.Commands
                             // pipelines.
                             _asjob = true;
 
-                            List<Job> removedDebugStopJobs = new List<Job>();
-
                             // Write warnings to user about each disconnect.
                             foreach (var cjob in rtnJob.ChildJobs)
                             {
@@ -1629,39 +1715,15 @@ namespace Microsoft.PowerShell.Commands
                                     PSSession session = GetPSSession(childJob.Runspace.InstanceId);
                                     if (session != null)
                                     {
-                                        RemoteDebugger remoteDebugger = session.Runspace.Debugger as RemoteDebugger;
-                                        if (remoteDebugger != null &&
-                                            remoteDebugger.IsRemoteDebug)
-                                        {
-                                            // The session was disconnected because it hit a debug breakpoint.
+                                        // Write network failed, auto-disconnect error
+                                        WriteNetworkFailedError(session);
 
-                                            // Remove child job data aggregation so debugger can show data.
-                                            childJob.RemoveJobAggregation();
-                                            removedDebugStopJobs.Add(childJob);
-
-                                            // Write appropriate warning.
-                                            WriteWarning(
-                                                StringUtil.Format(RemotingErrorIdStrings.RCDisconnectDebug,
+                                        // Session disconnected message.
+                                        WriteWarning(
+                                            StringUtil.Format(RemotingErrorIdStrings.RCDisconnectSession,
                                                 session.Name, session.InstanceId, session.ComputerName));
-                                        }
-                                        else
-                                        {
-                                            // Write network failed, auto-disconnect error
-                                            WriteNetworkFailedError(session);
-
-                                            // Session disconnected message.
-                                            WriteWarning(
-                                                StringUtil.Format(RemotingErrorIdStrings.RCDisconnectSession,
-                                                    session.Name, session.InstanceId, session.ComputerName));
-                                        }
                                     }
                                 }
-                            }
-
-                            // Remove debugger stopped jobs
-                            foreach (var dJob in removedDebugStopJobs)
-                            {
-                                rtnJob.ChildJobs.Remove(dJob);
                             }
 
                             if (rtnJob.ChildJobs.Count > 0)
@@ -1686,25 +1748,13 @@ namespace Microsoft.PowerShell.Commands
                             // Add to session repository.
                             this.RunspaceRepository.AddOrReplace(session);
 
-                            RemoteRunspace remoteRunspace = session.Runspace as RemoteRunspace;
-                            if (remoteRunspace != null &&
-                                remoteRunspace.RunspacePool.RemoteRunspacePoolInternal.IsRemoteDebugStop)
-                            {
-                                // The session was disconnected because it hit a debug breakpoint.
-                                WriteWarning(
-                                    StringUtil.Format(RemotingErrorIdStrings.RCDisconnectDebug,
-                                    session.Name, session.InstanceId, session.ComputerName));
-                            }
-                            else
-                            {
-                                // Write network failed, auto-disconnect error
-                                WriteNetworkFailedError(session);
+                            // Write network failed, auto-disconnect error
+                            WriteNetworkFailedError(session);
 
-                                // Session disconnected message.
-                                WriteWarning(
-                                    StringUtil.Format(RemotingErrorIdStrings.RCDisconnectSession,
-                                        session.Name, session.InstanceId, session.ComputerName));
-                            }
+                            // Session disconnected message.
+                            WriteWarning(
+                                StringUtil.Format(RemotingErrorIdStrings.RCDisconnectSession,
+                                    session.Name, session.InstanceId, session.ComputerName));
 
                             // Session created message.
                             WriteWarning(

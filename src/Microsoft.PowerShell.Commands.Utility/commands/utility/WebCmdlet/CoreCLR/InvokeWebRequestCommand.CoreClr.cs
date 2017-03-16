@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// The Invoke-RestMethod command
     /// This command makes an HTTP or HTTPS request to a web server and returns the results.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Invoke, "WebRequest", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217035")]
+    [Cmdlet(VerbsLifecycle.Invoke, "WebRequest", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217035", DefaultParameterSetName = "StandardMethod")]
     public class InvokeWebRequestCommand : WebRequestPSCmdlet
     {
         #region Virtual Method Overrides

@@ -1,6 +1,6 @@
 Describe 'using module' -Tags "CI" {
     BeforeAll {
-        $originalPSMODULEPATH = $env:PSMODULEPATH
+        $originalPSModulePath = $env:PSModulePath
 
         Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
 
@@ -23,15 +23,15 @@ Describe 'using module' -Tags "CI" {
             }
 
             $resolvedTestDrivePath = Split-Path ((get-childitem "${TestDrive}\$ModulePathPrefix")[0].FullName)
-            if (-not ($env:PSMODULEPATH -like "*$resolvedTestDrivePath*")) {
-                $env:PSMODULEPATH += "$([System.IO.Path]::PathSeparator)$resolvedTestDrivePath"
+            if (-not ($env:PSModulePath -like "*$resolvedTestDrivePath*")) {
+                $env:PSModulePath += "$([System.IO.Path]::PathSeparator)$resolvedTestDrivePath"
             }
         }
 
     }
 
     AfterAll {
-        $env:PSMODULEPATH = $originalPSMODULEPATH
+        $env:PSModulePath = $originalPSModulePath
     }
 
     It 'Import-Module has ImplementedAssembly, when classes are present in the module' {
@@ -349,7 +349,7 @@ using module Foo
 
         # 'using module' behavior must be aligned with Import-Module.
         # Import-Module does the following:
-        # 1) find the first directory from $env:PSMODULEPATH that contains the module
+        # 1) find the first directory from $env:PSModulePath that contains the module
         # 2) Import highest available version of the module
         # In out case TestDrive:\Module is before TestDrive:\Modules2 and so 2.3.0 is the right version
         It "uses the last module, if multiple versions are present" {
@@ -436,12 +436,12 @@ function foo()
     }
 
 
-    # here we are back to normal $env:PSMODULEPATH, but all modules are there
+    # here we are back to normal $env:PSModulePath, but all modules are there
     Context "Module by path" {
         BeforeAll {
             # this is a setup for Context "Module by path"
             New-TestModule -Name FooForPaths -Content 'class Foo { [string] GetModuleName() { return "FooForPaths" } }'
-            $env:PSMODULEPATH = $originalPSMODULEPATH
+            $env:PSModulePath = $originalPSModulePath
 
             new-item -type directory -Force TestDrive:\FooRelativeConsumer
             Set-Content -Path "${TestDrive}\FooRelativeConsumer\FooRelativeConsumer.ps1" -Value @'
@@ -457,8 +457,8 @@ class Bar : Foo {}
 '@
         }
 
-        It 'use non-modified PSMODULEPATH' {
-            $env:PSMODULEPATH | Should Be $originalPSMODULEPATH
+        It 'use non-modified PSModulePath' {
+            $env:PSModulePath | Should Be $originalPSModulePath
         }
 
         It "can be accessed by relative path" {

@@ -261,7 +261,14 @@ namespace System.Management.Automation
                         // create the xdg folder if needed
                         if (!Directory.Exists(xdgDataHomeDefault))
                         {
-                            Directory.CreateDirectory(xdgDataHomeDefault);
+                            try
+                            {
+                                Directory.CreateDirectory(xdgDataHomeDefault);
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                //service accounts won't have permission to create user folder
+                            }
                         }
                         return xdgDataHomeDefault;
                     }
@@ -277,7 +284,14 @@ namespace System.Management.Automation
                         //xdg values have not been set
                         if (!Directory.Exists(xdgModuleDefault)) //module folder not always guaranteed to exist
                         {
-                            Directory.CreateDirectory(xdgModuleDefault);
+                            try
+                            {
+                                Directory.CreateDirectory(xdgModuleDefault);
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                //service accounts won't have permission to create user folder
+                            }
                         }
                         return xdgModuleDefault;
                     }
@@ -296,7 +310,14 @@ namespace System.Management.Automation
                         //xdg values have not been set
                         if (!Directory.Exists(xdgCacheDefault)) //module folder not always guaranteed to exist
                         {
-                            Directory.CreateDirectory(xdgCacheDefault);
+                            try
+                            {
+                                Directory.CreateDirectory(xdgCacheDefault);
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                //service accounts won't have permission to create user folder
+                            }
                         }
 
                         return xdgCacheDefault;
@@ -306,7 +327,14 @@ namespace System.Management.Automation
                     {
                         if (!Directory.Exists(Path.Combine(xdgcachehome, "powershell")))
                         {
-                            Directory.CreateDirectory(Path.Combine(xdgcachehome, "powershell"));
+                            try
+                            {
+                                Directory.CreateDirectory(Path.Combine(xdgcachehome, "powershell"));
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                //service accounts won't have permission to create user folder
+                            }                                
                         }
 
                         return Path.Combine(xdgcachehome, "powershell");
@@ -451,6 +479,13 @@ namespace System.Management.Automation
             return Unix.NativeMethods.GetCurrentThreadId();
         }
 
+        internal static int NonWindowsGetProcessParentPid(int pid)
+        {
+            return IsOSX ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
+        }
+
+       
+
         // Unix specific implementations of required functionality
         //
         // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
@@ -525,6 +560,30 @@ namespace System.Management.Automation
                 }
             }
 
+            public static int GetProcFSParentPid(int pid)
+            {
+                const int invalidPid = -1;
+                // read /proc/<pid>/stat
+                // 4th column will contain the ppid, 92 in the example below
+                // ex: 93 (bash) S 92 93 2 4294967295 ...
+
+                var path = $"/proc/{pid}/stat";
+                try
+                {
+                    var stat = System.IO.File.ReadAllText(path);
+                    var parts = stat.Split(new[] { ' ' }, 5);
+                    if (parts.Length < 5)
+                    {
+                        return invalidPid;
+                    }
+                    return Int32.Parse(parts[3]);
+                }
+                catch (Exception)
+                {
+                    return invalidPid;
+                }
+            }
+
             internal static class NativeMethods
             {
                 private const string psLib = "libpsl-native";
@@ -539,6 +598,9 @@ namespace System.Management.Automation
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.LPStr)]
                 internal static extern string GetUserName();
+
+                [DllImport(psLib)]
+                internal static extern int GetPPid(int pid);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 internal static extern int GetLinkCount([MarshalAs(UnmanagedType.LPStr)]string filePath, out int linkCount);

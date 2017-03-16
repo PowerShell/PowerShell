@@ -8,7 +8,7 @@ trap '
 ' INT
 
 get_url() {
-    release=v6.0.0-alpha.16
+    release=v6.0.0-alpha.17
     echo "https://github.com/PowerShell/PowerShell/releases/download/$release/$1"
 }
 
@@ -24,7 +24,7 @@ case "$OSTYPE" in
                     sudo yum install -y curl
                 fi
 
-                package=powershell-6.0.0_alpha.16-1.el7.centos.x86_64.rpm
+                package=powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm
                 ;;
             ubuntu)
                 if ! hash curl 2>/dev/null; then
@@ -34,15 +34,23 @@ case "$OSTYPE" in
 
                 case "$VERSION_ID" in
                     14.04)
-                        package=powershell_6.0.0-alpha.16-1ubuntu1.14.04.1_amd64.deb
+                        package=powershell_6.0.0-alpha.17-1ubuntu1.14.04.1_amd64.deb
                         ;;
                     16.04)
-                        package=powershell_6.0.0-alpha.16-1ubuntu1.16.04.1_amd64.deb
+                        package=powershell_6.0.0-alpha.17-1ubuntu1.16.04.1_amd64.deb
                         ;;
                     *)
                         echo "Ubuntu $VERSION_ID is not supported!" >&2
                         exit 2
                 esac
+                ;;
+            opensuse)
+                if ! hash curl 2>/dev/null; then
+                    echo "curl not found, installing..."
+                    sudo zypper install -y curl
+                fi
+
+                package=powershell-6.0.0_alpha.17-1.suse.13.2.x86_64.rpm
                 ;;
             *)
                 echo "$NAME is not supported!" >&2
@@ -51,7 +59,7 @@ case "$OSTYPE" in
         ;;
     darwin*)
         # We don't check for curl as macOS should have a system version
-        package=powershell-6.0.0-alpha.16.pkg
+        package=powershell-6.0.0-alpha.17.pkg
         ;;
     *)
         echo "$OSTYPE is not supported!" >&2
@@ -82,6 +90,12 @@ case "$OSTYPE" in
                 sudo dpkg -i "./$package" &> /dev/null
                 # Resolve dependencies
                 sudo apt-get install -f
+                ;;
+            opensuse)
+                # Install the Microsoft public key so that zypper trusts the package
+                sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+                # zypper automatically resolves dependencies for local packages
+                sudo zypper --non-interactive install "./$package" &> /dev/null
                 ;;
             *)
         esac

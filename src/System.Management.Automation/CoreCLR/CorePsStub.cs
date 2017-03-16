@@ -546,6 +546,17 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     }
 
     /// <summary>
+    /// Stub for ProcessWindowStyle
+    /// </summary>
+    public enum ProcessWindowStyle
+    {
+        Normal,
+        Hidden,
+        Minimized,
+        Maximized
+    }
+
+    /// <summary>
     /// Stub for MailAddress
     /// </summary>
     public class MailAddress
@@ -792,31 +803,6 @@ namespace System.Management.Automation
     }
 
     #endregion PSTransaction
-
-    #region CMS
-
-    internal static class CmsUtils
-    {
-        internal static string BEGIN_CERTIFICATE_SIGIL = "-----BEGIN CERTIFICATE-----";
-        internal static string END_CERTIFICATE_SIGIL = "-----END CERTIFICATE-----";
-
-        internal static string Encrypt(byte[] contentBytes, CmsMessageRecipient[] recipients, SessionState sessionState, out ErrorRecord error)
-        {
-            throw new NotImplementedException("CmsUtils.Encrypt(...) is not implemented in CoreCLR powershell.");
-        }
-
-        internal static string GetAsciiArmor(byte[] bytes)
-        {
-            throw new NotImplementedException("CmsUtils.GetAsciiArmor(...) is not implemented in CoreCLR powershell.");
-        }
-
-        internal static byte[] RemoveAsciiArmor(string actualContent, string beginMarker, string endMarker, out int startIndex, out int endIndex)
-        {
-            throw new NotImplementedException("CmsUtils.RemoveAsciiArmor(...) is not implemented in CoreCLR powershell.");
-        }
-    }
-
-    #endregion CMS
 
     #region ApartmentState
 

@@ -618,6 +618,8 @@ namespace System.Management.Automation
 
         private int _saveCacheToDiskQueued;
 
+        private bool _saveCacheToDisk = true;
+
         public void QueueSerialization()
         {
             // We expect many modules to rapidly call for serialization.
@@ -625,7 +627,7 @@ namespace System.Management.Automation
             // after it seems like we've stopped adding stuff to write out.  This is
             // avoids blocking the pipeline thread waiting for the write to finish.
             // We want to make sure we only queue one task.
-            if (Interlocked.Increment(ref _saveCacheToDiskQueued) == 1)
+            if (_saveCacheToDisk && Interlocked.Increment(ref _saveCacheToDiskQueued) == 1)
             {
                 Task.Run(async delegate
                 {
@@ -694,6 +696,8 @@ namespace System.Management.Automation
         private void Serialize(string filename)
         {
             AnalysisCacheData fromOtherProcess = null;
+            Diagnostics.Assert(_saveCacheToDisk != false, "Serialize should never be called without going through QueueSerialization which has a check");
+
             try
             {
                 if (Utils.NativeFileExists(filename))
@@ -710,7 +714,16 @@ namespace System.Management.Automation
                     var folder = Path.GetDirectoryName(filename);
                     if (!Directory.Exists(folder))
                     {
-                        Directory.CreateDirectory(folder);
+                        try
+                        {
+                            Directory.CreateDirectory(folder);
+                        }
+                        catch (UnauthorizedAccessException)
+                        {
+                            // service accounts won't be able to create directory
+                            _saveCacheToDisk = false;
+                            return;
+                        }
                     }
                 }
             }

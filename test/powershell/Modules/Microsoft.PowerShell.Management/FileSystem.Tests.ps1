@@ -1,3 +1,4 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     BeforeAll {
@@ -21,6 +22,9 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $newTestFile = "NewTestFile.txt"
             $testContent = "Some Content"
             $testContent2 = "More Content"
+            $reservedNames = "CON", "PRN", "AUX", "CLOCK$", "NUL",
+                             "COM0", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
+                             "LPT0", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9"
         }
 
         BeforeEach {
@@ -104,6 +108,53 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $contentBefore.Count | Should Be 1
             $contentAfter.Count | Should Be 0
         }
+
+         It "Copy-Item on Windows rejects Windows reserved device names" -Skip:(-not $IsWindows) {
+             foreach ($deviceName in $reservedNames)
+             {
+                { Copy-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
+             }
+         }
+
+         It "Move-Item on Windows rejects Windows reserved device names" -Skip:(-not $IsWindows) {
+             foreach ($deviceName in $reservedNames)
+             {
+                { Move-Item -Path $testFile -Destination $deviceName -ErrorAction Stop } | ShouldBeErrorId "MoveError,Microsoft.PowerShell.Commands.MoveItemCommand"
+             }
+         }
+
+         It "Rename-Item on Windows rejects Windows reserved device names" -Skip:(-not $IsWindows) {
+             foreach ($deviceName in $reservedNames)
+             {
+                { Rename-Item -Path $testFile -NewName $deviceName -ErrorAction Stop } | ShouldBeErrorId "RenameError,Microsoft.PowerShell.Commands.RenameItemCommand"
+             }
+         }
+
+         It "Copy-Item on Unix succeeds with Windows reserved device names" -Skip:($IsWindows) {
+             foreach ($deviceName in $reservedNames)
+             {
+                Copy-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
+                Test-Path $deviceName | Should Be $true
+             }
+         }
+
+         It "Move-Item on Unix succeeds with Windows reserved device names" -Skip:($IsWindows) {
+             foreach ($deviceName in $reservedNames)
+             {
+                Move-Item -Path $testFile -Destination $deviceName -Force -ErrorAction SilentlyContinue
+                Test-Path $deviceName | Should Be $true
+                New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
+             }
+         }
+
+         It "Rename-Item on Unix succeeds with Windows reserved device names" -Skip:($IsWindows) {
+             foreach ($deviceName in $reservedNames)
+             {
+                Rename-Item -Path $testFile -NewName $deviceName -Force -ErrorAction SilentlyContinue
+                Test-Path $deviceName | Should Be $true
+                New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
+             }
+         }
     }
 
     Context "Validate basic host navigation functionality" {
@@ -495,6 +546,7 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
         $level1_0 = "Level1_0"
         $level2_0 = "Level2_0"
         $level2_1 = "Level2_1"
+        $fileExt = ".ext"
         $root = Join-Path "TestDrive:" "" #adds correct / or \
         $level1_0Full = Join-Path $root $level1_0
         $level2_0Full = Join-Path $level1_0Full $level2_0
@@ -553,6 +605,22 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
         It "Validate Leaf" {
             $result = Split-Path -Path $level1_0Full -Leaf
             $result | Should Be $level1_0
+        }
+        
+        It 'Validate LeafBase' {
+            $result = Split-Path -Path "$level2_1Full$fileExt" -LeafBase
+            $result | Should Be $level2_1
+        }
+
+        It 'Validate LeafBase is not over-zealous' {
+            
+            $result = Split-Path -Path "$level2_1Full$fileExt$fileExt" -LeafBase
+            $result | Should Be "$level2_1$fileExt"
+        }
+
+        It 'Validate LeafBase' {
+            $result = Split-Path -Path "$level2_1Full$fileExt" -Extension
+            $result | Should Be $fileExt
         }
 
         It "Validate NoQualifier" {

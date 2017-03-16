@@ -79,7 +79,7 @@
     "dependencies": {
         "Microsoft.PowerShell.SDK": "6.0.0-*",
         "Microsoft.PowerShell.PSReadLine": "6.0.0-*",
-        "libpsrpclient": "1.0.0-*",
+        "psrp": "1.1.0-*",
         "PSDesiredStateConfiguration": "1.0.0-alpha01",
         "PowerShellHelpFiles": "1.0.0-alpha01"
     },
@@ -104,6 +104,7 @@
         "centos.7-x64": { },
         "fedora.24-x64": { },
         "osx.10.11-x64": { },
-        "osx.10.12-x64": { }
+        "osx.10.12-x64": { },
+        "opensuse.13.2-x64": {}
     }
 }

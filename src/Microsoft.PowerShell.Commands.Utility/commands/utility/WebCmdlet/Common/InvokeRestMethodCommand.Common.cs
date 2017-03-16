@@ -16,11 +16,23 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// gets or sets the parameter Method
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = "StandardMethod")]
         public override WebRequestMethod Method
         {
             get { return base.Method; }
             set { base.Method = value; }
+        }
+
+        /// <summary>
+        /// gets or sets the parameter CustomMethod
+        /// </summary>
+        [Parameter(ParameterSetName = "CustomMethod")]
+        [Alias("CM")]
+        [ValidateNotNullOrEmpty]
+        public override string CustomMethod
+        {
+            get { return base.CustomMethod; }
+            set { base.CustomMethod = value; }
         }
 
         #endregion Parameters
