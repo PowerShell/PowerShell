@@ -1,6 +1,3 @@
-$hostmodule = Join-Path $PSScriptRoot "../../Common/TestHostCS.psm1"
-import-module $hostmodule -ErrorAction SilentlyContinue
-
 Describe "Read-Host Test" -tag "CI" {
     BeforeAll {
         $th = New-TestHost

@@ -48,8 +48,6 @@ Describe "Write-Host with wrong colors" -Tags "CI" {
 Describe "Write-Host with TestHostCS" -Tags "CI" {
 
     BeforeAll {
-        $hostmodule = Join-Path $PSScriptRoot "../../Common/TestHostCS.psm1"
-        import-module $hostmodule -ErrorAction SilentlyContinue
         $th = New-TestHost
         $rs = [runspacefactory]::Createrunspace($th)
         $rs.open()

@@ -19,8 +19,13 @@ try {
     catch { }
 }
 
+# On Unix paths is separated by colon
+# On Windows paths is separated by semicolon
+$TestModulePathSeparator = ':'
+
 if ($IsWindows)
 {
+    $TestModulePathSeparator = ';'
     $IsAdmin = (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
     # Can't use $env:HOME - not available on older systems (e.g. in AppVeyor)
     $nugetPackagesRoot = "${env:HOMEDRIVE}${env:HOMEPATH}\.nuget\packages"
@@ -49,6 +54,12 @@ if ($IsLinux) {
         Remove-Item -Force ENV:\LD_LIBRARY_PATH
         Get-ChildItem ENV:
     }
+}
+
+# Autoload (in current session) temporary modules used in our tests
+$TestModulePath = Join-Path $PSScriptRoot "test/tools/Modules"
+if ( -not $env:PSModulePath.contains($TestModulePath) ) {
+    $env:PSModulePath = $TestModulePath+$TestModulePathSeparator+$($env:PSModulePath)
 }
 
 #
@@ -753,8 +764,12 @@ function Start-PSPester {
 
     Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
     Publish-PSTestTools
+
     # All concatenated commands/arguments are suffixed with the delimiter (space)
     $Command = ""
+
+    # Autoload (in subprocess) temporary modules used in our tests
+    $Command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + '+$($env:PSModulePath);'
 
     # Windows needs the execution policy adjusted
     if ($IsWindows) {
