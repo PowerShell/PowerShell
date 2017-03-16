@@ -201,10 +201,11 @@ Windows PowerShell transcript start
 Start time: {0:yyyyMMddHHmmss}
 Username: {1}
 RunAs User: {2}
-Machine: {3} ({4})
-Host Application: {5}
-Process ID: {6}
-{7}
+Configuration Name: {3}
+Machine: {4} ({5})
+Host Application: {6}
+Process ID: {7}
+{8}
 **********************</value>
   </data>
   <data name="TranscriptEpilogue" xml:space="preserve">
