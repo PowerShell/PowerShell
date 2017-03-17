@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell
                                "Start",
                                new object[] { string.Empty, args, args.Length });
 #else
-            return UnmanagedPSEntry.Start(string.Empty, args, args.Length);
+            return (new UnmanagedPSEntry()).Start(string.Empty, args);
 #endif
         }
     }

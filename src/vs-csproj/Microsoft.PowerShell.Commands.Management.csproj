@@ -1,51 +1,62 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Configuration Condition=" '$(Configuration)' == '' ">Release</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{FE0D19AF-A6BE-4A68-BC1D-F52F3A17E2A0}</ProjectGuid>
     <OutputType>Library</OutputType>
     <NoStandardLibraries>false</NoStandardLibraries>
     <AssemblyName>Microsoft.PowerShell.Commands.Management</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <TargetFrameworkVersion>v4.5.1</TargetFrameworkVersion>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup>
     <RootNamespace>Microsoft.PowerShell.Commands.Management</RootNamespace>
+    <SignAssembly>false</SignAssembly>
+    <DelaySign>true</DelaySign>
+    <AssemblyOriginatorKeyFile>$(MSBuildProjectDirectory)\..\signing\visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+    <PackageDir>$(MSBuildProjectDirectory)\..\..\Packages</PackageDir>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <PublishDir>$(MSBuildProjectDirectory)\..\powershell-win-full\bin\Debug\net451\win10-x64\publish</PublishDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
+    <SignAssembly>true</SignAssembly>
+    <PackageKind>net451</PackageKind>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>NET451</DefineConstants>
+    <NoWarn>CS1570;CS1734</NoWarn>
+    <ErrorReport>queue</ErrorReport>
+    <DebugType>full</DebugType>
+    <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UNIX|AnyCPU'">
     <OutputPath>bin\UNIX\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CORECLR|AnyCPU'">
     <OutputPath>bin\CORECLR\</OutputPath>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Management.Infrastructure" />
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
+    <Reference Include="System.Configuration.Install" />
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="System.DirectoryServices" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Management" />
+    <Reference Include="System.ServiceProcess" />
     <Reference Include="System.Xml" />
     <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Web.Services" />
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="$(PublishDir)\Microsoft.WSMan.Management.dll" />
+    <Reference Include="$(PublishDir)\Microsoft.PowerShell.Security.dll" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Microsoft.PowerShell.Commands.Management\AssemblyInfo.cs">
@@ -147,9 +158,9 @@
     <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ContentCommandBase.cs">
       <Link>commands\management\ContentCommandBase.cs</Link>
     </Compile>
-    <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ControlPanelItemCommand.cs">
+    <None Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ControlPanelItemCommand.cs">
       <Link>commands\management\ControlPanelItemCommand.cs</Link>
-    </Compile>
+    </None>
     <Compile Include="..\Microsoft.PowerShell.Commands.Management\commands\management\ConvertPathCommand.cs">
       <Link>commands\management\ConvertPathCommand.cs</Link>
     </Compile>
@@ -311,6 +322,7 @@
     </Compile>
     <Compile Include="..\Microsoft.PowerShell.Commands.Management\singleshell\installer\MshManagementMshSnapin.cs">
       <Link>singleshell\installer\MshManagementMshSnapin.cs</Link>
+      <SubType>Component</SubType>
     </Compile>
   </ItemGroup>
   <ItemGroup>
@@ -322,54 +334,55 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ClearRecycleBinResources.resx">
+    <Resource Include="..\Microsoft.PowerShell.Commands.Management\resources\ClearRecycleBinResources.resx">
       <Link>resources\ClearRecycleBinResources.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ClipboardResources.resx">
+    </Resource>
+    <Resource Include="..\Microsoft.PowerShell.Commands.Management\resources\ClipboardResources.resx">
       <Link>resources\ClipboardResources.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\CmdletizationResources.resx">
+    </Resource>
+    <Resource Include="..\Microsoft.PowerShell.Commands.Management\resources\CmdletizationResources.resx">
       <Link>resources\CmdletizationResources.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ComputerInfoResources.resx">
+      <SubType>Designer</SubType>
+    </Resource>
+    <Resource Include="..\Microsoft.PowerShell.Commands.Management\resources\ComputerInfoResources.resx">
       <Link>resources\ComputerInfoResources.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ComputerResources.resx">
+    </Resource>
+    <Resource Include="..\Microsoft.PowerShell.Commands.Management\resources\ComputerResources.resx">
       <Link>resources\ComputerResources.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ControlPanelResources.resx">
+    </Resource>
+    <Resource Include="..\Microsoft.PowerShell.Commands.Management\resources\ControlPanelResources.resx">
       <Link>resources\ControlPanelResources.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\EventlogResources.resx">
+    </Resource>
+    <Resource Include="..\Microsoft.PowerShell.Commands.Management\resources\EventlogResources.resx">
       <Link>resources\EventlogResources.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\HotFixResources.resx">
+    </Resource>
+    <Resource Include="..\Microsoft.PowerShell.Commands.Management\resources\HotFixResources.resx">
       <Link>resources\HotFixResources.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ManagementMshSnapInResources.resx">
+    </Resource>
+    <Resource Include="..\Microsoft.PowerShell.Commands.Management\resources\ManagementMshSnapInResources.resx">
       <Link>resources\ManagementMshSnapInResources.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\NavigationResources.resx">
+    </Resource>
+    <Resource Include="..\Microsoft.PowerShell.Commands.Management\resources\NavigationResources.resx">
       <Link>resources\NavigationResources.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ProcessCommandHelpResources.resx">
+    </Resource>
+    <Resource Include="..\Microsoft.PowerShell.Commands.Management\resources\ProcessCommandHelpResources.resx">
       <Link>resources\ProcessCommandHelpResources.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ProcessResources.resx">
+    </Resource>
+    <Resource Include="..\Microsoft.PowerShell.Commands.Management\resources\ProcessResources.resx">
       <Link>resources\ProcessResources.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\ServiceResources.resx">
+    </Resource>
+    <Resource Include="..\Microsoft.PowerShell.Commands.Management\resources\ServiceResources.resx">
       <Link>resources\ServiceResources.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\TransactionResources.resx">
+    </Resource>
+    <Resource Include="..\Microsoft.PowerShell.Commands.Management\resources\TransactionResources.resx">
       <Link>resources\TransactionResources.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\WebServiceResources.resx">
+    </Resource>
+    <Resource Include="..\Microsoft.PowerShell.Commands.Management\resources\WebServiceResources.resx">
       <Link>resources\WebServiceResources.resx</Link>
-    </EmbeddedResource>
-    <EmbeddedResource Include="..\Microsoft.PowerShell.Commands.Management\resources\WmiResources.resx">
+    </Resource>
+    <Resource Include="..\Microsoft.PowerShell.Commands.Management\resources\WmiResources.resx">
       <Link>resources\WmiResources.resx</Link>
-    </EmbeddedResource>
+    </Resource>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="System.Management.Automation.csproj">
