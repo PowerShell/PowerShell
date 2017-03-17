@@ -67,9 +67,9 @@ We have a Gitter Room which you can join below.
 
 [![Join the chat at https://gitter.im/PowerShell/PowerShell](https://badges.gitter.im/PowerShell/PowerShell.svg)](https://gitter.im/PowerShell/PowerShell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-There is also the community driven PowerShell Slack Team which you can sign up for at [Slack Signup].
+There is also the community driven PowerShell Slack Team which you can sign up for at [Slack Sign up].
 
-[Slack Signup]: http://slack.poshcode.org
+[Slack Sign up]: http://slack.poshcode.org
 
 ## Building the Repository
 
