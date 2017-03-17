@@ -35,7 +35,10 @@ namespace Microsoft.PowerShell
                 _progPaneUpdateTimer.Dispose();
                 _progPaneUpdateTimer = null;
             }
-            progPaneUpdateFlag = false;
+            // We don't reset 'progPaneUpdateFlag = false' here
+            // because `HandleIncomingProgressRecord` will be init 'progPaneUpdateFlag' in any way.
+            // (Also the timer callback can still set it to 'true' accidentally)
+
 
             if (_progPane != null)
             {
@@ -79,7 +82,7 @@ namespace Microsoft.PowerShell
 
                 _progPane = new ProgressPane(this);
 
-                if (_progPaneUpdateTimer == null && _progPane != null)
+                if (_progPaneUpdateTimer == null)
                 {
                     // Show a progress pane at the first time we've received a progress record
                     progPaneUpdateFlag = true;
