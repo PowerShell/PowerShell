@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Linq;
 using NuGet.Frameworks;
-using Microsoft.DotNet.Cli.Utils;
 using Microsoft.DotNet.ProjectModel;
 using Microsoft.DotNet.ProjectModel.Graph;
 using Microsoft.Extensions.DependencyModel.Resolution;

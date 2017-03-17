@@ -6,8 +6,7 @@
 
     "dependencies": {
         "Microsoft.NETCore.App": "1.1.0",
-        "Microsoft.DotNet.ProjectModel": "1.0.0-rc3-1-003177",
-        "Microsoft.DotNet.Cli.Utils": "1.0.0-preview3-004056"
+        "Microsoft.DotNet.ProjectModel": "1.0.0-rc3-1-003177"
     },
 
     "configurations": {
