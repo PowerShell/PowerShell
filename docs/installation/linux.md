@@ -1,5 +1,4 @@
-Package installation instructions
-=================================
+# Package installation instructions
 
 Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16],
 [CentOS 7][cos], [Arch Linux][arch], [many Linux distributions (AppImage)][lai], and [macOS 10.11][mac].
@@ -24,8 +23,7 @@ Once the package is installed, run `powershell` from a terminal.
 [mac]: #macos-1011
 [download]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-alpha.17/tools/download.sh
 
-Ubuntu 14.04
-============
+## Ubuntu 14.04
 
 Using [Ubuntu 14.04][], download the Debian package
 `powershell_6.0.0-alpha.17-1ubuntu1.14.04.1_amd64.deb`
@@ -42,7 +40,7 @@ sudo apt-get install -f
 > the next command, `apt-get install -f` resolves these
 > and then finishes configuring the PowerShell package.
 
-**Uninstallation**
+### Uninstallation - Ubuntu 14.04
 
 ```sh
 sudo apt-get remove powershell
@@ -50,8 +48,7 @@ sudo apt-get remove powershell
 
 [Ubuntu 14.04]: http://releases.ubuntu.com/14.04/
 
-Ubuntu 16.04
-============
+## Ubuntu 16.04
 
 Using [Ubuntu 16.04][], download the Debian package
 `powershell_6.0.0-alpha.17-1ubuntu1.16.04.1_amd64.deb`
@@ -68,7 +65,7 @@ sudo apt-get install -f
 > the next command, `apt-get install -f` resolves these
 > and then finishes configuring the PowerShell package.
 
-**Uninstallation**
+### Uninstallation - Ubuntu 16.04
 
 ```sh
 sudo apt-get remove powershell
@@ -78,8 +75,7 @@ sudo apt-get remove powershell
 
 This works for Debian Stretch (now testing) as well.
 
-CentOS 7
-========
+## CentOS 7
 
 Using [CentOS 7][], download the RPM package
 `powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm`
@@ -99,7 +95,7 @@ sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0
 
 > This package works on Oracle Linux 7. It should work on Red Hat Enterprise Linux 7 too.
 
-**Uninstallation**
+### Uninstallation
 
 ```sh
 sudo yum remove powershell
@@ -107,8 +103,7 @@ sudo yum remove powershell
 
 [CentOS 7]: https://www.centos.org/download/
 
-Arch Linux
-==========
+## Arch Linux
 
 PowerShell is available from the [Arch Linux][] User Repository (AUR) as a [release][arch-release] or the [latest development build][arch-git].
 
@@ -120,8 +115,7 @@ For more information on installing packages from the AUR, see the [Arch Linux wi
 [arch-release]: https://aur.archlinux.org/packages/powershell/
 [arch-git]: https://aur.archlinux.org/packages/powershell-git/
 
-Linux AppImage
-==============
+## Linux AppImage
 
 Using a recent Linux distribution,
 download the AppImage `PowerShell-x86_64.AppImage`
@@ -129,7 +123,7 @@ from the [releases][] page onto the Linux machine.
 
 Then execute the following in the terminal:
 
-```
+```bash
 chmod a+x PowerShell-x86_64.AppImage
 ./PowerShell-x86_64.AppImage
 ```
@@ -142,8 +136,7 @@ and is a single binary.
 
 [appimage]: http://appimage.org/
 
-macOS 10.11
-===========
+## macOS 10.11
 
 Using macOS 10.11, download the PKG package
 `powershell-6.0.0-alpha.17.pkg`
@@ -156,7 +149,7 @@ or install it from the terminal:
 sudo installer -pkg powershell-6.0.0-alpha.17.pkg -target /
 ```
 
-**Uninstallation**
+### Uninstallation - macOS 10.11
 
 PowerShell on MacOS must be removed manually.
 
@@ -172,12 +165,11 @@ and remove the desired the paths with `sudo rm`.
 
 [paths]:#paths
 
-OpenSSL
--------
+## OpenSSL
 
 Also install [Homebrew's OpenSSL][openssl]:
 
-```
+```bash
 brew install openssl
 brew install curl --with-openssl
 ```
@@ -203,7 +195,7 @@ they will fail to work unless the libraries are manually placed there (security 
 or their libraries are patched (which we do).
 To patch .NET Core's cryptography libraries, we use `install_name_tool`:
 
-```
+```bash
 find ~/.nuget -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
 find ~/.nuget -name System.Net.Http.Native.dylib | xargs sudo install_name_tool -change /usr/lib/libcurl.4.dylib /usr/local/opt/curl/lib/libcurl.4.dylib
 ```
@@ -218,8 +210,7 @@ You *can* run this command manually if you're having trouble with .NET Core's cr
 [brew]: http://brew.sh/
 [homebrew-patch]: https://github.com/Homebrew/brew/pull/597
 
-Paths
-=====
+## Paths
 
 * `$PSHOME` is `/opt/microsoft/powershell/6.0.0-alpha.17/`
 * User profiles will be read from `~/.config/powershell/profile.ps1`
