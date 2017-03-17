@@ -43,16 +43,6 @@
             "buildOptions": {
                 "define": [ "CORECLR" ]
             }
-        },
-        "net451": {
-            "frameworkAssemblies": {
-                "System.Windows.Forms": {
-                    "type": "build"
-                }
-            },
-            "buildOptions": {
-                "debugType": "full"
-            }
         }
     }
 }

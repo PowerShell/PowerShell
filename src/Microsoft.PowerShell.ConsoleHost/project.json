@@ -63,11 +63,6 @@
                 "System.Xml.XDocument": "4.3.0",
                 "System.IO.MemoryMappedFiles": "4.3.0"
             }
-        },
-        "net451": {
-            "buildOptions": {
-                "debugType": "full"
-            }
         }
     }
 }

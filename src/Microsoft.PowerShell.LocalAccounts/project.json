@@ -46,11 +46,6 @@
             "dependencies": {
                 "System.Net.NameResolution": "4.3.0"
             }
-        },
-        "net451": {
-            "buildOptions": {
-                "debugType": "full"
-            }
         }
     }
 }

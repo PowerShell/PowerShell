@@ -41,16 +41,6 @@
             "dependencies": {
                 "NETStandard.Library": "1.6.1"
             }
-        },
-        "net451": {
-            "frameworkAssemblies": {
-                "System.Runtime": "",
-                "System.Xml": "",
-                "System.Data": ""
-            },
-            "buildOptions": {
-                "debugType": "full"
-            }
         }
     }
 }

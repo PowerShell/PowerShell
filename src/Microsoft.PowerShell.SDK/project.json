@@ -12,7 +12,6 @@
     },
 
     "frameworks": {
-        "net451": {},
         "netstandard1.6": {
             "dependencies": {
                 "Microsoft.CSharp": "4.3.0",
