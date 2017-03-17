@@ -73,6 +73,8 @@ namespace Microsoft.PowerShell
                 _pendingProgress = new PendingProgress();
             }
 
+            _pendingProgress.Update(sourceId, record);
+
             if (_progPane == null)
             {
                 // This is the first time we've received a progress record
@@ -85,7 +87,7 @@ namespace Microsoft.PowerShell
                 if (_progPaneUpdateTimer == null)
                 {
                     // Show a progress pane at the first time we've received a progress record
-                    progPaneUpdateFlag = true;
+                    progPaneUpdateFlag = 1;
 
                     // Invoke the timer only once to exclude overlaps
                     // The timer will be restarted in 'ProgressPaneUpdateTimerElapsed'
@@ -93,13 +95,11 @@ namespace Microsoft.PowerShell
                 }
             }
 
-            if (progPaneUpdateFlag || record.RecordType == ProgressRecordType.Completed)
+            if (Interlocked.CompareExchange(ref progPaneUpdateFlag, 0, 1) == 1 || record.RecordType == ProgressRecordType.Completed)
             {
                 // Update the progress pane only when the timer set up the update flag or WriteProgress is completed.
                 // As a result, we do not block WriteProgress and whole script and eliminate unnecessary console locks and updates.
-                _pendingProgress.Update(sourceId, record);
                 _progPane.Show(_pendingProgress);
-                progPaneUpdateFlag = false;
             }
         }
 
@@ -115,10 +115,7 @@ namespace Microsoft.PowerShell
         void
         ProgressPaneUpdateTimerElapsed(object sender)
         {
-            if (_progPane != null)
-            {
-                progPaneUpdateFlag = true;
-            }
+            Interlocked.CompareExchange(ref progPaneUpdateFlag, 1, 0);
 
             _progPaneUpdateTimer?.Change(UpdateTimerThreshold, Timeout.Infinite);
         }
@@ -219,7 +216,7 @@ namespace Microsoft.PowerShell
         // The timer set up 'progPaneUpdateFlag' every 'UpdateTimerThreshold' milliseconds to update 'ProgressPane'
         private Timer _progPaneUpdateTimer;
         private const int UpdateTimerThreshold = 200;
-        private bool progPaneUpdateFlag;
+        private int progPaneUpdateFlag;
     }
 }   // namespace 
 
