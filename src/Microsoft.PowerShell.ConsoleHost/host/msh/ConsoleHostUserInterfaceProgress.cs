@@ -29,26 +29,30 @@ namespace Microsoft.PowerShell
             // destroy the data structures representing outstanding progress records
             // take down and destroy the progress display
 
-            if (_progPaneUpdateTimer != null)
+            // If we have multiple runspaces on the host then any finished pipeline in any runspace will lead to call 'ResetProgress'
+            // so we need the lock
+            lock (_instanceLock)
             {
-                // Stop update a progress pane and destroy timer
-                _progPaneUpdateTimer.Dispose();
-                _progPaneUpdateTimer = null;
+                if (_progPaneUpdateTimer != null)
+                {
+                    // Stop update a progress pane and destroy timer
+                    _progPaneUpdateTimer.Dispose();
+                    _progPaneUpdateTimer = null;
+                }
+                // We don't set 'progPaneUpdateFlag = 0' here, because:
+                // 1. According to MSDN, the timer callback can occur after the Dispose() method has been called.
+                //    So we cannot guarantee the flag is truly set to 0.
+                // 2. When creating a new timer in 'HandleIncomingProgressRecord', we will set the flag to 1 anyway
+
+                if (_progPane != null)
+                {
+                    Dbg.Assert(_pendingProgress != null, "How can you have a progress pane and no backing data structure?");
+
+                    _progPane.Hide();
+                    _progPane = null;
+                }
+                _pendingProgress = null;
             }
-            // We don't reset 'progPaneUpdateFlag = false' here
-            // because `HandleIncomingProgressRecord` will be init 'progPaneUpdateFlag' in any way.
-            // (Also the timer callback can still set it to 'true' accidentally)
-
-
-            if (_progPane != null)
-            {
-                Dbg.Assert(_pendingProgress != null, "How can you have a progress pane and no backing data structure?");
-
-                // lock (_instanceLock) is not needed here because lock is done at global level
-                _progPane.Hide();
-                _progPane = null;
-            }
-            _pendingProgress = null;
         }
 
 
@@ -89,9 +93,8 @@ namespace Microsoft.PowerShell
                     // Show a progress pane at the first time we've received a progress record
                     progPaneUpdateFlag = 1;
 
-                    // Invoke the timer only once to exclude overlaps
-                    // The timer will be restarted in 'ProgressPaneUpdateTimerElapsed'
-                    _progPaneUpdateTimer = new Timer( new TimerCallback(ProgressPaneUpdateTimerElapsed), null, UpdateTimerThreshold, Timeout.Infinite);
+                    // The timer will be auto restarted every 'UpdateTimerThreshold' ms
+                    _progPaneUpdateTimer = new Timer( new TimerCallback(ProgressPaneUpdateTimerElapsed), null, UpdateTimerThreshold, UpdateTimerThreshold);
                 }
             }
 
@@ -107,7 +110,7 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         ///
-        /// TimerCallback for _progPaneUpdateTimer to update 'progPaneUpdateFlag' and restart the timer
+        /// TimerCallback for '_progPaneUpdateTimer' to update 'progPaneUpdateFlag'
         ///
         /// </summary>
 
@@ -116,8 +119,6 @@ namespace Microsoft.PowerShell
         ProgressPaneUpdateTimerElapsed(object sender)
         {
             Interlocked.CompareExchange(ref progPaneUpdateFlag, 1, 0);
-
-            _progPaneUpdateTimer?.Change(UpdateTimerThreshold, Timeout.Infinite);
         }
 
         private
@@ -214,9 +215,9 @@ namespace Microsoft.PowerShell
         private ProgressPane _progPane = null;
         private PendingProgress _pendingProgress = null;
         // The timer set up 'progPaneUpdateFlag' every 'UpdateTimerThreshold' milliseconds to update 'ProgressPane'
-        private Timer _progPaneUpdateTimer;
+        private Timer _progPaneUpdateTimer = null;
         private const int UpdateTimerThreshold = 200;
-        private int progPaneUpdateFlag;
+        private int progPaneUpdateFlag = 0;
     }
 }   // namespace 
 
