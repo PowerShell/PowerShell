@@ -189,7 +189,8 @@
                 "System.Threading.Tasks.Parallel": "4.3.0",
                 "System.Xml.XPath.XmlDocument": "4.3.0",
                 "System.Xml.XmlDocument": "4.3.0",
-                "System.Xml.XmlSerializer": "4.3.0"
+                "System.Xml.XmlSerializer": "4.3.0",
+                "System.Text.Encoding.CodePages": "4.3.0"
             }
         },
         "net451": {
