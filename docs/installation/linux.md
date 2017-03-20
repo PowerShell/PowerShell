@@ -205,7 +205,6 @@ The PowerShell macOS package come with the necessary libraries patched,
 and the build script patches the libraries on-the-fly when building from source.
 You *can* run this command manually if you're having trouble with .NET Core's cryptography libraries.
 
-
 [openssl]: https://github.com/Homebrew/homebrew-core/blob/master/Formula/openssl.rb
 [brew]: http://brew.sh/
 [homebrew-patch]: https://github.com/Homebrew/brew/pull/597
@@ -224,7 +223,6 @@ The profiles respect PowerShell's per-host configuration,
 so the default host-specific profiles exists at `Microsoft.PowerShell_profile.ps1` in the same locations.
 
 On Linux and macOS, the [XDG Base Directory Specification][xdg-bds] is respected.
-
 
 Note that because macOS is a derivation of BSD,
 instead of `/opt`, the prefix used is `/usr/local`.
