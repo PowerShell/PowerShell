@@ -19,29 +19,29 @@ For Windows you will need to install Win32 Open SSH from GitHub.  For Linux you 
 ## Setup on Windows Machine
 1.  Install the latest [PowerShell for Windows] build from GitHub
     - You can tell if it has the SSH remoting support by looking at the parameter sets for New-PSSession
-```powershell
-Get-Command New-PSSession -syntax
-New-PSSession [-Name <string[]>] [-HostName <string>] [-UserName <string>] [-KeyPath <string>] [<CommonParameters>]
-```
+    ```powershell
+    PS> Get-ommand New-PSSession -syntax
+    New-PSSession [-HostName] <string[]> [-Name <string[]>] [-UserName <string>] [-KeyFilePath <string>] [-SSHTransport] [<CommonParameters>]
+    ```
 2.  Install the latest [Win32 Open SSH] build from GitHub using the [installation] instructions
 3.  Edit the sshd_config file at the location where you installed Win32 Open SSH
     - Make sure password authentication is enabled
-```bash
-PasswordAuthentication yes
-```
+    ```bash
+    PasswordAuthentication yes
+    ```
     - Add a PowerShell subsystem entry
-```bash
-Subsystem	powershell `PowerShell_Install_Path`\powershell.exe -sshs -NoLogo -NoProfile
-```
+    ```bash
+    Subsystem	powershell `PowerShell_Install_Path`\powershell.exe -sshs -NoLogo -NoProfile
+    ```
     - Optionally enable key authentication
-```bash
-RSAAuthentication yes
-PubkeyAuthentication yes
-```
+    ```bash
+    RSAAuthentication yes
+    PubkeyAuthentication yes
+    ```
 4.  Restart the sshd service
-```powershell
-Restart-Service sshd
-```
+    ```powershell
+    Restart-Service sshd
+    ```
 5. Add the path where OpenSSH is installed to your Path Env Variable
     - This should be along the lines of `C:\Program Files\OpenSSH\`
     - This allows for the ssh.exe to be found
@@ -51,7 +51,7 @@ Restart-Service sshd
     - You can tell if it has the SSH remoting support by looking at the parameter sets for New-PSSession
     ```powershell
     Get-Command New-PSSession -syntax
-    New-PSSession [-Name <string[]>] [-HostName <string>] [-UserName <string>] [-KeyPath <string>] [<CommonParameters>]
+    New-PSSession [-HostName] <string[]> [-Name <string[]>] [-UserName <string>] [-KeyFilePath <string>] [-SSHTransport] [<CommonParameters>]
     ```
 2.  Install [Ubuntu SSH] as needed
     - sudo apt install openssh-client
