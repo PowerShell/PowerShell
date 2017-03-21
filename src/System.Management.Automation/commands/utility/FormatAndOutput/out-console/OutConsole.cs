@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
     /// default sink (display to console screen)
     /// </summary>
     [Cmdlet(VerbsData.Out, "Default", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113362", RemotingCapability = RemotingCapability.None)]
-    public class OutDefaultCommand : FrontEndCommandBase
+    public class OutDefaultCommand : FrontEndCommandBase, IDisposable
     {
         /// <summary>
         /// Determines whether objects should be sent to API consumers.
@@ -79,9 +79,14 @@ namespace Microsoft.PowerShell.Commands
                 mrt.MergeUnclaimedPreviousErrorResults = true;
             }
 
-            _savedTranscribeOnly = Host.UI.TranscribeOnly;
+            if (!_transcriptStateChanged)
+            {
+                _savedTranscribeOnly = Host.UI.TranscribeOnly;
+            }
+
             if (Transcript)
             {
+                _transcriptStateChanged = true;
                 Host.UI.TranscribeOnly = true;
             }
 
@@ -143,15 +148,30 @@ namespace Microsoft.PowerShell.Commands
             }
 
             base.EndProcessing();
+        }
+
+        /// <summary>
+        /// Revert transcription state on Dispose
+        /// </summary>
+        protected override void InternalDispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
 
             if (Transcript)
             {
                 Host.UI.TranscribeOnly = _savedTranscribeOnly;
             }
+
+            _disposed = true;
         }
 
+        private bool _disposed = false;
         private ArrayList _outVarResults = null;
         private bool _savedTranscribeOnly = false;
+        private static bool _transcriptStateChanged = false;
     }
 
     /// <summary>
