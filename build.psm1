@@ -236,14 +236,14 @@ function Start-PSBuild {
     $Arguments += "--runtime", $Options.Runtime
 
     # handle Restore
-    if ($Restore -or -not (Test-Path "$($Options.Top)/project.lock.json")) {
+    if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
         log "Run dotnet restore"
 
         $RestoreArguments = @("--verbosity")
         if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-            $RestoreArguments += "Info"
+            $RestoreArguments += "detailed"
         } else {
-            $RestoreArguments += "Warning"
+            $RestoreArguments += "quiet"
         }
 
         $RestoreArguments += "$PSScriptRoot"
@@ -2046,9 +2046,24 @@ function Start-TypeGen
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    Push-Location "$PSScriptRoot/src/TypeCatalogParser"
+    $GetDependenciesTargetPath = "$PSScriptRoot/src/Microsoft.PowerShell.SDK/obj/Microsoft.PowerShell.SDK.csproj.TypeCatalog.targets"
+    $GetDependenciesTargetValue = @'
+<Project>
+    <Target Name="_GetDependencies"
+            DependsOnTargets="ResolvePackageDependenciesDesignTime">
+        <ItemGroup>
+            <_DependentAssemblyPath Include="%(_DependenciesDesignTime.Path)%3B" Condition=" '%(_DependenciesDesignTime.Type)' == 'Assembly' And '%(_DependenciesDesignTime.Name)' != 'Microsoft.Management.Infrastructure.Native.dll' And '%(_DependenciesDesignTime.Name)' != 'Microsoft.Management.Infrastructure.dll' " />
+        </ItemGroup>
+        <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_DependentAssemblyPath)" Overwrite="true" />
+    </Target>
+</Project>
+'@
+    Set-Content -Path $GetDependenciesTargetPath -Value $GetDependenciesTargetValue -Force -Encoding Ascii
+
+    Push-Location "$PSScriptRoot/src/Microsoft.PowerShell.SDK"
     try {
-        dotnet run
+        $ps_inc_file = "$PSScriptRoot/src/TypeCatalogGen/powershell.inc"
+        dotnet msbuild .\Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$ps_inc_file" /nologo
     } finally {
         Pop-Location
     }
