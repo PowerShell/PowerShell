@@ -27,4 +27,12 @@ Describe "Tab completion bug fix" -Tags "CI" {
         $result.CompletionMatches.Count | Should Be 1
         $result.CompletionMatches[0].CompletionText | Should Be "pscustomobject"
     }
+    It "Issue#1345 - 'Import-Module -n<tab>' should work" {
+        $cmd = "Import-Module -n"
+        $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+        $result.CompletionMatches.Count | Should Be 3
+        $result.CompletionMatches[0].CompletionText | Should Be "-Name"
+        $result.CompletionMatches[1].CompletionText | Should Be "-NoClobber"
+        $result.CompletionMatches[2].CompletionText | Should Be "-NoOverwrite"
+    }
 }
