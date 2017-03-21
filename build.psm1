@@ -684,18 +684,21 @@ function Publish-PSTestTools {
     Find-Dotnet
 
     $tools = "$PSScriptRoot/test/tools/EchoArgs","$PSScriptRoot/test/tools/CreateChildProcess"
-    # Publish EchoArgs so it can be run by tests
+    if ($Options -eq $null)
+    {
+        $Options = New-PSOptions
+    }
 
+    # Publish EchoArgs so it can be run by tests
     foreach ($tool in $tools)
     {
         Push-Location $tool
         try {
-            dotnet publish --output bin
+            dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
         } finally {
             Pop-Location
         }
     }
-
 }
 
 function Start-PSPester {
@@ -954,7 +957,7 @@ function Start-PSxUnit {
 function Install-Dotnet {
     [CmdletBinding()]
     param(
-        [string]$Channel = "preview",
+        [string]$Channel,
         [string]$Version,
         [switch]$NoSudo
     )
