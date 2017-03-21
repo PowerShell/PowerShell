@@ -125,16 +125,6 @@ namespace Microsoft.PowerShell.Commands
         public static string FileReadError { get { return UtilityCommonStrings.FileReadError; } }
 
         /// <summary>
-        /// Error message to indicate that Format-Hex cmdlet does not directly support the type provided as input.
-        /// </summary>
-        public static string FormatHexTypeNotSupported { get { return UtilityCommonStrings.FormatHexTypeNotSupported; } }
-
-        /// <summary>
-        /// Error message to indicate that Format-Hex cmdlet does not directly support the type provided as input.
-        /// </summary>
-        public static string FormatHexResolvePathError { get { return UtilityCommonStrings.FormatHexResolvePathError; } }
-
-        /// <summary>
         /// The resource string used to indicate 'PATH:' in the formating header.
         /// </summary>
         public static string FormatHexPathPrefix { get { return UtilityCommonStrings.FormatHexPathPrefix; } }
