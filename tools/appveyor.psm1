@@ -163,7 +163,9 @@ function Invoke-AppVeyorBuild
           Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -Publish
       }
 
-      Start-PSBuild -FullCLR -PSModuleRestore
+      ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+      ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+      # Start-PSBuild -FullCLR -PSModuleRestore
       Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release'
 }
 
@@ -319,9 +321,11 @@ function Invoke-AppVeyorTest
 
     #
     # FullCLR
-    $env:FullOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -FullCLR))
-    Write-Host -Foreground Green 'Run FullCLR tests'
-    Start-PSPester -FullCLR -bindir $env:FullOutput -outputFile $testResultsFileFullCLR -Tag $null -path 'test/fullCLR'
+    ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+    ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+    # $env:FullOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -FullCLR))
+    # Write-Host -Foreground Green 'Run FullCLR tests'
+    # Start-PSPester -FullCLR -bindir $env:FullOutput -outputFile $testResultsFileFullCLR -Tag $null -path 'test/fullCLR'
 
     Write-Host -Foreground Green 'Upload FullCLR test results'
     Update-AppVeyorTestResults -resultsFile $testResultsFileFullCLR

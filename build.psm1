@@ -158,6 +158,10 @@ function Start-PSBuild {
     # simplify ParameterSetNames
     if ($PSCmdlet.ParameterSetName -eq 'FullCLR') {
         $FullCLR = $true
+
+        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+        throw "Building against FullCLR is not supported"
     }
 
     # Add .NET CLI tools to PATH
@@ -239,6 +243,9 @@ function Start-PSBuild {
     if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
         log "Run dotnet restore"
 
+        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen")
+        $testProjectDirs = Get-ChildItem "$PSScriptRoot/test/*.csproj" -Recurse | % { [System.IO.Path]::GetDirectoryName($_) }
+
         $RestoreArguments = @("--verbosity")
         if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
             $RestoreArguments += "detailed"
@@ -246,9 +253,7 @@ function Start-PSBuild {
             $RestoreArguments += "quiet"
         }
 
-        $RestoreArguments += "$PSScriptRoot"
-
-        Start-NativeExecution { dotnet restore $RestoreArguments }
+        ($srcProjectDirs + $testProjectDirs) | % { Start-NativeExecution { dotnet restore $_ $RestoreArguments } }
 
         # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
         if ($IsOSX) {
@@ -493,6 +498,12 @@ function New-PSOptions {
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
+    if ($FullCLR) {
+        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+        throw "Building against FullCLR is not supported"
+    }
+
     $ConfigWarningMsg = "The passed-in Configuration value '{0}' is not supported on '{1}'. Use '{2}' instead."
     if (-not $Configuration) {
         $Configuration = if ($IsLinux -or $IsOSX) {
@@ -704,6 +715,12 @@ function Start-PSPester {
         [switch]$Quiet,
         [switch]$PassThru
     )
+
+    if ($FullCLR) {
+        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+        throw "Building against FullCLR is not supported"
+    }
 
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
     if ($Unelevate)
@@ -946,7 +963,7 @@ function Install-Dotnet {
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
-    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/v1.0.0-preview2-1-3177/scripts/obtain"
+    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/v1.0.1/scripts/obtain"
 
     # Install for Linux and OS X
     if ($IsLinux -or $IsOSX) {
@@ -1005,11 +1022,11 @@ function Start-PSBootstrap {
         SupportsShouldProcess=$true,
         ConfirmImpact="High")]
     param(
-        [string]$Channel = "preview",
+        [string]$Channel = "rel-1.0.0",
         # we currently pin dotnet-cli version, because tool
         # is currently migrating to msbuild toolchain
         # and requires constant updates to our build process.
-        [string]$Version = "1.0.0-preview2-1-003177",
+        [string]$Version = "1.0.1",
         [switch]$Package,
         [switch]$NoSudo,
         [switch]$Force
@@ -1783,6 +1800,12 @@ function Start-DevPowerShell {
         [string]$Command,
         [switch]$KeepPSModulePath
     )
+
+    if ($FullCLR) {
+        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+        throw "Building against FullCLR is not supported"
+    }
 
     try {
         if ((-not $NoNewWindow) -and ($IsCoreCLR)) {
