@@ -92,6 +92,11 @@ You can also install the RPM without the intermediate step of downloading it:
 ```sh
 sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.17/powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm
 ```
+You can also install via the Microsoft Repository
+sudo rpm -Uvh http://packages.microsoft.com/config/rhel/7/packages-microsoft-prod.rpm
+sudo yum install powershell
+
+With this method, future powershell updates will be installed automatically with 'sudo yum update'.
 
 > This package works on Oracle Linux 7. It should work on Red Hat Enterprise Linux 7 too.
 
