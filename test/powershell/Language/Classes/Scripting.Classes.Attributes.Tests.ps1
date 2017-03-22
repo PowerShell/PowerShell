@@ -1,3 +1,4 @@
+
 Describe 'Attributes Test' -Tags "CI" {
 
     BeforeAll {
@@ -56,15 +57,7 @@ namespace Dummy
         [C1]::new().Ensure = "Present"
 
         It 'Error when ValidateSet should be ExceptionWhenSetting' {
-            try
-            {
-                [C1]::new().Ensure = "foo"
-                throw "Exception expected"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
-            }
+            { [C1]::new().Ensure = "foo" } | ShouldBeErrorId 'ExceptionWhenSetting'
         }
     }
 
@@ -73,13 +66,7 @@ namespace Dummy
         # This call should not throw exception
         [C1]::Ensure = "Present"
         It 'Error when ValidateSet should be ExceptionWhenSetting'{
-            try  {
-                [C1]::Ensure = "foo"
-                throw "Exception expected"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
-            }
+            { [C1]::Ensure = "foo" } | ShouldBeErrorId 'ExceptionWhenSetting'
         }
     }
 
@@ -89,13 +76,7 @@ namespace Dummy
         [C1]::new().f = 10
         [C1]::new().f = 1
         It 'Error when ValidateSet should be ExceptionWhenSetting'{
-            try {
-                [C1]::new().f = 20
-                throw "Exception expected"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
-            }
+            { [C1]::new().f = 20 } | ShouldBeErrorId 'ExceptionWhenSetting'
         }
     }
 
@@ -104,13 +85,7 @@ namespace Dummy
         # This call should not throw exception
         [C1]::f = 5
         It 'Error when ValidateSet should be ExceptionWhenSetting'{
-            try {
-                [C1]::f = 20
-                throw "Exception expected"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
-            }
+            { [C1]::f = 20 } | ShouldBeErrorId 'ExceptionWhenSetting'
         }
     }
 
@@ -120,13 +95,7 @@ namespace Dummy
         [C1]::o = "abc"
         [C1]::o = 5
         It 'Error when ValidateSet should be ExceptionWhenSetting'{
-            try {
-                [C1]::o = 1
-                throw "Exception expected"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
-            }
+            { [C1]::o = 1 } | ShouldBeErrorId 'ExceptionWhenSetting'
         }
     }
 
@@ -165,13 +134,7 @@ namespace Dummy
             $c.arg | should be 200
         }
         It 'Set to string should fail with ExceptionWhenSetting' {
-            try {
-                $c.arg = "abc"
-                throw "Exception expected"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should be 'ExceptionWhenSetting'
-            }
+            { $c.arg = "abc" } | ShouldBeErrorId 'ExceptionWhenSetting'
         }
     }
 

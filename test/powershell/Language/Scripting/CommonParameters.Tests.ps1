@@ -1,4 +1,5 @@
-﻿Describe "Common parameters support for script cmdlets" -Tags "CI" {
+﻿
+Describe "Common parameters support for script cmdlets" -Tags "CI" {
     BeforeEach {
         $rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace()
         $rs.open()
@@ -135,19 +136,11 @@
             [void] $ps.AddScript($script + $command)
             $asyncResult = $ps.BeginInvoke()
 
-            try
-            {
-                $ps.EndInvoke($asyncResult)
-                Throw "Exception expected, execution should not have reached here"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "ActionPreferenceStopException"
-            } # Exception: "Command execution stopped because the preference variable "ErrorActionPreference" or common parameter is set to Stop: error foo"
-
+            # Exception: "Command execution stopped because the preference variable "ErrorActionPreference" or common parameter is set to Stop: error foo"
+            { $ps.EndInvoke($asyncResult) } | ShouldBeErrorId "ActionPreferenceStopException"
 
             # BUG in runspace api.
             #$ps.error.count | Should Be 1
-
             $ps.InvocationStateInfo.State | Should Be 'Failed'
         }
     }

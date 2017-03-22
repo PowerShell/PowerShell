@@ -87,6 +87,7 @@ Describe "Start-Process" -Tags @("CI","SLOW") {
     ## -WindowStyle is supported in PowerShell core on Windows full desktop.
     It "Should give an error when -WindowStyle parameter is used" -Skip:$isFullWin {
         { Start-Process -FilePath $pingCommand -WindowStyle Normal } | ShouldBeErrorId "NotSupportedException,Microsoft.PowerShell.Commands.StartProcessCommand"
+
     }
 
     It "Should give an error when both -NoNewWindow and -WindowStyle are specified" -Skip:(!$isFullWin) {

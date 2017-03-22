@@ -1,3 +1,4 @@
+
 Describe "Add-Content cmdlet tests" -Tags "CI" {
   $file1 = "file1.txt"
   Setup -File "$file1"
@@ -25,18 +26,15 @@ Describe "Add-Content cmdlet tests" -Tags "CI" {
       get-content testdrive:\$file1 | Should BeExactly $AsItWas
     }
     It "should throw 'ParameterArgumentValidationErrorNullNotAllowed' when -Path is `$null" {
-      Try {add-content -path $null -value "ShouldNotWorkBecausePathIsNull" -ea stop; Throw "Previous statement unexpectedly succeeded..."
-      } Catch {$_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddContentCommand"}
+      {add-content -path $null -value "ShouldNotWorkBecausePathIsNull" -ErrorAction Stop } | ShouldBeErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddContentCommand"
     }
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 903880)]
     It "should throw `"Cannot bind argument to parameter 'Path'`" when -Path is `$()" {
-      Try {add-content -path $() -value "ShouldNotWorkBecausePathIsInvalid" -ea stop; Throw "Previous statement unexpectedly succeeded..."
-      } Catch {$_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddContentCommand"}
+      {add-content -path $() -value "ShouldNotWorkBecausePathIsInvalid" -ErrorAction Stop } | ShouldBeErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddContentCommand"
     }
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
     It "should throw 'NotSupportedException' when you add-content to an unsupported provider" -Skip:($IsLinux -Or $IsOSX) {
-      Try {add-content -path HKLM:\\software\\microsoft -value "ShouldNotWorkBecausePathIsUnsupported" -ea stop; Throw "Previous statement unexpectedly succeeded..."
-      } Catch {$_.FullyQualifiedErrorId | Should Be "NotSupported,Microsoft.PowerShell.Commands.AddContentCommand"}
+      {add-content -path HKLM:\\software\\microsoft -value "ShouldNotWorkBecausePathIsUnsupported" -ErrorAction Stop } | ShouldBeErrorId "NotSupported,Microsoft.PowerShell.Commands.AddContentCommand"
     }
     #[BugId(BugDatabase.WindowsOutOfBandReleases, 9058182)]
     It "should be able to pass multiple [string]`$objects to Add-Content through the pipeline to output a dynamic Path file" -Pending:($IsLinux -Or $IsOSX) {#https://github.com/PowerShell/PowerShell/issues/891

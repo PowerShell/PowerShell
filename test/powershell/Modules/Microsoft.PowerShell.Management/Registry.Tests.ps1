@@ -1,3 +1,4 @@
+
 try {
     #skip all tests on non-windows platform
     $defaultParamValues = $PSdefaultParameterValues.Clone()
@@ -182,11 +183,9 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
         }
 
         It "Verify Filter" {
-            try {
+            {
                 $result = New-ItemProperty -Path ".\*" -Filter "Test*" -Name $testPropertyName -Value $testPropertyValue -ErrorAction Stop
-                throw "Expected exception not thrown"
-            }
-            catch { $_.FullyQualifiedErrorId | Should Be "NotSupported,Microsoft.PowerShell.Commands.NewItemPropertyCommand" }
+            } | ShouldBeErrorId "NotSupported,Microsoft.PowerShell.Commands.NewItemPropertyCommand"
         }
 
         It "Verify Include" {
@@ -227,11 +226,9 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
         }
 
         It "Verify Filter" {
-            try {
+            {
                 $result = Get-ItemProperty -Path ".\*" -Filter "*Test*" -ErrorAction Stop
-                throw "Expected exception not thrown"
-            }
-            catch { $_.FullyQualifiedErrorId | Should Be "NotSupported,Microsoft.PowerShell.Commands.GetItemPropertyCommand" }
+            } | ShouldBeErrorId "NotSupported,Microsoft.PowerShell.Commands.GetItemPropertyCommand"
         }
 
         It "Verify Include" {
@@ -316,11 +313,9 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
 
         It "Verify WhatIf" {
             Copy-ItemProperty -Path $testKey -Name $testPropertyName -Destination $testKey2 -WhatIf
-            try {
+            {
                 Get-ItemProperty -Path $testKey2 -Name $testPropertyName -ErrorAction Stop
-                throw "Expected exception not thrown"
-            }
-            catch { $_.FullyQualifiedErrorId | Should Be "System.Management.Automation.PSArgumentException,Microsoft.PowerShell.Commands.GetItemPropertyCommand" }
+            } | ShouldBeErrorId "System.Management.Automation.PSArgumentException,Microsoft.PowerShell.Commands.GetItemPropertyCommand"
         }
     }
 
@@ -396,11 +391,9 @@ Describe "Extended Registry Provider Tests" -Tags @("Feature", "RequireAdminOnWi
     Context "Valdiate Remove-ItemProperty Parameters" {
         It "Verify Confirm can be bypassed" {
             Remove-ItemProperty -Path $testKey -Name $testPropertyName -Confirm:$false
-            try {
+            {
                 Get-ItemProperty -Path $testKey -Name $testPropertyName -ErrorAction Stop
-                throw "Expected exception not thrown"
-            }
-            catch { $_.FullyQualifiedErrorId | Should Be "System.Management.Automation.PSArgumentException,Microsoft.PowerShell.Commands.GetItemPropertyCommand" }
+            } | ShouldBeErrorId "System.Management.Automation.PSArgumentException,Microsoft.PowerShell.Commands.GetItemPropertyCommand"
         }
 
         It "Verify WhatIf" {

@@ -1,3 +1,4 @@
+
 function Test-UnblockFile {
     try {
         Get-Content -Path $testfilepath -Stream Zone.Identifier -ErrorAction Stop | Out-Null
@@ -37,23 +38,11 @@ Describe "Unblock-File" -Tags "CI" {
     }
 
     It "With '-Path': no file exist" {
-        try {
-            Unblock-File -Path nofileexist.ttt -ErrorAction Stop
-            throw "No Exception!"
-        } 
-        catch {
-            $_.FullyQualifiedErrorId | Should Be "FileNotFound,Microsoft.PowerShell.Commands.UnblockFileCommand"
-        }
+        { Unblock-File -Path nofileexist.ttt -ErrorAction Stop } | ShouldBeErrorId "FileNotFound,Microsoft.PowerShell.Commands.UnblockFileCommand"
     }
 
     It "With '-LiteralPath': no file exist" {
-        try {
-            Unblock-File -LiteralPath nofileexist.ttt -ErrorAction Stop
-            throw "No Exception!"
-        } 
-        catch {
-            $_.FullyQualifiedErrorId | Should Be "FileNotFound,Microsoft.PowerShell.Commands.UnblockFileCommand"
-        }
+        { Unblock-File -LiteralPath nofileexist.ttt -ErrorAction Stop } | ShouldBeErrorId "FileNotFound,Microsoft.PowerShell.Commands.UnblockFileCommand"
     }
 
     It "With '-Path': file exist" {

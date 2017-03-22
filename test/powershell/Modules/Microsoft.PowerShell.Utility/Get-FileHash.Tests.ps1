@@ -1,3 +1,4 @@
+
 Describe "Get-FileHash" -Tags "CI" {
 
     BeforeAll {
@@ -31,35 +32,17 @@ Describe "Get-FileHash" -Tags "CI" {
         }
 
         It "Should be throw for wrong algorithm name" {
-            try {
-                Get-FileHash Get-FileHash $testDocument -Algorithm wrongAlgorithm
-                throw "No Exception!"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetFileHashCommand"
-            }
+            { Get-FileHash Get-FileHash $testDocument -Algorithm wrongAlgorithm } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
     }
 
     Context "Paths tests" {
         It "With '-Path': no file exist" {
-            try {
-                Get-FileHash -Path nofileexist.ttt -ErrorAction Stop
-                throw "No Exception!"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
-            }
+            { Get-FileHash -Path nofileexist.ttt -ErrorAction Stop } | ShouldBeErrorId "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
 
         It "With '-LiteralPath': no file exist" {
-            try {
-                Get-FileHash -LiteralPath nofileexist.ttt -ErrorAction Stop
-                throw "No Exception!"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
-            }
+            { Get-FileHash -LiteralPath nofileexist.ttt -ErrorAction Stop } | ShouldBeErrorId "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
 
         It "With '-Path': file exist" {

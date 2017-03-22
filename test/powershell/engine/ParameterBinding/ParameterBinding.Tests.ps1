@@ -1,4 +1,5 @@
-﻿Describe "Parameter Binding Tests" -Tags "CI" {
+﻿
+Describe "Parameter Binding Tests" -Tags "CI" {
     It "Should throw a parameter binding exception when two parameters have the same position" {
         function test-PositionalBinding1 {
             [CmdletBinding()]
@@ -12,15 +13,7 @@
             }
         }
 
-        try
-        {
-            test-PositionalBinding1 1
-            throw "No Exception!"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | should be "AmbiguousPositionalParameterNoName,test-PositionalBinding1"
-        }
+        { test-PositionalBinding1 1 } | ShouldBeErrorId "AmbiguousPositionalParameterNoName,test-PositionalBinding1"
     }
 
     It "a mandatory parameter can't be passed a null if it doesn't have AllowNullAttribute" {
@@ -62,17 +55,11 @@
             }
         }
 
-        try
-        {
+        $exc = {
             test-allownullattributes -Parameter2 1 -Parameter3 $null -ShowMe 1
-            throw "No Exception!"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | should be "ParameterArgumentValidationErrorEmptyStringNotAllowed,test-allownullattributes"
-            $_.CategoryInfo | Should match "ParameterBindingValidationException"
-            $_.Exception.Message | should match "Parameter3"
-        }
+        } | ShouldBeErrorId "ParameterArgumentValidationErrorEmptyStringNotAllowed,test-allownullattributes"
+        $exc.CategoryInfo | Should match "ParameterBindingValidationException"
+        $exc.Exception.Message | should match "Parameter3"
     }
 
     It "can't pass an argument that looks like a boolean parameter to a named string parameter" {
@@ -88,17 +75,11 @@
             }
         }
 
-        try
-        {
+        $exc = {
             test-namedwithboolishargument -Parameter2 -Parameter1
-            throw "No Exception!"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | should be "MissingArgument,test-namedwithboolishargument"
-            $_.CategoryInfo | Should match "ParameterBindingException"
-            $_.Exception.Message | should match "Parameter2"
-        }
+        } | ShouldBeErrorId "MissingArgument,test-namedwithboolishargument"
+        $exc.CategoryInfo | Should match "ParameterBindingException"
+        $exc.Exception.Message | should match "Parameter2"
     }
 
     It "Verify that a SwitchParameter's IsPresent member is false if the parameter is not specified" {
@@ -148,18 +129,12 @@
             }
         }
 
-        try
-        {
+        $exc = {
             test-singleintparameter -Parameter1 'dookie'
-            throw "No Exception!"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | should be "ParameterArgumentTransformationError,test-singleintparameter"
-            $_.CategoryInfo | Should match "ParameterBindingArgumentTransformationException"
-            $_.Exception.Message | should match "Input string was not in a correct format"
-            $_.Exception.Message | should match "Parameter1"
-        }
+        } | ShouldBeErrorId "ParameterArgumentTransformationError,test-singleintparameter"
+        $exc.CategoryInfo | Should match "ParameterBindingArgumentTransformationException"
+        $exc.Exception.Message | should match "Input string was not in a correct format"
+        $exc.Exception.Message | should match "Parameter1"
     }
 
     It "Verify that WhatIf is available when SupportShouldProcess is true" {
@@ -267,17 +242,11 @@
             )
         }
 
-        try
-        {
+        $exc = {
             test-nameconflicts6 -Parameter2 1
-            throw "No Exception!"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | should be "ParameterNameConflictsWithAlias"
-            $_.CategoryInfo | Should match "MetadataException"
-            $_.Exception.Message | should match "Parameter1"
-            $_.Exception.Message | should match "Parameter2"
-        }
+        } | ShouldBeErrorId "ParameterNameConflictsWithAlias"
+        $exc.CategoryInfo | Should match "MetadataException"
+        $exc.Exception.Message | should match "Parameter1"
+        $exc.Exception.Message | should match "Parameter2"
     }
 }

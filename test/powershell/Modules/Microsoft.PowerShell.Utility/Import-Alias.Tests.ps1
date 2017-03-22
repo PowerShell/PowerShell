@@ -1,3 +1,4 @@
+
 Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
     $testAliasDirectory = Join-Path -Path $TestDrive -ChildPath ImportAliasTestDirectory
     $testAliases        = "TestAliases"
@@ -21,38 +22,18 @@ Describe "Import-Alias DRT Unit Tests" -Tags "CI" {
 		Remove-Item -Path $testAliasDirectory -Recurse -Force
 	}
 
-	It "Import-Alias Resolve To Multiple will throw PSInvalidOperationException" {
-			$ErrorActionPreference = "Stop"
-		try {
-			Import-Alias *
-			Throw "Execution OK"
-		}
-		catch {
-			$_.FullyQualifiedErrorId | Should be "NotSupported,Microsoft.PowerShell.Commands.ImportAliasCommand"
-		}
-	}
-
-	It "Import-Alias From Exported Alias File Aliases Already Exist should throw SessionStateException" {
-			$ErrorActionPreference = "Stop"
-		{Export-Alias  $fulltestpath abcd*}| Should Not Throw
-		try {
-			Import-Alias $fulltestpath
-			Throw "Execution OK"
-		}
-		catch {
-			$_.FullyQualifiedErrorId | Should be "AliasAlreadyExists,Microsoft.PowerShell.Commands.ImportAliasCommand"
-		}
+    It "Import-Alias Resolve To Multiple will throw PSInvalidOperationException" {
+        { Import-Alias * -ErrorAction Stop } | ShouldBeErrorId "NotSupported,Microsoft.PowerShell.Commands.ImportAliasCommand"
     }
 
-	It "Import-Alias Into Invalid Scope should throw PSArgumentException"{
-		{Export-Alias  $fulltestpath abcd*}| Should Not Throw
-		try {
-			Import-Alias $fulltestpath -scope bogus
-			Throw "Execution OK"
-		}
-		catch {
-			$_.FullyQualifiedErrorId | Should be "Argument,Microsoft.PowerShell.Commands.ImportAliasCommand"
-		}
+    It "Import-Alias From Exported Alias File Aliases Already Exist should throw SessionStateException" {
+        { Export-Alias  $fulltestpath abcd* -ErrorAction Stop } | Should Not Throw
+        { Import-Alias $fulltestpath -ErrorAction Stop } | ShouldBeErrorId "AliasAlreadyExists,Microsoft.PowerShell.Commands.ImportAliasCommand"
+    }
+
+    It "Import-Alias Into Invalid Scope should throw PSArgumentException"{
+        { Export-Alias  $fulltestpath abcd* -ErrorAction Stop} | Should Not Throw
+        { Import-Alias $fulltestpath -scope bogus -ErrorAction Stop } | ShouldBeErrorId "Argument,Microsoft.PowerShell.Commands.ImportAliasCommand"
     }
 
 	It "Import-Alias From Exported Alias File Aliases Already Exist using force should not throw"{

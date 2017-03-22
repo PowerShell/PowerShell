@@ -1,3 +1,4 @@
+
 Describe "Out-File DRT Unit Tests" -Tags "CI" {
     It "Should be able to write the contents into a file with -pspath" {
         $tempFile = Join-Path -Path $TestDrive -ChildPath "ExposeBug928965"
@@ -25,7 +26,7 @@ Describe "Out-File" -Tags "CI" {
     }
 
     AfterEach {
-        Remove-Item -Path $testfile -Force
+        Remove-Item -Path $testfile -Force -ErrorAction SilentlyContinue
     }
 
     It "Should be able to be called without error" {
@@ -58,8 +59,8 @@ Describe "Out-File" -Tags "CI" {
 
         Out-File -FilePath $testfile -InputObject $inObject
 
-        { Out-File -FilePath $testfile -InputObject $inObject -NoClobber -ErrorAction SilentlyContinue }   | Should Throw "already exists."
-        { Out-File -FilePath $testfile -InputObject $inObject -NoOverWrite -ErrorAction SilentlyContinue } | Should Throw "already exists."
+        { Out-File -FilePath $testfile -InputObject $inObject -NoClobber -ErrorAction SilentlyContinue }   | ShouldBeErrorId "NoClobber,Microsoft.PowerShell.Commands.OutFileCommand"
+        { Out-File -FilePath $testfile -InputObject $inObject -NoOverWrite -ErrorAction SilentlyContinue } | ShouldBeErrorId "NoClobber,Microsoft.PowerShell.Commands.OutFileCommand"
 
         $actual = Get-Content $testfile
 
@@ -127,7 +128,7 @@ Describe "Out-File" -Tags "CI" {
         # reset to not read only so it can be deleted
         Set-ItemProperty -Path $testfile -Name IsReadOnly -Value $false
     }
-    
+
     It "Should be able to use the 'Path' alias for the 'FilePath' parameter" {
         { Out-File -Path $testfile } | Should Not Throw
     }

@@ -1,22 +1,10 @@
 
 Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
     It "Get-Alias Bogus Scope Name should throw PSArgumentException"{
-        try {
-            Get-Alias -Name "ABCD" -Scope "bogus"
-            Throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "Argument,Microsoft.PowerShell.Commands.GetAliasCommand"
-        }
+        { Get-Alias -Name "ABCD" -Scope "bogus" } | ShouldBeErrorId "Argument,Microsoft.PowerShell.Commands.GetAliasCommand"
     }
     It "Get-Alias OutOfRange Scope"{
-        try {
-            Get-Alias -Name "ABCD" -Scope "99999"
-            Throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "ArgumentOutOfRange,Microsoft.PowerShell.Commands.GetAliasCommand"
-        }
+        { Get-Alias -Name "ABCD" -Scope "99999" } | ShouldBeErrorId "ArgumentOutOfRange,Microsoft.PowerShell.Commands.GetAliasCommand"
     }
     It "Get-Alias Named Single Valid"{
             Set-Alias -Name ABCD -Value "foo"
@@ -139,13 +127,7 @@ Describe "Get-Alias DRT Unit Tests" -Tags "CI" {
             $result.Options| Should Be "None"
     }
     It "Get-Alias Expose Bug 1065828, BugId:905235"{
-        try {
-            Get-Alias -Name "ABCD" -Scope "100"
-            Throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "ArgumentOutOfRange,Microsoft.PowerShell.Commands.GetAliasCommand"
-        }
+        { Get-Alias -Name "ABCD" -Scope "100" } | ShouldBeErrorId "ArgumentOutOfRange,Microsoft.PowerShell.Commands.GetAliasCommand"
     }
     It "Get-Alias Zero Scope Valid"{
             Set-Alias -Name ABCD -Value "foo"
@@ -224,23 +206,16 @@ Describe "Get-Alias null tests" -Tags "CI" {
   Context 'Check null or empty value to the -Name parameter' {
     It 'Should throw if <value> is passed to -Name parameter' -TestCases $testCases {
       param($data)
-      try
-      {
-          Get-Alias -Name $data
-          throw "No Exception!"
-      }
-      catch { $_.FullyQualifiedErrorId | Should Be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetAliasCommand' }
+
+      { Get-Alias -Name $data } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetAliasCommand"
     }
   }
+
   Context 'Check null or empty value to the -Name parameter via pipeline' {
     It 'Should throw if <value> is passed through pipeline to -Name parameter' -TestCases $testCases {
       param($data)
-      try
-      {
-          $data | Get-Alias -ErrorAction Stop
-          throw "No Exception!"
-      }
-      catch { $_.FullyQualifiedErrorId | Should Be 'ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetAliasCommand' }
+
+      { $data | Get-Alias -ErrorAction Stop } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetAliasCommand"
     }
   }
 }

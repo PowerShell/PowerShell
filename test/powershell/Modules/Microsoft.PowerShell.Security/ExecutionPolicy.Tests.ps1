@@ -1,6 +1,8 @@
 #
 # These are general tests that verify non-Windows behavior
 #
+
+
 Describe "ExecutionPolicy" -Tags "CI" {
 
     Context "Check Get-ExecutionPolicy behavior" {
@@ -919,13 +921,8 @@ ZoneId=$FileType
             [string]
             $policyScope
         )
-        try {
-            Set-ExecutionPolicy -Scope $policyScope -ExecutionPolicy Restricted
-            throw "No Exception!"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should Be "CantSetGroupPolicy,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand"
-        }
+
+        { Set-ExecutionPolicy -Scope $policyScope -ExecutionPolicy Restricted } | ShouldBeErrorId "CantSetGroupPolicy,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand"
     }
 
     function RestoreExecutionPolicy
@@ -1039,14 +1036,8 @@ ZoneId=$FileType
 
             Set-ExecutionPolicy -Scope Process -ExecutionPolicy Undefined
             Set-ExecutionPolicy -Scope CurrentUser -ExecutionPolicy Restricted
-            try
-            {
-                Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy ByPass
-                throw "Expected exception: ExecutionPolicyOverride"
-            }
-            catch [System.Security.SecurityException] {
-                $_.FullyQualifiedErrorId | Should Be 'ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand'
-            }
+
+            { Set-ExecutionPolicy -Scope LocalMachine -ExecutionPolicy ByPass } | ShouldBeErrorId 'ExecutionPolicyOverride,Microsoft.PowerShell.Commands.SetExecutionPolicyCommand'
 
             Get-ExecutionPolicy -Scope LocalMachine | Should Be "ByPass"
         }

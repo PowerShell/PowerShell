@@ -2,6 +2,7 @@
 #
 # Copyright (c) Microsoft Corporation, 2015
 
+
 function RemoveTestGroups
 {
     param([string] $basename)
@@ -22,14 +23,12 @@ function VerifyFailingTest
     $backupEAP = $script:ErrorActionPreference
     $script:ErrorActionPreference = "Stop"
 
-    try {
-        & $sb
-        throw "Expected FullyQualifiedErrorId: $expectedFqeid"
+    try
+    {
+        { & $sb } | ShouldBeErrorId $expectedFqeid
     }
-    catch {
-        $_.FullyQualifiedErrorId | Should Be $expectedFqeid
-    }
-    finally {
+    finally
+    {
         $script:ErrorActionPreference = $backupEAP
     }
 }
@@ -43,7 +42,7 @@ try {
     Describe "Verify Expected LocalGroup Cmdlets are present" -Tags "CI" {
 
         It "Test command presence" {
-            $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | % Name
+            $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | ForEach-Object Name
 
             $result -contains "New-LocalGroup" | Should Be $true
             $result -contains "Set-LocalGroup" | Should Be $true
@@ -135,17 +134,16 @@ try {
             $name = "A"*257
             $desc = "D"*129
 
-            try {
-                $shouldBeNull = New-LocalGroup -Name $name -Description $desc
-                throw "An error was expected"
+            $sb = {
+                try {
+                    $shouldBeNull = New-LocalGroup -Name $name -Description $desc
+                }
+                finally {
+                    #clean up erroneous creation
+                    if ($shouldBeNull) { Remove-LocalGroup -Name $name }
+                }
             }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.NewLocalGroupCommand"
-            }
-            finally {
-                #clean up erroneous creation
-                if ($shouldBeNull) { Remove-LocalGroup -Name $name }
-            }
+            VerifyFailingTest $sb "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.NewLocalGroupCommand"
         }
 
         It "Creates New-LocalGroup with Description > 48 characters" {

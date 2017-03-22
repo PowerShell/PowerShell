@@ -1,3 +1,4 @@
+
 Describe "Set-Content cmdlet tests" -Tags "CI" {
     BeforeAll {
         $file1 = "file1.txt"
@@ -38,38 +39,21 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
             $result | Should BeExactly "ExpectedContent"
         }
         It "should remove existing content from testdrive\$file1 when the -Value is `$null" {
-            $AsItWas=get-content $filePath1
-            $AsItWas |Should BeExactly "ExpectedContent"
-            set-content -path $filePath1 -value $null -ea stop
-            $AsItIs=get-content $filePath1
-            $AsItIs| Should Not Be $AsItWas
+            $AsItWas = get-content $filePath1
+            $AsItWas | Should BeExactly "ExpectedContent"
+
+            set-content -path $filePath1 -value $null -ErrorAction SilentlyContinue
+            $AsItIs = get-content $filePath1
+            $AsItIs | Should Not Be $AsItWas
         }
         It "should throw 'ParameterArgumentValidationErrorNullNotAllowed' when -Path is `$null" {
-            try {
-                set-content -path $null -value "ShouldNotWorkBecausePathIsNull" -ea stop
-                Throw "Previous statement unexpectedly succeeded..."
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
-            }
+            { set-content -path $null -value "ShouldNotWorkBecausePathIsNull" -ErrorAction Stop } | ShouldBeErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
         }
         It "should throw 'ParameterArgumentValidationErrorNullNotAllowed' when -Path is `$()" {
-            try {
-                set-content -path $() -value "ShouldNotWorkBecausePathIsInvalid" -ea stop
-                Throw "Previous statement unexpectedly succeeded..."
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
-            }
+            { set-content -path $() -value "ShouldNotWorkBecausePathIsInvalid" -ErrorAction Stop } | ShouldBeErrorId "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.SetContentCommand"
         }
         It "should throw 'PSNotSupportedException' when you set-content to an unsupported provider" -skip:$skipRegistry {
-            try {
-                set-content -path HKLM:\\software\\microsoft -value "ShouldNotWorkBecausePathIsUnsupported" -ea stop
-                Throw "Previous statement unexpectedly succeeded..."
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should Be "NotSupported,Microsoft.PowerShell.Commands.SetContentCommand"
-            }
+            { set-content -path HKLM:\\software\\microsoft -value "ShouldNotWorkBecausePathIsUnsupported" -ErrorAction Stop } | ShouldBeErrorId "NotSupported,Microsoft.PowerShell.Commands.SetContentCommand"
         }
         #[BugId(BugDatabase.WindowsOutOfBandReleases, 9058182)]
         It "should be able to pass multiple [string]`$objects to Set-Content through the pipeline to output a dynamic Path file" {

@@ -1,5 +1,4 @@
-﻿$remotingModule = Join-Path $PSScriptRoot "../Common/TestRemoting.psm1"
-Import-Module $remotingModule
+Import-Module $PSScriptRoot\..\Common\TestRemoting.psm1
 
 Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
 
@@ -9,29 +8,15 @@ Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
     }
 
     It "Null argument exception should be thrown for null PSCommand argument" {
-
-        try
         {
             [System.Management.Automation.HostUtilities]::InvokeOnRunspace($null, $localRunspace)
-            throw "InvokeOnRunspace method did not throw expected PSArgumentNullException exception"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be "PSArgumentNullException"
-        }
+        } | ShouldBeErrorId "PSArgumentNullException"
     }
 
     It "Null argument exception should be thrown for null Runspace argument" {
-
-        try
         {
             [System.Management.Automation.HostUtilities]::InvokeOnRunspace($command, $null)
-            throw "InvokeOnRunspace method did not throw expected PSArgumentNullException exception"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be "PSArgumentNullException"
-        }
+        } | ShouldBeErrorId "PSArgumentNullException"
     }
 }
 

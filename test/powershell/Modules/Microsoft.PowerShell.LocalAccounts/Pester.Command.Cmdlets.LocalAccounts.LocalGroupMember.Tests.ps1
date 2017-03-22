@@ -2,6 +2,7 @@
 #
 # Copyright (c) Microsoft Corporation, 2015
 
+
 function IsWin10OrHigher
 {
     $version = [system.environment]::osversion.version
@@ -39,14 +40,12 @@ function VerifyFailingTest
     $backupEAP = $script:ErrorActionPreference
     $script:ErrorActionPreference = "Stop"
 
-    try {
-        & $sb
-        throw "Expected error: $expectedFqeid"
+    try
+    {
+        { & $sb } | ShouldBeErrorId $expectedFqeid
     }
-    catch {
-        $_.FullyQualifiedErrorId | Should Be $expectedFqeid
-    }
-    finally {
+    finally
+    {
         $script:ErrorActionPreference = $backupEAP
     }
 }
@@ -60,7 +59,7 @@ try {
     Describe "Verify Expected LocalGroupMember Cmdlets are present" -Tags "CI" {
 
         It "Test command presence" {
-            $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | % Name
+            $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | ForEach-Object Name
 
             $result -contains "Add-LocalGroupMember" | Should Be $true
             $result -contains "Get-LocalGroupMember" | Should Be $true

@@ -1,4 +1,5 @@
-﻿Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tags "Feature" {
+﻿
+Describe "Using delimiters with Export-CSV and Import-CSV behave correctly" -tags "Feature" {
     BeforeAll {
         # note, we will not use "," as that's the default for CSV
         $delimiters = "/", " ", "@", "#", "$", "\", "&", "(", ")",
@@ -40,12 +41,14 @@
 
     It "Disallow use of null delimiter" {
         $d | export-csv TESTDRIVE:/file.csv
-        { import-csv -path TESTDRIVE:/file.csv -delimiter $null } | Should Throw "Delimiter"
+        $exc = { import-csv -path TESTDRIVE:/file.csv -delimiter $null -ErrorAction Stop } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.ImportCsvCommand"
+        $exc.Exception.ParameterName | Should Be "Delimiter"
     }
 
     It "Disallow use of delimiter with useCulture parameter" {
         $d | export-csv TESTDRIVE:/file.csv
-        { import-csv -path TESTDRIVE:/file.csv -useCulture "," } | Should Throw "','"
+        $exc = { import-csv -path TESTDRIVE:/file.csv -useCulture "," -ErrorAction Stop } | ShouldBeErrorId "PositionalParameterNotFound,Microsoft.PowerShell.Commands.ImportCsvCommand"
+        $exc.Exception.ParameterName | Should Be ","
     }
 
     It "Imports the same properties as exported" {

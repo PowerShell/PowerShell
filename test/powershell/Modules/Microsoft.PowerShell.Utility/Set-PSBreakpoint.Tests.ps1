@@ -1,3 +1,4 @@
+
 $ps = Join-Path -Path $PsHome -ChildPath "powershell"
 
 Describe "Set-PSBreakpoint DRT Unit Tests" -Tags "CI" {
@@ -66,7 +67,7 @@ set-psbreakpoint -command foo
     }
 
     It "-script and -line can take multiple items" {
-        $brk = sbp -line 11,12,13 -column 1 -script $scriptFileName,$scriptFileName
+        $brk = Set-PSBreakpoint -line 11,12,13 -column 1 -script $scriptFileName,$scriptFileName
         $brk.Line | Should Be 11,12,13
         $brk.Column | Should Be 1
         Remove-PSBreakPoint -Id $brk.Id
@@ -74,13 +75,13 @@ set-psbreakpoint -command foo
 
 
     It "-script and -line are positional" {
-        $brk = sbp $scriptFileName 13
+        $brk = Set-PSBreakpoint $scriptFileName 13
         $brk.Line | Should Be 13
         Remove-PSBreakPoint -Id $brk.Id
     }
 
     It "-script, -line and -column are positional" {
-        $brk = sbp $scriptFileName 13 1
+        $brk = Set-PSBreakpoint $scriptFileName 13 1
         $brk.Line | Should Be 13
         $brk.Column | Should Be 1
         Remove-PSBreakPoint -Id $brk.Id
@@ -137,25 +138,11 @@ set-psbreakpoint -command foo
     }
 
     It "Should be throw Exception when Column number less than 1" {
-        try {
-            set-psbreakpoint -line 1 -column -1 -script $scriptFileName
-            Throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
-        }
+        { set-psbreakpoint -line 1 -column -1 -script $scriptFileName -ErrorAction Stop } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
     }
 
     It "Should be throw Exception when Line number less than 1" {
-        $ErrorActionPreference = "Stop"
-        try {
-            set-psbreakpoint -line -1 -script $scriptFileName
-            Throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should Be "SetPSBreakpoint:LineLessThanOne,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
-        }
-        $ErrorActionPreference = "SilentlyContinue"
+        { set-psbreakpoint -line -1 -script $scriptFileName -ErrorAction Stop } | ShouldBeErrorId "SetPSBreakpoint:LineLessThanOne,Microsoft.PowerShell.Commands.SetPSBreakpointCommand"
     }
 
     It "Remove implicit script from 'set-psbreakpoint -script'" {

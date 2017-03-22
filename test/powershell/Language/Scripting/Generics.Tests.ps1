@@ -1,5 +1,7 @@
 ﻿using namespace system.collections.generic
 using namespace System.Management.Automation
+
+
 Describe "Generics support" -Tags "CI" {
     # list and stack are in different assemblies, and dictionary
     # takes more than one type parameter.
@@ -60,13 +62,10 @@ Describe "Generics support" -Tags "CI" {
         # The error message for a generic that doesn't meet the constraints should mention which
         # argument failed.
         $ex = $null
-        try {
+        $exception =  {
             [nullable[object]]
-            Throw "Exception expected, execution should not have reached here"
-        } catch {
-            $_.FullyQualifiedErrorId | Should be 'TypeNotFoundWithMessage'
-            $_ | should match "\[T\]"
-        }
+        } | ShouldBeErrorId "TypeNotFoundWithMessage"
+        $exception.Exception.Message | should match "\[T\]"
     }
 
     It 'Array type works properly' -skip:$IsCoreCLR{

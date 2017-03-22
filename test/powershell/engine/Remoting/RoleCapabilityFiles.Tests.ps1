@@ -2,6 +2,7 @@
 ## PowerShell Remoting Endpoint Role Capability Files Tests
 ##
 
+
 Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tests" -Tags "Feature" {
 
     BeforeAll {
@@ -40,21 +41,10 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
             Administrators = @{ RoleCapabilityFiles = "$RoleCapDirectory\NoFile.psrc" }
         }
 
-        $fullyQualifiedErrorId = ""
-        try
-        {
+        $exc = {
             $iss = [initialsessionstate]::CreateFromSessionConfigurationFile($PSSessionConfigFile, { $true })
-            throw 'No Exception!'
-        }
-        catch
-        {
-            $psioe = [System.Management.Automation.PSInvalidOperationException] ($_.Exception).InnerException
-            if ($psioe -ne $null)
-            {
-                $fullyQualifiedErrorId = $psioe.ErrorRecord.FullyQualifiedErrorId
-            }
-            $fullyQualifiedErrorId | Should Be 'CouldNotFindRoleCapabilityFile'
-        }
+        } | ShouldBeErrorId "PSInvalidOperationException"
+        $exc.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should Be "CouldNotFindRoleCapabilityFile"
     }
 
     It "Verifies incorrect role capability file extenstion error" {
@@ -63,21 +53,10 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
             Administrators = @{ RoleCapabilityFiles = "$BadRoleCapFile" }
         }
 
-        $fullyQualifiedErrorId = ""
-        try
-        {
+        $exc = {
             $iss = [initialsessionstate]::CreateFromSessionConfigurationFile($PSSessionConfigFile, { $true })
-            throw 'No Exception!'
-        }
-        catch
-        {
-            $psioe = [System.Management.Automation.PSInvalidOperationException] ($_.Exception).InnerException
-            if ($psioe -ne $null)
-            {
-                $fullyQualifiedErrorId = $psioe.ErrorRecord.FullyQualifiedErrorId
-            }
-            $fullyQualifiedErrorId | Should Be 'InvalidRoleCapabilityFileExtension'
-        }
+        } | ShouldBeErrorId "PSInvalidOperationException"
+        $exc.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should Be "InvalidRoleCapabilityFileExtension"
     }
 
     It "Verifies restriction on good role capability file" {
@@ -91,21 +70,10 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
         [powershell] $ps = [powershell]::Create($iss)
         $null = $ps.AddCommand('Get-Service')
 
-        $exceptionTypeName = ""
-        try
-        {
+        $exc = {
             $ps.Invoke()
-            throw 'No Exception!'
-        }
-        catch
-        {
-            if ($_.Exception.InnerException -ne $null)
-            {
-                $exceptionTypeName = $_.Exception.InnerException.GetType().FullName
-            }
-            $exceptionTypeName | Should Be 'System.Management.Automation.CommandNotFoundException'
-        }
-
+        } | ShouldBeErrorId "CommandNotFoundException"
+        $exc.Exception.InnerException.CommandName | Should Be "Get-Service"
         $ps.Dispose()
     }
 }

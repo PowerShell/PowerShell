@@ -1,4 +1,5 @@
-$powershellexe = (get-process -id $PID).mainmodule.filename
+
+$powershellexe = Join-Path -Path $PsHome -ChildPath "powershell"
 
 Describe "Clone array" -Tags "CI" {
     It "Cast in target expr" {
@@ -44,7 +45,7 @@ Describe "MSFT:3309783" -Tags "CI" {
 
     It "Run in current process" {
         # For good measure, do the same thing in this process
-        [psobject] | % FullName | Should Be System.Management.Automation.PSObject
+        [psobject] | ForEach-Object FullName | Should Be System.Management.Automation.PSObject
     }
 
     It "Pipe objects derived from PSObject" {
@@ -59,7 +60,7 @@ Describe "MSFT:3309783" -Tags "CI" {
         }
 
         [MyPsObj]::new("abc").psobject.ToString() | Should Be "MyObj: abc"
-        [MyPsObj]::new("def") | Out-String | % Trim | Should Be "MyObj: def"
+        [MyPsObj]::new("def") | Out-String | ForEach-Object Trim | Should Be "MyObj: def"
     }
 }
 
@@ -171,21 +172,15 @@ Describe "Assign readonly/constant variables" -Tags "CI" {
 
 Describe "Attribute error position" -Tags "CI" {
     It "Ambiguous overloads" {
-        try
-        {
+        $exc = {
             & {
                 param(
                     [ValidateNotNull(1,2,3,4)]
                     $param
                 )
             }
-            throw "Should have thrown"
-        }
-        catch
-        {
-            $_.InvocationInfo.Line | Should Match ValidateNotNull
-            $_.FullyQualifiedErrorId | Should Be MethodCountCouldNotFindBest
-        }
+        } | ShouldBeErrorId "MethodCountCouldNotFindBest"
+        $exc.InvocationInfo.Line | Should Match ValidateNotNull
     }
 }
 

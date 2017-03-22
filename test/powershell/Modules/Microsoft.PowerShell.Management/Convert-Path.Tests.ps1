@@ -1,3 +1,4 @@
+
 Describe "Convert-Path tests" -Tag CI {
     It "Convert-Path should handle provider qualified paths" {
         Convert-Path "FileSystem::${TESTDRIVE}" | should be "${TESTDRIVE}"
@@ -12,32 +13,17 @@ Describe "Convert-Path tests" -Tag CI {
         get-item $TESTDRIVE | Convert-Path | Should be "$TESTDRIVE"
     }
     It "Convert-Path without arguments is an error" {
-        try {
+        {
             $ps = [powershell]::Create()
             $ps.AddCommand("Convert-Path").Invoke()
-            throw "Execution should not have reached here"
-        }
-        catch {
-            $_.fullyqualifiederrorid | should be ParameterBindingException
-        }
+        } | ShouldBeErrorId "ParameterBindingException"
+
     }
     It "Convert-Path with null path is an error" {
-        try {
-            Convert-Path -path ""
-            throw "Execution should not have reached here"
-        }
-        catch {
-            $_.fullyqualifiederrorid | should be "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ConvertPathCommand"
-        }
+        { Convert-Path -path "" -ErrorAction Stop } | ShouldBeErrorId "ParameterArgumentValidationErrorEmptyStringNotAllowed,Microsoft.PowerShell.Commands.ConvertPathCommand"
     }
     It "Convert-Path with non-existing non-filesystem path is an error" {
-        try {
-            Convert-Path -path "env:thisvariableshouldnotexist" -ea stop
-            throw "Execution should not have reached here"
-        }
-        catch {
-            $_.fullyqualifiederrorid | should be "PathNotFound,Microsoft.PowerShell.Commands.ConvertPathCommand"
-        }
+        { Convert-Path -path "env:thisvariableshouldnotexist" -ErrorAction Stop } | ShouldBeErrorId "PathNotFound,Microsoft.PowerShell.Commands.ConvertPathCommand"
     }
     It "Convert-Path can handle multiple directories" {
         $d1 = Setup -D dir1 -pass

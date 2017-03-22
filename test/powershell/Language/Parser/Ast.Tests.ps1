@@ -1,4 +1,6 @@
 using Namespace System.Management.Automation.Language
+
+
 Describe "The SafeGetValue method on AST returns safe values" -Tags "CI" {
     It "A hashtable is returned from a HashtableAst" {
         $HashtableAstType = [HashtableAst]
@@ -18,23 +20,16 @@ Describe "The SafeGetValue method on AST returns safe values" -Tags "CI" {
     }
     It "The proper error is returned when a variable is referenced" {
         $ast = { $a }.Ast.Find({$args[0] -is "VariableExpressionAst"},$true)
-        try {
+        $exc = {
             $ast.SafeGetValue() | out-null
-            throw "No Exception!"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "InvalidOperationException"
-            $_.ToString() | Should Match '\$a'
-        }
+        } | ShouldBeErrorId "InvalidOperationException"
+        $exc.Exception.Message | Should Match '\$a'
     }
     It "A ScriptBlock AST fails with the proper error" {
-        try {
-            { 1 }.Ast.SafeGetValue()
-            throw "No Exception!"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "InvalidOperationException"
-        }
+        { { 1 }.Ast.SafeGetValue() } | ShouldBeErrorId "InvalidOperationException"
+    }
+    It "A ScriptBlock AST fails with the proper error" {
+        { { 1 }.Ast.SafeGetValue() } | ShouldBeErrorId "InvalidOperationException"
     }
 
 }

@@ -1,3 +1,4 @@
+
 Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 
 	BeforeAll {
@@ -36,29 +37,15 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
     }
 
 	It "Export-Alias resolving to multiple files will throw ReadWriteMultipleFilesNotSupported" {
-		try {
+		{
 			$null = New-Item -Path $TestDrive\foo -ItemType File
 			$null = New-Item -Path $TestDrive\bar -ItemType File
 			Export-Alias $TestDrive\*
-			Throw "Execution OK"
-		}
-		catch {
-			$_.FullyQualifiedErrorId | Should be "ReadWriteMultipleFilesNotSupported,Microsoft.PowerShell.Commands.ExportAliasCommand"
-		}
-		finally{
-			Remove-Item $TestDrive\foo -Force -ErrorAction SilentlyContinue
-			Remove-Item $TestDrive\bar -Force -ErrorAction SilentlyContinue
-		}
+		} | ShouldBeErrorId "ReadWriteMultipleFilesNotSupported,Microsoft.PowerShell.Commands.ExportAliasCommand"
 	}
 
 	It "Export-Alias with Invalid Scope will throw PSArgumentException" {
-		try {
-			Export-Alias $fulltestpath -scope foobar
-			Throw "Execution OK"
-		}
-		catch {
-			$_.FullyQualifiedErrorId | Should be "Argument,Microsoft.PowerShell.Commands.ExportAliasCommand"
-		}
+		{ Export-Alias $fulltestpath -scope foobar } | ShouldBeErrorId "Argument,Microsoft.PowerShell.Commands.ExportAliasCommand"
 	}
 
 	It "Export-Alias for Default"{
@@ -116,13 +103,8 @@ Describe "Export-Alias DRT Unit Tests" -Tags "CI" {
 			chmod 444 $fulltestpath
 		}
 
-		try{
-			Export-Alias $fulltestpath abcd02
-			throw "No Exception!"
-		}
-		catch{
-			$_.FullyQualifiedErrorId | Should be "FileOpenFailure,Microsoft.PowerShell.Commands.ExportAliasCommand"
-		}
+		{ Export-Alias $fulltestpath abcd02 } | ShouldBeErrorId "FileOpenFailure,Microsoft.PowerShell.Commands.ExportAliasCommand"
+
 		Export-Alias $fulltestpath abcd03 -force
 		$fulltestpath| Should Not ContainExactly '"abcd01","efgh01","","None"'
 		$fulltestpath| Should Not ContainExactly '"abcd02","efgh02","","None"'

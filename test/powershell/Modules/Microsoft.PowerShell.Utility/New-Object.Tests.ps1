@@ -1,3 +1,4 @@
+
 Describe "New-Object" -Tags "CI" {
     It "should create an object with 4 fields" {
         $o = New-Object psobject
@@ -72,93 +73,58 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
 		$result.YearsInMS | Should Be 11
 	}
 
-	It "New-Object with invalid type should throw Exception"{
-		try
-		{
-			New-Object -TypeName LiarType -EA Stop
-			Throw "Execution OK"
-		}
-		catch
-		{
-			$_.CategoryInfo| Should Match "PSArgumentException"
-			$_.FullyQualifiedErrorId | Should be "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
-		}
-	}
+    It "New-Object with invalid type should throw Exception"{
+        $exc = {
+            New-Object -TypeName LiarType -EA Stop
+        } | ShouldBeErrorId "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
 
-	It "New-Object with invalid argument should throw Exception"{
-		try
-		{
-			New-Object -TypeName System.Management.Automation.PSVariable -ArgumentList "A", 1, None, "asd" -EA Stop
-			Throw "Execution OK"
-		}
-		catch
-		{
-			$_.CategoryInfo| Should Match "MethodException"
-			$_.FullyQualifiedErrorId | Should be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
-		}
-	}
+        $exc.CategoryInfo | Should Match "PSArgumentException"
+    }
 
-	It "New-Object with abstract class should throw Exception"{
-		Add-Type -TypeDefinition "public abstract class AbstractEmployee{public AbstractEmployee(){}}"
-		try
-		{
-			New-Object -TypeName AbstractEmployee -EA Stop
-			Throw "Execution OK"
-		}
-		catch
-		{
-			$_.CategoryInfo| Should Match "MethodInvocationException"
-			$_.FullyQualifiedErrorId | Should be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
-		}
-	}
+    It "New-Object with invalid argument should throw Exception"{
+        $exc= {
+            New-Object -TypeName System.Management.Automation.PSVariable -ArgumentList "A", 1, None, "asd" -EA Stop
+        } | ShouldBeErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
+        $exc.CategoryInfo| Should Match "MethodException"
+    }
 
-	It "New-Object with bad argument for class constructor should throw Exception"{
-		if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
-		{
-			Add-Type -TypeDefinition "public class Employee{public Employee(string firstName,string lastName,int yearsInMS){FirstName = firstName;LastName=lastName;YearsInMS = yearsInMS;}public string FirstName;public string LastName;public int YearsInMS;}"
-		}
-		try
-		{
-			New-Object -TypeName Employee -ArgumentList 11 -EA Stop
-			Throw "Execution OK"
-		}
-		catch
-		{
-			$_.CategoryInfo| Should Match "MethodException"
-			$_.FullyQualifiedErrorId | Should be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
-		}
-	}
+    It "New-Object with abstract class should throw Exception"{
+        Add-Type -TypeDefinition "public abstract class AbstractEmployee{public AbstractEmployee(){}}"
+        $exc = {
+            New-Object -TypeName AbstractEmployee -EA Stop
+        } | ShouldBeErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
+        $exc.CategoryInfo| Should Match "MethodInvocationException"
+    }
 
-	#This case will throw "Execution OK" now, just mark as pending now
-	It "New-Object with not init class constructor should throw Exception" -Pending{
-		if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
-		{
-			Add-Type -TypeDefinition "public class Employee{public Employee(string firstName,string lastName,int yearsInMS){FirstName = firstName;LastName=lastName;YearsInMS = yearsInMS;}public string FirstName;public string LastName;public int YearsInMS;}"
-		}
-		try
-		{
-			New-Object -TypeName Employee -EA Stop
-			Throw "Execution OK"
-		}
-		catch
-		{
-			$_.FullyQualifiedErrorId | Should be "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
-		}
-	}
+    It "New-Object with bad argument for class constructor should throw Exception"{
+        if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
+        {
+            Add-Type -TypeDefinition "public class Employee{public Employee(string firstName,string lastName,int yearsInMS){FirstName = firstName;LastName=lastName;YearsInMS = yearsInMS;}public string FirstName;public string LastName;public int YearsInMS;}"
+        }
+        $exc = {
+            New-Object -TypeName Employee -ArgumentList 11 -EA Stop
+        } | ShouldBeErrorId "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
+        $exc.CategoryInfo| Should Match "MethodException"
+    }
 
-	It "New-Object with Private Nested class should throw Exception"{
-		Add-Type -TypeDefinition "public class WeirdEmployee{public WeirdEmployee(){}private class PrivateNestedWeirdEmployee{public PrivateNestedWeirdEmployee(){}}}"
-		try
-		{
-			New-Object -TypeName WeirdEmployee+PrivateNestedWeirdEmployee -EA Stop
-			Throw "Execution OK"
-		}
-		catch
-		{
-			$_.CategoryInfo| Should Match "PSArgumentException"
-			$_.FullyQualifiedErrorId | Should be "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
-		}
-	}
+    #This case will throw "Execution OK" now, just mark as pending now
+    It "New-Object with not init class constructor should throw Exception" -Pending {
+        if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
+        {
+            Add-Type -TypeDefinition "public class Employee{public Employee(string firstName,string lastName,int yearsInMS){FirstName = firstName;LastName=lastName;YearsInMS = yearsInMS;}public string FirstName;public string LastName;public int YearsInMS;}"
+        }
+
+        { New-Object -TypeName Employee -ErrorAction Stop } | ShouldBeErrorId "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
+    }
+
+    It "New-Object with Private Nested class should throw Exception"{
+        Add-Type -TypeDefinition "public class WeirdEmployee{public WeirdEmployee(){}private class PrivateNestedWeirdEmployee{public PrivateNestedWeirdEmployee(){}}}"
+
+        $exc = {
+            New-Object -TypeName WeirdEmployee+PrivateNestedWeirdEmployee -ErrorAction Stop
+        } | ShouldBeErrorId "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
+        $exc.CategoryInfo| Should Match "PSArgumentException"
+    }
 
 	It "New-Object with TypeName and Property parameter should work"{
 		$result = New-Object -TypeName PSObject -property @{foo=123}

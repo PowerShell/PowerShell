@@ -1,3 +1,4 @@
+
 Describe "Get-Uptime" -Tags "CI" {
     BeforeAll {
         $IsHighResolution = [system.diagnostics.stopwatch]::IsHighResolution
@@ -24,22 +25,19 @@ Describe "Get-Uptime" -Tags "CI" {
         $upt | Should BeOfType "DateTime"
     }
     It "Get-Uptime throw if IsHighResolution == false" {
-        try
         {
-            # Enable the test hook
-            [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsNotHighResolution', $true)
+            try
+            {
+                # Enable the test hook
+                [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsNotHighResolution', $true)
 
-            Get-Uptime
-            throw "No Exception!"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should be "GetUptimePlatformIsNotSupported,Microsoft.PowerShell.Commands.GetUptimeCommand"
-        }
-        finally
-        {
-            # Disable the test hook
-            [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsHighResolutionIsFalse', $false)
-        }
+                Get-Uptime
+            }
+            finally
+            {
+                # Disable the test hook
+                [system.management.automation.internal.internaltesthooks]::SetTestHook('StopwatchIsHighResolutionIsFalse', $false)
+            }
+        } | ShouldBeErrorId  "GetUptimePlatformIsNotSupported,Microsoft.PowerShell.Commands.GetUptimeCommand"
     }
 }

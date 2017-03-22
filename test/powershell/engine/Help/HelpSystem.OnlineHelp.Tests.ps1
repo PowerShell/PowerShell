@@ -1,4 +1,5 @@
-﻿Describe 'Online help tests for PowerShell Core Cmdlets' -Tags "CI" {
+﻿
+Describe 'Online help tests for PowerShell Core Cmdlets' -Tags "CI" {
 
     # The csv files (V2Cmdlets.csv and V3Cmdlets.csv) contain a list of cmdlets and expected HelpURIs.
     # The HelpURI is part of the cmdlet metadata, and when the user runs 'get-help <cmdletName> -online'
@@ -89,15 +90,6 @@ Describe 'Get-Help -Online is not supported on Nano Server and IoT' -Tags "CI" {
     $skipTest = -not ([System.Management.Automation.Platform]::IsIoT -or [System.Management.Automation.Platform]::IsNanoServer)
 
     It "Get-help -online <cmdletName> throws InvalidOperation." -skip:$skipTest {
-
-        try
-        {
-            Get-Help Get-Help -Online
-            throw "Execution should not have succeeded"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | Should Be "InvalidOperation,Microsoft.PowerShell.Commands.GetHelpCommand"
-        }
+        { Get-Help Get-Help -Online } | ShouldBeErrorId "InvalidOperation,Microsoft.PowerShell.Commands.GetHelpCommand"
     }
 }

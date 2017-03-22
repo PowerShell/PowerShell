@@ -100,7 +100,7 @@
         try
         {
             Invoke-Expression $Cmd
-            Throw "Exception expected, execution should not have reached here"
+            Throw "No Exception!"
         } catch {
 
            if($InnerException)

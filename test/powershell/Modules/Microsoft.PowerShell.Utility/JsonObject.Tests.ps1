@@ -1,24 +1,5 @@
-﻿Describe 'Unit tests for JsonObject' -tags "CI" {
-
-    function ShouldThrow
-    {
-        param (
-            [Parameter(ValueFromPipeline = $true)]
-            $InputObject,
-            [Parameter(Position = 0)]
-            $ExpectedException
-        )
-
-        try
-        {
-            & $InputObject
-            throw "Should throw exception"
-        }
-        catch
-        {
-            $_.FullyQualifiedErrorId | should be $ExpectedException
-        }
-    }
+﻿
+Describe 'Unit tests for JsonObject' -tags "CI" {
 
     $validStrings = @(
         @{ name = "empty"; str = "" }
@@ -41,6 +22,6 @@
     It 'throw ArgumentException for invalid string - <name>' -TestCase $invalidStrings  {
         param ($str)
         $errRecord = $null
-        { [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($str, [ref]$errRecord) } | ShouldThrow 'ArgumentException'
+        { [Microsoft.PowerShell.Commands.JsonObject]::ConvertFromJson($str, [ref]$errRecord) } | ShouldBeErrorId 'ArgumentException'
     }
 }

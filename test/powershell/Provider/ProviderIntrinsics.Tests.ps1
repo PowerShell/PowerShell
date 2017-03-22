@@ -1,3 +1,4 @@
+
 Describe "ProviderIntrinsics Tests" -tags "CI" {
     BeforeAll {
         setup -d TestDir
@@ -9,13 +10,7 @@ Describe "ProviderIntrinsics Tests" -tags "CI" {
         $ExecutionContext.InvokeProvider.ChildItem.HasChild("$TESTDRIVE/TestDir") | Should be $false
     }
     It 'If the path does not exist, HasChild throws an exception' {
-        try {
-            $ExecutionContext.InvokeProvider.ChildItem.HasChild("TESTDRIVE/ThisDirectoryDoesNotExist")
-            throw "Execution OK"
-        }
-        catch {
-            $_.fullyqualifiederrorid | should be "ItemNotFoundException"
-        }
+        { $ExecutionContext.InvokeProvider.ChildItem.HasChild("TESTDRIVE/ThisDirectoryDoesNotExist") } | ShouldBeErrorId "ItemNotFoundException"
     }
 }
 

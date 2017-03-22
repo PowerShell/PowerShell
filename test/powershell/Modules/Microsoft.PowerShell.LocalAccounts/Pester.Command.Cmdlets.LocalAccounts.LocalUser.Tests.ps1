@@ -2,6 +2,7 @@
 #
 # Copyright (c) Microsoft Corporation, 2015
 
+
 Set-Variable dateInFuture -option Constant -value "12/12/2036 09:00"
 Set-Variable dateInPast -option Constant -value "12/12/2010 09:00"
 Set-Variable dateInvalid -option Constant -value "12/12/2016 25:00"
@@ -26,14 +27,12 @@ function VerifyFailingTest
     $backupEAP = $script:ErrorActionPreference
     $script:ErrorActionPreference = "Stop"
 
-    try {
-        & $sb
-        throw "Expected error: $expectedFqeid"
+    try
+    {
+        { & $sb } | ShouldBeErrorId $expectedFqeid
     }
-    catch {
-        $_.FullyQualifiedErrorId | Should Be $expectedFqeid
-    }
-    finally {
+    finally
+    {
         $script:ErrorActionPreference = $backupEAP
     }
 }

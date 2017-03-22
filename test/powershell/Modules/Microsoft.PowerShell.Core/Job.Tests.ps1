@@ -1,4 +1,4 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe "Job Cmdlet Tests" -Tag "CI" {
     Context "Simple Jobs" {
         BeforeEach {

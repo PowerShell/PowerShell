@@ -1,3 +1,4 @@
+
 Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" -Tags "CI" {
     BeforeAll {
 		$functionDefinitionFile = Join-Path -Path $TestDrive -ChildPath "functionDefinition.ps1"
@@ -135,34 +136,16 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 		}
 	}
 
-	It "Throws a syntax error when parsing a string without a closing quote. (line 164)" {
-		try {
-            ExecuteCommand '"This is a test'
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "IncompleteParseException"
-        }
-	}
+    It "Throws a syntax error when parsing a string without a closing quote. (line 164)" {
+        { ExecuteCommand '"This is a test' } | ShouldBeErrorId "IncompleteParseException"
+    }
 
-	It "Throws an error if an open parenthesis is not closed (line 176)" {
-        try {
-            ExecuteCommand "("
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | should be "IncompleteParseException"
-        }
+    It "Throws an error if an open parenthesis is not closed (line 176)" {
+        { ExecuteCommand "(" } | ShouldBeErrorId "IncompleteParseException"
     }
 
     It "Throws an exception if the the first statement starts with an empty pipe element (line 188)" {
-        try {
-            ExecuteCommand "| get-location"
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | should be "ParseException"
-        }
+        { ExecuteCommand "| get-location" } | ShouldBeErrorId "ParseException"
     }
 
 	It "Throws an CommandNotFoundException exception if using a label in front of an if statement is not allowed. (line 225)"{
@@ -172,52 +155,23 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         $PowerShell.Streams.Error.FullyQualifiedErrorId | should be "CommandNotFoundException"
     }
 
-	It "Pipe an expression into a value expression. (line 237)" {
-        try {
-            ExecuteCommand "testcmd-parserbvt | 3"
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | should be "ParseException"
-        }
+    It "Pipe an expression into a value expression. (line 237)" {
+        { ExecuteCommand "testcmd-parserbvt | 3" } | ShouldBeErrorId "ParseException"
 
-		try {
-            ExecuteCommand "testcmd-parserbvt | $(1 + 1)"
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | should be "ParseException"
-        }
+        { ExecuteCommand "testcmd-parserbvt | $(1 + 1)" } | ShouldBeErrorId "ParseException"
 
-		try {
-            ExecuteCommand "testcmd-parserbvt | 'abc'"
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | should be "ParseException"
-        }
+        { ExecuteCommand "testcmd-parserbvt | 'abc'" } | ShouldBeErrorId "ParseException"
     }
 
     It "Throws when you pipe into a value expression (line 238)" {
         foreach($command in "1;2;3|3",'1;2;3|$(1+1)',"1;2;3|'abc'") {
-            try {
-                ExecuteCommand $command
-                throw "Execution OK"
-            }
-            catch {
-                $_.FullyQualifiedErrorId | Should be "ParseException"
-            }
+            { ExecuteCommand $command } | ShouldBeErrorId "ParseException"
         }
     }
 
-	It "Throws an incomplete parse exception when a comma follows an expression (line 247)" {
-        try {
-            ExecuteCommand "(1+ 1),"
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "IncompleteParseException"
-        }
+    It "Throws an incomplete parse exception when a comma follows an expression (line 247)" {
+        { ExecuteCommand "(1+ 1)," } | ShouldBeErrorId "IncompleteParseException"
+
     }
 
 
@@ -392,84 +346,37 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 		$result | should be "1", "2", "1", "2"
     }
 
-	It "This test will check that it is a syntax error to use if without a code block. (line 1141)" {
-        try {
-            ExecuteCommand 'if ("true")'
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "IncompleteParseException"
-        }
+    It "This test will check that it is a syntax error to use if without a code block. (line 1141)" {
+        { ExecuteCommand 'if ("true")' } | ShouldBeErrorId "IncompleteParseException"
+
     }
 
-	It "This test will check that it is a syntax error if the if condition is not complete. (line 1150)" {
-        try {
-            ExecuteCommand 'if ('
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "IncompleteParseException"
-        }
+    It "This test will check that it is a syntax error if the if condition is not complete. (line 1150)" {
+        { ExecuteCommand 'if (' } | ShouldBeErrorId "IncompleteParseException"
     }
 
-	It "This test will check that it is a syntax error to have an if condition without parentheses. (line 1159)" {
-        try {
-            ExecuteCommand 'if "true" { 1} else {2}'
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
-        }
+    It "This test will check that it is a syntax error to have an if condition without parentheses. (line 1159)" {
+        { ExecuteCommand 'if "true" { 1} else {2}' } | ShouldBeErrorId "ParseException"
     }
 
-	It "This test will check that the parser throws a syntax error when the if condition is missing the closing parentheses. (line 1168)" {
-        try {
-            ExecuteCommand 'if ("true"  { 1};'
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
-        }
+    It "This test will check that the parser throws a syntax error when the if condition is missing the closing parentheses. (line 1168)" {
+        { ExecuteCommand 'if ("true"  { 1};' } | ShouldBeErrorId "ParseException"
     }
 
-	It "This test will check that it is a syntax error to have an else keyword without the corresponding code block. (line 1177)" {
-        try {
-            ExecuteCommand 'if ("true") {1} else'
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "IncompleteParseException"
-        }
+    It "This test will check that it is a syntax error to have an else keyword without the corresponding code block. (line 1177)" {
+        { ExecuteCommand 'if ("true") {1} else' } | ShouldBeErrorId "IncompleteParseException"
     }
 
-	It "This test will check that the parser throws a syntax error when a foreach loop is not complete. (line 1238)" {
-        try {
-            ExecuteCommand '$count=0;$files = $(get-childitem / -filter *.txt );foreach ($i ;$count'
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
-        }
+    It "This test will check that the parser throws a syntax error when a foreach loop is not complete. (line 1238)" {
+        { ExecuteCommand '$count=0;$files = $(get-childitem / -filter *.txt );foreach ($i ;$count' } | ShouldBeErrorId "ParseException"
     }
 
-	It "This test will check that the parser throws a syntax error if the foreach loop is not complete. (line 1248)" {
-        try {
-            ExecuteCommand '$count=0;$files = $(get-childitem / -filter *.txt );foreach ($i in ;$count'
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
-        }
+    It "This test will check that the parser throws a syntax error if the foreach loop is not complete. (line 1248)" {
+        { ExecuteCommand '$count=0;$files = $(get-childitem / -filter *.txt );foreach ($i in ;$count' } | ShouldBeErrorId "ParseException"
     }
 
-	It "This will test that the parser throws a syntax error if the foreach loop is missing a closing parentheses. (line 1258)" {
-        try {
-            ExecuteCommand '$count=0;$files = $(get-childitem / -filter *.txt );foreach ($i in $files ;$count'
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
-        }
+    It "This will test that the parser throws a syntax error if the foreach loop is missing a closing parentheses. (line 1258)" {
+        { ExecuteCommand '$count=0;$files = $(get-childitem / -filter *.txt );foreach ($i in $files ;$count' } | ShouldBeErrorId "ParseException"
     }
 
 	It "Test that if an exception is thrown from the try block it will be caught in the appropropriate catch block and that the finally block will run regardless of whether an exception is thrown. (line 1317)" {
@@ -705,34 +612,16 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
 		$result -join "" | should be (1, 2, 3, 4, 5, 6 -join "")
     }
 
-	It "Test that an incomplete parse exception is thrown if the array is unfinished. (line 2473)"{
-		try {
-            ExecuteCommand '1,2,'
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "IncompleteParseException"
-        }
+    It "Test that an incomplete parse exception is thrown if the array is unfinished. (line 2473)"{
+        { ExecuteCommand '1,2,' } | ShouldBeErrorId "IncompleteParseException"
     }
 
-	It "Test that the unary comma is not valid in cmdlet parameters. (line 2482)"{
-		try {
-            ExecuteCommand 'write-output 2,,1'
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
-        }
+    It "Test that the unary comma is not valid in cmdlet parameters. (line 2482)"{
+        { ExecuteCommand 'write-output 2,,1' } | ShouldBeErrorId "ParseException"
     }
 
-	It 'Test that "$var:" will expand to nothing inside a string. (line 2551)'{
-		try {
-            ExecuteCommand '"$var:"'
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
-        }
+    It 'Test that "$var:" will expand to nothing inside a string. (line 2551)'{
+        { ExecuteCommand '"$var:"' } | ShouldBeErrorId "ParseException"
     }
 
 	It "Tests the assignment to a read-only property (line 2593)"{
@@ -747,24 +636,12 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
         $PowerShell.Streams.Error.FullyQualifiedErrorId | should be "NullArrayIndex"
     }
 
-	It 'Tests the parser response to ArrayName[. (line 2678)'{
-		try {
-            ExecuteCommand '$A=$(testcmd-parserBVT -returntype array); $A[ ;'
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
-        }
+    It 'Tests the parser response to ArrayName[. (line 2678)'{
+        { ExecuteCommand '$A=$(testcmd-parserBVT -returntype array); $A[ ;' } | ShouldBeErrorId "ParseException"
     }
 
-	It 'Tests the parser response to ArrayName[]. (line 2687)'{
-		try {
-            ExecuteCommand '$A=$(testcmd-parserBVT -returntype array); $A[] ;'
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | Should be "ParseException"
-        }
+    It 'Tests the parser response to ArrayName[]. (line 2687)'{
+        { ExecuteCommand '$A=$(testcmd-parserBVT -returntype array); $A[] ;' } | ShouldBeErrorId "ParseException"
     }
 
 	#Issue#1430
@@ -826,13 +703,7 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
     }
 
     It "A here string must have one line (line 3266)" {
-        try {
-            ExecuteCommand "@`"`"@"
-            throw "Execution OK"
-        }
-        catch {
-            $_.FullyQualifiedErrorId | should be "ParseException"
-        }
+        { ExecuteCommand "@`"`"@" } |ShouldBeErrorId "ParseException"
     }
 
     It "A here string should not throw on '`$herestr=@`"``n'`"'``n`"@'" {
