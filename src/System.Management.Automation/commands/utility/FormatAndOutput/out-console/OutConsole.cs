@@ -160,11 +160,11 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (Transcript)
+            if (_transcriptStateChanged)
             {
                 Host.UI.TranscribeOnly = _savedTranscribeOnly;
+                _transcriptStateChanged = false;
             }
-
             _disposed = true;
         }
 
