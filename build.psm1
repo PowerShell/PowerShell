@@ -40,6 +40,7 @@ if ($IsLinux) {
     $IsFedora = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24
     $IsOpenSUSE = $LinuxInfo.ID -match 'opensuse'
     $IsOpenSUSE13 = $IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'
+    ${IsOpenSUSE42.1} = $IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '42.1'
     $IsRedHatFamily = $IsCentOS -or $IsFedora -or $IsOpenSUSE
 
     # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
@@ -99,7 +100,8 @@ function Start-PSBuild {
                      "win10-x64",
                      "osx.10.11-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64")]
+                     "opensuse.13.2-x64",
+                     "opensuse.42.1-x64")]
         [Parameter(ParameterSetName='CoreCLR')]
         [string]$Runtime,
 
@@ -473,7 +475,8 @@ function New-PSOptions {
                      "win10-x64",
                      "osx.10.11-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64")]
+                     "opensuse.13.2-x64",
+                     "opensuse.42.1-x64")]
         [string]$Runtime,
 
         [switch]$Publish,
@@ -1668,14 +1671,14 @@ esac
     # We currently only support:
     # CentOS 7 
     # Fedora 24+
-    # OpenSUSE 13.2
+    # OpenSUSE 42.1 (13.2 might build but is EOL)
     # Also SEE: https://fedoraproject.org/wiki/Packaging:DistTag
     if ($IsCentOS) {
         $rpm_dist = "el7.centos"
     } elseif ($IsFedora) {
         $version_id = $LinuxInfo.VERSION_ID
         $rpm_dist = "fedora.$version_id"
-    } elseif ($IsOpenSUSE13) {
+    } elseif ($IsOpenSUSE) {
         $version_id = $LinuxInfo.VERSION_ID
         $rpm_dist = "suse.$version_id"
     }
@@ -2695,7 +2698,8 @@ function Start-CrossGen {
                      "win10-x64",
                      "osx.10.11-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64")]
+                     "opensuse.13.2-x64",
+                     "opensuse.42.1-x64")]
         [string]
         $Runtime
     )
@@ -2761,6 +2765,8 @@ function Start-CrossGen {
             "fedora.24-x64"
         } elseif ($IsOpenSUSE13) {
             "opensuse.13.2-x64"
+        } elseif (${IsOpenSUSE42.1}) {
+            "opensuse.42.1-x64"
         }
     } elseif ($IsOSX) {
         "osx.10.10-x64"
