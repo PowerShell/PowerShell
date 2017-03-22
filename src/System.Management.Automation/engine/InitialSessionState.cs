@@ -4605,6 +4605,7 @@ end
                     new SessionStateAliasEntry("ghy", "Get-History", "", ReadOnly),
                     new SessionStateAliasEntry("gi", "Get-Item", "", ReadOnly),
                     new SessionStateAliasEntry("gl", "Get-Location", "", ReadOnly),
+                    new SessionStateAliasEntry("Get-FileHash", "Get-Hash", "", ReadOnly),
                     new SessionStateAliasEntry("gm", "Get-Member", "", ReadOnly),
                     new SessionStateAliasEntry("gmo", "Get-Module", "", ReadOnly),
                     new SessionStateAliasEntry("gp", "Get-ItemProperty", "", ReadOnly),

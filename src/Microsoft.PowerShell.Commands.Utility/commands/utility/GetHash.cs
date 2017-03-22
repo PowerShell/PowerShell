@@ -8,10 +8,14 @@ using System.IO;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements Get-FileHash
+    /// This class implements Get-Hash
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "FileHash", DefaultParameterSetName = PathParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=517145")]
-    [OutputType(typeof(FileHashInfo))]
+    [Cmdlet(VerbsCommon.Get, "Hash", DefaultParameterSetName = PathParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=517145")]
+    [OutputType(typeof(FileHashInfo), ParameterSetName = new[] { PathParameterSet,
+                                                                 LiteralPathParameterSet,
+                                                                 StreamParameterSet
+                                                                 })]
+    [OutputType(typeof(StringHashInfo), ParameterSetName = new[] { StringHashParameterSet })]
     public class GetFileHashCommand : HashCmdletBase
     {
         /// <summary>
@@ -20,8 +24,8 @@ namespace Microsoft.PowerShell.Commands
         /// Resolved wildcards
         /// </summary>
         /// <value></value>
-        [Parameter(Mandatory = true, ParameterSetName = PathParameterSet, Position = 0, ValueFromPipeline = true, ValueFromPipelineByPropertyName = true)]
-        public String[] Path
+        [Parameter(Mandatory = true, ParameterSetName = PathParameterSet, Position = 0, ValueFromPipelineByPropertyName = true)]
+        public string[] Path
         {
             get
             {
@@ -41,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(Mandatory = true, ParameterSetName = LiteralPathParameterSet, Position = 0, ValueFromPipelineByPropertyName = true)]
         [Alias("PSPath")]
-        public String[] LiteralPath
+        public string[] LiteralPath
         {
             get
             {
@@ -53,7 +57,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private String[] _paths;
+        private string[] _paths;
 
         /// <summary>
         /// InputStream parameter
@@ -62,6 +66,38 @@ namespace Microsoft.PowerShell.Commands
         /// <value></value>
         [Parameter(Mandatory = true, ParameterSetName = StreamParameterSet, Position = 0)]
         public Stream InputStream { get; set; }
+
+        /// <summary>
+        /// InputString parameter
+        /// The strings to calculate a hash
+        /// We allow `null` and `empty` strings because we can get it from pipeline.
+        /// </summary>
+        /// <value></value>
+        [Parameter(Mandatory = true, ParameterSetName = StringHashParameterSet, Position = 0, ValueFromPipeline = true)]
+        [AllowNull()]
+        [AllowEmptyString()]
+        public string[] InputString { get; set; }
+
+        /// <summary>
+        /// Encoding parameter
+        /// The Encoding of the 'InputString'
+        /// </summary>
+        /// <value></value>
+        [Parameter(Mandatory = false, ParameterSetName = StringHashParameterSet, Position = 2)]
+        [ValidateSetAttribute(new string[] {
+            EncodingConversion.Unknown,
+            EncodingConversion.String,
+            EncodingConversion.Unicode,
+            EncodingConversion.BigEndianUnicode,
+            EncodingConversion.Utf8,
+            EncodingConversion.Utf7,
+            EncodingConversion.Utf32,
+            EncodingConversion.Ascii,
+            EncodingConversion.Default,
+            EncodingConversion.OEM })]
+        public string Encoding { get; set; } = EncodingConversion.Default;
+
+
 
         /// <summary>
         /// BeginProcessing() override
@@ -78,6 +114,43 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void ProcessRecord()
         {
+            if ( ParameterSetName == StringHashParameterSet)
+            {
+                if (InputString == null)
+                {
+                    WriteStringHashInfo(Algorithm, null, null, Encoding);
+                }
+                else
+                {
+                    foreach (string str in InputString)
+                    {
+                        try
+                        {
+                            //if (str == null)
+                            //{
+                            //    WriteStringHashInfo(Algorithm, string.Empty, string.Empty, Encoding);
+                            //    Exception exception = new Exception("Hash for 'null' string is 'null'", ex);
+                            //    WriteError(new ErrorRecord(exception, "GetHashInvalidData", ErrorCategory.InvalidData, null));
+                            //}
+                            //else
+                            //{
+                                byte[] bytehash = hasher.ComputeHash(EncodingConversion.Convert(this, Encoding).GetBytes(str));
+                                string hash = BitConverter.ToString(bytehash).Replace("-","");
+                                WriteStringHashInfo(Algorithm, hash, str, Encoding);
+                            //}
+                        }
+                        catch (Exception ex)
+                        {
+                            WriteStringHashInfo(Algorithm, string.Empty, string.Empty, Encoding);
+                            Exception exception = new Exception("Hash for 'null' string is 'null'", ex);
+                            WriteError(new ErrorRecord(exception, "GetHashInvalidData", ErrorCategory.InvalidData, null));
+                        }
+                    }
+                }
+
+                return;
+            }
+
             List<string> pathsToProcess = new List<string>();
             ProviderInfo provider = null;
 
@@ -119,17 +192,15 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string path in pathsToProcess)
             {
-                byte[] bytehash = null;
-                String hash = null;
                 Stream openfilestream = null;
 
                 try
                 {
                     openfilestream = File.OpenRead(path);
-                    bytehash = hasher.ComputeHash(openfilestream);
+                    byte[] bytehash = hasher.ComputeHash(openfilestream);
 
-                    hash = BitConverter.ToString(bytehash).Replace("-","");
-                    WriteHashResult(Algorithm, hash, path);
+                    String hash = BitConverter.ToString(bytehash).Replace("-","");
+                    WriteFileHashInfo(Algorithm, hash, path);
                 }
                 catch (FileNotFoundException ex)
                 {
@@ -160,14 +231,14 @@ namespace Microsoft.PowerShell.Commands
                 bytehash = hasher.ComputeHash(InputStream);
 
                 hash = BitConverter.ToString(bytehash).Replace("-","");
-                WriteHashResult(Algorithm, hash, "");
+                WriteFileHashInfo(Algorithm, hash, "");
             }
         }
 
         /// <summary>
         /// Create FileHashInfo object and output it
         /// </summary>
-        private void WriteHashResult(string Algorithm, string hash, string path)
+        private void WriteFileHashInfo(string Algorithm, string hash, string path)
         {
             FileHashInfo result = new FileHashInfo();
             result.Algorithm = Algorithm;
@@ -177,11 +248,25 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Create StringHashInfo object and output it
+        /// </summary>
+        private void WriteStringHashInfo(string Algorithm, string hash, string HashedString, string Encoding)
+        {
+            StringHashInfo result = new StringHashInfo();
+            result.Algorithm = Algorithm;
+            result.Hash = hash;
+            result.HashedString = HashedString;
+            result.Encoding = Encoding;
+            WriteObject(result);
+        }
+
+        /// <summary>
         /// Parameter set names
         /// </summary>
         private const string PathParameterSet = "Path";
         private const string LiteralPathParameterSet = "LiteralPath";
         private const string StreamParameterSet = "StreamParameterSet";
+        private const string StringHashParameterSet = "StringHashParameterSet";
 
     }
 
@@ -289,4 +374,31 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public string Path { get; set;}
      }
+
+    /// <summary>
+    /// StringHashInfo class contains information about a String hash
+    /// </summary>
+    public class StringHashInfo
+    {
+        /// <summary>
+        /// Hash algorithm name
+        /// </summary>
+        public string Algorithm { get; set;}
+
+        /// <summary>
+        /// Hash value of the 'HashedString' string
+        /// </summary>
+        public string Hash { get; set;}
+
+        /// <summary>
+        /// Encoding of the 'HashedString' string
+        /// </summary>
+        public string Encoding { get; set;}
+
+        /// <summary>
+        /// HashedString value which 'Hash' calculated for
+        /// </summary>
+        public string HashedString { get; set;}
+    }
+
 }
