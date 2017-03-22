@@ -1771,7 +1771,9 @@ function Publish-NuGetFeed
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    @(
+    try {
+        Push-Location $PSScriptRoot
+        @(
 'Microsoft.PowerShell.Commands.Management',
 'Microsoft.PowerShell.Commands.Utility',
 'Microsoft.PowerShell.Commands.Diagnostics',
@@ -1783,12 +1785,15 @@ function Publish-NuGetFeed
 'Microsoft.WSMan.Management',
 'Microsoft.WSMan.Runtime',
 'Microsoft.PowerShell.SDK'
-    ) | % {
-        if ($VersionSuffix) {
-            dotnet pack "src/$_" --output $OutputPath --version-suffix $VersionSuffix
-        } else {
-            dotnet pack "src/$_" --output $OutputPath
+        ) | % {
+            if ($VersionSuffix) {
+                dotnet pack "src/$_" --output $OutputPath --version-suffix $VersionSuffix /p:IncludeSymbols=true
+            } else {
+                dotnet pack "src/$_" --output $OutputPath
+            }
         }
+    } finally {
+        Pop-Location
     }
 }
 
