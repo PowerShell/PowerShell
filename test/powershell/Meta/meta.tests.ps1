@@ -51,8 +51,6 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                                         "text execute.")
             }
 
-            $LASTEXITCODE | Should beexactly 0
-
             $mdIssuesPath = Join-Path -Path $PSScriptRoot -ChildPath "markdownissues.txt"
 
             Write-Verbose "$mdIssuesPath should exist" -Verbose
