@@ -24,430 +24,175 @@ Describe "Windows aliases do not conflict with Linux commands" -Tags "CI" {
 
 Describe "Verify approved aliases list" -Tags "CI" {
     BeforeAll {
-        if ( !$isCoreCLR ) {
-            # Windows FullCLR approved aliases
-            $aliaslist = @(
-                            "% -> ForEach-Object",
-                            "? -> Where-Object",
-                            "ac -> Add-Content",
-                            "asnp -> Add-PSSnapin",
-                            "cat -> Get-Content",
-                            "cd -> Set-Location",
-                            "CFS -> ConvertFrom-String",
-                            "chdir -> Set-Location",
-                            "clc -> Clear-Content",
-                            "clear -> Clear-Host",
-                            "clhy -> Clear-History",
-                            "cli -> Clear-Item",
-                            "clp -> Clear-ItemProperty",
-                            "cls -> Clear-Host",
-                            "clv -> Clear-Variable",
-                            "cnsn -> Connect-PSSession",
-                            "compare -> Compare-Object",
-                            "copy -> Copy-Item",
-                            "cp -> Copy-Item",
-                            "cpi -> Copy-Item",
-                            "cpp -> Copy-ItemProperty",
-                            "curl -> Invoke-WebRequest",
-                            "cvpa -> Convert-Path",
-                            "dbp -> Disable-PSBreakpoint",
-                            "del -> Remove-Item",
-                            "diff -> Compare-Object",
-                            "dir -> Get-ChildItem",
-                            "dnsn -> Disconnect-PSSession",
-                            "ebp -> Enable-PSBreakpoint",
-                            "echo -> Write-Output",
-                            "epal -> Export-Alias",
-                            "epcsv -> Export-Csv",
-                            "epsn -> Export-PSSession",
-                            "erase -> Remove-Item",
-                            "etsn -> Enter-PSSession",
-                            "exsn -> Exit-PSSession",
-                            "fc -> Format-Custom",
-                            "fhx -> Format-Hex",
-                            "fl -> Format-List",
-                            "foreach -> ForEach-Object",
-                            "ft -> Format-Table",
-                            "fw -> Format-Wide",
-                            "gal -> Get-Alias",
-                            "gbp -> Get-PSBreakpoint",
-                            "gc -> Get-Content",
-                            "gcb -> Get-Clipboard",
-                            "gci -> Get-ChildItem",
-                            "gcm -> Get-Command",
-                            "gcs -> Get-PSCallStack",
-                            "gdr -> Get-PSDrive",
-                            "ghy -> Get-History",
-                            "gi -> Get-Item",
-                            "gjb -> Get-Job",
-                            "gl -> Get-Location",
-                            "gm -> Get-Member",
-                            "gmo -> Get-Module",
-                            "gp -> Get-ItemProperty",
-                            "gps -> Get-Process",
-                            "gpv -> Get-ItemPropertyValue",
-                            "group -> Group-Object",
-                            "gsn -> Get-PSSession",
-                            "gsnp -> Get-PSSnapin",
-                            "gsv -> Get-Service",
-                            "gu -> Get-Unique",
-                            "gv -> Get-Variable",
-                            "gwmi -> Get-WmiObject",
-                            "h -> Get-History",
-                            "history -> Get-History",
-                            "icm -> Invoke-Command",
-                            "iex -> Invoke-Expression",
-                            "ihy -> Invoke-History",
-                            "ii -> Invoke-Item",
-                            "ipal -> Import-Alias",
-                            "ipcsv -> Import-Csv",
-                            "ipmo -> Import-Module",
-                            "ipsn -> Import-PSSession",
-                            "irm -> Invoke-RestMethod",
-                            "ise -> powershell_ise.exe",
-                            "iwmi -> Invoke-WmiMethod",
-                            "iwr -> Invoke-WebRequest",
-                            "kill -> Stop-Process",
-                            "lp -> Out-Printer",
-                            "ls -> Get-ChildItem",
-                            "man -> help",
-                            "md -> mkdir",
-                            "measure -> Measure-Object",
-                            "mi -> Move-Item",
-                            "mount -> New-PSDrive",
-                            "move -> Move-Item",
-                            "mp -> Move-ItemProperty",
-                            "mv -> Move-Item",
-                            "nal -> New-Alias",
-                            "ndr -> New-PSDrive",
-                            "ni -> New-Item",
-                            "nmo -> New-Module",
-                            "npssc -> New-PSSessionConfigurationFile",
-                            "nsn -> New-PSSession",
-                            "nv -> New-Variable",
-                            "nwsn -> New-PSWorkflowSession",
-                            "ogv -> Out-GridView",
-                            "oh -> Out-Host",
-                            "popd -> Pop-Location",
-                            "ps -> Get-Process",
-                            "pushd -> Push-Location",
-                            "pwd -> Get-Location",
-                            "r -> Invoke-History",
-                            "rbp -> Remove-PSBreakpoint",
-                            "rcjb -> Receive-Job",
-                            "rcsn -> Receive-PSSession",
-                            "rd -> Remove-Item",
-                            "rdr -> Remove-PSDrive",
-                            "ren -> Rename-Item",
-                            "ri -> Remove-Item",
-                            "rjb -> Remove-Job",
-                            "rm -> Remove-Item",
-                            "rmdir -> Remove-Item",
-                            "rmo -> Remove-Module",
-                            "rni -> Rename-Item",
-                            "rnp -> Rename-ItemProperty",
-                            "rp -> Remove-ItemProperty",
-                            "rsn -> Remove-PSSession",
-                            "rsnp -> Remove-PSSnapin",
-                            "rujb -> Resume-Job",
-                            "rv -> Remove-Variable",
-                            "rvpa -> Resolve-Path",
-                            "rwmi -> Remove-WmiObject",
-                            "sajb -> Start-Job",
-                            "sal -> Set-Alias",
-                            "saps -> Start-Process",
-                            "sasv -> Start-Service",
-                            "sbp -> Set-PSBreakpoint",
-                            "sc -> Set-Content",
-                            "scb -> Set-Clipboard",
-                            "select -> Select-Object",
-                            "set -> Set-Variable",
-                            "shcm -> Show-Command",
-                            "si -> Set-Item",
-                            "sl -> Set-Location",
-                            "sleep -> Start-Sleep",
-                            "sls -> Select-String",
-                            "sort -> Sort-Object",
-                            "sp -> Set-ItemProperty",
-                            "spjb -> Stop-Job",
-                            "spps -> Stop-Process",
-                            "spsv -> Stop-Service",
-                            "start -> Start-Process",
-                            "sujb -> Suspend-Job",
-                            "sv -> Set-Variable",
-                            "swmi -> Set-WmiInstance",
-                            "tee -> Tee-Object",
-                            "trcm -> Trace-Command",
-                            "type -> Get-Content",
-                            "wget -> Invoke-WebRequest",
-                            "where -> Where-Object",
-                            "wjb -> Wait-Job",
-                            "write -> Write-Output"
-                        )
-        } else { 
-                If ($IsWindows) {
-                    # PowerShell Core approved aliases on Windows
-                    $aliaslist = @(
-                                    "% -> ForEach-Object",
-                                    "? -> Where-Object",
-                                    "ac -> Add-Content",
-                                    "cat -> Get-Content",
-                                    "cd -> Set-Location",
-                                    "chdir -> Set-Location",
-                                    "clc -> Clear-Content",
-                                    "clear -> Clear-Host",
-                                    "clhy -> Clear-History",
-                                    "cli -> Clear-Item",
-                                    "clp -> Clear-ItemProperty",
-                                    "cls -> Clear-Host",
-                                    "clv -> Clear-Variable",
-                                    "cnsn -> Connect-PSSession",
-                                    "compare -> Compare-Object",
-                                    "copy -> Copy-Item",
-                                    "cp -> Copy-Item",
-                                    "cpi -> Copy-Item",
-                                    "cpp -> Copy-ItemProperty",
-                                    "cvpa -> Convert-Path",
-                                    "dbp -> Disable-PSBreakpoint",
-                                    "del -> Remove-Item",
-                                    "diff -> Compare-Object",
-                                    "dir -> Get-ChildItem",
-                                    "dnsn -> Disconnect-PSSession",
-                                    "ebp -> Enable-PSBreakpoint",
-                                    "echo -> Write-Output",
-                                    "epal -> Export-Alias",
-                                    "epcsv -> Export-Csv",
-                                    "erase -> Remove-Item",
-                                    "etsn -> Enter-PSSession",
-                                    "exsn -> Exit-PSSession",
-                                    "fc -> Format-Custom",
-                                    "fhx -> Format-Hex",
-                                    "fl -> Format-List",
-                                    "foreach -> ForEach-Object",
-                                    "ft -> Format-Table",
-                                    "fw -> Format-Wide",
-                                    "gal -> Get-Alias",
-                                    "gbp -> Get-PSBreakpoint",
-                                    "gc -> Get-Content",
-                                    "gci -> Get-ChildItem",
-                                    "gcm -> Get-Command",
-                                    "gcs -> Get-PSCallStack",
-                                    "gdr -> Get-PSDrive",
-                                    "ghy -> Get-History",
-                                    "gi -> Get-Item",
-                                    "gin -> Get-ComputerInfo",
-                                    "gjb -> Get-Job",
-                                    "gl -> Get-Location",
-                                    "gm -> Get-Member",
-                                    "gmo -> Get-Module",
-                                    "gp -> Get-ItemProperty",
-                                    "gps -> Get-Process",
-                                    "gpv -> Get-ItemPropertyValue",
-                                    "group -> Group-Object",
-                                    "gsn -> Get-PSSession",
-                                    "gsv -> Get-Service",
-                                    "gtz -> Get-TimeZone",
-                                    "gu -> Get-Unique",
-                                    "gv -> Get-Variable",
-                                    "h -> Get-History",
-                                    "history -> Get-History",
-                                    "icm -> Invoke-Command",
-                                    "iex -> Invoke-Expression",
-                                    "ihy -> Invoke-History",
-                                    "ii -> Invoke-Item",
-                                    "ipal -> Import-Alias",
-                                    "ipcsv -> Import-Csv",
-                                    "ipmo -> Import-Module",
-                                    "irm -> Invoke-RestMethod",
-                                    "iwr -> Invoke-WebRequest",
-                                    "kill -> Stop-Process",
-                                    "ls -> Get-ChildItem",
-                                    "man -> help",
-                                    "md -> mkdir",
-                                    "measure -> Measure-Object",
-                                    "mi -> Move-Item",
-                                    "mount -> New-PSDrive",
-                                    "move -> Move-Item",
-                                    "mp -> Move-ItemProperty",
-                                    "mv -> Move-Item",
-                                    "nal -> New-Alias",
-                                    "ndr -> New-PSDrive",
-                                    "ni -> New-Item",
-                                    "nmo -> New-Module",
-                                    "nsn -> New-PSSession",
-                                    "nv -> New-Variable",
-                                    "oh -> Out-Host",
-                                    "popd -> Pop-Location",
-                                    "ps -> Get-Process",
-                                    "pushd -> Push-Location",
-                                    "pwd -> Get-Location",
-                                    "r -> Invoke-History",
-                                    "rbp -> Remove-PSBreakpoint",
-                                    "rcjb -> Receive-Job",
-                                    "rcsn -> Receive-PSSession",
-                                    "rd -> Remove-Item",
-                                    "rdr -> Remove-PSDrive",
-                                    "ren -> Rename-Item",
-                                    "ri -> Remove-Item",
-                                    "rjb -> Remove-Job",
-                                    "rm -> Remove-Item",
-                                    "rmdir -> Remove-Item",
-                                    "rmo -> Remove-Module",
-                                    "rni -> Rename-Item",
-                                    "rnp -> Rename-ItemProperty",
-                                    "rp -> Remove-ItemProperty",
-                                    "rsn -> Remove-PSSession",
-                                    "rv -> Remove-Variable",
-                                    "rvpa -> Resolve-Path",
-                                    "sajb -> Start-Job",
-                                    "sal -> Set-Alias",
-                                    "saps -> Start-Process",
-                                    "sasv -> Start-Service",
-                                    "sbp -> Set-PSBreakpoint",
-                                    "sc -> Set-Content",
-                                    "select -> Select-Object",
-                                    "set -> Set-Variable",
-                                    "si -> Set-Item",
-                                    "sl -> Set-Location",
-                                    "sleep -> Start-Sleep",
-                                    "sls -> Select-String",
-                                    "sort -> Sort-Object",
-                                    "sp -> Set-ItemProperty",
-                                    "spjb -> Stop-Job",
-                                    "spps -> Stop-Process",
-                                    "spsv -> Stop-Service",
-                                    "start -> Start-Process",
-                                    "stz -> Set-TimeZone",
-                                    "sv -> Set-Variable",
-                                    "tee -> Tee-Object",
-                                    "type -> Get-Content",
-                                    "where -> Where-Object",
-                                    "wjb -> Wait-Job",
-                                    "write -> Write-Output"
-                                )
-                } else {
-                    # PowerShell Core approved aliases on Unix
-                    $aliaslist = @(
-                                    "% -> ForEach-Object",
-                                    "? -> Where-Object",
-                                    "cd -> Set-Location",
-                                    "chdir -> Set-Location",
-                                    "clc -> Clear-Content",
-                                    "clear -> Clear-Host",
-                                    "clhy -> Clear-History",
-                                    "cli -> Clear-Item",
-                                    "clp -> Clear-ItemProperty",
-                                    "cls -> Clear-Host",
-                                    "clv -> Clear-Variable",
-                                    "cnsn -> Connect-PSSession",
-                                    "copy -> Copy-Item",
-                                    "cpi -> Copy-Item",
-                                    "cvpa -> Convert-Path",
-                                    "dbp -> Disable-PSBreakpoint",
-                                    "del -> Remove-Item",
-                                    "dir -> Get-ChildItem",
-                                    "dnsn -> Disconnect-PSSession",
-                                    "ebp -> Enable-PSBreakpoint",
-                                    "echo -> Write-Output",
-                                    "epal -> Export-Alias",
-                                    "epcsv -> Export-Csv",
-                                    "erase -> Remove-Item",
-                                    "etsn -> Enter-PSSession",
-                                    "exsn -> Exit-PSSession",
-                                    "fc -> Format-Custom",
-                                    "fhx -> Format-Hex",
-                                    "fl -> Format-List",
-                                    "foreach -> ForEach-Object",
-                                    "ft -> Format-Table",
-                                    "fw -> Format-Wide",
-                                    "gal -> Get-Alias",
-                                    "gbp -> Get-PSBreakpoint",
-                                    "gc -> Get-Content",
-                                    "gci -> Get-ChildItem",
-                                    "gcm -> Get-Command",
-                                    "gcs -> Get-PSCallStack",
-                                    "gdr -> Get-PSDrive",
-                                    "ghy -> Get-History",
-                                    "gi -> Get-Item",
-                                    "gin -> Get-ComputerInfo",
-                                    "gjb -> Get-Job",
-                                    "gl -> Get-Location",
-                                    "gm -> Get-Member",
-                                    "gmo -> Get-Module",
-                                    "gp -> Get-ItemProperty",
-                                    "gps -> Get-Process",
-                                    "gpv -> Get-ItemPropertyValue",
-                                    "group -> Group-Object",
-                                    "gsn -> Get-PSSession",
-                                    "gsv -> Get-Service",
-                                    "gu -> Get-Unique",
-                                    "gv -> Get-Variable",
-                                    "h -> Get-History",
-                                    "history -> Get-History",
-                                    "icm -> Invoke-Command",
-                                    "iex -> Invoke-Expression",
-                                    "ihy -> Invoke-History",
-                                    "ii -> Invoke-Item",
-                                    "ipal -> Import-Alias",
-                                    "ipcsv -> Import-Csv",
-                                    "ipmo -> Import-Module",
-                                    "irm -> Invoke-RestMethod",
-                                    "iwr -> Invoke-WebRequest",
-                                    "kill -> Stop-Process",
-                                    "md -> mkdir",
-                                    "measure -> Measure-Object",
-                                    "mi -> Move-Item",
-                                    "move -> Move-Item",
-                                    "mp -> Move-ItemProperty",
-                                    "nal -> New-Alias",
-                                    "ndr -> New-PSDrive",
-                                    "ni -> New-Item",
-                                    "nmo -> New-Module",
-                                    "nsn -> New-PSSession",
-                                    "nv -> New-Variable",
-                                    "oh -> Out-Host",
-                                    "popd -> Pop-Location",
-                                    "pushd -> Push-Location",
-                                    "pwd -> Get-Location",
-                                    "r -> Invoke-History",
-                                    "rbp -> Remove-PSBreakpoint",
-                                    "rcjb -> Receive-Job",
-                                    "rcsn -> Receive-PSSession",
-                                    "rd -> Remove-Item",
-                                    "rdr -> Remove-PSDrive",
-                                    "ren -> Rename-Item",
-                                    "ri -> Remove-Item",
-                                    "rjb -> Remove-Job",
-                                    "rmo -> Remove-Module",
-                                    "rni -> Rename-Item",
-                                    "rnp -> Rename-ItemProperty",
-                                    "rp -> Remove-ItemProperty",
-                                    "rsn -> Remove-PSSession",
-                                    "rv -> Remove-Variable",
-                                    "rvpa -> Resolve-Path",
-                                    "sajb -> Start-Job",
-                                    "sal -> Set-Alias",
-                                    "saps -> Start-Process",
-                                    "sasv -> Start-Service",
-                                    "sbp -> Set-PSBreakpoint",
-                                    "sc -> Set-Content",
-                                    "select -> Select-Object",
-                                    "set -> Set-Variable",
-                                    "si -> Set-Item",
-                                    "sl -> Set-Location",
-                                    "sls -> Select-String",
-                                    "sp -> Set-ItemProperty",
-                                    "spjb -> Stop-Job",
-                                    "spps -> Stop-Process",
-                                    "spsv -> Stop-Service",
-                                    "sv -> Set-Variable",
-                                    "type -> Get-Content",
-                                    "where -> Where-Object",
-                                    "wjb -> Wait-Job"
-                                )
-                }
+        $FullCLR = !$isCoreCLR
+        $CoreWindows = $isCoreCLR -and $IsWindows
+        $CoreUnix = $isCoreCLR -and !$IsWindows
+        $FullCLR -or $CoreWindows -or $CoreUnix
+        $aliasFullList = @{
+            "% -> ForEach-Object"                     = $FullCLR -or $CoreWindows -or $CoreUnix
+            "? -> Where-Object"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "ac -> Add-Content"                       = $FullCLR -or $CoreWindows
+            "asnp -> Add-PSSnapin"                    = $FullCLR
+            "cat -> Get-Content"                      = $FullCLR -or $CoreWindows
+            "cd -> Set-Location"                      = $FullCLR -or $CoreWindows -or $CoreUnix
+            "CFS -> ConvertFrom-String"               = $FullCLR
+            "chdir -> Set-Location"                   = $FullCLR -or $CoreWindows -or $CoreUnix
+            "clc -> Clear-Content"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "clear -> Clear-Host"                     = $FullCLR -or $CoreWindows -or $CoreUnix
+            "clhy -> Clear-History"                   = $FullCLR -or $CoreWindows -or $CoreUnix
+            "cli -> Clear-Item"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "clp -> Clear-ItemProperty"               = $FullCLR -or $CoreWindows -or $CoreUnix
+            "cls -> Clear-Host"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "clv -> Clear-Variable"                   = $FullCLR -or $CoreWindows -or $CoreUnix
+            "cnsn -> Connect-PSSession"               = $FullCLR -or $CoreWindows -or $CoreUnix
+            "compare -> Compare-Object"               = $FullCLR -or $CoreWindows
+            "copy -> Copy-Item"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "cp -> Copy-Item"                         = $FullCLR -or $CoreWindows
+            "cpi -> Copy-Item"                        = $FullCLR -or $CoreWindows -or $CoreUnix
+            "cpp -> Copy-ItemProperty"                = $FullCLR -or $CoreWindows
+            "curl -> Invoke-WebRequest"               = $FullCLR
+            "cvpa -> Convert-Path"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "dbp -> Disable-PSBreakpoint"             = $FullCLR -or $CoreWindows -or $CoreUnix
+            "del -> Remove-Item"                      = $FullCLR -or $CoreWindows -or $CoreUnix
+            "diff -> Compare-Object"                  = $FullCLR -or $CoreWindows
+            "dir -> Get-ChildItem"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "dnsn -> Disconnect-PSSession"            = $FullCLR -or $CoreWindows -or $CoreUnix
+            "ebp -> Enable-PSBreakpoint"              = $FullCLR -or $CoreWindows -or $CoreUnix
+            "echo -> Write-Output"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "epal -> Export-Alias"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "epcsv -> Export-Csv"                     = $FullCLR -or $CoreWindows -or $CoreUnix
+            "epsn -> Export-PSSession"                = $FullCLR
+            "erase -> Remove-Item"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "etsn -> Enter-PSSession"                 = $FullCLR -or $CoreWindows -or $CoreUnix
+            "exsn -> Exit-PSSession"                  = $FullCLR -or $CoreWindows -or $CoreUnix
+            "fc -> Format-Custom"                     = $FullCLR -or $CoreWindows -or $CoreUnix
+            "fhx -> Format-Hex"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "fl -> Format-List"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "foreach -> ForEach-Object"               = $FullCLR -or $CoreWindows -or $CoreUnix
+            "ft -> Format-Table"                      = $FullCLR -or $CoreWindows -or $CoreUnix
+            "fw -> Format-Wide"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gal -> Get-Alias"                        = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gbp -> Get-PSBreakpoint"                 = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gc -> Get-Content"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gcb -> Get-Clipboard"                    = $FullCLR
+            "gci -> Get-ChildItem"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gcm -> Get-Command"                      = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gcs -> Get-PSCallStack"                  = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gdr -> Get-PSDrive"                      = $FullCLR -or $CoreWindows -or $CoreUnix
+            "ghy -> Get-History"                      = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gi -> Get-Item"                          = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gin -> Get-ComputerInfo"                 = $CoreWindows -or $CoreUnix
+            "gjb -> Get-Job"                          = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gl -> Get-Location"                      = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gm -> Get-Member"                        = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gmo -> Get-Module"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gp -> Get-ItemProperty"                  = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gps -> Get-Process"                      = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gpv -> Get-ItemPropertyValue"            = $FullCLR -or $CoreWindows -or $CoreUnix
+            "group -> Group-Object"                   = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gsn -> Get-PSSession"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gsnp -> Get-PSSnapin"                    = $FullCLR
+            "gsv -> Get-Service"                      = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gtz -> Get-TimeZone"                     = $CoreWindows
+            "gu -> Get-Unique"                        = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gv -> Get-Variable"                      = $FullCLR -or $CoreWindows -or $CoreUnix
+            "gwmi -> Get-WmiObject"                   = $FullCLR
+            "h -> Get-History"                        = $FullCLR -or $CoreWindows -or $CoreUnix
+            "history -> Get-History"                  = $FullCLR -or $CoreWindows -or $CoreUnix
+            "icm -> Invoke-Command"                   = $FullCLR -or $CoreWindows -or $CoreUnix
+            "iex -> Invoke-Expression"                = $FullCLR -or $CoreWindows -or $CoreUnix
+            "ihy -> Invoke-History"                   = $FullCLR -or $CoreWindows -or $CoreUnix
+            "ii -> Invoke-Item"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "ipal -> Import-Alias"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "ipcsv -> Import-Csv"                     = $FullCLR -or $CoreWindows -or $CoreUnix
+            "ipmo -> Import-Module"                   = $FullCLR -or $CoreWindows -or $CoreUnix
+            "ipsn -> Import-PSSession"                = $FullCLR
+            "irm -> Invoke-RestMethod"                = $FullCLR -or $CoreWindows -or $CoreUnix
+            "ise -> powershell_ise.exe"               = $FullCLR
+            "iwmi -> Invoke-WmiMethod"                = $FullCLR
+            "iwr -> Invoke-WebRequest"                = $FullCLR -or $CoreWindows -or $CoreUnix
+            "kill -> Stop-Process"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "lp -> Out-Printer"                       = $FullCLR
+            "ls -> Get-ChildItem"                     = $FullCLR -or $CoreWindows
+            "man -> help"                             = $FullCLR -or $CoreWindows
+            "md -> mkdir"                             = $FullCLR -or $CoreWindows -or $CoreUnix
+            "measure -> Measure-Object"               = $FullCLR -or $CoreWindows -or $CoreUnix
+            "mi -> Move-Item"                         = $FullCLR -or $CoreWindows -or $CoreUnix
+            "mount -> New-PSDrive"                    = $FullCLR -or $CoreWindows
+            "move -> Move-Item"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "mp -> Move-ItemProperty"                 = $FullCLR -or $CoreWindows -or $CoreUnix
+            "mv -> Move-Item"                         = $FullCLR -or $CoreWindows
+            "nal -> New-Alias"                        = $FullCLR -or $CoreWindows -or $CoreUnix
+            "ndr -> New-PSDrive"                      = $FullCLR -or $CoreWindows -or $CoreUnix
+            "ni -> New-Item"                          = $FullCLR -or $CoreWindows -or $CoreUnix
+            "nmo -> New-Module"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "npssc -> New-PSSessionConfigurationFile" = $FullCLR
+            "nsn -> New-PSSession"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "nv -> New-Variable"                      = $FullCLR -or $CoreWindows -or $CoreUnix
+            "nwsn -> New-PSWorkflowSession"           = $FullCLR
+            "ogv -> Out-GridView"                     = $FullCLR
+            "oh -> Out-Host"                          = $FullCLR -or $CoreWindows -or $CoreUnix
+            "popd -> Pop-Location"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "ps -> Get-Process"                       = $FullCLR -or $CoreWindows
+            "pushd -> Push-Location"                  = $FullCLR -or $CoreWindows -or $CoreUnix
+            "pwd -> Get-Location"                     = $FullCLR -or $CoreWindows -or $CoreUnix
+            "r -> Invoke-History"                     = $FullCLR -or $CoreWindows -or $CoreUnix
+            "rbp -> Remove-PSBreakpoint"              = $FullCLR -or $CoreWindows -or $CoreUnix
+            "rcjb -> Receive-Job"                     = $FullCLR -or $CoreWindows -or $CoreUnix
+            "rcsn -> Receive-PSSession"               = $FullCLR -or $CoreWindows -or $CoreUnix
+            "rd -> Remove-Item"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "rdr -> Remove-PSDrive"                   = $FullCLR -or $CoreWindows -or $CoreUnix
+            "ren -> Rename-Item"                      = $FullCLR -or $CoreWindows -or $CoreUnix
+            "ri -> Remove-Item"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "rjb -> Remove-Job"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "rm -> Remove-Item"                       = $FullCLR -or $CoreWindows
+            "rmdir -> Remove-Item"                    = $FullCLR -or $CoreWindows
+            "rmo -> Remove-Module"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "rni -> Rename-Item"                      = $FullCLR -or $CoreWindows -or $CoreUnix
+            "rnp -> Rename-ItemProperty"              = $FullCLR -or $CoreWindows -or $CoreUnix
+            "rp -> Remove-ItemProperty"               = $FullCLR -or $CoreWindows -or $CoreUnix
+            "rsn -> Remove-PSSession"                 = $FullCLR -or $CoreWindows -or $CoreUnix
+            "rsnp -> Remove-PSSnapin"                 = $FullCLR
+            "rujb -> Resume-Job"                      = $FullCLR
+            "rv -> Remove-Variable"                   = $FullCLR -or $CoreWindows -or $CoreUnix
+            "rvpa -> Resolve-Path"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "rwmi -> Remove-WmiObject"                = $FullCLR
+            "sajb -> Start-Job"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "sal -> Set-Alias"                        = $FullCLR -or $CoreWindows -or $CoreUnix
+            "saps -> Start-Process"                   = $FullCLR -or $CoreWindows -or $CoreUnix
+            "sasv -> Start-Service"                   = $FullCLR -or $CoreWindows -or $CoreUnix
+            "sbp -> Set-PSBreakpoint"                 = $FullCLR -or $CoreWindows -or $CoreUnix
+            "sc -> Set-Content"                       = $FullCLR -or $CoreWindows -or $CoreUnix
+            "scb -> Set-Clipboard"                    = $FullCLR
+            "select -> Select-Object"                 = $FullCLR -or $CoreWindows -or $CoreUnix
+            "set -> Set-Variable"                     = $FullCLR -or $CoreWindows -or $CoreUnix
+            "shcm -> Show-Command"                    = $FullCLR
+            "si -> Set-Item"                          = $FullCLR -or $CoreWindows -or $CoreUnix
+            "sl -> Set-Location"                      = $FullCLR -or $CoreWindows -or $CoreUnix
+            "sleep -> Start-Sleep"                    = $FullCLR -or $CoreWindows
+            "sls -> Select-String"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "sort -> Sort-Object"                     = $FullCLR -or $CoreWindows
+            "sp -> Set-ItemProperty"                  = $FullCLR -or $CoreWindows -or $CoreUnix
+            "spjb -> Stop-Job"                        = $FullCLR -or $CoreWindows -or $CoreUnix
+            "spps -> Stop-Process"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "spsv -> Stop-Service"                    = $FullCLR -or $CoreWindows -or $CoreUnix
+            "start -> Start-Process"                  = $FullCLR -or $CoreWindows
+            "stz -> Set-TimeZone"                     = $CoreWindows
+            "sujb -> Suspend-Job"                     = $FullCLR
+            "sv -> Set-Variable"                      = $FullCLR -or $CoreWindows -or $CoreUnix
+            "swmi -> Set-WmiInstance"                 = $FullCLR
+            "tee -> Tee-Object"                       = $FullCLR -or $CoreWindows
+            "trcm -> Trace-Command"                   = $FullCLR
+            "type -> Get-Content"                     = $FullCLR -or $CoreWindows -or $CoreUnix
+            "wget -> Invoke-WebRequest"               = $FullCLR
+            "where -> Where-Object"                   = $FullCLR -or $CoreWindows -or $CoreUnix
+            "wjb -> Wait-Job"                         = $FullCLR -or $CoreWindows -or $CoreUnix
+            "write -> Write-Output"                   = $FullCLR -or $CoreWindows
         }
+        $aliaslist = @()
+        $aliaslist += $aliasFullList.Keys | ForEach-Object { if ($aliasFullList[$_]) { $_ } }
     }
+
 
     It "All approved aliases present (no aliases removed, no new aliases added)" {
         # We control only default engine aliases (Source -eq "") and aliases from following default loaded modules
