@@ -119,14 +119,6 @@ function Get-PropertyNamesForComputerInfoTest
         "CsWakeUpType",
         "CsWorkgroup")
 
-    $propertyNames += @("DeviceGuardAvailableSecurityProperties",
-        "DeviceGuardCodeIntegrityPolicyEnforcementStatus",
-        "DeviceGuardRequiredSecurityProperties",
-        "DeviceGuardSecurityServicesConfigured",
-        "DeviceGuardSecurityServicesRunning",
-        "DeviceGuardSmartStatus",
-        "DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus")
-
     $propertyNames += @("HyperVisorPresent",
         "HyperVRequirementDataExecutionPreventionAvailable",
         "HyperVRequirementSecondLevelAddressTranslation",
@@ -333,24 +325,6 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
 
         $cimClassInstance = Get-CimClass $className $namespace
         $cimClassInstance.$propertyName
-    }
-
-    function Get-DeviceGuard
-    {
-        param([string]$propertyName)
-        $returnValue = $null
-        try
-        {
-            $returnValue = Get-CimClassPropVal Win32_DeviceGuard $propertyName -namespace 'root\Microsoft\Windows\DeviceGuard' -ErrorAction Stop
-        }
-        catch
-        {
-            #swallow this
-        }
-        if (($propertyName -eq 'SmartStatus') -and ($returnValue -eq $null)){
-            $returnValue = 0
-        }
-        return $returnValue
     }
 
     function Get-CsNetworkAdapters
@@ -868,14 +842,6 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             "CsWakeUpType" {return Get-CimClassPropVal Win32_ComputerSystem WakeUpType}
             "CsWorkgroup" {return Get-CimClassPropVal Win32_ComputerSystem Workgroup}
 
-            "DeviceGuardAvailableSecurityProperties" {return Get-DeviceGuard AvailableSecurityProperties}
-            "DeviceGuardCodeIntegrityPolicyEnforcementStatus" {return Get-DeviceGuard CodeIntegrityPolicyEnforcementStatus}
-            "DeviceGuardRequiredSecurityProperties" {return Get-DeviceGuard RequiredSecurityProperties}
-            "DeviceGuardSecurityServicesConfigured" {return Get-DeviceGuard SecurityServicesConfigured}
-            "DeviceGuardSecurityServicesRunning" {return Get-DeviceGuard SecurityServicesRunning}
-            "DeviceGuardSmartStatus" {return Get-DeviceGuard SmartStatus}
-            "DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus" {return Get-DeviceGuard UserModeCodeIntegrityPolicyEnforcementStatus}
-
             "HyperVisorPresent" {return Get-HyperVProperty $propertyName}
             "HyperVRequirementDataExecutionPreventionAvailable" {return Get-HyperVProperty $propertyName}
             "HyperVRequirementSecondLevelAddressTranslation" {return Get-HyperVProperty $propertyName}
@@ -1304,14 +1270,95 @@ try {
         BeforeAll {
             if ($IsWindows)
             {
+                Add-Type -Name 'slc' -Namespace Win32Functions -MemberDefinition @'
+                    [DllImport("slc.dll", CharSet = CharSet.Unicode)]
+                    public static extern int SLGetWindowsInformationDWORD(string licenseProperty, out int propertyValue);
+'@
+                # Determine if the Software Licensing for CodeIntegrity is enabled
+                function HasDeviceGuardLicense
+                {
+                    try
+                    {
+                        $policy = $null
+                        if ([Win32Functions.slc]::SLGetWindowsInformationDWORD("CodeIntegrity-AllowConfigurablePolicy", [Ref]$policy) -eq 0 -and $policy -eq 1)
+                        {
+                            return $true
+                        }
+                    }
+                    catch
+                    {
+                        # fall through
+                    }
+
+                    return $false
+                }
+
+                function Get-DeviceGuard
+                {
+                    $returnValue = @{
+                        SmartStatus = 0     # Off
+                        AvailableSecurityProperties = $null
+                        CodeIntegrityPolicyEnforcementStatus = $null
+                        RequiredSecurityProperties = $null
+                        SecurityServicesConfigured = $null
+                        SecurityServicesRunning = $null
+                        UserModeCodeIntegrityPolicyEnforcementStatus = $null
+                    }
+                    try
+                    {
+                        $instance = Get-CimInstance Win32_DeviceGuard -Namespace 'root\Microsoft\Windows\DeviceGuard' -ErrorAction Stop
+                        $ss = $instance.VirtualizationBasedSecurityStatus;
+                        if ($ss -ne $null)
+                        {
+                            $returnValue.SmartStatus = $ss;
+                        }
+                        $returnValue.AvailableSecurityProperties = $instance.AvailableSecurityProperties
+                        $returnValue.CodeIntegrityPolicyEnforcementStatus = $instance.CodeIntegrityPolicyEnforcementStatus
+                        $returnValue.RequiredSecurityProperties = $instance.RequiredSecurityProperties
+                        $returnValue.SecurityServicesConfigured = $instance.SecurityServicesConfigured
+                        $returnValue.SecurityServicesRunning = $instance.SecurityServicesRunning
+                        $returnValue.UserModeCodeIntegrityPolicyEnforcementStatus = $instance.UserModeCodeIntegrityPolicyEnforcementStatus
+                    }
+                    catch
+                    {
+                        # Swallow any errors and keep the deviceGuardInfo properties empty
+                        # This is what the cmdlet is expected to do
+                    }
+
+                    return $returnValue
+                }
+
                 $observed = Get-ComputerInfoForTest
-                $observed | Should Not BeNullOrEmpty
             }
         }
 
         It "Verify that alias 'gin' exists" {
             $result = (Get-Alias -Name "gin").Name
             $result | Should Be "gin"
+        }
+
+        It "Test for DeviceGuard properties" {
+            if (-not (HasDeviceGuardLicense))
+            {
+                $observed.DeviceGuardSmartStatus | Should Be 0
+                $observed.DeviceGuardRequiredSecurityProperties | Should Be $null
+                $observed.DeviceGuardAvailableSecurityProperties | Should Be $null
+                $observed.DeviceGuardSecurityServicesConfigured | Should Be $null
+                $observed.DeviceGuardSecurityServicesRunning | Should Be $null
+                $observed.DeviceGuardCodeIntegrityPolicyEnforcementStatus | Should Be $null
+                $observed.DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus | Should Be $null
+            }
+            else
+            {
+                $deviceGuard = Get-DeviceGuard
+                $observed.DeviceGuardSmartStatus | Should Be $deviceGuard.SmartStatus
+                $observed.DeviceGuardRequiredSecurityProperties | Should Be $deviceGuard.RequiredSecurityProperties
+                $observed.DeviceGuardAvailableSecurityProperties | Should Be $deviceGuard.AvailableSecurityProperties
+                $observed.DeviceGuardSecurityServicesConfigured | Should Be $deviceGuard.SecurityServicesConfigured
+                $observed.DeviceGuardSecurityServicesRunning | Should Be $deviceGuard.SecurityServicesRunning
+                $observed.DeviceGuardCodeIntegrityPolicyEnforcementStatus | Should Be $deviceGuard.CodeIntegrityPolicyEnforcementStatus
+                $observed.DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus | Should Be $deviceGuard.UserModeCodeIntegrityPolicyEnforcementStatus
+            }
         }
 
         #
@@ -1351,7 +1398,6 @@ try {
         It "(special case) Test for property = OsInUseVirtualMemory" {
             ($observed.OsInUseVirtualMemory -gt 0) | Should Be $true
         }
-
 
         It "(special case) Test for Filter Property - Property filter with special wild card * and fixed" {
             $propertyFilter = @("BiosC*","*")

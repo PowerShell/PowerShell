@@ -67,7 +67,12 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private static Type LookForTypeInAssemblies(TypeName typeName, IEnumerable<Assembly> assemblies, TypeResolutionState typeResolutionState, bool reportAmbiguousException, out Exception exception)
+        private static Type LookForTypeInAssemblies(TypeName typeName,
+                                                    IEnumerable<Assembly> assemblies,
+                                                    HashSet<Assembly> searchedAssemblies,
+                                                    TypeResolutionState typeResolutionState,
+                                                    bool reportAmbiguousException,
+                                                    out Exception exception)
         {
             exception = null;
             string alternateNameToFind = typeResolutionState.GetAlternateTypeName(typeName.Name);
@@ -75,9 +80,12 @@ namespace System.Management.Automation.Language
             Type foundType2 = null;
             foreach (Assembly assembly in assemblies)
             {
+                // Skip the assemblies that we already searched and found no matching type.
+                if (searchedAssemblies.Contains(assembly)) { continue; }
+
                 try
                 {
-                    Type targetType = LookForTypeInSingleAssembly(assembly, typeName.Name); ;
+                    Type targetType = LookForTypeInSingleAssembly(assembly, typeName.Name);
                     if (targetType == null && alternateNameToFind != null)
                     {
                         targetType = LookForTypeInSingleAssembly(assembly, alternateNameToFind);
@@ -108,6 +116,11 @@ namespace System.Management.Automation.Language
                                 foundType = targetType;
                             }
                         }
+                    }
+                    else
+                    {
+                        // We didn't find a match from the current assembly, so update the searchedAssemblies set.
+                        searchedAssemblies.Add(assembly);
                     }
                 }
                 catch (Exception) // Assembly.GetType might throw unadvertised exceptions
@@ -158,34 +171,44 @@ namespace System.Management.Automation.Language
             return true;
         }
 
-        private static Type ResolveTypeNameWorker(TypeName typeName, SessionStateScope currentScope, IEnumerable<Assembly> loadedAssemblies, TypeResolutionState typeResolutionState, bool reportAmbiguousException, out Exception exception)
+        private static Type ResolveTypeNameWorker(TypeName typeName,
+                                                  SessionStateScope currentScope,
+                                                  IEnumerable<Assembly> loadedAssemblies,
+                                                  HashSet<Assembly> searchedAssemblies,
+                                                  TypeResolutionState typeResolutionState,
+                                                  bool onlySearchInGivenAssemblies,
+                                                  bool reportAmbiguousException,
+                                                  out Exception exception)
         {
             Type result;
             exception = null;
-            while (currentScope != null)
+
+            if (!onlySearchInGivenAssemblies)
             {
-                result = currentScope.LookupType(typeName.Name);
-                if (result != null)
+                while (currentScope != null)
+                {
+                    result = currentScope.LookupType(typeName.Name);
+                    if (result != null)
+                    {
+                        return result;
+                    }
+                    currentScope = currentScope.Parent;
+                }
+
+                if (TypeAccelerators.builtinTypeAccelerators.TryGetValue(typeName.Name, out result))
                 {
                     return result;
                 }
-                currentScope = currentScope.Parent;
             }
 
-            if (TypeAccelerators.builtinTypeAccelerators.TryGetValue(typeName.Name, out result))
-            {
-                return result;
-            }
-
-            exception = null;
-            result = LookForTypeInAssemblies(typeName, loadedAssemblies, typeResolutionState, reportAmbiguousException, out exception);
+            result = LookForTypeInAssemblies(typeName, loadedAssemblies, searchedAssemblies, typeResolutionState, reportAmbiguousException, out exception);
             if (exception != null)
             {
                 // skip the rest of lookups, if exception reported.
                 return result;
             }
 
-            if (result == null)
+            if (!onlySearchInGivenAssemblies && result == null)
             {
                 lock (TypeAccelerators.userTypeAccelerators)
                 {
@@ -194,6 +217,73 @@ namespace System.Management.Automation.Language
             }
 
             return result;
+        }
+
+        /// <summary>
+        /// A set of assemblies that we have searched from but found no matching type. By checking this set, we can
+        /// avoid searching from some assemblies multiple times.
+        /// This set is made thread static, so that type resolution happens on the same thread can reuse the HashSet
+        /// without having to create a new HashSet instance every time. This will reduce GC given that type resolution
+        /// is a frequent operation in powershell script.
+        /// </summary>
+        /// <remarks>
+        /// This set should be used directly only in the method CallResolveTypeNameWorkerHelper.
+        /// </remarks>
+        [ThreadStatic]
+        private static HashSet<Assembly> s_searchedAssemblies = null;
+
+        /// <summary>
+        /// A helper method to call ResolveTypeNameWorker in steps.
+        /// </summary>
+        private static Type CallResolveTypeNameWorkerHelper(TypeName typeName,
+                                                            ExecutionContext context,
+                                                            IEnumerable<Assembly> assemblies,
+                                                            bool isAssembliesExplicitlyPassedIn,
+                                                            TypeResolutionState typeResolutionState,
+                                                            out Exception exception)
+        {
+            if (s_searchedAssemblies == null)
+            {
+                s_searchedAssemblies = new HashSet<Assembly>();
+            }
+            else
+            {
+                // Clear the set before starting a full search to make sure we have a clean start.
+                s_searchedAssemblies.Clear();
+            }
+
+            try
+            {
+                exception = null;
+                var currentScope = context != null ? context.EngineSessionState.CurrentScope : null;
+                Type result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, s_searchedAssemblies, typeResolutionState,
+                                                    /*onlySearchInGivenAssemblies*/ false, /* reportAmbiguousException */ true, out exception);
+                if (exception == null && result == null)
+                {
+                    if (context != null && !isAssembliesExplicitlyPassedIn)
+                    {
+                        // If the assemblies to search from is not specified by the caller of 'ResolveTypeNameWithContext',
+                        // then we search our assembly cache first, so as to give preference to resolving the type against
+                        // assemblies explicitly loaded by powershell, for example, via importing module/snapin.
+                        result = ResolveTypeNameWorker(typeName, currentScope, context.AssemblyCache.Values, s_searchedAssemblies, typeResolutionState,
+                                                    /*onlySearchInGivenAssemblies*/ true, /* reportAmbiguousException */ false, out exception);
+                    }
+
+                    if (result == null)
+                    {
+                        // Search from the assembly list passed in.
+                        result = ResolveTypeNameWorker(typeName, currentScope, assemblies, s_searchedAssemblies, typeResolutionState,
+                                                    /*onlySearchInGivenAssemblies*/ true, /* reportAmbiguousException */ false, out exception);
+                    }
+                }
+
+                return result;
+            }
+            finally
+            {
+                // Clear the set after a full search, so dynamic assemblies can get reclaimed as needed.
+                s_searchedAssemblies.Clear();
+            }
         }
 
         internal static Type ResolveAssemblyQualifiedTypeName(TypeName typeName, out Exception exception)
@@ -226,7 +316,6 @@ namespace System.Management.Automation.Language
         internal static Type ResolveTypeNameWithContext(TypeName typeName, out Exception exception, Assembly[] assemblies, TypeResolutionState typeResolutionState)
         {
             ExecutionContext context = null;
-
             exception = null;
 
             if (typeResolutionState == null)
@@ -284,29 +373,23 @@ namespace System.Management.Automation.Language
             // If nothing is found, we search again, this time applying any 'using namespace ...' declarations including the implicit 'using namespace System'.
             // We must search all using aliases and REPORT an error if there is an ambiguity.
 
-            var assemList = assemblies ?? ClrFacade.GetAssemblies(typeResolutionState, typeName);
-
-            if (context == null)
-            {
-                context = LocalPipeline.GetExecutionContextFromTLS();
-            }
-            SessionStateScope currentScope = null;
-            if (context != null)
-            {
-                currentScope = context.EngineSessionState.CurrentScope;
-            }
-
             // If this is TypeDefinition we should not cache anything in TypeCache.
             if (typeName._typeDefinitionAst != null)
             {
                 return typeName._typeDefinitionAst.Type;
             }
 
-            result = ResolveTypeNameWorker(typeName, currentScope, typeResolutionState.assemblies, typeResolutionState, /* reportAmbiguousException */ true, out exception);
-            if (exception == null && result == null)
+            if (context == null)
             {
-                result = ResolveTypeNameWorker(typeName, currentScope, assemList, typeResolutionState, /* reportAmbiguousException */ false, out exception);
+                context = LocalPipeline.GetExecutionContextFromTLS();
             }
+
+            // Use the explicitly passed-in assembly list when it's specified by the caller.
+            // Otherwise, retrieve all currently loaded assemblies.
+            var assemList = assemblies ?? ClrFacade.GetAssemblies(typeResolutionState, typeName);
+            var isAssembliesExplicitlyPassedIn = assemblies != null;
+
+            result = CallResolveTypeNameWorkerHelper(typeName, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
 
             if (result != null)
             {
@@ -323,18 +406,14 @@ namespace System.Management.Automation.Language
                                           newTypeNameToSearch;
                     var newTypeName = new TypeName(typeName.Extent, newTypeNameToSearch);
 #if CORECLR
-                    if (assemblies == null)
+                    if (!isAssembliesExplicitlyPassedIn)
                     {
                         // We called 'ClrFacade.GetAssemblies' to get assemblies. That means the assemblies to search from
                         // are not pre-defined, and thus we have to refetch assembly again based on the new type name.
                         assemList = ClrFacade.GetAssemblies(typeResolutionState, newTypeName);
                     }
 #endif
-                    var newResult = ResolveTypeNameWorker(newTypeName, currentScope, typeResolutionState.assemblies, typeResolutionState, /* reportAmbiguousException */ true, out exception);
-                    if (exception == null && newResult == null)
-                    {
-                        newResult = ResolveTypeNameWorker(newTypeName, currentScope, assemList, typeResolutionState, /* reportAmbiguousException */ false, out exception);
-                    }
+                    var newResult = CallResolveTypeNameWorkerHelper(newTypeName, context, assemList, isAssembliesExplicitlyPassedIn, typeResolutionState, out exception);
 
                     if (exception != null)
                     {

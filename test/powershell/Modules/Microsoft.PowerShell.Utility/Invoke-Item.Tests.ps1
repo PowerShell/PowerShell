@@ -47,14 +47,16 @@ Describe "Invoke-Item on non-Windows" -Tags "CI" {
 
 Describe "Invoke-Item tests on Windows" -Tags "CI","RequireAdminOnWindows" {
     BeforeAll {
-        if ($IsWindows) {
+        $isNanoServer = [System.Management.Automation.Platform]::IsNanoServer
+        $isIot = [System.Management.Automation.Platform]::IsIoT
+        $isFullWin = $IsWindows -and !$isNanoServer -and !$isIot
+
+        if ($isFullWin) {
             $testfilename = "testfile.!!testext!!"
             $testfilepath = Join-Path $TestDrive $testfilename
             $renamedtestfilename = "renamedtestfile.!!testext!!"
             $renamedtestfilepath = Join-Path $TestDrive $renamedtestfilename
-            remove-item $testfilepath -ErrorAction SilentlyContinue
-            remove-item $renamedtestfilepath -ErrorAction SilentlyContinue
-            new-item $testfilepath | Out-Null
+
             cmd.exe /c assoc .!!testext!!=!!testext!!.FileType | Out-Null
             cmd.exe /c ftype !!testext!!.FileType=cmd.exe /c rename $testfilepath $renamedtestfilename | Out-Null
         }
@@ -62,14 +64,21 @@ Describe "Invoke-Item tests on Windows" -Tags "CI","RequireAdminOnWindows" {
 
     AfterAll {
         if ($IsWindows) {
-            remove-item $testfilepath -ErrorAction SilentlyContinue
-            remove-item $renamedtestfilepath -ErrorAction SilentlyContinue
             cmd.exe /c assoc !!testext!!=
             cmd.exe /c ftype !!testext!!.FileType=
         }
     }
 
-    It "Should invoke a file without error on Windows w/o .NET Core" -Skip:(-not $IsWindows -or ($IsWindows -and $IsCoreCLR)) {
+    BeforeEach {
+        New-Item $testfilepath -ItemType File | Out-Null
+    }
+
+    AfterEach {
+        Remove-Item $testfilepath -ErrorAction SilentlyContinue
+        Remove-Item $renamedtestfilepath -ErrorAction SilentlyContinue
+    }
+
+    It "Should invoke a file without error on Windows full SKUs" -Skip:(-not $isFullWin) {
         invoke-item $testfilepath
         # Waiting subprocess start and rename file
         {
@@ -82,7 +91,8 @@ Describe "Invoke-Item tests on Windows" -Tags "CI","RequireAdminOnWindows" {
         } | Should Not throw
     }
 
-    It "Should throw 'not supported' on Windows with .NET Core" -Skip:(-not ($IsWindows -and $IsCoreCLR)) {
-        { Invoke-Item $testfilepath } | Should Throw "Operation is not supported on this platform."
+    It "Should start a file without error on Windows full SKUs" -Skip:(-not $isFullWin) {
+        Start-Process $testfilepath -Wait
+        Test-Path $renamedtestfilepath | Should Be $true
     }
 }

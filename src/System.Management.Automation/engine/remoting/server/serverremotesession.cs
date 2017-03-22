@@ -206,7 +206,9 @@ namespace System.Management.Automation.Remoting
             {
                 throw PSTraceSource.NewInvalidOperationException("RemotingErrorIdStrings.NonExistentInitialSessionStateProvider", configurationProviderId);
             }
-
+            string shellPrefix = System.Management.Automation.Remoting.Client.WSManNativeApi.ResourceURIPrefix;
+            int index = configurationProviderId.IndexOf(shellPrefix, StringComparison.OrdinalIgnoreCase);
+            senderInfo.ConfigurationName = (index == 0) ? configurationProviderId.Substring(shellPrefix.Length) : string.Empty;
             ServerRemoteSession result = new ServerRemoteSession(senderInfo,
                 configurationProviderId,
                 initializationParameters,

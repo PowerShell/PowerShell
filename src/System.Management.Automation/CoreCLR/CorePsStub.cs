@@ -546,6 +546,17 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
     }
 
     /// <summary>
+    /// Stub for ProcessWindowStyle
+    /// </summary>
+    public enum ProcessWindowStyle
+    {
+        Normal,
+        Hidden,
+        Minimized,
+        Maximized
+    }
+
+    /// <summary>
     /// Stub for MailAddress
     /// </summary>
     public class MailAddress

@@ -30,6 +30,7 @@ Describe "JEA session Transcprit script test" -Tag @("Feature", 'RequireAdminOnW
             Unregister-PSSessionConfiguration -Name JEA -Force -ErrorAction SilentlyContinue
         }
     }
+    
 }
 
 
@@ -51,5 +52,5 @@ Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
             Remove-Item $RoleCapDirectory -Recurse -Force -ErrorAction SilentlyContinue
         }
     }
-
+    
 }

@@ -27,19 +27,19 @@
     }
 
     It "Command lookup with duplicate paths" {
-        $previousPath = $env:PSMODULEPATH
+        $previousPath = $env:PSModulePath
 
         try
         {
             New-Item -Path "$TestDrive\TestFunctionA" -ItemType Directory
             New-Item -Path "$TestDrive\\TestFunctionA\TestFunctionA.psm1" -Value "function TestFunctionA {}" | Out-Null
 
-            $env:PSMODULEPATH = "$TestDrive" + [System.IO.Path]::PathSeparator + "$TestDrive"
+            $env:PSModulePath = "$TestDrive" + [System.IO.Path]::PathSeparator + "$TestDrive"
             (Get-command 'TestFunctionA').count | Should Be 1
         }
         finally
         {
-            $env:PSMODULEPATH = $previousPath
+            $env:PSModulePath = $previousPath
         }
     }
 

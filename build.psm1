@@ -40,6 +40,7 @@ if ($IsLinux) {
     $IsFedora = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24
     $IsOpenSUSE = $LinuxInfo.ID -match 'opensuse'
     $IsOpenSUSE13 = $IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'
+    ${IsOpenSUSE42.1} = $IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '42.1'
     $IsRedHatFamily = $IsCentOS -or $IsFedora -or $IsOpenSUSE
 
     # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
@@ -99,7 +100,8 @@ function Start-PSBuild {
                      "win10-x64",
                      "osx.10.11-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64")]
+                     "opensuse.13.2-x64",
+                     "opensuse.42.1-x64")]
         [Parameter(ParameterSetName='CoreCLR')]
         [string]$Runtime,
 
@@ -421,8 +423,19 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         # so we need to get its parent directory
         $publishPath = Split-Path $Options.Output -Parent
         log "Restore PowerShell modules to $publishPath"
-        # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
-        Restore-PSModule -Name @('PowerShellGet') -Destination (Join-Path -Path $publishPath -ChildPath "Modules")
+
+        $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
+
+        # Restore modules from myget feed
+        Restore-PSModule -Destination $modulesDir -Name @(
+            # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
+            'PowerShellGet'
+        )
+
+        # Restore modules from powershellgallery feed
+        Restore-PSModule -Destination $modulesDir -Name @(
+            'Microsoft.PowerShell.Archive'
+        ) -SourceLocation "https://www.powershellgallery.com/api/v2/"
     }
 }
 
@@ -462,7 +475,8 @@ function New-PSOptions {
                      "win10-x64",
                      "osx.10.11-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64")]
+                     "opensuse.13.2-x64",
+                     "opensuse.42.1-x64")]
         [string]$Runtime,
 
         [switch]$Publish,
@@ -771,7 +785,7 @@ function Start-PSPester {
     }
     else {
         try {
-            $originalModulePath = $env:PSMODULEPATH
+            $originalModulePath = $env:PSModulePath
             if ($Unelevate)
             {
                 Start-UnelevatedProcess -process $powershell -arguments @('-noprofile', '-c', $Command)
@@ -801,7 +815,7 @@ function Start-PSPester {
                 & $powershell -noprofile -c $Command
             }
         } finally {
-            $env:PSMODULEPATH = $originalModulePath
+            $env:PSModulePath = $originalModulePath
             if ($Unelevate)
             {
                 Remove-Item $outputBufferFilePath
@@ -1428,6 +1442,23 @@ function New-UnixPackage {
 
     foreach ($Dependency in "fpm", "ronn") {
         if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
+            # These tools are not added to the path automatically on OpenSUSE 13.2
+            # try adding them to the path and re-tesing first
+            [string] $gemsPath = $null
+            [string] $depenencyPath = $null
+            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems   | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName  
+            if($gemsPath) {
+                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse  | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName  
+                $originalPath = $env:PATH
+                $env:PATH = $ENV:PATH +":" + $depenencyPath
+                if((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
+                    continue
+                }
+                else {
+                    $env:PATH = $originalPath
+                }
+            }
+            
             throw "Dependency precheck failed!"
         }
     }
@@ -1640,14 +1671,14 @@ esac
     # We currently only support:
     # CentOS 7 
     # Fedora 24+
-    # OpenSUSE 13.2
+    # OpenSUSE 42.1 (13.2 might build but is EOL)
     # Also SEE: https://fedoraproject.org/wiki/Packaging:DistTag
     if ($IsCentOS) {
         $rpm_dist = "el7.centos"
     } elseif ($IsFedora) {
         $version_id = $LinuxInfo.VERSION_ID
         $rpm_dist = "fedora.$version_id"
-    } elseif ($IsOpenSUSE13) {
+    } elseif ($IsOpenSUSE) {
         $version_id = $LinuxInfo.VERSION_ID
         $rpm_dist = "suse.$version_id"
     }
@@ -1767,7 +1798,7 @@ function Start-DevPowerShell {
             if (-not $Command) {
                 $ArgumentList = @('-NoExit') + $ArgumentList
             }
-            $Command = '$env:PSMODULEPATH = Join-Path $env:DEVPATH Modules; ' + $Command
+            $Command = '$env:PSModulePath = Join-Path $env:DEVPATH Modules; ' + $Command
         }
 
         if ($Command) {
@@ -2667,7 +2698,8 @@ function Start-CrossGen {
                      "win10-x64",
                      "osx.10.11-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64")]
+                     "opensuse.13.2-x64",
+                     "opensuse.42.1-x64")]
         [string]
         $Runtime
     )
@@ -2731,6 +2763,10 @@ function Start-CrossGen {
             "rhel.7-x64"
         } elseif ($IsFedora) {
             "fedora.24-x64"
+        } elseif ($IsOpenSUSE13) {
+            "opensuse.13.2-x64"
+        } elseif (${IsOpenSUSE42.1}) {
+            "opensuse.42.1-x64"
         }
     } elseif ($IsOSX) {
         "osx.10.10-x64"

@@ -91,32 +91,43 @@ namespace Microsoft.PowerShell
 
                 int rows = tempProgressRegion.GetLength(0);
                 int cols = tempProgressRegion.GetLength(1);
+                _location.X = 0;
+
+#if UNIX
+                _location.Y = _rawui.CursorPosition.Y;
+
+                //if the cursor is at the bottom, create screen buffer space by scrolling
+                int scrollRows = rows - ((_rawui.BufferSize.Height - 1) - _location.Y);
+                for (int i = 0; i < rows; i++)
+                {
+                    Console.Out.Write('\n');
+                }
+                if (scrollRows > 0)
+                {
+                    _location.Y -= scrollRows;
+                }
+
+                //create cleared region to clear progress bar later
+                _savedRegion = tempProgressRegion;
+                for(int row = 0; row < rows; row++)
+                {
+                    for(int col = 0; col < cols; col++)
+                    {
+                        _savedRegion[row, col].Character = ' ';
+                    }
+                }
+
+                //put cursor back to where output should be
+                _rawui.CursorPosition = _location;
+#else
                 _location = _rawui.WindowPosition;
 
                 // We have to show the progress pane in the first column, as the screen buffer at any point might contain
                 // a CJK double-cell characters, which makes it impractical to try to find a position where the pane would
                 // not slice a character.  Column 0 is the only place where we know for sure we can place the pane.
 
-                _location.X = 0;
                 _location.Y = Math.Min(_location.Y + 2, _bufSize.Height);
 
-#if UNIX
-                // replace the saved region in the screen buffer with our progress display
-                _location = _rawui.CursorPosition;
-
-                //set the cursor position back to the beginning of the region to overwrite write-progress
-                //if the cursor is at the bottom, back it up to overwrite the previous write progress
-                if (_location.Y >= _rawui.BufferSize.Height - rows)
-                {
-                    Console.Out.Write('\n');
-                    if (_location.Y >= rows)
-                    {
-                        _location.Y -= rows;
-                    }
-                }
-
-                _rawui.CursorPosition = _location;
-#else
                 // Save off the current contents of the screen buffer in the region that we will occupy
                 _savedRegion =
                     _rawui.GetBufferContents(

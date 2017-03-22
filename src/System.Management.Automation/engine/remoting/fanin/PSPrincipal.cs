@@ -162,6 +162,11 @@ namespace System.Management.Automation.Remoting
             internal set { _applicationArguments = value; }
         }
 
+        /// <summary>
+        /// "ConfigurationName" from the sever remote session
+        /// </summary>
+        public string ConfigurationName { get; internal set; }
+
         #endregion
     }
 
