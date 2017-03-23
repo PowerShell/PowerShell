@@ -1,0 +1,24 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <VersionPrefix>6.0.0</VersionPrefix>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DelaySign>true</DelaySign>
+    <AssemblyName>Microsoft.Management.Infrastructure.CimCmdlets</AssemblyName>
+    <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+</Project>

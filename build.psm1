@@ -158,6 +158,10 @@ function Start-PSBuild {
     # simplify ParameterSetNames
     if ($PSCmdlet.ParameterSetName -eq 'FullCLR') {
         $FullCLR = $true
+
+        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+        throw "Building against FullCLR is not supported"
     }
 
     # Add .NET CLI tools to PATH
@@ -236,19 +240,20 @@ function Start-PSBuild {
     $Arguments += "--runtime", $Options.Runtime
 
     # handle Restore
-    if ($Restore -or -not (Test-Path "$($Options.Top)/project.lock.json")) {
+    if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
         log "Run dotnet restore"
+
+        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen")
+        $testProjectDirs = Get-ChildItem "$PSScriptRoot/test/*.csproj" -Recurse | % { [System.IO.Path]::GetDirectoryName($_) }
 
         $RestoreArguments = @("--verbosity")
         if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-            $RestoreArguments += "Info"
+            $RestoreArguments += "detailed"
         } else {
-            $RestoreArguments += "Warning"
+            $RestoreArguments += "quiet"
         }
 
-        $RestoreArguments += "$PSScriptRoot"
-
-        Start-NativeExecution { dotnet restore $RestoreArguments }
+        ($srcProjectDirs + $testProjectDirs) | % { Start-NativeExecution { dotnet restore $_ $RestoreArguments } }
 
         # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
         if ($IsOSX) {
@@ -493,6 +498,12 @@ function New-PSOptions {
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
+    if ($FullCLR) {
+        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+        throw "Building against FullCLR is not supported"
+    }
+
     $ConfigWarningMsg = "The passed-in Configuration value '{0}' is not supported on '{1}'. Use '{2}' instead."
     if (-not $Configuration) {
         $Configuration = if ($IsLinux -or $IsOSX) {
@@ -673,18 +684,21 @@ function Publish-PSTestTools {
     Find-Dotnet
 
     $tools = "$PSScriptRoot/test/tools/EchoArgs","$PSScriptRoot/test/tools/CreateChildProcess"
-    # Publish EchoArgs so it can be run by tests
+    if ($Options -eq $null)
+    {
+        $Options = New-PSOptions
+    }
 
+    # Publish EchoArgs so it can be run by tests
     foreach ($tool in $tools)
     {
         Push-Location $tool
         try {
-            dotnet publish --output bin
+            dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
         } finally {
             Pop-Location
         }
     }
-
 }
 
 function Start-PSPester {
@@ -704,6 +718,12 @@ function Start-PSPester {
         [switch]$Quiet,
         [switch]$PassThru
     )
+
+    if ($FullCLR) {
+        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+        throw "Building against FullCLR is not supported"
+    }
 
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
     if ($Unelevate)
@@ -937,7 +957,7 @@ function Start-PSxUnit {
 function Install-Dotnet {
     [CmdletBinding()]
     param(
-        [string]$Channel = "preview",
+        [string]$Channel,
         [string]$Version,
         [switch]$NoSudo
     )
@@ -946,7 +966,7 @@ function Install-Dotnet {
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
-    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/v1.0.0-preview2-1-3177/scripts/obtain"
+    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/v1.0.1/scripts/obtain"
 
     # Install for Linux and OS X
     if ($IsLinux -or $IsOSX) {
@@ -1005,11 +1025,11 @@ function Start-PSBootstrap {
         SupportsShouldProcess=$true,
         ConfirmImpact="High")]
     param(
-        [string]$Channel = "preview",
+        [string]$Channel = "rel-1.0.0",
         # we currently pin dotnet-cli version, because tool
         # is currently migrating to msbuild toolchain
         # and requires constant updates to our build process.
-        [string]$Version = "1.0.0-preview2-1-003177",
+        [string]$Version = "1.0.1",
         [switch]$Package,
         [switch]$NoSudo,
         [switch]$Force
@@ -1751,7 +1771,9 @@ function Publish-NuGetFeed
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    @(
+    try {
+        Push-Location $PSScriptRoot
+        @(
 'Microsoft.PowerShell.Commands.Management',
 'Microsoft.PowerShell.Commands.Utility',
 'Microsoft.PowerShell.Commands.Diagnostics',
@@ -1763,12 +1785,15 @@ function Publish-NuGetFeed
 'Microsoft.WSMan.Management',
 'Microsoft.WSMan.Runtime',
 'Microsoft.PowerShell.SDK'
-    ) | % {
-        if ($VersionSuffix) {
-            dotnet pack "src/$_" --output $OutputPath --version-suffix $VersionSuffix
-        } else {
-            dotnet pack "src/$_" --output $OutputPath
+        ) | % {
+            if ($VersionSuffix) {
+                dotnet pack "src/$_" --output $OutputPath --version-suffix $VersionSuffix /p:IncludeSymbols=true
+            } else {
+                dotnet pack "src/$_" --output $OutputPath
+            }
         }
+    } finally {
+        Pop-Location
     }
 }
 
@@ -1783,6 +1808,12 @@ function Start-DevPowerShell {
         [string]$Command,
         [switch]$KeepPSModulePath
     )
+
+    if ($FullCLR) {
+        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+        throw "Building against FullCLR is not supported"
+    }
 
     try {
         if ((-not $NoNewWindow) -and ($IsCoreCLR)) {
@@ -2046,9 +2077,24 @@ function Start-TypeGen
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    Push-Location "$PSScriptRoot/src/TypeCatalogParser"
+    $GetDependenciesTargetPath = "$PSScriptRoot/src/Microsoft.PowerShell.SDK/obj/Microsoft.PowerShell.SDK.csproj.TypeCatalog.targets"
+    $GetDependenciesTargetValue = @'
+<Project>
+    <Target Name="_GetDependencies"
+            DependsOnTargets="ResolvePackageDependenciesDesignTime">
+        <ItemGroup>
+            <_DependentAssemblyPath Include="%(_DependenciesDesignTime.Path)%3B" Condition=" '%(_DependenciesDesignTime.Type)' == 'Assembly' And '%(_DependenciesDesignTime.Name)' != 'Microsoft.Management.Infrastructure.Native.dll' And '%(_DependenciesDesignTime.Name)' != 'Microsoft.Management.Infrastructure.dll' " />
+        </ItemGroup>
+        <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_DependentAssemblyPath)" Overwrite="true" />
+    </Target>
+</Project>
+'@
+    Set-Content -Path $GetDependenciesTargetPath -Value $GetDependenciesTargetValue -Force -Encoding Ascii
+
+    Push-Location "$PSScriptRoot/src/Microsoft.PowerShell.SDK"
     try {
-        dotnet run
+        $ps_inc_file = "$PSScriptRoot/src/TypeCatalogGen/powershell.inc"
+        dotnet msbuild .\Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$ps_inc_file" /nologo
     } finally {
         Pop-Location
     }
