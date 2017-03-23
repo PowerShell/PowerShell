@@ -106,7 +106,10 @@
             "imports": [ "dnxcore50", "portable-net45+win8" ],
             "dependencies": {
                 "Microsoft.CodeAnalysis.CSharp": "2.0.0-rc",
-                "System.Diagnostics.TextWriterTraceListener": "4.3.0"
+                "System.Diagnostics.TextWriterTraceListener": "4.3.0",
+                "System.Net.NameResolution": "4.3.0-preview1-24530-04",
+                "System.Net.Ping": "4.3.0-preview1-24530-04",
+                "System.Net.Sockets": "4.3.0-preview1-24530-04"
             }
         },
         "net451": {            
