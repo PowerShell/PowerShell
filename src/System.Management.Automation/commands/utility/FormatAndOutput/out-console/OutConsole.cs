@@ -79,16 +79,7 @@ namespace Microsoft.PowerShell.Commands
                 mrt.MergeUnclaimedPreviousErrorResults = true;
             }
 
-            if (!_transcriptStateChanged)
-            {
-                _savedTranscribeOnly = Host.UI.TranscribeOnly;
-            }
-
-            if (Transcript)
-            {
-                _transcriptStateChanged = true;
-                Host.UI.TranscribeOnly = true;
-            }
+            _savedTranscribeOnly = Host.UI.TranscribeOnly;
 
             // This needs to be done directly through the command runtime, as Out-Default
             // doesn't actually write pipeline objects.
@@ -107,6 +98,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (Transcript)
             {
+                Host.UI.TranscribeOnly = true;
                 WriteObject(InputObject);
             }
 
@@ -160,18 +152,13 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            if (_transcriptStateChanged)
-            {
-                Host.UI.TranscribeOnly = _savedTranscribeOnly;
-                _transcriptStateChanged = false;
-            }
+            Host.UI.TranscribeOnly = _savedTranscribeOnly;
             _disposed = true;
         }
 
         private bool _disposed = false;
         private ArrayList _outVarResults = null;
         private bool _savedTranscribeOnly = false;
-        private static bool _transcriptStateChanged = false;
     }
 
     /// <summary>

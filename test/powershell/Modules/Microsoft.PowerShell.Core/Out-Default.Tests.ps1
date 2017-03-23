@@ -1,6 +1,21 @@
 Describe "Out-Default Tests" -tag CI {
     BeforeAll {
+        # due to https://github.com/PowerShell/PowerShell/issues/3405, `Out-Default -Transcript` emits output to pipeline
+        # as running in Pester effectively wraps everything in parenthesis, workaround is to use another powershell
+        # to run the test script passed as a string
         $powershell = "$PSHOME/powershell"
+    }
+
+    It "'Out-Default -Transcript' shows up in transcript, but not pipeline" {
+        $script = @"
+            `$null = Start-Transcript -Path "$testdrive\transcript.txt";
+            'hello' | Microsoft.PowerShell.Core\Out-Default -Transcript;
+            'bye';
+            `$null = Stop-Transcript
+"@
+
+        & $powershell -c $script | Should BeExactly 'bye'
+        "TestDrive:\transcript.txt" | Should Contain 'hello'
     }
 
     It "Out-Default reverts transcription state when used more than once in a pipeline" {
