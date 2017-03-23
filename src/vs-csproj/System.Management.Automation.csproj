@@ -29,12 +29,20 @@
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Microsoft.Management.Infrastructure" />
     <Reference Include="System" />
+    <Reference Include="System.Collections.Immutable, Version=1.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Collections.Immutable.1.3.1\lib\portable-net45+win8+wp8+wpa81\System.Collections.Immutable.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Core" />
     <Reference Include="System.Data" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.DirectoryServices" />
     <Reference Include="System.Management" />
     <Reference Include="System.Numerics" />
+    <Reference Include="System.Reflection.Metadata, Version=1.4.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\System.Reflection.Metadata.1.4.2\lib\portable-net45+win8\System.Reflection.Metadata.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Security" />
@@ -1029,6 +1037,9 @@
     </Compile>
     <Compile Include="..\System.Management.Automation\engine\parser\DebugViewWriter.cs">
       <Link>engine\parser\DebugViewWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\System.Management.Automation\engine\parser\DynamicKeyword.cs">
+      <Link>engine\parser\DynamicKeyword.cs</Link>
     </Compile>
     <Compile Include="..\System.Management.Automation\engine\parser\FusionAssemblyIdentity.cs">
       <Link>engine\parser\FusionAssemblyIdentity.cs</Link>
