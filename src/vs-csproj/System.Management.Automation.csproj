@@ -646,6 +646,9 @@
     <Compile Include="..\System.Management.Automation\engine\GetEvent_Types_Ps1Xml.cs">
       <Link>engine\GetEvent_Types_Ps1Xml.cs</Link>
     </Compile>
+    <Compile Include="..\System.Management.Automation\engine\Humanizer.cs">
+      <Link>engine\Humanizer.cs</Link>
+    </Compile>
     <Compile Include="..\System.Management.Automation\engine\hostifaces\AsyncResult.cs">
       <Link>engine\hostifaces\AsyncResult.cs</Link>
     </Compile>

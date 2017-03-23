@@ -667,6 +667,12 @@ namespace System.Management.Automation.Runspaces
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_TimeSpan()
         {
             yield return new FormatViewDefinition("System.TimeSpan",
+                CustomControl.Create()
+                    .StartEntry()
+                        .AddScriptBlockExpressionBinding("[Microsoft.PowerShell.ToStringCodeMethods]::ToHumanString($_)")
+                    .EndEntry()
+                .EndControl());
+            yield return new FormatViewDefinition("System.TimeSpan",
                 ListControl.Create()
                     .StartEntry()
                         .AddItemProperty(@"Days")
