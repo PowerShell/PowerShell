@@ -11,7 +11,7 @@ Describe "New-PSSession basic test" -Tag @("CI") {
 }
 
 Describe "JEA session Transcprit script test" -Tag @("Feature", 'RequireAdminOnWindows') {
-    It "Configuration name should be in the transcript header" {
+    It "Configuration name should be in the transcript header" -Pending {
         [string] $RoleCapDirectory = (New-Item -Path "$TestDrive\RoleCapability" -ItemType Directory -Force).FullName
         [string] $PSSessionConfigFile = "$RoleCapDirectory\TestConfig.pssc"
         [string] $transScriptFile = "$RoleCapDirectory\*.txt"
@@ -30,5 +30,27 @@ Describe "JEA session Transcprit script test" -Tag @("Feature", 'RequireAdminOnW
             Unregister-PSSessionConfiguration -Name JEA -Force -ErrorAction SilentlyContinue
         }
     }
+    
+}
 
+
+Describe "JEA session Get-Help test" -Tag @("CI", 'RequireAdminOnWindows') {
+    It "Get-Help should work in JEA sessions" -Pending {
+        [string] $RoleCapDirectory = (New-Item -Path "$TestDrive\RoleCapability" -ItemType Directory -Force).FullName
+        [string] $PSSessionConfigFile = "$RoleCapDirectory\TestConfig.pssc"
+        try
+        {
+            New-PSSessionConfigurationFile -Path $PSSessionConfigFile -TranscriptDirectory $RoleCapDirectory -SessionType RestrictedRemoteServer
+            Register-PSSessionConfiguration -Name JEA -Path $PSSessionConfigFile -Force -ErrorAction SilentlyContinue 
+            $scriptBlock = {Enter-PSSession -ComputerName Localhost -ConfigurationName JEA; Get-Help Get-Command; Exit-PSSession}
+            $helpContent = & $scriptBlock
+            $helpContent | Should Not Be $null 
+        }
+        finally
+        {
+            Unregister-PSSessionConfiguration -Name JEA -Force -ErrorAction SilentlyContinue
+            Remove-Item $RoleCapDirectory -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+    
 }
