@@ -249,6 +249,11 @@ namespace System.Management.Automation.Runspaces
             yield return new ExtendedTypeDefinition(
                 "Microsoft.PowerShell.Commands.PSRunspaceDebug",
                 ViewsOf_Microsoft_PowerShell_Commands_PSRunspaceDebug());
+
+            yield return new ExtendedTypeDefinition(
+                "Microsoft.PowerShell.Commands.PingStatus",
+                ViewsOf_Microsoft_PowerShell_Commands_PingStatus()
+            );
         }
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_RuntimeType()
@@ -1323,6 +1328,27 @@ namespace System.Management.Automation.Runspaces
                         .AddPropertyColumn("RunspaceName")
                         .AddPropertyColumn("Enabled")
                         .AddPropertyColumn("BreakAll")
+                    .EndRowDefinition()
+                .EndTable());
+        }
+
+        private static IEnumerable<FormatViewDefinition> ViewsOf_Microsoft_PowerShell_Commands_PingStatus()
+        {
+            yield return new FormatViewDefinition("Microsoft.PowerShell.Commands.PingStatus",
+                TableControl.Create()
+                    .AddHeader(label: "Source", width: 13)
+                    .AddHeader(label: "Destination", width: 15)
+                    .AddHeader(label: "IPV4Address", width: 16)
+                    .AddHeader(label: "IPV6Address", width: 40)
+                    .AddHeader(label: "Bytes", width: 8)
+                    .AddHeader(label: "Time(ms)", width: 9)
+                    .StartRowDefinition()
+                        .AddPropertyColumn("Source")
+                        .AddPropertyColumn("Destination")
+                        .AddPropertyColumn("Ipv4")
+                        .AddPropertyColumn("Ipv6")
+                        .AddPropertyColumn("BufferSize")
+                        .AddPropertyColumn("ResponseTime")
                     .EndRowDefinition()
                 .EndTable());
         }
