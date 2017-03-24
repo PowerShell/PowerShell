@@ -131,10 +131,11 @@ This works for Debian Stretch (now testing) as well.
 
 ## CentOS 7
 
-### Installation via Package Repository
+> This package also works on Oracle Linux 7 and Red Hat Enterprise Linux (RHEL) 7.
 
-PowerShell Core, for Linux, is published to package repositories for easy installation (and updates).
-This is the preferred method.
+### Installation via Package Repository (preferred)
+
+PowerShell Core for Linux is published to official Microsoft repositories for easy installation (and updates).
 
 ```sh
 # Register the Microsoft RedHat repository
@@ -148,7 +149,7 @@ powershell
 ```
 
 After registering the Microsoft repository once as superuser,
-from then on, you just need to use `sudo yum update powershell` to update it.
+you just need to use `sudo yum update powershell` to update PowerShell.
 
 ### Installation via Direct Download
 
@@ -167,8 +168,6 @@ You can also install the RPM without the intermediate step of downloading it:
 ```sh
 sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.17/powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm
 ```
-
-> This package works on Oracle Linux 7. It should work on Red Hat Enterprise Linux 7 too.
 
 ### Uninstallation
 
