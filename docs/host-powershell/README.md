@@ -8,32 +8,32 @@
 ### Overview
 
 Due to the lack of necessary APIs for manipulating assemblies in .NET Core 1.1 and prior,
-PowerShell Core needs to control assembly loading via our customized `AssemblyLoadContext` in order to do tasks like type resolution.
+PowerShell Core needs to control assembly loading via our customized `AssemblyLoadContext` ([CorePsAssemblyLoadContext.cs][]) in order to do tasks like type resolution.
 So applications that want to host PowerShell Core (using PowerShell APIs) need to be bootstrapped from `PowerShellAssemblyLoadContextInitializer`.
 
 `PowerShellAssemblyLoadContextInitializer` exposes 2 APIs for this purpose:
 `SetPowerShellAssemblyLoadContext` and `InitializeAndCallEntryMethod`.
 They are for different scenarios:
 
-- For `SetPowerShellAssemblyLoadContext`,
-it's designed to be used by a native host whose TPA (Trusted Platform Assemblies) list doesn't include powershell assemblies,
+- `SetPowerShellAssemblyLoadContext` - It's designed to be used by a native host
+whose Trusted Platform Assemblies (TPA) do not include powershell assemblies,
 such as the in-box `powershell.exe` and other native CoreCLR host in Nano Server.
 When using this API, instead of setting up a new load context,
 `PowerShellAssemblyLoadContextInitializer` will register a handler to the [Resolving][] event of the default load context.
 Then PowerShell Core will depend on the default load context to handle TPA and the `Resolving` event to handle other assemblies.
 
-- For `InitializeAndCallEntryMethod`,
-it's designed to be used with `dotnet.exe` where the TPA list includes powershell assemblies.
+- `InitializeAndCallEntryMethod` - It's designed to be used with `dotnet.exe`
+where the TPA list includes powershell assemblies.
 When using this API, `PowerShellAssemblyLoadContextInitializer` will set up a new load context to handle all assemblies.
 PowerShell Core itself also uses this API for [bootstrapping][].
 
 This documentation only covers the `InitializeAndCallEntryMethod` API,
 as it's what you need when building a .NET Core application with .NET CLI.
 
-### Example
+### Comparison - Hosting Windows PowerShell vs. Hosting PowerShell Core
 
-The following code is how you host Windows PowerShell in an application.  
-It's straight forward that you can directly run your business logic code from the application entry point `'Main'` method.
+The following code demonstrates how to host Windows PowerShell in an application.  
+As shown below, you can insert your business logic code directly in the `'Main'` method.
 
 ```CSharp
 // MyApp.exe
@@ -122,6 +122,8 @@ namespace Application.Test
 }
 ```
 
+### .NET Core Sample Application
+
 You can find the sample application project `"MyApp"` under [sample-dotnet1.1](./sample-dotnet1.1). 
 To build the sample project, run the following commands:
 
@@ -145,5 +147,6 @@ System.Management.Automation.ActionPreference
 System.Management.Automation.AliasAttribute
 ```
 
+[CorePsAssemblyLoadContext.cs]: https://github.com/PowerShell/PowerShell/blob/master/src/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CoreCLR/CorePsAssemblyLoadContext.cs
 [Resolving]: https://github.com/dotnet/corefx/blob/ec2a6190efa743ab600317f44d757433e44e859b/src/System.Runtime.Loader/ref/System.Runtime.Loader.cs#L35
 [bootstrapping]: https://github.com/PowerShell/PowerShell/blob/master/src/powershell/Program.cs#L27
