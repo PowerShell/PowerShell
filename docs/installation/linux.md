@@ -77,7 +77,15 @@ This works for Debian Stretch (now testing) as well.
 
 ## CentOS 7
 
-Using [CentOS 7][], download the RPM package
+Using CentOS 7, you can install PowerShell via the official Microsoft Packages repository:
+```sh
+sudo rpm -Uvh http://packages.microsoft.com/config/rhel/7/packages-microsoft-prod.rpm
+sudo yum install powershell
+```
+
+With this method, future PowerShell updates will be installed automatically with `sudo yum update`.
+
+You can also install PowerShell by manualling downloading the RPM package
 `powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm`
 from the [releases][] page onto the CentOS machine.
 
@@ -92,13 +100,8 @@ You can also install the RPM without the intermediate step of downloading it:
 ```sh
 sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.17/powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm
 ```
-You can also install via the Microsoft Repository
-sudo rpm -Uvh http://packages.microsoft.com/config/rhel/7/packages-microsoft-prod.rpm
-sudo yum install powershell
 
-With this method, future powershell updates will be installed automatically with 'sudo yum update'.
-
-> This package works on Oracle Linux 7. It should work on Red Hat Enterprise Linux 7 too.
+> This package works on Oracle Linux 7. It should work on Red Hat Enterprise Linux (RHEL) 7 too.
 
 ### Uninstallation
 
