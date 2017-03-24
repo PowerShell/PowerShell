@@ -25,6 +25,33 @@ Once the package is installed, run `powershell` from a terminal.
 
 ## Ubuntu 14.04
 
+### Installation via Package Repository
+
+PowerShell Core, for Linux, is published to package repositories for easy installation (and updates).
+This is the preferred method.
+
+```sh
+# Import the public repository GPG keys
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+
+# Register the Microsoft Ubuntu repository
+curl https://packages.microsoft.com/config/ubuntu/14.04/prod.list | sudo tee /etc/apt/sources.list.d/microsoft.list
+
+# Update apt-get
+sudo apt-get update
+
+# Install PowerShell
+sudo apt-get install -y powershell
+
+# Start PowerShell
+powershell
+```
+
+After registering the Microsoft repository once as superuser,
+from then on, you just need to use `sudo apt-get upgrade powershell` to update it.
+
+### Installation via Direct Download
+
 Using [Ubuntu 14.04][], download the Debian package
 `powershell_6.0.0-alpha.17-1ubuntu1.14.04.1_amd64.deb`
 from the [releases][] page onto the Ubuntu machine.
@@ -49,6 +76,33 @@ sudo apt-get remove powershell
 [Ubuntu 14.04]: http://releases.ubuntu.com/14.04/
 
 ## Ubuntu 16.04
+
+### Installation via Package Repository
+
+PowerShell Core, for Linux, is published to package repositories for easy installation (and updates).
+This is the preferred method.
+
+```sh
+# Import the public repository GPG keys
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+
+# Register the Microsoft Ubuntu repository
+curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | sudo tee /etc/apt/sources.list.d/microsoft.list
+
+# Update apt-get
+sudo apt-get update
+
+# Install PowerShell
+sudo apt-get install -y powershell
+
+# Start PowerShell
+powershell
+```
+
+After registering the Microsoft repository once as superuser,
+from then on, you just need to use `sudo apt-get upgrade powershell` to update it.
+
+### Installation via Direct Download
 
 Using [Ubuntu 16.04][], download the Debian package
 `powershell_6.0.0-alpha.17-1ubuntu1.16.04.1_amd64.deb`
@@ -77,15 +131,29 @@ This works for Debian Stretch (now testing) as well.
 
 ## CentOS 7
 
-Using CentOS 7, you can install PowerShell via the official Microsoft Packages repository:
+> This package also works on Oracle Linux 7 and Red Hat Enterprise Linux (RHEL) 7.
+
+### Installation via Package Repository (preferred)
+
+PowerShell Core for Linux is published to official Microsoft repositories for easy installation (and updates).
+
 ```sh
-sudo rpm -Uvh http://packages.microsoft.com/config/rhel/7/packages-microsoft-prod.rpm
-sudo yum install powershell
+# Register the Microsoft RedHat repository
+curl https://packages.microsoft.com/config/rhel/7/prod.repo | sudo tee /etc/yum.repos.d/microsoft.repo
+
+# Install PowerShell
+sudo yum install -y powershell
+
+# Start PowerShell
+powershell
 ```
 
-With this method, future PowerShell updates will be installed automatically with `sudo yum update`.
+After registering the Microsoft repository once as superuser,
+you just need to use `sudo yum update powershell` to update PowerShell.
 
-You can also install PowerShell by manualling downloading the RPM package
+### Installation via Direct Download
+
+Using [CentOS 7][], download the RPM package
 `powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm`
 from the [releases][] page onto the CentOS machine.
 
@@ -100,8 +168,6 @@ You can also install the RPM without the intermediate step of downloading it:
 ```sh
 sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.17/powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm
 ```
-
-> This package works on Oracle Linux 7. It should work on Red Hat Enterprise Linux (RHEL) 7 too.
 
 ### Uninstallation
 

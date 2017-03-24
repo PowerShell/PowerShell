@@ -557,15 +557,11 @@ namespace Microsoft.PowerShell.Commands
 
             // get secure-boot info
             //TODO: Local machine only? Check for that?
-            FirmwareType fwType = FirmwareType.Unknown;
-            if (Native.GetFirmwareType(ref fwType))
-                rv.firmwareType = fwType;
+            rv.firmwareType = GetFirmwareType();
 
             // get amount of memory physically installed
             //TODO: Local machine only. Check for that?
-            UInt64 memory;
-            if (Native.GetPhysicallyInstalledSystemMemory(out memory))
-                rv.physicallyInstalledMemory = memory;
+            rv.physicallyInstalledMemory = GetPhysicallyInstalledSystemMemory();
 
 
             // get time zone
@@ -603,6 +599,54 @@ namespace Microsoft.PowerShell.Commands
             rv.deviceGuard = GetDeviceGuard(session);
 
             return rv;
+        }
+
+        /// <summary>
+        /// Wrapper around the native GetFirmwareType function.
+        /// </summary>
+        /// <returns>
+        /// null if unsuccessful, otherwise FirmwareType enum specifying
+        /// the firmware type.
+        /// </returns>
+        private static Nullable<FirmwareType> GetFirmwareType()
+        {
+            try
+            {
+                FirmwareType firmwareType;
+
+                if (Native.GetFirmwareType(out firmwareType))
+                    return firmwareType;
+            }
+            catch (Exception)
+            {
+                // Probably failed to load the DLL or to file the function entry point.
+                // Fail silently
+            }
+
+            return null;
+        }
+
+        /// <summary>
+        /// Wrapper around the native GetPhysicallyInstalledSystemMemory function.
+        /// </summary>
+        /// <returns>
+        /// null if unsuccessful, otherwise the amount of physically installed memory.
+        /// </returns>
+        private static Nullable<UInt64> GetPhysicallyInstalledSystemMemory()
+        {
+            try
+            {
+                UInt64 memory;
+                if (Native.GetPhysicallyInstalledSystemMemory(out memory))
+                    return memory;
+            }
+            catch (Exception)
+            {
+                // Probably failed to load the DLL or to file the function entry point.
+                // Fail silently
+            }
+
+            return null;
         }
 
         /// <summary>
@@ -1058,11 +1102,19 @@ namespace Microsoft.PowerShell.Commands
             // that accepts an integer LocalID (LCID) value, so we'll PInvoke native code
             // to get a locale name from an LCID value
 
-            var sbName = new System.Text.StringBuilder(Native.LOCALE_NAME_MAX_LENGTH);
-            var len = Native.LCIDToLocaleName(localeID, sbName, sbName.Capacity, 0);
+            try
+            {
+                var sbName = new System.Text.StringBuilder(Native.LOCALE_NAME_MAX_LENGTH);
+                var len = Native.LCIDToLocaleName(localeID, sbName, sbName.Capacity, 0);
 
-            if (len > 0 && sbName.Length > 0)
-                return sbName.ToString();
+                if (len > 0 && sbName.Length > 0)
+                    return sbName.ToString();
+            }
+            catch (Exception)
+            {
+                // Probably failed to load the DLL or to file the function entry point.
+                // Fail silently
+            }
 
             return null;
         }
@@ -5094,7 +5146,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         [DllImport(PInvokeDllNames.GetFirmwareTypeDllName, SetLastError = true)]
         [return: MarshalAs(UnmanagedType.Bool)]
-        public static extern bool GetFirmwareType(ref FirmwareType firmwareType);
+        public static extern bool GetFirmwareType(out FirmwareType firmwareType);
 
         /// <summary>
         /// Convert a Local Identifier to a Locale name

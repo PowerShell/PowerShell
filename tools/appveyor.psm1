@@ -163,7 +163,9 @@ function Invoke-AppVeyorBuild
           Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -Publish
       }
 
-      Start-PSBuild -FullCLR -PSModuleRestore
+      ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+      ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+      <# Start-PSBuild -FullCLR -PSModuleRestore # Disable FullCLR Build #>
       Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release'
 }
 
@@ -289,7 +291,7 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
     $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
-    $testResultsFileFullCLR = "$pwd\TestsResults.FullCLR.xml"
+    <# $testResultsFileFullCLR = "$pwd\TestsResults.FullCLR.xml" # Disable FullCLR Build #>
     if(!(Test-Path "$env:CoreOutput\powershell.exe"))
     {
         throw "CoreCLR PowerShell.exe was not built"
@@ -317,21 +319,23 @@ function Invoke-AppVeyorTest
     Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
 
+    <#
     #
-    # FullCLR
+    # FullCLR # Disable FullCLR Build
     $env:FullOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -FullCLR))
     Write-Host -Foreground Green 'Run FullCLR tests'
     Start-PSPester -FullCLR -bindir $env:FullOutput -outputFile $testResultsFileFullCLR -Tag $null -path 'test/fullCLR'
 
     Write-Host -Foreground Green 'Upload FullCLR test results'
     Update-AppVeyorTestResults -resultsFile $testResultsFileFullCLR
+    #>
 
     #
     # Fail the build, if tests failed
     @(
         $testResultsNonAdminFile,
-        $testResultsAdminFile,
-        $testResultsFileFullCLR
+        $testResultsAdminFile
+        <# $testResultsFileFullCLR # Disable FullCLR Build #>
     ) | % {
         Test-PSPesterResults -TestResultsFile $_
     }
@@ -401,13 +405,16 @@ function Invoke-AppveyorFinish
         $name = Get-PackageName
 
         $zipFilePath = Join-Path $pwd "$name.zip"
-        $zipFileFullPath = Join-Path $pwd "$name.FullCLR.zip"
+        <# $zipFileFullPath = Join-Path $pwd "$name.FullCLR.zip" # Disable FullCLR Build #>
 
         Add-Type -assemblyname System.IO.Compression.FileSystem
         Write-Verbose "Zipping ${env:CoreOutput} into $zipFilePath" -verbose
         [System.IO.Compression.ZipFile]::CreateFromDirectory($env:CoreOutput, $zipFilePath)
+        <#
+         # Disable FullCLR Build
         Write-Verbose "Zipping ${env:FullOutput} into $zipFileFullPath" -verbose
         [System.IO.Compression.ZipFile]::CreateFromDirectory($env:FullOutput, $zipFileFullPath)
+        #>
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
@@ -415,7 +422,7 @@ function Invoke-AppveyorFinish
         }
 
         $null = $artifacts.Add($zipFilePath)
-        $null = $artifacts.Add($zipFileFullPath)
+        <# $null = $artifacts.Add($zipFileFullPath) # Disable FullCLR Build #>
 
         if ($env:APPVEYOR_REPO_TAG_NAME)
         {

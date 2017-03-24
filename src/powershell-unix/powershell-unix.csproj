@@ -1,0 +1,56 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <Description>PowerShell top-level project with .NET CLI host</Description>
+    <VersionPrefix>6.0.0</VersionPrefix>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>powershell</AssemblyName>
+    <OutputType>Exe</OutputType>
+    <RuntimeIdentifiers>ubuntu.14.04-x64;ubuntu.16.04-x64;ubuntu.16.10-x64;debian.8-x64;centos.7-x64;fedora.24-x64;osx.10.11-x64;osx.10.12-x64;opensuse.13.2-x64;opensuse.42.1-x64</RuntimeIdentifiers>
+    <RuntimeFrameworkVersion>1.1.1</RuntimeFrameworkVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\powershell\Program.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
+    <Content Include="..\Modules\Unix\**\*;..\Modules\Shared\**\*" Exclude="..\Modules\Shared\Pester\.git*;..\Modules\Shared\Pester\*.yml">
+      <Link>Modules\%(RecursiveDir)\%(FileName)%(Extension)</Link> 
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="*.so;*.dylib;..\..\license_thirdparty_proprietary.txt;..\..\powershell.version">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.PowerShell.SDK\Microsoft.PowerShell.SDK.csproj" />
+    <ProjectReference Include="..\Microsoft.PowerShell.PSReadLine\Microsoft.PowerShell.PSReadLine.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="libpsrpclient" Version="1.0.0-*" />
+    <PackageReference Include="PSDesiredStateConfiguration" Version="1.0.0-alpha01" />
+    <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-alpha01" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netcoreapp1.1' ">
+    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Linux' ">
+    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+</Project>
