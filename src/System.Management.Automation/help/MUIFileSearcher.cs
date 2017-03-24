@@ -161,7 +161,7 @@ namespace System.Management.Automation
                             string leafFileName = Path.GetFileName(file);
                             string uniqueToDirectory = Path.Combine(directory, leafFileName);
 
-                            if (!_uniqueMatches.Contains(uniqueToDirectory))
+                            if (!_result.Contains(path) && !_uniqueMatches.Contains(uniqueToDirectory))
                             {
                                 _result.Add(path);
                                 _uniqueMatches[uniqueToDirectory] = true;

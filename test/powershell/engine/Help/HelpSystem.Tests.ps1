@@ -180,3 +180,13 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
         }
     }
 }
+
+Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI') {
+
+    It "Get-Help about_should should return help text and not multiple HelpInfo objects" {
+
+        $help = Get-Help about_should
+        $help.count | Should Be 1
+        $help | Should BeOfType System.String
+    }
+}

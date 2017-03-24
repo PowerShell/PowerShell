@@ -273,7 +273,11 @@ namespace System.Management.Automation
             Diagnostics.Assert(searchPaths != null,
                 "HelpSystem returned an null search path");
 
-            searchPaths.Add(GetDefaultShellSearchPath());
+            string defaultShellSearchPath = GetDefaultShellSearchPath();
+            if (!searchPaths.Contains(defaultShellSearchPath))
+            {
+                searchPaths.Add(defaultShellSearchPath);
+            }
 
             return searchPaths;
         }
