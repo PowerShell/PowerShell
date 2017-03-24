@@ -182,11 +182,25 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
 }
 
 Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI') {
+    BeforeAll {
+        $savedPSModulePath = $env:PSModulePath
+        $env:PSModulePath += ";TestDrive:\Modules"
+        $modulePath = "TestDrive:\Modules\Test"
+        $null = New-Item -Path $modulePath\en-us -ItemType Directory -Force
+        New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
+        Set-Content -Path $modulePath\test.psm1 -Value "function foo{}"
+        Set-Content -Path $modulePath\en-us\about_testhelp.help.txt -Value "Hello" -NoNewline
+        Import-Module test
+    }
 
-    It "Get-Help about_should should return help text and not multiple HelpInfo objects" {
+    AfterAll {
+        $env:PSModulePath = $savedPSModulePath
+    }
 
-        $help = Get-Help about_should
+    It "Get-Help should return help text and not multiple HelpInfo objects" {
+
+        $help = Get-Help about_testhelp
         $help.count | Should Be 1
-        $help | Should BeOfType System.String
+        $help | Should BeExactly "Hello"
     }
 }
