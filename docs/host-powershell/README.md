@@ -1,7 +1,7 @@
 # Host PowerShell Core in .NET Core Applications
 
 > This documentation is based on PowerShell Core packages built against .NET Core 1.1 and prior. 
-> Things may change after PowerShell Core starts to build against .NET Core 2.0.
+> Things may change after we move to .NET Core 2.0.
 
 ## PowerShell Core targeting .NET Core 1.1 and Prior
 
@@ -55,7 +55,7 @@ public class Program
 ```
 
 However, when it comes to hosting PowerShell Core, there will be a layer of redirection for the powershell load context to take effect.
-In a .NET Core application, the entry point assembly, where `'Main'` method resides, is loaded in the default load context,
+In a .NET Core application, the entry point assembly that contains the `'Main'` method is loaded in the default load context,
 and thus all assemblies referenced by the entry point assembly, implicitly or explicitly, will also be loaded into the default load context.
 
 In order to have the powershell load context to control assembly loading for the execution of an application,
