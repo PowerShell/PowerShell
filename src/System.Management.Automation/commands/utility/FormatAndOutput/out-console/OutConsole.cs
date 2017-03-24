@@ -43,7 +43,7 @@ namespace Microsoft.PowerShell.Commands
     /// default sink (display to console screen)
     /// </summary>
     [Cmdlet(VerbsData.Out, "Default", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113362", RemotingCapability = RemotingCapability.None)]
-    public class OutDefaultCommand : FrontEndCommandBase, IDisposable
+    public class OutDefaultCommand : FrontEndCommandBase
     {
         /// <summary>
         /// Determines whether objects should be sent to API consumers.
@@ -152,6 +152,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
+            base.InternalDispose();
             Host.UI.TranscribeOnly = _savedTranscribeOnly;
             _disposed = true;
         }
