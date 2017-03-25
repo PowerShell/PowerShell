@@ -1,7 +1,7 @@
 Docker
 ======
 
-These Dockerfiles enable building and running PowerShell in a container for each Linux distribution we support.
+These DockerFiles enable building and running PowerShell in a container for each Linux distribution we support.
 There are two sets: release and nightly.
 
 This requires an up-to-date version of Docker, such as 1.12.

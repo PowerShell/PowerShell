@@ -291,7 +291,7 @@ You *can* run this command manually if you're having trouble with .NET Core's cr
 * User modules will be read from `~/.local/share/powershell/Modules`
 * Shared modules will be read from `/usr/local/share/powershell/Modules`
 * Default modules will be read from `$PSHOME/Modules`
-* PSReadLine history will be recorded to `~/.local/share/powershell/PSReadLine/ConsoleHost_history.txt`
+* PSReadline history will be recorded to `~/.local/share/powershell/PSReadLine/ConsoleHost_history.txt`
 
 The profiles respect PowerShell's per-host configuration,
 so the default host-specific profiles exists at `Microsoft.PowerShell_profile.ps1` in the same locations.
