@@ -1,0 +1,26 @@
+{
+  "name": "powershell.common.markdown.tests",
+  "version": "1.0.0",
+  "description": "The PowerShell Common MarkDown Tests.",
+  "main": "gulpfile.js",
+  "dependencies": {
+    "gulp": "^3.9.1",
+    "through2": "^2.0.1",
+    "markdownlint": "^0.2.0"
+  },
+  "devDependencies": {
+    "gulp-concat": "^2.6.1",
+    "gulp-debug": "^3.0.0",
+    "markdownlint": "^0.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/PowerShell/PowerShell.git"
+  },
+  "author": "Microsoft Corporation",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/PowerShell/PowerShell/issues"
+  },
+  "homepage": "https://github.com/PowerShell/PowerShell#readme"
+}
