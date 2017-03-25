@@ -20,7 +20,7 @@ For Windows you will need to install Win32 Open SSH from GitHub.  For Linux you 
 1.  Install the latest [PowerShell for Windows] build from GitHub
     - You can tell if it has the SSH remoting support by looking at the parameter sets for New-PSSession
     ```powershell
-    PS> Get-ommand New-PSSession -syntax
+    PS> Get-Command New-PSSession -syntax
     New-PSSession [-HostName] <string[]> [-Name <string[]>] [-UserName <string>] [-KeyFilePath <string>] [-SSHTransport] [<CommonParameters>]
     ```
 2.  Install the latest [Win32 Open SSH] build from GitHub using the [installation] instructions
