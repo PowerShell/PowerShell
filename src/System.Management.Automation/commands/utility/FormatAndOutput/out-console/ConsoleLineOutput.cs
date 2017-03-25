@@ -321,7 +321,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     // If the host is in "transcribe only"
                     // mode (due to an implicitly added call to Out-Default -Transcribe),
                     // then don't call the actual host API.
-                    if (!_console.TranscribeOnly)
+                    if (_console.TranscribeOnlyCount == 0)
                     {
                         _console.WriteLine(s);
                     }

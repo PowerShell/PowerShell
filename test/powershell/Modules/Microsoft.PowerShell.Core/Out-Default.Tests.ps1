@@ -6,7 +6,7 @@ Describe "Out-Default Tests" -tag CI {
         $powershell = "$PSHOME/powershell"
     }
 
-    It "'Out-Default -Transcript' shows up in transcript, but not pipeline" {
+    It "'Out-Default -Transcript' shows up in transcript, but not host" {
         $script = @"
             `$null = Start-Transcript -Path "$testdrive\transcript.txt";
             'hello' | Microsoft.PowerShell.Core\Out-Default -Transcript;
