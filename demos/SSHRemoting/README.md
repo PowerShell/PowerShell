@@ -35,7 +35,6 @@ For Windows you will need to install Win32 Open SSH from GitHub.  For Linux you 
     ```
     - Optionally enable key authentication
     ```bash
-    RSAAuthentication yes
     PubkeyAuthentication yes
     ```
 4.  Restart the sshd service
@@ -62,7 +61,6 @@ For Windows you will need to install Win32 Open SSH from GitHub.  For Linux you 
     - Add a PowerShell subsystem entry
       + Subsystem powershell powershell -sshs -NoLogo -NoProfile
     - Optionally enable key authentication
-      + RSAAuthentication yes
       + PubkeyAuthentication yes
 4.  Restart the sshd service
     - sudo service sshd restart
