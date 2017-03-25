@@ -708,7 +708,7 @@ function Start-PSPester {
         [string]$OutputFile = "pester-tests.xml",
         [string[]]$ExcludeTag = 'Slow',
         [string[]]$Tag = "CI",
-        [string]$Path = "$PSScriptRoot/test/powershell",
+        [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
         [switch]$ThrowOnFailure,
         [switch]$FullCLR,
         [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output),
@@ -790,7 +790,7 @@ function Start-PSPester {
         $Command += "-PassThru "
     }
 
-    $Command += "'" + $Path + "'"
+    $Command += "'" + ($Path -join "','") + "'"
     if ($Unelevate)
     {
         $Command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
