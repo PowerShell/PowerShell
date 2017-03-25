@@ -749,3 +749,6 @@ Coveralls.net
 powershell.version
 csmacnz
 Coveralls.exe
+ - docs/host-powershell/README.md
+sample-dotnet1
+CorePsAssemblyLoadContext.cs
