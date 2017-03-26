@@ -390,7 +390,29 @@ namespace System.Management.Automation.Host
         /// so that when content is sent through Out-Default it doesn't
         /// make it to the actual host.
         /// </summary>
-        internal bool TranscribeOnly { get; set; }
+        internal bool TranscribeOnly => transcribeOnlyCount != 0;
+        private int transcribeOnlyCount = 0;
+        internal IDisposable SetTranscribeOnly() => new TranscribeOnlyCookie(this);
+        private sealed class TranscribeOnlyCookie : IDisposable
+        {
+            private PSHostUserInterface ui;
+            private bool disposed = false;
+            public TranscribeOnlyCookie(PSHostUserInterface ui)
+            {
+                this.ui=ui;
+                ++ui.transcribeOnlyCount;
+            }
+            public void Dispose()
+            {
+                if (!disposed)
+                {
+                    --ui.transcribeOnlyCount;
+                    disposed = true;
+                    GC.SuppressFinalize(this);
+                }
+            }
+            ~TranscribeOnlyCookie() => Dispose();
+        }
 
         /// <summary>
         /// Flag to determine whether the host is transcribing.
