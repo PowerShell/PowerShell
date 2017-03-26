@@ -11,6 +11,7 @@ using System.Security;
 using System.Globalization;
 using System.Management.Automation.Runspaces;
 using Microsoft.PowerShell.Commands;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace System.Management.Automation.Host
@@ -390,7 +391,7 @@ namespace System.Management.Automation.Host
         /// so that when content is sent through Out-Default it doesn't
         /// make it to the actual host.
         /// </summary>
-        internal bool TranscribeOnly => transcribeOnlyCount != 0;
+        internal bool TranscribeOnly => Interlocked.CompareExchange(ref transcribeOnlyCount, 0, 0) != 0;
         private int transcribeOnlyCount = 0;
         internal IDisposable SetTranscribeOnly() => new TranscribeOnlyCookie(this);
         private sealed class TranscribeOnlyCookie : IDisposable
@@ -400,13 +401,13 @@ namespace System.Management.Automation.Host
             public TranscribeOnlyCookie(PSHostUserInterface ui)
             {
                 this.ui=ui;
-                ++ui.transcribeOnlyCount;
+                Interlocked.Increment(ref ui.transcribeOnlyCount);
             }
             public void Dispose()
             {
                 if (!disposed)
                 {
-                    --ui.transcribeOnlyCount;
+                    Interlocked.Decrement(ref ui.transcribeOnlyCount);
                     disposed = true;
                     GC.SuppressFinalize(this);
                 }
