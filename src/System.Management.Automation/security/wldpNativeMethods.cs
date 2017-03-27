@@ -105,11 +105,10 @@ namespace System.Management.Automation.Security
             MessageId = "System.Runtime.InteropServices.SafeHandle.DangerousGetHandle")]
         private static SystemEnforcementMode GetWldpPolicy(string path, SafeHandle handle)
         {
-            // If the WLDP assembly is missing (such as windows 7 or down OS), return default/None to skip WLDP validation
             if (s_hadMissingWldpAssembly || !IO.File.Exists(IO.Path.Combine(Environment.SystemDirectory, "wldp.dll")))
             {
                 s_hadMissingWldpAssembly = true;
-                return s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
+                return HandleMissingWldpBinary();
             }
 
             // If path is NULL, see if we have the cached system-wide lockdown policy.
@@ -159,14 +158,41 @@ namespace System.Management.Automation.Security
                     return SystemEnforcementMode.Enforce;
                 }
             }
-            catch (DllNotFoundException)
-            {
-                s_hadMissingWldpAssembly = true;
-                return s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
-            }
+            catch (DllNotFoundException) { }
+            catch (BadImageFormatException) { }
+
+            s_hadMissingWldpAssembly = true;
+            return HandleMissingWldpBinary();
         }
         private static SystemEnforcementMode? s_cachedWldpSystemPolicy = null;
 
+        private static SystemEnforcementMode HandleMissingWldpBinary()
+        {
+            // Try using a Win10 alternative API to check System enforcement.
+            NativeMethods.SYSTEM_CODEINTEGRITYPOLICY_INFORMATION ciPolicyInfo = new NativeMethods.SYSTEM_CODEINTEGRITYPOLICY_INFORMATION();
+            uint ciPolicyInfoSize = (uint)Marshal.SizeOf(typeof(NativeMethods.SYSTEM_CODEINTEGRITYPOLICY_INFORMATION));
+            uint returnLength = 0;
+
+            int result = NativeMethods.NtQueryCodeIntegrityPolicyInfo(
+                NativeMethods.SYSTEM_INFORMATION_CLASS.SystemCodeIntegrityPolicyInformation,
+                ref ciPolicyInfo,
+                ciPolicyInfoSize,
+                ref returnLength);
+
+            // Policy enforcement is enabled when CODEINTEGRITYPOLICY_OPTION_ENABLED option is set and 
+            // CODEINTEGRITYPOLICY_OPTION_AUDIT_ENABLED option is NOT set.
+            // On down level machines that do not support the CodeIntegrityPolicy system information the returned result
+            // variable will be non-zero, which we ignore and return no enforcement mode as before for OSes with missing wldp.dll.
+            if ((result == 0) &&
+                ((ciPolicyInfo.Options & (uint)NativeMethods.CodeIntegrityPolicyOptions.CODEINTEGRITYPOLICY_OPTION_ENABLED) != 0) &&
+                ((ciPolicyInfo.Options & (uint)NativeMethods.CodeIntegrityPolicyOptions.CODEINTEGRITYPOLICY_OPTION_AUDIT_ENABLED) == 0))
+            {
+                return s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.Enforce);
+            }
+
+            // If the WLDP assembly is missing (such as windows 7 or down OS), return default/None to skip WLDP valification
+            return s_cachedWldpSystemPolicy.GetValueOrDefault(SystemEnforcementMode.None);
+        }
 
         private static SystemEnforcementMode GetAppLockerPolicy(string path, SafeHandle handle)
         {
