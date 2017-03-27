@@ -64,11 +64,11 @@ The `Start-PSBootstrap` function does the following:
 - Adds the LLVM package feed
 - Installs our dependencies combined with the dependencies of the .NET CLI toolchain via `apt-get`
 - Uninstalls any prior versions of .NET CLI
-- Downloads and installs the latest .NET CLI 1.0.0-preview3 SDK to `~/.dotnet`
+- Downloads and installs the latest .NET Core SDK 1.0.1 to `~/.dotnet`
 
 If you want to use `dotnet` outside of `Start-PSBuild`, add `~/.dotnet` to your `PATH` environment variable.
 
-[dotnet-cli]: https://github.com/dotnet/cli#new-to-net-cli
+[dotnet-cli]: https://github.com/dotnet/cli
 [CMake]: https://cmake.org/cmake/help/v2.8.12/cmake.html
 
 .NET CLI
@@ -76,12 +76,12 @@ If you want to use `dotnet` outside of `Start-PSBuild`, add `~/.dotnet` to your 
 
 If you have any problems installing `dotnet`, please see their [documentation][cli-docs].
 
-The version of .NET CLI is very important; you need a recent build of 1.0.0 (**not** 1.0.1).
+The version of .NET CLI is very important; the version we are currently using is `1.0.1`.
 
 Previous installations of DNX, `dnvm`, or older installations of .NET CLI can cause odd failures when running. 
 Please check your version and uninstall prior any prior versions.
 
-[cli-docs]: https://dotnet.github.io/getting-started/
+[cli-docs]: https://www.microsoft.com/net/core
 
 Build using our module
 ======================
@@ -145,7 +145,7 @@ dotnet build --configuration Linux
 ```
 
 The executable will be in `./bin/[configuration]/[framework]/[rid]/[binary name]`, 
-where our configuration is `Linux`, framework is `netcoreapp1.0`, 
+where our configuration is `Linux`, framework is `netcoreapp1.1`, 
 runtime identifier is `ubuntu.14.04-x64`, and binary name is `powershell`. 
 The function `Get-PSOutput` will return the path to the executable; 
 thus you can execute the development copy via `& (Get-PSOutput)`.
