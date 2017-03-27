@@ -1,9 +1,10 @@
 # ![logo][] PowerShell
 
 Welcome to the PowerShell GitHub Community!
-PowerShell is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework that works well with your existing tools and is optimized for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models.
-It includes a command-line shell, an associated scripting language and a framework for processing cmdlets.
-
+PowerShell is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework
+that works well with your existing tools and is optimized for dealing with structured data
+(e.g. JSON, CSV, XML, etc.), REST APIs, and object models.  It includes a command-line shell, an
+associated scripting language and a framework for processing cmdlets.
 
 [logo]: assets/Powershell_64.png
 
@@ -149,7 +150,7 @@ PowerShell is licensed under the [MIT license][].
 
 ## Governance
 
-Governance policy for PowerShell project is described [here][].  
+Governance policy for PowerShell project is described [here][].
 
 [here]: https://github.com/PowerShell/PowerShell/blob/master/docs/community/governance.md
 
