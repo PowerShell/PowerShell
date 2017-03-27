@@ -1412,7 +1412,7 @@ function Start-PSPackage {
                 Start-NativeExecution { bash -iex "$PSScriptRoot/tools/appimage.sh" }
                 $appImage = Get-Item PowerShell-*.AppImage
                 if ($appImage.Count -gt 1) {
-                    Write-Error "Found more than one AppImage package"
+                    throw "Found more than one AppImage package, remove all *.AppImage files and try to create the package again"
                 }
                 Rename-Item $appImage.Name $appImage.Name.Replace("-","-$Version-")
             } else {
