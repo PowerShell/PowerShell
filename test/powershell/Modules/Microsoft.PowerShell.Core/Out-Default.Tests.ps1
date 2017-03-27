@@ -24,5 +24,16 @@ Describe "Out-Default Tests" -tag CI {
 
     It "Out-Default reverts transcription state when exception occurs in pipeline" {
         & $powershell -c "try { & { throw } | Out-Default -Transcript } catch {}; 'Hello'" | Should BeExactly "Hello"
-    }    
+    }
+
+    It "Out-Default reverts transcription state even if Dispose() isn't called" {
+        $script = @"
+            `$sp = {Out-Default -Transcript}.GetSteppablePipeline();
+            `$sp.Begin(`$false);
+            `$sp = `$null;
+            [GC]::Collect();
+            'hello'
+"@
+        & $powershell -c $script | Should BeExactly 'hello'
+    }
 }
