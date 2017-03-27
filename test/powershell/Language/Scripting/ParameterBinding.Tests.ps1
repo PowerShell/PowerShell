@@ -1,7 +1,4 @@
-﻿Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1 -ErrorAction SilentlyContinue
-Import-Module $PSScriptRoot\..\..\Common\TestHostCS.psm1 -ErrorAction SilentlyContinue
-
-Describe "Tests for parameter binding" -Tags "CI" {
+﻿Describe "Tests for parameter binding" -Tags "CI" {
     Context 'Test of Mandatory parameters' {
         BeforeAll {
             $f = "function get-foo { param([Parameter(mandatory=`$true)] `$a) `$a };"

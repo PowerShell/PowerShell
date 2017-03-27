@@ -1,6 +1,3 @@
-$hostmodule = Join-Path $PSScriptRoot "../../Common/TestHostCS.psm1"
-import-module $hostmodule -ErrorAction SilentlyContinue
-
 Describe "Get-Credential Test" -tag "CI" {
     BeforeAll {
         $th = New-TestHost
