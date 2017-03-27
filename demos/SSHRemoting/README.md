@@ -20,7 +20,7 @@ For Windows you will need to install Win32 Open SSH from GitHub.  For Linux you 
 1.  Install the latest [PowerShell for Windows] build from GitHub
     - You can tell if it has the SSH remoting support by looking at the parameter sets for New-PSSession
     ```powershell
-    PS> Get-ommand New-PSSession -syntax
+    PS> Get-Command New-PSSession -syntax
     New-PSSession [-HostName] <string[]> [-Name <string[]>] [-UserName <string>] [-KeyFilePath <string>] [-SSHTransport] [<CommonParameters>]
     ```
 2.  Install the latest [Win32 Open SSH] build from GitHub using the [installation] instructions
@@ -35,7 +35,6 @@ For Windows you will need to install Win32 Open SSH from GitHub.  For Linux you 
     ```
     - Optionally enable key authentication
     ```bash
-    RSAAuthentication yes
     PubkeyAuthentication yes
     ```
 4.  Restart the sshd service
@@ -62,7 +61,6 @@ For Windows you will need to install Win32 Open SSH from GitHub.  For Linux you 
     - Add a PowerShell subsystem entry
       + Subsystem powershell powershell -sshs -NoLogo -NoProfile
     - Optionally enable key authentication
-      + RSAAuthentication yes
       + PubkeyAuthentication yes
 4.  Restart the sshd service
     - sudo service sshd restart
@@ -113,6 +111,44 @@ PTestName@WinVM1s password:
 Microsoft Windows [Version 10.0.10586]
 
 [WinVM1]: PS C:\Users\PTestName\Documents> 
+
+#
+# Windows to Windows
+#
+C:\Users\PSUser\Documents>"C:\Program Files\PowerShell\6.0.0.17\powershell.exe"
+PowerShell
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+PS C:\Users\PSUser\Documents> $session = New-PSSession -HostName WinVM2 -UserName PSRemoteUser
+The authenticity of host 'WinVM2 (10.13.37.3)' can't be established.
+ECDSA key fingerprint is SHA256:kSU6slAROyQVMEynVIXAdxSiZpwDBigpAF/TXjjWjmw.
+Are you sure you want to continue connecting (yes/no)?
+Warning: Permanently added 'WinVM2,10.13.37.3' (ECDSA) to the list of known hosts.
+PSRemoteUser@WinVM2's password:
+PS C:\Users\PSUser\Documents> $session
+
+ Id Name            ComputerName    ComputerType    State         ConfigurationName     Availability
+ -- ----            ------------    ------------    -----         -----------------     ------------
+  1 SSH1            WinVM2          RemoteMachine   Opened        DefaultShell             Available
+
+
+PS C:\Users\PSUser\Documents> Enter-PSSession -Session $session
+[WinVM2]: PS C:\Users\PSRemoteUser\Documents> $PSVersionTable
+
+Name                           Value
+----                           -----
+PSEdition                      Core
+PSCompatibleVersions           {1.0, 2.0, 3.0, 4.0...}
+SerializationVersion           1.1.0.1
+BuildVersion                   3.0.0.0
+CLRVersion
+PSVersion                      6.0.0-alpha
+WSManStackVersion              3.0
+PSRemotingProtocolVersion      2.3
+GitCommitId                    v6.0.0-alpha.17
+
+
+[WinVM2]: PS C:\Users\PSRemoteUser\Documents>
 ```
 
 ### Known Issues:
