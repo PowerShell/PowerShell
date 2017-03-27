@@ -2,8 +2,6 @@ $moduleRootFilePath = Split-Path -Path $PSScriptRoot -Parent
 
 # Identify the repository root path of the resource module
 $repoRootPath = (Resolve-Path -LiteralPath (Join-path $moduleRootFilePath "../..")).ProviderPath
-Write-Verbose -message "RepoRoot: $repoRootPath" -Verbose
-Write-Verbose -message "PSScriptRoot: $PSScriptRoot" -Verbose
 $repoRootPathFound = $false
 
 Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
@@ -72,7 +70,6 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 './docs/installation/*.md'
             )
             $filter = ($docsToTest -join ',')
-            Write-Verbose "Filter: $filter" -Verbose
             &"gulp" test-mdsyntax --silent `
                 --rootpath $repoRootPath `
                 --filter $filter
@@ -95,7 +92,6 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
 
         $mdIssuesPath = Join-Path -Path $PSScriptRoot -ChildPath "markdownissues.txt"
 
-        Write-Verbose "$mdIssuesPath should exist" -Verbose
         $mdIssuesPath | should exist
 
         Get-Content -Path $mdIssuesPath | ForEach-Object -Process {
