@@ -276,7 +276,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 long totalLength = 0;
                 byte[] buffer = new byte[StreamHelper.ChunkSize];
-                ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, StringUtil.Format(WebCmdletStrings.ReadResponseProgressStatus, 0));
+                ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
                 for (int read = 1; 0 < read; totalLength += read)
                 {
                     if (null != _ownerCmdlet)
