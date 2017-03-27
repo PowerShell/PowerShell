@@ -1044,6 +1044,11 @@ namespace System.Management.Automation
             string folderPath = null;
 
 #if UNIX
+            string envHome = System.Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
+            if (null == envHome)
+            {
+                envHome = Platform.GetTemporaryDirectory();
+            }
             switch (folder)
             {
                 case SpecialFolder.ProgramFiles:
@@ -1060,11 +1065,22 @@ namespace System.Management.Automation
                     if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
                     break;
                 case SpecialFolder.Personal:
-                    folderPath = System.Environment.GetEnvironmentVariable("HOME");
+                    folderPath = envHome;
                     break;
                 case SpecialFolder.LocalApplicationData:
-                    folderPath = System.IO.Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".config");
-                    if (!System.IO.Directory.Exists(folderPath)) { System.IO.Directory.CreateDirectory(folderPath); }
+                    folderPath = System.IO.Path.Combine(envHome, ".config");
+                    if (!System.IO.Directory.Exists(folderPath)) 
+                    {
+                        try
+                        {
+                            System.IO.Directory.CreateDirectory(folderPath); 
+                        }
+                        catch (UnauthorizedAccessException)
+                        {
+                            // directory creation may fail if the account doesn't have filesystem permission such as some service accounts
+                            folderPath = String.Empty;
+                        }
+                    }
                     break;
                 default:
                     throw new NotSupportedException();
@@ -1100,7 +1116,7 @@ namespace System.Management.Automation
                     }
                     break;
                 case SpecialFolder.MyDocuments: // same as SpecialFolder.Personal
-                    userProfile = System.Environment.GetEnvironmentVariable("USERPROFILE");
+                    userProfile = System.Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
                     if (userProfile != null)
                     {
                         folderPath = System.IO.Path.Combine(userProfile, "Documents");
@@ -1117,7 +1133,7 @@ namespace System.Management.Automation
                         // It's guaranteed by NanoServer team that 'USERPROFILE' will be already set when SetupComplete.cmd runs.
                         // So we use the path '%USERPROFILE%\AppData\Local' as an alternative in this case, and also set the env
                         // variable %LOCALAPPDATA% to it, so that modules running in PS can depend on this env variable.
-                        userProfile = System.Environment.GetEnvironmentVariable("USERPROFILE");
+                        userProfile = System.Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
                         if (userProfile != null)
                         {
                             string alternatePath = System.IO.Path.Combine(userProfile, @"AppData\Local");

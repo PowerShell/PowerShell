@@ -604,6 +604,30 @@ namespace System.Management.Automation
 #endif
         }
 
+        /// <summary>
+        /// Get a temporary directory to use, needs to be unique to avoid collision
+        /// </summary>
+        internal static string GetTemporaryDirectory()
+        {
+            string tempDir = String.Empty;
+            string tempPath = Path.GetTempPath();
+            do
+            {
+                tempDir = Path.Combine(tempPath,System.Guid.NewGuid().ToString());
+            }
+            while (Directory.Exists(tempDir));
+
+            try
+            {
+                Directory.CreateDirectory(tempDir);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                tempDir = String.Empty; // will become current working directory
+            }
+            return tempDir;
+        }
+
         internal static string GetHostName()
         {
             // Note: non-windows CoreCLR does not support System.Net yet

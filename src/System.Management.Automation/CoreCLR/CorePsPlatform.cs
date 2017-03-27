@@ -16,6 +16,8 @@ namespace System.Management.Automation
     /// </summary>
     public static class Platform
     {
+        private static string _tempDirectory = null;
+
         /// <summary>
         /// True if the current platform is Linux.
         /// </summary>
@@ -204,6 +206,41 @@ namespace System.Management.Automation
 #endif
         }
 
+        /// <summary>
+        /// Remove the temporary directory created for the current process
+        /// </summary>
+        internal static void RemoveTemporaryDirectory()
+        {
+            if (null == _tempDirectory)
+            {
+                return;
+            }
+
+            try
+            {
+                Directory.Delete(_tempDirectory, true);
+            }
+            catch
+            {
+                // ignore if there is a failure
+            }
+            _tempDirectory = null;
+        }
+
+        /// <summary>
+        /// Get a temporary directory to use for the current process
+        /// </summary>
+        internal static string GetTemporaryDirectory()
+        {
+            if (null != _tempDirectory)
+            {
+                return _tempDirectory;
+            }
+
+            _tempDirectory = PsUtils.GetTemporaryDirectory();
+            return _tempDirectory;
+        }
+
 #if UNIX
         /// <summary>
         /// X Desktop Group configuration type enum.
@@ -234,10 +271,15 @@ namespace System.Management.Automation
             string xdgconfighome = System.Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
             string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
-            string xdgConfigHomeDefault = Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".config", "powershell");
-            string xdgDataHomeDefault = Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".local", "share", "powershell");
+            string envHome = System.Environment.GetEnvironmentVariable(CommonEnvVariableNames.Home);
+            if (null == envHome)
+            {
+                envHome = GetTemporaryDirectory();
+            }
+            string xdgConfigHomeDefault = Path.Combine(envHome, ".config", "powershell");
+            string xdgDataHomeDefault = Path.Combine(envHome, ".local", "share", "powershell");
             string xdgModuleDefault = Path.Combine(xdgDataHomeDefault, "Modules");
-            string xdgCacheDefault = Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".cache", "powershell");
+            string xdgCacheDefault = Path.Combine(envHome, ".cache", "powershell");
 
             switch (dirpath)
             {
@@ -268,6 +310,7 @@ namespace System.Management.Automation
                             catch (UnauthorizedAccessException)
                             {
                                 //service accounts won't have permission to create user folder
+                                return GetTemporaryDirectory();
                             }
                         }
                         return xdgDataHomeDefault;
@@ -291,6 +334,7 @@ namespace System.Management.Automation
                             catch (UnauthorizedAccessException)
                             {
                                 //service accounts won't have permission to create user folder
+                                return GetTemporaryDirectory();
                             }
                         }
                         return xdgModuleDefault;
@@ -317,6 +361,7 @@ namespace System.Management.Automation
                             catch (UnauthorizedAccessException)
                             {
                                 //service accounts won't have permission to create user folder
+                                return GetTemporaryDirectory();
                             }
                         }
 
@@ -334,6 +379,7 @@ namespace System.Management.Automation
                             catch (UnauthorizedAccessException)
                             {
                                 //service accounts won't have permission to create user folder
+                                return GetTemporaryDirectory();
                             }                                
                         }
 
