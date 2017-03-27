@@ -66,7 +66,7 @@ namespace System.Management.Automation.Language
 
         internal static DynamicMetaObject WriteToDebugLog(this DynamicMetaObject obj, DynamicMetaObjectBinder binder)
         {
-#if ENABLE_BINDER_DEBUG_LOGGING && !CORECLR
+#if ENABLE_BINDER_DEBUG_LOGGING
             if (obj != FakeError)
             {
                 System.Diagnostics.Debug.WriteLine("Binder: {0}\r\n    Restrictions: {2}\r\n    Target: {1}",
@@ -328,7 +328,7 @@ namespace System.Management.Automation.Language
                                          bindingRestrictions);
         }
 
-#if ENABLE_BINDER_DEBUG_LOGGING && !CORECLR
+#if ENABLE_BINDER_DEBUG_LOGGING
         internal static string ToDebugString(this BindingRestrictions restrictions)
         {
             return restrictions.ToExpression().ToDebugString();
@@ -336,7 +336,7 @@ namespace System.Management.Automation.Language
 #endif
     }
 
-    internal static class DynamicMetaObjectBinderExtentions
+    internal static class DynamicMetaObjectBinderExtensions
     {
         internal static DynamicMetaObject DeferForPSObject(this DynamicMetaObjectBinder binder,
                                                            params DynamicMetaObject[] args)
@@ -400,35 +400,34 @@ namespace System.Management.Automation.Language
 
         internal static BindingRestrictions GetLanguageModeCheckIfHasEverUsedConstrainedLanguage()
         {
-            BindingRestrictions languageModeRestriction = BindingRestrictions.Empty;
-
             // Also add a language mode check to detect toggling between language modes
             if (ExecutionContext.HasEverUsedConstrainedLanguage)
             {
                 var context = LocalPipeline.GetExecutionContextFromTLS();
 
-                switch (context.LanguageMode)
-                {
-                    case PSLanguageMode.ConstrainedLanguage:
-                        languageModeRestriction = BindingRestrictions.GetExpressionRestriction(
-                             Expression.Equal(
-                                 Expression.Property(
-                                     ExpressionCache.GetExecutionContextFromTLS,
-                                     CachedReflectionInfo.ExecutionContext_LanguageMode),
-                                 Expression.Constant(PSLanguageMode.ConstrainedLanguage)));
-                        break;
-                    default:
-                        languageModeRestriction = BindingRestrictions.GetExpressionRestriction(
-                             Expression.NotEqual(
-                                 Expression.Property(
-                                     ExpressionCache.GetExecutionContextFromTLS,
-                                     CachedReflectionInfo.ExecutionContext_LanguageMode),
-                                 Expression.Constant(PSLanguageMode.ConstrainedLanguage)));
-                        break;
-                }
+                var tmp = Expression.Variable(typeof(ExecutionContext));
+                var langModeFromContext = Expression.Property(tmp, CachedReflectionInfo.ExecutionContext_LanguageMode);
+                var constrainedLanguageMode = Expression.Constant(PSLanguageMode.ConstrainedLanguage);
+
+                // Execution context might be null if we're called from a thread with no runspace (e.g. a PSObject
+                // is used in some C# w/ dynamic). This is sometimes fine, we don't always need a runspace to access
+                // properties.
+                Expression test = context?.LanguageMode == PSLanguageMode.ConstrainedLanguage
+                    ? Expression.AndAlso(
+                          Expression.NotEqual(tmp, ExpressionCache.NullExecutionContext),
+                          Expression.Equal(langModeFromContext, constrainedLanguageMode))
+                    : Expression.OrElse(
+                          Expression.Equal(tmp, ExpressionCache.NullExecutionContext),
+                          Expression.NotEqual(langModeFromContext, constrainedLanguageMode));
+
+                return BindingRestrictions.GetExpressionRestriction(
+                    Expression.Block(
+                        new[] {tmp},
+                        Expression.Assign(tmp, ExpressionCache.GetExecutionContextFromTLS),
+                        test));
             }
 
-            return languageModeRestriction;
+            return BindingRestrictions.Empty;
         }
 
         internal static BindingRestrictions GetOptionalVersionAndLanguageCheckForType(DynamicMetaObjectBinder binder, Type targetType, int expectedVersionNumber)
@@ -455,7 +454,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Some classes that implement IEnumerable are not considered as enumerable from the perspective of pipelines,
     /// this binder implements those semantics.
-    /// 
+    ///
     /// The standard interop ConvertBinder is used to allow third party dynamic objects to get the first chance
     /// at the conversion in case they do support enumeration, but do not implement IEnumerable directly.
     /// </summary>
@@ -999,7 +998,7 @@ namespace System.Management.Automation.Language
 
     /// <summary>
     /// This binder is used to convert objects to string in specific circumstances, including:
-    /// 
+    ///
     ///     * The LHS of a format expression.  The arguments (the RHS objects) of the format
     ///       expression are not converted to string here, that is defered to String.Format which
     ///       may have some custom formatting to apply.
@@ -1431,10 +1430,7 @@ namespace System.Management.Automation.Language
                 var indexResult = PSSetIndexBinder.Get(1).FallbackSetIndex(target, new[] { args[0] }, args[1]);
                 resultExpr = Expression.TryCatch(
                     indexResult.Expression,
-                    Expression.Catch(exception,
-                        Expression.Block(
-                            Expression.Call(CachedReflectionInfo.CommandProcessorBase_CheckForSevereException, exception),
-                            result)));
+                    Expression.Catch(exception, result));
             }
             else
             {
@@ -1723,20 +1719,18 @@ namespace System.Management.Automation.Language
                     argIndex += 1;
                 }
 
-                // We wrap the block of assignements in a try/catch and issue a general error message whenever the assignment fails.
+                // We wrap the block of assignments in a try/catch and issue a general error message whenever the assignment fails.
                 var exception = Expression.Parameter(typeof(Exception));
-                var block = Expression.Block(
+                result = Expression.Block(
+                    new ParameterExpression[] { tmp },
                     Expression.Assign(tmp, result),
                     Expression.TryCatch(
                         Expression.Block(typeof(void), blockExprs),
                         Expression.Catch(
                             exception,
-                            Expression.Block(
-                               Expression.Call(CachedReflectionInfo.CommandProcessorBase_CheckForSevereException, exception),
-                               Compiler.ThrowRuntimeErrorWithInnerException("PropertyAssignmentException", Expression.Property(exception, "Message"), exception, typeof(void))))),
+                            Compiler.ThrowRuntimeErrorWithInnerException("PropertyAssignmentException", Expression.Property(exception, "Message"), exception, typeof(void)))),
                     // The result of the block is the object constructed, so the tmp must be the last expr in the block.
                     tmp);
-                result = Expression.Block(new ParameterExpression[] { tmp }, block);
             }
 
             return new DynamicMetaObject(result, target.CombineRestrictions(args));
@@ -1909,7 +1903,7 @@ namespace System.Management.Automation.Language
             //    * return expr
             //    * tmp = expr; return tmp (make a copy)
             //    * return CopyInstanceMembersOfValueType((T)expr, expr) (make a copy, also copy instance members)
-            //    
+            //
             // If we've never seen an instance member for a given type, we can avoid the expensive call to
             // CopyInstanceMembersOfValueType, but if somebody adds an instance member in the future, we need to invalidate
             // previously generated rules.  We do that with the version check.
@@ -2178,7 +2172,7 @@ namespace System.Management.Automation.Language
 
             return (errorSuggestion ??
                     new DynamicMetaObject(
-                        Compiler.CreateThrow(typeof(object), typeof(PSNotImplementedException), "Unimplemented operaton"),
+                        Compiler.CreateThrow(typeof(object), typeof(PSNotImplementedException), "Unimplemented operation"),
                         target.CombineRestrictions(arg))).WriteToDebugLog(this);
         }
 
@@ -2483,7 +2477,7 @@ namespace System.Management.Automation.Language
             //     tmp = Parser.ScanNumber(arg)
             //     if (tmp == null) { throw new RuntimeError("BadNumericConstant") }
             //     dynamic op target tmp
-            // For equality comparision operators, if the conversion fails, we shouldn't raise
+            // For equality comparison operators, if the conversion fails, we shouldn't raise
             // an exception, so those must be wrapped in try/catch, like:
             //     try { /* as above */ }
             //     catch (InvalidCastException) { true or false (depending on Operation type) }
@@ -2520,7 +2514,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Use the tokenzier to scan a number and convert it to a number of any type.
+        /// Use the tokenizer to scan a number and convert it to a number of any type.
         /// </summary>
         /// <param name="expr">
         /// The expression that refers to a string to be converted to a number of any type.
@@ -2534,7 +2528,7 @@ namespace System.Management.Automation.Language
             if (!toType.IsNumeric())
             {
                 // toType is only mostly for diagnostics, so it doesn't need to be correct.  If it's not numeric, we're
-                // doing something like "42" - "10", and toType is the type of the "other" operand, in this case, it 
+                // doing something like "42" - "10", and toType is the type of the "other" operand, in this case, it
                 // would string.  Fall back to int if Parser.ScanNumber fails.
                 toType = typeof(int);
             }
@@ -2933,20 +2927,22 @@ namespace System.Management.Automation.Language
 
                 // Figure out the smallest type necessary so we don't lose information.
                 // For uint, V2 promoted to long, but it's more correct to use uint.
-                // For ulong, V2 incorreclty used long, this is fixed here.
+                // For ulong, V2 incorrectly used long, this is fixed here.
                 // For float, double, and decimal operands, we used to use long because V2 did.
                 // Because we use unsigned for -bnot, to be consistent, we promote to unsigned here too (-band,-bor,-xor)
                 opType = GetBitwiseOpType((int)leftTypeCode >= (int)rightTypeCode ? leftTypeCode : rightTypeCode);
 
                 if (numericTarget != null && numericArg != null)
                 {
-                    var expr = exprGenerator(numericTarget.Expression.Cast(target.LimitType).Cast(opType),
-                        numericArg.Expression.Cast(numericArg.LimitType).Cast(opType)).Cast(typeof(object));
+                    var expr = exprGenerator(numericTarget.Expression.Cast(numericTarget.LimitType).Cast(opType),
+                                             numericArg.Expression.Cast(numericArg.LimitType).Cast(opType));
 
                     if (target.LimitType.GetTypeInfo().IsEnum)
                     {
-                        expr = expr.Cast(target.LimitType).Cast(typeof(object));
+                        expr = expr.Cast(target.LimitType);
                     }
+
+                    expr = expr.Cast(typeof(object));
                     return new DynamicMetaObject(expr, numericTarget.CombineRestrictions(numericArg));
                 }
             }
@@ -3068,7 +3064,7 @@ namespace System.Management.Automation.Language
             BindingRestrictions bindingRestrictions = target.CombineRestrictions(arg);
             bindingRestrictions = bindingRestrictions.Merge(BinderUtils.GetOptionalVersionAndLanguageCheckForType(this, targetType, _version));
 
-            // If there is no conversion, then just rely on 'objectEqualsCall' which most likely will return false. If we attempted the 
+            // If there is no conversion, then just rely on 'objectEqualsCall' which most likely will return false. If we attempted the
             // conversion, we'd need extra code to catch an exception we know will happen just to return false.
             if (conversion.Rank == ConversionRank.None)
             {
@@ -3120,7 +3116,7 @@ namespace System.Management.Automation.Language
             }
 
             return BinaryComparisonCommon(enumerable, target, arg)
-                ?? BinaryComparision(target, arg, e => Expression.LessThan(e, ExpressionCache.Constant(0)));
+                ?? BinaryComparison(target, arg, e => Expression.LessThan(e, ExpressionCache.Constant(0)));
         }
 
         private DynamicMetaObject CompareLE(DynamicMetaObject target,
@@ -3140,7 +3136,7 @@ namespace System.Management.Automation.Language
             }
 
             return BinaryComparisonCommon(enumerable, target, arg)
-                ?? BinaryComparision(target, arg, e => Expression.LessThanOrEqual(e, ExpressionCache.Constant(0)));
+                ?? BinaryComparison(target, arg, e => Expression.LessThanOrEqual(e, ExpressionCache.Constant(0)));
         }
 
         private DynamicMetaObject CompareGT(DynamicMetaObject target,
@@ -3162,7 +3158,7 @@ namespace System.Management.Automation.Language
             }
 
             return BinaryComparisonCommon(enumerable, target, arg)
-                ?? BinaryComparision(target, arg, e => Expression.GreaterThan(e, ExpressionCache.Constant(0)));
+                ?? BinaryComparison(target, arg, e => Expression.GreaterThan(e, ExpressionCache.Constant(0)));
         }
 
         private DynamicMetaObject CompareGE(DynamicMetaObject target,
@@ -3184,10 +3180,10 @@ namespace System.Management.Automation.Language
             }
 
             return BinaryComparisonCommon(enumerable, target, arg)
-                ?? BinaryComparision(target, arg, e => Expression.GreaterThanOrEqual(e, ExpressionCache.Constant(0)));
+                ?? BinaryComparison(target, arg, e => Expression.GreaterThanOrEqual(e, ExpressionCache.Constant(0)));
         }
 
-        private DynamicMetaObject BinaryComparision(DynamicMetaObject target, DynamicMetaObject arg, Func<Expression, Expression> toResult)
+        private DynamicMetaObject BinaryComparison(DynamicMetaObject target, DynamicMetaObject arg, Func<Expression, Expression> toResult)
         {
             if (target.LimitType == typeof(string))
             {
@@ -4048,9 +4044,8 @@ namespace System.Management.Automation.Language
             //       len = obj.Length
             //       if (index < 0)
             //           index = index + len
-            //       obj[index] 
+            //       obj[index]
             //    } catch (Exception e) {
-            //        CheckForSevereException(e);
             //        if (StrictMode(3)) { throw }
             //        $null
             //    }
@@ -4074,7 +4069,7 @@ namespace System.Management.Automation.Language
                 generateIndexOperation(targetTmp, indexTmp));
 
             return new DynamicMetaObject(
-                // Do the indexing within a try/catch so we can return $null if the index is out of bounds, 
+                // Do the indexing within a try/catch so we can return $null if the index is out of bounds,
                 // or if the index cast fails, e.g. $a = @(1); $a['abc']
                 SafeIndexResult(block),
                 target.CombineRestrictions(index));
@@ -4321,7 +4316,6 @@ namespace System.Management.Automation.Language
                 Expression.Catch(
                     exception,
                     Expression.Block(
-                        Expression.Call(CachedReflectionInfo.CommandProcessorBase_CheckForSevereException, exception),
                         Expression.IfThen(Compiler.IsStrictMode(3), Expression.Rethrow()),
                         GetNullResult())));
         }
@@ -5222,9 +5216,9 @@ namespace System.Management.Automation.Language
             }
 
             var type = castToType ?? ((value != null) ? value.GetType() : typeof(object));
-#if CORECLR 
+#if CORECLR
             var typeInfo = type.GetTypeInfo();
-            // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up 
+            // Assemblies in CoreCLR might not allow reflection execution on their internal types. In such case, we walk up
             // the derivation chain to find the first public parent, and use reflection methods on the public parent.
             if (!TypeResolver.IsPublic(typeInfo) && DotNetAdapter.DisallowPrivateReflection(typeInfo))
             {
@@ -5311,10 +5305,10 @@ namespace System.Management.Automation.Language
                                         new object[] { Name });
         }
 
-        internal static DynamicMetaObject EnsureAllowedInLanguageMode(PSLanguageMode languageMode, DynamicMetaObject target, Object targetValue,
+        internal static DynamicMetaObject EnsureAllowedInLanguageMode(ExecutionContext context, DynamicMetaObject target, Object targetValue,
             string name, bool isStatic, DynamicMetaObject[] args, BindingRestrictions moreTests, string errorID, string resourceString)
         {
-            if (languageMode == PSLanguageMode.ConstrainedLanguage)
+            if (context != null && context.LanguageMode == PSLanguageMode.ConstrainedLanguage)
             {
                 if (!IsAllowedInConstrainedLanguage(targetValue, name, isStatic))
                 {
@@ -5364,7 +5358,6 @@ namespace System.Management.Automation.Language
             // If we decide that the dynamic keyword should not mask exceptions, then we should create a new binder
             // from PSObject.PSDynamicMetaObject.BindGetMember that passes in a flag so we know not to wrap in a try/catch.
 
-            var ex = Expression.Variable(typeof(Exception));
             return Expression.TryCatch(
                 expr.Cast(typeof(object)),
                 Expression.Catch(typeof(TerminateException), Expression.Rethrow(typeof(object))),
@@ -5372,10 +5365,7 @@ namespace System.Management.Automation.Language
                 Expression.Catch(typeof(MethodException), Expression.Rethrow(typeof(object))),
                 // This catch is only needed if we have an IDictionary
                 Expression.Catch(typeof(PropertyNotFoundException), Expression.Rethrow(typeof(object))),
-                Expression.Catch(ex,
-                    Expression.Block(
-                        Expression.Call(CachedReflectionInfo.CommandProcessorBase_CheckForSevereException, ex),
-                        ExpressionCache.NullConstant)));
+                Expression.Catch(typeof(Exception), ExpressionCache.NullConstant));
         }
 
         /// <summary>
@@ -5466,10 +5456,10 @@ namespace System.Management.Automation.Language
             }
 
             // Check if the target value is actually a deserialized PSObject.
-            // - If so, we want to use the original value. 
-            //   Mostly, a deserialized object is a PSObject with an empty immediate base object, and it's OK to call PSObject.Base() 
+            // - If so, we want to use the original value.
+            //   Mostly, a deserialized object is a PSObject with an empty immediate base object, and it's OK to call PSObject.Base()
             //   on it in this case, because the method would just return the original PSObject. But if it's the deserialized object of
-            //   a container object (i.e. an object derived from IEnumerable, IList, or IDictionary), the immediate base object is a 
+            //   a container object (i.e. an object derived from IEnumerable, IList, or IDictionary), the immediate base object is a
             //   Hashtable or ArrayList. In such case, we sometimes would lose the psadapted/psextended properties that we actually care
             //   by using the base object.
             //
@@ -5624,7 +5614,7 @@ namespace System.Management.Automation.Language
             if (hasTypeTableMember)
             {
                 // We need to make sure the type table we would use to find a member is the same type table that we used here to
-                // find (or not find) a member.  If they were different type tables, we could easily get different results.                
+                // find (or not find) a member.  If they were different type tables, we could easily get different results.
                 restrictions = restrictions.Merge(
                     BindingRestrictions.GetInstanceRestriction(Expression.Call(CachedReflectionInfo.PSGetMemberBinder_GetTypeTableFromTLS), typeTable));
 
@@ -5821,7 +5811,7 @@ namespace System.Management.Automation.Language
             }
             Expression transformedExpression = originalExpression.Convert(typeof(object));
             var engineIntrinsicsTempVar = Expression.Variable(typeof(EngineIntrinsics));
-            // apply tranformation attributes from right to left
+            // apply transformation attributes from right to left
             for (int i = attributesArray.Length - 1; i >= 0; i--)
             {
                 transformedExpression = Expression.Call(Expression.Constant(attributesArray[i]),
@@ -5968,7 +5958,7 @@ namespace System.Management.Automation.Language
                 // Validate that this is allowed in the current language mode
                 var context = LocalPipeline.GetExecutionContextFromTLS();
                 DynamicMetaObject runtimeError = PSGetMemberBinder.EnsureAllowedInLanguageMode(
-                    context.LanguageMode, target, targetValue, Name, _static, new[] { value }, restrictions,
+                    context, target, targetValue, Name, _static, new[] { value }, restrictions,
                     "PropertySetterNotSupportedInConstrainedLanguage", ParserStrings.PropertySetConstrainedLanguage);
                 if (runtimeError != null)
                 {
@@ -6027,8 +6017,8 @@ namespace System.Management.Automation.Language
                         Expression lhs;
                         Type lhsType;
 
-                        // Populate transformation attributes. 
-                        // Order of attributes is the same as order provided by user in the code 
+                        // Populate transformation attributes.
+                        // Order of attributes is the same as order provided by user in the code
                         // We assume that GetCustomAttributes implemented that way.
                         IEnumerable<ArgumentTransformationAttribute> argumentTransformationAttributes =
                             data.member.GetCustomAttributes<ArgumentTransformationAttribute>();
@@ -6458,7 +6448,7 @@ namespace System.Management.Automation.Language
                 // Validate that this is allowed in the current language mode
                 var context = LocalPipeline.GetExecutionContextFromTLS();
                 DynamicMetaObject runtimeError = PSGetMemberBinder.EnsureAllowedInLanguageMode(
-                    context.LanguageMode, target, targetValue, Name, _static, args, restrictions,
+                    context, target, targetValue, Name, _static, args, restrictions,
                     "MethodInvocationNotSupportedInConstrainedLanguage", ParserStrings.InvokeMethodConstrainedLanguage);
                 if (runtimeError != null)
                 {
@@ -6499,7 +6489,7 @@ namespace System.Management.Automation.Language
             //  (1) the target value could be a regular PSObject that wraps the Hashtable/ArrayList, i.e. $target = [PSObject]::AsPSObject($hash)
             //  (2) the target value could be a deserialized object (PSObject) with the 'isDeserialized' field to be false, i.e. deserialized Hashtable/ArrayList/Dictionary[string, string]
             //  (3) the target value could be a deserialized object (PSObject) with the 'isDeserialized' field to be true, i.e. deserialized XmlElement
-            // For the first two cases, it's OK to call a .NET method from the base object, such as $target.Add(). 
+            // For the first two cases, it's OK to call a .NET method from the base object, such as $target.Add().
             // For the third case, calling a .NET method from the base object is incorrect, because the original type of the deserialized object doesn't have the method.
             //  example: XmlElement derives from IEnumerable, so it's treated as a container object when powershell does the serialization -- using an ArrayList to hold
             //  its elements -- but we cannot call Add() on it.
@@ -6648,7 +6638,7 @@ namespace System.Management.Automation.Language
 
                 // If we're calling SteppablePipeline.{Begin|Process|End}, we don't want
                 // to wrap exceptions - this is very much a special case to help error
-                // propogation and ensure errors are attributed to the correct code (the
+                // propagation and ensure errors are attributed to the correct code (the
                 // cmdlet invoked, not the method call from some proxy.)
                 if (methodInfo.DeclaringType == typeof(SteppablePipeline)
                     && (methodInfo.Name.Equals("Begin", StringComparison.Ordinal))
@@ -6911,8 +6901,8 @@ namespace System.Management.Automation.Language
         /// <param name="target">The target to operate against</param>
         /// <param name="args">
         ///     Arguments to the operator. The first argument must be either a scriptblock
-        ///     or a string representing a 'simple where' expresson. The second is an enum that controls
-        ///     the matching behaviour returning the first, last or all matching elements. 
+        ///     or a string representing a 'simple where' expression. The second is an enum that controls
+        ///     the matching behaviour returning the first, last or all matching elements.
         /// </param>
         /// <param name="argRestrictions">The binding restrictions for the arguments.</param>
         private DynamicMetaObject InvokeWhereOnCollection(DynamicMetaObject target, DynamicMetaObject[] args, BindingRestrictions argRestrictions)

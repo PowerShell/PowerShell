@@ -3,7 +3,7 @@
     <#
     .EXTERNALHELP Microsoft.PowerShell.Workflow.ServiceCore.dll-help.xml
     #>
-    [CmdletBinding(DefaultParameterSetName='ComputerName', HelpUri='http://go.microsoft.com/fwlink/?LinkID=238268', RemotingCapability='OwnedByCommand')]
+    [CmdletBinding(DefaultParameterSetName='ComputerName', HelpUri='https://go.microsoft.com/fwlink/?LinkID=238268', RemotingCapability='OwnedByCommand')]
     [OutputType([System.Management.Automation.Runspaces.PSSession])]
     param(
         [Parameter(ParameterSetName='ComputerName', Position=0, ValueFromPipeline=$true, ValueFromPipelineByPropertyName=$true)]
@@ -11,7 +11,7 @@
         [ValidateNotNullOrEmpty()]
         [string[]]
         $ComputerName,
-        
+
         [Parameter(ParameterSetName='ComputerName', ValueFromPipelineByPropertyName=$true)]
         [Object]
         $Credential,
@@ -35,7 +35,7 @@
         [Parameter(ParameterSetName='ComputerName')]
         [int]
         $ThrottleLimit,
-                
+
         [Parameter(ParameterSetName='ComputerName')]
         [ValidateNotNull()]
         [System.Management.Automation.Remoting.PSSessionOption]

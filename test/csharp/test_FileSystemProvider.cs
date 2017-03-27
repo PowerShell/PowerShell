@@ -32,7 +32,7 @@ namespace PSTests
 		{
 			File.Delete(testPath);
 		}
-		
+
 		private ExecutionContext GetExecutionContext()
 		{
 			CultureInfo currentCulture = CultureInfo.CurrentCulture;
@@ -47,20 +47,20 @@ namespace PSTests
         {
             ExecutionContext executionContext = GetExecutionContext();
             SessionStateInternal sessionState = new SessionStateInternal(executionContext);
-			
+
 			SessionStateProviderEntry providerEntry = new SessionStateProviderEntry("FileSystem",typeof(FileSystemProvider), null);
 			sessionState.AddSessionStateEntry(providerEntry);
             ProviderInfo matchingProvider = sessionState.ProviderList.ToList()[0];
 
             return matchingProvider;
         }
-		
+
         [Fact]
         public void TestCreateJunctionFails()
         {
             Assert.False(InternalSymbolicLinkLinkCodeMethods.CreateJunction("",""));
         }
-		
+
 		[Fact]
         public void TestGetHelpMaml()
         {
@@ -69,19 +69,19 @@ namespace PSTests
 			Assert.Equal(fileSystemProvider.GetHelpMaml("helpItemName",String.Empty),String.Empty);
 			Assert.Equal(fileSystemProvider.GetHelpMaml(String.Empty,"path"),String.Empty);
         }
-		
+
 		[Fact]
         public void TestMode()
         {
 			Assert.Equal(FileSystemProvider.Mode(null),String.Empty);
 			FileSystemInfo directoryObject = new DirectoryInfo(@"/");
 			FileSystemInfo fileObject = new FileInfo(@"/etc/hosts");
-			FileSystemInfo excutableObject = new FileInfo(@"/bin/echo");
+			FileSystemInfo executableObject = new FileInfo(@"/bin/echo");
 			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(directoryObject)).Replace("r","-"),"d-----");
 			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(fileObject)).Replace("r","-"),"------");
-			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(excutableObject)).Replace("r","-"),"------");
+			Assert.Equal(FileSystemProvider.Mode(PSObject.AsPSObject(executableObject)).Replace("r","-"),"------");
         }
-		
+
 		[Fact]
         public void TestGetProperty()
         {
@@ -103,7 +103,7 @@ namespace PSTests
 				}
 			}
         }
-		
+
 		[Fact]
         public void TestSetProperty()
         {
@@ -122,7 +122,7 @@ namespace PSTests
 				}
 			}
         }
-		
+
 		[Fact]
         public void TestClearProperty()
         {
@@ -132,7 +132,7 @@ namespace PSTests
 			fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
 			fileSystemProvider.ClearProperty(testPath, new Collection<string>(){"Attributes"});
         }
-		
+
 		[Fact]
         public void TestGetContentReader()
         {
@@ -140,12 +140,12 @@ namespace PSTests
 			ProviderInfo providerInfoToSet = GetProvider();
 			fileSystemProvider.SetProviderInformation(providerInfoToSet);
 			fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
-			
+
 			IContentReader contentReader = fileSystemProvider.GetContentReader(testPath);
 			Assert.Equal(contentReader.Read(1)[0],testContent);
 			contentReader.Close();
         }
-		
+
 		[Fact]
         public void TestGetContentWriter()
         {
@@ -153,13 +153,13 @@ namespace PSTests
 			ProviderInfo providerInfoToSet = GetProvider();
 			fileSystemProvider.SetProviderInformation(providerInfoToSet);
 			fileSystemProvider.Context = new CmdletProviderContext(GetExecutionContext());
-			
+
 			IContentWriter contentWriter = fileSystemProvider.GetContentWriter(testPath);
 			contentWriter.Write(new List<string>(){"contentWriterTestContent"});
 			contentWriter.Close();
 			Assert.Equal(File.ReadAllText(testPath), testContent+@"contentWriterTestContent"+ System.Environment.NewLine);
         }
-		
+
 		[Fact]
         public void TestClearContent()
         {

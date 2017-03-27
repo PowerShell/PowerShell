@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This cmdlet sets the provided scheduled job options to the provided ScheduledJobOptions objects.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ScheduledJobOption", DefaultParameterSetName = ScheduledJobOptionCmdletBase.OptionsParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223921")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223921")]
     [OutputType(typeof(ScheduledJobOptions))]
     public class SetScheduledJobOptionCommand : ScheduledJobOptionCmdletBase
     {
@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScheduledJobOptions object.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, 
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true,
                    ParameterSetName = ScheduledJobOptionCmdletBase.OptionsParameterSet)]
         [ValidateNotNull]
         public ScheduledJobOptions InputObject

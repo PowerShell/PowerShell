@@ -1,114 +1,59 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5B0CA2C8-9C4E-460B-A632-0FC22E71DF2A}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <NoStandardLibraries>false</NoStandardLibraries>
+    <Description>PowerShell Host</Description>
+    <VersionPrefix>6.0.0</VersionPrefix>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <NoWarn>$(NoWarn);CS1570</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DelaySign>true</DelaySign>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Microsoft.PowerShell.ConsoleHost</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+    <GenerateAssemblyInformationalVersionAttribute>false</GenerateAssemblyInformationalVersionAttribute>
+    <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+    <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+    <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+    <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+
+  <ItemGroup>
+    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <Compile Remove="singleshell\installer\EngineInstaller.cs" />
+    <Compile Remove="singleshell\installer\MshHostMshSnapin.cs" />
+    <Compile Remove="gen\HostMshSnapinResources.cs" />
+    
+    <EmbeddedResource Remove="resources\HostMshSnapinResources.resx" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Linux' ">
+    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RootNamespace>Microsoft.PowerShell.ConsoleHost</RootNamespace>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UNIX|AnyCPU'">
-    <OutputPath>bin\UNIX\</OutputPath>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CORECLR|AnyCPU'">
-    <OutputPath>bin\CORECLR\</OutputPath>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <PackageReference Include="System.Xml.XDocument" Version="4.3.0" />
+    <PackageReference Include="System.IO.MemoryMappedFiles" Version="4.3.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="gen\CommandLineParameterParserStrings.cs" />
-    <Compile Include="gen\ConsoleControlStrings.cs" />
-    <Compile Include="gen\ConsoleHostRawUserInterfaceStrings.cs" />
-    <Compile Include="gen\ConsoleHostStrings.cs" />
-    <Compile Include="gen\ConsoleHostUserInterfaceSecurityResources.cs" />
-    <Compile Include="gen\ConsoleHostUserInterfaceStrings.cs" />
-    <Compile Include="gen\HostMshSnapinResources.cs" />
-    <Compile Include="gen\ManagedEntranceStrings.cs" />
-    <Compile Include="gen\ProgressNodeStrings.cs" />
-    <Compile Include="gen\TranscriptStrings.cs" />
-    <Compile Include="host\msh\CommandLineParameterParser.cs" />
-    <Compile Include="host\msh\ConsoleControl.cs" />
-    <Compile Include="host\msh\ConsoleHost.cs" />
-    <Compile Include="host\msh\ConsoleHostRawUserInterface.cs" />
-    <Compile Include="host\msh\ConsoleHostTranscript.cs" />
-    <Compile Include="host\msh\ConsoleHostUserInterface.cs" />
-    <Compile Include="host\msh\ConsoleHostUserInterfaceProgress.cs" />
-    <Compile Include="host\msh\ConsoleHostUserInterfacePrompt.cs" />
-    <Compile Include="host\msh\ConsoleHostUserInterfacePromptForChoice.cs" />
-    <Compile Include="host\msh\ConsoleHostUserInterfaceSecurity.cs" />
-    <Compile Include="host\msh\ConsoleShell.cs" />
-    <Compile Include="host\msh\ConsoleTextWriter.cs" />
-    <Compile Include="host\msh\Executor.cs" />
-    <Compile Include="host\msh\ManagedEntrance.cs" />
-    <Compile Include="host\msh\PendingProgress.cs" />
-    <Compile Include="host\msh\ProgressNode.cs" />
-    <Compile Include="host\msh\ProgressPane.cs" />
-    <Compile Include="host\msh\Serialization.cs" />
-    <Compile Include="host\msh\StartTranscriptCmdlet.cs" />
-    <Compile Include="host\msh\StopTranscriptCmdlet.cs" />
-    <Compile Include="singleshell\installer\EngineInstaller.cs" />
-    <Compile Include="singleshell\installer\MshHostMshSnapin.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="map.json" />
-    <None Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="resources\CommandLineParameterParserStrings.resx" />
-    <EmbeddedResource Include="resources\ConsoleControlStrings.resx" />
-    <EmbeddedResource Include="resources\ConsoleHostRawUserInterfaceStrings.resx" />
-    <EmbeddedResource Include="resources\ConsoleHostStrings.resx" />
-    <EmbeddedResource Include="resources\ConsoleHostUserInterfaceSecurityResources.resx" />
-    <EmbeddedResource Include="resources\ConsoleHostUserInterfaceStrings.resx" />
-    <EmbeddedResource Include="resources\HostMshSnapinResources.resx" />
-    <EmbeddedResource Include="resources\ManagedEntranceStrings.resx" />
-    <EmbeddedResource Include="resources\ProgressNodeStrings.resx" />
-    <EmbeddedResource Include="resources\TranscriptStrings.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj">
-      <Project>{1256d32a-be8d-4efe-9769-57be5663209e}</Project>
-      <Name>System.Management.Automation</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
-  <ProjectExtensions>
-    <VisualStudio AllowExistingFolder="true" />
-  </ProjectExtensions>
+
 </Project>

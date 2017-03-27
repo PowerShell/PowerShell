@@ -12,12 +12,12 @@ using Microsoft.PowerShell.LocalAccounts;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Rename-LocalUser cmdlet renames a local user account in the Security 
+    /// The Rename-LocalUser cmdlet renames a local user account in the Security
     /// Accounts Manager.
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "LocalUser",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkID=717983")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkID=717983")]
     [Alias("rnlu")]
     public class RenameLocalUserCommand : Cmdlet
     {
@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameter Properties
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
-        /// Specifies the of the local user account to rename in the local Security 
+        /// Specifies the of the local user account to rename in the local Security
         /// Accounts Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
-        /// Specifies the local user account to be renamed in the local Security 
+        /// Specifies the local user account to be renamed in the local Security
         /// Accounts Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -61,10 +61,10 @@ namespace Microsoft.PowerShell.Commands
             set { this.name = value; }
         }
         private string name;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "NewName".
-        /// Specifies the new name for the local user account in the Security Accounts 
+        /// Specifies the new name for the local user account in the Security Accounts
         /// Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
             set { this.newname = value; }
         }
         private string newname;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "SID".
         /// Specifies the local user to rename.
@@ -95,8 +95,8 @@ namespace Microsoft.PowerShell.Commands
         private System.Security.Principal.SecurityIdentifier sid;
         #endregion Parameter Properties
 
-      
-      
+
+
         #region Cmdlet Overrides
         /// <summary>
         /// BeginProcessing method.
@@ -124,7 +124,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        
+
         /// <summary>
         /// EndProcessing method.
         /// </summary>

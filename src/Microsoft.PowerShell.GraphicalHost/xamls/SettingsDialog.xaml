@@ -23,7 +23,7 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
-                <CheckBox x:Name="Synopsys" Margin="5" Grid.Row="0" Grid.Column="0" Content="{x:Static this:HelpWindowResources.SynopsisTitle}"></CheckBox>
+                <CheckBox x:Name="Synopsis" Margin="5" Grid.Row="0" Grid.Column="0" Content="{x:Static this:HelpWindowResources.SynopsisTitle}"></CheckBox>
                 <CheckBox x:Name="Syntax" Margin="5" Grid.Row="1" Grid.Column="0" Content="{x:Static this:HelpWindowResources.SyntaxTitle}"></CheckBox>
                 <CheckBox x:Name="Description" Margin="5" Grid.Row="2" Grid.Column="0" Content="{x:Static this:HelpWindowResources.DescriptionTitle}"></CheckBox>
                 <CheckBox x:Name="Parameters" Margin="5" Grid.Row="3" Grid.Column="0" Content="{x:Static this:HelpWindowResources.ParametersTitle}"></CheckBox>
@@ -41,7 +41,7 @@
                     <RowDefinition Height="Auto"></RowDefinition>
                     <RowDefinition Height="Auto"></RowDefinition>
                 </Grid.RowDefinitions>
-                <CheckBox x:Name="CaseSensitive" Margin="5" Grid.Row="0" Grid.Column="0" Content="{x:Static this:HelpWindowResources.CaseSensitiveTitle}"></CheckBox>                
+                <CheckBox x:Name="CaseSensitive" Margin="5" Grid.Row="0" Grid.Column="0" Content="{x:Static this:HelpWindowResources.CaseSensitiveTitle}"></CheckBox>
                 <CheckBox x:Name="WholeWord" Margin="5" Grid.Row="1" Grid.Column="0" Content="{x:Static this:HelpWindowResources.WholeWordTitle}"></CheckBox>
             </Grid>
         </GroupBox>

@@ -17,8 +17,8 @@ using System.Text;
 using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
 using System.Security;
-
 #if CORECLR
+using System.IO.Compression;
 using System.Net.Http;
 using System.Threading.Tasks;
 // Use stub for SerializableAttribute, SerializationInfo and ISerializable related types. WebClient.
@@ -401,7 +401,7 @@ namespace System.Management.Automation.Help
 
             // Directory.Exists checks if baseUri is a network drive or
             // a local directory. If baseUri is local, we don't need to resolve it.
-            // 
+            //
             // The / check works because all of our fwlinks must resolve
             // to a remote virtual directory. I think HTTP always appends /
             // in reference to a directory.
@@ -1020,11 +1020,11 @@ namespace System.Management.Automation.Help
             {
                 if (_progressEvents.Count > 0)
                 {
-                    foreach (UpdatableHelpProgressEventArgs evnt in _progressEvents)
+                    foreach (UpdatableHelpProgressEventArgs evt in _progressEvents)
                     {
-                        evnt.CommandType = commandType;
+                        evt.CommandType = commandType;
 
-                        OnProgressChanged(this, evnt);
+                        OnProgressChanged(this, evt);
                     }
 
                     _progressEvents.Clear();
@@ -1033,7 +1033,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// Installs HelpInfo.xml   
+        /// Installs HelpInfo.xml
         /// </summary>
         /// <param name="moduleName"></param>
         /// <param name="moduleGuid"></param>
@@ -1209,9 +1209,9 @@ namespace System.Management.Automation.Help
                 OnProgressChanged(this, new UpdatableHelpProgressEventArgs(CurrentModule, commandType, StringUtil.Format(
                     HelpDisplayStrings.UpdateProgressInstalling), 0));
 
-                string combinedSourcePath = Path.Combine(sourcePath, fileName);
+                string combinedSourcePath = GetFilePath(Path.Combine(sourcePath, fileName));
 
-                if (!File.Exists(combinedSourcePath))
+                if (string.IsNullOrEmpty(combinedSourcePath))
                 {
                     throw new UpdatableHelpSystemException("HelpContentNotFound", StringUtil.Format(HelpDisplayStrings.HelpContentNotFound),
                         ErrorCategory.ResourceUnavailable, null, null);
@@ -1249,6 +1249,37 @@ namespace System.Management.Automation.Help
             }
         }
 
+#if UNIX
+        private bool ExpandArchive(string source, string destination)
+        {
+            bool sucessfulDecompression = false;
+
+            try
+            {
+                using (FileStream archiveFileStream = new FileStream(source, IO.FileMode.Open, FileAccess.Read))
+                using (ZipArchive zipArchive = new ZipArchive(archiveFileStream, ZipArchiveMode.Read, false))
+                {
+                    foreach (ZipArchiveEntry entry in zipArchive.Entries)
+                    {
+                        string extractPath = Path.Combine(destination, entry.FullName);
+                        entry.ExtractToFile(extractPath);
+                    }
+                    sucessfulDecompression = true;
+                }
+            }
+            catch (ArgumentException) { }
+            catch (InvalidDataException) { }
+            catch (NotSupportedException) { }
+            catch (FileNotFoundException) { }
+            catch (IOException) { }
+            catch (SecurityException) { }
+            catch (UnauthorizedAccessException) { }
+            catch (ObjectDisposedException) { }
+
+            return sucessfulDecompression;
+        }
+#endif
+
         /// <summary>
         /// Unzips to help content to a given location
         /// </summary>
@@ -1265,12 +1296,15 @@ namespace System.Management.Automation.Help
                 Directory.CreateDirectory(destPath);
             }
 
-            string cabDir = Path.GetDirectoryName(srcPath);
-
+            string sourceDirectory = Path.GetDirectoryName(srcPath);
+            bool sucessfulDecompression = false;
+#if UNIX
+            sucessfulDecompression = ExpandArchive(Path.Combine(sourceDirectory, Path.GetFileName(srcPath)), destPath);
+#else
             // Cabinet API doesn't handle the trailing back slash
-            if (!cabDir.EndsWith("\\", StringComparison.Ordinal))
+            if (!sourceDirectory.EndsWith("\\", StringComparison.Ordinal))
             {
-                cabDir += "\\";
+                sourceDirectory += "\\";
             }
 
             if (!destPath.EndsWith("\\", StringComparison.Ordinal))
@@ -1278,7 +1312,9 @@ namespace System.Management.Automation.Help
                 destPath += "\\";
             }
 
-            if (!CabinetExtractorFactory.GetCabinetExtractor().Extract(Path.GetFileName(srcPath), cabDir, destPath))
+            sucessfulDecompression = CabinetExtractorFactory.GetCabinetExtractor().Extract(Path.GetFileName(srcPath), sourceDirectory, destPath);
+#endif
+            if (!sucessfulDecompression)
             {
                 throw new UpdatableHelpSystemException("UnableToExtract", StringUtil.Format(HelpDisplayStrings.UnzipFailure),
                     ErrorCategory.InvalidOperation, null, null);
@@ -1574,9 +1610,10 @@ namespace System.Management.Automation.Help
                 }
             }
 
-            if (File.Exists(path))
+            string filePath = GetFilePath(path);
+            if (!string.IsNullOrEmpty(filePath))
             {
-                using (FileStream currentHelpInfoFile = new FileStream(path, FileMode.Open, FileAccess.Read))
+                using (FileStream currentHelpInfoFile = new FileStream(filePath, FileMode.Open, FileAccess.Read))
                 {
                     StreamReader reader = new StreamReader(currentHelpInfoFile);
 
@@ -1584,6 +1621,43 @@ namespace System.Management.Automation.Help
                 }
             }
 
+            return null;
+        }
+
+        /// <summary>
+        /// Validate the given path. If it exists, return the full path to the file.
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        internal static string GetFilePath(string path)
+        {
+#if UNIX
+            // On Linux, file paths are case sensitive.
+            // The user does not have control over the files (HelpInfo.xml, .zip, and cab) that are generated by the Publishing team.
+            // The logic below is to support updating help content via sourcepath parameter for case insensitive files.
+            FileInfo item = new FileInfo(path);
+            string directoryPath = item.Directory.FullName;
+            string fileName = item.Name;
+
+            // Prerequisite: The directory in the given path must exist and it is case sensitive.
+            if (Utils.NativeDirectoryExists(directoryPath))
+            {
+                // Get the list of files in the directory.
+                string[] fileList = Directory.GetFiles(directoryPath);
+                foreach (string filePath in fileList)
+                {
+                    if (filePath.EndsWith(fileName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return filePath;
+                    }
+                }
+            }
+#else
+            if (Utils.NativeFileExists(path))
+            {
+                return path;
+            }
+#endif
             return null;
         }
 
@@ -1742,7 +1816,7 @@ namespace System.Management.Automation.Help
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>

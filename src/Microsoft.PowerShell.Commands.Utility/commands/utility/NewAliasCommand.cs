@@ -11,8 +11,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// The implementation of the "new-alias" cmdlet
     /// </summary>
-    /// 
-    [Cmdlet(VerbsCommon.New, "Alias", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113352")]
+    ///
+    [Cmdlet(VerbsCommon.New, "Alias", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113352")]
     [OutputType(typeof(AliasInfo))]
     public class NewAliasCommand : WriteAliasCommandBase
     {
@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The main processing loop of the command.
         /// </summary>
-        /// 
+        ///
         protected override void ProcessRecord()
         {
             // If not force, then see if the alias already exists

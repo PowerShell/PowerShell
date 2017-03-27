@@ -23,8 +23,8 @@ namespace System.Diagnostics.Eventing
         internal const int ERROR_ACCESS_DENIED = 0x5;
         internal const int ERROR_INVALID_HANDLE = 0x6;
 
-        // Can occurs when filled buffers are trying to flush to disk, but disk IOs are not fast enough. 
-        // This happens when the disk is slow and event traffic is heavy. 
+        // Can occurs when filled buffers are trying to flush to disk, but disk IOs are not fast enough.
+        // This happens when the disk is slow and event traffic is heavy.
         // Eventually, there are no more free (empty) buffers and the event is dropped.
         internal const int ERROR_NOT_ENOUGH_MEMORY = 0x8;
 
@@ -53,7 +53,7 @@ namespace System.Diagnostics.Eventing
         internal const int ERROR_PIPE_LISTENING = 0x218;  // 536
         internal const int ERROR_OPERATION_ABORTED = 0x3E3;  // 995; For IO Cancellation
         internal const int ERROR_IO_PENDING = 0x3E5;  // 997
-        internal const int ERROR_NOT_FOUND = 0x490;  // 1168      
+        internal const int ERROR_NOT_FOUND = 0x490;  // 1168
 
         // The event size is larger than the allowed maximum (64k - header).
         internal const int ERROR_ARITHMETIC_OVERFLOW = 0x216;  // 534
@@ -70,7 +70,7 @@ namespace System.Diagnostics.Eventing
         internal const int ERROR_MUI_FILE_NOT_FOUND = 15100;
 
         //
-        // ErrorCode & format 
+        // ErrorCode & format
         //
 
         // for win32 error message formatting
@@ -204,7 +204,7 @@ namespace System.Diagnostics.Eventing
 
         //
         // EventLog
-        // 
+        //
         [Flags]
         internal enum EvtQueryFlags
         {
@@ -407,7 +407,7 @@ namespace System.Diagnostics.Eventing
             //EvtEventMetadataPropertyIdEND
         }
 
-        //CHANNEL CONFIGURATION 
+        //CHANNEL CONFIGURATION
         internal enum EvtChannelConfigPropertyId
         {
             EvtChannelConfigEnabled = 0,            // EvtVarTypeBoolean
@@ -453,7 +453,7 @@ namespace System.Diagnostics.Eventing
             EvtExportLogTolerateQueryErrors = 0x1000
         }
 
-        //RENDERING    
+        //RENDERING
         internal enum EvtRenderContextFlags
         {
             EvtRenderContextValues = 0,      // Render specific properties
@@ -483,9 +483,9 @@ namespace System.Diagnostics.Eventing
 
         internal enum EvtSystemPropertyId
         {
-            EvtSystemProviderName = 0,          // EvtVarTypeString             
-            EvtSystemProviderGuid,              // EvtVarTypeGuid  
-            EvtSystemEventID,                   // EvtVarTypeUInt16  
+            EvtSystemProviderName = 0,          // EvtVarTypeString
+            EvtSystemProviderGuid,              // EvtVarTypeGuid
+            EvtSystemEventID,                   // EvtVarTypeUInt16
             EvtSystemQualifiers,                // EvtVarTypeUInt16
             EvtSystemLevel,                     // EvtVarTypeUInt8
             EvtSystemTask,                      // EvtVarTypeUInt16
@@ -497,8 +497,8 @@ namespace System.Diagnostics.Eventing
             EvtSystemRelatedActivityID,         // EvtVarTypeGuid
             EvtSystemProcessID,                 // EvtVarTypeUInt32
             EvtSystemThreadID,                  // EvtVarTypeUInt32
-            EvtSystemChannel,                   // EvtVarTypeString 
-            EvtSystemComputer,                  // EvtVarTypeString 
+            EvtSystemChannel,                   // EvtVarTypeString
+            EvtSystemComputer,                  // EvtVarTypeString
             EvtSystemUserID,                    // EvtVarTypeSid
             EvtSystemVersion,                   // EvtVarTypeUInt8
             EvtSystemPropertyIdEND

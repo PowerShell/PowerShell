@@ -56,12 +56,12 @@ namespace Microsoft.PowerShell.Workflow
                 new CounterInfo(PSWorkflowPerformanceCounterIds.PSRemotingForcedToWaitRequestsQueueLength, CounterType.RawData64),
                 new CounterInfo(PSWorkflowPerformanceCounterIds.PSRemotingConnectionsCreatedCount, CounterType.RawData64),
                 new CounterInfo(PSWorkflowPerformanceCounterIds.PSRemotingConnectionsDisposedCount, CounterType.RawData64),
-                new CounterInfo(PSWorkflowPerformanceCounterIds.PSRemotingConnectionsClosedReopendCount, CounterType.RawData64)
+                new CounterInfo(PSWorkflowPerformanceCounterIds.PSRemotingConnectionsClosedReopenedCount, CounterType.RawData64)
             };
     }
 
     /// <summary>
-    /// PSWorkflowPerformanceCounterIds enumerates the 
+    /// PSWorkflowPerformanceCounterIds enumerates the
     /// list of valid performance counter ids related to Powershell Workflow.
     /// NOTE: The prime reason for making this not an enum are as follows:
     /// (1) Everytime the enum will have to be typecasted to an int before invoking any
@@ -100,7 +100,7 @@ namespace Microsoft.PowerShell.Workflow
         internal const int PSRemotingForcedToWaitRequestsQueueLength = PSRemotingRequestsBeingServicedCount + 1;
         internal const int PSRemotingConnectionsCreatedCount = PSRemotingForcedToWaitRequestsQueueLength + 1;
         internal const int PSRemotingConnectionsDisposedCount = PSRemotingConnectionsCreatedCount + 1;
-        internal const int PSRemotingConnectionsClosedReopendCount = PSRemotingConnectionsDisposedCount + 1;
+        internal const int PSRemotingConnectionsClosedReopenedCount = PSRemotingConnectionsDisposedCount + 1;
     };
 
 

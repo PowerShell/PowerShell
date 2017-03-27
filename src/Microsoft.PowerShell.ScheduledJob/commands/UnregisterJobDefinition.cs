@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// Task Scheduler, job store, and local repository.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Unregister, "ScheduledJob", SupportsShouldProcess = true, DefaultParameterSetName = UnregisterScheduledJobCommand.DefinitionParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223925")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223925")]
     public sealed class UnregisterScheduledJobCommand : ScheduleJobCmdletBase
     {
         #region Parameters
@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScheduledJobDefinition Id.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, 
+        [Parameter(Position = 0, Mandatory = true,
                    ParameterSetName = UnregisterScheduledJobCommand.DefinitionIdParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -40,7 +40,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScheduledJobDefinition Name.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, 
+        [Parameter(Position = 0, Mandatory = true,
                    ParameterSetName = UnregisterScheduledJobCommand.DefinitionNameParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]

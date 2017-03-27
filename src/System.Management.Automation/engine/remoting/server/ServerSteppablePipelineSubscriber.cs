@@ -200,7 +200,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 exceptionOccurred = e;
             }
             finally
@@ -246,7 +245,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     exceptionOccurred = e;
                 }
                 finally

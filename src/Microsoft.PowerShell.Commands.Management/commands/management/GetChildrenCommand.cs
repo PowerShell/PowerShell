@@ -12,11 +12,11 @@ namespace Microsoft.PowerShell.Commands
     /// The get-childitem command class.
     /// This command lists the contents of a container
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// </remarks>
-    /// 
-    [Cmdlet(VerbsCommon.Get, "ChildItem", DefaultParameterSetName = "Items", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113308")]
+    ///
+    [Cmdlet(VerbsCommon.Get, "ChildItem", DefaultParameterSetName = "Items", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113308")]
     public class GetChildItemCommand : CoreCommandBase
     {
         /// <summary>
@@ -36,13 +36,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The string declaration for the -relationship parameter set.
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// The "relationship" parameter set includes the following parameters:
         ///     -relationship
         ///     -property
         /// </remarks>
-        /// 
+        ///
         private const string relationshipSet = "Relationship";
 #endif
         #region Command parameters
@@ -221,10 +221,10 @@ namespace Microsoft.PowerShell.Commands
         /// Gets and sets the value of the Relationship parameter which determines
         /// which relationship the targets should be retrieved for.
         /// </summary>
-        /// 
+        ///
         [Parameter(
-            Mandatory = true, 
-            ParameterSetName = relationshipSet, 
+            Mandatory = true,
+            ParameterSetName = relationshipSet,
             ValueFromPipelineByPropertyName = true)]
         public string[] Relationship
         {
@@ -243,7 +243,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the property parameter which may provide guidance to the relationship
         /// provider on which targets to return.
         /// </summary>
-        /// 
+        ///
         [Parameter(ParameterSetName = relationshipSet, ValueFromPipelineByPropertyName = true)]
         public string Property
         {
@@ -264,16 +264,16 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             object result = null;
@@ -349,7 +349,7 @@ namespace Microsoft.PowerShell.Commands
         #region command code
 
         /// <summary>
-        /// The main execution method for the get-childitem command. 
+        /// The main execution method for the get-childitem command.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -456,7 +456,7 @@ namespace Microsoft.PowerShell.Commands
 
                             foreach (string target in results)
                             {
-                                // Create an PSObject with the result. 
+                                // Create an PSObject with the result.
                                 // Attach the relationship name as a note,
                                 // and set "System.Management.Automation.RelationshipTarget"
                                 // as the TreatAs.
@@ -464,7 +464,7 @@ namespace Microsoft.PowerShell.Commands
                                 PSObject result = PSObject.AsPSObject (target);
                                 result.Properties.Add (
                                     new PSNoteProperty (
-                                        "Relationship", 
+                                        "Relationship",
                                         relationship));
 
                                 Collection<string> treatAs = new Collection<string> ();

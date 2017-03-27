@@ -34,8 +34,8 @@ Contributing to Issues
 * If you can't find your issue already,
   [open a new issue](https://github.com/PowerShell/PowerShell/issues/new),
   making sure to follow the directions as best you can.
-* If the issue is marked as [`0 - Backlog`][help-wanted-issue],
-  the PowerShell maintainers are looking for help with the issue.
+* If the issue is marked as [`Up-for-Grabs`][up-for-grabs],
+  the PowerShell Maintainers are looking for help with the issue.
 
 Contributing to Documentation
 -----------------------------
@@ -47,8 +47,22 @@ Please see the [Contributor Guide in `PowerShell/PowerShell-Docs`](https://githu
 ### Contributing to documentation related to maintaining or contributing to the PowerShell project
 
 * When writing Markdown documentation, use [semantic linefeeds][].
-  In most cases, it means "once clause / idea per line".
+  In most cases, it means "one clause/idea per line".
 * Otherwise, these issues should be treated like any other issue in this repo.
+
+#### Spellchecking documentation
+
+Documentation are spellchecked. We make use of the
+[markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) command line tool,
+which can be run in interactive mode to correct typos or add words to the ignore list
+(`.spelling` at the repository root).
+
+To run the spellchecker, follow the steps as follows:
+  * install [Node.js](https://nodejs.org/en/) (v6.4.0 or up)
+  * install [markdown-spellcheck](https://github.com/lukeapage/node-markdown-spellcheck) by
+`npm install -g markdown-spellcheck` (v0.11.0 or up)
+  * run `mdspell "**/*.md" --ignore-numbers --ignore-acronyms`
+  * if the `.spelling` file is updated, commit and push it
 
 Contributing to Code
 --------------------
@@ -113,7 +127,7 @@ See [Contributing to documentation related to PowerShell](#contributing-to-docum
   either update the changelog in your pull request or
   add a comment in the PR description saying that the change may warrant a note in the changelog.
   New changes always go into the **Unreleased** section.
-  Keeping the changelog up-to-date simplifies the release process for maintainers.
+  Keeping the changelog up-to-date simplifies the release process for Maintainers.
   An example:
     ```
     Unreleased
@@ -149,25 +163,59 @@ See [Contributing to documentation related to PowerShell](#contributing-to-docum
   our [CI system (Travis CI and AppVeyor)][ci-system]
   will run a suite of tests and automatically update the status of the pull request.
 
+* Our CI contains automated spellchecking. If there is any false-positive,
+  [run the spellchecker command line tool in interactive mode](#spellchecking-documentation) 
+  to add words to the `.spelling` file.
+
 #### Pull Request - Code Review
 
-* After a successful test pass,
-  the area maintainers will do a code review,
-  commenting on any changes that might need to be made.
+* Roles and Responsibilities of a PR: Author, Reviewer, and Assignee
+  * Reviewer and Assignee are two separate roles of a PR.
+    * A Reviewer can be anyone who wants to contribute.
+      A Reviewer reviews the change of a PR,
+      leaves comments for the Author to address,
+      and approves the PR when the change looks good.
+    * An Assignee must be a [Maintainer](../docs/maintainers), who monitors the progress of the PR,
+      coordinates the review process, and merges the PR after it's been approved.
+      The Assignee may or may not be a Reviewer of the PR at the same time.
+  * An Author is encouraged to choose Reviewer(s) and an Assignee for the PR.
+    If no Assignee is chosen, one of the Maintainers shall be assigned to it.
+    If no Reviewer is chosen, the Assignee shall choose Reviewer(s) as appropriate.
+    * If an Author is a [PowerShell Team](https://github.com/orgs/PowerShell/people) member,
+      then the Author **is required** to choose Reviewer(s) and an Assignee for the PR.
+  * For a PR to be merged, it must be approved by at least one PowerShell Team member or Collaborator,
+    so additional Reviewer(s) may be added by the Assignee as appropriate.
+    The Assignee may also be re-assigned by Maintainers.
+
+* A Reviewer can postpone the code review if CI builds fail,
+  but also can start the code review early regardless of the CI builds.
+
+* The Author **is responsible** for driving the PR to the Approved state.
+  The Author addresses review comments, and pings Reviewer(s) to start the next iteration.
+  If the review is making no progress (or very slow),
+  the Author can always ask the Assignee to help coordinate the process and keep it moving.
 
 * Additional feedback is always welcome!
-  Even if you are not designated as an area's maintainer,
+  Even if you are not designated as a Reviewer,
   feel free to review others' pull requests anyway.
   Leave your comments even if everything looks good;
   a simple "Looks good to me" or "LGTM" will suffice.
   This way we know someone has already taken a look at it!
 
+* When updating your pull request, please **create new commits**
+  and **don't rewrite the commits history**. This way it's very easy for
+  the reviewers to see diff between iterations.
+  If you rewrite the history in the pull request, review could be much slower.
+  Once the review is done, you can rewrite the history to make it prettier,
+  if you like.
+  Otherwise it's likely would be squashed on merge to master.
+
 * Once the code review is done,
   all merge conflicts are resolved,
   and the CI system build status is passing,
-  a maintainer will merge your changes.
+  the PR Assignee will merge your changes.
 
-* For more information on the the PowerShell maintainers' process,
+* For more information on the the PowerShell Maintainers' process,
   see the [documentation](../docs/maintainers).
 
 Making Breaking Changes
@@ -271,5 +319,5 @@ Once you sign a CLA, all your existing and future pull requests will be labeled 
 [good-git-resources]: https://help.github.com/articles/good-resources-for-learning-git-and-github/
 [contribute-issues]: #contributing-to-issues
 [open-issue]: https://github.com/PowerShell/PowerShell/issues
-[help-wanted-issue]: https://github.com/PowerShell/PowerShell/issues?q=is%3Aopen+is%3Aissue+label%3A%220%20-%20Backlog%22
+[up-for-grabs]: https://github.com/powershell/powershell/issues?q=is%3Aopen+is%3Aissue+label%3AUp-for-Grabs
 [semantic linefeeds]: http://rhodesmill.org/brandon/2012/one-sentence-per-line/

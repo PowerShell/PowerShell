@@ -4,7 +4,7 @@
     Project:     PowerShell
 
 
-    Contents:    PowerShell error interface for syntax editors 
+    Contents:    PowerShell error interface for syntax editors
 
     Classes:     System.Management.Automation.PSParseError
 
@@ -15,7 +15,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// This is a class that represents a syntax error from parsing. 
+    /// This is a class that represents a syntax error from parsing.
     /// </summary>
     public sealed class PSParseError
     {
@@ -35,16 +35,16 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// The token that indicates the error location. 
+        /// The token that indicates the error location.
         /// </summary>
         /// <remarks>
         /// This can either be the real token at which place the error happens or a position
-        /// token indicating the location where error happens. 
+        /// token indicating the location where error happens.
         /// </remarks>
         public PSToken Token { get; }
 
         /// <summary>
-        /// Error message. 
+        /// Error message.
         /// </summary>
         public string Message { get; }
     }

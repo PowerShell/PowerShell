@@ -7,10 +7,10 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// This class contains strings required for serialization
-    /// </summary>  
+    /// </summary>
     internal static class SerializationStrings
     {
-        #region element tags        
+        #region element tags
 
         /// <summary>
         /// Element tag for root node
@@ -105,97 +105,97 @@ namespace System.Management.Automation
 
         #region primitive known type tags
         /// <summary>
-        /// Element tag for char property. 
+        /// Element tag for char property.
         /// </summary>
         /// <remarks>This property is used for System.Char type</remarks>
         internal const string CharTag = "C";
 
         /// <summary>
-        /// Element tag for guid property. 
+        /// Element tag for guid property.
         /// </summary>
         /// <remarks>This property is used for System.Guid type</remarks>
         internal const string GuidTag = "G";
 
         /// <summary>
-        /// Element tag for boolean property. 
+        /// Element tag for boolean property.
         /// </summary>
         /// <remarks>This property is used for System.Boolean type</remarks>
         internal const string BooleanTag = "B";
 
         /// <summary>
-        /// Element tag for unsignedByte property. 
+        /// Element tag for unsignedByte property.
         /// </summary>
         /// <remarks>This property is used for System.Byte type</remarks>
         internal const string UnsignedByteTag = "By";
 
         /// <summary>
-        /// Element tag for dateTime property. 
+        /// Element tag for dateTime property.
         /// </summary>
         /// <remarks>This property is used for System.DateTime type</remarks>
         internal const string DateTimeTag = "DT";
 
         /// <summary>
-        /// Element tag for decimal property. 
+        /// Element tag for decimal property.
         /// </summary>
         /// <remarks>This property is used for System.Decimal type</remarks>
         internal const string DecimalTag = "D";
 
         /// <summary>
-        /// Element tag for double property. 
+        /// Element tag for double property.
         /// </summary>
         /// <remarks>This property is used for System.Double type</remarks>
         internal const string DoubleTag = "Db";
 
         /// <summary>
-        /// Element tag for duration property. 
+        /// Element tag for duration property.
         /// </summary>
         /// <remarks>This property is used for System.TimeSpan type</remarks>
         internal const string DurationTag = "TS";
 
         /// <summary>
-        /// Element tag for float property. 
+        /// Element tag for float property.
         /// </summary>
         /// <remarks>This property is used for System.Single type</remarks>
         internal const string FloatTag = "Sg";
 
         /// <summary>
-        /// Element tag for int property. 
+        /// Element tag for int property.
         /// </summary>
         /// <remarks>This property is used for System.Int32 type</remarks>
         internal const string IntTag = "I32";
 
         /// <summary>
-        /// Element tag for long property. 
+        /// Element tag for long property.
         /// </summary>
         /// <remarks>This property is used for System.Int64 type</remarks>
         internal const string LongTag = "I64";
 
         /// <summary>
-        /// Element tag for byte property. 
+        /// Element tag for byte property.
         /// </summary>
         /// <remarks>This property is used for System.SByte type</remarks>
         internal const string ByteTag = "SB";
 
         /// <summary>
-        /// Element tag for short property. 
+        /// Element tag for short property.
         /// </summary>
         /// <remarks>This property is used for System.Int16 type</remarks>
         internal const string ShortTag = "I16";
 
         /// <summary>
-        /// Element tag for base64Binary property. 
+        /// Element tag for base64Binary property.
         /// </summary>
         /// <remarks>This property is used for System.IO.Stream type</remarks>
         internal const string Base64BinaryTag = "BA";
 
         /// <summary>
-        /// Element tag for scriptblock property. 
+        /// Element tag for scriptblock property.
         /// </summary>
         /// <remarks>This property is used for System.Management.Automation.ScriptBlock type</remarks>
         internal const string ScriptBlockTag = "SBK";
 
         /// <summary>
-        /// Element tag for string property. 
+        /// Element tag for string property.
         /// </summary>
         /// <remarks>This property is used for System.String type</remarks>
         internal const string StringTag = "S";
@@ -207,25 +207,25 @@ namespace System.Management.Automation
         internal const string SecureStringTag = "SS";
 
         /// <summary>
-        /// Element tag for unsignedShort property. 
+        /// Element tag for unsignedShort property.
         /// </summary>
         /// <remarks>This property is used for System.UInt16 Stream type</remarks>
         internal const string UnsignedShortTag = "U16";
 
         /// <summary>
-        /// Element tag for unsignedInt property. 
+        /// Element tag for unsignedInt property.
         /// </summary>
         /// <remarks>This property is used for System.UInt32 type</remarks>
         internal const string UnsignedIntTag = "U32";
 
         /// <summary>
-        /// Element tag for unsignedLong property. 
+        /// Element tag for unsignedLong property.
         /// </summary>
         /// <remarks>This property is used for System.Long type</remarks>
         internal const string UnsignedLongTag = "U64";
 
         /// <summary>
-        /// Element tag for anyUri property. 
+        /// Element tag for anyUri property.
         /// </summary>
         /// <remarks>This property is used for System.Uri type</remarks>
         internal const string AnyUriTag = "URI";
@@ -251,7 +251,7 @@ namespace System.Management.Automation
         internal const string NilTag = "Nil";
 
         /// <summary>
-        /// Element tag for PSObjectReference property. 
+        /// Element tag for PSObjectReference property.
         /// </summary>
         /// <remarks>This property is used for a reference to a property bag</remarks>
         internal const string ReferenceTag = "Ref";
@@ -309,7 +309,7 @@ namespace System.Management.Automation
         /// </summary>
         internal const string MonadNamespacePrefix = "ps";
 
-        #endregion namespace values     
+        #endregion namespace values
     };
 }
 

@@ -12,9 +12,9 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements Set-PSBreakpoint command.  
+    /// This class implements Set-PSBreakpoint command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "PSBreakpoint", DefaultParameterSetName = "Line", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113449")]
+    [Cmdlet(VerbsCommon.Set, "PSBreakpoint", DefaultParameterSetName = "Line", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113449")]
     [OutputType(typeof(VariableBreakpoint), typeof(CommandBreakpoint), typeof(LineBreakpoint))]
     public class SetPSBreakpointCommand : PSCmdlet
     {
@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Variable { get; set; } = null;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [Parameter(ParameterSetName = "Variable")]
         public VariableAccessMode Mode { get; set; } = VariableAccessMode.Write;

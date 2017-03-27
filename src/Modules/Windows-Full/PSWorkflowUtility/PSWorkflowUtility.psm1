@@ -4,7 +4,7 @@ workflow Invoke-AsWorkflow
     .EXTERNALHELP Microsoft.PowerShell.Workflow.ServiceCore.dll-help.xml
     #>
     [System.Security.SecurityCritical()]
-    [CmdletBinding(DefaultParameterSetName='Command', HelpUri='http://go.microsoft.com/fwlink/?LinkId=238267')]
+    [CmdletBinding(DefaultParameterSetName='Command', HelpUri='https://go.microsoft.com/fwlink/?LinkId=238267')]
     param(
         [Parameter(Mandatory=$true,ParameterSetName="Command")]
         [ValidateNotNullOrEmpty()]
@@ -16,11 +16,11 @@ workflow Invoke-AsWorkflow
     )
     if($CommandName)
     {
-        if($Parameter) 
+        if($Parameter)
 		{
 			InlineScript {& $using:CommandName @using:Parameter}
 		}
-        else 
+        else
 		{
 			InlineScript {& $using:CommandName}
 		}

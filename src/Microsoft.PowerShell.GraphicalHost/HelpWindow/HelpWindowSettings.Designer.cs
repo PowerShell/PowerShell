@@ -68,12 +68,12 @@ namespace Microsoft.Management.UI.Internal {
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("True")]
-        public bool HelpSynopsysDisplayed {
+        public bool HelpSynopsisDisplayed {
             get {
-                return ((bool)(this["HelpSynopsysDisplayed"]));
+                return ((bool)(this["HelpSynopsisDisplayed"]));
             }
             set {
-                this["HelpSynopsysDisplayed"] = value;
+                this["HelpSynopsisDisplayed"] = value;
             }
         }
         

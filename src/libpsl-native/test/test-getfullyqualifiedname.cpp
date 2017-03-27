@@ -12,19 +12,30 @@
 
 TEST(GetFullyQualifiedNameTest, ValidateLinuxGetFullyQualifiedDomainName)
 {
-    std::string actual(GetFullyQualifiedName());
-    std::string hostname(GetComputerName());
+    char *hostname = GetComputerName();
+    ASSERT_STRNE(NULL, hostname);
+
+    // this might be fail
+    errno = 0;
+    char *actual = GetFullyQualifiedName();
+    int fqdnErrno = errno;
 
     struct addrinfo hints, *info;
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_CANONNAME;
-    EXPECT_FALSE(getaddrinfo(hostname.c_str(), "http", &hints, &info));
+    errno = 0;
+    if (getaddrinfo(hostname, "http", &hints, &info) != 0)
+    {
+        // test that getaddrinfo failed the same way
+        EXPECT_EQ(fqdnErrno, errno);
+        goto exit;
+    }
 
     // Compare canonical name to FQDN
-    EXPECT_STREQ(info->ai_canonname, actual.c_str());
-
+    EXPECT_STREQ(info->ai_canonname, actual);
     freeaddrinfo(info);
-
+exit:
+    free(hostname);
 }

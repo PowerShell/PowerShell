@@ -1,6 +1,0 @@
-{
-  "monad/src/oneget/providers/inbox/msuprovider/MsuProvider.cs": "MsuProvider.cs",
-  "monad/src/oneget/providers/inbox/msuprovider/provider.manifest": "provider.manifest",
-  "monad/src/oneget/providers/inbox/msuprovider/Properties/AssemblyInfo.cs": "Properties/AssemblyInfo.cs",
-  "monad/src/oneget/providers/inbox/msuprovider/Resources/Messages.resx": "resources/Microsoft.PackageManagement.Msu.Resources.Messages.resx"
-}

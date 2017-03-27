@@ -57,8 +57,13 @@ function Register-WinRmPlugin
     # Filename = %windir%\\system32\\PowerShell\\6.0.0\\pwrshplugin.dll
     # Name = PowerShell.6.0.0
     #
-    $regKeyValueFormatString = '<PlugInConfiguration xmlns=\"http://schemas.microsoft.com/wbem/wsman/1/config/PluginConfiguration\" Name=\"{0}\" Filename=\"{1}\" SDKVersion=\"2\" XmlRenderingType=\"text\" Enabled=\"True\" OutputBufferingMode=\"Block\" ProcessIdleTimeoutSec=\"0\" Architecture=\"64\" UseSharedProcess=\"false\" RunAsUser=\"\" RunAsPassword=\"\" AutoRestart=\"false\"><InitializationParameters><Param Name=\"PSVersion\" Value=\"5.0\"/></InitializationParameters><Resources><Resource ResourceUri=\"http://schemas.microsoft.com/powershell/{0}\" SupportsOptions=\"true\" ExactMatch=\"true\"><Security Uri=\"http://schemas.microsoft.com/powershell/{0}\" ExactMatch=\"true\" Sddl=\"O:NSG:BAD:P(A;;GA;;;BA)S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)\"/><Capability Type=\"Shell\"/></Resource></Resources><Quotas IdleTimeoutms=\"7200000\" MaxConcurrentUsers=\"5\" MaxProcessesPerShell=\"15\" MaxMemoryPerShellMB=\"1024\" MaxShellsPerUser=\"25\" MaxConcurrentCommandsPerShell=\"1000\" MaxShells=\"25\" MaxIdleTimeoutms=\"43200000\"/></PlugInConfiguration>'
-    $valueString = $regKeyValueFormatString -f $pluginEndpointName, $pluginAbsolutePath
+    $pluginArchitecture = "64"
+    if ($env:PROCESSOR_ARCHITECTURE -match "x86")
+    {
+        $pluginArchitecture = "32"
+    }
+    $regKeyValueFormatString = '<PlugInConfiguration xmlns=\"http://schemas.microsoft.com/wbem/wsman/1/config/PluginConfiguration\" Name=\"{0}\" Filename=\"{1}\" SDKVersion=\"2\" XmlRenderingType=\"text\" Enabled=\"True\" OutputBufferingMode=\"Block\" ProcessIdleTimeoutSec=\"0\" Architecture=\"{2}\" UseSharedProcess=\"false\" RunAsUser=\"\" RunAsPassword=\"\" AutoRestart=\"false\"><InitializationParameters><Param Name=\"PSVersion\" Value=\"5.0\"/></InitializationParameters><Resources><Resource ResourceUri=\"http://schemas.microsoft.com/powershell/{0}\" SupportsOptions=\"true\" ExactMatch=\"true\"><Security Uri=\"http://schemas.microsoft.com/powershell/{0}\" ExactMatch=\"true\" Sddl=\"O:NSG:BAD:P(A;;GA;;;BA)S:P(AU;FA;GA;;;WD)(AU;SA;GXGW;;;WD)\"/><Capability Type=\"Shell\"/></Resource></Resources><Quotas IdleTimeoutms=\"7200000\" MaxConcurrentUsers=\"5\" MaxProcessesPerShell=\"15\" MaxMemoryPerShellMB=\"1024\" MaxShellsPerUser=\"25\" MaxConcurrentCommandsPerShell=\"1000\" MaxShells=\"25\" MaxIdleTimeoutms=\"43200000\"/></PlugInConfiguration>'
+    $valueString = $regKeyValueFormatString -f $pluginEndpointName, $pluginAbsolutePath, $pluginArchitecture
     $keyValuePair = $regKeyName -f $valueString
 
     $regKey = $regKeyFormatString -f $pluginEndpointName
@@ -142,7 +147,7 @@ else
     Write-Verbose "Using PowerShell Version: $targetPsVersion" -Verbose
 }
 
-$pluginBasePath = Join-Path "$env:WINDIR\System32\PowerShell" $powerShellVersion
+$pluginBasePath = Join-Path "$env:WINDIR\System32\PowerShell" $targetPsVersion
 
 $resolvedPluginAbsolutePath = ""
 if (! (Test-Path $pluginBasePath))

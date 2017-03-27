@@ -38,7 +38,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal static bool IsText(HttpResponseMessage response)
         {
-            string contentType = response.Content.Headers.ContentType.MediaType;
+            // ContentType may not exist in response header.
+            string contentType = response.Content.Headers.ContentType?.MediaType;
             return ContentHelper.IsText(contentType);
         }
     }

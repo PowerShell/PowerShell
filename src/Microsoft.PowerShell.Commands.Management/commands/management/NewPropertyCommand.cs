@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to create a new property on an object.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "ItemProperty", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113354")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113354")]
     public class NewItemPropertyCommand : ItemPropertyCommandBase
     {
         #region Parameters
@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The type of the property to create on the item.
         /// </summary>
-        /// 
+        ///
         [Parameter(ValueFromPipelineByPropertyName = true)]
         [Alias("Type")]
         public string PropertyType { get; set; }
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The value of the property to create on the item.
         /// </summary>
-        /// 
+        ///
         [Parameter(ValueFromPipelineByPropertyName = true)]
         public object Value { get; set; }
 
@@ -108,16 +108,16 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)

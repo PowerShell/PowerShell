@@ -14,13 +14,13 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Enable-LocalUser cmdlet enables local user accounts. When a user account 
-    /// is disabled, the user is not permitted to log on. When a user account is 
+    /// The Enable-LocalUser cmdlet enables local user accounts. When a user account
+    /// is disabled, the user is not permitted to log on. When a user account is
     /// enabled, the user is permitted to log on normally.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Enable, "LocalUser",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717985")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717985")]
     [Alias("elu")]
     public class EnableLocalUserCommand : Cmdlet
     {
@@ -35,7 +35,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameter Properties
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
-        /// Specifies the of the local user accounts to enable in the local Security 
+        /// Specifies the of the local user accounts to enable in the local Security
         /// Accounts Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -51,10 +51,10 @@ namespace Microsoft.PowerShell.Commands
             set { this.inputobject = value; }
         }
         private Microsoft.PowerShell.Commands.LocalUser[] inputobject;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "Name".
-        /// Specifies the local user accounts to enable in the local Security Accounts 
+        /// Specifies the local user accounts to enable in the local Security Accounts
         /// Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -70,10 +70,10 @@ namespace Microsoft.PowerShell.Commands
             set { this.name = value; }
         }
         private string[] name;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "SID".
-        /// Specifies the LocalUser accounts to enable by 
+        /// Specifies the LocalUser accounts to enable by
         /// System.Security.Principal.SecurityIdentifier.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -90,8 +90,8 @@ namespace Microsoft.PowerShell.Commands
         }
         private System.Security.Principal.SecurityIdentifier[] sid;
         #endregion Parameter Properties
-      
-      
+
+
 
 
         #region Cmdlet Overrides
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        
+
         /// <summary>
         /// EndProcessing method.
         /// </summary>

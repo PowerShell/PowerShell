@@ -2,7 +2,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     It "Get-Date with all parameters returns proper results" {
         $date = [datetime]::Now + ([timespan]::new(0,0,30))
         $result = Get-Date -Date $date -Year 1973 -Month 2 -Day 22 -Hour 15 -Minute 40 -Second 10 -Millisecond 200
-        $result.GetType() | Should be ([Datetime])
+        $result | Should BeOfType Datetime
         $result.Year | Should be 1973
         $result.Month| Should be 2
         $result.Day | Should be 22
@@ -13,7 +13,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
     It "using -displayhint produces the correct output" {
-        $d = Get-date -Date:"Jan 1, 2020"  -DisplayHint Date | Out-String 
+        $d = Get-date -Date:"Jan 1, 2020"  -DisplayHint Date | Out-String
         $d.Trim() | Should be "Wednesday, January 1, 2020"
     }
 
@@ -33,19 +33,19 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         Get-date -Date 1/1/0030 -uformat %a%A%b%B%c%C%d%D%e%h%H%I%j%m%M%p%r | Should be "TueTuesdayJanJanuaryTue Jan  1 00:00:00 003000101/01/30 1Jan001210100AM12:00:00 AM"
     }
 
-    It "using -uformat 'StTuUVwWxXyYZ' produces the correct output" { 
+    It "using -uformat 'StTuUVwWxXyYZ' produces the correct output" {
         Get-date -Date 1/1/0030 -uformat %S%T%u%U%V%w%W%x%X%y%Y%% | Should be "0000:00:002012001/01/3000:00:00300030%"
     }
 
     It "Get-date works with pipeline input" {
-        $x = new-object System.Management.Automation.PSObject 
-        $x | add-member NoteProperty Date ([DateTime]::Now) 
-        $y = @($x,$x) 
+        $x = new-object System.Management.Automation.PSObject
+        $x | add-member NoteProperty Date ([DateTime]::Now)
+        $y = @($x,$x)
         ($y | Get-date).Length | Should be 2
     }
 
     It "the LastWriteTime alias works with pipeline input" {
-        $folder = "GetDateTest" 
+        $folder = "GetDateTest"
         $pathString = Join-Path -Path $TestDrive -ChildPath $folder
         New-Item -Path $TestDrive -Name $folder -ItemType directory -Force
         for($i = 0; $i -lt 10; $i++)
@@ -53,7 +53,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
             $temp = [guid]::NewGuid()
             $pathString2 = Join-Path -Path $pathString -ChildPath $temp
             New-Item -Path $pathString -Name $temp -ItemType file -Force
-    
+
             for($j = 0; $j -lt 100; $j++)
             {
                 Add-Content -Path $pathString2 -Value $j
@@ -64,8 +64,8 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
         $result1 = get-childitem -path $pathString | get-date
         $result2 = get-childitem -path $pathString | get-date
 
-        $result1.Length | Should be 10 
-        $result1.Length -eq $result2.Length | Should be $true    
+        $result1.Length | Should be 10
+        $result1.Length -eq $result2.Length | Should be $true
 
         for($i = 0; $i -lt $result1.Length; $i++)
         {
@@ -77,14 +77,10 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
 
-} 
+}
 
 
 Describe "Get-Date" -Tags "CI" {
-    It "Should return a DateTime object upon being called" {
-	(Get-Date).GetType().Name.Equals('DateTime') | Should Be $true
-    }
-
     It "Should have colons when ToString method is used" {
 	(Get-Date).ToString().Contains(":")                   | Should be $true
 	(Get-Date -DisplayHint Time).ToString().Contains(":") | Should be $true

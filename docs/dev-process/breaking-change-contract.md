@@ -44,7 +44,7 @@ Examples:
 +	Change in parsing of input and throwing new errors (even if parsing behavior is not specified in the docs)
     + Example: a script may be using a JSON parser that is forgiving to minor syntactic errors in the JSON text. Changing that parser to be more rigorous in its processing would result in errors being thrown when no error was generated in the past thus breaking scripts.
 
-Judiciously making changes in these type of features require judgment: how predictable, obvious, consistent was the behavior? In general, a significant external preview of the change would need to be done also possibly requiring an RFC to be created to allow for community input on the proposal.
+Judiciously making changes in these type of features require judgement: how predictable, obvious, consistent was the behavior? In general, a significant external preview of the change would need to be done also possibly requiring an RFC to be created to allow for community input on the proposal.
 
 ## Bucket 3: Unlikely Grey Area
 
@@ -58,7 +58,7 @@ Examples:
 
     + Example: changes to formatting for an object type. We have always considered the output formatting of an object to be a user experience issue and thus open for change. Since PowerShell pipes objects not text, changes to the way an object is rendered to text is generally considered to be allowed.
 
-As with type 2 changes, these require judgment: what is reasonable and what’s not?
+As with type 2 changes, these require judgement: what is reasonable and what’s not?
 
 ## Bucket 4: Clearly Non-Public
 

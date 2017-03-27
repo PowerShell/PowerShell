@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This cmdlet removes ScheduledJobTriggers from ScheduledJobDefinition objects.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "JobTrigger", DefaultParameterSetName = RemoveJobTriggerCommand.JobDefinitionParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223914")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223914")]
     public sealed class RemoveJobTriggerCommand : ScheduleJobCmdletBase
     {
         #region Parameters
@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScheduledJobDefinition Id.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, 
+        [Parameter(Position = 0, Mandatory = true,
                    ParameterSetName = RemoveJobTriggerCommand.JobDefinitionIdParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScheduledJobDefinition Name.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, 
+        [Parameter(Position = 0, Mandatory = true,
                    ParameterSetName = RemoveJobTriggerCommand.JobDefinitionNameParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScheduledJobDefinition.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, 
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true,
                    ParameterSetName = RemoveJobTriggerCommand.JobDefinitionParameterSet)]
         [ValidateNotNullOrEmpty]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]

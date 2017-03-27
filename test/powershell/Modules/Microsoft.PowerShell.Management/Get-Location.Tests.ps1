@@ -9,7 +9,7 @@ Describe "Get-Location" -Tags "CI" {
     }
 
     It "Should list the output of the current working directory" {
-    
+
 	(Get-Location).Path | Should Be $currentDirectory
     }
 

@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="pipelineId">Id of pipeline in which command associated 
+        /// <param name="pipelineId">Id of pipeline in which command associated
         /// with this history entry is executed</param>
         /// <param name="cmdline">command string</param>
         /// <param name="status">status of pipeline execution</param>
@@ -62,7 +62,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region public
         /// <summary>
-        /// Id of this history entry. 
+        /// Id of this history entry.
         /// </summary>
         /// <value></value>
         public long Id
@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// CommandLine string 
+        /// CommandLine string
         /// </summary>
         /// <value></value>
         public string CommandLine
@@ -276,7 +276,7 @@ namespace Microsoft.PowerShell.Commands
 
         internal History(ExecutionContext context)
         {
-            //Create history size variable. Add ValidateRangeAttribute to 
+            //Create history size variable. Add ValidateRangeAttribute to
             //validate the range.
             Collection<Attribute> attrs = new Collection<Attribute>();
             attrs.Add(new ValidateRangeAttribute(1, (int)Int16.MaxValue));
@@ -302,7 +302,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="startTime"></param>
         /// <param name="endTime"></param>
         /// <param name="skipIfLocked">If true, the entry will not be added when the history is locked</param>
-        /// <returns>id for the new created entry. Use this id to fetch the 
+        /// <returns>id for the new created entry. Use this id to fetch the
         /// entry. Returns -1 if the entry is not added</returns>
         /// <remarks>This function is thread safe</remarks>
         internal long AddEntry(long pipelineId, string cmdline, PipelineState status, DateTime startTime, DateTime endTime, bool skipIfLocked)
@@ -356,7 +356,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets entry from buffer for given id. This id should be the 
+        /// Gets entry from buffer for given id. This id should be the
         /// id returned by Add method.
         /// </summary>
         /// <param name="id">Id of the entry to be fetched</param>
@@ -380,11 +380,11 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Get count HistoryEntries 
+        /// Get count HistoryEntries
         /// </summary>
         /// <param name="id"></param>
         /// <param name="count"></param>
-        /// <param name="newest"></param>        
+        /// <param name="newest"></param>
         /// <returns>history entries</returns>
         internal HistoryInfo[] GetEntries(long id, long count, SwitchParameter newest)
         {
@@ -441,7 +441,7 @@ namespace Microsoft.PowerShell.Commands
                             if (_buffer[GetIndexFromId(i)] == null) continue;
                             if (_buffer[GetIndexFromId(i)].Cleared == true)
                             {
-                                // we have to clear count entries before an id, so if an entry is null,decrement 
+                                // we have to clear count entries before an id, so if an entry is null,decrement
                                 // first id as long as its is greater than the lowest entry in the buffer.
                                 firstId--;
                                 continue;
@@ -474,7 +474,7 @@ namespace Microsoft.PowerShell.Commands
                             if (_buffer[GetIndexFromId(i)] == null) continue;
                             if (_buffer[GetIndexFromId(i)].Cleared == true)
                             {
-                                // we have to clear count entries before an id, so if an entry is null,increment  first id 
+                                // we have to clear count entries before an id, so if an entry is null,increment  first id
                                 firstId++;
                                 continue;
                             }
@@ -492,10 +492,10 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    //get entries for count,newest                                               
+                    //get entries for count,newest
 
                     long index, SmallestID = 0;
-                    //if we change the defaulthistory size and when no of entries exceed the size, then 
+                    //if we change the defaulthistory size and when no of entries exceed the size, then
                     //we need to get the smallest entry in the buffer when we want to clear the oldest entry
                     //eg if size is 5 and then the entries can be 7,6,1,2,3
                     if (_capacity != DefaultHistorySize)
@@ -651,9 +651,9 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Clears the history entry from buffer for a given id. 
+        /// Clears the history entry from buffer for a given id.
         /// </summary>
-        /// <param name="id">Id of the entry to be Cleared</param>        
+        /// <param name="id">Id of the entry to be Cleared</param>
         /// <returns>nothing</returns>
         internal void ClearEntry(long id)
         {
@@ -730,7 +730,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets entry from buffer for given id. This id should be the 
+        /// Gets entry from buffer for given id. This id should be the
         /// id returned by Add method.
         /// </summary>
         /// <param name="id">Id of the entry to be fetched</param>
@@ -795,10 +795,10 @@ namespace Microsoft.PowerShell.Commands
 
             HistoryInfo[] tempBuffer = new HistoryInfo[historySize];
 
-            //Calculate number of entries to copy in new buffer.                
+            //Calculate number of entries to copy in new buffer.
             int numberOfEntries = _countEntriesInBuffer;
 
-            //when buffer size is changed,we have to consider the totalnumber of entries added 
+            //when buffer size is changed,we have to consider the totalnumber of entries added
             if (numberOfEntries < _countEntriesAdded)
                 numberOfEntries = (int)_countEntriesAdded;
 
@@ -836,7 +836,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets index in buffer for an entry with given Id using passed in 
+        /// Gets index in buffer for an entry with given Id using passed in
         /// capacity
         /// </summary>
         /// <param name="id"></param>
@@ -900,8 +900,8 @@ namespace Microsoft.PowerShell.Commands
         private int _countEntriesInBuffer;
 
         /// <summary>
-        /// total number of entries added till now including those which have 
-        /// been overwritten after buffer got full. This is also number of 
+        /// total number of entries added till now including those which have
+        /// been overwritten after buffer got full. This is also number of
         /// last entry added.
         /// </summary>
         private long _countEntriesAdded;
@@ -927,7 +927,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class Implements the get-history command
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "History", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113317")]
+    [Cmdlet(VerbsCommon.Get, "History", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113317")]
     [OutputType(typeof(HistoryInfo))]
     public class GetHistoryCommand : PSCmdlet
     {
@@ -965,8 +965,8 @@ namespace Microsoft.PowerShell.Commands
         private int _count;
 
         /// <summary>
-        /// No of History Entries (starting from last) that are to be displayed. 
-        /// </summary>        
+        /// No of History Entries (starting from last) that are to be displayed.
+        /// </summary>
         [Parameter(Position = 1)]
         [ValidateRangeAttribute(0, (int)Int16.MaxValue)]
         public int Count
@@ -994,7 +994,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!_countParameterSpecified)
                 {
-                    //If Id parameter is specified and count is not specified, 
+                    //If Id parameter is specified and count is not specified,
                     //get history
                     foreach (long id in _id)
                     {
@@ -1071,7 +1071,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class implements the Invoke-History command
     /// </summary>
-    [Cmdlet("Invoke", "History", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113344")]
+    [Cmdlet(VerbsLifecycle.Invoke, "History", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113344")]
     public class InvokeHistoryCommand : PSCmdlet
     {
         #region Parameters
@@ -1083,13 +1083,13 @@ namespace Microsoft.PowerShell.Commands
         private bool _multipleIdProvided;
         private string _id;
         /// <summary>
-        /// Accepts a string value indicating a previously executed command to 
-        /// re-execute. 
-        /// If string can be parsed to long, 
-        /// it will be used as HistoryId 
-        /// else 
-        /// as a string value indicating a previously executed command to 
-        /// re-execute. This string is the first n characters of the command 
+        /// Accepts a string value indicating a previously executed command to
+        /// re-execute.
+        /// If string can be parsed to long,
+        /// it will be used as HistoryId
+        /// else
+        /// as a string value indicating a previously executed command to
+        /// re-execute. This string is the first n characters of the command
         /// that is to be re-executed.
         /// </summary>
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
@@ -1118,7 +1118,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            //Invoke-history can execute only one command. If multiple 
+            //Invoke-history can execute only one command. If multiple
             //ids were provided, throw exception
             if (_multipleIdProvided == true)
             {
@@ -1146,7 +1146,7 @@ namespace Microsoft.PowerShell.Commands
             //Get the history entry to invoke
             HistoryInfo entry = GetHistoryEntryToInvoke(history);
 
-            //Check if there is a loop in invoke-history 
+            //Check if there is a loop in invoke-history
             LocalPipeline pipeline = (LocalPipeline)((LocalRunspace)Context.CurrentRunspace).GetCurrentlyRunningPipeline();
 
             if (pipeline.PresentInInvokeHistoryEntryList(entry) == false)
@@ -1191,7 +1191,7 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (HostException)
             {
-                //when the host is not interactive, HostException is thrown 
+                //when the host is not interactive, HostException is thrown
                 //do nothing
             }
 
@@ -1245,7 +1245,7 @@ namespace Microsoft.PowerShell.Commands
         {
             HistoryInfo entry = null;
 
-            //User didn't specify any input parameter. Invoke the last 
+            //User didn't specify any input parameter. Invoke the last
             //entry
             if (_id == null)
             {
@@ -1398,7 +1398,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Invoke-history is replaced in history by the command it executed.
         /// This replacement happens only if Invoke-History is single element
-        /// in the pipeline. If there are more than one element in pipeline 
+        /// in the pipeline. If there are more than one element in pipeline
         /// (ex A | Invoke-History 2 | B) then we cannot do this replacement.
         /// </summary>
         private void ReplaceHistoryString(HistoryInfo entry)
@@ -1416,21 +1416,21 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// This class Implements the add-history command
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "History", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113279")]
+    [Cmdlet(VerbsCommon.Add, "History", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113279")]
     [OutputType(typeof(HistoryInfo))]
     public class AddHistoryCommand : PSCmdlet
     {
         #region parameters
 
         /// <summary>
-        /// This parameter specifies the current pipeline object 
+        /// This parameter specifies the current pipeline object
         /// </summary>
         [Parameter(Position = 0, ValueFromPipeline = true)]
         public PSObject[] InputObject { set; get; }
 
         private bool _passthru;
         /// <summary>
-        /// A Boolean that indicates whether history objects should be 
+        /// A Boolean that indicates whether history objects should be
         /// passed to the next element in the pipeline.
         /// </summary>
         [Parameter()]
@@ -1449,9 +1449,9 @@ namespace Microsoft.PowerShell.Commands
         override
         void BeginProcessing()
         {
-            //Get currently running pipeline and add history entry for 
+            //Get currently running pipeline and add history entry for
             //this pipeline.
-            //Note:Generally History entry for current pipeline is added 
+            //Note:Generally History entry for current pipeline is added
             //on completion of pipeline (See LocalPipeline implementation).
             //However Add-history adds additional entries in to history and
             //additional entries must be added after history for current pipeline.
@@ -1501,7 +1501,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Convert mshObject that has has the properties of an HistoryInfo 
+        /// Convert mshObject that has has the properties of an HistoryInfo
         /// object in to HistoryInfo object.
         /// </summary>
         /// <param name="mshObject">
@@ -1672,7 +1672,7 @@ namespace Microsoft.PowerShell.Commands
     /// This Class implements the Clear History cmdlet
     ///</summary>
 
-    [Cmdlet(VerbsCommon.Clear, "History", SupportsShouldProcess = true, DefaultParameterSetName = "IDParameter", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135199")]
+    [Cmdlet(VerbsCommon.Clear, "History", SupportsShouldProcess = true, DefaultParameterSetName = "IDParameter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135199")]
     public class ClearHistoryCommand : PSCmdlet
     {
         #region Command Line Parameters
@@ -1680,7 +1680,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Specifies the ID of a command in the session history.Clear history clears the entries
         /// wit the specified ID(s)
-        /// </summary>       
+        /// </summary>
         [Parameter(ParameterSetName = "IDParameter", Position = 0,
            HelpMessage = "Specifies the ID of a command in the session history.Clear history clears only the specified command")]
         [ValidateRangeAttribute((int)1, int.MaxValue)]
@@ -1697,7 +1697,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        /// <summary>  
+        /// <summary>
         /// id of a history  entry
         /// </summary>
 
@@ -1722,7 +1722,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        /// <summary>  
+        /// <summary>
         ///  commandline parameter
         /// </summary>
 
@@ -1742,12 +1742,12 @@ namespace Microsoft.PowerShell.Commands
             }
             set
             {
-                _countParamterSpecified = true;
+                _countParameterSpecified = true;
                 _count = value;
             }
         }
 
-        /// <summary>  
+        /// <summary>
         /// count of the history entries
         /// </summary>
         private int _count = 32;
@@ -1755,7 +1755,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// a boolean variable to indicate if the count parameter specified
         /// </summary>
-        private bool _countParamterSpecified = false;
+        private bool _countParameterSpecified = false;
 
         /// <summary>
         /// Specifies whether new entries to be cleared or the default old ones.
@@ -1774,7 +1774,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        /// <summary>  
+        /// <summary>
         /// switch parameter on the history entries
         /// </summary>
 
@@ -1824,7 +1824,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private void ClearHistoryByID()
         {
-            if (_countParamterSpecified && Count < 0)
+            if (_countParameterSpecified && Count < 0)
             {
                 Exception ex =
                    new ArgumentException
@@ -1846,9 +1846,9 @@ namespace Microsoft.PowerShell.Commands
             if (_id != null)
             {
                 // if count parameter is not present
-                if (!_countParamterSpecified)
+                if (!_countParameterSpecified)
                 {
-                    // clearing the entry for each id in the id[] parameter.      
+                    // clearing the entry for each id in the id[] parameter.
                     foreach (long id in _id)
                     {
                         Dbg.Assert(id > 0, "ValidateRangeAttribute should not allow this");
@@ -1897,7 +1897,7 @@ namespace Microsoft.PowerShell.Commands
                     );
                 }
                 else
-                {// if id,count adn newest parameters are present 
+                {// if id,count adn newest parameters are present
                     //throw an exception for invalid count values
 
                     long id = _id[0];
@@ -1908,7 +1908,7 @@ namespace Microsoft.PowerShell.Commands
             else
             {
                 // confirmation message if all the clearhistory cmdlet is used without any parameters
-                if (_countParamterSpecified == false)
+                if (_countParameterSpecified == false)
                 {
                     string message = StringUtil.Format(HistoryStrings.ClearHistoryWarning, "Warning");// "The command would clear all the entry(s) from the session history,Are you sure you want to continue ?";
                     if (!ShouldProcess(message))
@@ -1933,7 +1933,7 @@ namespace Microsoft.PowerShell.Commands
         private void ClearHistoryByCmdLine()
         {
             // throw an exception for invalid count values
-            if (_countParamterSpecified && Count < 0)
+            if (_countParameterSpecified && Count < 0)
             {
                 Exception ex =
                    new ArgumentException
@@ -1956,7 +1956,7 @@ namespace Microsoft.PowerShell.Commands
             if (_commandline != null)
             {
                 // if count parameter is not present
-                if (!_countParamterSpecified)
+                if (!_countParameterSpecified)
                 {
                     foreach (string cmd in _commandline)
                     {
@@ -1983,7 +1983,7 @@ namespace Microsoft.PowerShell.Commands
                     );
                 }
                 else
-                {   // if commandline,count and newest parameters are present.                 
+                {   // if commandline,count and newest parameters are present.
                     ClearHistoryEntries(0, _count, _commandline[0], _newest);
                 }
             }
@@ -2038,11 +2038,11 @@ namespace Microsoft.PowerShell.Commands
                 //creates a wild card pattern
                 WildcardPattern wildcardpattern = WildcardPattern.Get(cmdline, WildcardOptions.IgnoreCase);
                 //count set to zero if not specified.
-                if (!_countParamterSpecified && WildcardPattern.ContainsWildcardCharacters(cmdline))
+                if (!_countParameterSpecified && WildcardPattern.ContainsWildcardCharacters(cmdline))
                 {
                     count = 0;
                 }
-                // Return the matching history entries for the command line parameter 
+                // Return the matching history entries for the command line parameter
                 // if newest id false...gets the oldest entry
                 _entries = _history.GetEntries(wildcardpattern, count, newest);
             }// end case cmdline
@@ -2055,17 +2055,17 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return;
-        }//end  function    
+        }//end  function
 
 
         /// <summary>
         /// history obj
-        /// </summary>        
+        /// </summary>
         private History _history;
 
         /// <summary>
         /// array of historyinfo objects
-        /// </summary>        
+        /// </summary>
         private HistoryInfo[] _entries;
 
         #endregion Private

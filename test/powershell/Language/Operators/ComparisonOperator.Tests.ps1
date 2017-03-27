@@ -27,7 +27,7 @@ Describe "ComparisonOperator" -tag "CI" {
 	It "Should be $true for 1 -ne 2" {
 	 1 -ne 2       | Should Be $true
     }
-	
+
 	It "Should be $true for 1 -and 1, $false for 1 -and 0, $false for 0 -and 0" {
 	 1 -and 1       | Should Be $true
 	 1 -and 0       | Should Be $false
@@ -46,7 +46,7 @@ Describe "ComparisonOperator" -tag "CI" {
 	 !1       | Should Be $false
 	 !0       | Should Be $true
     }
-	
+
 	It "Should be $true for 'Hello','world' -contains 'Hello'" {
 	 $arr= 'Hello','world'
 	 $arr -contains 'Hello'       | Should Be $true
@@ -67,5 +67,45 @@ Describe "ComparisonOperator" -tag "CI" {
     }
 	It "Should be $false for 'Hello world' -notlike 'Hello*'" {
 	 "Hello world" -notlike "Hello*"       | Should Be $false
+    }
+}
+
+
+Describe "Bytewise Operator" -tag "CI" {
+
+    It "Test -bor on enum with [byte] as underlying type" {
+        $result = [System.Security.AccessControl.AceFlags]::ObjectInherit -bxor `
+                  [System.Security.AccessControl.AceFlags]::ContainerInherit
+        $result.ToString() | Should Be "ObjectInherit, ContainerInherit"
+    }
+
+    It "Test -bor on enum with [int] as underlying type" {
+        $result = [System.Management.Automation.CommandTypes]::Alias -bor `
+                  [System.Management.Automation.CommandTypes]::Application
+        $result.ToString() | Should Be "Alias, Application"
+    }
+
+    It "Test -band on enum with [byte] as underlying type" {
+        $result = [System.Security.AccessControl.AceFlags]::ObjectInherit -band `
+                  [System.Security.AccessControl.AceFlags]::ContainerInherit
+        $result.ToString() | Should Be "None"
+    }
+
+    It "Test -band on enum with [int] as underlying type" {
+        $result = [System.Management.Automation.CommandTypes]::Alias -band `
+                  [System.Management.Automation.CommandTypes]::All
+        $result.ToString() | Should Be "Alias"
+    }
+
+    It "Test -bxor on enum with [byte] as underlying type" {
+        $result = [System.Security.AccessControl.AceFlags]::ObjectInherit -bxor `
+                  [System.Security.AccessControl.AceFlags]::ContainerInherit
+        $result.ToString() | Should Be "ObjectInherit, ContainerInherit"
+    }
+
+    It "Test -bxor on enum with [int] as underlying type" {
+        $result = [System.Management.Automation.CommandTypes]::Alias -bxor `
+                  [System.Management.Automation.CommandTypes]::Application
+        $result.ToString() | Should Be "Alias, Application"
     }
 }

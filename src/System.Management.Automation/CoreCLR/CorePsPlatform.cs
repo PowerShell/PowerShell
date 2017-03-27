@@ -4,6 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 using System.IO;
@@ -74,7 +75,7 @@ namespace System.Management.Automation
 #endif
             }
         }
-        
+
         /// <summary>
         /// True if the underlying system is NanoServer.
         /// </summary>
@@ -88,7 +89,7 @@ namespace System.Management.Automation
                 return false;
 #else
                 if (_isNanoServer.HasValue) { return _isNanoServer.Value; }
-                
+
                 _isNanoServer = false;
                 using (RegistryKey regKey = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows NT\CurrentVersion\Server\ServerLevels"))
                 {
@@ -166,7 +167,7 @@ namespace System.Management.Automation
             }
         }
 
-#if !UNIX 
+#if !UNIX
         private static bool? _isNanoServer = null;
         private static bool? _isIoT = null;
         private static bool? _isInbox = null;
@@ -260,7 +261,14 @@ namespace System.Management.Automation
                         // create the xdg folder if needed
                         if (!Directory.Exists(xdgDataHomeDefault))
                         {
-                            Directory.CreateDirectory(xdgDataHomeDefault);
+                            try
+                            {
+                                Directory.CreateDirectory(xdgDataHomeDefault);
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                //service accounts won't have permission to create user folder
+                            }
                         }
                         return xdgDataHomeDefault;
                     }
@@ -276,7 +284,14 @@ namespace System.Management.Automation
                         //xdg values have not been set
                         if (!Directory.Exists(xdgModuleDefault)) //module folder not always guaranteed to exist
                         {
-                            Directory.CreateDirectory(xdgModuleDefault);
+                            try
+                            {
+                                Directory.CreateDirectory(xdgModuleDefault);
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                //service accounts won't have permission to create user folder
+                            }
                         }
                         return xdgModuleDefault;
                     }
@@ -295,7 +310,14 @@ namespace System.Management.Automation
                         //xdg values have not been set
                         if (!Directory.Exists(xdgCacheDefault)) //module folder not always guaranteed to exist
                         {
-                            Directory.CreateDirectory(xdgCacheDefault);
+                            try
+                            {
+                                Directory.CreateDirectory(xdgCacheDefault);
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                //service accounts won't have permission to create user folder
+                            }
                         }
 
                         return xdgCacheDefault;
@@ -305,7 +327,14 @@ namespace System.Management.Automation
                     {
                         if (!Directory.Exists(Path.Combine(xdgcachehome, "powershell")))
                         {
-                            Directory.CreateDirectory(Path.Combine(xdgcachehome, "powershell"));
+                            try
+                            {
+                                Directory.CreateDirectory(Path.Combine(xdgcachehome, "powershell"));
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                //service accounts won't have permission to create user folder
+                            }                                
                         }
 
                         return Path.Combine(xdgcachehome, "powershell");
@@ -394,18 +423,18 @@ namespace System.Management.Automation
         internal static bool NonWindowsCreateSymbolicLink(string path, string target)
         {
             // Linux doesn't care if target is a directory or not
-            return Unix.NativeMethods.CreateSymLink(path, target);
+            return Unix.NativeMethods.CreateSymLink(path, target) == 0;
         }
 
         internal static bool NonWindowsCreateHardLink(string path, string strTargetPath)
         {
-            return Unix.CreateHardLink(path, strTargetPath);
+            return Unix.NativeMethods.CreateHardLink(path, strTargetPath) == 0;
         }
 
-        internal static void NonWindowsSetDate(DateTime dateToUse)
+        internal static unsafe bool NonWindowsSetDate(DateTime dateToUse)
         {
-            Unix.SetDateInfoInternal date = new Unix.SetDateInfoInternal(dateToUse);
-            Unix.SetDate(date);
+            Unix.NativeMethods.UnixTm tm = Unix.NativeMethods.DateTimeToUnixTm(dateToUse);
+            return Unix.NativeMethods.SetDate(&tm) == 0;
         }
 
         internal static string NonWindowsGetDomainName()
@@ -447,12 +476,31 @@ namespace System.Management.Automation
 
         internal static uint NonWindowsGetThreadId()
         {
-            // TODO:PSL clean this up
-            return 0;
+            return Unix.NativeMethods.GetCurrentThreadId();
         }
 
+        internal static int NonWindowsGetProcessParentPid(int pid)
+        {
+            return IsOSX ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
+        }
+
+       
+
+        // Unix specific implementations of required functionality
+        //
+        // Please note that `Win32Exception(Marshal.GetLastWin32Error())`
+        // works *correctly* on Linux in that it creates an exception with
+        // the string perror would give you for the last set value of errno.
+        // No manual mapping is required. .NET Core maps the Linux errno
+        // to a PAL value and calls strerror_r underneath to generate the message.
         internal static class Unix
         {
+            // This is a helper that attempts to map errno into a PowerShell ErrorCategory
+            internal static ErrorCategory GetErrorCategory(int errno)
+            {
+                return (ErrorCategory)Unix.NativeMethods.GetErrorCategory(errno);
+            }
+
             private static string s_userName;
             public static string UserName
             {
@@ -502,61 +550,37 @@ namespace System.Management.Automation
                 int count;
                 string filePath = fs.FullName;
                 int ret = NativeMethods.GetLinkCount(filePath, out count);
-                if (ret == 1)
+                if (ret == 0)
                 {
                     return count > 1;
                 }
                 else
                 {
-                    int lastError = Marshal.GetLastWin32Error();
-                    throw new InvalidOperationException("Unix.IsHardLink error: " + lastError);
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
             }
 
-            public static void SetDate(SetDateInfoInternal info)
+            public static int GetProcFSParentPid(int pid)
             {
-                int ret = NativeMethods.SetDate(info);
-                if (ret == -1)
+                const int invalidPid = -1;
+                // read /proc/<pid>/stat
+                // 4th column will contain the ppid, 92 in the example below
+                // ex: 93 (bash) S 92 93 2 4294967295 ...
+
+                var path = $"/proc/{pid}/stat";
+                try
                 {
-                    int lastError = Marshal.GetLastWin32Error();
-                    throw new InvalidOperationException("Unix.NonWindowsSetDate error: " + lastError);
+                    var stat = System.IO.File.ReadAllText(path);
+                    var parts = stat.Split(new[] { ' ' }, 5);
+                    if (parts.Length < 5)
+                    {
+                        return invalidPid;
+                    }
+                    return Int32.Parse(parts[3]);
                 }
-            }
-
-            public static bool CreateHardLink(string path, string strTargetPath)
-            {
-                int ret = NativeMethods.CreateHardLink(path, strTargetPath);
-                return ret == 1 ? true : false;
-            }
-
-            [StructLayout(LayoutKind.Sequential)]
-            internal class SetDateInfoInternal
-            {
-                public int Year;
-                public int Month;
-                public int Day;
-                public int Hour;
-                public int Minute;
-                public int Second;
-                public int Millisecond;
-                public int DST;
-
-                public SetDateInfoInternal(DateTime d)
+                catch (Exception)
                 {
-                    Year = d.Year;
-                    Month = d.Month;
-                    Day = d.Day;
-                    Hour = d.Hour;
-                    Minute = d.Minute;
-                    Second = d.Second;
-                    Millisecond = d.Millisecond;
-                    DST = d.IsDaylightSavingTime() ? 1 : 0;
-                }
-
-                public override string ToString()
-                {
-                    string ret = String.Format("Year = {0}; Month = {1}; Day = {2}; Hour = {3}; Minute = {4}; Second = {5}; Millisec = {6}; DST = {7}", Year, Month, Day, Hour, Minute, Second, Millisecond, DST);
-                    return ret;
+                    return invalidPid;
                 }
             }
 
@@ -568,9 +592,15 @@ namespace System.Management.Automation
 
                 // C bools are 1 byte and so must be marshaled as I1
 
+                [DllImport(psLib, CharSet = CharSet.Ansi)]
+                internal static extern int GetErrorCategory(int errno);
+
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.LPStr)]
                 internal static extern string GetUserName();
+
+                [DllImport(psLib)]
+                internal static extern int GetPPid(int pid);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 internal static extern int GetLinkCount([MarshalAs(UnmanagedType.LPStr)]string filePath, out int linkCount);
@@ -583,17 +613,49 @@ namespace System.Management.Automation
                 [return: MarshalAs(UnmanagedType.I1)]
                 internal static extern bool IsExecutable([MarshalAs(UnmanagedType.LPStr)]string filePath);
 
+                [DllImport(psLib, CharSet = CharSet.Ansi)]
+                internal static extern uint GetCurrentThreadId();
+
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.LPStr)]
                 internal static extern string GetFullyQualifiedName();
 
-                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                internal static extern int SetDate(SetDateInfoInternal info);
+                // This is a struct tm from <time.h>
+                [StructLayout(LayoutKind.Sequential)]
+                internal unsafe struct UnixTm
+                {
+                    public int tm_sec;    /* Seconds (0-60) */
+                    public int tm_min;    /* Minutes (0-59) */
+                    public int tm_hour;   /* Hours (0-23) */
+                    public int tm_mday;   /* Day of the month (1-31) */
+                    public int tm_mon;    /* Month (0-11) */
+                    public int tm_year;   /* Year - 1900 */
+                    public int tm_wday;   /* Day of the week (0-6, Sunday = 0) */
+                    public int tm_yday;   /* Day in the year (0-365, 1 Jan = 0) */
+                    public int tm_isdst;  /* Daylight saving time */
+                }
+
+                internal static UnixTm DateTimeToUnixTm(DateTime date)
+                {
+                    UnixTm tm;
+                    tm.tm_sec = date.Second;
+                    tm.tm_min = date.Minute;
+                    tm.tm_hour = date.Hour;
+                    tm.tm_mday = date.Day;
+                    tm.tm_mon = date.Month - 1; // needs to be 0 indexed
+                    tm.tm_year = date.Year - 1900; // years since 1900
+                    tm.tm_wday = 0; // this is ignored by mktime
+                    tm.tm_yday = 0; // this is also ignored
+                    tm.tm_isdst = date.IsDaylightSavingTime() ? 1 : 0;
+                    return tm;
+                }
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
-                [return: MarshalAs(UnmanagedType.I1)]
-                internal static extern bool CreateSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
-                                                          [MarshalAs(UnmanagedType.LPStr)]string target);
+                internal static extern unsafe int SetDate(UnixTm* tm);
+
+                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                internal static extern int CreateSymLink([MarshalAs(UnmanagedType.LPStr)]string filePath,
+                                                         [MarshalAs(UnmanagedType.LPStr)]string target);
 
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 internal static extern int CreateHardLink([MarshalAs(UnmanagedType.LPStr)]string filePath,

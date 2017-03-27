@@ -13,12 +13,12 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Remove-LocalUser cmdlet deletes a user account from the Windows Security 
+    /// The Remove-LocalUser cmdlet deletes a user account from the Windows Security
     /// Accounts manager.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "LocalUser",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717982")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717982")]
     [Alias("rlu")]
     public class RemoveLocalUserCommand : Cmdlet
     {
@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameter Properties
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
-        /// Specifies the of the local user accounts to remove in the local Security 
+        /// Specifies the of the local user accounts to remove in the local Security
         /// Accounts Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
-        /// Specifies the user accounts to be deleted from the local Security Accounts 
+        /// Specifies the user accounts to be deleted from the local Security Accounts
         /// Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -67,7 +67,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
-        /// Specifies the local user accounts to remove by 
+        /// Specifies the local user accounts to remove by
         /// System.Security.Principal.SecurityIdentifier.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion Parameter Properties
 
 
-      
+
         #region Cmdlet Overrides
         /// <summary>
         /// BeginProcessing method.
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        
+
         /// <summary>
         /// EndProcessing method.
         /// </summary>

@@ -10,11 +10,11 @@ namespace System.Management.Automation.Remoting
 {
     /// <summary>
     /// This abstract class defines the server side data structure handler that a remote connection has
-    /// at the remote session level. 
+    /// at the remote session level.
     /// There are two other data structure handler levels:
     /// 1) at the runspace level,
     /// 2) at the pipeline level.
-    /// 
+    ///
     /// This session level data structure handler defines what can be done at the session level.
     /// </summary>
     internal abstract class ServerRemoteSessionDataStructureHandler : BaseSessionDataStructureHandler
@@ -83,7 +83,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// This method is used by the client data dispatching mechanism. 
+        /// This method is used by the client data dispatching mechanism.
         /// </summary>
         /// <param name="arg">
         /// This parameter contains the remote data from the client.

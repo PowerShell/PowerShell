@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// </summary>
 
-    [Cmdlet("Write", "Host", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113426", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommunications.Write, "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113426", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteHostCommand : ConsoleColorCmdlet
     {
         //
@@ -56,9 +56,9 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// 
+        ///
         /// The separator to print between objects
-        /// 
+        ///
         /// </summary>
         /// <value></value>
 

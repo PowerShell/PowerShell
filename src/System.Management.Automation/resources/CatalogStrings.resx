@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -117,8 +117,8 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="CatalogDefintionFileNotGenerated" xml:space="preserve">
-    <value>Unable to generate catalog defintion file.</value>
+  <data name="CatalogDefinitionFileNotGenerated" xml:space="preserve">
+    <value>Unable to generate catalog definition file.</value>
   </data>
   <data name="AddFileToCatalog" xml:space="preserve">
     <value>Adding file '{0}' to the catalog. Relative path of file in catalog is '{1}'.</value>
@@ -126,7 +126,7 @@
   <data name="SkipValidationOfCatalogFile" xml:space="preserve">
     <value>Skipping validating file {0} from catalog. </value>
   </data>
-  <data name="FoundFileHashInCatlogItem" xml:space="preserve">
+  <data name="FoundFileHashInCatalogItem" xml:space="preserve">
     <value>Found file {0} in the catalog with hash of {1}. </value>
   </data>
   <data name="FoundDuplicateFilesRelativePath" xml:space="preserve">
@@ -151,7 +151,7 @@
     <value>Catalog version is not valid. We only support catalog version {0} and version {1}.</value>
   </data>
   <data name="UnableToOpenCatalogDefinitionFile" xml:space="preserve">
-    <value>Unable to open catalog defintion file.</value>
+    <value>Unable to open catalog definition file.</value>
   </data>
   <data name="FoundDuplicateFileMemberInCatalog" xml:space="preserve">
     <value>Found multiple entries of file member {0} in the catalog.</value>

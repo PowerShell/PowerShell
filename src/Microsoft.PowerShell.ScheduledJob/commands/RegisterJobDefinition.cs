@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsLifecycle.Register, "ScheduledJob", SupportsShouldProcess = true, DefaultParameterSetName = RegisterScheduledJobCommand.ScriptBlockParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223922")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223922")]
     [OutputType(typeof(ScheduledJobDefinition))]
     public sealed class RegisterScheduledJobCommand : ScheduleJobCmdletBase
     {
@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// File path for script to be run in job.
         /// </summary>
-        [Parameter(Position = 1, Mandatory = true, 
+        [Parameter(Position = 1, Mandatory = true,
                    ParameterSetName = RegisterScheduledJobCommand.FilePathParameterSet)]
         [ValidateNotNullOrEmpty]
         public string FilePath
@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScriptBlock containing script to run in job.
         /// </summary>
-        [Parameter(Position = 1, Mandatory = true, 
+        [Parameter(Position = 1, Mandatory = true,
                    ParameterSetName = RegisterScheduledJobCommand.ScriptBlockParameterSet)]
         [ValidateNotNull]
         public ScriptBlock ScriptBlock
@@ -244,7 +244,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
                 try
                 {
-                    // If RunEvery parameter is specified then create a job trigger for the definition that 
+                    // If RunEvery parameter is specified then create a job trigger for the definition that
                     // runs the job at the requested interval.
                     if (MyInvocation.BoundParameters.ContainsKey("RunEvery"))
                     {
@@ -312,7 +312,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             JobInvocationInfo jobInvocationInfo = new ScheduledJobInvocationInfo(jobDefinition, parameterCollection);
 
-            ScheduledJobDefinition definition = new ScheduledJobDefinition(jobInvocationInfo, Trigger, 
+            ScheduledJobDefinition definition = new ScheduledJobDefinition(jobInvocationInfo, Trigger,
                 ScheduledJobOption, _credential);
 
             return definition;
@@ -348,7 +348,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
             JobInvocationInfo jobInvocationInfo = new ScheduledJobInvocationInfo(jobDefinition, parameterCollection);
 
-            ScheduledJobDefinition definition = new ScheduledJobDefinition(jobInvocationInfo, Trigger, 
+            ScheduledJobDefinition definition = new ScheduledJobDefinition(jobInvocationInfo, Trigger,
                 ScheduledJobOption, _credential);
 
             return definition;

@@ -1,15 +1,8 @@
-if ( ! (get-module -ea silentlycontinue TestHostCS ))
-{
-    $root = git rev-parse --show-toplevel
-    $pestertestroot = join-path $root test/powershell
-    $common = join-path $pestertestroot Common
-    $hostmodule = join-path $common TestHostCS.psm1
-    import-module $hostmodule
-}
 Describe "Get-Credential Test" -tag "CI" {
     BeforeAll {
         $th = New-TestHost
         $th.UI.StringForSecureString = "This is a test"
+        $th.UI.UserNameForCredential = "John"
         $rs = [runspacefactory]::Createrunspace($th)
         $rs.open()
         $ps = [powershell]::Create()
@@ -21,11 +14,89 @@ Describe "Get-Credential Test" -tag "CI" {
         $rs.Dispose()
         $ps.Dispose()
     }
-    It "Get-Credential produces as credential object" {
-        $cred = $ps.AddScript("Get-Credential -User Joe -Message Foo").Invoke() | Select-Object -First 1
-        $cred.gettype().FullName | Should Be "System.Management.Automation.PSCredential"
+    AfterEach {
+        $ps.Commands.Clear()
+    }
+    It "Get-Credential with message, produces a credential object" {
+        $cred = $ps.AddScript("Get-Credential -UserName Joe -Message Foo").Invoke() | Select-Object -First 1
+        $cred | Should BeOfType System.Management.Automation.PSCredential
         $netcred = $cred.GetNetworkCredential()
         $netcred.UserName | Should be "Joe"
         $netcred.Password | Should be "this is a test"
+        $th.ui.Streams.Prompt[-1] | Should Match "Credential:[^:]+:Foo"
+    }
+    It "Get-Credential with title, produces a credential object" {
+        $cred = $ps.AddScript("Get-Credential -UserName Joe -Title CustomTitle").Invoke() | Select-Object -First 1
+        $cred | Should BeOfType System.Management.Automation.PSCredential
+        $netcred = $cred.GetNetworkCredential()
+        $netcred.UserName | Should be "Joe"
+        $netcred.Password | Should be "this is a test"
+        $th.ui.Streams.Prompt[-1] | should Match "Credential:CustomTitle:[^:]+"
+    }
+    It "Get-Credential with only username, produces a credential object" {
+        $cred = $ps.AddScript("Get-Credential -UserName Joe").Invoke() | Select-Object -First 1
+        $cred | Should BeOfType System.Management.Automation.PSCredential
+        $netcred = $cred.GetNetworkCredential()
+        $netcred.UserName | Should be "Joe"
+        $netcred.Password | Should be "this is a test"
+        $th.ui.Streams.Prompt[-1] | Should Match "Credential:[^:]+:[^:]+"
+    }
+    It "Get-Credential with title and message, produces a credential object" {
+        $cred = $ps.AddScript("Get-Credential -UserName Joe -Message Foo -Title CustomTitle").Invoke() | Select-Object -First 1
+        $cred | Should BeOfType System.Management.Automation.PSCredential
+        $netcred = $cred.GetNetworkCredential()
+        $netcred.UserName | Should be "Joe"
+        $netcred.Password | Should be "this is a test"
+        $th.ui.Streams.Prompt[-1] | should be "Credential:CustomTitle:Foo"
+    }
+    It "Get-Credential without parameters" {
+        $cred = $ps.AddScript("Get-Credential").Invoke() | Select-Object -First 1
+        $cred | Should BeOfType System.Management.Automation.PSCredential
+        $netcred = $cred.GetNetworkCredential()
+        $netcred.UserName | Should be "John"
+        $netcred.Password | Should be "This is a test"
+        $th.ui.Streams.Prompt[-1] | Should Match "Credential:[^:]+:[^:]+"
+    }
+    It "Get-Credential `$null" {
+        $cred = $ps.AddScript("Get-Credential `$null").Invoke() | Select-Object -First 1
+        $cred | Should BeOfType System.Management.Automation.PSCredential
+        $netcred = $cred.GetNetworkCredential()
+        $netcred.UserName | Should be "John"
+        $netcred.Password | Should be "This is a test"
+        $th.ui.Streams.Prompt[-1] | Should Match "Credential:[^:]+:[^:]+"
+    }
+    It "Get-Credential -Credential `$null" {
+        $cred = $ps.AddScript("Get-Credential -Credential `$null").Invoke() | Select-Object -First 1
+        $cred | Should BeOfType System.Management.Automation.PSCredential
+        $netcred = $cred.GetNetworkCredential()
+        $netcred.UserName | Should be "John"
+        $netcred.Password | Should be "This is a test"
+        $th.ui.Streams.Prompt[-1] | Should Match "Credential:[^:]+:[^:]+"
+    }
+    it "Get-Credential Joe" {
+        $cred = $ps.AddScript("Get-Credential Joe").Invoke() | Select-Object -First 1
+        $cred | Should BeOfType System.Management.Automation.PSCredential
+        $netcred = $cred.GetNetworkCredential()
+        $netcred.UserName | Should be "Joe"
+        $netcred.Password | Should be "This is a test"
+        $th.ui.Streams.Prompt[-1] | Should Match "Credential:[^:]+:[^:]+"
+    }
+    it "Get-Credential -Credential Joe" {
+        $cred = $ps.AddScript("Get-Credential Joe").Invoke() | Select-Object -First 1
+        $cred | Should BeOfType System.Management.Automation.PSCredential
+        $netcred = $cred.GetNetworkCredential()
+        $netcred.UserName | Should be "Joe"
+        $netcred.Password | Should be "This is a test"
+        $th.ui.Streams.Prompt[-1] | Should Match "Credential:[^:]+:[^:]+"
+    }
+    it "Get-Credential `$credential" {
+        $password = ConvertTo-SecureString -String "CredTest" -AsPlainText -Force
+        $credential = [pscredential]::new("John", $password)
+
+        $cred = Get-Credential $credential
+        $cred | Should BeOfType System.Management.Automation.PSCredential
+        $netcred = $cred.GetNetworkCredential()
+        $netcred.UserName | Should be "John"
+        $netcred.Password | Should be "CredTest"
     }
 }

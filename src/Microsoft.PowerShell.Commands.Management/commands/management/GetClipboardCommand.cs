@@ -34,22 +34,22 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Defines the implementation of the 'Get-Clipboard' cmdlet.
-    /// This cmdlet get the content from system clipboard. 
+    /// This cmdlet get the content from system clipboard.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Clipboard", HelpUri = "http://go.microsoft.com/fwlink/?LinkId=526219")]
+    [Cmdlet(VerbsCommon.Get, "Clipboard", HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526219")]
     [Alias("gcb")]
     [OutputType(typeof(String), typeof(FileInfo), typeof(Image), typeof(Stream))]
     public class GetClipboardCommand : PSCmdlet
     {
-        /// <summary>  
-        /// Property that sets clipboard type. This will return the required format from clipboard 
-        /// </summary>  
+        /// <summary>
+        /// Property that sets clipboard type. This will return the required format from clipboard
+        /// </summary>
         [Parameter]
         public ClipboardFormat Format { get; set; }
 
-        /// <summary>  
+        /// <summary>
         /// Property that sets format type when the return type is text.
-        /// </summary>  
+        /// </summary>
         [Parameter]
         [ValidateNotNullOrEmpty]
         public TextDataFormat TextFormatType
@@ -64,9 +64,9 @@ namespace Microsoft.PowerShell.Commands
         private TextDataFormat _textFormat = TextDataFormat.UnicodeText;
         private bool _isTextFormatTypeSet = false;
 
-        /// <summary>  
+        /// <summary>
         /// Property that sets raw parameter. This will allow clipboard return text or file list as one string.
-        /// </summary>  
+        /// </summary>
         [Parameter]
         public SwitchParameter Raw
         {

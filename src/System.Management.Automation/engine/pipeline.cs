@@ -60,7 +60,7 @@ namespace System.Management.Automation.Internal
         /// <remarks>
         /// This is only public because it implements an interface method.
         /// The class itself is internal.
-        /// 
+        ///
         /// We use the standard IDispose pattern.
         /// </remarks>
         public void Dispose()
@@ -797,9 +797,8 @@ namespace System.Management.Automation.Internal
                 {
                     commandProcessor.Command.DoStopProcessing();
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     // 2004/04/26-JonN We swallow exceptions
                     // which occur during StopProcessing.
                     continue;
@@ -878,9 +877,8 @@ namespace System.Management.Automation.Internal
                 }
                 throw;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 DisposeCommands();
                 throw;
             }
@@ -1026,8 +1024,8 @@ namespace System.Management.Automation.Internal
                 myInfo.PipelinePosition = i + 1;
                 myInfo.PipelineLength = _commands.Count;
                 myInfo.PipelineIterationInfo = pipelineIterationInfo;
-                commandProcessor.DoPrepare(psDefaultParameterValues);
                 myInfo.ExpectingInput = commandProcessor.IsPipelineInputExpected();
+                commandProcessor.DoPrepare(psDefaultParameterValues);
             }
 
             // Clear ErrorVariable as appropriate
@@ -1161,7 +1159,7 @@ namespace System.Management.Automation.Internal
         } // private void Inject
 
         /// <summary>
-        /// Retrieve results from the pipeline. 
+        /// Retrieve results from the pipeline.
         /// </summary>
         /// <returns>
         /// Results from last pipeline stage.  This will be empty if
@@ -1302,8 +1300,6 @@ namespace System.Management.Automation.Internal
                         // exemption.
                         catch (Exception e) // Catch-all OK, 3rd party callout.
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
-
                             InvocationInfo myInvocation = null;
                             if (null != commandProcessor.Command)
                                 myInvocation = commandProcessor.Command.MyInvocation;
@@ -1355,9 +1351,8 @@ namespace System.Management.Automation.Internal
                             redirPipe.Dispose();
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                     }
 #pragma warning restore 56500
                 }
@@ -1544,7 +1539,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// The scope the pipeline should execute in.
         /// </summary>
-        /// 
+        ///
         internal SessionStateScope ExecutionScope
         {
             get { return _executionScope; }

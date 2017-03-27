@@ -9,15 +9,15 @@ EmptyMetadata=Read metadata was empty. Url: {0}.
 InvalidEndpointAddress=Invalid endpoint address ({0}). Web response with status code '{1}' was obtained while accessing this endpoint address.
 NoEntitySets=Metadata from URI '{0}' does not contain Entity Sets. No output will be written.
 NoEntityTypes=Metadata from URI '{0}' does not contain Entity Types. No output will be written.
-MetadataUriDoesNotExist=Metadata specifed at the URI '{0}' does not exist. No output will be written.
+MetadataUriDoesNotExist=Metadata specified at the URI '{0}' does not exist. No output will be written.
 InValidIdentifierInMetadata=Metadata specified at URI '{0}' contains an invalid Identifier '{1}'. Only valid C# identifiers are supported in the generated complex types during the proxy creation.
 InValidMetadata=Failed to process metadata specified at URI '{0}'. No output will be written.
 InValidXmlInMetadata=Metadata specified at URI '{0}' contains an invalid XML. No output will be written.
 ODataVersionNotFound=Metadata specified at URI '{0}' does not contain the OData Version. No output will be written.
 ODataVersionNotSupported=The OData version '{0}' specified in the metadata located at the URI '{1}' is not supported. Only OData versions between '{2}' and '{3}' are supported by '{4}' during proxy generation. No output will be written.
 InValidSchemaNamespace=Metadata specified at URI '{0}' is invalid. NULL or Empty values are not supported for Namespace attribute in the schema.
-InValidSchemaNamespaceConflictWithClassName=Metadata specified at URI '{0}' contains invalid Namespace {1} name, which conflicts with another type name. To avoid compliation error {1} will be changed to {2}.
-InValidSchemaNamespaceContainsInvalidChars=Metadata specified at URI '{0}' contains invalid Namespace name {1} with a combination of dots and numbers in it, which is not allowed in .Net. To avoid compliation error {1} will be changed to {2}.
+InValidSchemaNamespaceConflictWithClassName=Metadata specified at URI '{0}' contains invalid Namespace {1} name, which conflicts with another type name. To avoid compilation error {1} will be changed to {2}.
+InValidSchemaNamespaceContainsInvalidChars=Metadata specified at URI '{0}' contains invalid Namespace name {1} with a combination of dots and numbers in it, which is not allowed in .Net. To avoid compilation error {1} will be changed to {2}.
 InValidUri=URI '{0}' is invalid. No output will be written.
 RedfishNotEnabled=This version of Microsoft.PowerShell.ODataUtils doesn’t support Redfish, please run: ‘update-module Microsoft.PowerShell.ODataUtils’ to get Redfish support.
 EntitySetUndefinedType=Metadata from URI '{0}' does not contain the Type for Entity Set '{1}'. No output will be written.
@@ -48,7 +48,7 @@ SkipEntitySetConflictCommandCreation=CDXML module creation has been skipped for 
 EntitySetConflictCommandCreationWithWarning=CDXML module creation for the Entity Set '{0}' succeeded but contains a command '{1}' that collides with the inbox command.
 SkipConflictServiceActionCommandCreation=CDXML module creation has been skipped for the Service Action '{0}' because the exported command '{1}' conflicts with the inbox command.
 ConflictServiceActionCommandCreationWithWarning=CDXML module creation for the Service Action '{0}' succeeded but contains a command '{1}' that collides with the inbox command.
-AllowUnsecureConnectionMessage=The cmdlet '{0}' is trying to establish an Unsecure connection with the OData endpoint through the URI '{1}'. Either supply a secure URI to the -{2} parameter or use -AllowUnsecureConnection switch paramter if you intend to use the current URI.
+AllowUnsecureConnectionMessage=The cmdlet '{0}' is trying to establish an Unsecure connection with the OData endpoint through the URI '{1}'. Either supply a secure URI to the -{2} parameter or use -AllowUnsecureConnection switch parameter if you intend to use the current URI.
 ProgressBarMessage=Creating proxy for the OData endpoint at the URI '{0}'.
 ###PSLOC
 

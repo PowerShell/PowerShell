@@ -12,12 +12,12 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Get-LocalGroup cmdlet gets local groups from the Windows Security 
+    /// The Get-LocalGroup cmdlet gets local groups from the Windows Security
     /// Accounts manager.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "LocalGroup",
             DefaultParameterSetName = "Default",
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717974")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717974")]
     [Alias("glg")]
     public class GetLocalGroupCommand : Cmdlet
     {
@@ -61,7 +61,7 @@ namespace Microsoft.PowerShell.Commands
         private System.Security.Principal.SecurityIdentifier[] sid;
         #endregion Parameter Properties
 
-      
+
 
 
         #region Cmdlet Overrides
@@ -91,7 +91,7 @@ namespace Microsoft.PowerShell.Commands
             ProcessSids();
         }
 
-        
+
         /// <summary>
         /// EndProcessing method.
         /// </summary>

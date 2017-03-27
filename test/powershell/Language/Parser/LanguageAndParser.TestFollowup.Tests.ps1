@@ -107,7 +107,7 @@ Describe "Hashtable key property syntax" -Tags "CI" {
 }
 
 Describe "Assign automatic variables" -Tags "CI" {
-    
+
     $autos = '_', 'args', 'this', 'input', 'pscmdlet', 'psboundparameters', 'myinvocation', 'psscriptroot', 'pscommandpath'
 
     foreach ($auto in $autos)
@@ -131,14 +131,41 @@ Describe "Assign automatic variables" -Tags "CI" {
     }
 
     It "Assign auto w/ correct type constraint" {
-      & { [object]$_ = 1; $_ } | Should Be 1
-      & { [object[]]$args = 1; $args } | Should Be 1
-      & { [object]$this = 1; $this } | Should Be 1
-      & { [object]$input = 1; $input } | Should Be 1
-      # Can't test PSCmdlet or PSBoundParameters, they use an internal type
-      & { [System.Management.Automation.InvocationInfo]$myInvocation = $myInvocation; $myInvocation.Line } | Should Match Automation.InvocationInfo
-      & { [string]$PSScriptRoot = 'abc'; $PSScriptRoot } | Should Be abc
-      & { [string]$PSCommandPath = 'abc'; $PSCommandPath } | Should Be abc
+        & { [object]$_ = 1; $_ } | Should Be 1
+        & { [object[]]$args = 1; $args } | Should Be 1
+        & { [object]$this = 1; $this } | Should Be 1
+        & { [object]$input = 1; $input } | Should Be 1
+        # Can't test PSCmdlet or PSBoundParameters, they use an internal type
+        & { [System.Management.Automation.InvocationInfo]$myInvocation = $myInvocation; $myInvocation.Line } | Should Match Automation.InvocationInfo
+        & { [string]$PSScriptRoot = 'abc'; $PSScriptRoot } | Should Be abc
+        & { [string]$PSCommandPath = 'abc'; $PSCommandPath } | Should Be abc
+    }
+}
+
+Describe "Assign readonly/constant variables" -Tags "CI" {
+
+    $testCase = @(
+        @{ sb_wo_conversion = { $? = 1 }; name = '$? = 1' }
+        @{ sb_wo_conversion = { $HOME = 1 }; name = '$HOME = 1' }
+        @{ sb_wo_conversion = { $PID = 1 }; name = '$PID = 1' }
+    )
+
+    It "Assign readonly/constant variables w/o type constraint - '<name>'" -TestCases $testCase {
+        param($sb_wo_conversion)
+        { & $sb_wo_conversion } | Should Throw
+        { . $sb_wo_conversion } | Should Throw
+    }
+
+    $testCase = @(
+        @{ sb_w_conversion = { [datetime]$? = 1 }; name = '[datetime]$? = 1' }
+        @{ sb_w_conversion = { [datetime]$HOME = 1 }; name = '[datetime]$HOME = 1' }
+        @{ sb_w_conversion = { [datetime]$PID = 1 }; name = '[datetime]$PID = 1' }
+    )
+
+    It "Assign readonly/constant variables w/ type constraint - '<name>'" -TestCases $testCase {
+        param($sb_w_conversion)
+        { & $sb_w_conversion } | Should Throw
+        { . $sb_w_conversion } | Should Throw
     }
 }
 

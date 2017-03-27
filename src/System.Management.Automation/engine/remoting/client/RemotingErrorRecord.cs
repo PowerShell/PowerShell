@@ -283,15 +283,15 @@ namespace System.Management.Automation.Remoting
     /// </summary>
     /// <remarks>This class should only be used when
     /// defining origin information for error records.
-    /// In case of output objects, the information 
-    /// should directly be added to the object as 
+    /// In case of output objects, the information
+    /// should directly be added to the object as
     /// properties</remarks>
     [Serializable]
     [DataContract()]
     public class OriginInfo
     {
         /// <summary>
-        /// The HostEntry information for the machine on 
+        /// The HostEntry information for the machine on
         /// which this information originated
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "PSIP")]
@@ -306,7 +306,7 @@ namespace System.Management.Automation.Remoting
         private String _computerName;
 
         /// <summary>
-        /// Runspace instance ID 
+        /// Runspace instance ID
         /// </summary>
         [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "ID")]
         public Guid RunspaceID

@@ -5,6 +5,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Runtime.Serialization;
 using System.Collections.Generic;
+using System.Management.Automation.Language;
 
 #if CORECLR
 using Environment = System.Management.Automation.Environment;
@@ -13,15 +14,15 @@ using Environment = System.Management.Automation.Environment;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Defines a data structure used to represent informational context destined for the host or user. 
-    /// 
+    ///
+    /// Defines a data structure used to represent informational context destined for the host or user.
+    ///
     /// </summary>
     /// <remarks>
-    /// 
+    ///
     /// InformationRecords are passed to <see cref="System.Management.Automation.Cmdlet.WriteInformation(Object, string[])"/>,
     /// which, according to host or user preference, forwards that information on to the host for rendering to the user.
-    /// 
+    ///
     /// </remarks>
     /// <seealso cref="System.Management.Automation.Cmdlet.WriteInformation(Object, string[])"/>
 
@@ -29,9 +30,9 @@ namespace System.Management.Automation
     public class InformationRecord
     {
         /// <summary>
-        /// 
+        ///
         /// Initializes a new instance of the InformationRecord class.
-        /// 
+        ///
         /// </summary>
         /// <param name="messageData">The object to be transmitted to the host.</param>
         /// <param name="source">The source of the message (i.e.: script path, function name, etc.)</param>
@@ -41,15 +42,6 @@ namespace System.Management.Automation
             this.Source = source;
 
             this.TimeGenerated = DateTime.Now;
-            this.Tags = new List<string>();
-            // domain\user on Windows, just user on Unix
-#if UNIX
-            this.User = Platform.Unix.UserName;
-#else
-            this.User = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-#endif
-            this.Computer = PsUtils.GetHostName();
-            this.ProcessId = (uint)System.Diagnostics.Process.GetCurrentProcess().Id;
             this.NativeThreadId = PsUtils.GetNativeThreadId();
             this.ManagedThreadId = (uint)System.Threading.Thread.CurrentThread.ManagedThreadId;
         }
@@ -104,25 +96,64 @@ namespace System.Management.Automation
         /// </summary>
         [DataMember]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public List<string> Tags { get; internal set; }
+        public List<string> Tags
+        {
+            get { return _tags ?? (_tags = new List<string>()); }
+            internal set { _tags = value; }
+        }
+        private List<string> _tags;
 
         /// <summary>
         /// The user that generated this informational record
         /// </summary>
         [DataMember]
-        public string User { get; set; }
+        public string User
+        {
+            get
+            {
+                if (this._user == null)
+                {
+                    // domain\user on Windows, just user on Unix
+#if UNIX
+                    this._user = Platform.Unix.UserName;
+#else
+                    this._user = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+#endif
+                }
+                return _user;
+            }
+            set { _user = value; }
+        }
+        private string _user;
 
         /// <summary>
         /// The computer that generated this informational record
         /// </summary>
         [DataMember]
-        public string Computer { get; set; }
+        public string Computer
+        {
+            get { return this._computerName ?? (this._computerName = PsUtils.GetHostName()); }
+            set { this._computerName = value; }
+        }
+        private string _computerName;
 
         /// <summary>
         /// The process that generated this informational record
         /// </summary>
         [DataMember]
-        public uint ProcessId { get; set; }
+        public uint ProcessId
+        {
+            get
+            {
+                if (!this._processId.HasValue)
+                {
+                    this._processId = (uint) System.Diagnostics.Process.GetCurrentProcess().Id;
+                }
+                return this._processId.Value;
+            }
+            set { _processId = value; }
+        }
+        private uint? _processId;
 
         /// <summary>
         /// The native thread that generated this informational record

@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
         private char _delimiter;
 
         ///<summary>
-        ///Culture switch for csv conversion        
+        ///Culture switch for csv conversion
         ///</summary>
         [Parameter(ParameterSetName = "UseCulture")]
         public SwitchParameter UseCulture { get; set; }
@@ -110,7 +110,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// implementation for the export-csv command
     /// </summary>
-    [Cmdlet(VerbsData.Export, "Csv", SupportsShouldProcess = true, DefaultParameterSetName = "Delimiter", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113299")]
+    [Cmdlet(VerbsData.Export, "Csv", SupportsShouldProcess = true, DefaultParameterSetName = "Delimiter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113299")]
     public sealed class ExportCsvCommand : BaseCsvWritingCommand, IDisposable
     {
         #region Command Line Parameters
@@ -214,7 +214,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public SwitchParameter Append { get; set; }
-        private bool _isActuallyAppending; // true if Append=true AND the file written was not empty (or nonexistant) when the cmdlet was invoked
+        private bool _isActuallyAppending; // true if Append=true AND the file written was not empty (or nonexistent) when the cmdlet was invoked
 
         #endregion
 
@@ -484,7 +484,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements Import-Csv command
     /// </summary>
-    [Cmdlet(VerbsData.Import, "Csv", DefaultParameterSetName = "Delimiter", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113341")]
+    [Cmdlet(VerbsData.Import, "Csv", DefaultParameterSetName = "Delimiter", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113341")]
     public sealed
     class
     ImportCsvCommand : PSCmdlet
@@ -575,7 +575,7 @@ namespace Microsoft.PowerShell.Commands
         public string Encoding { get; set; }
 
         /// <summary>
-        /// Avoid writing out duplicate warning messages when there are 
+        /// Avoid writing out duplicate warning messages when there are
         /// one or more unspecified names
         /// </summary>
         private bool _alreadyWarnedUnspecifiedNames = false;
@@ -585,7 +585,7 @@ namespace Microsoft.PowerShell.Commands
         #region Override Methods
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -624,7 +624,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }//if
-        }////ProcessRecord  
+        }////ProcessRecord
     }
     #endregion Override Methods
 
@@ -636,14 +636,14 @@ namespace Microsoft.PowerShell.Commands
     /// Implements ConvertTo-Csv command
     /// </summary>
     [Cmdlet(VerbsData.ConvertTo, "Csv", DefaultParameterSetName = "Delimiter",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135203", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135203", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(String))]
     public sealed class ConvertToCsvCommand : BaseCsvWritingCommand
     {
         #region Parameter
 
         /// <summary>
-        /// Overrides Base InputObject 
+        /// Overrides Base InputObject
         /// </summary>
         [Parameter(ValueFromPipeline = true, Mandatory = true, ValueFromPipelineByPropertyName = true, Position = 0)]
         public override PSObject InputObject { get; set; }
@@ -658,7 +658,7 @@ namespace Microsoft.PowerShell.Commands
         private IList<string> _propertyNames;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         private ExportCsvHelper _helper;
 
@@ -710,7 +710,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region CSV conversion
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="line"></param>
         public override void
@@ -730,7 +730,7 @@ namespace Microsoft.PowerShell.Commands
     /// Implements ConvertFrom-Csv command
     /// </summary>
     [Cmdlet(VerbsData.ConvertFrom, "Csv", DefaultParameterSetName = "Delimiter",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135201", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135201", RemotingCapability = RemotingCapability.None)]
     public sealed
     class
     ConvertFromCsvCommand : PSCmdlet
@@ -746,7 +746,7 @@ namespace Microsoft.PowerShell.Commands
         public char Delimiter { get; set; }
 
         ///<summary>
-        ///Culture switch for csv conversion        
+        ///Culture switch for csv conversion
         ///</summary>
         [Parameter(ParameterSetName = "UseCulture", Mandatory = true)]
         [ValidateNotNull]
@@ -772,7 +772,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Header { get; set; }
 
         /// <summary>
-        /// Avoid writing out duplicate warning messages when there are 
+        /// Avoid writing out duplicate warning messages when there are
         /// one or more unspecified names
         /// </summary>
         private bool _alreadyWarnedUnspecifiedNames = false;
@@ -839,19 +839,19 @@ namespace Microsoft.PowerShell.Commands
     #region ExportHelperConversion
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     internal class ExportCsvHelper : IDisposable
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         private PSCmdlet _cmdlet;
 
         private char _delimiter;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="cmdlet"></param>
         /// <param name="delimiter"></param>
@@ -869,7 +869,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Get the name of properties from source PSObject and 
+        /// Get the name of properties from source PSObject and
         /// add them to _propertyNames.
         /// </summary>
         internal
@@ -920,7 +920,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="mshObject"></param>
         /// <param name="propertyNames"></param>
@@ -976,9 +976,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
             //If we cannot read some value, treat it as null.
-            catch (Exception ex)
+            catch (Exception)
             {
-                UtilityCommon.CheckForSevereException(_cmdlet, ex);
             }
             return value;
         }
@@ -1094,7 +1093,7 @@ namespace Microsoft.PowerShell.Commands
         private const string UnspecifiedName = "H";
 
         /// <summary>
-        /// Avoid writing out duplicate warning messages when there are 
+        /// Avoid writing out duplicate warning messages when there are
         /// one or more unspecified names
         /// </summary>
         private bool _alreadyWarnedUnspecifiedName = false;
@@ -1190,11 +1189,31 @@ namespace Microsoft.PowerShell.Commands
                 TypeName = ReadTypeInformation();
             }
 
-            if ((Header == null) && (!this.EOF))
+            while ((Header == null) && (!this.EOF))
             {
-                Collection<string> values = ParseNextRecord(true);
-                if (values.Count != 0)
+                Collection<string> values = ParseNextRecord();
+
+                // Trim all trailing blankspaces and delimiters ( single/multiple ).
+                // If there is only one element in the row and if its a blankspace we dont trim it.
+                // A trailing delimiter is represented as a blankspace while being added to result collection
+                // which is getting trimmed along with blankspaces supplied through the CSV in the below loop.
+                while (values.Count > 1 && values[values.Count - 1].Equals(string.Empty))
                 {
+                    values.RemoveAt(values.Count - 1);
+                }
+
+                // File starts with '#' and contains '#Fields:' is W3C Extended Log File Format
+                if (values.Count != 0 && values[0].StartsWith("#Fields: "))
+                {
+                    values[0] = values[0].Substring(9);
+                    Header = values;
+                } else if (values.Count != 0 && values[0].StartsWith("#"))
+                {
+                    // Skip all lines starting with '#'
+                } else
+                {
+                    // This is not W3C Extended Log File Format
+                    // By default first line is Header
                     Header = values;
                 }
             }
@@ -1213,7 +1232,7 @@ namespace Microsoft.PowerShell.Commands
             ReadHeader();
             while (true)
             {
-                Collection<string> values = ParseNextRecord(false);
+                Collection<string> values = ParseNextRecord();
                 if (values.Count == 0)
                     break;
 
@@ -1300,14 +1319,11 @@ namespace Microsoft.PowerShell.Commands
         /// Reads the next record from the file and returns parsed collection
         /// of string.
         /// </summary>
-        /// <param name="isHeaderRow">
-        /// Indicates if the parsed row is a header row or a values row.
-        /// </param>
         /// <returns>
         /// Parsed collection of strings.
         /// </returns>
         private Collection<string>
-        ParseNextRecord(bool isHeaderRow)
+        ParseNextRecord()
         {
             //Collection of strings to return
             Collection<string> result = new Collection<string>();
@@ -1348,8 +1364,8 @@ namespace Microsoft.PowerShell.Commands
                         if (PeekNextChar('"'))
                         {
                             //"" inside double quote are single quote
-                            //ex: "foo""bar" 
-                            //is read as 
+                            //ex: "foo""bar"
+                            //is read as
                             //->foo"bar<-
 
                             //PeekNextChar only peeks. Read the next char.
@@ -1359,13 +1375,13 @@ namespace Microsoft.PowerShell.Commands
                         }
                         else
                         {
-                            //We have seen a matching end quote. 
+                            //We have seen a matching end quote.
                             seenBeginQuote = false;
 
-                            //Read 
+                            //Read
                             //everything till we hit next delimiter.
                             //In correct CSV,1) end quote is followed by delimiter
-                            //2)end quote is followed some whitespaces and 
+                            //2)end quote is followed some whitespaces and
                             //then delimiter.
                             //We eat the whitespaces seen after the ending quote.
                             //However if there are other characters, we add all of them
@@ -1389,8 +1405,8 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        //We are seeing a quote after the start of 
-                        //the word. This is error, however we will be 
+                        //We are seeing a quote after the start of
+                        //the word. This is error, however we will be
                         //lenient here and do what excel does:
                         //Ex: foo "ba,r"
                         //In above example word read is ->foo "ba<-
@@ -1418,7 +1434,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        //We are not in quote and we are not at the 
+                        //We are not in quote and we are not at the
                         //beginning of a word. We should not be seeing
                         //spaces here. This is an error condition, however
                         //we will be lenient here and do what excel does,
@@ -1469,18 +1485,6 @@ namespace Microsoft.PowerShell.Commands
             if (current.Length != 0)
             {
                 result.Add(current.ToString());
-            }
-
-            //Trim all trailing blankspaces and delimiters ( single/multiple ).
-            // If there is only one element in the row and if its a blankspace we dont trim it.
-            // A trailing delimiter is represented as a blankspace while being added to result collection
-            // which is getting trimmed along with blankspaces supplied through the CSV in the below loop.
-            if (isHeaderRow)
-            {
-                while (result.Count > 1 && result[result.Count - 1].Equals(string.Empty))
-                {
-                    result.RemoveAt(result.Count - 1);
-                }
             }
 
             return result;

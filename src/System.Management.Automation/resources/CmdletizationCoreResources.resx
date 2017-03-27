@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -163,7 +163,7 @@
     <value>Cannot process the ObjectModelWrapper attribute. The {0} type defines the {1} cmdlet parameter with a {2} attribute parameter that is ignored.  Verify that the Cmdlet Definition XML specifies a valid type in the ObjectModelWrapper attribute and retry.</value>
     <comment>{StrContains="ObjectModelWrapper"}
 {0} is a placeholder for a .NET class name.  Example: System.Net.IPAddress
-{1} is a placeholder for a cmdlet parameter name.  Example: 'ProcesId'
+{1} is a placeholder for a cmdlet parameter name.  Example: 'ProcessId'
 {2} is a placeholder for a name of a property of ParameterAttribute class. Example: ValueFromPipelineByPropertyName </comment>
   </data>
   <data name="ScriptWriter_ParameterNameConflictsWithCommonParameters" xml:space="preserve">

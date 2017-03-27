@@ -42,7 +42,7 @@ namespace System.Management.Automation
 
         /// Used by Remoting infrastructure. This TypeTable instance
         /// will be used by Serializer if ExecutionContext is not
-        /// avaliable (to get the ExecutionContext's TypeTable)
+        /// available (to get the ExecutionContext's TypeTable)
         private TypeTable _typeTable;
 
         private Collection<CollectionEntry<PSPropertyInfo>> _allPropertiesCollection;
@@ -337,7 +337,7 @@ namespace System.Management.Automation
                 }
             }
 
-            // This will create a CimInstance for PS_Object and populate the typenames. 
+            // This will create a CimInstance for PS_Object and populate the typenames.
             result = CreateCimInstanceForPSObject(cimClassName: "PS_Object",
                                                   psObj: mshSource,
                                                   writeToString: writeToString);
@@ -371,7 +371,7 @@ namespace System.Management.Automation
                 CreateCimInstanceForPSObjectProperties(mshSource, depth, specificPropertiesToSerialize, out listOfCimInstancesProperties);
             }
 
-            //TODO, insivara : Implement serialization of CimInstance 
+            //TODO, insivara : Implement serialization of CimInstance
             //if (isCimInstance)
             //{
             //    CimInstance cimInstance = mshSource.ImmediateBaseObject as CimInstance;
@@ -402,7 +402,7 @@ namespace System.Management.Automation
         /// is same source.ImmediateBaseObject. When PSObject is serialized as string,
         /// </param>
         /// <param name="pktInfo">
-        /// TypeSerializationInfo for the primitive. 
+        /// TypeSerializationInfo for the primitive.
         /// </param>
         /// <param name="property"></param>
         /// <param name="depth"></param>
@@ -536,14 +536,12 @@ namespace System.Management.Automation
                 }
                 catch (System.NotSupportedException)
                 {
-                    //ignore exceptions thrown when the enumerator doesn't support Reset() method as in  win8:948569 
+                    //ignore exceptions thrown when the enumerator doesn't support Reset() method as in  win8:948569
                 }
             }
             catch (Exception exception)
             {
                 // Catch-all OK. This is a third-party call-out.
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 PSEtwLog.LogAnalyticWarning(
                     PSEventId.Serializer_EnumerationFailed, PSOpcode.Exception, PSTask.Serialization,
                     PSKeyword.Serializer | PSKeyword.UseAlwaysAnalytic,
@@ -569,8 +567,6 @@ namespace System.Management.Automation
                     catch (Exception exception)
                     {
                         // Catch-all OK. This is a third-party call-out.
-                        CommandProcessorBase.CheckForSevereException(exception);
-
                         PSEtwLog.LogAnalyticWarning(
                             PSEventId.Serializer_EnumerationFailed, PSOpcode.Exception, PSTask.Serialization,
                             PSKeyword.Serializer | PSKeyword.UseAlwaysAnalytic,
@@ -599,8 +595,6 @@ namespace System.Management.Automation
             catch (Exception exception) // ignore non-severe exceptions
             {
                 // Catch-all OK. This is a third-party call-out.
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 PSEtwLog.LogAnalyticWarning(
                     PSEventId.Serializer_EnumerationFailed, PSOpcode.Exception, PSTask.Serialization,
                     PSKeyword.Serializer | PSKeyword.UseAlwaysAnalytic,
@@ -629,8 +623,6 @@ namespace System.Management.Automation
                     catch (Exception exception)
                     {
                         // Catch-all OK. This is a third-party call-out.
-                        CommandProcessorBase.CheckForSevereException(exception);
-
                         PSEtwLog.LogAnalyticWarning(
                             PSEventId.Serializer_EnumerationFailed, PSOpcode.Exception, PSTask.Serialization,
                             PSKeyword.Serializer | PSKeyword.UseAlwaysAnalytic,
@@ -671,7 +663,7 @@ namespace System.Management.Automation
         # region Serialization Delegates
 
         /// <summary>
-        /// Creates CimInstance for a primitive type 
+        /// Creates CimInstance for a primitive type
         /// </summary>
         /// <param name="property">name of property. pass null for item</param>
         /// <param name="source">value</param>
@@ -693,7 +685,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Creates CimInstance for a string 
+        /// Creates CimInstance for a string
         /// </summary>
         /// <param name="property">name of property. pass null for item</param>
         /// <param name="source">string value to write</param>
@@ -839,11 +831,11 @@ namespace System.Management.Automation
         /// Collection of properties to serialize
         /// </param>
         /// <param name="depth">
-        /// depth to which each property should be 
+        /// depth to which each property should be
         /// serialized
-        /// </param>    
+        /// </param>
         /// <param name="listOfCimInstances">
-        /// list of CimInstances for the properties 
+        /// list of CimInstances for the properties
         /// serialized
         /// </param>
         private void SerializeProperties
@@ -880,6 +872,6 @@ namespace System.Management.Automation
             return new CimInstance("Null");
         }
 
-        #endregion 
+        #endregion
     }
 }

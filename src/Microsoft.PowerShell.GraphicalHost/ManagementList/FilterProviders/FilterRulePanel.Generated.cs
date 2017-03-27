@@ -20,7 +20,7 @@ using System.Windows.Input;
 
 namespace Microsoft.Management.UI.Internal
 {
-    
+
     [Localizability(LocalizationCategory.None)]
     partial class FilterRulePanel
     {
@@ -31,13 +31,13 @@ namespace Microsoft.Management.UI.Internal
         /// Adds a collection of FilterRules to the panel.
         /// </summary>
         public static readonly RoutedCommand AddRulesCommand = new RoutedCommand("AddRules",typeof(FilterRulePanel));
-        
+
         static private void AddRulesCommand_CommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             FilterRulePanel obj = (FilterRulePanel) sender;
             obj.OnAddRulesExecuted( e );
         }
-        
+
         /// <summary>
         /// Called when AddRules executes.
         /// </summary>
@@ -48,9 +48,9 @@ namespace Microsoft.Management.UI.Internal
         {
             OnAddRulesExecutedImplementation(e);
         }
-        
+
         partial void OnAddRulesExecutedImplementation(ExecutedRoutedEventArgs e);
-        
+
         //
         // RemoveRule routed command
         //
@@ -58,13 +58,13 @@ namespace Microsoft.Management.UI.Internal
         /// Removes a FilterRulePanelItem from the panel.
         /// </summary>
         public static readonly RoutedCommand RemoveRuleCommand = new RoutedCommand("RemoveRule",typeof(FilterRulePanel));
-        
+
         static private void RemoveRuleCommand_CommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             FilterRulePanel obj = (FilterRulePanel) sender;
             obj.OnRemoveRuleExecuted( e );
         }
-        
+
         /// <summary>
         /// Called when RemoveRule executes.
         /// </summary>
@@ -75,13 +75,13 @@ namespace Microsoft.Management.UI.Internal
         {
             OnRemoveRuleExecutedImplementation(e);
         }
-        
+
         partial void OnRemoveRuleExecutedImplementation(ExecutedRoutedEventArgs e);
-        
+
         //
         // Static constructor
         //
-        
+
         /// <summary>
         /// Called when the type is initialized.
         /// </summary>
@@ -92,9 +92,9 @@ namespace Microsoft.Management.UI.Internal
             CommandManager.RegisterClassCommandBinding( typeof(FilterRulePanel), new CommandBinding( FilterRulePanel.RemoveRuleCommand, RemoveRuleCommand_CommandExecuted ));
             StaticConstructorImplementation();
         }
-        
+
         static partial void StaticConstructorImplementation();
-        
+
         //
         // CreateAutomationPeer
         //
@@ -108,7 +108,7 @@ namespace Microsoft.Management.UI.Internal
         {
             return new ExtendedFrameworkElementAutomationPeer(this,AutomationControlType.Group,true);
         }
-        
+
     }
 }
 #endregion

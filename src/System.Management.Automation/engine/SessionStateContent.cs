@@ -12,7 +12,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session 
+    /// Holds the state of a Monad Shell session
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -23,44 +23,44 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the content reader for the specified item.
         /// </summary>
-        /// 
+        ///
         /// <param name="paths">
         /// The path(s) to the item(s) to get the content reader for.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        /// 
+        ///
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The content readers for all items that the path resolves to.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
+        ///
         internal Collection<IContentReader> GetContentReader(string[] paths, bool force, bool literalPath)
         {
             if (paths == null)
@@ -82,45 +82,45 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the content reader for the specified item.
         /// </summary>
-        /// 
+        ///
         /// <param name="paths">
         /// The path(s) to the item(s) to get the content reader from.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The content readers for all items that the path resolves to.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
+        ///
         internal Collection<IContentReader> GetContentReader(
              string[] paths,
              CmdletProviderContext context)
@@ -169,31 +169,31 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the content reader for the item at the specified path.
         /// </summary>
-        /// 
+        ///
         /// <param name="providerInstance">
         /// The provider instance to use.
         /// </param>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerInstance"/> does not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="PipelineStoppedException">
         /// If the pipeline is being stopped while executing the command.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
+        ///
         private IContentReader GetContentReaderPrivate(
             CmdletProvider providerInstance,
             string path,
@@ -236,7 +236,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetContentReaderProviderException",
                     SessionStateStrings.GetContentReaderProviderException,
@@ -250,42 +249,42 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the dynamic parameters for the get-content cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
+        ///
         internal object GetContentReaderDynamicParameters(
              string path,
             CmdletProviderContext context)
@@ -325,36 +324,36 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the dynamic parameters for the get-content cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        /// 
+        ///
         /// <param name="providerInstance">
         /// The instance of the provider to use.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerInstance"/> does not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="PipelineStoppedException">
         /// If the pipeline is being stopped while executing the command.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
+        ///
         private object GetContentReaderDynamicParameters(
             CmdletProvider providerInstance,
             string path,
@@ -396,7 +395,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetContentReaderDynamicParametersProviderException",
                     SessionStateStrings.GetContentReaderDynamicParametersProviderException,
@@ -414,44 +412,44 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the content writer for the specified item.
         /// </summary>
-        /// 
+        ///
         /// <param name="paths">
         /// The path(s) to the item(s) to get the content writer for.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        /// 
+        ///
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The content writers for all items that the path resolves to.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
+        ///
         internal Collection<IContentWriter> GetContentWriter(string[] paths, bool force, bool literalPath)
         {
             if (paths == null)
@@ -473,45 +471,45 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the content writer for the specified item.
         /// </summary>
-        /// 
+        ///
         /// <param name="paths">
         /// The path(s) to the item(s) to get the content writer from.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The content writers for all items that the path resolves to.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
+        ///
         internal Collection<IContentWriter> GetContentWriter(
             string[] paths,
             CmdletProviderContext context)
@@ -558,31 +556,31 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the content writer for the item at the specified path.
         /// </summary>
-        /// 
+        ///
         /// <param name="providerInstance">
         /// The provider instance to use.
         /// </param>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerInstance"/> does not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="PipelineStoppedException">
         /// If the pipeline is being stopped while executing the command.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
+        ///
         private IContentWriter GetContentWriterPrivate(
             CmdletProvider providerInstance,
             string path,
@@ -624,7 +622,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetContentWriterProviderException",
                     SessionStateStrings.GetContentWriterProviderException,
@@ -638,42 +635,42 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the dynamic parameters for the set-content and add-content cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
+        ///
         internal object GetContentWriterDynamicParameters(
              string path,
             CmdletProviderContext context)
@@ -713,36 +710,36 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the dynamic parameters for the set-content and add-content cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        /// 
+        ///
         /// <param name="providerInstance">
         /// The instance of the provider to use.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerInstance"/> does not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="PipelineStoppedException">
         /// If the pipeline is being stopped while executing the command.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
+        ///
         private object GetContentWriterDynamicParameters(
             CmdletProvider providerInstance,
             string path,
@@ -784,7 +781,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetContentWriterDynamicParametersProviderException",
                     SessionStateStrings.GetContentWriterDynamicParametersProviderException,
@@ -802,40 +798,40 @@ namespace System.Management.Automation
         /// <summary>
         /// Clears all the content from the specified item.
         /// </summary>
-        /// 
+        ///
         /// <param name="paths">
         /// The path(s) to the item(s) to clear the content from.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// Passed on to providers to force operations.
         /// </param>
-        /// 
+        ///
         /// <param name="literalPath">
         /// If true, globbing is not done on paths.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
+        ///
         internal void ClearContent(string[] paths, bool force, bool literalPath)
         {
             if (paths == null)
@@ -855,41 +851,41 @@ namespace System.Management.Automation
         /// <summary>
         /// Clears all of the content from the specified item.
         /// </summary>
-        /// 
+        ///
         /// <param name="paths">
         /// The path to the item to clear the content from.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
+        ///
         internal void ClearContent(
               string[] paths,
               CmdletProviderContext context)
@@ -927,31 +923,31 @@ namespace System.Management.Automation
         /// <summary>
         /// Clears the content from the item at the specified path.
         /// </summary>
-        /// 
+        ///
         /// <param name="providerInstance">
         /// The provider instance to use.
         /// </param>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerInstance"/> does not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="PipelineStoppedException">
         /// If the pipeline is being stopped while executing the command.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
+        ///
         private void ClearContentPrivate(
             CmdletProvider providerInstance,
             string path,
@@ -992,7 +988,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "ClearContentProviderException",
                     SessionStateStrings.ClearContentProviderException,
@@ -1005,42 +1000,42 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the dynamic parameters for the clear-content cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item if it was specified on the command line.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object that has properties and fields decorated with
         /// parsing attributes similar to a cmdlet class.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the <paramref name="path"/> refers to a provider that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> refers to does
         /// not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
+        ///
         internal object ClearContentDynamicParameters(
              string path,
             CmdletProviderContext context)
@@ -1080,35 +1075,35 @@ namespace System.Management.Automation
         /// <summary>
         /// Calls the provider to get the clear-content dynamic parameters
         /// </summary>
-        /// 
+        ///
         /// <param name="providerInstance">
         /// The instance of the provider to call
         /// </param>
-        /// 
+        ///
         /// <param name="path">
         /// The path to pass to the provider.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context the command is executing under.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The dynamic parameter object returned by the provider.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the <paramref name="providerInstance"/> does not support this operation.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="PipelineStoppedException">
         /// If the pipeline is being stopped while executing the command.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider threw an exception.
         /// </exception>
-        /// 
+        ///
         private object ClearContentDynamicParameters(
             CmdletProvider providerInstance,
             string path,
@@ -1150,7 +1145,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "ClearContentDynamicParametersProviderException",
                     SessionStateStrings.ClearContentDynamicParametersProviderException,

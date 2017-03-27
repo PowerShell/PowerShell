@@ -5,10 +5,10 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Help request is a set of data to be passed into monad help engine for requesting help contents. 
-    /// 
+    /// Help request is a set of data to be passed into monad help engine for requesting help contents.
+    ///
     /// Help request track information including
-    /// 
+    ///
     ///     1. target
     ///     2. category filter
     ///     3. provider
@@ -16,9 +16,9 @@ namespace System.Management.Automation
     ///     5. components
     ///     6. functionalities
     ///     7. roles
-    /// 
-    /// Upon getting a help request, help engine will validate the help request and send the request to 
-    /// necessary help providers for processing. 
+    ///
+    /// Upon getting a help request, help engine will validate the help request and send the request to
+    /// necessary help providers for processing.
     /// </summary>
     internal class HelpRequest
     {
@@ -72,13 +72,13 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Provider for this help.
-        /// 
+        ///
         /// If provider is set and helpCategory is 'Provider', provider help will be returned. (Also
         /// the value of target will be set to this one).
-        /// 
+        ///
         /// If provider is set and helpCategory is 'Command', this will add provider specific help
-        /// to provider. 
-        /// 
+        /// to provider.
+        ///
         /// </summary>
         /// <value></value>
         internal string Provider { get; set; }
@@ -90,39 +90,39 @@ namespace System.Management.Automation
         internal int MaxResults { get; set; } = -1;
 
         /// <summary>
-        /// Component filter for command help. 
+        /// Component filter for command help.
         /// </summary>
         /// <value></value>
         internal string[] Component { get; set; }
 
         /// <summary>
-        /// Role filter for command help. 
+        /// Role filter for command help.
         /// </summary>
         /// <value></value>
         internal string[] Role { get; set; }
 
         /// <summary>
-        /// Functionality filter for command help. 
+        /// Functionality filter for command help.
         /// </summary>
         /// <value></value>
         internal string[] Functionality { get; set; }
 
         /// <summary>
-        /// Keeps track of get-help cmdlet call origin. It can be called 
+        /// Keeps track of get-help cmdlet call origin. It can be called
         /// directly by the user or indirectly by a script that a user calls.
         /// </summary>
         internal CommandOrigin CommandOrigin { get; set; }
 
         /// <summary>
         /// Following validation will be done, (in order)
-        /// 
-        /// 1. If everything is empty, do default help. 
+        ///
+        /// 1. If everything is empty, do default help.
         /// 2. If target is empty, set it to be provider if currently doing provider help only. Otherwise, set it to be *
         /// 3. If any special parameters like component, role, functionality are specified, do command help only.
         /// 4. If command help is requested, search for alias also.
         /// 5. If help category is none, set it to be all.
         /// 6. Don't do default help.
-        /// 
+        ///
         /// </summary>
         internal void Validate()
         {

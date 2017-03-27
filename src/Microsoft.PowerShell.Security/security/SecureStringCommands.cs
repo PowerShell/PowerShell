@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
         private byte[] _key;
 
         /// <summary>
-        /// Gets or sets the SecureString version of the encryption 
+        /// Gets or sets the SecureString version of the encryption
         /// key used by the SecureString cmdlets.
         /// </summary>
         [Parameter(Position = 1, ParameterSetName = "Secure")]
@@ -86,7 +86,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Gets or sets the byte version of the encryption 
+        /// Gets or sets the byte version of the encryption
         /// key used by the SecureString cmdlets.
         /// </summary>
         [Parameter(ParameterSetName = "Open")]
@@ -106,14 +106,14 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Defines the implementation of the 'ConvertFrom-SecureString' cmdlet.
-    /// This cmdlet exports a new SecureString -- one that represents 
-    /// text that should be kept confidential. The text is encrypted 
-    /// for privacy when being used, and deleted from computer memory 
-    /// when no longer needed.  When no key is specified, the command 
+    /// This cmdlet exports a new SecureString -- one that represents
+    /// text that should be kept confidential. The text is encrypted
+    /// for privacy when being used, and deleted from computer memory
+    /// when no longer needed.  When no key is specified, the command
     /// uses the DPAPI to encrypt the string. When a key is specified, the
     /// command uses the AES algorithm to encrypt the string.
     /// </summary>
-    [Cmdlet(VerbsData.ConvertFrom, "SecureString", DefaultParameterSetName = "Secure", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113287")]
+    [Cmdlet(VerbsData.ConvertFrom, "SecureString", DefaultParameterSetName = "Secure", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113287")]
     [OutputType(typeof(string))]
     public sealed class ConvertFromSecureStringCommand : ConvertFromToSecureStringCommandBase
     {
@@ -202,15 +202,15 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Defines the implementation of the 'ConvertTo-SecureString' cmdlet.
-    /// This cmdlet imports a new SecureString from encrypted data -- 
-    /// one that represents  text that should be kept confidential. 
-    /// The text is encrypted for privacy when being used, and deleted 
-    /// from computer memory when no longer needed.  When no key is 
-    /// specified, the command uses the DPAPI to decrypt the data. 
-    /// When a key is specified, the command uses the AES algorithm 
+    /// This cmdlet imports a new SecureString from encrypted data --
+    /// one that represents  text that should be kept confidential.
+    /// The text is encrypted for privacy when being used, and deleted
+    /// from computer memory when no longer needed.  When no key is
+    /// specified, the command uses the DPAPI to decrypt the data.
+    /// When a key is specified, the command uses the AES algorithm
     /// to decrypt the data.
     /// </summary>
-    [Cmdlet(VerbsData.ConvertTo, "SecureString", DefaultParameterSetName = "Secure", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113291")]
+    [Cmdlet(VerbsData.ConvertTo, "SecureString", DefaultParameterSetName = "Secure", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113291")]
     [OutputType(typeof(SecureString))]
     public sealed class ConvertToSecureStringCommand : ConvertFromToSecureStringCommandBase
     {
@@ -242,7 +242,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the flag that marks the unsecured string as a plain
         /// text string.
         /// </summary>
-        /// 
+        ///
         [Parameter(Position = 1, ParameterSetName = "PlainText")]
         public SwitchParameter AsPlainText
         {
@@ -262,7 +262,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the flag that will force the import of a plaintext
         /// unsecured string.
         /// </summary>
-        /// 
+        ///
         [Parameter(Position = 2, ParameterSetName = "PlainText")]
         public SwitchParameter Force
         {

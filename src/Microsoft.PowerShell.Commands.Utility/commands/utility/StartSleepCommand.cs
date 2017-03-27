@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Suspend shell, script, or runspace activity for the specified period of time.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Start, "Sleep", DefaultParameterSetName = "Seconds", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113407")]
+    [Cmdlet(VerbsLifecycle.Start, "Sleep", DefaultParameterSetName = "Seconds", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113407")]
     public sealed class StartSleepCommand : PSCmdlet, IDisposable
     {
         private bool _disposed = false;
@@ -71,7 +71,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _stopping = false;
 
         /// <summary>
-        /// This method causes calling thread to sleep for 
+        /// This method causes calling thread to sleep for
         /// specified milliseconds
         /// </summary>
         private void Sleep(int milliSecondsToSleep)
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void ProcessRecord()
         {

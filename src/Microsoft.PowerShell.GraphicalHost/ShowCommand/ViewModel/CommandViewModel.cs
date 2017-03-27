@@ -70,7 +70,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// <summary>
         /// Field used for the CommonParameters parameter.
         /// </summary>
-        private ParameterSetViewModel comonParameters;
+        private ParameterSetViewModel commonParameters;
 
         /// <summary>
         /// The ShowCommandCommandInfo this model is based on
@@ -134,12 +134,12 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         public bool AreCommonParametersExpanded
         {
-            get 
-            { 
-                return this.areCommonParametersExpanded; 
+            get
+            {
+                return this.areCommonParametersExpanded;
             }
 
-            set 
+            set
             {
                 if (this.areCommonParametersExpanded == value)
                 {
@@ -233,13 +233,13 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         {
             get { return (this.ParameterSets.Count == 1) ? Visibility.Visible : Visibility.Collapsed; }
         }
-        
+
         /// <summary>
         /// Gets the CommonParameters parameter.
         /// </summary>
         public ParameterSetViewModel CommonParameters
         {
-            get { return this.comonParameters; }
+            get { return this.commonParameters; }
         }
 
         /// <summary>
@@ -255,9 +255,9 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         /// </summary>
         public GridLength CommonParametersHeight
         {
-            get 
-            { 
-                return this.commonParametersHeight; 
+            get
+            {
+                return this.commonParametersHeight;
             }
 
             set
@@ -380,7 +380,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                      ShowCommandResources.ImportModuleButtonText);
             }
         }
-        
+
         /// <summary>
         /// Gets the title for the cmdlet details
         /// </summary>
@@ -412,7 +412,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         internal static GridLength Star
         {
             get { return CommandViewModel.star; }
-        } 
+        }
 
         /// <summary>
         /// Gets the builded PowerShell script.
@@ -423,7 +423,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             StringBuilder builder = new StringBuilder();
 
             string commandName = this.commandInfo.CommandType == CommandTypes.ExternalScript ? this.commandInfo.Definition : this.Name;
-            
+
             if (this.ModuleQualifyCommandName && !String.IsNullOrEmpty(this.ModuleName))
             {
                 commandName = this.ModuleName + "\\" + commandName;
@@ -537,7 +537,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             }
 
             List<ParameterViewModel> commonParametersList = commonParametersTable.Values.ToList<ParameterViewModel>();
-            returnValue.comonParameters = new ParameterSetViewModel(String.Empty, commonParametersList);
+            returnValue.commonParameters = new ParameterSetViewModel(String.Empty, commonParametersList);
 
             returnValue.parameterSets.Sort(returnValue.Compare);
 

@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -120,7 +120,7 @@
   <data name="CimJob_InvalidClassName" xml:space="preserve">
     <value>Cannot find the {0} class on the {1} CIM server.  Verify the value of the ClassName xml attribute in Cmdlet Definition XML and retry. Valid class name example: ROOT\cimv2\Win32_Process.</value>
     <comment>{StrContains="ClassName"} {StrContains="ROOT\cimv2\Win32_Process"}
-{0} is a placeholder for a name of a (potentially misspelled) CIM class.  Example: "Win32_Proccess".
+{0} is a placeholder for a name of a (potentially misspelled) CIM class.  Example: "Win32_Process".
 {1} is a placeholder for a server name.  Example: "localhost".</comment>
   </data>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
@@ -149,7 +149,7 @@
   </data>
   <data name="CimJob_SafeQueryDescription" xml:space="preserve">
     <value>CIM query for instances of the {0} class on the {1} CIM server: {2}</value>
-    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Proccess".
+    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Process".
 {1} is a placeholder for a server name.  Example: "localhost".</comment>
   </data>
   <data name="CimJob_ErrorCodeFromMethod" xml:space="preserve">
@@ -158,7 +158,7 @@
   </data>
   <data name="CimJob_SafeMethodDescription" xml:space="preserve">
     <value>The {2} CIM method exposed by the {0} class on the {1} CIM server</value>
-    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Proccess".
+    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Process".
 {1} is a placeholder for a server name.  Example: "localhost".
 {2} is a placeholder for a CIM method name. Example: Create</comment>
   </data>
@@ -187,12 +187,12 @@
   </data>
   <data name="CimJob_SafeAssociationDescription" xml:space="preserve">
     <value>CIM query for enumerating associated instance of the {0} class on the {1} CIM server</value>
-    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Proccess".
+    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Process".
 {1} is a placeholder for a server name.  Example: "localhost".</comment>
   </data>
   <data name="CimJob_AssociationDescription" xml:space="preserve">
     <value>CIM query for enumerating instances of the {0} class on the {1} CIM server, that are associated with the following instance: {2}</value>
-    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Proccess".
+    <comment>{0} is a placeholder for a name of a CIM class.  Example: "Win32_Process".
 {1} is a placeholder for a server name.  Example: "localhost".
 {2} is a placeholder for a string describing a CimInstance.  Example: "Win32_Process[Handle=123]".</comment>
   </data>

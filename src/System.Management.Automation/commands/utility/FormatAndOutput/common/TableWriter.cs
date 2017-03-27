@@ -3,6 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System.Collections.Specialized;
+using System.Management.Automation.Internal;
 using System.Text;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
@@ -241,14 +242,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 scArray[k] = GenerateMultiLineRowField(values[validColumnArray[k]], validColumnArray[k],
                                                                         alignment[validColumnArray[k]], ds);
 
-                // NOTE: the following padding operations assume that we 
+                // NOTE: the following padding operations assume that we
                 // pad with a blank (or any character that ALWAYS maps to a single screen cell
                 if (k > 0)
                 {
                     // skipping the first ones, add a separator for catenation
                     for (int j = 0; j < scArray[k].Count; j++)
                     {
-                        scArray[k][j] = new string(' ', ScreenInfo.separatorCharacterCount) + scArray[k][j];
+                        scArray[k][j] = StringUtil.Padding(ScreenInfo.separatorCharacterCount) + scArray[k][j];
                     }
                 }
                 else
@@ -258,7 +259,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         for (int j = 0; j < scArray[k].Count; j++)
                         {
-                            scArray[k][j] = new string(' ', _startColumn) + scArray[k][j];
+                            scArray[k][j] = StringUtil.Padding(_startColumn) + scArray[k][j];
                         }
                     }
                 }
@@ -288,7 +289,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     for (int j = 0; j < paddingEntries; j++)
                     {
-                        scArray[col].Add(new string(' ', paddingBlanks));
+                        scArray[col].Add(StringUtil.Padding(paddingBlanks));
                     }
                 }
             }
@@ -308,7 +309,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             return rows;
         }
 
-        private StringCollection GenerateMultiLineRowField(string val, int k, int aligment, DisplayCells dc)
+        private StringCollection GenerateMultiLineRowField(string val, int k, int alignment, DisplayCells dc)
         {
             StringCollection sc = StringManipulationHelper.GenerateLines(dc, val,
                                         _si.columnInfo[k].width, _si.columnInfo[k].width);
@@ -316,7 +317,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             for (int col = 0; col < sc.Count; col++)
             {
                 if (dc.Length(sc[col]) < _si.columnInfo[k].width)
-                    sc[col] = GenerateRowField(sc[col], _si.columnInfo[k].width, aligment, dc);
+                    sc[col] = GenerateRowField(sc[col], _si.columnInfo[k].width, alignment, dc);
             }
             return sc;
         }
@@ -335,18 +336,18 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 }
                 int newRowIndex = sb.Length;
 
-                // NOTE: the following padding operations assume that we 
+                // NOTE: the following padding operations assume that we
                 // pad with a blank (or any character that ALWAYS maps to a single screen cell
                 if (k > 0)
                 {
-                    sb.Append(new string(' ', ScreenInfo.separatorCharacterCount));
+                    sb.Append(StringUtil.Padding(ScreenInfo.separatorCharacterCount));
                 }
                 else
                 {
                     // add indentation padding if needed
                     if (_startColumn > 0)
                     {
-                        sb.Append(new string(' ', _startColumn));
+                        sb.Append(StringUtil.Padding(_startColumn));
                     }
                 }
                 sb.Append(GenerateRowField(values[k], _si.columnInfo[k].width, alignment[k], dc));
@@ -372,7 +373,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     case TextAlignment.Right:
                         {
-                            s = new string(' ', padCount) + s;
+                            s = StringUtil.Padding(padCount) + s;
                         }
                         break;
 
@@ -382,14 +383,14 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                             int padLeft = padCount / 2;
                             int padRight = padCount - padLeft;
 
-                            s = new string(' ', padLeft) + s + new string(' ', padRight);
+                            s = StringUtil.Padding(padLeft) + s + StringUtil.Padding(padRight);
                         }
                         break;
 
                     default:
                         {
                             // left align is the default
-                            s += new string(' ', padCount);
+                            s += StringUtil.Padding(padCount);
                         }
                         break;
                 }
@@ -407,7 +408,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     {
                         case TextAlignment.Right:
                             {
-                                // get from "abcdef" to "...f"    
+                                // get from "abcdef" to "...f"
                                 int tailCount = dc.GetTailSplitLength(s, truncationDisplayLength);
                                 s = s.Substring(s.Length - tailCount);
                                 s = ellipsis + s;

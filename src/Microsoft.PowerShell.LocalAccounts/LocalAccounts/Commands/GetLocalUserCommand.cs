@@ -12,13 +12,13 @@ using System.Management.Automation.SecurityAccountsManager.Extensions;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Get-LocalUser cmdlet gets local user accounts from the Windows Security 
-    /// Accounts Manager. This includes local accounts that have been connected to a 
+    /// The Get-LocalUser cmdlet gets local user accounts from the Windows Security
+    /// Accounts Manager. This includes local accounts that have been connected to a
     /// Microsoft account.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "LocalUser",
             DefaultParameterSetName = "Default",
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717980")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717980")]
     [Alias("glu")]
     public class GetLocalUserCommand : Cmdlet
     {
@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameter Properties
         /// <summary>
         /// The following is the definition of the input parameter "Name".
-        /// Specifies the local user accounts to get from the local Security Accounts 
+        /// Specifies the local user accounts to get from the local Security Accounts
         /// Manager. This accepts a name or wildcard string.
         /// </summary>
         [Parameter(Position = 0,
@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
             set { this.name = value; }
         }
         private string[] name;
-        
+
         /// <summary>
         /// The following is the definition of the input parameter "SID".
         /// Specifies a user from the local Security Accounts Manager.
@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands
             ProcessSids();
         }
 
-        
+
         /// <summary>
         /// EndProcessing method.
         /// </summary>

@@ -81,33 +81,33 @@ Describe "Format-List DRT basic functionality" -Tags "CI" {
 		$result = $p | Format-List -Force -Property "foo","bar" | Out-String
 		$result.Trim() | Should BeNullOrEmpty
 	}
-	
+
 	It "Format-List with Null Objects for End-To-End should work"{
 		$p = $null
 		$result = $p | Format-List -Force -Property "foo","bar" | Out-String
 		$result.Trim() | Should BeNullOrEmpty
 	}
-	
+
 	It "Format-List with single line string for End-To-End should work"{
 		$p = "single line string"
 		$result = $p | Format-List -Force -Property "foo","bar" | Out-String
 		$result.Trim() | Should BeNullOrEmpty
 	}
-	
+
 	It "Format-List with multiple line string for End-To-End should work"{
 		$p = "Line1\nLine2"
 		$result = $p | Format-List -Force -Property "foo","bar" | Out-String
 		$result.Trim() | Should BeNullOrEmpty
 	}
-	
+
 	It "Format-List with string sequence for End-To-End should work"{
 		$p = "Line1","Line2"
 		$result = $p | Format-List -Force -Property "foo","bar" | Out-String
 		$result.Trim() | Should BeNullOrEmpty
 	}
-	
+
     It "Format-List with complex object for End-To-End should work" {
-        Add-Type -TypeDefinition "public enum MyDayOfWeek{Sun,Mon,Tue,Wed,Thr,Fri,Sat}"
+        Add-Type -TypeDefinition "public enum MyDayOfWeek{Sun,Mon,Tue,Wed,Thu,Fri,Sat}"
         $eto = [MyDayOfWeek]::New()
         $info = @{}
         $info.intArray = 1,2,3,4
@@ -124,7 +124,7 @@ Describe "Format-List DRT basic functionality" -Tags "CI" {
         $result | Should Match "Name  : intArray"
         $result | Should Match "Value : {1, 2, 3, 4}"
     }
-	
+
 	It "Format-List with multiple same class object should work"{
 		Add-Type -TypeDefinition "public class TestClass{public TestClass(string name,int length){Name = name;Length = length;}public string Name;public int Length;}"
 		$testobjects = [TestClass]::New('name1',1),[TestClass]::New('name2',2),[TestClass]::New('name3',3)
@@ -136,7 +136,7 @@ Describe "Format-List DRT basic functionality" -Tags "CI" {
 		$result | Should Match "Name   : name3"
 		$result | Should Match "Length : 3"
 	}
-	
+
 	It "Format-List with multiple different class object should work"{
 		Add-Type -TypeDefinition "public class TestClass{public TestClass(string name,int length){Name = name;Length = length;}public string Name;public int Length;}"
 		Add-Type -TypeDefinition "public class TestClass2{public TestClass2(string name,string value,int length){Name = name;Value = value; Length = length;}public string Name;public string Value;public int Length;}"

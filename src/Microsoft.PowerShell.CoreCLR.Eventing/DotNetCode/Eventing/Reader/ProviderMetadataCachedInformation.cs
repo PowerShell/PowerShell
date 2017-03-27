@@ -2,10 +2,10 @@
 /*============================================================
 **
 **
-** Purpose: 
-** This internal class exposes a limited set of cached Provider 
-** metadata information.   It is meant to support the Metadata 
-** 
+** Purpose:
+** This internal class exposes a limited set of cached Provider
+** metadata information.   It is meant to support the Metadata
+**
 ============================================================*/
 
 using System.Globalization;
@@ -13,10 +13,10 @@ using System.Collections.Generic;
 
 namespace System.Diagnostics.Eventing.Reader
 {
-    // 
-    // this class does not expose underlying Provider metadata objects.  Instead it 
+    //
+    // this class does not expose underlying Provider metadata objects.  Instead it
     // exposes a limited set of Provider metadata information from the cache.  The reason
-    // for this is so the cache can easily Dispose the metadata object without worrying 
+    // for this is so the cache can easily Dispose the metadata object without worrying
     // about who is using it.
     //
     internal class ProviderMetadataCachedInformation

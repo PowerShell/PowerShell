@@ -18,16 +18,16 @@ namespace System.Management.Automation.ComInterop
     /// This class implements an event sink for a particular RCW.
     /// Unlike the implementation of events in TlbImp'd assemblies,
     /// we will create only one event sink per RCW (theoretically RCW might have
-    /// several ComEventSink evenk sinks - but all these implement different source intefaces).
+    /// several ComEventSink evenk sinks - but all these implement different source interfaces).
     /// Each ComEventSink contains a list of ComEventSinkMethod objects - which represent
-    /// a single method on the source interface an a multicast delegate to redirect 
-    /// the calls. Notice that we are chaining multicast delegates so that same 
-    /// ComEventSinkMedhod can invoke multiple event handlers).
-    /// 
+    /// a single method on the source interface an a multicast delegate to redirect
+    /// the calls. Notice that we are chaining multicast delegates so that same
+    /// ComEventSinkMethod can invoke multiple event handlers).
+    ///
     /// ComEventSink implements an IDisposable pattern to Unadvise from the connection point.
-    /// Typically, when RCW is finalized the corresponding Dispose will be triggered by 
+    /// Typically, when RCW is finalized the corresponding Dispose will be triggered by
     /// ComEventSinksContainer finalizer. Notice that lifetime of ComEventSinksContainer
-    /// is bound to the lifetime of the RCW. 
+    /// is bound to the lifetime of the RCW.
     /// </summary>
     internal sealed class ComEventSink : MarshalByRefObject, IReflect, IDisposable
     {
@@ -106,7 +106,7 @@ namespace System.Management.Automation.ComInterop
                     }
                     else if (sink._sourceIid == Guid.Empty)
                     {
-                        // we found a ComEventSink object that 
+                        // we found a ComEventSink object that
                         // was previously disposed. Now we will reuse it.
                         sink.Initialize(rcw, sourceIid);
                         comEventSink = sink;
@@ -178,17 +178,17 @@ namespace System.Management.Automation.ComInterop
                     }
                 }
 
-                // If the delegates chain is empty - we can remove 
+                // If the delegates chain is empty - we can remove
                 // corresponding ComEvenSinkEntry
                 if (sinkEntry._handlers == null)
                     _comEventSinkMethods.Remove(sinkEntry);
 
                 // We can Unadvise from the ConnectionPoint if no more sink entries
-                // are registered for this interface 
+                // are registered for this interface
                 //(calling Dispose will call IConnectionPoint.Unadvise).
                 if (_comEventSinkMethods.Count == 0)
                 {
-                    // notice that we do not remove 
+                    // notice that we do not remove
                     // ComEventSinkEntry from the list, we will re-use this data structure
                     // if a new handler needs to be attached.
                     Dispose();

@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Defines the implementation of the get-pfxcertificate cmdlet
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PfxCertificate", DefaultParameterSetName = "ByPath", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113323")]
+    [Cmdlet(VerbsCommon.Get, "PfxCertificate", DefaultParameterSetName = "ByPath", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113323")]
     [OutputType(typeof(X509Certificate2))]
     public sealed class GetPfxCertificateCommand : PSCmdlet
     {
@@ -212,26 +212,20 @@ namespace Microsoft.PowerShell.Commands
 
         private static X509Certificate2 GetCertFromPfxFile(string path)
         {
-            X509Certificate2 cert = new X509Certificate2();
-
-            cert.Import(path);
-
+            X509Certificate2 cert = new X509Certificate2(path);
             return cert;
         }
 
         private static X509Certificate2 GetCertFromPfxFile(string path, SecureString password)
         {
-            X509Certificate2 cert = new X509Certificate2();
-
             //
             // NTRAID#DevDiv Bugs-33007-2004/7/08-kumarp
             // the following will not be required once X509Certificate2.Import()
             // accepts a SecureString
             //
-            string clearTextPassword = SecurityUtils.GetStringFromSecureString(password);
-
-            cert.Import(path, clearTextPassword, X509KeyStorageFlags.DefaultKeySet);
-
+            string clearTextPassword = Utils.GetStringFromSecureString(password);
+            
+            var cert = new X509Certificate2(path, clearTextPassword, X509KeyStorageFlags.DefaultKeySet);
             return cert;
         }
     }

@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to rename a property of an item at a specified path
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "ItemProperty", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113383")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113383")]
     public class RenameItemPropertyCommand : PassThroughItemPropertyCommandBase
     {
         #region Parameters
@@ -74,16 +74,16 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null)

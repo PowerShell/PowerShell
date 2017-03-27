@@ -4,7 +4,7 @@ PowerShell/PowerShell utilizes `dotnet cli` project model.
 Source code for a library (executable) is located under `src/<library-name>`.
 I.e. System.Management.Automation.dll sources are located under `src/System.Management.Automation`
 
-In the windows source tree, this files located differently.
+In the windows source tree, the files are organized differently.
 That's why we use `map.json` files in `src/<library-name>`.
 This file is a simple json hashtable that describes mapping between files in source depot and GitHub.
 
@@ -20,12 +20,11 @@ There is an entry
 ```
 
 in `.\src\System.Management.Automation\map.json`.
-It tells us that file `ComMethod.cs` located in `monad/src/engine/COM/ComMethod.cs` in psl-monad (and sd enlistment).
-And in PowerShell/PowerShell it mapped into `src/System.Management.Automation/engine/COM/ComMethod.cs`
+It tells us that file `ComMethod.cs` located at `monad/src/engine/COM/ComMethod.cs` in psl-monad (and sd enlistment) is mapped to `src/System.Management.Automation/engine/COM/ComMethod.cs` in PowerShell/PowerShell.
 
 ### build.psm1
 
-Our dev module contains a number of functions to work that can be used to work with this mapping file.
+Our dev module contains a number of functions that can be used to work with this mapping file.
 
 * `Copy-MappedFiles` -- copies files from psl-monad into PowerShell/PowerShell. Used for "sd -> github" integration.
 * `Send-GitDiffToSd` -- applies patch from git to **admin** enlistment with respect to all `map.json` files. 

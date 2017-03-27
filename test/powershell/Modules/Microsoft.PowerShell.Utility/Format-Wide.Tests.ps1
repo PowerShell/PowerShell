@@ -27,6 +27,7 @@ Describe "Format-Wide" -Tags "CI" {
         try
 		{
 			Format-Wide -InputObject $(Get-ChildItem) -Property CreationTime -View aoeu
+			throw "No Exception!"
 		}
 		catch
 		{
@@ -47,41 +48,41 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
 		$result = $info | Format-Wide | Out-String
 		$result | Should Match "array"
 	}
-	
+
 	It "Format-Wide with No Objects for End-To-End should work"{
 		$p = @{}
 		$result = $p | Format-Wide | Out-String
 		$result | Should BeNullOrEmpty
 	}
-	
+
 	It "Format-Wide with Null Objects for End-To-End should work"{
 		$p = $null
 		$result = $p | Format-Wide | Out-String
 		$result | Should BeNullOrEmpty
 	}
-	
+
 	It "Format-Wide with single line string for End-To-End should work"{
 		$p = "single line string"
 		$result = $p | Format-Wide | Out-String
 		$result | Should Match $p
 	}
-	
+
 	It "Format-Wide with multiple line string for End-To-End should work"{
 		$p = "Line1\nLine2"
 		$result = $p | Format-Wide | Out-String
 		$result | Should Match "Line1"
 		$result | Should Match "Line2"
 	}
-	
+
 	It "Format-Wide with string sequence for End-To-End should work"{
 		$p = "Line1","Line2"
 		$result = $p |Format-Wide | Out-String
 		$result | Should Match "Line1"
 		$result | Should Match "Line2"
 	}
-	
+
    It "Format-Wide with complex object for End-To-End should work" {
-		Add-Type -TypeDefinition "public enum MyDayOfWeek{Sun,Mon,Tue,Wed,Thr,Fri,Sat}"
+		Add-Type -TypeDefinition "public enum MyDayOfWeek{Sun,Mon,Tue,Wed,Thu,Fri,Sat}"
 		$eto = New-Object MyDayOfWeek
 		$info = @{}
 		$info.intArray = 1,2,3,4
@@ -94,7 +95,7 @@ Describe "Format-Wide DRT basic functionality" -Tags "CI" {
 		$result | Should Match "enumerable"
 		$result | Should Match "enumerableTestObject"
 	}
-	
+
 	It "Format-Wide with multiple same class object with grouping should work"{
 		Add-Type -TypeDefinition "public class TestGroupingClass{public TestGroupingClass(string name,int length){Name = name;Length = length;}public string Name;public int Length;public string GroupingKey;}"
 		$testobject1 = [TestGroupingClass]::New('name1',1)

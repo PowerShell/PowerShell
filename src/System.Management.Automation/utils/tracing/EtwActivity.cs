@@ -273,7 +273,7 @@ namespace System.Management.Automation.Tracing
 
         /// <summary>
         /// Sets the activityId provided in the current thread.
-        /// If current thread already has the same activityId it does 
+        /// If current thread already has the same activityId it does
         /// nothing.
         /// </summary>
         /// <param name="activityId"></param>
@@ -366,8 +366,8 @@ namespace System.Management.Automation.Tracing
         /// </summary>
         public void Correlate()
         {
-            Guid parentAcitvity = GetActivityId();
-            CorrelateWithActivity(parentAcitvity);
+            Guid parentActivity = GetActivityId();
+            CorrelateWithActivity(parentActivity);
         }
 
         /// <summary>

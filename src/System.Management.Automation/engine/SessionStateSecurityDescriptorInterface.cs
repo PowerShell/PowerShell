@@ -14,7 +14,7 @@ using Microsoft.PowerShell.CoreClr.Stubs;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session 
+    /// Holds the state of a Monad Shell session
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -23,21 +23,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets an instance of an ISecurityDescriptorCmdletProvider given the provider ID.
         /// </summary>
-        /// 
+        ///
         /// <param name="providerInstance">
         /// An instance of a CmdletProvider.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An instance of a ISecurityDescriptorCmdletProvider for the specified provider ID.
         /// </returns>
-        /// 
+        ///
         /// <throws>
         /// ArgumentNullException if providerId is null.
         /// NotSupportedException if the providerId is not for a provider
         /// that is derived from ISecurityDescriptorCmdletProvider.
         /// </throws>
-        /// 
+        ///
         internal static ISecurityDescriptorCmdletProvider GetPermissionProviderInstance(CmdletProvider providerInstance)
         {
             if (providerInstance == null)
@@ -66,19 +66,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the security descriptor from the specified item.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item to retrieve the security descriptor from.
         /// </param>
-        /// 
+        ///
         /// <param name="sections">
         /// Specifies the parts of a security descriptor to retrieve.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The security descriptor for the item at the specified path.
         /// </returns>
-        /// 
+        ///
         internal Collection<PSObject> GetSecurityDescriptor(string path,
                                                              AccessControlSections sections)
         {
@@ -101,29 +101,29 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the security descriptor from the specified item.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item to retrieve the security descriptor from.
         /// </param>
-        /// 
+        ///
         /// <param name="sections">
         /// Specifies the parts of a security descriptor to retrieve.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// Nothing. The security descriptor for the item at the specified path is
         /// written to the context.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
+        ///
         internal void GetSecurityDescriptor(
             string path,
             AccessControlSections sections,
@@ -192,7 +192,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "GetSecurityDescriptorProviderException",
                     SessionStateStrings.GetSecurityDescriptorProviderException,
@@ -209,19 +208,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the security descriptor on the specified item.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item to set the security descriptor on.
         /// </param>
-        /// 
+        ///
         /// <param name="securityDescriptor">
         /// The security descriptor to set on the item at the specified path.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The security descriptor that was set on the item at the specified path.
         /// </returns>
-        /// 
+        ///
         internal Collection<PSObject> SetSecurityDescriptor(string path, ObjectSecurity securityDescriptor)
         {
             if (path == null)
@@ -249,29 +248,29 @@ namespace System.Management.Automation
         /// <summary>
         /// Sets the security descriptor on the specified item.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item to set the security descriptor on.
         /// </param>
-        /// 
+        ///
         /// <param name="securityDescriptor">
         /// The security descriptor to set on the item at the specified path.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context which the core command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// Nothing. The security descriptor that was set on the item at the specified path
         /// is written to the context.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
+        ///
         internal void SetSecurityDescriptor(
             string path,
             ObjectSecurity securityDescriptor,
@@ -373,14 +372,13 @@ namespace System.Management.Automation
                 //
                 // thrown if path points to an item that does not
                 // support access control.
-                // 
+                //
                 // for example, FAT or FAT32 file in case of file system provider
                 //
                 context.WriteError(new ErrorRecord(e, e.GetType().FullName, ErrorCategory.InvalidOperation, path));
             }
             catch (SystemException e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 //
                 // thrown if the CLR gets back unexpected error
                 // from OS security or marta
@@ -389,7 +387,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "SetSecurityDescriptorProviderException",
                     SessionStateStrings.SetSecurityDescriptorProviderException,
@@ -406,25 +403,25 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the security descriptor from the specified item.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item to retrieve the security descriptor from.
         /// </param>
-        /// 
+        ///
         /// <param name="sections">
         /// Specifies the parts of a security descriptor to retrieve.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// Nothing. The security descriptor for the item at the specified path is
         /// written to the context.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="path"/> does not contain glob characters and
         /// could not be found.
         /// </exception>
-        /// 
+        ///
         internal ObjectSecurity NewSecurityDescriptorFromPath(
             string path,
             AccessControlSections sections)
@@ -508,7 +505,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "NewSecurityDescriptorProviderException",
                     SessionStateStrings.GetSecurityDescriptorProviderException,
@@ -523,25 +519,25 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the security descriptor from the specified item.
         /// </summary>
-        /// 
+        ///
         /// <param name="type">
         /// The type of the item which corresponds to the security
         /// descriptor that we want to create.
         /// </param>
-        /// 
+        ///
         /// <param name="providerId">
         /// The name of the provider.
         /// </param>
-        /// 
+        ///
         /// <param name="sections">
         /// Specifies the parts of a security descriptor to retrieve.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// Nothing. The security descriptor for the item at the specified type is
         /// written to the context.
         /// </returns>
-        /// 
+        ///
         internal ObjectSecurity NewSecurityDescriptorOfType(
             string providerId,
             string type,
@@ -554,26 +550,26 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the security descriptor from the specified item.
         /// </summary>
-        /// 
+        ///
         /// <param name="type">
         /// The type of the item which corresponds to the security
         /// descriptor that we want to create.
         /// </param>
-        /// 
+        ///
         /// <param name="providerInstance">
         /// The type of the item which corresponds to the security
         /// descriptor that we want to create.
         /// </param>
-        /// 
+        ///
         /// <param name="sections">
         /// Specifies the parts of a security descriptor to retrieve.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// Nothing. The security descriptor for the item at the specified type is
         /// written to the context.
         /// </returns>
-        /// 
+        ///
         internal ObjectSecurity NewSecurityDescriptorOfType(
             CmdletProvider providerInstance,
             string type,
@@ -615,7 +611,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK, 3rd party callout.
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw NewProviderInvocationException(
                     "NewSecurityDescriptorProviderException",
                     SessionStateStrings.GetSecurityDescriptorProviderException,

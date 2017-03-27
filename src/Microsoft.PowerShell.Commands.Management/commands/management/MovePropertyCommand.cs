@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to move a property on an item to another item
     /// </summary>
     [Cmdlet(VerbsCommon.Move, "ItemProperty", SupportsShouldProcess = true, DefaultParameterSetName = "Path", SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113351")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113351")]
     public class MoveItemPropertyCommand : PassThroughItemPropertyCommandBase
     {
         #region Parameters
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// The path to the destination item to copy the property to.
         /// </summary>
-        /// 
+        ///
         [Parameter(Mandatory = true, Position = 1, ValueFromPipelineByPropertyName = true)]
         public string Destination { get; set; }
 
@@ -75,16 +75,16 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             string propertyName = String.Empty;

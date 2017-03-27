@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command to determine if an item exists at a specified path
     /// </summary>
-    [Cmdlet(VerbsDiagnostic.Test, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113418")]
+    [Cmdlet(VerbsDiagnostic.Test, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113418")]
     [OutputType(typeof(bool))]
     public class TestPathCommand : CoreCommandWithCredentialsBase
     {
@@ -112,16 +112,16 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             object result = null;

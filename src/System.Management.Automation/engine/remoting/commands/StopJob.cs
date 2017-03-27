@@ -17,7 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet stops the asynchronously invoked remote operations.
     /// </summary>
     [Cmdlet(VerbsLifecycle.Stop, "Job", SupportsShouldProcess = true, DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113413")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113413")]
     [OutputType(typeof(Job))]
     public class StopJobCommand : JobCmdletBase, IDisposable
     {
@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _passThru;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override String[] Command
         {
@@ -201,7 +201,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void StopProcessing()
         {
@@ -269,7 +269,7 @@ namespace Microsoft.PowerShell.Commands
         #region Dispose
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public void Dispose()
         {
@@ -278,7 +278,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)

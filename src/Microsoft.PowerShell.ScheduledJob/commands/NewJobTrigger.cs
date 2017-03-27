@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// parameter values.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "JobTrigger", DefaultParameterSetName = NewJobTriggerCommand.OnceParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223912")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223912")]
     [OutputType(typeof(ScheduledJobTrigger))]
     public sealed class NewJobTriggerCommand : ScheduleJobCmdletBase
     {
@@ -71,11 +71,11 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Job start date/time for trigger.
         /// </summary>
-        [Parameter(Mandatory = true, 
+        [Parameter(Mandatory = true,
                    ParameterSetName = NewJobTriggerCommand.OnceParameterSet)]
-        [Parameter(Mandatory = true, 
+        [Parameter(Mandatory = true,
                    ParameterSetName = NewJobTriggerCommand.DailyParameterSet)]
-        [Parameter(Mandatory = true, 
+        [Parameter(Mandatory = true,
                    ParameterSetName = NewJobTriggerCommand.WeeklyParameterSet)]
         public DateTime At
         {
@@ -114,7 +114,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Switch to specify an AtStartup trigger.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, 
+        [Parameter(Mandatory = true, Position = 0,
             ParameterSetName = NewJobTriggerCommand.AtStartupParameterSet)]
         public SwitchParameter AtStartup
         {
@@ -126,7 +126,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Switch to specify an AtLogon trigger.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, 
+        [Parameter(Mandatory = true, Position = 0,
             ParameterSetName = NewJobTriggerCommand.AtLogonParameterSet)]
         public SwitchParameter AtLogOn
         {
@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Switch to specify a Once (one time) trigger.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, 
+        [Parameter(Mandatory = true, Position = 0,
             ParameterSetName = NewJobTriggerCommand.OnceParameterSet)]
         public SwitchParameter Once
         {
@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Switch to specify a Daily trigger.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, 
+        [Parameter(Mandatory = true, Position = 0,
             ParameterSetName = NewJobTriggerCommand.DailyParameterSet)]
         public SwitchParameter Daily
         {
@@ -195,7 +195,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Switch to specify a Weekly trigger.
         /// </summary>
-        [Parameter(Mandatory = true, Position = 0, 
+        [Parameter(Mandatory = true, Position = 0,
             ParameterSetName = NewJobTriggerCommand.WeeklyParameterSet)]
         public SwitchParameter Weekly
         {

@@ -28,7 +28,7 @@ Function CleanInputString([string]$inputStr){
     $outputStr
 }
 
-#EndRegion utilty functions
+#EndRegion utility functions
 
 #Region Class specifications
 
@@ -100,7 +100,7 @@ Class ApacheVirtualHost{
             $vHostDef += "</VirtualHost>"
             $filName = $ConfigurationFile
             $VhostDef | Out-File "/tmp/${filName}" -Force -Encoding:ascii
-            & $global:sudocmd "mv" "/tmp/${filName}" "${VhostsDirectory}/${filName}" 
+            & $global:sudocmd "mv" "/tmp/${filName}" "${VhostsDirectory}/${filName}"
             Write-Information "Restarting Apache HTTP Server"
             Restart-ApacheHTTPServer
         }
@@ -206,7 +206,7 @@ Function Restart-ApacheHTTPServer{
    [switch]$Graceful
    )
 
-    if ($Graceful -eq $null){$Graceful = $fase}
+    if ($Graceful -eq $null){$Graceful = $false}
     $cmd = GetApacheCmd
         if ($Graceful){
                 & $global:sudocmd $cmd  -k graceful

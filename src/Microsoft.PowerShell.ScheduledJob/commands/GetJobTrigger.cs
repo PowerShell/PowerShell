@@ -18,7 +18,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This cmdlet gets ScheduledJobTriggers for the specified ScheduledJobDefinition object.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "JobTrigger", DefaultParameterSetName = GetJobTriggerCommand.JobDefinitionParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223915")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223915")]
     [OutputType(typeof(ScheduledJobTrigger))]
     public sealed class GetJobTriggerCommand : ScheduleJobCmdletBase
     {
@@ -31,11 +31,11 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// Trigger number to get.
         /// </summary>
-        [Parameter(Position = 1, 
+        [Parameter(Position = 1,
                    ParameterSetName = GetJobTriggerCommand.JobDefinitionParameterSet)]
-        [Parameter(Position = 1, 
+        [Parameter(Position = 1,
                    ParameterSetName = GetJobTriggerCommand.JobDefinitionIdParameterSet)]
-        [Parameter(Position = 1, 
+        [Parameter(Position = 1,
                    ParameterSetName = GetJobTriggerCommand.JobDefinitionNameParameterSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public Int32[] TriggerId

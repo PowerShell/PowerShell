@@ -70,11 +70,46 @@ Describe "Stream writer tests" -Tags "CI" {
     }
 
     Context "Write-Information cmdlet" {
-       It "Write-Information outputs an information object" {
-           # redirect the streams is sufficient
-           $result = Write-Information "Test Message" *>&1
-           $result.GetType().Fullname | Should be "System.Management.Automation.InformationRecord"
-           "$result" | Should be "Test Message"
+        BeforeAll {
+            $ps = [powershell]::Create()
+        }
+
+        BeforeEach {
+            $ps.Commands.Clear()
+            $ps.Streams.ClearStreams()
+        }
+
+        AfterAll {
+            $ps.Dispose()
+        }
+
+       It "Write-Information outputs an information object" -Pending:($IsOSX) {
+            # redirect the streams is sufficient
+            $result = Write-Information "Test Message" *>&1
+            $result.NativeThreadId | Should Not Be 0
+            $result.ProcessId | Should Be $pid
+            $result | Should BeOfType System.Management.Automation.InformationRecord
+
+            # Use Match instead of Be so we can avoid dealing with a potential domain name
+            $result.Computer | Should Match "^($([environment]::MachineName)){1}(\.[a-zA-Z0-9]+)*$"
+            if ($IsWindows)
+            {
+                $result.User | Should Match ".*${env:USERNAME}"
+            }
+            else
+            {
+                $result.User | Should Be $(whoami)
+            }
+
+            "$result" | Should be "Test Message"
+       }
+
+       It "Write-Information accept objects from pipe" {
+            $ps.AddScript("'teststring',12345 | Write-Information -InformationAction Continue").Invoke()
+            $result = $ps.Streams.Information
+            $result.Count | Should be 2
+            $result[0].MessageData | Should be "teststring"
+            $result[1].MessageData | Should be "12345"
        }
     }
 }

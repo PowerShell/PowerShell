@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -216,7 +216,7 @@
   <data name="PromptForExportConsole" xml:space="preserve">
     <value>Cannot export a console file because no console file has been specified. Do you want to continue with the export operation?</value>
   </data>
-  <data name="ConsoleCannotbeConvertedToString" xml:space="preserve">
+  <data name="ConsoleCannotBeConvertedToString" xml:space="preserve">
     <value>Cannot save the file because the file name format is not valid. Specify a file name using the command: export-console -path.</value>
   </data>
   <data name="FileNameNotResolved" xml:space="preserve">

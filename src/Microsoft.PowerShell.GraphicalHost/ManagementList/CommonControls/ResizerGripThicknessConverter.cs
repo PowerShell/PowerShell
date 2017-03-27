@@ -32,7 +32,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Converts a value. 
+        /// Converts a value.
         /// </summary>
         /// <param name="values">The value produced by the binding source.</param>
         /// <param name="targetType">The type of the binding target property.</param>
@@ -60,7 +60,7 @@ namespace Microsoft.Management.UI.Internal
         }
 
         /// <summary>
-        /// Converts a value. 
+        /// Converts a value.
         /// </summary>
         /// <param name="value">The value that is produced by the binding target.</param>
         /// <param name="targetTypes">The type to convert to.</param>

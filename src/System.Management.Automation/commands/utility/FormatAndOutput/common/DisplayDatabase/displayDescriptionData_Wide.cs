@@ -244,7 +244,7 @@ namespace System.Management.Automation
 
         internal bool SafeForExport()
         {
-            return DisplayEntry.SafeForExport() && EntrySelectedBy == null || EntrySelectedBy.SafeForExport();
+            return DisplayEntry.SafeForExport() && (EntrySelectedBy == null || EntrySelectedBy.SafeForExport());
         }
 
         internal bool CompatibleWithOldPowerShell()

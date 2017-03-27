@@ -53,14 +53,14 @@ namespace System.Management.Automation
         protected bool _rethrowExitException;
 
         /// <summary>
-        /// This indicates whether exit is called during the execution of 
-        /// script block. 
+        /// This indicates whether exit is called during the execution of
+        /// script block.
         /// </summary>
         /// <remarks>
-        /// Exit command can be executed in any of begin/process/end blocks. 
-        /// 
+        /// Exit command can be executed in any of begin/process/end blocks.
+        ///
         /// If exit is called in one block (for example, begin), any subsequent
-        /// blocks (for example, process and end) should not be executed. 
+        /// blocks (for example, process and end) should not be executed.
         /// </remarks>
         protected bool _exitWasCalled;
 
@@ -85,8 +85,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Helper function for setting up command object and commandRuntime object 
-        /// for script command processor. 
+        /// Helper function for setting up command object and commandRuntime object
+        /// for script command processor.
         /// </summary>
         protected void CommonInitialization(ScriptBlock scriptBlock, ExecutionContext context, bool useLocalScope, CommandOrigin origin, SessionStateInternal sessionState)
         {
@@ -101,7 +101,7 @@ namespace System.Management.Automation
             ScriptCommand scriptCommand = new ScriptCommand { CommandInfo = this.CommandInfo };
 
             this.Command = scriptCommand;
-            // WinBlue: 219115             
+            // WinBlue: 219115
             // Set the command origin for the new ScriptCommand object since we're not
             // going through command discovery here where it's usually set.
             this.Command.CommandOriginInternal = origin;
@@ -161,74 +161,74 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// This class implements a command processor for script related commands. 
+    /// This class implements a command processor for script related commands.
     /// </summary>
     /// <remarks>
-    /// 
+    ///
     /// 1. Usage scenarios
-    /// 
-    /// ScriptCommandProcessor is used for four kinds of commands. 
-    /// 
+    ///
+    /// ScriptCommandProcessor is used for four kinds of commands.
+    ///
     /// a. Functions and filters
-    /// 
-    /// For example, 
-    /// 
+    ///
+    /// For example,
+    ///
     ///     function foo($a) {$a}
     ///     foo "my text"
-    /// 
-    /// Second command is an example of a function invocation. 
-    /// 
-    /// In this case, a FunctionInfo object is provided while constructing 
-    /// command processor. 
-    /// 
+    ///
+    /// Second command is an example of a function invocation.
+    ///
+    /// In this case, a FunctionInfo object is provided while constructing
+    /// command processor.
+    ///
     /// b. Script File
-    /// 
+    ///
     /// For example,
-    /// 
+    ///
     ///     . .\my.ps1
-    /// 
-    /// In this case, a ExternalScriptInfo or ScriptInfo object is provided 
-    /// while constructing command processor. 
-    /// 
+    ///
+    /// In this case, a ExternalScriptInfo or ScriptInfo object is provided
+    /// while constructing command processor.
+    ///
     /// c. ScriptBlock
-    /// 
-    /// For example, 
-    /// 
+    ///
+    /// For example,
+    ///
     ///     . {$a = 5}
-    /// 
+    ///
     /// In this case, a ScriptBlock object is provided while constructing command
-    /// processor. 
-    /// 
+    /// processor.
+    ///
     /// d. Script Text
-    /// 
+    ///
     /// This is used internally for directly running a text stream of script.
-    /// 
+    ///
     /// 2. Design
-    /// 
+    ///
     /// a. Script block
-    /// 
+    ///
     /// No matter how a script command processor is created, core piece of information
-    /// is always a ScriptBlock object, which can come from either a FunctionInfo object, 
-    /// a ScriptInfo object, or directly parsed from script text. 
-    /// 
+    /// is always a ScriptBlock object, which can come from either a FunctionInfo object,
+    /// a ScriptInfo object, or directly parsed from script text.
+    ///
     /// b. Script scope
-    /// 
-    /// A script block can be executed either in current scope or in a new scope. 
-    /// 
+    ///
+    /// A script block can be executed either in current scope or in a new scope.
+    ///
     /// New scope created should be a scope supporting $script: in case the command
-    /// processor is created from a script file. 
-    /// 
+    /// processor is created from a script file.
+    ///
     /// c. Begin/Process/End blocks
-    /// 
+    ///
     /// Each script block can have one block of script for begin/process/end. These map
-    /// to BeginProcessing, ProcessingRecord, and EndProcessing of cmdlet api. 
-    /// 
+    /// to BeginProcessing, ProcessingRecord, and EndProcessing of cmdlet api.
+    ///
     /// d. ExitException handling
-    /// 
+    ///
     /// If the command processor is created based on a script file, its exit exception
     /// handling is different in the sense that it indicates an exitcode instead of killing
-    /// current powershell session. 
-    /// 
+    /// current powershell session.
+    ///
     /// </remarks>
     internal sealed class DlrScriptCommandProcessor : ScriptCommandProcessorBase
     {
@@ -560,8 +560,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // This cmdlet threw an exception, so
                 // wrap it and bubble it up.
                 throw ManageInvocationException(e);

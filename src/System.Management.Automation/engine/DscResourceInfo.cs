@@ -72,7 +72,7 @@ namespace System.Management.Automation
         public string FriendlyName { get; set; }
 
         /// <summary>
-        /// Gets or sets of the file which implements the resource. For the resources which are defined using 
+        /// Gets or sets of the file which implements the resource. For the resources which are defined using
         /// MOF file, this will be path to a module which resides in the same folder where schema.mof file is present.
         /// For composite resources, this will be the module which implements the resource
         /// </summary>
@@ -80,7 +80,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets parent folder, where the resource is defined
-        /// It is the folder containing either the implementing module(=Path) or folder containing ".schema.mof". 
+        /// It is the folder containing either the implementing module(=Path) or folder containing ".schema.mof".
         /// For native providers, Path will be null and only ParentPath will be present.
         /// </summary>
         public string ParentPath { get; set; }

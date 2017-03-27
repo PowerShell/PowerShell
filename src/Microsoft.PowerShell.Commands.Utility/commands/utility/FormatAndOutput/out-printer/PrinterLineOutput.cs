@@ -97,7 +97,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// callback to be called when IConsole.WriteLine() is called by WriteLineHelper 
+        /// callback to be called when IConsole.WriteLine() is called by WriteLineHelper
         /// </summary>
         /// <param name="s">string to write</param>
         private void OnWriteLine(string s)
@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// helper to create a font. 
+        /// helper to create a font.
         /// If the font object exists, it does nothing.
         /// Else, the a new object is created and verified
         /// </summary>
@@ -205,7 +205,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// Event fired for each page to print 
+        /// Event fired for each page to print
         /// </summary>
         /// <param name="sender">sender, not used</param>
         /// <param name="ev">print page event</param>
@@ -225,7 +225,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             // Use the MarginBounds on the event to do this
             float linesPerPage = ev.MarginBounds.Height / _printFont.GetHeight(ev.Graphics);
 
-            if (!_printingInitalized)
+            if (!_printingInitialized)
             {
                 // on the first page we have to initialize the metrics for LineOutput
 
@@ -234,7 +234,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 float w = ev.Graphics.MeasureString(s, _printFont).Width / s.Length;
                 float columnsPerPage = ev.MarginBounds.Width / w;
 
-                _printingInitalized = true;
+                _printingInitialized = true;
                 _deviceRows = (int)linesPerPage;
                 _deviceColumns = (int)columnsPerPage;
 
@@ -268,7 +268,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         /// <summary>
         /// flag for one time initialization of the interface (columns, etc.)
         /// </summary>
-        private bool _printingInitalized = false;
+        private bool _printingInitialized = false;
 
         /// <summary>
         /// callback to ask the outputter to playback its cache
@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         /// <summary>
         /// default font, used if the printFont is not specified or if the
-        /// printFont is not fixed pitch. 
+        /// printFont is not fixed pitch.
         /// </summary>
         /// <remarks>
         /// This default must be loaded from a resource file as different

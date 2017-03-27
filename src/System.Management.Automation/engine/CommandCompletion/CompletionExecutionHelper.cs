@@ -12,7 +12,7 @@ namespace System.Management.Automation
     using System.Collections;
 
     /// <summary>
-    /// Auxilliary class to the execution of commands as needed by
+    /// Auxiliary class to the execution of commands as needed by
     /// CommandCompletion
     /// </summary>
     internal class CompletionExecutionHelper
@@ -75,7 +75,7 @@ namespace System.Management.Automation
                 return false;
             }
 
-            // we got back one or more objects. 
+            // we got back one or more objects.
             return (streamResults.Count > 1) || (LanguagePrimitives.IsTrue(streamResults[0]));
         }
 
@@ -138,7 +138,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 exceptionThrown = e;
             }
 
@@ -170,7 +169,6 @@ namespace System.Management.Automation
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 exceptionThrown = e;
             }
             finally
@@ -215,11 +213,9 @@ namespace System.Management.Automation
                 }
                 return result;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // We swallow all exceptions from command completion because we don't want the shell to crash
-                CommandProcessorBase.CheckForSevereException(e);
-
                 return string.Empty;
             }
         }

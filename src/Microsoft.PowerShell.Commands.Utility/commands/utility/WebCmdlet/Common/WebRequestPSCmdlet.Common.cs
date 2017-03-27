@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         #region URI
 
         /// <summary>
-        /// gets or sets the parameter UseBasicParsing 
+        /// gets or sets the parameter UseBasicParsing
         /// </summary>
         [Parameter]
         public virtual SwitchParameter UseBasicParsing { get; set; }
@@ -88,6 +88,12 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNull]
         public virtual X509Certificate Certificate { get; set; }
 
+        /// <summary>
+        /// gets or sets the SkipCertificateCheck property
+        /// </summary>
+        [Parameter]
+        public virtual SwitchParameter SkipCertificateCheck { get; set; }
+
         #endregion
 
         #region Headers
@@ -141,13 +147,26 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// gets or sets the Method property
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = "StandardMethod")]
         public virtual WebRequestMethod Method
         {
             get { return _method; }
             set { _method = value; }
         }
         private WebRequestMethod _method = WebRequestMethod.Default;
+
+        /// <summary>
+        /// gets or sets the CustomMethod property
+        /// </summary>
+        [Parameter(ParameterSetName = "CustomMethod")]
+        [Alias("CM")]
+        [ValidateNotNullOrEmpty]
+        public virtual string CustomMethod
+        {
+            get { return _customMethod; }
+            set { _customMethod = value; }
+        }
+        private string _customMethod;
 
         #endregion
 
@@ -541,7 +560,8 @@ namespace Microsoft.PowerShell.Commands
             IDictionary bodyAsDictionary;
             LanguagePrimitives.TryConvertTo<IDictionary>(Body, out bodyAsDictionary);
             if ((null != bodyAsDictionary)
-                && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get))
+                && ((IsStandardMethodSet() && (Method == WebRequestMethod.Default || Method == WebRequestMethod.Get))
+                     || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "GET")))
             {
                 UriBuilder uriBuilder = new UriBuilder(uri);
                 if (uriBuilder.Query != null && uriBuilder.Query.Length > 1)
@@ -620,6 +640,16 @@ namespace Microsoft.PowerShell.Commands
             return (error);
         }
 
-        #endregion Helper Methods     
+        private bool IsStandardMethodSet()
+        {
+            return (ParameterSetName == "StandardMethod");
+        }
+        
+        private bool IsCustomMethodSet()
+        {
+            return (ParameterSetName == "CustomMethod");
+        }
+
+        #endregion Helper Methods
     }
 }

@@ -16,18 +16,18 @@ namespace Microsoft.PowerShell.Commands
     /// This cmdlet takes a Job object and checks to see if it is debuggable.  If it
     /// is debuggable then it breaks into the job debugger in step mode.  If it is not
     /// debuggable then it is treated as a parent job and each child job is checked if
-    /// it is debuggable and if it is will break into its job debugger in step mode.  
-    /// For multiple debuggable child jobs, each job execution will be halted and the 
+    /// it is debuggable and if it is will break into its job debugger in step mode.
+    /// For multiple debuggable child jobs, each job execution will be halted and the
     /// debugger will step to each job execution point sequentially.
-    /// 
-    /// When a job is debugged its output data is written to host and the executing job 
-    /// script will break into the host debugger, in step mode, at the next stoppable 
+    ///
+    /// When a job is debugged its output data is written to host and the executing job
+    /// script will break into the host debugger, in step mode, at the next stoppable
     /// execution point.
-    /// 
+    ///
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsDiagnostic.Debug, "Job", SupportsShouldProcess = true, DefaultParameterSetName = DebugJobCommand.JobParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=330208")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=330208")]
     public sealed class DebugJobCommand : PSCmdlet
     {
         #region Strings

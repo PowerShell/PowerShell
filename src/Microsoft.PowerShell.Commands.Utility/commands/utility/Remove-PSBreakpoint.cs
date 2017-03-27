@@ -7,10 +7,10 @@ using System.Management.Automation;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements Remove-PSBreakpoint 
+    /// This class implements Remove-PSBreakpoint
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = "Breakpoint",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113375")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113375")]
     public class RemovePSBreakpointCommand : PSBreakpointCommandBase
     {
         /// <summary>

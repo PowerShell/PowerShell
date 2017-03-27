@@ -17,15 +17,15 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Defines the implementation of the 'Get-ExecutionPolicy' cmdlet.
     /// This cmdlet gets the effective execution policy of the shell.
-    /// 
+    ///
     /// In priority-order (highest priority first,) these come from:
     ///    - Machine-wide Group Policy
     ///    - Current-user Group Policy
     ///    - Current session preference
-    ///    - Current user machine preference    
+    ///    - Current user machine preference
     ///    - Local machine preference
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ExecutionPolicy", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113315")]
+    [Cmdlet(VerbsCommon.Get, "ExecutionPolicy", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113315")]
     [OutputType(typeof(ExecutionPolicy))]
     public class GetExecutionPolicyCommand : PSCmdlet
     {
@@ -106,14 +106,14 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Defines the implementation of the 'Set-ExecutionPolicy' cmdlet.
-    /// This cmdlet sets the local preference for the execution policy of the 
+    /// This cmdlet sets the local preference for the execution policy of the
     /// shell.
-    /// 
+    ///
     /// The execution policy may be overridden by settings in Group Policy.
     /// If the Group Policy setting overrides the desired behaviour, the Cmdlet
     /// generates a terminating error.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "ExecutionPolicy", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113394")]
+    [Cmdlet(VerbsCommon.Set, "ExecutionPolicy", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113394")]
     public class SetExecutionPolicyCommand : PSCmdlet
     {
         /// <summary>
@@ -272,7 +272,7 @@ namespace Microsoft.PowerShell.Commands
                         catch (System.Management.Automation.Host.HostException)
                         {
                             // Host doesn't implement ShouldContinue. This should
-                            // return false, but must return true due 
+                            // return false, but must return true due
                             // to backward compatibility.
                             return true;
                         }

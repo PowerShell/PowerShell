@@ -18,7 +18,7 @@ using System.Windows;
 
 namespace Microsoft.Management.UI.Internal
 {
-    
+
     /// <summary>
     /// Represents a toggle button used to expand or collapse elements.
     /// </summary>
@@ -38,7 +38,7 @@ namespace Microsoft.Management.UI.Internal
         {
             return new ExpanderButtonAutomationPeer(this);
         }
-        
+
     }
 }
 #endregion

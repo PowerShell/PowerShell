@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -95,7 +95,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     case ProtocolType.Dcom:
                         return "DCOM";
                     case ProtocolType.Default:
-                    case ProtocolType.Wsman:                   
+                    case ProtocolType.Wsman:
                     default:
                         return "WSMAN";
                 }
@@ -919,7 +919,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Create a new <see cref="CimSession"/> base on given cmdlet
         /// and its parameter
-        /// </summary>        
+        /// </summary>
         /// <param name="cmdlet"></param>
         /// <param name="sessionOptions"></param>
         /// <param name="credential"></param>
@@ -952,7 +952,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 else
                 {
                     //CimSession will be returned as part of TestConnection
-                    this.cimTestSession.TestCimSession(computerName, proxy); 
+                    this.cimTestSession.TestCimSession(computerName, proxy);
                 }
             }
         }
@@ -971,8 +971,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
             CimTestCimSessionContext testCimSessionContext = context as CimTestCimSessionContext;
             UInt32 sessionId = this.sessionState.GenerateSessionId();
-            string orginalSessioName = testCimSessionContext.CimSessionWrapper.Name;
-            string sessionName = (orginalSessioName != null) ? orginalSessioName : String.Format(CultureInfo.CurrentUICulture, @"{0}{1}", CimSessionState.CimSessionClassName, sessionId);
+            string originalSessionName = testCimSessionContext.CimSessionWrapper.Name;
+            string sessionName = (originalSessionName != null) ? originalSessionName : String.Format(CultureInfo.CurrentUICulture, @"{0}{1}", CimSessionState.CimSessionClassName, sessionId);
 
             // detach CimSession from the proxy object
             CimSession createdCimSession = testCimSessionContext.Proxy.Detach();

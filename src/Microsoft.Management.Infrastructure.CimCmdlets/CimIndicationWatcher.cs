@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -208,7 +208,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             string theNameSpace,
             string theQueryDialect,
             string theQueryExpression,
-            UInt32 theOpreationTimeout)
+            UInt32 theOperationTimeout)
         {
             enableRaisingEvents = false;
             status = Status.Default;
@@ -220,7 +220,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             this.nameSpace = theNameSpace;
             this.queryDialect = ConstValue.GetQueryDialectWithDefault(theQueryDialect);
             this.queryExpression = theQueryExpression;
-            this.opreationTimeout = theOpreationTimeout;
+            this.operationTimeout = theOperationTimeout;
             this.computerName = theComputerName;
         }
 
@@ -299,7 +299,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             this.nameSpace,
                             this.queryDialect,
                             this.queryExpression,
-                            this.opreationTimeout);
+                            this.operationTimeout);
                     }
                     else
                     {
@@ -308,7 +308,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                             this.nameSpace,
                             this.queryDialect,
                             this.queryExpression,
-                            this.opreationTimeout);
+                            this.operationTimeout);
                     }
                     status = Status.Started;
                 }
@@ -392,7 +392,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private string nameSpace;
         private string queryDialect;
         private string queryExpression;
-        private UInt32 opreationTimeout;
+        private UInt32 operationTimeout;
         #endregion
         #endregion
     }

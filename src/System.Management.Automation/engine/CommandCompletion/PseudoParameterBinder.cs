@@ -253,7 +253,7 @@ namespace System.Management.Automation.Language
     /// <summary>
     /// Runs the PowerShell parameter binding algorithm against a CommandAst,
     /// returning information about which parameters were bound.
-    /// 
+    ///
     /// </summary>
     public static class StaticParameterBinder
     {
@@ -333,24 +333,21 @@ namespace System.Management.Automation.Language
             PseudoBindingInfo pseudoBinding = null;
             if (Runspace.DefaultRunspace == null)
             {
-                lock (s_bindCommandlLock)
+                // Handle static binding from a non-PowerShell / C# application
+                // DefaultRunspace is a thread static field, so race condition will not happen because different threads will access different instances of "DefaultRunspace"
+                if (s_bindCommandRunspace == null)
                 {
-                    if (s_bindCommandPowerShell == null)
-                    {
-                        // Create a mini runspace by remove the types and formats
-                        InitialSessionState minimalState = InitialSessionState.CreateDefault2();
-                        minimalState.Types.Clear();
-                        minimalState.Formats.Clear();
-
-                        s_bindCommandPowerShell = PowerShell.Create(minimalState);
-                    }
-
-                    // Handle static binding from a non-PowerShell / C# application
-                    Runspace.DefaultRunspace = s_bindCommandPowerShell.Runspace;
-                    // Static binding always does argument binding (not argument or parameter completion).
-                    pseudoBinding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ArgumentBinding);
-                    Runspace.DefaultRunspace = null;
+                    // Create a mini runspace by remove the types and formats
+                    InitialSessionState minimalState = InitialSessionState.CreateDefault2();
+                    minimalState.Types.Clear();
+                    minimalState.Formats.Clear();
+                    s_bindCommandRunspace = RunspaceFactory.CreateRunspace(minimalState);
+                    s_bindCommandRunspace.Open();
                 }
+                Runspace.DefaultRunspace = s_bindCommandRunspace;
+                // Static binding always does argument binding (not argument or parameter completion).
+                pseudoBinding = new PseudoParameterBinder().DoPseudoParameterBinding(commandAst, null, null, PseudoParameterBinder.BindingType.ArgumentBinding);
+                Runspace.DefaultRunspace = null;
             }
             else
             {
@@ -360,8 +357,8 @@ namespace System.Management.Automation.Language
 
             return new StaticBindingResult(commandAst, pseudoBinding);
         }
-        private static Object s_bindCommandlLock = new Object();
-        private static PowerShell s_bindCommandPowerShell = null;
+        [ThreadStatic]
+        static Runspace s_bindCommandRunspace = null;
     }
 
     /// <summary>
@@ -700,12 +697,12 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Dictionary<string, ParameterBindingResult> BoundParameters { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Dictionary<string, StaticBindingError> BindingExceptions { get; }
     }
@@ -727,12 +724,12 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public ParameterMetadata Parameter { get; internal set; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Object ConstantValue
         {
@@ -748,7 +745,7 @@ namespace System.Management.Automation.Language
         private object _constantValue;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public CommandElementAst Value
         {
@@ -809,7 +806,7 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="commandInfo"></param>
         /// <param name="validParameterSetsFlags"></param>
-        /// <param name="defaultParameterSetFalg"></param>
+        /// <param name="defaultParameterSetFlag"></param>
         /// <param name="boundParameters"></param>
         /// <param name="unboundParameters"></param>
         /// <param name="boundArguments"></param>
@@ -823,7 +820,7 @@ namespace System.Management.Automation.Language
         internal PseudoBindingInfo(
             CommandInfo commandInfo,
             uint validParameterSetsFlags,
-            uint defaultParameterSetFalg,
+            uint defaultParameterSetFlag,
             Dictionary<string, MergedCompiledCommandParameter> boundParameters,
             List<MergedCompiledCommandParameter> unboundParameters,
             Dictionary<string, AstParameterArgumentPair> boundArguments,
@@ -838,7 +835,7 @@ namespace System.Management.Automation.Language
             CommandInfo = commandInfo;
             InfoType = PseudoBindingInfoType.PseudoBindingSucceed;
             ValidParameterSetsFlags = validParameterSetsFlags;
-            DefaultParameterSetFlag = defaultParameterSetFalg;
+            DefaultParameterSetFlag = defaultParameterSetFlag;
             BoundParameters = boundParameters;
             UnboundParameters = unboundParameters;
             BoundArguments = boundArguments;
@@ -1095,7 +1092,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Restores original ExceutionContext host state.
+        /// Restores original ExecutionContext host state.
         /// </summary>
         /// <param name="executionContext">ExecutionContext</param>
         private void RestoreHost(ExecutionContext executionContext)
@@ -1118,7 +1115,7 @@ namespace System.Management.Automation.Language
         private CommandAst _commandAst;
         private ReadOnlyCollection<CommandElementAst> _commandElements;
 
-        // binding realted states
+        // binding related states
         private bool _function = false;
         private string _commandName = null;
         private CommandInfo _commandInfo = null;
@@ -1152,7 +1149,7 @@ namespace System.Management.Automation.Language
             _ignoredWorkflowParameters = new List<string>(Cmdlet.CommonParameters.Concat<string>(Cmdlet.OptionalCommonParameters));
             _ignoredWorkflowParameters.RemoveAll(item => supportedCommonParameters.Contains(item, StringComparer.OrdinalIgnoreCase));
 
-            // Initializing binding realted members
+            // Initializing binding related members
             _function = false;
             _commandName = null;
             _currentParameterSetFlag = uint.MaxValue;
@@ -1201,11 +1198,9 @@ namespace System.Management.Automation.Language
             {
                 processor = PrepareFromAst(context, out commandName) ?? context.CreateCommand(commandName, dotSource);
             }
-            catch (RuntimeException rte)
+            catch (RuntimeException)
             {
                 // Failed to create the CommandProcessor;
-                CommandProcessorBase.CheckForSevereException(rte);
-
                 if (_commandAst.IsInWorkflow() &&
                     commandName != null &&
                     CompletionCompleters.PseudoWorkflowCommands.Contains(commandName, StringComparer.OrdinalIgnoreCase))
@@ -1285,8 +1280,8 @@ namespace System.Management.Automation.Language
                             context.CurrentCommandProcessor = commandProcessor;
                             commandProcessor.SetCurrentScopeToExecutionScope();
                             // Run method "BindCommandLineParametersNoValidation" to get all available parameters, including the dynamic
-                            // parameters (some of them, not necessarilly all. Since we don't do the actual binding, some dynamic parameters
-                            // might not be retrieved). 
+                            // parameters (some of them, not necessarily all. Since we don't do the actual binding, some dynamic parameters
+                            // might not be retrieved).
                             if (!retryWithNoArgs)
                             {
                                 // Win8 345299: First try with all unbounded arguments
@@ -1310,9 +1305,8 @@ namespace System.Management.Automation.Language
                             if (e.ErrorId == "MissingArgument" || e.ErrorId == "AmbiguousParameter")
                                 retryWithNoArgs = true;
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
                         }
                         finally
                         {
@@ -1579,7 +1573,7 @@ namespace System.Management.Automation.Language
         /// specified. We always eat the error (such as parameter without value) and continue
         /// to do the binding.
         /// </summary>
-        /// 
+        ///
         /// <param name="paramAstAtCursor">
         /// For parameter completion, if the cursor is pointing at a CommandParameterAst, we
         /// should not try exact matching for that CommandParameterAst. This is to handle the
@@ -1587,7 +1581,7 @@ namespace System.Management.Automation.Language
         ///     Add-Computer -domain(tab)
         /// Add-Computer has an alias "Domain" that can exactly match this partial input, but
         /// since the user is typing 'tab', the partial input 'domain' should not be considered
-        /// as an exact match. In this case, we don't try exact matching when calling 
+        /// as an exact match. In this case, we don't try exact matching when calling
         /// GetMatchingParameter(..) so as to preserve other possibilities.
         /// </param>
         private bool ParseParameterArguments(CommandParameterAst paramAstAtCursor)
@@ -1621,7 +1615,7 @@ namespace System.Management.Automation.Language
                 catch (ParameterBindingException e)
                 {
                     // The parameterName is resolved to multiple parameters. The most possible scenario for this
-                    // would be the user typping tab to complete a parameter. In this case, we can ignore this 
+                    // would be the user typing tab to complete a parameter. In this case, we can ignore this
                     // parameter safely.
 
                     // If the next item is a pure argument, we skip it so that it doesn't get bound
@@ -1723,7 +1717,7 @@ namespace System.Management.Automation.Language
                         catch (ParameterBindingException)
                         {
                             // The next parameter name is ambiguous. We just set
-                            // a fake argument for the current paramter.
+                            // a fake argument for the current parameter.
                             FakePair newArg = new FakePair(argument.Parameter);
                             result.Add(newArg);
                         }
@@ -1839,7 +1833,7 @@ namespace System.Management.Automation.Language
                 catch (InvalidOperationException)
                 {
                     // This exception is thrown because the binder found two positional parameters
-                    // from the same parameter set with the same position defined. The parameter denition
+                    // from the same parameter set with the same position defined. The parameter definition
                     // is ambiguous. We give up binding in this case
                     _bindingEffective = false;
                     return result;
@@ -1867,9 +1861,9 @@ namespace System.Management.Automation.Language
                         break;
                     }
 
-                    // The positional pseudo binding is processed in two different approches for parameter completion and parameter argument completion.
+                    // The positional pseudo binding is processed in two different approaches for parameter completion and parameter argument completion.
                     // - For parameter completion, we do NOT honor the default parameter set, so we can preserve potential parameters as many as possible.
-                    //   Example:  
+                    //   Example:
                     //           Where-Object PropertyA -<tab>
                     //   If the default parameter is honored, the completion results only contain EQ, because it's locked to the default set
                     //
@@ -1885,7 +1879,7 @@ namespace System.Management.Automation.Language
                     //
                     // So the algorithm for positional binding is:
                     // - With bindingType == ParameterCompletion
-                    //   Skip the attempt with the default set, as well as the attempt with all sets but no coercion. 
+                    //   Skip the attempt with the default set, as well as the attempt with all sets but no coercion.
                     //   Do the positional binding with the (all valid set + with coercion) directly.
                     //
                     // - With bindingType == ArgumentCompletion  (parameter argument completion)
@@ -2011,7 +2005,7 @@ namespace System.Management.Automation.Language
                 }
             }
 
-            // We preserve all posibilities
+            // We preserve all possibilities
             if (bindingSuccessful && localParameterSetFlag != 0)
                 _currentParameterSetFlag &= localParameterSetFlag;
             return bindingSuccessful;

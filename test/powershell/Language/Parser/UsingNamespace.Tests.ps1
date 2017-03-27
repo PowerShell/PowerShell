@@ -10,27 +10,7 @@ using namespace System.Diagnostics; using namespace System.Runtime.CompilerServi
 using namespace System.Collections.Generic
 
 Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
-
-function ShouldBeErrorId
-{
-    param([Parameter(ValueFromPipeline, Mandatory)]
-          [ScriptBlock]
-          $sb,
-          
-          [Parameter(Mandatory, Position=0)]
-          [string]
-          $FullyQualifiedErrorId)
-
-    try
-    {
-        & $sb
-        throw "Unexpected"
-    }
-    catch
-    {
-        $_.FullyQualifiedErrorId | Should Be $FullyQualifiedErrorId
-    }
-}
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 
 # Flags is System.FlagsAttribute
 # This tests our implicit 'using namespace System'
@@ -92,7 +72,7 @@ Describe "Using Namespace" -Tags "CI" {
                 [CompilerGenerated()]
                 $b
             )
-            
+
             "OK"
         }
 

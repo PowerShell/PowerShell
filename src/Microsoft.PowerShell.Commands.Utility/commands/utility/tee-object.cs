@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class for Tee-object implementation
     /// </summary>
-    [Cmdlet("Tee", "Object", DefaultParameterSetName = "File", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113417")]
+    [Cmdlet("Tee", "Object", DefaultParameterSetName = "File", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113417")]
     public sealed class TeeObjectCommand : PSCmdlet, IDisposable
     {
         /// <summary>
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
         private string _variable;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void BeginProcessing()
         {
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void EndProcessing()
         {

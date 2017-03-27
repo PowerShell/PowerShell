@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Text;
 using System.Globalization;
+using System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands.Internal.Format
 {
@@ -715,7 +716,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         internal static string PadLeft(string val, int count)
         {
-            return new string(' ', count) + val;
+            return StringUtil.Padding(count) + val;
         }
 
         private static readonly char[] s_newLineChar = new char[] { '\n' };

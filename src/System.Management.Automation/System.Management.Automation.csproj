@@ -1,891 +1,179 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{1256D32A-BE8D-4EFE-9769-57BE5663209E}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <NoStandardLibraries>false</NoStandardLibraries>
-    <AssemblyName>ClassLibrary</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <VersionPrefix>6.0.0</VersionPrefix>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <NoWarn>$(NoWarn);CS1570;CS1734</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DelaySign>true</DelaySign>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>System.Management.Automation</AssemblyName>
+    <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
   </PropertyGroup>
-  <PropertyGroup>
-    <RootNamespace>System.Management.Automation</RootNamespace>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.AssemblyLoadContext\Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.csproj" />
+    <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.Eventing\Microsoft.PowerShell.CoreCLR.Eventing.csproj" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.3.0" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.3.0" />
+    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
+    <PackageReference Include="System.Collections.Specialized" Version="4.3.0" />
+    <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />
+    <PackageReference Include="System.ComponentModel.EventBasedAsync" Version="4.3.0" />
+    <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.3.0" />
+    <PackageReference Include="System.Data.Common" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.Contracts" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.StackTrace" Version="4.3.0" />
+    <PackageReference Include="System.Diagnostics.TraceSource" Version="4.3.0" />
+    <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.3.0" />
+    <PackageReference Include="System.IO.FileSystem.DriveInfo" Version="4.3.0" />
+    <PackageReference Include="System.IO.FileSystem.Watcher" Version="4.3.0" />
+    <PackageReference Include="System.IO.Pipes" Version="4.3.0" />
+    <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
+    <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
+    <PackageReference Include="System.Net.Http" Version="4.3.0" />
+    <PackageReference Include="System.Net.NetworkInformation" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
+    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
+    <PackageReference Include="System.Security.AccessControl" Version="4.3.0" />
+    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.0" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.3.0" />
+    <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.0" />
+    <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
+    <PackageReference Include="System.Threading.Tasks.Parallel" Version="4.3.0" />
+    <PackageReference Include="System.Xml.XPath.XmlDocument" Version="4.3.0" />
+    <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
+    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'WINDOWS|AnyCPU'">
-    <OutputPath>bin\UNIX\</OutputPath>
-    <DefineConstants>DEBUG;NOT_SIGNED</DefineConstants>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.objectModel.autogen.cs" />
+    <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.xmlSerializer.autogen.cs" />
+    <Compile Remove="engine\CodeMethods.cs" />
+    <Compile Remove="engine\ComInterop\ArgBuilder.cs" />
+    <Compile Remove="engine\ComInterop\BoolArgBuilder.cs" />
+    <Compile Remove="engine\ComInterop\BoundDispEvent.cs" />
+    <Compile Remove="engine\ComInterop\CollectionExtensions.cs" />
+    <Compile Remove="engine\ComInterop\ComBinder.cs" />
+    <Compile Remove="engine\ComInterop\ComBinderHelpers.cs" />
+    <Compile Remove="engine\ComInterop\ComClassMetaObject.cs" />
+    <Compile Remove="engine\ComInterop\ComDispIds.cs" />
+    <Compile Remove="engine\ComInterop\ComEventDesc.cs" />
+    <Compile Remove="engine\ComInterop\ComEventSink.cs" />
+    <Compile Remove="engine\ComInterop\ComEventSinkProxy.cs" />
+    <Compile Remove="engine\ComInterop\ComEventSinksContainer.cs" />
+    <Compile Remove="engine\ComInterop\ComFallbackMetaObject.cs" />
+    <Compile Remove="engine\ComInterop\ComHresults.cs" />
+    <Compile Remove="engine\ComInterop\ComInterop.cs" />
+    <Compile Remove="engine\ComInterop\ComInvokeAction.cs" />
+    <Compile Remove="engine\ComInterop\ComInvokeBinder.cs" />
+    <Compile Remove="engine\ComInterop\ComMetaObject.cs" />
+    <Compile Remove="engine\ComInterop\ComMethodDesc.cs" />
+    <Compile Remove="engine\ComInterop\ComObject.cs" />
+    <Compile Remove="engine\ComInterop\ComParamDesc.cs" />
+    <Compile Remove="engine\ComInterop\ComRuntimeHelpers.cs" />
+    <Compile Remove="engine\ComInterop\ComType.cs" />
+    <Compile Remove="engine\ComInterop\ComTypeClassDesc.cs" />
+    <Compile Remove="engine\ComInterop\ComTypeDesc.cs" />
+    <Compile Remove="engine\ComInterop\ComTypeEnumDesc.cs" />
+    <Compile Remove="engine\ComInterop\ComTypeLibDesc.cs" />
+    <Compile Remove="engine\ComInterop\ComTypeLibInfo.cs" />
+    <Compile Remove="engine\ComInterop\ComTypeLibMemberDesc.cs" />
+    <Compile Remove="engine\ComInterop\ConversionArgBuilder.cs" />
+    <Compile Remove="engine\ComInterop\ConvertArgBuilder.cs" />
+    <Compile Remove="engine\ComInterop\ConvertibleArgBuilder.cs" />
+    <Compile Remove="engine\ComInterop\CurrencyArgBuilder.cs" />
+    <Compile Remove="engine\ComInterop\DateTimeArgBuilder.cs" />
+    <Compile Remove="engine\ComInterop\DispCallable.cs" />
+    <Compile Remove="engine\ComInterop\DispCallableMetaObject.cs" />
+    <Compile Remove="engine\ComInterop\DispatchArgBuilder.cs" />
+    <Compile Remove="engine\ComInterop\ErrorArgBuilder.cs" />
+    <Compile Remove="engine\ComInterop\Errors.cs" />
+    <Compile Remove="engine\ComInterop\ExcepInfo.cs" />
+    <Compile Remove="engine\ComInterop\Helpers.cs" />
+    <Compile Remove="engine\ComInterop\IDispatchComObject.cs" />
+    <Compile Remove="engine\ComInterop\IDispatchMetaObject.cs" />
+    <Compile Remove="engine\ComInterop\IPseudoComObject.cs" />
+    <Compile Remove="engine\ComInterop\NullArgBuilder.cs" />
+    <Compile Remove="engine\ComInterop\SimpleArgBuilder.cs" />
+    <Compile Remove="engine\ComInterop\SplatCallSite.cs" />
+    <Compile Remove="engine\ComInterop\StringArgBuilder.cs" />
+    <Compile Remove="engine\ComInterop\TypeEnumMetaObject.cs" />
+    <Compile Remove="engine\ComInterop\TypeLibInfoMetaObject.cs" />
+    <Compile Remove="engine\ComInterop\TypeLibMetaObject.cs" />
+    <Compile Remove="engine\ComInterop\TypeUtils.cs" />
+    <Compile Remove="engine\ComInterop\UnknownArgBuilder.cs" />
+    <Compile Remove="engine\ComInterop\VarEnumSelector.cs" />
+    <Compile Remove="engine\ComInterop\Variant.cs" />
+    <Compile Remove="engine\ComInterop\VariantArgBuilder.cs" />
+    <Compile Remove="engine\ComInterop\VariantArray.cs" />
+    <Compile Remove="engine\ComInterop\VariantBuilder.cs" />
+    <Compile Remove="engine\ExtraAdapter.cs" />
+    <Compile Remove="engine\ManagementObjectAdapter.cs" />
+    <Compile Remove="engine\MshObjectTypeDescriptor.cs" />
+    <Compile Remove="engine\PSMI\PSNegotiationData.cs" />
+    <Compile Remove="engine\PSMI\PSPowerShellPipeline.cs" />
+    <Compile Remove="engine\PSMI\Serialization\InternalMISerializer.cs" />
+    <Compile Remove="engine\PSMI\Serialization\KnownMITypes.cs" />
+    <Compile Remove="engine\PSMI\Serialization\MISerializer.cs" />
+    <Compile Remove="engine\PSMI\Serialization\MITypeSerializationInfo.cs" />
+    <Compile Remove="engine\PSMI\Serialization\PSMISerializer.cs" />
+    <Compile Remove="engine\TransactedString.cs" />
+    <Compile Remove="engine\TransactionManager.cs" />
+    <Compile Remove="engine\hostifaces\NativeCultureResolver.cs" />
+    <Compile Remove="engine\hostifaces\RunspaceInvoke.cs" />
+    <Compile Remove="logging\eventlog\EventLogLogProvider.cs" />
+    <Compile Remove="namespaces\SafeTransactionHandle.cs" />
+    <Compile Remove="namespaces\TransactedRegistry.cs" />
+    <Compile Remove="namespaces\TransactedRegistryKey.cs" />
+    <Compile Remove="namespaces\TransactedRegistrySecurity.cs" />
+    <Compile Remove="security\wldpNativeMethods.cs" />
+    <Compile Remove="singleshell\Commands\ConsoleCommands.cs" />
+    <Compile Remove="singleshell\Commands\MshSnapinCommands.cs" />
+    <Compile Remove="singleshell\config\RegistryStringResourceIndirect.cs" />
+    <Compile Remove="singleshell\installer\CustomMshSnapin.cs" />
+    <Compile Remove="singleshell\installer\MshCoreMshSnapin.cs" />
+    <Compile Remove="singleshell\installer\MshInstaller.cs" />
+    <Compile Remove="singleshell\installer\MshSnapin.cs" />
+    <Compile Remove="singleshell\installer\MshSnapinInstaller.cs" />
+    <Compile Remove="utils\BackgroundDispatcher.cs" />
+    <Compile Remove="utils\GraphicalHostReflectionWrapper.cs" />
+    <Compile Remove="utils\perfCounters\CounterSetInstanceBase.cs" />
+    <Compile Remove="utils\perfCounters\CounterSetRegistrarBase.cs" />
+    <Compile Remove="utils\perfCounters\PSPerfCountersMgr.cs" />
+    <Compile Remove="gen\CoreMshSnapinResources.cs" />
+    <Compile Remove="gen\ErrorPackageRemoting.cs" />
+    
+    <EmbeddedResource Remove="resources\CoreMshSnapinResources.resx" />
+    <EmbeddedResource Remove="resources\ErrorPackageRemoting.resx" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugType>portable</DebugType>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UNIX|AnyCPU'">
-    <OutputPath>bin\UNIX\</OutputPath>
-    <DefineConstants>DEBUG;CORECLR;UNIX;NOT_SIGNED</DefineConstants>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Linux' ">
+    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CORECLR|AnyCPU'">
-    <OutputPath>bin\CORECLR\</OutputPath>
-    <DefineConstants>DEBUG;CORECLR;NOT_SIGNED</DefineConstants>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
+    <DebugType>full</DebugType>
   </PropertyGroup>
+
   <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Microsoft.Management.Infrastructure" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.DirectoryServices" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Numerics" />
-    <Reference Include="System.Runtime.Serialization" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Security" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
+    <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0-alpha*" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="cimSupport\cmdletization\cim\WildcardPatternToCimQueryParser.cs" />
-    <Compile Include="cimSupport\cmdletization\EnumWriter.cs" />
-    <Compile Include="cimSupport\cmdletization\MethodInvocationInfo.cs" />
-    <Compile Include="cimSupport\cmdletization\MethodParameter.cs" />
-    <Compile Include="cimSupport\cmdletization\MethodParametersCollection.cs" />
-    <Compile Include="cimSupport\cmdletization\ObjectModelWrapper.cs" />
-    <Compile Include="cimSupport\cmdletization\QueryBuilder.cs" />
-    <Compile Include="cimSupport\cmdletization\ScriptWriter.cs" />
-    <Compile Include="cimSupport\cmdletization\xml\cmdlets-over-objects.objectModel.autogen.cs" />
-    <Compile Include="cimSupport\cmdletization\xml\cmdlets-over-objects.xmlSerializer.autogen.cs" />
-    <Compile Include="cimSupport\cmdletization\xml\CoreCLR\cmdlets-over-objects.objectModel.autogen.cs" />
-    <Compile Include="cimSupport\cmdletization\xml\CoreCLR\cmdlets-over-objects.xmlSerializer.autogen.cs" />
-    <Compile Include="cimSupport\other\ciminstancetypeadapter.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\BaseCommand.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\BaseFormattingCommand.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\BaseFormattingCommandParameters.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\BaseOutputtingCommand.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\ColumnWidthManager.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\ComplexWriter.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DefaultFormatters\Certificate_format_ps1xml.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DefaultFormatters\Diagnostics_Format_ps1xml.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DefaultFormatters\DotNetTypes_format_ps1xml.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DefaultFormatters\Event_Format_ps1xml.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DefaultFormatters\FileSystem_format_ps1xml.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DefaultFormatters\HelpV3_format_ps1xml.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DefaultFormatters\Help_format_ps1xml.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DefaultFormatters\PowerShellCore_format_ps1xml.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DefaultFormatters\PowerShellTrace_format_ps1xml.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DefaultFormatters\Registry_format_ps1xml.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DefaultFormatters\WSMan_Format_ps1xml.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\commands.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\displayDescriptionData.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\displayDescriptionDataMethods.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\displayDescriptionData_Complex.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\displayDescriptionData_List.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\displayDescriptionData_Misc.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\displayDescriptionData_Table.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\displayDescriptionData_Wide.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\displayResourceManagerCache.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\FormatTable.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\typeDataManager.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\typeDataQuery.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\typeDataXmlLoader.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\typeDataXmlLoader_Complex.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\typeDataXmlLoader_List.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\typeDataXmlLoader_Table.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\typeDataXmlLoader_Views.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\typeDataXmlLoader_Wide.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\DisplayDatabase\XmlLoaderBase.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\FormatGroupManager.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\FormatMsgCtxManager.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\FormattingObjects.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\FormattingObjectsDeserializer.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\FormatViewGenerator.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\FormatViewGenerator_Complex.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\FormatViewGenerator_List.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\FormatViewGenerator_Table.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\FormatViewGenerator_Wide.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\FormatViewManager.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\FormatXMLWriter.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\ILineOutput.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\ListWriter.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\OutputManager.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\OutputQueue.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\TableWriter.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\Utilities\Mshexpression.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\Utilities\MshObjectUtil.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\Utilities\MshParameter.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\Utilities\MshParameterAssociation.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\format-default\format-default.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\out-console\ConsoleLineOutput.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\out-console\OutConsole.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\out-textInterface\OutTextInterface.cs" />
-    <Compile Include="CoreCLR\CorePsExtensions.cs" />
-    <Compile Include="CoreCLR\CorePsPlatform.cs" />
-    <Compile Include="CoreCLR\CorePsStub.cs" />
-    <Compile Include="DscSupport\CimDSCParser.cs" />
-    <Compile Include="engine\AliasInfo.cs" />
-    <Compile Include="engine\ApplicationInfo.cs" />
-    <Compile Include="engine\ArgumentTypeConverterAttribute.cs" />
-    <Compile Include="engine\Attributes.cs" />
-    <Compile Include="engine\AutomationEngine.cs" />
-    <Compile Include="engine\AutomationNull.cs" />
-    <Compile Include="engine\ChildrenCmdletProviderInterfaces.cs" />
-    <Compile Include="engine\cmdlet.cs" />
-    <Compile Include="engine\CmdletFamilyProviderInterfaces.cs" />
-    <Compile Include="engine\CmdletInfo.cs" />
-    <Compile Include="engine\CmdletParameterBinderController.cs" />
-    <Compile Include="engine\CodeMethods.cs" />
-    <Compile Include="engine\ComInterop\ArgBuilder.cs" />
-    <Compile Include="engine\ComInterop\BoolArgBuilder.cs" />
-    <Compile Include="engine\ComInterop\BoundDispEvent.cs" />
-    <Compile Include="engine\ComInterop\CollectionExtensions.cs" />
-    <Compile Include="engine\ComInterop\ComBinder.cs" />
-    <Compile Include="engine\ComInterop\ComBinderHelpers.cs" />
-    <Compile Include="engine\ComInterop\ComClassMetaObject.cs" />
-    <Compile Include="engine\ComInterop\ComDispIds.cs" />
-    <Compile Include="engine\ComInterop\ComEventDesc.cs" />
-    <Compile Include="engine\ComInterop\ComEventSink.cs" />
-    <Compile Include="engine\ComInterop\ComEventSinkProxy.cs" />
-    <Compile Include="engine\ComInterop\ComEventSinksContainer.cs" />
-    <Compile Include="engine\ComInterop\ComFallbackMetaObject.cs" />
-    <Compile Include="engine\ComInterop\ComHresults.cs" />
-    <Compile Include="engine\ComInterop\ComInterop.cs" />
-    <Compile Include="engine\ComInterop\ComInvokeAction.cs" />
-    <Compile Include="engine\ComInterop\ComInvokeBinder.cs" />
-    <Compile Include="engine\ComInterop\ComMetaObject.cs" />
-    <Compile Include="engine\ComInterop\ComMethodDesc.cs" />
-    <Compile Include="engine\ComInterop\ComObject.cs" />
-    <Compile Include="engine\ComInterop\ComParamDesc.cs" />
-    <Compile Include="engine\ComInterop\ComRuntimeHelpers.cs" />
-    <Compile Include="engine\ComInterop\ComType.cs" />
-    <Compile Include="engine\ComInterop\ComTypeClassDesc.cs" />
-    <Compile Include="engine\ComInterop\ComTypeDesc.cs" />
-    <Compile Include="engine\ComInterop\ComTypeEnumDesc.cs" />
-    <Compile Include="engine\ComInterop\ComTypeLibDesc.cs" />
-    <Compile Include="engine\ComInterop\ComTypeLibInfo.cs" />
-    <Compile Include="engine\ComInterop\ComTypeLibMemberDesc.cs" />
-    <Compile Include="engine\ComInterop\ConversionArgBuilder.cs" />
-    <Compile Include="engine\ComInterop\ConvertArgBuilder.cs" />
-    <Compile Include="engine\ComInterop\ConvertibleArgBuilder.cs" />
-    <Compile Include="engine\ComInterop\CurrencyArgBuilder.cs" />
-    <Compile Include="engine\ComInterop\DateTimeArgBuilder.cs" />
-    <Compile Include="engine\ComInterop\DispatchArgBuilder.cs" />
-    <Compile Include="engine\ComInterop\DispCallable.cs" />
-    <Compile Include="engine\ComInterop\DispCallableMetaObject.cs" />
-    <Compile Include="engine\ComInterop\ErrorArgBuilder.cs" />
-    <Compile Include="engine\ComInterop\Errors.cs" />
-    <Compile Include="engine\ComInterop\ExcepInfo.cs" />
-    <Compile Include="engine\ComInterop\Helpers.cs" />
-    <Compile Include="engine\ComInterop\IDispatchComObject.cs" />
-    <Compile Include="engine\ComInterop\IDispatchMetaObject.cs" />
-    <Compile Include="engine\ComInterop\IPseudoComObject.cs" />
-    <Compile Include="engine\ComInterop\NullArgBuilder.cs" />
-    <Compile Include="engine\ComInterop\SimpleArgBuilder.cs" />
-    <Compile Include="engine\ComInterop\SplatCallSite.cs" />
-    <Compile Include="engine\ComInterop\StringArgBuilder.cs" />
-    <Compile Include="engine\ComInterop\TypeEnumMetaObject.cs" />
-    <Compile Include="engine\ComInterop\TypeLibInfoMetaObject.cs" />
-    <Compile Include="engine\ComInterop\TypeLibMetaObject.cs" />
-    <Compile Include="engine\ComInterop\TypeUtils.cs" />
-    <Compile Include="engine\ComInterop\UnknownArgBuilder.cs" />
-    <Compile Include="engine\ComInterop\VarEnumSelector.cs" />
-    <Compile Include="engine\ComInterop\Variant.cs" />
-    <Compile Include="engine\ComInterop\VariantArgBuilder.cs" />
-    <Compile Include="engine\ComInterop\VariantArray.cs" />
-    <Compile Include="engine\ComInterop\VariantBuilder.cs" />
-    <Compile Include="engine\CommandBase.cs" />
-    <Compile Include="engine\CommandCompletion\CommandCompletion.cs" />
-    <Compile Include="engine\CommandCompletion\CompletionAnalysis.cs" />
-    <Compile Include="engine\CommandCompletion\CompletionCompleters.cs" />
-    <Compile Include="engine\CommandCompletion\CompletionExecutionHelper.cs" />
-    <Compile Include="engine\CommandCompletion\CompletionResult.cs" />
-    <Compile Include="engine\CommandCompletion\ExtensibleCompletion.cs" />
-    <Compile Include="engine\CommandCompletion\PseudoParameterBinder.cs" />
-    <Compile Include="engine\CommandDiscovery.cs" />
-    <Compile Include="engine\CommandFactory.cs" />
-    <Compile Include="engine\CommandInfo.cs" />
-    <Compile Include="engine\CommandMetadata.cs" />
-    <Compile Include="engine\CommandParameter.cs" />
-    <Compile Include="engine\CommandPathSearch.cs" />
-    <Compile Include="engine\CommandProcessor.cs" />
-    <Compile Include="engine\CommandProcessorBase.cs" />
-    <Compile Include="engine\CommandSearcher.cs" />
-    <Compile Include="engine\CommonCommandParameters.cs" />
-    <Compile Include="engine\CompiledCommandParameter.cs" />
-    <Compile Include="engine\COM\ComAdapter.cs" />
-    <Compile Include="engine\COM\ComDispatch.cs" />
-    <Compile Include="engine\COM\ComInvoker.cs" />
-    <Compile Include="engine\COM\ComMethod.cs" />
-    <Compile Include="engine\COM\ComProperty.cs" />
-    <Compile Include="engine\COM\ComTypeInfo.cs" />
-    <Compile Include="engine\COM\ComUtil.cs" />
-    <Compile Include="engine\ConfigurationInfo.cs" />
-    <Compile Include="engine\ContentCmdletProviderInterfaces.cs" />
-    <Compile Include="engine\CoreAdapter.cs" />
-    <Compile Include="engine\Credential.cs" />
-    <Compile Include="engine\CultureVariable.cs" />
-    <Compile Include="engine\DataStoreAdapter.cs" />
-    <Compile Include="engine\DataStoreAdapterProvider.cs" />
-    <Compile Include="engine\debugger\Breakpoint.cs" />
-    <Compile Include="engine\debugger\debugger.cs" />
-    <Compile Include="engine\DefaultCommandRuntime.cs" />
-    <Compile Include="engine\DriveInterfaces.cs" />
-    <Compile Include="engine\DriveNames.cs" />
-    <Compile Include="engine\DscResourceInfo.cs" />
-    <Compile Include="engine\DscResourceSearcher.cs" />
-    <Compile Include="engine\EngineIntrinsics.cs" />
-    <Compile Include="engine\EnumExpressionEvaluator.cs" />
-    <Compile Include="engine\EnumMinimumDisambiguation.cs" />
-    <Compile Include="engine\ErrorPackage.cs" />
-    <Compile Include="engine\EventManager.cs" />
-    <Compile Include="engine\ExecutionContext.cs" />
-    <Compile Include="engine\ExtendedTypeSystemException.cs" />
-    <Compile Include="engine\ExternalScriptInfo.cs" />
-    <Compile Include="engine\ExtraAdapter.cs" />
-    <Compile Include="engine\FilterInfo.cs" />
-    <Compile Include="engine\FunctionInfo.cs" />
-    <Compile Include="engine\GetCommandCommand.cs" />
-    <Compile Include="engine\GetEvent_Types_Ps1Xml.generated.cs" />
-    <Compile Include="engine\hostifaces\AsyncResult.cs" />
-    <Compile Include="engine\hostifaces\ChoiceDescription.cs" />
-    <Compile Include="engine\hostifaces\Command.cs" />
-    <Compile Include="engine\hostifaces\Connection.cs" />
-    <Compile Include="engine\hostifaces\ConnectionBase.cs" />
-    <Compile Include="engine\hostifaces\ConnectionFactory.cs" />
-    <Compile Include="engine\hostifaces\DefaultHost.cs" />
-    <Compile Include="engine\hostifaces\FieldDescription.cs" />
-    <Compile Include="engine\hostifaces\History.cs" />
-    <Compile Include="engine\hostifaces\HostUtilities.cs" />
-    <Compile Include="engine\hostifaces\InformationalRecord.cs" />
-    <Compile Include="engine\hostifaces\InternalHost.cs" />
-    <Compile Include="engine\hostifaces\InternalHostRawUserInterface.cs" />
-    <Compile Include="engine\hostifaces\InternalHostUserInterface.cs" />
-    <Compile Include="engine\hostifaces\internalHostuserInterfacesecurity.cs" />
-    <Compile Include="engine\hostifaces\ListModifier.cs" />
-    <Compile Include="engine\hostifaces\LocalConnection.cs" />
-    <Compile Include="engine\hostifaces\LocalPipeline.cs" />
-    <Compile Include="engine\hostifaces\MshHost.cs" />
-    <Compile Include="engine\hostifaces\MshHostRawUserInterface.cs" />
-    <Compile Include="engine\hostifaces\MshHostUserInterface.cs" />
-    <Compile Include="engine\hostifaces\NativeCultureResolver.cs" />
-    <Compile Include="engine\hostifaces\Parameter.cs" />
-    <Compile Include="engine\hostifaces\Pipeline.cs" />
-    <Compile Include="engine\hostifaces\pipelinebase.cs" />
-    <Compile Include="engine\hostifaces\PowerShell.cs" />
-    <Compile Include="engine\hostifaces\PowerShellProcessInstance.cs" />
-    <Compile Include="engine\hostifaces\PSCommand.cs" />
-    <Compile Include="engine\hostifaces\PSDataCollection.cs" />
-    <Compile Include="engine\hostifaces\RunspaceInit.cs" />
-    <Compile Include="engine\hostifaces\RunspaceInvoke.cs" />
-    <Compile Include="engine\hostifaces\RunspacePool.cs" />
-    <Compile Include="engine\hostifaces\RunspacePoolInternal.cs" />
-    <Compile Include="engine\ICommandRuntime.cs" />
-    <Compile Include="engine\InformationRecord.cs" />
-    <Compile Include="engine\InitialSessionState.cs" />
-    <Compile Include="engine\InternalCommands.cs" />
-    <Compile Include="engine\interpreter\AddInstruction.cs" />
-    <Compile Include="engine\interpreter\ArrayOperations.cs" />
-    <Compile Include="engine\interpreter\BranchLabel.cs" />
-    <Compile Include="engine\interpreter\CallInstruction.cs" />
-    <Compile Include="engine\interpreter\CallInstruction.Generated.cs" />
-    <Compile Include="engine\interpreter\ControlFlowInstructions.cs" />
-    <Compile Include="engine\interpreter\DivInstruction.cs" />
-    <Compile Include="engine\interpreter\DynamicInstructionN.cs" />
-    <Compile Include="engine\interpreter\DynamicInstructions.Generated.cs" />
-    <Compile Include="engine\interpreter\DynamicSplatInstruction.cs" />
-    <Compile Include="engine\interpreter\EqualInstruction.cs" />
-    <Compile Include="engine\interpreter\FieldOperations.cs" />
-    <Compile Include="engine\interpreter\GreaterThanInstruction.cs" />
-    <Compile Include="engine\interpreter\ILightCallSiteBinder.cs" />
-    <Compile Include="engine\interpreter\Instruction.cs" />
-    <Compile Include="engine\interpreter\InstructionFactory.cs" />
-    <Compile Include="engine\interpreter\InstructionList.cs" />
-    <Compile Include="engine\interpreter\InterpretedFrame.cs" />
-    <Compile Include="engine\interpreter\Interpreter.cs" />
-    <Compile Include="engine\interpreter\LabelInfo.cs" />
-    <Compile Include="engine\interpreter\LessThanInstruction.cs" />
-    <Compile Include="engine\interpreter\LightCompiler.cs" />
-    <Compile Include="engine\interpreter\LightDelegateCreator.cs" />
-    <Compile Include="engine\interpreter\LightLambda.cs" />
-    <Compile Include="engine\interpreter\LightLambda.Generated.cs" />
-    <Compile Include="engine\interpreter\LightLambdaClosureVisitor.cs" />
-    <Compile Include="engine\interpreter\LocalAccess.cs" />
-    <Compile Include="engine\interpreter\LocalVariables.cs" />
-    <Compile Include="engine\interpreter\LoopCompiler.cs" />
-    <Compile Include="engine\interpreter\MulInstruction.cs" />
-    <Compile Include="engine\interpreter\NotEqualInstruction.cs" />
-    <Compile Include="engine\interpreter\NumericConvertInstruction.cs" />
-    <Compile Include="engine\interpreter\PowerShellInstructions.cs" />
-    <Compile Include="engine\interpreter\RuntimeVariables.cs" />
-    <Compile Include="engine\interpreter\StackOperations.cs" />
-    <Compile Include="engine\interpreter\SubInstruction.cs" />
-    <Compile Include="engine\interpreter\TypeOperations.cs" />
-    <Compile Include="engine\interpreter\Utilities.cs" />
-    <Compile Include="engine\InvocationInfo.cs" />
-    <Compile Include="engine\ItemCmdletProviderInterfaces.cs" />
-    <Compile Include="engine\LanguagePrimitives.cs" />
-    <Compile Include="engine\lang\codegen.cs" />
-    <Compile Include="engine\lang\interface\PSParseError.cs" />
-    <Compile Include="engine\lang\interface\PSParser.cs" />
-    <Compile Include="engine\lang\interface\PSToken.cs" />
-    <Compile Include="engine\lang\parserutils.cs" />
-    <Compile Include="engine\lang\scriptblock.cs" />
-    <Compile Include="engine\ManagementObjectAdapter.cs" />
-    <Compile Include="engine\MergedCommandParameterMetadata.cs" />
-    <Compile Include="engine\MinishellParameterBinderController.cs" />
-    <Compile Include="engine\Modules\AnalysisCache.cs" />
-    <Compile Include="engine\Modules\ExportModuleMemberCommand.cs" />
-    <Compile Include="engine\Modules\GetModuleCommand.cs" />
-    <Compile Include="engine\Modules\ImportModuleCommand.cs" />
-    <Compile Include="engine\Modules\ModuleCmdletBase.cs" />
-    <Compile Include="engine\Modules\ModuleIntrinsics.cs" />
-    <Compile Include="engine\Modules\ModuleSpecification.cs" />
-    <Compile Include="engine\Modules\ModuleUtils.cs" />
-    <Compile Include="engine\Modules\NewModuleCommand.cs" />
-    <Compile Include="engine\Modules\NewModuleManifestCommand.cs" />
-    <Compile Include="engine\Modules\PSModuleInfo.cs" />
-    <Compile Include="engine\Modules\RemoteDiscoveryHelper.cs" />
-    <Compile Include="engine\Modules\RemoveModuleCommand.cs" />
-    <Compile Include="engine\Modules\ScriptAnalysis.cs" />
-    <Compile Include="engine\Modules\TestModuleManifestCommand.cs" />
-    <Compile Include="engine\MshCmdlet.cs" />
-    <Compile Include="engine\MshCommandRuntime.cs" />
-    <Compile Include="engine\MshMemberInfo.cs" />
-    <Compile Include="engine\MshObject.cs" />
-    <Compile Include="engine\MshObjectTypeDescriptor.cs" />
-    <Compile Include="engine\MshReference.cs" />
-    <Compile Include="engine\MshSecurityException.cs" />
-    <Compile Include="engine\MshSnapinQualifiedName.cs" />
-    <Compile Include="engine\NativeCommand.cs" />
-    <Compile Include="engine\NativeCommandParameterBinder.cs" />
-    <Compile Include="engine\NativeCommandParameterBinderController.cs" />
-    <Compile Include="engine\NativeCommandProcessor.cs" />
-    <Compile Include="engine\NullString.cs" />
-    <Compile Include="engine\ObjectEventRegistrationBase.cs" />
-    <Compile Include="engine\ParameterBinderBase.cs" />
-    <Compile Include="engine\ParameterBinderController.cs" />
-    <Compile Include="engine\ParameterInfo.cs" />
-    <Compile Include="engine\ParameterSetInfo.cs" />
-    <Compile Include="engine\ParameterSetPromptingData.cs" />
-    <Compile Include="engine\ParameterSetSpecificMetadata.cs" />
-    <Compile Include="engine\parser\ast.cs" />
-    <Compile Include="engine\parser\AstVisitor.cs" />
-    <Compile Include="engine\parser\CharTraits.cs" />
-    <Compile Include="engine\parser\Compiler.cs" />
-    <Compile Include="engine\parser\ConstantValues.cs" />
-    <Compile Include="engine\parser\DebugViewWriter.cs" />
-    <Compile Include="engine\parser\FusionAssemblyIdentity.cs" />
-    <Compile Include="engine\parser\GlobalAssemblyCache.cs" />
-    <Compile Include="engine\parser\Parser.cs" />
-    <Compile Include="engine\parser\Position.cs" />
-    <Compile Include="engine\parser\PreOrderVisitor.cs" />
-    <Compile Include="engine\parser\PSType.cs" />
-    <Compile Include="engine\parser\SafeValues.cs" />
-    <Compile Include="engine\parser\SemanticChecks.cs" />
-    <Compile Include="engine\parser\SymbolResolver.cs" />
-    <Compile Include="engine\parser\token.cs" />
-    <Compile Include="engine\parser\tokenizer.cs" />
-    <Compile Include="engine\parser\TypeResolver.cs" />
-    <Compile Include="engine\parser\VariableAnalysis.cs" />
-    <Compile Include="engine\PathInterfaces.cs" />
-    <Compile Include="engine\Pipe.cs" />
-    <Compile Include="engine\pipeline.cs" />
-    <Compile Include="engine\PositionalCommandParameter.cs" />
-    <Compile Include="engine\ProgressRecord.cs" />
-    <Compile Include="engine\PropertyAccessor.cs" />
-    <Compile Include="engine\PropertyCmdletProviderInterfaces.cs" />
-    <Compile Include="engine\ProviderInterfaces.cs" />
-    <Compile Include="engine\ProviderNames.cs" />
-    <Compile Include="engine\ProxyCommand.cs" />
-    <Compile Include="engine\PSClassInfo.cs" />
-    <Compile Include="engine\PSClassSearcher.cs" />
-    <Compile Include="engine\PseudoParameterBinder.cs" />
-    <Compile Include="engine\PseudoParameters.cs" />
-    <Compile Include="engine\PSMI\PSNegotiationData.cs" />
-    <Compile Include="engine\PSMI\PSPowerShellPipeline.cs" />
-    <Compile Include="engine\PSMI\Serialization\InternalMISerializer.cs" />
-    <Compile Include="engine\PSMI\Serialization\KnownMITypes.cs" />
-    <Compile Include="engine\PSMI\Serialization\MISerializer.cs" />
-    <Compile Include="engine\PSMI\Serialization\MITypeSerializationInfo.cs" />
-    <Compile Include="engine\PSMI\Serialization\PSMISerializer.cs" />
-    <Compile Include="engine\PSVersionInfo.cs" />
-    <Compile Include="engine\QuestionMarkVariable.cs" />
-    <Compile Include="engine\ReflectionParameterBinder.cs" />
-    <Compile Include="engine\regex.cs" />
-    <Compile Include="engine\remoting\client\ClientMethodExecutor.cs" />
-    <Compile Include="engine\remoting\client\ClientRemotePowerShell.cs" />
-    <Compile Include="engine\remoting\client\clientremotesession.cs" />
-    <Compile Include="engine\remoting\client\clientremotesessionprotocolstatemachine.cs" />
-    <Compile Include="engine\remoting\client\Job.cs" />
-    <Compile Include="engine\remoting\client\Job2.cs" />
-    <Compile Include="engine\remoting\client\JobManager.cs" />
-    <Compile Include="engine\remoting\client\JobSourceAdapter.cs" />
-    <Compile Include="engine\remoting\client\PowerShellStreams.cs" />
-    <Compile Include="engine\remoting\client\PSProxyJob.cs" />
-    <Compile Include="engine\remoting\client\remotepipeline.cs" />
-    <Compile Include="engine\remoting\client\remoterunspace.cs" />
-    <Compile Include="engine\remoting\client\remoterunspaceinfo.cs" />
-    <Compile Include="engine\remoting\client\RemoteRunspacePoolInternal.cs" />
-    <Compile Include="engine\remoting\client\RemotingErrorRecord.cs" />
-    <Compile Include="engine\remoting\client\remotingprotocol.cs" />
-    <Compile Include="engine\remoting\client\RemotingProtocol2.cs" />
-    <Compile Include="engine\remoting\client\remotingprotocolimplementation.cs" />
-    <Compile Include="engine\remoting\client\RunspaceRef.cs" />
-    <Compile Include="engine\remoting\client\ThrottlingJob.cs" />
-    <Compile Include="engine\remoting\commands\ConnectPSSession.cs" />
-    <Compile Include="engine\remoting\commands\CustomShellCommands.cs" />
-    <Compile Include="engine\remoting\commands\DebugJob.cs" />
-    <Compile Include="engine\remoting\commands\DisconnectPSSession.cs" />
-    <Compile Include="engine\remoting\commands\EnterPSHostProcessCommand.cs" />
-    <Compile Include="engine\remoting\commands\GetJob.cs" />
-    <Compile Include="engine\remoting\commands\getrunspacecommand.cs" />
-    <Compile Include="engine\remoting\commands\InvokeCommandCommand.cs" />
-    <Compile Include="engine\remoting\commands\JobRepository.cs" />
-    <Compile Include="engine\remoting\commands\NewPSSessionConfigurationFile.cs" />
-    <Compile Include="engine\remoting\commands\NewPSSessionConfigurationOptionCommand.cs" />
-    <Compile Include="engine\remoting\commands\NewPSSessionOptionCommand.cs" />
-    <Compile Include="engine\remoting\commands\newrunspacecommand.cs" />
-    <Compile Include="engine\remoting\commands\PopRunspaceCommand.cs" />
-    <Compile Include="engine\remoting\commands\PSRemotingCmdlet.cs" />
-    <Compile Include="engine\remoting\commands\PushRunspaceCommand.cs" />
-    <Compile Include="engine\remoting\commands\ReceiveJob.cs" />
-    <Compile Include="engine\remoting\commands\ReceivePSSession.cs" />
-    <Compile Include="engine\remoting\commands\remotingcommandutil.cs" />
-    <Compile Include="engine\remoting\commands\RemoveJob.cs" />
-    <Compile Include="engine\remoting\commands\removerunspacecommand.cs" />
-    <Compile Include="engine\remoting\commands\ResumeJob.cs" />
-    <Compile Include="engine\remoting\commands\runspacerepository.cs" />
-    <Compile Include="engine\remoting\commands\StartJob.cs" />
-    <Compile Include="engine\remoting\commands\StopJob.cs" />
-    <Compile Include="engine\remoting\commands\SuspendJob.cs" />
-    <Compile Include="engine\remoting\commands\TestPSSessionConfigurationFile.cs" />
-    <Compile Include="engine\remoting\commands\WaitJob.cs" />
-    <Compile Include="engine\remoting\common\AsyncObject.cs" />
-    <Compile Include="engine\remoting\common\DispatchTable.cs" />
-    <Compile Include="engine\remoting\common\fragmentor.cs" />
-    <Compile Include="engine\remoting\common\Indexer.cs" />
-    <Compile Include="engine\remoting\common\misc.cs" />
-    <Compile Include="engine\remoting\common\ObjectRef.cs" />
-    <Compile Include="engine\remoting\common\PSETWTracer.cs" />
-    <Compile Include="engine\remoting\common\PSSessionConfigurationTypeOption.cs" />
-    <Compile Include="engine\remoting\common\psstreamobject.cs" />
-    <Compile Include="engine\remoting\common\remotesession.cs" />
-    <Compile Include="engine\remoting\common\RemoteSessionHyperVSocket.cs" />
-    <Compile Include="engine\remoting\common\RemoteSessionNamedPipe.cs" />
-    <Compile Include="engine\remoting\common\remotingexceptions.cs" />
-    <Compile Include="engine\remoting\common\RunspaceConnectionInfo.cs" />
-    <Compile Include="engine\remoting\common\RunspaceInitInfo.cs" />
-    <Compile Include="engine\remoting\common\RunspacePoolStateInfo.cs" />
-    <Compile Include="engine\remoting\common\throttlemanager.cs" />
-    <Compile Include="engine\remoting\common\WireDataFormat\EncodeAndDecode.cs" />
-    <Compile Include="engine\remoting\common\WireDataFormat\RemoteHost.cs" />
-    <Compile Include="engine\remoting\common\WireDataFormat\RemoteHostEncoder.cs" />
-    <Compile Include="engine\remoting\common\WireDataFormat\RemoteSessionCapability.cs" />
-    <Compile Include="engine\remoting\common\WireDataFormat\RemotingDataObject.cs" />
-    <Compile Include="engine\remoting\fanin\BaseTransportManager.cs" />
-    <Compile Include="engine\remoting\fanin\InitialSessionStateProvider.cs" />
-    <Compile Include="engine\remoting\fanin\OutOfProcTransportManager.cs" />
-    <Compile Include="engine\remoting\fanin\PriorityCollection.cs" />
-    <Compile Include="engine\remoting\fanin\PSPrincipal.cs" />
-    <Compile Include="engine\remoting\fanin\PSSessionConfigurationData.cs" />
-    <Compile Include="engine\remoting\fanin\WSManNativeAPI.cs" />
-    <Compile Include="engine\remoting\fanin\WSManPlugin.cs" />
-    <Compile Include="engine\remoting\fanin\WSManPluginFacade.cs" />
-    <Compile Include="engine\remoting\fanin\WSManPluginShellSession.cs" />
-    <Compile Include="engine\remoting\fanin\WSManPluginTransportManager.cs" />
-    <Compile Include="engine\remoting\fanin\WSManTransportManager.cs" />
-    <Compile Include="engine\remoting\host\RemoteHostMethodInfo.cs" />
-    <Compile Include="engine\remoting\server\OutOfProcServerMediator.cs" />
-    <Compile Include="engine\remoting\server\ServerMethodExecutor.cs" />
-    <Compile Include="engine\remoting\server\ServerPowerShellDriver.cs" />
-    <Compile Include="engine\remoting\server\ServerRemoteHost.cs" />
-    <Compile Include="engine\remoting\server\ServerRemoteHostRawUserInterface.cs" />
-    <Compile Include="engine\remoting\server\ServerRemoteHostUserInterface.cs" />
-    <Compile Include="engine\remoting\server\serverremotesession.cs" />
-    <Compile Include="engine\remoting\server\serverremotesessionstatemachine.cs" />
-    <Compile Include="engine\remoting\server\serverremotingprotocol.cs" />
-    <Compile Include="engine\remoting\server\ServerRemotingProtocol2.cs" />
-    <Compile Include="engine\remoting\server\serverremotingprotocolimplementation.cs" />
-    <Compile Include="engine\remoting\server\ServerRunspacePoolDriver.cs" />
-    <Compile Include="engine\remoting\server\ServerSteppablePipelineDriver.cs" />
-    <Compile Include="engine\remoting\server\ServerSteppablePipelineSubscriber.cs" />
-    <Compile Include="engine\remoting\server\WSManChannelEvents.cs" />
-    <Compile Include="engine\runtime\Binding\Binders.cs" />
-    <Compile Include="engine\runtime\CompiledScriptBlock.cs" />
-    <Compile Include="engine\runtime\MutableTuple.cs" />
-    <Compile Include="engine\runtime\Operations\ArrayOps.cs" />
-    <Compile Include="engine\runtime\Operations\ClassOps.cs" />
-    <Compile Include="engine\runtime\Operations\MiscOps.cs" />
-    <Compile Include="engine\runtime\Operations\NumericOps.cs" />
-    <Compile Include="engine\runtime\Operations\StringOps.cs" />
-    <Compile Include="engine\runtime\Operations\VariableOps.cs" />
-    <Compile Include="engine\runtime\ScriptBlockToPowerShell.cs" />
-    <Compile Include="engine\ScopedItemSearcher.cs" />
-    <Compile Include="engine\ScriptCommand.cs" />
-    <Compile Include="engine\ScriptCommandProcessor.cs" />
-    <Compile Include="engine\ScriptInfo.cs" />
-    <Compile Include="engine\scriptparameterbinder.cs" />
-    <Compile Include="engine\scriptparameterbindercontroller.cs" />
-    <Compile Include="engine\SecurityDescriptorCmdletProviderInterfaces.cs" />
-    <Compile Include="engine\SecurityManagerBase.cs" />
-    <Compile Include="engine\serialization.cs" />
-    <Compile Include="engine\SerializationStrings.cs" />
-    <Compile Include="engine\SessionState.cs" />
-    <Compile Include="engine\SessionStateAliasAPIs.cs" />
-    <Compile Include="engine\SessionStateCapacityVariable.cs" />
-    <Compile Include="engine\SessionStateCmdletAPIs.cs" />
-    <Compile Include="engine\SessionStateContainer.cs" />
-    <Compile Include="engine\SessionStateContent.cs" />
-    <Compile Include="engine\SessionStateDriveAPIs.cs" />
-    <Compile Include="engine\SessionStateDynamicProperty.cs" />
-    <Compile Include="engine\SessionStateFunctionAPIs.cs" />
-    <Compile Include="engine\SessionStateItem.cs" />
-    <Compile Include="engine\SessionStateLocationAPIs.cs" />
-    <Compile Include="engine\SessionStateNavigation.cs" />
-    <Compile Include="engine\SessionStateProperty.cs" />
-    <Compile Include="engine\SessionStateProviderAPIs.cs" />
-    <Compile Include="engine\SessionStatePublic.cs" />
-    <Compile Include="engine\SessionStateScope.cs" />
-    <Compile Include="engine\SessionStateScopeAPIs.cs" />
-    <Compile Include="engine\SessionStateScopeEnumerator.cs" />
-    <Compile Include="engine\SessionStateSecurityDescriptorInterface.cs" />
-    <Compile Include="engine\SessionStateStrings.cs" />
-    <Compile Include="engine\SessionStateUtils.cs" />
-    <Compile Include="engine\SessionStateVariableAPIs.cs" />
-    <Compile Include="engine\ShellVariable.cs" />
-    <Compile Include="engine\SpecialVariables.cs" />
-    <Compile Include="engine\ThirdPartyAdapter.cs" />
-    <Compile Include="engine\TransactedString.cs" />
-    <Compile Include="engine\TransactionManager.cs" />
-    <Compile Include="engine\TypeMetadata.cs" />
-    <Compile Include="engine\TypesV3_Ps1Xml.generated.cs" />
-    <Compile Include="engine\Types_Ps1Xml.generated.cs" />
-    <Compile Include="engine\TypeTable.cs" />
-    <Compile Include="engine\UserFeedbackParameters.cs" />
-    <Compile Include="engine\Utils.cs" />
-    <Compile Include="engine\VariableAttributeCollection.cs" />
-    <Compile Include="engine\VariableInterfaces.cs" />
-    <Compile Include="engine\VariablePath.cs" />
-    <Compile Include="engine\WinRT\IInspectable.cs" />
-    <Compile Include="engine\WorkflowInfo.cs" />
-    <Compile Include="gen\Authenticode.cs" />
-    <Compile Include="gen\AuthorizationManagerBase.cs" />
-    <Compile Include="gen\AutomationExceptions.cs" />
-    <Compile Include="gen\CimInstanceTypeAdapterResources.cs" />
-    <Compile Include="gen\CmdletizationCoreResources.cs" />
-    <Compile Include="gen\CommandBaseStrings.cs" />
-    <Compile Include="gen\ConsoleInfoErrorStrings.cs" />
-    <Compile Include="gen\CoreClrStubResources.cs" />
-    <Compile Include="gen\CoreMshSnapinResources.cs" />
-    <Compile Include="gen\Credential.cs" />
-    <Compile Include="gen\CredentialAttributeStrings.cs" />
-    <Compile Include="gen\CredUI.cs" />
-    <Compile Include="gen\DebuggerStrings.cs" />
-    <Compile Include="gen\DescriptionsStrings.cs" />
-    <Compile Include="gen\DiscoveryExceptions.cs" />
-    <Compile Include="gen\EnumExpressionEvaluatorStrings.cs" />
-    <Compile Include="gen\ErrorCategoryStrings.cs" />
-    <Compile Include="gen\ErrorPackage.cs" />
-    <Compile Include="gen\ErrorPackageRemoting.cs" />
-    <Compile Include="gen\EtwLoggingStrings.cs" />
-    <Compile Include="gen\EventingResources.cs" />
-    <Compile Include="gen\ExtendedTypeSystem.cs" />
-    <Compile Include="gen\FileSystemProviderStrings.cs" />
-    <Compile Include="gen\FormatAndOutXmlLoadingStrings.cs" />
-    <Compile Include="gen\FormatAndOut_format_xxx.cs" />
-    <Compile Include="gen\FormatAndOut_MshParameter.cs" />
-    <Compile Include="gen\FormatAndOut_out_xxx.cs" />
-    <Compile Include="gen\GetErrorText.cs" />
-    <Compile Include="gen\HelpDisplayStrings.cs" />
-    <Compile Include="gen\HelpErrors.cs" />
-    <Compile Include="gen\HistoryStrings.cs" />
-    <Compile Include="gen\HostInterfaceExceptionsStrings.cs" />
-    <Compile Include="gen\InternalCommandStrings.cs" />
-    <Compile Include="gen\InternalHostStrings.cs" />
-    <Compile Include="gen\InternalHostUserInterfaceStrings.cs" />
-    <Compile Include="gen\Logging.cs" />
-    <Compile Include="gen\Metadata.cs" />
-    <Compile Include="gen\MiniShellErrors.cs" />
-    <Compile Include="gen\Modules.cs" />
-    <Compile Include="gen\MshHostRawUserInterfaceStrings.cs" />
-    <Compile Include="gen\MshSignature.cs" />
-    <Compile Include="gen\MshSnapInCmdletResources.cs" />
-    <Compile Include="gen\MshSnapinInfo.cs" />
-    <Compile Include="gen\NativeCP.cs" />
-    <Compile Include="gen\ParameterBinderStrings.cs" />
-    <Compile Include="gen\ParserStrings.cs" />
-    <Compile Include="gen\PathUtilsStrings.cs" />
-    <Compile Include="gen\PipelineStrings.cs" />
-    <Compile Include="gen\PowerShellStrings.cs" />
-    <Compile Include="gen\ProgressRecordStrings.cs" />
-    <Compile Include="gen\ProviderBaseSecurity.cs" />
-    <Compile Include="gen\ProxyCommandStrings.cs" />
-    <Compile Include="gen\PSCommandStrings.cs" />
-    <Compile Include="gen\PSDataBufferStrings.cs" />
-    <Compile Include="gen\PSListModifierStrings.cs" />
-    <Compile Include="gen\RegistryProviderStrings.cs" />
-    <Compile Include="gen\RemotingErrorIdStrings.cs" />
-    <Compile Include="gen\RunspaceInit.cs" />
-    <Compile Include="gen\RunspacePoolStrings.cs" />
-    <Compile Include="gen\RunspaceStrings.cs" />
-    <Compile Include="gen\SecuritySupportStrings.cs" />
-    <Compile Include="gen\Serialization.cs" />
-    <Compile Include="gen\SessionStateProviderBaseStrings.cs" />
-    <Compile Include="gen\SessionStateStrings.cs" />
-    <Compile Include="gen\SuggestionStrings.cs" />
-    <Compile Include="gen\TabCompletionStrings.cs" />
-    <Compile Include="gen\TransactionStrings.cs" />
-    <Compile Include="gen\TypesXmlStrings.cs" />
-    <Compile Include="gen\WildcardPatternStrings.cs" />
-    <Compile Include="help\AliasHelpInfo.cs" />
-    <Compile Include="help\AliasHelpProvider.cs" />
-    <Compile Include="help\BaseCommandHelpInfo.cs" />
-    <Compile Include="help\CabinetAPI.cs" />
-    <Compile Include="help\CabinetNativeApi.cs" />
-    <Compile Include="help\CommandHelpProvider.cs" />
-    <Compile Include="help\DefaultCommandHelpObjectBuilder.cs" />
-    <Compile Include="help\DefaultHelpProvider.cs" />
-    <Compile Include="help\DscResourceHelpProvider.cs" />
-    <Compile Include="help\FaqHelpInfo.cs" />
-    <Compile Include="help\FaqHelpProvider.cs" />
-    <Compile Include="help\GeneralHelpInfo.cs" />
-    <Compile Include="help\GeneralHelpProvider.cs" />
-    <Compile Include="help\GlossaryHelpInfo.cs" />
-    <Compile Include="help\GlossaryHelpProvider.cs" />
-    <Compile Include="help\HelpCategoryInvalidException.cs" />
-    <Compile Include="help\HelpCommands.cs" />
-    <Compile Include="help\HelpCommentsParser.cs" />
-    <Compile Include="help\HelpErrorTracer.cs" />
-    <Compile Include="help\HelpFileHelpInfo.cs" />
-    <Compile Include="help\HelpFileHelpProvider.cs" />
-    <Compile Include="help\HelpInfo.cs" />
-    <Compile Include="help\HelpNotFoundException.cs" />
-    <Compile Include="help\HelpProvider.cs" />
-    <Compile Include="help\HelpProviderWithCache.cs" />
-    <Compile Include="help\HelpProviderWithFullCache.cs" />
-    <Compile Include="help\HelpRequest.cs" />
-    <Compile Include="help\HelpSystem.cs" />
-    <Compile Include="help\MamlClassHelpInfo.cs" />
-    <Compile Include="help\MamlCommandHelpInfo.cs" />
-    <Compile Include="help\MamlNode.cs" />
-    <Compile Include="help\MamlUtil.cs" />
-    <Compile Include="help\MUIFileSearcher.cs" />
-    <Compile Include="help\ProviderCommandHelpInfo.cs" />
-    <Compile Include="help\ProviderContext.cs" />
-    <Compile Include="help\ProviderHelpInfo.cs" />
-    <Compile Include="help\ProviderHelpProvider.cs" />
-    <Compile Include="help\PSClassHelpProvider.cs" />
-    <Compile Include="help\RemoteHelpInfo.cs" />
-    <Compile Include="help\SaveHelpCommand.cs" />
-    <Compile Include="help\ScriptCommandHelpProvider.cs" />
-    <Compile Include="help\SyntaxHelpInfo.cs" />
-    <Compile Include="help\UpdatableHelpCommandBase.cs" />
-    <Compile Include="help\UpdatableHelpInfo.cs" />
-    <Compile Include="help\UpdatableHelpModuleInfo.cs" />
-    <Compile Include="help\UpdatableHelpSystem.cs" />
-    <Compile Include="help\UpdatableHelpUri.cs" />
-    <Compile Include="help\UpdateHelpCommand.cs" />
-    <Compile Include="logging\eventlog\EventLogLogProvider.cs" />
-    <Compile Include="logging\LogContext.cs" />
-    <Compile Include="logging\LogProvider.cs" />
-    <Compile Include="logging\MshLog.cs" />
-    <Compile Include="minishell\api\FormatAndTypeDataHelper.cs" />
-    <Compile Include="minishell\api\RunspaceConfiguration.cs" />
-    <Compile Include="minishell\api\RunspaceConfigurationAttributeException.cs" />
-    <Compile Include="minishell\api\RunspaceConfigurationEntry.cs" />
-    <Compile Include="minishell\api\RunspaceConfigurationEntryCollection.cs" />
-    <Compile Include="minishell\api\RunspaceConfigurationHelper.cs" />
-    <Compile Include="minishell\api\RunspaceConfigurationTypeAttribute.cs" />
-    <Compile Include="minishell\api\RunspaceConfigurationTypeException.cs" />
-    <Compile Include="namespaces\AliasProvider.cs" />
-    <Compile Include="namespaces\Buffer.cs" />
-    <Compile Include="namespaces\ContainerProviderBase.cs" />
-    <Compile Include="namespaces\CoreCommandContext.cs" />
-    <Compile Include="namespaces\DriveProviderBase.cs" />
-    <Compile Include="namespaces\EnvironmentProvider.cs" />
-    <Compile Include="namespaces\FileSystemContentStream.cs" />
-    <Compile Include="namespaces\FileSystemProvider.cs" />
-    <Compile Include="namespaces\FileSystemSecurity.cs" />
-    <Compile Include="namespaces\FunctionProvider.cs" />
-    <Compile Include="namespaces\IContentProvider.cs" />
-    <Compile Include="namespaces\IContentReader.cs" />
-    <Compile Include="namespaces\IContentWriter.cs" />
-    <Compile Include="namespaces\IDynamicPropertyProvider.cs" />
-    <Compile Include="namespaces\IPermissionProvider.cs" />
-    <Compile Include="namespaces\IPropertiesProvider.cs" />
-    <Compile Include="namespaces\ItemProviderBase.cs" />
-    <Compile Include="namespaces\LocationGlobber.cs" />
-    <Compile Include="namespaces\NavigationProviderBase.cs" />
-    <Compile Include="namespaces\PathInfo.cs" />
-    <Compile Include="namespaces\ProviderBase.cs" />
-    <Compile Include="namespaces\ProviderBaseSecurity.cs" />
-    <Compile Include="namespaces\ProviderDeclarationAttribute.cs" />
-    <Compile Include="namespaces\RegistryProvider.cs" />
-    <Compile Include="namespaces\RegistrySecurity.cs" />
-    <Compile Include="namespaces\RegistryWrapper.cs" />
-    <Compile Include="namespaces\SafeRegistryHandle.cs" />
-    <Compile Include="namespaces\SafeTransactionHandle.cs" />
-    <Compile Include="namespaces\SessionStateProviderBase.cs" />
-    <Compile Include="namespaces\StackInfo.cs" />
-    <Compile Include="namespaces\TransactedRegistry.cs" />
-    <Compile Include="namespaces\TransactedRegistryKey.cs" />
-    <Compile Include="namespaces\TransactedRegistrySecurity.cs" />
-    <Compile Include="namespaces\VariableProvider.cs" />
-    <Compile Include="namespaces\Win32Native.cs" />
-    <Compile Include="security\Authenticode.cs" />
-    <Compile Include="security\CredentialParameter.cs" />
-    <Compile Include="security\MshSignature.cs" />
-    <Compile Include="security\nativeMethods.cs" />
-    <Compile Include="security\SecureStringHelper.cs" />
-    <Compile Include="security\SecurityManager.cs" />
-    <Compile Include="security\SecuritySupport.cs" />
-    <Compile Include="security\wldpNativeMethods.cs" />
-    <Compile Include="singleshell\Commands\ConsoleCommands.cs" />
-    <Compile Include="singleshell\Commands\MshSnapinCommands.cs" />
-    <Compile Include="singleshell\config\MshConsoleInfo.cs" />
-    <Compile Include="singleshell\config\MshConsoleLoadException.cs" />
-    <Compile Include="singleshell\config\MshSnapinInfo.cs" />
-    <Compile Include="singleshell\config\MshSnapinLoadException.cs" />
-    <Compile Include="singleshell\config\RegistryStringResourceIndirect.cs" />
-    <Compile Include="singleshell\config\RunspaceConfigForSingleShell.cs" />
-    <Compile Include="singleshell\installer\CustomMshSnapin.cs" />
-    <Compile Include="singleshell\installer\MshCoreMshSnapin.cs" />
-    <Compile Include="singleshell\installer\MshInstaller.cs" />
-    <Compile Include="singleshell\installer\MshSnapin.cs" />
-    <Compile Include="singleshell\installer\MshSnapinInstaller.cs" />
-    <Compile Include="utils\ArchitectureSensitiveAttribute.cs" />
-    <Compile Include="utils\assert.cs" />
-    <Compile Include="utils\BackgroundDispatcher.cs" />
-    <Compile Include="utils\ClrFacade.cs" />
-    <Compile Include="utils\CommandDiscoveryExceptions.cs" />
-    <Compile Include="utils\CommandProcessorExceptions.cs" />
-    <Compile Include="utils\CoreProviderCmdlets.cs" />
-    <Compile Include="utils\CryptoUtils.cs" />
-    <Compile Include="utils\ExecutionExceptions.cs" />
-    <Compile Include="utils\ExtensionMethods.cs" />
-    <Compile Include="utils\GraphicalHostReflectionWrapper.cs" />
-    <Compile Include="utils\HostInterfacesExceptions.cs" />
-    <Compile Include="utils\IObjectReader.cs" />
-    <Compile Include="utils\IObjectWriter.cs" />
-    <Compile Include="utils\MetadataExceptions.cs" />
-    <Compile Include="utils\MshArgumentException.cs" />
-    <Compile Include="utils\MshArgumentNullException.cs" />
-    <Compile Include="utils\MshArgumentOutOfRangeException.cs" />
-    <Compile Include="utils\MshInvalidOperationException.cs" />
-    <Compile Include="utils\MshNotImplementedException.cs" />
-    <Compile Include="utils\MshNotSupportedException.cs" />
-    <Compile Include="utils\MshObjectDisposedException.cs" />
-    <Compile Include="utils\MshTraceSource.cs" />
-    <Compile Include="utils\ObjectReader.cs" />
-    <Compile Include="utils\ObjectStream.cs" />
-    <Compile Include="utils\ObjectWriter.cs" />
-    <Compile Include="utils\ParameterBinderExceptions.cs" />
-    <Compile Include="utils\ParserException.cs" />
-    <Compile Include="utils\PathUtils.cs" />
-    <Compile Include="utils\perfCounters\CounterSetInstanceBase.cs" />
-    <Compile Include="utils\perfCounters\CounterSetRegistrarBase.cs" />
-    <Compile Include="utils\perfCounters\PSPerfCountersMgr.cs" />
-    <Compile Include="utils\PInvokeDllNames.cs" />
-    <Compile Include="utils\PlatformInvokes.cs" />
-    <Compile Include="utils\PowerShellETWTracer.cs" />
-    <Compile Include="utils\PSTelemetryMethods.cs" />
-    <Compile Include="utils\PSTelemetryWrapper.cs" />
-    <Compile Include="utils\PsUtils.cs" />
-    <Compile Include="utils\ResourceManagerCache.cs" />
-    <Compile Include="utils\RuntimeException.cs" />
-    <Compile Include="utils\SessionStateExceptions.cs" />
-    <Compile Include="utils\StringUtil.cs" />
-    <Compile Include="utils\StructuredTraceSource.cs" />
-    <Compile Include="utils\tracing\EtwActivity.cs" />
-    <Compile Include="utils\tracing\EtwActivityReverter.cs" />
-    <Compile Include="utils\tracing\EtwActivityReverterMethodInvoker.cs" />
-    <Compile Include="utils\tracing\EtwEventCorrelator.cs" />
-    <Compile Include="utils\tracing\IMethodInvoker.cs" />
-    <Compile Include="utils\tracing\PSEtwLog.cs" />
-    <Compile Include="utils\tracing\PSEtwLogProvider.cs" />
-    <Compile Include="utils\tracing\Tracing.cs" />
-    <Compile Include="utils\tracing\TracingGen.cs" />
-    <Compile Include="utils\Verbs.cs" />
-    <Compile Include="utils\WindowsErrorReporting.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="map.json" />
-    <None Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="resources\Authenticode.resx" />
-    <EmbeddedResource Include="resources\AuthorizationManagerBase.resx" />
-    <EmbeddedResource Include="resources\AutomationExceptions.resx" />
-    <EmbeddedResource Include="resources\CimInstanceTypeAdapterResources.resx" />
-    <EmbeddedResource Include="resources\CmdletizationCoreResources.resx" />
-    <EmbeddedResource Include="resources\CommandBaseStrings.resx" />
-    <EmbeddedResource Include="resources\ConsoleInfoErrorStrings.resx" />
-    <EmbeddedResource Include="resources\CoreClrStubResources.resx" />
-    <EmbeddedResource Include="resources\CoreMshSnapinResources.resx" />
-    <EmbeddedResource Include="resources\Credential.resx" />
-    <EmbeddedResource Include="resources\CredentialAttributeStrings.resx" />
-    <EmbeddedResource Include="resources\CredUI.resx" />
-    <EmbeddedResource Include="resources\DebuggerStrings.resx" />
-    <EmbeddedResource Include="resources\DescriptionsStrings.resx" />
-    <EmbeddedResource Include="resources\DiscoveryExceptions.resx" />
-    <EmbeddedResource Include="resources\EnumExpressionEvaluatorStrings.resx" />
-    <EmbeddedResource Include="resources\ErrorCategoryStrings.resx" />
-    <EmbeddedResource Include="resources\ErrorPackage.resx" />
-    <EmbeddedResource Include="resources\ErrorPackageRemoting.resx" />
-    <EmbeddedResource Include="resources\EtwLoggingStrings.resx" />
-    <EmbeddedResource Include="resources\EventingResources.resx" />
-    <EmbeddedResource Include="resources\ExtendedTypeSystem.resx" />
-    <EmbeddedResource Include="resources\FileSystemProviderStrings.resx" />
-    <EmbeddedResource Include="resources\FormatAndOutXmlLoadingStrings.resx" />
-    <EmbeddedResource Include="resources\FormatAndOut_format_xxx.resx" />
-    <EmbeddedResource Include="resources\FormatAndOut_MshParameter.resx" />
-    <EmbeddedResource Include="resources\FormatAndOut_out_xxx.resx" />
-    <EmbeddedResource Include="resources\GetErrorText.resx" />
-    <EmbeddedResource Include="resources\HelpDisplayStrings.resx" />
-    <EmbeddedResource Include="resources\HelpErrors.resx" />
-    <EmbeddedResource Include="resources\HistoryStrings.resx" />
-    <EmbeddedResource Include="resources\HostInterfaceExceptionsStrings.resx" />
-    <EmbeddedResource Include="resources\InternalCommandStrings.resx" />
-    <EmbeddedResource Include="resources\InternalHostStrings.resx" />
-    <EmbeddedResource Include="resources\InternalHostUserInterfaceStrings.resx" />
-    <EmbeddedResource Include="resources\Logging.resx" />
-    <EmbeddedResource Include="resources\Metadata.resx" />
-    <EmbeddedResource Include="resources\MiniShellErrors.resx" />
-    <EmbeddedResource Include="resources\Modules.resx" />
-    <EmbeddedResource Include="resources\MshHostRawUserInterfaceStrings.resx" />
-    <EmbeddedResource Include="resources\MshSignature.resx" />
-    <EmbeddedResource Include="resources\MshSnapInCmdletResources.resx" />
-    <EmbeddedResource Include="resources\MshSnapinInfo.resx" />
-    <EmbeddedResource Include="resources\NativeCP.resx" />
-    <EmbeddedResource Include="resources\ParameterBinderStrings.resx" />
-    <EmbeddedResource Include="resources\ParserStrings.resx" />
-    <EmbeddedResource Include="resources\PathUtilsStrings.resx" />
-    <EmbeddedResource Include="resources\PipelineStrings.resx" />
-    <EmbeddedResource Include="resources\PowerShellStrings.resx" />
-    <EmbeddedResource Include="resources\ProgressRecordStrings.resx" />
-    <EmbeddedResource Include="resources\ProviderBaseSecurity.resx" />
-    <EmbeddedResource Include="resources\ProxyCommandStrings.resx" />
-    <EmbeddedResource Include="resources\PSCommandStrings.resx" />
-    <EmbeddedResource Include="resources\PSDataBufferStrings.resx" />
-    <EmbeddedResource Include="resources\PSListModifierStrings.resx" />
-    <EmbeddedResource Include="resources\RegistryProviderStrings.resx" />
-    <EmbeddedResource Include="resources\RemotingErrorIdStrings.resx" />
-    <EmbeddedResource Include="resources\RunspaceInit.resx" />
-    <EmbeddedResource Include="resources\RunspacePoolStrings.resx" />
-    <EmbeddedResource Include="resources\RunspaceStrings.resx" />
-    <EmbeddedResource Include="resources\SecuritySupportStrings.resx" />
-    <EmbeddedResource Include="resources\Serialization.resx" />
-    <EmbeddedResource Include="resources\SessionStateProviderBaseStrings.resx" />
-    <EmbeddedResource Include="resources\SessionStateStrings.resx" />
-    <EmbeddedResource Include="resources\SuggestionStrings.resx" />
-    <EmbeddedResource Include="resources\TabCompletionStrings.resx" />
-    <EmbeddedResource Include="resources\TransactionStrings.resx" />
-    <EmbeddedResource Include="resources\TypesXmlStrings.resx" />
-    <EmbeddedResource Include="resources\WildcardPatternStrings.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include=".vs\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
-  <ProjectExtensions>
-    <VisualStudio AllowExistingFolder="true" />
-  </ProjectExtensions>
+
 </Project>

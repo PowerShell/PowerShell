@@ -74,6 +74,7 @@ This means that a command like `ls *.txt` will fail because the asterisk will no
 expanded to match file names. 
 You can work around this by doing `ls (gci *.txt | % name)` or, more simply, 
 `gci *.txt` using the PowerShell built-in equivalent to `ls`.
+[RFC0009](https://github.com/PowerShell/PowerShell-RFC/issues/33)
 
 .NET Framework vs .NET Core Framework
 -----------------
@@ -89,6 +90,8 @@ Redirection Issues
 ------------------
 
 Input redirection is not supported in PowerShell on any platform. 
+[Issue #1629](https://github.com/PowerShell/PowerShell/issues/1629)
+
 Use either `Get-Content` to write the contents of a file into the pipeline.
 
 PowerShell does not currently support "direct pipelining" external commands. 
@@ -114,14 +117,14 @@ Remoting Support
 ----------------
 
 Client-side remoting from Linux/macOS is not supported with the initial package. 
-This will be enabled shortly after the Alpha release by installing an additional package.
+The work is being done in the [psl-omi-provider](https://github.com/PowerShell/psl-omi-provider) repo.
 
 Just-Enough-Administration (JEA) Support
 ----------------------------------------
 
 The ability to create constrained administration (JEA) remoting
 endpoints is not currently available in PowerShell on Linux/macOS. 
-This feature will be enabled shortly after the Alpha release by installing new package.
+This feature is currently not in scope for 6.0 and something we will consider post 6.0 but requires significant design work.
 
 sudo, exec, and PowerShell
 -------------------------
@@ -149,8 +152,8 @@ Command Availability
 The following table lists commands that are known not to work in PowerShell on Linux/macOS.
 
 <table>
-<th>Commands<td><b>Operational State<td><b>Notes</th>
-<Tr>
+<th>Commands</th><th>Operational State</th><th>Notes</th>
+<tr>
 <td>Get-Service New-Service Restart-Service Resume-Service Set-Service Start-Service Stop-Service Suspend-Service
 <td>Not available.
 <td>These commands will not be recognized. This will be fixed in a future release.
@@ -170,11 +173,6 @@ The following table lists commands that are known not to work in PowerShell on L
 <td>Available, doesn't work properly. <td>For example `Start-Process gvim -PassThru | Wait-Process` doesn't work; it fails to wait for the process.
 </tr>
 <tr>
-<td>Update-Help
-<td>Available but doesn't work.
-<td>`CabinetExtractorFactory` generates an `InvalidOperation` exception. These will be fixed in a future release.
-</tr>
-<tr>
 <td>Register-PSSessionConfiguration, Unregister-PSSessionConfiguration, Get-PSSessionConfiguration
 <td>Available but doesn't work.
 <td>Writes an error message indicating that the commands are not working. These will be fixed in a future release.
@@ -188,11 +186,6 @@ The following table lists commands that are known not to work in PowerShell on L
 <td>Set-ExecutionPolicy
 <td>Available but doesn't work.
 <td>Returns a message saying not supported on this platform. Execution policy is a user-focused "safety belt" that helps prevent the user from making expensive mistakes. It is not a security boundary.
-</tr>
-<tr>
-<td>Select-Xml
-<td>Available but doesn't work.
-<td>The underlying Select.Xml.Node classes are missing on Linux/.NET Core. This is unlikely to be fixed in the near term so this cmdlet will be probably be removed.
 </tr>
 <tr>
 <td>New-PSSession, New-PSSessionOption, New-PSTransportOption
@@ -221,6 +214,6 @@ Remoting Endpoint Creation on Nano Server TP5
 
 The [script](https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md) to create a new WinRM remoting 
 endpoint (`Install-PowerShellRemoting.ps1`) encounters a bug in the in-box PowerShell Core on Nano Server TP5.
-The bug causes the script to create an incorrect directory for the plugin and may result in creation of an invalid remoting endpoint.
+The bug causes the script to create an incorrect directory for the plug-in and may result in creation of an invalid remoting endpoint.
 When the same command is run for the second time, the script executes as expected and successfully creates the WinRM remoting endpoint. 
 The bug in in-box PowerShell Core on Nano Server TP5 does not occur in later versions of Nano Server.

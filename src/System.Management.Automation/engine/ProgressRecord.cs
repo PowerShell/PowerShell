@@ -8,15 +8,15 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Defines a data structure used to represent the status of an ongoing operation at a point in time. 
-    /// 
+    ///
+    /// Defines a data structure used to represent the status of an ongoing operation at a point in time.
+    ///
     /// </summary>
     /// <remarks>
-    /// 
+    ///
     /// ProgressRecords are passed to <see cref="System.Management.Automation.Cmdlet.WriteProgress(ProgressRecord)"/>,
     /// which, according to user preference, forwards that information on to the host for rendering to the user.
-    /// 
+    ///
     /// </remarks>
     /// <seealso cref="System.Management.Automation.Cmdlet.WriteProgress(ProgressRecord)"/>
 
@@ -27,25 +27,25 @@ namespace System.Management.Automation
         #region Public API
 
         /// <summary>
-        /// 
+        ///
         /// Initializes a new instance of the ProgressRecord class and defines the activity Id,
         /// activity description, and status description.
-        /// 
+        ///
         /// </summary>
         /// <param name="activityId">
-        /// 
+        ///
         /// A unique numeric key that identifies the activity to which this record applies.
-        /// 
+        ///
         /// </param>
         /// <param name="activity">
-        /// 
+        ///
         /// A description of the activity for which progress is being reported.
-        /// 
+        ///
         /// </param>
         /// <param name="statusDescription">
         ///
         /// A description of the status of the activity.
-        ///  
+        ///
         /// </param>
 
         public
@@ -72,7 +72,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Cloning constructor (all fields are value types - can treat our implementation of cloning as "deep" copy) 
+        /// Cloning constructor (all fields are value types - can treat our implementation of cloning as "deep" copy)
         /// </summary>
         /// <param name="other"></param>
         internal ProgressRecord(ProgressRecord other)
@@ -94,7 +94,7 @@ namespace System.Management.Automation
         { }
 
         /// <summary>
-        /// 
+        ///
         /// Gets the Id of the activity to which this record corresponds.  Used as a 'key' for the
         /// linking of subordinate activities.
         ///
@@ -113,24 +113,24 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// 
+        ///
         /// Gets and sets the Id of the activity for which this record is a subordinate.
-        /// 
+        ///
         /// </summary>
         /// <remarks>
-        /// 
+        ///
         /// Used to allow chaining of progress records (such as when one installation invokes a child installation). UI:
         /// normally not directly visible except as already displayed as its own activity. Usually a sub-activity will be
         /// positioned below and to the right of its parent.
-        /// 
+        ///
         /// A negative value (the default) indicates that the activity is not a subordinate.
-        /// 
+        ///
         /// May not be the same as ActivityId.
-        /// 
-        /// <!--NTRAID#Windows OS Bugs-1161549 the default value for this should be picked up from a variable in the 
-        /// shell so that a script can set that variable, and have all subsequent calls to WriteProgress (the API) be 
+        ///
+        /// <!--NTRAID#Windows OS Bugs-1161549 the default value for this should be picked up from a variable in the
+        /// shell so that a script can set that variable, and have all subsequent calls to WriteProgress (the API) be
         /// subordinate to the "current parent id".-->
-        /// 
+        ///
         /// </remarks>
 
         public
@@ -154,15 +154,15 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// 
+        ///
         /// Gets and sets the description of the activity for which progress is being reported.
-        /// 
+        ///
         /// </summary>
         /// <remarks>
-        /// 
+        ///
         /// States the overall intent of whats being accomplished, such as "Recursively removing item c:\temp." Typically
         /// displayed in conjunction with a progress bar.
-        /// 
+        ///
         /// </remarks>
 
         public
@@ -186,9 +186,9 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// 
+        ///
         /// Gets and sets the current status of the operation, e.g., "35 of 50 items Copied." or "95% completed." or "100 files purged."
-        /// 
+        ///
         /// </summary>
 
         public
@@ -212,9 +212,9 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// 
+        ///
         /// Gets and sets the current operation of the many required to accomplish the activity (such as "copying foo.txt"). Normally displayed
-        /// below its associated progress bar, e.g., "deleting file foo.bar"  
+        /// below its associated progress bar, e.g., "deleting file foo.bar"
         /// Set to null or empty in the case a sub-activity will be used to show the current operation.
         ///
         /// </summary>
@@ -238,10 +238,10 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// 
+        ///
         /// Gets and sets the estimate of the percentage of total work for the activity that is completed.  Typically displayed as a progress bar.
         /// Set to a negative value to indicate that the percentage completed should not be displayed.
-        /// 
+        ///
         /// </summary>
 
         public
@@ -270,17 +270,17 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// 
+        ///
         /// Gets and sets the estimate of time remaining until this activity is completed.  This can be based upon a measurement of time since
         /// started and the percent complete or another approach deemed appropriate by the caller.
         ///
         /// Normally displayed beside the progress bar, as "N seconds remaining."
-        /// 
+        ///
         /// </summary>
         ///<remarks>
         ///
         /// A value less than 0 means "don't display a time remaining."
-        /// 
+        ///
         /// </remarks>
 
         public
@@ -302,9 +302,9 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// 
+        ///
         /// Gets and sets the type of record represented by this instance.
-        /// 
+        ///
         /// </summary>
 
         public
@@ -329,16 +329,16 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// 
+        ///
         /// Overrides <see cref="System.Object.ToString"/>
-        /// 
+        ///
         /// </summary>
         /// <returns>
-        /// 
+        ///
         /// "parent = a id = b act = c stat = d cur = e pct = f sec = g type = h" where
         /// a, b, c, d, e, f, and g are the values of ParentActivityId, ActivityId, Activity, StatusDescription,
         /// CurrentOperation, PercentComplete, SecondsRemaining and RecordType properties.
-        /// 
+        ///
         /// </returns>
 
         public override
@@ -429,28 +429,28 @@ namespace System.Management.Automation
             }
 
             /*
-             * According to the spec of Checkpoint-Computer 
+             * According to the spec of Checkpoint-Computer
              * (http://cmdletdesigner/SpecViewer/Default.aspx?Project=PowerShell&Cmdlet=Checkpoint-Computer)
              * we have percentage remaining = f(t) where
              * f(inf) = 0%
              * f(0) = 100%
              * f(90) = <something small> = 10%
-             * 
+             *
              * The spec talks about exponential decay, but function based on 1/x seems better:
-             * f(t) = a / (T + b) 
-             * 
+             * f(t) = a / (T + b)
+             *
              * This by definition has f(inf) = 0, so we have to find a and b for the last 2 cases:
-             * E1: f(0) = a / (0 + b) = 100 
+             * E1: f(0) = a / (0 + b) = 100
              * E2: f(T = 90) = a / (T + b) = 10
-             * 
+             *
              * From E1 we have a = 100 * b, which we can use in E2:
              * (100 * b) / (T + b) = 10
              * 100 * b = 10 * T + 10 * b
              * 90 * b = 10 * T
              * b = T / 9
-             * 
+             *
              * Some sample values (for T=90):
-             * t   | %rem  
+             * t   | %rem
              * -----------
              * 0   | 100.0%
              * 5   |  66.6%
@@ -501,13 +501,13 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// Creates a ProgressRecord object from a PSObject property bag. 
+        /// Creates a ProgressRecord object from a PSObject property bag.
         /// PSObject has to be in the format returned by ToPSObjectForRemoting method.
         /// </summary>
         /// <param name="progressAsPSObject">PSObject to rehydrate</param>
         /// <returns>
         /// ProgressRecord rehydrated from a PSObject property bag
-        /// </returns>       
+        /// </returns>
         /// <exception cref="ArgumentNullException">
         /// Thrown if the PSObject is null.
         /// </exception>
@@ -564,9 +564,9 @@ namespace System.Management.Automation
 
 
     /// <summary>
-    /// 
+    ///
     /// Defines two types of progress record that refer to the beginning (or middle) and end of an operation.
-    /// 
+    ///
     /// </summary>
 
     public
@@ -579,7 +579,7 @@ namespace System.Management.Automation
         /// A cmdlet can call WriteProgress with ProgressRecordType.Processing
         /// as many times as it wishes.  However, at the end of the operation,
         /// it should call once more with ProgressRecordType.Completed.
-        /// 
+        ///
         /// The first time that a host receives a progress record
         /// for a given activity, it will typically display a progress
         /// indicator for that activity.  For each subsequent record

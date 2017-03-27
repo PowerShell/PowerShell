@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -126,7 +126,7 @@
   </data>
   <data name="ErrorTextBoxTypeConversionErrorText" xml:space="preserve">
     <value>Value should be of Type {0}.</value>
-    <comment>This text reperesent the error which will be shown when the enterd type does not match the type we are expecting. {0} is the expected type.</comment>
+    <comment>This text represents the error which will be shown when the entered type does not match the type we are expecting. {0} is the expected type.</comment>
   </data>
   <data name="ValidatingSelectorValueOutOfBounds" xml:space="preserve">
     <value>The current selection is empty.</value>

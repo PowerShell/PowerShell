@@ -290,17 +290,13 @@ Describe "Unit tests for various script breakpoints" -Tags "CI" {
         {
             & $command
 
-	        It "Script should fail to verify exception" {
-		        $false | Should Be $true
-	        }
+            throw "No Exception!"
         }
         catch
         {
-            $type = $_.Exception.GetType().Name
-
-	        It "Script failed expected exception" {
-		        $type | Should Be $exception
-	        }
+            It "Script failed expected exception" {
+                $_.Exception.GetType().Name | Should Be $exception
+            }
         }
     }
 
@@ -511,7 +507,7 @@ Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
     #    <Summary>Unit tests for line breakpoints on modules...</Summary>
     #  </Test>
     #
-    $oldModulePath = $env:PSMODULEPATH
+    $oldModulePath = $env:PSModulePath
     try
     {
         #
@@ -564,7 +560,7 @@ Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
         #
         # Load the module
         #
-        $ENV:PSMODULEPATH = $moduleRoot
+        $ENV:PSModulePath = $moduleRoot
 
         import-module $moduleName
 
@@ -598,7 +594,7 @@ Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
     }
     finally
     {
-        $env:PSMODULEPATH = $oldModulePath
+        $env:PSModulePath = $oldModulePath
         if ($breakpoint1 -ne $null) { Remove-PSBreakpoint $breakpoint1 }
         if ($breakpoint2 -ne $null) { Remove-PSBreakpoint $breakpoint2 }
         if ($breakpoint3 -ne $null) { Remove-PSBreakpoint $breakpoint3 }

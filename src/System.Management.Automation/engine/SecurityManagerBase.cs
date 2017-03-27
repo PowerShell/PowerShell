@@ -8,37 +8,37 @@ using System.Management.Automation.Host;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// This enum defines the dispatch origin of a command. 
-    /// </summary>    
+    /// This enum defines the dispatch origin of a command.
+    /// </summary>
     public enum CommandOrigin
     {
         /// <summary>
         /// The command was submitted via a runspace.
-        /// </summary>    
+        /// </summary>
         Runspace,
 
         /// <summary>
         /// The command was dispatched by the msh engine as a result of
         /// a dispatch request from an already running command.
-        /// </summary>    
+        /// </summary>
         Internal
     }
 
     /// <summary>
     /// Defines the base class for an authorization manager of a Runspace.
-    /// 
+    ///
     /// An authorization manager helps a host control and restrict the
     /// execution of commands.  For each of the command types listed in
     /// the <see cref="System.Management.Automation.CommandTypes"/>
     /// enumeration, the engine requests permission from the AuthorizationManager
     /// to run the command.
-    /// 
+    ///
     /// Extending this class requires that you override the ShouldRun method with
-    /// the logic specific to your needs.  The base class gives permission to run 
-    /// every command.  The default 
+    /// the logic specific to your needs.  The base class gives permission to run
+    /// every command.  The default
     /// Microsoft.PowerShell.PSAuthorizationManager
     /// provides a customized and much more complete authorization policy.
-    /// </summary>    
+    /// </summary>
     public class AuthorizationManager
     {
         #region constructor
@@ -69,7 +69,7 @@ namespace System.Management.Automation
         ///
         /// <param name="host"> allows access to the host. </param>
         ///
-        /// <remarks>  
+        /// <remarks>
         /// This method throws SecurityException in case running is not allowed.
         /// </remarks>
         ///
@@ -77,7 +77,7 @@ namespace System.Management.Automation
         /// If the derived security manager threw an exception or returned
         /// false with a reason.
         /// </exception>
-        /// 
+        ///
         internal void ShouldRunInternal(CommandInfo commandInfo,
                                         CommandOrigin origin,
                                         PSHost host)
@@ -85,8 +85,8 @@ namespace System.Management.Automation
 #if UNIX
             // TODO:PSL this is a workaround since the exception below
             // hides the internal issue of what's going on in terms of
-            // execution policy.  
-            // On non-Windows platform Set/Get-ExecutionPolicy throw   
+            // execution policy.
+            // On non-Windows platform Set/Get-ExecutionPolicy throw
             // PlatformNotSupportedException
             return;
 #else
@@ -121,7 +121,6 @@ namespace System.Management.Automation
             }
             catch (Exception e) // Catch-all OK. 3rd party callout
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 authorizationManagerException = e;
 
                 defaultCatch = true;
@@ -176,7 +175,7 @@ namespace System.Management.Automation
         ///
         /// <param name="host"> The host running the command </param>
         ///
-        /// <param name="reason"> The reason for preventing execution, if applicable </param> 
+        /// <param name="reason"> The reason for preventing execution, if applicable </param>
         ///
         /// <returns> True if the host should run the command.  False otherwise </returns>
         ///

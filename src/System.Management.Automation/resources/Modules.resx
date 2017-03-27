@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -154,8 +154,7 @@
     <value>No custom object was returned for module '{0}' because the -AsCustomObject parameter can only be used with script modules.</value>
   </data>
   <data name="InvalidModuleManifest" xml:space="preserve">
-    <value>The module manifest '{0}' could not be processed because it is not a valid Windows PowerShell restricted language file. Remove the elements that are not permitted by the restricted language:
-{1}</value>
+    <value>The module manifest '{0}' could not be processed because it is not a valid PowerShell module manifest file. Remove the elements that are not permitted: {1}</value>
   </data>
   <data name="EmptyModuleManifest" xml:space="preserve">
     <value>Processing the module manifest file '{0}' did not result in a valid manifest object. Update the file to contain a valid Windows PowerShell module manifest. A valid manifest can be created using the New-ModuleManifest cmdlet.</value>
@@ -512,7 +511,7 @@
     <value>The variable '{0}' was not imported because there is a member with the same name in the current scope.</value>
   </data>
   <data name="WildCardNotAllowedInModuleToProcessAndInNestedModules" xml:space="preserve">
-    <value>Wildcard characters are not allowed in members 'ModuleToProcess', 'RootModule', or 'NestedModule' in the module manifest '{0}'.</value>
+    <value>Wildcard characters are not allowed in members 'ModuleToProcess', 'RootModule', or 'NestedModules' in the module manifest '{0}'.</value>
   </data>
   <data name="CoreModuleCannotBeRemoved" xml:space="preserve">
     <value>The module '{0}' is a core module for Windows PowerShell. Add the Force parameter to your command to remove core modules.</value>

@@ -17,30 +17,30 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// This cmdlet disconnects PS sessions (RemoteRunspaces) that are in the Opened state
-    /// and returns the PS session objects in the Disconnected state.  While the PS 
+    /// and returns the PS session objects in the Disconnected state.  While the PS
     /// sessions are in the disconnected state no commands can be invoked on them and
     /// any existing remote running commands will not return any data.
-    /// The PS sessions can be reconnected by using the Connect-PSSession cmdlet.  
-    /// 
+    /// The PS sessions can be reconnected by using the Connect-PSSession cmdlet.
+    ///
     /// The cmdlet can be used in the following ways:
-    /// 
+    ///
     /// Disconnect a PS session object:
     /// > $session = New-PSSession serverName
     /// > Disconnect-PSSession $session
-    /// 
+    ///
     /// Disconnect a PS session by name:
     /// > Disconnect-PSSession -Name $session.Name
-    /// 
+    ///
     /// Disconnect a PS session by Id:
     /// > Disconnect-PSSession -Id $session.Id
-    /// 
+    ///
     /// Disconnect a collection of PS sessions:
     /// > Get-PSSession | Disconnect-PSSession
-    /// 
+    ///
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsCommunications.Disconnect, "PSSession", SupportsShouldProcess = true, DefaultParameterSetName = DisconnectPSSessionCommand.SessionParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210605", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210605", RemotingCapability = RemotingCapability.OwnedByCommand)]
     [OutputType(typeof(PSSession))]
     public class DisconnectPSSessionCommand : PSRunspaceCmdlet, IDisposable
     {
@@ -190,8 +190,8 @@ namespace Microsoft.PowerShell.Commands
                     psSessions = GetMatchingRunspaces(false, true);
                 }
 
-                // Look for local sessions that have the EnableNetworkAccess property set and 
-                // return a string containing all of the session names.  Emit a warning for 
+                // Look for local sessions that have the EnableNetworkAccess property set and
+                // return a string containing all of the session names.  Emit a warning for
                 // these sessions.
                 string cnNames = GetLocalhostWithNetworkAccessEnabled(psSessions);
                 if (!string.IsNullOrEmpty(cnNames))
@@ -519,7 +519,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Dispose method of IDisposable. Gets called in the following cases:
         ///     1. Pipeline explicitly calls dispose on cmdlets
-        ///     2. Called by the garbage collector 
+        ///     2. Called by the garbage collector
         /// </summary>
         public void Dispose()
         {
@@ -532,7 +532,7 @@ namespace Microsoft.PowerShell.Commands
         /// Internal dispose method which does the actual
         /// dispose operations and finalize suppressions
         /// </summary>
-        /// <param name="disposing">Whether method is called 
+        /// <param name="disposing">Whether method is called
         /// from Dispose or destructor</param>
         private void Dispose(bool disposing)
         {

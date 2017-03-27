@@ -16,7 +16,7 @@ namespace Microsoft.Management.UI.Internal
     public abstract class FilterRule : IEvaluate
     {
         /// <summary>
-        /// Gets a value indicating whether the FilterRule can be 
+        /// Gets a value indicating whether the FilterRule can be
         /// evaluated in its current state.
         /// </summary>
         public virtual bool IsValid

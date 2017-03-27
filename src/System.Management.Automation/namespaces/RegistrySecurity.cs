@@ -1,3 +1,4 @@
+#if !UNIX
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -5,7 +6,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
-using Dbg = System.Management.Automation;
 using System.Security.AccessControl;
 using Microsoft.PowerShell.Commands.Internal;
 
@@ -15,9 +15,9 @@ namespace Microsoft.PowerShell.Commands
     /// Provider that provides access to Registry through cmdlets. This provider
     /// implements <see cref="System.Management.Automation.Provider.NavigationCmdletProvider"/>,
     /// <see cref="System.Management.Automation.Provider.IPropertyCmdletProvider"/>,
-    /// <see cref="System.Management.Automation.Provider.IDynamicPropertyCmdletProvider"/>,    
+    /// <see cref="System.Management.Automation.Provider.IDynamicPropertyCmdletProvider"/>,
     /// <see cref="System.Management.Automation.Provider.ISecurityDescriptorCmdletProvider"/>
-    /// interfaces. 
+    /// interfaces.
     /// </summary>
     public sealed partial class RegistryProvider :
         NavigationCmdletProvider,
@@ -33,7 +33,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the security descriptor for the item specified by <paramref name="path"/>.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item.
         /// </param>
@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="sections">
         /// Specifies the parts of a security descriptor to retrieve.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// Nothing. An object that represents the security descriptor for the item
         /// specified by path is written to the WriteSecurityDescriptorObject method.
@@ -85,11 +85,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Sets the security descriptor for the item specified by <paramref name="path"/>
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item to set the security descriptor on.
         /// </param>
-        /// 
+        ///
         /// <param name="securityDescriptor">
         /// The new security descriptor for the item.
         /// </param>
@@ -192,15 +192,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Creates a new empty security descriptor.
         /// </summary>
-        /// 
+        ///
         /// <param name="type">
         /// The type of item associated with this security descriptor
         /// </param>
-        /// 
+        ///
         /// <param name="sections">
         /// Specifies the parts of a security descriptor to create.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An instance of <see cref="System.Security.AccessControl.ObjectSecurity" /> object.
         /// </returns>
@@ -221,4 +221,4 @@ namespace Microsoft.PowerShell.Commands
         #endregion ISecurityDescriptorCmdletProvider members
     }
 }
-
+#endif // !UNIX

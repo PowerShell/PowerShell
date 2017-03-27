@@ -101,7 +101,7 @@ namespace System.Management.Automation
             // Add maml2 first since we are prepending.
 
             // For maml2: Add as collection or single item. No-op if
-            PSPropertyInfo propertyInfo2 = GetProperyInfo(maml2, parametersPath);
+            PSPropertyInfo propertyInfo2 = GetPropertyInfo(maml2, parametersPath);
             var array = propertyInfo2.Value as Array;
             if (array != null)
             {
@@ -115,7 +115,7 @@ namespace System.Management.Automation
             // Extend maml1 to make sure the property-path exists - since we'll be modifying it soon.
             EnsurePropertyInfoPathExists(maml1, parametersPath);
             // For maml1: Add as collection or single item. Do nothing if null or some other type.
-            PSPropertyInfo propertyInfo1 = GetProperyInfo(maml1, parametersPath);
+            PSPropertyInfo propertyInfo1 = GetPropertyInfo(maml1, parametersPath);
             List<object> maml1items = new List<object>();
             array = propertyInfo1.Value as Array;
             if (array != null)
@@ -190,7 +190,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get property info.
         /// </summary>
-        internal static PSPropertyInfo GetProperyInfo(PSObject psObject, string[] path)
+        internal static PSPropertyInfo GetPropertyInfo(PSObject psObject, string[] path)
         {
             if (path.Length <= 0)
             {
@@ -238,7 +238,7 @@ namespace System.Management.Automation
             // Add maml2 first since we are prepending.
 
             // For maml2: Add as collection or single item. No-op if
-            PSPropertyInfo propertyInfo2 = GetProperyInfo(maml2, path);
+            PSPropertyInfo propertyInfo2 = GetPropertyInfo(maml2, path);
 
             if (null != propertyInfo2)
             {
@@ -256,7 +256,7 @@ namespace System.Management.Automation
             // Extend maml1 to make sure the property-path exists - since we'll be modifying it soon.
             EnsurePropertyInfoPathExists(maml1, path);
             // For maml1: Add as collection or single item. Do nothing if null or some other type.
-            PSPropertyInfo propertyInfo1 = GetProperyInfo(maml1, path);
+            PSPropertyInfo propertyInfo1 = GetPropertyInfo(maml1, path);
 
             if (null != propertyInfo1)
             {

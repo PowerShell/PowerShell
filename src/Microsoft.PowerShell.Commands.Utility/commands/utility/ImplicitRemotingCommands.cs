@@ -14,6 +14,7 @@ using System.Management.Automation.Language;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Remoting;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Xml;
@@ -30,10 +31,10 @@ namespace Microsoft.PowerShell.Commands
     using PowerShell = System.Management.Automation.PowerShell;
 
     /// <summary>
-    /// This class implements Export-PSSession cmdlet.  
+    /// This class implements Export-PSSession cmdlet.
     /// Spec: TBD
     /// </summary>
-    [Cmdlet(VerbsData.Export, "PSSession", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135213")]
+    [Cmdlet(VerbsData.Export, "PSSession", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135213")]
     [OutputType(typeof(FileInfo))]
     public sealed class ExportPSSessionCommand : ImplicitRemotingCommandBase
     {
@@ -102,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
         private const string copyItemScript = @"
                 param($sourcePath, $destinationPath)
                 Copy-Item -Recurse $sourcePath\\* -Destination $destinationPath\\
-                Remove-item $sourcePath -Recurse -Force 
+                Remove-item $sourcePath -Recurse -Force
             ";
 
         private void DisplayDirectory(List<string> generatedFiles)
@@ -160,10 +161,10 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// This class implements Import-PSSession cmdlet.  
+    /// This class implements Import-PSSession cmdlet.
     /// Spec: http://cmdletdesigner/SpecViewer/Default.aspx?Project=PowerShell&amp;Cmdlet=Import-Command
     /// </summary>
-    [Cmdlet(VerbsData.Import, "PSSession", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135221")]
+    [Cmdlet(VerbsData.Import, "PSSession", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135221")]
     [OutputType(typeof(PSModuleInfo))]
     public sealed class ImportPSSessionCommand : ImplicitRemotingCommandBase
     {
@@ -542,8 +543,8 @@ namespace Microsoft.PowerShell.Commands
             }
 
             return new ErrorDetails(
-                this.GetType().Assembly,
-                "ImplicitRemotingStrings",
+                typeof(ImplicitRemotingCommandBase).GetTypeInfo().Assembly,
+                "Microsoft.PowerShell.Commands.Utility.resources.ImplicitRemotingStrings",
                 errorId,
                 args);
         }
@@ -736,11 +737,11 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // 
+            //
             // output a generic error message if exception is not recognized
             //
             errorId = "ErrorFromRemoteCommand";
-            errorDetails = this.GetErrorDetails(errorId, "Get-Command", runtimeException.Message);
+            errorDetails = this.GetErrorDetails(errorId, commandName, runtimeException.Message);
 
             errorRecord = new ErrorRecord(
                 new RuntimeException(errorDetails.Message, runtimeException),
@@ -1012,7 +1013,7 @@ namespace Microsoft.PowerShell.Commands
             return ConvertTo<T>(commandName, property.Value, nullOk);
         }
 
-        private List<T> RehydrateList<T>(string commandName, PSObject deserializedObject, string propertyName, Converter<PSObject, T> itemRehydrator)
+        private List<T> RehydrateList<T>(string commandName, PSObject deserializedObject, string propertyName, Func<PSObject, T> itemRehydrator)
         {
             Dbg.Assert(deserializedObject != null, "deserializedObject parameter != null");
 
@@ -1026,7 +1027,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private List<T> RehydrateList<T>(string commandName, object deserializedList, Converter<PSObject, T> itemRehydrator)
+        private List<T> RehydrateList<T>(string commandName, object deserializedList, Func<PSObject, T> itemRehydrator)
         {
             if (itemRehydrator == null)
             {
@@ -1050,7 +1051,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private Dictionary<K, V> RehydrateDictionary<K, V>(string commandName, PSObject deserializedObject, string propertyName, Converter<PSObject, V> valueRehydrator)
+        private Dictionary<K, V> RehydrateDictionary<K, V>(string commandName, PSObject deserializedObject, string propertyName, Func<PSObject, V> valueRehydrator)
         {
             Dbg.Assert(deserializedObject != null, "deserializedObject parameter != null");
             Dbg.Assert(!string.IsNullOrEmpty(propertyName), "propertyName parameter != null");
@@ -1665,7 +1666,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
@@ -2041,7 +2042,7 @@ namespace Microsoft.PowerShell.Commands
 
         private const string HeaderTemplate = @"
 param(
-    <# {0} #>    
+    <# {0} #>
     [System.Management.Automation.Runspaces.PSSession] $PSSessionOverride,
     [System.Management.Automation.Remoting.PSSessionOption] $PSSessionOptionOverride
 )
@@ -2079,7 +2080,7 @@ $script:MyModule = $MyInvocation.MyCommand.ScriptBlock.Module
                 throw PSTraceSource.NewArgumentNullException("writer");
             }
 
-            // In Win8, we are no longer loading all assemblies by default. 
+            // In Win8, we are no longer loading all assemblies by default.
             // So we need to use the fully qualified name when accessing a type in that assembly
             string versionOfScriptGenerator = "[" + typeof(ExportPSSessionCommand).AssemblyQualifiedName + "]" + "::VersionOfScriptGenerator";
             GenerateTopComment(writer);
@@ -2104,7 +2105,7 @@ function Write-PSImplicitRemotingMessage
         [Parameter(Mandatory = $true, Position = 0)]
         [string]
         $message)
-        
+
     try { & $script:WriteHost -Object $message -ErrorAction SilentlyContinue } catch { }
 }
 ";
@@ -2132,8 +2133,8 @@ function Set-PSImplicitRemotingSession
     param(
         [Parameter(Mandatory = $true, Position = 0)]
         [AllowNull()]
-        [Management.Automation.Runspaces.PSSession] 
-        $PSSession, 
+        [Management.Automation.Runspaces.PSSession]
+        $PSSession,
 
         [Parameter(Mandatory = $false, Position = 1)]
         [bool] $createdByModule = $false)
@@ -2144,12 +2145,12 @@ function Set-PSImplicitRemotingSession
 
         if ($createdByModule -and ($script:PSSession -ne $null))
         {{
-            $moduleName = Get-PSImplicitRemotingModuleName 
+            $moduleName = Get-PSImplicitRemotingModuleName
             $script:PSSession.Name = '{0}' -f $moduleName
-            
+
             $oldCleanUpScript = $script:MyModule.OnRemove
             $removePSSessionCommand = $script:RemovePSSession
-            $script:MyModule.OnRemove = {{ 
+            $script:MyModule.OnRemove = {{
                 & $removePSSessionCommand -Session $PSSession -ErrorAction SilentlyContinue
                 if ($oldCleanUpScript)
                 {{
@@ -2329,7 +2330,7 @@ function Get-PSImplicitRemotingSession
 {{
     param(
         [Parameter(Mandatory = $true, Position = 0)]
-        [string] 
+        [string]
         $commandName
     )
 
@@ -2407,8 +2408,8 @@ function Get-PSImplicitRemotingSession
 
         private const string ReimportTemplate = @"
             try {{
-                & $script:InvokeCommand -Session $script:PSSession -ScriptBlock {{ 
-                    Get-Module -ListAvailable -Name '{0}' | Import-Module 
+                & $script:InvokeCommand -Session $script:PSSession -ScriptBlock {{
+                    Get-Module -ListAvailable -Name '{0}' | Import-Module
                 }} -ErrorAction SilentlyContinue
             }} catch {{ }}
 ";
@@ -2443,7 +2444,7 @@ function Get-PSImplicitRemotingSession
         // index 4 - authentication mechanism (empty string of full parameter + value)
         // index 5 - allow redirection
         private const string NewRunspaceTemplate = @"
-            $( 
+            $(
                 & $script:NewPSSession `
                     {0} -ConfigurationName '{1}' `
                     -SessionOption (Get-PSImplicitRemotingSessionOption) `
@@ -2458,7 +2459,7 @@ function Get-PSImplicitRemotingSession
         // index 1 - VM credential
         // index 2 - "-ConfigurationName <configuration name>" or empty string
         private const string NewVMRunspaceTemplate = @"
-            $( 
+            $(
                 & $script:NewPSSession `
                     {0} `
                     {1} `
@@ -2470,7 +2471,7 @@ function Get-PSImplicitRemotingSession
         // index 1 - "-RunAsAdministrator" or empty string
         // index 2 - "-ConfigurationName <configuration name>" or empty string
         private const string NewContainerRunspaceTemplate = @"
-            $( 
+            $(
                 & $script:NewPSSession `
                     {0} `
                     {1} `
@@ -2684,12 +2685,12 @@ function Modify-PSImplicitRemotingParameters
         [Parameter()]
         [switch]
         $leaveAsRemoteParameter)
-        
+
     if ($PSBoundParameters.ContainsKey($parameterName))
     {
         $clientSideParameters.Add($parameterName, $PSBoundParameters[$parameterName])
-        if (-not $leaveAsRemoteParameter) { 
-            $null = $PSBoundParameters.Remove($parameterName) 
+        if (-not $leaveAsRemoteParameter) {
+            $null = $PSBoundParameters.Remove($parameterName)
         }
     }
 }
@@ -3036,7 +3037,7 @@ function Get-PSImplicitRemotingClientSideParameters
             }
             // Sign psm1 file and format file
             // If certificate is passed, sign the file
-            // If certificate is not passed and executionPolicy is set to Restricted/AllSigned, output error 
+            // If certificate is not passed and executionPolicy is set to Restricted/AllSigned, output error
             // Since we will anyway be erroring out during Import-Module, it is better to fail fast
             ExecutionPolicy executionPolicy = SecuritySupport.GetExecutionPolicy(Utils.DefaultPowerShellShellID);
             if (executionPolicy == ExecutionPolicy.Restricted || executionPolicy == ExecutionPolicy.AllSigned)
@@ -3082,9 +3083,10 @@ function Get-PSImplicitRemotingClientSideParameters
                 string applicationArgumentsFile = Path.Combine(moduleRootDirectory.FullName, "ApplicationArguments.xml");
                 result.Add(applicationArgumentsFile);
 
-                using (XmlWriter xw = XmlTextWriter.Create(applicationArgumentsFile))
+                using (var stream = new FileStream(applicationArgumentsFile, FileMode.Create, FileAccess.Write, FileShare.Read))
+                using (var xmlWriter = XmlWriter.Create(stream))
                 {
-                    Serializer serializer = new Serializer(xw);
+                    Serializer serializer = new Serializer(xmlWriter);
                     serializer.Serialize(applicationArguments);
                     serializer.Done();
                 }

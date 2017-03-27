@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -15,13 +15,13 @@ using Microsoft.Management.Infrastructure.Options;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// This Cmdlet enables the IT Pro to create a CIM Session. CIM Session object 
-    /// is a client-side representation of the connection between the client and the 
-    /// server. 
-    /// The CimSession object returned by the Cmdlet is used by all other CIM 
+    /// This Cmdlet enables the IT Pro to create a CIM Session. CIM Session object
+    /// is a client-side representation of the connection between the client and the
+    /// server.
+    /// The CimSession object returned by the Cmdlet is used by all other CIM
     /// cmdlets.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "CimSession", DefaultParameterSetName = CredentialParameterSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227967")]
+    [Cmdlet(VerbsCommon.New, "CimSession", DefaultParameterSetName = CredentialParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227967")]
     [OutputType(typeof(CimSession))]
     public sealed class NewCimSessionCommand : CimBaseCommand
     {
@@ -64,7 +64,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// This is specificly for wsman protocol.
         /// </summary>
         [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = CertificatePrameterSet)]
+                   ParameterSetName = CertificateParameterSet)]
         public String CertificateThumbprint
         {
             get { return certificatethumbprint; }
@@ -74,7 +74,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
-        /// Specifies the computer on which the commands associated with this session 
+        /// Specifies the computer on which the commands associated with this session
         /// will run. The default value is LocalHost.
         /// </summary>
         [Alias(AliasCN, AliasServerName)]
@@ -96,8 +96,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// Specifies a friendly name for the CIM Session connection.
         /// </para>
         /// <para>
-        /// If a name is not passed, then the session is given the name CimSession<int>, 
-        /// where <int> is the next available session number. Example, CimSession1, 
+        /// If a name is not passed, then the session is given the name CimSession<int>,
+        /// where <int> is the next available session number. Example, CimSession1,
         /// CimSession2, etc...
         /// </para>
         /// </summary>

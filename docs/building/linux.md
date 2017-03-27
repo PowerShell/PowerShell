@@ -92,7 +92,7 @@ If you have followed the toolchain setup section above, you should have `powersh
 
 > If you cannot or do not want to self-host, `Start-PSBuild` is just a
 > convenience; you can execute each step of the build process yourself
-> in Bash; see [Build manually][#Build manually] below.
+> in Bash; see [Build manually](#build-manually) below.
 
 ```powershell
 Import-Module ./build.psm1
@@ -101,7 +101,7 @@ Start-PSBuild
 Congratulations! If everything went right, PowerShell is now built.
 The `Start-PSBuild` script will output the location of the executable:
 
-`./src/powershell-unix/bin/Linux/netcoreapp1.0/ubuntu.14.04-x64/powershell`.
+`./src/powershell-unix/bin/Linux/netcoreapp1.1/ubuntu.14.04-x64/powershell`.
 
 You should now be running the `powershell` that you just built, if your run the above executable.
 You can run our cross-platform Pester tests with `Start-PSPester`, and our xUnit tests with `Start-PSxUnit`.
@@ -110,6 +110,10 @@ Build manually
 ==============
 
 The following goes into detail about what `Start-PSBuild` does.
+
+There are two preliminary steps that apply to all operating systems,
+the [ResGen](internals.md#resgen) and [type catalog generation](internals.md#type-catalog),
+documented in [internals of build process](internals.md#preliminary-steps).
 
 Build the native library
 ------------------------

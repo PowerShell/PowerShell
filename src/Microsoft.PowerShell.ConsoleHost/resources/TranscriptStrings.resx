@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -127,7 +127,7 @@
     <value>Transcript stopped, output file is {0}</value>
   </data>
   <data name="CannotStartTranscription" xml:space="preserve">
-    <value>Transcription cannot be started.</value>
+    <value>Transcription cannot be started due to the error: {0}</value>
   </data>
   <data name="ReadWriteFileNotFileSystemProvider" xml:space="preserve">
     <value>The current provider ({0}) cannot open a file.</value>

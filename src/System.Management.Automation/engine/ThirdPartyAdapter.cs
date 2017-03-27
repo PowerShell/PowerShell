@@ -48,8 +48,6 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.GetTypeNameHierarchyError",
                     exception,
@@ -80,8 +78,6 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.GetProperties",
                     exception,
@@ -119,8 +115,6 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.GetProperty",
                     exception,
@@ -162,8 +156,6 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.PropertyIsSettableError",
                     exception,
@@ -186,8 +178,6 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.PropertyIsGettableError",
                     exception,
@@ -210,8 +200,6 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.PropertyGetError",
                     exception,
@@ -235,8 +223,6 @@ namespace System.Management.Automation
             catch (SetValueException) { throw; }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.PropertySetError",
                     exception,
@@ -261,8 +247,6 @@ namespace System.Management.Automation
             }
             catch (Exception exception)
             {
-                CommandProcessorBase.CheckForSevereException(exception);
-
                 throw new ExtendedTypeSystemException(
                     "PSPropertyAdapter.PropertyTypeError",
                     exception,

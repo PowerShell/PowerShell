@@ -50,7 +50,7 @@ namespace System.Management.Automation
         #region Overrides of Job
 
         ///<summary>
-        /// Success status of the command execution. 
+        /// Success status of the command execution.
         /// </summary>
         public override string StatusMessage
         {
@@ -59,15 +59,15 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Indicates that more data is available in this
-        /// result object for reading. 
+        /// result object for reading.
         /// </summary>
         public override bool HasMoreData
         {
             get
             {
-                // moreData is initially set to true, and it 
-                // will remain so until the async result 
-                // object has completed execution. 
+                // moreData is initially set to true, and it
+                // will remain so until the async result
+                // object has completed execution.
 
                 if (_moreData && IsFinishedState(JobStateInfo.State))
                 {
@@ -118,7 +118,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Start a job asynchronously
         /// </summary>
-        /// <remarks>When a job is started all the data in the 
+        /// <remarks>When a job is started all the data in the
         /// job streams from a previous invocation will be cleared</remarks>
         public override void StartJobAsync()
         {
@@ -149,7 +149,6 @@ namespace System.Management.Automation
             }
             catch (Exception error)
             {
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "StopJob", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 throw;
@@ -172,7 +171,6 @@ namespace System.Management.Automation
             catch (Exception error)
             {
                 // Exception transferred using event arguments.
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "StopJobAsync", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 OnStopJobCompleted(new AsyncCompletedEventArgs(error, false, null));
@@ -224,7 +222,6 @@ namespace System.Management.Automation
             }
             catch (Exception error)
             {
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "SuspendJob", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 throw;
@@ -247,7 +244,6 @@ namespace System.Management.Automation
             catch (Exception error)
             {
                 // Exception transferred using event arguments.
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "SuspendJobAsync", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 OnSuspendJobCompleted(new AsyncCompletedEventArgs(error, false, null));
@@ -299,7 +295,6 @@ namespace System.Management.Automation
             }
             catch (Exception error)
             {
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "ResumeJob", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 throw;
@@ -322,7 +317,6 @@ namespace System.Management.Automation
             catch (Exception error)
             {
                 // Exception transferred using event arguments.
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "ResumeJobAsync", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 OnResumeJobCompleted(new AsyncCompletedEventArgs(error, false, null));
@@ -365,7 +359,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Start execution of the job with the
-        /// specified input. This input will serve as 
+        /// specified input. This input will serve as
         /// input to the underlying pipeline
         /// </summary>
         /// <param name="input"></param>
@@ -397,11 +391,10 @@ namespace System.Management.Automation
                 // in the same invocation. Return once the job object is returned and
                 // used to initialize the proxy.
                 DoStartAsync(dataAdded, stateChanged, input);
-                _jobInitialiedWaitHandle.WaitOne();
+                _jobInitializedWaitHandle.WaitOne();
             }
             catch (Exception error)
             {
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "StartJob", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 throw;
@@ -430,7 +423,6 @@ namespace System.Management.Automation
             catch (Exception error)
             {
                 // Exception transferred using event arguments.
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "StartJobAsync", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 OnStartJobCompleted(new AsyncCompletedEventArgs(error, false, null));
@@ -479,7 +471,6 @@ namespace System.Management.Automation
             }
             catch (Exception error)
             {
-                CommandProcessorBase.CheckForSevereException(error);
                 _tracer.WriteMessage(ClassNameTrace, "RemoveJob", _remoteJobInstanceId, this, "Error", null);
                 _tracer.TraceException(error);
                 throw;
@@ -542,7 +533,7 @@ namespace System.Management.Automation
         public event EventHandler<AsyncCompletedEventArgs> RemoveJobCompleted;
 
         /// <summary>
-        /// Method to raise the event when removing a 
+        /// Method to raise the event when removing a
         /// server side job is completed
         /// </summary>
         /// <param name="eventArgs">argument describing
@@ -566,7 +557,6 @@ namespace System.Management.Automation
             {
                 // errors in the handlers are not errors in the operation
                 // silently ignore them
-                CommandProcessorBase.CheckForSevereException(exception);
                 _tracer.TraceException(exception);
             }
 #pragma warning restore 56500
@@ -605,7 +595,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Runspace in which this job will be executed
         /// </summary>
-        /// <remarks>At any point of time only a runspace or a 
+        /// <remarks>At any point of time only a runspace or a
         /// runspacepool may be specified</remarks>
         public Runspace Runspace
         {
@@ -1036,7 +1026,7 @@ namespace System.Management.Automation
 
             var container = new AsyncCompleteContainer { EventArgs = eventArgs, Action = action };
 
-            // End the task. The asyncOp object is responsible 
+            // End the task. The asyncOp object is responsible
             // for marshaling the call.
             asyncOp.PostOperationCompleted(JobActionAsyncCompleted, container);
         }
@@ -1332,7 +1322,7 @@ namespace System.Management.Automation
                 RemoveComplete.Reset();
             }
 
-            // _receivePowerShell will never be null and so 
+            // _receivePowerShell will never be null and so
             // there is no need to do a null check
             Dbg.Assert(_receivePowerShell != null, "ReceivePowerShell should not be null");
 
@@ -1344,7 +1334,7 @@ namespace System.Management.Automation
                 // remove it.
                 // Do this within the Try/Finally block so that the wait handle will be set
                 // on exit.
-                _jobInitialiedWaitHandle.WaitOne();
+                _jobInitializedWaitHandle.WaitOne();
                 if (_remoteJobInstanceId == Guid.Empty) return;
 
                 // Stop the receive-job command if it's in progress.
@@ -1354,7 +1344,7 @@ namespace System.Management.Automation
                 using (PowerShell powershell = PowerShell.Create())
                 {
                     // Either the runspace or runspace pool will be
-                    // not null at this point. This is because of 
+                    // not null at this point. This is because of
                     // the following:
                     // 1. The job state is running
                     // 2. The job was started using either a runspace
@@ -1385,8 +1375,6 @@ namespace System.Management.Automation
                     }
                     catch (Exception e)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
-
                         // since this is third party code call out - it is ok
                         // to catch Exception. In all other cases the specific
                         // exception must be caught
@@ -1567,7 +1555,7 @@ namespace System.Management.Automation
                             JobSuspendedOrFinished.Set();
                             OnSuspendJobCompleted(new AsyncCompletedEventArgs(e.JobStateInfo.Reason, false, null));
 
-                            _jobInitialiedWaitHandle.Set();
+                            _jobInitializedWaitHandle.Set();
                             OnStartJobCompleted(new AsyncCompletedEventArgs(e.JobStateInfo.Reason, false, null));
 
                             OnStopJobCompleted(new AsyncCompletedEventArgs(e.JobStateInfo.Reason, false, null));
@@ -1798,7 +1786,7 @@ namespace System.Management.Automation
                                  "storing job state to {0}", computedJobState.ToString());
             // we need to store the state and set it only when invocation
             // state changed for _receivePowerShell is received. This is to
-            // enable consumers from disposing the proxy job on its state 
+            // enable consumers from disposing the proxy job on its state
             // changed handler
             _computedJobState = computedJobState;
         }
@@ -1921,7 +1909,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <exception cref="ObjectDisposedException">Thrown if
         /// the object has already been disposed</exception>
-        /// <remarks>Method is not thread-safe. Caller has to 
+        /// <remarks>Method is not thread-safe. Caller has to
         /// ensure thread safety</remarks>
         private new void AssertNotDisposed()
         {
@@ -2058,7 +2046,7 @@ namespace System.Management.Automation
                                            ? PSTraceSource.NewNotSupportedException(PowerShellStrings.CommandDoesNotWriteJob)
                                            : _receivePowerShell.Streams.Error[0].Exception;
                     DoSetJobState(JobState.Failed, reason);
-                    _jobInitialiedWaitHandle.Set();
+                    _jobInitializedWaitHandle.Set();
                     OnStartJobCompleted(new AsyncCompletedEventArgs(reason, false, null));
                     return;
                 }
@@ -2079,7 +2067,7 @@ namespace System.Management.Automation
                 }
 
                 // Release any thread waiting start.
-                _jobInitialiedWaitHandle.Set();
+                _jobInitializedWaitHandle.Set();
                 _tracer.WriteMessage(ClassNameTrace, "DataAddedToOutput", Guid.Empty, this,
                                      "BEGIN Invoke StartJobCompleted event", null);
                 OnStartJobCompleted(new AsyncCompletedEventArgs(null, false, null));
@@ -2377,7 +2365,7 @@ namespace System.Management.Automation
 
             if (_removeComplete != null) _removeComplete.Dispose();
             if (_jobRunningOrFinished != null) _jobRunningOrFinished.Dispose();
-            _jobInitialiedWaitHandle.Dispose();
+            _jobInitializedWaitHandle.Dispose();
             if (_jobSuspendedOrFinished != null) _jobSuspendedOrFinished.Dispose();
 
             if (ChildJobs != null && ChildJobs.Count > 0)
@@ -2448,7 +2436,7 @@ namespace System.Management.Automation
             }
         }
 
-        private readonly ManualResetEvent _jobInitialiedWaitHandle = new ManualResetEvent(false);
+        private readonly ManualResetEvent _jobInitializedWaitHandle = new ManualResetEvent(false);
 
         private ManualResetEvent _jobSuspendedOrFinished;
         private ManualResetEvent JobSuspendedOrFinished
@@ -2569,7 +2557,6 @@ namespace System.Management.Automation
             {
                 // errors in the handlers are not errors in the operation
                 // silently ignore them
-                CommandProcessorBase.CheckForSevereException(exception);
                 _tracer.WriteMessage(ClassNameTrace, "OnJobDataAdded", Guid.Empty, this, "END Exception thrown in JobDataAdded handler");
                 _tracer.TraceException(exception);
             }

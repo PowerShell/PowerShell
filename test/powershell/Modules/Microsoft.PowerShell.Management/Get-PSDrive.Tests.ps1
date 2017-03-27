@@ -23,17 +23,18 @@ Describe "Get-PSDrive" -Tags "CI" {
     }
 
     It "Should return drive info"{
-	(Get-PSDrive Env).Name        | Should Be Env
-	(Get-PSDrive Cert).Root       | Should Be \
+        (Get-PSDrive Env).Name        | Should Be Env
+        (Get-PSDrive Alias).Name      | Should Be Alias
 
-	if ($IsWindows)
-	{
-	    (Get-PSDrive C).Provider.Name | Should Be FileSystem
-	}
-	else
-	{
-	    (Get-PSDrive /).Provider.Name | Should Be FileSystem
-	}
+        if ($IsWindows)
+        {
+            (Get-PSDrive Cert).Root       | Should Be \
+            (Get-PSDrive C).Provider.Name | Should Be FileSystem
+        }
+        else
+        {
+            (Get-PSDrive /).Provider.Name | Should Be FileSystem
+        }
     }
 
     It "Should be able to access a drive using the PSProvider switch" {

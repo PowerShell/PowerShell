@@ -15,13 +15,13 @@ using System.Management.Automation.Remoting.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This cmdlet takes a Runspace object and checks to see if it is debuggable (i.e, if 
+    /// This cmdlet takes a Runspace object and checks to see if it is debuggable (i.e, if
     /// it is running a script or is currently stopped in the debugger.  If it
     /// is debuggable then it breaks into the Runspace debugger in step mode.
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsDiagnostic.Debug, "Runspace", SupportsShouldProcess = true, DefaultParameterSetName = DebugRunspaceCommand.RunspaceParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=403731")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=403731")]
     public sealed class DebugRunspaceCommand : PSCmdlet
     {
         #region Strings
@@ -45,7 +45,7 @@ namespace Microsoft.PowerShell.Commands
         // Debugging to persist until Ctrl+C or Debugger 'Exit' stops cmdlet.
         private bool _debugging;
         private ManualResetEventSlim _newRunningScriptEvent = new ManualResetEventSlim(true);
-        private RunspaceAvailability _previousRunspaceAvailablity = RunspaceAvailability.None;
+        private RunspaceAvailability _previousRunspaceAvailability = RunspaceAvailability.None;
 
         #endregion
 
@@ -409,8 +409,8 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            RunspaceAvailability prevAvailability = _previousRunspaceAvailablity;
-            _previousRunspaceAvailablity = e.RunspaceAvailability;
+            RunspaceAvailability prevAvailability = _previousRunspaceAvailability;
+            _previousRunspaceAvailability = e.RunspaceAvailability;
 
             if ((e.RunspaceAvailability == RunspaceAvailability.Available) || (e.RunspaceAvailability == RunspaceAvailability.None))
             {

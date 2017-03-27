@@ -25,20 +25,20 @@ namespace Microsoft.WSMan.Management
     //
 
     /// <summary>
-    /// Performs configuration actions to enable the local machine for remote 
+    /// Performs configuration actions to enable the local machine for remote
     /// management. Steps include:
     /// 1. Check if WinRM service is running. If not start the WinRM service
     /// 2. Set the WinRM service type to auto start
-    /// 3. Create a listener to accept request on any IP address. By default 
+    /// 3. Create a listener to accept request on any IP address. By default
     /// transport is http
     /// 4. Enable firewall exception for WS-Management traffic
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "WSManQuickConfig", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=141463")]
+    [Cmdlet(VerbsCommon.Set, "WSManQuickConfig", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141463")]
     public class SetWSManQuickConfigCommand : PSCmdlet, IDisposable
     {
         /// <summary>
         /// The following is the definition of the input parameter "UseSSL".
-        /// Indicates a https listener to be created. If this switch is not specified 
+        /// Indicates a https listener to be created. If this switch is not specified
         /// then by default a http listener will be created
         /// </summary>
         [Parameter]
@@ -52,7 +52,7 @@ namespace Microsoft.WSMan.Management
 
         //helper variable
         private WSManHelper helper;
-                
+
         /// <summary>
         /// Property that sets force parameter. This will allow
         /// configuring WinRM without prompting the user.

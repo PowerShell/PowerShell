@@ -12,10 +12,10 @@ using Dbg = System.Management.Automation;
 
 namespace Microsoft.PowerShell.Commands
 {
-    /// <summary> 
-    /// implementation for the set-date command 
-    /// </summary> 
-    [Cmdlet(VerbsCommon.Set, "Date", DefaultParameterSetName = "Date", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113393")]
+    /// <summary>
+    /// implementation for the set-date command
+    /// </summary>
+    [Cmdlet(VerbsCommon.Set, "Date", DefaultParameterSetName = "Date", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113393")]
     [OutputType(typeof(DateTime))]
     public sealed class SetDateCommand : PSCmdlet
     {
@@ -48,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// set the date
-        /// </summary> 
+        /// </summary>
         [ArchitectureSensitive]
         protected override void ProcessRecord()
         {
@@ -69,42 +69,37 @@ namespace Microsoft.PowerShell.Commands
                     goto case "Date";
             }
 
-            //
-
-            // build up the SystemTime struct to pass to SetSystemTime
-            NativeMethods.SystemTime systemTime = new NativeMethods.SystemTime();
-            systemTime.Year = (UInt16)dateToUse.Year;
-            systemTime.Month = (UInt16)dateToUse.Month;
-            systemTime.Day = (UInt16)dateToUse.Day;
-            systemTime.Hour = (UInt16)dateToUse.Hour;
-            systemTime.Minute = (UInt16)dateToUse.Minute;
-            systemTime.Second = (UInt16)dateToUse.Second;
-            systemTime.Milliseconds = (UInt16)dateToUse.Millisecond;
-
             if (ShouldProcess(dateToUse.ToString()))
             {
-                if (Platform.IsWindows)
+#if UNIX
+                if (!Platform.NonWindowsSetDate(dateToUse))
                 {
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                }
+#else
+                // build up the SystemTime struct to pass to SetSystemTime
+                NativeMethods.SystemTime systemTime = new NativeMethods.SystemTime();
+                systemTime.Year = (UInt16)dateToUse.Year;
+                systemTime.Month = (UInt16)dateToUse.Month;
+                systemTime.Day = (UInt16)dateToUse.Day;
+                systemTime.Hour = (UInt16)dateToUse.Hour;
+                systemTime.Minute = (UInt16)dateToUse.Minute;
+                systemTime.Second = (UInt16)dateToUse.Second;
+                systemTime.Milliseconds = (UInt16)dateToUse.Millisecond;
 #pragma warning disable 56523
-
-                    if (!NativeMethods.SetLocalTime(ref systemTime))
-                    {
-                        throw new Win32Exception(Marshal.GetLastWin32Error());
-                    }
-
-                    // MSDN says to call this twice to account for changes
-                    // between DST
-                    if (!NativeMethods.SetLocalTime(ref systemTime))
-                    {
-                        throw new Win32Exception(Marshal.GetLastWin32Error());
-                    }
-
-#pragma warning restore 56523
-                }
-                else
+                if (!NativeMethods.SetLocalTime(ref systemTime))
                 {
-                    Platform.NonWindowsSetDate(dateToUse);
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
+
+                // MSDN says to call this twice to account for changes
+                // between DST
+                if (!NativeMethods.SetLocalTime(ref systemTime))
+                {
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                }
+#pragma warning restore 56523
+#endif
             }
 
             //output DateTime object wrapped in an PSObject with DisplayHint attached
@@ -121,7 +116,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal static class NativeMethods
         {
-            public struct SystemTime
+            [StructLayout(LayoutKind.Sequential)]
+            public class SystemTime
             {
                 public UInt16 Year;
                 public UInt16 Month;

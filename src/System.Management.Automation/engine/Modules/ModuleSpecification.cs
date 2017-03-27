@@ -21,11 +21,11 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// Represents module specification written in a module manifest (i.e. in RequiredModules member/field).
-    /// 
+    ///
     /// Module manifest allows 2 forms of module specification:
     /// 1. string - module name
     /// 2. hashtable - [string]ModuleName (required) + [Version]ModuleVersion/RequiredVersion (required) + [Guid]GUID (optional)
-    /// 
+    ///
     /// so we have a constructor that takes a string and a constructor that takes a hashtable
     /// (so that LanguagePrimitives.ConvertTo can cast a string or a hashtable to this type)
     /// </summary>
@@ -157,7 +157,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (moduleSpecification.RequiredVersion != null && moduleSpecification.MaximumVersion != null)
             {
-                message = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "MaxiumVersion", "RequiredVersion");
+                message = StringUtil.Format(SessionStateStrings.GetContent_TailAndHeadCannotCoexist, "MaximumVersion", "RequiredVersion");
                 return new ArgumentException(message);
             }
             return null;

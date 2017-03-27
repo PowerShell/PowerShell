@@ -56,7 +56,19 @@ namespace System.Management.Automation
             }
             else if (attributeAsts != null)
             {
-                var.Attributes.Clear();
+                // Use bytewise operation directly instead of 'var.IsReadOnly || var.IsConstant' on
+                // a hot path (setting variable with type constraint) to get better performance.
+                if ((var.Options & (ScopedItemOptions.ReadOnly | ScopedItemOptions.Constant)) != ScopedItemOptions.None)
+                {
+                    SessionStateUnauthorizedAccessException e =
+                        new SessionStateUnauthorizedAccessException(
+                                var.Name,
+                                SessionStateCategory.Variable,
+                                "VariableNotWritable",
+                                SessionStateStrings.VariableNotWritable);
+                    throw e;
+                }
+
                 var attributes = GetAttributeCollection(attributeAsts);
                 value = PSVariable.TransformValue(attributes, value);
                 if (!PSVariable.IsValidValue(attributes, value))
@@ -71,6 +83,8 @@ namespace System.Management.Automation
                     throw e;
                 }
                 var.SetValueRaw(value, true);
+                // Don't update the PSVariable's attributes until we successfully set the value
+                var.Attributes.Clear();
                 var.AddParameterAttributesNoChecks(attributes);
 
                 if (executionContext._debuggingMode > 0)

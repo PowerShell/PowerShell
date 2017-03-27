@@ -12,14 +12,14 @@ namespace Microsoft.PowerShell.Commands
     /// A command to Remove WMI Object
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "WmiObject", DefaultParameterSetName = "class", SupportsShouldProcess = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113381", RemotingCapability = RemotingCapability.OwnedByCommand)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113381", RemotingCapability = RemotingCapability.OwnedByCommand)]
     public class RemoveWmiObject : WmiBaseCmdlet
     {
         #region Parameters
         /// <summary>
         /// The WMI Object to use
         /// </summary>
-        /// 
+        ///
         [Parameter(ValueFromPipeline = true, Mandatory = true, ParameterSetName = "object")]
         public ManagementObject InputObject
         {

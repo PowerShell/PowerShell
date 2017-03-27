@@ -93,7 +93,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         /// <summary>
-        /// Gets the Parameters of this parameterset 
+        /// Gets the Parameters of this parameterset
         /// </summary>
         public List<ParameterViewModel> Parameters
         {
@@ -157,7 +157,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 {
                     continue;
                 }
-                
+
                 ShowCommandParameterType parameterType = parameter.Parameter.ParameterType;
 
                 if (parameterType.IsEnum || parameterType.IsString || (parameterType.IsArray && parameterType.ElementType.IsString))
@@ -168,7 +168,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
                 {
                     parameterValueString = ParameterSetViewModel.GetDelimitedParameter(parameterValueString, "{", "}");
                 }
-                else 
+                else
                 {
                     parameterValueString = ParameterSetViewModel.GetDelimitedParameter(parameterValueString, "(", ")");
                 }
@@ -231,7 +231,7 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
         }
 
         #endregion
-        
+
         /// <summary>
         /// Gets the delimited parameter if it needs delimitation and is not delimited
         /// </summary>

@@ -3,6 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System.Management.Automation.Host;
+using System.Threading;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation.Internal
@@ -60,11 +61,30 @@ namespace System.Management.Automation.Internal
                 else
                 {
                     // The segment does not fit, back off a tad until it does
-                    // We need to back off 1 by 1 because there could theoretically 
+                    // We need to back off 1 by 1 because there could theoretically
                     // be characters taking more 2 buffer cells
                     --i;
                 }
             } while (true);
+
+            return result;
+        }
+
+        // Typical padding is at most a screen's width, any more than that and we won't bother caching.
+        private const int IndentCacheMax = 120;
+        private static readonly string[] IndentCache = new string[IndentCacheMax];
+        internal static string Padding(int countOfSpaces)
+        {
+            if (countOfSpaces >= IndentCacheMax)
+                return new string(' ', countOfSpaces);
+
+            var result = IndentCache[countOfSpaces];
+
+            if (result == null)
+            {
+                Interlocked.CompareExchange(ref IndentCache[countOfSpaces], new string(' ', countOfSpaces), null);
+                result = IndentCache[countOfSpaces];
+            }
 
             return result;
         }

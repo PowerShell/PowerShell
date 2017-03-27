@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "LocalGroupMember",
             DefaultParameterSetName = "Default",
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717988")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717988")]
     [Alias("glgm")]
     public class GetLocalGroupMemberCommand : Cmdlet
     {
@@ -44,8 +44,8 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "Member".
-        /// Specifies the name of the user or group that is a member of this group. If 
-        /// this parameter is not specified, all members of the specified group are 
+        /// Specifies the name of the user or group that is a member of this group. If
+        /// this parameter is not specified, all members of the specified group are
         /// returned. This accepts a name, SID, or wildcard string.
         /// </summary>
         [Parameter(Position = 1)]
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.Commands
             set { this.name = value; }
         }
         private string name;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "SID".
         /// The security group from the local Security Accounts Manager.
@@ -128,7 +128,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        
+
         /// <summary>
         /// EndProcessing method.
         /// </summary>

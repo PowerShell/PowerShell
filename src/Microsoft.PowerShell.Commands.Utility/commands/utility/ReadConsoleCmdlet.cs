@@ -20,14 +20,14 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// </summary>
 
-    [Cmdlet("Read", "Host", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113371")]
+    [Cmdlet(VerbsCommunications.Read, "Host", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113371")]
     [OutputType(typeof(String), typeof(SecureString))]
     public sealed class ReadHostCommand : PSCmdlet
     {
         /// <summary>
         ///
         /// Constructs a new instance.
-        /// 
+        ///
         /// </summary>
 
         public
@@ -107,7 +107,7 @@ namespace Microsoft.PowerShell.Commands
 
                     while (e.MoveNext())
                     {
-                        // The current object might itself be a collection, like a string array, as in read/console "foo","bar","baz"  
+                        // The current object might itself be a collection, like a string array, as in read/console "foo","bar","baz"
                         // If it is, then the PSObject ToString() will take care of it.  We could go on unwrapping collections
                         // forever, but it's a pretty common use case to see a varags confused with an array.
 

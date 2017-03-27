@@ -13,7 +13,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session 
+    /// Holds the state of a Monad Shell session
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -24,11 +24,11 @@ namespace System.Management.Automation
         /// you want to change the current working directory use the SetLocation
         /// method.
         /// </summary>
-        /// 
+        ///
         /// <exception cref="InvalidOperationException">
         /// If a location has not been set yet.
         /// </exception>
-        /// 
+        ///
         internal PathInfo CurrentLocation
         {
             get
@@ -56,29 +56,29 @@ namespace System.Management.Automation
         /// Gets the namespace specific path of the current working directory
         /// for the specified namespace.
         /// </summary>
-        /// 
+        ///
         /// <param name="namespaceID">
         /// An identifier that uniquely identifies the namespace to get the
         /// current working directory for.
         /// </param>
-        /// 
+        ///
         /// <returns>
-        /// The namespace specific path of the current working directory for 
+        /// The namespace specific path of the current working directory for
         /// the specified namespace.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="namespaceID"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="namespacesID"/> refers to a provider that does not exist.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If a current drive cannot be found for the provider <paramref name="namespaceID"/>
         /// </exception>
-        /// 
+        ///
         internal PathInfo GetNamespaceCurrentLocation(string namespaceID)
         {
             if (namespaceID == null)
@@ -139,11 +139,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Changes the current working directory to the path specified
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path of the new current working directory
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The PathInfo object representing the path of the location
         /// that was set.
@@ -152,25 +152,25 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="path"/> does not exist, is not a container, or
         /// resolved to multiple containers.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="path"/> refers to a provider that does not exist.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If <paramref name="path"/> refers to a drive that does not exist.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider associated with <paramref name="path"/> threw an
         /// exception.
         /// </exception>
-        /// 
+        ///
         internal PathInfo SetLocation(string path)
         {
             return SetLocation(path, null);
@@ -179,15 +179,15 @@ namespace System.Management.Automation
         /// <summary>
         /// Changes the current working directory to the path specified
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path of the new current working directory
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context the provider uses when performing the operation.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The PathInfo object representing the path of the location
         /// that was set.
@@ -196,29 +196,29 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="path"/> does not exist, is not a container, or
         /// resolved to multiple containers.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If <paramref name="path"/> refers to a provider that does not exist.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If <paramref name="path"/> refers to a drive that does not exist.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider associated with <paramref name="path"/> threw an
         /// exception.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ItemNotFoundException">
         /// If the <paramref name="path"/> could not be resolved.
         /// </exception>
-        /// 
+        ///
         internal PathInfo SetLocation(string path, CmdletProviderContext context)
         {
             if (path == null)
@@ -308,10 +308,8 @@ namespace System.Management.Automation
             {
                 throw;
             }
-            catch (Exception e) // Catch-all OK, 3rd party callout
+            catch (Exception) // Catch-all OK, 3rd party callout
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // Reset the drive to the previous drive and
                 // then rethrow the error
 
@@ -379,10 +377,8 @@ namespace System.Management.Automation
                         {
                             throw;
                         }
-                        catch (Exception e) // Catch-all OK, 3rd party callout
+                        catch (Exception) // Catch-all OK, 3rd party callout
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
-
                             // Reset the drive to the previous drive and
                             // then rethrow the error
 
@@ -413,10 +409,8 @@ namespace System.Management.Automation
                         {
                             throw;
                         }
-                        catch (Exception e) // Catch-all OK, 3rd party callout
+                        catch (Exception) // Catch-all OK, 3rd party callout
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
-
                             // Reset the drive to the previous drive and
                             // then rethrow the error
 
@@ -471,7 +465,7 @@ namespace System.Management.Automation
                 {
                     if (currentPath.Length == 0)
                     {
-                        // Treat this as a container because providers that only 
+                        // Treat this as a container because providers that only
                         // support the ContainerCmdletProvider interface are really
                         // containers at their root.
 
@@ -502,7 +496,7 @@ namespace System.Management.Automation
                     }
                     else
                     {
-                        // Set the path to use 
+                        // Set the path to use
                         path = currentPath;
 
                         // Mark it as a container
@@ -566,53 +560,53 @@ namespace System.Management.Automation
         /// Determines if the specified path is the current working directory
         /// or a parent of the current working directory.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// A monad namespace absolute or relative path.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context the provider uses when performing the operation.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// true, if the path is the current working directory or a parent of the current
         /// working directory. false, otherwise.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="path"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the path is a provider-qualified path for a provider that is
         /// not loaded into the system.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If the <paramref name="path"/> refers to a drive that could not be found.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider used to build the path threw an exception.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="NotSupportedException">
         /// If the provider that the <paramref name="path"/> represents is not a NavigationCmdletProvider
         /// or ContainerCmdletProvider.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="InvalidOperationException">
-        /// If the <paramref name="path"/> starts with "~" and the home location is not set for 
+        /// If the <paramref name="path"/> starts with "~" and the home location is not set for
         /// the provider.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider specified by <paramref name="providerId"/> threw an
         /// exception when its GetParentPath or MakePath was called while
         /// processing the <paramref name="path"/>.
         /// </exception>
-        /// 
+        ///
         internal bool IsCurrentLocationOrAncestor(string path, CmdletProviderContext context)
         {
             bool result = false;
@@ -846,7 +840,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Resets the current working drive and directory to the first
         /// entry on the working directory stack and removes that entry
-        /// from the stack. 
+        /// from the stack.
         /// </summary>
         ///
         /// <param name="stackName">
@@ -868,20 +862,20 @@ namespace System.Management.Automation
         /// or
         /// A stack was not found with the specified name.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderNotFoundException">
         /// If the path on the stack refers to a provider that does not exist.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException">
         /// If the path on the stack refers to a drive that does not exist.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ProviderInvocationException">
         /// If the provider associated with the path on the stack threw an
         /// exception.
         /// </exception>
-        /// 
+        ///
         internal PathInfo PopLocation(string stackName)
         {
             if (String.IsNullOrEmpty(stackName))
@@ -970,9 +964,9 @@ namespace System.Management.Automation
         /// Gets the monad namespace paths for all the directories that are
         /// pushed on the working directory stack.
         /// </summary>
-        /// 
+        ///
         /// <param name="stackName">
-        /// The stack of the ID of the location stack to retrieve. If it is 
+        /// The stack of the ID of the location stack to retrieve. If it is
         /// null or empty the default stack is used.
         /// </param>
         ///
@@ -980,12 +974,12 @@ namespace System.Management.Automation
         /// The PathInfoStack representing the location stack for the specified
         /// stack ID.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If no location stack <paramref name="stackName"/> exists except if
         /// the default stack is requested.
         /// </exception>
-        /// 
+        ///
         internal PathInfoStack LocationStack(string stackName)
         {
             if (String.IsNullOrEmpty(stackName))
@@ -1034,7 +1028,7 @@ namespace System.Management.Automation
         /// <exception cref="ItemNotFoundException">
         /// If <paramref name="stackName"/> does not exist as a location stack.
         /// </exception>
-        /// 
+        ///
         internal PathInfoStack SetDefaultLocationStack(string stackName)
         {
             if (String.IsNullOrEmpty(stackName))

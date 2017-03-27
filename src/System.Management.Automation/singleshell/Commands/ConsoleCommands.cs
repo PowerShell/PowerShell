@@ -69,7 +69,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class that implements export-console cmdlet.
     /// </summary>
-    [Cmdlet(VerbsData.Export, "Console", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113298")]
+    [Cmdlet(VerbsData.Export, "Console", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113298")]
     public sealed class ExportConsoleCommand : ConsoleCmdletsBase
     {
         #region Parameters
@@ -78,7 +78,7 @@ namespace Microsoft.PowerShell.Commands
         /// Property that gets/sets console file name.
         /// </summary>
         /// <remarks>
-        /// If a parameter is not supplied then the file represented by $console 
+        /// If a parameter is not supplied then the file represented by $console
         /// will be used for saving.
         /// </remarks>
         [Parameter(Position = 0, Mandatory = false, ValueFromPipeline = true,
@@ -186,7 +186,7 @@ namespace Microsoft.PowerShell.Commands
             if (!ShouldProcess(this.Path)) // should this be resolvedPath?
                 return;
 
-            //check if destination file exists. 
+            //check if destination file exists.
             if (File.Exists(resolvedPath))
             {
                 if (NoClobber)
@@ -248,7 +248,7 @@ namespace Microsoft.PowerShell.Commands
             catch (ArgumentException ae)
             {
                 ThrowError(resolvedPath,
-                    "InvalidCharacetersInPath", ae, ErrorCategory.InvalidArgument);
+                    "InvalidCharactersInPath", ae, ErrorCategory.InvalidArgument);
             }
 
             // looks like saving succeeded.
@@ -274,10 +274,6 @@ namespace Microsoft.PowerShell.Commands
             catch (SessionStateUnauthorizedAccessException sue)
             {
                 e = sue;
-            }
-            catch (SessionStateOverflowException sof)
-            {
-                e = sof;
             }
             catch (ProviderNotFoundException pnf)
             {
@@ -402,23 +398,23 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Resolves the specified path to PathInfo objects
         /// </summary>
-        /// 
+        ///
         /// <param name="pathToResolve">
         /// The path to be resolved. Each path may contain glob characters.
         /// </param>
-        /// 
+        ///
         /// <param name="allowNonexistingPaths">
         /// If true, resolves the path even if it doesn't exist.
         /// </param>
-        /// 
+        ///
         /// <param name="currentCommandContext">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A string representing the resolved path.
         /// </returns>
-        /// 
+        ///
         private PathInfo ResolvePath(
             string pathToResolve,
             bool allowNonexistingPaths,
@@ -556,7 +552,7 @@ namespace Microsoft.PowerShell.Commands
                 return consoleValue;
             }
 
-            throw PSTraceSource.NewArgumentException("fileName", ConsoleInfoErrorStrings.ConsoleCannotbeConvertedToString);
+            throw PSTraceSource.NewArgumentException("fileName", ConsoleInfoErrorStrings.ConsoleCannotBeConvertedToString);
         }
 
         /// <summary>

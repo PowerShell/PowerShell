@@ -10,7 +10,7 @@ namespace Microsoft.Management.UI.Internal
     using System.Diagnostics;
 
     /// <summary>
-    /// The TextEqualsFilterRule class evaluates a string item to 
+    /// The TextEqualsFilterRule class evaluates a string item to
     /// check if it is equal to the rule's value.
     /// </summary>
     [Serializable]

@@ -16,10 +16,10 @@ using System.Globalization;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements get-member command.  
+    /// This class implements get-member command.
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "Member", DefaultParameterSetName = "TypeNameSet",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113280", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113280", RemotingCapability = RemotingCapability.None)]
     public class AddMemberCommand : PSCmdlet
     {
         private static object s_notSpecified = new object();
@@ -526,15 +526,15 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// This ValidateArgumentsAttribute is used to guarantee the argument to be bound to
         /// -NotePropertyName parameter cannot be converted to the enum type PSMemberTypes.
-        /// So when given a string or a number that can be converted, we make sure it gets 
+        /// So when given a string or a number that can be converted, we make sure it gets
         /// bound to -MemberType, instead of -NotePropertyName.
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// This exception will be hidden in the positional binding phase. So we make sure
         /// if the argument can be converted to PSMemberTypes, it gets bound to the -MemberType
         /// parameter. We are sure that when this exception is thrown, the current positional
-        /// argument can be successfully bound to 
+        /// argument can be successfully bound to
         /// </remarks>
         private sealed class ValidateNotePropertyNameAttribute : ValidateArgumentsAttribute
         {

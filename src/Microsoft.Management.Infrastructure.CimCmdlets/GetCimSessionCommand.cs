@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -14,16 +14,16 @@ using System.Management.Automation;
 namespace Microsoft.Management.Infrastructure.CimCmdlets
 {
     /// <summary>
-    /// The command returns zero, one or more CimSession objects that represent 
+    /// The command returns zero, one or more CimSession objects that represent
     /// connections with remote computers established from the current PS Session.
     /// </summary>
 
-    [Cmdlet(VerbsCommon.Get, "CimSession", DefaultParameterSetName = ComputerNameSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227966")]
+    [Cmdlet(VerbsCommon.Get, "CimSession", DefaultParameterSetName = ComputerNameSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227966")]
     [OutputType(typeof(CimSession))]
     public sealed class GetCimSessionCommand : CimBaseCommand
     {
         #region constructor
-        
+
         /// <summary>
         /// constructor
         /// </summary>
@@ -32,7 +32,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
         }
-        
+
         #endregion
 
         #region parameters
@@ -40,17 +40,17 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// <para>
         /// The following is the definition of the input parameter "ComputerName".
-        /// Specifies one or more connections by providing their ComputerName(s). The 
-        /// Cmdlet then gets CimSession(s) opened with those connections. This parameter 
-        /// is an alternative to using CimSession(s) that also identifies the remote 
+        /// Specifies one or more connections by providing their ComputerName(s). The
+        /// Cmdlet then gets CimSession(s) opened with those connections. This parameter
+        /// is an alternative to using CimSession(s) that also identifies the remote
         /// computer(s).
         /// </para>
         /// <para>
-        /// This is the only optional parameter of the Cmdlet. If not provided, the 
-        /// Cmdlet returns all CimSession(s) live/active in the runspace. 
+        /// This is the only optional parameter of the Cmdlet. If not provided, the
+        /// Cmdlet returns all CimSession(s) live/active in the runspace.
         /// </para>
         /// <para>
-        /// If an instance of CimSession is pipelined to Get-CimSession, the 
+        /// If an instance of CimSession is pipelined to Get-CimSession, the
         /// ComputerName property of the instance is bound by name with this parameter.
         /// </para>
         /// </summary>
@@ -111,7 +111,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
-        /// Specifies one or more session Name(s)  for which to get CimSession(s). The 
+        /// Specifies one or more session Name(s)  for which to get CimSession(s). The
         /// argument may contain wildcard characters.
         /// </summary>
         [Parameter(Mandatory = true,

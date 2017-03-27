@@ -10,13 +10,14 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Security;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Collections;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// This cmdlet start invocation of jobs in background.
     /// </summary>
-    [Cmdlet("Start", "Job", DefaultParameterSetName = StartJobCommand.ComputerNameParameterSet, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113405")]
+    [Cmdlet(VerbsLifecycle.Start, "Job", DefaultParameterSetName = StartJobCommand.ComputerNameParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113405")]
     [OutputType(typeof(PSRemotingJob))]
     public class StartJobCommand : PSExecutionCmdlet, IDisposable
     {
@@ -97,10 +98,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Command to execute specified as a string. This can be a single
-        /// cmdlet, an expression or anything that can be internally 
+        /// cmdlet, an expression or anything that can be internally
         /// converted into a ScriptBlock
         /// </summary>
-        /// <remarks>This is used in the in process case with a 
+        /// <remarks>This is used in the in process case with a
         /// "ValueFromPipelineProperty" enabled in order to maintain
         /// compatibility with v1.0</remarks>
         [Parameter(Position = 0,
@@ -118,6 +119,8 @@ namespace Microsoft.PowerShell.Commands
                 base.ScriptBlock = value;
             }
         }
+
+        #region Suppress PSRemotingBaseCmdlet parameters
 
         // suppress all the parameters from PSRemotingBaseCmdlet
         // which should not be part of Start-PSJob
@@ -151,6 +154,40 @@ namespace Microsoft.PowerShell.Commands
         {
             get { return false; }
         }
+
+        /// <summary>
+        /// Suppress SSHTransport
+        /// </summary>
+        public override SwitchParameter SSHTransport
+        {
+            get { return false; }
+        }
+
+        /// <summary>
+        /// Suppress SSHConnection
+        /// </summary>
+        public override Hashtable[] SSHConnection
+        {
+            get { return null; }
+        }
+
+        /// <summary>
+        /// Suppress UserName
+        /// </summary>
+        public override string UserName
+        {
+            get { return null; }
+        }
+
+        /// <summary>
+        /// Suppress KeyFilePath
+        /// </summary>
+        public override string KeyFilePath
+        {
+            get { return null; }
+        }
+
+        #endregion
 
         /// <summary>
         /// Credential to use for this job
@@ -299,7 +336,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Overriding to suppress this parameter 
+        /// Overriding to suppress this parameter
         /// </summary>
         public override string CertificateThumbprint
         {
@@ -369,7 +406,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Extended Session Options for controlling the session creation. Use 
+        /// Extended Session Options for controlling the session creation. Use
         /// "New-WSManSessionOption" cmdlet to supply value for this parameter.
         /// </summary>
         /// <remarks>
@@ -496,7 +533,7 @@ namespace Microsoft.PowerShell.Commands
         } // CoreBeginProcessing
 
         /// <summary>
-        /// Create a throttle operation using NewProcessConnectionInfo 
+        /// Create a throttle operation using NewProcessConnectionInfo
         /// ie., Out-Of-Process runspace.
         /// </summary>
         protected override void CreateHelpersForSpecifiedComputerNames()
@@ -640,11 +677,11 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// InvokeAsync would have been called in ProcessRecord. Wait here
-        /// for all the results to become available. 
+        /// for all the results to become available.
         /// </summary>
         protected override void EndProcessing()
         {
-            // close the input stream on all the pipelines 
+            // close the input stream on all the pipelines
             CloseAllInputStreams();
         } // EndProcessing
 

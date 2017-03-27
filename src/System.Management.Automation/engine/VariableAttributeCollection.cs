@@ -19,16 +19,16 @@ namespace System.Management.Automation
         /// the specified variable. Whenever the attributes change
         /// the variable value is verified against the attribute.
         /// </summary>
-        /// 
+        ///
         /// <param name="variable">
         /// The variable that needs to be verified anytime an attribute
         /// changes.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="variable"/> is null.
         /// </exception>
-        /// 
+        ///
         internal PSVariableAttributeCollection(PSVariable variable)
         {
             if (variable == null)
@@ -46,24 +46,24 @@ namespace System.Management.Automation
         /// Ensures that the variable that the attribute is being added to is still
         /// valid after the attribute is added.
         /// </summary>
-        /// 
+        ///
         /// <param name="index">
         /// The zero-based index at which <paramref name="item"/> should be inserted.
         /// </param>
-        /// 
+        ///
         /// <param name="item">
         /// The attribute being added to the collection.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ValidationMetadataException">
         /// If the new attribute causes the variable to be in an invalid state.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentTransformationMetadataException">
         /// If the new attribute is an ArgumentTransformationAttribute and the transformation
         /// fails.
         /// </exception>
-        /// 
+        ///
         protected override void InsertItem(int index, Attribute item)
         {
             object variableValue = VerifyNewAttribute(item);
@@ -77,19 +77,19 @@ namespace System.Management.Automation
         /// Ensures that the variable that the attribute is being set to is still
         /// valid after the attribute is set.
         /// </summary>
-        /// 
+        ///
         /// <param name="index">
         /// The zero-based index at which <paramref name="item"/> should be set.
         /// </param>
-        /// 
+        ///
         /// <param name="item">
         /// The attribute being set in the collection.
         /// </param>
-        /// 
+        ///
         /// <exception cref="ValidationMetadataException">
         /// If the new attribute causes the variable to be in an invalid state.
         /// </exception>
-        /// 
+        ///
         protected override void SetItem(int index, Attribute item)
         {
             object variableValue = VerifyNewAttribute(item);
@@ -119,16 +119,16 @@ namespace System.Management.Automation
         /// Validates and performs any transformations that the new attribute
         /// implements.
         /// </summary>
-        /// 
+        ///
         /// <param name="item">
         /// The new attribute to be added to the collection.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The new variable value. This may change from the original value if the
         /// new attribute is an ArgumentTransformationAttribute.
         /// </returns>
-        /// 
+        ///
         private object VerifyNewAttribute(Attribute item)
         {
             object variableValue = _variable.Value;

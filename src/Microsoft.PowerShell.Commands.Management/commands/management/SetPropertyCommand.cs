@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to set the property of an item at a specified path
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "ItemProperty", DefaultParameterSetName = "propertyValuePathSet", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113396")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113396")]
     public class SetItemPropertyCommand : PassThroughItemPropertyCommandBase
     {
         private const string propertyValuePathSet = "propertyValuePathSet";
@@ -108,16 +108,16 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             PSObject mshObject = null;

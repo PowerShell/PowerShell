@@ -31,7 +31,7 @@ namespace System.Management.Automation.Runspaces
 
     /// <summary>
     /// Class that exposes read only properties and which conveys information
-    /// about a remote runspace object to the user. The class serves the 
+    /// about a remote runspace object to the user. The class serves the
     /// following purpose:
     ///     1. Exposes useful information to the user as properties
     ///     2. Shields the remote runspace object from directly being exposed
@@ -143,8 +143,8 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// SessionId of this runspace. This is unique only across 
-        /// a session 
+        /// SessionId of this runspace. This is unique only across
+        /// a session
         /// </summary>
         public int Id { get; }
 
@@ -166,7 +166,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Private data to be used by applications built on top of PowerShell.  
+        /// Private data to be used by applications built on top of PowerShell.
         /// Optionally sent by the remote server when creating a new session / runspace.
         /// </summary>
         public PSPrimitiveDictionary ApplicationPrivateData
@@ -239,7 +239,7 @@ namespace System.Management.Automation.Runspaces
         /// This constructor will be used to created a remote runspace info
         /// object with a auto generated name
         /// </summary>
-        /// <param name="remoteRunspace">Remote runspace object for which 
+        /// <param name="remoteRunspace">Remote runspace object for which
         /// the info object need to be created</param>
         internal PSSession(RemoteRunspace remoteRunspace)
         {

@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command that appends the specified content to the item at the specified path.
     /// </summary>
     [Cmdlet(VerbsCommon.Clear, "Content", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113282")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113282")]
     public class ClearContentCommand : ContentCommandBase
     {
         #region Command code
@@ -83,16 +83,16 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)

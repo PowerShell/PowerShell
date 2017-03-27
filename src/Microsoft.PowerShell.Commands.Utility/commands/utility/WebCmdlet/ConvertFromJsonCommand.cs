@@ -13,7 +13,7 @@ namespace Microsoft.PowerShell.Commands
     /// The ConvertFrom-Json command
     /// This command convert a Json string representation to a JsonObject
     /// </summary>
-    [Cmdlet(VerbsData.ConvertFrom, "Json", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=217031", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsData.ConvertFrom, "Json", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=217031", RemotingCapability = RemotingCapability.None)]
     [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly")]
     public class ConvertFromJsonCommand : Cmdlet
     {
@@ -72,7 +72,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void EndProcessing()
         {
             // When Input is provided through pipeline, the input can be represented in the following two ways:
-            // 1. Each input to the buffer is a complete Json content. There can be multiple inputs of this format. 
+            // 1. Each input to the buffer is a complete Json content. There can be multiple inputs of this format.
             // 2. The complete buffer input collectively represent a single JSon format. This is typically the majority of the case.
             if (_inputObjectBuffer.Count > 0)
             {
@@ -89,15 +89,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                     catch (ArgumentException)
                     {
-                        // The first input string does not represent a complete Json Syntax. 
+                        // The first input string does not represent a complete Json Syntax.
                         // Hence consider the the entire input as a single Json content.
                     }
-#if CORECLR
-                    catch (Newtonsoft.Json.JsonSerializationException)
-                    {
-                        // we use another serializer for CORECLR implementation
-                    }
-#endif
+
                     if (successfullyConverted)
                     {
                         for (int index = 1; index < _inputObjectBuffer.Count; index++)

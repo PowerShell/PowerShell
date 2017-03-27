@@ -1,5 +1,5 @@
 Describe 'Exceptions flow for classes' -Tags "CI" {
-    
+
     $canaryHashtable = @{}
 
     $iss = [initialsessionstate]::CreateDefault()
@@ -13,10 +13,10 @@ Describe 'Exceptions flow for classes' -Tags "CI" {
     }
 
     Context 'All calls are inside classes' {
-        
+
         It 'does not execute statements after instance method with exception' {
-            
-            # Put try-catch outside to avoid try-catch logic altering analysis 
+
+            # Put try-catch outside to avoid try-catch logic altering analysis
             try {
 
                 $ps.AddScript( @'
@@ -30,22 +30,22 @@ class C
         $canaryHashtable['canary'] = 100
     }
 
-    [void] ImThrow() 
+    [void] ImThrow()
     {
         throw 'I told you'
     }
 }
 [C]::new().m1()
 '@).Invoke()
-            
+
             } catch {}
 
             $canaryHashtable['canary'] | Should Be 42
         }
 
         It 'does not execute statements after static method with exception' {
-            
-            # Put try-catch outside to avoid try-catch logic altering analysis 
+
+            # Put try-catch outside to avoid try-catch logic altering analysis
             try {
 
                 $ps.AddScript( @'
@@ -59,22 +59,22 @@ class C
         $canaryHashtable['canary'] = 100
     }
 
-    static [void] ImThrow() 
+    static [void] ImThrow()
     {
         1 / 0
     }
 }
 [C]::s1()
 '@).Invoke()
-            
+
             } catch {}
 
             $canaryHashtable['canary'] | Should Be 43
         }
 
         It 'does not execute statements after instance method with exception and deep stack' {
-            
-            # Put try-catch outside to avoid try-catch logic altering analysis 
+
+            # Put try-catch outside to avoid try-catch logic altering analysis
             try {
 
                 $ps.AddScript( @'
@@ -88,41 +88,41 @@ class C
         $canaryHashtable['canary'] = -6101
     }
 
-    [void] m2() 
+    [void] m2()
     {
         $canaryHashtable = Get-Canary
         $canaryHashtable['canary'] += 10
         $this.m3()
-        $canaryHashtable['canary'] = -6102 
+        $canaryHashtable['canary'] = -6102
     }
 
-    [void] m3() 
+    [void] m3()
     {
         $canaryHashtable = Get-Canary
         $canaryHashtable['canary'] += 100
         $this.m4()
-        $canaryHashtable['canary'] = -6103  
+        $canaryHashtable['canary'] = -6103
     }
 
-    [void] m4() 
-    { 
+    [void] m4()
+    {
         $canaryHashtable = Get-Canary
         $canaryHashtable['canary'] += 1000
         $this.ImThrow()
         $canaryHashtable['canary'] = -6104
     }
 
-    [void] ImThrow() 
+    [void] ImThrow()
     {
         $canaryHashtable = Get-Canary
         $canaryHashtable['canary'] += 10000
-        
+
         1 / 0
     }
 }
 [C]::new().m1()
 '@).Invoke()
-            
+
             } catch {}
 
             $canaryHashtable['canary'] | Should Be 11111
@@ -130,11 +130,11 @@ class C
     }
 
     Context 'Class method call PS function' {
-        
+
         $body = @'
 class C
 {
-    [void] m1() 
+    [void] m1()
     {
         m2
     }
@@ -144,7 +144,7 @@ class C
         s2
     }
 }
-                
+
 
 function m2()
 {
@@ -167,7 +167,7 @@ function CallImThrow()
     ImThrow
 }
 
-function ImThrow() 
+function ImThrow()
 {
     1 / 0
 }
@@ -175,28 +175,28 @@ function ImThrow()
 '@
 
         It 'does not execute statements after function with exception called from instance method' {
-            
-            # Put try-catch outside to avoid try-catch logic altering analysis 
+
+            # Put try-catch outside to avoid try-catch logic altering analysis
             try {
 
                 $ps.AddScript($body).Invoke()
                 $ps.AddScript('$c = [C]::new(); $c.m1()').Invoke()
-            
+
             } catch {}
-            
+
             $canaryHashtable['canaryM'] | Should Be 45
         }
 
         It 'does not execute statements after function with exception called from static method' {
-            
-            # Put try-catch outside to avoid try-catch logic altering analysis 
+
+            # Put try-catch outside to avoid try-catch logic altering analysis
             try {
 
                 $ps.AddScript($body).Invoke()
                 $ps.AddScript('[C]::s1()').Invoke()
-            
+
             } catch {}
-            
+
             $canaryHashtable['canaryS'] | Should Be 46
         }
 
@@ -216,7 +216,7 @@ foo
 $canaryHashtable['canary'] += 100
 
 '@).Invoke()
-            
+
             } catch {}
 
             $canaryHashtable['canary'] | Should Be 111
@@ -234,7 +234,7 @@ Describe "Exception error position" -Tags "CI" {
     }
 
     It "Setting a property that doesn't exist" {
-        try { 
+        try {
             [MSFT_3090412]::f1()
             throw "f1 should have thrown"
         } catch {
@@ -243,7 +243,7 @@ Describe "Exception error position" -Tags "CI" {
     }
 
     It "Throwing an exception" {
-        try { 
+        try {
             [MSFT_3090412]::f2()
             throw "f2 should have thrown"
         } catch {
@@ -252,7 +252,7 @@ Describe "Exception error position" -Tags "CI" {
     }
 
     It "Calling a .Net method that throws" {
-        try { 
+        try {
             [MSFT_3090412]::f3()
             throw "f3 should have thrown"
         } catch {
@@ -261,7 +261,7 @@ Describe "Exception error position" -Tags "CI" {
     }
 
     It "Terminating error" {
-        try { 
+        try {
             [MSFT_3090412]::f4()
             throw "f4 should have thrown"
         } catch {
@@ -276,7 +276,7 @@ Describe "Exception from initializer" -Tags "CI" {
         [int]$a = "zz"
         MSFT_6397334a() {}
     }
-    
+
     class MSFT_6397334b
     {
         [int]$a = "zz"
@@ -287,12 +287,12 @@ Describe "Exception from initializer" -Tags "CI" {
         static [int]$a = "zz"
         static MSFT_6397334a() {}
     }
-    
+
     class MSFT_6397334d
     {
         static [int]$a = "zz"
     }
-  
+
     It "instance member w/ ctor" {
         try {
             [MSFT_6397334a]::new()
@@ -302,10 +302,10 @@ Describe "Exception from initializer" -Tags "CI" {
         {
             $e = $_
             $e.FullyQualifiedErrorId | Should Be InvalidCastFromStringToInteger
-            $e.InvocationInfo.Line | Should Match 'a = "zz"'            
+            $e.InvocationInfo.Line | Should Match 'a = "zz"'
         }
     }
-    
+
     It "instance member w/o ctor" {
         try {
             [MSFT_6397334b]::new()
@@ -315,35 +315,35 @@ Describe "Exception from initializer" -Tags "CI" {
         {
             $e = $_
             $e.FullyQualifiedErrorId | Should Be InvalidCastFromStringToInteger
-            $e.InvocationInfo.Line | Should Match 'a = "zz"'            
+            $e.InvocationInfo.Line | Should Match 'a = "zz"'
         }
     }
 
     It "static member w/ ctor" {
         try {
             $null = [MSFT_6397334c]::a
-            throw "[MSFT_6397334c]::a should have thrown"
+            throw "No Exception!"
         }
         catch
         {
-            $_.Exception.GetType().FullName | Should Be System.TypeInitializationException
+            $_.Exception | Should BeOfType System.TypeInitializationException
             $e  = $_.Exception.InnerException.InnerException.ErrorRecord
             $e.FullyQualifiedErrorId | Should Be InvalidCastFromStringToInteger
-            $e.InvocationInfo.Line | Should Match 'a = "zz"'            
+            $e.InvocationInfo.Line | Should Match 'a = "zz"'
         }
     }
-    
+
     It "static member w/o ctor" {
         try {
             $null = [MSFT_6397334d]::a
-            throw "[MSFT_6397334d]::a should have thrown"
+            throw "No Exception!"
         }
         catch
         {
-            $_.Exception.GetType().FullName | Should Be System.TypeInitializationException
+            $_.Exception | Should BeOfType System.TypeInitializationException
             $e  = $_.Exception.InnerException.InnerException.ErrorRecord
             $e.FullyQualifiedErrorId | Should Be InvalidCastFromStringToInteger
-            $e.InvocationInfo.Line | Should Match 'a = "zz"'            
+            $e.InvocationInfo.Line | Should Match 'a = "zz"'
         }
     }
 }

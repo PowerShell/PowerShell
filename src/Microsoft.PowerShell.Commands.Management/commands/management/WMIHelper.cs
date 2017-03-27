@@ -68,7 +68,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Internal Constructor.  This variant takes a count parameter that determines how many times 
+        /// Internal Constructor.  This variant takes a count parameter that determines how many times
         /// the WMI command is executed.
         /// </summary>
         /// <param name="childJob">Job associated with this operation</param>
@@ -162,7 +162,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         internal override event EventHandler<OperationStateEventArgs> OperationComplete;
 
@@ -835,12 +835,12 @@ namespace Microsoft.PowerShell.Commands
                         ArrayList namespaceArray = new ArrayList();
                         ArrayList sinkArray = new ArrayList();
                         ArrayList connectArray = new ArrayList(); // Optimization for remote namespace
-                        int currentNamesapceCount = 0;
+                        int currentNamespaceCount = 0;
                         namespaceArray.Add(getObject.Namespace);
                         bool topNamespace = true;
-                        while (currentNamesapceCount < namespaceArray.Count)
+                        while (currentNamespaceCount < namespaceArray.Count)
                         {
-                            string connectNamespace = (string)namespaceArray[currentNamesapceCount];
+                            string connectNamespace = (string)namespaceArray[currentNamespaceCount];
                             ManagementScope scope = new ManagementScope(WMIHelper.GetScopeString(_computerName, connectNamespace), options);
                             scope.Connect();
                             ManagementClass namespaceClass = new ManagementClass(scope, new ManagementPath("__Namespace"), new ObjectGetOptions());
@@ -861,7 +861,7 @@ namespace Microsoft.PowerShell.Commands
                                 sinkArray.Add(_job.GetNewSink());
                             }
                             connectArray.Add(scope);
-                            currentNamesapceCount++;
+                            currentNamespaceCount++;
                         }
 
                         if ((sinkArray.Count != namespaceArray.Count) || (connectArray.Count != namespaceArray.Count)) // not expected throw exception
@@ -872,14 +872,14 @@ namespace Microsoft.PowerShell.Commands
                             return;
                         }
 
-                        currentNamesapceCount = 0;
-                        while (currentNamesapceCount < namespaceArray.Count)
+                        currentNamespaceCount = 0;
+                        while (currentNamespaceCount < namespaceArray.Count)
                         {
-                            string connectNamespace = (string)namespaceArray[currentNamesapceCount];
-                            ManagementObjectSearcher searcher = getObject.GetObjectList((ManagementScope)connectArray[currentNamesapceCount]);
+                            string connectNamespace = (string)namespaceArray[currentNamespaceCount];
+                            ManagementObjectSearcher searcher = getObject.GetObjectList((ManagementScope)connectArray[currentNamespaceCount]);
                             if (searcher == null)
                             {
-                                currentNamesapceCount++;
+                                currentNamespaceCount++;
                                 continue;
                             }
                             if (topNamespace)
@@ -889,9 +889,9 @@ namespace Microsoft.PowerShell.Commands
                             }
                             else
                             {
-                                searcher.Get((ManagementOperationObserver)sinkArray[currentNamesapceCount]);
+                                searcher.Get((ManagementOperationObserver)sinkArray[currentNamespaceCount]);
                             }
-                            currentNamesapceCount++;
+                            currentNamespaceCount++;
                         }
                     }
                     else
@@ -1263,7 +1263,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (wmiInstance.flagSpecified && wmiInstance.PutType != PutType.CreateOnly)
                     {
-                        //Throw Terminating error   
+                        //Throw Terminating error
                         ThrowTerminatingError(new ErrorRecord(
                          new InvalidOperationException(),
                          "CreateOnlyFlagNotSpecifiedWithClassPath",
@@ -1302,7 +1302,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (wmiInstance.flagSpecified && wmiInstance.PutType != PutType.CreateOnly)
                         {
-                            //Throw Terminating error   
+                            //Throw Terminating error
                             ThrowTerminatingError(new ErrorRecord(
                              new InvalidOperationException(),
                              "CreateOnlyFlagNotSpecifiedWithClassPath",
@@ -1616,7 +1616,7 @@ namespace Microsoft.PowerShell.Commands
             return location.ToString();
         }
         /// <summary>
-        /// Stop Job 
+        /// Stop Job
         /// </summary>
         public override void StopJob()
         {
@@ -1632,7 +1632,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
         /// <summary>
-        /// Release all the resources. 
+        /// Release all the resources.
         /// </summary>
         /// <param name="disposing">
         /// if true, release all the managed objects.
@@ -1778,7 +1778,7 @@ namespace Microsoft.PowerShell.Commands
         private WmiAsyncCmdletHelper _helper;
         //bool _bFinished;
         private ThrottleManager _throttleManager;
-        private object _syncObject = new object();           // sync object  
+        private object _syncObject = new object();           // sync object
         private int _sinkCompleted;
         private bool _bJobFailed;
         private bool _bAtLeastOneObject;
@@ -1920,7 +1920,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Release all the resources. 
+        /// Release all the resources.
         /// </summary>
         /// <param name="disposing">
         /// if true, release all the managed objects.

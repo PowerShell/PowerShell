@@ -22,7 +22,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>Create a new .net object</summary>
-    [Cmdlet(VerbsCommon.New, "Object", DefaultParameterSetName = netSetName, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113355")]
+    [Cmdlet(VerbsCommon.New, "Object", DefaultParameterSetName = netSetName, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113355")]
     public sealed class NewObjectCommand : PSCmdlet
     {
         #region parameters
@@ -401,7 +401,6 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 info.e = e;
                 info.success = false;
             }

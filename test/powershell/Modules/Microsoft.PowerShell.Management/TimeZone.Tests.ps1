@@ -8,13 +8,16 @@
     --------------------------------------
     Localization
         Many of the tests below looking-up timezones by Name do not support localization.
-        That is, the current tests use us english versions of StandardName and DaylighName for tests.
+        That is, the current tests use us english versions of StandardName and DaylightName for tests.
 
         ref: https://msdn.microsoft.com/en-us/library/windows/desktop/ms725481.aspx
            [snippet] Both StandardName and DaylightName are localized according to the current user default UI language.
 #>
 
-if ($IsWindows) {
+try {
+
+    $defaultParamValues = $PSdefaultParameterValues.Clone()
+    $PSDefaultParameterValues["it:skip"] = !$IsWindows
 
 function Assert-ListsSame
 {
@@ -39,26 +42,26 @@ Describe "Get-Timezone test case no switches" -Tags "CI" {
 Describe "Get-Timezone test cases" -Tags "CI" {
 
     It "Call without ListAvailable switch returns an object of type TimeZoneInfo" {
-        $result = (Get-TimeZone).GetType().Name
-        $result | Should Be "TimeZoneInfo"
+        $result = Get-TimeZone
+        $result | Should BeOfType TimeZoneInfo
     }
 
     It "Call WITH ListAvailable switch returns ArrayList of TimeZoneInfo objects where the list is greater than 0 item" {
         $list = Get-TimeZone -ListAvailable
         $list.Count -gt 0 | Should Be $true
 
-        $list.GetType().Name | Should Be "Object[]"
-        $list[0].GetType().Name | Should Be "TimeZoneInfo"
+        ,$list | Should BeOfType "Object[]"
+        $list[0] | Should BeOfType "TimeZoneInfo"
     }
 
     It "Call with ListAvailable switch returns a list containing TimeZoneInfo.Local" {
-        $observedIdList = Get-TimeZone -ListAvailable | select -ExpandProperty Id
+        $observedIdList = Get-TimeZone -ListAvailable | Select-Object -ExpandProperty Id
         $oneExpectedId = ([System.TimeZoneInfo]::Local).Id
         $observedIdList -contains $oneExpectedId | Should Be $true
     }
 
     It "Call with ListAvailable switch returns a list containing one returned by Get-TimeZone" {
-        $observedIdList = Get-TimeZone -ListAvailable | select -ExpandProperty Id
+        $observedIdList = Get-TimeZone -ListAvailable | Select-Object -ExpandProperty Id
         $oneExpectedId = (Get-TimeZone).Id
         $observedIdList -contains $oneExpectedId | Should Be $true
     }
@@ -82,7 +85,7 @@ Describe "Get-Timezone test cases" -Tags "CI" {
 
     It "Call Get-TimeZone using ID param and multiple items, one is wild card but error action ignore works as expected" {
         $result = Get-TimeZone -Id @("Cape Verde Standard Time","Morocco Standard Time","*","Azores Standard Time") `
-                               -ErrorAction SilentlyContinue | % Id
+                               -ErrorAction SilentlyContinue | ForEach-Object Id
         $expectedIdList = @("Cape Verde Standard Time","Morocco Standard Time","Azores Standard Time")
         Assert-ListsSame $expectedIdList $result
     }
@@ -118,13 +121,16 @@ Describe "Get-Timezone test cases" -Tags "CI" {
     }
 }
 
-Describe "Set-Timezone test case: call by single Id" -Tags "CI" {
-    $originalTimeZoneId
+Describe "Set-Timezone test case: call by single Id" -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
-        $originalTimeZoneId = (Get-TimeZone).Id
+        if ($IsWindows) {
+            $originalTimeZoneId = (Get-TimeZone).Id
+        }
     }
     AfterAll {
-        Set-TimeZone -ID $originalTimeZoneId
+        if ($IsWindows) {
+            Set-TimeZone -ID $originalTimeZoneId
+        }
     }
 
     It "Call Set-TimeZone by Id" {
@@ -145,19 +151,28 @@ Describe "Set-Timezone test case: call by single Id" -Tags "CI" {
     }
 }
 
-Describe "Set-Timezone test cases" -Tags "Feature" {
-    $originalTimeZoneId
+Describe "Set-Timezone test cases" -Tags @('Feature', 'RequireAdminOnWindows') {
     BeforeAll {
-        $originalTimeZoneId = (Get-TimeZone).Id
+        if ($IsWindows) {
+            $originalTimeZoneId = (Get-TimeZone).Id
+        }
     }
     AfterAll {
-        Set-TimeZone -ID $originalTimeZoneId
+        if ($IsWindows) {
+            Set-TimeZone -ID $originalTimeZoneId
+        }
     }
 
     It "Call Set-TimeZone with invalid Id" {
-        $exception = $null
-        try { Set-TimeZone -Id "zzInvalidID" } catch { $exception = $_ }
-        $exception.FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
+        try
+        {
+            Set-TimeZone -Id "zzInvalidID"
+            throw "No Exception!"
+        }
+        catch
+        {
+            $_.FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
+        }
     }
 
     It "Call Set-TimeZone by Name" {
@@ -178,9 +193,15 @@ Describe "Set-Timezone test cases" -Tags "Feature" {
     }
 
     It "Call Set-TimeZone with invalid Name" {
-        $exception = $null
-        try { Set-TimeZone -Name "zzINVALID_Name" } catch { $exception = $_ }
-        $exception.FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
+        try
+        {
+            Set-TimeZone -Name "zzINVALID_Name"
+            throw "No Exception!"
+        }
+        catch
+        {
+            $_.FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
+        }
     }
 
     It "Verify that alias 'stz' exists" {
@@ -224,4 +245,6 @@ Describe "Set-Timezone test cases" -Tags "Feature" {
     }
 }
 
+} finally {
+    $global:PSDefaultParameterValues = $defaultParamValues
 }

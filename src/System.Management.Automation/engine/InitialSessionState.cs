@@ -835,7 +835,7 @@ namespace System.Management.Automation.Runspaces
 
 #if !CORECLR // Workflow Not Supported On CSS
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public sealed class SessionStateWorkflowEntry : SessionStateCommandEntry
     {
@@ -1309,7 +1309,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        ///
+        /// Add items to this collection.
         /// </summary>
         /// <param name="items"></param>
         public void Add(IEnumerable<T> items)
@@ -1322,6 +1322,27 @@ namespace System.Management.Automation.Runspaces
                 foreach (T element in items)
                 {
                     _internalCollection.Add(element);
+                }
+            }
+        }
+
+        /// <summary>
+        /// Special add for TypeTable type entries that removes redundant file entries.
+        /// </summary>
+        internal void AddTypeTableTypesInfo(IEnumerable<T> items)
+        {
+            if (typeof(T) != typeof(SessionStateTypeEntry)) { throw new PSInvalidOperationException(); }
+
+            lock (_syncObject)
+            {
+                foreach (var element in items)
+                {
+                    var typeEntry = element as SessionStateTypeEntry;
+                    if (typeEntry.TypeData != null)
+                    {
+                        // Skip type file entries.
+                        _internalCollection.Add(element);
+                    }
                 }
             }
         }
@@ -1631,7 +1652,7 @@ namespace System.Management.Automation.Runspaces
             iss.ThrowOnRunspaceOpenError = true;
             iss.UseFullLanguageModeInDebugger = false;
 
-            // WIN8:551312 M3P endpoint should have NO application exposed 
+            // WIN8:551312 M3P endpoint should have NO application exposed
             //
             foreach (SessionStateCommandEntry entry in iss.Commands)
             {
@@ -1701,7 +1722,7 @@ namespace System.Management.Automation.Runspaces
             iss.ThrowOnRunspaceOpenError = true;
             iss.UseFullLanguageModeInDebugger = false;
 
-            // WIN8:551312 M3P endpoint should have NO application exposed 
+            // WIN8:551312 M3P endpoint should have NO application exposed
             //
             foreach (SessionStateCommandEntry entry in iss.Commands)
             {
@@ -1778,7 +1799,7 @@ namespace System.Management.Automation.Runspaces
             iss.ThrowOnRunspaceOpenError = true;
             iss.UseFullLanguageModeInDebugger = false;
 
-            // WIN8:551312 M3P endpoint should have NO application exposed 
+            // WIN8:551312 M3P endpoint should have NO application exposed
             //
             foreach (SessionStateCommandEntry entry in iss.Commands)
             {
@@ -2823,11 +2844,11 @@ namespace System.Management.Automation.Runspaces
             // If a user has any module with the same name as that of the core module( or nested module inside the core module)
             // in his module path, then that will get loaded instead of the actual nested module (from the GAC - in our case)
             // Hence, searching only from the system module path while loading the core modules
-            ProcessImportModule(initializedRunspace, CoreModulesToImport, ModuleIntrinsics.GetSystemwideModulePath(), publicCommands);
+            ProcessImportModule(initializedRunspace, CoreModulesToImport, ModuleIntrinsics.GetPSHomeModulePath(), publicCommands);
 
             // Win8:328748 - functions defined in global scope end up in a module
             // Since we import the core modules, EngineSessionState's module is set to the last imported module. So, if a function is defined in global scope, it ends up in that module.
-            // Setting the module to null fixes that. 
+            // Setting the module to null fixes that.
             initializedRunspace.ExecutionContext.EngineSessionState.Module = null;
 
             // Set the SessionStateDrive here since we have all the provider information at this point
@@ -3138,7 +3159,6 @@ namespace System.Management.Automation.Runspaces
             catch (NotSupportedException e) { ex = e; }
             catch (ProviderNotFoundException e) { ex = e; }
             catch (ProviderInvocationException e) { ex = e; }
-            catch (SessionStateOverflowException e) { ex = e; }
             catch (KeyNotFoundException e) { ex = e; }
             catch (IOException e) { ex = e; }
             catch (UnauthorizedAccessException e) { ex = e; }
@@ -3212,8 +3232,6 @@ namespace System.Management.Automation.Runspaces
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
-
                     if (ThrowOnRunspaceOpenError)
                     {
                         return e;
@@ -3372,7 +3390,7 @@ namespace System.Management.Automation.Runspaces
 
         /// <summary>
         /// Helper method to search for commands matching the provided commandPattern.
-        /// Supports wild cards and if the commandPattern contains wildcard characters then multiple 
+        /// Supports wild cards and if the commandPattern contains wildcard characters then multiple
         /// results can be returned.  Otherwise a single (and first) match will be returned.
         /// If a moduleName is provided then only commands associated with that module will be returned.
         /// Only public commands are searched to start with.  If no results are found then a search on
@@ -3442,9 +3460,9 @@ namespace System.Management.Automation.Runspaces
                 else
                 {
                     // If FullyQualifiedPath is supplied then use it.
-                    // In this scenario, the FullyQualifiedPath would 
-                    // refer to $pshome\Modules location where core 
-                    // modules are deployed. 
+                    // In this scenario, the FullyQualifiedPath would
+                    // refer to $pshome\Modules location where core
+                    // modules are deployed.
                     if (!string.IsNullOrEmpty(path))
                     {
                         name = Path.Combine(path, name);
@@ -3662,9 +3680,8 @@ namespace System.Management.Automation.Runspaces
                     }
                 }
             }
-            catch (Exception e) // swallow all non-severe exceptions
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
         }
 
@@ -3855,7 +3872,12 @@ namespace System.Management.Automation.Runspaces
                     context.TypeTable = typeTable;
 
                     Types.Clear();
-                    Types.Add(typeTable.typesInfo);
+
+                    // A TypeTable contains types info along with type file references used to create the types info,
+                    // which is redundant information.  When resused in a runspace the ISS unpacks the file types again
+                    // resulting in duplicate types and duplication errors when processed.
+                    // So use this special Add method to filter all types files found in the TypeTable.
+                    Types.AddTypeTableTypesInfo(typeTable.typesInfo);
 
                     return;
                 }
@@ -4153,7 +4175,7 @@ namespace System.Management.Automation.Runspaces
                 throw e;
             }
 
-#if !CORECLR // CustomPSSnapIn Not Supported On CSS. 
+#if !CORECLR // CustomPSSnapIn Not Supported On CSS.
             if (!String.IsNullOrEmpty(psSnapInInfo.CustomPSSnapInType))
             {
                 LoadCustomPSSnapIn(psSnapInInfo);
@@ -4521,14 +4543,14 @@ namespace System.Management.Automation.Runspaces
 
    To customize your own custom options, pass a hashtable to CompleteInput, e.g.
          return [System.Management.Automation.CommandCompletion]::CompleteInput($inputScript, $cursorColumn,
-             @{ RelativeFilePaths=$false } 
+             @{ RelativeFilePaths=$false }
 #>
 
 [CmdletBinding(DefaultParameterSetName = 'ScriptInputSet')]
 Param(
     [Parameter(ParameterSetName = 'ScriptInputSet', Mandatory = $true, Position = 0)]
     [string] $inputScript,
-    
+
     [Parameter(ParameterSetName = 'ScriptInputSet', Mandatory = $true, Position = 1)]
     [int] $cursorColumn,
 
@@ -4540,7 +4562,7 @@ Param(
 
     [Parameter(ParameterSetName = 'AstInputSet', Mandatory = $true, Position = 2)]
     [System.Management.Automation.Language.IScriptPosition] $positionOfCursor,
-    
+
     [Parameter(ParameterSetName = 'ScriptInputSet', Position = 2)]
     [Parameter(ParameterSetName = 'AstInputSet', Position = 3)]
     [Hashtable] $options = $null
@@ -4589,14 +4611,19 @@ $RawUI.SetBufferContents(
     @{Top = -1; Bottom = -1; Right = -1; Left = -1},
     @{Character = ' '; ForegroundColor = $rawui.ForegroundColor; BackgroundColor = $rawui.BackgroundColor})
 # .Link
-# http://go.microsoft.com/fwlink/?LinkID=225747
+# https://go.microsoft.com/fwlink/?LinkID=225747
 # .ExternalHelp System.Management.Automation.dll-help.xml
 ";
             }
             else
             {
                 // Porting note: non-Windows platforms use `clear`
-                return "& (Get-Command -CommandType Application clear | Select-Object -First 1).Definition";
+                return @"
+& (Get-Command -CommandType Application clear | Select-Object -First 1).Definition
+# .Link
+# https://go.microsoft.com/fwlink/?LinkID=225747
+# .ExternalHelp System.Management.Automation.dll-help.xml
+";
             }
         }
 
@@ -4612,9 +4639,9 @@ $RawUI.SetBufferContents(
             return @"
 <#
 .FORWARDHELPTARGETNAME Get-Help
-.FORWARDHELPCATEGORY Cmdlet 
+.FORWARDHELPCATEGORY Cmdlet
 #>
-[CmdletBinding(DefaultParameterSetName='AllUsersView', HelpUri='http://go.microsoft.com/fwlink/?LinkID=113316')]
+[CmdletBinding(DefaultParameterSetName='AllUsersView', HelpUri='https://go.microsoft.com/fwlink/?LinkID=113316')]
 param(
     [Parameter(Position=0, ValueFromPipelineByPropertyName=$true)]
     [string]
@@ -4670,9 +4697,9 @@ param(
         internal static string GetMkdirFunctionText()
         {
             return @"
-<# 
+<#
 .FORWARDHELPTARGETNAME New-Item
-.FORWARDHELPCATEGORY Cmdlet 
+.FORWARDHELPCATEGORY Cmdlet
 #>
 
 [CmdletBinding(DefaultParameterSetName='pathSet',
@@ -4740,41 +4767,6 @@ end {
 ";
         }
 
-
-        internal static string GetGetVerbText()
-        {
-            return @"
-param(
-    [Parameter(ValueFromPipeline=$true)]
-    [string[]]
-    $verb = '*'
-)
-begin {
-    $allVerbs = [System.Reflection.IntrospectionExtensions]::GetTypeInfo([PSObject]).Assembly.ExportedTypes |
-        Microsoft.PowerShell.Core\Where-Object {$_.Name -match '^Verbs.'} |
-        Microsoft.PowerShell.Utility\Get-Member -type Properties -static |
-        Microsoft.PowerShell.Utility\Select-Object @{
-            Name='Verb'
-            Expression = {$_.Name}
-        }, @{
-            Name='Group'
-            Expression = {
-                $str = ""$($_.TypeName)""
-                $str.Substring($str.LastIndexOf('Verbs') + 5)
-            }
-        }
-}
-process {
-    foreach ($v in $verb) {
-        $allVerbs | Microsoft.PowerShell.Core\Where-Object { $_.Verb -like $v }
-    }
-}
-# .Link
-# http://go.microsoft.com/fwlink/?LinkID=160712
-# .ExternalHelp System.Management.Automation.dll-help.xml
-";
-        }
-
         internal static string GetOSTFunctionText()
         {
             return @"
@@ -4820,7 +4812,7 @@ end
 }
 <#
 .ForwardHelpTargetName Out-String
-.ForwardHelpCategory Cmdlet 
+.ForwardHelpCategory Cmdlet
 #>
 ";
         }
@@ -4930,7 +4922,7 @@ end
             new SessionStateVariableEntry(
                 FormatEnumerationLimit,
                 DefaultFormatEnumerationLimit,
-                RunspaceInit.FormatEnunmerationLimitDescription
+                RunspaceInit.FormatEnumerationLimitDescription
                 ),
 
              //variable for PSEmailServer
@@ -5142,6 +5134,11 @@ end
                         "Stop-Service",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("sv",
                         "Set-Variable",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                    // Web cmdlets aliases
+                    new SessionStateAliasEntry("irm",
+                        "Invoke-RestMethod",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("iwr",
+                        "Invoke-WebRequest",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
 // Porting note: #if !UNIX is used to disable aliases for cmdlets which conflict with Linux / OS X
 #if !UNIX
                     // ac is a native command on OS X
@@ -5209,10 +5206,6 @@ end
                         "Get-PSSnapIn",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("gwmi",
                         "Get-WmiObject",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("irm",
-                        "Invoke-RestMethod",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("iwr",
-                        "Invoke-WebRequest",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("iwmi",
                         "Invoke-WMIMethod",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("ogv",
@@ -5324,7 +5317,7 @@ end
         internal const string DefaultPromptFunctionText = @"
 ""PS $($executionContext.SessionState.Path.CurrentLocation)$('>' * ($nestedPromptLevel + 1)) "";
 # .Link
-# http://go.microsoft.com/fwlink/?LinkID=225750
+# https://go.microsoft.com/fwlink/?LinkID=225750
 # .ExternalHelp System.Management.Automation.dll-help.xml
 ";
 
@@ -5369,7 +5362,6 @@ if($paths) {
 #if !UNIX
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("mkdir", GetMkdirFunctionText(), isProductCode: true),
 #endif
-            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("Get-Verb", GetGetVerbText(), isProductCode: true),
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("oss", GetOSTFunctionText(), isProductCode: true),
 
             // Porting note: we remove the drive functions from Linux because they make no sense
@@ -5419,9 +5411,8 @@ if($paths) {
                 {
                     ssi.RemoveDrive(di, true, null);
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
         }
@@ -6032,7 +6023,9 @@ if($paths) {
 
             providers = new Dictionary<string, SessionStateProviderEntry>(StringComparer.OrdinalIgnoreCase)
             {
+#if !UNIX
                 { "Registry",    new SessionStateProviderEntry("Registry", typeof(RegistryProvider), helpFile) },
+#endif
                 { "Alias",       new SessionStateProviderEntry("Alias", typeof(AliasProvider), helpFile) },
                 { "Environment", new SessionStateProviderEntry("Environment", typeof(EnvironmentProvider), helpFile) },
                 { "FileSystem" , new SessionStateProviderEntry("FileSystem", typeof(FileSystemProvider), helpFile) },
@@ -6149,7 +6142,8 @@ if($paths) {
 
         private static string GetHelpFile(string assemblyPath)
         {
-            return Path.GetFileName(assemblyPath) + StringLiterals.HelpFileExtension;
+            // Help files exist only for original module assemblies, not for generated Ngen binaries
+            return Path.GetFileName(assemblyPath).Replace(".ni.dll", ".dll") + StringLiterals.HelpFileExtension;
         }
 
         private static PSTraceSource s_PSSnapInTracer = PSTraceSource.GetTracer("PSSnapInLoadUnload", "Loading and unloading mshsnapins", false);

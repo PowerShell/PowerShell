@@ -29,5 +29,5 @@ CmdletsToExport = 'New-JobTrigger', 'Add-JobTrigger', 'Remove-JobTrigger',
 AliasesToExport = @()
 FunctionsToExport = @()
 
-HelpInfoURI = 'http://go.microsoft.com/fwlink/?linkid=390816'
+HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=390816'
 }

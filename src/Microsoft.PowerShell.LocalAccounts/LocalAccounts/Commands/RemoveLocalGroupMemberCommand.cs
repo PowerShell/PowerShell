@@ -15,12 +15,12 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Remove-LocalGroupMember cmdlet removes one or more members (users or 
+    /// The Remove-LocalGroupMember cmdlet removes one or more members (users or
     /// groups) from a local security group.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "LocalGroupMember",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717989")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717989")]
     [Alias("rlgm")]
     public class RemoveLocalGroupMemberCommand : PSCmdlet
     {
@@ -43,11 +43,11 @@ namespace Microsoft.PowerShell.Commands
             set { this.group = value; }
         }
         private Microsoft.PowerShell.Commands.LocalGroup group;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "Member".
-        /// Specifies one or more users or groups to remove from this local group. You can 
-        /// identify users or groups by specifying their names or SIDs, or by passing 
+        /// Specifies one or more users or groups to remove from this local group. You can
+        /// identify users or groups by specifying their names or SIDs, or by passing
         /// Microsoft.PowerShell.Commands.LocalPrincipal objects.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
             set { this.name = value; }
         }
         private string name;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "SID".
         /// Specifies a security group from the local Security Accounts Manager.
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
         /// in WhatIf scenarios.
         /// </param>
         /// <param name="member">
-        /// LocalPrincipal object to be processed 
+        /// LocalPrincipal object to be processed
         /// </param>
         /// <returns>
         /// LocalPrincipal object processed and ready to be removed

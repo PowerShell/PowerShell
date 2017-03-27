@@ -7,7 +7,7 @@ function Get-ParseResults
     [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline=$True,Mandatory=$True)]
-        [string]$src, 
+        [string]$src,
         [switch]$Ast
     )
 
@@ -23,16 +23,15 @@ function Get-RuntimeError
 {
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$True,Mandatory=$True)]
-        [string]$src
+        [Parameter(ValueFromPipeline=$True,Mandatory=$True)][string]$src
     )
-
+ 
     $errors = $null
-    try 
+    try
     {
         [scriptblock]::Create($src).Invoke() > $null
     }
-    catch 
+    catch
     {
         return $_.Exception.InnerException.ErrorRecord
     }
@@ -54,63 +53,34 @@ function position_message
 
 
 #
-# Run the new parser, check the errors against the expected errors
-#
-function Test-Error
-{
-    [CmdletBinding()]
-    param([string]$src, [string[]]$expectedErrors, [int[]]$expectedOffsets)
-
-    Assert ($expectedErrors.Count -eq $expectedOffsets.Count) "Test case error"
-
-    $errors = Get-ParseResults -Src $src
-
-
-    if ($null -ne $errors)
-    {
-        Assert ($errors.Count -eq $expectedErrors.Count) "Expected $($expectedErrors.Count) errors, got $($errors.Count)"
-        for ($i = 0; $i -lt $errors.Count; ++$i)
-        {
-            $err = $errors[$i]
-            Assert ($expectedErrors[$i] -eq $err.ErrorId) ("Unexpected error: {0,-30}{1}" -f ("$($err.ErrorId):",
-                      (position_message $err.Extent.StartScriptPosition)))
-            Assert ($expectedOffsets[$i] -eq $err.Extent.StartScriptPosition.Offset) `
-                "Expected position: $($expectedOffsets[$i]), got $($err.Extent.StartScriptPosition.Offset)"
-       }
-    }
-    else
-    {
-        Assert $false "Expected errors but didn't receive any."
-    }
-}
-
-#
 # Pester friendly version of Test-Error
 #
 function ShouldBeParseError
 {
     [CmdletBinding()]
     param(
-        [string]$src, 
-        [string[]]$expectedErrors, 
-        [int[]]$expectedOffsets, 
+        [string]$src,
+        [string[]]$expectedErrors,
+        [int[]]$expectedOffsets,
         # This is a temporary solution after moving type creation from parse time to runtime
-        [switch]$SkipAndCheckRuntimeError
+        [switch]$SkipAndCheckRuntimeError,
+        # for test coverarage purpose, tests validate columnNumber or offset
+        [switch]$CheckColumnNumber
     )
 
     Context "Parse error expected: <<$src>>" {
         # Test case error if this fails
         $expectedErrors.Count | Should Be $expectedOffsets.Count
-        
-        if ($SkipAndCheckRuntimeError) 
+
+        if ($SkipAndCheckRuntimeError)
         {
             It "error should happen at parse time, not at runtime" -Skip {}
             $errors = Get-RuntimeError -Src $src
             # for runtime errors we will only get the first one
             $expectedErrors = ,$expectedErrors[0]
             $expectedOffsets = ,$expectedOffsets[0]
-        } 
-        else 
+        }
+        else
         {
             $errors = Get-ParseResults -Src $src
         }
@@ -124,12 +94,14 @@ function ShouldBeParseError
             {
                 $errorId = $err.FullyQualifiedErrorId
             }
-            else 
+            else
             {
                 $errorId = $err.ErrorId
             }
             It "Error Id" { $errorId | Should Be $expectedErrors[$i] }
-            It "Error position" -Pending:$SkipAndCheckRuntimeError { $err.Extent.StartScriptPosition.Offset | Should Be $expectedOffsets[$i] }
+            $acutalPostion = $err.Extent.StartScriptPosition.Offset
+            if ( $CheckColumnNumber ) { $acutalPostion = $err.Extent.StartScriptPosition.ColumnNumber }
+            It "Error position" -Pending:$SkipAndCheckRuntimeError { $acutalPostion | Should Be $expectedOffsets[$i] }
        }
     }
 }
@@ -141,7 +113,7 @@ function Flatten-Ast
     param([System.Management.Automation.Language.Ast] $ast)
 
     $ast
-    $ast | gm -type property | ? { ($prop = $_.Name) -ne 'Parent' } | % { 
+    $ast | gm -type property | ? { ($prop = $_.Name) -ne 'Parent' } | % {
         $ast.$prop | ? { $_ -is [System.Management.Automation.Language.Ast] } | % { Flatten-Ast $_ }
     }
 }
@@ -149,30 +121,55 @@ function Flatten-Ast
 function Test-ErrorStmt
 {
     param([string]$src, [string]$errorStmtExtent)
+    $a = $args
+    Context "Error Statement expected: <<$src>>" {
+        $ast = Get-ParseResults $src -Ast
+        $asts = @(Flatten-Ast $ast.EndBlock.Statements[0])
 
-    $ast = Get-ParseResults $src -Ast
-    $asts = @(Flatten-Ast $ast.EndBlock.Statements[0])
-
-    Assert ($asts[0] -is [System.Management.Automation.Language.ErrorStatementAst]) "Expected error statement"
-    Assert ($asts.Count -eq $args.Count + 1) "Incorrect number of nested asts"
-    Assert ($asts[0].Extent.Text -eq $errorStmtExtent) "Error statement expected <$errorStmtExtent>, got <$($asts[0].Extent.Text)>"
-    for ($i = 0; $i -lt $args.Count; ++$i)
-    {
-        Assert ($asts[$i + 1].Extent.Text -eq $args[$i]) "Nested ast incorrect: <$($asts[$i+1].Extent.Text)>, expected <$($args[$i])>"
+        It 'Type is ErrorStatementAst' { $asts[0] | Should BeOfType System.Management.Automation.Language.ErrorStatementAst }
+        It "`$asts.count" { $asts.Count | Should Be ($a.Count + 1) }
+        It "`$asts[0].Extent.Text" { $asts[0].Extent.Text | Should Be $errorStmtExtent }
+        for ($i = 0; $i -lt $a.Count; ++$i)
+        {
+            It "`$asts[$($i + 1)].Extent.Text" {  $asts[$i + 1].Extent.Text | Should Be $a[$i] }
+        }
     }
 }
 
 function Test-Ast
 {
     param([string]$src)
-
+    $a = $args
     $ast = Get-ParseResults $src -Ast
     $asts = @(Flatten-Ast $ast)
-    Assert ($asts.Count -eq $args.Count) "Incorrect number of nested asts, got $($asts.Count), expected $($args.Count)"
-    for ($i = 0; $i -lt $args.Count; ++$i)
-    {
-        Assert ($asts[$i].Extent.Text -eq $args[$i]) "Nested ast incorrect: <$($asts[$i].Extent.Text)>, expected <$($args[$i])>"
+    Context "Ast Validation: <<$src>>" {
+        It "`$asts.count" { $asts.Count | Should Be $a.Count }
+        for ($i = 0; $i -lt $a.Count; ++$i)
+        {
+            It "`$asts[$i].Extent.Text" { $asts[$i].Extent.Text | Should Be $a[$i] }
+        }
     }
 }
 
-Export-ModuleMember -Function Test-Error, Test-ErrorStmt, Test-Ast, ShouldBeParseError, Get-ParseResults, Get-RuntimeError
+## ErrorStatement is special for SwitchStatement
+    function Test-ErrorStmtForSwitchFlag
+    {
+        param([string]$src, [string]$flagName)
+        $a = $args
+        $ast = Get-ParseResults $src -Ast
+        $ast = $ast.EndBlock.Statements[0]
+        Context "Ast Validation: <<$src>>" {
+            $ast | Should BeOfType System.Management.Automation.Language.ErrorStatementAst
+            $ast.Flags.ContainsKey($flagName) | Should be $true
+
+            $asts = @(Flatten-Ast $ast.Flags[$flagName].Item2)
+
+            $asts.Count | Should Be $a.Count
+            for ($i = 0; $i -lt $a.Count; ++$i)
+            {
+                $asts[$i].Extent.Text | Should Be $a[$i]
+            }
+        }
+    }
+
+Export-ModuleMember -Function Test-ErrorStmt, Test-Ast, ShouldBeParseError, Get-ParseResults, Get-RuntimeError, Test-ErrorStmtForSwitchFlag

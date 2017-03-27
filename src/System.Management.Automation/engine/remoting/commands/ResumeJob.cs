@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Commands
 #if !CORECLR
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet(VerbsLifecycle.Resume, "Job", SupportsShouldProcess = true, DefaultParameterSetName = JobCmdletBase.SessionIdParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=210611")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=210611")]
 #endif
     [OutputType(typeof(Job))]
     public class ResumeJobCommand : JobCmdletBase, IDisposable
@@ -50,7 +50,7 @@ namespace Microsoft.PowerShell.Commands
         private Job[] _jobs;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override String[] Command
         {
@@ -237,7 +237,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         protected override void StopProcessing()
         {
@@ -249,7 +249,7 @@ namespace Microsoft.PowerShell.Commands
         #region Dispose
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public void Dispose()
         {
@@ -258,7 +258,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="disposing"></param>
         protected void Dispose(bool disposing)

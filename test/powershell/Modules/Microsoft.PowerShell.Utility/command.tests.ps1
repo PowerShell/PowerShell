@@ -1,6 +1,6 @@
 ﻿Describe "Trace-Command" -tags "Feature" {
-    
-    Context "Listner options" {
+
+    Context "Listener options" {
         BeforeAll {
             $logFile = setup -f traceCommandLog.txt -pass
             $actualLogFile = setup -f actualTraceCommandLog.txt -pass
@@ -10,7 +10,7 @@
             if ( test-path $logfile ) { Remove-Item $logFile }
             if ( test-path $actualLogFile ) { Remove-Item $actualLogFile }
         }
-        
+
         It "LogicalOperationStack works" -pending:($IsCoreCLR) {
             $keyword = "Trace_Command_ListenerOption_LogicalOperationStack_Foo"
             $stack = [System.Diagnostics.Trace]::CorrelationManager.LogicalOperationStack
@@ -18,9 +18,9 @@
 
             Trace-Command -Name * -Expression {write-output Foo} -ListenerOption LogicalOperationStack -FilePath $logfile
 
-            $log = Get-Content $logfile | Where-Object {$_ -like "*LogicalOperationStack=$keyword*"}            
+            $log = Get-Content $logfile | Where-Object {$_ -like "*LogicalOperationStack=$keyword*"}
             $log.Count | Should BeGreaterThan 0
-        } 
+        }
 
         It "Callstack works" -pending:($IsCoreCLR) {
             Trace-Command -Name * -Expression {write-output Foo} -ListenerOption Callstack -FilePath $logfile
@@ -35,10 +35,10 @@
 
             ## allow a gap of 6 seconds. All traces should be finished within 6 seconds.
             $allowedGap = [timespan](60 * 1000 * 1000)
-            $results | ForEach-Object { 
-                    $actualGap = $_ - $expectedDate; 
-                    if ($expectedDate -gt $_) 
-                    { 
+            $results | ForEach-Object {
+                    $actualGap = $_ - $expectedDate;
+                    if ($expectedDate -gt $_)
+                    {
                         $actualGap = $expectedDate - $_;
                     }
 
@@ -46,7 +46,7 @@
                 }
         }
 
-        It "None options has no effect" {            
+        It "None options has no effect" {
             Trace-Command -Name * -Expression {write-output Foo} -ListenerOption None -FilePath $actualLogfile
             Trace-Command -name * -Expression {write-output Foo} -FilePath $logfile
 
@@ -66,7 +66,7 @@
             $log = Get-Content $logfile | Where-Object {$_ -like "*Timestamp=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
             $sortedResults = $results | Sort-Object
-            $sortedResults | Should Be $results 
+            $sortedResults | Should Be $results
         }
 
         It "ProcessId logs current process Id" {
@@ -76,5 +76,5 @@
 
             $results | ForEach-Object { $_ | Should Be $pid }
         }
-    }        
+    }
 }

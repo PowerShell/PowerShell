@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -236,7 +236,7 @@
   <data name="ExitReason" xml:space="preserve">
     <value>Workflow complete.</value>
   </data>
-  <data name="RemovingWrokflowInstance" xml:space="preserve">
+  <data name="RemovingWorkflowInstance" xml:space="preserve">
     <value>Removing workflow instance from the table.</value>
   </data>
   <data name="ElapsedTimeReached" xml:space="preserve">
@@ -278,7 +278,7 @@ Method: {3}</value>
   <data name="ErrorWhileValidatingWorkflow" xml:space="preserve">
     <value>An exception has occurred while validating the workflow.</value>
   </data>
-  <data name="AsJobandJobNameNotAllowed" xml:space="preserve">
+  <data name="AsJobAndJobNameNotAllowed" xml:space="preserve">
     <value>The argument to -PSParameterCollection can not contain AsJob, JobName, InputObject or PSParameterCollection as entries. Remove the extra entries and try again.</value>
     <comment>PSParameterCollection, AsJob, JobName, InputObject should not be localized. These are the names of parameters.</comment>
   </data>

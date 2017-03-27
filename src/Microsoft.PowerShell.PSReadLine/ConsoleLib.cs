@@ -19,7 +19,7 @@ namespace Microsoft.PowerShell.Internal
         public const uint MAPVK_VK_TO_VSC   = 0x00;
         public const uint MAPVK_VSC_TO_VK   = 0x01;
         public const uint MAPVK_VK_TO_CHAR  = 0x02;
-        
+
         public const byte VK_SHIFT          = 0x10;
         public const byte VK_CONTROL        = 0x11;
         public const byte VK_ALT            = 0x12;
@@ -368,7 +368,7 @@ namespace Microsoft.PowerShell.Internal
         public ushort Attributes;
     }
 
-    internal static class ConsoleKeyInfoExtension 
+    internal static class ConsoleKeyInfoExtension
     {
         public static string ToGestureString(this ConsoleKeyInfo key)
         {
@@ -713,10 +713,10 @@ namespace Microsoft.PowerShell.Internal
         internal static bool IsAnyDBCSCharSet(uint charSet)
         {
             const uint SHIFTJIS_CHARSET = 128;
-            const uint HANGEUL_CHARSET = 129;
+            const uint HANGUL_CHARSET = 129;
             const uint CHINESEBIG5_CHARSET = 136;
             const uint GB2312_CHARSET = 134;
-            return charSet == SHIFTJIS_CHARSET || charSet == HANGEUL_CHARSET ||
+            return charSet == SHIFTJIS_CHARSET || charSet == HANGUL_CHARSET ||
                    charSet == CHINESEBIG5_CHARSET || charSet == GB2312_CHARSET;
         }
 
@@ -798,7 +798,7 @@ namespace Microsoft.PowerShell.Internal
                      (0xffd2 <= c && c <= 0xffd7) ||
                      (0xffda <= c && c <= 0xffdc))
             {
-                /* Halfwidth Hangule variants */
+                /* Halfwidth Hangul variants */
                 return 1;
             }
             else if (0xffe0 <= c && c <= 0xffe6)

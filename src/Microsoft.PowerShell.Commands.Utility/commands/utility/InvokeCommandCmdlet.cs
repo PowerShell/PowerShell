@@ -10,7 +10,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class implementing Invoke-Expression
     /// </summary>
-    [Cmdlet("Invoke", "Expression", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113343")]
+    [Cmdlet(VerbsLifecycle.Invoke, "Expression", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113343")]
     public sealed
     class
     InvokeExpressionCommand : PSCmdlet
@@ -26,7 +26,7 @@ namespace Microsoft.PowerShell.Commands
         #endregion parameters
 
         /// <summary>
-        /// For each record, execute it, and push the results into the 
+        /// For each record, execute it, and push the results into the
         /// success stream.
         /// </summary>
         protected override void ProcessRecord()

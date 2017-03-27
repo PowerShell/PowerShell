@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         [DefaultValue(null)]
         public InArgument<Object> Value
@@ -252,7 +252,7 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// Forces the activity to not call the persist functionality, which will be responsible for 
+        /// Forces the activity to not call the persist functionality, which will be responsible for
         /// persisting the workflow state onto the disk.
         /// </summary>
         [BehaviorCategory]

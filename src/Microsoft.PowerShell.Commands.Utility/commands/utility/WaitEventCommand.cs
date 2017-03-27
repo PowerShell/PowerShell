@@ -9,9 +9,9 @@ using System.Threading;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Waits for a given event to arrive.  
+    /// Waits for a given event to arrive.
     /// </summary>
-    [Cmdlet(VerbsLifecycle.Wait, "Event", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=135276")]
+    [Cmdlet(VerbsLifecycle.Wait, "Event", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135276")]
     [OutputType(typeof(PSEventArgs))]
     public class WaitEventCommand : PSCmdlet
     {

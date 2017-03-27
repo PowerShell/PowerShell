@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -34,7 +34,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         #region Properties
 
-        internal UInt32 Channel 
+        internal UInt32 Channel
         {
             get { return channel; }
         }

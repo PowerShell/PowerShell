@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -227,7 +227,7 @@
   <data name="ObjectIdCannotBeLessThanZero" xml:space="preserve">
     <value>ObjectId cannot be less than or equal to 0. This can happen if the fragments are not properly constructed by the remote computer, or the data has been changed by unauthorized users.</value>
   </data>
-  <data name="FragmetIdsNotInSequence" xml:space="preserve">
+  <data name="FragmentIdsNotInSequence" xml:space="preserve">
     <value>The FragmentIDs of the same object must be in sequence, incrementally changing by 1. This can happen if the fragments are not properly constructed by the remote computer. The data might also have been corrupted or changed.</value>
   </data>
   <data name="ObjectIsTooBig" xml:space="preserve">
@@ -542,7 +542,7 @@
   <data name="StopPSJobWhatIfTarget" xml:space="preserve">
     <value>Remote Command: {0}, associated with the job that has an ID of "{1}".</value>
   </data>
-  <data name="NewRunspaceAmbiguosAuthentication" xml:space="preserve">
+  <data name="NewRunspaceAmbiguousAuthentication" xml:space="preserve">
     <value>A {0} cannot be specified when {1} is specified.</value>
   </data>
   <data name="WildCardErrorFilePathParameter" xml:space="preserve">
@@ -602,7 +602,7 @@
   <data name="CSCDoubleParameterOutOfRange" xml:space="preserve">
     <value>{0} is not a valid value for the parameter {1}. The value must be greater than or equal to 0.</value>
   </data>
-  <data name="ProxyAmbiguosAuthentication" xml:space="preserve">
+  <data name="ProxyAmbiguousAuthentication" xml:space="preserve">
     <value>{0} cannot be specified as a proxy authentication mechanism. Only {1},{2} or {3} are supported for proxy authentication.</value>
   </data>
   <data name="ProxyCredentialWithoutAccess" xml:space="preserve">
@@ -936,7 +936,7 @@ Do you want to continue?</value>
     <value>{0} may need to restart the WinRM service if a configuration using this name has recently been unregistered, certain system data structures may still be cached. In that case, a restart of WinRM may be required.
 All WinRM sessions connected to Windows PowerShell session configurations, such as Microsoft.PowerShell and session configurations that are created with the Register-PSSessionConfiguration cmdlet, are disconnected.</value>
   </data>
-   <data name="WinRMForceRestartWarning" xml:space="preserve">
+  <data name="WinRMForceRestartWarning" xml:space="preserve">
     <value>You are running in a remote session and have selected the Force option which means the WinRM service may restart.If the WinRM service restarts then this remote session will be terminated and you will need to create a new session to continue</value>
   </data>
   <data name="JobSourceAdapterCannotSaveNullJob" xml:space="preserve">
@@ -1268,7 +1268,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   <data name="InvalidIdleTimeoutOption" xml:space="preserve">
     <value>The specified IdleTimeout session option {0} (seconds) is not a valid period.  Specify an IdleTimeout value that is greater than or equal to the minimum allowed {1} (seconds).</value>
     <comment>{0} is a placeholder for the provided idletimeout
-{1} is a placeholder for the miniumum allowed idletimeout value</comment>
+{1} is a placeholder for the minimum allowed idletimeout value</comment>
   </data>
   <data name="DISCVisibilityAndAutoLoadingCannotBeBothSpecified" xml:space="preserve">
     <value>The cmdlet "{0}" or the alias "{1}" cannot be present when "{2}","{3}","{4}" or "{5}" keys are specified in the session configuration file.</value>
@@ -1359,9 +1359,6 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   <data name="ReceivePSSessionInDebugMode" xml:space="preserve">
     <value>The remote session command is currently stopped in the debugger.  Use the Enter-PSSession cmdlet to connect interactively to the remote session and automatically enter into the console debugger.</value>
   </data>
-  <data name="RCDisconnectDebug" xml:space="preserve">
-    <value>Session {0} with instance ID {1} on computer {2} has been disconnected because the script running on the session has stopped at a breakpoint. Use the Enter-PSSession cmdlet on this session to connect back to the session and begin interactive debugging.</value>
-  </data>
   <data name="RemoteDebuggingEndpointVersionError" xml:space="preserve">
     <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running Windows PowerShell {0} or greater.</value>
   </data>
@@ -1393,7 +1390,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>The job cannot be debugged because there is no host UI available.  Make sure you are running this command in a PowerShell host that implements PSHostUserInterface.</value>
   </data>
   <data name="CannotDebugJobInvalidDebuggerMode" xml:space="preserve">
-    <value>The job cannot be debugged because the host debugger mode is set to None or Default.  The host debugger mode must be LocalScript and/or RemoteSript.</value>
+    <value>The job cannot be debugged because the host debugger mode is set to None or Default.  The host debugger mode must be LocalScript and/or RemoteScript.</value>
   </data>
   <data name="FoundMultipleJobsWithId" xml:space="preserve">
     <value>Multiple jobs were found with Id {0}.  Debug-Job can debug only one job at a time.</value>
@@ -1447,7 +1444,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>The supplied plugin context is not valid.</value>
   </data>
   <data name="WSManPluginInvalidArgSet" xml:space="preserve">
-    <value>Powershell plugin encounterd a fatal error while processing {0} arguments.</value>
+    <value>Powershell plugin encountered a fatal error while processing {0} arguments.</value>
   </data>
   <data name="WSManPluginInvalidCommandContext" xml:space="preserve">
     <value>The supplied command context is not valid.</value>
@@ -1489,19 +1486,19 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>PowerShell plugin does not understand the option {0}. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
   </data>
   <data name="WSManPluginProtocolVersionNotFound" xml:space="preserve">
-    <value>An option with name {0} is expected from the client. Make sure the client is compatible with the build {1} and the protocl version {2} of PowerShell.</value>
+    <value>An option with name {0} is expected from the client. Make sure the client is compatible with the build {1} and the protocol version {2} of PowerShell.</value>
   </data>
   <data name="WSManPluginProtocolVersionNotMatch" xml:space="preserve">
     <value>&lt;PSProtocolVersionError ServerProtocolVersion="{0}" ServerBuildVersion="{1}"&gt;Powershell plugin does not support the protocol version {2} requested by client.&lt;/PSProtocolVersionError&gt;</value>
   </data>
   <data name="WSManPluginReportContextFailed" xml:space="preserve">
-    <value>Powershell plugin encounterd a fatal error while reporting context to WSMan service.</value>
+    <value>Powershell plugin encountered a fatal error while reporting context to WSMan service.</value>
   </data>
   <data name="WSManPluginSessionCreationFailed" xml:space="preserve">
     <value>Unable to create managed server session.</value>
   </data>
   <data name="WSManPluginShutdownRegistrationFailed" xml:space="preserve">
-    <value>Powershell plugin encounterd a fatal error registering a wait handle for shutdown notification.</value>
+    <value>Powershell plugin encountered a fatal error registering a wait handle for shutdown notification.</value>
   </data>
   <data name="ServerDriverRemoteHostAlreadyPushed" xml:space="preserve">
     <value>Cannot enter Runspace because a Runspace is already pushed in this session.</value>
@@ -1610,6 +1607,36 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   -The domain or computer name was not included with the specified credential, for example: DOMAIN\UserName or COMPUTER\UserName.</value>
   </data>
   <data name="CannotStartSSHClient" xml:space="preserve">
-    <value>An error occurred when starting the SSH.exe client needed for the remoting connection.</value>
+    <value>Failed to start the SSH client process needed for the remoting connection with error: {0}.</value>
+  </data>
+  <data name="KeyFileNotFound" xml:space="preserve">
+    <value>The specified key file {0} was not found.</value>
+  </data>
+  <data name="SSHClientEndWithErrorMessage" xml:space="preserve">
+    <value>The SSH client session has ended with error message: {0}</value>
+  </data>
+  <data name="SSHClientEndNoErrorMessage" xml:space="preserve">
+    <value>The SSH client session has ended with no error message.</value>
+  </data>
+  <data name="MissingRequiredSSHParameter" xml:space="preserve">
+    <value>The provided SSHConnection hashtable is missing the required ComputerName or HostName parameter.</value>
+  </data>
+  <data name="InvalidSSHConnectionParameter" xml:space="preserve">
+    <value>The provided SSHConnection hashtable parameter name or element is null or empty.</value>
+  </data>
+  <data name="UnknownSSHConnectionParameter" xml:space="preserve">
+    <value>The provided SSHConnection hashtable parameter {0} is not supported.</value>
+  </data>
+  <data name="SSHConnectionDuplicateHostName" xml:space="preserve">
+    <value>The provided SSHConnection hashtable contains both a ComputerName and HostName parameter.  Only one can be specified.</value>
+  </data>
+  <data name="SSHConnectionDuplicateKeyPath" xml:space="preserve">
+    <value>The provided SSHConnection hashtable contains both a KeyFilePath and IdentityFilePath parameter.  Only one can be specified.</value>
+  </data>
+  <data name="CouldNotFindRoleCapabilityFile" xml:space="preserve">
+    <value>Could not find the provided role capability file {0}.</value>
+  </data>
+  <data name="InvalidRoleCapabilityFileExtension" xml:space="preserve">
+    <value>The provided role capability file {0} does not have the required .psrc extension.</value>
   </data>
 </root>

@@ -16,7 +16,7 @@ namespace Microsoft.Management.UI.Internal
     public abstract class DataErrorInfoValidationRule
     {
         /// <summary>
-        /// When overridden in a derived class, performs validation checks on a value. 
+        /// When overridden in a derived class, performs validation checks on a value.
         /// </summary>
         /// <param name="value">
         /// The value to check.

@@ -16,11 +16,11 @@ using System.Security.Cryptography;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements get-random cmdlet.  
+    /// This class implements get-random cmdlet.
     /// </summary>
     /// <!-- author: LukaszA -->
     [Cmdlet(VerbsCommon.Get, "Random", DefaultParameterSetName = GetRandomCommand.RandomNumberParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113446", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113446", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(Int32), typeof(Int64), typeof(Double))]
     public class GetRandomCommand : PSCmdlet
     {
@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameters for RandomNumberParameterSet
 
         /// <summary>
-        /// Maximum number to generate 
+        /// Maximum number to generate
         /// </summary>
         [Parameter(ParameterSetName = RandomNumberParameterSet, Position = 0)]
         public object Maximum { get; set; }
@@ -275,7 +275,7 @@ namespace Microsoft.PowerShell.Commands
         public object[] InputObject { get; set; }
 
         /// <summary>
-        /// Number of items to output (number of list items or of numbers) 
+        /// Number of items to output (number of list items or of numbers)
         /// </summary>
         [Parameter(ParameterSetName = GetRandomCommand.RandomListItemParameterSet)]
         [ValidateRange(1, int.MaxValue)]
@@ -290,7 +290,7 @@ namespace Microsoft.PowerShell.Commands
             double randomNumber;
             double diff = max - min;
 
-            // I couldn't find a better fix for bug #216893 then 
+            // I couldn't find a better fix for bug #216893 then
             // to test and retry if a random number falls outside the bounds
             // because of floating-point-arithmetic inaccuracies.
             //
@@ -446,7 +446,7 @@ namespace Microsoft.PowerShell.Commands
         // rough proof that when choosing random K items out of N items
         // each item has got K/N probability of being included in the final list
         //
-        // probability that a particular item in this.chosenListItems is NOT going to be replaced 
+        // probability that a particular item in this.chosenListItems is NOT going to be replaced
         // when processing I-th input item [assumes I > K]:
         // P_one_step(I) = 1 - ((K / I) * ((K - 1) / K) + ((I - K) / I) = (I - 1) / I
         //                      <--A-->   <-----B----->   <-----C----->
@@ -459,8 +459,8 @@ namespace Microsoft.PowerShell.Commands
         //
         // probability that a particular item in this.chosenListItems is NOT going to be replaced
         // when processing input items J through N [assumes J > K]
-        // P_removal(J) = Multiply(for I = J to N) P(I) = 
-        //              = ((J - 1) / J) * (J / (J + 1)) * ... * ((N - 2) / (N - 1)) * ((N - 1) / N) = 
+        // P_removal(J) = Multiply(for I = J to N) P(I) =
+        //              = ((J - 1) / J) * (J / (J + 1)) * ... * ((N - 2) / (N - 1)) * ((N - 1) / N) =
         //              = (J - 1) / N
         //
         // probability that when processing an element it is going to be put into this.chosenListItems
@@ -510,7 +510,7 @@ namespace Microsoft.PowerShell.Commands
         {
             if (this.EffectiveParameterSet == MyParameterSet.RandomListItem)
             {
-                // make sure the order is truly random 
+                // make sure the order is truly random
                 // (all permutations with the same probability)
                 // O(n) time
                 int n = _chosenListItems.Count;

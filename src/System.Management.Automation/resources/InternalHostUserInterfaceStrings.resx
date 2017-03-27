@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -201,10 +201,11 @@ Windows PowerShell transcript start
 Start time: {0:yyyyMMddHHmmss}
 Username: {1}
 RunAs User: {2}
-Machine: {3} ({4})
-Host Application: {5}
-Process ID: {6}
-{7}
+Configuration Name: {3}
+Machine: {4} ({5})
+Host Application: {6}
+Process ID: {7}
+{8}
 **********************</value>
   </data>
   <data name="TranscriptEpilogue" xml:space="preserve">
@@ -212,5 +213,8 @@ Process ID: {6}
 Windows PowerShell transcript end
 End time: {0:yyyyMMddHHmmss}
 **********************</value>
+  </data>
+   <data name="InvalidTranscriptFilePath" xml:space="preserve">
+    <value>File path {0} resolves to a directory.</value>
   </data>
 </root>

@@ -75,23 +75,23 @@ namespace System.Management.Automation
         /// Constructs the parameter binder with the specified type metadata. The binder is only valid
         /// for a single instance of a bindable object and only for the duration of a command.
         /// </summary>
-        /// 
+        ///
         /// <param name="target">
         /// The target object that the parameter values will be bound to.
         /// </param>
-        /// 
+        ///
         /// <param name="invocationInfo">
         /// The invocation information for the code that is being bound.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context of the currently running engine.
         /// </param>
-        /// 
+        ///
         /// <param name="command">
         /// The command that the parameter binder is binding to. The command can be null.
         /// </param>
-        /// 
+        ///
         internal ParameterBinderBase(
             object target,
             InvocationInfo invocationInfo,
@@ -117,19 +117,19 @@ namespace System.Management.Automation
         /// Constructs the parameter binder with the specified type metadata. The binder is only valid
         /// for a single instance of a bindable object and only for the duration of a command.
         /// </summary>
-        /// 
+        ///
         /// <param name="invocationInfo">
         /// The invocation information for the code that is being bound.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context of the currently running engine.
         /// </param>
-        /// 
+        ///
         /// <param name="command">
         /// The command that the parameter binder is binding to. The command can be null.
         /// </param>
-        /// 
+        ///
         internal ParameterBinderBase(
             InvocationInfo invocationInfo,
             ExecutionContext context,
@@ -204,15 +204,15 @@ namespace System.Management.Automation
         /// Derived classes must override this method to get the default parameter
         /// value so that it can be restored between pipeline input
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the parameter to get the default value of.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The value of the parameter specified by name.
         /// </returns>
-        /// 
+        ///
         internal abstract object GetDefaultParameterValue(string name);
 
         #endregion Parameter default values
@@ -304,37 +304,37 @@ namespace System.Management.Automation
         /// parameter, then calls the protected BindParameter method to have
         /// the derived class do the actual binding.
         /// </summary>
-        /// 
+        ///
         /// <param name="parameter">
         /// The parameter to be bound.
         /// </param>
-        /// 
+        ///
         /// <param name="parameterMetadata">
         /// The metadata for the parameter to use in guiding the binding.
         /// </param>
-        /// 
+        ///
         /// <param name="flags">
         /// Flags for type coercion and validation.
         /// </param>
-        /// 
+        ///
         /// <returns>
-        /// True if the parameter was successfully bound. False if <paramref name="coerceTypeIfNeeded"/> 
+        /// True if the parameter was successfully bound. False if <paramref name="coerceTypeIfNeeded"/>
         /// is false and the type does not match the parameter type.
         /// </returns>
-        /// 
+        ///
         /// <remarks>
         /// The binding algorithm goes as follows:
         /// 1. The data generation attributes are run
         /// 2. The data is coerced into the correct type
         /// 3. The data if validated using the validation attributes
-        /// 4. The data is encoded into the bindable object using the 
+        /// 4. The data is encoded into the bindable object using the
         ///    protected BindParameter method.
         /// </remarks>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="parameter"/> or <paramref name="parameterMetadata"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ParameterBindingException">
         /// If argument transformation fails.
         /// or
@@ -344,7 +344,7 @@ namespace System.Management.Automation
         /// or
         /// If the binding to the parameter fails.
         /// </exception>
-        /// 
+        ///
         internal virtual bool BindParameter(
             CommandParameterInternal parameter,
             CompiledCommandParameter parameterMetadata,
@@ -386,7 +386,7 @@ namespace System.Management.Automation
                     }
 
                     // Now do the argument transformation. No transformation is done for the default values in script that meet the following 2 conditions:
-                    //  1. the default value is not specified by the user, but is the powershell default value. 
+                    //  1. the default value is not specified by the user, but is the powershell default value.
                     //     e.g. the powershell default value for a class type is null, for the string type is string.empty.
                     //  2. the powershell default value is null.
                     // This is to prevent ArgumentTransformationAttributes from making a non-mandatory parameter behave like a mandatory one.
@@ -421,11 +421,11 @@ namespace System.Management.Automation
                                 else
                                 {
                                     // Only apply argument transformation when the argument is not null, is mandatory, or disallows null as a value.
-                                    // 
+                                    //
                                     // If we are binding default value for an unbound script parameter, this parameter is guaranteed not mandatory
                                     // in the chosen parameter set. This is because:
                                     //  1. If we use cmdlet binding for this script (CmdletParameterBinderController is used), then binding
-                                    //     default value to unbound parameters won't happen until after all mandatory parameters from the 
+                                    //     default value to unbound parameters won't happen until after all mandatory parameters from the
                                     //     chosen parameter set are handled. Therefore, the unbound parameter we are dealing with here won't
                                     //     be mandatory in the chosen parameter set.
                                     //  2. If we use script binding (ScriptParameterBinderController is used), then parameters won't have the
@@ -446,7 +446,6 @@ namespace System.Management.Automation
                             }
                             catch (Exception e) // Catch-all OK, 3rd party callout
                             {
-                                CommandProcessorBase.CheckForSevereException(e);
                                 bindingTracer.WriteLine(
                                     "ERROR: DATA GENERATION: {0}",
                                     e.Message);
@@ -489,7 +488,7 @@ namespace System.Management.Automation
                         if (!ShouldContinueUncoercedBind(parameter, parameterMetadata, flags, ref parameterValue))
                         {
                             // Don't attempt the bind because the value
-                            // is not of the correct 
+                            // is not of the correct
                             // type for the parameter.
                             break;
                         }
@@ -530,7 +529,6 @@ namespace System.Management.Automation
                                 }
                                 catch (Exception e) // Catch-all OK, 3rd party callout
                                 {
-                                    CommandProcessorBase.CheckForSevereException(e);
                                     bindingTracer.WriteLine(
                                         "ERROR: VALIDATION FAILED: {0}",
                                         e.Message);
@@ -553,7 +551,7 @@ namespace System.Management.Automation
                             }
                         }
 
-                        // If the is null, an empty string, or an empty collection, 
+                        // If the is null, an empty string, or an empty collection,
                         // check the parameter metadata to ensure that binding can continue
                         // This method throws an appropriate ParameterBindingException
                         // if binding cannot continue. If it returns then binding can
@@ -564,7 +562,7 @@ namespace System.Management.Automation
                         }
                     }
 
-                    // Write out obsolete parameter warning only if 
+                    // Write out obsolete parameter warning only if
                     //  1. We are binding parameters for a simple function/script
                     //  2. We are not binding a default parameter value
 
@@ -582,9 +580,9 @@ namespace System.Management.Automation
                         if (mshCommandRuntime != null)
                         {
                             // Write out warning only if we are in the context of MshCommandRuntime.
-                            // This is because 
+                            // This is because
                             //  1. The overload method WriteWarning(WarningRecord) is only available in MshCommandRuntime;
-                            //  2. We write out warnings for obsolete commands and obsolete cmdlet parameters only when in 
+                            //  2. We write out warnings for obsolete commands and obsolete cmdlet parameters only when in
                             //     the context of MshCommandRuntime. So we do it here to keep consistency.
                             mshCommandRuntime.WriteWarning(new WarningRecord(FQIDParameterObsolete, obsoleteWarning));
                         }
@@ -672,9 +670,8 @@ namespace System.Management.Automation
                                 stringToPrint = parameterValue.ToString();
                             }
                         }
-                        catch (Exception e) // Catch-all OK, 3rd party callout
+                        catch (Exception) // Catch-all OK, 3rd party callout
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
                         }
                         if (stringToPrint != null)
                         {
@@ -688,30 +685,30 @@ namespace System.Management.Automation
         } // BindParameter
 
         /// <summary>
-        /// This method ensures that if the parameter is mandatory, and AllowNull, AllowEmptyString, 
+        /// This method ensures that if the parameter is mandatory, and AllowNull, AllowEmptyString,
         /// and/or AllowEmptyCollection is not specified, then argument is not null or empty.
         /// </summary>
-        /// 
+        ///
         /// <param name="parameter">
         /// The argument token.
         /// </param>
-        /// 
+        ///
         /// <param name="parameterMetadata">
         /// The metadata for the parameter.
         /// </param>
-        /// 
+        ///
         /// <param name="argumentType">
         /// The type of the argument to validate against.
         /// </param>
-        /// 
+        ///
         /// <param name="parameterValue">
         /// The value that will be bound to the parameter.
         /// </param>
-        /// 
+        ///
         /// <param name="recurseIntoCollections">
         /// If true, then elements of collections will be validated against the metadata.
         /// </param>
-        /// 
+        ///
         private void ValidateNullOrEmptyArgument(
             CommandParameterInternal parameter,
             CompiledCommandParameter parameterMetadata,
@@ -742,7 +739,7 @@ namespace System.Management.Automation
 
             if (argumentType == typeof(string))
             {
-                // Since the parameter is of type string, verify that either the argument 
+                // Since the parameter is of type string, verify that either the argument
                 // is not null and not empty or that the parameter can accept null or empty.
                 string stringParamValue = parameterValue as string;
                 Diagnostics.Assert(
@@ -900,7 +897,7 @@ namespace System.Management.Automation
                 if (encodedValue == null || coercionRequired)
                 {
                     // Don't attempt the bind because the
-                    // PSObject BaseObject is not of the correct 
+                    // PSObject BaseObject is not of the correct
                     // type for the parameter.
                     return false;
                 }
@@ -963,42 +960,42 @@ namespace System.Management.Automation
         /// <summary>
         /// Coerces the argument type to the parameter value type as needed.
         /// </summary>
-        /// 
+        ///
         /// <param name="argument">
         /// The argument as was specified by the command line.
         /// </param>
-        /// 
+        ///
         /// <param name="parameterName">
         /// The name of the parameter that the coercion is taking place to bind to. It is
         /// used only for error reporting.
         /// </param>
-        /// 
+        ///
         /// <param name="toType">
         /// The type to coerce the value to.
         /// </param>
-        /// 
+        ///
         /// <param name="collectionTypeInfo">
         /// The information about the collection type, like element type, etc.
         /// </param>
-        /// 
+        ///
         /// <param name="currentValue">
         /// The current value of the argument.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The value of the argument in the type of the parameter.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="argument"/> or <paramref name="toType"/> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ParameterBindingException">
         /// If the argument value is missing and the parameter is not a bool or SwitchParameter.
         /// or
         /// If the argument value could not be converted to the parameter type.
         /// </exception>
-        /// 
+        ///
         private object CoerceTypeAsNeeded(
             CommandParameterInternal argument,
             string parameterName,
@@ -1055,7 +1052,7 @@ namespace System.Management.Automation
 
                         bindingTracer.WriteLine("Trying to convert argument value from {0} to {1}", argumentType, toType);
 
-                        // Likewise shortcircuit the case were the user has asked for a shell object. 
+                        // Likewise shortcircuit the case were the user has asked for a shell object.
                         // He always gets a shell object regardless of the actual type of the object.
                         if (toType == typeof(PSObject))
                         {
@@ -1097,7 +1094,7 @@ namespace System.Management.Automation
                         }
 
                         // NTRAID#Windows OS Bugs -<bug id here> - Nana
-                        // If we have a boolean, we have to ensure that it can 
+                        // If we have a boolean, we have to ensure that it can
                         // only take parameters of type boolean or numbers with
                         // 0 indicating false and everything else indicating true
                         // Anything else passed should be reported as an error
@@ -1173,7 +1170,7 @@ namespace System.Management.Automation
                             else
                             {
                                 // Invalid types which cannot be associated with a bool
-                                // Since there is a catch block which appropriately 
+                                // Since there is a catch block which appropriately
                                 // handles this situation we just throw an exception here
                                 //throw new PSInvalidCastException();
                                 ParameterBindingException pbe =
@@ -1428,56 +1425,56 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Takes the current value specified and converts or adds it to 
+        /// Takes the current value specified and converts or adds it to
         /// a collection of the appropriate type.
         /// </summary>
-        /// 
+        ///
         /// <param name="argument">
         /// The argument the current value comes from. Used for error reporting.
         /// </param>
-        /// 
+        ///
         /// <param name="parameterName">
         /// The name of the parameter.
         /// </param>
-        /// 
+        ///
         /// <param name="collectionTypeInformation">
         /// The collection type information to which the current value will be
         /// encoded.
         /// </param>
-        /// 
+        ///
         /// <param name="toType">
         /// The type the current value will be converted to.
         /// </param>
-        /// 
+        ///
         /// <param name="currentValue">
         /// The value to be encoded.
         /// </param>
-        /// 
+        ///
         /// <param name="coerceElementTypeIfNeeded">
         /// If true, the element will be coerced into the appropriate type
         /// for the collection. If false, and the element isn't of the appropriate
         /// type then the <paramref name="coercionRequired"/> out parameter will
         /// be true.
         /// </param>
-        /// 
+        ///
         /// <param name="coercionRequired">
         /// This out parameter will be true if <paramref name="coerceElementTypeIfNeeded"/>
         /// is true and the value could not be encoded into the collection because it
         /// requires coercion to the element type.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A collection of the appropriate type containing the specified value.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ParameterBindingException">
         /// If <paramref name="currentValue"/> is a collection and one of its values
         /// cannot be coerced into the appropriate type.
         /// or
-        /// A collection of the appropriate <paramref name="collectionTypeInformation"/> 
+        /// A collection of the appropriate <paramref name="collectionTypeInformation"/>
         /// could not be created.
         /// </exception>
-        /// 
+        ///
         [SuppressMessage("Microsoft.Maintainability", "CA1505:AvoidUnmaintainableCode")]
         [SuppressMessage("Microsoft.Maintainability", "CA1506:AvoidExcessiveClassCoupling", Justification = "Consider Simplyfing it")]
         private object EncodeCollection(
@@ -1530,7 +1527,7 @@ namespace System.Management.Automation
                 IList resultAsIList = null;
                 MethodInfo addMethod = null;
 
-                // We must special case System.Array to be like an object array since it is an 
+                // We must special case System.Array to be like an object array since it is an
                 // abstract base class and cannot be created in the IList path below.
                 bool isSystemDotArray = (toType == typeof(System.Array));
 
@@ -1705,7 +1702,7 @@ namespace System.Management.Automation
                 }
 
                 // NTRAID#Windows OS Bugs-966440-2004/05/05-JeffJon
-                // This coercion can only go to a collection type.  It cannot take a 
+                // This coercion can only go to a collection type.  It cannot take a
                 // collection type and coerce it into a scalar type.
 
                 // Now that the new collection instance has been created, coerce each element type
@@ -1792,8 +1789,6 @@ namespace System.Management.Automation
                         }
                         catch (Exception error) // OK, we catch all here by design
                         {
-                            CommandProcessorBase.CheckForSevereException(error);
-
                             // The inner exception to TargetInvocationException
                             // (if present) has a better Message
                             if (error is TargetInvocationException &&
@@ -1891,8 +1886,6 @@ namespace System.Management.Automation
                     }
                     catch (Exception error) // OK, we catch all here by design
                     {
-                        CommandProcessorBase.CheckForSevereException(error);
-
                         // The inner exception to TargetInvocationException
                         // (if present) has a better Message
                         if (error is TargetInvocationException &&
@@ -2052,14 +2045,14 @@ namespace System.Management.Automation
             if (_dictionary.ImplicitUsingParameters == null)
             {
                 // Handle downlevel V4 case where using parameters are passed as an array list.
-                IList implictArrayUsingParameters = PSObject.Base(obj) as IList;
-                if ((implictArrayUsingParameters != null) && (implictArrayUsingParameters.Count > 0))
+                IList implicitArrayUsingParameters = PSObject.Base(obj) as IList;
+                if ((implicitArrayUsingParameters != null) && (implicitArrayUsingParameters.Count > 0))
                 {
                     // Convert array to hash table.
                     _dictionary.ImplicitUsingParameters = new Hashtable();
-                    for (int index = 0; index < implictArrayUsingParameters.Count; index++)
+                    for (int index = 0; index < implicitArrayUsingParameters.Count; index++)
                     {
-                        _dictionary.ImplicitUsingParameters.Add(index, implictArrayUsingParameters[index]);
+                        _dictionary.ImplicitUsingParameters.Add(index, implicitArrayUsingParameters[index]);
                     }
                 }
             }

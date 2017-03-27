@@ -13,26 +13,26 @@ using System.Management.Automation.Language;
 using System.Threading;
 
 // These APIs are not part of the public contract.
-// They are implementation details and intendent to be called from generated assemlbies for PS classes.
+// They are implementation details and intended to be called from generated assemblies for PS classes.
 //
-// Because they are called from other assemblies, we have to make them public. 
+// Because they are called from other assemblies, we have to make them public.
 // We put them in Internal namespace to emphasise that despite the fact that they are public, it's not part of API contract.
 
 namespace System.Management.Automation.Internal
 {
     /// <summary>
     /// Every Runspace in one process contains SessionStateInternal per module (module SessionState).
-    /// Every RuntimeType is associated to only one SessionState in the Runspace, which creates it: 
+    /// Every RuntimeType is associated to only one SessionState in the Runspace, which creates it:
     /// it's ever global state or a module state.
     /// In the former case, module can be imported from the different runspaces in the same process.
     /// And so runspaces will share RuntimeType. But in every runspace, Type is associated with just one SessionState.
     /// We want type methods to be able access $script: variables and module-specific methods.
-    /// To achive it, we preserve reference to SessionState that creates type in the private field 'SessionStateFieldName'.
+    /// To achieve it, we preserve reference to SessionState that creates type in the private field 'SessionStateFieldName'.
     /// Later, we use it to call scriptBlocks captured in ScriptBlockMemberMethodWrapper with the right sessionState.
     /// </summary>
     public class SessionStateKeeper
     {
-        // We use ConditionalWeakTable, because if GC already collect Runspace, 
+        // We use ConditionalWeakTable, because if GC already collect Runspace,
         // then there is no way to call a ctor on the type in this Runspace.
         private readonly ConditionalWeakTable<Runspace, SessionStateInternal> _stateMap;
 
@@ -43,9 +43,26 @@ namespace System.Management.Automation.Internal
 
         internal void RegisterRunspace()
         {
-            // it's not get, but really 'Add' value.
-            // ConditionalWeakTable.Add throw exception, when you are trying to add a value with the same key.
-            _stateMap.GetValue(Runspace.DefaultRunspace, runspace => runspace.ExecutionContext.EngineSessionState);
+            SessionStateInternal ssInMap = null;
+            Runspace rsToUse = Runspace.DefaultRunspace;
+            SessionStateInternal ssToUse = rsToUse.ExecutionContext.EngineSessionState;
+
+            // Different threads will operate on different key/value pairs (default-runspace/session-state pairs),
+            // and a ConditionalWeakTable itself is thread safe, so there won't be race condition here.
+            if (!_stateMap.TryGetValue(rsToUse, out ssInMap))
+            {
+                // If the key doesn't exist yet, add it
+                _stateMap.Add(rsToUse, ssToUse);
+            }
+            else if (!ssInMap.Equals(ssToUse))
+            {
+                // If the key exists but the corresponding value is not what we should use, then remove the key/value pair and add the new pair.
+                // This could happen when a powershell class is defined in a module and the module gets reloaded. In such case, the same TypeDefinitionAst
+                // instance will get reused, but should be associated with the SessionState from the new module, instead of the one from the old module.
+                _stateMap.Remove(rsToUse);
+                _stateMap.Add(rsToUse, ssToUse);
+            }
+            // If the key exists and the corresponding value is the one we should use, then do nothing.
         }
 
         /// <summary>
@@ -148,7 +165,7 @@ namespace System.Management.Automation.Internal
     {
         /// <summary>
         /// This method calls all Validate attributes for the property to validate value.
-        /// Called from class property setters with ValidateArgumentsAttribute attributes. 
+        /// Called from class property setters with ValidateArgumentsAttribute attributes.
         /// </summary>
         /// <param name="type"></param>
         /// <param name="propertyName"></param>
@@ -215,7 +232,7 @@ namespace System.Management.Automation.Internal
         {
             DynamicMethod dm = s_nonVirtualCallCache.GetValue(mi, CreateDynamicMethod);
 
-            // The target object will be passed to the hidden parameter 'this' of the instance method 
+            // The target object will be passed to the hidden parameter 'this' of the instance method
             var newArgs = new List<object>(args.Length + 1) { target };
             newArgs.AddRange(args);
 

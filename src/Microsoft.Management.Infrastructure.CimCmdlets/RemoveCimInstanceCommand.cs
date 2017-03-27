@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -23,11 +23,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         "CimInstance",
         SupportsShouldProcess=true,
         DefaultParameterSetName = CimBaseCommand.CimInstanceComputerSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227964")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227964")]
     public class RemoveCimInstanceCommand : CimBaseCommand
     {
         #region constructor
-        
+
         /// <summary>
         /// constructor
         /// </summary>
@@ -36,7 +36,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
         }
-        
+
         #endregion
 
         #region parameters
@@ -74,7 +74,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.CimInstanceComputerSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = CimBaseCommand.CimInstanceSessionSet)]           
+                   ParameterSetName = CimBaseCommand.CimInstanceSessionSet)]
         public Uri ResourceUri
         {
             get { return resourceUri; }
@@ -83,8 +83,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 this.resourceUri = value;
                 base.SetParameter(value, nameResourceUri);
             }
-        }   
-        private Uri resourceUri; 
+        }
+        private Uri resourceUri;
 
         /// <summary>
         /// The following is the definition of the input parameter "ComputerName".
@@ -352,7 +352,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                     new ParameterDefinitionEntry(CimBaseCommand.CimInstanceComputerSet, false),
                                     new ParameterDefinitionEntry(CimBaseCommand.CimInstanceSessionSet, false),
                                  }
-            },            
+            },
         };
 
         /// <summary>

@@ -20,16 +20,18 @@ if (BUILD_ONECORE)
     #
     # Configure lib directories so that CI picks up onecore.lib
     #
-    SET (WindowsSdkDir $ENV{WindowsSdkDir})
-    SET (WindowsSDKVersion $ENV{WindowsSDKVersion})
-    SET (WindowsSDKLibBase "${WindowsSdkDir}/Lib/${WindowsSDKVersion}")
-    SET (OneCoreLibBase "$ENV{VCInstallDir}lib/onecore/amd64")
+    if (BUILD_ARCH_AMD64)
+        SET (WindowsSdkDir $ENV{WindowsSdkDir})
+        SET (WindowsSDKVersion $ENV{WindowsSDKVersion})
+        SET (WindowsSDKLibBase "${WindowsSdkDir}/Lib/${WindowsSDKVersion}")
+        SET (OneCoreLibBase "$ENV{VCInstallDir}lib/onecore/amd64")
 
-    SET (LibraryPath)
-    list (APPEND LibraryPath "${OneCoreLibBase}")
-    list (APPEND LibraryPath "${WindowsSDKLibBase}ucrt/${WindowsSDKPlatform}")
-    list (APPEND LibraryPath "${WindowsSDKLibBase}um/${WindowsSDKPlatform}" )
-    link_directories(${LibraryPath})
+        SET (LibraryPath)
+        list (APPEND LibraryPath "${OneCoreLibBase}")
+        list (APPEND LibraryPath "${WindowsSDKLibBase}ucrt/${WindowsSDKPlatform}")
+        list (APPEND LibraryPath "${WindowsSDKLibBase}um/${WindowsSDKPlatform}" )
+        link_directories(${LibraryPath})
+    endif ()
 
 else ()
     # Settings to use when creating PowerShell.exe for Windows on full SKUs or downlevel platforms

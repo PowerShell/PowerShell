@@ -10,7 +10,7 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// Base class for Enable/Disable/Remove-PSBreakpoint 
+    /// Base class for Enable/Disable/Remove-PSBreakpoint
     /// </summary>
     public abstract class PSBreakpointCommandBase : PSCmdlet
     {
@@ -101,7 +101,7 @@ namespace Microsoft.PowerShell.Commands
         private bool ShouldProcessInternal(string target)
         {
             // ShouldProcess should be called only if the WhatIf or Confirm parameters are passed in explicitly.
-            // It should *not* be called if we are in a nested debug prompt and the current running command was 
+            // It should *not* be called if we are in a nested debug prompt and the current running command was
             // run with -WhatIf or -Confirm, because this prevents the user from adding/removing breakpoints inside
             // a debugger stop.
             if (this.MyInvocation.BoundParameters.ContainsKey("WhatIf") || this.MyInvocation.BoundParameters.ContainsKey("Confirm"))
@@ -114,9 +114,9 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// This class implements Enable-PSBreakpoint 
+    /// This class implements Enable-PSBreakpoint
     /// </summary>
-    [Cmdlet("Enable", "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = "Id", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113295")]
+    [Cmdlet(VerbsLifecycle.Enable, "PSBreakpoint", SupportsShouldProcess = true, DefaultParameterSetName = "Id", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113295")]
     [OutputType(typeof(Breakpoint))]
     public class EnablePSBreakpointCommand : PSBreakpointCommandBase
     {

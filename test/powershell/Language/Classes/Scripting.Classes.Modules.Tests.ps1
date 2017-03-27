@@ -8,14 +8,14 @@
 Describe 'use of a module from two runspaces' -Tags "CI" {
     function New-TestModule {
         param(
-            [string]$Name, 
+            [string]$Name,
             [string]$Content
         )
-        
+
         $TestModulePath = Join-Path -Path $TestDrive -ChildPath "TestModule"
         $ModuleFolder = Join-Path -Path $TestModulePath -ChildPath $Name
         New-Item -Path $ModuleFolder -ItemType Directory -Force > $null
-        
+
         Set-Content -Path "$ModuleFolder\$Name.psm1" -Value $Content
 
         $manifestParams = @{
@@ -24,14 +24,14 @@ Describe 'use of a module from two runspaces' -Tags "CI" {
         }
         New-ModuleManifest @manifestParams
 
-        if ($env:PSMODULEPATH -notlike "*$TestModulePath*") {
-            $env:PSMODULEPATH += "$([System.IO.Path]::PathSeparator)$TestModulePath"
+        if ($env:PSModulePath -notlike "*$TestModulePath*") {
+            $env:PSModulePath += "$([System.IO.Path]::PathSeparator)$TestModulePath"
         }
     }
 
-    $originalPSMODULEPATH = $env:PSMODULEPATH
+    $originalPSModulePath = $env:PSModulePath
     try {
-        
+
         New-TestModule -Name 'Random' -Content @'
 $script:random = Get-Random
 class RandomWrapper
@@ -53,13 +53,13 @@ Import-Module Random
             $res = 1..2 | % {
                 0..1 | % {
                     $ps[$_].Commands.Clear()
-                    # The idea: instance created inside the context, in one runspace. 
+                    # The idea: instance created inside the context, in one runspace.
                     # Method is called on instance in the different runspace, but it should know about the origin.
                     $w = $ps[$_].AddScript('& (Get-Module Random) { [RandomWrapper]::new() }').Invoke()[0]
                     $w.getRandom()
                 }
             }
-            
+
             $res.Count | Should Be 4
             $res[0] | Should Not Be $res[1]
             $res[0] | Should Be $res[2]
@@ -67,7 +67,47 @@ Import-Module Random
         }
 
     } finally {
-        $env:PSMODULEPATH = $originalPSMODULEPATH
+        $env:PSModulePath = $originalPSModulePath
     }
 
+}
+
+Describe 'Module reloading with Class definition' -Tags "CI" {
+
+    BeforeAll {
+        Set-Content -Path TestDrive:\TestModule.psm1 -Value @'
+$passedArgs = $args
+class Root { $passedIn = $passedArgs }
+function Get-PassedArgsRoot { [Root]::new().passedIn }
+function Get-PassedArgsNoRoot { $passedArgs }
+'@
+        $Arg_Hello = 'Hello'
+        $Arg_World = 'World'
+    }
+
+    AfterEach {
+        Remove-Module TestModule -Force -ErrorAction SilentlyContinue
+    }
+
+    It "Class execution reflects changes in module reloading with '-Force'" {
+        Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_Hello
+        Get-PassedArgsRoot | Should Be $Arg_Hello
+        Get-PassedArgsNoRoot | Should Be $Arg_Hello
+
+        Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_World -Force
+        Get-PassedArgsRoot | Should Be $Arg_World
+        Get-PassedArgsNoRoot | Should Be $Arg_World
+    }
+
+    It "Class execution reflects changes in module reloading with 'Remove-Module' and 'Import-Module'" {
+        Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_Hello
+        Get-PassedArgsRoot | Should Be $Arg_Hello
+        Get-PassedArgsNoRoot | Should Be $Arg_Hello
+
+        Remove-Module TestModule
+
+        Import-Module TestDrive:\TestModule.psm1 -ArgumentList $Arg_World
+        Get-PassedArgsRoot | Should Be $Arg_World
+        Get-PassedArgsNoRoot | Should Be $Arg_World
+    }
 }

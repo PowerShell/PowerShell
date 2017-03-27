@@ -14,7 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// MSH paths that match the glob strings.
     /// </summary>
     [Cmdlet(VerbsDiagnostic.Resolve, "Path", DefaultParameterSetName = "Path", SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113384")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113384")]
     public class ResolvePathCommand : CoreCommandWithCredentialsBase
     {
         #region Parameters

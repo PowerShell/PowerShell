@@ -2,11 +2,11 @@
 /*============================================================
 **
 **
-** Purpose: 
-** This public class defines the methods / properties for the 
+** Purpose:
+** This public class defines the methods / properties for the
 ** individual Data Values of an EventRecord.  Instances of this
 ** class are obtained from EventRecord.
-** 
+**
 ============================================================*/
 
 namespace System.Diagnostics.Eventing.Reader

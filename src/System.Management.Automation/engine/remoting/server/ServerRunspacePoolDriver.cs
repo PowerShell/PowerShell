@@ -21,7 +21,7 @@ using System.Security.Principal;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Interface exposing driver single thread invoke enter/exit 
+    /// Interface exposing driver single thread invoke enter/exit
     /// nested pipeline.
     /// </summary>
     internal interface IRSPDriverInvoke
@@ -103,7 +103,7 @@ namespace System.Management.Automation
         /// runspace pool driver</param>
         /// <param name="maxRunspaces">maximum runspaces to open</param>
         /// <param name="minRunspaces">minimum runspaces to open</param>
-        /// <param name="threadOptions">threading options for the runspaces in the pool</param>        
+        /// <param name="threadOptions">threading options for the runspaces in the pool</param>
         /// <param name="hostInfo">host information about client side host</param>
         /// <param name="configData">
         /// Contains:
@@ -260,7 +260,7 @@ namespace System.Management.Automation
             DataStructureHandler.SetMinRunspacesReceived +=
                 new EventHandler<RemoteDataEventArgs<PSObject>>(HandleSetMinRunspacesReceived);
             DataStructureHandler.GetAvailableRunspacesReceived +=
-                new EventHandler<RemoteDataEventArgs<PSObject>>(HandleGetAvailalbeRunspacesReceived);
+                new EventHandler<RemoteDataEventArgs<PSObject>>(HandleGetAvailableRunspacesReceived);
             DataStructureHandler.ResetRunspaceState +=
                 new EventHandler<RemoteDataEventArgs<PSObject>>(HandleResetRunspaceState);
         }
@@ -288,13 +288,13 @@ namespace System.Management.Automation
         internal Guid InstanceId { get; }
 
         /// <summary>
-        /// The local runspace pool associated with 
+        /// The local runspace pool associated with
         /// this driver
         /// </summary>
         internal RunspacePool RunspacePool { get; private set; }
 
         /// <summary>
-        /// Start the RunspacePoolDriver. This will open the 
+        /// Start the RunspacePoolDriver. This will open the
         /// underlying RunspacePool.
         /// </summary>
         internal void Start()
@@ -305,7 +305,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Send application private data to client
-        /// will be called during runspace creation 
+        /// will be called during runspace creation
         /// and each time a new client connects to the server session
         /// </summary>
         internal void SendApplicationPrivateDataToClient()
@@ -421,8 +421,8 @@ namespace System.Management.Automation
         #region IRSPDriverInvoke interface methods
 
         /// <summary>
-        /// This method blocks the current thread execution and starts a 
-        /// new Invoker pump that will handle invoking client side nested commands.  
+        /// This method blocks the current thread execution and starts a
+        /// new Invoker pump that will handle invoking client side nested commands.
         /// This method returns after ExitNestedPipeline is called.
         /// </summary>
         public void EnterNestedPipeline()
@@ -451,7 +451,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// If script execution is currently in debugger stopped mode, this will
-        /// release the debugger and terminate script execution, or if processing 
+        /// release the debugger and terminate script execution, or if processing
         /// a debug command will stop the debug command.
         /// This is used to implement the remote stop signal and ensures a command
         /// will stop even when in debug stop mode.
@@ -485,7 +485,7 @@ namespace System.Management.Automation
 
             if (!string.IsNullOrEmpty(_configurationName))
             {
-                // Client is requesting a configured session.  
+                // Client is requesting a configured session.
                 // Create a configured remote runspace and push onto host stack.
                 if ((_remoteHost != null) && !(_remoteHost.IsRunspacePushed))
                 {
@@ -557,7 +557,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Invokes a PowerShell instance 
+        /// Invokes a PowerShell instance
         /// </summary>
         /// <param name="powershell"></param>
         /// <param name="args"></param>
@@ -577,7 +577,7 @@ namespace System.Management.Automation
                 this,
 #if !CORECLR // No ApartmentState In CoreCLR
                 args.Runspace.ApartmentState,
-#endif                
+#endif
                 hostInfo,
                 RemoteStreamOptions.AddInvocationInfo,
                 false,
@@ -641,7 +641,7 @@ namespace System.Management.Automation
             }
 
             // Set the current location to MyDocuments folder for this runspace.
-            // This used to be set to the Personal folder but was changed to MyDocuments folder for 
+            // This used to be set to the Personal folder but was changed to MyDocuments folder for
             // compatibility with PowerShell on Nano Server for PowerShell V5.
             // This is needed because in the remoting scenario, Environment.CurrentDirectory
             // always points to System Folder (%windir%\system32) irrespective of the
@@ -653,12 +653,11 @@ namespace System.Management.Automation
                 string personalfolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 args.Runspace.ExecutionContext.EngineSessionState.SetLocation(personalfolder);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // SetLocation API can call 3rd party code and so there is no telling what exception may be thrown.
                 // Setting location is not critical and is expected not to work with some account types, so we want
                 // to ignore all but critical errors.
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Run startup scripts
@@ -838,7 +837,7 @@ namespace System.Management.Automation
 
             if (_remoteHost.IsRunspacePushed)
             {
-                // If we have a pushed runspace then execute there.  
+                // If we have a pushed runspace then execute there.
                 // Ensure debugger is enabled to the original mode it was set to.
                 if (_serverRemoteDebugger != null)
                 {
@@ -955,7 +954,7 @@ namespace System.Management.Automation
                 powershell.SetIsNested(false);
             }
 
-            // Invoke command normally.  Ensure debugger is enabled to the 
+            // Invoke command normally.  Ensure debugger is enabled to the
             // original mode it was set to.
             if (_serverRemoteDebugger != null)
             {
@@ -1061,7 +1060,7 @@ namespace System.Management.Automation
 
             if (_remoteHost.IsRunspacePushed)
             {
-                // If we have a pushed runspace then execute there.  
+                // If we have a pushed runspace then execute there.
                 StartPowerShellCommandOnPushedRunspace(
                     countingPipeline,
                     mainPipeline,
@@ -1143,7 +1142,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="sender">sender of this event, unused</param>
         /// <param name="eventArgs">contains information on the callid</param>
-        private void HandleGetAvailalbeRunspacesReceived(object sender, RemoteDataEventArgs<PSObject> eventArgs)
+        private void HandleGetAvailableRunspacesReceived(object sender, RemoteDataEventArgs<PSObject> eventArgs)
         {
             PSObject data = eventArgs.Data;
             long callId = (long)((PSNoteProperty)data.Properties[RemoteDataNameStrings.CallId]).Value;
@@ -1183,9 +1182,8 @@ namespace System.Management.Automation
                 // Local runspace state reset.
                 runspaceToReset.ResetRunspaceState();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 return false;
             }
 
@@ -1234,10 +1232,8 @@ namespace System.Management.Automation
             {
                 driver.Start();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // Pop runspace on error.
                 _remoteHost.PopRunspace();
 
@@ -1475,7 +1471,7 @@ namespace System.Management.Automation
         #region Private Classes
 
         /// <summary>
-        /// Helper class to run ServerPowerShellDriver objects on a single thread.  This is 
+        /// Helper class to run ServerPowerShellDriver objects on a single thread.  This is
         /// needed to support nested pipeline execution and remote debugging.
         /// </summary>
         private sealed class PowerShellDriverInvoker
@@ -1580,7 +1576,7 @@ namespace System.Management.Automation
             #region Private classes
 
             /// <summary>
-            /// Class that queues and invokes ServerPowerShellDriver objects 
+            /// Class that queues and invokes ServerPowerShellDriver objects
             /// in sequence.
             /// </summary>
             private sealed class InvokePump
@@ -1634,9 +1630,8 @@ namespace System.Management.Automation
                                     IsBusy = true;
                                     driver.InvokeMain();
                                 }
-                                catch (Exception e)
+                                catch (Exception)
                                 {
-                                    CommandProcessorBase.CheckForSevereException(e);
                                 }
                                 finally
                                 {
@@ -1892,7 +1887,7 @@ namespace System.Management.Automation
         /// Sets up debugger to debug provided job or its child jobs.
         /// </summary>
         /// <param name="job">
-        /// Job object that is either a debuggable job or a container 
+        /// Job object that is either a debuggable job or a container
         /// of debuggable child jobs.
         /// </param>
         internal override void DebugJob(Job job)
@@ -2123,7 +2118,6 @@ namespace System.Management.Automation
                 }
                 catch (Exception e)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     _exception = e;
                 }
                 finally
@@ -2261,9 +2255,8 @@ namespace System.Management.Automation
                 // Restore original context remote host.
                 _runspace.ExecutionContext.InternalHost.SetHostRef(contextHost);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                CommandProcessor.CheckForSevereException(ex);
             }
             finally
             {
@@ -2298,9 +2291,8 @@ namespace System.Management.Automation
                     args: new object[] { e },
                     extraData: null);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                CommandProcessor.CheckForSevereException(ex);
             }
         }
 
@@ -2346,9 +2338,8 @@ namespace System.Management.Automation
                     _driverInvoker.EnterNestedPipeline();
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessor.CheckForSevereException(e);
             }
             finally
             {
@@ -2366,7 +2357,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Blocks DebuggerStop event thread until exit debug mode is 
+        /// Blocks DebuggerStop event thread until exit debug mode is
         /// received from the client.
         /// </summary>
         private void OnEnterDebugMode(ManualResetEventSlim debugModeCompletedEvent)
@@ -2414,9 +2405,8 @@ namespace System.Management.Automation
 
                 _runspace.ExecutionContext.SetVariable(SpecialVariables.NestedPromptCounterVarPath, 0);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessor.CheckForSevereException(e);
             }
         }
 
@@ -2508,7 +2498,7 @@ namespace System.Management.Automation
             bool addToHistory)
         {
             // For nested debugger command processing, invoke command on new local runspace since
-            // the root script debugger runspace is unavailable (it is running a PS script or a 
+            // the root script debugger runspace is unavailable (it is running a PS script or a
             // workflow function script).
             Runspace runspace = (remoteHost != null) ?
                 RunspaceFactory.CreateRunspace(remoteHost) : RunspaceFactory.CreateRunspace();
@@ -2548,10 +2538,8 @@ namespace System.Management.Automation
 
                 driver.Start();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 runspace.Close();
                 runspace.Dispose();
             }

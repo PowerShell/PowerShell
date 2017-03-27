@@ -179,7 +179,7 @@ namespace System.Management.Automation
         /// <summary>
         /// True if the RunspaceConfiguration/InitialSessionState is for a single shell or false otherwise.
         /// </summary>
-        /// 
+        ///
         internal bool IsSingleShell
         {
             get
@@ -252,7 +252,7 @@ namespace System.Management.Automation
         /// providers based on the type of the shell
         /// (single shell or custom shell).
         /// </summary>
-        /// 
+        ///
         internal ProviderNames ProviderNames
         {
             get
@@ -324,7 +324,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get the SessionState facade for the internal session state APIs
         /// </summary>
-        /// 
+        ///
         internal SessionState SessionState
         {
             get
@@ -398,7 +398,7 @@ namespace System.Management.Automation
             };
 
         /// <summary>
-        /// Is true the PSScheduledJob and PSWorkflow modules are loaded for this runspace 
+        /// Is true the PSScheduledJob and PSWorkflow modules are loaded for this runspace
         /// </summary>
         internal bool IsModuleWithJobSourceAdapterLoaded
         {
@@ -409,7 +409,7 @@ namespace System.Management.Automation
         /// Gets the location globber for the session state for
         /// this instance of the runspace.
         /// </summary>
-        /// 
+        ///
         internal LocationGlobber LocationGlobber
         {
             get
@@ -423,7 +423,7 @@ namespace System.Management.Automation
         /// <summary>
         /// The assemblies that have been loaded for this runspace
         /// </summary>
-        /// 
+        ///
         internal Dictionary<string, Assembly> AssemblyCache { get; private set; }
 
         #endregion Properties
@@ -558,7 +558,7 @@ namespace System.Management.Automation
         #region HelpSystem
 
         /// <summary>
-        /// Help system for this engine context. 
+        /// Help system for this engine context.
         /// </summary>
         /// <value></value>
         internal HelpSystem HelpSystem
@@ -802,39 +802,8 @@ namespace System.Management.Automation
                     return;
             }
 
-            // 1045384-2004/12/14-JonN implementing $MaximumErrorCount
-            object maxcountobj = EngineSessionState.CurrentScope.ErrorCapacity.FastValue;
-            if (null != maxcountobj)
-            {
-                try
-                {
-                    maxcountobj = LanguagePrimitives.ConvertTo(maxcountobj, typeof(int), CultureInfo.InvariantCulture);
-                }
-                catch (PSInvalidCastException)
-                {
-                }
-                catch (System.OverflowException)
-                {
-                }
-                catch (Exception e)
-                {
-                    Diagnostics.Assert(false,
-                        "Unexpected exception in LanguagePrimitives.ConvertTo: "
-                        + e.GetType().FullName);
-                    throw;
-                }
-            }
-            int maxErrorCount = (maxcountobj is int) ? (int)maxcountobj : 256;
-            if (0 > maxErrorCount)
-                maxErrorCount = 0;
-            else if (32768 < maxErrorCount)
-                maxErrorCount = 32768;
+            const int maxErrorCount = 256;
 
-            if (0 >= maxErrorCount)
-            {
-                arraylist.Clear();
-                return;
-            }
             int numToErase = arraylist.Count - (maxErrorCount - 1);
             if (0 < numToErase)
             {
@@ -1218,7 +1187,7 @@ namespace System.Management.Automation
                     _formatDBManager.Update(this.AuthorizationManager, this.EngineHostInterface);
                     if (this.InitialSessionState != null)
                     {
-                        // Win8:418011: Set DisableFormatTableUpdates only after performing the initial update. Otherwise, formatDBManager will be 
+                        // Win8:418011: Set DisableFormatTableUpdates only after performing the initial update. Otherwise, formatDBManager will be
                         // in bad state.
                         _formatDBManager.DisableFormatTableUpdates = this.InitialSessionState.DisableFormatUpdates;
                     }
@@ -1254,7 +1223,7 @@ namespace System.Management.Automation
         private bool _assemblyCacheInitialized = false;
 
         /// <summary>
-        /// This function is called by RunspaceConfiguration.Assemblies.Update call back. 
+        /// This function is called by RunspaceConfiguration.Assemblies.Update call back.
         /// It's not used when constructing a runspace from an InitialSessionState object.
         /// </summary>
         internal void UpdateAssemblyCache()
@@ -1322,7 +1291,7 @@ namespace System.Management.Automation
 
             if (AssemblyCache.ContainsKey(loadedAssembly.FullName))
             {
-                // we should ignore this assembly. 
+                // we should ignore this assembly.
                 return loadedAssembly;
             }
             // We will cache the assembly by both full name and
@@ -1331,7 +1300,7 @@ namespace System.Management.Automation
 
             if (AssemblyCache.ContainsKey(loadedAssembly.GetName().Name))
             {
-                // we should ignore this assembly. 
+                // we should ignore this assembly.
                 return loadedAssembly;
             }
             AssemblyCache.Add(loadedAssembly.GetName().Name, loadedAssembly);
@@ -1486,9 +1455,8 @@ namespace System.Management.Automation
                         StringUtil.Format(resourceString, arguments));
                 }
             }
-            catch (Exception ex) // swallow all exceptions
+            catch (Exception) // swallow all exceptions
             {
-                CommandProcessorBase.CheckForSevereException(ex);
             }
         }
 
@@ -1516,9 +1484,8 @@ namespace System.Management.Automation
                     ui.WriteErrorLine(error);
                 }
             }
-            catch (Exception ex) // swallow all exceptions
+            catch (Exception) // swallow all exceptions
             {
-                CommandProcessorBase.CheckForSevereException(ex);
             }
         }
 
@@ -1552,9 +1519,8 @@ namespace System.Management.Automation
                     ui.WriteErrorLine(e.Message);
                 }
             }
-            catch (Exception ex) // swallow all exceptions
+            catch (Exception) // swallow all exceptions
             {
-                CommandProcessorBase.CheckForSevereException(ex);
             }
         }
 
@@ -1581,9 +1547,8 @@ namespace System.Management.Automation
                     ui.WriteErrorLine(errorRecord.ToString());
                 }
             }
-            catch (Exception ex) // swallow all exceptions
+            catch (Exception) // swallow all exceptions
             {
-                CommandProcessorBase.CheckForSevereException(ex);
             }
         }
 
@@ -1614,7 +1579,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs an Execution context object for Automation Engine
         /// </summary>
-        /// 
+        ///
         /// <param name="engine">
         /// Engine that hosts this execution context
         /// </param>
@@ -1635,7 +1600,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs an Execution context object for Automation Engine
         /// </summary>
-        /// 
+        ///
         /// <param name="engine">
         /// Engine that hosts this execution context
         /// </param>
@@ -1688,7 +1653,7 @@ namespace System.Management.Automation
             if (AuthorizationManager == null)
             {
                 // if authorizationmanager==null, this means the configuration
-                // explicitly asked for dummy authorization manager. 
+                // explicitly asked for dummy authorization manager.
                 AuthorizationManager = new AuthorizationManager(null);
             }
 
@@ -1727,9 +1692,9 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Enum that defines state of monad engine. 
+    /// Enum that defines state of monad engine.
     /// </summary>
-    /// 
+    ///
     internal enum EngineState
     {
         /// <summary>

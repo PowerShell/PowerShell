@@ -12,36 +12,36 @@ using System.Management.Automation.Runspaces;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
+    ///
     /// Class HelpProvider defines the interface to be implemented by help providers.
-    /// 
+    ///
     /// Help Providers:
-    ///     The basic contract for help providers is to provide help based on the 
-    ///     search target. 
-    /// 
+    ///     The basic contract for help providers is to provide help based on the
+    ///     search target.
+    ///
     ///     The result of help provider invocation can be three things:
     ///         a. Full help info. (in the case of exact-match and single search result)
     ///         b. Short help info. (in the case of multiple search result)
-    ///         c. Partial help info. (in the case of some commandlet help info, which 
+    ///         c. Partial help info. (in the case of some commandlet help info, which
     ///                                 should be supplemented by provider help info)
     ///         d. Help forwarding info. (in the case of alias, which will change the target
     ///                                   for alias)
-    /// 
+    ///
     ///     Help providers may need to provide functionality in following two area,
     ///         a. caching and indexing to boost performance
     ///         b. localization
-    /// 
+    ///
     /// Basic properties of a Help Provider
     ///     1. Name
     ///     2. Type
     ///     3. Assembly
-    /// 
+    ///
     /// Help Provider Interface
-    ///     1. Initialize: 
-    ///     2. ExactMatchHelp: 
+    ///     1. Initialize:
+    ///     2. ExactMatchHelp:
     ///     3. SearchHelp:
     ///     4. ProcessForwardedHelp
-    /// 
+    ///
     /// </summary>
     internal abstract class HelpProvider
     {
@@ -149,30 +149,30 @@ namespace System.Management.Automation
         /// <summary>
         /// Search help info that match the target search pattern.
         /// </summary>
-        /// <param name="helpRequest">help request object</param>  
+        /// <param name="helpRequest">help request object</param>
         /// <param name="searchOnlyContent">
-        /// If true, searches for pattern in the help content. Individual 
+        /// If true, searches for pattern in the help content. Individual
         /// provider can decide which content to search in.
-        /// 
+        ///
         /// If false, searches for pattern in the command names.
-        /// </param>       
+        /// </param>
         /// <returns>a collection of help info objects</returns>
         internal abstract IEnumerable<HelpInfo> SearchHelp(HelpRequest helpRequest, bool searchOnlyContent);
 
         /// <summary>
-        /// Process a helpinfo forwarded over by another help provider. 
-        /// 
-        /// HelpProvider can choose to process the helpInfo or not, 
-        /// 
+        /// Process a helpinfo forwarded over by another help provider.
+        ///
+        /// HelpProvider can choose to process the helpInfo or not,
+        ///
         ///     1. If a HelpProvider chooses not to process the helpInfo, it can return null to indicate
         ///        helpInfo is not processed.
         ///     2. If a HelpProvider indeed processes the helpInfo, it should create a new helpInfo
         ///        object instead of modifying the passed-in helpInfo object. This is very important
-        ///        since the helpInfo object passed in is usually stored in cache, which can 
-        ///        used in later queries. 
+        ///        since the helpInfo object passed in is usually stored in cache, which can
+        ///        used in later queries.
         /// </summary>
         /// <param name="helpInfo">helpInfo passed over by another HelpProvider</param>
-        /// <param name="helpRequest">help request object</param>        
+        /// <param name="helpRequest">help request object</param>
         /// <returns></returns>
         internal virtual IEnumerable<HelpInfo> ProcessForwardedHelp(HelpInfo helpInfo, HelpRequest helpRequest)
         {
@@ -183,9 +183,9 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Reset help provider. 
-        /// 
-        /// Normally help provider are reset after a help culture change. 
+        /// Reset help provider.
+        ///
+        /// Normally help provider are reset after a help culture change.
         /// </summary>
         internal virtual void Reset()
         {
@@ -198,16 +198,16 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Report help file load errors.
-        /// 
-        /// Currently three cases are handled, 
-        /// 
+        ///
+        /// Currently three cases are handled,
+        ///
         ///     1. IOException: not able to read the file
         ///     2. SecurityException: not authorized to read the file
         ///     3. XmlException: xml schema error.
-        /// 
+        ///
         /// This will be called either from search help or exact match help
         /// to find the error.
-        /// 
+        ///
         /// </summary>
         /// <param name="exception"></param>
         /// <param name="target"></param>
@@ -223,7 +223,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Each Shell ( minishell ) will have its own path specified by the
         /// registry HKLM\software\microsoft\msh\1\ShellIds\&lt;ShellID&gt;\path. Every help
-        /// provider should search this path for content. 
+        /// provider should search this path for content.
         /// </summary>
         /// <returns>string representing base directory of the executing shell.</returns>
         internal string GetDefaultShellSearchPath()

@@ -77,16 +77,16 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal virtual object GetDynamicParameters(CmdletProviderContext context)
         {
             return null;
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Called by the base implementation that checks the SupportShouldProcess provider
-        /// capability. This virtual method gives the 
+        /// capability. This virtual method gives the
         /// derived cmdlet a chance query the CmdletProvider capabilities to determine
         /// if the provider supports ShouldProcess
         /// </summary>
@@ -111,11 +111,11 @@ namespace Microsoft.PowerShell.Commands
         /// A helper for derived classes to call to determine if the paths specified
         /// are for a provider that supports ShouldProcess
         /// </summary>
-        /// 
+        ///
         /// <param name="paths">
         /// The paths to check to see if the providers support ShouldProcess.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// If the paths are to different providers, and any don't support
         /// ShouldProcess, then the return value is false. If they all
@@ -159,7 +159,7 @@ namespace Microsoft.PowerShell.Commands
         /// The dynamic parameters which have already been retrieved from the provider
         /// and bound by the command processor.
         /// </summary>
-        /// 
+        ///
         protected internal object RetrievedDynamicParameters
         {
             get
@@ -171,7 +171,7 @@ namespace Microsoft.PowerShell.Commands
         /// The dynamic parameters for the command. They are retrieved using the
         /// GetDynamicParameters virtual method.
         /// </summary>
-        /// 
+        ///
         private object _dynamicParameters;
 
         #endregion Protected members
@@ -179,8 +179,8 @@ namespace Microsoft.PowerShell.Commands
         #region Public members
 
         /// <summary>
-        /// Stops the processing of the provider by using the 
-        /// CmdletProviderContext to tunnel the stop message to 
+        /// Stops the processing of the provider by using the
+        /// CmdletProviderContext to tunnel the stop message to
         /// the provider instance.
         /// </summary>
         ///
@@ -197,26 +197,26 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the filter property
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// This is meant to be overridden by derived classes if
         /// they support the Filter parameter. This property is on
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
-        /// 
+        ///
         public virtual string Filter { get; set; }
 
 
         /// <summary>
         /// Gets or sets the include property
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// This is meant to be overridden by derived classes if
         /// they support the Include parameter. This property is on
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
-        /// 
+        ///
         public virtual string[] Include { get;
 // get
             set;
@@ -229,13 +229,13 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the exclude property
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// This is meant to be overridden by derived classes if
         /// they support the Exclude parameter. This property is on
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
-        /// 
+        ///
         public virtual string[] Exclude { get;
 // get
             set;
@@ -257,12 +257,12 @@ namespace Microsoft.PowerShell.Commands
         /// For example, if the user tries to copy a file to a path that already exists and
         /// the destination is read-only, if force is true, the provider should copy over
         /// the existing read-only file. If force is false, the provider should write an error.
-        /// 
+        ///
         /// This is meant to be overridden by derived classes if
         /// they support the Force parameter. This property is on
         /// the base class to simplify the creation of the CmdletProviderContext.
         /// </remarks>
-        /// 
+        ///
         public virtual SwitchParameter Force
         {
             get
@@ -281,7 +281,7 @@ namespace Microsoft.PowerShell.Commands
         /// Retrieves the dynamic parameters for the command from
         /// the provider.
         /// </summary>
-        /// 
+        ///
         public object GetDynamicParameters()
         {
             // Don't stream errors or Write* to the pipeline.
@@ -388,11 +388,11 @@ namespace Microsoft.PowerShell.Commands
     /// This command does things like list the contents of a container, get
     /// an item at a given path, get the current working directory, etc.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// </remarks>
-    /// 
-    [Cmdlet(VerbsCommon.Get, "Location", DefaultParameterSetName = "Location", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113321")]
+    ///
+    [Cmdlet(VerbsCommon.Get, "Location", DefaultParameterSetName = "Location", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113321")]
     [OutputType(typeof(PathInfo), ParameterSetName = new string[] { "locationSet" })]
     [OutputType(typeof(PathInfoStack), ParameterSetName = new string[] { "Stack" })]
     public class GetLocationCommand : DriveMatchingCoreCommandBase
@@ -625,7 +625,7 @@ namespace Microsoft.PowerShell.Commands
                                 }
                             }
 
-                            // Match the providers 
+                            // Match the providers
 
                             foreach (ProviderInfo providerInfo in SessionState.Provider.GetAll())
                             {
@@ -724,7 +724,7 @@ namespace Microsoft.PowerShell.Commands
     /// The core command for setting/changing location.
     /// This is the equivalent of cd command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "Location", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113397")]
+    [Cmdlet(VerbsCommon.Set, "Location", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113397")]
     [OutputType(typeof(PathInfo), typeof(PathInfoStack))]
     public class SetLocationCommand : CoreCommandBase
     {
@@ -820,7 +820,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the relationship Parameter which determines which relationship
         /// to resolve to a path to set-location to.
         /// </summary>
-        /// 
+        ///
         [Parameter(Mandatory = true, ParameterSetName = relationshipSet, ValueFromPipelineByPropertyName = true)]
         public string Relationship
         {
@@ -840,7 +840,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the Property parameter value
         /// </summary>
-        /// 
+        ///
         [Parameter(ParameterSetName = relationshipSet, ValueFromPipelineByPropertyName = true)]
         public string Property
         {
@@ -859,7 +859,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the Target parameter value
         /// </summary>
-        /// 
+        ///
         [Parameter (ParameterSetName = relationshipSet, ValueFromPipelineByPropertyName = true)]
         public string Target
         {
@@ -1065,7 +1065,7 @@ namespace Microsoft.PowerShell.Commands
     /// The core command for setting/changing location and pushing it onto a location stack.
     /// This is the equivalent of the pushd command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Push, "Location", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113370")]
+    [Cmdlet(VerbsCommon.Push, "Location", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113370")]
     public class PushLocationCommand : CoreCommandBase
     {
         #region Command parameters
@@ -1163,7 +1163,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the relationship Parameter which determines which relationship
         /// to resolve to a path to set-location to.
         /// </summary>
-        /// 
+        ///
         [Parameter (Mandatory = true, ParameterSetName = relationshipSet, ValueFromPipelineByPropertyName = true)]
         public string Relationship
         {
@@ -1182,7 +1182,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the Property parameter value
         /// </summary>
-        /// 
+        ///
         [Parameter (ParameterSetName = relationshipSet, ValueFromPipelineByPropertyName = true)]
         public string Property
         {
@@ -1201,7 +1201,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets or sets the Target parameter value
         /// </summary>
-        /// 
+        ///
         [Parameter (ParameterSetName = relationshipSet, ValueFromPipelineByPropertyName = true)]
         public string Target
         {
@@ -1233,7 +1233,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _passThrough;
 
         /// <summary>
-        /// The ID of the stack to use for the pop. 
+        /// The ID of the stack to use for the pop.
         /// </summary>
         private string _stackName;
 
@@ -1354,7 +1354,7 @@ namespace Microsoft.PowerShell.Commands
     /// The core command for pop-location.  This is the equivalent of the popd command.
     /// It pops a container from the stack and sets the current location to that container.
     /// </summary>
-    [Cmdlet(VerbsCommon.Pop, "Location", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113369")]
+    [Cmdlet(VerbsCommon.Pop, "Location", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113369")]
     public class PopLocationCommand : CoreCommandBase
     {
         #region Command parameters
@@ -1405,7 +1405,7 @@ namespace Microsoft.PowerShell.Commands
         private bool _passThrough;
 
         /// <summary>
-        /// The ID of the stack to use for the pop. 
+        /// The ID of the stack to use for the pop.
         /// </summary>
         private string _stackName;
 
@@ -1478,7 +1478,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Mounts a drive in the Monad namespace.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "PSDrive", SupportsShouldProcess = true, SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113357")]
+    [Cmdlet(VerbsCommon.New, "PSDrive", SupportsShouldProcess = true, SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113357")]
     public class NewPSDriveCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -1582,16 +1582,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the new-psdrive cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             return SessionState.Drive.NewDriveDynamicParameters(PSProvider, context);
@@ -1732,11 +1732,6 @@ namespace Microsoft.PowerShell.Commands
                                 pathNotFound));
                         return;
                     }
-                    catch (SessionStateOverflowException)
-                    {
-                        // This is terminating condition
-                        throw;
-                    }
                     catch (SessionStateException sessionStateException)
                     {
                         WriteError(
@@ -1783,7 +1778,7 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>
         /// A collection of the drives that match the filters.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="DriveNotFoundException"></exception>
         /// <exception cref="ProviderNotFoundException"></exception>
         ///
@@ -1791,12 +1786,12 @@ namespace Microsoft.PowerShell.Commands
         /// If <paramref name="scope"/> is less than zero, or not
         /// a number and not "script", "global", "local", or "private"
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scope"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        /// 
+        ///
         internal List<PSDriveInfo> GetMatchingDrives(
              string driveName,
             string[] providerNames,
@@ -1915,7 +1910,7 @@ namespace Microsoft.PowerShell.Commands
     /// Removes a drive that is mounted in the Monad namespace.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "PSDrive", DefaultParameterSetName = "Name", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113376")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113376")]
     public class RemovePSDriveCommand : DriveMatchingCoreCommandBase
     {
         #region Command parameters
@@ -1988,7 +1983,7 @@ namespace Microsoft.PowerShell.Commands
         /// Gets or sets the force property which determines if the drive
         /// should be removed even if there were errors.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public override SwitchParameter Force
         {
@@ -2109,7 +2104,7 @@ namespace Microsoft.PowerShell.Commands
     /// Gets a specified or listing of drives that are mounted in the Monad
     /// namespace.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PSDrive", DefaultParameterSetName = "Name", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113327")]
+    [Cmdlet(VerbsCommon.Get, "PSDrive", DefaultParameterSetName = "Name", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113327")]
     [OutputType(typeof(PSDriveInfo))]
     public class GetPSDriveCommand : DriveMatchingCoreCommandBase
     {
@@ -2307,7 +2302,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Gets the specified item using the namespace providers.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Item", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113319")]
+    [Cmdlet(VerbsCommon.Get, "Item", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113319")]
     public class GetItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -2429,16 +2424,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the get-item cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -2513,7 +2508,7 @@ namespace Microsoft.PowerShell.Commands
     /// Creates the specified item using the namespace providers.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "Item", DefaultParameterSetName = "pathSet", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113353")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113353")]
     public class NewItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -2574,16 +2569,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the new-item cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -2675,7 +2670,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Sets the specified item using the namespace providers.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "Item", SupportsShouldProcess = true, DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113395")]
+    [Cmdlet(VerbsCommon.Set, "Item", SupportsShouldProcess = true, DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113395")]
     public class SetItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -2745,7 +2740,7 @@ namespace Microsoft.PowerShell.Commands
         /// if the object that is set should be written to the pipeline.
         /// Defaults to false.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public SwitchParameter PassThru
         {
@@ -2786,16 +2781,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the set-item cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -2892,7 +2887,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Removes the specified item using the namespace providers.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "Item", SupportsShouldProcess = true, DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113373")]
+    [Cmdlet(VerbsCommon.Remove, "Item", SupportsShouldProcess = true, DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113373")]
     public class RemoveItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -3030,16 +3025,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the remove-item cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -3350,7 +3345,7 @@ namespace Microsoft.PowerShell.Commands
     /// the namespace providers.
     /// </summary>
     [Cmdlet(VerbsCommon.Move, "Item", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113350")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113350")]
     public class MoveItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -3449,7 +3444,7 @@ namespace Microsoft.PowerShell.Commands
         /// if the object that is set should be written to the pipeline.
         /// Defaults to false.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public SwitchParameter PassThru
         {
@@ -3460,16 +3455,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the move-item cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -3748,7 +3743,7 @@ namespace Microsoft.PowerShell.Commands
     /// Renames a specified item to a new name using the namespace providers
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "Item", SupportsShouldProcess = true, SupportsTransactions = true, DefaultParameterSetName = "ByPath",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113382")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113382")]
     public class RenameItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -3811,7 +3806,7 @@ namespace Microsoft.PowerShell.Commands
         /// if the object that is set should be written to the pipeline.
         /// Defaults to false.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public SwitchParameter PassThru
         {
@@ -3822,16 +3817,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the rename-item cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             return InvokeProvider.Item.RenameItemDynamicParameters(Path, NewName, context);
@@ -4036,7 +4031,7 @@ namespace Microsoft.PowerShell.Commands
     /// Copies a specified item to a new location using the namespace providers
     /// </summary>
     [Cmdlet(VerbsCommon.Copy, "Item", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113292")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113292")]
     public class CopyItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -4171,7 +4166,7 @@ namespace Microsoft.PowerShell.Commands
         /// if the object that is set should be written to the pipeline.
         /// Defaults to false.
         /// </summary>
-        /// 
+        ///
         [Parameter]
         public SwitchParameter PassThru
         {
@@ -4182,16 +4177,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the copy-item cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -4309,7 +4304,7 @@ namespace Microsoft.PowerShell.Commands
     /// Clears an item at the specified location
     /// </summary>
     [Cmdlet(VerbsCommon.Clear, "Item", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113283")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113283")]
     public class ClearItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -4430,16 +4425,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the clear-item cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -4539,8 +4534,8 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Invokes an item at the specified location
     /// </summary>
-    [Cmdlet("Invoke", "Item", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113345")]
+    [Cmdlet(VerbsLifecycle.Invoke, "Item", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113345")]
     public class InvokeItemCommand : CoreCommandWithCredentialsBase
     {
         #region Command parameters
@@ -4634,16 +4629,16 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the dynamic parameters for the invoke-item cmdlet.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -4741,7 +4736,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Gets a core command provider by name
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PSProvider", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113329")]
+    [Cmdlet(VerbsCommon.Get, "PSProvider", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113329")]
     [OutputType(typeof(ProviderInfo))]
     public class GetPSProviderCommand : CoreCommandBase
     {
@@ -4752,6 +4747,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         ///
         [Parameter(Position = 0, ValueFromPipelineByPropertyName = true)]
+        [ValidateNotNullOrEmpty()]
         public string[] PSProvider
         {
             get { return _provider; }

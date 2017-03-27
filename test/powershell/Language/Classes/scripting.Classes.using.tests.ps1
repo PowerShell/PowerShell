@@ -1,20 +1,20 @@
 Describe 'using module' -Tags "CI" {
     BeforeAll {
-        $originalPSMODULEPATH = $env:PSMODULEPATH
-        
+        $originalPSModulePath = $env:PSModulePath
+
         Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
 
         function New-TestModule {
             param(
-                [string]$Name, 
-                [string]$Content, 
-                [switch]$Manifest, 
+                [string]$Name,
+                [string]$Content,
+                [switch]$Manifest,
                 [version]$Version = '1.0', # ignored, if $Manifest -eq $false
                 [string]$ModulePathPrefix = 'modules' # module is created under TestDrive:\$ModulePathPrefix\$Name
             )
-            
+
             if ($manifest) {
-                new-item -type directory -Force "${TestDrive}\$ModulePathPrefix\$Name\$Version" > $null    
+                new-item -type directory -Force "${TestDrive}\$ModulePathPrefix\$Name\$Version" > $null
                 Set-Content -Path "${TestDrive}\$ModulePathPrefix\$Name\$Version\$Name.psm1" -Value $Content
                 New-ModuleManifest -RootModule "$Name.psm1" -Path "${TestDrive}\$ModulePathPrefix\$Name\$Version\$Name.psd1" -ModuleVersion $Version
             } else {
@@ -23,22 +23,22 @@ Describe 'using module' -Tags "CI" {
             }
 
             $resolvedTestDrivePath = Split-Path ((get-childitem "${TestDrive}\$ModulePathPrefix")[0].FullName)
-            if (-not ($env:PSMODULEPATH -like "*$resolvedTestDrivePath*")) {
-                $env:PSMODULEPATH += "$([System.IO.Path]::PathSeparator)$resolvedTestDrivePath"
+            if (-not ($env:PSModulePath -like "*$resolvedTestDrivePath*")) {
+                $env:PSModulePath += "$([System.IO.Path]::PathSeparator)$resolvedTestDrivePath"
             }
         }
 
     }
 
     AfterAll {
-        $env:PSMODULEPATH = $originalPSMODULEPATH 
+        $env:PSModulePath = $originalPSModulePath
     }
 
     It 'Import-Module has ImplementedAssembly, when classes are present in the module' {
         # Create modules in TestDrive:\
         New-TestModule -Name Foo -Content 'class Foo { [string] GetModuleName() { return "Foo" } }'
         New-TestModule -Manifest -Name FooWithManifest -Content 'class Foo { [string] GetModuleName() { return "FooWithManifest" } }'
-        
+
         $module = Import-Module Foo  -PassThru
         try {
             $module.ImplementingAssembly | Should Not Be $null
@@ -53,7 +53,7 @@ using module Foo
 class Bar : Foo {}
 [Bar]
 "@).Invoke()
-            
+
         $barType.BaseType.Name | Should Be 'Foo'
     }
 
@@ -76,13 +76,13 @@ using module Foo
 class Bar : Foo.Foo {}
 [Foo.Foo]::new()
 "@).Invoke()
-        $fooObject.GetModuleName() | Should Be 'Foo' 
+        $fooObject.GetModuleName() | Should Be 'Foo'
     }
 
     It "can use modules with classes collision" {
         # we use 3 classes with name Foo at the same time
         # two of them come from 'using module' and one is defined in the scriptblock itself.
-        # we should be able to use first two of them by the module-quilified name and the third one it's name.
+        # we should be able to use first two of them by the module-qualified name and the third one it's name.
         $fooModuleName = [scriptblock]::Create(@"
 using module Foo
 using module FooWithManifest
@@ -106,11 +106,11 @@ class Bar : Foo {}
         $fooModuleName[3] | Should Be 'This'
     }
 
-    It "doesn't mess up two consequitive scripts" {
+    It "doesn't mess up two consecutive scripts" {
         $sb1 = [scriptblock]::Create(@"
 using module Foo
 class Bar : Foo {}
-[Bar]::new().GetModuleName() 
+[Bar]::new().GetModuleName()
 "@)
 
         $sb2 = [scriptblock]::Create(@"
@@ -118,7 +118,7 @@ using module Foo
 
 class Foo { [string] GetModuleName() { return "This" } }
 class Bar : Foo {}
-[Bar]::new().GetModuleName() 
+[Bar]::new().GetModuleName()
 
 "@)
         $sb1.Invoke() | Should Be 'Foo'
@@ -257,10 +257,33 @@ New-Object Foo
         It "report an error on incomplete using input" {
             $err = Get-ParseResults "using module @{ModuleName = 'FooWithManifest'; FooWithManifest = 1." # missing closing bracket
             $err.Count | Should Be 2
-            $err[0].ErrorId | Should Be 'IncompleteHashLiteral'
+            $err[0].ErrorId | Should Be 'MissingEndCurlyBrace'
             $err[1].ErrorId | Should Be 'RequiresModuleInvalid'
         }
 
+        It "report an error when 'using module' terminating by NewLine" {
+            $err = Get-ParseResults "using module"
+            $err.Count | Should Be 1
+            $err[0].ErrorId | Should Be 'MissingUsingItemName'
+        }
+
+        It "report an error when 'using module' terminating by Semicolon" {
+            $err = Get-ParseResults "using module; $testvar=1"
+            $err.Count | Should Be 1
+            $err[0].ErrorId | Should Be 'MissingUsingItemName'
+        }
+
+        It "report an error when a value after 'using module' is a unallowed expression" {
+            $err = Get-ParseResults "using module )"
+            $err.Count | Should Be 1
+            $err[0].ErrorId | Should Be 'InvalidValueForUsingItemName'
+        }
+
+        It "report an error when a value after 'using module' is not a valid module name" {
+            $err = Get-ParseResults "using module 123"
+            $err.Count | Should Be 1
+            $err[0].ErrorId | Should Be 'InvalidValueForUsingItemName'
+        }
     }
 
     Context 'short name in case of name collision' {
@@ -311,7 +334,7 @@ using module FooWithManifest
 using module Foo
 [Foo]::new().GetModuleName()
 "@).Invoke()
-            
+
             $moduleName | Should Be 'Foo2'
         }
     }
@@ -324,9 +347,9 @@ using module Foo
             New-TestModule -Manifest -Name FooWithManifest -Content 'class Foo { [string] GetModuleName() { return "Foo345" } }' -Version '3.4.5' -ModulePathPrefix 'Modules2'
         }
 
-        # 'using module' behavior must be alligned with Import-Module.
+        # 'using module' behavior must be aligned with Import-Module.
         # Import-Module does the following:
-        # 1) find the first directory from $env:PSMODULEPATH that contains the module
+        # 1) find the first directory from $env:PSModulePath that contains the module
         # 2) Import highest available version of the module
         # In out case TestDrive:\Module is before TestDrive:\Modules2 and so 2.3.0 is the right version
         It "uses the last module, if multiple versions are present" {
@@ -381,13 +404,13 @@ using module ModuleWithRuntimeError
     }
 
     Context 'shared InitialSessionState' {
-    
+
         It 'can pick the right module' {
-                
+
             $scriptToProcessPath = "${TestDrive}\toProcess.ps1"
             Set-Content -Path $scriptToProcessPath -Value @'
 using module Foo
-function foo() 
+function foo()
 {
     [Foo]::new()
 }
@@ -411,36 +434,36 @@ function foo()
             $ps.Streams.Error | Should Be $null
         }
     }
-       
 
-    # here we are back to normal $env:PSMODULEPATH, but all modules are there
+
+    # here we are back to normal $env:PSModulePath, but all modules are there
     Context "Module by path" {
         BeforeAll {
             # this is a setup for Context "Module by path"
             New-TestModule -Name FooForPaths -Content 'class Foo { [string] GetModuleName() { return "FooForPaths" } }'
-            $env:PSMODULEPATH = $originalPSMODULEPATH
+            $env:PSModulePath = $originalPSModulePath
 
             new-item -type directory -Force TestDrive:\FooRelativeConsumer
             Set-Content -Path "${TestDrive}\FooRelativeConsumer\FooRelativeConsumer.ps1" -Value @'
-using module ..\modules\FooForPaths 
+using module ..\modules\FooForPaths
 class Bar : Foo {}
 [Bar]::new()
 '@
-        
+
             Set-Content -Path "${TestDrive}\FooRelativeConsumerErr.ps1" -Value @'
-using module FooForPaths 
+using module FooForPaths
 class Bar : Foo {}
 [Bar]::new()
 '@
         }
 
-        It 'use non-modified PSMODULEPATH' {
-            $env:PSMODULEPATH | Should Be $originalPSMODULEPATH
+        It 'use non-modified PSModulePath' {
+            $env:PSModulePath | Should Be $originalPSModulePath
         }
 
         It "can be accessed by relative path" {
-            $barObject = & TestDrive:\FooRelativeConsumer\FooRelativeConsumer.ps1          
-            $barObject.GetModuleName() | Should Be 'FooForPaths' 
+            $barObject = & TestDrive:\FooRelativeConsumer\FooRelativeConsumer.ps1
+            $barObject.GetModuleName() | Should Be 'FooForPaths'
         }
 
         It "cannot be accessed by relative path without .\ from a script" {
@@ -456,8 +479,8 @@ using module $resolvedTestDrivePath\FooForPaths
 "@
             $err = Get-ParseResults $s
             $err.Count | Should Be 0
-            $barObject = [scriptblock]::Create($s).Invoke()            
-            $barObject.GetModuleName() | Should Be 'FooForPaths' 
+            $barObject = [scriptblock]::Create($s).Invoke()
+            $barObject.GetModuleName() | Should Be 'FooForPaths'
         }
 
         It "can be accessed by absolute path with file extension" {
@@ -465,8 +488,8 @@ using module $resolvedTestDrivePath\FooForPaths
             $barObject = [scriptblock]::Create(@"
 using module $resolvedTestDrivePath\FooForPaths\FooForPaths.psm1
 [Foo]::new()
-"@).Invoke()            
-            $barObject.GetModuleName() | Should Be 'FooForPaths' 
+"@).Invoke()
+            $barObject.GetModuleName() | Should Be 'FooForPaths'
         }
 
         It "can be accessed by relative path without file" {
@@ -476,14 +499,14 @@ using module .\FooForPaths
 [Foo]::new()
 "@
             $err.FullyQualifiedErrorId | Should Be ModuleNotFoundDuringParse
-            
+
             Push-Location TestDrive:\modules
             try {
                 $barObject = [scriptblock]::Create(@"
 using module .\FooForPaths
 [Foo]::new()
-"@).Invoke()            
-                $barObject.GetModuleName() | Should Be 'FooForPaths' 
+"@).Invoke()
+                $barObject.GetModuleName() | Should Be 'FooForPaths'
             } finally {
                 Pop-Location
             }

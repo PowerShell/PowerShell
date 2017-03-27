@@ -3,7 +3,7 @@
 //  Microsoft Windows NT
 //  Copyright (C) Microsoft Corporation, 2007.
 //
-//  Contents:  Entry points for managed PowerShell plugin worker used to 
+//  Contents:  Entry points for managed PowerShell plugin worker used to
 //  host powershell in a WSMan service.
 // ----------------------------------------------------------------------
 
@@ -86,7 +86,7 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// class that holds plugin + shell context information used to handle
     /// shutdown notifications.
-    /// 
+    ///
     /// Explicit destruction and release of the IntPtrs is not required because
     /// their lifetime is managed by WinRM.
     /// </summary>
@@ -101,7 +101,7 @@ namespace System.Management.Automation.Remoting
         internal bool isReceiveOperation;
         internal bool isShuttingDown;
 
-        #endregion 
+        #endregion
 
         #region Constructors
 
@@ -122,7 +122,7 @@ namespace System.Management.Automation.Remoting
     }
 
     /// <summary>
-    /// Represents the logical grouping of all actions required to handle the 
+    /// Represents the logical grouping of all actions required to handle the
     /// lifecycle of shell sessions through the WinRM plugin.
     /// </summary>
     internal class WSManPluginInstance
@@ -167,9 +167,6 @@ namespace System.Management.Automation.Remoting
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.UnhandledException +=
                 new UnhandledExceptionEventHandler(WSManPluginInstance.UnhandledExceptionHandler);
-
-            // Register our Watson handler for crash reports in server mode
-            System.Management.Automation.WindowsErrorReporting.RegisterWindowsErrorReporting(true);
 #endif
         }
 
@@ -359,8 +356,6 @@ namespace System.Management.Automation.Remoting
             }
             catch (System.Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 PSEtwLog.LogOperationalError(PSEventId.TransportError,
                     PSOpcode.Connect, PSTask.None, PSKeyword.UseAlwaysOperational, "00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000",
                     Convert.ToString(WSManPluginErrorCodes.ManagedException, CultureInfo.InvariantCulture), e.Message, e.StackTrace);
@@ -437,8 +432,6 @@ namespace System.Management.Automation.Remoting
             }
             catch (System.Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 PSEtwLog.LogOperationalError(PSEventId.TransportError,
                     PSOpcode.Connect, PSTask.None, PSKeyword.UseAlwaysOperational, "00000000-0000-0000-0000-000000000000", "00000000-0000-0000-0000-000000000000",
                     Convert.ToString(WSManPluginErrorCodes.ManagedException, CultureInfo.InvariantCulture), e.Message, e.StackTrace);
@@ -480,15 +473,13 @@ namespace System.Management.Automation.Remoting
                 return;
             }
 
-            SetThreadProperties(mgdShellSession.creationRequestDetails);
             // update the internal data store only if this is not receive operation.
             if (!context.isReceiveOperation)
             {
                 DeleteFromActiveShellSessions(context.shellContext);
             }
 
-            string errorMsg = StringUtil.Format(RemotingErrorIdStrings.WSManPluginOperationClose);
-            System.Exception reasonForClose = new System.Exception(errorMsg);
+            System.Exception reasonForClose = new System.Exception(RemotingErrorIdStrings.WSManPluginOperationClose);
             mgdShellSession.CloseOperation(context, reasonForClose);
         }
 
@@ -509,7 +500,7 @@ namespace System.Management.Automation.Remoting
                 //Dbg.Assert(false, "context.shellContext not matched");
                 return;
             }
-            SetThreadProperties(mgdShellSession.creationRequestDetails);
+
             mgdShellSession.CloseCommandOperation(context);
         }
 
@@ -996,7 +987,7 @@ namespace System.Management.Automation.Remoting
                 }
                 catch (System.Security.SecurityException)
                 {
-                    // The caller does not have the correct permissions. 
+                    // The caller does not have the correct permissions.
                     // -or-
                     // A Win32 error occurred.
                 }
@@ -1009,7 +1000,7 @@ namespace System.Management.Automation.Remoting
 
         private const string WSManRunAsClientTokenName = "__WINRM_RUNAS_CLIENT_TOKEN__";
         /// <summary>
-        /// Helper method to retrieve the WSMan client token from the __WINRM_RUNAS_CLIENT_TOKEN__ 
+        /// Helper method to retrieve the WSMan client token from the __WINRM_RUNAS_CLIENT_TOKEN__
         /// environment variable, which is set in the WSMan layer for Virtual or RunAs accounts.
         /// </summary>
         /// <returns>ClientToken IntPtr</returns>
@@ -1420,7 +1411,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// extract message from exception (if any) and report operation complete with it to WSMan 
+        /// extract message from exception (if any) and report operation complete with it to WSMan
         /// </summary>
         /// <param name="requestDetails"></param>
         /// <param name="reasonForClose"></param>
@@ -1469,7 +1460,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Sets thread properties like UI Culture, Culture etc..This is needed as code is transitioning from
-        /// unmanaged heap to managed heap...and thread properties are not set correctly during this 
+        /// unmanaged heap to managed heap...and thread properties are not set correctly during this
         /// transition.
         /// Currently WSMan provider supplies only UI Culture related data..so only UI Culture is set.
         /// </summary>
@@ -1487,7 +1478,7 @@ namespace System.Management.Automation.Remoting
                 WSManPluginConstants.WSManPluginParamsGetRequestedLocale,
                 outputStruct);
             //ref nativeLocaleData);
-            bool retreivingLocaleSucceeded = (0 == hResult);
+            bool retrievingLocaleSucceeded = (0 == hResult);
             WSManNativeApi.WSManData_UnToMan localeData = WSManNativeApi.WSManData_UnToMan.UnMarshal(outputStruct); // nativeLocaleData
 
             //IntPtr nativeDataLocaleData = IntPtr.Zero;
@@ -1496,13 +1487,13 @@ namespace System.Management.Automation.Remoting
                 WSManPluginConstants.WSManPluginParamsGetRequestedDataLocale,
                 outputStruct);
             //ref nativeDataLocaleData);
-            bool retreivingDataLocaleSucceeded = ((int)WSManPluginErrorCodes.NoError == hResult);
+            bool retrievingDataLocaleSucceeded = ((int)WSManPluginErrorCodes.NoError == hResult);
             WSManNativeApi.WSManData_UnToMan dataLocaleData = WSManNativeApi.WSManData_UnToMan.UnMarshal(outputStruct); // nativeDataLocaleData
 
             // Set the UI Culture
             try
             {
-                if (retreivingLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == localeData.Type))
+                if (retrievingLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == localeData.Type))
                 {
                     CultureInfo uiCultureToUse = new CultureInfo(localeData.Text);
                     ClrFacade.SetCurrentThreadUiCulture(uiCultureToUse);
@@ -1516,7 +1507,7 @@ namespace System.Management.Automation.Remoting
             // Set the Culture
             try
             {
-                if (retreivingDataLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == dataLocaleData.Type))
+                if (retrievingDataLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == dataLocaleData.Type))
                 {
                     CultureInfo cultureToUse = new CultureInfo(dataLocaleData.Text);
                     ClrFacade.SetCurrentThreadCulture(cultureToUse);

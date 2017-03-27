@@ -41,7 +41,7 @@ namespace Microsoft.PowerShell.ScheduledJob
 
         /// <summary>
         /// Pass through for scheduledjobtrigger object.
-        /// </summary>      
+        /// </summary>
         [Parameter(ParameterSetName = EnableDisableScheduledJobCmdletBase.EnabledParameterSet)]
         public SwitchParameter PassThru
         {
@@ -73,7 +73,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                 if (_passThru)
                 {
                     WriteObject(trigger);
-                }                
+                }
             }
         }
 

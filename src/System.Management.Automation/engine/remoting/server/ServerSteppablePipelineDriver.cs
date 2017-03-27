@@ -76,7 +76,7 @@ namespace System.Management.Automation
         // was created
         private bool _addToHistory;
         // associated with this powershell
-#if !CORECLR // No ApartmentState In CoreCLR       
+#if !CORECLR // No ApartmentState In CoreCLR
         private ApartmentState apartmentState;  // apartment state for this powershell
 #endif
 
@@ -95,8 +95,8 @@ namespace System.Management.Automation
         /// <param name="noInput">whether there is input for this powershell</param>
         /// <param name="clientPowerShellId">the client powershell id</param>
         /// <param name="clientRunspacePoolId">the client runspacepool id</param>
-        /// <param name="runspacePoolDriver">runspace pool driver 
-        /// which is creating this powershell driver</param>        
+        /// <param name="runspacePoolDriver">runspace pool driver
+        /// which is creating this powershell driver</param>
         /// <param name="hostInfo">host info using which the host for
         /// this powershell will be constructed</param>
         /// <param name="streamOptions">serialization options for the streams in this powershell</param>
@@ -124,7 +124,7 @@ namespace System.Management.Automation
         /// <param name="noInput">whether there is input for this powershell</param>
         /// <param name="clientPowerShellId">the client powershell id</param>
         /// <param name="clientRunspacePoolId">the client runspacepool id</param>
-        /// <param name="runspacePoolDriver">runspace pool driver 
+        /// <param name="runspacePoolDriver">runspace pool driver
         /// which is creating this powershell driver</param>
         /// <param name="apartmentState">apartment state for this powershell</param>
         /// <param name="hostInfo">host info using which the host for
@@ -194,7 +194,7 @@ namespace System.Management.Automation
         internal PowerShell LocalPowerShell { get; }
 
         /// <summary>
-        /// Instance id by which this powershell driver is 
+        /// Instance id by which this powershell driver is
         /// identified. This is the same as the id of the
         /// powershell on the client side
         /// </summary>
@@ -212,9 +212,9 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Id of the runspace pool driver which created
-        /// this object. This is the same as the id of 
+        /// this object. This is the same as the id of
         /// the runspace pool at the client side which
-        /// is associated with the powershell on the 
+        /// is associated with the powershell on the
         /// client side
         /// </summary>
         internal Guid RunspacePoolId { get; }
@@ -372,7 +372,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Checks if there is any pending input that needs processing. If so, triggers RunProcessRecord
-        /// event. The pipeline execution thread catches this and calls us back when the pipeline is 
+        /// event. The pipeline execution thread catches this and calls us back when the pipeline is
         /// suspended.
         /// </summary>
         /// <param name="complete"></param>
@@ -434,7 +434,7 @@ namespace System.Management.Automation
         internal void SetState(PSInvocationState newState, Exception reason)
         {
             PSInvocationState copyState = PSInvocationState.NotStarted;
-            bool shoulRaiseEvents = false;
+            bool shouldRaiseEvents = false;
             lock (SyncObject)
             {
                 switch (PipelineState)
@@ -471,7 +471,7 @@ namespace System.Management.Automation
                                 case PSInvocationState.Stopped:
                                 case PSInvocationState.Failed:
                                     copyState = newState;
-                                    shoulRaiseEvents = true;
+                                    shouldRaiseEvents = true;
                                     break;
                             }
                         }
@@ -484,11 +484,11 @@ namespace System.Management.Automation
                                 case PSInvocationState.Completed:
                                 case PSInvocationState.Failed:
                                     copyState = PSInvocationState.Stopped;
-                                    shoulRaiseEvents = true;
+                                    shouldRaiseEvents = true;
                                     break;
                                 case PSInvocationState.Stopped:
                                     copyState = newState;
-                                    shoulRaiseEvents = true;
+                                    shouldRaiseEvents = true;
                                     break;
                                 default:
                                     throw new InvalidOperationException();
@@ -505,7 +505,7 @@ namespace System.Management.Automation
                 PipelineState = copyState;
             }
 
-            if (shoulRaiseEvents)
+            if (shouldRaiseEvents)
             {
                 // send the state change notification to the client
                 DataStructureHandler.SendStateChangedInformationToClient(

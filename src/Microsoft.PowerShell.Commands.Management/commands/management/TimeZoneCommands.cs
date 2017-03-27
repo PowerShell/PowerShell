@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Commands
     /// A cmdlet to retrieve time zone information.
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TimeZone", DefaultParameterSetName = "Name",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=799468")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=799468")]
     [Alias("gtz")]
     public class GetTimeZoneCommand : PSCmdlet
     {
@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Id { get; set; }
 
         /// <summary>
-        /// Specifies that the cmdlet should produce a collection of the 
+        /// Specifies that the cmdlet should produce a collection of the
         /// TimeZoneInfo objects that are available on the system.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ListAvailable")]
@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.Set, "TimeZone",
         SupportsShouldProcess = true,
         DefaultParameterSetName = "Name",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=799469")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=799469")]
     [Alias("stz")]
     public class SetTimeZoneCommand : PSCmdlet
     {
@@ -485,7 +485,7 @@ namespace Microsoft.PowerShell.Commands
             private const string PrivilegeCheckApiDllName = "api-ms-win-downlevel-advapi32-l1-1-1.dll";
             private const string AdjustTokenPrivilegesApiDllName = "api-ms-win-downlevel-advapi32-l1-1-1.dll";
             private const string CloseHandleApiDllName = "api-ms-win-downlevel-kernel32-l1-1-0.dll";
-            private const string SendMessageTimeoutApiDllName = "ext-ms-win-rtcore-ntuser-window-ext-l1-1-0.dll";            
+            private const string SendMessageTimeoutApiDllName = "ext-ms-win-rtcore-ntuser-window-ext-l1-1-0.dll";
 #else
             private const string SetDynamicTimeZoneApiDllName = "kernel32.dll";
             private const string GetTimeZoneInformationForYearApiDllName = "kernel32.dll";
@@ -722,7 +722,7 @@ namespace Microsoft.PowerShell.Commands
             /// PInvoke AdjustTokenPrivilege API
             /// </summary>
             /// <param name="TokenHandle"></param>
-            /// <param name="DisableAllPrivilegs"></param>
+            /// <param name="DisableAllPrivileges"></param>
             /// <param name="NewState"></param>
             /// <param name="BufferLength"></param>
             /// <param name="PreviousState"></param>
@@ -730,7 +730,7 @@ namespace Microsoft.PowerShell.Commands
             /// <returns></returns>
             [DllImport(AdjustTokenPrivilegesApiDllName, SetLastError = true, CharSet = CharSet.Unicode, BestFitMapping = false)]
             [return: MarshalAs(UnmanagedType.Bool)]
-            public static extern bool AdjustTokenPrivileges(IntPtr TokenHandle, bool DisableAllPrivilegs,
+            public static extern bool AdjustTokenPrivileges(IntPtr TokenHandle, bool DisableAllPrivileges,
                 ref TOKEN_PRIVILEGES NewState, int BufferLength, IntPtr PreviousState, IntPtr ReturnLength);
 
             /// <summary>
@@ -836,7 +836,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Find the system time zone by checking first against StandardName and then, 
+        /// Find the system time zone by checking first against StandardName and then,
         /// if no matches were found, against the DaylightName.
         /// </summary>
         /// <param name="name">The name (or wildcard pattern) of the system time zone to find.</param>

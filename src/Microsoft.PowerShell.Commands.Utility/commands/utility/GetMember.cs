@@ -56,9 +56,9 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// This class implements get-member command.  
+    /// This class implements get-member command.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "Member", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113322", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommon.Get, "Member", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113322", RemotingCapability = RemotingCapability.None)]
     [OutputType(typeof(MemberDefinition))]
     public class GetMemberCommand : PSCmdlet
     {
@@ -191,7 +191,7 @@ namespace Microsoft.PowerShell.Commands
                 // properties. We should honor extended properties for such case.
 
 
-                // request is to search dotnet or adapted or both members. 
+                // request is to search dotnet or adapted or both members.
                 // dotnet,adapted members cannot be Script*,Note*,Code*
                 memberTypeToSearch ^= (PSMemberTypes.AliasProperty | PSMemberTypes.CodeMethod | PSMemberTypes.CodeProperty
                 | PSMemberTypes.MemberSet | PSMemberTypes.NoteProperty | PSMemberTypes.PropertySet | PSMemberTypes.ScriptMethod

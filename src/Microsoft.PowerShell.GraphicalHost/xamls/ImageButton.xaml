@@ -11,8 +11,8 @@
             </ResourceDictionary>
         </Grid.Resources>
         <Grid>
-            <Button x:Name="innerButton" 
-                    Command="{Binding Path=Command, RelativeSource={RelativeSource AncestorType={x:Type controls:ImageButtonBase}}}"  
+            <Button x:Name="innerButton"
+                    Command="{Binding Path=Command, RelativeSource={RelativeSource AncestorType={x:Type controls:ImageButtonBase}}}"
                     ToolTip="{Binding Converter={StaticResource imageButtonToolTipConverter}, RelativeSource={RelativeSource AncestorType={x:Type controls:ImageButtonBase}}}"
                     ToolTipService.ShowOnDisabled="True" Template="{StaticResource imageButtonTemplate}">
             </Button>

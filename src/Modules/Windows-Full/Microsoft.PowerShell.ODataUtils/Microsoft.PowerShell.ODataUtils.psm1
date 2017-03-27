@@ -19,16 +19,16 @@ if ($ProcessorArchitecture -eq 5)
 . "$PSScriptRoot\Microsoft.PowerShell.ODataUtilsHelper.ps1"
 
 #########################################################
-# Generates PowerShell module containing client side 
-# proxy cmdlets that can be used to interact with an 
+# Generates PowerShell module containing client side
+# proxy cmdlets that can be used to interact with an
 # OData based server side endpoint.
-######################################################### 
-function Export-ODataEndpointProxy 
+#########################################################
+function Export-ODataEndpointProxy
 {
     [CmdletBinding(
     DefaultParameterSetName='CDXML',
     SupportsShouldProcess=$true,
-    HelpUri="http://go.microsoft.com/fwlink/?LinkId=510069")]
+    HelpUri="https://go.microsoft.com/fwlink/?LinkId=510069")]
     [OutputType([System.IO.FileInfo])]
     param
     (
@@ -46,11 +46,11 @@ function Export-ODataEndpointProxy
 
         [Parameter(Position=3, ValueFromPipelineByPropertyName=$true)]
         [PSCredential] $Credential,
-	
+
         [Parameter(Position=4, ValueFromPipelineByPropertyName=$true)]
         [ValidateSet('Put', 'Post', 'Patch')]
         [string] $CreateRequestMethod='Post',
-	
+
         [Parameter(Position=5, ValueFromPipelineByPropertyName=$true)]
         [ValidateSet('Put', 'Post', 'Patch')]
         [string] $UpdateRequestMethod='Patch',
@@ -79,7 +79,7 @@ function Export-ODataEndpointProxy
         [Hashtable] $Headers
     )
 
-    BEGIN 
+    BEGIN
     {
         if (!$MetadataUri)
         {
@@ -128,7 +128,7 @@ function Export-ODataEndpointProxy
             $errorRecord = CreateErrorRecordHelper "ODataEndpointProxyOutputModuleExists" $errorMessage ([System.Management.Automation.ErrorCategory]::ResourceExists) $null $OutputModule
             $PSCmdlet.ThrowTerminatingError($errorRecord)
         }
-        
+
         $isWhatIf = $psboundparameters.ContainsKey("WhatIf")
 
         if(!$OutputModuleExists)
@@ -142,12 +142,12 @@ function Export-ODataEndpointProxy
         {
             $resolvedOutputModulePath = Resolve-Path -Path $OutputModule -ErrorAction Stop -Verbose
             if($resolvedOutputModulePath.Count -gt 1)
-            {    
+            {
                 $errorMessage = ($LocalizedData.OutputModulePathIsNotUnique -f $OutputModule)
                 $errorRecord = CreateErrorRecordHelper "ODataEndpointProxyOutputModulePathIsNotUnique" $errorMessage ([System.Management.Automation.ErrorCategory]::InvalidArgument) $null $OutputModule
                 $PSCmdlet.ThrowTerminatingError($errorRecord)
             }
-            
+
             # Make sure that the path specified is a valid file system directory path.
             if([system.IO.Directory]::Exists($resolvedOutputModulePath))
             {
@@ -158,7 +158,7 @@ function Export-ODataEndpointProxy
                 $errorMessage = ($LocalizedData.OutputModulePathIsNotFileSystemPath -f $OutputModule)
                 $errorRecord = CreateErrorRecordHelper "ODataEndpointProxyPathIsNotFileSystemPath" $errorMessage ([System.Management.Automation.ErrorCategory]::InvalidArgument) $null $OutputModule
                 $PSCmdlet.ThrowTerminatingError($errorRecord)
-            } 
+            }
         }
 
         $rootDir = [System.IO.Directory]::GetDirectoryRoot($OutputModule)
@@ -188,7 +188,7 @@ function Export-ODataEndpointProxy
         }
     }
 
-    END 
+    END
     {
         if($pscmdlet.ShouldProcess($Uri))
         {
@@ -199,17 +199,17 @@ function Export-ODataEndpointProxy
 
                 # Import module based on selected CmdletAdapter
                 $adapterToImport = $CmdletAdapter
-                
+
                 # NetworkControllerAdapter relies on ODataAdapter
                 if ($CmdletAdapter -eq 'NetworkControllerAdapter')
                 {
                     $adapterToImport = 'ODataAdapter'
                 }
- 
+
                 Write-Debug ($LocalizedData.SelectedAdapter -f $adapterPSScript)
 
                 $adapterPSScript = "$PSScriptRoot\Microsoft.PowerShell." + $adapterToImport + ".ps1"
-                
+
                 . $adapterPSScript
                 ExportODataEndpointProxy @PSBoundParameters
             }

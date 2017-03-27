@@ -148,10 +148,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Static constructor
-        /// 
-        /// NOTE: FWLinks for core PowerShell modules are needed since they get loaded as snapins in a Remoting Endpoint. 
+        ///
+        /// NOTE: FWLinks for core PowerShell modules are needed since they get loaded as snapins in a Remoting Endpoint.
         /// When we moved to modules in V3, we were not able to make this change as it was a risky change to make at that time.
-        /// 
+        ///
         /// </summary>
         static UpdatableHelpCommandBase()
         {
@@ -159,13 +159,13 @@ namespace Microsoft.PowerShell.Commands
 
             // TODO: assign real TechNet addresses
 
-            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "http://go.microsoft.com/fwlink/?linkid=390783");
-            s_metadataCache.Add("Microsoft.PowerShell.Core", "http://go.microsoft.com/fwlink/?linkid=390782");
-            s_metadataCache.Add("Microsoft.PowerShell.Utility", "http://go.microsoft.com/fwlink/?linkid=390787");
-            s_metadataCache.Add("Microsoft.PowerShell.Host", "http://go.microsoft.com/fwlink/?linkid=390784");
-            s_metadataCache.Add("Microsoft.PowerShell.Management", " http://go.microsoft.com/fwlink/?linkid=390785");
-            s_metadataCache.Add("Microsoft.PowerShell.Security", " http://go.microsoft.com/fwlink/?linkid=390786");
-            s_metadataCache.Add("Microsoft.WSMan.Management", "http://go.microsoft.com/fwlink/?linkid=390788");
+            s_metadataCache.Add("Microsoft.PowerShell.Diagnostics", "https://go.microsoft.com/fwlink/?linkid=390783");
+            s_metadataCache.Add("Microsoft.PowerShell.Core", "https://go.microsoft.com/fwlink/?linkid=390782");
+            s_metadataCache.Add("Microsoft.PowerShell.Utility", "https://go.microsoft.com/fwlink/?linkid=390787");
+            s_metadataCache.Add("Microsoft.PowerShell.Host", "https://go.microsoft.com/fwlink/?linkid=390784");
+            s_metadataCache.Add("Microsoft.PowerShell.Management", " https://go.microsoft.com/fwlink/?linkid=390785");
+            s_metadataCache.Add("Microsoft.PowerShell.Security", " https://go.microsoft.com/fwlink/?linkid=390786");
+            s_metadataCache.Add("Microsoft.WSMan.Management", "https://go.microsoft.com/fwlink/?linkid=390788");
         }
 
         /// <summary>
@@ -229,7 +229,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 return;
             }
-            if (!module.HelpInfoUri.StartsWith("http://", StringComparison.OrdinalIgnoreCase))
+            if (!(module.HelpInfoUri.StartsWith("http://", StringComparison.OrdinalIgnoreCase) || module.HelpInfoUri.StartsWith("https://", StringComparison.OrdinalIgnoreCase)))
             {
                 if (!noErrors)
                 {
@@ -487,7 +487,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            // Win8: 572882 When the system locale is English and the UI is JPN, 
+            // Win8: 572882 When the system locale is English and the UI is JPN,
             // running "update-help" still downs English help content.
             var cultures = _language ?? _helpSystem.GetCurrentUICulture();
 
@@ -699,7 +699,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="path">path to resolve</param>
         /// <param name="recurse">resolve recursively?</param>
-        /// <param name="isLiteralPath">Treat the path / start path as a literal path?</param>/// 
+        /// <param name="isLiteralPath">Treat the path / start path as a literal path?</param>///
         /// <returns>a list of directories</returns>
         internal IEnumerable<string> ResolvePath(string path, bool recurse, bool isLiteralPath)
         {

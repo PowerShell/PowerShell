@@ -236,7 +236,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             //public string AnsiStringValue;
 
             //[FieldOffset(4), MarshalAs(UnmanagedType.LPWStr)]
-            //public string WideStringValue; 
+            //public string WideStringValue;
         };
 
         [StructLayout(LayoutKind.Sequential)]
@@ -282,25 +282,25 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         // We access those fields directly. The struct is here for reference only.
         //
         [StructLayout(LayoutKind.Explicit, CharSet = CharSet.Unicode)]
-        struct PDH_COUNTER_INFO {  
-            [FieldOffset(0)]  public UInt32 dwLength;  
-            [FieldOffset(4)]  public UInt32 dwType;  
-            [FieldOffset(8)]  public UInt32 CVersion;  
-            [FieldOffset(12)] public UInt32 CStatus;  
-            [FieldOffset(16)] public UInt32 lScale;  
-            [FieldOffset(20)] public UInt32 lDefaultScale;  
-            [FieldOffset(24)] public IntPtr dwUserData;  
-            [FieldOffset(32)] public IntPtr dwQueryUserData;  
-            [FieldOffset(40)] public string szFullPath;  
+        struct PDH_COUNTER_INFO {
+            [FieldOffset(0)]  public UInt32 dwLength;
+            [FieldOffset(4)]  public UInt32 dwType;
+            [FieldOffset(8)]  public UInt32 CVersion;
+            [FieldOffset(12)] public UInt32 CStatus;
+            [FieldOffset(16)] public UInt32 lScale;
+            [FieldOffset(20)] public UInt32 lDefaultScale;
+            [FieldOffset(24)] public IntPtr dwUserData;
+            [FieldOffset(32)] public IntPtr dwQueryUserData;
+            [FieldOffset(40)] public string szFullPath;
 
-            [FieldOffset(48)] public string szMachineName;      
-            [FieldOffset(56)] public string szObjectName;      
-            [FieldOffset(64)] public string szInstanceName;      
-            [FieldOffset(72)] public string szParentInstance;      
-            [FieldOffset(80)] public UInt32 dwInstanceIndex;      
+            [FieldOffset(48)] public string szMachineName;
+            [FieldOffset(56)] public string szObjectName;
+            [FieldOffset(64)] public string szInstanceName;
+            [FieldOffset(72)] public string szParentInstance;
+            [FieldOffset(80)] public UInt32 dwInstanceIndex;
             [FieldOffset(88)] public string szCounterName;
-            
-            [FieldOffset(96)] public string szExplainText;  
+
+            [FieldOffset(96)] public string szExplainText;
             [FieldOffset(104)]public IntPtr DataBuffer;
         }*/
 
@@ -530,7 +530,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 res = PdhGetCounterInfo(hCounter, false, ref pBufferSize, bufCounterInfo);
                 if (res == 0 && bufCounterInfo != IntPtr.Zero)
                 {
-                    //PDH_COUNTER_INFO pdhCounterInfo = (PDH_COUNTER_INFO)Marshal.PtrToStructure(bufCounterInfo, typeof(PDH_COUNTER_INFO));                 
+                    //PDH_COUNTER_INFO pdhCounterInfo = (PDH_COUNTER_INFO)Marshal.PtrToStructure(bufCounterInfo, typeof(PDH_COUNTER_INFO));
 
                     counterType = (uint)Marshal.ReadInt32(bufCounterInfo, 4);
                     defaultScale = (uint)Marshal.ReadInt32(bufCounterInfo, 20);
@@ -973,10 +973,10 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 if (res == 0)
                 {
                     //
-                    // Marshal.PtrToStructure will allocate managed memory for the object, 
+                    // Marshal.PtrToStructure will allocate managed memory for the object,
                     // so the unmanaged ptr can be freed safely
                     //
-                    pCounterPathElements = (PDH_COUNTER_PATH_ELEMENTS)Marshal.PtrToStructure(structPtr, typeof(PDH_COUNTER_PATH_ELEMENTS));
+                    pCounterPathElements = Marshal.PtrToStructure<PDH_COUNTER_PATH_ELEMENTS>(structPtr);
                 }
             }
             finally
@@ -991,12 +991,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         // TranslateLocalCounterPath() helper translates counter paths from English into the current locale language.
         // NOTE: we can only translate counter set and counter names.
         // Translated instance names come from providers
-        // This function will leave them unchanged: 
+        // This function will leave them unchanged:
         // however, it works for common cases like "*" and "_total"
         // and many instance names are just numbers, anyway.
         //
-        // Also - this only supports local paths, b/c connecting to remote registry 
-        // requires a different firewall exception. 
+        // Also - this only supports local paths, b/c connecting to remote registry
+        // requires a different firewall exception.
         // This function checks and Asserts if the path is not valid.
         //
         public uint TranslateLocalCounterPath(string englishPath, out string localizedPath)
@@ -1011,25 +1011,25 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             // Check if the path is local and assert if not:
-            string machineNameMassaged = pathElts.MachineName.ToLower(CultureInfo.InvariantCulture);
+            string machineNameMassaged = pathElts.MachineName.ToLowerInvariant();
             machineNameMassaged = machineNameMassaged.TrimStart('\\');
-            Debug.Assert(machineNameMassaged == System.Environment.MachineName.ToLower(CultureInfo.InvariantCulture));
+            Debug.Assert(machineNameMassaged == System.Environment.MachineName.ToLowerInvariant());
 
-            string lowerEngCtrName = pathElts.CounterName.ToLower(CultureInfo.InvariantCulture);
-            string lowerEngObjectName = pathElts.ObjectName.ToLower(CultureInfo.InvariantCulture);
+            string lowerEngCtrName = pathElts.CounterName.ToLowerInvariant();
+            string lowerEngObjectName = pathElts.ObjectName.ToLowerInvariant();
 
             // Get the registry index
             RegistryKey rootKey = Registry.LocalMachine.OpenSubKey("SOFTWARE\\Microsoft\\Windows NT\\CurrentVersion\\Perflib\\009");
             string[] regCounters = (string[])rootKey.GetValue("Counter");
 
 
-            // NOTE: 1-based enumeration because the name strings follow index strings in the array           
+            // NOTE: 1-based enumeration because the name strings follow index strings in the array
             Int32 counterIndex = -1;
             Int32 objIndex = -1;
             for (uint enumIndex = 1; enumIndex < regCounters.Length; enumIndex++)
             {
                 string regString = regCounters[enumIndex];
-                if (regString.ToLower(CultureInfo.InvariantCulture) == lowerEngCtrName)
+                if (regString.ToLowerInvariant() == lowerEngCtrName)
                 {
                     try
                     {
@@ -1040,7 +1040,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                         return (uint)PdhResults.PDH_INVALID_PATH;
                     }
                 }
-                else if (regString.ToLower(CultureInfo.InvariantCulture) == lowerEngObjectName)
+                else if (regString.ToLowerInvariant() == lowerEngObjectName)
                 {
                     try
                     {
@@ -1093,7 +1093,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
         public uint LookupPerfNameByIndex(string machineName, uint index, out string locName)
         {
             //
-            //  NOTE: to make PdhLookupPerfNameByIndex() work, 
+            //  NOTE: to make PdhLookupPerfNameByIndex() work,
             //  localizedPath needs to be pre-allocated on the first call.
             //  This is different from most other PDH functions that tolerate NULL buffers and return required size.
             //
@@ -1195,12 +1195,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     res = ParsePath(counterPath, ref pathElts);
                     if (res == 0 && pathElts.InstanceName != null)
                     {
-                        chi.InstanceName = pathElts.InstanceName.ToLower(CultureInfo.InvariantCulture);
+                        chi.InstanceName = pathElts.InstanceName.ToLowerInvariant();
                     }
 
-                    if (!_consumerPathToHandleAndInstanceMap.ContainsKey(counterPath.ToLower(CultureInfo.InvariantCulture)))
+                    if (!_consumerPathToHandleAndInstanceMap.ContainsKey(counterPath.ToLowerInvariant()))
                     {
-                        _consumerPathToHandleAndInstanceMap.Add(counterPath.ToLower(CultureInfo.InvariantCulture), chi);
+                        _consumerPathToHandleAndInstanceMap.Add(counterPath.ToLowerInvariant(), chi);
                     }
 
                     bAtLeastOneAdded = true;
@@ -1213,7 +1213,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
         //
         // AddRelogCounters combines instances and adds counters to m_hQuery.
-        // The counter handles and full paths 
+        // The counter handles and full paths
         //
         public uint AddRelogCounters(PerformanceCounterSampleSet sampleSet)
         {
@@ -1223,9 +1223,9 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             Dictionary<string, List<PerformanceCounterSample>> prefixInstanceMap = new Dictionary<string, List<PerformanceCounterSample>>();
 
-            // 
+            //
             // Go through all the samples one, constructing prefixInstanceMap and adding new counters as needed
-            //            
+            //
             foreach (PerformanceCounterSample sample in sampleSet.CounterSamples)
             {
                 PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
@@ -1236,9 +1236,9 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     continue;
                 }
 
-                string lowerCaseMachine = pathElts.MachineName.ToLower(CultureInfo.InvariantCulture);
-                string lowerCaseObject = pathElts.ObjectName.ToLower(CultureInfo.InvariantCulture);
-                string lowerCaseCounter = pathElts.CounterName.ToLower(CultureInfo.InvariantCulture);
+                string lowerCaseMachine = pathElts.MachineName.ToLowerInvariant();
+                string lowerCaseObject = pathElts.ObjectName.ToLowerInvariant();
+                string lowerCaseCounter = pathElts.CounterName.ToLowerInvariant();
 
                 string lcPathMinusInstance = @"\\" + lowerCaseMachine + @"\" + lowerCaseObject + @"\" + lowerCaseCounter;
 
@@ -1254,12 +1254,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                     prefixInstanceMap.Add(lcPathMinusInstance, newList);
                 }
 
-                //Console.WriteLine ("Added path " + sample.Path + " to the 1ist map with prefix " + lcPathMinusInstance);                
+                //Console.WriteLine ("Added path " + sample.Path + " to the 1ist map with prefix " + lcPathMinusInstance);
             }
 
-            // 
+            //
             // Add counters to the query, consolidating multi-instance with a wildcard path,
-            // and construct m_ReloggerPathToHandleAndInstanceMap where each full path would be pointing to its counter handle 
+            // and construct m_ReloggerPathToHandleAndInstanceMap where each full path would be pointing to its counter handle
             // and an instance name (might be empty for no-instance counter types).
             // You can have multiple full paths inside m_ReloggerPathToHandleAndInstanceMap pointing to the same handle.
             //
@@ -1294,7 +1294,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
                 //Console.WriteLine ("added  pdh query path:" + unifiedPath );
 
-                //now, add all actual paths to m_ReloggerPathToHandleAndInstanceMap 
+                //now, add all actual paths to m_ReloggerPathToHandleAndInstanceMap
                 foreach (PerformanceCounterSample sample in prefixInstanceMap[prefix])
                 {
                     PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
@@ -1311,12 +1311,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
                     if (pathElts.InstanceName != null)
                     {
-                        chi.InstanceName = pathElts.InstanceName.ToLower(CultureInfo.InvariantCulture);
+                        chi.InstanceName = pathElts.InstanceName.ToLowerInvariant();
                     }
 
-                    if (!_reloggerPathToHandleAndInstanceMap.ContainsKey(sample.Path.ToLower(CultureInfo.InvariantCulture)))
+                    if (!_reloggerPathToHandleAndInstanceMap.ContainsKey(sample.Path.ToLowerInvariant()))
                     {
-                        _reloggerPathToHandleAndInstanceMap.Add(sample.Path.ToLower(CultureInfo.InvariantCulture), chi);
+                        _reloggerPathToHandleAndInstanceMap.Add(sample.Path.ToLowerInvariant(), chi);
                         //Console.WriteLine ("added map path:" + sample.Path );
                     }
                 }
@@ -1339,9 +1339,9 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             uint res = 0;
 
-            // 
+            //
             // Go through all the samples one, constructing prefixInstanceMap and adding new counters as needed
-            //            
+            //
             foreach (PerformanceCounterSample sample in sampleSet.CounterSamples)
             {
                 PDH_COUNTER_PATH_ELEMENTS pathElts = new PDH_COUNTER_PATH_ELEMENTS();
@@ -1370,12 +1370,12 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                 chi.hCounter = counterHandle;
                 if (pathElts.InstanceName != null)
                 {
-                    chi.InstanceName = pathElts.InstanceName.ToLower(CultureInfo.InvariantCulture);
+                    chi.InstanceName = pathElts.InstanceName.ToLowerInvariant();
                 }
 
-                if (!_reloggerPathToHandleAndInstanceMap.ContainsKey(sample.Path.ToLower(CultureInfo.InvariantCulture)))
+                if (!_reloggerPathToHandleAndInstanceMap.ContainsKey(sample.Path.ToLowerInvariant()))
                 {
-                    _reloggerPathToHandleAndInstanceMap.Add(sample.Path.ToLower(CultureInfo.InvariantCulture), chi);
+                    _reloggerPathToHandleAndInstanceMap.Add(sample.Path.ToLowerInvariant(), chi);
                 }
             }
 
@@ -1461,11 +1461,11 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
                                      (uint)rawValue.TimeStamp.dwLowDateTime;
 
                 //
-                // NOTE: PDH returns the filetime as local time, therefore 
+                // NOTE: PDH returns the filetime as local time, therefore
                 // we need to call FromFileTimUtc() to avoid .NET applying the timezone adjustment.
                 // However, that would result in the DateTime object having Kind.Utc.
                 // We have to copy it once more to correct that (Kind is a read-only property).
-                //            
+                //
                 sampleTimeStamp = new DateTime(DateTime.FromFileTimeUtc(dtFT).Ticks, DateTimeKind.Local);
 
                 PDH_FMT_COUNTERVALUE_DOUBLE fmtValueDouble;
@@ -1514,7 +1514,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             //
-            // Prior to Vista, PdhCollectQueryDataWithTime() was not available, 
+            // Prior to Vista, PdhCollectQueryDataWithTime() was not available,
             // so we could not collect a timestamp for the entire sample set.
             // We will use the last sample's timestamp instead.
             //
@@ -1527,7 +1527,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
             else
             {
-                // 
+                //
                 // Reset the error - any errors are saved per sample in PerformanceCounterSample.Status for kvetching later
                 //
                 res = 0;
@@ -1562,11 +1562,11 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
 
             //
-            // NOTE: PDH returns the filetime as local time, therefore 
+            // NOTE: PDH returns the filetime as local time, therefore
             // we need to call FromFileTimUtc() to avoid .NET applying the timezone adjustment.
             // However, that would result in the DateTime object having Kind.Utc.
             // We have to copy it once more to correct that (Kind is a read-only property).
-            //            
+            //
             DateTime batchStamp = DateTime.Now;
             if (res != PdhResults.PDH_NO_DATA)
             {
@@ -1670,7 +1670,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
             }
             else
             {
-                // 
+                //
                 // Reset the error - any errors are saved per sample in PerformanceCounterSample.Status for kvetching later
                 //
                 res = 0;
@@ -1756,7 +1756,7 @@ namespace Microsoft.Powershell.Commands.GetCounter.PdhNative
 
             bUnknownPath = false;
 
-            string lcPath = sample.Path.ToLower(CultureInfo.InvariantCulture);
+            string lcPath = sample.Path.ToLowerInvariant();
 
             if (!_reloggerPathToHandleAndInstanceMap.ContainsKey(lcPath))
             {

@@ -1,9 +1,9 @@
 ﻿/*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
-// #define LOGENABLE // uncomment this line to enable the log, 
+// #define LOGENABLE // uncomment this line to enable the log,
                   // create c:\temp\cim.log before invoking cimcmdlets
 
 using System;
@@ -157,11 +157,11 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// <summary>
         /// Flag used to control generating message into powershell
         /// </summary>
-        private static bool genrateVerboseMessage = true;
-        internal static bool GenrateVerboseMessage
+        private static bool generateVerboseMessage = true;
+        internal static bool GenerateVerboseMessage
         {
-            get { return genrateVerboseMessage; }
-            set { genrateVerboseMessage = value; }
+            get { return generateVerboseMessage; }
+            set { generateVerboseMessage = value; }
         }
 
         /// <summary>
@@ -203,7 +203,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         internal static string removeParameterSetName = @"Remove parameter set {0} name from cache";
         internal static string currentParameterSetNameCount = @"Cache have {0} parameter set names";
         internal static string currentParameterSetNameInCache = @"Cache have parameter set {0} valid {1}";
-        internal static string currentnonMadatoryParameterSetInCache = @"Cache have optional parameter set {0} valid {1}";
+        internal static string currentnonMandatoryParameterSetInCache = @"Cache have optional parameter set {0} valid {1}";
         internal static string optionalParameterSetNameCount = @"Cache have {0} optional parameter set names";
         internal static string finalParameterSetName = @"------Final parameter set name of the cmdlet is {0}";
         internal static string addToOptionalParameterSet = @"Add to optional ParameterSetNames {0}";
@@ -231,7 +231,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             return string.Format(CultureInfo.CurrentUICulture, "{0}::{1}        ",
                 frame.GetMethod().DeclaringType.Name,
                 frame.GetMethod().Name);
-            
+
 #endif
         }
         #endregion
@@ -371,7 +371,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     {
                         writer.WriteLineAsync(spaces[indent] + sourceInformation + @"        " + message);
                     }
-                    
+
                 }
             }
         }

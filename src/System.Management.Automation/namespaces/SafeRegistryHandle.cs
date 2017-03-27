@@ -9,7 +9,7 @@
 **
 ** A wrapper for registry handles
 **
-** 
+**
 ===========================================================*/
 
 using System;
@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using Microsoft.Win32.SafeHandles;
 
-#if CORECLR 
+#if CORECLR
 // Use stubs for SafeHandleZeroOrMinusOneIsInvalid and ReliabilityContractAttribute
 using Microsoft.PowerShell.CoreClr.Stubs;
 #else

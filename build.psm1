@@ -19,15 +19,65 @@ try {
     catch { }
 }
 
+# On Unix paths is separated by colon
+# On Windows paths is separated by semicolon
+$TestModulePathSeparator = ':'
+
+if ($IsWindows)
+{
+    $TestModulePathSeparator = ';'
+    $IsAdmin = (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
+    # Can't use $env:HOME - not available on older systems (e.g. in AppVeyor)
+    $nugetPackagesRoot = "${env:HOMEDRIVE}${env:HOMEPATH}\.nuget\packages"
+}
+else
+{
+    $nugetPackagesRoot = "${env:HOME}/.nuget/packages"
+}
+
 if ($IsLinux) {
-    $LinuxInfo = Get-Content /etc/os-release | ConvertFrom-StringData
+    $LinuxInfo = Get-Content /etc/os-release -Raw | ConvertFrom-StringData
 
     $IsUbuntu = $LinuxInfo.ID -match 'ubuntu'
     $IsUbuntu14 = $IsUbuntu -and $LinuxInfo.VERSION_ID -match '14.04'
     $IsUbuntu16 = $IsUbuntu -and $LinuxInfo.VERSION_ID -match '16.04'
     $IsCentOS = $LinuxInfo.ID -match 'centos' -and $LinuxInfo.VERSION_ID -match '7'
+    $IsFedora = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24
+    $IsOpenSUSE = $LinuxInfo.ID -match 'opensuse'
+    $IsOpenSUSE13 = $IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'
+    ${IsOpenSUSE42.1} = $IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '42.1'
+    $IsRedHatFamily = $IsCentOS -or $IsFedora -or $IsOpenSUSE
+
+    # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
+    # https://github.com/PowerShell/PowerShell/issues/2511
+    if ($IsFedora -and (Test-Path ENV:\LD_LIBRARY_PATH)) {
+        Remove-Item -Force ENV:\LD_LIBRARY_PATH
+        Get-ChildItem ENV:
+    }
 }
 
+# Autoload (in current session) temporary modules used in our tests
+$TestModulePath = Join-Path $PSScriptRoot "test/tools/Modules"
+if ( -not $env:PSModulePath.contains($TestModulePath) ) {
+    $env:PSModulePath = $TestModulePath+$TestModulePathSeparator+$($env:PSModulePath)
+}
+
+#
+# At the moment, we just support x64 builds. When we support x86 builds, this
+# check may need to verify the SDK for the specified architecture.
+#
+function Get-Win10SDKBinDir {
+    return "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64"
+}
+
+function Test-Win10SDK {
+    # The Windows 10 SDK is installed to "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64",
+    # but the directory may exist even if the SDK has not been installed.
+    #
+    # A slightly more robust check is for the mc.exe binary within that directory.
+    # It is only present if the SDK is installed.
+    return (Test-Path "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64\mc.exe")
+}
 
 function Start-PSBuild {
     [CmdletBinding(DefaultParameterSetName='CoreCLR')]
@@ -42,6 +92,7 @@ function Start-PSBuild {
         [switch]$ResGen,
         [switch]$TypeGen,
         [switch]$Clean,
+        [switch]$PSModuleRestore,
 
         # this switch will re-build only System.Management.Automation.dll
         # it's useful for development, to do a quick changes in the engine
@@ -53,10 +104,15 @@ function Start-PSBuild {
                      "ubuntu.16.04-x64",
                      "debian.8-x64",
                      "centos.7-x64",
+                     "fedora.24-x64",
                      "win7-x64",
+                     "win7-x86",
                      "win81-x64",
                      "win10-x64",
-                     "osx.10.11-x64")]
+                     "osx.10.11-x64",
+                     "osx.10.12-x64",
+                     "opensuse.13.2-x64",
+                     "opensuse.42.1-x64")]
         [Parameter(ParameterSetName='CoreCLR')]
         [string]$Runtime,
 
@@ -66,11 +122,7 @@ function Start-PSBuild {
         [Parameter(ParameterSetName='FullCLR')]
         [switch]$XamlGen,
 
-        [Parameter(ParameterSetName='FullCLR')]
-        [ValidateSet('x86', 'x64')] # TODO: At some point, we need to add ARM support to match CoreCLR
-        [string]$NativeHostArch = "x64",
-
-        [ValidateSet('Linux', 'Debug', 'Release', '')] # We might need "Checked" as well
+        [ValidateSet('Linux', 'Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
         [string]$Configuration,
 
         [Parameter(ParameterSetName='CoreCLR')]
@@ -101,6 +153,11 @@ function Start-PSBuild {
         Push-Location $PSScriptRoot
         try {
             git clean -fdX
+            # Extra cleaning is required to delete the CMake temporary files.
+            # These are not cleaned when using "X" and cause CMake to retain state, leading to
+            # mis-configured environment issues when switching between x86 and x64 compilation
+            # environments.
+            git clean -fdx .\src\powershell-native
         } finally {
             Pop-Location
         }
@@ -112,6 +169,10 @@ function Start-PSBuild {
     # simplify ParameterSetNames
     if ($PSCmdlet.ParameterSetName -eq 'FullCLR') {
         $FullCLR = $true
+
+        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+        throw "Building against FullCLR is not supported"
     }
 
     # Add .NET CLI tools to PATH
@@ -121,20 +182,14 @@ function Start-PSBuild {
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
 
     if ($IsWindows) {
-        # use custom package store - this value is also defined in nuget.config under config/repositoryPath
-        # dotnet restore uses this value as the target for installing the assemblies for referenced nuget packages.
-        # dotnet build does not currently consume the  config value but will consume env:NUGET_PACKAGES to resolve these dependencies
-        $env:NUGET_PACKAGES="$PSScriptRoot\Packages"
-
         # cmake is needed to build powershell.exe
         $precheck = $precheck -and (precheck 'cmake' 'cmake not found. Run Start-PSBootstrap. You can also install it from https://chocolatey.org/packages/cmake')
 
         Use-MSBuild
 
         #mc.exe is Message Compiler for native resources
-        $mcexe = Get-ChildItem "${env:ProgramFiles(x86)}\Windows Kits\10\" -Recurse -Filter 'mc.exe' | ? {$_.FullName -match 'x64'} | select -First 1 | % {$_.FullName}
-        if (-not $mcexe) {
-            throw 'mc.exe not found. Run Start-PSBootstrap or install Microsoft Windows 10 SDK from https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk'
+        if (-Not (Test-Win10SDK)) {
+            throw 'Win 10 SDK not found. Run Start-PSBootstrap or install Microsoft Windows 10 SDK from https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk'
         }
 
         $vcVarsPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
@@ -147,13 +202,6 @@ function Start-PSBuild {
             $msbuildConfiguration = $Configuration
         } else {
             $msbuildConfiguration = 'Release'
-        }
-
-        # setup cmakeGenerator
-        if ($NativeHostArch -eq 'x86') {
-            $cmakeGenerator = 'Visual Studio 14 2015'
-        } else {
-            $cmakeGenerator = 'Visual Studio 14 2015 Win64'
         }
 
     } elseif ($IsLinux -or $IsOSX) {
@@ -170,6 +218,7 @@ function Start-PSBuild {
     # set output options
     $OptionsArguments = @{
         Publish=$Publish
+        CrossGen=$CrossGen
         Output=$Output
         FullCLR=$FullCLR
         Runtime=$Runtime
@@ -191,7 +240,7 @@ function Start-PSBuild {
         $Arguments += "build"
     }
     if ($Output) {
-        $Arguments += "--output", (Join-Path $PSScriptRoot $Output)
+        $Arguments += "--output", $Output
     }
     elseif ($SMAOnly) {
         $Arguments += "--output", (Split-Path $script:Options.Output)
@@ -202,26 +251,28 @@ function Start-PSBuild {
     $Arguments += "--runtime", $Options.Runtime
 
     # handle Restore
-    if ($Restore -or -not (Test-Path "$($Options.Top)/project.lock.json")) {
+    if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
         log "Run dotnet restore"
+
+        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen")
+        $testProjectDirs = Get-ChildItem "$PSScriptRoot/test/*.csproj" -Recurse | % { [System.IO.Path]::GetDirectoryName($_) }
 
         $RestoreArguments = @("--verbosity")
         if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-            $RestoreArguments += "Info"
+            $RestoreArguments += "detailed"
         } else {
-            $RestoreArguments += "Warning"
+            $RestoreArguments += "quiet"
         }
 
-        $RestoreArguments += "$PSScriptRoot"
-
-        Start-NativeExecution { dotnet restore $RestoreArguments }
+        ($srcProjectDirs + $testProjectDirs) | % { Start-NativeExecution { dotnet restore $_ $RestoreArguments } }
 
         # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
         if ($IsOSX) {
             # This is the restored library used to build
             # This is allowed to fail since the user may have already restored
             Write-Warning ".NET Core links the incorrect OpenSSL, correcting NuGet package libraries..."
-            find $env:HOME/.nuget -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
+            find $env:HOME/.nuget -name System.Security.Cryptography.Native.OpenSsl.dylib | % { sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib $_ }
+            find $env:HOME/.nuget -name System.Net.Http.Native.dylib | % { sudo install_name_tool -change /usr/lib/libcurl.4.dylib /usr/local/opt/curl/lib/libcurl.4.dylib $_ }
         }
     }
 
@@ -269,6 +320,19 @@ function Start-PSBuild {
         try {
             Push-Location "$PSScriptRoot\src\powershell-native"
 
+            $NativeHostArch = "x64"
+            if ($script:Options.Runtime -match "-x86")
+            {
+                $NativeHostArch = "x86"
+            }
+
+            # setup cmakeGenerator
+            if ($NativeHostArch -eq 'x86') {
+                $cmakeGenerator = 'Visual Studio 14 2015'
+            } else {
+                $cmakeGenerator = 'Visual Studio 14 2015 Win64'
+            }
+
             # Compile native resources
             $currentLocation = Get-Location
             @("nativemsh/pwrshplugin") | % {
@@ -287,7 +351,7 @@ cmd.exe /C cd /d "$currentLocation" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeH
                     # Describes wither it should build the CoreCLR or FullCLR version
                     [ValidateSet("ON", "OFF")]
                     [string]$OneCoreValue,
-                    
+
                     # Array of file names to copy from the local build directory to the packaging directory
                     [string[]]$FilesToCopy
                 )
@@ -298,7 +362,7 @@ cmd.exe /C cd /d "$currentLocation" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeH
                 $location = Get-Location
 
                 $command = @"
-cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=$OneCoreValue -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$msbuildConfiguration"
+cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=$OneCoreValue -DBUILD_TARGET_ARCH=$NativeHostArch -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$msbuildConfiguration"
 "@
                 log "  Executing Build Command: $command"
                 Start-NativeExecution { Invoke-Expression -Command:$command }
@@ -317,19 +381,19 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
                     Copy-Item $srcPath $dstPath
                 }
             }
-        
+
             if ($FullCLR) {
-                $fullBinaries = @(  
+                $fullBinaries = @(
                     'powershell.exe',
                     'powershell.pdb',
                     'pwrshplugin.dll',
                     'pwrshplugin.pdb'
                 )
-                Build-NativeWindowsBinaries "OFF" $fullBinaries 
+                Build-NativeWindowsBinaries "OFF" $fullBinaries
             }
             else
             {
-                $coreClrBinaries = @(  
+                $coreClrBinaries = @(
                     'pwrshplugin.dll',
                     'pwrshplugin.pdb'
                 )
@@ -358,7 +422,7 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
 
         if ($CrossGen) {
             $publishPath = Split-Path $Options.Output
-            Start-CrossGen -PublishPath $publishPath
+            Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
             log "PowerShell.exe with ngen binaries is available at: $($Options.Output)"
         } else {
             log "PowerShell output: $($Options.Output)"
@@ -366,15 +430,51 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
     } finally {
         Pop-Location
     }
+
+    if($PSModuleRestore)
+    {
+        $ProgressPreference = "SilentlyContinue"
+        # Downloading the PowerShellGet and PackageManagement modules.
+        # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp1.1\win10-x64\publish\powershell.exe",
+        # so we need to get its parent directory
+        $publishPath = Split-Path $Options.Output -Parent
+        log "Restore PowerShell modules to $publishPath"
+
+        $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
+
+        # Restore modules from myget feed
+        Restore-PSModule -Destination $modulesDir -Name @(
+            # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
+            'PowerShellGet'
+        )
+
+        # Restore modules from powershellgallery feed
+        Restore-PSModule -Destination $modulesDir -Name @(
+            'Microsoft.PowerShell.Archive'
+        ) -SourceLocation "https://www.powershellgallery.com/api/v2/"
+    }
+}
+
+function Compress-TestContent {
+    [CmdletBinding()]
+    param(
+        $Destination
+    )
+
+    $powerShellTestRoot =  Join-Path $PSScriptRoot 'test\powershell'
+    Add-Type -AssemblyName System.IO.Compression.FileSystem
+
+    $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Destination)
+    [System.IO.Compression.ZipFile]::CreateFromDirectory($powerShellTestRoot, $resolvedPath)
 }
 
 function New-PSOptions {
     [CmdletBinding()]
     param(
-        [ValidateSet("Linux", "Debug", "Release", "")]
+        [ValidateSet("Linux", "Debug", "Release", "CodeCoverage", "")]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp1.0", "net451")]
+        [ValidateSet("netcoreapp1.1", "net451")]
         [string]$Framework,
 
         # These are duplicated from Start-PSBuild
@@ -384,13 +484,21 @@ function New-PSOptions {
                      "ubuntu.16.04-x64",
                      "debian.8-x64",
                      "centos.7-x64",
+                     "fedora.24-x64",
+                     "win7-x86",
                      "win7-x64",
                      "win81-x64",
                      "win10-x64",
-                     "osx.10.11-x64")]
+                     "osx.10.11-x64",
+                     "osx.10.12-x64",
+                     "opensuse.13.2-x64",
+                     "opensuse.42.1-x64")]
         [string]$Runtime,
 
         [switch]$Publish,
+
+        [switch]$CrossGen,
+
         [string]$Output,
 
         [switch]$FullCLR,
@@ -401,27 +509,51 @@ function New-PSOptions {
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
+    if ($FullCLR) {
+        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+        throw "Building against FullCLR is not supported"
+    }
+
+    $ConfigWarningMsg = "The passed-in Configuration value '{0}' is not supported on '{1}'. Use '{2}' instead."
     if (-not $Configuration) {
         $Configuration = if ($IsLinux -or $IsOSX) {
             "Linux"
         } elseif ($IsWindows) {
             "Debug"
         }
-        Write-Verbose "Using configuration '$Configuration'"
-    }
-
-    if ($FullCLR) {
-        $Top = "$PSScriptRoot/src/powershell-win-full"
     } else {
-        if ($Configuration -eq 'Linux')
-        {
-            $Top = "$PSScriptRoot/src/powershell-unix"
-        }
-        else
-        {
-            $Top = "$PSScriptRoot/src/powershell-win-core"
+        switch ($Configuration) {
+            "Linux" {
+                if ($IsWindows) {
+                    $Configuration = "Debug"
+                    Write-Warning ($ConfigWarningMsg -f $switch.Current, "Windows", $Configuration)
+                }
+            }
+            "CodeCoverage" {
+                if(-not $IsWindows) {
+                    $Configuration = "Linux"
+                    Write-Warning ($ConfigWarningMsg -f $switch.Current, $LinuxInfo.PRETTY_NAME, $Configuration)
+                }
+            }
+            Default {
+                if ($IsLinux -or $IsOSX) {
+                    $Configuration = "Linux"
+                    Write-Warning ($ConfigWarningMsg -f $switch.Current, $LinuxInfo.PRETTY_NAME, $Configuration)
+                }
+            }
         }
     }
+    Write-Verbose "Using configuration '$Configuration'"
+
+    $PowerShellDir = if ($FullCLR) {
+        "powershell-win-full"
+    } elseif ($Configuration -eq 'Linux') {
+        "powershell-unix"
+    } else {
+        "powershell-win-core"
+    }
+    $Top = [IO.Path]::Combine($PSScriptRoot, "src", $PowerShellDir)
     Write-Verbose "Top project directory is $Top"
 
 
@@ -429,7 +561,7 @@ function New-PSOptions {
         $Framework = if ($FullCLR) {
             "net451"
         } else {
-            "netcoreapp1.0"
+            "netcoreapp1.1"
         }
         Write-Verbose "Using framework '$Framework'"
     }
@@ -455,9 +587,7 @@ function New-PSOptions {
     }
 
     # Build the Output path
-    if ($Output) {
-        $Output = Join-Path $PSScriptRoot $Output
-    } else {
+    if (!$Output) {
         $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime)
 
         # Publish injects the publish directory
@@ -471,7 +601,7 @@ function New-PSOptions {
     $RealFramework = $Framework
     if ($SMAOnly)
     {
-        $Top = "$PSScriptRoot/src/System.Management.Automation"
+        $Top = [IO.Path]::Combine($PSScriptRoot, "src", "System.Management.Automation")
         if ($Framework -match 'netcoreapp')
         {
             $RealFramework = 'netstandard1.6'
@@ -482,7 +612,9 @@ function New-PSOptions {
               Configuration = $Configuration;
               Framework = $RealFramework;
               Runtime = $Runtime;
-              Output = $Output }
+              Output = $Output;
+              Publish = $Publish;
+              CrossGen = $CrossGen }
 }
 
 
@@ -513,7 +645,7 @@ function Get-PesterTag {
         foreach( $describe in $des) {
             $elements = $describe.CommandElements
             $lineno = $elements[0].Extent.StartLineNumber
-            $foundTag = $false
+            $foundPriorityTags = @()
             for ( $i = 0; $i -lt $elements.Count; $i++) {
                 if ( $elements[$i].extent.text -match "^-t" ) {
                     $vAst = $elements[$i+1]
@@ -521,17 +653,26 @@ function Get-PesterTag {
                         $warnings += "TAGS must be static strings, error in ${fullname}, line $lineno"
                     }
                     $values = $vAst.FindAll({$args[0] -is "System.Management.Automation.Language.StringConstantExpressionAst"},$true).Value
-                    $values | %{
-                        if ( $_ -notmatch "CI|FEATURE|SCENARIO|SLOW" ) {
+                    $values | % {
+                        if (@('REQUIREADMINONWINDOWS', 'SLOW') -contains $_) {
+                            # These are valid tags also, but they are not the priority tags
+                        }
+                        elseif (@('CI', 'FEATURE', 'SCENARIO') -contains $_) {
+                            $foundPriorityTags += $_
+                        }
+                        else {
                             $warnings += "${fullname} includes improper tag '$_', line '$lineno'"
                         }
+
                         $alltags[$_]++
-                        }
-                    $foundTag = $true
+                    }
                 }
             }
-            if ( ! $foundTag ) {
-                $warnings += "${fullname} does not include -Tag in Describe, line '$lineno'"
+            if ( $foundPriorityTags.Count -eq 0 ) {
+                $warnings += "${fullname}:$lineno does not include -Tag in Describe"
+            }
+            elseif ( $foundPriorityTags.Count -gt 1 ) {
+                $warnings += "${fullname}:$lineno includes more then one scope -Tag: $foundPriorityTags"
             }
         }
     }
@@ -547,21 +688,88 @@ function Get-PesterTag {
     $o
 }
 
+function Publish-PSTestTools {
+    [CmdletBinding()]
+    param()
+
+    Find-Dotnet
+
+    $tools = "$PSScriptRoot/test/tools/EchoArgs","$PSScriptRoot/test/tools/CreateChildProcess"
+    if ($Options -eq $null)
+    {
+        $Options = New-PSOptions
+    }
+
+    # Publish EchoArgs so it can be run by tests
+    foreach ($tool in $tools)
+    {
+        Push-Location $tool
+        try {
+            dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
+        } finally {
+            Pop-Location
+        }
+    }
+}
+
 function Start-PSPester {
-    [CmdletBinding()]param(
+    [CmdletBinding()]
+    param(
         [string]$OutputFormat = "NUnitXml",
         [string]$OutputFile = "pester-tests.xml",
-        [string[]]$ExcludeTag = "Slow",
+        [string[]]$ExcludeTag = 'Slow',
         [string[]]$Tag = "CI",
         [string]$Path = "$PSScriptRoot/test/powershell",
         [switch]$ThrowOnFailure,
         [switch]$FullCLR,
-        [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output) 
+        [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output),
+        [string]$powershell = (Join-Path $binDir 'powershell'),
+        [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester")),
+        [switch]$Unelevate,
+        [switch]$Quiet,
+        [switch]$PassThru
     )
+
+    if ($FullCLR) {
+        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+        throw "Building against FullCLR is not supported"
+    }
+
+    # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
+    if ($Unelevate)
+    {
+        if (-not $IsWindows)
+        {
+            throw '-Unelevate is currently not supported on non-Windows platforms'
+        }
+
+        if (-not $IsAdmin)
+        {
+            throw '-Unelevate cannot be applied because the current user is not Administrator'
+        }
+
+        if (-not $PSBoundParameters.ContainsKey('ExcludeTag'))
+        {
+            $ExcludeTag += 'RequireAdminOnWindows'
+        }
+    }
+    elseif ($IsWindows -and (-not $IsAdmin))
+    {
+        if (-not $PSBoundParameters.ContainsKey('ExcludeTag'))
+        {
+            $ExcludeTag += 'RequireAdminOnWindows'
+        }
+    }
+
+    Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
+    Publish-PSTestTools
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
     $Command = ""
-    $powershell = Join-Path $binDir 'powershell'
+
+    # Autoload (in subprocess) temporary modules used in our tests
+    $Command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + '+$($env:PSModulePath);'
 
     # Windows needs the execution policy adjusted
     if ($IsWindows) {
@@ -569,11 +777,16 @@ function Start-PSPester {
     }
     $startParams = @{binDir=$binDir}
 
-    $PesterModule = [IO.Path]::Combine($binDir, "Modules", "Pester")
     if(!$FullCLR)
     {
-        $Command += "Import-Module '$PesterModule'; "
+        $Command += "Import-Module '$Pester'; "
     }
+
+    if ($Unelevate)
+    {
+        $outputBufferFilePath = [System.IO.Path]::GetTempFileName()
+    }
+
     $Command += "Invoke-Pester "
 
     $Command += "-OutputFormat ${OutputFormat} -OutputFile ${OutputFile} "
@@ -583,9 +796,21 @@ function Start-PSPester {
     if ($Tag) {
         $Command += "-Tag @('" + (${Tag} -join "','") + "') "
     }
+    # sometimes we need to eliminate Pester output, especially when we're
+    # doing a daily build as the log file is too large
+    if ( $Quiet ) {
+        $Command += "-Quiet "
+    }
+    if ( $PassThru ) {
+        $Command += "-PassThru "
+    }
 
     $Command += "'" + $Path + "'"
-        
+    if ($Unelevate)
+    {
+        $Command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
+    }
+
     Write-Verbose $Command
 
     # To ensure proper testing, the module path must not be inherited by the spawned process
@@ -595,12 +820,42 @@ function Start-PSPester {
     }
     else {
         try {
-            $originalModulePath = $env:PSMODULEPATH
-            
-            & $powershell -noprofile -c $Command
+            $originalModulePath = $env:PSModulePath
+            if ($Unelevate)
+            {
+                Start-UnelevatedProcess -process $powershell -arguments @('-noprofile', '-c', $Command)
+                $currentLines = 0
+                while ($true)
+                {
+                    $lines = Get-Content $outputBufferFilePath | Select-Object -Skip $currentLines
+                    $lines | Write-Host
+                    if ($lines | ? { $_ -eq '__UNELEVATED_TESTS_THE_END__'})
+                    {
+                        break
+                    }
+
+                    $count = ($lines | measure-object).Count
+                    if ($count -eq 0)
+                    {
+                        sleep 1
+                    }
+                    else
+                    {
+                        $currentLines += $count
+                    }
+                }
+            }
+            else
+            {
+                & $powershell -noprofile -c $Command
+            }
         } finally {
-            $env:PSMODULEPATH = $originalModulePath
-        }        
+            $env:PSModulePath = $originalModulePath
+            if ($Unelevate)
+            {
+                Remove-Item $outputBufferFilePath
+            }
+        }
     }
     if($ThrowOnFailure)
     {
@@ -608,24 +863,61 @@ function Start-PSPester {
     }
 }
 
+function script:Start-UnelevatedProcess
+{
+    param(
+        [string]$process,
+        [string[]]$arguments
+    )
+    if (-not $IsWindows)
+    {
+        throw "Start-UnelevatedProcess is currently not supported on non-Windows platforms"
+    }
+
+    runas.exe /trustlevel:0x20000 "$process $arguments"
+}
+
+function Show-PSPesterError
+{
+    param ( [Xml.XmlElement]$testFailure )
+    logerror ("Description: " + $testFailure.description)
+    logerror ("Name:        " + $testFailure.name)
+    logerror "message:"
+    logerror $testFailure.failure.message
+    logerror "stack-trace:"
+    logerror $testFailure.failure."stack-trace"
+}
+
 #
 # Read the test result file and
-# Throw if a test failed 
+# Throw if a test failed
 function Test-PSPesterResults
 {
     param(
         [string]$TestResultsFile = "pester-tests.xml",
-        [string] $TestArea = 'test/powershell'
+        [string]$TestArea = 'test/powershell'
     )
 
     if(!(Test-Path $TestResultsFile))
     {
         throw "Test result file '$testResultsFile' not found for $TestArea."
-    } 
+    }
 
     $x = [xml](Get-Content -raw $testResultsFile)
     if ([int]$x.'test-results'.failures -gt 0)
     {
+        logerror "TEST FAILURES"
+        # switch between methods, SelectNode is not available on dotnet core
+        if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] ) {
+            $failures = [System.Xml.XmlDocumentXPathExtensions]::SelectNodes($x."test-results",'.//test-case[@result = "Failure"]')
+        }
+        else {
+            $failures = $x.SelectNodes('.//test-case[@result = "Failure"]')
+        }
+        foreach ( $testfail in $failures )
+        {
+            Show-PSPesterError $testfail
+        }
         throw "$($x.'test-results'.failures) tests in $TestArea failed"
     }
 }
@@ -677,15 +969,84 @@ function Start-PSxUnit {
 }
 
 
+function Install-Dotnet {
+    [CmdletBinding()]
+    param(
+        [string]$Channel,
+        [string]$Version,
+        [switch]$NoSudo
+    )
+
+    # This allows sudo install to be optional; needed when running in containers / as root
+    # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
+    $sudo = if (!$NoSudo) { "sudo" }
+
+    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/v1.0.1/scripts/obtain"
+
+    # Install for Linux and OS X
+    if ($IsLinux -or $IsOSX) {
+        # Uninstall all previous dotnet packages
+        $uninstallScript = if ($IsUbuntu) {
+            "dotnet-uninstall-debian-packages.sh"
+        } elseif ($IsOSX) {
+            "dotnet-uninstall-pkgs.sh"
+        }
+
+        if ($uninstallScript) {
+            Start-NativeExecution {
+                curl -sO $obtainUrl/uninstall/$uninstallScript
+                Invoke-Expression "$sudo bash ./$uninstallScript"
+            }
+        } else {
+            Write-Warning "This script only removes prior versions of dotnet for Ubuntu 14.04 and OS X"
+        }
+
+        # Install new dotnet 1.1.0 preview packages
+        $installScript = "dotnet-install.sh"
+        Start-NativeExecution {
+            curl -sO $obtainUrl/$installScript
+            bash ./$installScript -c $Channel -v $Version
+        }
+
+        # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
+        if ($IsOSX) {
+            # This is the library shipped with .NET Core
+            # This is allowed to fail as the user may have installed other versions of dotnet
+            Write-Warning ".NET Core links the incorrect OpenSSL, correcting .NET CLI libraries..."
+            find $env:HOME/.dotnet -name System.Security.Cryptography.Native.OpenSsl.dylib | % { sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib $_ }
+        }
+    } elseif ($IsWindows) {
+        Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
+        $installScript = "dotnet-install.ps1"
+        Invoke-WebRequest -Uri $obtainUrl/$installScript -OutFile $installScript
+        & ./$installScript -Channel $Channel -Version $Version
+    }
+}
+
+function Get-RedHatPackageManager {
+    if ($IsCentOS) {
+        "yum install -y -q"
+    } elseif ($IsFedora) {
+        "dnf install -y -q"
+    } elseif ($IsOpenSUSE) {
+        "zypper --non-interactive install"
+    } else {
+        throw "Error determining package manager for this distribution."
+    }
+}
+
 function Start-PSBootstrap {
     [CmdletBinding(
         SupportsShouldProcess=$true,
         ConfirmImpact="High")]
     param(
-        [ValidateSet("dev", "beta", "preview")]
         [string]$Channel = "rel-1.0.0",
-        [string]$Version = "latest",
+        # we currently pin dotnet-cli version, because tool
+        # is currently migrating to msbuild toolchain
+        # and requires constant updates to our build process.
+        [string]$Version = "1.0.1",
         [switch]$Package,
+        [switch]$NoSudo,
         [switch]$Force
     )
 
@@ -693,12 +1054,21 @@ function Start-PSBootstrap {
 
     Push-Location $PSScriptRoot/tools
 
+    # This allows sudo install to be optional; needed when running in containers / as root
+    # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
+    $sudo = if (!$NoSudo) { "sudo" }
+
     try {
         # Update googletest submodule for linux native cmake
         if ($IsLinux -or $IsOSX) {
-            $Submodule = "$PSScriptRoot/src/libpsl-native/test/googletest"
-            Remove-Item -Path $Submodule -Recurse -Force -ErrorAction SilentlyContinue
-            git submodule update --init -- $submodule
+            try {
+                Push-Location $PSScriptRoot
+                $Submodule = "$PSScriptRoot/src/libpsl-native/test/googletest"
+                Remove-Item -Path $Submodule -Recurse -Force -ErrorAction SilentlyContinue
+                git submodule update --init -- $submodule
+            } finally {
+                Pop-Location
+            }
         }
 
         # Install ours and .NET's dependencies
@@ -713,11 +1083,14 @@ function Start-PSBootstrap {
             elseif ($IsUbuntu16) { $Deps += "libicu55" }
 
             # Packaging tools
-            if ($Package) { $Deps += "ruby-dev" }
+            if ($Package) { $Deps += "ruby-dev", "groff" }
 
             # Install dependencies
-            sudo apt-get install -y -qq $Deps
-        } elseif ($IsCentOS) {
+            Start-NativeExecution {
+                Invoke-Expression "$sudo apt-get update"
+                Invoke-Expression "$sudo apt-get install -y -qq $Deps"
+            }
+        } elseif ($IsRedHatFamily) {
             # Build tools
             $Deps += "which", "curl", "gcc-c++", "cmake", "make"
 
@@ -725,75 +1098,59 @@ function Start-PSBootstrap {
             $Deps += "libicu", "libunwind"
 
             # Packaging tools
-            if ($Package) { $Deps += "ruby-devel", "rpm-build" }
+            if ($Package) { $Deps += "ruby-devel", "rpm-build", "groff" }
+
+            $PackageManager = Get-RedHatPackageManager
+
+            $baseCommand = "$sudo $PackageManager"
+
+            # On OpenSUSE 13.2 container, sudo does not exist, so don't use it if not needed
+            if($NoSudo)
+            {
+                $baseCommand = $PackageManager
+            }
 
             # Install dependencies
-            sudo yum install -y -q $Deps
+            Start-NativeExecution {
+                Invoke-Expression "$baseCommand $Deps"
+            }
         } elseif ($IsOSX) {
             precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
 
             # Build tools
-            $Deps += "curl", "cmake"
+            $Deps += "cmake"
 
             # .NET Core required runtime libraries
             $Deps += "openssl"
 
             # Install dependencies
-            brew install $Deps
+            # ignore exitcode, because they may be already installed
+            Start-NativeExecution { brew install $Deps } -IgnoreExitcode
+
+            # Install patched version of curl
+            Start-NativeExecution { brew install curl --with-openssl } -IgnoreExitcode
         }
 
         # Install [fpm](https://github.com/jordansissel/fpm) and [ronn](https://github.com/rtomayko/ronn)
         if ($Package) {
-            gem install fpm ronn
-        }
-
-        $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/rel/1.0.0/scripts/obtain"
-
-        # Install for Linux and OS X
-        if ($IsLinux -or $IsOSX) {
-            # Uninstall all previous dotnet packages
-            $uninstallScript = if ($IsUbuntu) {
-                "dotnet-uninstall-debian-packages.sh"
-            } elseif ($IsOSX) {
-                "dotnet-uninstall-pkgs.sh"
-            }
-
-            if ($uninstallScript) {
-                curl -s $obtainUrl/uninstall/$uninstallScript -o $uninstallScript
-                chmod +x $uninstallScript
-                sudo ./$uninstallScript
-            } else {
-                Write-Warning "This script only removes prior versions of dotnet for Ubuntu 14.04 and OS X"
-            }
-
-            # Install new dotnet 1.0.0 preview packages
-            $installScript = "dotnet-install.sh"
-            curl -s $obtainUrl/$installScript -o $installScript
-            chmod +x $installScript
-            bash ./$installScript -c $Channel -v $Version
-
-            # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
-            if ($IsOSX) {
-                # This is the library shipped with .NET Core
-                # This is allowed to fail as the user may have installed other versions of dotnet
-                Write-Warning ".NET Core links the incorrect OpenSSL, correcting .NET CLI libraries..."
-                find $env:HOME/.dotnet -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
+            try {
+                # We cannot guess if the user wants to run gem install as root
+                Start-NativeExecution { gem install fpm ronn }
+            } catch {
+                Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
             }
         }
+
+        $DotnetArguments = @{ Channel=$Channel; Version=$Version; NoSudo=$NoSudo }
+        Install-Dotnet @DotnetArguments
 
         # Install for Windows
-        if ($IsWindows -and -not $IsCoreCLR) {
-            Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
-            $installScript = "dotnet-install.ps1"
-            Invoke-WebRequest -Uri $obtainUrl/$installScript -OutFile $installScript
-            & ./$installScript -c $Channel -v $Version
-
+        if ($IsWindows) {
             $machinePath = [Environment]::GetEnvironmentVariable('Path', 'MACHINE')
             $newMachineEnvironmentPath = $machinePath
 
             $cmakePresent = precheck 'cmake' $null
-            $win10sdkBinPath = "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64"
-            $sdkPresent = Test-Path -Path $win10sdkBinPath -PathType Container
+            $sdkPresent = Test-Win10SDK
 
             # Install chocolatey
             $chocolateyPath = "$env:AllUsersProfile\chocolatey\bin"
@@ -826,7 +1183,7 @@ function Start-PSBootstrap {
                 log "Cmake is already installed. Skipping installation."
             } else {
                 log "Cmake not present. Installing cmake."
-                choco install cmake -y --version 3.6.0
+                Start-NativeExecution { choco install cmake -y --version 3.6.0 }
                 if (-not ($machinePath.ToLower().Contains($cmakePath.ToLower()))) {
                     log "Adding $cmakePath to Path environment variable"
                     $env:Path += ";$cmakePath"
@@ -841,7 +1198,7 @@ function Start-PSBootstrap {
 
             if (-not $sdkPresent) {
                 log "Windows 10 SDK not present. Installing $packageName."
-                choco install windows-sdk-10.0 -y
+                Start-NativeExecution { choco install windows-sdk-10.0 -y }
             } else {
                 log "Windows 10 SDK present. Skipping installation."
             }
@@ -854,8 +1211,71 @@ function Start-PSBootstrap {
                 }
             }
 
-        } elseif ($IsWindows) {
-            Write-Warning "Start-PSBootstrap cannot be run in Core PowerShell on Windows (need Invoke-WebRequest!)"
+        }
+    } finally {
+        Pop-Location
+    }
+}
+
+function Start-PSRelease {
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory)]
+        [string]$Name, # i.e. v6.0.0-alpha.12
+        [Parameter(Mandatory)]
+        [string]$CommitSHA1 # i.e. 7985366f9ec43af47b24dd88f04c0afc5eab3825
+    )
+
+    Push-Location $PSScriptRoot
+    try {
+        # check that we are in the right location
+        if ($IsWindows) {
+            if ($PSScriptRoot -ne "C:\PowerShell") {
+                throw "To make the release, please clone the project to C:\PowerShell. Currently it's under $PSScriptRoot"
+            }
+        } else {
+            if ($PSScriptRoot -ne "/PowerShell") {
+                throw "To make the release, please clone the project to /PowerShell. Currently it's under $PSScriptRoot"
+            }
+        }
+
+        # check that there is no tag with $Name yet
+        if ((git tag) -eq $Name) {
+            throw "Tag $Name already exists"
+        }
+
+        if ((git rev-parse HEAD) -ne $CommitSHA1) {
+            throw "Checkout the release commit before making the release: git checkout $CommitSHA1"
+        }
+
+        # Check that there are any local changes
+        $changedFiles = git status --porcelain -uno
+        if ($changedFiles) {
+            throw "There are changes in: $changedFiles"
+        }
+
+        $untrackedFiles = git ls-files --other --exclude-standard --directory
+        if ($untrackedFiles) {
+            throw "There are untracked files (run 'git clean -fdx'): $untrackedFiles"
+        }
+
+        # make sure submodules are up-to-date
+        git submodule init
+        git submodule update
+
+        # Create temporarely release tag
+        (git tag $Name $CommitSHA1)
+
+        try {
+            # make sure that we have up-to-date version of build tools
+            Start-PSBootstrap -Package
+            # run the clean build that will use temporarely tag
+            Start-PSBuild -Clean -Crossgen -PSModuleRestore
+            # make the package
+            Start-PSPackage
+        } finally {
+            # cleanup temporarely tag
+            git tag -d $Name
         }
     } finally {
         Pop-Location
@@ -872,32 +1292,61 @@ function Start-PSPackage {
         [ValidatePattern("^powershell")]
         [string]$Name = "powershell",
 
-        # Ubuntu, CentOS, and OS X, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "appx")]
-        [string[]]$Types
+        # Ubuntu, CentOS, Fedora, OS X, and Windows packages are supported
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "appx", "zip", "AppImage")]
+        [string[]]$Type,
+
+        # Generate windows downlevel package
+        [ValidateSet("win81-x64", "win7-x86", "win7-x64")]
+        [ValidateScript({$IsWindows})]
+        [string]$WindowsDownLevel
     )
+
+    # Runtime and Configuration settings required by the package
+    ($Runtime, $Configuration) = if ($WindowsDownLevel) {
+        $WindowsDownLevel, "Release"
+    } else {
+        New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+    }
+    Write-Verbose "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'" -Verbose
+
+    # Make sure the most recent build satisfies the package requirement
+    if (-not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
+        -not $Script:Options.CrossGen -or                       ## Last build didn't specify -CrossGen
+        $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
+        $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
+        $Script:Options.Framework -ne "netcoreapp1.1")          ## Last build wasn't for CoreCLR
+    {
+        # It's possible that the most recent build doesn't satisfy the package requirement but
+        # an earlier build does. e.g., run the following in order on win10-x64:
+        #    Start-PSBuild -Clean -CrossGen -Runtime win10-x64 -Configuration Release
+        #    Start-PSBuild -FullCLR
+        #    Start-PSPackage -Type msi
+        # It's also possible that the last build actually satisfies the package requirement but
+        # then `Start-PSPackage` runs from a new PS session or `build.psm1` was reloaded.
+        #
+        # In these cases, the user will be asked to build again even though it's technically not
+        # necessary. However, we want it that way -- being very explict when generating packages.
+        # This check serves as a simple gate to ensure that the user knows what he is doing, and
+        # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
+        # are generated, it'll be hard to verify if they were built from the correct content.
+        throw "Please ensure you have run 'Start-PSBuild -Clean -CrossGen -Runtime $Runtime -Configuration $Configuration'!"
+    }
 
     # Use Git tag if not given a version
     if (-not $Version) {
         $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
     }
 
-    if ($IsWindows) {
-        Write-Warning "Please ensure you have previously run Start-PSBuild -Clean -CrossGen -Configuration Release!"
-        $Source = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish -Configuration Release))
-    } else {
-        Write-Warning "Please ensure you have previously run Start-PSBuild -Clean -CrossGen!"
-        $Source = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish))
-    }
-
-    Write-Verbose "Packaging $Source"
+    $Source = Split-Path -Path $Script:Options.Output -Parent
+    Write-Verbose "Packaging Source: '$Source'" -Verbose
 
     # Decide package output type
-    if (-not $Types) {
-        $Types = if ($IsLinux) {
+    if (-not $Type) {
+        $Type = if ($IsLinux) {
             if ($LinuxInfo.ID -match "ubuntu") {
                 "deb"
-            } elseif ($LinuxInfo.ID -match "centos") {
+            } elseif ($IsRedHatFamily) {
                 "rpm"
             } else {
                 throw "Building packages for $($LinuxInfo.PRETTY_NAME) is unsupported!"
@@ -907,34 +1356,69 @@ function Start-PSPackage {
         } elseif ($IsWindows) {
             "msi", "appx"
         }
-        Write-Warning "-Types was not specified, continuing with $Types!"
+        Write-Warning "-Type was not specified, continuing with $Type!"
     }
 
-    switch ($Types) {
-        "msi" {
+    # Build the name suffix for win-plat packages
+    if ($IsWindows) {
+        # Add the server name to the $RunTime. $runtime produced by dotnet is same for client or server
+        switch ($Runtime) {
+            'win81-x64' {$NameSuffix = 'win81-win2012r2-x64'}
+            'win10-x64' {$NameSuffix = 'win10-win2016-x64'}
+            'win7-x64'  {$NameSuffix = 'win7-win2008r2-x64'}
+            Default {$NameSuffix = $Runtime}
+        }
+    }
+
+    switch ($Type) {
+        "zip" {
             $Arguments = @{
-                ProductSourcePath = $Source;
-                ProductVersion = $Version;
-                AssetsPath = "$PSScriptRoot\assets";
-                LicenseFilePath = "$PSScriptRoot\assets\license.rtf";
+                PackageNameSuffix = $NameSuffix
+                PackageSourcePath = $Source
+                PackageVersion = $Version
+            }
+            New-ZipPackage @Arguments
+        }
+        "msi" {
+            $TargetArchitecture = "x64"
+            if ($Runtime -match "-x86")
+            {
+                $TargetArchitecture = "x86"
+            }
+
+            $Arguments = @{
+                ProductNameSuffix = $NameSuffix
+                ProductSourcePath = $Source
+                ProductVersion = $Version
+                AssetsPath = "$PSScriptRoot\assets"
+                LicenseFilePath = "$PSScriptRoot\assets\license.rtf"
                 # Product Guid needs to be unique for every PowerShell version to allow SxS install
-                ProductGuid = [Guid]::NewGuid()
+                ProductGuid = [Guid]::NewGuid();
+                ProductTargetArchitecture = $TargetArchitecture;
             }
             New-MSIPackage @Arguments
         }
         "appx" {
             $Arguments = @{
-                PackageVersion = $Version;
-                SourcePath = $Source;
+                PackageNameSuffix = $NameSuffix
+                PackageSourcePath = $Source
+                PackageVersion = $Version
                 AssetsPath = "$PSScriptRoot\assets"
             }
             New-AppxPackage @Arguments
         }
+        "AppImage" {
+            if ($IsUbuntu14) {
+                Start-NativeExecution { bash -iex "$PSScriptRoot/tools/appimage.sh" }
+            } else {
+                Write-Warning "Ignoring AppImage type for non Ubuntu Trusty platform"
+            }
+        }
         default {
             $Arguments = @{
-                Type = $_;
-                Source = $Source;
-                Name = $Name;
+                Type = $_
+                PackageSourcePath = $Source
+                Name = $Name
                 Version = $Version
             }
             New-UnixPackage @Arguments
@@ -944,13 +1428,14 @@ function Start-PSPackage {
 
 
 function New-UnixPackage {
-    [CmdletBinding()]param(
+    [CmdletBinding()]
+    param(
         [Parameter(Mandatory)]
         [ValidateSet("deb", "osxpkg", "rpm")]
         [string]$Type,
 
         [Parameter(Mandatory)]
-        [string]$Source,
+        [string]$PackageSourcePath,
 
         # Must start with 'powershell' but may have any suffix
         [Parameter(Mandatory)]
@@ -979,8 +1464,8 @@ function New-UnixPackage {
                 }
         }
         "rpm" {
-            if (!$IsCentOS) {
-                throw ($ErrorMessage -f "CentOS")
+            if (!$IsRedHatFamily) {
+                throw ($ErrorMessage -f "Redhat Family")
             }
         }
         "osxpkg" {
@@ -991,7 +1476,24 @@ function New-UnixPackage {
     }
 
     foreach ($Dependency in "fpm", "ronn") {
-        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Publish")) {
+        if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
+            # These tools are not added to the path automatically on OpenSUSE 13.2
+            # try adding them to the path and re-tesing first
+            [string] $gemsPath = $null
+            [string] $depenencyPath = $null
+            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems   | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName  
+            if($gemsPath) {
+                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse  | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName  
+                $originalPath = $env:PATH
+                $env:PATH = $ENV:PATH +":" + $depenencyPath
+                if((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
+                    continue
+                }
+                else {
+                    $env:PATH = $originalPath
+                }
+            }
+            
             throw "Dependency precheck failed!"
         }
     }
@@ -1011,7 +1513,7 @@ It consists of a cross-platform command-line shell and associated scripting lang
     # Setup staging directory so we don't change the original source directory
     $Staging = "$PSScriptRoot/staging"
     Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $Staging
-    Copy-Item -Recurse $Source $Staging
+    Copy-Item -Recurse $PackageSourcePath $Staging
 
     # Rename files to given name if not "powershell"
     if ($Name -ne "powershell") {
@@ -1043,6 +1545,68 @@ It consists of a cross-platform command-line shell and associated scripting lang
     }
 
     New-Item -Force -ItemType SymbolicLink -Path "/tmp/$Name" -Target "$Destination/$Name" >$null
+
+    if ($IsRedHatFamily) {
+        # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
+        # platform specific changes. This is the only set of platforms needed for this currently
+        # as Ubuntu has these specific library files in the platform and OSX builds for itself
+        # against the correct versions.
+        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" >$null
+        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" >$null
+
+        $AfterInstallScript = [io.path]::GetTempFileName()
+        $AfterRemoveScript = [io.path]::GetTempFileName()
+        @'
+#!/bin/sh
+if [ ! -f /etc/shells ] ; then
+    echo "{0}" > /etc/shells
+else
+    grep -q "^{0}$" /etc/shells || echo "{0}" >> /etc/shells
+fi
+'@ -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+
+        @'
+if [ "$1" = 0 ] ; then
+    if [ -f /etc/shells ] ; then
+        TmpFile=`/bin/mktemp /tmp/.powershellmXXXXXX`
+        grep -v '^{0}$' /etc/shells > $TmpFile
+        cp -f $TmpFile /etc/shells
+        rm -f $TmpFile
+    fi
+fi
+'@ -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+    }
+    elseif ($IsUbuntu) {
+        $AfterInstallScript = [io.path]::GetTempFileName()
+        $AfterRemoveScript = [io.path]::GetTempFileName()
+        @'
+#!/bin/sh
+set -e
+case "$1" in
+    (configure)
+        add-shell "{0}"
+    ;;
+    (abort-upgrade|abort-remove|abort-deconfigure)
+        exit 0
+    ;;
+    (*)
+        echo "postinst called with unknown argument '$1'" >&2
+        exit 0
+    ;;
+esac
+'@ -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+
+        @'
+#!/bin/sh
+set -e
+case "$1" in
+        (remove)
+        remove-shell "{0}"
+        ;;
+esac
+'@ -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+    }
+
 
     # there is a weird bug in fpm
     # if the target of the powershell symlink exists, `fpm` aborts
@@ -1085,17 +1649,50 @@ It consists of a cross-platform command-line shell and associated scripting lang
         chmod 755 "$Staging/$Name" # only the executable should be executable
     }
 
-    $libunwind = switch ($Type) {
-        "deb" { "libunwind8" }
-        "rpm" { "libunwind" }
-    }
-
-    $libicu = switch ($Type) {
-        "deb" {
-            if ($IsUbuntu14) { "libicu52" }
-            elseif ($IsUbuntu16) { "libicu55" }
+    # Setup package dependencies
+    # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
+    $Dependencies = @()
+    if ($IsUbuntu) {
+        $Dependencies = @(
+            "libc6",
+            "libcurl3",
+            "libgcc1",
+            "libssl1.0.0",
+            "libstdc++6",
+            "libtinfo5",
+            "libunwind8",
+            "libuuid1",
+            "zlib1g"
+        )
+        # Please note the different libicu package dependency!
+        if ($IsUbuntu14) {
+            $Dependencies += "libicu52"
+        } elseif ($IsUbuntu16) {
+            $Dependencies += "libicu55"
         }
-        "rpm" { "libicu" }
+    } elseif ($IsRedHatFamily) {
+        $Dependencies = @(
+            "glibc",
+            "libicu",
+            "openssl",
+            "libunwind",
+            "uuid",
+            "zlib"
+        )
+
+        if($IsFedora -or $IsCentOS)
+        {
+            $Dependencies += "libcurl"
+            $Dependencies += "libgcc"
+            $Dependencies += "libstdc++"
+            $Dependencies += "ncurses-base"
+        }
+
+        if($IsOpenSUSE)
+        {
+            $Dependencies += "libgcc_s1"
+            $Dependencies += "libstdc++6"
+        }
     }
 
     # iteration is "debian_revision"
@@ -1106,32 +1703,54 @@ It consists of a cross-platform command-line shell and associated scripting lang
         $Iteration += "ubuntu1.16.04.1"
     }
 
-    # We currently only support CentOS 7
-    # https://fedoraproject.org/wiki/Packaging:DistTag
-    $rpm_dist = "el7.centos"
+    # We currently only support:
+    # CentOS 7 
+    # Fedora 24+
+    # OpenSUSE 42.1 (13.2 might build but is EOL)
+    # Also SEE: https://fedoraproject.org/wiki/Packaging:DistTag
+    if ($IsCentOS) {
+        $rpm_dist = "el7.centos"
+    } elseif ($IsFedora) {
+        $version_id = $LinuxInfo.VERSION_ID
+        $rpm_dist = "fedora.$version_id"
+    } elseif ($IsOpenSUSE) {
+        $version_id = $LinuxInfo.VERSION_ID
+        $rpm_dist = "suse.$version_id"
+    }
+
 
     $Arguments = @(
         "--force", "--verbose",
         "--name", $Name,
         "--version", $Version,
         "--iteration", $Iteration,
-        "--rpm-dist", $rpm_dist,
         "--maintainer", "PowerShell Team <PowerShellTeam@hotmail.com>",
         "--vendor", "Microsoft Corporation",
         "--url", "https://microsoft.com/powershell",
         "--license", "MIT License",
         "--description", $Description,
         "--category", "shells",
-        "--rpm-os", "linux",
-        "--depends", $libunwind,
-        "--depends", $libicu,
         "-t", $Type,
-        "-s", "dir",
+        "-s", "dir"
+    )
+    if ($IsRedHatFamily) {
+        $Arguments += @("--rpm-dist", $rpm_dist)
+        $Arguments += @("--rpm-os", "linux")
+    }
+    foreach ($Dependency in $Dependencies) {
+        $Arguments += @("--depends", $Dependency)
+    }
+    if ($AfterInstallScript) {
+       $Arguments += @("--after-install", $AfterInstallScript)
+    }
+    if ($AfterRemoveScript) {
+       $Arguments += @("--after-remove", $AfterRemoveScript)
+    }
+    $Arguments += @(
         "$Staging/=$Destination/",
         "$GzipFile=$ManFile",
         "/tmp/$Name=$Link"
     )
-
     # Build package
     try {
         $Output = Start-NativeExecution { fpm $Arguments }
@@ -1142,6 +1761,12 @@ It consists of a cross-platform command-line shell and associated scripting lang
                 Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
                 Move-Item $hack_dest $symlink_dest
             }
+        }
+        if ($AfterInstallScript) {
+           Remove-Item -erroraction 'silentlycontinue' $AfterInstallScript
+        }
+        if ($AfterRemoveScript) {
+           Remove-Item -erroraction 'silentlycontinue' $AfterRemoveScript
         }
     }
 
@@ -1161,9 +1786,12 @@ function Publish-NuGetFeed
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    @(
+    try {
+        Push-Location $PSScriptRoot
+        @(
 'Microsoft.PowerShell.Commands.Management',
 'Microsoft.PowerShell.Commands.Utility',
+'Microsoft.PowerShell.Commands.Diagnostics',
 'Microsoft.PowerShell.ConsoleHost',
 'Microsoft.PowerShell.Security',
 'System.Management.Automation',
@@ -1172,12 +1800,15 @@ function Publish-NuGetFeed
 'Microsoft.WSMan.Management',
 'Microsoft.WSMan.Runtime',
 'Microsoft.PowerShell.SDK'
-    ) | % {
-        if ($VersionSuffix) {
-            dotnet pack "src/$_" --output $OutputPath --version-suffix $VersionSuffix
-        } else {
-            dotnet pack "src/$_" --output $OutputPath
+        ) | % {
+            if ($VersionSuffix) {
+                dotnet pack "src/$_" --output $OutputPath --version-suffix $VersionSuffix /p:IncludeSymbols=true
+            } else {
+                dotnet pack "src/$_" --output $OutputPath
+            }
         }
+    } finally {
+        Pop-Location
     }
 }
 
@@ -1193,6 +1824,12 @@ function Start-DevPowerShell {
         [switch]$KeepPSModulePath
     )
 
+    if ($FullCLR) {
+        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+        throw "Building against FullCLR is not supported"
+    }
+
     try {
         if ((-not $NoNewWindow) -and ($IsCoreCLR)) {
             Write-Warning "Start-DevPowerShell -NoNewWindow is currently implied in PowerShellCore edition https://github.com/PowerShell/PowerShell/issues/1543"
@@ -1207,7 +1844,7 @@ function Start-DevPowerShell {
             if (-not $Command) {
                 $ArgumentList = @('-NoExit') + $ArgumentList
             }
-            $Command = '$env:PSMODULEPATH = Join-Path $env:DEVPATH Modules; ' + $Command
+            $Command = '$env:PSModulePath = Join-Path $env:DEVPATH Modules; ' + $Command
         }
 
         if ($Command) {
@@ -1248,7 +1885,7 @@ function Start-DevPowerShell {
         {
             Remove-Item env:DEVPATH
         }
-        
+
         if ($ZapDisable) {
             Remove-Item env:COMPLUS_ZapDisable
         }
@@ -1455,9 +2092,24 @@ function Start-TypeGen
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    Push-Location "$PSScriptRoot/src/TypeCatalogParser"
+    $GetDependenciesTargetPath = "$PSScriptRoot/src/Microsoft.PowerShell.SDK/obj/Microsoft.PowerShell.SDK.csproj.TypeCatalog.targets"
+    $GetDependenciesTargetValue = @'
+<Project>
+    <Target Name="_GetDependencies"
+            DependsOnTargets="ResolvePackageDependenciesDesignTime">
+        <ItemGroup>
+            <_DependentAssemblyPath Include="%(_DependenciesDesignTime.Path)%3B" Condition=" '%(_DependenciesDesignTime.Type)' == 'Assembly' And '%(_DependenciesDesignTime.Name)' != 'Microsoft.Management.Infrastructure.Native.dll' And '%(_DependenciesDesignTime.Name)' != 'Microsoft.Management.Infrastructure.dll' " />
+        </ItemGroup>
+        <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_DependentAssemblyPath)" Overwrite="true" />
+    </Target>
+</Project>
+'@
+    Set-Content -Path $GetDependenciesTargetPath -Value $GetDependenciesTargetValue -Force -Encoding Ascii
+
+    Push-Location "$PSScriptRoot/src/Microsoft.PowerShell.SDK"
     try {
-        dotnet run
+        $ps_inc_file = "$PSScriptRoot/src/TypeCatalogGen/powershell.inc"
+        dotnet msbuild .\Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$ps_inc_file" /nologo
     } finally {
         Pop-Location
     }
@@ -1674,6 +2326,12 @@ function script:log([string]$message) {
     [console]::ResetColor()
 }
 
+function script:logerror([string]$message) {
+    Write-Host -Foreground Red $message
+    #reset colors for older package to at return to default after error message on a compilation error
+    [console]::ResetColor()
+}
+
 function script:precheck([string]$command, [string]$missedMessage) {
     $c = Get-Command $command -ErrorAction SilentlyContinue
     if (-not $c) {
@@ -1737,7 +2395,7 @@ function script:Convert-PSObjectToHashtable {
 
 # this function wraps native command Execution
 # for more information, read https://mnaoumov.wordpress.com/2015/01/11/execution-of-external-commands-in-powershell-done-right/
-function script:Start-NativeExecution([scriptblock]$sb)
+function script:Start-NativeExecution([scriptblock]$sb, [switch]$IgnoreExitcode)
 {
     $backupEAP = $script:ErrorActionPreference
     $script:ErrorActionPreference = "Continue"
@@ -1745,12 +2403,41 @@ function script:Start-NativeExecution([scriptblock]$sb)
         & $sb
         # note, if $sb doesn't have a native invocation, $LASTEXITCODE will
         # point to the obsolete value
-        if ($LASTEXITCODE -ne 0) {
+        if ($LASTEXITCODE -ne 0 -and -not $IgnoreExitcode) {
             throw "Execution of {$sb} failed with exit code $LASTEXITCODE"
         }
     } finally {
         $script:ErrorActionPreference = $backupEAP
     }
+}
+
+# Builds coming out of this project can have version number as 'a.b.c-stringf.d-e-f' OR 'a.b.c.d-e-f'
+# This function converts the above version into semantic version major.minor[.build-quality[.revision]] format
+function Get-PackageSemanticVersion
+{
+    [CmdletBinding()]
+    param (
+        # Version of the Package
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $Version
+        )
+
+    Write-Verbose "Extract the semantic version in the form of major.minor[.build-quality[.revision]] for $Version"
+    $packageVersionTokens = $Version.Split('.')
+
+    if (3 -eq $packageVersionTokens.Count) {
+        # In case the input is of the form a.b.c, add a '0' at the end for revision field
+        $packageSemanticVersion = $Version,'0' -join '.'
+    } elseif (3 -lt $packageVersionTokens.Count) {
+        # We have all the four fields
+        $packageRevisionTokens = ($packageVersionTokens[3].Split('-'))[0]
+        $packageSemanticVersion = $packageVersionTokens[0],$packageVersionTokens[1],$packageVersionTokens[2],$packageRevisionTokens -join '.'
+    } else {
+        throw "Cannot create Semantic Version from the string $Version containing 4 or more tokens"
+    }
+
+    $packageSemanticVersion
 }
 
 # Builds coming out of this project can have version number as 'a.b.c' OR 'a.b.c-d-f'
@@ -1775,20 +2462,23 @@ function Get-PackageVersionAsMajorMinorBuildRevision
     } elseif (1 -lt $packageVersionTokens.Count) {
         # We have all the four fields
         $packageBuildTokens = ([regex]::Matches($packageVersionTokens[1], "\d+"))[0].value
-        $packageVersion = $packageVersion + '.' + $packageBuildTokens[0]
+        $packageVersion = $packageVersion + '.' + $packageBuildTokens
     }
 
-    return $packageVersion
+    $packageVersion
 }
 
 function New-MSIPackage
 {
     [CmdletBinding()]
     param (
-    
+
         # Name of the Product
         [ValidateNotNullOrEmpty()]
-        [string] $ProductName = 'PowerShell', 
+        [string] $ProductName = 'PowerShell',
+
+        # Suffix of the Name
+        [string] $ProductNameSuffix,
 
         # Version of the Product
         [Parameter(Mandatory = $true)]
@@ -1806,26 +2496,32 @@ function New-MSIPackage
 
         # File describing the MSI Package creation semantics
         [ValidateNotNullOrEmpty()]
-        [string] $ProductWxsPath = (Join-Path $pwd '\assets\Product.wxs'),
+        [string] $ProductWxsPath = "$PSScriptRoot\assets\Product.wxs",
 
         # Path to Assets folder containing artifacts such as icons, images
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $AssetsPath, 
+        [string] $AssetsPath,
 
         # Path to license.rtf file - for the EULA
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $LicenseFilePath
+        [string] $LicenseFilePath,
 
-    )    
+        # Architecture to use when creating the MSI
+        [Parameter(Mandatory = $true)]
+        [ValidateSet("x86", "x64")]
+        [ValidateNotNullOrEmpty()]
+        [string] $ProductTargetArchitecture
+
+    )
 
     $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset v3.10\bin"
 
     Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
     if (-not (Test-Path $wixToolsetBinPath))
     {
-        throw "Install Wix Toolset prior to running this script - https://wix.codeplex.com/downloads/get/1540240"
+        throw "Wix Toolset is required to create MSI package. Please install Wix from https://wix.codeplex.com/downloads/get/1540240"
     }
 
     Write-Verbose "Initialize Wix executables - Heat.exe, Candle.exe, Light.exe"
@@ -1833,40 +2529,53 @@ function New-MSIPackage
     $wixCandleExePath = Join-Path $wixToolsetBinPath "Candle.exe"
     $wixLightExePath = Join-Path $wixToolsetBinPath "Light.exe"
 
-    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion -Verbose
-    
-    $assetsInSourcePath = "$ProductSourcePath" + '\assets'
-    New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
+    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $ProductVersion
+    $ProductVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $ProductVersion
 
     $assetsInSourcePath = Join-Path $ProductSourcePath 'assets'
+    New-Item $assetsInSourcePath -type directory -Force | Write-Verbose
 
-    Write-Verbose "Place dependencies such as icons to $assetsInSourcePath" 
+    Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
     Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
-    
+
     $productVersionWithName = $ProductName + "_" + $ProductVersion
-    Write-Verbose "Create MSI for Product $productVersionWithName"
+    $productSemanticVersionWithName = $ProductName + "_" + $ProductSemanticVersion
+
+    Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
 
     [Environment]::SetEnvironmentVariable("ProductSourcePath", $ProductSourcePath, "Process")
+    # These variables are used by Product.wxs in assets directory
     [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
     [Environment]::SetEnvironmentVariable("ProductGuid", $ProductGuid, "Process")
     [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
     [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
+    [Environment]::SetEnvironmentVariable("ProductTargetArchitecture", $ProductTargetArchitecture, "Process")
+    $ProductProgFilesDir = "ProgramFiles64Folder"
+    if ($ProductTargetArchitecture -eq "x86")
+    {
+        $ProductProgFilesDir = "ProgramFilesFolder"
+    }
+    [Environment]::SetEnvironmentVariable("ProductProgFilesDir", $ProductProgFilesDir, "Process")
 
     $wixFragmentPath = (Join-path $env:Temp "Fragment.wxs")
     $wixObjProductPath = (Join-path $env:Temp "Product.wixobj")
     $wixObjFragmentPath = (Join-path $env:Temp "Fragment.wixobj")
-    
-    $msiLocationPath = Join-Path $pwd "$productVersionWithName.msi"    
+
+    $packageName = $productSemanticVersionWithName
+    if ($ProductNameSuffix) {
+        $packageName += "-$ProductNameSuffix"
+    }
+    $msiLocationPath = Join-Path $pwd "$packageName.msi"
     Remove-Item -ErrorAction SilentlyContinue $msiLocationPath -Force
 
     & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v | Write-Verbose
     & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -arch x64 -v | Write-Verbose
-    & $wixLightExePath -out "$productVersionWithName.msi" $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -dWixUILicenseRtf="$LicenseFilePath" -v | Write-Verbose
-    
+    & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -dWixUILicenseRtf="$LicenseFilePath" -v | Write-Verbose
+
     Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
 
-    Write-Verbose "You can find the MSI @ $msiLocationPath"
-    return $msiLocationPath
+    Write-Verbose "You can find the MSI @ $msiLocationPath" -Verbose
+    $msiLocationPath
 }
 
 # Function to create an Appx package compatible with Windows 8.1 and above
@@ -1879,6 +2588,9 @@ function New-AppxPackage
         [ValidateNotNullOrEmpty()]
         [string] $PackageName = 'PowerShell',
 
+        # Suffix of the Name
+        [string] $PackageNameSuffix,
+
         # Version of the Package
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
@@ -1887,7 +2599,7 @@ function New-AppxPackage
         # Source Path to the Binplaced Files
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $SourcePath,
+        [string] $PackageSourcePath,
 
         # Path to Assets folder containing Appx specific artifacts
         [Parameter(Mandatory = $true)]
@@ -1895,19 +2607,21 @@ function New-AppxPackage
         [string] $AssetsPath
     )
 
-    $PackageVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $PackageVersion -Verbose
+    $PackageSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
+
+    $PackageVersion = Get-PackageVersionAsMajorMinorBuildRevision -Version $PackageVersion
     Write-Verbose "Package Version is $PackageVersion"
 
-    $win10sdkBinPath = "${env:ProgramFiles(x86)}\Windows Kits\10\bin\x64"
+    $win10sdkBinPath = Get-Win10SDKBinDir
 
     Write-Verbose "Ensure Win10 SDK is present on the machine @ $win10sdkBinPath"
-    if (-not (Test-Path $win10sdkBinPath)) {
+    if (-not (Test-Win10SDK)) {
         throw "Install Win10 SDK prior to running this script - https://go.microsoft.com/fwlink/p/?LinkID=698771"
     }
 
-    Write-Verbose "Ensure Source Path is valid - $SourcePath"
-    if (-not (Test-Path $SourcePath)) {
-        throw "Invalid SourcePath - $SourcePath"
+    Write-Verbose "Ensure Source Path is valid - $PackageSourcePath"
+    if (-not (Test-Path $PackageSourcePath)) {
+        throw "Invalid PackageSourcePath - $PackageSourcePath"
     }
 
     Write-Verbose "Ensure Assets Path is valid - $AssetsPath"
@@ -1950,27 +2664,79 @@ function New-AppxPackage
     $appxManifest = $appxManifest.Replace('#SQUARE150x150LOGO#', 'Assets\Powershell_256.png')
     $appxManifest = $appxManifest.Replace('#SQUARE44x44LOGO#', 'Assets\Powershell_48.png')
 
-    Write-Verbose "Place Appx Manifest in $SourcePath"
-    $appxManifest | Out-File "$SourcePath\AppxManifest.xml" -Force
+    Write-Verbose "Place Appx Manifest in $PackageSourcePath"
+    $appxManifest | Out-File "$PackageSourcePath\AppxManifest.xml" -Force
 
-    $assetsInSourcePath = "$SourcePath" + '\Assets'
+    $assetsInSourcePath = Join-Path $PackageSourcePath 'Assets'
     New-Item $assetsInSourcePath -type directory -Force | Out-Null
-
-    $assetsInSourcePath = Join-Path $SourcePath 'Assets'
 
     Write-Verbose "Place AppxManifest dependencies such as images to $assetsInSourcePath"
     Copy-Item "$AssetsPath\*.png" $assetsInSourcePath -Force
 
-    $appxPackageName = $PackageName + "_" + $PackageVersion
-    $appxPackagePath = "$pwd\$appxPackageName.appx"
-    Write-Verbose "Calling MakeAppx from $makeappxExePath to create the package @ $appxPackagePath"
-    & $makeappxExePath pack /o /v /d $SourcePath  /p $appxPackagePath | Write-Verbose
+    $appxPackageName = $PackageName + "_" + $PackageSemanticVersion
+    if ($PackageNameSuffix) {
+        $appxPackageName = $appxPackageName, $PackageNameSuffix -join "-"
+    }
+    $appxLocationPath = "$pwd\$appxPackageName.appx"
+    Write-Verbose "Calling MakeAppx from $makeappxExePath to create the package @ $appxLocationPath"
+    & $makeappxExePath pack /o /v /d $PackageSourcePath  /p $appxLocationPath | Write-Verbose
 
     Write-Verbose "Clean-up Appx artifacts and Assets from $SourcePath"
     Remove-Item $assetsInSourcePath -Recurse -Force -ErrorAction SilentlyContinue
-    Remove-Item "$SourcePath\AppxManifest.xml" -Force -ErrorAction SilentlyContinue
+    Remove-Item "$PackageSourcePath\AppxManifest.xml" -Force -ErrorAction SilentlyContinue
 
-    return $appxPackagePath
+    Write-Verbose "You can find the APPX @ $appxLocationPath" -Verbose
+    $appxLocationPath
+}
+
+# Function to create a zip file for Nano Server and xcopy deployment
+function New-ZipPackage
+{
+    [CmdletBinding()]
+    param (
+
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $PackageName = 'PowerShell',
+
+        # Suffix of the Name
+        [string] $PackageNameSuffix,
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $PackageVersion,
+
+        # Source Path to the Product Files - required to package the contents into an Zip
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $PackageSourcePath
+    )
+
+    $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
+
+    $zipPackageName = $PackageName + "_" + $ProductSemanticVersion
+    if ($PackageNameSuffix) {
+        $zipPackageName = $zipPackageName, $PackageNameSuffix -join "-"
+    }
+
+    Write-Verbose "Create Zip for Product $zipPackageName"
+
+    $zipLocationPath = Join-Path $PWD "$zipPackageName.zip"
+
+    If(Get-Command Compress-Archive -ErrorAction Ignore)
+    {
+        Compress-Archive -Path $PackageSourcePath\* -DestinationPath $zipLocationPath
+
+        Write-Verbose "You can find the Zip @ $zipLocationPath" -Verbose
+        $zipLocationPath
+
+    }
+    #TODO: Use .NET Api to do compresss-archive equivalent if the cmdlet is not present
+    else
+    {
+        Write-Error -Message "Compress-Archive cmdlet is missing in this PowerShell version"
+    }
 }
 
 function Start-CrossGen {
@@ -1979,7 +2745,24 @@ function Start-CrossGen {
         [Parameter(Mandatory= $true)]
         [ValidateNotNullOrEmpty()]
         [String]
-        $PublishPath
+        $PublishPath,
+
+        [Parameter(Mandatory=$true)]
+        [ValidateSet("ubuntu.14.04-x64",
+                     "ubuntu.16.04-x64",
+                     "debian.8-x64",
+                     "centos.7-x64",
+                     "fedora.24-x64",
+                     "win7-x86",
+                     "win7-x64",
+                     "win81-x64",
+                     "win10-x64",
+                     "osx.10.11-x64",
+                     "osx.10.12-x64",
+                     "opensuse.13.2-x64",
+                     "opensuse.42.1-x64")]
+        [string]
+        $Runtime
     )
 
     function Generate-CrossGenAssembly {
@@ -2025,20 +2808,26 @@ function Start-CrossGen {
     }
 
     # Get the path to crossgen
-    $crossGenSearchPath = if ($IsWindows) {
-        "$PSScriptRoot\Packages\*crossgen.exe"
-    } else {
-        "~/.nuget/packages/*crossgen"
-    }
+    $crossGenExe = if ($IsWindows) { "crossgen.exe" } else { "crossgen" }
 
     # The crossgen tool is only published for these particular runtimes
     $crossGenRuntime = if ($IsWindows) {
-        "win7-x64"
+        if ($Runtime -match "-x86") {
+            "win7-x86"
+        } else {
+            "win7-x64"
+        }
     } elseif ($IsLinux) {
         if ($IsUbuntu) {
             "ubuntu.14.04-x64"
         } elseif ($IsCentOS) {
             "rhel.7-x64"
+        } elseif ($IsFedora) {
+            "fedora.24-x64"
+        } elseif ($IsOpenSUSE13) {
+            "opensuse.13.2-x64"
+        } elseif (${IsOpenSUSE42.1}) {
+            "opensuse.42.1-x64"
         }
     } elseif ($IsOSX) {
         "osx.10.10-x64"
@@ -2048,10 +2837,16 @@ function Start-CrossGen {
         throw "crossgen is not available for this platform"
     }
 
-    $crossGenPath = Get-ChildItem $crossGenSearchPath -Recurse | ? { $_.FullName -match $crossGenRuntime } | select -First 1 | % { $_.FullName }
+    # Get the CrossGen.exe for the correct runtime with the latest version
+    $crossGenPath = Get-ChildItem $script:nugetPackagesRoot $crossGenExe -Recurse | `
+                        Where-Object { $_.FullName -match $crossGenRuntime } | `
+                        Sort-Object -Property FullName -Descending | `
+                        Select-Object -First 1 | `
+                        ForEach-Object { $_.FullName }
     if (-not $crossGenPath) {
         throw "Unable to find latest version of crossgen.exe. 'Please run Start-PSBuild -Clean' first, and then try again."
     }
+    Write-Verbose "Matched CrossGen.exe: $crossGenPath" -Verbose
 
     # Crossgen.exe requires the following assemblies:
     # mscorlib.dll
@@ -2075,6 +2870,14 @@ function Start-CrossGen {
         }
     }
 
+    # Common assemblies used by Add-Type to crossgen
+    $commonAssembliesForAddType = @(
+        "Microsoft.CodeAnalysis.CSharp.dll"
+        "Microsoft.CodeAnalysis.dll"
+        "Microsoft.CodeAnalysis.VisualBasic.dll"
+        "Microsoft.CSharp.dll"
+    )
+
     # Common PowerShell libraries to crossgen
     $psCoreAssemblyList = @(
         "Microsoft.PowerShell.Commands.Utility.dll",
@@ -2083,7 +2886,6 @@ function Start-CrossGen {
         "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll",
         "Microsoft.PowerShell.CoreCLR.Eventing.dll",
         "Microsoft.PowerShell.ConsoleHost.dll",
-        "Microsoft.PowerShell.PackageManagement.dll",
         "Microsoft.PowerShell.PSReadLine.dll",
         "System.Management.Automation.dll"
     )
@@ -2099,20 +2901,152 @@ function Start-CrossGen {
         )
     }
 
-    foreach ($assemblyName in $psCoreAssemblyList) {
+    $fullAssemblyList = $commonAssembliesForAddType + $psCoreAssemblyList
+
+    foreach ($assemblyName in $fullAssemblyList) {
         $assemblyPath = Join-Path $PublishPath $assemblyName
         Generate-CrossGenAssembly -CrossgenPath $crossGenPath -AssemblyPath $assemblyPath
     }
 
-    Write-Verbose "PowerShell Ngen assemblies have been generated, deleting ILs..." -Verbose
-    foreach ($assemblyName in $psCoreAssemblyList) {
+    #
+    # With the latest dotnet.exe, the default load context is only able to load TPAs, and TPA
+    # only contains IL assembly names. In order to make the default load context able to load
+    # the NI PS assemblies, we need to replace the IL PS assemblies with the corresponding NI
+    # PS assemblies, but with the same IL assembly names.
+    #
+    Write-Verbose "PowerShell Ngen assemblies have been generated. Deploying ..." -Verbose
+    foreach ($assemblyName in $fullAssemblyList) {
+
         # Remove the IL assembly and its symbols.
         $assemblyPath = Join-Path $PublishPath $assemblyName
-        $symbolsPath = $assemblyPath.Replace(".dll", ".pdb")
-        Remove-Item $assemblyPath -Force -ErrorAction SilentlyContinue
-        Remove-Item $symbolsPath -Force -ErrorAction SilentlyContinue
+        $symbolsPath = [System.IO.Path]::ChangeExtension($assemblyPath, ".pdb")
+
+        Remove-Item $assemblyPath -Force -ErrorAction Stop
+
+        # No symbols are available for Microsoft.CodeAnalysis.CSharp.dll, Microsoft.CodeAnalysis.dll,
+        # Microsoft.CodeAnalysis.VisualBasic.dll, and Microsoft.CSharp.dll.
+        if ($commonAssembliesForAddType -notcontains $assemblyName) {
+            Remove-Item $symbolsPath -Force -ErrorAction Stop
+        }
+
+        # Rename the corresponding ni.dll assembly to be the same as the IL assembly
+        $niAssemblyPath = [System.IO.Path]::ChangeExtension($assemblyPath, "ni.dll")
+        Rename-Item $niAssemblyPath $assemblyPath -Force -ErrorAction Stop
     }
 }
+
+# Cleans the PowerShell repo - everything but the root folder
+function Clear-PSRepo
+{
+    [CmdletBinding()]
+    param()
+
+    Get-ChildItem $PSScriptRoot\* -Directory | ForEach-Object {
+        Write-Verbose "Cleaning $_ ..."
+        git clean -fdX $_
+    }
+}
+
+# Install PowerShell modules such as PackageManagement, PowerShellGet
+function Restore-PSModule
+{
+    [CmdletBinding()]
+    param(
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string[]]$Name,
+
+        [Parameter(Mandatory=$true)]
+        [ValidateNotNullOrEmpty()]
+        [string]$Destination,
+
+        [string]$SourceLocation="https://powershell.myget.org/F/powershellmodule/api/v2/",
+
+        [string]$RequiredVersion
+        )
+
+    $needRegister = $true
+    $RepositoryName = "mygetpsmodule"
+
+    # Check if the PackageManagement works in the base-oS or PowerShellCore
+    Get-PackageProvider -Name NuGet -ForceBootstrap -Verbose:$VerbosePreference
+    Get-PackageProvider -Name PowerShellGet -Verbose:$VerbosePreference
+
+    # Get the existing registered PowerShellGet repositories
+    $psrepos = PowerShellGet\Get-PSRepository
+
+    foreach ($repo in $psrepos)
+    {
+        if(($repo.SourceLocation -eq $SourceLocation) -or ($repo.SourceLocation.TrimEnd("/") -eq $SourceLocation.TrimEnd("/")))
+        {
+            # found a registered repository that matches the source location
+            $needRegister = $false
+            $RepositoryName = $repo.Name
+            break
+        }
+    }
+
+    if($needRegister)
+    {
+        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue
+        if($regVar)
+        {
+            PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
+        }
+
+        log "Registering PSRepository with name: $RepositoryName and sourcelocation: $SourceLocation"
+        PowerShellGet\Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -ErrorVariable ev -verbose
+        if($ev)
+        {
+            throw ("Failed to register repository '{0}'" -f $RepositoryName)
+        }
+
+        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName
+        if(-not $regVar)
+        {
+            throw ("'{0}' is not registered" -f $RepositoryName)
+        }
+    }
+
+    log ("Name='{0}', Destination='{1}', Repository='{2}'" -f ($Name -join ','), $Destination, $RepositoryName)
+
+    # do not output progress
+    $ProgressPreference = "SilentlyContinue"
+    $Name | ForEach-Object {
+
+        $command = @{
+                        Name=$_
+                        Path = $Destination
+                        Repository =$RepositoryName
+                    }
+
+        if($RequiredVersion)
+        {
+            $command.Add("RequiredVersion", $RequiredVersion)
+        }
+
+        # pull down the module
+        log "running save-module $_"
+        PowerShellGet\Save-Module @command -Force
+
+        # Remove PSGetModuleInfo.xml file
+        Find-Module -Name $_ -Repository $RepositoryName -IncludeDependencies | ForEach-Object {
+            Remove-Item -Path $Destination\$($_.Name)\*\PSGetModuleInfo.xml -Force
+        }
+    }
+
+    # Clean up
+    if($needRegister)
+    {
+        $regVar = PowerShellGet\Get-PSRepository -Name $RepositoryName -ErrorAction SilentlyContinue
+        if($regVar)
+        {
+            log "Unregistering PSRepository with name: $RepositoryName"
+            PowerShellGet\UnRegister-PSRepository -Name $RepositoryName
+        }
+    }
+}
+
 
 $script:RESX_TEMPLATE = @'
 <?xml version="1.0" encoding="utf-8"?>

@@ -30,9 +30,9 @@ namespace Microsoft.PowerShell.Activities
         /// The .NET type implementing the cmdlet to invoke.
         /// </summary>
         public override System.Type TypeImplementingCmdlet { get { return typeof(Microsoft.Management.Infrastructure.CimCmdlets.GetCimClassCommand); } }
-        
+
         // Arguments
-        
+
         /// <summary>
         /// Provides access to the ClassName parameter.
         /// </summary>

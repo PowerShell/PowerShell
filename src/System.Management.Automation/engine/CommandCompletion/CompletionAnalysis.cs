@@ -417,7 +417,7 @@ namespace System.Management.Automation
                         break;
 
                     case TokenKind.Comma:
-                        // Hanlde array elements such as dir .\cd,<tab> || dir -Path: .\cd,<tab>
+                        // Handle array elements such as dir .\cd,<tab> || dir -Path: .\cd,<tab>
                         if (lastAst is ErrorExpressionAst &&
                             (lastAst.Parent is CommandAst || lastAst.Parent is CommandParameterAst))
                         {
@@ -561,7 +561,7 @@ namespace System.Management.Automation
                     //
                     // Handle following scenario, cursor is in next line and after a command call,
                     // we need to skip the command call autocompletion if there is no backtick character
-                    // in the end of the prevous line, since backtick means command call continues to the next line
+                    // in the end of the previous line, since backtick means command call continues to the next line
                     //
                     // Configuration config
                     // {
@@ -590,13 +590,13 @@ namespace System.Management.Automation
                     // and an assignment is pending.  For cases like:
                     //   new-object System.Drawing.Point -prop @{ X=  -> Tab should not complete
                     // Note: This check works when all statements preceding the last are complete,
-                    //       but if a preceding statement is incomplete this test fails because 
+                    //       but if a preceding statement is incomplete this test fails because
                     //       the Ast mixes the statements due to incomplete parsing.
                     //   e.g.,
                     //   new-object System.Drawing.Point -prop @{ X = 100; Y =      <- Incomplete line
                     //   new-object new-object System.Drawing.Point -prop @{ X =    <- Tab will yield hash properties.
                     if (hashTableAst != null &&
-                        CheckForPendingAssigment(hashTableAst))
+                        CheckForPendingAssignment(hashTableAst))
                     {
                         return result;
                     }
@@ -777,7 +777,7 @@ namespace System.Management.Automation
             return result;
         }
 
-        // Helper method to auto complete hashtale key
+        // Helper method to auto complete hashtable key
         private List<CompletionResult> GetResultForHashtable(CompletionContext completionContext)
         {
             var lastAst = completionContext.RelatedAsts.Last();
@@ -837,7 +837,7 @@ namespace System.Management.Automation
         }
 
         // Helper method to look for an incomplete assignment pair in hash table.
-        private bool CheckForPendingAssigment(HashtableAst hashTableAst)
+        private bool CheckForPendingAssignment(HashtableAst hashTableAst)
         {
             foreach (var keyValue in hashTableAst.KeyValuePairs)
             {
@@ -1214,7 +1214,7 @@ namespace System.Management.Automation
                         replacementIndex = completionContext.ReplacementIndex;
                         replacementLength = completionContext.ReplacementLength;
                     }
-                    // Hanlde scenarios like this: "c:\wind"<tab>. Treat the StringLiteral/StringExpandable as path/command
+                    // Handle scenarios like this: "c:\wind"<tab>. Treat the StringLiteral/StringExpandable as path/command
                     else
                     {
                         // Handle path/commandname completion for quoted string
@@ -1263,7 +1263,7 @@ namespace System.Management.Automation
         /// Generate auto complete results for identifier within configuration.
         /// Results are generated based on DynamicKeywords matches given identifier.
         /// For example, following "Fi" matches "File", and "Us" matches "User"
-        /// 
+        ///
         ///     Configuration
         ///     {
         ///         Fi^
@@ -1272,7 +1272,7 @@ namespace System.Management.Automation
         ///             Us^
         ///         }
         ///     }
-        /// 
+        ///
         /// </summary>
         /// <param name="completionContext"></param>
         /// <param name="configureAst"></param>
@@ -1492,9 +1492,8 @@ namespace System.Management.Automation
                             return result;
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         return result;
                     }
                 }

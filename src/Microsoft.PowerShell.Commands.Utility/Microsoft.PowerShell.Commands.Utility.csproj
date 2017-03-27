@@ -1,279 +1,97 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{5B134412-7EAF-4D60-9EED-CD200BDC5153}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <NoStandardLibraries>false</NoStandardLibraries>
+    <VersionPrefix>6.0.0</VersionPrefix>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <NoWarn>$(NoWarn);CS1570</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DelaySign>true</DelaySign>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Microsoft.PowerShell.Commands.Utility</AssemblyName>
-    <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
+
+  <ItemGroup>
+    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\ColumnInfo.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\ExpressionColumnInfo.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\HeaderInfo.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\OriginalColumnInfo.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\OutGridViewCommand.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\OutWindowProxy.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\ScalarTypeColumnInfo.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\TableView.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\out-printer\PrinterLineOutput.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\out-printer\out-printer.cs" />
+    <Compile Remove="commands\utility\Send-MailMessage.cs" />
+    <Compile Remove="commands\utility\ShowCommand\ShowCommand.cs" />
+    <Compile Remove="commands\utility\ShowCommand\ShowCommandCommandInfo.cs" />
+    <Compile Remove="commands\utility\ShowCommand\ShowCommandModuleInfo.cs" />
+    <Compile Remove="commands\utility\ShowCommand\ShowCommandParameterInfo.cs" />
+    <Compile Remove="commands\utility\ShowCommand\ShowCommandParameterSetInfo.cs" />
+    <Compile Remove="commands\utility\ShowCommand\ShowCommandParameterType.cs" />
+    <Compile Remove="commands\utility\ShowCommand\ShowCommandProxy.cs" />
+    <Compile Remove="commands\utility\update-list.cs" />
+    <Compile Remove="singleshell\installer\MshUtilityMshSnapin.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\BasicHtmlWebResponseObject.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\ContentHelper.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\HtmlWebResponseObject.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\InvokeRestMethodCommand.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\InvokeWebRequestCommand.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\JsonObjectTypeResolver.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\WebRequestPSCmdlet.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\WebResponseHelper.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\WebResponseObject.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\WebResponseObjectFactory.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\CoreCLR\HtmlWebResponseObject.CoreClr.cs" />
+    <Compile Remove="gen\FormatAndOut_out_gridview.cs" />
+    <Compile Remove="gen\UtilityMshSnapinResources.cs" />
+    <Compile Remove="gen\OutPrinterDisplayStrings.cs" />
+    <Compile Remove="gen\UpdateListStrings.cs" />
+    <Compile Remove="gen\SendMailMessageStrings.cs" />
+    <Compile Remove="gen\ConvertFromStringResources.cs" />
+    <Compile Remove="gen\ConvertStringResources.cs" />
+    <Compile Remove="gen\FlashExtractStrings.cs" />
+    <Compile Remove="gen\ImmutableStrings.cs" />
+    
+    <EmbeddedResource Remove="resources\FormatAndOut_out_gridview.resx" />
+    <EmbeddedResource Remove="resources\UtilityMshSnapinResources.resx" />
+    <EmbeddedResource Remove="resources\OutPrinterDisplayStrings.resx" />
+    <EmbeddedResource Remove="resources\UpdateListStrings.resx" />
+    <EmbeddedResource Remove="resources\SendMailMessageStrings.resx" />
+    <EmbeddedResource Remove="resources\ConvertFromStringResources.resx" />
+    <EmbeddedResource Remove="resources\ConvertStringResources.resx" />
+    <EmbeddedResource Remove="resources\FlashExtractStrings.resx" />
+    <EmbeddedResource Remove="resources\ImmutableStrings.resx" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Linux' ">
+    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
     <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup>
-    <RootNamespace>Microsoft.PowerShell.Commands.Utility</RootNamespace>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'UNIX|AnyCPU'">
-    <OutputPath>bin\UNIX\</OutputPath>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'CORECLR|AnyCPU'">
-    <OutputPath>bin\CORECLR\</OutputPath>
-  </PropertyGroup>
-  <ItemGroup>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Drawing">
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Drawing.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Numerics">
-      <HintPath>C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\.NETFramework\v4.0\System.Numerics.dll</HintPath>
-    </Reference>
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.0.0-rc" />
+    <PackageReference Include="System.Diagnostics.TextWriterTraceListener" Version="4.3.0" />
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="commands\utility\AddMember.cs" />
-    <Compile Include="commands\utility\AddType.cs" />
-    <Compile Include="commands\utility\compare-object.cs" />
-    <Compile Include="commands\utility\ConsoleColorCmdlet.cs" />
-    <Compile Include="commands\utility\convert-HTML.cs" />
-    <Compile Include="commands\utility\ConvertFrom-StringData.cs" />
-    <Compile Include="commands\utility\Csv.cs" />
-    <Compile Include="commands\utility\CSVCommands.cs" />
-    <Compile Include="commands\utility\CustomSerialization.cs" />
-    <Compile Include="commands\utility\CustomSerializationStrings.cs" />
-    <Compile Include="commands\utility\DebugRunspaceCommand.cs" />
-    <Compile Include="commands\utility\Disable-PSBreakpoint.cs" />
-    <Compile Include="commands\utility\Enable-PSBreakpoint.cs" />
-    <Compile Include="commands\utility\EnableDisableRunspaceDebugCommand.cs" />
-    <Compile Include="commands\utility\ExportAliasCommand.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\GetFormatDataCommand.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\common\WriteFormatDataCommand.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\format-list\Format-List.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\format-object\format-object.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\format-table\Format-Table.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\format-wide\Format-Wide.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\out-file\Out-File.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\out-printer\out-printer.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\out-printer\PrinterLineOutput.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\out-string\out-string.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\OutGridView\ColumnInfo.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\OutGridView\ExpressionColumnInfo.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\OutGridView\HeaderInfo.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\OutGridView\OriginalColumnInfo.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\OutGridView\OutGridViewCommand.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\OutGridView\OutWindowProxy.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\OutGridView\ScalarTypeColumnInfo.cs" />
-    <Compile Include="commands\utility\FormatAndOutput\OutGridView\TableView.cs" />
-    <Compile Include="commands\utility\Get-PSBreakpoint.cs" />
-    <Compile Include="commands\utility\Get-PSCallStack.cs" />
-    <Compile Include="commands\utility\GetAliasCommand.cs" />
-    <Compile Include="commands\utility\GetCultureCommand.cs" />
-    <Compile Include="commands\utility\GetDateCommand.cs" />
-    <Compile Include="commands\utility\GetEventCommand.cs" />
-    <Compile Include="commands\utility\GetEventSubscriberCommand.cs" />
-    <Compile Include="commands\utility\GetHostCmdlet.cs" />
-    <Compile Include="commands\utility\GetMember.cs" />
-    <Compile Include="commands\utility\GetRandomCommand.cs" />
-    <Compile Include="commands\utility\GetRunspaceCommand.cs" />
-    <Compile Include="commands\utility\GetUICultureCommand.cs" />
-    <Compile Include="commands\utility\GetUnique.cs" />
-    <Compile Include="commands\utility\group-object.cs" />
-    <Compile Include="commands\utility\ImplicitRemotingCommands.cs" />
-    <Compile Include="commands\utility\Import-LocalizedData.cs" />
-    <Compile Include="commands\utility\ImportAliasCommand.cs" />
-    <Compile Include="commands\utility\InvokeCommandCmdlet.cs" />
-    <Compile Include="commands\utility\MatchString.cs" />
-    <Compile Include="commands\utility\Measure-Object.cs" />
-    <Compile Include="commands\utility\new-object.cs" />
-    <Compile Include="commands\utility\NewAliasCommand.cs" />
-    <Compile Include="commands\utility\neweventcommand.cs" />
-    <Compile Include="commands\utility\NewTimeSpanCommand.cs" />
-    <Compile Include="commands\utility\ObjectCommandComparer.cs" />
-    <Compile Include="commands\utility\OrderObjectBase.cs" />
-    <Compile Include="commands\utility\ReadConsoleCmdlet.cs" />
-    <Compile Include="commands\utility\RegisterObjectEventCommand.cs" />
-    <Compile Include="commands\utility\RegisterPSEventCommand.cs" />
-    <Compile Include="commands\utility\Remove-PSBreakpoint.cs" />
-    <Compile Include="commands\utility\RemoveEventCommand.cs" />
-    <Compile Include="commands\utility\select-object.cs" />
-    <Compile Include="commands\utility\Send-MailMessage.cs" />
-    <Compile Include="commands\utility\Set-PSBreakpoint.cs" />
-    <Compile Include="commands\utility\SetAliasCommand.cs" />
-    <Compile Include="commands\utility\SetDateCommand.cs" />
-    <Compile Include="commands\utility\ShowCommand\ShowCommand.cs" />
-    <Compile Include="commands\utility\ShowCommand\ShowCommandCommandInfo.cs" />
-    <Compile Include="commands\utility\ShowCommand\ShowCommandModuleInfo.cs" />
-    <Compile Include="commands\utility\ShowCommand\ShowCommandParameterInfo.cs" />
-    <Compile Include="commands\utility\ShowCommand\ShowCommandParameterSetInfo.cs" />
-    <Compile Include="commands\utility\ShowCommand\ShowCommandParameterType.cs" />
-    <Compile Include="commands\utility\ShowCommand\ShowCommandProxy.cs" />
-    <Compile Include="commands\utility\sort-object.cs" />
-    <Compile Include="commands\utility\StartSleepCommand.cs" />
-    <Compile Include="commands\utility\tee-object.cs" />
-    <Compile Include="commands\utility\TimeExpressionCommand.cs" />
-    <Compile Include="commands\utility\trace\GetTracerCommand.cs" />
-    <Compile Include="commands\utility\trace\MshHostTraceListener.cs" />
-    <Compile Include="commands\utility\trace\SetTracerCommand.cs" />
-    <Compile Include="commands\utility\trace\TraceCommandBase.cs" />
-    <Compile Include="commands\utility\trace\TraceExpressionCommand.cs" />
-    <Compile Include="commands\utility\trace\TraceListenerCommandBase.cs" />
-    <Compile Include="commands\utility\UnblockFile.cs" />
-    <Compile Include="commands\utility\UnregisterEventCommand.cs" />
-    <Compile Include="commands\utility\Update-Data.cs" />
-    <Compile Include="commands\utility\update-list.cs" />
-    <Compile Include="commands\utility\Update-TypeData.cs" />
-    <Compile Include="commands\utility\UtilityCommon.cs" />
-    <Compile Include="commands\utility\Var.cs" />
-    <Compile Include="commands\utility\WaitEventCommand.cs" />
-    <Compile Include="commands\utility\WebCmdlet\Common\BasicHtmlWebResponseObject.Common.cs" />
-    <Compile Include="commands\utility\WebCmdlet\Common\ContentHelper.Common.cs" />
-    <Compile Include="commands\utility\WebCmdlet\Common\HtmlWebResponseObject.Common.cs" />
-    <Compile Include="commands\utility\WebCmdlet\Common\InvokeRestMethodCommand.Common.cs" />
-    <Compile Include="commands\utility\WebCmdlet\Common\WebRequestPSCmdlet.Common.cs" />
-    <Compile Include="commands\utility\WebCmdlet\Common\WebResponseObject.Common.cs" />
-    <Compile Include="commands\utility\WebCmdlet\CoreCLR\BasicHtmlWebResponseObject.CoreClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\CoreCLR\ContentHelper.CoreClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\CoreCLR\HtmlWebResponseObject.CoreClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\CoreCLR\HttpKnownHeaderNames.cs" />
-    <Compile Include="commands\utility\WebCmdlet\CoreCLR\InvokeRestMethodCommand.CoreClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\CoreCLR\InvokeWebRequestCommand.CoreClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\CoreCLR\WebProxy.cs" />
-    <Compile Include="commands\utility\WebCmdlet\CoreCLR\WebRequestPSCmdlet.CoreClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\CoreCLR\WebResponseHelper.CoreClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\CoreCLR\WebResponseObject.CoreClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\CoreCLR\WebResponseObjectFactory.CoreClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\FullClr\BasicHtmlWebResponseObject.FullClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\FullClr\ContentHelper.FullClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\FullClr\HtmlWebResponseObject.FullClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\FullClr\InvokeRestMethodCommand.FullClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\FullClr\InvokeWebRequestCommand.FullClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\FullClr\JsonObjectTypeResolver.cs" />
-    <Compile Include="commands\utility\WebCmdlet\FullClr\WebRequestPSCmdlet.FullClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\FullClr\WebResponseHelper.FullClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\FullClr\WebResponseObject.FullClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\FullClr\WebResponseObjectFactory.FullClr.cs" />
-    <Compile Include="commands\utility\WebCmdlet\ConvertFromJsonCommand.cs" />
-    <Compile Include="commands\utility\WebCmdlet\ConvertToJsonCommand.cs" />
-    <Compile Include="commands\utility\WebCmdlet\FormObject.cs" />
-    <Compile Include="commands\utility\WebCmdlet\FormObjectCollection.cs" />
-    <Compile Include="commands\utility\WebCmdlet\JsonObject.cs" />
-    <Compile Include="commands\utility\WebCmdlet\PSUserAgent.cs" />
-    <Compile Include="commands\utility\WebCmdlet\StreamHelper.cs" />
-    <Compile Include="commands\utility\WebCmdlet\WebCmdletElementCollection.cs" />
-    <Compile Include="commands\utility\WebCmdlet\WebRequestMethod.cs" />
-    <Compile Include="commands\utility\WebCmdlet\WebRequestSession.cs" />
-    <Compile Include="commands\utility\Write-Object.cs" />
-    <Compile Include="commands\utility\write.cs" />
-    <Compile Include="commands\utility\WriteAliasCommandBase.cs" />
-    <Compile Include="commands\utility\WriteConsoleCmdlet.cs" />
-    <Compile Include="commands\utility\WriteProgressCmdlet.cs" />
-    <Compile Include="commands\utility\XmlCommands.cs" />
-    <Compile Include="gen\AddMember.cs" />
-    <Compile Include="gen\AddTypeStrings.cs" />
-    <Compile Include="gen\AliasCommandStrings.cs" />
-    <Compile Include="gen\ConvertFromStringData.cs" />
-    <Compile Include="gen\ConvertFromStringResources.cs" />
-    <Compile Include="gen\ConvertStringResources.cs" />
-    <Compile Include="gen\CsvCommandStrings.cs" />
-    <Compile Include="gen\Debugger.cs" />
-    <Compile Include="gen\EventingStrings.cs" />
-    <Compile Include="gen\FlashExtractStrings.cs" />
-    <Compile Include="gen\FormatAndOut_out_gridview.cs" />
-    <Compile Include="gen\GetMember.cs" />
-    <Compile Include="gen\GetRandomCommandStrings.cs" />
-    <Compile Include="gen\HostStrings.cs" />
-    <Compile Include="gen\HttpCommandStrings.cs" />
-    <Compile Include="gen\ImmutableStrings.cs" />
-    <Compile Include="gen\ImplicitRemotingStrings.cs" />
-    <Compile Include="gen\ImportLocalizedDataStrings.cs" />
-    <Compile Include="gen\MatchStringStrings.cs" />
-    <Compile Include="gen\MeasureObjectStrings.cs" />
-    <Compile Include="gen\NewObjectStrings.cs" />
-    <Compile Include="gen\OutPrinterDisplayStrings.cs" />
-    <Compile Include="gen\SelectObjectStrings.cs" />
-    <Compile Include="gen\SendMailMessageStrings.cs" />
-    <Compile Include="gen\SortObjectStrings.cs" />
-    <Compile Include="gen\TraceCommandStrings.cs" />
-    <Compile Include="gen\UpdateDataStrings.cs" />
-    <Compile Include="gen\UpdateListStrings.cs" />
-    <Compile Include="gen\UtilityCommonStrings.cs" />
-    <Compile Include="gen\UtilityMshSnapinResources.cs" />
-    <Compile Include="gen\VariableCommandStrings.cs" />
-    <Compile Include="gen\WebCmdletStrings.cs" />
-    <Compile Include="gen\WriteErrorStrings.cs" />
-    <Compile Include="gen\WriteProgressResourceStrings.cs" />
-    <Compile Include="singleshell\installer\MshUtilityMshSnapin.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="map.json" />
-    <None Include="project.json" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="resources\AddMember.resx" />
-    <EmbeddedResource Include="resources\AddTypeStrings.resx" />
-    <EmbeddedResource Include="resources\AliasCommandStrings.resx" />
-    <EmbeddedResource Include="resources\ConvertFromStringData.resx" />
-    <EmbeddedResource Include="resources\ConvertFromStringResources.resx" />
-    <EmbeddedResource Include="resources\ConvertStringResources.resx" />
-    <EmbeddedResource Include="resources\CsvCommandStrings.resx" />
-    <EmbeddedResource Include="resources\Debugger.resx" />
-    <EmbeddedResource Include="resources\EventingStrings.resx" />
-    <EmbeddedResource Include="resources\FlashExtractStrings.resx" />
-    <EmbeddedResource Include="resources\FormatAndOut_out_gridview.resx" />
-    <EmbeddedResource Include="resources\GetMember.resx" />
-    <EmbeddedResource Include="resources\GetRandomCommandStrings.resx" />
-    <EmbeddedResource Include="resources\HostStrings.resx" />
-    <EmbeddedResource Include="resources\HttpCommandStrings.resx" />
-    <EmbeddedResource Include="resources\ImmutableStrings.resx" />
-    <EmbeddedResource Include="resources\ImplicitRemotingStrings.resx" />
-    <EmbeddedResource Include="resources\ImportLocalizedDataStrings.resx" />
-    <EmbeddedResource Include="resources\MatchStringStrings.resx" />
-    <EmbeddedResource Include="resources\MeasureObjectStrings.resx" />
-    <EmbeddedResource Include="resources\NewObjectStrings.resx" />
-    <EmbeddedResource Include="resources\OutPrinterDisplayStrings.resx" />
-    <EmbeddedResource Include="resources\SelectObjectStrings.resx" />
-    <EmbeddedResource Include="resources\SendMailMessageStrings.resx" />
-    <EmbeddedResource Include="resources\SortObjectStrings.resx" />
-    <EmbeddedResource Include="resources\TraceCommandStrings.resx" />
-    <EmbeddedResource Include="resources\UpdateDataStrings.resx" />
-    <EmbeddedResource Include="resources\UpdateListStrings.resx" />
-    <EmbeddedResource Include="resources\UtilityCommonStrings.resx" />
-    <EmbeddedResource Include="resources\UtilityMshSnapinResources.resx" />
-    <EmbeddedResource Include="resources\VariableCommandStrings.resx" />
-    <EmbeddedResource Include="resources\WebCmdletStrings.resx" />
-    <EmbeddedResource Include="resources\WriteErrorStrings.resx" />
-    <EmbeddedResource Include="resources\WriteProgressResourceStrings.resx" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj">
-      <Project>{1256d32a-be8d-4efe-9769-57be5663209e}</Project>
-      <Name>System.Management.Automation</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSHARP.Targets" />
-  <ProjectExtensions>
-    <VisualStudio AllowExistingFolder="true" />
-  </ProjectExtensions>
+
 </Project>

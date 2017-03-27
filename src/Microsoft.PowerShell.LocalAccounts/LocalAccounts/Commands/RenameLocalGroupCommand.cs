@@ -12,12 +12,12 @@ using Microsoft.PowerShell.LocalAccounts;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Rename-LocalGroup cmdlet renames a local security group in the Security 
+    /// The Rename-LocalGroup cmdlet renames a local security group in the Security
     /// Accounts Manager.
     /// </summary>
     [Cmdlet(VerbsCommon.Rename, "LocalGroup",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717978")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717978")]
     [Alias("rnlg")]
     public class RenameLocalGroupCommand : Cmdlet
     {
@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Commands
         #region Parameter Properties
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
-        /// Specifies the of the local group account to rename in the local Security 
+        /// Specifies the of the local group account to rename in the local Security
         /// Accounts Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
-        /// Specifies the local group to be renamed in the local Security Accounts 
+        /// Specifies the local group to be renamed in the local Security Accounts
         /// Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -61,10 +61,10 @@ namespace Microsoft.PowerShell.Commands
             set { this.name = value; }
         }
         private string name;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "NewName".
-        /// Specifies the new name for the local security group in the Security Accounts 
+        /// Specifies the new name for the local security group in the Security Accounts
         /// Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -76,7 +76,7 @@ namespace Microsoft.PowerShell.Commands
             set { this.newname = value; }
         }
         private string newname;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "SID".
         /// Specifies a security group from the local Security Accounts Manager.
@@ -94,7 +94,7 @@ namespace Microsoft.PowerShell.Commands
         }
         private System.Security.Principal.SecurityIdentifier sid;
         #endregion Parameter Properties
-      
+
 
         #region Cmdlet Overrides
         /// <summary>
@@ -123,7 +123,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        
+
         /// <summary>
         /// EndProcessing method.
         /// </summary>

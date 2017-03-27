@@ -216,18 +216,18 @@ namespace System.Management.Automation.Remoting
         /// <exception cref="ArgumentException">
         /// 1. "optionName" is already defined
         /// </exception>
-        /* 
+        /*
                   <InitializationParameters>
                     <Param Name="PSVersion" Value="2.0" />
                     <Param Name="ApplicationBase" Value="<folder path>" />
                     ...
-                  </InitializationParameters> 
+                  </InitializationParameters>
         */
         /* The following extensions have been added in V3 providing the user
          * the ability to pass data to the session configuration for initialization
-         * 
+         *
                 <Param Name="SessionConfigurationData" Value="<SessionConfigurationData with XML escaping>" />
-         * 
+         *
          * The session configuration data blob can be defined as under
                     <SessionConfigurationData>
                         <Param Name="ModulesToImport" Value="<folder path>" />
@@ -236,7 +236,7 @@ namespace System.Management.Automation.Remoting
                             ...
                             </PrivateData>
                         </Param>
-                    </SessionConfigurationData>                    
+                    </SessionConfigurationData>
          */
         internal static ConfigurationDataFromXML Create(string initializationParameters)
         {
@@ -304,7 +304,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         /// <exception cref="ArgumentException">
@@ -366,7 +366,7 @@ namespace System.Management.Automation.Remoting
         public abstract InitialSessionState GetInitialSessionState(PSSenderInfo senderInfo);
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sessionConfigurationData"></param>
         /// <param name="senderInfo"></param>
@@ -407,7 +407,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// Derived classes can override this method to provide application private data
-        /// that is going to be sent to the client and exposed via 
+        /// that is going to be sent to the client and exposed via
         /// <see cref="System.Management.Automation.Runspaces.PSSession.ApplicationPrivateData"/>,
         /// <see cref="System.Management.Automation.Runspaces.Runspace.GetApplicationPrivateData"/> and
         /// <see cref="System.Management.Automation.Runspaces.RunspacePool.GetApplicationPrivateData"/>
@@ -436,7 +436,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="isDisposing"></param>
         protected virtual void Dispose(bool isDisposing)
@@ -448,18 +448,18 @@ namespace System.Management.Automation.Remoting
         #region GetInitialSessionState from 3rd party shell ids
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="shellId"></param>
         /// <param name="initializationParameters">
         /// Initialization Parameters xml passed by WSMan API. This data is read from the config
-        /// xml and is in the following format:  
-        /// </param>   
-        /// <returns></returns>        
+        /// xml and is in the following format:
+        /// </param>
+        /// <returns></returns>
         /// <exception cref="InvalidOperationException">
         /// 1. Non existent InitialSessionState provider for the shellID
         /// </exception>
-        /* 
+        /*
                   <InitializationParameters>
                     <Param Name="PSVersion" Value="2.0" />
                     <Param Name="ApplicationBase" Value="<folder path>" />
@@ -507,7 +507,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="shellId">
         /// shellId for which the assembly is getting loaded
@@ -599,7 +599,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Sets the application's current working directory to <paramref name="applicationBase"/> and 
+        /// Sets the application's current working directory to <paramref name="applicationBase"/> and
         /// loads the assembly <paramref name="assemblyName"/>. Once the assembly is loaded, the application's
         /// current working directory is set back to the original value.
         /// </summary>
@@ -811,7 +811,7 @@ namespace System.Management.Automation.Remoting
     internal sealed class DefaultRemotePowerShellConfiguration : PSSessionConfiguration
     {
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="senderInfo"></param>
         /// <returns></returns>
@@ -901,7 +901,7 @@ namespace System.Management.Automation.Remoting
         internal TypeValidationCallback ValidationCallback;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="callback"></param>
@@ -947,6 +947,7 @@ namespace System.Management.Automation.Remoting
         internal static readonly string ScriptsToProcess = "ScriptsToProcess";
         internal static readonly string SessionType = "SessionType";
         internal static readonly string RoleCapabilities = "RoleCapabilities";
+        internal static readonly string RoleCapabilityFiles = "RoleCapabilityFiles";
         internal static readonly string RunAsVirtualAccount = "RunAsVirtualAccount";
         internal static readonly string RunAsVirtualAccountGroups = "RunAsVirtualAccountGroups";
         internal static readonly string TranscriptDirectory = "TranscriptDirectory";
@@ -969,19 +970,20 @@ namespace System.Management.Automation.Remoting
             new ConfigTypeEntry(Copyright,                      new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
             new ConfigTypeEntry(Description,                    new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
             new ConfigTypeEntry(EnforceInputParameterValidation,new ConfigTypeEntry.TypeValidationCallback(BooleanTypeValidationCallback)),
-            new ConfigTypeEntry(EnvironmentVariables,           new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValiationCallback)),
+            new ConfigTypeEntry(EnvironmentVariables,           new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValidationCallback)),
             new ConfigTypeEntry(ExecutionPolicy,                new ConfigTypeEntry.TypeValidationCallback(ExecutionPolicyValidationCallback)),
             new ConfigTypeEntry(FormatsToProcess,               new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
             new ConfigTypeEntry(FunctionDefinitions,            new ConfigTypeEntry.TypeValidationCallback(FunctionDefinitionsTypeValidationCallback)),
             new ConfigTypeEntry(GMSAAccount,                    new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
             new ConfigTypeEntry(Guid,                           new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
-            new ConfigTypeEntry(LanguageMode,                   new ConfigTypeEntry.TypeValidationCallback(LanugageModeValidationCallback)),
+            new ConfigTypeEntry(LanguageMode,                   new ConfigTypeEntry.TypeValidationCallback(LanguageModeValidationCallback)),
             new ConfigTypeEntry(ModulesToImport,                new ConfigTypeEntry.TypeValidationCallback(StringOrHashtableArrayTypeValidationCallback)),
             new ConfigTypeEntry(MountUserDrive,                 new ConfigTypeEntry.TypeValidationCallback(BooleanTypeValidationCallback)),
             new ConfigTypeEntry(PowerShellVersion,              new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
-            new ConfigTypeEntry(RequiredGroups,                 new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValiationCallback)),
+            new ConfigTypeEntry(RequiredGroups,                 new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValidationCallback)),
             new ConfigTypeEntry(RoleCapabilities,               new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
-            new ConfigTypeEntry(RoleDefinitions,                new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValiationCallback)),
+            new ConfigTypeEntry(RoleCapabilityFiles,            new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
+            new ConfigTypeEntry(RoleDefinitions,                new ConfigTypeEntry.TypeValidationCallback(HashtableTypeValidationCallback)),
             new ConfigTypeEntry(RunAsVirtualAccount,            new ConfigTypeEntry.TypeValidationCallback(BooleanTypeValidationCallback)),
             new ConfigTypeEntry(RunAsVirtualAccountGroups,      new ConfigTypeEntry.TypeValidationCallback(StringArrayTypeValidationCallback)),
             new ConfigTypeEntry(SchemaVersion,                  new ConfigTypeEntry.TypeValidationCallback(StringTypeValidationCallback)),
@@ -1031,7 +1033,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1063,14 +1065,14 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
         /// <returns></returns>
-        private static bool LanugageModeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
+        private static bool LanguageModeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
             string value = obj as string;
 
@@ -1095,7 +1097,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1127,14 +1129,14 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
         /// <param name="cmdlet"></param>
         /// <param name="path"></param>
         /// <returns></returns>
-        private static bool HashtableTypeValiationCallback(string key, object obj, PSCmdlet cmdlet, string path)
+        private static bool HashtableTypeValidationCallback(string key, object obj, PSCmdlet cmdlet, string path)
         {
             Hashtable hash = obj as Hashtable;
 
@@ -1148,7 +1150,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1196,7 +1198,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1249,7 +1251,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="key"></param>
         /// <param name="obj"></param>
@@ -1391,6 +1393,7 @@ namespace System.Management.Automation.Remoting
         private static readonly HashSet<string> s_allowedRoleCapabilityKeys = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
         {
             "RoleCapabilities",
+            "RoleCapabilityFiles",
             "ModulesToImport",
             "VisibleAliases",
             "VisibleCmdlets",
@@ -1513,7 +1516,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         private static void ValidatePS1XMLExtension(string key, string[] paths, string filePath)
         {
@@ -1541,7 +1544,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         private static void ValidatePS1OrPSM1Extension(string key, string[] paths, string filePath)
         {
@@ -1571,7 +1574,7 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="table"></param>
         /// <param name="filePath"></param>
@@ -1808,8 +1811,11 @@ namespace System.Management.Automation.Remoting
         }
 
         // Takes the "RoleCapabilities" node in the config hash, and merges its values into the base configuration.
+        private const string PSRCExtension = ".psrc";
         private void MergeRoleCapabilitiesIntoConfigHash()
         {
+            List<string> psrcFiles = new List<string>();
+
             if (_configHash.ContainsKey(ConfigFileConstants.RoleCapabilities))
             {
                 string[] roleCapabilities = TryGetStringArray(_configHash[ConfigFileConstants.RoleCapabilities]);
@@ -1821,17 +1827,50 @@ namespace System.Management.Automation.Remoting
                         string roleCapabilityPath = GetRoleCapabilityPath(roleCapability);
                         if (String.IsNullOrEmpty(roleCapabilityPath))
                         {
-                            string message = StringUtil.Format(RemotingErrorIdStrings.CouldNotFindRoleCapability, roleCapability, roleCapability + ".psrc");
+                            string message = StringUtil.Format(RemotingErrorIdStrings.CouldNotFindRoleCapability, roleCapability, roleCapability + PSRCExtension);
                             PSInvalidOperationException ioe = new PSInvalidOperationException(message);
                             ioe.SetErrorId("CouldNotFindRoleCapability");
                             throw ioe;
                         }
 
-                        DISCPowerShellConfiguration roleCapabilityConfiguration = new DISCPowerShellConfiguration(roleCapabilityPath, null);
-                        IDictionary roleCapabilityConfigurationItems = roleCapabilityConfiguration.ConfigHash;
-                        MergeConfigHashIntoConfigHash(roleCapabilityConfigurationItems);
+                        psrcFiles.Add(roleCapabilityPath);
                     }
                 }
+            }
+
+            if (ConfigHash.ContainsKey(ConfigFileConstants.RoleCapabilityFiles))
+            {
+                string[] roleCapabilityFiles = TryGetStringArray(ConfigHash[ConfigFileConstants.RoleCapabilityFiles]);
+                if (roleCapabilityFiles != null)
+                {
+                    foreach (var roleCapabilityFilePath in roleCapabilityFiles)
+                    {
+                        if (!Path.GetExtension(roleCapabilityFilePath).Equals(PSRCExtension, StringComparison.OrdinalIgnoreCase))
+                        {
+                            string message = StringUtil.Format(RemotingErrorIdStrings.InvalidRoleCapabilityFileExtension, roleCapabilityFilePath);
+                            PSInvalidOperationException ioe = new PSInvalidOperationException(message);
+                            ioe.SetErrorId("InvalidRoleCapabilityFileExtension");
+                            throw ioe;
+                        }
+
+                        if (!File.Exists(roleCapabilityFilePath))
+                        {
+                            string message = StringUtil.Format(RemotingErrorIdStrings.CouldNotFindRoleCapabilityFile, roleCapabilityFilePath);
+                            PSInvalidOperationException ioe = new PSInvalidOperationException(message);
+                            ioe.SetErrorId("CouldNotFindRoleCapabilityFile");
+                            throw ioe;
+                        }
+
+                        psrcFiles.Add(roleCapabilityFilePath);
+                    }
+                }
+            }
+
+            foreach (var roleCapabilityFile in psrcFiles)
+            {
+                DISCPowerShellConfiguration roleCapabilityConfiguration = new DISCPowerShellConfiguration(roleCapabilityFile, null);
+                IDictionary roleCapabilityConfigurationItems = roleCapabilityConfiguration.ConfigHash;
+                MergeConfigHashIntoConfigHash(roleCapabilityConfigurationItems);
             }
         }
 
@@ -1935,10 +1974,10 @@ namespace System.Management.Automation.Remoting
             // Create the initial session state
             string initialSessionState = TryGetValue(_configHash, ConfigFileConstants.SessionType);
             SessionType sessionType = SessionType.Default;
-            bool cmdletVisibilityApplied = IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleCmdlets);
-            bool functionVisiblityApplied = IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleFunctions);
-            bool aliasVisibilityApplied = IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleAliases);
-            bool providerVisibiltyApplied = IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleProviders);
+            bool cmdletVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleCmdlets);
+            bool functionVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleFunctions);
+            bool aliasVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleAliases);
+            bool providerVisibilityApplied = IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleProviders);
             bool processDefaultSessionStateVisibility = false;
 
             if (!String.IsNullOrEmpty(initialSessionState))
@@ -1965,12 +2004,12 @@ namespace System.Management.Automation.Remoting
                 processDefaultSessionStateVisibility = true;
             }
 
-            if (cmdletVisibilityApplied || functionVisiblityApplied || aliasVisibilityApplied || providerVisibiltyApplied ||
-                IsNonDefaultVisibiltySpecified(ConfigFileConstants.VisibleExternalCommands))
+            if (cmdletVisibilityApplied || functionVisibilityApplied || aliasVisibilityApplied || providerVisibilityApplied ||
+                IsNonDefaultVisibilitySpecified(ConfigFileConstants.VisibleExternalCommands))
             {
                 iss.DefaultCommandVisibility = SessionStateEntryVisibility.Private;
 
-                // If visibility is applied on a default runspace then set initial ISS 
+                // If visibility is applied on a default runspace then set initial ISS
                 // commands visibility to private.
                 if (processDefaultSessionStateVisibility)
                 {
@@ -1982,7 +2021,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // Add providers
-            if (providerVisibiltyApplied)
+            if (providerVisibilityApplied)
             {
                 string[] providers = TryGetStringArray(_configHash[ConfigFileConstants.VisibleProviders]);
 
@@ -2167,7 +2206,7 @@ namespace System.Management.Automation.Remoting
                 {
                     foreach (Hashtable function in functions)
                     {
-                        SessionStateFunctionEntry entry = CreateSessionStateFunctionEntry(function, functionVisiblityApplied);
+                        SessionStateFunctionEntry entry = CreateSessionStateFunctionEntry(function, functionVisibilityApplied);
 
                         if (entry != null)
                         {
@@ -2317,7 +2356,7 @@ namespace System.Management.Automation.Remoting
             }
 
             // Now apply visibility logic
-            if (cmdletVisibilityApplied || functionVisiblityApplied || aliasVisibilityApplied || providerVisibiltyApplied)
+            if (cmdletVisibilityApplied || functionVisibilityApplied || aliasVisibilityApplied || providerVisibilityApplied)
             {
                 if (sessionType == SessionType.Default)
                 {
@@ -2723,7 +2762,7 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         /// <param name="configFileKey"></param>
         /// <returns></returns>
-        private bool IsNonDefaultVisibiltySpecified(string configFileKey)
+        private bool IsNonDefaultVisibilitySpecified(string configFileKey)
         {
             if (_configHash.ContainsKey(configFileKey))
             {

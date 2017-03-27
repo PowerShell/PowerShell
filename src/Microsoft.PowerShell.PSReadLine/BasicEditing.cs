@@ -428,8 +428,8 @@ namespace Microsoft.PowerShell
                 {
                 // The following are debugger commands that should be accepted if we're debugging
                 // because the console host will interpret these commands directly.
-                case 's': case 'v': case 'o': case 'c': case 'q': case'k': case 'l':
-                case 'S': case 'V': case 'O': case 'C': case 'Q': case'K': case 'L':
+                case 's': case 'v': case 'o': case 'c': case 'q': case 'k': case 'l':
+                case 'S': case 'V': case 'O': case 'C': case 'Q': case 'K': case 'L':
                 case '?': case 'h': case 'H':
                     // Ideally we would check $PSDebugContext, but it is set at function
                     // scope, and because we're in a module, we can't find that variable
@@ -549,7 +549,7 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// A new empty line is created below the current line regardless of where the cursor
-        /// is on the current line.  The cursor moves to the beginning of the new line. 
+        /// is on the current line.  The cursor moves to the beginning of the new line.
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1026:DefaultParametersShouldNotBeUsed")]
         public static void InsertLineBelow(ConsoleKeyInfo? key = null, object arg = null)

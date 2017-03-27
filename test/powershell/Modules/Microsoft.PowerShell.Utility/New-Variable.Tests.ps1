@@ -8,7 +8,7 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 		$var1.Options|Should Be "None"
 		$var1.Description|Should Be "my description"
 	}
-	
+
 	It "New-Variable variable with option should works"{
 		New-Variable foo bar -option Constant
 		$var1=Get-Variable -Name foo
@@ -17,14 +17,14 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 		$var1.Options|Should Be "Constant"
 		$var1.Description|Should Be ""
 	}
-	
+
 	It "New-Variable variable twice should throw Exception"{
 		New-Variable foo bogus
-		
+
 		try {
 			New-Variable foo bar -EA Stop
 			Throw "Execution OK"
-		} 
+		}
 		catch {
 			$_.CategoryInfo| Should Match "SessionStateException"
 			$_.FullyQualifiedErrorId | Should Be "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
@@ -36,14 +36,14 @@ Describe "New-Variable DRT Unit Tests" -Tags "CI" {
 		$var1.Options|Should Be "None"
 		$var1.Description|Should Be ""
 	}
-	
+
 	It "New-Variable ReadOnly variable twice should throw Exception"{
 		New-Variable foo bogus -option ReadOnly
-		
+
 		try {
 			New-Variable foo bar -EA Stop
 			Throw "Execution OK"
-		} 
+		}
 		catch {
 			$_.CategoryInfo| Should Match "SessionStateException"
 			$_.FullyQualifiedErrorId | Should Be "VariableAlreadyExists,Microsoft.PowerShell.Commands.NewVariableCommand"
@@ -135,7 +135,7 @@ Describe "New-Variable" -Tags "CI" {
 	}
 
 	It "Should default to none as the value for options" {
-		 (new-variable -name var2 -value 4 -passthru).Options | should be "None" 
+		 (new-variable -name var2 -value 4 -passthru).Options | should be "None"
 	}
 
 	It "Should be able to set ReadOnly option" {
@@ -159,7 +159,7 @@ Describe "New-Variable" -Tags "CI" {
 
 		Set-Variable -Name var1 -Option Constant  -ErrorAction SilentlyContinue
 
-		(Get-Variable var1).Options | should be "None" 
+		(Get-Variable var1).Options | should be "None"
 	}
 
 	It "Should not be able to delete a constant variable" {
@@ -236,7 +236,7 @@ Describe "New-Variable" -Tags "CI" {
     }
     It "Should be able to create a local scope variable using the local switch" {
         Get-Variable -scope local -name localvar -ValueOnly -ea silentlycontinue | should BeNullOrEmpty
-        New-Variable -Scope local -Name localVar -value 10 
+        New-Variable -Scope local -Name localVar -value 10
         get-variable -scope local -name localvar -ValueOnly | Should be 10
     }
     It "Should be able to create a script scope variable using the script switch" {

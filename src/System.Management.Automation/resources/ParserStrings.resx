@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -346,9 +346,6 @@ Possible matches are</value>
   </data>
   <data name="MissingExpressionInNamedArgument" xml:space="preserve">
     <value>Missing statement after '=' in named argument.</value>
-  </data>
-  <data name="IncompleteHashLiteral" xml:space="preserve">
-    <value>The hash literal was incomplete.</value>
   </data>
   <data name="MissingPropertyTerminator" xml:space="preserve">
     <value>Missing ';' or end-of-line in property definition.</value>
@@ -971,7 +968,7 @@ Possible matches are</value>
     <value>Exception parsing MOF file '{0}':{1}.</value>
   </data>
   <data name="MissingConfigurationName" xml:space="preserve">
-    <value>The name for the configuration is missing. Provide the missing name as a simple name, string, or string-valued expresson.</value>
+    <value>The name for the configuration is missing. Provide the missing name as a simple name, string, or string-valued expression.</value>
   </data>
   <data name="MissingRequiredResourcesArgument" xml:space="preserve">
     <value>Missing argument to -Resources. The argument to the -Resource parameter must be a comma-separated list of names or constant strings naming modules to reference for resource type definitions.</value>
@@ -991,7 +988,7 @@ Possible matches are</value>
     <value>The ThrottleLimit parameter of the foreach statement is missing a value. Supply a throttle limit to the parameter.</value>
     <comment>'ThrottleLimit' must not be localized.</comment>
   </data>
-  <data name="ThrottleLimitRequresParallelFlag" xml:space="preserve">
+  <data name="ThrottleLimitRequiresParallelFlag" xml:space="preserve">
     <value>The ThrottleLimit parameter is only supported on foreach statements that use the Parallel parameter.</value>
     <comment>'ThrottleLimit' and 'Parallel' must not be localized.</comment>
   </data>
@@ -1008,7 +1005,7 @@ Possible matches are</value>
     <value>Missing '=' operator after key in property assignment.</value>
   </data>
   <data name="DuplicatePropertyInInstanceDefinition" xml:space="preserve">
-    <value>Duplicate property assignements are not allowed in an instance definition.</value>
+    <value>Duplicate property assignments are not allowed in an instance definition.</value>
   </data>
   <data name="DuplicateCimClassDefinition" xml:space="preserve">
     <value>A second CIM class definition for '{0}' was found while processing the schema file '{1}'. This class was already defined in the file(s) '{2}'. Remove the redundant definition, and then try again.</value>

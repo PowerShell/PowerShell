@@ -23,7 +23,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     [Cmdlet(VerbsCommon.Remove, "CimSession",
              SupportsShouldProcess = true,
              DefaultParameterSetName = CimSessionSet,
-             HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227968")]
+             HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227968")]
     public sealed class RemoveCimSessionCommand : CimBaseCommand
     {
         #region constructor
@@ -35,14 +35,14 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             : base(parameters, parameterSets)
         {
         }
-        
+
         #endregion
 
         #region parameters
 
         /// <summary>
         /// The following is the definition of the input parameter "CimSession".
-        /// Specifies one or more CimSession object to be removed from the local PS 
+        /// Specifies one or more CimSession object to be removed from the local PS
         /// session/runspace.
         /// </summary>
         [Parameter(
@@ -65,9 +65,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// <para>The following is the definition of the input parameter "ComputerName".
-        /// Specified one or more computer names for which all CimSession(s) 
+        /// Specified one or more computer names for which all CimSession(s)
         /// (connections) should be removed (terminated).</para>
-        /// <para>This is the only optional parameter. If no value for this parameter is 
+        /// <para>This is the only optional parameter. If no value for this parameter is
         /// provided, all CimSession(s) are terminated.</para>
         /// </summary>
         [Alias(AliasCN, AliasServerName)]

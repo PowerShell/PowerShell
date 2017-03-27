@@ -39,31 +39,31 @@ namespace Microsoft.PowerShell
 #endif
 
         /// <summary>
-        /// 
+        ///
         /// Entry point in to ConsoleShell. This method is called from the native or managed exe host application
-        /// 
+        ///
         /// </summary>
         /// <param name="configuration">
         /// Configuration information which is used to create Runspace.
         /// </param>
-        /// 
+        ///
         /// <param name="bannerText">
         /// Banner text to be displayed by ConsoleHost
         /// </param>
-        /// 
+        ///
         /// <param name="helpText">
         /// Help text for minishell. This is displayed on 'minishell -?'.
         /// </param>
-        /// 
+        ///
         /// <param name="preStartWarning">
         /// Warning occurred prior to this point, for example, a snap-in fails to load beforehand.
         /// This string will be printed out.
         /// </param>
-        /// 
+        ///
         /// <param name="args">
         /// Commandline parameters specified by user.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An integer value which should be used as exit code for the
         /// process.
@@ -81,17 +81,6 @@ namespace Microsoft.PowerShell
             {
                 throw PSTraceSource.NewArgumentNullException("args");
             }
-
-            // The default font face used for Powershell Console is Lucida Console. 
-            // However certain CJK locales dont support Lucida Console font. Hence for such 
-            // locales the console font is updated to Raster dynamically.
-
-            // For NanoServer:
-            // 1. There is no GetCurrentConsoleFontEx / SetCurrentConsoleFontEx on NanoServer;
-            // 2. We don't handle CJK locales on NanoServer due to lack of win32 API supports on NanoServer.
-#if !CORECLR
-            ConsoleControl.UpdateLocaleSpecificFont();
-#endif
 
             return ConsoleHost.Start(configuration, bannerText, helpText, preStartWarning, args);
         }

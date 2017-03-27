@@ -35,7 +35,7 @@ function Get-CronTab ([String] $user) {
 }
 
 function ConvertTo-CronJob ([String] $crontab) {
-    $split = $crontab.split(" ", 6)
+    $split = $crontab -split " ", 6
     $cronjob = [CronJob]@{
         Minute = $split[0];
         Hour = $split[1];
@@ -51,7 +51,7 @@ function Invoke-CronTab ([String] $user, [String[]] $arguments, [Switch] $noThro
     If ($user -ne [String]::Empty) {
         $arguments = Write-Output "-u" $UserName $arguments
     }
-    
+
     Write-Verbose "Running: $crontabcmd $arguments"
     $output = & $crontabcmd @arguments 2>&1
     if ($LastExitCode -ne 0 -and -not $noThrow) {
@@ -87,7 +87,7 @@ function Remove-CronJob {
   Cron job object returned from Get-CronJob
 .PARAMETER Force
   Don't prompt when removing the cron job
-#>   
+#>
     [CmdletBinding(SupportsShouldProcess=$true,ConfirmImpact="High")]
     param (
         [ArgumentCompleter( { $wordToComplete = $args[2]; Get-CronTabUser | Where-Object { $_ -like "$wordToComplete*" } | Sort-Object } )]
@@ -109,7 +109,7 @@ function Remove-CronJob {
         [string[]] $crontab = Get-CronTab -user $UserName
         $newcrontab = [List[string]]::new()
         $found = $false
-        
+
         $JobAsString = $Job.ToString()
         foreach ($line in $crontab) {
             if ($JobAsString -ceq $line) {
@@ -118,7 +118,7 @@ function Remove-CronJob {
                 $newcrontab.Add($line)
             }
         }
-        
+
         if (-not $found) {
             $e = New-Object System.Exception -ArgumentList "Job not found"
             throw $e
@@ -126,7 +126,7 @@ function Remove-CronJob {
         if ($Force -or $pscmdlet.ShouldProcess($Job.Command,"Remove")) {
             Import-CronTab -user $UserName -crontab $newcrontab
         }
-    }        
+    }
 }
 
 function New-CronJob {
@@ -136,7 +136,7 @@ function New-CronJob {
 .DESCRIPTION
   Create a new job in the cron table.  Date and time parameters can be specified
   as ranges such as 10-30, as a list: 5,6,7, or combined 1-5,10-15.  An asterisk
-  means 'first through last' (the entire allowed range).  Step values can be used 
+  means 'first through last' (the entire allowed range).  Step values can be used
   with ranges or with an asterisk.  Every 2 hours can be specified as either
   0-23/2 or */2.
 .EXAMPLE
@@ -157,7 +157,7 @@ function New-CronJob {
   Valid values are 0-7.  0 and 7 are both Sunday.  If not specified, defaults to *.
 .PARAMETER Command
   Command to execute at the scheduled time and day.
-#>   
+#>
     [CmdletBinding()]
     param (
         [ArgumentCompleter( { $wordToComplete = $args[2]; Get-CronTabUser | Where-Object { $_ -like "$wordToComplete*" } | Sort-Object } )]
@@ -175,7 +175,7 @@ function New-CronJob {
     )
     process {
         # TODO: validate parameters, note that different versions of crontab support different capabilities
-        $line = "{0} {1} {2} {3} {4} {5}" -f [String]::Join(",",$Minute), [String]::Join(",",$Hour), 
+        $line = "{0} {1} {2} {3} {4} {5}" -f [String]::Join(",",$Minute), [String]::Join(",",$Hour),
             [String]::Join(",",$DayOfMonth), [String]::Join(",",$Month), [String]::Join(",",$DayOfWeek), $Command
         [string[]] $crontab = Get-CronTab -user $UserName
         $crontab += $line
@@ -196,7 +196,7 @@ function Get-CronJob {
   CronJob objects
 .PARAMETER UserName
   Optional parameter to specify a specific user's cron table
-#>   
+#>
     [CmdletBinding()]
     [OutputType([CronJob])]
     param (

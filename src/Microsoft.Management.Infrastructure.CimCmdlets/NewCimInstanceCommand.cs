@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -24,12 +24,12 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
     /// on the server, otherwise just create client in-memory instance
     /// </para>
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "CimInstance", DefaultParameterSetName = CimBaseCommand.ClassNameComputerSet, SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227963")]
+    [Cmdlet(VerbsCommon.New, "CimInstance", DefaultParameterSetName = CimBaseCommand.ClassNameComputerSet, SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227963")]
     [OutputType(typeof(CimInstance))]
     public class NewCimInstanceCommand : CimBaseCommand
     {
         #region constructor
-        
+
         /// <summary>
         /// constructor
         /// </summary>
@@ -38,7 +38,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         {
             DebugHelper.WriteLogEx();
         }
-        
+
         #endregion
 
         #region parameters
@@ -79,7 +79,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                    ParameterSetName = CimBaseCommand.ResourceUriSessionSet)]
         [Parameter(Mandatory = true,
                    ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = CimBaseCommand.ResourceUriComputerSet)]           
+                   ParameterSetName = CimBaseCommand.ResourceUriComputerSet)]
         public Uri ResourceUri
         {
             get { return resourceUri; }
@@ -89,7 +89,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 base.SetParameter(value, nameResourceUri);
             }
         }
-        private Uri resourceUri;         
+        private Uri resourceUri;
 
         /// <summary>
         /// <para>
@@ -111,7 +111,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = CimBaseCommand.ResourceUriSessionSet)]
         [Parameter(
             ValueFromPipelineByPropertyName = true,
-            ParameterSetName = CimBaseCommand.ResourceUriComputerSet)]            
+            ParameterSetName = CimBaseCommand.ResourceUriComputerSet)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public String[] Key
         {
@@ -163,7 +163,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ValueFromPipelineByPropertyName = true)]
         [SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         [Alias("Arguments")]
-        public IDictionary Property 
+        public IDictionary Property
         {
             get { return property; }
             set { property = value; }
@@ -186,7 +186,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = CimBaseCommand.ResourceUriSessionSet)]
         [Parameter(
             ValueFromPipelineByPropertyName = true,
-            ParameterSetName = CimBaseCommand.ResourceUriComputerSet)]            
+            ParameterSetName = CimBaseCommand.ResourceUriComputerSet)]
         public String Namespace
         {
             get { return nameSpace; }
@@ -200,7 +200,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
 
         /// <summary>
         /// The following is the definition of the input parameter "OperationTimeoutSec".
-        /// Operation Timeout of the cmdlet in seconds. Overrides the value in the Cim 
+        /// Operation Timeout of the cmdlet in seconds. Overrides the value in the Cim
         /// Session.
         /// </summary>
         [Alias(AliasOT)]
@@ -225,7 +225,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(
             Mandatory = true,
             ValueFromPipeline = true,
-            ParameterSetName = CimBaseCommand.ResourceUriSessionSet)]            
+            ParameterSetName = CimBaseCommand.ResourceUriSessionSet)]
         [Parameter(
             Mandatory = true,
             ValueFromPipeline = true,
@@ -243,7 +243,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         private CimSession[] cimSession;
 
         /// <summary>
-        /// <para>The following is the definition of the input parameter "ComputerName".       
+        /// <para>The following is the definition of the input parameter "ComputerName".
         /// Provides the name of the computer from which to create the instances.
         /// </para>
         /// <para>
@@ -256,7 +256,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             ParameterSetName = CimBaseCommand.ClassNameComputerSet)]
         [Parameter(
             ValueFromPipelineByPropertyName = true,
-            ParameterSetName = CimBaseCommand.ResourceUriComputerSet)]            
+            ParameterSetName = CimBaseCommand.ResourceUriComputerSet)]
         [Parameter(
             ValueFromPipelineByPropertyName = true,
             ParameterSetName = CimClassComputerSet)]
@@ -286,13 +286,13 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(
             ParameterSetName = CimBaseCommand.CimClassComputerSet)]
         [Parameter(
-            ParameterSetName = CimBaseCommand.CimClassSessionSet)]            
-        public SwitchParameter ClientOnly  
+            ParameterSetName = CimBaseCommand.CimClassSessionSet)]
+        public SwitchParameter ClientOnly
         {
             get { return clientOnly; }
-            set { 
-                clientOnly = value; 
-                base.SetParameter(value, nameClientOnly);                
+            set {
+                clientOnly = value;
+                base.SetParameter(value, nameClientOnly);
                 }
         }
         private SwitchParameter clientOnly;
@@ -431,15 +431,15 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 nameResourceUri, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.ResourceUriSessionSet, true),
-                                    new ParameterDefinitionEntry(CimBaseCommand.ResourceUriComputerSet, true),                                   
+                                    new ParameterDefinitionEntry(CimBaseCommand.ResourceUriComputerSet, true),
                                  }
-            },            
+            },
             {
                 nameKey, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.ClassNameSessionSet, false),
                                     new ParameterDefinitionEntry(CimBaseCommand.ClassNameComputerSet, false),
                                     new ParameterDefinitionEntry(CimBaseCommand.ResourceUriComputerSet, false),
-                                    new ParameterDefinitionEntry(CimBaseCommand.ResourceUriSessionSet, false),                                    
+                                    new ParameterDefinitionEntry(CimBaseCommand.ResourceUriSessionSet, false),
                                  }
             },
             {
@@ -447,26 +447,26 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                     new ParameterDefinitionEntry(CimBaseCommand.CimClassSessionSet, true),
                                     new ParameterDefinitionEntry(CimBaseCommand.CimClassComputerSet, true),
                                  }
-            },           
+            },
             {
                 nameNamespace, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.ClassNameSessionSet, false),
                                     new ParameterDefinitionEntry(CimBaseCommand.ClassNameComputerSet, false),
                                     new ParameterDefinitionEntry(CimBaseCommand.ResourceUriComputerSet, false),
-                                    new ParameterDefinitionEntry(CimBaseCommand.ResourceUriSessionSet, false),                                     
+                                    new ParameterDefinitionEntry(CimBaseCommand.ResourceUriSessionSet, false),
                                  }
             },
             {
                 nameCimSession, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.ClassNameSessionSet, true),
-                                    new ParameterDefinitionEntry(CimBaseCommand.ResourceUriSessionSet, true),                                          
+                                    new ParameterDefinitionEntry(CimBaseCommand.ResourceUriSessionSet, true),
                                     new ParameterDefinitionEntry(CimBaseCommand.CimClassSessionSet, true),
                                  }
             },
             {
                 nameComputerName, new HashSet<ParameterDefinitionEntry> {
                                     new ParameterDefinitionEntry(CimBaseCommand.ClassNameComputerSet, false),
-                                    new ParameterDefinitionEntry(CimBaseCommand.ResourceUriComputerSet, false),                                        
+                                    new ParameterDefinitionEntry(CimBaseCommand.ResourceUriComputerSet, false),
                                     new ParameterDefinitionEntry(CimBaseCommand.CimClassComputerSet, false),
                                  }
             },
@@ -475,9 +475,9 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                     new ParameterDefinitionEntry(CimBaseCommand.ClassNameSessionSet, true),
                                     new ParameterDefinitionEntry(CimBaseCommand.ClassNameComputerSet, true),
                                     new ParameterDefinitionEntry(CimBaseCommand.CimClassSessionSet, true),
-                                    new ParameterDefinitionEntry(CimBaseCommand.CimClassComputerSet, true),                                    
+                                    new ParameterDefinitionEntry(CimBaseCommand.CimClassComputerSet, true),
                                  }
-            },            
+            },
         };
 
         /// <summary>
@@ -490,7 +490,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {   CimBaseCommand.CimClassSessionSet, new ParameterSetEntry(2)     },
             {   CimBaseCommand.CimClassComputerSet, new ParameterSetEntry(1)     },
             {   CimBaseCommand.ResourceUriSessionSet, new ParameterSetEntry(2)     },
-            {   CimBaseCommand.ResourceUriComputerSet, new ParameterSetEntry(1)     },                
+            {   CimBaseCommand.ResourceUriComputerSet, new ParameterSetEntry(1)     },
         };
         #endregion
     }//End Class

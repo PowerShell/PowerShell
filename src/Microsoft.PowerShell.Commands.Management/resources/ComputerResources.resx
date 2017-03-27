@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -144,13 +144,13 @@
   <data name="RestoreFailed" xml:space="preserve">
     <value>The last attempt to restore the computer failed.</value>
   </data>
-  <data name="RestoreSuceess" xml:space="preserve">
+  <data name="RestoreSuccess" xml:space="preserve">
     <value>The computer has been restored to the specified restore point.</value>
   </data>
   <data name="RestoreInterrupted" xml:space="preserve">
     <value>The last attempt to restore the computer was interrupted.</value>
   </data>
-  <data name="NoResorePoint" xml:space="preserve">
+  <data name="NoRestorePoint" xml:space="preserve">
     <value>The command cannot locate the "{0}" restore point. Verify the "{0}" sequence number, and then try the command again.</value>
   </data>
   <data name="NoPingResult" xml:space="preserve">
@@ -399,7 +399,7 @@
   <data name="RenameCommandWsmanAuthParamConflict" xml:space="preserve">
     <value>Parameter WsmanAuthentication cannot be specified with the DCOM protocol. Parameter WSManAuthentication is valid only when the WSMan protocol is used.</value>
   </data>
-  <data name="StopCommandAuthProtcolConflict" xml:space="preserve">
+  <data name="StopCommandAuthProtocolConflict" xml:space="preserve">
     <value>Parameters DcomAuthentication and Impersonation cannot be specified with the WSMan protocol. {0}</value>
   </data>
   <data name="StopCommandParamMessage" xml:space="preserve">
@@ -408,7 +408,7 @@
   <data name="StopCommandParamWSManAuthConflict" xml:space="preserve">
     <value>Parameter WsmanAuthentication cannot be specified with DcomAuthentication or Impersonation parameters. {0}</value>
   </data>
-  <data name="StopCommandWSManAuthProtcolConflict" xml:space="preserve">
+  <data name="StopCommandWSManAuthProtocolConflict" xml:space="preserve">
     <value>Parameter WsmanAuthentication cannot be specified with the DCOM protocol. {0}</value>
   </data>
   <data name="InvalidParameterDCOMNotSupported" xml:space="preserve">

@@ -654,7 +654,7 @@ namespace System.Management.Automation.Runspaces
                         _proxyAuthentication = value;
                         break;
                     default:
-                        string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ProxyAmbiguosAuthentication,
+                        string message = PSRemotingErrorInvariants.FormatResourceString(RemotingErrorIdStrings.ProxyAmbiguousAuthentication,
                             value,
                             AuthenticationMechanism.Basic.ToString(),
                             AuthenticationMechanism.Negotiate.ToString(),
@@ -1258,7 +1258,7 @@ namespace System.Management.Automation.Runspaces
             if ((WSManAuthenticationMechanism != WSManAuthenticationMechanism.WSMAN_FLAG_DEFAULT_AUTHENTICATION)
                 && (_thumbPrint != null))
             {
-                throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.NewRunspaceAmbiguosAuthentication,
+                throw PSTraceSource.NewInvalidOperationException(RemotingErrorIdStrings.NewRunspaceAmbiguousAuthentication,
                       "CertificateThumbPrint", this.AuthenticationMechanism.ToString());
             }
         }
@@ -1844,9 +1844,9 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Key Path
+        /// Key File Path
         /// </summary>
-        private string KeyPath
+        private string KeyFilePath
         {
             get;
             set;
@@ -1867,18 +1867,17 @@ namespace System.Management.Automation.Runspaces
         /// </summary>
         /// <param name="userName">User Name</param>
         /// <param name="computerName">Computer Name</param>
-        /// <param name="keyPath">Key Path</param>
+        /// <param name="keyFilePath">Key File Path</param>
         public SSHConnectionInfo(
             string userName,
             string computerName,
-            string keyPath)
+            string keyFilePath)
         {
-            if (userName == null) { throw new PSArgumentNullException("userName"); }
             if (computerName == null) { throw new PSArgumentNullException("computerName"); }
 
             this.UserName = userName;
             this.ComputerName = computerName;
-            this.KeyPath = keyPath;
+            this.KeyFilePath = keyFilePath;
         }
 
         #endregion
@@ -1930,7 +1929,7 @@ namespace System.Management.Automation.Runspaces
             SSHConnectionInfo newCopy = new SSHConnectionInfo();
             newCopy.ComputerName = this.ComputerName;
             newCopy.UserName = this.UserName;
-            newCopy.KeyPath = this.KeyPath;
+            newCopy.KeyFilePath = this.KeyFilePath;
 
             return newCopy;
         }
@@ -1980,9 +1979,9 @@ namespace System.Management.Automation.Runspaces
 
             // Extract an optional domain name if provided.
             string domainName = null;
-            string userName = this.UserName;
+            string userName = this.UserName ?? GetCurrentUserName();
 #if !UNIX
-            var parts = this.UserName.Split(Utils.Separators.Backslash);
+            var parts = userName.Split(Utils.Separators.Backslash);
             if (parts.Length == 2)
             {
                 domainName = parts[0];
@@ -1996,11 +1995,17 @@ namespace System.Management.Automation.Runspaces
             //   See sshd_configuration file, subsystems section and it will have this entry:
             //     Subsystem       powershell C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe -Version 5.1 -sshs -NoLogo -NoProfile
             string arguments;
-            if (!string.IsNullOrEmpty(this.KeyPath))
+            if (!string.IsNullOrEmpty(this.KeyFilePath))
             {
+                if (!System.IO.File.Exists(this.KeyFilePath))
+                {
+                    throw new FileNotFoundException(
+                        StringUtil.Format(RemotingErrorIdStrings.KeyFileNotFound, this.KeyFilePath));
+                }
+
                 arguments = (string.IsNullOrEmpty(domainName)) ?
-                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" {1}@{2} -s powershell", this.KeyPath, userName, this.ComputerName) :
-                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" -l {1}@{2} {3} -s powershell", this.KeyPath, userName, domainName, this.ComputerName);
+                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" {1}@{2} -s powershell", this.KeyFilePath, userName, this.ComputerName) :
+                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" -l {1}@{2} {3} -s powershell", this.KeyFilePath, userName, domainName, this.ComputerName);
             }
             else
             {
@@ -2020,6 +2025,19 @@ namespace System.Management.Automation.Runspaces
         }
 
         #endregion
+
+        #region Private Methods
+
+        private string GetCurrentUserName()
+        {
+#if UNIX
+            return System.Environment.GetEnvironmentVariable("USER") ?? string.Empty;
+#else
+            return System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+#endif
+        }
+
+#endregion
 
         #region SSH Process Creation
 
@@ -2094,7 +2112,9 @@ namespace System.Management.Automation.Runspaces
                 (sshProcess == null) ||
                 (sshProcess.HasExited == true))
             {
-                throw new InvalidOperationException(RemotingErrorIdStrings.CannotStartSSHClient, ex);
+                throw new InvalidOperationException(
+                    StringUtil.Format(RemotingErrorIdStrings.CannotStartSSHClient, (ex != null) ? ex.Message : string.Empty), 
+                    ex);
             }
 
             // Create the std in writer/readers needed for communication with ssh.exe.
@@ -2107,9 +2127,8 @@ namespace System.Management.Automation.Runspaces
                 stdOutReaderVar = new StreamReader(new NamedPipeServerStream(PipeDirection.In, true, true, stdOutPipeServer));
                 stdErrReaderVar = new StreamReader(new NamedPipeServerStream(PipeDirection.In, true, true, stdErrPipeServer));
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 if (stdInWriterVar != null) { stdInWriterVar.Dispose(); } else { stdInPipeServer.Dispose(); }
                 if (stdOutReaderVar != null) { stdInWriterVar.Dispose(); } else { stdOutPipeServer.Dispose(); }
                 if (stdErrReaderVar != null) { stdInWriterVar.Dispose(); } else { stdErrPipeServer.Dispose(); }
@@ -2119,6 +2138,10 @@ namespace System.Management.Automation.Runspaces
 
             return sshProcess;
         }
+
+        // Process creation flags
+        private const int CREATE_NEW_PROCESS_GROUP = 0x00000200;
+        private const int CREATE_SUSPENDED = 0x00000004;
 
         /// <summary>
         /// CreateProcessWithRedirectedStd
@@ -2157,10 +2180,8 @@ namespace System.Management.Automation.Runspaces
                 stdErrPipeServer = CreateNamedPipe(stdErrPipeName, securityDesc);
                 stdErrPipeClient = GetNamedPipeHandle(stdErrPipeName);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 if (stdInPipeServer != null) { stdInPipeServer.Dispose(); }
                 if (stdInPipeClient != null) { stdInPipeClient.Dispose(); }
                 if (stdOutPipeServer != null) { stdOutPipeServer.Dispose(); }
@@ -2188,8 +2209,12 @@ namespace System.Management.Automation.Runspaces
                 // No new window: Inherit the parent process's console window
                 creationFlags = 0x00000000;
 
+                // Create the new process in its own group, so that Ctrl+C is not sent to ssh.exe.  We want to handle this
+                // control signal internally so that it can be passed via PSRP to the remote session.
+                creationFlags |= CREATE_NEW_PROCESS_GROUP;
+
                 // Create the new process suspended so we have a chance to get a corresponding Process object in case it terminates quickly.
-                creationFlags |= 0x00000004;
+                creationFlags |= CREATE_SUSPENDED;
 
                 PlatformInvokes.SECURITY_ATTRIBUTES lpProcessAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
                 PlatformInvokes.SECURITY_ATTRIBUTES lpThreadAttributes = new PlatformInvokes.SECURITY_ATTRIBUTES();
@@ -2216,9 +2241,8 @@ namespace System.Management.Automation.Runspaces
 
                 return result;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 if (stdInPipeServer != null) { stdInPipeServer.Dispose(); }
                 if (stdInPipeClient != null) { stdInPipeClient.Dispose(); }
                 if (stdOutPipeServer != null) { stdOutPipeServer.Dispose(); }
@@ -2710,7 +2734,7 @@ namespace System.Management.Automation.Runspaces
             string processParameters,
             ref HCS_PROCESS_INFORMATION processInformation,
             ref IntPtr process,
-            ref string reslt);
+            ref string result);
 
         [DllImport(PinvokeDllNames.CreateProcessInComputeSystemDllName, SetLastError = true, CharSet = CharSet.Unicode)]
         internal static extern uint HcsOpenProcess(
@@ -2888,8 +2912,6 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 if (e is FileNotFoundException || e is FileLoadException)
                 {
                     //
@@ -2979,8 +3001,6 @@ namespace System.Management.Automation.Runspaces
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 if (e.InnerException != null &&
                     StringComparer.Ordinal.Equals(
                         e.InnerException.GetType().FullName,

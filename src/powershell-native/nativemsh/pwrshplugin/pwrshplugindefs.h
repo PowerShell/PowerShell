@@ -129,7 +129,7 @@ typedef struct _PwrshPluginWkr_Ptrs
     WSManPluginReceiveFuncPtr wsManPluginReceiveFuncPtr;
     WSManPluginSignalFuncPtr wsManPluginSignalFuncPtr;
     WSManPluginConnectFuncPtr wsManPluginConnectFuncPtr;
-    WSManPluginOperationShutdownFuncPtr wsmanPluingOperationShutdownFuncPtr; // This ptr is not used in this environment, but is required to keep the memory layout identical between unmanaged and managed code.
+    WSManPluginOperationShutdownFuncPtr wsmanPluginOperationShutdownFuncPtr; // This ptr is not used in this environment, but is required to keep the memory layout identical between unmanaged and managed code.
 } PwrshPluginWkr_Ptrs;
 
 class PlugInException

@@ -4,7 +4,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System.Collections;
 using System.Diagnostics;
-using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -16,7 +15,10 @@ using System.Xml;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Management.Automation.Language;
-using Microsoft.Management.Infrastructure;
+#if CORECLR
+// Use stubs for SerializableAttribute, SecurityPermissionAttribute, ReliabilityContractAttribute and ISerializable related types.
+using Microsoft.PowerShell.CoreClr.Stubs;
+#endif
 
 namespace System.Management.Automation
 {
@@ -29,7 +31,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Safely retrieves the MainModule property of a
-        /// process. Version 2.0 and below of the .NET Framework are 
+        /// process. Version 2.0 and below of the .NET Framework are
         /// impacted by a Win32 API usability knot that throws an
         /// exception if API tries to enumerate the process' modules
         /// while it is still loading them. This generates the error
@@ -49,15 +51,15 @@ namespace System.Management.Automation
         /// <param name="targetProcess">The process from which to
         /// retrieve the MainModule</param>
         /// <exception cref="NotSupportedException">
-        /// You are trying to access the MainModule property for a process that is running 
-        /// on a remote computer. This property is available only for processes that are 
+        /// You are trying to access the MainModule property for a process that is running
+        /// on a remote computer. This property is available only for processes that are
         /// running on the local computer.
         /// </exception>
         /// <exception cref="InvalidOperationException">
-        /// The process Id is not available (or) The process has exited. 
+        /// The process Id is not available (or) The process has exited.
         /// </exception>
         /// <exception cref="System.ComponentModel.Win32Exception">
-        /// 
+        ///
         /// </exception>
         internal static ProcessModule GetMainModule(Process targetProcess)
         {
@@ -90,58 +92,65 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Retrieve the parent process of a process.
-        /// 
-        /// This is an extremely expensive operation, as WMI
-        /// needs to work with an ugly Win32 API. The Win32 API
-        /// creates a snapshot of every process in the system, which
-        /// you then need to iterate through to find your process and
-        /// its parent PID.
         ///
-        /// Also, since this is PID based, this API is only reliable
-        /// when the process has not yet exited.
+        /// Previously this code used WMI, but WMI is causing a CPU spike whenever the query gets called as it results in
+        /// tzres.dll and tzres.mui.dll being loaded into every process to conver the time information to local format.
+        /// For perf reasons, we result to P/Invoke.
         /// </summary>
         ///
         /// <param name="current">The process we want to find the
         /// parent of</param>
         internal static Process GetParentProcess(Process current)
         {
-            string wmiQuery = String.Format(CultureInfo.CurrentCulture,
-                                            "Select * From Win32_Process Where Handle='{0}'",
-                                            current.Id);
+            int parentPid = 0;
 
-            using (CimSession cimSession = CimSession.Create(null))
+#if !UNIX
+            PlatformInvokes.PROCESSENTRY32 pe32 = new PlatformInvokes.PROCESSENTRY32 { };
+            pe32.dwSize = (uint)ClrFacade.SizeOf<PlatformInvokes.PROCESSENTRY32>();
+
+            using (PlatformInvokes.SafeSnapshotHandle hSnapshot = PlatformInvokes.CreateToolhelp32Snapshot(PlatformInvokes.SnapshotFlags.Process, (uint)current.Id))
             {
-                IEnumerable<CimInstance> processCollection =
-                    cimSession.QueryInstances("root/cimv2", "WQL", wmiQuery);
-
-                int parentPid =
-                    processCollection.Select(
-                        cimProcess =>
-                        Convert.ToInt32(cimProcess.CimInstanceProperties["ParentProcessId"].Value,
-                                        CultureInfo.CurrentCulture)).FirstOrDefault();
-
-                if (parentPid == 0)
-                    return null;
-
-                try
+                if (!PlatformInvokes.Process32First(hSnapshot, ref pe32))
                 {
-                    Process returnProcess = Process.GetProcessById(parentPid);
-
-                    // Ensure the process started before the current
-                    // process, as it could have gone away and had the
-                    // PID recycled.
-                    if (returnProcess.StartTime <= current.StartTime)
-                        return returnProcess;
-                    else
+                    int errno = Marshal.GetLastWin32Error();
+                    if (errno == PlatformInvokes.ERROR_NO_MORE_FILES)
+                    {
                         return null;
+                    }
                 }
-                catch (ArgumentException)
+                do
                 {
-                    // GetProcessById throws an ArgumentException when
-                    // you reach the top of the chain -- Explorer.exe
-                    // has a parent process, but you cannot retrieve it.
+                    if (pe32.th32ProcessID == (uint)current.Id)
+                    {
+                        parentPid = (int)pe32.th32ParentProcessID;
+                        break;
+                    }
+
+                } while (PlatformInvokes.Process32Next(hSnapshot, ref pe32));
+            }
+#endif
+
+            if (parentPid == 0)
+                return null;
+
+            try
+            {
+                Process returnProcess = Process.GetProcessById(parentPid);
+
+                // Ensure the process started before the current
+                // process, as it could have gone away and had the
+                // PID recycled.
+                if (returnProcess.StartTime <= current.StartTime)
+                    return returnProcess;
+                else
                     return null;
-                }
+            }
+            catch (ArgumentException)
+            {
+                // GetProcessById throws an ArgumentException when
+                // you reach the top of the chain -- Explorer.exe
+                // has a parent process, but you cannot retrieve it.
+                return null;
             }
         }
 
@@ -187,7 +196,7 @@ namespace System.Management.Automation
                 const string install = "Install";
                 const string oneToThreePointFivePrefix = @"SOFTWARE\Microsoft\NET Framework Setup\NDP\";
 
-                // In .NET 4.5, there is no concept of Client and Full. There is only the full redistributable package available 
+                // In .NET 4.5, there is no concept of Client and Full. There is only the full redistributable package available
                 // http://msdn.microsoft.com/en-us/library/cc656912(VS.110).aspx
                 const string v45KeyName = @"v4\Full";
                 const string v45ReleaseKeyName = "Release";
@@ -242,7 +251,7 @@ namespace System.Management.Automation
                 }
 
                 // To add v1.0 in the future note that
-                // http://msdn.microsoft.com/en-us/library/ms994395.aspx does not mention 
+                // http://msdn.microsoft.com/en-us/library/ms994395.aspx does not mention
                 // NDP keys since they were not introduced until later.
                 // There were no official setup keys,  but this blog suggests an alternative for finding out
                 // about the service pack information:
@@ -456,7 +465,7 @@ namespace System.Management.Automation
             /// <summary>
             /// Check if the given version if the framework is installed
             /// </summary>
-            /// <param name="version">version to check. 
+            /// <param name="version">version to check.
             /// for .NET Framework 3.5 and any service pack this can be new Version(3,5) or new Version(3, 5, 21022, 8).
             /// for .NET 3.5 with SP1 this should be new Version(3, 5, 30729, 1).
             /// For other versions please check the table at http://support.microsoft.com/kb/318785.
@@ -624,19 +633,11 @@ namespace System.Management.Automation
 
         internal static uint GetNativeThreadId()
         {
-            if (Platform.IsWindows)
-            {
-                return WinGetNativeThreadId();
-            }
-            else
-            {
-                return Platform.NonWindowsGetThreadId();
-            }
-        }
-
-        internal static uint WinGetNativeThreadId()
-        {
+#if UNIX
+            return Platform.NonWindowsGetThreadId();
+#else
             return NativeMethods.GetCurrentThreadId();
+#endif
         }
 
         private static class NativeMethods
@@ -677,11 +678,11 @@ namespace System.Management.Automation
         #region ASTUtils
 
         /// <summary>
-        /// This method is to get the unique key for a UsingExpressionAst. The key is a base64 
+        /// This method is to get the unique key for a UsingExpressionAst. The key is a base64
         /// encoded string based on the text of the UsingExpressionAst.
-        /// 
+        ///
         /// This method is used when handling a script block that contains $using for Invoke-Command.
-        /// 
+        ///
         /// When run Invoke-Command targeting a machine that runs PSv3 or above, we pass a dictionary
         /// to the remote end that contains the key of each UsingExpressionAst and its value. This method
         /// is used to generate the key.
@@ -692,14 +693,14 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(usingAst != null, "Caller makes sure the parameter is not null");
 
-            // We cannot call ToLowerInvariant unconditionally, because usingAst might 
+            // We cannot call ToLowerInvariant unconditionally, because usingAst might
             // contain IndexExpressionAst in its SubExpression, such as
             //   $using:bar["AAAA"]
             // and the index "AAAA" might not get us the same value as "aaaa".
             //
             // But we do want a unique key to represent the same UsingExpressionAst's as much
-            // as possible, so as to avoid sending redundant key-value's to remote machine. 
-            // As a workaround, we call ToLowerInvariant when the SubExpression of usingAst 
+            // as possible, so as to avoid sending redundant key-value's to remote machine.
+            // As a workaround, we call ToLowerInvariant when the SubExpression of usingAst
             // is a VariableExpressionAst, because:
             //   (1) Variable name is case insensitive;
             //   (2) People use $using to refer to a variable most of the time.
@@ -1038,7 +1039,7 @@ namespace System.Management.Automation
             // contents will return the same value for Object.GetHashCode.
             //
             // RuntimeHelpers.GetHashCode is useful in scenarios where you care about object identity. Two strings with
-            // identical contents will return different values for RuntimeHelpers.GetHashCode, because they are different 
+            // identical contents will return different values for RuntimeHelpers.GetHashCode, because they are different
             // string objects, although their contents are the same.
 
             return RuntimeHelpers.GetHashCode(obj);

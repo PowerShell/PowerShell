@@ -65,7 +65,7 @@ namespace System.Management.Automation.Runspaces
                         .AddScriptBlockExpressionBinding(
 @"$optional = $_.required -ne 'true'
 $positional = (($_.position -ne $()) -and ($_.position -ne '') -and ($_.position -notmatch 'named') -and ([int]$_.position -ne $()))
-$parameterValue = if ($null -ne $_.psobject.Members['ParameterValueGroup']) { 
+$parameterValue = if ($null -ne $_.psobject.Members['ParameterValueGroup']) {
     "" {$($_.ParameterValueGroup.ParameterValue -join ' | ')}""
 } elseif ($null -ne $_.psobject.Members['ParameterValue']) {
     "" <$($_.ParameterValue)>""

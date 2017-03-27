@@ -16,7 +16,7 @@ namespace System.Management.Automation.Runspaces
                         .StartFrame(leftIndent: 4)
                             .AddText(FileSystemProviderStrings.DirectoryDisplayGrouping)
                             .AddScriptBlockExpressionBinding(@"
-                                                  $_.PSParentPath.Replace(""Microsoft.PowerShell.Core\FileSystem::"", """")                                                  
+                                                  $_.PSParentPath.Replace(""Microsoft.PowerShell.Core\FileSystem::"", """")
                                               ")
                             .AddNewline()
                         .EndFrame()
@@ -44,6 +44,14 @@ namespace System.Management.Automation.Runspaces
 
         private static IEnumerable<FormatViewDefinition> ViewsOf_FileSystemTypes(CustomControl[] sharedControls)
         {
+            const string LengthScriptBlock =
+@"if ($_ -is [System.IO.DirectoryInfo]) { return '' }
+if ($_.Attributes -band [System.IO.FileAttributes]::Offline)
+{
+    return '({0})' -f $_.Length
+}
+return $_.Length";
+
             yield return new FormatViewDefinition("children",
                 TableControl.Create()
                     .GroupByProperty("PSParentPath", customControl: sharedControls[0])
@@ -56,7 +64,7 @@ namespace System.Management.Automation.Runspaces
                         .AddScriptBlockColumn(@"
                                     [String]::Format(""{0,10}  {1,8}"", $_.LastWriteTime.ToString(""d""), $_.LastWriteTime.ToString(""t""))
                                 ")
-                        .AddPropertyColumn("Length")
+                        .AddScriptBlockColumn(LengthScriptBlock)
                         .AddPropertyColumn("Name")
                     .EndRowDefinition()
                 .EndTable());
@@ -66,7 +74,7 @@ namespace System.Management.Automation.Runspaces
                     .GroupByProperty("PSParentPath", customControl: sharedControls[0])
                     .StartEntry(entrySelectedByType: new[] { "System.IO.FileInfo" })
                         .AddItemProperty(@"Name")
-                        .AddItemProperty(@"Length")
+                        .AddItemScriptBlock(LengthScriptBlock)
                         .AddItemProperty(@"CreationTime")
                         .AddItemProperty(@"LastWriteTime")
                         .AddItemProperty(@"LastAccessTime")

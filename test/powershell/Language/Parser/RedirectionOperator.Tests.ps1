@@ -10,7 +10,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         }
 
 
-        # If out-file -encoding happens to have a default, be sure to 
+        # If out-file -encoding happens to have a default, be sure to
         # save it away
         $SavedValue = $null
         $oldDefaultParameterValues = $psDefaultParameterValues
@@ -42,11 +42,20 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
             $bytes[$i] | Should be $expectedBytes[$i]
         }
     }
-    
+
     # $availableEncodings = "unknown","string","unicode","bigendianunicode","utf8","utf7", "utf32","ascii","default","oem"
     $availableEncodings = (get-command out-file).Parameters["Encoding"].Attributes.ValidValues
 
     foreach($encoding in $availableEncodings) {
+        $skipTest = $false
+        if ($encoding -eq "default") {
+            # [System.Text.Encoding]::Default is exposed by 'System.Private.CoreLib.dll' at
+            # runtime via reflection. However,it isn't exposed in the reference contract of
+            # 'System.Text.Encoding', and therefore we cannot use 'Encoding.Default' in our
+            # code. So we need to skip this encoding in the test.
+            $skipTest = $true
+        }
+
         # some of the encodings accepted by out-file aren't real,
         # and out-file has its own translation, so we'll
         # not do that logic here, but simply ignore those encodings
@@ -54,7 +63,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         $enc = [system.text.encoding]::$encoding
         if ( $enc )
         {
-            $msg = "Overriding encoding for out-file is respected for $encoding" 
+            $msg = "Overriding encoding for out-file is respected for $encoding"
             $BOM = $enc.GetPreamble()
             $TXT = $enc.GetBytes($asciiString)
             $CR  = $enc.GetBytes($asciiCR)
@@ -63,7 +72,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
             $asciiString > TESTDRIVE:/file.txt
             $observedBytes = Get-Content -encoding Byte TESTDRIVE:/file.txt
             # THE TEST
-            It $msg {
+            It $msg -Skip:$skipTest {
                 $observedBytes.Count | Should be $expectedBytes.Count
                 for($i = 0;$i -lt $observedBytes.Count; $i++) {
                     $observedBytes[$i] | Should be $expectedBytes[$i]
@@ -72,5 +81,14 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
 
         }
     }
+}
 
+Describe "File redirection mixed with Out-Null" -Tags CI {
+    It "File redirection before Out-Null should work" {
+        "some text" > $TestDrive\out.txt | Out-Null
+        Get-Content $TestDrive\out.txt | Should Be "some text"
+
+        echo "some more text" > $TestDrive\out.txt | Out-Null
+        Get-Content $TestDrive\out.txt | Should Be "some more text"
+    }
 }

@@ -43,7 +43,7 @@ namespace ConsoleApplication
             // className = Full.Name.Of.The.ClassFoo
             // shortClassName = ClassFoo
             // namespaceName = Full.Name.Of.The
-            
+
             string shortClassName = className;
             string namespaceName = null;
             int lastIndexOfDot = className.LastIndexOf('.');

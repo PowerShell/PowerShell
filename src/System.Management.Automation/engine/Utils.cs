@@ -20,16 +20,23 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Text;
-using System.Security.Principal;
 
 using TypeTable = System.Management.Automation.Runspaces.TypeTable;
+
+#if CORECLR
+using System.Diagnostics;
+using Microsoft.Win32.SafeHandles;
+using Microsoft.PowerShell.CoreClr.Stubs;
+#else
+using System.Security.Principal;
 using PSUtils = System.Management.Automation.PsUtils;
+#endif
 
 namespace System.Management.Automation
 {
     /// <summary>
     /// helper fns
-    /// </summary> 
+    /// </summary>
     internal static class Utils
     {
         // From System.Web.Util.HashCodeCombiner
@@ -184,7 +191,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets TypeTable by querying the ExecutionContext stored in 
+        /// Gets TypeTable by querying the ExecutionContext stored in
         /// Thread-Local-Storage. This will return null if ExecutionContext
         /// is not available.
         /// </summary>
@@ -200,8 +207,12 @@ namespace System.Management.Automation
             return ecFromTLS.TypeTable;
         }
 
+#if !UNIX
         private static string s_pshome = null;
 
+        /// <summary>
+        /// Get the application base path of the shell from registry
+        /// </summary>
         internal static string GetApplicationBaseFromRegistry(string shellId)
         {
             bool wantPsHome = (object)shellId == (object)DefaultPowerShellShellID;
@@ -226,6 +237,7 @@ namespace System.Management.Automation
 
             return null;
         }
+#endif
 
         /// <summary>
         /// Gets the application base for current monad version
@@ -238,13 +250,13 @@ namespace System.Management.Automation
         /// </exception>
         internal static string GetApplicationBase(string shellId)
         {
-#if CORECLR 
+#if CORECLR
             // Use the location of SMA.dll as the application base
             // Assembly.GetEntryAssembly and GAC are not in CoreCLR.
             Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
             return Path.GetDirectoryName(assembly.Location);
 #else
-            // This code path applies to Windows FullCLR inbox deployments. All CoreCLR 
+            // This code path applies to Windows FullCLR inbox deployments. All CoreCLR
             // implementations should use the location of SMA.dll since it must reside in PSHOME.
             //
             // try to get the path from the registry first
@@ -253,13 +265,13 @@ namespace System.Management.Automation
             {
                 return result;
             }
-            
+
             // The default keys aren't installed, so try and use the entry assembly to
             // get the application base. This works for managed apps like minishells...
             Assembly assem = Assembly.GetEntryAssembly();
             if (assem != null)
             {
-                // For minishells, we just return the executable path. 
+                // For minishells, we just return the executable path.
                 return Path.GetDirectoryName(assem.Location);
             }
 
@@ -269,7 +281,7 @@ namespace System.Management.Automation
             string gacRootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Microsoft.Net\\assembly");
             if (!assem.Location.StartsWith(gacRootPath, StringComparison.OrdinalIgnoreCase))
             {
-                // For other hosts. 
+                // For other hosts.
                 return Path.GetDirectoryName(assem.Location);
             }
 
@@ -344,7 +356,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks if the filePath represents a file under product folder 
+        /// Checks if the filePath represents a file under product folder
         /// ie., PowerShell ApplicationBase or $env:windir\system32 or
         /// $env:windir\syswow64.
         /// </summary>
@@ -424,7 +436,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Coverts a string to version format. 
+        /// Coverts a string to version format.
         /// If the string is of the format x (ie., no dots), then ".0" is appended
         /// to the string.
         /// Version.TryParse will be used to convert the string to a Version
@@ -525,7 +537,7 @@ namespace System.Management.Automation
 #if !CORECLR
         /// <summary>
         /// Checks whether current monad session supports NetFrameworkVersion specified
-        /// by checkVersion. The specified version is treated as the the minimum required 
+        /// by checkVersion. The specified version is treated as the the minimum required
         /// version of .NET framework.
         /// </summary>
         /// <param name="checkVersion">Version to check</param>
@@ -541,13 +553,13 @@ namespace System.Management.Automation
                 return false;
             }
 
-            // Construct a temporary version number with build number and revision number set to 0. 
-            // This is done so as to re-use the version specifications in PSUtils.FrameworkRegistryInstallation          
+            // Construct a temporary version number with build number and revision number set to 0.
+            // This is done so as to re-use the version specifications in PSUtils.FrameworkRegistryInstallation
             Version tempVersion = new Version(checkVersion.Major, checkVersion.Minor, 0, 0);
 
-            // Win8: 840038 - For any version above the highest known .NET version (4.5 for Windows 8), we can't make a call as to 
+            // Win8: 840038 - For any version above the highest known .NET version (4.5 for Windows 8), we can't make a call as to
             // whether the requirement is satisfied or not because we can't detect that version of .NET.
-            // We end up erring on the side of app compat by letting it through. 
+            // We end up erring on the side of app compat by letting it through.
             // We will write a message in the Verbose output saying that we cannot detect the specified version of the .NET Framework.
             if (checkVersion > PsUtils.FrameworkRegistryInstallation.KnownHighestNetFrameworkVersion)
             {
@@ -604,7 +616,7 @@ namespace System.Management.Automation
 
         internal static string GetRegistryConfigurationPrefix()
         {
-            // For 3.0 PowerShell, we still use "1" as the registry version key for 
+            // For 3.0 PowerShell, we still use "1" as the registry version key for
             // Snapin and Custom shell lookup/discovery.
             // For 3.0 PowerShell, we use "3" as the registry version key only for Engine
             // related data like ApplicationBase etc.
@@ -616,13 +628,18 @@ namespace System.Management.Automation
             return GetRegistryConfigurationPrefix() + "\\" + shellID;
         }
 
-        // Retrieves group policy settings based on the preference order provided:
-        // Dictionary<string, object> settings = GetGroupPolicySetting("Transcription", Registry.LocalMachine, Registry.CurrentUser);
-
+        // Calling static members of 'Registry' on UNIX will raise 'PlatformNotSupportedException'
+#if UNIX
+        internal static RegistryKey[] RegLocalMachine = null;
+        internal static RegistryKey[] RegCurrentUser = null;
+        internal static RegistryKey[] RegLocalMachineThenCurrentUser = null;
+        internal static RegistryKey[] RegCurrentUserThenLocalMachine = null;
+#else
         internal static RegistryKey[] RegLocalMachine = new[] { Registry.LocalMachine };
         internal static RegistryKey[] RegCurrentUser = new[] { Registry.CurrentUser };
         internal static RegistryKey[] RegLocalMachineThenCurrentUser = new[] { Registry.LocalMachine, Registry.CurrentUser };
         internal static RegistryKey[] RegCurrentUserThenLocalMachine = new[] { Registry.CurrentUser, Registry.LocalMachine };
+#endif
 
         internal static Dictionary<string, object> GetGroupPolicySetting(string settingName, RegistryKey[] preferenceOrder)
         {
@@ -794,10 +811,9 @@ namespace System.Management.Automation
 
                         ps.Invoke<PSModuleInfo>();
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         // Call-out to user code, catch-all OK
-                        CommandProcessorBase.CheckForSevereException(e);
                     }
                     finally
                     {
@@ -860,10 +876,9 @@ namespace System.Management.Automation
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Call-out to user code, catch-all OK
-                CommandProcessorBase.CheckForSevereException(e);
             }
             finally
             {
@@ -922,10 +937,9 @@ namespace System.Management.Automation
                     }
                 }
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // Call-out to user code, catch-all OK
-                CommandProcessorBase.CheckForSevereException(e);
             }
             finally
             {
@@ -996,7 +1010,27 @@ namespace System.Management.Automation
                     Win32Exception win32Exception = new Win32Exception(errorCode);
                     exception = new UnauthorizedAccessException(win32Exception.Message, win32Exception);
                 }
-
+                else if (errorCode == 32)
+                {
+                    // Errorcode 32 is 'ERROR_SHARING_VIOLATION' i.e.
+                    // The process cannot access the file because it is being used by another process.
+                    // GetFileAttributes may return INVALID_FILE_ATTRIBUTES for a system file or directory because of this error.
+                    // GetFileAttributes function tries to open the file with FILE_READ_ATTRIBUTES access right but it fails if the
+                    // sharing flag for the file is set to 0x00000000.This flag prevents it from opening a file for delete, read, or
+                    // write access. For example: C:\pagefile.sys is always opened by OS with sharing flag 0x00000000.
+                    // But FindFirstFile is still able to get attributes as this api retrieves the required information using a find
+                    // handle generated with FILE_LIST_DIRECTORY access.
+                    // Fall back to FindFirstFile to check if the file actually exists.
+                    IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
+                    NativeMethods.WIN32_FIND_DATA findData;
+                    IntPtr findHandle = NativeMethods.FindFirstFile(path, out findData);
+                    if (findHandle != INVALID_HANDLE_VALUE)
+                    {
+                        isDirectory = (findData.dwFileAttributes & NativeMethods.FileAttributes.Directory) != 0;
+                        NativeMethods.FindClose(findHandle);
+                        return true;
+                    }
+                }
                 else if (errorCode == 53)
                 {
                     // ERROR_BAD_NETPATH - The network path was not found.
@@ -1083,6 +1117,7 @@ namespace System.Management.Automation
 
         internal static bool IsReservedDeviceName(string destinationPath)
         {
+#if !UNIX
             string[] reservedDeviceNames = { "CON", "PRN", "AUX", "CLOCK$", "NUL",
                                              "COM0", "COM1", "COM2", "COM3", "COM4", "COM5", "COM6", "COM7", "COM8", "COM9",
                                              "LPT0", "LPT1", "LPT2", "LPT3", "LPT4", "LPT5", "LPT6", "LPT7", "LPT8", "LPT9" };
@@ -1106,7 +1141,7 @@ namespace System.Management.Automation
                     return true;
                 }
             }
-
+#endif
             return false;
         }
 
@@ -1528,7 +1563,7 @@ namespace System.Management.Automation
 
             // (Copied from System.IO.Path so we can call TrimEnd in the same way that Directory.EnumerateFiles would on the search patterns).
             // Trim trailing white spaces, tabs etc but don't be aggressive in removing everything that has UnicodeCategory of trailing space.
-            // String.WhitespaceChars will trim aggressively than what the underlying FS does (for ex, NTFS, FAT).    
+            // String.WhitespaceChars will trim aggressively than what the underlying FS does (for ex, NTFS, FAT).
             internal static readonly char[] PathSearchTrimEnd = { (char)0x9, (char)0xA, (char)0xB, (char)0xC, (char)0xD, (char)0x20, (char)0x85, (char)0xA0 };
         }
     }
@@ -1544,8 +1579,11 @@ namespace System.Management.Automation.Internal
         internal static bool ForceScriptBlockLogging;
         internal static bool UseDebugAmsiImplementation;
         internal static bool BypassAppLockerPolicyCaching;
+        internal static bool BypassOnlineHelpRetrieval;
         // It's useful to test that we don't depend on the ScriptBlock and AST objects and can use a re-parsed version.
         internal static bool IgnoreScriptBlockCache;
+        // Simulate 'System.Diagnostics.Stopwatch.IsHighResolution is false' to test Get-Uptime throw
+        internal static bool StopwatchIsNotHighResolution;
 
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, bool value)
@@ -1557,4 +1595,215 @@ namespace System.Management.Automation.Internal
             }
         }
     }
+
+#if CORECLR && !UNIX
+    /// <summary>
+    /// Helper to start process using ShellExecuteEx. This is used only in PowerShell Core on Full Windows.
+    /// </summary>
+    internal class ShellExecuteHelper
+    {
+        /// <summary>
+        /// Start a process using ShellExecuteEx with default settings about WindowStyle and Verb.
+        /// </summary>
+        internal static Process Start(ProcessStartInfo startInfo)
+        {
+            return Start(startInfo, ProcessWindowStyle.Normal, string.Empty);
+        }
+
+        /// <summary>
+        /// Start a process using ShellExecuteEx
+        /// </summary>
+        /// <remarks>
+        /// Quoted from MSDN:
+        /// "Because ShellExecuteEx can delegate execution to Shell extensions (data sources, context menu handlers, verb implementations) 
+        ///  that are activated using Component Object Model (COM), COM should be initialized before ShellExecuteEx is called. Some Shell
+        ///  extensions require the COM single-threaded apartment (STA) type. In that case, COM should be initialized as shown here:
+        ///     CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)
+        ///  There are instances where ShellExecuteEx does not use one of these types of Shell extension and those instances would not require
+        ///  COM to be initialized at all. Nonetheless, it is good practice to always initalize COM before using this function."
+        ///
+        /// TODO: In .NET Core, managed threads are all eagerly initialized with MTA mode, so to call 'ShellExecuteEx' from a STA thread, we
+        /// need to create a native thread using 'CreateThread' function and initialize COM with STA on that thread. Currently we are calling
+        /// ShellExecuteEx directly on MTA thread, and it works for things like openning a folder in File Explorer, openning a PDF/DOCX file,
+        /// openning URL in web browser and etc, but it's not guaranteed to work in all ShellExecution scenarios. Github issue #2969 is used
+        /// to track the "invoke-on-STA-thread" work.
+        /// </remarks>
+        internal static Process Start(ProcessStartInfo startInfo, ProcessWindowStyle windowStyle, string verb)
+        {
+            var shellExecuteInfo = new NativeMethods.ShellExecuteInfo();
+            shellExecuteInfo.fMask = NativeMethods.SEE_MASK_NOCLOSEPROCESS;
+            shellExecuteInfo.fMask |= NativeMethods.SEE_MASK_FLAG_NO_UI;
+ 
+            switch (windowStyle)
+            {
+                case ProcessWindowStyle.Hidden:
+                    shellExecuteInfo.nShow = NativeMethods.SW_HIDE;
+                    break;
+                case ProcessWindowStyle.Minimized:
+                    shellExecuteInfo.nShow = NativeMethods.SW_SHOWMINIMIZED;
+                    break;
+                case ProcessWindowStyle.Maximized:
+                    shellExecuteInfo.nShow = NativeMethods.SW_SHOWMAXIMIZED;
+                    break;
+                default:
+                    shellExecuteInfo.nShow = NativeMethods.SW_SHOWNORMAL;
+                    break;
+            }
+
+            try
+            {
+                if (startInfo.FileName.Length != 0)
+                    shellExecuteInfo.lpFile = Marshal.StringToHGlobalUni(startInfo.FileName);             
+                if (!string.IsNullOrEmpty(verb))
+                    shellExecuteInfo.lpVerb = Marshal.StringToHGlobalUni(verb);
+                if (startInfo.Arguments.Length != 0)
+                    shellExecuteInfo.lpParameters = Marshal.StringToHGlobalUni(startInfo.Arguments);
+                if (startInfo.WorkingDirectory.Length != 0)
+                    shellExecuteInfo.lpDirectory = Marshal.StringToHGlobalUni(startInfo.WorkingDirectory);
+
+                shellExecuteInfo.fMask |= NativeMethods.SEE_MASK_FLAG_DDEWAIT;
+
+                if (!NativeMethods.ShellExecuteEx(shellExecuteInfo))
+                {
+                    int errorCode = Marshal.GetLastWin32Error();
+                    if (errorCode == 0) 
+                    {
+                        switch ((long)shellExecuteInfo.hInstApp)
+                        {
+                            case NativeMethods.SE_ERR_FNF: errorCode = NativeMethods.ERROR_FILE_NOT_FOUND; break;
+                            case NativeMethods.SE_ERR_PNF: errorCode = NativeMethods.ERROR_PATH_NOT_FOUND; break;
+                            case NativeMethods.SE_ERR_ACCESSDENIED: errorCode = NativeMethods.ERROR_ACCESS_DENIED; break;
+                            case NativeMethods.SE_ERR_OOM: errorCode = NativeMethods.ERROR_NOT_ENOUGH_MEMORY; break;
+                            case NativeMethods.SE_ERR_DDEFAIL:
+                            case NativeMethods.SE_ERR_DDEBUSY:
+                            case NativeMethods.SE_ERR_DDETIMEOUT: errorCode = NativeMethods.ERROR_DDE_FAIL; break;
+                            case NativeMethods.SE_ERR_SHARE: errorCode = NativeMethods.ERROR_SHARING_VIOLATION; break;
+                            case NativeMethods.SE_ERR_NOASSOC: errorCode = NativeMethods.ERROR_NO_ASSOCIATION; break;
+                            case NativeMethods.SE_ERR_DLLNOTFOUND: errorCode = NativeMethods.ERROR_DLL_NOT_FOUND; break;
+                            default: errorCode = (int)shellExecuteInfo.hInstApp; break;
+                        }
+                    }
+
+                    if(errorCode == NativeMethods.ERROR_BAD_EXE_FORMAT || errorCode == NativeMethods.ERROR_EXE_MACHINE_TYPE_MISMATCH)
+                    {
+                        throw new Win32Exception(errorCode, "InvalidApplication");
+                    }
+                    
+                    throw new Win32Exception(errorCode);
+                }
+            }
+            finally
+            {                
+                if (shellExecuteInfo.lpFile != (IntPtr)0) Marshal.FreeHGlobal(shellExecuteInfo.lpFile);
+                if (shellExecuteInfo.lpVerb != (IntPtr)0) Marshal.FreeHGlobal(shellExecuteInfo.lpVerb);
+                if (shellExecuteInfo.lpParameters != (IntPtr)0) Marshal.FreeHGlobal(shellExecuteInfo.lpParameters);
+                if (shellExecuteInfo.lpDirectory != (IntPtr)0) Marshal.FreeHGlobal(shellExecuteInfo.lpDirectory);
+            }
+
+            Process processToReturn = null;
+            if (shellExecuteInfo.hProcess != IntPtr.Zero)
+            {
+                var handle = new SafeProcessHandle(shellExecuteInfo.hProcess, true);
+                try {
+                    int processId = GetProcessIdFromHandle(handle);
+                    processToReturn = Process.GetProcessById(processId);
+                } finally {
+                    handle.Dispose();
+                }
+            }
+
+            return processToReturn;
+        }
+
+        private static int GetProcessIdFromHandle(SafeProcessHandle processHandle)
+        {
+            NativeMethods.NtProcessBasicInfo info = new NativeMethods.NtProcessBasicInfo();
+            int status = NativeMethods.NtQueryInformationProcess(processHandle, NativeMethods.NtQueryProcessBasicInfo, info, (int)Marshal.SizeOf(info), null);
+            if (status != 0) {
+                throw new InvalidOperationException("CantGetProcessId", new Win32Exception(status));
+            }
+            // We should change the signature of this function and ID property in process class.
+            return info.UniqueProcessId.ToInt32();
+        }
+
+        private static class NativeMethods
+        {
+            public const int SEE_MASK_NOCLOSEPROCESS = 0x00000040;
+            public const int SEE_MASK_FLAG_NO_UI = 0x00000400;
+            public const int SEE_MASK_FLAG_DDEWAIT = 0x00000100;
+
+            public const int SW_HIDE = 0;
+            public const int SW_SHOWMINIMIZED = 2;
+            public const int SW_SHOWMAXIMIZED = 3;
+            public const int SW_SHOWNORMAL = 1;
+
+            public const int SE_ERR_FNF = 2;
+            public const int SE_ERR_PNF = 3;
+            public const int SE_ERR_ACCESSDENIED = 5;
+            public const int SE_ERR_OOM = 8;
+            public const int SE_ERR_DLLNOTFOUND = 32;
+            public const int SE_ERR_SHARE = 26;
+            public const int SE_ERR_DDETIMEOUT = 28;
+            public const int SE_ERR_DDEFAIL = 29;
+            public const int SE_ERR_DDEBUSY = 30;
+            public const int SE_ERR_NOASSOC = 31;
+
+            public const int ERROR_FILE_NOT_FOUND = 2;
+            public const int ERROR_PATH_NOT_FOUND = 3;
+            public const int ERROR_ACCESS_DENIED = 5;
+            public const int ERROR_NOT_ENOUGH_MEMORY = 8;
+            public const int ERROR_SHARING_VIOLATION = 32;
+            public const int ERROR_OPERATION_ABORTED = 995;
+            public const int ERROR_NO_ASSOCIATION = 1155;
+            public const int ERROR_DLL_NOT_FOUND = 1157;
+            public const int ERROR_DDE_FAIL = 1156;
+
+            public const int ERROR_BAD_EXE_FORMAT = 193;
+            public const int ERROR_EXE_MACHINE_TYPE_MISMATCH = 216;
+
+            public const int NtQueryProcessBasicInfo = 0;
+
+            [StructLayout(LayoutKind.Sequential)]
+            internal class ShellExecuteInfo 
+            {
+                public int cbSize = 0;
+                public int fMask = 0;
+                public IntPtr hwnd = (IntPtr)0;
+                public IntPtr lpVerb = (IntPtr)0;
+                public IntPtr lpFile = (IntPtr)0;
+                public IntPtr lpParameters = (IntPtr)0;
+                public IntPtr lpDirectory = (IntPtr)0;
+                public int nShow = 0;
+                public IntPtr hInstApp = (IntPtr)0;
+                public IntPtr lpIDList = (IntPtr)0;
+                public IntPtr lpClass = (IntPtr)0;
+                public IntPtr hkeyClass = (IntPtr)0;
+                public int dwHotKey = 0;
+                public IntPtr hIcon = (IntPtr)0;
+                public IntPtr hProcess = (IntPtr)0;
+
+                public ShellExecuteInfo() 
+                {
+                    cbSize = Marshal.SizeOf(this);
+                }
+            }
+
+            [StructLayout(LayoutKind.Sequential)]
+            internal class NtProcessBasicInfo {
+                public int ExitStatus = 0;
+                public IntPtr PebBaseAddress = (IntPtr)0;
+                public IntPtr AffinityMask = (IntPtr)0;
+                public int BasePriority = 0;
+                public IntPtr UniqueProcessId = (IntPtr)0;
+                public IntPtr InheritedFromUniqueProcessId = (IntPtr)0;
+            }
+
+            [DllImport("Shell32", CharSet=CharSet.Unicode, SetLastError=true)]
+            public static extern bool ShellExecuteEx(ShellExecuteInfo info);
+
+            [DllImport("Ntdll", CharSet=CharSet.Unicode)]
+            public static extern int NtQueryInformationProcess(SafeProcessHandle processHandle, int query, NtProcessBasicInfo info, int size, int[] returnedSize);
+        }
+    }
+#endif
 }

@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
             // Additionally in both instance and static cmdlets, if the pipeline object is a CimInstance, then it can affect the session acted against
             if (invocationInfo.ExpectingInput)
             {
-                // can get unlimited number of CimInstances through pipeline 
+                // can get unlimited number of CimInstances through pipeline
                 // - this translates into potentially unlimited number of CimSession we will work with
                 return int.MaxValue;
             }
@@ -206,7 +206,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
                                                         cmdlet.WriteError(errorRecord);
                                                     }
 
-                                                    return false; // not really needed here, but required by CmdletMethodInvoker 
+                                                    return false; // not really needed here, but required by CmdletMethodInvoker
                                                 };
 
             return new CmdletMethodInvoker<bool>

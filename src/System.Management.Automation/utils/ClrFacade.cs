@@ -23,9 +23,14 @@ using System.Runtime.InteropServices.ComTypes;
 using System.Runtime.Loader; /* used in facade APIs related to assembly operations */
 using System.Management.Automation.Host;          /* used in facade API 'GetUninitializedObject' */
 using Microsoft.PowerShell.CoreClr.Stubs;         /* used in facade API 'GetFileSecurityZone' */
+using System.Management.Automation.Internal;
+using System.Text.RegularExpressions;
 #else
-using Microsoft.PowerShell.Commands.Internal; /* used in the facade APIs related to 'SafeProcessHandle' */
 using System.Runtime.Serialization;           /* used in facade API 'GetUninitializedObject' */
+#endif
+#if !UNIX
+using System.ComponentModel;                  /* used in the facade API RetrieveProcessUserName */
+using Microsoft.PowerShell.Commands.Internal; /* used in the facade APIs related to 'SafeProcessHandle' and 'RetreiveUserName' */
 #endif
 
 namespace System.Management.Automation
@@ -33,7 +38,7 @@ namespace System.Management.Automation
     /// <summary>
     /// ClrFacade contains all diverging code (different implementation for FullCLR and CoreCLR using if/def).
     /// It exposes common APIs that can be used by the rest of the code base.
-    /// </summary>    
+    /// </summary>
     internal static class ClrFacade
     {
         /// <summary>
@@ -111,6 +116,160 @@ namespace System.Management.Automation
             return process.Handle;
 #endif
         }
+
+#region Facade for AddProcessProperties
+
+        /// <summary>
+        /// Ensures the 'UserName' and 'HandleCount' Properties exist the Process object.
+        /// </summary>
+        /// <param name="process"></param>
+        /// <param name="includeUserName"></param>
+        /// <returns></returns>
+        internal static PSObject AddProcessProperties(bool includeUserName, Process process)
+        {
+            PSObject processAsPsobj = includeUserName ? AddUserNameToProcess(process) : PSObject.AsPSObject(process);
+#if CORECLR
+            // In CoreCLR, the System.Diagnostics.Process.HandleCount property does not exist.
+            // I am adding a note property HandleCount and temporarily setting it to zero.
+            // This issue will be fix for RTM and it is tracked by 5024994: Get-process does not populate the Handles field.
+            PSMemberInfo hasHandleCount = processAsPsobj.Properties["HandleCount"];
+            if (hasHandleCount == null)
+            {
+                PSNoteProperty noteProperty = new PSNoteProperty("HandleCount", 0);
+                processAsPsobj.Properties.Add(noteProperty, true);
+                processAsPsobj.TypeNames.Insert(0, "System.Diagnostics.Process#HandleCount");
+            }
+#endif
+            return processAsPsobj;
+        }
+        /// <summary>
+        /// New PSTypeName added to the process object
+        /// </summary>
+        private const string TypeNameForProcessWithUserName = "System.Diagnostics.Process#IncludeUserName";
+
+        /// <summary>
+        /// Add the 'UserName' NoteProperty to the Process object
+        /// </summary>
+        /// <param name="process"></param>
+        /// <returns></returns>
+        private static PSObject AddUserNameToProcess(Process process)
+        {
+            // Return null if we failed to get the owner information
+            string userName = ClrFacade.RetrieveProcessUserName(process);
+
+            PSObject processAsPsobj = PSObject.AsPSObject(process);
+            PSNoteProperty noteProperty = new PSNoteProperty("UserName", userName);
+
+            processAsPsobj.Properties.Add(noteProperty, true);
+            processAsPsobj.TypeNames.Insert(0, TypeNameForProcessWithUserName);
+
+            return processAsPsobj;
+        }
+
+
+        /// <summary>
+        /// Retrieve the UserName through PInvoke
+        /// </summary>
+        /// <param name="process"></param>
+        /// <returns></returns>
+        private static string RetrieveProcessUserName(Process process)
+        {
+            string userName = null;
+#if UNIX
+            userName = Platform.NonWindowsGetUserFromPid(process.Id);
+#else
+            IntPtr tokenUserInfo = IntPtr.Zero;
+            IntPtr processTokenHandler = IntPtr.Zero;
+
+            const uint TOKEN_QUERY = 0x0008;
+
+            try
+            {
+                do
+                {
+                    int error;
+                    if (!Win32Native.OpenProcessToken(ClrFacade.GetSafeProcessHandle(process), TOKEN_QUERY, out processTokenHandler)) { break; }
+
+                    // Set the default length to be 256, so it will be sufficient for most cases
+                    int tokenInfoLength = 256;
+                    tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
+                    if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength))
+                    {
+                        error = Marshal.GetLastWin32Error();
+                        if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
+                        {
+                            Marshal.FreeHGlobal(tokenUserInfo);
+                            tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
+
+                            if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength)) { break; }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    var tokenUser = ClrFacade.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
+
+                    // Set the default length to be 256, so it will be sufficient for most cases
+                    int userNameLength = 256, domainNameLength = 256;
+                    var userNameStr = new StringBuilder(userNameLength);
+                    var domainNameStr = new StringBuilder(domainNameLength);
+                    Win32Native.SID_NAME_USE accountType;
+
+                    if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
+                    {
+                        error = Marshal.GetLastWin32Error();
+                        if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
+                        {
+                            userNameStr.EnsureCapacity(userNameLength);
+                            domainNameStr.EnsureCapacity(domainNameLength);
+
+                            if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType)) { break; }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    userName = domainNameStr + "\\" + userNameStr;
+                } while (false);
+            }
+            catch (NotSupportedException)
+            {
+                // The Process not started yet, or it's a process from a remote machine
+            }
+            catch (InvalidOperationException)
+            {
+                // The Process has exited, Process.Handle will raise this exception
+            }
+            catch (Win32Exception)
+            {
+                // We might get an AccessDenied error
+            }
+            catch (Exception)
+            {
+                // I don't expect to get other exceptions,
+            }
+            finally
+            {
+                if (tokenUserInfo != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(tokenUserInfo);
+                }
+
+                if (processTokenHandler != IntPtr.Zero)
+                {
+                    Win32Native.CloseHandle(processTokenHandler);
+                }
+            }
+
+#endif
+            return userName;
+        }
+
+#endregion
 
 #if CORECLR
         /// <summary>
@@ -256,7 +415,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="namespaceQualifiedTypeName">
         /// In CoreCLR context, if it's for string-to-type conversion and the namespace qualified type name is known, pass it in so that
-        /// powershell can load the necessary TPA if the target type is from an unloaded TPA. 
+        /// powershell can load the necessary TPA if the target type is from an unloaded TPA.
         /// </param>
         internal static IEnumerable<Assembly> GetAssemblies(string namespaceQualifiedTypeName = null)
         {
@@ -402,7 +561,7 @@ namespace System.Management.Automation
 #else
                 uint oemCp = NativeMethods.GetOEMCP();
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
-#endif   
+#endif
             }
             return s_oemEncoding;
         }
@@ -419,8 +578,163 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(Path.IsPathRooted(filePath), "Caller makes sure the path is rooted.");
             Diagnostics.Assert(Utils.NativeFileExists(filePath), "Caller makes sure the file exists.");
+#if CORECLR
+            string sysRoot = System.Environment.GetEnvironmentVariable("SystemRoot");
+            string urlmonPath = Path.Combine(sysRoot, @"System32\urlmon.dll");
+            if (Utils.NativeFileExists(urlmonPath))
+            {
+                return MapSecurityZoneWithUrlmon(filePath);
+            }
+            return MapSecurityZoneWithoutUrlmon(filePath);
+#else
             return MapSecurityZoneWithUrlmon(filePath);
+#endif
         }
+
+#if CORECLR
+        #region WithoutUrlmon
+
+        /// <summary>
+        /// Map the file to SecurityZone without using urlmon.dll.
+        /// This is needed on NanoServer because urlmon.dll is not in OneCore.
+        /// </summary>
+        /// <remarks>
+        /// The algorithm is as follows:
+        ///
+        /// 1. Alternate data stream "Zone.Identifier" is checked first. If this alternate data stream has content, then the content is parsed to determine the SecurityZone.
+        /// 2. If the alternate data stream "Zone.Identifier" doesn't exist, or its content is not expected, then the file path will be analyzed to determine the SecurityZone.
+        ///
+        /// For #1, the parsing rules are observed as follows:
+        ///   A. Read content of the data stream line by line. Each line is trimmed.
+        ///   B. Try to match the current line with '^\[ZoneTransfer\]'.
+        ///        - if matching, then do step (#C) starting from the next line
+        ///        - if not matching, then continue to do step (#B) with the next line.
+        ///   C. Try to match the current line with '^ZoneId\s*=\s*(.*)'
+        ///        - if matching, check if the ZoneId is valid. Then return the corresponding SecurityZone if the 'ZoneId' is valid, or 'NoZone' if invalid.
+        ///        - if not matching, then continue to do step (#C) with the next line.
+        ///   D. Reach EOF, then return 'NoZone'.
+        /// After #1, if the returned SecurityZone is 'NoZone', then proceed with #2. Otherwise, return it as the mapping result.
+        ///
+        /// For #2, the analysis rules are observed as follows:
+        ///   A. If the path is a UNC path, then
+        ///       - if the host name of the UNC path is IP address, then mapping it to "Internet" zone.
+        ///       - if the host name of the UNC path has dot (.) in it, then mapping it to "internet" zone.
+        ///       - otherwise, mapping it to "intranet" zone.
+        ///   B. If the path is not UNC path, then get the root drive,
+        ///       - if the drive is CDRom, mapping it to "Untrusted" zone
+        ///       - if the drive is Network, mapping it to "Intranet" zone
+        ///       - otherwise, mapping it to "MyComputer" zone.
+        ///
+        /// The above algorithm has two changes comparing to the behavior of "Zone.CreateFromUrl" I observed:
+        ///   (1) If a file downloaded from internet (ZoneId=3) is not on the local machine, "Zone.CreateFromUrl" won't respect the MOTW.
+        ///       I think it makes more sense for powershell to always check the MOTW first, even for files not on local box.
+        ///   (2) When it's a UNC path and is actually a loopback (\\127.0.0.1\c$\test.txt), "Zone.CreateFromUrl" returns "Internet", but
+        ///       the above algorithm changes it to be "MyComputer" because it's actually the same computer.
+        /// </remarks>
+        private static SecurityZone MapSecurityZoneWithoutUrlmon(string filePath)
+        {
+            SecurityZone reval = ReadFromZoneIdentifierDataStream(filePath);
+            if (reval != SecurityZone.NoZone) { return reval; }
+
+            // If it reaches here, then we either couldn't get the ZoneId information, or the ZoneId is invalid.
+            // In this case, we try to determine the SecurityZone by analyzing the file path.
+            Uri uri = new Uri(filePath);
+            if (uri.IsUnc)
+            {
+                if (uri.IsLoopback)
+                {
+                    return SecurityZone.MyComputer;
+                }
+
+                if (uri.HostNameType == UriHostNameType.IPv4 ||
+                    uri.HostNameType == UriHostNameType.IPv6)
+                {
+                    return SecurityZone.Internet;
+                }
+
+                // This is also an observation of Zone.CreateFromUrl/Zone.SecurityZone. If the host name
+                // has 'dot' in it, the file will be treated as in Internet security zone. Otherwise, it's
+                // in Intranet security zone.
+                string hostName = uri.Host;
+                return hostName.IndexOf('.') == -1 ? SecurityZone.Intranet : SecurityZone.Internet;
+            }
+
+            string root = Path.GetPathRoot(filePath);
+            DriveInfo drive = new DriveInfo(root);
+            switch (drive.DriveType)
+            {
+                case DriveType.NoRootDirectory:
+                case DriveType.Unknown:
+                case DriveType.CDRom:
+                    return SecurityZone.Untrusted;
+                case DriveType.Network:
+                    return SecurityZone.Intranet;
+                default:
+                    return SecurityZone.MyComputer;
+            }
+        }
+
+        /// <summary>
+        /// Read the 'Zone.Identifier' alternate data stream to determin SecurityZone of the file.
+        /// </summary>
+        private static SecurityZone ReadFromZoneIdentifierDataStream(string filePath)
+        {
+            try
+            {
+                FileStream zoneDataSteam = AlternateDataStreamUtilities.CreateFileStream(
+                                            filePath, "Zone.Identifier", FileMode.Open,
+                                            FileAccess.Read, FileShare.Read);
+
+                // If we successfully get the zone data stream, try to read the ZoneId information
+                using (StreamReader zoneDataReader = new StreamReader(zoneDataSteam, GetDefaultEncoding()))
+                {
+                    string line = null;
+                    bool zoneTransferMatched = false;
+
+                    // After a lot experiments with Zone.CreateFromUrl/Zone.SecurityZone, the way it handles the alternate
+                    // data stream 'Zone.Identifier' is observed as follows:
+                    //    1. Read content of the data stream line by line. Each line is trimmed.
+                    //    2. Try to match the current line with '^\[ZoneTransfer\]'.
+                    //           - if matching, then do step #3 starting from the next line
+                    //           - if not matching, then continue to do step #2 with the next line.
+                    //    3. Try to match the current line with '^ZoneId\s*=\s*(.*)'
+                    //           - if matching, check if the ZoneId is valid. Then return the corresponding SecurityZone if valid, or 'NoZone' if invalid.
+                    //           - if not matching, then continue to do step #3 with the next line.
+                    //    4. Reach EOF, then return 'NoZone'.
+                    while ((line = zoneDataReader.ReadLine()) != null)
+                    {
+                        line = line.Trim();
+                        if (!zoneTransferMatched)
+                        {
+                            zoneTransferMatched = Regex.IsMatch(line, @"^\[ZoneTransfer\]", RegexOptions.IgnoreCase);
+                        }
+                        else
+                        {
+                            Match match = Regex.Match(line, @"^ZoneId\s*=\s*(.*)", RegexOptions.IgnoreCase);
+                            if (!match.Success) { continue; }
+
+                            // Match found. Validate ZoneId value.
+                            string zoneIdRawValue = match.Groups[1].Value;
+                            match = Regex.Match(zoneIdRawValue, @"^[+-]?\d+", RegexOptions.IgnoreCase);
+                            if (!match.Success) { return SecurityZone.NoZone; }
+
+                            string zoneId = match.Groups[0].Value;
+                            SecurityZone result;
+                            return LanguagePrimitives.TryConvertTo(zoneId, out result) ? result : SecurityZone.NoZone;
+                        }
+                    }
+                }
+            }
+            catch (FileNotFoundException)
+            {
+                // FileNotFoundException may be thrown by AlternateDataStreamUtilities.CreateFileStream when the data stream 'Zone.Identifier'
+                // does not exist, or when the underlying file system doesn't support alternate data stream.
+            }
+
+            return SecurityZone.NoZone;
+        }
+        #endregion WithoutUrlmon
+#endif
 
         /// <summary>
         /// Map the file to SecurityZone using urlmon.dll, depending on 'IInternetSecurityManager::MapUrlToZone'.
@@ -503,6 +817,36 @@ namespace System.Management.Automation
         #endregion Culture
 
         #region Misc
+
+        /// <summary>
+        /// Facade for Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks)
+        /// Inserts line breaks after every 76 characters in the string representation.
+        /// </summary>
+        internal static string ToBase64StringWithLineBreaks(byte[] bytes)
+        {
+#if CORECLR
+            // Inserts line breaks after every 76 characters in the string representation.
+            string encodedRawString = Convert.ToBase64String(bytes);
+            if (encodedRawString.Length <= 76)
+                return encodedRawString;
+            
+            StringBuilder builder = new StringBuilder(encodedRawString.Length);
+            int index = 0, remainingLen = encodedRawString.Length;
+            while (remainingLen > 76)
+            {
+                builder.Append(encodedRawString, index, 76);
+                builder.Append(System.Environment.NewLine);
+
+                index += 76;
+                remainingLen -= 76;
+            }
+
+            builder.Append(encodedRawString, index, remainingLen);
+            return builder.ToString();
+#else
+            return Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);
+#endif
+        }
 
         /// <summary>
         /// Facade for RemotingServices.IsTransparentProxy(object)
@@ -599,11 +943,11 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Facade for FormatterServices.GetUninitializedObject.
-        /// 
+        ///
         /// In CORECLR, there are two peculiarities with its implementation that affect our own:
         /// 1. Structures cannot be instantiated using GetConstructor, so they must be filtered out.
         /// 2. Classes must have a default constructor implemented for GetConstructor to work.
-        /// 
+        ///
         /// See RemoteHostEncoder.IsEncodingAllowedForClassOrStruct for a list of the required types.
         /// </summary>
         /// <param name="type"></param>

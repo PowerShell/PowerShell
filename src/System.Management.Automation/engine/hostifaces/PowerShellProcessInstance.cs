@@ -13,7 +13,7 @@ using System.Diagnostics;
 namespace System.Management.Automation.Runspaces
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public sealed class PowerShellProcessInstance : IDisposable
     {
@@ -32,16 +32,21 @@ namespace System.Management.Automation.Runspaces
         #region Constructors
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         static PowerShellProcessInstance()
         {
+#if UNIX
+            s_PSExePath = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID),
+                            "powershell");
+#else
             s_PSExePath = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID),
                             "powershell.exe");
+#endif
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="powerShellVersion"></param>
         /// <param name="credential"></param>
@@ -71,17 +76,21 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
-            string processArguments = string.Empty;
+#if CORECLR
+            string processArguments = " -s -NoLogo -NoProfile";
+#else
             // Adding Version parameter to powershell.exe
-            // Version parameter needs to go before all other parameters because the native layer looks for Version or 
+            // Version parameter needs to go before all other parameters because the native layer looks for Version or
             // PSConsoleFile parameters before parsing other parameters.
             // The other parameters get parsed in the managed layer.
             Version tempVersion = powerShellVersion ?? PSVersionInfo.PSVersion;
-            processArguments = string.Format(CultureInfo.InvariantCulture,
+            string processArguments = string.Format(CultureInfo.InvariantCulture,
                        "-Version {0}", new Version(tempVersion.Major, tempVersion.Minor));
 
             processArguments = string.Format(CultureInfo.InvariantCulture,
                 "{0} -s -NoLogo -NoProfile", processArguments);
+
+#endif
 
             if (initializationScript != null)
             {
@@ -106,7 +115,9 @@ namespace System.Management.Automation.Runspaces
                 RedirectStandardOutput = true,
                 RedirectStandardError = true,
                 CreateNoWindow = true,
+#if !UNIX
                 LoadUserProfile = true,
+#endif
             };
 
             if (credential != null)
@@ -126,7 +137,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public PowerShellProcessInstance() : this(null, null, null, false)
         {
@@ -141,8 +152,8 @@ namespace System.Management.Automation.Runspaces
             get
             {
                 // When process is exited, there is some delay in receiving ProcessExited event and HasExited property on process object.
-                // Using HasExited property on started process object to determine if powershell process has exited. 
-                //                
+                // Using HasExited property on started process object to determine if powershell process has exited.
+                //
                 return _processExited || (_started && Process != null && Process.HasExited);
             }
         }
@@ -151,7 +162,7 @@ namespace System.Management.Automation.Runspaces
 
         #region Dispose
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public void Dispose()
         {
@@ -159,7 +170,7 @@ namespace System.Management.Automation.Runspaces
             GC.SuppressFinalize(this);
         }
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="disposing"></param>
         private void Dispose(bool disposing)
@@ -194,7 +205,7 @@ namespace System.Management.Automation.Runspaces
 
         #region Public Properties
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Process Process { get; }
 

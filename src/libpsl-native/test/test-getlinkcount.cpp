@@ -29,7 +29,7 @@ protected:
 
         int fd = mkstemp(fileTemplateBuf);
         EXPECT_TRUE(fd != -1);
-	file = fileTemplateBuf;
+        file = fileTemplateBuf;
     }
 
     void createFileForTesting(const std::string &theFile)
@@ -43,50 +43,43 @@ protected:
     std::string createHardLink(const std::string &origFile)
     {
         std::string newFile = origFile + "_link";
-	int ret = link(origFile.c_str(), newFile.c_str());
+        int ret = link(origFile.c_str(), newFile.c_str());
         EXPECT_EQ(0, ret);
 
-	return newFile;
+        return newFile;
     }
 
     void removeFile(const std::string &fileName)
     {
         int ret = unlink(fileName.c_str());
-	EXPECT_EQ(0, ret);
+        EXPECT_EQ(0, ret);
     }
 };
-
-TEST_F(getLinkCountTest, FilePathNameIsNull)
-{
-    int32_t retVal = GetLinkCount(NULL, &count );
-    ASSERT_FALSE(retVal);
-    EXPECT_EQ(ERROR_INVALID_PARAMETER, errno);
-}
 
 TEST_F(getLinkCountTest, FilePathNameDoesNotExist)
 {
     std::string invalidFile = "/tmp/createFile";
-    int32_t retVal = GetLinkCount(invalidFile.c_str(), &count);
-    ASSERT_FALSE(retVal);
-    EXPECT_EQ(ERROR_FILE_NOT_FOUND, errno);
+    int32_t ret = GetLinkCount(invalidFile.c_str(), &count);
+    ASSERT_EQ(-1, ret);
+    EXPECT_EQ(ENOENT, errno);
 }
 
 TEST_F(getLinkCountTest, LinkCountOfSinglyLinkedFile)
 {
     createFileForTesting(file);
-    int32_t retVal = GetLinkCount(file, &count);
-    ASSERT_TRUE(retVal);
+    int32_t ret = GetLinkCount(file, &count);
+    ASSERT_EQ(0, ret);
     EXPECT_EQ(1, count);
 
     removeFile(file);
 }
 
-TEST_F(getLinkCountTest, LinkCountOfMultipliLinkedFile)
+TEST_F(getLinkCountTest, LinkCountOfMultiplyLinkedFile)
 {
     createFileForTesting(file);
     std::string newFile = createHardLink(file);
-    int32_t retVal = GetLinkCount(file, &count);
-    ASSERT_TRUE(retVal);
+    int32_t ret = GetLinkCount(file, &count);
+    ASSERT_EQ(0, ret);
     EXPECT_EQ(2, count);
 
     removeFile(file);

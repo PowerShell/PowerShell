@@ -1,8 +1,151 @@
 Changelog
 =========
 
-Unreleased
-----------
+v6.0.0-alpha.17 - 2017-03-08
+----------------------------
+- Update PSRP client libraries for Linux and Mac.
+  - We now support customer configurations for Office 365 interaction, as well as NTLM authentication for WSMan-based remoting from Linux (more information [here](https://github.com/PowerShell/psl-omi-provider/releases/tag/v1.0.0.18)). (#3271)
+- We now support remote step-in debugging for `Invoke-Command -ComputerName`. (#3015)
+- Use prettier formatter with `ConvertTo-Json` output. (#2787) (Thanks to @kittholland!)
+- Port `*-CmsMessage` and `Get-PfxCertificate` cmdlets to Powershell Core. (#3224)
+- `powershell -version` now returns version information for PowerShell Core. (#3115)
+- Add the `-TimeOut` parameter to `Test-Connection`. (#2492)
+- Add `ShouldProcess` support to `New-FileCatalog` and `Test-FileCatalog` (fixes `-WhatIf` and `-Confirm`). (#3074) (Thanks to @iSazonov!)
+- Fix `Test-ModuleManifest` to normalize paths correctly before validating.
+  - This fixes some problems when using `Publish-Module` on non-Windows platforms. (#3097)
+- Remove the `AliasProperty "Count"` defined for `System.Array`.
+  - This removes the extraneous `Count` property on some `ConvertFrom-Json` output. (#3231) (Thanks to @PetSerAl!)
+- Port `Import-PowerShellDatafile` from PowerShell script to C#. (#2750) (Thanks to @powercode!)
+- Add `-CustomMethod` paramter to web cmdlets to allow for non-standard method verbs. (#3142) (Thanks to @Lee303!)
+- Fix web cmdlets to include the HTTP response in the exception when the response status code is not success. (#3201)
+- Expose a process' parent process by adding the `CodeProperty "Parent"` to `System.Diagnostics.Process`. (#2850) (Thanks to @powercode!)
+- Fix crash when converting a recursive array to a bool. (#3208) (Thanks to @PetSerAl!)
+- Fix casting single element array to a generic collection. (#3170)
+- Allow profile directory creation failures for Service Account scenarios. (#3244)
+- Allow Windows' reserved device names (e.g. CON, PRN, AUX, etc.) to be used on non-Windows platforms. (#3252)
+- Remove duplicate type definitions when reusing an `InitialSessionState` object to create another Runspace. (#3141)
+- Fix `PSModuleInfo.CaptureLocals` to not do `ValidateAttribute` check when capturing existing variables from the caller's scope. (#3149)
+- Fix a race bug in WSMan command plugin instance close operation. (#3203)
+- Fix a problem where newly mounted volumes aren't available to modules that have already been loaded. (#3034)
+- Remove year from PowerShell copyright banner at startup. (#3204) (Thanks to @kwiknick!)
+- Fixed spelling for the property name `BiosSerialNumber` for `Get-ComputerInfo`. (#3167) (Thanks to @iSazonov!)
+
+v6.0.0-alpha.16 - 2017-02-15
+----------------------------
+- Add `WindowsUBR` property to `Get-ComputerInfo` result
+- Cache padding strings to speed up formatting a little
+- Add alias `Path` to the `-FilePath` parameter of `Out-File`
+- Fix the `-InFile` parameter of `Invoke-WebRequest`
+- Add the default help content to powershell core
+- Speed up `Add-Type` by crossgen'ing its dependency assemblies
+- Convert `Get-FileHash` from script to C# implementation
+- Fix lock contention when compiling the code to run in interpreter
+- Avoid going through WinRM remoting stack when using `Get-ComputerInfo` locally
+- Fix native parameter auto-completion for tokens that begin with a single "Dash"
+- Fix parser error reporting for incompleted input to allow defining class in interactive host
+- Add the `RoleCapabilityFiles` keyword for JEA support on Windows
+
+v6.0.0-alpha.15 - 2017-01-18
+----------------------------
+- Use parens around file length for offline files
+- Fix issues with the Windows console mode (terminal emulation) and native executables
+- Fix error recovery with `using module`
+- Report `PlatformNotSupported` on IoT for Get/Import/Export-Counter
+- Add `-Group` parameter to `Get-Verb`
+- Use MB instead of KB for memory columns of `Get-Process`
+- Add new escape character for ESC: `` `e``
+- Fix a small parsing issue with a here string
+- Improve tab completion of types that use type accelerators
+- `Invoke-RestMethod` improvements for non-XML non-JSON input
+- PSRP remoting now works on CentOS without addition setup
+
+v6.0.0-alpha.14 - 2016-12-14
+----------------------------
+- Moved to .NET Core 1.1
+- Add Windows performance counter cmdlets to PowerShell Core
+- Fix try/catch to choose the more specific exception handler
+- Fix issue reloading modules that define PowerShell classes
+- `Add ValidateNotNullOrEmpty` to approximately 15 parameters
+- `New-TemporaryFile` and `New-Guid` rewritten in C#
+- Enable client side PSRP on non-Windows platforms
+- `Split-Path` now works with UNC roots
+- Implicitly convert value assigned to XML property to string
+- Updates to `Invoke-Command` parameters when using SSH remoting transport
+- Fix `Invoke-WebRequest` with non-text responses on non-Windows platforms
+- `Write-Progress` performance improvement from `alpha13` reverted because it introduced crash with a race condition
+
+v6.0.0-alpha.13 - 2016-11-22
+----------------------------
+- Fix `NullReferenceException` in binder after turning on constrained language mode
+- Enable `Invoke-WebRequest` and `Invoke-RestMethod` to not validate the HTTPS certificate of the server if required.
+- Enable binder debug logging in PowerShell Core
+- Add parameters `-Top` and `-Bottom` to `Sort-Object` for Top/Bottom N sort
+- Enable `Update-Help` and `Save-Help` on Unix platforms
+- Update the formatter for `System.Diagnostics.Process` to not show the `Handles` column
+- Improve `Write-Progress` performance by adding timer to update a progress pane every 100 ms
+- Enable correct table width calculations with ANSI escape sequences on Unix
+- Fix background jobs for Unix and Windows
+- Add `Get-Uptime` to `Microsoft.PowerShell.Utility`
+- Make `Out-Null` as fast as `> $null`
+- Add Dockerfile for windowsservercore and NanoServer
+- Fix WebRequest failure to handle missing ContentType in response header
+- Make `Write-Host` fast by delay initializing some properties in InformationRecord
+- Ensure PowerShell Core adds an initial `/` rooted drive on Unix platforms
+- Enable streaming behavior for native command execution in pipeline, so that `ping | grep` doesn't block
+- Make `Write-Information` accept objects from pipeline
+- Fixes deprecated syscall issue on macOS 10.12
+- Fix code errors found by the static analysis using PVS-Studio
+- Add support to W3C Extended Log File Format in `Import-Csv`
+- Guard against `ReflectionTypeLoadException` in type name auto-completion
+- Update build scripts to support win7-x86 runtime
+- Move PackageManagement code/test to oneget.org
+
+v6.0.0-alpha.12 - 2016-11-03
+----------------------------
+- Fix `Get-ChildItem -Recurse -ErrorAction Ignore` to ignore additional errors
+- Don't block pipeline when running Windows exes
+- Fix for PowerShell SSH remoting with recent Win32-OpenSSH change.
+- `Select-Object` with `-ExcludeProperty` now implies `-Property *` if -Property is not specified.
+- Adding ValidateNotNullOrEmpty to `-Name` parameter of `Get-Alias`
+- Enable Implicit remoting commands in PowerShell Core
+- Fix GetParentProcess() to replace an expensive WMI query with Win32 API calls
+- Fix `Set-Content` failure to create a file in PSDrive under certain conditions.
+- Adding ValidateNotNullOrEmpty to `-Name` parameter of `Get-Service`
+- Adding support <Suppress> in `Get-WinEvent -FilterHashtable`
+- Adding WindowsVersion to `Get-ComputerInfo`
+- Remove the unnecessary use of lock in PseudoParameterBinder to avoid deadlock
+- Refactor `Get-WinEvent` to use StringBuilder for XPath query construction
+- Clean up and fix error handling of libpsl-native
+- Exclude Registry and Certificate providers from UNIX PS
+- Update PowerShell Core to consume .Net Core preview1-24530-04
+
+v6.0.0-alpha.11 - 2016-10-17
+----------------------------
+- Add '-Title' to 'Get-Credential' and unify the prompt experience
+- Update dependency list for PowerShell Core on Linux and OS X
+- Fix 'powershell -Command -' to not hang and to not ignore the last command
+- Fix binary operator tab completion
+- Enable 'ConvertTo-Html' in PowerShell Core
+- Remove most Maximum* capacity variables
+- Fix 'Get-ChildItem -Hidden' to work on system hidden files on Windows
+- Fix 'JsonConfigFileAccessor' to handle corrupted 'PowerShellProperties.json'
+and defer creating the user setting directory until a write request comes
+- Fix variable assignment to not overwrite readonly variables
+- Fix 'Get-WinEvent -FilterHashtable' to work with named fields in UserData of event logs
+- Fix 'Get-Help -Online' in PowerShell Core on Windows
+- Spelling/grammar fixes
+
+v6.0.0-alpha.10 - 2016-09-15
+----------------------------
+- Fix passing escaped double quoted spaces to native executables
+- Add Dockerfiles to build each Linux distribution
+- `~/.config/PowerShell` capitalization bug fixed
+- Fix crash on Windows 7
+- Fix remote debugging on Windows client
+- Fix multi-line input with redirected stdin
+- Add PowerShell to `/etc/shells` on installation
+- Fix `Install-Module` version comparison bug
+- Spelling fixes
 
 v6.0.0-alpha.9 - 2016-08-15
 ---------------------------

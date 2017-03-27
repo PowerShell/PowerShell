@@ -128,15 +128,15 @@ Kenneth MacKay and Emergya (Cloud4all, FP7/2007-2013, grant agreement
 
 
 ----------------------------------------------------
-	dotnet-test-xunit 2.2.0-preview2-build1029
-	xunit
-	xunit.abstractions
-	xunit.assert
-	xunit.core
-	xunit.extensibility.core
-	xunit.extensibility.execution
-	xunit.runner.reporters
-	xunit.runner.utility
+•	dotnet-test-xunit 2.2.0-preview2-build1029
+•	xunit
+•	xunit.abstractions
+•	xunit.assert
+•	xunit.core
+•	xunit.extensibility.core
+•	xunit.extensibility.execution
+•	xunit.runner.reporters
+•	xunit.runner.utility
 ----------------------------------------------------
 
 https://www.nuget.org/packages
@@ -157,261 +157,261 @@ limitations under the License.
 
 
 --------------------------------------------------
-	Microsoft.CodeAnalysis.Analyzers
-	Microsoft.CodeAnalysis.Common
-	Microsoft.CodeAnalysis.CSharp
-	Microsoft.CodeAnalysis.VisualBasic
-	Microsoft.CSharp
-	Microsoft.DiaSymReader
-	Microsoft.DiaSymReader.Native
-	Microsoft.DotNet.Cli.Utils
-	Microsoft.DotNet.InternalAbstractions
-	Microsoft.DotNet.ProjectModel
-	Microsoft.Extensions.DependencyModel
-	Microsoft.Extensions.Testing.Abstractions
-	Microsoft.NETCore
-	Microsoft.NETCore.App
-	Microsoft.NETCore.DotNetHost
-	Microsoft.NETCore.DotNetHostPolicy
-	Microsoft.NETCore.DotNetHostResolver
-	Microsoft.NETCore.Jit
-	Microsoft.NETCore.Platforms
-	Microsoft.NETCore.Portable.Compatibility
-	Microsoft.NETCore.Runtime
-	Microsoft.NETCore.Runtime.CoreCLR
-	Microsoft.NETCore.Runtime.Native
-	Microsoft.NETCore.Targets
-	Microsoft.NETCore.Windows.ApiSets
-	Microsoft.VisualBasic
-	Microsoft.Win32.Primitives
-	Microsoft.Win32.Registry
-	Microsoft.Win32.Registry.AccessControl
-	NETStandard.Library
-	runtime.any.System.Collections
-	runtime.any.System.Diagnostics.Tools
-	runtime.any.System.Diagnostics.Tracing
-	runtime.any.System.Globalization
-	runtime.any.System.Globalization.Calendars
-	runtime.any.System.IO
-	runtime.any.System.Reflection
-	runtime.any.System.Reflection.Extensions
-	runtime.any.System.Reflection.Primitives
-	runtime.any.System.Resources.ResourceManager
-	runtime.any.System.Runtime
-	runtime.any.System.Runtime.Handles
-	runtime.any.System.Runtime.InteropServices
-	runtime.any.System.Text.Encoding
-	runtime.any.System.Text.Encoding.Extensions
-	runtime.any.System.Threading.Tasks
-	runtime.any.System.Threading.Timer
-	runtime.debian.8-x64.Microsoft.NETCore.DotNetHost
-	runtime.debian.8-x64.Microsoft.NETCore.DotNetHostPolicy
-	runtime.debian.8-x64.Microsoft.NETCore.DotNetHostResolver
-	runtime.debian.8-x64.Microsoft.NETCore.Jit
-	runtime.debian.8-x64.Microsoft.NETCore.Runtime.CoreCLR
-	runtime.debian.8-x64.runtime.native.System
-	runtime.debian.8-x64.runtime.native.System.IO.Compression
-	runtime.debian.8-x64.runtime.native.System.Net.Http
-	runtime.debian.8-x64.runtime.native.System.Net.Security
-	runtime.debian.8-x64.runtime.native.System.Security.Cryptography
-	runtime.native.System
-	runtime.native.System.Data.SqlClient.sni
-	runtime.native.System.IO.Compression
-	runtime.native.System.Net.Http
-	runtime.native.System.Net.Security
-	runtime.native.System.Security.Cryptography
-	runtime.osx.10.10-x64.Microsoft.NETCore.DotNetHost
-	runtime.osx.10.10-x64.Microsoft.NETCore.DotNetHostPolicy
-	runtime.osx.10.10-x64.Microsoft.NETCore.DotNetHostResolver
-	runtime.osx.10.10-x64.Microsoft.NETCore.Jit
-	runtime.osx.10.10-x64.Microsoft.NETCore.Runtime.CoreCLR
-	runtime.osx.10.10-x64.runtime.native.System
-	runtime.osx.10.10-x64.runtime.native.System.IO.Compression
-	runtime.osx.10.10-x64.runtime.native.System.Net.Http
-	runtime.osx.10.10-x64.runtime.native.System.Net.Security
-	runtime.osx.10.10-x64.runtime.native.System.Security.Cryptography
-	runtime.rhel.7-x64.Microsoft.NETCore.DotNetHost
-	runtime.rhel.7-x64.Microsoft.NETCore.DotNetHostPolicy
-	runtime.rhel.7-x64.Microsoft.NETCore.DotNetHostResolver
-	runtime.rhel.7-x64.Microsoft.NETCore.Jit
-	runtime.rhel.7-x64.Microsoft.NETCore.Runtime.CoreCLR
-	runtime.rhel.7-x64.runtime.native.System
-	runtime.rhel.7-x64.runtime.native.System.IO.Compression
-	runtime.rhel.7-x64.runtime.native.System.Net.Http
-	runtime.rhel.7-x64.runtime.native.System.Net.Security
-	runtime.rhel.7-x64.runtime.native.System.Security.Cryptography
-	runtime.ubuntu.14.04-x64.Microsoft.NETCore.DotNetHost
-	runtime.ubuntu.14.04-x64.Microsoft.NETCore.DotNetHostPolicy
-	runtime.ubuntu.14.04-x64.Microsoft.NETCore.DotNetHostResolver
-	runtime.ubuntu.14.04-x64.Microsoft.NETCore.Jit
-	runtime.ubuntu.14.04-x64.Microsoft.NETCore.Runtime.CoreCLR
-	runtime.ubuntu.14.04-x64.runtime.native.System
-	runtime.ubuntu.14.04-x64.runtime.native.System.IO.Compression
-	runtime.ubuntu.14.04-x64.runtime.native.System.Net.Http
-	runtime.ubuntu.14.04-x64.runtime.native.System.Net.Security
-	runtime.ubuntu.14.04-x64.runtime.native.System.Security.Cryptography
-	runtime.ubuntu.16.04-x64.Microsoft.NETCore.DotNetHost
-	runtime.ubuntu.16.04-x64.Microsoft.NETCore.DotNetHostPolicy
-	runtime.ubuntu.16.04-x64.Microsoft.NETCore.DotNetHostResolver
-	runtime.ubuntu.16.04-x64.Microsoft.NETCore.Jit
-	runtime.ubuntu.16.04-x64.Microsoft.NETCore.Runtime.CoreCLR
-	runtime.ubuntu.16.04-x64.runtime.native.System
-	runtime.ubuntu.16.04-x64.runtime.native.System.IO.Compression
-	runtime.ubuntu.16.04-x64.runtime.native.System.Net.Http
-	runtime.ubuntu.16.04-x64.runtime.native.System.Net.Security
-	runtime.ubuntu.16.04-x64.runtime.native.System.Security.Cryptography
-	runtime.unix.Microsoft.Win32.Primitives
-	runtime.unix.System.Console
-	runtime.unix.System.Diagnostics.Debug
-	runtime.unix.System.IO.FileSystem
-	runtime.unix.System.Net.Primitives
-	runtime.unix.System.Net.Sockets
-	runtime.unix.System.Private.Uri
-	runtime.unix.System.Runtime.Extensions
-	runtime.win.Microsoft.Win32.Primitives
-	runtime.win.System.Console
-	runtime.win.System.Diagnostics.Debug
-	runtime.win.System.IO.FileSystem
-	runtime.win.System.Net.Primitives
-	runtime.win.System.Net.Sockets
-	runtime.win.System.Runtime.Extensions
-	runtime.win7-x64.Microsoft.NETCore.DotNetHost
-	runtime.win7-x64.Microsoft.NETCore.DotNetHostPolicy
-	runtime.win7-x64.Microsoft.NETCore.DotNetHostResolver
-	runtime.win7-x64.Microsoft.NETCore.Jit
-	runtime.win7-x64.Microsoft.NETCore.Runtime.CoreCLR
-	runtime.win7-x64.Microsoft.NETCore.Windows.ApiSets
-	runtime.win7-x64.runtime.native.System.Data.SqlClient.sni
-	runtime.win7-x64.runtime.native.System.IO.Compression
-	runtime.win7-x86.runtime.native.System.Data.SqlClient.sni
-	runtime.win7.System.Private.Uri
-	runtime.win81-x64.Microsoft.NETCore.Windows.ApiSets
-	System.AppContext
-	System.Buffers
-	System.Collections
-	System.Collections.Concurrent
-	System.Collections.Immutable
-	System.Collections.NonGeneric
-	System.Collections.Specialized
-	System.ComponentModel
-	System.ComponentModel.Annotations
-	System.ComponentModel.EventBasedAsync
-	System.ComponentModel.Primitives
-	System.ComponentModel.TypeConverter
-	System.Console
-	System.Data.Common
-	System.Data.SqlClient
-	System.Diagnostics.Contracts
-	System.Diagnostics.Debug
-	System.Diagnostics.DiagnosticSource
-	System.Diagnostics.FileVersionInfo
-	System.Diagnostics.Process
-	System.Diagnostics.StackTrace
-	System.Diagnostics.TextWriterTraceListener
-	System.Diagnostics.Tools
-	System.Diagnostics.TraceSource
-	System.Diagnostics.Tracing
-	System.Dynamic.Runtime
-	System.Globalization
-	System.Globalization.Calendars
-	System.Globalization.Extensions
-	System.IO
-	System.IO.Compression
-	System.IO.Compression.ZipFile
-	System.IO.FileSystem
-	System.IO.FileSystem.AccessControl
-	System.IO.FileSystem.DriveInfo
-	System.IO.FileSystem.Primitives
-	System.IO.FileSystem.Watcher
-	System.IO.MemoryMappedFiles
-	System.IO.Packaging
-	System.IO.Pipes
-	System.IO.UnmanagedMemoryStream
-	System.Linq
-	System.Linq.Expressions
-	System.Linq.Parallel
-	System.Linq.Queryable
-	System.Net.Http
-	System.Net.Http.WinHttpHandler
-	System.Net.NameResolution
-	System.Net.NetworkInformation
-	System.Net.Ping
-	System.Net.Primitives
-	System.Net.Requests
-	System.Net.Security
-	System.Net.Sockets
-	System.Net.WebHeaderCollection
-	System.Net.WebSockets
-	System.Net.WebSockets.Client
-	System.Numerics.Vectors
-	System.ObjectModel
-	System.Private.DataContractSerialization
-	System.Private.ServiceModel
-	System.Private.Uri
-	System.Reflection
-	System.Reflection.DispatchProxy
-	System.Reflection.Emit
-	System.Reflection.Emit.ILGeneration
-	System.Reflection.Emit.Lightweight
-	System.Reflection.Extensions
-	System.Reflection.Metadata
-	System.Reflection.Primitives
-	System.Reflection.TypeExtensions
-	System.Resources.Reader
-	System.Resources.ResourceManager
-	System.Runtime
-	System.Runtime.CompilerServices.VisualC
-	System.Runtime.Extensions
-	System.Runtime.Handles
-	System.Runtime.InteropServices
-	System.Runtime.InteropServices.PInvoke
-	System.Runtime.InteropServices.RuntimeInformation
-	System.Runtime.Loader
-	System.Runtime.Numerics
-	System.Runtime.Serialization.Json
-	System.Runtime.Serialization.Primitives
-	System.Runtime.Serialization.Xml
-	System.Security.AccessControl
-	System.Security.Claims
-	System.Security.Cryptography.Algorithms
-	System.Security.Cryptography.Cng
-	System.Security.Cryptography.Csp
-	System.Security.Cryptography.Encoding
-	System.Security.Cryptography.OpenSsl
-	System.Security.Cryptography.Pkcs
-	System.Security.Cryptography.Primitives
-	System.Security.Cryptography.X509Certificates
-	System.Security.Principal
-	System.Security.Principal.Windows
-	System.Security.SecureString
-	System.ServiceModel.Duplex
-	System.ServiceModel.Http
-	System.ServiceModel.NetTcp
-	System.ServiceModel.Primitives
-	System.ServiceModel.Security
-	System.ServiceProcess.ServiceController
-	System.Text.Encoding
-	System.Text.Encoding.CodePages
-	System.Text.Encoding.Extensions
-	System.Text.Encodings.Web
-	System.Text.RegularExpressions
-	System.Threading
-	System.Threading.AccessControl
-	System.Threading.Overlapped
-	System.Threading.Tasks
-	System.Threading.Tasks.Dataflow
-	System.Threading.Tasks.Extensions
-	System.Threading.Tasks.Parallel
-	System.Threading.Thread
-	System.Threading.ThreadPool
-	System.Threading.Timer
-	System.Xml.ReaderWriter
-	System.Xml.XDocument
-	System.Xml.XmlDocument
-	System.Xml.XmlSerializer
-	System.Xml.XPath
-	System.Xml.XPath.XDocument
-	System.Xml.XPath.XmlDocument
+•	Microsoft.CodeAnalysis.Analyzers
+•	Microsoft.CodeAnalysis.Common
+•	Microsoft.CodeAnalysis.CSharp
+•	Microsoft.CodeAnalysis.VisualBasic
+•	Microsoft.CSharp
+•	Microsoft.DiaSymReader
+•	Microsoft.DiaSymReader.Native
+•	Microsoft.DotNet.Cli.Utils
+•	Microsoft.DotNet.InternalAbstractions
+•	Microsoft.DotNet.ProjectModel
+•	Microsoft.Extensions.DependencyModel
+•	Microsoft.Extensions.Testing.Abstractions
+•	Microsoft.NETCore
+•	Microsoft.NETCore.App
+•	Microsoft.NETCore.DotNetHost
+•	Microsoft.NETCore.DotNetHostPolicy
+•	Microsoft.NETCore.DotNetHostResolver
+•	Microsoft.NETCore.Jit
+•	Microsoft.NETCore.Platforms
+•	Microsoft.NETCore.Portable.Compatibility
+•	Microsoft.NETCore.Runtime
+•	Microsoft.NETCore.Runtime.CoreCLR
+•	Microsoft.NETCore.Runtime.Native
+•	Microsoft.NETCore.Targets
+•	Microsoft.NETCore.Windows.ApiSets
+•	Microsoft.VisualBasic
+•	Microsoft.Win32.Primitives
+•	Microsoft.Win32.Registry
+•	Microsoft.Win32.Registry.AccessControl
+•	NETStandard.Library
+•	runtime.any.System.Collections
+•	runtime.any.System.Diagnostics.Tools
+•	runtime.any.System.Diagnostics.Tracing
+•	runtime.any.System.Globalization
+•	runtime.any.System.Globalization.Calendars
+•	runtime.any.System.IO
+•	runtime.any.System.Reflection
+•	runtime.any.System.Reflection.Extensions
+•	runtime.any.System.Reflection.Primitives
+•	runtime.any.System.Resources.ResourceManager
+•	runtime.any.System.Runtime
+•	runtime.any.System.Runtime.Handles
+•	runtime.any.System.Runtime.InteropServices
+•	runtime.any.System.Text.Encoding
+•	runtime.any.System.Text.Encoding.Extensions
+•	runtime.any.System.Threading.Tasks
+•	runtime.any.System.Threading.Timer
+•	runtime.debian.8-x64.Microsoft.NETCore.DotNetHost
+•	runtime.debian.8-x64.Microsoft.NETCore.DotNetHostPolicy
+•	runtime.debian.8-x64.Microsoft.NETCore.DotNetHostResolver
+•	runtime.debian.8-x64.Microsoft.NETCore.Jit
+•	runtime.debian.8-x64.Microsoft.NETCore.Runtime.CoreCLR
+•	runtime.debian.8-x64.runtime.native.System
+•	runtime.debian.8-x64.runtime.native.System.IO.Compression
+•	runtime.debian.8-x64.runtime.native.System.Net.Http
+•	runtime.debian.8-x64.runtime.native.System.Net.Security
+•	runtime.debian.8-x64.runtime.native.System.Security.Cryptography
+•	runtime.native.System
+•	runtime.native.System.Data.SqlClient.sni
+•	runtime.native.System.IO.Compression
+•	runtime.native.System.Net.Http
+•	runtime.native.System.Net.Security
+•	runtime.native.System.Security.Cryptography
+•	runtime.osx.10.10-x64.Microsoft.NETCore.DotNetHost
+•	runtime.osx.10.10-x64.Microsoft.NETCore.DotNetHostPolicy
+•	runtime.osx.10.10-x64.Microsoft.NETCore.DotNetHostResolver
+•	runtime.osx.10.10-x64.Microsoft.NETCore.Jit
+•	runtime.osx.10.10-x64.Microsoft.NETCore.Runtime.CoreCLR
+•	runtime.osx.10.10-x64.runtime.native.System
+•	runtime.osx.10.10-x64.runtime.native.System.IO.Compression
+•	runtime.osx.10.10-x64.runtime.native.System.Net.Http
+•	runtime.osx.10.10-x64.runtime.native.System.Net.Security
+•	runtime.osx.10.10-x64.runtime.native.System.Security.Cryptography
+•	runtime.rhel.7-x64.Microsoft.NETCore.DotNetHost
+•	runtime.rhel.7-x64.Microsoft.NETCore.DotNetHostPolicy
+•	runtime.rhel.7-x64.Microsoft.NETCore.DotNetHostResolver
+•	runtime.rhel.7-x64.Microsoft.NETCore.Jit
+•	runtime.rhel.7-x64.Microsoft.NETCore.Runtime.CoreCLR
+•	runtime.rhel.7-x64.runtime.native.System
+•	runtime.rhel.7-x64.runtime.native.System.IO.Compression
+•	runtime.rhel.7-x64.runtime.native.System.Net.Http
+•	runtime.rhel.7-x64.runtime.native.System.Net.Security
+•	runtime.rhel.7-x64.runtime.native.System.Security.Cryptography
+•	runtime.ubuntu.14.04-x64.Microsoft.NETCore.DotNetHost
+•	runtime.ubuntu.14.04-x64.Microsoft.NETCore.DotNetHostPolicy
+•	runtime.ubuntu.14.04-x64.Microsoft.NETCore.DotNetHostResolver
+•	runtime.ubuntu.14.04-x64.Microsoft.NETCore.Jit
+•	runtime.ubuntu.14.04-x64.Microsoft.NETCore.Runtime.CoreCLR
+•	runtime.ubuntu.14.04-x64.runtime.native.System
+•	runtime.ubuntu.14.04-x64.runtime.native.System.IO.Compression
+•	runtime.ubuntu.14.04-x64.runtime.native.System.Net.Http
+•	runtime.ubuntu.14.04-x64.runtime.native.System.Net.Security
+•	runtime.ubuntu.14.04-x64.runtime.native.System.Security.Cryptography
+•	runtime.ubuntu.16.04-x64.Microsoft.NETCore.DotNetHost
+•	runtime.ubuntu.16.04-x64.Microsoft.NETCore.DotNetHostPolicy
+•	runtime.ubuntu.16.04-x64.Microsoft.NETCore.DotNetHostResolver
+•	runtime.ubuntu.16.04-x64.Microsoft.NETCore.Jit
+•	runtime.ubuntu.16.04-x64.Microsoft.NETCore.Runtime.CoreCLR
+•	runtime.ubuntu.16.04-x64.runtime.native.System
+•	runtime.ubuntu.16.04-x64.runtime.native.System.IO.Compression
+•	runtime.ubuntu.16.04-x64.runtime.native.System.Net.Http
+•	runtime.ubuntu.16.04-x64.runtime.native.System.Net.Security
+•	runtime.ubuntu.16.04-x64.runtime.native.System.Security.Cryptography
+•	runtime.unix.Microsoft.Win32.Primitives
+•	runtime.unix.System.Console
+•	runtime.unix.System.Diagnostics.Debug
+•	runtime.unix.System.IO.FileSystem
+•	runtime.unix.System.Net.Primitives
+•	runtime.unix.System.Net.Sockets
+•	runtime.unix.System.Private.Uri
+•	runtime.unix.System.Runtime.Extensions
+•	runtime.win.Microsoft.Win32.Primitives
+•	runtime.win.System.Console
+•	runtime.win.System.Diagnostics.Debug
+•	runtime.win.System.IO.FileSystem
+•	runtime.win.System.Net.Primitives
+•	runtime.win.System.Net.Sockets
+•	runtime.win.System.Runtime.Extensions
+•	runtime.win7-x64.Microsoft.NETCore.DotNetHost
+•	runtime.win7-x64.Microsoft.NETCore.DotNetHostPolicy
+•	runtime.win7-x64.Microsoft.NETCore.DotNetHostResolver
+•	runtime.win7-x64.Microsoft.NETCore.Jit
+•	runtime.win7-x64.Microsoft.NETCore.Runtime.CoreCLR
+•	runtime.win7-x64.Microsoft.NETCore.Windows.ApiSets
+•	runtime.win7-x64.runtime.native.System.Data.SqlClient.sni
+•	runtime.win7-x64.runtime.native.System.IO.Compression
+•	runtime.win7-x86.runtime.native.System.Data.SqlClient.sni
+•	runtime.win7.System.Private.Uri
+•	runtime.win81-x64.Microsoft.NETCore.Windows.ApiSets
+•	System.AppContext
+•	System.Buffers
+•	System.Collections
+•	System.Collections.Concurrent
+•	System.Collections.Immutable
+•	System.Collections.NonGeneric
+•	System.Collections.Specialized
+•	System.ComponentModel
+•	System.ComponentModel.Annotations
+•	System.ComponentModel.EventBasedAsync
+•	System.ComponentModel.Primitives
+•	System.ComponentModel.TypeConverter
+•	System.Console
+•	System.Data.Common
+•	System.Data.SqlClient
+•	System.Diagnostics.Contracts
+•	System.Diagnostics.Debug
+•	System.Diagnostics.DiagnosticSource
+•	System.Diagnostics.FileVersionInfo
+•	System.Diagnostics.Process
+•	System.Diagnostics.StackTrace
+•	System.Diagnostics.TextWriterTraceListener
+•	System.Diagnostics.Tools
+•	System.Diagnostics.TraceSource
+•	System.Diagnostics.Tracing
+•	System.Dynamic.Runtime
+•	System.Globalization
+•	System.Globalization.Calendars
+•	System.Globalization.Extensions
+•	System.IO
+•	System.IO.Compression
+•	System.IO.Compression.ZipFile
+•	System.IO.FileSystem
+•	System.IO.FileSystem.AccessControl
+•	System.IO.FileSystem.DriveInfo
+•	System.IO.FileSystem.Primitives
+•	System.IO.FileSystem.Watcher
+•	System.IO.MemoryMappedFiles
+•	System.IO.Packaging
+•	System.IO.Pipes
+•	System.IO.UnmanagedMemoryStream
+•	System.Linq
+•	System.Linq.Expressions
+•	System.Linq.Parallel
+•	System.Linq.Queryable
+•	System.Net.Http
+•	System.Net.Http.WinHttpHandler
+•	System.Net.NameResolution
+•	System.Net.NetworkInformation
+•	System.Net.Ping
+•	System.Net.Primitives
+•	System.Net.Requests
+•	System.Net.Security
+•	System.Net.Sockets
+•	System.Net.WebHeaderCollection
+•	System.Net.WebSockets
+•	System.Net.WebSockets.Client
+•	System.Numerics.Vectors
+•	System.ObjectModel
+•	System.Private.DataContractSerialization
+•	System.Private.ServiceModel
+•	System.Private.Uri
+•	System.Reflection
+•	System.Reflection.DispatchProxy
+•	System.Reflection.Emit
+•	System.Reflection.Emit.ILGeneration
+•	System.Reflection.Emit.Lightweight
+•	System.Reflection.Extensions
+•	System.Reflection.Metadata
+•	System.Reflection.Primitives
+•	System.Reflection.TypeExtensions
+•	System.Resources.Reader
+•	System.Resources.ResourceManager
+•	System.Runtime
+•	System.Runtime.CompilerServices.VisualC
+•	System.Runtime.Extensions
+•	System.Runtime.Handles
+•	System.Runtime.InteropServices
+•	System.Runtime.InteropServices.PInvoke
+•	System.Runtime.InteropServices.RuntimeInformation
+•	System.Runtime.Loader
+•	System.Runtime.Numerics
+•	System.Runtime.Serialization.Json
+•	System.Runtime.Serialization.Primitives
+•	System.Runtime.Serialization.Xml
+•	System.Security.AccessControl
+•	System.Security.Claims
+•	System.Security.Cryptography.Algorithms
+•	System.Security.Cryptography.Cng
+•	System.Security.Cryptography.Csp
+•	System.Security.Cryptography.Encoding
+•	System.Security.Cryptography.OpenSsl
+•	System.Security.Cryptography.Pkcs
+•	System.Security.Cryptography.Primitives
+•	System.Security.Cryptography.X509Certificates
+•	System.Security.Principal
+•	System.Security.Principal.Windows
+•	System.Security.SecureString
+•	System.ServiceModel.Duplex
+•	System.ServiceModel.Http
+•	System.ServiceModel.NetTcp
+•	System.ServiceModel.Primitives
+•	System.ServiceModel.Security
+•	System.ServiceProcess.ServiceController
+•	System.Text.Encoding
+•	System.Text.Encoding.CodePages
+•	System.Text.Encoding.Extensions
+•	System.Text.Encodings.Web
+•	System.Text.RegularExpressions
+•	System.Threading
+•	System.Threading.AccessControl
+•	System.Threading.Overlapped
+•	System.Threading.Tasks
+•	System.Threading.Tasks.Dataflow
+•	System.Threading.Tasks.Extensions
+•	System.Threading.Tasks.Parallel
+•	System.Threading.Thread
+•	System.Threading.ThreadPool
+•	System.Threading.Timer
+•	System.Xml.ReaderWriter
+•	System.Xml.XDocument
+•	System.Xml.XmlDocument
+•	System.Xml.XmlSerializer
+•	System.Xml.XPath
+•	System.Xml.XPath.XDocument
+•	System.Xml.XPath.XmlDocument
 -------------------------------------------------------
 
 MICROSOFT SOFTWARE LICENSE TERMS 
@@ -436,7 +436,7 @@ included for your information only.
 2.      DATA.  The software may collect information about you and your use of the software, and send that 
 to Microsoft. Microsoft may use this information to improve our products and services. You can learn 
 more about data collection and use in the help documentation and the privacy statement 
-at  http://go.microsoft.com/fwlink/?LinkId=528096 . Your use of the software operates as your 
+at  https://go.microsoft.com/fwlink/?LinkId=528096 . Your use of the software operates as your 
 consent to these practices. 
 3.      ADDITIONAL LICENSING REQUIREMENTS AND/OR USE RIGHTS. 
 a.      DISTRIBUTABLE CODE.   The software is comprised of Distributable Code. “Distributable 
@@ -546,20 +546,20 @@ votre pays si celles-ci ne le permettent pas.
 
 
 --------------------------------------------------------
-	NuGet.Common
-	NuGet.Configuration
-	NuGet.DependencyResolver.Core
-	NuGet.Frameworks
-	NuGet.LibraryModel
-	NuGet.Packaging
-	NuGet.Packaging.Core
-	NuGet.Packaging.Core.Types
-	NuGet.ProjectModel
-	NuGet.Protocol.Core.Types
-	NuGet.Protocol.Core.v3
-	NuGet.Repositories
-	NuGet.RuntimeModel
-	NuGet.Versioning
+•	NuGet.Common
+•	NuGet.Configuration
+•	NuGet.DependencyResolver.Core
+•	NuGet.Frameworks
+•	NuGet.LibraryModel
+•	NuGet.Packaging
+•	NuGet.Packaging.Core
+•	NuGet.Packaging.Core.Types
+•	NuGet.ProjectModel
+•	NuGet.Protocol.Core.Types
+•	NuGet.Protocol.Core.v3
+•	NuGet.Repositories
+•	NuGet.RuntimeModel
+•	NuGet.Versioning
 ----------------------------------------------------------
 
 Copyright (c) .NET Foundation. All rights reserved.
@@ -577,9 +577,9 @@ specific language governing permissions and limitations under the License.
 
 
 ---------------------------------------------------------
-	Microsoft.Management.Infrastructure.dll
-	Microsoft.Management.Infrastructure.Native.dll
-	Microsoft.Management.Infrastructure.Unmanaged.dll
+•	Microsoft.Management.Infrastructure.dll
+•	Microsoft.Management.Infrastructure.Native.dll
+•	Microsoft.Management.Infrastructure.Unmanaged.dll
 ----------------------------------------------------------
 MICROSOFT SOFTWARE LICENSE TERMS
 MANAGEMENT.INFRASTRUCTURE.DLL 
@@ -720,4 +720,25 @@ EFFET JURIDIQUE. Le présent contrat décrit certains droits juridiques. Vous po
 prévus par les lois de votre pays. Le présent contrat ne modifie pas les droits que vous confèrent les lois 
 de votre pays si celles-ci ne le permettent pas.
 
-
+The following components are governed by the MIT license, a copy of which appears 
+below the list of components:  
+------------------------------------------------------
+tools/appimage.sh
+------------------------------------------------------
+Copyright (c) 2016 Simon Peter
+All rights reserved. 
+MIT License
+Permission is hereby granted, free of charge, to any person obtaining a copy of this 
+software and associated documentation files (the "Software"), to deal in the Software 
+without restriction, including without limitation the rights to use, copy, modify, 
+merge, publish, distribute, sublicense, and/or sell copies of the Software, and to 
+permit persons to whom the Software is furnished to do so, subject to the following 
+conditions:
+The above copyright notice and this permission notice shall be included in all copies 
+or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED *AS IS*, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF 
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE 
+OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.

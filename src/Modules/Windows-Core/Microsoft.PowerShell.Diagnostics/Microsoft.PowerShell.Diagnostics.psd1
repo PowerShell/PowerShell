@@ -5,9 +5,9 @@ CompanyName="Microsoft Corporation"
 Copyright="© Microsoft Corporation. All rights reserved."
 ModuleVersion="3.0.0.0"
 PowerShellVersion="3.0"
-CmdletsToExport="Get-WinEvent", "New-WinEvent"
+CmdletsToExport="Get-WinEvent", "New-WinEvent", "Get-Counter", "Import-Counter", "Export-Counter"
 NestedModules="Microsoft.PowerShell.Commands.Diagnostics.dll"
-TypesToProcess="..\..\GetEvent.types.ps1xml"
-FormatsToProcess="..\..\Event.format.ps1xml"
-HelpInfoURI = 'http://go.microsoft.com/fwlink/?linkid=390783'
+TypesToProcess="GetEvent.types.ps1xml"
+FormatsToProcess="Event.format.ps1xml", "Diagnostics.format.ps1xml"
+HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=390783'
 }

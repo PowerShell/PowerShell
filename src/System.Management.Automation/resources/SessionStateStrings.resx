@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -297,7 +297,7 @@
   <data name="ProviderStartException" xml:space="preserve">
     <value>Attempting to perform the Start operation on the '{0}' provider failed. {1}</value>
   </data>
-  <data name="StartDynamicParmatersProviderException" xml:space="preserve">
+  <data name="StartDynamicParameterProviderException" xml:space="preserve">
     <value>Attempting to perform the StartDynamicParameters operation on the '{0}' provider failed for the path '{1}'. {2}</value>
   </data>
   <data name="InitializeDefaultDrivesException" xml:space="preserve">
@@ -368,21 +368,6 @@
   </data>
   <data name="VariableNotRemovable" xml:space="preserve">
     <value>Cannot remove variable {0} because it is constant or read-only. If the variable is read-only, try the operation again specifying the Force option.</value>
-  </data>
-  <data name="VariableNotRemovableSystem" xml:space="preserve">
-    <value>Cannot remove variable {0} because it is owned by the system.</value>
-  </data>
-  <data name="AliasOverflow" xml:space="preserve">
-    <value>Alias {0} cannot be created because alias capacity {1} has been exceeded for this scope.</value>
-  </data>
-  <data name="DriveOverflow" xml:space="preserve">
-    <value>Drive {0} cannot be created because drive capacity {1} has been exceeded for this scope.</value>
-  </data>
-  <data name="FunctionOverflow" xml:space="preserve">
-    <value>Function {0} cannot be created because function capacity {1} has been exceeded for this scope.</value>
-  </data>
-  <data name="VariableOverflow" xml:space="preserve">
-    <value>Cannot create variable {0} because variable capacity {1} is exceeded for this scope.</value>
   </data>
   <data name="AliasIsConstant" xml:space="preserve">
     <value>Alias {0} cannot be modified because it is constant.</value>

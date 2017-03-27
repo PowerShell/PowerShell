@@ -17,8 +17,8 @@ namespace System.Management.Automation.Remoting
     /// <summary>
     /// This enum defines the error message ids used by the resource manager to get
     /// localized messages.
-    /// 
-    /// Related error ids are organized in a pre-defined range of values. 
+    ///
+    /// Related error ids are organized in a pre-defined range of values.
     /// </summary>
     internal enum PSRemotingErrorId : uint
     {
@@ -26,7 +26,7 @@ namespace System.Management.Automation.Remoting
         DefaultRemotingExceptionMessage = 0,
         OutOfMemory = 1,
 
-        // Pipeline related range: 10-99      
+        // Pipeline related range: 10-99
         PipelineIdsDoNotMatch = 10,
         PipelineNotFoundOnServer = 11,
         PipelineStopped = 12,
@@ -67,7 +67,7 @@ namespace System.Management.Automation.Remoting
         MissingIsStartFragment = 409,
         MissingProperty = 410,
         ObjectIdsNotMatching = 411,
-        FragmetIdsNotInSequence = 412,
+        FragmentIdsNotInSequence = 412,
         ObjectIsTooBig = 413,
         MissingIsEndFragment = 414,
         DeserializedObjectIsNull = 415,
@@ -193,7 +193,7 @@ namespace System.Management.Automation.Remoting
         RemoteRunspaceNotAvailableForSpecifiedSessionId = 920,
         ItemNotFoundInRepository = 921,
         CannotRemoveJob = 922,
-        NewRunspaceAmbiguosAuthentication = 923,
+        NewRunspaceAmbiguousAuthentication = 923,
         WildCardErrorFilePathParameter = 924,
         FilePathNotFromFileSystemProvider = 925,
         FilePathShouldPS1Extension = 926,
@@ -204,7 +204,7 @@ namespace System.Management.Automation.Remoting
         URIRedirectionReported = 930,
         NoMoreInputWrites = 931,
         InvalidComputerName = 932,
-        ProxyAmbiguosAuthentication = 933,
+        ProxyAmbiguousAuthentication = 933,
         ProxyCredentialWithoutAccess = 934,
 
         // Start-PSSession related error codes.

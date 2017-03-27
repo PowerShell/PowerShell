@@ -9,9 +9,9 @@ namespace Microsoft.PowerShell.Commands
     #region WriteOutputCommand
     /// <summary>
     /// This class implements Write-output command
-    /// 
+    ///
     /// </summary>
-    [Cmdlet("Write", "Output", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113427", RemotingCapability = RemotingCapability.None)]
+    [Cmdlet(VerbsCommunications.Write, "Output", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113427", RemotingCapability = RemotingCapability.None)]
     public sealed class WriteOutputCommand : PSCmdlet
     {
         private PSObject[] _inputObjects = null;

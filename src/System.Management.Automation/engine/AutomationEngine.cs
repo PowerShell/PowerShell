@@ -28,7 +28,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the CommandDiscovery instance for the current engine
         /// </summary>
-        /// 
+        ///
         internal CommandDiscovery CommandDiscovery { get; }
 
 
@@ -80,7 +80,7 @@ namespace System.Management.Automation
             // Initialize providers before loading types so that any ScriptBlocks in the
             // types.ps1xml file can be parsed.
 
-            // Bind the execution context with RunspaceConfiguration. 
+            // Bind the execution context with RunspaceConfiguration.
             // This has the side effect of initializing cmdlet cache and providers from runspace configuration.
             if (runspaceConfiguration != null)
             {
@@ -93,8 +93,6 @@ namespace System.Management.Automation
             }
 
             InitialSessionState.SetSessionStateDrive(Context, true);
-
-            InitialSessionState.CreateQuestionVariable(Context);
         }
 
         /// <summary>

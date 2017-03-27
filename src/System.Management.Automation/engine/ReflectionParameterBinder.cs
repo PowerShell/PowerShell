@@ -13,7 +13,7 @@ namespace System.Management.Automation
     /// <summary>
     /// The parameter binder for real CLR objects that have properties and fields decorated with the parameter attributes.
     /// </summary>
-    /// 
+    ///
     internal class ReflectionParameterBinder : ParameterBinderBase
     {
         #region ctor
@@ -22,15 +22,15 @@ namespace System.Management.Automation
         /// Constructs the parameter binder with the specified type metadata. The binder is only valid
         /// for a single instance of a bindable object and only for the duration of a command.
         /// </summary>
-        /// 
+        ///
         /// <param name="target">
         /// The target object that the parameter values will be bound to.
         /// </param>
-        /// 
+        ///
         /// <param name="command">
         /// An instance of the command so that attributes can access the context.
         /// </param>
-        /// 
+        ///
         internal ReflectionParameterBinder(
             object target,
             Cmdlet command)
@@ -42,19 +42,19 @@ namespace System.Management.Automation
         /// Constructs the parameter binder with the specified type metadata. The binder is only valid
         /// for a single instance of a bindable object and only for the duration of a command.
         /// </summary>
-        /// 
+        ///
         /// <param name="target">
         /// The target object that the parameter values will be bound to.
         /// </param>
-        /// 
+        ///
         /// <param name="command">
         /// An instance of the command so that attributes can access the context.
         /// </param>
-        /// 
+        ///
         /// <param name="commandLineParameters">
         /// The dictionary to use to record the parameters set by this object...
         /// </param>
-        /// 
+        ///
         internal ReflectionParameterBinder(
             object target,
             Cmdlet command,
@@ -73,19 +73,19 @@ namespace System.Management.Automation
         /// <summary>
         /// Gets the default value for the specified parameter
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the parameter to get the default value of.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The default value of the specified parameter.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="GetValueException">
         /// If the ETS call to get the property value throws an exception.
         /// </exception>
-        /// 
+        ///
         internal override object GetDefaultParameterValue(string name)
         {
             try
@@ -103,7 +103,6 @@ namespace System.Management.Automation
             catch (GetValueException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new GetValueInvocationException("CatchFromBaseAdapterGetValue",
                     e,
                     ExtendedTypeSystem.ExceptionWhenGetting,
@@ -152,7 +151,6 @@ namespace System.Management.Automation
             catch (SetValueException) { throw; }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 throw new SetValueInvocationException("CatchFromBaseAdapterSetValue",
                     e,
                     ExtendedTypeSystem.ExceptionWhenSetting,

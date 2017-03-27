@@ -810,7 +810,7 @@ namespace System.Management.Automation.Language
                         result = new List<UsingStatementAst>();
                     }
                     var usingStatement = statement as UsingStatementAst;
-                    // otherwise returned statement is ErrorStatementAst. 
+                    // otherwise returned statement is ErrorStatementAst.
                     // We ignore it here, because error already reported to the parser.
                     if (usingStatement != null)
                     {
@@ -2991,8 +2991,6 @@ namespace System.Management.Automation.Language
             }
             catch (Exception e)
             {
-                CommandProcessorBase.CheckForSevereException(e);
-
                 // In theory this should never happen so if it does, we'll report the actual exception rather than introducing a new message
                 ReportError(configurationKeywordToken.Extent, () => "ConfigurationStatementToken: " + e);
                 return null;
@@ -3017,7 +3015,7 @@ namespace System.Management.Automation.Language
                     System.Management.Automation.Language.DynamicKeyword.Reset();
                 }
 
-                // Finally resync the tokenizer at the current position 
+                // Finally resync the tokenizer at the current position
                 // this will flush any cached dynamic keyword tokens.
                 var restorePoint = _tokenizer.GetRestorePoint();
                 Resync(restorePoint);
@@ -3056,7 +3054,7 @@ namespace System.Management.Automation.Language
         {
             //G  foreach-statement:
             //G      'foreach'   new-lines:opt   foreach-parameters:opt   new-lines:opt   '('
-            //G          new-lines:opt   variable   new-lines:opt   'in'   new-lines:opt   pipeline  
+            //G          new-lines:opt   variable   new-lines:opt   'in'   new-lines:opt   pipeline
             //G          new-lines:opt   ')'   statement-block
             //G  foreach-parameters:
             //G      foreach-parameter
@@ -3369,7 +3367,7 @@ namespace System.Management.Automation.Language
         ///     keyword [parameters] [name] { a=1; b=2; } # constructor with properties
         /// or
         ///     keyword [parameters] [name] { ... }  # constructor with a simple body.
-        /// or keywordcommand parameters 
+        /// or keywordcommand parameters
         /// This custom keyword does not introduce a new AST node type. Instead it generates a
         /// CommandAst that calls a PowerShell command to implement the keyword's logic.
         /// This command has one of two signatures:
@@ -3604,7 +3602,7 @@ namespace System.Management.Automation.Language
                 ExpressionAst body = null;
                 if (keywordData.BodyMode == DynamicKeywordBodyMode.ScriptBlock)
                 {
-                    var oldInConfiguraiton = _inConfiguration;
+                    var oldInConfiguration = _inConfiguration;
                     try
                     {
                         _inConfiguration = false;
@@ -3612,7 +3610,7 @@ namespace System.Management.Automation.Language
                     }
                     finally
                     {
-                        _inConfiguration = oldInConfiguraiton;
+                        _inConfiguration = oldInConfiguration;
                     }
                 }
                 else if (keywordData.BodyMode == DynamicKeywordBodyMode.Hashtable)
@@ -3810,7 +3808,7 @@ namespace System.Management.Automation.Language
             //G
             //G  class-name:
             //G      simple-name
-            //G 
+            //G
             //G  base-type-list:
             //G      new-lines:opt   type-name   new-lines:opt
             //G      base-class-list  ','   new-lines:opt   type-name   new-lines:opt
@@ -3911,7 +3909,7 @@ namespace System.Management.Automation.Language
                 if (rCurly.Kind != TokenKind.RCurly)
                 {
                     UngetToken(rCurly);
-                    ReportIncompleteInput(lastExtent, () => ParserStrings.MissingEndCurlyBrace);
+                    ReportIncompleteInput(After(lCurly), rCurly.Extent, () => ParserStrings.MissingEndCurlyBrace);
                 }
                 else
                 {
@@ -4271,7 +4269,7 @@ namespace System.Management.Automation.Language
             if (rCurly.Kind != TokenKind.RCurly)
             {
                 UngetToken(rCurly);
-                ReportIncompleteInput(After(lastExtent), () => ParserStrings.MissingEndCurlyBrace);
+                ReportIncompleteInput(After(lCurly), rCurly.Extent, () => ParserStrings.MissingEndCurlyBrace);
             }
 
             var startExtent = customAttributes != null && customAttributes.Count > 0
@@ -4311,22 +4309,32 @@ namespace System.Management.Automation.Language
 
             IScriptExtent endExtent = enumeratorName.Extent;
             ExpressionAst initialValueAst = null;
-            var assignToken = PeekToken();
             var missingInitializer = false;
-            if (assignToken.Kind == TokenKind.Equals)
+            var oldTokenizerMode = _tokenizer.Mode;
+            Token assignToken = null;
+            try
             {
-                SkipToken();
-                initialValueAst = ExpressionRule();
-                if (initialValueAst == null)
+                SetTokenizerMode(TokenizerMode.Expression);
+                assignToken = PeekToken();
+                if (assignToken.Kind == TokenKind.Equals)
                 {
-                    ReportError(After(assignToken), () => ParserStrings.ExpectedValueExpression, assignToken.Kind.Text());
-                    endExtent = assignToken.Extent;
-                    missingInitializer = true;
+                    SkipToken();
+                    initialValueAst = ExpressionRule();
+                    if (initialValueAst == null)
+                    {
+                        ReportError(After(assignToken), () => ParserStrings.ExpectedValueExpression, assignToken.Kind.Text());
+                        endExtent = assignToken.Extent;
+                        missingInitializer = true;
+                    }
+                    else
+                    {
+                        endExtent = initialValueAst.Extent;
+                    }
                 }
-                else
-                {
-                    endExtent = initialValueAst.Extent;
-                }
+            }
+            finally
+            {
+                SetTokenizerMode(oldTokenizerMode);
             }
 
             Token terminatorToken = PeekToken();
@@ -4406,8 +4414,11 @@ namespace System.Management.Automation.Language
             {
                 case TokenKind.EndOfInput:
                 case TokenKind.NewLine:
-                // Example, using module ,FooBar
+                // Example: 'using module ,FooBar'
+                // GetCommandArgument will successfully return an argument for a unary array argument
+                // but we don't want to allow that syntax with a using statement.
                 case TokenKind.Comma:
+                case TokenKind.Semi:
                     {
                         ReportIncompleteInput(After(directiveToken), () => ParserStrings.MissingUsingItemName);
                         return new ErrorStatementAst(ExtentOf(usingToken, directiveToken));
@@ -4418,11 +4429,14 @@ namespace System.Management.Automation.Language
             if (itemAst == null)
             {
                 ReportError(itemToken.Extent, () => ParserStrings.InvalidValueForUsingItemName, itemToken.Text);
+                // ErrorRecovery: If there is no identifier, skip whole 'using' line
+                SyncOnError(true, TokenKind.Semi, TokenKind.NewLine);
+                return new ErrorStatementAst(ExtentOf(usingToken, itemToken.Extent));
             }
 
             if (!(itemAst is StringConstantExpressionAst) && (kind != UsingStatementKind.Module || !(itemAst is HashtableAst)))
             {
-                ReportError(ExtentOf(usingToken, ExtentFromFirstOf(itemAst, itemToken)), () => ParserStrings.InvalidValueForUsingItemName, itemAst.Extent.Text);
+                ReportError(ExtentFromFirstOf(itemAst, itemToken), () => ParserStrings.InvalidValueForUsingItemName, itemAst.Extent.Text);
                 return new ErrorStatementAst(ExtentOf(usingToken, ExtentFromFirstOf(itemAst, itemToken)));
             }
 
@@ -4533,8 +4547,8 @@ namespace System.Management.Automation.Language
                         {
                             // We are in REPL, or Invoke-Expression, or ScriptBlock.Create, etc.
                             // It's legal to use '.\foo.dll', and we should do lookup in $pwd.
-                            // We resolving it in parse time to avoid difference in script behavior, 
-                            // when script execution is delayed from parsing, i.e. 
+                            // We resolving it in parse time to avoid difference in script behavior,
+                            // when script execution is delayed from parsing, i.e.
                             // $script = [scriptblock]::Create('using assembly .\foo.dll; [Foo].foo()')
                             // # using assembly behavior should be the same in these two cases:
                             // cd A; $script.Invoke()
@@ -4970,9 +4984,8 @@ namespace System.Management.Automation.Language
                     }
                     else
                     {
-                        errorAsts.Concat(exceptionTypes);
+                        errorAsts.AddRange(exceptionTypes);
                     }
-                    // REVIEW: seems like some code is missing here, errorAsts isn't used
                 }
                 return null;
             }
@@ -6331,8 +6344,8 @@ namespace System.Management.Automation.Language
                 // Note -  the error handling function inspects the error message body to extra the ParserStrings property name. It uses this value as the errorid.
                 var errorMessageExpression = parsingSchemaElement ?
                     (Expression<Func<string>>)(() => ParserStrings.IncompletePropertyAssignmentBlock)
-                    : (Expression<Func<string>>)(() => ParserStrings.IncompleteHashLiteral);
-                ReportIncompleteInput(keyValuePairs.Any() ? After(keyValuePairs.Last().Item2) : After(atCurlyToken), rCurly.Extent, errorMessageExpression);
+                    : (Expression<Func<string>>)(() => ParserStrings.MissingEndCurlyBrace);
+                ReportIncompleteInput(After(atCurlyToken), rCurly.Extent, errorMessageExpression);
                 endExtent = Before(rCurly);
             }
             else
@@ -6381,7 +6394,7 @@ namespace System.Management.Automation.Language
                     ? (() => (ParserStrings.MissingEqualsInPropertyAssignmentBlock))
                     : (Expression<Func<string>>)(() => ParserStrings.MissingEqualsInHashLiteral);
                 ReportError(errorExtent, errorMessageExpression);
-                SyncOnError(true, TokenKind.RCurly, TokenKind.Semi, TokenKind.NewLine);
+                SyncOnError(false, TokenKind.RCurly, TokenKind.Semi, TokenKind.NewLine);
                 return new KeyValuePair(key, new ErrorStatementAst(errorExtent));
             }
 
@@ -6668,7 +6681,7 @@ namespace System.Management.Automation.Language
             //G      target-expression   member-name   invoke-param-list
             //G  invoke-param-list:
             //G      '('   invoke-param-paren-list
-            //G      script-block 
+            //G      script-block
 
             IScriptExtent lastExtent = null;
 
@@ -6947,7 +6960,7 @@ namespace System.Management.Automation.Language
     #region Error related classes
 
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public class ParseError
     {
@@ -6975,7 +6988,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
         public override string ToString()
@@ -6984,22 +6997,22 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public IScriptExtent Extent { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string ErrorId { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public string Message { get; }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public bool IncompleteInput { get; }
     }

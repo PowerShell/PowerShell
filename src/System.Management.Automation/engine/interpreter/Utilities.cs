@@ -376,15 +376,15 @@ namespace System.Management.Automation.Interpreter
         {
         }
 
-        public HybridReferenceDictionary(int initialCapicity)
+        public HybridReferenceDictionary(int initialCapacity)
         {
-            if (initialCapicity > _arraySize)
+            if (initialCapacity > _arraySize)
             {
-                _dict = new Dictionary<TKey, TValue>(initialCapicity);
+                _dict = new Dictionary<TKey, TValue>(initialCapacity);
             }
             else
             {
-                _keysAndValues = new KeyValuePair<TKey, TValue>[initialCapicity];
+                _keysAndValues = new KeyValuePair<TKey, TValue>[initialCapacity];
             }
         }
 
@@ -564,7 +564,7 @@ namespace System.Management.Automation.Interpreter
     /// <summary>
     /// Provides a dictionary-like object used for caches which holds onto a maximum
     /// number of elements specified at construction time.
-    /// 
+    ///
     /// This class is not thread safe.
     /// </summary>
     internal class CacheDict<TKey, TValue>
@@ -683,7 +683,7 @@ namespace System.Management.Automation.Interpreter
         /// <summary>
         /// True if the caller will guarantee that all cleanup happens as the thread
         /// unwinds.
-        /// 
+        ///
         /// This is typically used in a case where the thread local is surrounded by
         /// a try/finally block.  The try block pushes some state, the finally block
         /// restores the previous state.  Therefore when the thread exits the thread
@@ -809,8 +809,8 @@ namespace System.Management.Automation.Interpreter
         }
 
         /// <summary>
-        /// Called when the fast path storage lookup fails. if we encountered the Empty storage 
-        /// during the initial fast check then spin until we hit non-empty storage and try the fast 
+        /// Called when the fast path storage lookup fails. if we encountered the Empty storage
+        /// during the initial fast check then spin until we hit non-empty storage and try the fast
         /// path again.
         /// </summary>
         private StorageInfo RetryOrCreateStorageInfo(StorageInfo[] curStorage)
@@ -847,7 +847,7 @@ namespace System.Management.Automation.Interpreter
                 StorageInfo newInfo = new StorageInfo(Thread.CurrentThread);
 
                 // set to updating while potentially resizing/mutating, then we'll
-                // set back to the current value.                                        
+                // set back to the current value.
                 while ((curStorage = Interlocked.Exchange(ref _stores, s_updating)) == s_updating)
                 {
                     // another thread is already updating...

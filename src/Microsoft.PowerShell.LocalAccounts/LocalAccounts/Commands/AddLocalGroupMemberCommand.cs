@@ -15,12 +15,12 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Add-LocalGroupMember cmdlet adds one or more users or groups to a local 
+    /// The Add-LocalGroupMember cmdlet adds one or more users or groups to a local
     /// group.
     /// </summary>
     [Cmdlet(VerbsCommon.Add, "LocalGroupMember",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717987")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717987")]
     [Alias("algm")]
     public class AddLocalGroupMemberCommand : PSCmdlet
     {
@@ -43,11 +43,11 @@ namespace Microsoft.PowerShell.Commands
             set { this.group = value; }
         }
         private Microsoft.PowerShell.Commands.LocalGroup group;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "Member".
-        /// Specifies one or more users or groups to add to this local group. You can 
-        /// identify users or groups by specifying their names or SIDs, or by passing 
+        /// Specifies one or more users or groups to add to this local group. You can
+        /// identify users or groups by specifying their names or SIDs, or by passing
         /// Microsoft.PowerShell.Commands.LocalPrincipal objects.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -151,7 +151,7 @@ namespace Microsoft.PowerShell.Commands
         /// in WhatIf scenarios.
         /// </param>
         /// <param name="member">
-        /// LocalPrincipal object to be processed 
+        /// LocalPrincipal object to be processed
         /// </param>
         /// <returns>
         /// A LocalPrincipal Object to be added to the group
@@ -264,7 +264,7 @@ namespace Microsoft.PowerShell.Commands
         /// </param>
         private void ProcessName(string name)
         {
-            ProcessGroup(sam.GetLocalGroup(name));   
+            ProcessGroup(sam.GetLocalGroup(name));
         }
 
         /// <summary>

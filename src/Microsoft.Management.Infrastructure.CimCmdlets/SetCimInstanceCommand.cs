@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -24,7 +24,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         "CimInstance",
         SupportsShouldProcess = true,
         DefaultParameterSetName = CimBaseCommand.CimInstanceComputerSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkId=227962")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkId=227962")]
     public class SetCimInstanceCommand : CimBaseCommand
     {
         #region constructor
@@ -36,7 +36,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             : base(parameters, parameterSets)
         {
         }
-        
+
         #endregion
 
         #region parameters
@@ -94,7 +94,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         [Parameter(ValueFromPipelineByPropertyName = true,
                    ParameterSetName = CimBaseCommand.CimInstanceComputerSet)]
         [Parameter(ValueFromPipelineByPropertyName = true,
-                   ParameterSetName = CimBaseCommand.CimInstanceSessionSet)]           
+                   ParameterSetName = CimBaseCommand.CimInstanceSessionSet)]
         public Uri ResourceUri
         {
             get { return resourceUri; }
@@ -103,8 +103,8 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 this.resourceUri = value;
                 base.SetParameter(value, nameResourceUri);
             }
-        }      
-        private Uri resourceUri; 
+        }
+        private Uri resourceUri;
 
         /// <summary>
         /// The following is the definition of the input parameter "Namespace".
@@ -350,7 +350,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         #region const string of parameter names
         internal const string nameCimSession = "CimSession";
         internal const string nameComputerName = "ComputerName";
-        internal const string nameResourceUri = "ResourceUri";     
+        internal const string nameResourceUri = "ResourceUri";
         internal const string nameNamespace = "Namespace";
         internal const string nameCimInstance = "InputObject";
         internal const string nameQuery = "Query";
@@ -412,7 +412,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                                     new ParameterDefinitionEntry(CimBaseCommand.CimInstanceComputerSet, false),
                                     new ParameterDefinitionEntry(CimBaseCommand.CimInstanceSessionSet, false),
                                  }
-            },             
+            },
         };
 
         /// <summary>

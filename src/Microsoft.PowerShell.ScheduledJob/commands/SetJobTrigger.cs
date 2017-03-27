@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.ScheduledJob
     /// This cmdlet sets properties on a trigger for a ScheduledJobDefinition.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "JobTrigger", DefaultParameterSetName = SetJobTriggerCommand.DefaultParameterSet,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=223916")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=223916")]
     [OutputType(typeof(ScheduledJobTrigger))]
     public sealed class SetJobTriggerCommand : ScheduleJobCmdletBase
     {
@@ -560,7 +560,7 @@ namespace Microsoft.PowerShell.ScheduledJob
                     WriteValidationError(msg);
                     return false;
                 }
-                if ((trigger.DaysOfWeek == null || trigger.DaysOfWeek.Count == 0) && 
+                if ((trigger.DaysOfWeek == null || trigger.DaysOfWeek.Count == 0) &&
                     !MyInvocation.BoundParameters.ContainsKey(_paramDaysOfWeek))
                 {
                     string msg = StringUtil.Format(ScheduledJobErrorStrings.MissingDaysOfWeek, ScheduledJobErrorStrings.TriggerDailyType);

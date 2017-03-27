@@ -10,17 +10,17 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This cmdlet updates the property of incoming objects and passes them to the 
-    /// pipeline. This cmdlet also returns a .NET object with properties that 
+    /// This cmdlet updates the property of incoming objects and passes them to the
+    /// pipeline. This cmdlet also returns a .NET object with properties that
     /// defines the update action on a list.
-    /// 
-    /// This cmdlet is most helpful when the cmdlet author wants the user to do 
-    /// update action on object list that are not directly exposed through 
-    /// cmdlet parameter. One wants to update a property value which is a list 
+    ///
+    /// This cmdlet is most helpful when the cmdlet author wants the user to do
+    /// update action on object list that are not directly exposed through
+    /// cmdlet parameter. One wants to update a property value which is a list
     /// (multi-valued parameter for a cmdlet), without exposing the list.
     /// </summary>
     [Cmdlet(VerbsData.Update, "List", DefaultParameterSetName = "AddRemoveSet",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113447", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113447", RemotingCapability = RemotingCapability.None)]
     public class UpdateListCommand : PSCmdlet
     {
         /// <summary>
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
-        /// List of InputObjects where the updates needs to applied to the 
+        /// List of InputObjects where the updates needs to applied to the
         /// specific property
         /// </summary>
         //[Parameter(ValueFromPipeline = true, ParameterSetName = "AddRemoveSet")]
@@ -63,7 +63,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "Property".
-        /// Defines which property of the input object should be updated with Add and 
+        /// Defines which property of the input object should be updated with Add and
         /// Remove actions
         /// </summary>
         //[Parameter(Position = 0, ParameterSetName = "AddRemoveSet")]

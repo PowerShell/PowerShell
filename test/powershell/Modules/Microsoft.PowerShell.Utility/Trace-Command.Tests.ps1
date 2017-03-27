@@ -1,7 +1,7 @@
 # This came from monad/tests/ci/PowerShell/tests/Commands/Cmdlets/pester.utility.command.tests.ps1
 Describe "Trace-Command" -tags "CI" {
-    
-    Context "Listner options" {
+
+    Context "Listener options" {
         BeforeAll {
             $logFile = New-Item "TestDrive:/traceCommandLog.txt" -Force
             $actualLogFile = New-Item "TestDrive:/actualTraceCommandLog.txt" -Force
@@ -11,7 +11,7 @@ Describe "Trace-Command" -tags "CI" {
             Remove-Item "TestDrive:/traceCommandLog.txt" -Force -ErrorAction SilentlyContinue
             Remove-Item "TestDrive:/actualTraceCommandLog.txt" -Force -ErrorAction SilentlyContinue
         }
-        
+
         # LogicalOperationStack is not in .NET Core
         It "LogicalOperationStack works" -Skip:$IsCoreCLR {
             $keyword = "Trace_Command_ListenerOption_LogicalOperationStack_Foo"
@@ -20,9 +20,9 @@ Describe "Trace-Command" -tags "CI" {
 
             Trace-Command -Name * -Expression {echo Foo} -ListenerOption LogicalOperationStack -FilePath $logfile
 
-            $log = Get-Content $logfile | Where-Object {$_ -like "*LogicalOperationStack=$keyword*"}            
+            $log = Get-Content $logfile | Where-Object {$_ -like "*LogicalOperationStack=$keyword*"}
             $log.Count | Should BeGreaterThan 0
-        } 
+        }
 
         # GetStackTrace is not in .NET Core
         It "Callstack works" -Skip:$IsCoreCLR {
@@ -38,10 +38,10 @@ Describe "Trace-Command" -tags "CI" {
 
             ## allow a gap of 6 seconds. All traces should be finished within 6 seconds.
             $allowedGap = [timespan](60 * 1000 * 1000)
-            $results | ForEach-Object { 
-                    $actualGap = $_ - $expectedDate; 
-                    if ($expectedDate -gt $_) 
-                    { 
+            $results | ForEach-Object {
+                    $actualGap = $_ - $expectedDate;
+                    if ($expectedDate -gt $_)
+                    {
                         $actualGap = $expectedDate - $_;
                     }
 
@@ -49,7 +49,7 @@ Describe "Trace-Command" -tags "CI" {
                 }
         }
 
-        It "None options has no effect" {            
+        It "None options has no effect" {
             Trace-Command -Name * -Expression {echo Foo} -ListenerOption None -FilePath $actualLogfile
             Trace-Command -name * -Expression {echo Foo} -FilePath $logfile
 
@@ -69,7 +69,7 @@ Describe "Trace-Command" -tags "CI" {
             $log = Get-Content $logfile | Where-Object {$_ -like "*Timestamp=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
             $sortedResults = $results | Sort-Object
-            $sortedResults | Should Be $results 
+            $sortedResults | Should Be $results
         }
 
         It "ProcessId logs current process Id" {
@@ -79,5 +79,5 @@ Describe "Trace-Command" -tags "CI" {
 
             $results | ForEach-Object { $_ | Should Be $pid }
         }
-    }        
+    }
 }

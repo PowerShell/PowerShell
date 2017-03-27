@@ -12,12 +12,12 @@ using Microsoft.PowerShell.LocalAccounts;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Set-LocalGroup cmdlet modifies the properties of a local security group 
+    /// The Set-LocalGroup cmdlet modifies the properties of a local security group
     /// in the Windows Security Accounts Manager.
     /// </summary>
     [Cmdlet(VerbsCommon.Set, "LocalGroup",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717979")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717979")]
     [Alias("slg")]
     public class SetLocalGroupCommand : Cmdlet
     {
@@ -28,21 +28,20 @@ namespace Microsoft.PowerShell.Commands
         #region Parameter Properties
         /// <summary>
         /// The following is the definition of the input parameter "Description".
-        /// A descriptive comment (48 characters).
+        /// A descriptive comment.
         /// </summary>
         [Parameter(Mandatory = true)]
         [ValidateNotNull]
-        [ValidateLength(0, 48)]
         public string Description
         {
             get { return this.description;}
             set { this.description = value; }
         }
         private string description;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "InputObject".
-        /// Specifies the local group account to modify in the local Security 
+        /// Specifies the local group account to modify in the local Security
         /// Accounts Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -57,10 +56,10 @@ namespace Microsoft.PowerShell.Commands
             set { this.inputobject = value; }
         }
         private Microsoft.PowerShell.Commands.LocalGroup inputobject;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "Name".
-        /// Specifies the local group to be renamed in the local Security Accounts 
+        /// Specifies the local group to be renamed in the local Security Accounts
         /// Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -75,7 +74,7 @@ namespace Microsoft.PowerShell.Commands
             set { this.name = value; }
         }
         private string name;
-      
+
         /// <summary>
         /// The following is the definition of the input parameter "SID".
         /// Specifies a security group from the local Security Accounts Manager.
@@ -93,8 +92,8 @@ namespace Microsoft.PowerShell.Commands
         }
         private System.Security.Principal.SecurityIdentifier sid;
         #endregion Parameter Properties
-      
-      
+
+
 
         #region Cmdlet Overrides
         /// <summary>
@@ -149,7 +148,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        
+
         /// <summary>
         /// EndProcessing method.
         /// </summary>

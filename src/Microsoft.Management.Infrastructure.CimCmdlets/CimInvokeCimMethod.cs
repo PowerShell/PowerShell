@@ -1,5 +1,5 @@
 /*============================================================================
- * Copyright (C) Microsoft Corporation, All rights reserved. 
+ * Copyright (C) Microsoft Corporation, All rights reserved.
  *============================================================================
  */
 
@@ -106,7 +106,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                     break;
                 case CimBaseCommand.ClassNameComputerSet:
                 case CimBaseCommand.CimClassComputerSet:
-                case CimBaseCommand.ResourceUriComputerSet:                    
+                case CimBaseCommand.ResourceUriComputerSet:
                 case CimBaseCommand.QueryComputerSet:
                     foreach (string computerName in computerNames)
                     {
@@ -127,7 +127,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 default:
                     break;
             }
-            CimMethodParametersCollection paramsCollection = 
+            CimMethodParametersCollection paramsCollection =
                 CreateParametersCollection(cmdlet.Arguments, cmdlet.CimClass, cmdlet.CimInstance, cmdlet.MethodName);
 
             // Invoke methods
@@ -135,7 +135,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
             {
                 case CimBaseCommand.ClassNameComputerSet:
                 case CimBaseCommand.ClassNameSessionSet:
-                case CimBaseCommand.ResourceUriSessionSet:   
+                case CimBaseCommand.ResourceUriSessionSet:
                 case CimBaseCommand.ResourceUriComputerSet:
                     {
                         string target = string.Format(CultureInfo.CurrentUICulture, targetClass, cmdlet.ClassName);
@@ -408,7 +408,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
                 {
                     if (parameterValue == null)
                     {
-                        // try the best to get the type while value is null                    
+                        // try the best to get the type while value is null
                         parameter = CimMethodParameter.Create(
                             parameterName,
                             parameterValue,

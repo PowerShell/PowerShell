@@ -11,7 +11,7 @@ using System.Management.Automation.Language;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the information for a given breakpoint 
+    /// Holds the information for a given breakpoint
     /// </summary>
     public abstract class Breakpoint
     {
@@ -101,9 +101,8 @@ namespace System.Management.Automation
             {
                 return BreakpointAction.Break;
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             return BreakpointAction.Continue;

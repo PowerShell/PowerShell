@@ -21,63 +21,63 @@ namespace System.Management.Automation.ComInterop
 {
     /// <summary>
     /// An object that implements IDispatch
-    /// 
+    ///
     /// This currently has the following issues:
     /// 1. If we prefer ComObjectWithTypeInfo over IDispatchComObject, then we will often not
-    ///    IDispatchComObject since implementations of IDispatch often rely on a registered type library. 
+    ///    IDispatchComObject since implementations of IDispatch often rely on a registered type library.
     ///    If we prefer IDispatchComObject over ComObjectWithTypeInfo, users get a non-ideal experience.
-    /// 2. IDispatch cannot distinguish between properties and methods with 0 arguments (and non-0 
-    ///    default arguments?). So obj.foo() is ambiguous as it could mean invoking method foo, 
+    /// 2. IDispatch cannot distinguish between properties and methods with 0 arguments (and non-0
+    ///    default arguments?). So obj.foo() is ambiguous as it could mean invoking method foo,
     ///    or it could mean invoking the function pointer returned by property foo.
     ///    We are attempting to find whether we need to call a method or a property by examining
     ///    the ITypeInfo associated with the IDispatch. ITypeInfo tell's use what parameters the method
-    ///    expects, is it a method or a property, what is the default property of the object, how to 
+    ///    expects, is it a method or a property, what is the default property of the object, how to
     ///    create an enumerator for collections etc.
-    /// 3. IronPython processes the signature and converts ref arguments into return values. 
-    ///    However, since the signature of a DispMethod is not available beforehand, this conversion 
-    ///    is not possible. There could be other signature conversions that may be affected. How does 
+    /// 3. IronPython processes the signature and converts ref arguments into return values.
+    ///    However, since the signature of a DispMethod is not available beforehand, this conversion
+    ///    is not possible. There could be other signature conversions that may be affected. How does
     ///    VB6 deal with ref arguments and IDispatch?
-    ///    
+    ///
     /// We also support events for IDispatch objects:
     /// Background:
     /// COM objects support events through a mechanism known as Connect Points.
-    /// Connection Points are separate objects created off the actual COM 
+    /// Connection Points are separate objects created off the actual COM
     /// object (this is to prevent circular references between event sink
-    /// and event source). When clients want to sink events generated  by 
-    /// COM object they would implement callback interfaces (aka source 
-    /// interfaces) and hand it over (advise) to the Connection Point. 
-    /// 
+    /// and event source). When clients want to sink events generated  by
+    /// COM object they would implement callback interfaces (aka source
+    /// interfaces) and hand it over (advise) to the Connection Point.
+    ///
     /// Implementation details:
     /// When IDispatchComObject.TryGetMember request is received we first check
     /// whether the requested member is a property or a method. If this check
-    /// fails we will try to determine whether an event is requested. To do 
+    /// fails we will try to determine whether an event is requested. To do
     /// so we will do the following set of steps:
     /// 1. Verify the COM object implements IConnectionPointContainer
     /// 2. Attempt to find COM object's coclass's description
     ///    a. Query the object for IProvideClassInfo interface. Go to 3, if found
     ///    b. From object's IDispatch retrieve primary interface description
     ///    c. Scan coclasses declared in object's type library.
-    ///    d. Find coclass implementing this particular primary interface 
+    ///    d. Find coclass implementing this particular primary interface
     /// 3. Scan coclass for all its source interfaces.
-    /// 4. Check whether to any of the methods on the source interfaces matches 
+    /// 4. Check whether to any of the methods on the source interfaces matches
     /// the request name
-    /// 
+    ///
     /// Once we determine that TryGetMember requests an event we will return
     /// an instance of BoundDispEvent class. This class has InPlaceAdd and
     /// InPlaceSubtract operators defined. Calling InPlaceAdd operator will:
-    /// 1. An instance of ComEventSinksContainer class is created (unless 
+    /// 1. An instance of ComEventSinksContainer class is created (unless
     /// RCW already had one). This instance is hanged off the RCW in attempt
     /// to bind the lifetime of event sinks to the lifetime of the RCW itself,
     /// meaning event sink will be collected once the RCW is collected (this
     /// is the same way event sinks lifetime is controlled by PIAs).
     /// Notice: ComEventSinksContainer contains a Finalizer which will go and
     /// unadvise all event sinks.
-    /// Notice: ComEventSinksContainer is a list of ComEventSink objects. 
-    /// 2. Unless we have already created a ComEventSink for the required 
+    /// Notice: ComEventSinksContainer is a list of ComEventSink objects.
+    /// 2. Unless we have already created a ComEventSink for the required
     /// source interface, we will create and advise a new ComEventSink. Each
-    /// ComEventSink implements a single source interface that COM object 
-    /// supports. 
-    /// 3. ComEventSink contains a map between method DISPIDs to  the 
+    /// ComEventSink implements a single source interface that COM object
+    /// supports.
+    /// 3. ComEventSink contains a map between method DISPIDs to  the
     /// multicast delegate that will be invoked when the event is raised.
     /// 4. ComEventSink implements IReflect interface which is exposed as
     /// custom IDispatch to COM consumers. This allows us to intercept calls
@@ -129,9 +129,9 @@ namespace System.Management.Automation.ComInterop
         private static int GetIDsOfNames(IDispatch dispatch, string name, out int dispId)
         {
             int[] dispIds = new int[1];
-            Guid emtpyRiid = Guid.Empty;
+            Guid emptyRiid = Guid.Empty;
             int hresult = dispatch.TryGetIDsOfNames(
-                ref emtpyRiid,
+                ref emptyRiid,
                 new string[] { name },
                 1,
                 0,
@@ -143,13 +143,13 @@ namespace System.Management.Automation.ComInterop
 
         private static int Invoke(IDispatch dispatch, int memberDispId, out object result)
         {
-            Guid emtpyRiid = Guid.Empty;
+            Guid emptyRiid = Guid.Empty;
             ComTypes.DISPPARAMS dispParams = new ComTypes.DISPPARAMS();
             ComTypes.EXCEPINFO excepInfo = new ComTypes.EXCEPINFO();
             uint argErr;
             int hresult = dispatch.TryInvoke(
                 memberDispId,
-                ref emtpyRiid,
+                ref emptyRiid,
                 0,
                 ComTypes.INVOKEKIND.INVOKE_PROPERTYGET,
                 ref dispParams,
@@ -338,7 +338,7 @@ namespace System.Management.Automation.ComInterop
                         );
                         members.Add(new KeyValuePair<string, object>(method.Name, value));
 
-                        //evaluation failed for some reason. pass exception out 
+                        //evaluation failed for some reason. pass exception out
                     }
                     catch (Exception ex)
                     {
@@ -491,7 +491,7 @@ namespace System.Management.Automation.ComInterop
 
                     // Sometimes coclass has multiple source interfaces. Usually this is caused by
                     // adding new events and putting them on new interfaces while keeping the
-                    // old interfaces around. This may cause name collisioning which we are
+                    // old interfaces around. This may cause name collisions which we are
                     // resolving by keeping only the first event with the same name.
                     if (events.ContainsKey(name) == false)
                     {
@@ -536,7 +536,7 @@ namespace System.Management.Automation.ComInterop
                 }
             }
 
-            // retrieving class information through IPCI has failed - 
+            // retrieving class information through IPCI has failed -
             // we can try scanning the typelib to find the coclass
 
             ComTypes.ITypeLib typeLib;
@@ -637,7 +637,7 @@ namespace System.Management.Automation.ComInterop
                         puts.Add(name, method);
 
                         // for the special dispId == 0, we need to store
-                        // the method descriptor for the Do(SetItem) binder. 
+                        // the method descriptor for the Do(SetItem) binder.
                         if (method.DispId == ComDispIds.DISPID_VALUE && setItem == null)
                         {
                             setItem = method;
@@ -655,7 +655,7 @@ namespace System.Management.Automation.ComInterop
 
                         putrefs.Add(name, method);
                         // for the special dispId == 0, we need to store
-                        // the method descriptor for the Do(SetItem) binder. 
+                        // the method descriptor for the Do(SetItem) binder.
                         if (method.DispId == ComDispIds.DISPID_VALUE && setItem == null)
                         {
                             setItem = method;
@@ -682,8 +682,8 @@ namespace System.Management.Automation.ComInterop
 
                     funcs.Add(name, method);
 
-                    // for the special dispId == 0, we need to store the method descriptor 
-                    // for the Do(GetItem) binder. 
+                    // for the special dispId == 0, we need to store the method descriptor
+                    // for the Do(GetItem) binder.
                     if (funcDesc.memid == ComDispIds.DISPID_VALUE)
                     {
                         getItem = method;

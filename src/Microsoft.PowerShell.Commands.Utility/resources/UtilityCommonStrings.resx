@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -145,10 +145,10 @@
     <value>The file '{0}' cannot be read: {1}</value>
   </data>
   <data name="FormatHexTypeNotSupported" xml:space="preserve">
-    <value>Cannot convert input of type {0} to hexadecimal. To view the hexadecimal formatting of its string representation, pipe it to the Out-String cmdlet before piping it to Format-Hex.</value>
+    <value>Cannot convert input of type '{0}' to hexadecimal. To view the hexadecimal formatting of its string representation, pipe it to the Out-String cmdlet before piping it to Format-Hex.</value>
   </data>
-  <data name="FormatHexResolvePathError" xml:space="preserve">
-    <value>Cannot display the context of {0} as hex. The path resolves to multiple files.</value>
+  <data name="FormatHexOnlySupportsFileSystemPaths" xml:space="preserve">
+    <value>The given path '{0}' is not supported. This command only supports the FileSystem Provider paths.</value>
   </data>
   <data name="FormatHexPathPrefix" xml:space="preserve">
     <value>Path: </value>

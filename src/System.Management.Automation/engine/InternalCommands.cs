@@ -25,7 +25,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [SuppressMessage("Microsoft.PowerShell", "PS1012:CallShouldProcessOnlyIfDeclaringSupport")]
     [Cmdlet("ForEach", "Object", SupportsShouldProcess = true, DefaultParameterSetName = "ScriptBlockSet",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113300", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113300", RemotingCapability = RemotingCapability.None)]
     public sealed class ForEachObjectCommand : PSCmdlet
     {
         /// <summary>
@@ -158,9 +158,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Execute the begin scriptblock at the start of processing
         /// </summary>
-        /// <exception cref="SessionStateOverflowException">
-        /// The maximum scope depth would be exceeded
-        /// </exception>
         /// <exception cref="ParseException">could not parse script</exception>
         /// <exception cref="RuntimeException">see Pipeline.Invoke</exception>
         /// <exception cref="ParameterBindingException">see Pipeline.Invoke</exception>
@@ -242,9 +239,6 @@ namespace Microsoft.PowerShell.Commands
         /// Execute the processing script blocks on the current pipeline object
         /// which is passed as it's only parameter.
         /// </summary>
-        /// <exception cref="SessionStateOverflowException">
-        /// The maximum scope depth would be exceeded
-        /// </exception>
         /// <exception cref="ParseException">could not parse script</exception>
         /// <exception cref="RuntimeException">see Pipeline.Invoke</exception>
         /// <exception cref="ParameterBindingException">see Pipeline.Invoke</exception>
@@ -411,7 +405,6 @@ namespace Microsoft.PowerShell.Commands
                                 }
                                 catch (Exception ex)
                                 {
-                                    CommandProcessorBase.CheckForSevereException(ex);
                                     MethodException mex = ex as MethodException;
                                     if (mex != null && mex.ErrorRecord != null && mex.ErrorRecord.FullyQualifiedErrorId == "MethodCountCouldNotFindBest")
                                     {
@@ -449,12 +442,11 @@ namespace Microsoft.PowerShell.Commands
                                         // PipelineStoppedException can be caused by select-object
                                         throw;
                                     }
-                                    catch (Exception ex)
+                                    catch (Exception)
                                     {
                                         // When the property is not gettable or it throws an exception.
                                         // e.g. when trying to access an assembly's location property, since dynamic assemblies are not backed up by a file,
                                         // an exception will be thrown when accessing its location property. In this case, return null.
-                                        CommandProcessorBase.CheckForSevereException(ex);
                                         WriteObject(null);
                                     }
                                 }
@@ -554,7 +546,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception ex)
                 {
-                    CommandProcessorBase.CheckForSevereException(ex);
                     WriteError(new ErrorRecord(ex, "MethodInvocationError", ErrorCategory.InvalidOperation, _inputObject));
                 }
             }
@@ -573,9 +564,8 @@ namespace Microsoft.PowerShell.Commands
                 // The "ToString()" method could throw an exception
                 objInString = LanguagePrimitives.IsNull(obj) ? "null" : obj.ToString();
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
                 objInString = null;
             }
 
@@ -733,9 +723,6 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Execute the end scriptblock when the pipeline is complete
         /// </summary>
-        /// <exception cref="SessionStateOverflowException">
-        /// The maximum scope depth would be exceeded
-        /// </exception>
         /// <exception cref="ParseException">could not parse script</exception>
         /// <exception cref="RuntimeException">see Pipeline.Invoke</exception>
         /// <exception cref="ParameterBindingException">see Pipeline.Invoke</exception>
@@ -765,7 +752,7 @@ namespace Microsoft.PowerShell.Commands
     /// is passed on, otherwise it is dropped.
     /// </summary>
     [Cmdlet("Where", "Object", DefaultParameterSetName = "EqualSet",
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113423", RemotingCapability = RemotingCapability.None)]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113423", RemotingCapability = RemotingCapability.None)]
     public sealed class WhereObjectCommand : PSCmdlet
     {
         /// <summary>
@@ -1456,9 +1443,6 @@ namespace Microsoft.PowerShell.Commands
         /// Execute the script block passing in the current pipeline object as
         /// it's only parameter.
         /// </summary>
-        /// <exception cref="SessionStateOverflowException">
-        /// The maximum scope depth would be exceeded
-        /// </exception>
         /// <exception cref="ParseException">could not parse script</exception>
         /// <exception cref="RuntimeException">see Pipeline.Invoke</exception>
         /// <exception cref="ParameterBindingException">see Pipeline.Invoke</exception>
@@ -1533,8 +1517,6 @@ namespace Microsoft.PowerShell.Commands
                 }
                 catch (Exception ex)
                 {
-                    CommandProcessorBase.CheckForSevereException(ex);
-
                     ErrorRecord errorRecord = new ErrorRecord(
                         PSTraceSource.NewInvalidOperationException(ParserStrings.OperatorFailed, _binaryOperator, ex.Message),
                         "OperatorFailed",
@@ -1625,10 +1607,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     throw;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
                     // When the property is not gettable or it throws an exception
-                    CommandProcessorBase.CheckForSevereException(ex);
                     return null;
                 }
             }
@@ -1644,13 +1625,13 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!WildcardPattern.ContainsWildcardCharacters(_property))
             {
-                PSMemberInfoInternalCollection<PSMemberInfo> restuls = new PSMemberInfoInternalCollection<PSMemberInfo>();
+                PSMemberInfoInternalCollection<PSMemberInfo> results = new PSMemberInfoInternalCollection<PSMemberInfo>();
                 PSMemberInfo member = _inputObject.Members[_property];
                 if (member != null)
                 {
-                    restuls.Add(member);
+                    results.Add(member);
                 }
-                return new ReadOnlyPSMemberInfoCollection<PSMemberInfo>(restuls);
+                return new ReadOnlyPSMemberInfoCollection<PSMemberInfo>(results);
             }
 
             ReadOnlyPSMemberInfoCollection<PSMemberInfo> members = _inputObject.Members.Match(_property, PSMemberTypes.All);
@@ -1664,7 +1645,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Implements a cmdlet that sets the script debugging options.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "PSDebug", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113398")]
+    [Cmdlet(VerbsCommon.Set, "PSDebug", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113398")]
     public sealed class SetPSDebugCommand : PSCmdlet
     {
         /// <summary>
@@ -1755,7 +1736,7 @@ namespace Microsoft.PowerShell.Commands
     /// Unlike Set-PSDebug -strict, Set-StrictMode is not engine-wide, and only 
     /// affects the scope it was defined in.
     /// </summary>
-    [Cmdlet(VerbsCommon.Set, "StrictMode", DefaultParameterSetName = "Version", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113450")]
+    [Cmdlet(VerbsCommon.Set, "StrictMode", DefaultParameterSetName = "Version", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113450")]
     public class SetStrictModeCommand : PSCmdlet
     {
         /// <summary>

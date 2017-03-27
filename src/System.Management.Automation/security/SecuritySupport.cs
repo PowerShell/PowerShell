@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell
     /// <summary>
     /// Defines the different Execution Policies supported by the
     /// PSAuthorizationManager class.
-    /// 
+    ///
     /// </summary>
     public enum ExecutionPolicy
     {
@@ -42,17 +42,17 @@ namespace Microsoft.PowerShell
         Unrestricted = 0,
 
         /// RemoteSigned - Only .msh and .mshxml files originating from the internet
-        ///    must be digitally signed.  If remote, signed, and executed, Monad 
-        ///    prompts to determine if files from the signing publisher should be 
+        ///    must be digitally signed.  If remote, signed, and executed, Monad
+        ///    prompts to determine if files from the signing publisher should be
         ///    run or not.  This is the default setting.
         RemoteSigned = 1,
 
         /// AllSigned - All .msh and .mshxml files must be digitally signed.  If
-        ///    signed and executed, Monad prompts to determine if files from the 
+        ///    signed and executed, Monad prompts to determine if files from the
         ///    signing publisher should be run or not.
         AllSigned = 2,
 
-        /// Restricted - All .msh files are blocked.  Mshxml files must be digitally 
+        /// Restricted - All .msh files are blocked.  Mshxml files must be digitally
         ///    signed, and by a trusted publisher.  If you haven't made a trust decision
         ///    on the publisher yet, prompting is done as in AllSigned mode.
         Restricted = 3,
@@ -74,7 +74,7 @@ namespace Microsoft.PowerShell
     /// policy. They are in the following priority, with successive
     /// elements overriding the items that precede them:
     /// LocalMachine -> CurrentUser -> Runspace
-    /// 
+    ///
     /// </summary>
     public enum ExecutionPolicyScope
     {
@@ -104,7 +104,7 @@ namespace System.Management.Automation.Internal
 {
     /// <summary>
     /// The SAFER policy associated with this file
-    /// 
+    ///
     /// </summary>
     internal enum SaferPolicy
     {
@@ -290,7 +290,7 @@ namespace System.Management.Automation.Internal
                             return ExecutionPolicy.Undefined;
                     }
 
-                // TODO: Group Policy is only supported on Full systems, but !LINUX && CORECLR 
+                // TODO: Group Policy is only supported on Full systems, but !LINUX && CORECLR
                 // will run there as well, so I don't think we should remove it.
                 case ExecutionPolicyScope.UserPolicy:
                 case ExecutionPolicyScope.MachinePolicy:
@@ -506,7 +506,7 @@ namespace System.Management.Automation.Internal
                     {
                         if (hRestrictedToken == IntPtr.Zero)
                         {
-                            // This is not necessarily the "fully trusted" level, 
+                            // This is not necessarily the "fully trusted" level,
                             // it means that the thread token is complies with the requested level
                             status = SaferPolicy.Allowed;
                         }
@@ -981,7 +981,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Defines the valid purposes by which
     /// we can filter certificates.
-    /// </summary>    
+    /// </summary>
     internal enum CertificatePurpose
     {
         /// <summary>
@@ -992,19 +992,19 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Certificates that can be used to sign
         /// code and scripts.
-        /// </summary>    
+        /// </summary>
         CodeSigning = 0x1,
 
         /// <summary>
         /// Certificates that can be used to encrypt
         /// data.
-        /// </summary>    
+        /// </summary>
         DocumentEncryption = 0x2,
 
         /// <summary>
         /// Certificates that can be used for any
         /// purpose.
-        /// </summary>    
+        /// </summary>
         All = 0xffff
     }
 }
@@ -1012,17 +1012,11 @@ namespace Microsoft.PowerShell.Commands
 
 namespace System.Management.Automation
 {
-#if !CORECLR
-
     using System.Security.Cryptography.Pkcs;
 
     /// <summary>
     /// Utility class for CMS (Cryptographic Message Syntax) related operations
     /// </summary>
-    /// <remarks>
-    /// The namespace 'System.Security.Cryptography.Pkcs' is not available in CoreCLR,
-    /// so the Cryptographic Message Syntax (CMS) will not be supported on OneCore PS.
-    /// </remarks>
     internal static class CmsUtils
     {
         internal static string Encrypt(byte[] contentBytes, CmsMessageRecipient[] recipients, SessionState sessionState, out ErrorRecord error)
@@ -1086,8 +1080,7 @@ namespace System.Management.Automation
             StringBuilder output = new StringBuilder();
             output.AppendLine(BEGIN_CMS_SIGIL);
 
-            string encodedString = Convert.ToBase64String(
-                bytes, Base64FormattingOptions.InsertLineBreaks);
+            string encodedString = ClrFacade.ToBase64StringWithLineBreaks(bytes);
             output.AppendLine(encodedString);
             output.Append(END_CMS_SIGIL);
 
@@ -1130,8 +1123,6 @@ namespace System.Management.Automation
             return messageBytes;
         }
     }
-
-#endif
 
     /// <summary>
     /// Represents a message recipient for the Cms cmdlets.
@@ -1271,16 +1262,15 @@ namespace System.Management.Automation
                 return;
             }
 
-            List<X509Certificate2> certificatesToProcess = new List<X509Certificate2>(); ;
+            List<X509Certificate2> certificatesToProcess = new List<X509Certificate2>();
             try
             {
                 X509Certificate2 newCertificate = new X509Certificate2(messageBytes);
                 certificatesToProcess.Add(newCertificate);
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 // User call-out, catch-all OK
-                CommandProcessorBase.CheckForSevereException(e);
 
                 // Wasn't certificate data
                 return;
@@ -1355,10 +1345,9 @@ namespace System.Management.Automation
                     {
                         certificate = new X509Certificate2(path);
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
                         // User call-out, catch-all OK
-                        CommandProcessorBase.CheckForSevereException(e);
                         continue;
                     }
 

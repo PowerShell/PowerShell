@@ -12,17 +12,17 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// 
+    ///
     /// Implements the stop-transcript cmdlet
-    /// 
+    ///
     /// </summary>
 
-    [Cmdlet(VerbsLifecycle.Stop, "Transcript", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113415")]
+    [Cmdlet(VerbsLifecycle.Stop, "Transcript", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113415")]
     [OutputType(typeof(String))]
     public sealed class StopTranscriptCommand : PSCmdlet
     {
         /// <summary>
-        /// 
+        ///
         /// Starts the transcription
         /// </summary>
 
@@ -43,7 +43,6 @@ namespace Microsoft.PowerShell.Commands
             }
             catch (Exception e)
             {
-                ConsoleHost.CheckForSevereException(e);
                 throw PSTraceSource.NewInvalidOperationException(
                         e, TranscriptStrings.ErrorStoppingTranscript, e.Message);
             }

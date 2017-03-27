@@ -32,7 +32,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Cmdlet to create a new module manifest file.
     /// </summary>
-    [Cmdlet(VerbsCommon.New, "ModuleManifest", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=141555")]
+    [Cmdlet(VerbsCommon.New, "ModuleManifest", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=141555")]
     [OutputType(typeof(string))]
     public sealed class NewModuleManifestCommand : PSCmdlet
     {
@@ -881,9 +881,9 @@ namespace Microsoft.PowerShell.Commands
                     _exportedCmdlets = new string[] { "*" };
             }
 
-            ValidateUriParamterValue(ProjectUri, "ProjectUri");
-            ValidateUriParamterValue(LicenseUri, "LicenseUri");
-            ValidateUriParamterValue(IconUri, "IconUri");
+            ValidateUriParameterValue(ProjectUri, "ProjectUri");
+            ValidateUriParameterValue(LicenseUri, "LicenseUri");
+            ValidateUriParameterValue(IconUri, "IconUri");
 
             if (CompatiblePSEditions != null && (CompatiblePSEditions.Distinct(StringComparer.OrdinalIgnoreCase).Count() != CompatiblePSEditions.Count()))
             {
@@ -1131,7 +1131,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private void ValidateUriParamterValue(Uri uri, string parameterName)
+        private void ValidateUriParameterValue(Uri uri, string parameterName)
         {
             Dbg.Assert(!String.IsNullOrWhiteSpace(parameterName), "parameterName should not be null or whitespace");
 

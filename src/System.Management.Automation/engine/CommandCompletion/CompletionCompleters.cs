@@ -29,7 +29,7 @@ using Microsoft.PowerShell.Commands;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
+    ///
     /// </summary>
     public static class CompletionCompleters
     {
@@ -57,7 +57,7 @@ namespace System.Management.Automation
         #region Command Names
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="commandName"></param>
         /// <returns></returns>
@@ -67,7 +67,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="commandName"></param>
         /// <param name="moduleName"></param>
@@ -220,9 +220,8 @@ namespace System.Management.Automation
                     // (syntax errors, security exceptions, etc.)  If so, the name is fine for the tooltip.
                     syntax = commandInfo.Syntax;
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
 
@@ -333,7 +332,7 @@ namespace System.Management.Automation
                     }
 
                     // The first command might be an un-prefixed commandInfo that we get by importing a module with the -Prefix parameter,
-                    // in that case, we should add the module name qualification because if the module is not in the module path, calling 
+                    // in that case, we should add the module name qualification because if the module is not in the module path, calling
                     // 'Get-Foo' directly doesn't work
                     string completionName = keyValuePair.Key;
                     if (!includeModulePrefix)
@@ -357,7 +356,7 @@ namespace System.Management.Automation
                     for (int index = 1; index < commandList.Count; index++)
                     {
                         var commandInfo = commandList[index] as CommandInfo;
-                        // If it's a pseudo command that only works in the script workflow, don't bother adding it to the result 
+                        // If it's a pseudo command that only works in the script workflow, don't bother adding it to the result
                         // list since it's a duplicate
                         if (commandInfo == null) { continue; }
 
@@ -375,7 +374,7 @@ namespace System.Management.Automation
                 else
                 {
                     // The first command might be an un-prefixed commandInfo that we get by importing a module with the -Prefix parameter,
-                    // in that case, we should add the module name qualification because if the module is not in the module path, calling 
+                    // in that case, we should add the module name qualification because if the module is not in the module path, calling
                     // 'Get-Foo' directly doesn't work
                     string completionName = keyValuePair.Key;
                     if (!includeModulePrefix)
@@ -567,10 +566,11 @@ namespace System.Management.Automation
 
             PseudoBindingInfo pseudoBinding = new PseudoParameterBinder()
                                                 .DoPseudoParameterBinding(commandAst, null, parameterAst, PseudoParameterBinder.BindingType.ParameterCompletion);
-            // The command cannot be found or it's not a cmdlet, not a script cmdlet, not a function
+            // The command cannot be found or it's not a cmdlet, not a script cmdlet, not a function.
+            // Try completing as if it the parameter is a command argument for native command completion.
             if (pseudoBinding == null)
             {
-                return result;
+                return CompleteCommandArgument(context);
             }
 
             switch (pseudoBinding.InfoType)
@@ -825,7 +825,9 @@ namespace System.Management.Automation
 
         private static string GetOperatorDescription(string op)
         {
-            return ResourceManagerCache.GetResourceString(typeof(CompletionCompleters).GetTypeInfo().Assembly, "TabCompletionStrings", op + "OperatorDescription");
+            return ResourceManagerCache.GetResourceString(typeof(CompletionCompleters).GetTypeInfo().Assembly,
+                                                          "System.Management.Automation.resources.TabCompletionStrings",
+                                                          op + "OperatorDescription");
         }
 
         #endregion Command Parameters
@@ -964,7 +966,7 @@ namespace System.Management.Automation
                 }
                 else if (expressionAst.Parent is ArrayLiteralAst && expressionAst.Parent.Parent is CommandParameterAst)
                 {
-                    // Handle scenarios such as 
+                    // Handle scenarios such as
                     //      dir -Path: a.txt, <tab> || dir -Path: a.txt, b.txt <tab>
                     commandAst = (CommandAst)expressionAst.Parent.Parent.Parent;
                     if (context.WordToComplete == string.Empty)
@@ -1654,7 +1656,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Process a parameter to get the argument completion results
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// If the argument completion falls into these pre-defined cases:
         ///   1. The matching parameter is of type Enum
@@ -1805,7 +1807,7 @@ namespace System.Management.Automation
             NativeCommandArgumentCompletion(commandName, parameter.Parameter, result, commandAst, context, boundArguments);
         }
 
-        private static IEnumerable<PSTypeName> NativeCommandArgumentCompletion_InferTypesOfArugment(
+        private static IEnumerable<PSTypeName> NativeCommandArgumentCompletion_InferTypesOfArgument(
             Dictionary<string, AstParameterArgumentPair> boundArguments,
             CommandAst commandAst,
             CompletionContext context,
@@ -2039,9 +2041,8 @@ namespace System.Management.Automation
                         }
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
             switch (commandName)
@@ -2405,9 +2406,8 @@ namespace System.Management.Automation
             {
                 customResults = scriptBlock.Invoke(argumentsToCompleter);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             if (customResults == null || !customResults.Any())
@@ -2527,7 +2527,7 @@ namespace System.Management.Automation
             else if (boundArguments != null && boundArguments.ContainsKey("InputObject"))
             {
                 gotInstance = true;
-                cimClassTypeNames = NativeCommandArgumentCompletion_InferTypesOfArugment(boundArguments, commandAst, context, "InputObject");
+                cimClassTypeNames = NativeCommandArgumentCompletion_InferTypesOfArgument(boundArguments, commandAst, context, "InputObject");
             }
 
             if (cimClassTypeNames != null)
@@ -2811,7 +2811,7 @@ namespace System.Management.Automation
                 if (commandResults != null)
                     result.AddRange(commandResults);
 
-                // Consider files only if the -Module parameter is not present 
+                // Consider files only if the -Module parameter is not present
                 if (moduleName == null)
                 {
                     // ps1 files and directories. We only complete the files with .ps1 extension for Get-Command, because the -Syntax
@@ -3621,7 +3621,7 @@ namespace System.Management.Automation
         /// <param name="itemTypeToComplete">The item provided by user for completion.</param>
         /// <param name="paramName">Name of the parameter whose value needs completion.</param>
         /// <param name="result">List of completion suggestions.</param>
-        /// <param name="context">Completion context.</param>        
+        /// <param name="context">Completion context.</param>
         private static void NativeCompletionNewItemCommand(string itemTypeToComplete, string paramName, List<CompletionResult> result, CompletionContext context)
         {
             if (string.IsNullOrEmpty(paramName))
@@ -3893,7 +3893,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Find the location where 'tab' is typed based on the line and colum.
+        /// Find the location where 'tab' is typed based on the line and column.
         /// </summary>
         private static ArgumentLocation FindTargetArgumentLocation(Collection<AstParameterArgumentPair> parsedArguments, Token token)
         {
@@ -3956,7 +3956,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="prev">the argument that is right before the 'tab' location</param>
         /// <param name="position">the number of positional arguments before the 'tab' location</param>
@@ -4052,7 +4052,7 @@ namespace System.Management.Automation
         #region Filenames
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="fileName"></param>
         /// <returns></returns>
@@ -4167,9 +4167,8 @@ namespace System.Management.Automation
                                            provider.Name.Equals(FileSystemProvider.ProviderName,
                                                                 StringComparison.OrdinalIgnoreCase);
                         }
-                        catch (Exception e)
+                        catch (Exception)
                         {
-                            CommandProcessorBase.CheckForSevereException(e);
                         }
                     }
 
@@ -4188,9 +4187,8 @@ namespace System.Management.Automation
                             {
                                 leaf = Path.GetFileName(pathWithoutProvider);
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
-                                CommandProcessorBase.CheckForSevereException(e);
                             }
 
                             var notHiddenEntries = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
@@ -4225,9 +4223,8 @@ namespace System.Management.Automation
                                     {
                                         entries = Directory.GetFileSystemEntries(parentPath, leaf);
                                     }
-                                    catch (Exception e)
+                                    catch (Exception)
                                     {
-                                        CommandProcessorBase.CheckForSevereException(e);
                                     }
 
                                     if (entries != null)
@@ -4324,11 +4321,10 @@ namespace System.Management.Automation
                                 if (!completionText.StartsWith(parentDirectory, StringComparison.Ordinal))
                                     completionText = Path.Combine(".", completionText);
                             }
-                            catch (Exception e)
+                            catch (Exception)
                             {
-                                // The object at the specifie path is not accessable, such as c:\hiberfil.sys (for hibernation) or c:\pagefile.sys (for paging)
+                                // The object at the specified path is not accessable, such as c:\hiberfil.sys (for hibernation) or c:\pagefile.sys (for paging)
                                 // We ignore those files
-                                CommandProcessorBase.CheckForSevereException(e);
                                 continue;
                             }
                         }
@@ -4504,7 +4500,7 @@ namespace System.Management.Automation
         #region Variable
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="variableName"></param>
         /// <returns></returns>
@@ -5019,7 +5015,7 @@ namespace System.Management.Automation
                 //     $xml.
                 //     $xml.Save("C:\data.xml")
                 // In this example, we add $xml. between two existing statements, and the 'lastAst' in this case is
-                // a MemberExpressionAst '$xml.$xml', whose parent is still a MemberExpressionAst '$xml.$xml.Save'. 
+                // a MemberExpressionAst '$xml.$xml', whose parent is still a MemberExpressionAst '$xml.$xml.Save'.
                 // But here we DO NOT want to re-assign 'targetExpr' to be '$xml.$xml'. 'targetExpr' in this case
                 // should be '$xml'.
                 if (targetExpr == null)
@@ -5460,7 +5456,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                // Add stuff from our base class System.Object.  
+                // Add stuff from our base class System.Object.
                 if (@static)
                 {
                     // Don't add base class constructors
@@ -5610,7 +5606,7 @@ namespace System.Management.Automation
         /// In OneCore PS, there is no way to retrieve all loaded assemblies. But we have the type catalog dictionary
         /// which contains the full type names of all available CoreCLR .NET types. We can extract the necessary info
         /// from the full type names to make type name auto-completion work.
-        /// This type represents a generic type for type name completion. It only contains information that can be 
+        /// This type represents a generic type for type name completion. It only contains information that can be
         /// inferred from the full type name.
         /// </summary>
         private class GenericTypeCompletionInStringFormat : TypeCompletionInStringFormat
@@ -5703,7 +5699,7 @@ namespace System.Management.Automation
 
             internal override CompletionResult GetCompletionResult(string keyMatched, string prefix, string suffix, string namespaceToRemove)
             {
-                string completion = ToStringCodeMethods.Type(Type);
+                string completion = ToStringCodeMethods.Type(Type, false, keyMatched);
 
                 // If the completion included a namespace and ToStringCodeMethods.Type found
                 // an accelerator, then just use the type's FullName instead because the user
@@ -5817,7 +5813,7 @@ namespace System.Management.Automation
 
                     // If it's already included, skip it.
                     // This may happen when an accelerator name is the same as the short name of the type it represents,
-                    // and aslo that type has more than one accelerator names. For example: 
+                    // and aslo that type has more than one accelerator names. For example:
                     //    "float"  -> System.Single
                     //    "single" -> System.Single
                     if (typeAlreadyIncluded) { continue; }
@@ -5857,8 +5853,18 @@ namespace System.Management.Automation
 
             #region Process_LoadedAssemblies
 
-            var assembliesExludingPSGenerated = ClrFacade.GetAssemblies();
-            var allPublicTypes = assembliesExludingPSGenerated.SelectMany(assembly => assembly.GetTypes().Where(TypeResolver.IsPublic));
+            var assembliesExcludingPSGenerated = ClrFacade.GetAssemblies();
+            var allPublicTypes = assembliesExcludingPSGenerated.SelectMany(assembly =>
+            {
+                try
+                {
+                    return assembly.GetTypes().Where(TypeResolver.IsPublic);
+                }
+                catch (ReflectionTypeLoadException)
+                {
+                }
+                return Type.EmptyTypes;
+            });
 
             foreach (var type in allPublicTypes)
             {
@@ -6064,7 +6070,7 @@ namespace System.Management.Automation
                 }
             }
 
-            //this is a temparary fix. Only the type defined in the same script get complete. Need to use using Module when that is available. 
+            //this is a temporary fix. Only the type defined in the same script get complete. Need to use using Module when that is available.
             var scriptBlockAst = (ScriptBlockAst)context.RelatedAsts[0];
             var typeAsts = scriptBlockAst.FindAll(ast => ast is TypeDefinitionAst, false).Cast<TypeDefinitionAst>();
             foreach (var typeAst in typeAsts.Where(ast => pattern.IsMatch(ast.Name)))
@@ -6127,9 +6133,8 @@ namespace System.Management.Automation
             {
                 files = Directory.GetFiles(dirPath, wordToComplete);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             if (files != null)
@@ -6151,9 +6156,8 @@ namespace System.Management.Automation
                         var completionText = fileName.Substring(0, fileName.Length - 9);
                         results.Add(new CompletionResult(completionText));
                     }
-                    catch (Exception e)
+                    catch (Exception)
                     {
-                        CommandProcessorBase.CheckForSevereException(e);
                         continue;
                     }
                 }
@@ -6230,7 +6234,7 @@ namespace System.Management.Automation
         /// Generate auto complete results for hashtable key within a Dynamickeyword.
         /// Results are generated based on properties of a DynamicKeyword matches given identifier.
         /// For example, following "D" matches "DestinationPath"
-        /// 
+        ///
         ///     Configuration
         ///     {
         ///         File
@@ -6238,7 +6242,7 @@ namespace System.Management.Automation
         ///             D^
         ///         }
         ///     }
-        /// 
+        ///
         /// </summary>
         /// <param name="completionContext"></param>
         /// <param name="ast"></param>
@@ -6251,7 +6255,7 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(ast.Keyword != null, "DynamicKeywordStatementAst.Keyword can never be null");
             List<CompletionResult> results = null;
-            var dynamicKeywordProperies = ast.Keyword.Properties;
+            var dynamicKeywordProperties = ast.Keyword.Properties;
             var memberPattern = completionContext.WordToComplete + "*";
 
             //
@@ -6269,10 +6273,10 @@ namespace System.Management.Automation
                 }
             }
 
-            if (dynamicKeywordProperies.Count > 0)
+            if (dynamicKeywordProperties.Count > 0)
             {
                 // Excludes existing properties in the hashtable statement
-                var tempProperties = dynamicKeywordProperies.Where(p => !propertiesName.Contains(p.Key, StringComparer.OrdinalIgnoreCase));
+                var tempProperties = dynamicKeywordProperties.Where(p => !propertiesName.Contains(p.Key, StringComparer.OrdinalIgnoreCase));
                 if (tempProperties != null && tempProperties.Any())
                 {
                     results = new List<CompletionResult>();
@@ -6542,9 +6546,8 @@ namespace System.Management.Automation
                         return strValue + extraText;
                     }
                 }
-                catch (Exception e)
+                catch (Exception)
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                 }
             }
             return null;
@@ -6923,7 +6926,7 @@ namespace System.Management.Automation
             {
                 // ConstrainedLanguage has already been applied as necessary when we construct CompletionContext
                 Diagnostics.Assert(!(ExecutionContext.HasEverUsedConstrainedLanguage && executionContext.LanguageMode != PSLanguageMode.ConstrainedLanguage),
-                                   "If the runspace has ever used constrained language mode, then the current language mode should already be set to contrained language");
+                                   "If the runspace has ever used constrained language mode, then the current language mode should already be set to constrained language");
 
                 // We're passing 'true' here for isTrustedInput, because SafeExprEvaluator ensures that the AST
                 // has no dangerous side-effects such as arbitrary expression evaluation. It does require variable

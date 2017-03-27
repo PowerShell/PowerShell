@@ -11,7 +11,7 @@ namespace Microsoft.PowerShell.Commands
     /// A command to remove a property from an item.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "ItemProperty", DefaultParameterSetName = "Path", SupportsShouldProcess = true, SupportsTransactions = true,
-        HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113374")]
+        HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113374")]
     public class RemoveItemPropertyCommand : ItemPropertyCommandBase
     {
         #region Parameters
@@ -92,16 +92,16 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             string propertyName = null;

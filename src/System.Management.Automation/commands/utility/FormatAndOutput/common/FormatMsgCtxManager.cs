@@ -8,12 +8,12 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 {
     /// <summary>
     /// INTERNAL IMPLEMENTATION CLASS
-    /// 
+    ///
     /// It manages the finite state machine for the sequence of formatting messages.
     /// It achieves this by maintaining a stack of OutputContext-derived objects.
     /// A predefined set of events allows the host of this class to process the information
     /// as it comes trough the finite state machine (push model)
-    /// 
+    ///
     /// IMPORTANT: The code using this class will have to provide ALL the callbacks.
     /// </summary>
     internal class FormatMessagesContextManager
@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal abstract class OutputContext
         {
             /// <summary>
-            /// 
+            ///
             /// </summary>
             /// <param name="parentContextInStack">parent context in the stack, it can be null</param>
             internal OutputContext(OutputContext parentContextInStack)
@@ -59,7 +59,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         }
 
         /// <summary>
-        /// process an object from an input stream. It manages the context stack and 
+        /// process an object from an input stream. It manages the context stack and
         /// calls back on the specified event delegates
         /// </summary>
         /// <param name="o">object to process</param>
@@ -89,7 +89,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                     OutputContext oc = this.contextCreation(this.ActiveOutputContext, formatData);
                     _stack.Push(oc);
 
-                    // now we have the context properly set: need to notify the 
+                    // now we have the context properly set: need to notify the
                     // underlying algorithm to do the start document or group stuff
                     if (formatDataIsFormatStartData)
                     {

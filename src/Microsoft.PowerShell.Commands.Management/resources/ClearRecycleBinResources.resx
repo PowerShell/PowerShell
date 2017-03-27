@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -139,6 +139,6 @@
     <value>Invalid input. The following formats are supported: '{0}', '{1}' or '{2}'.</value>
   </data>
   <data name="InvalidDriveType" xml:space="preserve">
-    <value>The drive with the name '{0}' is not a Fixed drive and does not support the Recyle Bin. Please run the '{1}' cmdlet to see the available Fixed drives in the system.</value>
+    <value>The drive with the name '{0}' is not a Fixed drive and does not support the Recycle Bin. Please run the '{1}' cmdlet to see the available Fixed drives in the system.</value>
   </data>
 </root>

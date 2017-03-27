@@ -25,7 +25,7 @@ Describe "Remove-Variable" -Tags "CI" {
     }
 
     It "Should throw error when used with Name field, and named variable does not exist" {
-	Remove-Variable -Name nonexistantVariable -ErrorAction SilentlyContinue | Should Throw
+	Remove-Variable -Name nonexistentVariable -ErrorAction SilentlyContinue | Should Throw
     }
 
     It "Should be able to remove a variable using the rv alias" {
@@ -200,21 +200,21 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 		$var1 = Get-Variable -Name foo -EA SilentlyContinue
 		$var1 | Should BeNullOrEmpty
 	}
-	
+
 	It "Remove-Variable Constant variable should throw SessionStateUnauthorizedAccessException"{
 		New-Variable foo bar -Option Constant
 		try
 		{
 			Remove-Variable foo -EA Stop
-			Throw "Execution OK" 
+			Throw "Execution OK"
 		}
-		catch 
+		catch
 		{
-			$_.CategoryInfo | Should Match "SessionStateUnauthorizedAccessException"  
+			$_.CategoryInfo | Should Match "SessionStateUnauthorizedAccessException"
 			$_.FullyQualifiedErrorId | Should be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 	}
-	
+
 	It "Remove-Variable ReadOnly variable should throw SessionStateUnauthorizedAccessException and force remove should work"{
 		New-Variable foo bar -Option ReadOnly
 		try
@@ -222,41 +222,41 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 			Remove-Variable foo -EA Stop
 			Throw "Execution OK"
 		}
-		catch 
+		catch
 		{
-			$_.CategoryInfo| Should Match "SessionStateUnauthorizedAccessException"  
+			$_.CategoryInfo| Should Match "SessionStateUnauthorizedAccessException"
 			$_.FullyQualifiedErrorId | Should be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 		Remove-Variable foo -Force
 		$var1 = Get-Variable -Name foo -EA SilentlyContinue
 		$var1 | Should BeNullOrEmpty
 	}
-	
+
 	It "Remove-Variable Constant variable should throw SessionStateUnauthorizedAccessException and force remove should also throw exception"{
 		New-Variable foo bar -Option Constant
 		try
 		{
 			Remove-Variable foo -EA Stop
-			Throw "Execution OK" 
+			Throw "Execution OK"
 		}
-		catch 
+		catch
 		{
-			$_.CategoryInfo | Should Match "SessionStateUnauthorizedAccessException"  
+			$_.CategoryInfo | Should Match "SessionStateUnauthorizedAccessException"
 			$_.FullyQualifiedErrorId | Should be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
-		
+
 		try
 		{
 			Remove-Variable foo -Force -EA Stop
-			Throw "Execution OK" 
+			Throw "Execution OK"
 		}
-		catch 
+		catch
 		{
-			$_.CategoryInfo | Should Match "SessionStateUnauthorizedAccessException"  
+			$_.CategoryInfo | Should Match "SessionStateUnauthorizedAccessException"
 			$_.FullyQualifiedErrorId | Should be "VariableNotRemovable,Microsoft.PowerShell.Commands.RemoveVariableCommand"
 		}
 	}
-	
+
 	It "Remove-Variable variable in new scope should works and Get-Variable with different scope should have different result"{
 		New-Variable foo bar
 		&{
@@ -266,18 +266,18 @@ Describe "Remove-Variable basic functionality" -Tags "CI" {
 				Get-Variable -Name foo -Scope local -EA Stop
 				Throw "Execution OK"
 			}
-			catch 
+			catch
 			{
-				$_.CategoryInfo | Should Match "ItemNotFoundException"  
+				$_.CategoryInfo | Should Match "ItemNotFoundException"
 				$_.FullyQualifiedErrorId | Should be "VariableNotFound,Microsoft.PowerShell.Commands.GetVariableCommand"
 			}
 		}
-		
+
 		$var1 = Get-Variable -Name foo
 		$var1.Name | Should Be "foo"
 		$var1.Value | Should Be "bar"
 		$var1.Options | Should Be "None"
 		$var1.Description | Should Be ""
-		
+
 	}
 }

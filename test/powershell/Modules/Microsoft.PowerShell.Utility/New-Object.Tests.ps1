@@ -38,28 +38,28 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
 		$result = New-Object -TypeName int[] -Arg 10
 		$result.Count | Should Be 10
 	}
-	
+
 	It "New-Object with char should work"{
 		$result = New-Object -TypeName char
 		$result.Count | Should Be 1
 		$defaultChar = [char]0
 		([char]$result) | Should Be $defaultChar
 	}
-	
+
 	It "New-Object with default Coordinates should work"{
 		$result = New-Object -TypeName System.Management.Automation.Host.Coordinates
 		$result.Count | Should Be 1
 		$result.X | Should Be 0
 		$result.Y | Should Be 0
 	}
-	
+
 	It "New-Object with specified Coordinates should work"{
 		$result = New-Object -TypeName System.Management.Automation.Host.Coordinates -ArgumentList 1,2
 		$result.Count | Should Be 1
 		$result.X | Should Be 1
 		$result.Y | Should Be 2
 	}
-	
+
 	It "New-Object with Employ should work"{
 		if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
 		{
@@ -71,7 +71,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
 		$result.LastName | Should Be "Soe"
 		$result.YearsInMS | Should Be 11
 	}
-	
+
 	It "New-Object with invalid type should throw Exception"{
 		try
 		{
@@ -84,7 +84,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
 			$_.FullyQualifiedErrorId | Should be "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
 		}
 	}
-	
+
 	It "New-Object with invalid argument should throw Exception"{
 		try
 		{
@@ -97,7 +97,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
 			$_.FullyQualifiedErrorId | Should be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
 		}
 	}
-	
+
 	It "New-Object with abstract class should throw Exception"{
 		Add-Type -TypeDefinition "public abstract class AbstractEmployee{public AbstractEmployee(){}}"
 		try
@@ -111,8 +111,8 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
 			$_.FullyQualifiedErrorId | Should be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
 		}
 	}
-	
-	It "New-Object with bad argument for class construtor should throw Exception"{
+
+	It "New-Object with bad argument for class constructor should throw Exception"{
 		if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
 		{
 			Add-Type -TypeDefinition "public class Employee{public Employee(string firstName,string lastName,int yearsInMS){FirstName = firstName;LastName=lastName;YearsInMS = yearsInMS;}public string FirstName;public string LastName;public int YearsInMS;}"
@@ -128,9 +128,9 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
 			$_.FullyQualifiedErrorId | Should be "ConstructorInvokedThrowException,Microsoft.PowerShell.Commands.NewObjectCommand"
 		}
 	}
-	
+
 	#This case will throw "Execution OK" now, just mark as pending now
-	It "New-Object with not init class construtor should throw Exception" -Pending{
+	It "New-Object with not init class constructor should throw Exception" -Pending{
 		if(-not ([System.Management.Automation.PSTypeName]'Employee').Type)
 		{
 			Add-Type -TypeDefinition "public class Employee{public Employee(string firstName,string lastName,int yearsInMS){FirstName = firstName;LastName=lastName;YearsInMS = yearsInMS;}public string FirstName;public string LastName;public int YearsInMS;}"
@@ -145,7 +145,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
 			$_.FullyQualifiedErrorId | Should be "CannotFindAppropriateCtor,Microsoft.PowerShell.Commands.NewObjectCommand"
 		}
 	}
-	
+
 	It "New-Object with Private Nested class should throw Exception"{
 		Add-Type -TypeDefinition "public class WeirdEmployee{public WeirdEmployee(){}private class PrivateNestedWeirdEmployee{public PrivateNestedWeirdEmployee(){}}}"
 		try
@@ -159,7 +159,7 @@ Describe "New-Object DRT basic functionality" -Tags "CI" {
 			$_.FullyQualifiedErrorId | Should be "TypeNotFound,Microsoft.PowerShell.Commands.NewObjectCommand"
 		}
 	}
-	
+
 	It "New-Object with TypeName and Property parameter should work"{
 		$result = New-Object -TypeName PSObject -property @{foo=123}
 		$result.foo | Should Be 123

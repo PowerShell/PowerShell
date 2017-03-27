@@ -85,7 +85,7 @@ namespace System.Management.Automation.Remoting
 
         /// <summary>
         /// This is static property which gets Current TimeZone in byte format
-        /// by using ByteFormatter. 
+        /// by using ByteFormatter.
         /// This is static to make client generate this only once.
         /// </summary>
         internal static byte[] GetCurrentTimeZoneInByteFormat()
@@ -234,9 +234,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.ForegroundColor, hostRawUI.ForegroundColor);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set BackgroundColor.
@@ -244,9 +243,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.BackgroundColor, hostRawUI.BackgroundColor);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set CursorPosition.
@@ -254,9 +252,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.CursorPosition, hostRawUI.CursorPosition);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set WindowPosition.
@@ -264,9 +261,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.WindowPosition, hostRawUI.WindowPosition);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set CursorSize.
@@ -274,9 +270,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.CursorSize, hostRawUI.CursorSize);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set BufferSize.
@@ -284,9 +279,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.BufferSize, hostRawUI.BufferSize);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set WindowSize.
@@ -294,9 +288,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.WindowSize, hostRawUI.WindowSize);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set MaxWindowSize.
@@ -304,9 +297,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.MaxWindowSize, hostRawUI.MaxWindowSize);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set MaxPhysicalWindowSize.
@@ -314,9 +306,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.MaxPhysicalWindowSize, hostRawUI.MaxPhysicalWindowSize);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             // Set WindowTitle.
@@ -324,9 +315,8 @@ namespace System.Management.Automation.Remoting
             {
                 hostDefaultData.SetValue(HostDefaultDataId.WindowTitle, hostRawUI.WindowTitle);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                CommandProcessorBase.CheckForSevereException(e);
             }
 
             return hostDefaultData;

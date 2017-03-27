@@ -1,11 +1,11 @@
 ﻿#
 # Copyright (c) Microsoft Corporation, 2015
-# 
+#
 # This is a Pester test suite which validate the Json cmdlets.
 #
 
 #
-# This 'Describe' is for tests that were converted from utscripts (SDXROOT/admin/monad/tests/monad/DRT/utscripts) 
+# This 'Describe' is for tests that were converted from utscripts (SDXROOT/admin/monad/tests/monad/DRT/utscripts)
 # and C# tests (SDXROOT/admin/monad/tests/monad/DRT/commands/utility/UnitTests) to Pester.
 #
 Describe "Json Tests" -Tags "Feature" {
@@ -69,7 +69,7 @@ Describe "Json Tests" -Tags "Feature" {
         It "Convertto-Json should handle Enum based on Int64" {
 
             # Test follow-up for bug Win8: 378368 Convertto-Json problems with Enum based on Int64.
-            if ( ("JsonEnumTest" -as "Type") -eq $null ) { 
+            if ( ("JsonEnumTest" -as "Type") -eq $null ) {
                 $enum1 = "TestEnum" + (get-random)
                 $enum2 = "TestEnum" + (get-random)
                 $enum3 = "TestEnum" + (get-random)
@@ -82,7 +82,7 @@ Describe "Json Tests" -Tags "Feature" {
                     public $enum1 TestEnum1 = ${enum1}.One;
                     public $enum2 TestEnum2 = ${enum2}.Two;
                     public $enum3 TestEnum3 = ${enum3}.One;
-                }" 
+                }"
             }
             $op = [JsonEnumTest]::New() | convertto-json | convertfrom-json
             $op.TestEnum1 | Should Be "One"
@@ -104,15 +104,15 @@ Describe "Json Tests" -Tags "Feature" {
     Context "ConvertFrom and ConvertTo on JsonObject Tests" {
 
         It "Convert dictionary to PSObject" {
-            
+
             $response = ConvertFrom-Json '{"d":{"__type":"SimpleJsonObject","Name":{"First":"Joel","Last":"Wood"},"Greeting":"Hello"}}'
             $response.d.Name.First | Should Match "Joel"
         }
 
         It "Convert to Json using PSObject" -pending:($IsCoreCLR) {
-            
+
             $response = ConvertFrom-Json '{"d":{"__type":"SimpleJsonObject","Name":{"First":"Joel","Last":"Wood"},"Greeting":"Hello"}}'
-            
+
             $response2 = ConvertTo-Json -InputObject $response -ErrorAction Continue
             $response2 = ConvertTo-Json -InputObject $response -ErrorAction Inquire
             $response2 = ConvertTo-Json -InputObject $response -ErrorAction SilentlyContinue
@@ -120,7 +120,7 @@ Describe "Json Tests" -Tags "Feature" {
             $response2 | Should Be '{"d":{"Name":{"First":"Joel","Last":"Wood"},"Greeting":"Hello"}}'
 
             $response2 = ConvertTo-Json -InputObject $response -Depth 1 -Compress
-            $nameString = [System.Management.Automation.LanguagePrimitives]::ConvertTo($response.d.Name, [string]) 
+            $nameString = [System.Management.Automation.LanguagePrimitives]::ConvertTo($response.d.Name, [string])
             $response2 | Should Be "{`"d`":{`"Name`":`"$nameString`",`"Greeting`":`"Hello`"}}"
 
             $result1 = @"
@@ -165,12 +165,12 @@ Describe "Json Tests" -Tags "Feature" {
             $response2 = ConvertTo-Json -InputObject $arraylist
             $response2 | Should Be $result3
 
-            $response2 = $arraylist | ConvertTo-Json 
+            $response2 = $arraylist | ConvertTo-Json
             $response2 | Should Be $result3
         }
-        
+
         It "Convert to Json using hashtable" -pending:($IsCoreCLR) {
-            
+
             $nameHash = @{First="Joe1";Last="Wood"}
             $dHash = @{Name=$nameHash; Greeting="Hello"}
             $rootHash = @{d=$dHash}
@@ -207,7 +207,7 @@ Describe "Json Tests" -Tags "Feature" {
         }
 
         It "Convert from Json allows an empty string" {
-            
+
             $emptyStringResult = ConvertFrom-Json ""
             $emptyStringResult | Should Be $null
         }
@@ -216,24 +216,24 @@ Describe "Json Tests" -Tags "Feature" {
     Context "JsonObject Tests" {
 
         It "AddMember on JsonObject" {
-        
+
             # create a Version object
             $versionObject = New-Object System.Version 2, 3, 4, 14
 
             # add a NoteProperty member called Note with a text note
             $versionObject | Add-Member -MemberType NoteProperty -Name Note -Value "a version object"
 
-            # add an AliasProperty called Rev as an alias to the Revison property
+            # add an AliasProperty called Rev as an alias to the Revision property
             $versionObject | Add-Member -MemberType AliasProperty -Name Rev -Value Revision
 
-            # add a ScriptProperty called IsOld which returns whether the version is an older version  
+            # add a ScriptProperty called IsOld which returns whether the version is an older version
             $versionObject | Add-Member -MemberType ScriptProperty -Name IsOld -Value { ($this.Major -le 3) }
 
             $jstr = ConvertTo-Json $versionObject
-    
+
             # convert the JSON string to a JSON object
             $json = ConvertFrom-Json $jstr
-        
+
             # Check the basic properties
             $json.Major | Should Be 2
             $json.Minor | Should Be 3
@@ -260,7 +260,7 @@ Describe "Json Tests" -Tags "Feature" {
             $json = "[1,2,3,4,5,6]"
             $result = ConvertFrom-Json $json
             $result.Count | Should Be 6
-            $result.GetType().BaseType.fullname | Should Be "System.Array"
+            ,$result | Should BeOfType "System.Array"
         }
 
         It "ConvertFrom-Json with a float value" {
@@ -307,7 +307,7 @@ Describe "Json Tests" -Tags "Feature" {
             $result.Second.Count | Should Be 2
             $result.Second[0] | Should Be "four"
             $result.Second[1] | Should Be "five"
-            
+
             $result.Third.blah | Should Be "4"
         }
 
@@ -318,7 +318,7 @@ Describe "Json Tests" -Tags "Feature" {
 
             $result.SampleValue | Should Be 12345
         }
-        
+
 
         It "ConvertFrom-Json sample values" {
 
@@ -1094,7 +1094,7 @@ Describe "Validate Json serialization" -Tags "CI" {
                 FromJson = [string]"hello"
                 ToJson = '"hello"'
             }
-        
+
             # Int, int32, uint32, uint16, int16
 
             # 32-bit signed integer
@@ -1233,8 +1233,8 @@ Describe "Validate Json serialization" -Tags "CI" {
             if ( $TestCase.TestInput -eq "[char]::MinValue" ) { $pending = $true } else { $pending = $false }
             It "Validate '$($testCase.TestInput) | ConvertTo-Json' and '$($testCase.TestInput) | ConvertTo-Json | ConvertFrom-Json'" -pending:$pending {
 
-                # The test case input is executed via invoke-expression. Then, we use this value as an input to ConvertTo-Json, 
-                # and the result is saved into in the $result.ToJson variable. Lastly, this value is deserialized back using 
+                # The test case input is executed via invoke-expression. Then, we use this value as an input to ConvertTo-Json,
+                # and the result is saved into in the $result.ToJson variable. Lastly, this value is deserialized back using
                 # ConvertFrom-Json, and the value is saved to $result.FromJson for comparison.
 
                 $expression = Invoke-Expression $testCase.TestInput
@@ -1313,7 +1313,7 @@ Describe "Validate Json serialization" -Tags "CI" {
         }
 
         It "Validate 'Get-Command Get-Help, Get-command, Get-Member' output with Json conversion" {
-            
+
             $result = @{
                 Expected = @(Get-Command Get-Help, Get-Command, Get-Member)
                 SerializedViaJson = @(Get-Command Get-Help, Get-Command, Get-Member) | ConvertTo-Json | ConvertFrom-Json
@@ -1322,7 +1322,7 @@ Describe "Validate Json serialization" -Tags "CI" {
             $propertiesToValidate = @("Name", "Source", "HelpFile")
             ValidateProperties -serialized $result.SerializedViaJson -expected $result.Expected -properties $propertiesToValidate
         }
-        
+
         It "ConvertTo-JSON a dictionary of arrays" {
             $a = 1..5
             $b = 6..10
@@ -1350,6 +1350,30 @@ Describe "Validate Json serialization" -Tags "CI" {
 '@
             $expectedNoWhiteSpace = $expected -replace "\s"
             $actual | Should Be $expectedNoWhiteSpace
+        }
+    }
+
+
+    Context "Validate Json output is either Pretty or Compressed" {
+
+        It "Should print a pretty Array" {
+            $array = 'one', 'two', 'three'
+            $response = $array | ConvertTo-Json
+            ($response -split "\r?\n")[1] | Should Be '  "one",'
+        }
+
+        It "Should print a pretty dictionary" {
+            $dictionary = [Ordered]@{
+                'one' = 1
+                'two' = 2
+                'three' = 3
+            }       
+            $response2 = $dictionary | ConvertTo-Json
+            ($response2 -split "\r?\n")[1] | Should Be '  "one": 1,'
+        }
+        
+        It "Should minify Json with Compress switch" {
+            (@{ a = 1 } | ConvertTo-Json -Compress).Length | Should Be 7
         }
     }
 }
@@ -1407,7 +1431,7 @@ Describe "Json Bug fixes"  -Tags "Feature" {
 
     $testCases = @(
         @{
-            Name = "ConvertTo-Json -Depth 101 throws MaximumAllowedDepthReached when the user specifies a depth greather than 100."
+            Name = "ConvertTo-Json -Depth 101 throws MaximumAllowedDepthReached when the user specifies a depth greater than 100."
             NumberOfElements = 10
             MaxDepth = 101
             FullyQualifiedErrorId = "ReachedMaximumDepthAllowed,Microsoft.PowerShell.Commands.ConvertToJsonCommand"

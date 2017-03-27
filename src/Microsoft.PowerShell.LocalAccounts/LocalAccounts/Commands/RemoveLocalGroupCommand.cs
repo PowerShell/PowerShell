@@ -13,12 +13,12 @@ using System.Diagnostics.CodeAnalysis;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The Remove-LocalGroup cmdlet deletes a security group from the Windows 
+    /// The Remove-LocalGroup cmdlet deletes a security group from the Windows
     /// Security Accounts manager.
     /// </summary>
     [Cmdlet(VerbsCommon.Remove, "LocalGroup",
             SupportsShouldProcess = true,
-            HelpUri = "http://go.microsoft.com/fwlink/?LinkId=717975")]
+            HelpUri = "https://go.microsoft.com/fwlink/?LinkId=717975")]
     [Alias("rlg")]
     public class RemoveLocalGroupCommand : Cmdlet
     {
@@ -47,7 +47,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "Name".
-        /// Specifies the local groups to be deleted from the local Security Accounts 
+        /// Specifies the local groups to be deleted from the local Security Accounts
         /// Manager.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -66,7 +66,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// The following is the definition of the input parameter "SID".
-        /// Specifies the LocalGroup accounts to remove by 
+        /// Specifies the LocalGroup accounts to remove by
         /// System.Security.Principal.SecurityIdentifier.
         /// </summary>
         [Parameter(Mandatory = true,
@@ -112,7 +112,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        
+
         /// <summary>
         /// EndProcessing method.
         /// </summary>

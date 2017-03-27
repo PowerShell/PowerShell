@@ -20,11 +20,11 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructor for a session state scope.
         /// </summary>
-        /// 
+        ///
         /// <param name="parentScope">
         /// The parent of this scope.  It can be null for the global scope.
         /// </param>
-        /// 
+        ///
         internal SessionStateScope(SessionStateScope parentScope)
         {
             ScopeOrigin = CommandOrigin.Internal;
@@ -40,56 +40,6 @@ namespace System.Management.Automation
                 _scriptScope = this;
             }
         } // SessionStateScope constructor
-
-        private SessionStateCapacityVariable CreateCapacityVariable(
-            string variableName,
-            int defaultCapacity,
-            int maxCapacity,
-            int minCapacity,
-            string descriptionResourceString
-            )
-        {
-            // First do the lookup to see if a variable already exists.
-
-            SessionStateCapacityVariable capacityVariable = null;
-
-            if (Parent != null)
-            {
-                capacityVariable =
-                    Parent.GetVariable(variableName) as SessionStateCapacityVariable;
-            }
-
-            if (capacityVariable == null)
-            {
-                // Since we weren't able to find an existing one, create a new one
-                capacityVariable =
-                    new SessionStateCapacityVariable(
-                        variableName,
-                        defaultCapacity,
-                        maxCapacity,
-                        minCapacity,
-                        ScopedItemOptions.None);
-            }
-            else
-            {
-                // Since we did find one, create a local capacity variable with a reference
-                // to it.
-
-                capacityVariable =
-                    new SessionStateCapacityVariable(
-                        variableName,
-                        capacityVariable,
-                        ScopedItemOptions.None);
-            }
-
-            // Only initialize the description if it is null or empty.  Initializing it every time
-            // causes a measurable performance degradation.
-            if (String.IsNullOrEmpty(capacityVariable.Description))
-            {
-                capacityVariable.Description = descriptionResourceString;
-            }
-            return capacityVariable;
-        }
 
         #endregion constructor
 
@@ -111,11 +61,11 @@ namespace System.Management.Automation
         /// The script scope for this scope. It may reference itself but may not
         /// be a null reference.
         /// </summary>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="value"/> is null when setting the property.
         /// </exception>
-        /// 
+        ///
         internal SessionStateScope ScriptScope
         {
             get { return _scriptScope; }
@@ -143,7 +93,7 @@ namespace System.Management.Automation
         /// When dotting a script, no new scope is created.  Automatic variables must go somewhere, so rather than store
         /// them in the scope they are dotted into, we just store them in a tuple like any other local variable so we
         /// can skip saving and restoring them as the scopes change, instead it's a simple push/pop of this stack.
-        /// 
+        ///
         /// This works because in a dotted script block, the only locals in the tuple are the automatic variables, all
         /// other variables use the variable apis to find the variable and get/set it.
         /// </summary>
@@ -154,28 +104,24 @@ namespace System.Management.Automation
         /// <summary>
         /// Adds a new drive to the scope's drive collection.
         /// </summary>
-        /// 
+        ///
         /// <param name="newDrive">
         /// The new drive to be added.
         /// </param>
-        /// 
+        ///
         /// <remarks>
         /// This method assumes the drive has already been verified and
         /// the provider has already been notified.
         /// </remarks>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="newDrive" /> is null.
         /// </exception>
-        /// 
+        ///
         /// <exception cref="SessionStateException">
         /// If a drive of the same name already exists in this scope.
         /// </exception>
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum drive count has been reached for this scope.
-        /// </exception>
-        /// 
+        ///
         internal void NewDrive(PSDriveInfo newDrive)
         {
             if (newDrive == null)
@@ -200,20 +146,6 @@ namespace System.Management.Automation
                 throw e;
             }
 
-            if (!newDrive.IsAutoMounted &&
-                driveInfos.Count > DriveCapacity.FastValue - 1)
-            {
-                SessionStateOverflowException e =
-                    new SessionStateOverflowException(
-                        newDrive.Name,
-                        SessionStateCategory.Drive,
-                        "DriveOverflow",
-                        SessionStateStrings.DriveOverflow,
-                        DriveCapacity.FastValue);
-
-                throw e;
-            }
-
             if (!newDrive.IsAutoMounted)
             {
                 driveInfos.Add(newDrive.Name, newDrive);
@@ -231,20 +163,20 @@ namespace System.Management.Automation
         /// <summary>
         /// Removes the specified drive from this scope.
         /// </summary>
-        /// 
+        ///
         /// <param name="drive">
         /// The drive to be removed.
         /// </param>
-        /// 
+        ///
         /// <remarks>
         /// This method assumes that the drive has already been validated for removal
         /// by the provider.
         /// </remarks>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="drive" /> is null.
         /// </exception>
-        /// 
+        ///
         internal void RemoveDrive(PSDriveInfo drive)
         {
             if (drive == null)
@@ -286,20 +218,20 @@ namespace System.Management.Automation
         /// <summary>
         /// Retrieves the drive of the specified name.
         /// </summary>
-        /// 
+        ///
         /// <param name="name">
         /// The name of the drive to retrieve.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An instance of a PSDriveInfo object with the specified name if one
         /// exists in this scope or null if one does not exist.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentNullException">
         /// If <paramref name="name" /> is null.
         /// </exception>
-        /// 
+        ///
         internal PSDriveInfo GetDrive(string name)
         {
             if (name == null)
@@ -362,7 +294,7 @@ namespace System.Management.Automation
         /// <param name="name">
         /// The name of the variable to retrieve.
         /// </param>
-        /// 
+        ///
         /// <param name="origin">
         /// The origin of the command trying to retrieve this variable...
         /// </param>
@@ -424,7 +356,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="variable"></param>
         /// <returns></returns>
@@ -465,7 +397,7 @@ namespace System.Management.Automation
         /// If true, sets the variable value to newValue. If false, newValue must
         /// be a PSVariable object and the item will be set rather than the value.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// If true, the variable will be set even if it is readonly.
         /// </param>
@@ -473,11 +405,11 @@ namespace System.Management.Automation
         /// <param name="sessionState">
         /// Which SessionState this variable belongs to.
         /// </param>
-        /// 
+        ///
         /// <param name="origin">
         /// The origin of the caller
         /// </param>
-        /// 
+        ///
         /// <param name="fastPath">
         /// If true and the variable is being set in the global scope,
         /// then all of the normal variable lookup stuff is bypassed and
@@ -489,12 +421,8 @@ namespace System.Management.Automation
         ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the variable is read-only or constant.
-        /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of variables has been reached for this scope.
         /// </exception>
-        /// 
+        ///
         internal PSVariable SetVariable(string name, object value, bool asValue, bool force, SessionStateInternal sessionState, CommandOrigin origin = CommandOrigin.Internal, bool fastPath = false)
         {
             Diagnostics.Assert(name != null, "The caller should verify the name");
@@ -592,22 +520,6 @@ namespace System.Management.Automation
                 variable = (LocalsTuple != null ? LocalsTuple.TrySetVariable(name, value) : null) ?? new PSVariable(name, value);
             }
 
-            // Now check to make sure we don't exceed the max variable count
-            // if this is a new variable.
-
-            if (!varExists && _variables.Count > VariableCapacity.FastValue - 1)
-            {
-                SessionStateOverflowException e =
-                    new SessionStateOverflowException(
-                            name,
-                            SessionStateCategory.Variable,
-                            "VariableOverflow",
-                                SessionStateStrings.VariableOverflow,
-                            VariableCapacity.FastValue);
-
-                throw e;
-            }
-
             // Don't let people set AllScope variables in ConstrainedLanguage,
             // as they can be used to interfere with the session state of
             // trusted commands.
@@ -630,33 +542,47 @@ namespace System.Management.Automation
         } // SetVariable
 
         /// <summary>
+        /// Sets a variable to scope without any checks.
+        /// This is intended to be used only for global scope.
+        /// </summary>
+        /// <param name="variableToSet">PSVariable to set</param>
+        /// <param name="sessionState">SessionState for variable</param>
+        /// <returns></returns>
+        internal void SetVariableForce(PSVariable variableToSet, SessionStateInternal sessionState)
+        {
+            if (Parent != null)
+            {
+                throw new NotImplementedException("SetVariableForce");
+            }
+
+            variableToSet.SessionState = sessionState;
+            GetPrivateVariables()[variableToSet.Name] = variableToSet;
+        }
+
+        /// <summary>
         /// Sets a variable to the given value.
         /// </summary>
         ///
         /// <param name="newVariable">
         /// The new variable to create.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// If true, the variable will be set even if it is readonly.
         /// </param>
-        /// 
+        ///
         /// <param name="sessionState">
         /// Which SessionState this variable belongs to.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The PSVariable representing the variable that was set.
         /// </returns>
         ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the variable is read-only or constant.
-        /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of variables has been reached for this scope.
         /// </exception>
-        /// 
+        ///
         internal PSVariable NewVariable(PSVariable newVariable, bool force, SessionStateInternal sessionState)
         {
             PSVariable variable;
@@ -709,22 +635,6 @@ namespace System.Management.Automation
                 variable = newVariable;
             }
 
-            // Now check to make sure we don't exceed the max variable count
-            // if this is a new variable.
-
-            if (!varExists && _variables.Count > VariableCapacity.FastValue - 1)
-            {
-                SessionStateOverflowException e =
-                    new SessionStateOverflowException(
-                            newVariable.Name,
-                            SessionStateCategory.Variable,
-                            "VariableOverflow",
-                                SessionStateStrings.VariableOverflow,
-                            VariableCapacity.FastValue);
-
-                throw e;
-            }
-
             // Don't let people set AllScope variables in ConstrainedLanguage,
             // as they can be used to interfere with the session state of
             // trusted commands.
@@ -756,11 +666,11 @@ namespace System.Management.Automation
         /// <param name="force">
         /// If true, the variable will be removed even if its ReadOnly.
         /// </param>
-        /// 
+        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// if the variable is constant.
         /// </exception>
-        /// 
+        ///
         internal void RemoveVariable(string name, bool force)
         {
             Diagnostics.Assert(
@@ -777,18 +687,6 @@ namespace System.Management.Automation
                             SessionStateCategory.Variable,
                             "VariableNotRemovable",
                             SessionStateStrings.VariableNotRemovable);
-
-                throw e;
-            }
-
-            if (variable is SessionStateCapacityVariable)
-            {
-                SessionStateUnauthorizedAccessException e =
-                    new SessionStateUnauthorizedAccessException(
-                            name,
-                            SessionStateCategory.Variable,
-                            "VariableNotRemovableSystem",
-                            SessionStateStrings.VariableNotRemovableSystem);
 
                 throw e;
             }
@@ -900,15 +798,15 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The execution context for this engine instance.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// If true, the value will be set even if the alias is ReadOnly.
         /// </param>
-        /// 
+        ///
         /// <param name="origin">
         /// Origin of the caller of this API
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The string representing the value that was set.
         /// </returns>
@@ -916,11 +814,7 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// if the alias is read-only or constant.
         /// </exception>
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of aliases has been reached for this scope.
-        /// </exception>
-        /// 
+        ///
         internal AliasInfo SetAliasValue(string name, string value, ExecutionContext context, bool force, CommandOrigin origin)
         {
             Diagnostics.Assert(
@@ -931,18 +825,6 @@ namespace System.Management.Automation
             AliasInfo aliasInfo;
             if (!aliasInfos.TryGetValue(name, out aliasInfo))
             {
-                if (aliasInfos.Count > AliasCapacity.FastValue - 1)
-                {
-                    SessionStateOverflowException e =
-                        new SessionStateOverflowException(
-                                name,
-                                SessionStateCategory.Alias,
-                                "AliasOverflow",
-                            SessionStateStrings.AliasOverflow,
-                                AliasCapacity.FastValue);
-
-                    throw e;
-                }
                 aliasInfos[name] = new AliasInfo(name, value, context);
             }
             else
@@ -996,19 +878,19 @@ namespace System.Management.Automation
         /// <param name="context">
         /// The execution context for this engine instance.
         /// </param>
-        /// 
+        ///
         /// <param name="options">
         /// The options to set on the alias.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// If true, the value will be set even if the alias is ReadOnly.
         /// </param>
-        /// 
+        ///
         /// <param name="origin">
         /// Origin of the caller of this API
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The string representing the value that was set.
         /// </returns>
@@ -1016,11 +898,7 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the alias is read-only or constant.
         /// </exception>
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of aliases has been reached for this scope.
-        /// </exception>
-        /// 
+        ///
         internal AliasInfo SetAliasValue(
             string name,
             string value,
@@ -1038,18 +916,6 @@ namespace System.Management.Automation
             AliasInfo result;
             if (!aliasInfos.TryGetValue(name, out aliasInfo))
             {
-                if (aliasInfos.Count > AliasCapacity.FastValue - 1)
-                {
-                    SessionStateOverflowException e =
-                        new SessionStateOverflowException(
-                                name,
-                                SessionStateCategory.Alias,
-                                "AliasOverflow",
-                                SessionStateStrings.AliasOverflow,
-                                AliasCapacity.FastValue);
-
-                    throw e;
-                }
                 result = new AliasInfo(name, value, context, options);
                 aliasInfos[name] = result;
             }
@@ -1088,7 +954,7 @@ namespace System.Management.Automation
                 if ((options & ScopedItemOptions.AllScope) == 0 &&
                     (aliasInfo.Options & ScopedItemOptions.AllScope) != 0)
                 {
-                    // user is trying to remove the AllScope option from the alias. 
+                    // user is trying to remove the AllScope option from the alias.
                     // Do not allow this (as per spec).
 
                     SessionStateUnauthorizedAccessException e =
@@ -1136,11 +1002,11 @@ namespace System.Management.Automation
         /// If true, the alias will be set even if there is an existing ReadOnly
         /// alias.
         /// </param>
-        /// 
+        ///
         /// <param name="origin">
         /// Specifies the command origin of the calling command.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The string representing the value that was set.
         /// </returns>
@@ -1148,11 +1014,7 @@ namespace System.Management.Automation
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the alias is read-only or constant.
         /// </exception>
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of aliases has been reached for this scope.
-        /// </exception>
-        /// 
+        ///
         internal AliasInfo SetAliasItem(AliasInfo aliasToSet, bool force, CommandOrigin origin = CommandOrigin.Internal)
         {
             Diagnostics.Assert(
@@ -1162,22 +1024,7 @@ namespace System.Management.Automation
 
             var aliasInfos = GetAliases();
             AliasInfo aliasInfo;
-            if (!aliasInfos.TryGetValue(aliasToSet.Name, out aliasInfo))
-            {
-                if (aliasInfos.Count > AliasCapacity.FastValue - 1)
-                {
-                    SessionStateOverflowException e =
-                        new SessionStateOverflowException(
-                                aliasToSet.Name,
-                                SessionStateCategory.Alias,
-                                "AliasOverflow",
-                                SessionStateStrings.AliasOverflow,
-                                AliasCapacity.FastValue);
-
-                    throw e;
-                }
-            }
-            else
+            if (aliasInfos.TryGetValue(aliasToSet.Name, out aliasInfo))
             {
                 // An existing alias cannot be set if it is ReadOnly or Constant unless
                 // force is specified, in which case an existing ReadOnly alias can
@@ -1200,7 +1047,7 @@ namespace System.Management.Automation
                 if ((aliasToSet.Options & ScopedItemOptions.AllScope) == 0 &&
                     (aliasInfo.Options & ScopedItemOptions.AllScope) != 0)
                 {
-                    // user is trying to remove the AllScope option from the alias. 
+                    // user is trying to remove the AllScope option from the alias.
                     // Do not allow this (as per spec).
 
                     SessionStateUnauthorizedAccessException e =
@@ -1233,11 +1080,11 @@ namespace System.Management.Automation
         /// <param name="force">
         /// If true, the alias will be removed even if it is ReadOnly.
         /// </param>
-        /// 
+        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the alias is constant.
         /// </exception>
-        /// 
+        ///
         internal void RemoveAlias(string name, bool force)
         {
             Diagnostics.Assert(
@@ -1325,15 +1172,15 @@ namespace System.Management.Automation
         /// <param name="force">
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
-        /// 
+        ///
         /// <param name="origin">
         /// The origin of the caller of this API
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The execution context for the function/filter.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A FunctionInfo that is either a FilterInfo or FunctionInfo representing the
         /// function or filter.
@@ -1341,12 +1188,8 @@ namespace System.Management.Automation
         ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
-        /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of functions have been reached for this scope.
         /// </exception>
-        /// 
+        ///
         internal FunctionInfo SetFunction(
             string name,
             ScriptBlock function,
@@ -1375,15 +1218,15 @@ namespace System.Management.Automation
         /// <param name="force">
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
-        /// 
+        ///
         /// <param name="origin">
         /// The origin of the caller of this API
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The execution context for the function/filter.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A FunctionInfo that is either a FilterInfo or FunctionInfo representing the
         /// function or filter.
@@ -1391,12 +1234,8 @@ namespace System.Management.Automation
         ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
-        /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of functions have been reached for this scope.
         /// </exception>
-        /// 
+        ///
         internal FunctionInfo SetFunction(
             string name,
             ScriptBlock function,
@@ -1427,19 +1266,19 @@ namespace System.Management.Automation
         /// <param name="options">
         /// The options that should be applied to the function.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
-        /// 
+        ///
         /// <param name="origin">
         /// The origin of the caller of this API
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The execution context for the function/filter.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A FunctionInfo that is either a FilterInfo or FunctionInfo representing the
         /// function or filter.
@@ -1447,12 +1286,8 @@ namespace System.Management.Automation
         ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
-        /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of functions have been reached for this scope.
         /// </exception>
-        /// 
+        ///
         internal FunctionInfo SetFunction(
             string name,
             ScriptBlock function,
@@ -1497,23 +1332,23 @@ namespace System.Management.Automation
         /// <param name="options">
         /// The options that should be applied to the function.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// If true, the function will be set even if its ReadOnly.
         /// </param>
-        /// 
+        ///
         /// <param name="origin">
         /// The origin of the caller of this API
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The execution context for the function/filter.
         /// </param>
-        /// 
+        ///
         /// <param name="helpFile">
         /// The name of the help file associated with the function.
         /// </param>
-        /// 
+        ///
         /// <param name="functionFactory">
         /// Function to create the FunctionInfo.
         /// </param>
@@ -1525,12 +1360,8 @@ namespace System.Management.Automation
         ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is read-only or constant.
-        /// </exception> 
-        /// 
-        /// <exception cref="SessionStateOverflowException">
-        /// If the maximum number of functions have been reached for this scope.
         /// </exception>
-        /// 
+        ///
         internal FunctionInfo SetFunction(
             string name,
             ScriptBlock function,
@@ -1551,19 +1382,6 @@ namespace System.Management.Automation
             FunctionInfo result;
             if (!functionInfos.TryGetValue(name, out existingValue))
             {
-                if (functionInfos.Count > FunctionCapacity.FastValue - 1)
-                {
-                    SessionStateOverflowException e =
-                        new SessionStateOverflowException(
-                                name,
-                                SessionStateCategory.Function,
-                                "FunctionOverflow",
-                                SessionStateStrings.FunctionOverflow,
-                                FunctionCapacity.FastValue);
-
-                    throw e;
-                }
-
                 result = functionFactory(name, function, originalFunction, options, context, helpFile);
                 functionInfos[name] = result;
 
@@ -1662,11 +1480,11 @@ namespace System.Management.Automation
         /// <param name="force">
         /// If true, the function is removed even if it is ReadOnly.
         /// </param>
-        /// 
+        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the function is constant.
-        /// </exception> 
-        /// 
+        /// </exception>
+        ///
         internal void RemoveFunction(string name, bool force)
         {
             Diagnostics.Assert(
@@ -1758,24 +1576,24 @@ namespace System.Management.Automation
         /// <param name="cmdlet">
         /// The cmdlet that should be added.
         /// </param>
-        /// 
+        ///
         /// <param name="origin">
         /// The origin of the caller of this API
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The execution context for the cmdlet.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A CmdletInfo representing the cmdlet
         /// </returns>
         ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the cmdlet is read-only or constant.
-        /// </exception> 
-        /// 
-        /// 
+        /// </exception>
+        ///
+        ///
         internal CmdletInfo AddCmdletToCache(
             string name,
             CmdletInfo cmdlet,
@@ -1871,20 +1689,20 @@ namespace System.Management.Automation
         /// <param name="name">
         /// The name of the cmdlet to remove.
         /// </param>
-        /// 
+        ///
         /// <param name="index">
         /// The index at which to remove the cmdlet
         /// If index is -1, remove all cmdlets with that name
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// If true, the cmdlet is removed even if it is ReadOnly.
         /// </param>
-        /// 
+        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the cmdlet is constant.
-        /// </exception> 
-        /// 
+        /// </exception>
+        ///
         internal void RemoveCmdlet(string name, int index, bool force)
         {
             Diagnostics.Assert(
@@ -1920,15 +1738,15 @@ namespace System.Management.Automation
         /// <param name="name">
         /// The key for the cmdlet entry to remove.
         /// </param>
-        /// 
+        ///
         /// <param name="force">
         /// If true, the cmdlet entry is removed even if it is ReadOnly.
         /// </param>
-        /// 
+        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// If the cmdlet is constant.
-        /// </exception> 
-        /// 
+        /// </exception>
+        ///
         internal void RemoveCmdletEntry(string name, bool force)
         {
             Diagnostics.Assert(
@@ -2105,55 +1923,6 @@ namespace System.Management.Automation
                         _variables.Add(variable.Name, variable);
                 }
             }
-
-
-            // Now create the capacity variables with a reference to a parent scope
-            // capacity variable if one exists. If not, the defaults will be used.
-
-            string varName = "MaximumErrorCount";
-            _errorCapacity = CreateCapacityVariable(
-                varName,
-                SessionStateConstants.DefaultErrorCapacity,
-                SessionStateConstants.MaxErrorCapacity,
-                SessionStateConstants.MinErrorCapacity,
-                SessionStateStrings.MaxErrorCountDescription);
-            _variables.Add(varName, _errorCapacity);
-
-            varName = "MaximumVariableCount";
-            _variableCapacity = CreateCapacityVariable(
-                varName,
-                SessionStateConstants.DefaultVariableCapacity,
-                SessionStateConstants.MaxVariablesCapacity,
-                SessionStateConstants.MinVariablesCapacity,
-                SessionStateStrings.MaxVariableCountDescription);
-            _variables.Add(varName, _variableCapacity);
-
-            varName = "MaximumFunctionCount";
-            _functionCapacity = CreateCapacityVariable(
-                varName,
-                SessionStateConstants.DefaultFunctionCapacity,
-                SessionStateConstants.MaxFunctionCapacity,
-                SessionStateConstants.MinFunctionCapacity,
-                SessionStateStrings.MaxFunctionCountDescription);
-            _variables.Add(varName, _functionCapacity);
-
-            varName = "MaximumAliasCount";
-            _aliasCapacity = CreateCapacityVariable(
-                varName,
-                SessionStateConstants.DefaultAliasCapacity,
-                SessionStateConstants.MaxAliasCapacity,
-                SessionStateConstants.MinAliasCapacity,
-                SessionStateStrings.MaxAliasCountDescription);
-            _variables.Add(varName, _aliasCapacity);
-
-            varName = "MaximumDriveCount";
-            _driveCapacity = CreateCapacityVariable(
-                varName,
-                SessionStateConstants.DefaultDriveCapacity,
-                SessionStateConstants.MaxDriveCapacity,
-                SessionStateConstants.MinDriveCapacity,
-                SessionStateStrings.MaxDriveCountDescription);
-            _variables.Add(varName, _driveCapacity);
         }
 
         /// <summary>
@@ -2256,63 +2025,12 @@ namespace System.Management.Automation
 
         private readonly Dictionary<string, List<CmdletInfo>> _allScopeCmdlets = new Dictionary<string, List<CmdletInfo>>(StringComparer.OrdinalIgnoreCase);
 
-
-        internal SessionStateCapacityVariable ErrorCapacity
-        {
-            get
-            {
-                GetPrivateVariables(); // Make sure that the variable table is initialized...
-                return _errorCapacity;
-            }
-        }
-        private SessionStateCapacityVariable _errorCapacity;
-
-        internal SessionStateCapacityVariable VariableCapacity
-        {
-            get
-            {
-                GetPrivateVariables(); // Make sure that the variable table is initialized...
-                return _variableCapacity;
-            }
-        }
-        private SessionStateCapacityVariable _variableCapacity;
-
-        private SessionStateCapacityVariable FunctionCapacity
-        {
-            get
-            {
-                GetPrivateVariables(); // Make sure that the variable table is initialized...
-                return _functionCapacity;
-            }
-        }
-        private SessionStateCapacityVariable _functionCapacity;
-
-        private SessionStateCapacityVariable AliasCapacity
-        {
-            get
-            {
-                GetPrivateVariables(); // Make sure that the variable table is initialized...
-                return _aliasCapacity;
-            }
-        }
-        private SessionStateCapacityVariable _aliasCapacity;
-
-        private SessionStateCapacityVariable DriveCapacity
-        {
-            get
-            {
-                GetPrivateVariables(); // Make sure that the variable table is initialized...
-                return _driveCapacity;
-            }
-        }
-        private SessionStateCapacityVariable _driveCapacity;
-
         /// <summary>
         /// The variable that represents $true in the language.
         /// We don't need a new reference in each scope since it
         /// is ScopedItemOptions.Constant.
         /// </summary>
-        /// 
+        ///
         private static readonly PSVariable s_trueVar =
             new PSVariable(
                 StringLiterals.True,
@@ -2325,7 +2043,7 @@ namespace System.Management.Automation
         /// We don't need a new reference in each scope since it
         /// is ScopedItemOptions.Constant.
         /// </summary>
-        /// 
+        ///
         private static readonly PSVariable s_falseVar =
             new PSVariable(
                 StringLiterals.False,
@@ -2338,7 +2056,7 @@ namespace System.Management.Automation
         /// We don't need a new reference in each scope since it
         /// is ScopedItemOptions.Constant.
         /// </summary>
-        /// 
+        ///
         private static readonly NullVariable s_nullVar =
             new NullVariable();
 
@@ -2368,7 +2086,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="alias"></param>
         /// <param name="value"></param>
@@ -2391,7 +2109,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="alias"></param>
         /// <param name="value"></param>

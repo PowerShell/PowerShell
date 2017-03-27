@@ -5,15 +5,37 @@ git:
 
 os:
   - linux
+  - osx
 sudo: required
 dist: trusty
+osx_image: xcode7.3
+
+matrix:
+  fast_finish: true
 
 addons:
   artifacts:
-    paths: $(ls powershell*{deb,pkg} | tr "\n" ":")
+    paths:
+      - $(ls powershell*{deb,pkg,AppImage} | tr "\n" ":")
+      - pester-tests.xml
 
 install:
-  - (cd tools && ./download.sh)
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rvm use 2.2.1; fi # Default 2.0.0 Ruby is buggy
+  - pushd tools
+  - ./download.sh
+  - popd
+  # Default 2.0.0 Ruby is buggy
+  # Default bundler version is buggy
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rvm use 2.3.1; gem uninstall bundler -v1.13.1; fi
+  # spellcheck
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      nvm install 6.4.0 &&
+      npm install -g markdown-spellcheck@0.11.0;
+    fi
 
-script: ./tools/travis.sh
+script:
+  - ulimit -n 4096
+  - powershell -File tools/travis.ps1
+  # spellcheck
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
+      mdspell '**/*.md' '!powershell/**/*.md' --ignore-numbers --ignore-acronyms --report;
+    fi

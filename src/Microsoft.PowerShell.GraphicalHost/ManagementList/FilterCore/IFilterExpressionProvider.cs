@@ -19,17 +19,17 @@ namespace Microsoft.Management.UI.Internal
         /// Gets a FilterExpression representing the current
         /// relational organization of FilterRules for this provider.
         /// </summary>
-        FilterExpressionNode FilterExpression 
-        { 
-            get; 
+        FilterExpressionNode FilterExpression
+        {
+            get;
         }
 
         /// <summary>
         /// Gets a value indicating whether this provider currently has a non-empty filter expression.
         /// </summary>
         bool HasFilterExpression
-        { 
-            get; 
+        {
+            get;
         }
 
         /// <summary>

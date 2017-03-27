@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell.Workflow
             {
                 throw new ArgumentNullException("result");
             }
-            
+
             TAsyncResult asyncResult = result as TAsyncResult;
 
             if (asyncResult == null)

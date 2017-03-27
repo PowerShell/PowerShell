@@ -23,14 +23,14 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Set to true when object is disposed
         /// </summary>
-        /// 
+        ///
         private bool _disposed;
 
         /// <summary>
         /// Dispose method unloads the app domain and the
         /// resource reader if it was created.
         /// </summary>
-        /// 
+        ///
         public void Dispose()
         {
             if (_disposed == false)
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Disposes the resource reader.
         /// </summary>
-        /// 
+        ///
         protected override void EndProcessing()
         {
             if (_resourceReader != null)
@@ -245,7 +245,7 @@ namespace Microsoft.PowerShell.Commands
         /// For perf reasons we only want to create one instance for the duration of the command
         /// and be sure it gets disposed when the command completes.
         /// </summary>
-        /// 
+        ///
         internal RegistryStringResourceIndirect ResourceReader
         {
             get {
@@ -263,7 +263,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class that implements add-pssnapin cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.Add, "PSSnapin", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113281")]
+    [Cmdlet(VerbsCommon.Add, "PSSnapin", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113281")]
     [OutputType(typeof(PSSnapInInfo))]
     public sealed class AddPSSnapinCommand : PSSnapInCommandBase
     {
@@ -293,7 +293,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the Passthru flag for the operation.
-        /// If true, the PSSnapInInfo object is passed down the 
+        /// If true, the PSSnapInInfo object is passed down the
         /// output pipeline.
         /// </summary>
         [Parameter()]
@@ -345,7 +345,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             // cache snapin registry information...
 
-                            // For 3.0 PowerShell, we still use "1" as the registry version key for 
+                            // For 3.0 PowerShell, we still use "1" as the registry version key for
                             // Snapin and Custom shell lookup/discovery.
                             // For 3.0 PowerShell, we use "3" as the registry version key only for Engine
                             // related data like ApplicationBase etc.
@@ -538,7 +538,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class that implements remove-pssnapin cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.Remove, "PSSnapin", SupportsShouldProcess = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113378")]
+    [Cmdlet(VerbsCommon.Remove, "PSSnapin", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113378")]
     [OutputType(typeof(PSSnapInInfo))]
     public sealed class RemovePSSnapinCommand : PSSnapInCommandBase
     {
@@ -702,7 +702,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Class that implements get-pssnapin cmdlet.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "PSSnapin", HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113330")]
+    [Cmdlet(VerbsCommon.Get, "PSSnapin", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113330")]
     [OutputType(typeof(PSSnapInInfo))]
     public sealed class GetPSSnapinCommand : PSSnapInCommandBase
     {
@@ -712,6 +712,7 @@ namespace Microsoft.PowerShell.Commands
         /// Name(s) of PSSnapIn(s).
         /// </summary>
         [Parameter(Position = 0, Mandatory = false)]
+        [ValidateNotNullOrEmpty()]
         public string[] Name
         {
             get
@@ -752,7 +753,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Constructs PSSnapInfo objects as requested by the user and writes them to the 
+        /// Constructs PSSnapInfo objects as requested by the user and writes them to the
         /// output buffer.
         /// </summary>
         protected override void BeginProcessing()

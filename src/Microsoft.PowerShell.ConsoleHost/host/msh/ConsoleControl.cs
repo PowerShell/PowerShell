@@ -5,18 +5,17 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 
 // Implementation notes: In the functions that take ConsoleHandle parameters, we only assert that the handle is valid and not
-// closed, as opposed to doing a check and throwing an exception.  This is because the win32 APIs that those functions wrap will 
+// closed, as opposed to doing a check and throwing an exception.  This is because the win32 APIs that those functions wrap will
 // fail on invalid/closed handles, and the check for API failure will throw the exception.
 //
-// On the use of DangerousGetHandle: If the handle has been invalidated, then the API we pass it to will return an error.  These 
-// handles should not be exposed to recycling attacks (because they are not exposed at all), but if they were, the worse they 
+// On the use of DangerousGetHandle: If the handle has been invalidated, then the API we pass it to will return an error.  These
+// handles should not be exposed to recycling attacks (because they are not exposed at all), but if they were, the worse they
 // could do is diddle with the console buffer.
 #pragma warning disable 1634, 1691
 
 
 using System;
 using System.Text;
-using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Management.Automation;
 using System.Management.Automation.Host;
@@ -27,7 +26,6 @@ using System.Globalization;
 using System.Diagnostics;
 using Microsoft.Win32.SafeHandles;
 
-using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 
 using WORD = System.UInt16;
@@ -37,22 +35,28 @@ using NakedWin32Handle = System.IntPtr;
 using HWND = System.IntPtr;
 using HDC = System.IntPtr;
 
+#endif
+
+using System.Diagnostics.CodeAnalysis;
+using Dbg = System.Management.Automation.Diagnostics;
+
 namespace Microsoft.PowerShell
 {
     /// <summary>
     ///
-    /// Class ConsoleControl is used to wrap the various win32 console APIs 1:1 (i.e. at a low level, without attempting to be a 
+    /// Class ConsoleControl is used to wrap the various win32 console APIs 1:1 (i.e. at a low level, without attempting to be a
     /// "true" object-oriented library.
     ///
     /// </summary>
 
     internal static class ConsoleControl
     {
+#if !UNIX
 #region structs
 
         internal enum InputRecordEventTypes : ushort
         {
-            // from wincon.h.  These look like bit flags, but of course they could not really be used that way, since it would 
+            // from wincon.h.  These look like bit flags, but of course they could not really be used that way, since it would
             // not make sense to have more than one of the INPUT_RECORD union members "in effect" at any one time.
 
             KEY_EVENT = 0x0001,
@@ -272,19 +276,19 @@ namespace Microsoft.PowerShell
         internal struct MouseInput
         {
             /// <summary>
-            /// The absolute position of the mouse, or the amount of motion since the last mouse event was generated, depending on the value of the dwFlags member. 
+            /// The absolute position of the mouse, or the amount of motion since the last mouse event was generated, depending on the value of the dwFlags member.
             /// Absolute data is specified as the x coordinate of the mouse; relative data is specified as the number of pixels moved.
             /// </summary>
             internal Int32 X;
 
             /// <summary>
-            /// The absolute position of the mouse, or the amount of motion since the last mouse event was generated, depending on the value of the dwFlags member. 
+            /// The absolute position of the mouse, or the amount of motion since the last mouse event was generated, depending on the value of the dwFlags member.
             /// Absolute data is specified as the y coordinate of the mouse; relative data is specified as the number of pixels moved.
             /// </summary>
             internal Int32 Y;
 
             /// <summary>
-            /// If dwFlags contains MOUSEEVENTF_WHEEL, then mouseData specifies the amount of wheel movement. A positive value indicates that the wheel was rotated forward, away from the user; 
+            /// If dwFlags contains MOUSEEVENTF_WHEEL, then mouseData specifies the amount of wheel movement. A positive value indicates that the wheel was rotated forward, away from the user;
             /// a negative value indicates that the wheel was rotated backward, toward the user. One wheel click is defined as WHEEL_DELTA, which is 120.
             /// </summary>
             internal DWORD MouseData;
@@ -296,7 +300,7 @@ namespace Microsoft.PowerShell
             internal DWORD Flags;
 
             /// <summary>
-            /// The time stamp for the event, in milliseconds. If this parameter is 0, the system will provide its own time stamp. 
+            /// The time stamp for the event, in milliseconds. If this parameter is 0, the system will provide its own time stamp.
             /// </summary>
             internal DWORD Time;
 
@@ -316,7 +320,7 @@ namespace Microsoft.PowerShell
             internal WORD Vk;
 
             /// <summary>
-            /// A hardware scan code for the key. If dwFlags specifies KEYEVENTF_UNICODE, 
+            /// A hardware scan code for the key. If dwFlags specifies KEYEVENTF_UNICODE,
             /// wScan specifies a Unicode character which is to be sent to the foreground application.
             /// </summary>
             internal WORD Scan;
@@ -334,8 +338,8 @@ namespace Microsoft.PowerShell
             internal DWORD Time;
 
             /// <summary>
-            /// An additional value associated with the keystroke. 
-            /// Use the GetMessageExtraInfo function to obtain this information. 
+            /// An additional value associated with the keystroke.
+            /// Use the GetMessageExtraInfo function to obtain this information.
             /// </summary>
             internal IntPtr ExtraInfo;
         }
@@ -406,12 +410,12 @@ namespace Microsoft.PowerShell
             KeyUp = 0x0002,
 
             /// <summary>
-            /// If specified, wScan identifies the key and wVk is ignored. 
+            /// If specified, wScan identifies the key and wVk is ignored.
             /// </summary>
             Unicode = 0x0004,
 
             /// <summary>
-            /// If specified, the system synthesizes a VK_PACKET keystroke. The wVk parameter must be zero. 
+            /// If specified, the system synthesizes a VK_PACKET keystroke. The wVk parameter must be zero.
             /// This flag can only be combined with the KEYEVENTF_KEYUP flag.
             /// </summary>
             ScanCode = 0x0008
@@ -478,9 +482,9 @@ namespace Microsoft.PowerShell
 #region Input break handler (Ctrl-C, Ctrl-Break)
 
         /// <summary>
-        /// 
+        ///
         /// Types of control ConsoleBreakSignals received by break Win32Handler delegates
-        /// 
+        ///
         /// </summary>
 
         internal enum ConsoleBreakSignal : uint
@@ -501,7 +505,7 @@ namespace Microsoft.PowerShell
             None = 0xFF
         }
 
-        // NOTE: this delegate will be executed in its own thread 
+        // NOTE: this delegate will be executed in its own thread
 
         internal delegate bool BreakHandler(ConsoleBreakSignal ConsoleBreakSignal);
 
@@ -628,15 +632,15 @@ namespace Microsoft.PowerShell
 #region Mode
 
         /// <summary>
-        /// 
+        ///
         /// flags used by ConsoleControl.GetMode and ConsoleControl.SetMode
-        /// 
+        ///
         /// </summary>
         [Flags]
         internal enum ConsoleModes : uint
         {
             // These values from wincon.h
-            // input modes 
+            // input modes
             ProcessedInput = 0x001,
             LineInput = 0x002,
             EchoInput = 0x004,
@@ -650,6 +654,8 @@ namespace Microsoft.PowerShell
             ProcessedOutput = 0x001,  // yes, I know they are the same values as some flags defined above.
             WrapEndOfLine = 0x002,
             VirtualTerminal = 0x004,
+            // Error getting console mode
+            Unknown = 0xffffffff,
         }
 
         /// <summary>
@@ -682,24 +688,24 @@ namespace Microsoft.PowerShell
         }
 
         /// <summary>
-        /// 
+        ///
         /// Sets the current mode of the console device
-        /// 
+        ///
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// Handle to the console device returned by GetInputHandle
-        /// 
+        ///
         /// </param>
         /// <param name="mode">
-        /// 
+        ///
         /// Mask of mode flags
-        /// 
+        ///
         /// </param>
         /// <exception cref="HostException">
-        /// 
+        ///
         /// If Win32's SetConsoleMode fails
-        /// 
+        ///
         /// </exception>
 
         internal static void SetMode(ConsoleHandle consoleHandle, ConsoleModes mode)
@@ -728,38 +734,38 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         ///
-        /// Reads input from the console device according to the mode in effect (see GetMode, SetMode) 
-        /// 
+        /// Reads input from the console device according to the mode in effect (see GetMode, SetMode)
+        ///
         /// </summary>
         /// <param name="consoleHandle"></param>
-        /// 
+        ///
         /// Handle to the console device returned by GetInputHandle
-        /// 
+        ///
         /// <param name="initialContent">
-        /// 
+        ///
         /// Initial contents of the edit buffer, if any. charactersToRead should be at least as large as the length of this string.
-        /// 
+        ///
         /// </param>
         /// <param name="charactersToRead">
-        /// 
+        ///
         /// Number of characters to read from the device.
-        /// 
+        ///
         /// </param>
         /// <param name="endOnTab">
-        /// 
+        ///
         /// true to allow the user to terminate input by hitting the tab or shift-tab key, in addition to the enter key
-        /// 
+        ///
         /// </param>
         /// <param name="keyState">
-        /// 
+        ///
         /// bit mask indicating the state of the control/shift keys at the point input was terminated.
-        /// 
+        ///
         /// </param>
         /// <returns></returns>
         /// <exception cref="HostException">
-        /// 
+        ///
         /// If Win32's ReadConsole fails
-        /// 
+        ///
         /// </exception>
 
         internal static string ReadConsole(ConsoleHandle consoleHandle, string initialContent,
@@ -810,19 +816,19 @@ namespace Microsoft.PowerShell
         /// Returns the number of records read in buffer.
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// handle for the console where input is read
-        /// 
+        ///
         /// </param>
         /// <param name="buffer">
-        /// 
+        ///
         /// array where data read are stored
-        /// 
+        ///
         /// </param>
         /// <returns>
-        /// 
+        ///
         /// actual number of input records read
-        /// 
+        ///
         /// </returns>
         /// <exception cref="HostException">
         /// If Win32's ReadConsoleInput fails
@@ -855,19 +861,19 @@ namespace Microsoft.PowerShell
         /// Wraps Win32 PeekConsoleInput
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// handle for the console where input is peeked
-        /// 
+        ///
         /// </param>
         /// <param name="buffer">
-        /// 
+        ///
         /// array where data read are stored
-        /// 
+        ///
         /// </param>
         /// <returns>
-        /// 
+        ///
         /// actual number of input records peeked
-        /// 
+        ///
         /// </returns>
         /// <exception cref="HostException">
         /// If Win32's PeekConsoleInput fails
@@ -906,14 +912,14 @@ namespace Microsoft.PowerShell
         /// Wraps Win32 GetNumberOfConsoleInputEvents
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// handle for the console where the number of console input events is obtained
-        /// 
+        ///
         /// </param>
         /// <returns>
-        /// 
+        ///
         /// number of console input events
-        /// 
+        ///
         /// </returns>
         /// <exception cref="HostException">
         /// If Win32's GetNumberOfConsoleInputEvents fails
@@ -943,9 +949,9 @@ namespace Microsoft.PowerShell
         /// Wraps Win32 FlushConsoleInputBuffer
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// handle for the console where the input buffer is flushed
-        /// 
+        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's FlushConsoleInputBuffer fails
@@ -978,14 +984,14 @@ namespace Microsoft.PowerShell
         /// Returns Console Screen Buffer Info
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// Handle for the console where the screen buffer info is obtained
-        /// 
+        ///
         /// </param>
         /// <returns>
-        /// 
+        ///
         /// info about the screen buffer. See the definition of CONSOLE_SCREEN_BUFFER_INFO
-        /// 
+        ///
         /// </returns>
         /// <exception cref="HostException">
         /// If Win32's GetConsoleScreenBufferInfo fails
@@ -1088,19 +1094,19 @@ namespace Microsoft.PowerShell
         /// is constrained.
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// handle for the console where output is written
-        /// 
+        ///
         /// </param>
         /// <param name="origin">
-        /// 
+        ///
         /// location on screen buffer where writing starts
-        /// 
+        ///
         /// </param>
         /// <param name="contents">
-        /// 
+        ///
         /// 2D array of cells. Caller needs to ensure that the array is 2D.
-        /// 
+        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's GetConsoleScreenBufferInfo fails
@@ -1110,7 +1116,7 @@ namespace Microsoft.PowerShell
         /// If <paramref name="contents"/> is null
         /// </exception>
         /// <exception cref="ArgumentException">
-        /// If it is illegal to write <paramref name="contents"/> to the output buffer 
+        /// If it is illegal to write <paramref name="contents"/> to the output buffer
         /// </exception>
 
         internal static void WriteConsoleOutput(ConsoleHandle consoleHandle, Coordinates origin, BufferCell[,] contents)
@@ -1366,7 +1372,7 @@ namespace Microsoft.PowerShell
                         }
                         if (contents[r, c].Character != 0 || contents[r, c].BufferCellType != BufferCellType.Trailing)
                         {
-                            // for a 2 cell character, either there is no trailing BufferCell or 
+                            // for a 2 cell character, either there is no trailing BufferCell or
                             // the trailing BufferCell's character is not 0
                             throw PSTraceSource.NewArgumentException(string.Format(CultureInfo.InvariantCulture, "contents[{0}, {1}]", r, c));
                         }
@@ -1476,10 +1482,10 @@ namespace Microsoft.PowerShell
                             }
                             else if (contents[r, c].BufferCellType == BufferCellType.Trailing)
                             {
-                                // The FontFamily is a 8-bit integer. The low-order bit (bit 0) specifies the pitch of the font. 
-                                // If it is 1, the font is variable pitch (or proportional). If it is 0, the font is fixed pitch 
-                                // (or monospace). Bits 1 and 2 specify the font type. If both bits are 0, the font is a raster font; 
-                                // if bit 1 is 1 and bit 2 is 0, the font is a vector font; if bit 1 is 0 and bit 2 is set, or if both 
+                                // The FontFamily is a 8-bit integer. The low-order bit (bit 0) specifies the pitch of the font.
+                                // If it is 1, the font is variable pitch (or proportional). If it is 0, the font is fixed pitch
+                                // (or monospace). Bits 1 and 2 specify the font type. If both bits are 0, the font is a raster font;
+                                // if bit 1 is 1 and bit 2 is 0, the font is a vector font; if bit 1 is 0 and bit 2 is set, or if both
                                 // bits are 1, the font is true type. Bit 3 is 1 if the font is a device font; otherwise, it is 0.
                                 // We only care about the bit 1 and 2, which indicate the font type.
                                 // There are only two font type defined for the Console, at
@@ -1712,25 +1718,25 @@ namespace Microsoft.PowerShell
         /// is constrained.
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// handle for the console where output is read
-        /// 
+        ///
         /// </param>
         /// <param name="origin">
-        /// 
+        ///
         /// location on screen buffer where reading begins
-        /// 
+        ///
         /// </param>
         /// <param name="contentsRegion">
-        /// 
-        /// indicates the area in <paramref name="contents"/> where the data read 
+        ///
+        /// indicates the area in <paramref name="contents"/> where the data read
         /// is stored.
-        /// 
+        ///
         /// </param>
         /// <param name="contents">
-        /// 
+        ///
         /// this is ref because the bounds and size of the array are needed.
-        /// 
+        ///
         /// </param>
         /// <exception cref="HostException">
         /// If there is not enough memory to complete calls to Win32's ReadConsoleOutput
@@ -1869,8 +1875,8 @@ namespace Microsoft.PowerShell
                     contents[r, c].ForegroundColor = fgColor;
                     contents[r, c].BackgroundColor = bgColor;
 
-                    // Set the attributes of the buffercells to be the same as that of the 
-                    // incoming CHAR_INFO. In case where the CHAR_INFO character is a 
+                    // Set the attributes of the buffercells to be the same as that of the
+                    // incoming CHAR_INFO. In case where the CHAR_INFO character is a
                     // trailing byte set the Character of BufferCell to 0. This is done
                     // because at a lot of places this check is being done. Having a trailing
                     // character to be 0 is by design.
@@ -2277,24 +2283,24 @@ namespace Microsoft.PowerShell
         /// Wraps Win32 FillConsoleOutputCharacter
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// handle for the console where output is filled
-        /// 
+        ///
         /// </param>
         /// <param name="character">
-        /// 
+        ///
         /// character to fill the console output
-        /// 
+        ///
         /// </param>
         /// <param name="numberToWrite">
-        /// 
+        ///
         /// number of times to write character
-        /// 
+        ///
         /// </param>
         /// <param name="origin">
-        /// 
+        ///
         /// location on screen buffer where writing starts
-        /// 
+        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's FillConsoleOutputCharacter fails
@@ -2339,24 +2345,24 @@ namespace Microsoft.PowerShell
         /// Wraps Win32 FillConsoleOutputAttribute
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// handle for the console where output is filled
-        /// 
+        ///
         /// </param>
         /// <param name="attribute">
-        /// 
+        ///
         /// attribute to fill the console output
-        /// 
+        ///
         /// </param>
         /// <param name="numberToWrite">
-        /// 
+        ///
         /// number of times to write attribute
-        /// 
+        ///
         /// </param>
         /// <param name="origin">
-        /// 
+        ///
         /// location on screen buffer where writing starts
-        /// 
+        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's FillConsoleOutputAttribute fails
@@ -2400,29 +2406,29 @@ namespace Microsoft.PowerShell
         /// Wrap Win32 ScrollConsoleScreenBuffer
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// handle for the console where screen buffer is scrolled
-        /// 
+        ///
         /// </param>
         /// <param name="scrollRectangle">
-        /// 
+        ///
         /// area to be scrolled
-        /// 
+        ///
         /// </param>
         /// <param name="clipRectangle">
-        /// 
+        ///
         /// area to be updated after scrolling
-        /// 
+        ///
         /// </param>
         /// <param name="destOrigin">
-        /// 
+        ///
         /// location to which the top left corner of scrollRectangle move
-        /// 
+        ///
         /// </param>
         /// <param name="fill">
-        /// 
+        ///
         /// character and attribute to fill the area vacated by the scroll
-        /// 
+        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's ScrollConsoleScreenBuffer fails
@@ -2465,21 +2471,21 @@ namespace Microsoft.PowerShell
         /// Wraps Win32 SetConsoleWindowInfo
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// handle for the console where window info is set
-        /// 
+        ///
         /// </param>
         /// <param name="absolute">
-        /// 
+        ///
         /// If this parameter is TRUE, the coordinates specify the new upper-left and
         /// lower-right corners of the window. If it is false, the coordinates are offsets
         /// to the current window-corner coordinates
-        /// 
+        ///
         /// </param>
         /// <param name="windowInfo">
-        /// 
+        ///
         /// specify the size and position of the console screen buffer's window
-        /// 
+        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's SetConsoleWindowInfo fails
@@ -2506,14 +2512,14 @@ namespace Microsoft.PowerShell
         /// Wraps Win32 GetLargestConsoleWindowSize
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// handle for the console for which the largest window size is obtained
-        /// 
+        ///
         /// </param>
         /// <returns>
-        /// 
+        ///
         /// the largest window size
-        /// 
+        ///
         /// </returns>
         /// <exception cref="HostException">
         /// If Win32's GetLargestConsoleWindowSize fails
@@ -2545,9 +2551,9 @@ namespace Microsoft.PowerShell
         /// found in the docs is disregarded because it is essentially meaningless.
         /// </summary>
         /// <returns>
-        /// 
+        ///
         /// a string for the title of the window
-        /// 
+        ///
         /// </returns>
         /// <exception cref="HostException">
         /// If Win32's GetConsoleTitle fails
@@ -2579,9 +2585,9 @@ namespace Microsoft.PowerShell
         /// Wraps Win32 SetConsoleTitle
         /// </summary>
         /// <param name="consoleTitle">
-        /// 
+        ///
         /// a string for the title of the window
-        /// 
+        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's SetConsoleTitle fails
@@ -2607,7 +2613,7 @@ namespace Microsoft.PowerShell
 #region Font Selection
 
         /// <summary>
-        /// UpdateLocaleSpecificFont is a helper method used to update 
+        /// UpdateLocaleSpecificFont is a helper method used to update
         /// the console font based on the locale.
         /// The default font face used for Powershell Console is Lucida Console.
         /// However certain locales dont support Lucida Console font. Hence for such
@@ -2615,12 +2621,12 @@ namespace Microsoft.PowerShell
         /// </summary>
         internal static void UpdateLocaleSpecificFont()
         {
-            // Default Powershell shortcut.lnk settings. 
+            // Default Powershell shortcut.lnk settings.
             const string defaultFontFace = "Lucida Console";
 
             // Default CJK locale shortcut.lnk settings.
             // Font size is hard coded here to ensure we select a supported size.
-            // GDI does a poor job of selecting raster font size if the requested 
+            // GDI does a poor job of selecting raster font size if the requested
             // size is not supported.
             const string CJKFontFace = "Terminal";
             const int CJKFontFamily = 48;
@@ -2707,24 +2713,24 @@ namespace Microsoft.PowerShell
 #endregion
 #endif
         /// <summary>
-        /// 
+        ///
         /// Wrap Win32 WriteConsole
-        /// 
+        ///
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// handle for the console where the string is written
-        /// 
+        ///
         /// </param>
         /// <param name="output">
-        /// 
+        ///
         /// string that is written
-        /// 
+        ///
         /// </param>
         /// <exception cref="HostException">
-        /// 
-        /// if the Win32's WriteConsole fails 
-        /// 
+        ///
+        /// if the Win32's WriteConsole fails
+        ///
         /// </exception>
 
         internal static void WriteConsole(ConsoleHandle consoleHandle, string output)
@@ -2735,8 +2741,8 @@ namespace Microsoft.PowerShell
             if (String.IsNullOrEmpty(output))
                 return;
 
-            // Native WriteConsole doesn't support output buffer longer than 64K. 
-            // We need to chop the output string if it is too long. 
+            // Native WriteConsole doesn't support output buffer longer than 64K.
+            // We need to chop the output string if it is too long.
 
             int cursor = 0; // This records the chopping position in output string
             const int maxBufferSize = 16383; // this is 64K/4 - 1 to account for possible width of each character.
@@ -2780,19 +2786,19 @@ namespace Microsoft.PowerShell
         /// Wraps Win32 SetConsoleTextAttribute
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// handle for the console where text attribute is set
-        /// 
+        ///
         /// </param>
         /// <param name="attribute">
-        /// 
+        ///
         /// text attribute to set the console
-        /// 
+        ///
         /// </param>
         /// <exception cref="HostException">
-        /// 
-        /// if the Win32's SetConsoleTextAttribute fails 
-        /// 
+        ///
+        /// if the Win32's SetConsoleTextAttribute fails
+        ///
         /// </exception>
 
         internal static void SetConsoleTextAttribute(ConsoleHandle consoleHandle, WORD attribute)
@@ -2812,8 +2818,9 @@ namespace Microsoft.PowerShell
             }
         }
 
-
+#endif
 #region Dealing with CJK
+#if !UNIX
 
         /// <summary>
         /// From IsConsoleFullWidth in \windows\core\ntcon\server\dbcs.c
@@ -2851,17 +2858,17 @@ namespace Microsoft.PowerShell
         private static bool IsAnyDBCSCharSet(uint charSet)
         {
             const uint SHIFTJIS_CHARSET = 128;
-            const uint HANGEUL_CHARSET = 129;
+            const uint HANGUL_CHARSET = 129;
             const uint CHINESEBIG5_CHARSET = 136;
             const uint GB2312_CHARSET = 134;
-            return charSet == SHIFTJIS_CHARSET || charSet == HANGEUL_CHARSET ||
+            return charSet == SHIFTJIS_CHARSET || charSet == HANGUL_CHARSET ||
                 charSet == CHINESEBIG5_CHARSET || charSet == GB2312_CHARSET;
         }
 
         /// <summary>
         /// From IsConsoleFullWidth in \windows\core\ntcon\server\dbcs.c
         /// Precondition: the current code page needs to be a Far East code page.
-        /// 
+        ///
         /// char F8F8 makes this function return 1 while in CHT, CHS, and KOR it takes 2 cells.
         /// I don't think we should special-case this because that ought to be a bug outside of
         /// this code.
@@ -2920,7 +2927,7 @@ namespace Microsoft.PowerShell
                      (0xffd2 <= c && c <= 0xffd7) ||
                      (0xffda <= c && c <= 0xffdc))
             {
-                /* Halfwidth Hangule variants */
+                /* Halfwidth Hangul variants */
                 return 1;
             }
             else if (0xffe0 <= c && c <= 0xffe6)
@@ -3035,6 +3042,7 @@ namespace Microsoft.PowerShell
             }
         }
 
+#endif
 
         // Return the length of a VT100 control sequence character in str starting
         // at the given offset.
@@ -3042,7 +3050,7 @@ namespace Microsoft.PowerShell
         // This code only handles the most common formatting sequences, which are
         // all of the pattern:
         //     ESC '[' digits+ (';' digits)* 'm'
-        // 
+        //
         // There are many other VT100 escape sequences, but this simple pattern
         // is sufficient for our formatting system.  We won't handle cursor movements
         // or other attempts at animation.
@@ -3101,6 +3109,9 @@ namespace Microsoft.PowerShell
                 }
             }
 
+#if UNIX
+            return str.Length - offset - escapeSequenceAdjustment;
+#else
             uint codePage = NativeMethods.GetConsoleOutputCP();
             if (!IsAvailableFarEastCodePage(codePage))
             {
@@ -3129,8 +3140,10 @@ namespace Microsoft.PowerShell
                     NativeMethods.ReleaseDC(hwnd, hDC);
                 }
             }
+#endif
         }
 
+#if !UNIX
 
         /// <summary>
         /// Check if the output buffer code page is Japanese, Simplified Chinese, Korean, or Traditional Chinese
@@ -3146,7 +3159,10 @@ namespace Microsoft.PowerShell
                 codePage == 950;  // Traditional Chinese
         }
 
+#endif
 #endregion Dealing with CJK
+
+#if !UNIX
 
 #region Cursor
 
@@ -3155,14 +3171,14 @@ namespace Microsoft.PowerShell
         /// Wraps Win32 SetConsoleCursorPosition
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// handle for the console where cursor position is set
         ///
         /// </param>
         /// <param name="cursorPosition">
-        /// 
+        ///
         /// location to which the cursor will be set
-        /// 
+        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's SetConsoleCursorPosition fails
@@ -3196,14 +3212,14 @@ namespace Microsoft.PowerShell
         /// Wraps Win32 GetConsoleCursorInfo
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// handle for the console where cursor info is obtained
-        /// 
+        ///
         /// </param>
         /// <returns>
-        /// 
+        ///
         /// cursor info
-        /// 
+        ///
         /// </returns>
         /// <exception cref="HostException">
         /// If Win32's GetConsoleCursorInfo fails
@@ -3253,14 +3269,14 @@ namespace Microsoft.PowerShell
         /// Wraps Win32 SetConsoleCursorInfo
         /// </summary>
         /// <param name="consoleHandle">
-        /// 
+        ///
         /// handle for the console where cursor info is set
-        /// 
+        ///
         /// </param>
         /// <param name="cursorInfo">
-        /// 
+        ///
         /// cursor info to set the cursor
-        /// 
+        ///
         /// </param>
         /// <exception cref="HostException">
         /// If Win32's SetConsoleCursorInfo fails
@@ -3326,9 +3342,9 @@ namespace Microsoft.PowerShell
 #endregion SendInput
 
         /// <summary>
-        /// 
+        ///
         /// Class to hold the Native Methods used in this file enclosing class.
-        /// 
+        ///
         /// </summary>
 
         internal static class NativeMethods
@@ -3467,6 +3483,9 @@ namespace Microsoft.PowerShell
             [DllImport(PinvokeDllNames.GetLargestConsoleWindowSizeDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern COORD GetLargestConsoleWindowSize(NakedWin32Handle consoleOutput);
 
+            [DllImport(PinvokeDllNames.GetStdHandleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
+            internal static extern IntPtr GetStdHandle(int handleId);
+
             [DllImport(PinvokeDllNames.ReadConsoleDllName, SetLastError = true, CharSet = CharSet.Unicode)]
             internal static extern bool ReadConsole
             (
@@ -3603,6 +3622,6 @@ namespace Microsoft.PowerShell
 
         [TraceSourceAttribute("ConsoleControl", "Console control methods")]
         private static PSTraceSource tracer = PSTraceSource.GetTracer("ConsoleControl", "Console control methods");
-    }
-}   // namespace 
 #endif
+    }
+}   // namespace

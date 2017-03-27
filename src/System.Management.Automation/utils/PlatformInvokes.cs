@@ -105,7 +105,7 @@ namespace System.Management.Automation
         }
 
         [Flags]
-        //dwFlagsAndAttributes 
+        //dwFlagsAndAttributes
         internal enum FileAttributes : uint
         {
             ReadOnly = 0x00000001,
@@ -170,26 +170,26 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Creates or opens a file, file stream, directory, physical disk, volume, console buffer,
-        /// tape drive, communications resource, mailslot, or named pipe. The function returns a 
+        /// tape drive, communications resource, mailslot, or named pipe. The function returns a
         /// handle that can be used to access the object.
         /// </summary>
         /// <param name="lpFileName">
         /// The name of the object to be created or opened.
-        /// In the ANSI version of this function, the name is limited to MAX_PATH characters. 
-        /// To extend this limit to 32,767 wide characters, call the Unicode version of the 
-        /// function and prepend "\\?\" to the path. For more information, see Naming a File. 
+        /// In the ANSI version of this function, the name is limited to MAX_PATH characters.
+        /// To extend this limit to 32,767 wide characters, call the Unicode version of the
+        /// function and prepend "\\?\" to the path. For more information, see Naming a File.
         /// For information on special device names, see Defining an MS-DOS Device Name.
-        /// To specify a COM port number greater than 9, use the following syntax: "\\.\COM10". 
+        /// To specify a COM port number greater than 9, use the following syntax: "\\.\COM10".
         /// This syntax works for all port numbers and hardware that allows COM port numbers to be specified.
         /// To create a file stream, specify the name of the file, a colon, and then the name of the
         /// stream. For more information, see File Streams.
         /// </param>
         /// <param name="dwDesiredAccess">
         /// The access to the object, which can be read, write, or both.
-        /// You cannot request an access mode that conflicts with the sharing mode that is 
+        /// You cannot request an access mode that conflicts with the sharing mode that is
         /// specified in an open request that has an open handle.
-        /// If this parameter is zero (0), the application can query file and device attributes 
-        /// without accessing a device. This is useful for an application to determine the size 
+        /// If this parameter is zero (0), the application can query file and device attributes
+        /// without accessing a device. This is useful for an application to determine the size
         /// of a floppy disk drive and the formats it supports without requiring a floppy in a drive.
         /// It can also be used to test for the existence of a file or directory without opening
         /// them for read or write access.
@@ -197,54 +197,54 @@ namespace System.Management.Automation
         /// </param>
         /// <param name="dwShareMode">
         /// The sharing mode of an object, which can be read, write, both, or none.
-        /// You cannot request a sharing mode that conflicts with the access mode that is specified 
-        /// in an open request that has an open handle, because that would result in the following 
-        /// sharing violation: ERROR_SHARING_VIOLATION. 
-        /// If this parameter is zero (0) and CreateFile succeeds, the object cannot be shared 
-        /// and cannot be opened again until the handle is closed. For more information, see the 
+        /// You cannot request a sharing mode that conflicts with the access mode that is specified
+        /// in an open request that has an open handle, because that would result in the following
+        /// sharing violation: ERROR_SHARING_VIOLATION.
+        /// If this parameter is zero (0) and CreateFile succeeds, the object cannot be shared
+        /// and cannot be opened again until the handle is closed. For more information, see the
         /// Remarks section of this topic.
         /// The sharing options remain in effect until you close the handle to an object.
         /// To enable a process to share an object while another process has the object open,
         /// use a combination of one or more of the following values to specify the access mode
-        /// they can request to open the object. 
+        /// they can request to open the object.
         /// </param>
         /// <param name="lpSecurityAttributes">
-        /// A pointer to a SECURITY_ATTRIBUTES structure that determines whether or not the returned 
+        /// A pointer to a SECURITY_ATTRIBUTES structure that determines whether or not the returned
         /// handle can be inherited by child processes.
         /// If lpSecurityAttributes is NULL, the handle cannot be inherited.
         /// The lpSecurityDescriptor member of the structure specifies a security descriptor
-        /// for an object. If lpSecurityAttributes is NULL, the object gets a default security descriptor. 
-        /// The access control lists (ACL) in the default security descriptor for a file or directory 
+        /// for an object. If lpSecurityAttributes is NULL, the object gets a default security descriptor.
+        /// The access control lists (ACL) in the default security descriptor for a file or directory
         /// are inherited from its parent directory.
         /// The target file system must support security on files and directories for this parameter to
         /// have an effect on them, which is indicated when GetVolumeInformation returns FS_PERSISTENT_ACLS.
-        /// CreateFile ignores lpSecurityDescriptor when opening an existing file, but continues to 
+        /// CreateFile ignores lpSecurityDescriptor when opening an existing file, but continues to
         /// use the other structure members.
         /// </param>
         /// <param name="dwCreationDisposition">
-        /// An action to take on files that exist and do not exist. 
+        /// An action to take on files that exist and do not exist.
         /// See "CreateFile creation disposition" below
         /// </param>
         /// <param name="dwFlagsAndAttributes">
         /// The file attributes and flags.
-        /// This parameter can include any combination of the file attributes. 
+        /// This parameter can include any combination of the file attributes.
         /// All other file attributes override FILE_ATTRIBUTE_NORMAL.
-        /// When CreateFile opens a file, it combines the file flags with existing 
+        /// When CreateFile opens a file, it combines the file flags with existing
         /// file attributes, and ignores any supplied file attributes.
         /// </param>
         /// <param name="hTemplateFile">
-        /// A handle to a template file with the GENERIC_READ access right. 
+        /// A handle to a template file with the GENERIC_READ access right.
         /// The template file supplies file attributes and extended attributes for the file that is
         /// being created. This parameter can be NULL.
         /// When opening an existing file, CreateFile ignores the template file.
         /// When opening a new EFS-encrypted file, the file inherits the DACL from its parent directory.
         /// </param>
         /// <returns>
-        /// If the function succeeds, the return value is an open handle to a specified file. 
+        /// If the function succeeds, the return value is an open handle to a specified file.
         /// If a specified file exists before the function call and dwCreationDisposition is CREATE_ALWAYS
-        /// or OPEN_ALWAYS, a call to GetLastError returns ERROR_ALREADY_EXISTS, even when the 
+        /// or OPEN_ALWAYS, a call to GetLastError returns ERROR_ALREADY_EXISTS, even when the
         /// function succeeds. If a file does not exist before the call, GetLastError returns zero (0).
-        /// If the function fails, the return value is INVALID_HANDLE_VALUE. 
+        /// If the function fails, the return value is INVALID_HANDLE_VALUE.
         /// To get extended error information, call GetLastError.
         /// </returns>
         [DllImport(PinvokeDllNames.CreateFileDllName, SetLastError = true, CharSet = CharSet.Unicode)]
@@ -265,10 +265,10 @@ namespace System.Management.Automation
         /// </param>
         /// <returns>
         /// If the function succeeds, the return value is nonzero.
-        /// If the function fails, the return value is zero. To get extended error information, 
+        /// If the function fails, the return value is zero. To get extended error information,
         /// call GetLastError.
-        /// If the application is running under a debugger, the function will throw an exception 
-        /// if it receives either a handle value that is not valid or a pseudo-handle value. 
+        /// If the application is running under a debugger, the function will throw an exception
+        /// if it receives either a handle value that is not valid or a pseudo-handle value.
         /// This can happen if you close a handle twice, or if you call CloseHandle on a handle
         /// returned by the FindFirstFile function.
         /// </returns>
@@ -281,12 +281,12 @@ namespace System.Management.Automation
         internal static extern bool DosDateTimeToFileTime(
             short wFatDate, // _In_   WORD
             short wFatTime, // _In_   WORD
-            FILETIME lpFileTime); // _Out_  LPFILETIME 
+            FILETIME lpFileTime); // _Out_  LPFILETIME
 
         [DllImport(PinvokeDllNames.LocalFileTimeToFileTimeDllName, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern bool LocalFileTimeToFileTime(
             FILETIME lpLocalFileTime, // _In_   const FILETIME *
-            FILETIME lpFileTime); // _Out_  LPFILETIME 
+            FILETIME lpFileTime); // _Out_  LPFILETIME
 
         [DllImport(PinvokeDllNames.SetFileTimeDllName, SetLastError = false, CharSet = CharSet.Unicode)]
         internal static extern bool SetFileTime(
@@ -462,7 +462,7 @@ namespace System.Management.Automation
         internal static extern bool PrivilegeCheck(IntPtr tokenHandler, ref PRIVILEGE_SET requiredPrivileges, out bool pfResult);
 
         /// <summary>
-        /// The AdjustTokenPrivileges function enables or disables privileges in the specified access token. Enabling or disabling privileges in 
+        /// The AdjustTokenPrivileges function enables or disables privileges in the specified access token. Enabling or disabling privileges in
         /// an access token requires TOKEN_ADJUST_PRIVILEGES access. The TOKEN_ADJUST_PRIVILEGES and TOKEN_QUERY accesses are gained when calling
         /// the OpenProcessToken function.
         /// </summary>
@@ -511,7 +511,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the pseudo handler of the current process 
+        /// Get the pseudo handler of the current process
         /// </summary>
         /// <returns></returns>
         [DllImport(PinvokeDllNames.GetCurrentProcessDllName)]
@@ -519,8 +519,8 @@ namespace System.Management.Automation
         internal static extern IntPtr GetCurrentProcess();
 
         /// <summary>
-        /// Retrieves the current process token. 
-        /// This function exists just for backward compatibility. It is prefered to use the other override that takes 'SafeHandle' as parameter. 
+        /// Retrieves the current process token.
+        /// This function exists just for backward compatibility. It is prefered to use the other override that takes 'SafeHandle' as parameter.
         /// </summary>
         /// <param name="processHandle">process handle</param>
         /// <param name="desiredAccess">token access</param>
@@ -735,6 +735,68 @@ namespace System.Management.Automation
 
         [DllImport("kernel32.dll", CharSet = CharSet.Unicode, SetLastError = true)]
         public static extern IntPtr GetStdHandle(uint handleId);
+
+#endif
+
+        #endregion
+
+        #region CreateToolhelp32Snapshot
+
+#if !UNIX
+
+        [DllImport(PinvokeDllNames.CreateToolhelp32SnapshotDllName, SetLastError = true)]
+        internal static extern SafeSnapshotHandle CreateToolhelp32Snapshot(SnapshotFlags flags, uint id);
+        [DllImport(PinvokeDllNames.Process32FirstDllName, SetLastError = true)]
+        internal static extern bool Process32First(SafeSnapshotHandle hSnapshot, ref PROCESSENTRY32 lppe);
+        [DllImport(PinvokeDllNames.Process32NextDllName, SetLastError = true)]
+        internal static extern bool Process32Next(SafeSnapshotHandle hSnapshot, ref PROCESSENTRY32 lppe);
+
+        internal sealed class SafeSnapshotHandle : SafeHandleMinusOneIsInvalid
+        {
+            internal SafeSnapshotHandle() : base(true)
+            {
+            }
+
+            [SecurityPermission(SecurityAction.LinkDemand, UnmanagedCode = true)]
+            internal SafeSnapshotHandle(IntPtr handle) : base(true)
+            {
+                base.SetHandle(handle);
+            }
+
+            protected override bool ReleaseHandle()
+            {
+                return CloseHandle(base.handle);
+            }
+        }
+
+        [Flags]
+        internal enum SnapshotFlags : uint
+        {
+            HeapList = 0x00000001,
+            Process = 0x00000002,
+            Thread = 0x00000004,
+            Module = 0x00000008,
+            Module32 = 0x00000010,
+            All = (HeapList | Process | Thread | Module),
+            Inherit = 0x80000000,
+            NoHeaps = 0x40000000
+        }
+        [StructLayout(LayoutKind.Sequential)]
+        internal struct PROCESSENTRY32
+        {
+            public uint dwSize;
+            public uint cntUsage;
+            public uint th32ProcessID;
+            public IntPtr th32DefaultHeapID;
+            public uint th32ModuleID;
+            public uint cntThreads;
+            public uint th32ParentProcessID;
+            public int pcPriClassBase;
+            public uint dwFlags;
+            [MarshalAs(UnmanagedType.ByValTStr, SizeConst = 260)] public string szExeFile;
+        };
+
+        internal const int ERROR_NO_MORE_FILES = 0x12;
 
 #endif
 

@@ -394,7 +394,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             PSObject so = PSObjectHelper.AsPSObject(val);
             if (directive != null && !string.IsNullOrEmpty(directive.formatString))
             {
-                // we have a formatting directive, apply it 
+                // we have a formatting directive, apply it
                 // NOTE: with a format directive, we do not make any attempt
                 // to deal with IEnumerable
                 try
@@ -414,7 +414,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                                     // String.Format and PSObject.ToString().
                                     // I think we can swallow these.
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
                     // NOTE: we catch all the exceptions, since we do not know
                     // what the underlying object access would throw
                     if (formatErrorObject != null)

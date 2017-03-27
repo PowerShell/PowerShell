@@ -3,7 +3,7 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
   BeforeAll {
     $StartingLocation = Get-Location
   }
-  AfterEach { 
+  AfterEach {
     Set-Location $StartingLocation
   }
   It "should output multiple paths when called with multiple -Path targets" {
@@ -42,5 +42,10 @@ Describe "Join-Path cmdlet tests" -Tags "CI" {
     $result=Join-Path "Env:" "foo"
     $result.Count | Should be 1
     $result       | Should BeExactly ("Env:"+$SepChar+"foo")
+  }
+  It "should be able to join multiple child paths passed by position with remaining arguments" {
+    $result = Join-Path one two three four five
+    $result.Count | Should Be 1
+    $result       | Should BeExactly "one${sepChar}two${sepChar}three${sepChar}four${sepChar}five"
   }
 }

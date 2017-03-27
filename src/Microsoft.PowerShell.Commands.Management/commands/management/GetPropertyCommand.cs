@@ -12,7 +12,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command to get the property of an item at a specified path
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ItemProperty", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkID=113320")]
+    [Cmdlet(VerbsCommon.Get, "ItemProperty", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113320")]
     public class GetItemPropertyCommand : ItemPropertyCommandBase
     {
         #region Parameters
@@ -79,16 +79,16 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)
@@ -170,7 +170,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// A command to get the property value of an item at a specified path.
     /// </summary>
-    [Cmdlet(VerbsCommon.Get, "ItemPropertyValue", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "http://go.microsoft.com/fwlink/?LinkId=389281")]
+    [Cmdlet(VerbsCommon.Get, "ItemPropertyValue", DefaultParameterSetName = "Path", SupportsTransactions = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=389281")]
     public sealed class GetItemPropertyValueCommand : ItemPropertyCommandBase
     {
         #region Parameters
@@ -239,16 +239,16 @@ namespace Microsoft.PowerShell.Commands
         /// that require dynamic parameters should override this method and return the
         /// dynamic parameter object.
         /// </summary>
-        /// 
+        ///
         /// <param name="context">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An object representing the dynamic parameters for the cmdlet or null if there
         /// are none.
         /// </returns>
-        /// 
+        ///
         internal override object GetDynamicParameters(CmdletProviderContext context)
         {
             if (Path != null && Path.Length > 0)

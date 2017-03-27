@@ -10,7 +10,7 @@ using Dbg = System.Management.Automation;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// Holds the state of a Monad Shell session 
+    /// Holds the state of a Monad Shell session
     /// </summary>
     internal sealed partial class SessionStateInternal
     {
@@ -25,28 +25,28 @@ namespace System.Management.Automation
         /// <summary>
         /// Given a scope identifier, returns the proper session state scope.
         /// </summary>
-        /// 
+        ///
         /// <param name="scopeID">
         /// A scope identifier that is either one of the "special" scopes like
         /// "global", "local", or "private, or a numeric ID of a relative scope
         /// to the current scope.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The scope identified by the scope ID or the current scope if the
         /// scope ID is not defined as a special or numeric scope identifier.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentException">
         /// If <paramref name="scopeID"/> is less than zero, or not
         /// a number and not "script", "global", "local", or "private"
         /// </exception>
-        /// 
+        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        /// 
+        ///
         internal SessionStateScope GetScopeByID(string scopeID)
         {
             SessionStateScope result = _currentScope;
@@ -85,7 +85,7 @@ namespace System.Management.Automation
                 else
                 {
                     // Since the scope is not any of the special scopes
-                    // try parsing it as an ID 
+                    // try parsing it as an ID
 
                     try
                     {
@@ -115,21 +115,21 @@ namespace System.Management.Automation
         /// <summary>
         /// Given a scope ID, walks the scope list to the appropriate scope and returns it.
         /// </summary>
-        /// 
+        ///
         /// <param name="scopeID">
         /// The numeric indexer to the scope relative to the current scope.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// The scope at the index specified.  The index is relative to the current
         /// scope.
         /// </returns>
-        /// 
+        ///
         /// <exception cref="ArgumentOutOfRangeException">
         /// If <paramref name="scopeID"/> is less than zero or greater than the number of currently
         /// active scopes.
         /// </exception>
-        /// 
+        ///
         internal SessionStateScope GetScopeByID(int scopeID)
         {
             SessionStateScope processingScope = _currentScope;
@@ -163,7 +163,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// The module scope of a session state. This is only used internally
-        /// by the engine. There is no module scope qualifier. 
+        /// by the engine. There is no module scope qualifier.
         /// </summary>
         internal SessionStateScope ModuleScope { get; }
 
@@ -221,16 +221,16 @@ namespace System.Management.Automation
         /// Creates a new scope in the scope tree and assigns the parent
         /// and child scopes appropriately.
         /// </summary>
-        /// 
+        ///
         /// <param name="isScriptScope">
         /// If true, the new scope is pushed on to the script scope stack and
         /// can be referenced using $script:
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// A new SessionStateScope which is a child of the current scope.
         /// </returns>
-        /// 
+        ///
         internal SessionStateScope NewScope(bool isScriptScope)
         {
             Diagnostics.Assert(
@@ -252,15 +252,15 @@ namespace System.Management.Automation
         /// Removes the current scope from the scope tree and
         /// changes the current scope to the parent scope.
         /// </summary>
-        /// 
+        ///
         /// <param name="scope">
         /// The scope to cleanup and remove.
         /// </param>
-        /// 
+        ///
         /// <exception cref="SessionStateUnauthorizedAccessException">
         /// The global scope cannot be removed.
         /// </exception>
-        /// 
+        ///
         internal void RemoveScope(SessionStateScope scope)
         {
             Diagnostics.Assert(
@@ -310,10 +310,9 @@ namespace System.Management.Automation
                 {
                     throw;
                 }
-                catch (Exception e) // Catch-all OK, 3rd party callout.
+                catch (Exception) // Catch-all OK, 3rd party callout.
                 {
-                    CommandProcessorBase.CheckForSevereException(e);
-                    // Ignore all exceptions from the provider as we are 
+                    // Ignore all exceptions from the provider as we are
                     // going to force the removal anyway
                 }
             } // foreach drive
