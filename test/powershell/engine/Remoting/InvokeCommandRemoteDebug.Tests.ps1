@@ -4,9 +4,6 @@
 
 if ($IsWindows)
 {
-    $remotingModule = Join-Path $PSScriptRoot "../../Common/TestRemoting.psm1"
-    Import-Module $remotingModule -ErrorAction SilentlyContinue
-
     $typeDef = @'
     using System;
     using System.Globalization;

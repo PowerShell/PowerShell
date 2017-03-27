@@ -1,7 +1,4 @@
-﻿$remotingModule = Join-Path $PSScriptRoot "../../Common/TestRemoting.psm1"
-Import-Module $remotingModule -ErrorAction SilentlyContinue
-
-Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature" {
+﻿Describe "Implicit remoting and CIM cmdlets with AllSigned and Restricted policy" -tags "Feature" {
 
     BeforeAll {
 
