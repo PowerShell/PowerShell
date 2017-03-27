@@ -1410,6 +1410,11 @@ function Start-PSPackage {
         "AppImage" {
             if ($IsUbuntu14) {
                 Start-NativeExecution { bash -iex "$PSScriptRoot/tools/appimage.sh" }
+                $appImage = Get-Item PowerShell-*.AppImage
+                if ($appImage.Count -gt 1) {
+                    Write-Error "Found more than one AppImage package"
+                }
+                Rename-Item $appImage.Name $appImage.Name.Replace("-","-$Version-")
             } else {
                 Write-Warning "Ignoring AppImage type for non Ubuntu Trusty platform"
             }
