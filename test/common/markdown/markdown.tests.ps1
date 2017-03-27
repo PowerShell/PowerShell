@@ -6,6 +6,7 @@ $repoRootPathFound = $false
 
 Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
     BeforeAll {
+        # Skip if not windows
         $skip = !$IsWindows
         if ( !$skip ) 
         {
@@ -19,18 +20,21 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                     -ArgumentList @('install','--silent') `
                     -Wait `
                     -WorkingDirectory $PSScriptRoot `
-                    -PassThru `
                     -NoNewWindow
                 $null = Start-Process `
                     -FilePath "npm" `
                     -ArgumentList @('install','-g','gulp','--silent') `
                     -Wait `
                     -WorkingDirectory $PSScriptRoot `
-                    -PassThru `
                     -NoNewWindow
             } 
             elseif( -not $env:AppVeyor)
             {
+                <# 
+                    On Windows, but not an AppVeyor and pre-requisites are missing
+                    For now we will skip, and write a warning.  Work to resolve this is tracked in:
+                    https://github.com/PowerShell/PowerShell/issues/3429
+                #>
                 Write-Warning "Node and npm are required to run this test"
                 $skip = $true
             }
@@ -40,21 +44,23 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
     AfterAll {
         if ( !$skip ) 
         {
-            # We're using this tool to delete the node_modules folder because it gets too long
-            # for PowerShell to remove.
+            <# 
+                NPM install all the tools needed to run this test in the test folder.
+                We will now clean these up.
+                We're using this tool to delete the node_modules folder because it gets too long
+                for PowerShell to remove.
+            #>
             $null = Start-Process `
                 -FilePath "npm" `
                 -ArgumentList @('install','rimraf','-g','--silent') `
                 -Wait `
                 -WorkingDirectory $PSScriptRoot `
-                -PassThru `
                 -NoNewWindow
             $null = Start-Process `
                 -FilePath "rimraf" `
                 -ArgumentList @(Join-Path -Path $PSScriptRoot -ChildPath 'node_modules') `
                 -Wait `
                 -WorkingDirectory $PSScriptRoot `
-                -PassThru `
                 -NoNewWindow
         }
     }
@@ -74,9 +80,8 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 --rootpath $repoRootPath `
                 --filter $filter
 
-            Start-Sleep -Seconds 3
         }
-        catch [System.Exception]
+        catch
         {
             Write-Warning -Message ("Unable to run gulp to test markdown files. Please " + `
                                     "be sure that you have installed nodejs and have " + `
