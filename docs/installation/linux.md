@@ -25,7 +25,7 @@ Once the package is installed, run `powershell` from a terminal.
 
 ## Ubuntu 14.04
 
-### Installation via Package Repository
+### Installation via Package Repository - Ubuntu 14.04
 
 PowerShell Core, for Linux, is published to package repositories for easy installation (and updates).
 This is the preferred method.
@@ -77,7 +77,7 @@ sudo apt-get remove powershell
 
 ## Ubuntu 16.04
 
-### Installation via Package Repository
+### Installation via Package Repository - Ubuntu 16.04
 
 PowerShell Core, for Linux, is published to package repositories for easy installation (and updates).
 This is the preferred method.
@@ -102,7 +102,7 @@ powershell
 After registering the Microsoft repository once as superuser,
 from then on, you just need to use `sudo apt-get upgrade powershell` to update it.
 
-### Installation via Direct Download
+### Installation via Direct Download - Ubuntu 16.04
 
 Using [Ubuntu 16.04][], download the Debian package
 `powershell_6.0.0-alpha.17-1ubuntu1.16.04.1_amd64.deb`
@@ -133,7 +133,7 @@ This works for Debian Stretch (now testing) as well.
 
 > This package also works on Oracle Linux 7 and Red Hat Enterprise Linux (RHEL) 7.
 
-### Installation via Package Repository (preferred)
+### Installation via Package Repository (preferred) - CentOS 7
 
 PowerShell Core for Linux is published to official Microsoft repositories for easy installation (and updates).
 
@@ -151,7 +151,7 @@ powershell
 After registering the Microsoft repository once as superuser,
 you just need to use `sudo yum update powershell` to update PowerShell.
 
-### Installation via Direct Download
+### Installation via Direct Download - CentOS 7
 
 Using [CentOS 7][], download the RPM package
 `powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm`
@@ -279,7 +279,6 @@ The PowerShell macOS package come with the necessary libraries patched,
 and the build script patches the libraries on-the-fly when building from source.
 You *can* run this command manually if you're having trouble with .NET Core's cryptography libraries.
 
-
 [openssl]: https://github.com/Homebrew/homebrew-core/blob/master/Formula/openssl.rb
 [brew]: http://brew.sh/
 [homebrew-patch]: https://github.com/Homebrew/brew/pull/597
@@ -292,13 +291,12 @@ You *can* run this command manually if you're having trouble with .NET Core's cr
 * User modules will be read from `~/.local/share/powershell/Modules`
 * Shared modules will be read from `/usr/local/share/powershell/Modules`
 * Default modules will be read from `$PSHOME/Modules`
-* PSReadLine history will be recorded to `~/.local/share/powershell/PSReadLine/ConsoleHost_history.txt`
+* PSReadline history will be recorded to `~/.local/share/powershell/PSReadLine/ConsoleHost_history.txt`
 
 The profiles respect PowerShell's per-host configuration,
 so the default host-specific profiles exists at `Microsoft.PowerShell_profile.ps1` in the same locations.
 
 On Linux and macOS, the [XDG Base Directory Specification][xdg-bds] is respected.
-
 
 Note that because macOS is a derivation of BSD,
 instead of `/opt`, the prefix used is `/usr/local`.

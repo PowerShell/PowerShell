@@ -394,7 +394,7 @@ When BellStyle is set to Audible, specifies the duration of the beep.
 [Parameter(ParameterSetName = 'Set 1')]
 ```
 
-Specifies how PSReadLine should respond to various error and ambiguous conditions.
+Specifies how PSReadline should respond to various error and ambiguous conditions.
 
 Valid values are:
 
@@ -439,7 +439,7 @@ Specifies the searching history is case sensitive in functions like ReverseSearc
 [Parameter(ParameterSetName = 'Set 1')]
 ```
 
-Specifies how PSReadLine should save history.
+Specifies how PSReadline should save history.
 
 Valid values are:
 

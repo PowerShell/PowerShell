@@ -357,4 +357,4 @@ Pester Do and Don't
     1. The first `Should` failure will stop that block
 2. Don't use `Should` outside of an `It` Block
 3. Don't use the word "Error" or "Fail" to test a positive case
-    1. ex: "Get-Childitem TESTDRIVE: shouldn't fail", rather "Get-ChildItem should be able to retrieve file listing from TESTDRIVE"
+    1. ex: "Get-ChildItem TESTDRIVE: shouldn't fail", rather "Get-ChildItem should be able to retrieve file listing from TESTDRIVE"

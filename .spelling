@@ -21,7 +21,8 @@ env
 ProgramFiles
 ssh
 CentOS
-dockerfiles
+DockerFile
+DockerFiles
 ResGen
 catalog
 cataloged
@@ -82,6 +83,23 @@ alpha.8
 alpha.9
 alpha.15
 vscode
+AssemblyLoadContext
+ConsoleHost
+ConvertFrom-Json
+crossgen
+Get-ChildItem
+Get-ComputerInfo
+Get-WinEvent
+Invoke-RestMethod
+Invoke-WebRequest
+Microsoft.PowerShell.Archive
+PackageManagement
+PowerShellGet
+PSReadline
+Runspace
+SecureString
+WSMan
+xUnit
  - demos/Azure/README.md
 AzureRM.NetCore.Preview
 AzureRM.Profile.NetCore.Preview
@@ -97,15 +115,11 @@ New-CronJob
  - demos/DSC/readme.md
  - demos/install/README.md
 download.sh
- - demos/powershellget/README.md
-PowerShellGet
  - demos/python/README.md
 _script.ps1
 _script.ps1.
  - demos/rest/README.md
 rest.ps1
-Invoke-WebRequest
-ConvertFrom-Json
  - demos/SSHRemoting/README.md
 PSSessions
 HostName
@@ -147,7 +161,6 @@ Calvo
 AngelCalvo
 khansen00
 PRs
-PSReadline
 Snover
 jpsnover
 Payette
@@ -166,7 +179,6 @@ XTerm
 CmdletProviderClasses
 CommandDiscovery
 CommandSearch
-ConsoleHost
 ConsoleHostRunspaceInit
 ConsoleHostUserInterface
 ConsoleLineOutput
@@ -207,7 +219,6 @@ TypeGen
 GoogleTest
 superproject
  - docs/installation/linux.md
-PSReadLine
 OpenSUSE
  - docs/installation/windows.md
 Win8
@@ -244,7 +255,6 @@ launch.json
 ForEach-Object
  - docs/maintainers/issue-management.md
 omi
-PackageManagement
 Microsoft.PowerShell.Core
 Microsoft.PowerShell.Utility
 Microsoft.PowerShell.Management
@@ -275,7 +285,6 @@ Get-AuthenticodeSignature
 Set-AuthenticodeSignature
 Export-BinaryMiLog
 Import-BinaryMiLog
-Get-ChildItem
 Get-CimAssociatedInstance
 Get-CimClass
 Register-CimIndicationEvent
@@ -290,7 +299,6 @@ Remove-CimSession
 New-CimSessionOption
 Export-Clixml
 Import-Clixml
-Get-ComputerInfo
 ConvertFrom-Csv
 ConvertTo-Csv
 Export-Csv
@@ -396,7 +404,6 @@ Enable-PSTrace
 New-PSTransportOption
 Disable-PSWSManCombinedTrace
 Enable-PSWSManCombinedTrace
-Invoke-RestMethod
 Find-RoleCapability
 Debug-Runspace
 Get-Runspace
@@ -418,7 +425,6 @@ Get-TypeData
 Remove-TypeData
 Update-TypeData
 Get-UICulture
-Get-WinEvent
 New-WinEvent
 Connect-WSMan
 Disconnect-WSMan
@@ -439,15 +445,12 @@ ConvertTo-Xml
 Select-xml
  - docs/testing-guidelines/testing-guidelines.md
 100ms
-xUnit
 Api
-Runspace
 MessageAnalyzer
 TabCompletion
 Interop
 DotNet
 NativeExecution
-Microsoft.PowerShell.Archive
 Microsoft.PowerShell.Core
 Microsoft.PowerShell.Diagnostics
 Microsoft.PowerShell.Management
@@ -459,7 +462,6 @@ OpenCover
 corefx
 DotCover
 loopback
-WSMan
 Downlevel
 KPIs
 PowerBI
@@ -474,7 +476,6 @@ New-ApacheVHost
 FullyQualifiedErrorId
 FQErrorId
 TestDrive
-Get-Childitem
 PSDefaultParameterValues-skip
 nGet-MultiLineString
 nGet-ContentOut-String
@@ -727,16 +728,71 @@ hoc
 powershell-unix
  - src/TypeCatalogGen/README.md
 TypeCatalogGen
- - test/csharp/README.md
-AssemblyLoadContext
  - test/README.md
 csharp
 fullclr
 shebang
  - CHANGELOG.md
-v6.0.0
+-Title
+alpha.10
+alpha.11
+alpha.12
+alpha.13
+alpha.14
 alpha.16
 alpha.17
+bool
+ContentType
+ConvertTo-Html
+CoreConsoleHost
+crossgen'ing
+EXE's
+FileCatalog
+FilterHashtable
+GetParentProcess
+hostname
+IncludeUserName
+InformationRecord
+IoT
+iSazonov
+IsCore
+IsCoreCLR
+JsonConfigFileAccessor
+kittholland
+kwiknick
+Lee303
+libpsl-native
+Microsoft.Management.Infrastructure.Native
+Microsoft.PowerShell.LocalAccounts
+oneget.org
+PetSerAl
+powercode
+PowerShellProperties
+preview1-24530-04
+PSDrive
+PseudoParameterBinder
+PSReadLine
+PVS-Studio
+rc2-24027
+rc3-24011 
+stdin
+StringBuilder
+system.manage
+TimeZone
+TTY's
+UserData
+v0.1.0
+v0.2.0
+v0.3.0
+v0.4.0
+v0.5.0
+v0.6.0
+v6.0.0
+ValidateNotNullOrEmpty
+WebRequest
+win7-x86
+WindowsVersion
+XPath
  - test/tools/CodeCoverageAutomation/README.md
 Start-CodeCoverageRun
 Coveralls.io.

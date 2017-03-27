@@ -1,10 +1,9 @@
-Changelog
-=========
+# Changelog
 
-v6.0.0-alpha.17 - 2017-03-08
-----------------------------
+## v6.0.0-alpha.17 - 2017-03-08
+
 - Update PSRP client libraries for Linux and Mac.
-  - We now support customer configurations for Office 365 interaction, as well as NTLM authentication for WSMan-based remoting from Linux (more information [here](https://github.com/PowerShell/psl-omi-provider/releases/tag/v1.0.0.18)). (#3271)
+    - We now support customer configurations for Office 365 interaction, as well as NTLM authentication for WSMan based remoting from Linux (more information [here](https://github.com/PowerShell/psl-omi-provider/releases/tag/v1.0.0.18)). (#3271)
 - We now support remote step-in debugging for `Invoke-Command -ComputerName`. (#3015)
 - Use prettier formatter with `ConvertTo-Json` output. (#2787) (Thanks to @kittholland!)
 - Port `*-CmsMessage` and `Get-PfxCertificate` cmdlets to Powershell Core. (#3224)
@@ -16,7 +15,7 @@ v6.0.0-alpha.17 - 2017-03-08
 - Remove the `AliasProperty "Count"` defined for `System.Array`.
   - This removes the extraneous `Count` property on some `ConvertFrom-Json` output. (#3231) (Thanks to @PetSerAl!)
 - Port `Import-PowerShellDatafile` from PowerShell script to C#. (#2750) (Thanks to @powercode!)
-- Add `-CustomMethod` paramter to web cmdlets to allow for non-standard method verbs. (#3142) (Thanks to @Lee303!)
+- Add `-CustomMethod` parameter to web cmdlets to allow for non-standard method verbs. (#3142) (Thanks to @Lee303!)
 - Fix web cmdlets to include the HTTP response in the exception when the response status code is not success. (#3201)
 - Expose a process' parent process by adding the `CodeProperty "Parent"` to `System.Diagnostics.Process`. (#2850) (Thanks to @powercode!)
 - Fix crash when converting a recursive array to a bool. (#3208) (Thanks to @PetSerAl!)
@@ -25,13 +24,13 @@ v6.0.0-alpha.17 - 2017-03-08
 - Allow Windows' reserved device names (e.g. CON, PRN, AUX, etc.) to be used on non-Windows platforms. (#3252)
 - Remove duplicate type definitions when reusing an `InitialSessionState` object to create another Runspace. (#3141)
 - Fix `PSModuleInfo.CaptureLocals` to not do `ValidateAttribute` check when capturing existing variables from the caller's scope. (#3149)
-- Fix a race bug in WSMan command plugin instance close operation. (#3203)
+- Fix a race bug in WSMan command plug-in instance close operation. (#3203)
 - Fix a problem where newly mounted volumes aren't available to modules that have already been loaded. (#3034)
-- Remove year from PowerShell copyright banner at startup. (#3204) (Thanks to @kwiknick!)
+- Remove year from PowerShell copyright banner at start-up. (#3204) (Thanks to @kwiknick!)
 - Fixed spelling for the property name `BiosSerialNumber` for `Get-ComputerInfo`. (#3167) (Thanks to @iSazonov!)
 
-v6.0.0-alpha.16 - 2017-02-15
-----------------------------
+## v6.0.0-alpha.16 - 2017-02-15
+
 - Add `WindowsUBR` property to `Get-ComputerInfo` result
 - Cache padding strings to speed up formatting a little
 - Add alias `Path` to the `-FilePath` parameter of `Out-File`
@@ -42,12 +41,12 @@ v6.0.0-alpha.16 - 2017-02-15
 - Fix lock contention when compiling the code to run in interpreter
 - Avoid going through WinRM remoting stack when using `Get-ComputerInfo` locally
 - Fix native parameter auto-completion for tokens that begin with a single "Dash"
-- Fix parser error reporting for incompleted input to allow defining class in interactive host
+- Fix parser error reporting for incomplete input to allow defining class in interactive host
 - Add the `RoleCapabilityFiles` keyword for JEA support on Windows
 
-v6.0.0-alpha.15 - 2017-01-18
-----------------------------
-- Use parens around file length for offline files
+## v6.0.0-alpha.15 - 2017-01-18
+
+- Use parentheses around file length for offline files
 - Fix issues with the Windows console mode (terminal emulation) and native executables
 - Fix error recovery with `using module`
 - Report `PlatformNotSupported` on IoT for Get/Import/Export-Counter
@@ -59,8 +58,8 @@ v6.0.0-alpha.15 - 2017-01-18
 - `Invoke-RestMethod` improvements for non-XML non-JSON input
 - PSRP remoting now works on CentOS without addition setup
 
-v6.0.0-alpha.14 - 2016-12-14
-----------------------------
+## v6.0.0-alpha.14 - 2016-12-14
+
 - Moved to .NET Core 1.1
 - Add Windows performance counter cmdlets to PowerShell Core
 - Fix try/catch to choose the more specific exception handler
@@ -74,8 +73,8 @@ v6.0.0-alpha.14 - 2016-12-14
 - Fix `Invoke-WebRequest` with non-text responses on non-Windows platforms
 - `Write-Progress` performance improvement from `alpha13` reverted because it introduced crash with a race condition
 
-v6.0.0-alpha.13 - 2016-11-22
-----------------------------
+## v6.0.0-alpha.13 - 2016-11-22
+
 - Fix `NullReferenceException` in binder after turning on constrained language mode
 - Enable `Invoke-WebRequest` and `Invoke-RestMethod` to not validate the HTTPS certificate of the server if required.
 - Enable binder debug logging in PowerShell Core
@@ -87,7 +86,7 @@ v6.0.0-alpha.13 - 2016-11-22
 - Fix background jobs for Unix and Windows
 - Add `Get-Uptime` to `Microsoft.PowerShell.Utility`
 - Make `Out-Null` as fast as `> $null`
-- Add Dockerfile for windowsservercore and NanoServer
+- Add DockerFile for 'Windows Server Core' and 'Nano Server'
 - Fix WebRequest failure to handle missing ContentType in response header
 - Make `Write-Host` fast by delay initializing some properties in InformationRecord
 - Ensure PowerShell Core adds an initial `/` rooted drive on Unix platforms
@@ -100,10 +99,10 @@ v6.0.0-alpha.13 - 2016-11-22
 - Update build scripts to support win7-x86 runtime
 - Move PackageManagement code/test to oneget.org
 
-v6.0.0-alpha.12 - 2016-11-03
-----------------------------
+## v6.0.0-alpha.12 - 2016-11-03
+
 - Fix `Get-ChildItem -Recurse -ErrorAction Ignore` to ignore additional errors
-- Don't block pipeline when running Windows exes
+- Don't block pipeline when running Windows EXE's
 - Fix for PowerShell SSH remoting with recent Win32-OpenSSH change.
 - `Select-Object` with `-ExcludeProperty` now implies `-Property *` if -Property is not specified.
 - Adding ValidateNotNullOrEmpty to `-Name` parameter of `Get-Alias`
@@ -119,8 +118,8 @@ v6.0.0-alpha.12 - 2016-11-03
 - Exclude Registry and Certificate providers from UNIX PS
 - Update PowerShell Core to consume .Net Core preview1-24530-04
 
-v6.0.0-alpha.11 - 2016-10-17
-----------------------------
+## v6.0.0-alpha.11 - 2016-10-17
+
 - Add '-Title' to 'Get-Credential' and unify the prompt experience
 - Update dependency list for PowerShell Core on Linux and OS X
 - Fix 'powershell -Command -' to not hang and to not ignore the last command
@@ -129,16 +128,16 @@ v6.0.0-alpha.11 - 2016-10-17
 - Remove most Maximum* capacity variables
 - Fix 'Get-ChildItem -Hidden' to work on system hidden files on Windows
 - Fix 'JsonConfigFileAccessor' to handle corrupted 'PowerShellProperties.json'
-and defer creating the user setting directory until a write request comes
-- Fix variable assignment to not overwrite readonly variables
+    and defer creating the user setting directory until a write request comes
+- Fix variable assignment to not overwrite read-only variables
 - Fix 'Get-WinEvent -FilterHashtable' to work with named fields in UserData of event logs
 - Fix 'Get-Help -Online' in PowerShell Core on Windows
 - Spelling/grammar fixes
 
-v6.0.0-alpha.10 - 2016-09-15
-----------------------------
+## v6.0.0-alpha.10 - 2016-09-15
+
 - Fix passing escaped double quoted spaces to native executables
-- Add Dockerfiles to build each Linux distribution
+- Add DockerFiles to build each Linux distribution
 - `~/.config/PowerShell` capitalization bug fixed
 - Fix crash on Windows 7
 - Fix remote debugging on Windows client
@@ -147,23 +146,21 @@ v6.0.0-alpha.10 - 2016-09-15
 - Fix `Install-Module` version comparison bug
 - Spelling fixes
 
-v6.0.0-alpha.9 - 2016-08-15
----------------------------
+## v6.0.0-alpha.9 - 2016-08-15
 
 - Better man page
 - Added third-party and proprietary licenses
 - Added license to MSI
 
-v6.0.0-alpha.8 - 2016-08-11
----------------------------
+## v6.0.0-alpha.8 - 2016-08-11
 
-- PowerShell packages pre-compiled with CrossGen
+- PowerShell packages pre-compiled with crossgen
 - `Get-Help` content added
 - `Get-Help` null reference exception fixed
 - Ubuntu 16.04 support added
 - Unsupported cmdlets removed from Unix modules
-- PSReadLine long prompt bug fixed
-- PSReadLine custom key binding bug on Linux fixed
+- PSReadline long prompt bug fixed
+- PSReadline custom key binding bug on Linux fixed
 - Default terminal colors now respected
 - Semantic Version support added
 - `$env:` fixed for case-sensitive variables
@@ -178,13 +175,12 @@ v6.0.0-alpha.8 - 2016-08-11
 - Desired State Configuration MOF compilation ported to Linux
 - Windows 2012 R2 / Windows 8.1 remoting enabled
 
-v6.0.0-alpha.7 - 2016-07-26
----------------------------
+## v6.0.0-alpha.7 - 2016-07-26
 
 - Invoke-WebRequest and Invoke-RestMethod ported to PowerShell Core
-- Set PSReadLine default edit mode to Emacs on Linux
+- Set PSReadline default edit mode to Emacs on Linux
 - IsCore variable renamed to IsCoreCLR
-- LocalAccounts and other Windows-only assemblies excluded on Linux
+- Microsoft.PowerShell.LocalAccounts and other Windows-only assemblies excluded on Linux
 - PowerShellGet fully ported to Linux
 - PackageManagement NuGet provider ported
 - Write-Progress ported to Linux
@@ -197,8 +193,7 @@ v6.0.0-alpha.7 - 2016-07-26
 - FileCatalog cmdlets added back for Windows
 - Get-ComputerInfo cmdlet added back for Windows
 
-v0.6.0 - 2016-07-08
--------------------
+## v0.6.0 - 2016-07-08
 
 - Targets .NET Core 1.0 release
 - PowerShellGet enabled
@@ -208,12 +203,11 @@ v0.6.0 - 2016-07-08
 - Invoke-Item enabled for Linux and OS X
 - Windows ConsoleHost reverted to native interfaces
 - Portable ConsoleHost redirection issues fixed
-- Bugs with pseudo (and no) TTYs fixed
+- Bugs with pseudo (and no) TTY's fixed
 - Source Depot synced to baseline changeset 717473
 - SecureString stub replaced with .NET Core package
 
-v0.5.0 - 2016-06-16
--------------------
+## v0.5.0 - 2016-06-16
 
 - Paths given to cmdlets are now slash-agnostic (both / and \ work as directory separator)
 - Lack of cmdlet support for paths with literal \ is a known issue
@@ -234,10 +228,9 @@ v0.5.0 - 2016-06-16
 - Linux xUnit tests are running again
 - Many more Pester tests are running
 
-v0.4.0 - 2016-05-17
--------------------
+## v0.4.0 - 2016-05-17
 
-- PSReadLine is ported and included by default
+- PSReadline is ported and included by default
 - Original Windows ConsoleHost is ported and replaced CoreConsoleHost
 - .NET Core packages set to the RC2 release at build 24103
 - OS X 10.11 added to Continuous Integration matrix
@@ -246,8 +239,7 @@ v0.4.0 - 2016-05-17
 - Microsoft.Management.Infrastructure.Native replaced with package
 - Many more Pester tests
 
-v0.3.0 - 2016-04-11
--------------------
+## v0.3.0 - 2016-04-11
 
 - Supports Windows, Nano, OS X, Ubuntu 14.04, and CentOS 7.1
 - .NET Core packages are build rc3-24011
@@ -261,7 +253,7 @@ v0.3.0 - 2016-04-11
 - Host's shell ID changed to `Microsoft.PowerShellCore`
 - Modules that use C# assemblies can be loaded
 - `New-Item -ItemType SymbolicLink` supports arbitrary targets
-- Readline implementation supports multi-line input
+- PSReadline implementation supports multi-line input
 - `Ctrl-R` provides incremental reverse history search
 - `$Host.UI.RawUI` now supported
 - `Ctrl-K` and `Ctrl-Y` for kill and yank implemented
@@ -269,19 +261,17 @@ v0.3.0 - 2016-04-11
 - Documentation was completely overhauled
 - Many more Pester and xUnit tests added
 
-v0.2.0 - 2016-03-08
--------------------
+## v0.2.0 - 2016-03-08
 
 - Supports Windows, OS X, Ubuntu 14.04, and CentOS 7.1
 - .NET Core packages are build 23907
-- `System.Console` readline is fully functional
+- `System.Console` PSReadline is fully functional
 - Tests pass on OS X
 - `Microsoft.PowerShell.Platform` module is available
 - `New-Item` supports symbolic and hard links
 - `Add-Type` now works
 - PowerShell code merged with upstream `rs1_srv_ps`
 
-v0.1.0 - 2016-02-23
--------------------
+## v0.1.0 - 2016-02-23
 
 - Supports Windows, OS X, and Ubuntu 14.04
