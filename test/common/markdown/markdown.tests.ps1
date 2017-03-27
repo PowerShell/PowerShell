@@ -15,13 +15,13 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
             {
                 $NpmInstalled = "Installed"
                 Write-Verbose -Message "NPM is checking Gulp is installed. This may take a few moments." -Verbose
-                $null = Start-Process `
+                Start-Process `
                     -FilePath "npm" `
                     -ArgumentList @('install','--silent') `
                     -Wait `
                     -WorkingDirectory $PSScriptRoot `
                     -NoNewWindow
-                $null = Start-Process `
+                Start-Process `
                     -FilePath "npm" `
                     -ArgumentList @('install','-g','gulp','--silent') `
                     -Wait `
@@ -50,13 +50,13 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 We're using this tool to delete the node_modules folder because it gets too long
                 for PowerShell to remove.
             #>
-            $null = Start-Process `
+            Start-Process `
                 -FilePath "npm" `
                 -ArgumentList @('install','rimraf','-g','--silent') `
                 -Wait `
                 -WorkingDirectory $PSScriptRoot `
                 -NoNewWindow
-            $null = Start-Process `
+            Start-Process `
                 -FilePath "rimraf" `
                 -ArgumentList @(Join-Path -Path $PSScriptRoot -ChildPath 'node_modules') `
                 -Wait `
