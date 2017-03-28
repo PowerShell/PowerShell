@@ -35,4 +35,18 @@ Describe "Tab completion bug fix" -Tags "CI" {
         $result.CompletionMatches[1].CompletionText | Should Be "-NoClobber"
         $result.CompletionMatches[2].CompletionText | Should Be "-NoOverwrite"
     }
+    It "Issue#3416 - 'Select-Object -ExcludeProperty <tab>' should work" {
+        $cmd = "Get-Date | Select-Object -ExcludeProperty "
+        $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+        $result.CompletionMatches.Count | Should Be 15
+        $result.CompletionMatches[0].CompletionText | Should Be "Date"
+        $result.CompletionMatches[1].CompletionText | Should Be "DateTime"
+    }
+    It "Issue#3416 - 'Select-Object -ExpandProperty <tab>' should work" {
+        $cmd = "Get-Date | Select-Object -ExpandProperty "
+        $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+        $result.CompletionMatches.Count | Should Be 15
+        $result.CompletionMatches[0].CompletionText | Should Be "Date"
+        $result.CompletionMatches[1].CompletionText | Should Be "DateTime"
+    }
 }
