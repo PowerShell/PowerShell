@@ -3270,7 +3270,8 @@ namespace System.Management.Automation
                             helper);
             }
             // there is a failure reason available in the runspace
-            else if (runspace.RunspaceStateInfo.State == RunspaceState.Broken)
+            else if ((runspace.RunspaceStateInfo.State == RunspaceState.Broken) ||
+                     (runspace.RunspaceStateInfo.Reason != null))
             {
                 failureException = runspace.RunspaceStateInfo.Reason;
                 object targetObject = runspace.ConnectionInfo.ComputerName;
