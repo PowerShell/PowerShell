@@ -44,7 +44,7 @@ function Set-DailyBuildBadge
 
     $headers = @{
         "x-ms-date"      = [datetime]::UtcNow.ToString("R", [System.Globalization.CultureInfo]::InvariantCulture)
-        "Content-Length" = "$contentLength"
+        "cache-control"  = "no-cache"
         "x-ms-blob-type" = "BlockBlob"
         "x-ms-version"   = "$headerDate"
     }
