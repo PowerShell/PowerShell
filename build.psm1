@@ -1217,71 +1217,6 @@ function Start-PSBootstrap {
     }
 }
 
-function Start-PSRelease {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)]
-        [string]$Name, # i.e. v6.0.0-alpha.12
-        [Parameter(Mandatory)]
-        [string]$CommitSHA1 # i.e. 7985366f9ec43af47b24dd88f04c0afc5eab3825
-    )
-
-    Push-Location $PSScriptRoot
-    try {
-        # check that we are in the right location
-        if ($IsWindows) {
-            if ($PSScriptRoot -ne "C:\PowerShell") {
-                throw "To make the release, please clone the project to C:\PowerShell. Currently it's under $PSScriptRoot"
-            }
-        } else {
-            if ($PSScriptRoot -ne "/PowerShell") {
-                throw "To make the release, please clone the project to /PowerShell. Currently it's under $PSScriptRoot"
-            }
-        }
-
-        # check that there is no tag with $Name yet
-        if ((git tag) -eq $Name) {
-            throw "Tag $Name already exists"
-        }
-
-        if ((git rev-parse HEAD) -ne $CommitSHA1) {
-            throw "Checkout the release commit before making the release: git checkout $CommitSHA1"
-        }
-
-        # Check that there are any local changes
-        $changedFiles = git status --porcelain -uno
-        if ($changedFiles) {
-            throw "There are changes in: $changedFiles"
-        }
-
-        $untrackedFiles = git ls-files --other --exclude-standard --directory
-        if ($untrackedFiles) {
-            throw "There are untracked files (run 'git clean -fdx'): $untrackedFiles"
-        }
-
-        # make sure submodules are up-to-date
-        git submodule init
-        git submodule update
-
-        # Create temporarely release tag
-        (git tag $Name $CommitSHA1)
-
-        try {
-            # make sure that we have up-to-date version of build tools
-            Start-PSBootstrap -Package
-            # run the clean build that will use temporarely tag
-            Start-PSBuild -Clean -Crossgen -PSModuleRestore
-            # make the package
-            Start-PSPackage
-        } finally {
-            # cleanup temporarely tag
-            git tag -d $Name
-        }
-    } finally {
-        Pop-Location
-    }
-}
-
 
 function Start-PSPackage {
     [CmdletBinding()]param(
@@ -1776,7 +1711,19 @@ esac
     }
 
     # Magic to get path output
-    return Get-Item (Join-Path $PSScriptRoot (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
+    $createdPackage = Get-Item (Join-Path $PSScriptRoot (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
+
+    if ($IsOSX) {
+        # Add the OS information to the OSX package file name.
+        $packageExt = [System.IO.Path]::GetExtension($createdPackage.Name)
+        $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($createdPackage.Name)
+
+        $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
+        $newPackagePath = Join-Path $createdPackage.DirectoryName $newPackageName
+        $createdPackage = Rename-Item $createdPackage.FullName $newPackagePath -PassThru
+    }
+
+    return $createdPackage
 }
 
 
