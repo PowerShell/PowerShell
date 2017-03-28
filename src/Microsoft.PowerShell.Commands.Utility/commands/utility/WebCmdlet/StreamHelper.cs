@@ -276,13 +276,12 @@ namespace Microsoft.PowerShell.Commands
             {
                 long totalLength = 0;
                 byte[] buffer = new byte[StreamHelper.ChunkSize];
+                ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId, WebCmdletStrings.ReadResponseProgressActivity, "statusDescriptionPlaceholder");
                 for (int read = 1; 0 < read; totalLength += read)
                 {
                     if (null != _ownerCmdlet)
                     {
-                        ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId,
-                            WebCmdletStrings.ReadResponseProgressActivity,
-                        StringUtil.Format(WebCmdletStrings.ReadResponseProgressStatus, totalLength));
+                        record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseProgressStatus, totalLength);
                         _ownerCmdlet.WriteProgress(record);
 
                         if (_ownerCmdlet.IsStopping)
@@ -301,9 +300,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (_ownerCmdlet != null)
                 {
-                    ProgressRecord record = new ProgressRecord(StreamHelper.ActivityId,
-                        WebCmdletStrings.ReadResponseProgressActivity,
-                        StringUtil.Format(WebCmdletStrings.ReadResponseComplete, totalLength));
+                    record.StatusDescription = StringUtil.Format(WebCmdletStrings.ReadResponseComplete, totalLength);
                     record.RecordType = ProgressRecordType.Completed;
                     _ownerCmdlet.WriteProgress(record);
                 }
