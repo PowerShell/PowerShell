@@ -73,6 +73,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
         {
             $docsToTest = @(
                 './*.md'
+                './docs/*.md'
                 './docs/installation/*.md'
             )
             $filter = ($docsToTest -join ',')
