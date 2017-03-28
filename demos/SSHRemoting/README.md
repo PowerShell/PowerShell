@@ -18,7 +18,6 @@ This new parameter set will likely change but for now allows you to create SSH P
 You specify the target machine with the HostName parameter and provide the user name with UserName.
 When running the cmdlets interactively at the PowerShell command line you will be prompted for a password.
 But you also have the option to use SSH key authentication and provide a private key file path with the KeyFilePath parameter.
-Note that PSCredential is not supported.
 
 ## General setup information
 SSH is required to be installed on all machines.
@@ -168,10 +167,7 @@ GitCommitId                    v6.0.0-alpha.17
 ```
 
 ### Known Issues:
-1. You can currently establish a connection either interactively with user name and password or via key authentication.  
-2. Remote debugging from Linux to Windows does not work.  However, remote debugging from Windows to Linux does work.
-3. Fan out to multiple machines not yet supported.
-4. sudo command does not work in remote session to Linux machine.
+1. sudo command does not work in remote session to Linux machine.
 
 [PowerShell for Windows]: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#msi
 [Win32 Open SSH]: https://github.com/PowerShell/Win32-OpenSSH
