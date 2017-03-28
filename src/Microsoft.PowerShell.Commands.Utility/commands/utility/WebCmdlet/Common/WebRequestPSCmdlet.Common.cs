@@ -148,6 +148,7 @@ namespace Microsoft.PowerShell.Commands
         /// gets or sets the Method property
         /// </summary>
         [Parameter(ParameterSetName = "StandardMethod")]
+        [Parameter(ParameterSetName = "StandardMethodNoProxy")]
         public virtual WebRequestMethod Method
         {
             get { return _method; }
@@ -158,7 +159,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// gets or sets the CustomMethod property
         /// </summary>
-        [Parameter(ParameterSetName = "CustomMethod")]
+        [Parameter(Mandatory=true,ParameterSetName = "CustomMethod")]
+        [Parameter(Mandatory=true,ParameterSetName = "CustomMethodNoProxy")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
         public virtual string CustomMethod
@@ -170,25 +172,39 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion
 
+        #region NoProxy
+
+        /// <summary>
+        /// gets or sets the NoProxy property
+        /// </summary>
+        [Parameter(Mandatory=true,ParameterSetName = "CustomMethodNoProxy")]
+        [Parameter(Mandatory=true,ParameterSetName = "StandardMethodNoProxy")]
+        public virtual SwitchParameter NoProxy { get; set; }
+
+        #endregion
+
         #region Proxy
 
         /// <summary>
         /// gets or sets the Proxy property
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = "StandardMethod")]
+        [Parameter(ParameterSetName = "CustomMethod")]
         public virtual Uri Proxy { get; set; }
 
         /// <summary>
         /// gets or sets the ProxyCredential property
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = "StandardMethod")]
+        [Parameter(ParameterSetName = "CustomMethod")]
         [Credential]
         public virtual PSCredential ProxyCredential { get; set; }
 
         /// <summary>
         /// gets or sets the ProxyUseDefaultCredentials property
         /// </summary>
-        [Parameter]
+        [Parameter(ParameterSetName = "StandardMethod")]
+        [Parameter(ParameterSetName = "CustomMethod")]
         public virtual SwitchParameter ProxyUseDefaultCredentials { get; set; }
 
         #endregion

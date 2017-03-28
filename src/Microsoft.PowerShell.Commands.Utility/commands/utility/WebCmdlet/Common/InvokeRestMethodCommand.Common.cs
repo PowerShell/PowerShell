@@ -17,6 +17,7 @@ namespace Microsoft.PowerShell.Commands
         /// gets or sets the parameter Method
         /// </summary>
         [Parameter(ParameterSetName = "StandardMethod")]
+        [Parameter(ParameterSetName = "StandardMethodNoProxy")]
         public override WebRequestMethod Method
         {
             get { return base.Method; }
@@ -26,7 +27,8 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// gets or sets the parameter CustomMethod
         /// </summary>
-        [Parameter(ParameterSetName = "CustomMethod")]
+        [Parameter(Mandatory=true,ParameterSetName = "CustomMethod")]
+        [Parameter(Mandatory=true,ParameterSetName = "CustomMethodNoProxy")]
         [Alias("CM")]
         [ValidateNotNullOrEmpty]
         public override string CustomMethod

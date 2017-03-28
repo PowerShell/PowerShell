@@ -79,13 +79,19 @@ namespace Microsoft.PowerShell.Commands
                 request.Credentials = WebSession.Credentials;
             }
 
-            if (null != WebSession.Proxy)
+            if (NoProxy)
+            {
+                handler.UseProxy = false;
+            }
+            else if (WebSession.Proxy != null)
             {
                 request.Proxy = WebSession.Proxy;
             }
 
             switch (ParameterSetName)
             {
+                case "StandardMethodNoProxy":
+                    goto case "StandardMethod";
                 case "StandardMethod":
                     if (WebRequestMethod.Default != Method)
                     {
@@ -93,6 +99,8 @@ namespace Microsoft.PowerShell.Commands
                         request.Method = Method.ToString().ToUpperInvariant();
                     }
                     break;
+                case "CustomMethodNoProxy":
+                    goto case "CustomMethod";
                 case "CustomMethod":
                     // set the method if the parameter was provided
                     request.Method = CustomMethod.ToUpperInvariant();
