@@ -1,20 +1,32 @@
 # PowerShell Remoting Over SSH
 
 ## Overview
-PowerShell remoting normally uses WinRM for connection negotiation and data transport.  SSH was chosen for this remoting implementation since it is now available for both Linux and Windows platforms and allows true multiplatform PowerShell remoting.  However, WinRM also provides a robust hosting model for PowerShell remote sessions which this implementation does not yet do.  And this means that PowerShell remote endpoint configuration and JEA (Just Enough Administration) is not yet supported in this implementation.
+PowerShell remoting normally uses WinRM for connection negotiation and data transport.
+SSH was chosen for this remoting implementation since it is now available for both Linux and Windows platforms and allows true multiplatform PowerShell remoting.
+However, WinRM also provides a robust hosting model for PowerShell remote sessions which this implementation does not yet do.
+And this means that PowerShell remote endpoint configuration and JEA (Just Enough Administration) is not yet supported in this implementation.
 
-PowerShell SSH remoting lets you do basic PowerShell session remoting between Windows and Linux machines.  This is done by creating a PowerShell hosting process on the target machine as an SSH subsystem.  Eventually this will be changed to a more general hosting model similar to how WinRM works in order to support endpoint configuration and JEA.
+PowerShell SSH remoting lets you do basic PowerShell session remoting between Windows and Linux machines.
+This is done by creating a PowerShell hosting process on the target machine as an SSH subsystem.
+Eventually this will be changed to a more general hosting model similar to how WinRM works in order to support endpoint configuration and JEA.
 
 The New-PSSession, Enter-PSSession and Invoke-Command cmdlets now have a new parameter set to facilitate this new remoting connection
 ```powershell
-[-HostName <string>]  [-UserName <string>]  [-KeyPath <string>]
+[-HostName <string>]  [-UserName <string>]  [-KeyFilePath <string>]
 ```
 This new parameter set will likely change but for now allows you to create SSH PSSessions that you can interact with from the command line or invoke commands and scripts on.
-You specify the target machine with the HostName parameter and provide the user name with UserName.  When running the cmdlets interactively at the PowerShell command line you will be prompted for a password.  But you also have the option to use SSH key authentication and provide a private key file path with the KeyPath parameter.  Note that PSCredential is not yet supported.
+You specify the target machine with the HostName parameter and provide the user name with UserName.
+When running the cmdlets interactively at the PowerShell command line you will be prompted for a password.
+But you also have the option to use SSH key authentication and provide a private key file path with the KeyFilePath parameter.
 
 ## General setup information
-SSH is required to be installed on all machines.  You should install both client (ssh.exe) and server (sshd.exe) so that you can experiment with remoting to and from the machines.
-For Windows you will need to install Win32 Open SSH from GitHub.  For Linux you will need to install SSH (including server) appropriate to your platform.  You will also need a recent PowerShell build or package from GitHub having the SSH remoting feature.  SSH Subsystems is used to establish a PowerShell process on the remote machine and the SSH server will need to be configured for that.  In addition you will need to enable password authentication and optionally key based authentication.
+SSH is required to be installed on all machines.
+You should install both client (ssh.exe) and server (sshd.exe) so that you can experiment with remoting to and from the machines.
+For Windows you will need to install [Win32 OpenSSH from GitHub](https://github.com/PowerShell/Win32-OpenSSH/releases).
+For Linux you will need to install SSH (including sshd server) appropriate to your platform.
+You will also need a recent PowerShell build or package from GitHub having the SSH remoting feature.
+SSH subsystems is used to establish a PowerShell process on the remote machine and the SSH server will need to be configured for that.
+In addition you will need to enable password authentication and optionally key based authentication.
 
 ## Setup on Windows Machine
 1.  Install the latest [PowerShell for Windows] build from GitHub
@@ -66,7 +78,10 @@ For Windows you will need to install Win32 Open SSH from GitHub.  For Linux you 
     - sudo service sshd restart
 
 ## PowerShell Remoting Example:
-The easiest way to test remoting is to just try it on a single machine.  Here I will create a remote session back to the same machine on a Linux box.  Notice that I am using PowerShell cmdlets from a command prompt so we see prompts from SSH asking to verify the host computer as well as password prompts.  You can do the same thing on a Windows machine to ensure remoting is working there and then remote between machines by simply changing the host name.
+The easiest way to test remoting is to just try it on a single machine.
+Here I will create a remote session back to the same machine on a Linux box.
+Notice that I am using PowerShell cmdlets from a command prompt so we see prompts from SSH asking to verify the host computer as well as password prompts.
+You can do the same thing on a Windows machine to ensure remoting is working there and then remote between machines by simply changing the host name.
 
 ```powershell
 #
@@ -152,10 +167,7 @@ GitCommitId                    v6.0.0-alpha.17
 ```
 
 ### Known Issues:
-1.  You can currently establish a connection either interactively with user name and password or via key authentication.  PSCredential is not yet supported.
-2.  Remote debugging from Linux to Windows does not work.  However, remote debugging from Windows to Linux does work.
-3.  Fan out to multiple machines not yet supported.
-4.  sudo command does not work in remote session to Linux machine.
+1. sudo command does not work in remote session to Linux machine.
 
 [PowerShell for Windows]: https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md#msi
 [Win32 Open SSH]: https://github.com/PowerShell/Win32-OpenSSH
