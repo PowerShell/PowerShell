@@ -81,7 +81,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (Transcript)
             {
-                transcribeOnlyCookie = Host.UI.SetTranscribeOnly();
+                _transcribeOnlyCookie = Host.UI.SetTranscribeOnly();
             }
 
             // This needs to be done directly through the command runtime, as Out-Default
@@ -155,16 +155,16 @@ namespace Microsoft.PowerShell.Commands
             }
             finally
             {
-                if (transcribeOnlyCookie != null)
+                if (_transcribeOnlyCookie != null)
                 {
-                    transcribeOnlyCookie.Dispose();
-                    transcribeOnlyCookie = null;
+                    _transcribeOnlyCookie.Dispose();
+                    _transcribeOnlyCookie = null;
                 }
             }
         }
 
         private ArrayList _outVarResults = null;
-        private IDisposable transcribeOnlyCookie = null;
+        private IDisposable _transcribeOnlyCookie = null;
     }
 
     /// <summary>
