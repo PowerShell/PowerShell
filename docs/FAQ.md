@@ -1,4 +1,4 @@
-# Frequently Aske Questions
+# Frequently Asked Questions
 
 ## Where can I learn PowerShell's syntax?
 
