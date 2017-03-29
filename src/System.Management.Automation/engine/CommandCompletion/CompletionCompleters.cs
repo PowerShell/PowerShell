@@ -2249,7 +2249,6 @@ namespace System.Management.Automation
                     }
                 case "Group-Object":
                 case "Measure-Object":
-                case "Select-Object":
                 case "Sort-Object":
                 case "Where-Object":
                 case "Format-Custom":
@@ -2258,6 +2257,16 @@ namespace System.Management.Automation
                 case "Format-Wide":
                     {
                         if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase))
+                        {
+                            NativeCompletionMemberName(context.WordToComplete, result, commandAst, context);
+                        }
+                        break;
+                    }
+                case "Select-Object":
+                    {
+                        if (parameterName.Equals("Property", StringComparison.OrdinalIgnoreCase)
+                         || parameterName.Equals("ExcludeProperty", StringComparison.OrdinalIgnoreCase)
+                         || parameterName.Equals("ExpandProperty", StringComparison.OrdinalIgnoreCase))
                         {
                             NativeCompletionMemberName(context.WordToComplete, result, commandAst, context);
                         }
