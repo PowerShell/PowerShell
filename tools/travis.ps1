@@ -42,9 +42,11 @@ function Set-DailyBuildBadge
     $bytes = ([System.Text.Encoding]::UTF8.GetBytes($body))
     $contentLength = $bytes.length
 
+    $now = [datetime]::UtcNow.ToString("R", [System.Globalization.CultureInfo]::InvariantCulture)
     $headers = @{
-        "x-ms-date"      = [datetime]::UtcNow.ToString("R", [System.Globalization.CultureInfo]::InvariantCulture)
-        "Content-Length" = "$contentLength"
+        "x-ms-date"      = $now
+        "cache-control"  = "no-cache"
+        "last-modified"  = $now
         "x-ms-blob-type" = "BlockBlob"
         "x-ms-version"   = "$headerDate"
     }
