@@ -91,10 +91,19 @@ namespace Microsoft.PowerShell
 
                 int rows = tempProgressRegion.GetLength(0);
                 int cols = tempProgressRegion.GetLength(1);
+
+                _savedCursor = _rawui.CursorPosition;
                 _location.X = 0;
 
 #if UNIX
                 _location.Y = _rawui.CursorPosition.Y;
+
+                // if cursor is not on left edge already move down one line
+                if (_rawui.CursorPosition.X != 0)
+                {
+                    _location.Y++;
+                    _rawui.CursorPosition = _location;
+                }
 
                 //if the cursor is at the bottom, create screen buffer space by scrolling
                 int scrollRows = rows - ((_rawui.BufferSize.Height - 1) - _location.Y);
@@ -105,6 +114,7 @@ namespace Microsoft.PowerShell
                 if (scrollRows > 0)
                 {
                     _location.Y -= scrollRows;
+                    _savedCursor.Y -= scrollRows;
                 }
 
                 //create cleared region to clear progress bar later
@@ -161,6 +171,7 @@ namespace Microsoft.PowerShell
 
                 _rawui.SetBufferContents(_location, _savedRegion);
                 _savedRegion = null;
+                _rawui.CursorPosition = _savedCursor;
             }
         }
 
@@ -249,6 +260,7 @@ namespace Microsoft.PowerShell
 
 
         private Coordinates _location = new Coordinates(0, 0);
+        private Coordinates _savedCursor;
         private Size _bufSize;
         private BufferCell[,] _savedRegion;
         private BufferCell[,] _progressRegion;
