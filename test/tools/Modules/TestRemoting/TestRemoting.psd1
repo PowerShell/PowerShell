@@ -1,17 +1,17 @@
 #
-# Module manifest for module 'TestHostCS'
+# Module manifest for module 'TestRemoting'
 #
 
 @{
 
 # Script module or binary module file associated with this manifest.
-RootModule = 'TestHostCS.psm1'
+RootModule = 'TestRemoting.psm1'
 
 # Version number of this module.
 ModuleVersion = '1.0'
 
 # ID used to uniquely identify this module
-GUID = '40a19c05-d765-41a1-995e-98ca5f247ee1'
+GUID = '7acf3c68-64f4-4550-bf14-b9361bfbfea3'
 
 # Company or vendor of this module
 CompanyName = 'Microsoft Corporation'
@@ -20,10 +20,10 @@ CompanyName = 'Microsoft Corporation'
 Copyright = 'Copyright (C) Microsoft Corporation, All rights reserved.'
 
 # Description of the functionality provided by this module
-Description = 'Simple console host for console IO tests.'
+Description = 'Temporary module for remoting tests'
 
 # Functions to export from this module
-FunctionsToExport = 'New-TestHost'
+FunctionsToExport = 'New-RemoteRunspace', 'New-RemoteSession'
 
 # Cmdlets to export from this module
 #CmdletsToExport = '*'
@@ -35,4 +35,3 @@ FunctionsToExport = 'New-TestHost'
 #AliasesToExport = '*'
 
 }
-

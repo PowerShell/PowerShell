@@ -58,7 +58,7 @@ if ($IsLinux) {
 
 # Autoload (in current session) temporary modules used in our tests
 $TestModulePath = Join-Path $PSScriptRoot "test/tools/Modules"
-if ( -not $env:PSModulePath.contains($TestModulePath) ) {
+if ( $env:PSModulePath -notcontains $TestModulePath ) {
     $env:PSModulePath = $TestModulePath+$TestModulePathSeparator+$($env:PSModulePath)
 }
 
