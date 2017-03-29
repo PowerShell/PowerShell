@@ -2538,8 +2538,8 @@ function New-MSIPackage
     Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
     Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
 
-    $productVersionWithName = $ProductName + "_" + $ProductVersion
-    $productSemanticVersionWithName = $ProductName + "_" + $ProductSemanticVersion
+    $productVersionWithName = $ProductName + '_' + $ProductVersion
+    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
 
     Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
 
@@ -2569,7 +2569,7 @@ function New-MSIPackage
     $msiLocationPath = Join-Path $pwd "$packageName.msi"
     Remove-Item -ErrorAction SilentlyContinue $msiLocationPath -Force
 
-    & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v | Write-Verbose
+    & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v | Write-Verbose    
     & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -arch x64 -v | Write-Verbose
     & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -dWixUILicenseRtf="$LicenseFilePath" -v | Write-Verbose
 
@@ -2674,7 +2674,7 @@ function New-AppxPackage
     Write-Verbose "Place AppxManifest dependencies such as images to $assetsInSourcePath"
     Copy-Item "$AssetsPath\*.png" $assetsInSourcePath -Force
 
-    $appxPackageName = $PackageName + "_" + $PackageSemanticVersion
+    $appxPackageName = $PackageName + "-" + $PackageSemanticVersion
     if ($PackageNameSuffix) {
         $appxPackageName = $appxPackageName, $PackageNameSuffix -join "-"
     }
@@ -2716,7 +2716,7 @@ function New-ZipPackage
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
 
-    $zipPackageName = $PackageName + "_" + $ProductSemanticVersion
+    $zipPackageName = $PackageName + "-" + $ProductSemanticVersion
     if ($PackageNameSuffix) {
         $zipPackageName = $zipPackageName, $PackageNameSuffix -join "-"
     }

@@ -12,7 +12,7 @@
   <?define ProductVersion = "$(env.ProductVersion)" ?>
   <?define ProductSemanticVersion = "$(env.ProductSemanticVersion)" ?>
   <?define ProductVersionWithName = "$(var.ProductName)_$(var.ProductVersion)"?>
-  <?define ProductSemanticVersionWithName = "$(var.ProductName)_$(env.ProductSemanticVersion)"?>
+  <?define ProductSemanticVersionWithName = "$(var.ProductName)-$(env.ProductSemanticVersion)"?>
   <?define ProductTargetArchitecture = "$(env.ProductTargetArchitecture)"?>
   <?define ProductProgFilesDir = "$(env.ProductProgFilesDir)" ?>
 
