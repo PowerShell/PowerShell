@@ -425,7 +425,7 @@ Describe 'Property Attributes Test' -Tags "CI" {
         [ValidateSet]$v = $t[0]
         It "Should have 2 valid values" { $v.ValidValues.Count | should be 2 }
         It "first value should be a" { $v.ValidValues[0] | should be 'a' }
-        It "second value should be b" { $v.ValidValues[1] -eq 'b' }
+        It "second value should be b" { $v.ValidValues[1] | should be 'b' }
 }
 
 Describe 'Method Attributes Test' -Tags "CI" {
