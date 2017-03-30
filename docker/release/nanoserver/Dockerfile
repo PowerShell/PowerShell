@@ -47,4 +47,4 @@ RUN Start-Transcript -path C:\Dockerfile.log -append -IncludeInvocationHeader ; 
 # Persist %PSCORE% ENV variable for user convenience
 ENV PSCORE='"C:\Program Files\PowerShell\Core\PowerShell.exe"'
 
-ENTRYPOINT ["cmd", "/c", "\"%PSCORE%\""]
+ENTRYPOINT ["C:\\Program Files\\PowerShell\\Core\\PowerShell.exe"]
