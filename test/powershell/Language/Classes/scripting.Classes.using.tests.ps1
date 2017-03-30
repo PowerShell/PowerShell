@@ -2,8 +2,6 @@ Describe 'using module' -Tags "CI" {
     BeforeAll {
         $originalPSModulePath = $env:PSModulePath
 
-        Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
-
         function New-TestModule {
             param(
                 [string]$Name,

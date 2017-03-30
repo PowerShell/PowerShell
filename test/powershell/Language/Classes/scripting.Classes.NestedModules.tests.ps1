@@ -1,7 +1,5 @@
 Describe 'NestedModules' -Tags "CI" {
 
-    Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
-
     function New-TestModule {
         param(
             [string]$Name,
