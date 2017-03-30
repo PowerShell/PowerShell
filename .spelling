@@ -44,8 +44,11 @@ favor
 favorite
 frontload
 FullCLR
+Get-Acl
+Get-AuthenticodeSignature
 Get-ChildItem
 Get-ComputerInfo
+Get-PSSessionConfiguration
 Get-WinEvent
 github
 hashtable
@@ -62,6 +65,8 @@ macOS
 Microsoft.PowerShell.Archive
 MS-PSRP
 myget
+New-PSSessionOption
+New-PSTransportOption
 NuGet
 nuget
 nunit
@@ -79,12 +84,17 @@ PowerShellGet
 ProgramFiles
 ps1
 PSReadline
+Register-EngineEvent
+Register-PSSessionConfiguration
 remoting
 ResGen
 RFCs
 Runspace
 runtimes
 SecureString
+Set-Acl
+Set-AuthenticodeSignature
+Set-ExecutionPolicy
 ssh
 StackOverflow
 submodule
@@ -92,6 +102,8 @@ submodules
 sudo
 TeamCity
 toolset
+Unregister-Event
+Unregister-PSSessionConfiguration
 vscode
 walkthrough
 wget
@@ -229,6 +241,12 @@ Win8
 windir
  - docs/KNOWNISSUES.md
 cp
+pipelining
+psl-omi-provider
+globbing
+Register-WmiEvent
+System.Management.Automation.SemanticVersion
+System.Timers.Timer
  - docs/learning-powershell/create-powershell-scripts.md
 NetIP.ps1.
 RemoteSigned
@@ -322,8 +340,6 @@ Export-ModuleMember
 Find-DscResource
 Find-PackageProvider
 Find-RoleCapability
-Get-Acl
-Get-AuthenticodeSignature
 Get-CimAssociatedInstance
 Get-CimClass
 Get-CimInstance
@@ -352,7 +368,6 @@ Get-PSReadlineOption
 Get-PSRepository
 Get-PSSession
 Get-PSSessionCapability
-Get-PSSessionConfiguration
 Get-Runspace
 Get-RunspaceDebug
 Get-TimeZone
@@ -382,8 +397,6 @@ New-ModuleManifest
 New-PSDrive
 New-PSRoleCapabilityFile
 New-PSSessionConfigurationFile
-New-PSSessionOption
-New-PSTransportOption
 New-ScriptFileInfo
 New-TemporaryFile
 New-WinEvent
@@ -392,11 +405,9 @@ New-WSManSessionOption
 Receive-PSSession
 Register-ArgumentCompleter
 Register-CimIndicationEvent
-Register-EngineEvent
 Register-ObjectEvent
 Register-PackageSource
 Register-PSRepository
-Register-PSSessionConfiguration
 Remove-CimInstance
 Remove-CimSession
 Remove-ItemProperty
@@ -413,10 +424,7 @@ Rename-ItemProperty
 Rename-LocalGroup
 Rename-LocalUser
 Select-xml
-Set-Acl
-Set-AuthenticodeSignature
 Set-CimInstance
-Set-ExecutionPolicy
 Set-ItemProperty
 Set-LocalGroup
 Set-LocalUser
@@ -436,10 +444,8 @@ Test-ModuleManifest
 Test-PSSessionConfigurationFile
 Test-ScriptFileInfo
 Test-WSMan
-Unregister-Event
 Unregister-PackageSource
 Unregister-PSRepository
-Unregister-PSSessionConfiguration
 Update-FormatData
 Update-ModuleManifest
 Update-ScriptFileInfo
