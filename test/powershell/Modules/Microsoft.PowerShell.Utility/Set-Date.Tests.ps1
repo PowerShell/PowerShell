@@ -3,7 +3,6 @@
 # determine whether we're elevated
 Describe "Set-Date" -Tag "CI" {
     BeforeAll {
-        Import-Module (join-path $psscriptroot "../../Common/Test.Helpers.psm1")
         $IsElevated = Test-IsElevated
     }
 

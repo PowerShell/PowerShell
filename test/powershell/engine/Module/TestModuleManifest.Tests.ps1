@@ -1,5 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
-
 Describe "Test-ModuleManifest tests" -tags "CI" {
 
     AfterEach {

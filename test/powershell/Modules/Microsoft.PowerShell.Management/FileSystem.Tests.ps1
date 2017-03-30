@@ -1,4 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     BeforeAll {
         $testDir = "TestDir"

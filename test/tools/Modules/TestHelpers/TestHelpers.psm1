@@ -65,6 +65,3 @@ function ShouldBeErrorId
             $_.FullyQualifiedErrorId | Should Be $FullyQualifiedErrorId
         }
 }
-
-export-modulemember -function Wait-UntilTrue,Test-IsElevated, ShouldBeErrorId
-
