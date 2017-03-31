@@ -536,18 +536,13 @@ namespace System.Management.Automation
         {
             if (s_defaultEncoding == null)
             {
-#if CORECLR
+#if UNUX        // PowerShell Core on Unix
+                s_defaultEncoding = Encoding.UTF8;
+#elif CORECLR   // PowerShell Core on Windows
+                EncodingRegisterProvider()
 
-    #if UNUX    // PowerShell Core on Unix
-                s_defaultEncoding = Encoding.GetEncoding(65001);
-    #else       // PowerShell Core on Windows
-                uint aCp = NativeMethods.GetACP();
-                if (s_oemEncoding == null)
-                {
-                    Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-                }
-                s_defaultEncoding = Encoding.GetEncoding((int)aCp);
-    #endif
+                uint currentAnsiCp = NativeMethods.GetACP();
+                s_defaultEncoding = Encoding.GetEncoding((int)currentAnsiCp);
 
 #else           // Windows PowerShell
                 s_defaultEncoding = Encoding.Default;
@@ -564,18 +559,13 @@ namespace System.Management.Automation
         {
             if (s_oemEncoding == null)
             {
-#if CORECLR
-
-    #if UNUX    // PowerShell Core on Unix
+#if UNUX        // PowerShell Core on Unix
                 s_oemEncoding = GetDefaultEncoding();
-    #else       // PowerShell Core on Windows
+#elif CORECLR   // PowerShell Core on Windows
+                EncodingRegisterProvider()
+
                 uint oemCp = NativeMethods.GetOEMCP();
-                if (s_defaultEncoding == null)
-                {
-                    Encoding.RegisterProvider(System.Text.CodePagesEncodingProvider.Instance);
-                }
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
-    #endif
 
 #else           // Windows PowerShell
                 uint oemCp = NativeMethods.GetOEMCP();
@@ -584,7 +574,17 @@ namespace System.Management.Automation
             }
             return s_oemEncoding;
         }
+
         private static volatile Encoding s_oemEncoding;
+
+        private static EncodingRegisterProvider()
+        {
+            if (s_defaultEncoding == null && s_oemEncoding == null)
+            {
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            }
+
+        }
 
         #endregion Encoding
 
