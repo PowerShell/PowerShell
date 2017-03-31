@@ -585,7 +585,7 @@ namespace System.Management.Automation
                 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             }
         }
-#end
+#endif
 
         #endregion Encoding
 
