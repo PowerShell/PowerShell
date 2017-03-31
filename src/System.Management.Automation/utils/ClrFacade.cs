@@ -539,7 +539,7 @@ namespace System.Management.Automation
 #if UNUX        // PowerShell Core on Unix
                 s_defaultEncoding = Encoding.UTF8;
 #elif CORECLR   // PowerShell Core on Windows
-                EncodingRegisterProvider()
+                EncodingRegisterProvider();
 
                 uint currentAnsiCp = NativeMethods.GetACP();
                 s_defaultEncoding = Encoding.GetEncoding((int)currentAnsiCp);
@@ -562,7 +562,7 @@ namespace System.Management.Automation
 #if UNUX        // PowerShell Core on Unix
                 s_oemEncoding = GetDefaultEncoding();
 #elif CORECLR   // PowerShell Core on Windows
-                EncodingRegisterProvider()
+                EncodingRegisterProvider();
 
                 uint oemCp = NativeMethods.GetOEMCP();
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
@@ -577,7 +577,7 @@ namespace System.Management.Automation
 
         private static volatile Encoding s_oemEncoding;
 
-        private static EncodingRegisterProvider()
+        private static void EncodingRegisterProvider()
         {
             if (s_defaultEncoding == null && s_oemEncoding == null)
             {
