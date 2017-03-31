@@ -3937,8 +3937,8 @@ namespace System.Management.Automation.Runspaces
 
             if (errors.Count > 0)
             {
-                // Note: don't use '\n' ('char' convert implicitly to 'ushort' and 'int' and initialize 'StringBuilder' size)
-                var allErrors = new StringBuilder("\n");
+                var allErrors = new StringBuilder();
+                allErrors.Append('\n');
                 foreach (string error in errors)
                 {
                     if (!string.IsNullOrEmpty(error))
