@@ -530,7 +530,7 @@ namespace System.Management.Automation
         #region Encoding
 
         /// <summary>
-        /// Facade for getting Encoding.Default
+        /// Facade for getting default encoding
         /// </summary>
         internal static Encoding GetDefaultEncoding()
         {
