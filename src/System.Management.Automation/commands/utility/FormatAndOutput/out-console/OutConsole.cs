@@ -79,10 +79,10 @@ namespace Microsoft.PowerShell.Commands
                 mrt.MergeUnclaimedPreviousErrorResults = true;
             }
 
-            _savedTranscribeOnly = Host.UI.TranscribeOnly;
             if (Transcript)
             {
-                Host.UI.TranscribeOnly = true;
+                _incrementedTranscibeOnlyCount = true;
+                Host.UI.TranscribeOnlyCount++;
             }
 
             // This needs to be done directly through the command runtime, as Out-Default
@@ -143,15 +143,35 @@ namespace Microsoft.PowerShell.Commands
             }
 
             base.EndProcessing();
-
-            if (Transcript)
-            {
-                Host.UI.TranscribeOnly = _savedTranscribeOnly;
-            }
         }
 
+        /// <summary>
+        /// Revert transcription state on Dispose
+        /// </summary>
+        protected override void InternalDispose()
+        {
+            if (_disposed)
+            {
+                return;
+            }
+
+            try
+            {
+                base.InternalDispose();
+            }
+            finally
+            {
+                if (_incrementedTranscibeOnlyCount && --Host.UI.TranscribeOnlyCount < 0)
+                {
+                    Host.UI.TranscribeOnlyCount = 0;
+                }
+            }
+            _disposed = true;
+        }
+
+        private bool _disposed = false;
+        private bool _incrementedTranscibeOnlyCount = false;
         private ArrayList _outVarResults = null;
-        private bool _savedTranscribeOnly = false;
     }
 
     /// <summary>

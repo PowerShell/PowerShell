@@ -386,11 +386,11 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Flag to determine whether the host is in "Transcribe Only" mode,
+        /// Count to determine whether the host is in "Transcribe Only" mode,
         /// so that when content is sent through Out-Default it doesn't
-        /// make it to the actual host.
+        /// make it to the actual host if count == 0
         /// </summary>
-        internal bool TranscribeOnly { get; set; }
+        internal int TranscribeOnlyCount { get; set; }
 
         /// <summary>
         /// Flag to determine whether the host is transcribing.
