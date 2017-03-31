@@ -32,11 +32,11 @@ RUN $ErrorActionPreference='Stop'; `
     [System.IO.Compression.ZipFile]::ExtractToDirectory($ZipFile,$PsFolder) ; `
     if (Get-ChildItem -Path $PsFolder/powershell.exe) { `
       Remove-Item -Path $ZipFile ; `
-      New-Item -Type SymbolicLink -Path $PsFolder\ -Name Core -Value $PsFolder `
+      New-Item -Type SymbolicLink -Path $PsFolder\ -Name latest -Value $PsFolder `
     } else { throw 'Installation failed!  See c:\Dockerfile.log' } ;
 
 # Verify New Powershell.exe runs
-SHELL ["C:\\Program Files\\PowerShell\\Core\\PowerShell.exe", "-command"]
+SHELL ["C:\\Program Files\\PowerShell\\latest\\PowerShell.exe", "-command"]
 RUN Start-Transcript -path C:\Dockerfile.log -append -IncludeInvocationHeader ; `
     $ErrorActionPreference='Stop'; `
     Write-Output $PSVersionTable ; `
@@ -45,6 +45,6 @@ RUN Start-Transcript -path C:\Dockerfile.log -append -IncludeInvocationHeader ; 
     } ;
 
 # Persist %PSCORE% ENV variable for user convenience
-ENV PSCORE='"C:\Program Files\PowerShell\Core\PowerShell.exe"'
+ENV PSCORE='"C:\Program Files\PowerShell\latest\PowerShell.exe"'
 
-ENTRYPOINT ["C:\\Program Files\\PowerShell\\Core\\PowerShell.exe"]
+ENTRYPOINT ["C:\\Program Files\\PowerShell\\latest\\PowerShell.exe"]
