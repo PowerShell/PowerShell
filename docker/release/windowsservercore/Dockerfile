@@ -1,5 +1,5 @@
 # escape=`
-FROM microsoft/windowsservercore
+FROM microsoft/windowsservercore:latest
 MAINTAINER brycem@microsoft.com
 LABEL Readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
 LABEL Description="This Dockerfile will install the latest release of PS."
@@ -32,11 +32,11 @@ RUN $ErrorActionPreference='Stop'; `
     if ($log -match 'Installation success or error status: 0') { `
       Remove-Item -Path $MsiFile ; `
       $psexe=Get-Item -Path $Env:ProgramFiles\PowerShell\*\powershell.exe ; `
-      New-Item -Type SymbolicLink -Path $Env:ProgramFiles\PowerShell\ -Name Core -Value $psexe.DirectoryName `
+      New-Item -Type SymbolicLink -Path $Env:ProgramFiles\PowerShell\ -Name latest -Value $psexe.DirectoryName `
     } else { throw 'Installation failed!  See c:\PowerShell-win10-x64.msi.log' } ;
 
 # Verify New Powershell.exe runs
-SHELL ["C:\\Program Files\\PowerShell\\Core\\PowerShell.exe", "-command"]
+SHELL ["C:\\Program Files\\PowerShell\\latest\\PowerShell.exe", "-command"]
 RUN Start-Transcript -path C:\Dockerfile.log -append -IncludeInvocationHeader ; `
     $ErrorActionPreference='Stop'; `
     Write-Output $PSVersionTable ; `
@@ -45,4 +45,6 @@ RUN Start-Transcript -path C:\Dockerfile.log -append -IncludeInvocationHeader ; 
     } ;
 
 # Persist %PSCORE% ENV variable for user convenience
-ENV PSCORE='"C:\Program Files\PowerShell\Core\PowerShell.exe"'
+ENV PSCORE='"C:\Program Files\PowerShell\latest\PowerShell.exe"'
+
+ENTRYPOINT ["C:\\Program Files\\PowerShell\\latest\\PowerShell.exe"]
