@@ -1,5 +1,5 @@
 # escape=`
-FROM microsoft/nanoserver
+FROM microsoft/nanoserver:latest
 MAINTAINER brycem@microsoft.com
 LABEL Readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
 LABEL Description="This Dockerfile will install the latest release of PS."
