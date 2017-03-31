@@ -148,7 +148,7 @@ PowerShell is licensed under the [MIT license][].
 
 [MIT license]: LICENSE.txt
 
-### Docker Files and Images - Windows Server Core
+### Windows Docker Files and Images
 
 License: By requesting and using the Container OS Image for Windows containers, you acknowledge, understand, and consent to the Supplemental License Terms available on Docker hub:
 
