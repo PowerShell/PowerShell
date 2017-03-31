@@ -537,19 +537,19 @@ namespace System.Management.Automation
             if (s_defaultEncoding == null)
             {
 #if UNUX        // PowerShell Core on Unix
-                s_defaultEncoding = Encoding.UTF8;
+                s_defaultEncoding = Encoding.UTF8Encoding(false);
 #elif CORECLR   // PowerShell Core on Windows
                 EncodingRegisterProvider();
 
                 uint currentAnsiCp = NativeMethods.GetACP();
                 s_defaultEncoding = Encoding.GetEncoding((int)currentAnsiCp);
-
 #else           // Windows PowerShell
                 s_defaultEncoding = Encoding.Default;
 #endif
             }
             return s_defaultEncoding;
         }
+
         private static volatile Encoding s_defaultEncoding;
 
         /// <summary>
@@ -577,14 +577,15 @@ namespace System.Management.Automation
 
         private static volatile Encoding s_oemEncoding;
 
+#if CORECLR
         private static void EncodingRegisterProvider()
         {
             if (s_defaultEncoding == null && s_oemEncoding == null)
             {
                 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             }
-
         }
+#end
 
         #endregion Encoding
 
