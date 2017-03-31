@@ -7569,8 +7569,7 @@ namespace Microsoft.PowerShell.Commands
 
                 case FileSystemCmdletProviderEncoding.Oem:
                     {
-                        uint oemCP = NativeMethods.GetOEMCP();
-                        encoding = System.Text.Encoding.GetEncoding((int)oemCP);
+                        encoding = ClrFacade.GetOEMEncoding();
                     }
                     break;
 

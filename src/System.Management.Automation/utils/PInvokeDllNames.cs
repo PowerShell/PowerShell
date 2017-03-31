@@ -17,6 +17,7 @@ namespace System.Management.Automation
         internal const string QueryDosDeviceDllName = "api-ms-win-core-file-l1-1-0.dll";                     /*1*/
         internal const string CreateSymbolicLinkDllName = "api-ms-win-core-file-l2-1-0.dll";                 /*2*/
         internal const string GetOEMCPDllName = "api-ms-win-core-localization-l1-2-0.dll";                   /*3*/
+        internal const string GetACPDllName = "api-ms-win-core-localization-l1-2-0.dll";                   /*3*/
         internal const string DeviceIoControlDllName = "api-ms-win-core-io-l1-1-0.dll";                      /*4*/
         internal const string CreateFileDllName = "api-ms-win-core-file-l1-1-0.dll";                         /*5*/
         internal const string DeleteFileDllName = "api-ms-win-core-file-l1-1-0.dll";                         /*6*/
@@ -139,6 +140,7 @@ namespace System.Management.Automation
         internal const string QueryDosDeviceDllName = "kernel32.dll";                                        /*1*/
         internal const string CreateSymbolicLinkDllName = "kernel32.dll";                                    /*2*/
         internal const string GetOEMCPDllName = "kernel32.dll";                                              /*3*/
+        internal const string GetACPDllName = "kernel32.dll";                                                /*3*/
         internal const string DeviceIoControlDllName = "kernel32.dll";                                       /*4*/
         internal const string CreateFileDllName = "kernel32.dll";                                            /*5*/
         internal const string DeleteFileDllName = "kernel32.dll";                                            /*6*/
