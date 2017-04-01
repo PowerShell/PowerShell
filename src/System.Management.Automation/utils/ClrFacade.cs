@@ -536,8 +536,8 @@ namespace System.Management.Automation
         {
             if (s_defaultEncoding == null)
             {
-#if UNUX        // PowerShell Core on Unix
-                s_defaultEncoding = Encoding.UTF8Encoding(false);
+#if UNIX        // PowerShell Core on Unix
+                s_defaultEncoding = new UTF8Encoding(false);
 #elif CORECLR   // PowerShell Core on Windows
                 EncodingRegisterProvider();
 
@@ -559,7 +559,7 @@ namespace System.Management.Automation
         {
             if (s_oemEncoding == null)
             {
-#if UNUX        // PowerShell Core on Unix
+#if UNIX        // PowerShell Core on Unix
                 s_oemEncoding = GetDefaultEncoding();
 #elif CORECLR   // PowerShell Core on Windows
                 EncodingRegisterProvider();
