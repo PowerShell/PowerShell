@@ -79,10 +79,9 @@ namespace Microsoft.PowerShell.Commands
                 mrt.MergeUnclaimedPreviousErrorResults = true;
             }
 
-            _savedTranscribeOnly = Host.UI.TranscribeOnly;
             if (Transcript)
             {
-                Host.UI.TranscribeOnly = true;
+                _transcribeOnlyCookie = Host.UI.SetTranscribeOnly();
             }
 
             // This needs to be done directly through the command runtime, as Out-Default
@@ -143,15 +142,29 @@ namespace Microsoft.PowerShell.Commands
             }
 
             base.EndProcessing();
+        }
 
-            if (Transcript)
+        /// <summary>
+        /// Revert transcription state on Dispose
+        /// </summary>
+        protected override void InternalDispose()
+        {
+            try
             {
-                Host.UI.TranscribeOnly = _savedTranscribeOnly;
+                base.InternalDispose();
+            }
+            finally
+            {
+                if (_transcribeOnlyCookie != null)
+                {
+                    _transcribeOnlyCookie.Dispose();
+                    _transcribeOnlyCookie = null;
+                }
             }
         }
 
         private ArrayList _outVarResults = null;
-        private bool _savedTranscribeOnly = false;
+        private IDisposable _transcribeOnlyCookie = null;
     }
 
     /// <summary>

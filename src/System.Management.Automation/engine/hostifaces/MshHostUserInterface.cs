@@ -11,6 +11,7 @@ using System.Security;
 using System.Globalization;
 using System.Management.Automation.Runspaces;
 using Microsoft.PowerShell.Commands;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace System.Management.Automation.Host
@@ -390,7 +391,29 @@ namespace System.Management.Automation.Host
         /// so that when content is sent through Out-Default it doesn't
         /// make it to the actual host.
         /// </summary>
-        internal bool TranscribeOnly { get; set; }
+        internal bool TranscribeOnly => Interlocked.CompareExchange(ref _transcribeOnlyCount, 0, 0) != 0;
+        private int _transcribeOnlyCount = 0;
+        internal IDisposable SetTranscribeOnly() => new TranscribeOnlyCookie(this);
+        private sealed class TranscribeOnlyCookie : IDisposable
+        {
+            private PSHostUserInterface _ui;
+            private bool _disposed = false;
+            public TranscribeOnlyCookie(PSHostUserInterface ui)
+            {
+                _ui=ui;
+                Interlocked.Increment(ref _ui._transcribeOnlyCount);
+            }
+            public void Dispose()
+            {
+                if (!_disposed)
+                {
+                    Interlocked.Decrement(ref _ui._transcribeOnlyCount);
+                    _disposed = true;
+                    GC.SuppressFinalize(this);
+                }
+            }
+            ~TranscribeOnlyCookie() => Dispose();
+        }
 
         /// <summary>
         /// Flag to determine whether the host is transcribing.
