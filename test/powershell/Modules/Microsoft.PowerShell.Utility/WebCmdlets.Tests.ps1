@@ -258,8 +258,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     $testCase = @(
-        @{ proxy_address = "http://localhost:8080"; name = 'http_proxy'; protocol = 'http' }
-        @{ proxy_address = "http://localhost:8080"; name = 'https_proxy'; protocol = 'https' }
+        @{ proxy_address = "http://localhost:9"; name = 'http_proxy'; protocol = 'http' }
+        @{ proxy_address = "http://localhost:9"; name = 'https_proxy'; protocol = 'https' }
     )
 
     It "Validate Invoke-WebRequest error with -Proxy option set - '<name>'" -TestCases $testCase {
@@ -629,17 +629,17 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     $testCase = @(
-        @{ proxy_address = "http://localhost:8080"; name = 'http_proxy'; protocol = 'http' }
-        @{ proxy_address = "http://localhost:8080"; name = 'https_proxy'; protocol = 'https' }
+        @{ proxy_address = "http://localhost:9"; name = 'http_proxy'; protocol = 'http' }
+        @{ proxy_address = "http://localhost:9"; name = 'https_proxy'; protocol = 'https' }
     )
 
     It "Validate Invoke-RestMethod error with -Proxy option - '<name>'" -TestCases $testCase {
         param($proxy_address, $name, $protocol)
 
-        $command = "Invoke-RestMethod -Uri '${protocol}://httpbin.org/' -Proxy '${proxy_address}' -TimeoutSec 2"
+        $command = "Invoke-RestMethod -Uri '${protocol}://httpbin.org/' -Proxy '${proxy_address}'"
 
         $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should Be "System.Threading.Tasks.TaskCanceledException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
     It "Validate Invoke-RestMethod error with environment proxy set - '<name>'" -TestCases $testCase {
