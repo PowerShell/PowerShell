@@ -32,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="libpsrpclient" Version="1.0.0-*" />
+    <PackageReference Include="psrp" Version="1.1.0-*" />
     <PackageReference Include="PSDesiredStateConfiguration" Version="1.0.0-alpha01" />
     <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-alpha01" />
   </ItemGroup>
