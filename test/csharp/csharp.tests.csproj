@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <Description>PowerShell On Linux xUnit Tests</Description>
-    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <DelaySign>true</DelaySign>
     <AssemblyName>powershell-tests</AssemblyName>
     <AssemblyOriginatorKeyFile>../../src/signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
