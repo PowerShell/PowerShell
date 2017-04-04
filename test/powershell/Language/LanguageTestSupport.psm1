@@ -81,6 +81,7 @@ function ShouldBeParseError
     #       https://github.com/dotnet/coreclr/issues/9745
     #
     if ($SkipInTravisFullBuild) {
+        ## Report that we skipped the test and return
         It "Parse error expected: <<$src>>" -Skip {}
         return
     }
