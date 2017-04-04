@@ -231,13 +231,14 @@ namespace System.Management.Automation
         {
             //TODO: XDG_DATA_DIRS implementation as per GitHub issue #1060
 
+            string defaultHomePath = System.Environment.GetEnvironmentVariable("HOME") ?? Directory.GetCurrentDirectory();
             string xdgconfighome = System.Environment.GetEnvironmentVariable("XDG_CONFIG_HOME");
             string xdgdatahome = System.Environment.GetEnvironmentVariable("XDG_DATA_HOME");
             string xdgcachehome = System.Environment.GetEnvironmentVariable("XDG_CACHE_HOME");
-            string xdgConfigHomeDefault = Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".config", "powershell");
-            string xdgDataHomeDefault = Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".local", "share", "powershell");
+            string xdgConfigHomeDefault = Path.Combine(defaultHomePath, ".config", "powershell");
+            string xdgDataHomeDefault = Path.Combine(defaultHomePath, ".local", "share", "powershell");
             string xdgModuleDefault = Path.Combine(xdgDataHomeDefault, "Modules");
-            string xdgCacheDefault = Path.Combine(System.Environment.GetEnvironmentVariable("HOME"), ".cache", "powershell");
+            string xdgCacheDefault = Path.Combine(defaultHomePath, ".cache", "powershell");
 
             switch (dirpath)
             {
