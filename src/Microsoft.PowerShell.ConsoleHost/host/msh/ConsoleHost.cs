@@ -1398,6 +1398,7 @@ namespace Microsoft.PowerShell
                 ui.ThrowOnReadAndPrompt = cpp.ThrowOnReadAndPrompt;
                 _noExit = cpp.NoExit;
 
+#if !UNIX
                 // See if we need to change the process-wide execution
                 // policy
                 if (!String.IsNullOrEmpty(cpp.ExecutionPolicy))
@@ -1405,6 +1406,7 @@ namespace Microsoft.PowerShell
                     ExecutionPolicy executionPolicy = SecuritySupport.ParseExecutionPolicy(cpp.ExecutionPolicy);
                     SecuritySupport.SetExecutionPolicy(ExecutionPolicyScope.Process, executionPolicy, null);
                 }
+#endif
 
                 // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
                 // Removed HandleUnexpectedExceptions infrastructure
