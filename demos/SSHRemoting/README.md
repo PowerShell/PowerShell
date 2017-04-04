@@ -41,9 +41,9 @@ In addition you will need to enable password authentication and optionally key b
     ```bash
     PasswordAuthentication yes
     ```
-    - Add a PowerShell subsystem entry
+    - Add a PowerShell subsystem entry, replace `c:/program files/powershell/6.0.0.17/powershell.exe` with the correct path to the version you want to use
     ```bash
-    Subsystem	powershell `PowerShell_Install_Path`\powershell.exe -sshs -NoLogo -NoProfile
+    Subsystem	powershell c:/program files/powershell/6.0.0.17/powershell.exe -sshs -NoLogo -NoProfile
     ```
     - Optionally enable key authentication
     ```bash
