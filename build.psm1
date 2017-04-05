@@ -435,7 +435,7 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
     {
         $ProgressPreference = "SilentlyContinue"
         # Downloading the PowerShellGet and PackageManagement modules.
-        # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp1.1\win10-x64\publish\powershell.exe",
+        # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp2.0\win10-x64\publish\powershell.exe",
         # so we need to get its parent directory
         $publishPath = Split-Path $Options.Output -Parent
         log "Restore PowerShell modules to $publishPath"
@@ -474,7 +474,7 @@ function New-PSOptions {
         [ValidateSet("Linux", "Debug", "Release", "CodeCoverage", "")]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp1.1", "net451")]
+        [ValidateSet("netcoreapp2.0", "net451")]
         [string]$Framework,
 
         # These are duplicated from Start-PSBuild
@@ -561,7 +561,7 @@ function New-PSOptions {
         $Framework = if ($FullCLR) {
             "net451"
         } else {
-            "netcoreapp1.1"
+            "netcoreapp2.0"
         }
         Write-Verbose "Using framework '$Framework'"
     }
@@ -1250,7 +1250,7 @@ function Start-PSPackage {
         -not $Script:Options.CrossGen -or                       ## Last build didn't specify -CrossGen
         $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
         $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
-        $Script:Options.Framework -ne "netcoreapp1.1")          ## Last build wasn't for CoreCLR
+        $Script:Options.Framework -ne "netcoreapp2.0")          ## Last build wasn't for CoreCLR
     {
         # It's possible that the most recent build doesn't satisfy the package requirement but
         # an earlier build does. e.g., run the following in order on win10-x64:
