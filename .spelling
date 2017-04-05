@@ -233,6 +233,7 @@ GoogleTest
 superproject
  - docs/installation/linux.md
 OpenSUSE
+TravisEz13
  - docs/installation/windows.md
 Install-PowerShellRemoting
 pwrshplugin.dll

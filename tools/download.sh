@@ -8,10 +8,12 @@ trap '
 ' INT
 
 get_url() {
+    fork=$2
     release=v6.0.0-alpha.17
-    echo "https://github.com/PowerShell/PowerShell/releases/download/$release/$1"
+    echo "https://github.com/$fork/PowerShell/releases/download/$release/$1"
 }
 
+fork="PowerShell"
 # Get OS specific asset ID and package name
 case "$OSTYPE" in
     linux*)
@@ -50,7 +52,17 @@ case "$OSTYPE" in
                     sudo zypper install -y curl
                 fi
 
-                package=powershell-6.0.0_alpha.17-1.suse.13.2.x86_64.rpm
+                
+                case "$VERSION_ID" in
+                    42.1)
+                        # TODO during next release remove fork and fix package name
+                        fork=TravisEz13
+                        package=powershell-6.0.0_alpha.17_41_g8598a51-1.suse.42.1.x86_64.rpm
+                        ;;
+                    *)
+                        echo "OpenSUSE $VERSION_ID is not supported!" >&2
+                        exit 2
+                esac
                 ;;
             *)
                 echo "$NAME is not supported!" >&2
@@ -67,7 +79,7 @@ case "$OSTYPE" in
         ;;
 esac
 
-curl -L -o "$package" $(get_url "$package")
+curl -L -o "$package" $(get_url "$package" "$fork")
 
 if [[ ! -r "$package" ]]; then
     echo "ERROR: $package failed to download! Aborting..." >&2

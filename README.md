@@ -27,6 +27,7 @@ You can download and install a PowerShell package for any of the following platf
 | Ubuntu 16.04                       | [.deb][rl-ubuntu16]    | [Instructions][in-ubuntu16]   |
 | Ubuntu 14.04                       | [.deb][rl-ubuntu14]    | [Instructions][in-ubuntu14]   |
 | CentOS 7                           | [.rpm][rl-centos]      | [Instructions][in-centos]     |
+| OpenSUSE 42.1                      | [.rpm][rl-opensuse421] | [Instructions][in-opensuse421]|
 | Arch Linux                         |                        | [Instructions][in-archlinux]  |
 | Many Linux distributions           | [.AppImage][rl-ai]     | [Instructions][in-appimage]   |
 | macOS 10.11                        | [.pkg][rl-macos]       | [Instructions][in-macos]      |
@@ -41,6 +42,7 @@ You can download and install a PowerShell package for any of the following platf
 [rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.17/powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm
 [rl-ai]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.17/PowerShell-x86_64.AppImage
 [rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.17/powershell-6.0.0-alpha.17.pkg
+[rl-opensuse421]: tbd
 
 [installation]: docs/installation
 [in-windows]: docs/installation/windows.md#msi
@@ -51,6 +53,7 @@ You can download and install a PowerShell package for any of the following platf
 [in-appimage]: docs/installation/linux.md#linux-appimage
 [in-macos]: docs/installation/linux.md#macos-1011
 [in-docker]: docker
+[in-opensuse421]: docs/installation/linux.md#opensuse-421
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 
