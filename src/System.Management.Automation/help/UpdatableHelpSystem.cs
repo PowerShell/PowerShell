@@ -21,8 +21,6 @@ using System.Security;
 using System.IO.Compression;
 using System.Net.Http;
 using System.Threading.Tasks;
-// Use stub for SerializableAttribute, SerializationInfo and ISerializable related types. WebClient.
-using Microsoft.PowerShell.CoreClr.Stubs;
 #else
 using System.Xml.Schema;
 #endif

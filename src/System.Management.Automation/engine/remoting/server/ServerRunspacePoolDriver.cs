@@ -650,7 +650,7 @@ namespace System.Management.Automation
             // on Remoting in PowerShell engine
             try
             {
-                string personalfolder = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                string personalfolder = Platform.GetFolderPath(Environment.SpecialFolder.MyDocuments);
                 args.Runspace.ExecutionContext.EngineSessionState.SetLocation(personalfolder);
             }
             catch (Exception)

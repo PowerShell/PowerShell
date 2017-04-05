@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics; // Process class
 using System.ComponentModel; // Win32Exception
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Management.Automation;
@@ -17,6 +18,7 @@ using System.Net;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Security.Permissions;
 using System.Security.Principal;
 using Microsoft.Win32.SafeHandles;
 using System.Management.Automation.Internal;
@@ -25,15 +27,6 @@ using Microsoft.Management.Infrastructure;
 
 using FileNakedHandle = System.IntPtr;
 using DWORD = System.UInt32;
-
-#if CORECLR
-// Use stubs for SafeHandleZeroOrMinusOneIsInvalid and SerializableAttribute
-using Microsoft.PowerShell.CoreClr.Stubs;
-using Environment = System.Management.Automation.Environment;
-#else
-using System.Runtime.ConstrainedExecution;
-using System.Security.Permissions;
-#endif
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -2822,7 +2815,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    [SuppressUnmanagedCodeSecurity, HostProtection(SecurityAction.LinkDemand, MayLeakOnAbort = true)]
+    [SuppressUnmanagedCodeSecurity]
     internal sealed class SafeJobHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
         internal SafeJobHandle(IntPtr jobHandle)

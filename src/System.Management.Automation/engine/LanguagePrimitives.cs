@@ -2127,7 +2127,8 @@ namespace System.Management.Automation
             using (typeConversion.TraceScope("Looking for \"{0}\" cast operator.", methodName))
             {
                 // Get multiple matched Public & Static methods
-                var methods = ClrFacade.GetMethods(targetType, methodName);
+                const BindingFlags flagsToUse = BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod;
+                var methods = targetType.GetMember(methodName, flagsToUse);
                 foreach (MethodInfo method in methods)
                 {
                     if (!resultType.IsAssignableFrom(method.ReturnType))

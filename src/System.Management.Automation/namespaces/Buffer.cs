@@ -5,17 +5,11 @@
 //
 
 using BCLDebug = System.Diagnostics.Debug;
+using System.Runtime.ConstrainedExecution;
 
 namespace Microsoft.PowerShell.Commands.Internal
 {
     //Only contains static methods.  Does not require serialization
-
-#if CORECLR
-    // Use stub for ReliabilityContractAttribute
-    using Microsoft.PowerShell.CoreClr.Stubs;
-#else
-    using System.Runtime.ConstrainedExecution;
-#endif
 
     [System.Runtime.InteropServices.ComVisible(true)]
     internal static class Buffer

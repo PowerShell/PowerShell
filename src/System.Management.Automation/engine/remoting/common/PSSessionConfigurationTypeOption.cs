@@ -5,11 +5,6 @@
 using System.Collections;
 using System.Management.Automation.Runspaces;
 
-#if CORECLR
-// Use stub for ICloneable type.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation
 {
     /// <summary>

@@ -4,13 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System.Runtime.Serialization;
 using System.Management.Automation.Internal;
-
-#if !CORECLR
 using System.Security.Permissions;
-#else
-// Use stubs for ISerializable related types
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
 
 namespace System.Management.Automation
 {
@@ -537,7 +531,7 @@ namespace System.Management.Automation
     public class PSInvalidCastException : InvalidCastException, IContainsErrorRecord
     {
         #region Serialization
-#if !CORECLR // InvalidCastException Has No Serialization In CoreCLR
+
         /// <summary>
         /// Populates a <see cref="System.Runtime.Serialization.SerializationInfo"/> with the
         /// data needed to serialize the PSInvalidCastException object.
@@ -564,7 +558,7 @@ namespace System.Management.Automation
         {
             _errorId = info.GetString("ErrorId");
         }
-#endif
+
         #endregion Serialization
 
         /// <summary>

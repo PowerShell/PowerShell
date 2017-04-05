@@ -18,11 +18,6 @@ using System.Text;
 using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
 
-#if CORECLR
-// Use stubs for SerializableAttribute, SystemException, SerializationInfo and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 // Stops compiler from warning about unknown warnings
 #pragma warning disable 1634, 1691
 

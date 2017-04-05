@@ -976,7 +976,7 @@ namespace System.Management.Automation.Host
 
         internal static string GetTranscriptPath()
         {
-            string baseDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string baseDirectory = Platform.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             return GetTranscriptPath(baseDirectory, false);
         }
 
@@ -984,14 +984,14 @@ namespace System.Management.Automation.Host
         {
             if (String.IsNullOrEmpty(baseDirectory))
             {
-                baseDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                baseDirectory = Platform.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             }
             else
             {
                 if (!Path.IsPathRooted(baseDirectory))
                 {
                     baseDirectory = Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                        Platform.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                         baseDirectory);
                 }
             }

@@ -6,10 +6,6 @@ using System.IO;
 using System.Runtime.InteropServices;
 using Microsoft.Win32.SafeHandles;
 
-#if CORECLR
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation.Internal
 {
     internal class CabinetExtractor : ICabinetExtractor

@@ -8,12 +8,6 @@ using System.Management.Automation.Internal;
 using System.Runtime.Serialization;
 using System.Diagnostics.CodeAnalysis;
 
-#if CORECLR
-// Use stub for SystemException, SerializationInfo, SerializableAttribute and Serializable
-// It is needed for WriteErrorException which ONLY used in Write-Error cmdlet.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace Microsoft.PowerShell.Commands
 {
     #region WriteDebugCommand

@@ -13,15 +13,8 @@ using System.Text;
 using System.Resources;
 using System.Runtime.Serialization;
 using System.Reflection;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Language;
-
-#if CORECLR
-// Use stubs for SerializableAttribute, SecurityPermissionAttribute and ISerializable related types
-using Microsoft.PowerShell.CoreClr.Stubs;
-#else
 using System.Security.Permissions;
-#endif
 
 namespace System.Management.Automation
 {

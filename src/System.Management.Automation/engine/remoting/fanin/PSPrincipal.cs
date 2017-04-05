@@ -13,11 +13,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.Serialization;
 using Microsoft.PowerShell;
 
-#if CORECLR
-// Use stub for SerializableAttribute, SerializationInfo and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation.Remoting
 {
     /// <summary>

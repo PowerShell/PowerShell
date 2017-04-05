@@ -21,17 +21,11 @@ namespace Microsoft.PowerShell.Commands.Internal
     using System.Management.Automation;
     using System.Globalization;
     using System.Diagnostics.CodeAnalysis;
+    using System.Runtime.ConstrainedExecution;
 
     using BOOL = System.Int32;
     using DWORD = System.UInt32;
     using ULONG = System.UInt32;
-
-#if CORECLR
-    // Use stubs for SuppressUnmanagedCodeSecurityAttribute and ReliabilityContractAttribute
-    using Microsoft.PowerShell.CoreClr.Stubs;
-#else
-    using System.Runtime.ConstrainedExecution;
-#endif
 
     /**
      * Win32 encapsulation for MSCORLIB.

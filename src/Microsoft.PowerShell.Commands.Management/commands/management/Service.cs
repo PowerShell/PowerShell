@@ -13,15 +13,9 @@ using System.Management.Automation.Internal;
 using System.ComponentModel; // Win32Exception
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices; // Marshal, DllImport
+using System.Security.Permissions;
 using NakedWin32Handle = System.IntPtr;
 using DWORD = System.UInt32;
-
-#if CORECLR
-// Use the stub for SystemException
-using Microsoft.PowerShell.CoreClr.Stubs;
-#else
-using System.Security.Permissions;
-#endif
 
 namespace Microsoft.PowerShell.Commands
 {

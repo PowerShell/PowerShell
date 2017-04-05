@@ -95,7 +95,6 @@
     <Compile Remove="engine\ComInterop\VariantBuilder.cs" />
     <Compile Remove="engine\ExtraAdapter.cs" />
     <Compile Remove="engine\ManagementObjectAdapter.cs" />
-    <Compile Remove="engine\MshObjectTypeDescriptor.cs" />
     <Compile Remove="engine\PSMI\PSNegotiationData.cs" />
     <Compile Remove="engine\PSMI\PSPowerShellPipeline.cs" />
     <Compile Remove="engine\PSMI\Serialization\InternalMISerializer.cs" />

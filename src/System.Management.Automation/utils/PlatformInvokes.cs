@@ -5,14 +5,8 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Runtime.InteropServices;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Win32.SafeHandles;
-
-#if CORECLR
-// Use stubs for SafeHandleZeroOrMinusOneIsInvalid, SecurityPermissionAttribute and ReliabilityContractAttribute
-using Microsoft.PowerShell.CoreClr.Stubs;
-#else
 using System.Security.Permissions;
 using System.Runtime.ConstrainedExecution;
-#endif
 
 namespace System.Management.Automation
 {

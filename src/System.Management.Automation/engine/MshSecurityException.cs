@@ -4,11 +4,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System.Runtime.Serialization;
 
-#if CORECLR
-// Use stubs for Serializable attribute and ISerializable related types
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation
 {
     /// <summary>

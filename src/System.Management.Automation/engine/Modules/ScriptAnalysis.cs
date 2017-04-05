@@ -10,11 +10,6 @@ using System.Text;
 using System.Management.Automation.Language;
 using System.Text.RegularExpressions;
 
-#if CORECLR
-// Use stub for SerializableAttribute.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation
 {
     /// <summary>

@@ -18,12 +18,7 @@ using System.Runtime.Serialization;
 using System.Security;
 using System.Xml;
 using Dbg = System.Diagnostics.Debug;
-#if !CORECLR
 using System.Security.Permissions;
-#else
-// Use stub for SerializableAttribute, SecurityPermissionAttribute and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 

@@ -16,11 +16,6 @@ using Dbg = System.Management.Automation.Diagnostics;
 using System.Diagnostics;
 using Microsoft.Management.Infrastructure;
 
-#if CORECLR
-// Use stub for SerializableAttribute, NoSerializedAttribute, SystemException, ThreadAbortException and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
 namespace System.Management.Automation

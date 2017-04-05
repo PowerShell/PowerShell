@@ -11,11 +11,6 @@ using System.Management.Automation;
 using System.Management.Automation.Language;
 using System.Threading;
 using System.Threading.Tasks;
-#if CORECLR
-using Environment = System.Management.Automation.Environment;
-#else
-using Environment = System.Environment;
-#endif
 
 namespace Microsoft.PowerShell.Telemetry.Internal
 {
@@ -175,7 +170,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
                 (modulePath != null &&
                  (modulePath.StartsWith(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID), StringComparison.OrdinalIgnoreCase) ||
                   // The following covers both 64 and 32 bit Program Files by assuming 32bit is just ...\Program Files + " (x86)"
-                  modulePath.StartsWith(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), StringComparison.OrdinalIgnoreCase))) ||
+                  modulePath.StartsWith(Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles), StringComparison.OrdinalIgnoreCase))) ||
                 (companyName != null &&
                  foundModule.CompanyName.StartsWith("Microsoft", StringComparison.OrdinalIgnoreCase));
             if (couldBeMicrosoftModule)

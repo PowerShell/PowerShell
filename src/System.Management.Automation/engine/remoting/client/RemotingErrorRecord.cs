@@ -5,13 +5,7 @@
 using System.Runtime.Serialization;
 using System.Management.Automation.Remoting;
 using System.Diagnostics.CodeAnalysis;
-
-#if CORECLR
-// Use stubs for SerializableAttribute, SecurityPermissionAttribute and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#else
 using System.Security.Permissions;
-#endif
 
 namespace System.Management.Automation.Runspaces
 {

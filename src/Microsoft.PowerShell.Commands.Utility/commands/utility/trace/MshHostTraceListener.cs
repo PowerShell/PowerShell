@@ -4,14 +4,9 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Text;
+using System.Security.Permissions;
 using System.Management.Automation;
 using System.Management.Automation.Internal.Host;
-
-#if CORECLR
-using Microsoft.PowerShell.CoreClr.Stubs;
-#else
-using System.Security.Permissions;
-#endif
 
 namespace Microsoft.PowerShell.Commands
 {

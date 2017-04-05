@@ -25,9 +25,8 @@ using System.Runtime.InteropServices;
 using System.Management.Automation.Runspaces;
 
 #if CORECLR
-// Use stubs for SafeHandleZeroOrMinusOneIsInvalid and SecurityZone
+// Use stubs for SecurityZone
 using Microsoft.PowerShell.CoreClr.Stubs;
-using Environment = System.Management.Automation.Environment;
 #endif
 
 namespace Microsoft.PowerShell.Commands
@@ -266,9 +265,7 @@ namespace Microsoft.PowerShell.Commands
                     string.IsNullOrEmpty(this.ProviderInfo.HelpFile) ? "" : this.ProviderInfo.HelpFile);
 
                 XmlReaderSettings settings = new XmlReaderSettings();
-#if !CORECLR    // No XmlReaderSettings.XmlResolver in CoreCLR
                 settings.XmlResolver = null;
-#endif
                 reader = XmlReader.Create(fullHelpPath, settings);
                 document.Load(reader);
 

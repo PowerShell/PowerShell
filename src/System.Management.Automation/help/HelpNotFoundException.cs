@@ -9,13 +9,7 @@ using System;
 using System.Management.Automation;
 using System.Runtime.Serialization;
 using System.Reflection;
-
-#if CORECLR
-// Use stub for SerializableAttribute, SerializationInfo and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#else
 using System.Security.Permissions;
-#endif
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -115,7 +109,6 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-#if !CORECLR
         #region Serialization
 
         /// <summary>
@@ -151,7 +144,6 @@ namespace Microsoft.PowerShell.Commands
         }
 
         #endregion Serialization
-#endif
     }
 }
 

@@ -47,24 +47,6 @@ namespace System.Management.Automation
         /// </summary>
         internal static readonly char FIRST_CHAR_PSASSEMBLY_MARK = (char)0x29f9;
 
-        #region Type
-
-        /// <summary>
-        /// Facade for Type.GetMember(string, BindingFlags) to return multiple matched Public Static methods
-        /// </summary>
-        internal static MemberInfo[] GetMethods(Type targetType, string methodName)
-        {
-#if CORECLR
-            const BindingFlags flagsToUse = BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Static;
-            return targetType.GetMethods(methodName, flagsToUse);
-#else
-            const BindingFlags flagsToUse = BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod;
-            return targetType.GetMember(methodName, flagsToUse);
-#endif
-        }
-
-        #endregion Type
-
         #region Process
 
         /// <summary>

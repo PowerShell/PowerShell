@@ -19,12 +19,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Runtime.InteropServices;
 using System.Globalization;
 using System.ComponentModel;
-
-#if CORECLR
-// Use stub for SystemException
-using Microsoft.PowerShell.CoreClr.Stubs;
 using System.Reflection;
-#endif
 
 namespace Microsoft.PowerShell.Commands
 {
