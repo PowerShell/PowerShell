@@ -177,6 +177,39 @@ sudo yum remove powershell
 
 [CentOS 7]: https://www.centos.org/download/
 
+## OpenSUSE 42.1
+
+Installation instruction for OpenSUSE 42.1.
+
+**Note:** OpenSUSE package will be released as part of the alpha 18 release.
+@TravisEz13 Has built an unofficial package of alpha 17 which is available in the [fork's release](https://github.com/TravisEz13/PowerShell/releases/tag/v6.0.0-alpha.17).
+
+### Installation via Direct Download - OpenSUSE 42.1
+
+Using [OpenSUSE 42.1][], download the RPM package
+`powershell-6.0.0_alpha.17-1.suse.42.1.x86_64.rpm`
+from the [releases][] page onto the OpenSUSE machine.
+
+Then execute the following in the terminal:
+
+```sh
+sudo zypper install ./powershell-6.0.0_alpha.17-1.suse.42.1.x86_64.rpm
+```
+
+You can also install the RPM without the intermediate step of downloading it:
+
+```sh
+sudo zypper install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.17/powershell-6.0.0_alpha.17-1.suse.42.1.x86_64.rpm
+```
+
+### Uninstallation - OpenSUSE 42.1
+
+```sh
+sudo zypper remove powershell
+```
+
+[OpenSUSE 42.1]: https://software.opensuse.org/421/en
+
 ## Arch Linux
 
 PowerShell is available from the [Arch Linux][] User Repository (AUR) as a [release][arch-release] or the [latest development build][arch-git].
