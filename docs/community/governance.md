@@ -2,20 +2,20 @@
 
 ## Terms
 
-* [**PowerShell Committee**](#powershell-committee): A committee of project owners who are responsible for design decisions, approving [RFCs][RFC-repo], and approving new maintainers/committee members 
+* [**PowerShell Committee**](#powershell-committee): A committee of project owners who are responsible for design decisions, approving [RFCs][RFC-repo], and approving new maintainers/committee members
 * **Project Leads**: Project Leads support the PowerShell Committee, engineering teams, and community by working across Microsoft teams and leadership, and working through industry issues with other companies.
 They also have optional votes on the PowerShell Committee when they choose to invoke them. The initial Project Leads for PowerShell are Angel Calvo ([AngelCalvo](https://github.com/AngelCalvo)) and Kenneth Hansen ([khansen00](https://github.com/khansen00)).
 * [**Repository maintainer**](#repository-maintainers): An individual responsible for merging pull requests (PRs) into `master` when all requirements are met (code review, tests, docs, and RFC approval as applicable).
 Repository Maintainers are the only people with write permissions into `master`.
-* [**Area experts**](#area-experts): People who are experts for specific components (e.g. PSReadline, the parser) or technologies (e.g. security, performance). 
-Area experts are responsible for code reviews, issue triage, and providing their expertise to others. 
+* [**Area experts**](#area-experts): People who are experts for specific components (e.g. PSReadline, the parser) or technologies (e.g. security, performance).
+Area experts are responsible for code reviews, issue triage, and providing their expertise to others.
 * **Corporation**: The Corporation owns the PowerShell repository and, under extreme circumstances, reserves the right to dissolve or reform the PowerShell Committee, the Project Leads, and the Corporate Maintainer.
 The Corporation for PowerShell is Microsoft.
 * **Corporate Maintainer**: The Corporate Maintainer is an entity, person or set of persons, with the ability to veto decisions made by the PowerShell Committee or any other collaborators on the PowerShell project.
-This veto power will be used with restraint since it is intended that the community drive the project. 
+This veto power will be used with restraint since it is intended that the community drive the project.
 The Corporate Maintainer is determined by the Corporation both initially and in continuation.
 The initial Corporate Maintainer for PowerShell is Jeffrey Snover ([jpsnover](https://github.com/jpsnover)).
-* [**RFC process**][RFC-repo]: The "review-for-comment" (RFC) process whereby design decisions get made. 
+* [**RFC process**][RFC-repo]: The "review-for-comment" (RFC) process whereby design decisions get made.
 
 ## PowerShell Committee
 
@@ -31,7 +31,7 @@ The PowerShell Committee and its members (aka Committee Members) are the primary
 
 ### Committee Member Responsibilities
 
-Committee Members are responsible for reviewing and approving [PowerShell RFCs][RFC-repo] proposing new features or design changes. 
+Committee Members are responsible for reviewing and approving [PowerShell RFCs][RFC-repo] proposing new features or design changes.
 
 #### Changes that require an [RFC][RFC-repo]
 
@@ -45,14 +45,14 @@ The following types of decisions require a written RFC and ample time for the co
 
 #### Changes that don't require an RFC
 
-In some cases, a new feature or behavior may be deemed small enough to forgo the RFC process 
+In some cases, a new feature or behavior may be deemed small enough to forgo the RFC process
 (e.g. changing the default PSReadline `EditMode` to `Emacs` on Mac/Linux).
-In these cases, [issues marked as `1 - Planning`][issue-process] require only a simple majority of Committee Members to sign off. 
+In these cases, [issues marked as `1 - Planning`][issue-process] require only a simple majority of Committee Members to sign off.
 After that, a Repository Maintainer should relabel the issue as `2 - Ready` so that a contributor can begin working on it.
 
-If any Committee Members feels like this behavior is large enough to warrant an RFC, they can add the label `RFC-required` and the issue owner is expected to follow the RFC process. 
+If any Committee Members feels like this behavior is large enough to warrant an RFC, they can add the label `RFC-required` and the issue owner is expected to follow the RFC process.
 
-#### Committee Member DOs and DON'Ts 
+#### Committee Member DOs and DON'Ts
 
 As a PowerShell Committee Member:
 
@@ -73,23 +73,23 @@ Members are encouraged to share their opinions, but they should be presented as 
 ### PowerShell Committee Membership
 
 The initial PowerShell Committee consists of Microsoft employees.
-It is expected that over time, PowerShell experts in the community will be made Committee Members. 
-Membership is heavily dependent on the level of contribution and expertise: individuals who contribute in meaningful ways to the project will be recognized accordingly. 
+It is expected that over time, PowerShell experts in the community will be made Committee Members.
+Membership is heavily dependent on the level of contribution and expertise: individuals who contribute in meaningful ways to the project will be recognized accordingly.
 
-At any point in time, a Committee Member can nominate a strong community member to join the Committee. 
+At any point in time, a Committee Member can nominate a strong community member to join the Committee.
 Nominations should be submitted in the form of [RFCs][RFC-repo] detailing why that individual is qualified and how they will contribute.
-After the RFC has been discussed, a unanimous vote will be required for the new Committee Member to be confirmed. 
+After the RFC has been discussed, a unanimous vote will be required for the new Committee Member to be confirmed.
 
 ## Repository Maintainers
 
-Repository Maintainers are trusted stewards of the PowerShell repository responsible for maintaining consistency and quality of PowerShell code. 
+Repository Maintainers are trusted stewards of the PowerShell repository responsible for maintaining consistency and quality of PowerShell code.
 One of their primary responsibilities is merging pull requests after all requirements have been fulfilled.
 
 For more information on Repository Maintainers--their responsibilities, who they are, and how one becomes a Maintainer--see the [README for Repository Maintainers][maintainers].
 
 ## Area Experts
 
-Area Experts are people with knowledge of specific components or technologies in the PowerShell domain. They are responsible for code reviews, issue triage, and providing their expertise to others. 
+Area Experts are people with knowledge of specific components or technologies in the PowerShell domain. They are responsible for code reviews, issue triage, and providing their expertise to others.
 
 They have [write access](https://help.github.com/articles/permission-levels-for-an-organization-repository/) to the PowerShell repository which gives them the power to:
 
@@ -99,14 +99,14 @@ They have [write access](https://help.github.com/articles/permission-levels-for-
 
 ### Area Expert Responsibilities
 
-If you are an Area Expert, you are expected to be actively involved in any development, design, or contributions in your area of expertise. 
+If you are an Area Expert, you are expected to be actively involved in any development, design, or contributions in your area of expertise.
 
 If you are an Area Expert:
 
 1. **DO** assign the [correct labels][issue-process]
 1. **DO** assign yourself to issues labeled with your area of expertise
 1. **DO** code reviews for issues where you're assigned or in your areas of expertise.
-1. **DO** reply to new issues and pull requests that are related to your area of expertise 
+1. **DO** reply to new issues and pull requests that are related to your area of expertise
 (while reviewing PRs, leave your comment even if everything looks good - a simple "Looks good to me" or "LGTM" will suffice, so that we know someone has already taken a look at it).
 1. **DO** make sure contributors are following the [contributor guidelines](../../.github/CONTRIBUTING.md).
 1. **DO** ask people to resend a pull request, if it [doesn't target `master`](../../.github/CONTRIBUTING.md#lifecycle-of-a-pull-request).
@@ -122,12 +122,12 @@ If you are an Area Expert:
 
 See our [Issue Management Process][issue-process]
 
-## Pull Request Process 
+## Pull Request Process
 
 See our [Pull Request Process][pull-request-process]
 
 [RFC-repo]: https://github.com/PowerShell/PowerShell-RFC
-[pester]: ../testing-guidelines/WritingPesterTests.md 
+[pester]: ../testing-guidelines/WritingPesterTests.md
 [ci-system]: ../testing-guidelines/testing-guidelines.md#ci-system
 [breaking-changes]: ../dev-process/breaking-change-contract.md
 [issue-process]: ../maintainers/issue-management.md

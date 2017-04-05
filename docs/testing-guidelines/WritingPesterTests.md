@@ -5,10 +5,10 @@ about Pester or creating tests, the [Pester Wiki](https://github.com/pester/pest
 
 When creating tests, keep the following in mind:
 * Tests should not be overly complicated and test too many things
-	* boil down your tests to their essence, test only what you need
+    * boil down your tests to their essence, test only what you need
 * Tests should be as simple as they can
 * Tests should generally not rely on any other test
-	
+
 Examples:
 Here's the simplest of tests
 
@@ -18,7 +18,7 @@ Describe "A variable can be assigned and retrieved" {
        $a = 1
        $a | Should be 1
    }
-} 
+}
 ```
 
 If you need to do type checking, that can be done as well
@@ -33,7 +33,7 @@ Describe "One is really one" {
        $i = 1
        $i.GetType() | Should Be "int"
     }
-} 
+}
 ```
 
 alternatively, you could do the following:
@@ -48,7 +48,7 @@ Describe "One is really one" {
        $i = 1
        $i.GetType() | Should Be ([System.Int32])
     }
-} 
+}
 ```
 
 If you are checking for proper errors, do that in a `try/catch`, and then check `FullyQualifiedErrorId`. Checking against `FullyQualifiedErrorId` is recommended because it does not change based on culture as an error message might.
@@ -129,10 +129,10 @@ $testCases = @(
     )
 
 Describe "A test" {
-	It "<a> -xor <b> should be <expectedresult>" -testcase $testcases {
+    It "<a> -xor <b> should be <expectedresult>" -testcase $testcases {
         param ($a, $b, $ExpectedResult)
-		$a -xor $b | Should be $ExpectedResult
-	}
+        $a -xor $b | Should be $ExpectedResult
+    }
 }
 ```
 
@@ -177,10 +177,10 @@ Describe it {
         Write-Host -for DarkRed "After It"
     }
     Write-Host -for DarkRed "After Context"
-    Write-Host -for DarkGreen "Before Describe BeforeAll" 
+    Write-Host -for DarkGreen "Before Describe BeforeAll"
     BeforeAll { Write-Host -for DarkGreen "In Describe BeforeAll" }
     AfterAll { Write-Host -for DarkGreen "In Describe AfterAll" }
-} 
+}
 ```
 
 Now, when run, you can see the execution schedule
@@ -206,7 +206,7 @@ After Context
 Before Describe BeforeAll
 In Describe AfterAll
 Tests completed in 79ms
-Passed: 1 Failed: 0 Skipped: 0 Pending: 0 
+Passed: 1 Failed: 0 Skipped: 0 Pending: 0
 ```
 
 The DESCRIBE BeforeAll block is executed before any other code even though it was at the bottom of the Describe block, so if state is set elsewhere in the describe BLOCK, that state will not be visible (as the code will not yet been run). Notice, too, that the BEFOREALL block in Context is executed before any other code in that block.
@@ -241,7 +241,7 @@ Describe "Should not run these tests on non-Windows platforms" {
             2 | should be 1
         }
     }
-}  
+}
 ```
 Here is the output when run on a Linux distribution:
 ```

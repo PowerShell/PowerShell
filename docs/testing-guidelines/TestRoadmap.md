@@ -33,9 +33,9 @@ There are a small number of solutions available:
     * OpenCover is currently used by corefx to produce code coverage data, also visualization is available via [CoverAlls](https://coveralls.io/github/OpenCover/opencover).
     We should investigate `OpenCover` and determine it's feasibility for us.
     Unfortunately I haven't been able to find a solution for Linux
-* DotCover 
+* DotCover
     * I have contacted `JetBrains` to see if they have any solutions which may be used with .NET Core.
-    
+
 If we can get code coverage on PowerShell Core on Windows, we would at least be able to have _some_ data to illuminate our test gaps.
 
 Running code coverage more often on full PowerShell is something that we should consider, if it will help us close existing test coverage gaps, but the issue is _not_ test coverage for full PowerShell, but rather PowerShell Core where we have only a small percentage of tests in comparison.
@@ -45,9 +45,9 @@ We currently run only those tests which are tagged `CI` excluding the tag `SLOW`
 This means roughly 1/3rd of our github tests are not being run on any regular schedule.
 In order to provide us with higher confidence in our code, we should be running *ALL* of our tests on a regular basis.
 We have recently added to `AppVeyor` running all of our tests on a daily basis, but are not yet running these tests on Linux/Mac via `Travis`, which should be done.
-However, running the tests is only the first step, we need an easy way to be notified of test failures, and to track progress of those runs over time. 
+However, running the tests is only the first step, we need an easy way to be notified of test failures, and to track progress of those runs over time.
 Tracking this over time affords us the ability to see how our test count increases, implying an improvement in coverage.
-It also provides us mechanism whereby we can see trends in instability. 
+It also provides us mechanism whereby we can see trends in instability.
 
 ### Pending and Skipped Tests
 We currently have approximately 300 tests which are marked either as `skipped` or `pending`.
@@ -72,7 +72,7 @@ In addition to loopback tests using both WSMan and SSH protocols, we should have
 * OSX Client -> Nano Client
 * PowerShell Core Client -> Full PowerShell Server
 * Full PowerShell Client -> PowerShell Core Server
-* Downlevel Full PowerShell Client -> PowerShell Core Server 
+* Downlevel Full PowerShell Client -> PowerShell Core Server
 
 ### Challenges
 * On Windows, we have cmdlets to enable and disable remote access, those cmdlets do not exist on non-Windows platforms (they rely on configuration stored in the registry), nor do we support configuration for the SSH protocol.
@@ -108,7 +108,7 @@ There are a number of KPIs which we could report on:
 * Product KPIs
     * What is the usage of PowerShell Core on the various platforms
     * What are the common operations performed by PowerShell Core (cmdlet usage)
-    * How many remote connections are created in a session 
+    * How many remote connections are created in a session
 
 ## Reporting Priorities
 1. As a baseline, we should report code coverage on current Full PowerShell from the latest Windows release
@@ -119,7 +119,7 @@ This is the tool that will enable us to at least determine where we have _no_ da
 ### Public Dashboard
 Because we collect the test results as a build artifact, it is possible to collect and collate this data and provide a number of dash-board reports.
 Since we are an OSS project, it makes sense that our reports should be also public.
-A public dashboard provides evidence that we are not collecting PII, increasing trust in the project and shows that we are using data to drive product decisions. 
+A public dashboard provides evidence that we are not collecting PII, increasing trust in the project and shows that we are using data to drive product decisions.
 We could easily create a web presence in Azure which would enable us to provide reporting on the current and historical state of our tests.
 Now that we are running all of our tests on a nightly basis, we should be communicating the results of those test runs.
 PowerBI could be used to create the visualizations, which would reduce the time and effort.
@@ -127,14 +127,14 @@ PowerBI could be used to create the visualizations, which would reduce the time 
 In order to achieve this we need to:
 * Designate an Azure instance to run services and populate Azure tables:
     * Create tools to retrieve and transform git data
-    * Create tools to retrieve and transform the test data 
+    * Create tools to retrieve and transform the test data
 * Create PowerBI queries to visualize our KPIs
 
 # Release Criteria
 We must start defining the release criteria for a production ready release of PowerShell Core, as an initial proposal:
 * No open issues for the release
 * 80% code coverage of high use cmdlets (cmdlets used by 70% of users, as captured via telemetry)
-* 90% code coverage of language elements (coverage error code paths may not be 100%) 
+* 90% code coverage of language elements (coverage error code paths may not be 100%)
 * 60% code Coverage on Windows via Github tests
 * 100% of our minimum remoting matrix tested
 * Acceptance by 50% PowerShell MVPs (via Survey)
@@ -179,8 +179,8 @@ Unfortunately, the current logging mechanism used in our in-lab tests are not av
 
 **Proposal**
 
-* Investigate the effort to run our historical tests in a PowerShell Core environment 
- 
+* Investigate the effort to run our historical tests in a PowerShell Core environment
+
 # Action Plan
 This document represents a number of initiatives, all of which will take resources.
 Below is my suggestion for prioritization to reduce risk and improve confidence in our overall quality:

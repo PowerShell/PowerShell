@@ -1,6 +1,6 @@
 # Host PowerShell Core in .NET Core Applications
 
-> This documentation is based on PowerShell Core packages built against .NET Core 1.1 and prior. 
+> This documentation is based on PowerShell Core packages built against .NET Core 1.1 and prior.
 > Things may change after we move to .NET Core 2.0.
 
 ## PowerShell Core targeting .NET Core 1.1 and Prior
@@ -32,7 +32,7 @@ as it's what you need when building a .NET Core application with .NET CLI.
 
 ### Comparison - Hosting Windows PowerShell vs. Hosting PowerShell Core
 
-The following code demonstrates how to host Windows PowerShell in an application.  
+The following code demonstrates how to host Windows PowerShell in an application.
 As shown below, you can insert your business logic code directly in the `Main` method.
 
 ```CSharp
@@ -72,7 +72,7 @@ using System.Reflection;
 
 namespace Application.Test
 {
-    public class Program 
+    public class Program
     {
         /// <summary>
         /// Managed entry point shim, which starts the actual program
@@ -80,10 +80,10 @@ namespace Application.Test
         public static int Main(string[] args)
         {
             // Application needs to use PowerShell AssemblyLoadContext if it needs to create PowerShell runspace
-            // PowerShell engine depends on PS ALC to provide the necessary assembly loading/searching support that is missing from .NET Core 
+            // PowerShell engine depends on PS ALC to provide the necessary assembly loading/searching support that is missing from .NET Core
             string appBase = System.IO.Path.GetDirectoryName(typeof(Program).GetTypeInfo().Assembly.Location);
             System.Console.WriteLine("\nappBase: {0}", appBase);
-            
+
             // Initialize the PS ALC and let it load 'Logic.dll' and start the execution
             return (int)PowerShellAssemblyLoadContextInitializer.
                            InitializeAndCallEntryMethod(
@@ -124,7 +124,7 @@ namespace Application.Test
 
 ### .NET Core Sample Application
 
-You can find the sample application project `"MyApp"` under [sample-dotnet1.1](./sample-dotnet1.1). 
+You can find the sample application project `"MyApp"` under [sample-dotnet1.1](./sample-dotnet1.1).
 To build the sample project, run the following commands ([.NET Core SDK 1.0.1](https://github.com/dotnet/cli/releases/tag/v1.0.1) is required):
 
 ```powershell
