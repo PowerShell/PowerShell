@@ -4,9 +4,9 @@ MAINTAINER Andrew Schwartzmeyer <andschwa@microsoft.com>
 # TODO: Until a release of PowerShell for Fedora 24 is available,
 # this Dockerfile installs the CentOS 7 version for compatibility.
 
-ARG POWERSHELL_VERSION=6.0.0-alpha.17
-ARG POWERSHELL_RELEASE=v6.0.0-alpha.17
-ARG POWERSHELL_PACKAGE=powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm
+ARG POWERSHELL_VERSION=6.0.0-alpha.18
+ARG POWERSHELL_RELEASE=v6.0.0-alpha.18
+ARG POWERSHELL_PACKAGE=powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
 
 # The CentOS 7 release relies on an older version of libicu, so we'll be downloading it
 # from the University of Kent (GB) mirror service.

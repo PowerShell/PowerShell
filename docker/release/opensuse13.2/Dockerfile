@@ -2,8 +2,8 @@
 FROM opensuse:harlequin
 LABEL maintainer Travis Plunk <travis.plunk@microsoft.com>
 
-ARG POWERSHELL_VERSION=6.0.0_alpha.17
-ARG POWERSHELL_RELEASE=v6.0.0-alpha.17
+ARG POWERSHELL_VERSION=6.0.0_alpha.18
+ARG POWERSHELL_RELEASE=v6.0.0-alpha.18
 ARG POWERSHELL_PACKAGE=powershell-$POWERSHELL_VERSION-1.suse.13.2.x86_64.rpm
 
 # Update, Install packages to generate localedef and CURL which is used by RPM
