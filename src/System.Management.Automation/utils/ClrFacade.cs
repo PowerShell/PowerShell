@@ -530,22 +530,26 @@ namespace System.Management.Automation
         #region Encoding
 
         /// <summary>
-        /// Facade for Encoding.Default
+        /// Facade for getting default encoding
         /// </summary>
         internal static Encoding GetDefaultEncoding()
         {
             if (s_defaultEncoding == null)
             {
-#if CORECLR     // Encoding.Default is not in CoreCLR
-                // As suggested by CoreCLR team (tarekms), use latin1 (ISO-8859-1, CodePage 28591) as the default encoding.
-                // We will revisit this if it causes any failures when running tests on Core PS.
-                s_defaultEncoding = Encoding.GetEncoding(28591);
-#else
+#if UNIX        // PowerShell Core on Unix
+                s_defaultEncoding = new UTF8Encoding(false);
+#elif CORECLR   // PowerShell Core on Windows
+                EncodingRegisterProvider();
+
+                uint currentAnsiCp = NativeMethods.GetACP();
+                s_defaultEncoding = Encoding.GetEncoding((int)currentAnsiCp);
+#else           // Windows PowerShell
                 s_defaultEncoding = Encoding.Default;
 #endif
             }
             return s_defaultEncoding;
         }
+
         private static volatile Encoding s_defaultEncoding;
 
         /// <summary>
@@ -555,17 +559,33 @@ namespace System.Management.Automation
         {
             if (s_oemEncoding == null)
             {
-#if CORECLR     // The OEM code page '437' is not supported by CoreCLR.
-                // Use the default encoding (ISO-8859-1, CodePage 28591) as the OEM encoding in OneCore powershell.
+#if UNIX        // PowerShell Core on Unix
                 s_oemEncoding = GetDefaultEncoding();
-#else
+#elif CORECLR   // PowerShell Core on Windows
+                EncodingRegisterProvider();
+
+                uint oemCp = NativeMethods.GetOEMCP();
+                s_oemEncoding = Encoding.GetEncoding((int)oemCp);
+
+#else           // Windows PowerShell
                 uint oemCp = NativeMethods.GetOEMCP();
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
 #endif
             }
             return s_oemEncoding;
         }
+
         private static volatile Encoding s_oemEncoding;
+
+#if CORECLR
+        private static void EncodingRegisterProvider()
+        {
+            if (s_defaultEncoding == null && s_oemEncoding == null)
+            {
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            }
+        }
+#endif
 
         #endregion Encoding
 
@@ -1032,6 +1052,12 @@ namespace System.Management.Automation
             /// </summary>
             [DllImport(PinvokeDllNames.GetOEMCPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
             internal static extern uint GetOEMCP();
+
+            /// <summary>
+            /// Pinvoke for GetACP to get the Windows operating system code page.
+            /// </summary>
+            [DllImport(PinvokeDllNames.GetACPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
+            internal static extern uint GetACP();
 
             public const int S_OK = 0x00000000;
 
