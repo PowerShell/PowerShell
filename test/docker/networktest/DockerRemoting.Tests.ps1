@@ -1,6 +1,7 @@
 $imageName = "remotetestimage"
 Describe "Basic remoting test with docker" -tags @("Scenario","Slow"){
     BeforeAll {
+        $Timeout = 600 # 10 minutes to run these tests
         $dockerimage = docker images --format "{{ .Repository }}" $imageName
         if ( $dockerimage -ne $imageName ) {
             $pending = $true
@@ -10,24 +11,50 @@ Describe "Basic remoting test with docker" -tags @("Scenario","Slow"){
         else {
             $pending = $false
         }
-        # this is all I could figure out how to set up a container which
-        # sticks around for a while
-        Write-Verbose -verbose "setting up docker container PowerShell server"
-        $server = docker run -d remotetest1 powershell -c start-sleep 600
-        Write-Verbose -verbose "setting up docker container PowerShell client"
-        $client = docker run -d remotetest1 powershell -c start-sleep 600
 
-        # capture some data
+        # give the containers something to do, otherwise they will exit and be removed
+        Write-Verbose -verbose "setting up docker container PowerShell server"
+        $server = docker run -d $imageName powershell -c start-sleep $timeout
+        Write-Verbose -verbose "setting up docker container PowerShell client"
+        $client = docker run -d $imageName powershell -c start-sleep $timeout
+
+        # get fullpath to installed core powershell
+        Write-Verbose -verbose "Getting path to PowerShell core"
+        $powershellcorepath = docker exec $server powershell -c "(get-childitem 'c:\program files\powershell\*\powershell.exe').fullname"
+        if ( ! $powershellcorepath )
+        {
+            $pending = $true
+            write-warning "Cannot find powershell core executable, not running tests"
+            return
+        }
+        $powershellcoreversion = ($powershellcorepath -split "[\\/]")[-2]
+        # we will need the configuration of the core powershell endpoint
+        $powershellcoreConfiguration = "powershell.${powershellcoreversion}"
+
+        # capture the hostnames of the containers which will be used by the tests
         write-verbose -verbose "getting server hostname"
         $serverhostname = docker exec $server hostname
         write-verbose -verbose "getting client hostname"
         $clienthostname = docker exec $client hostname
 
+        # capture the versions of full and core PowerShell
         write-verbose -verbose "getting powershell full version"
         $fullVersion = docker exec $client powershell -c "`$psversiontable.psversion.tostring()"
+        if ( ! $fullVersion ) 
+        {
+            $pending = $true
+            write-warning "Cannot determine PowerShell full version, not running tests"
+            return
+        }
 
         write-verbose -verbose "getting powershell core version"
-        $coreVersion = docker exec $client "C:\program files\powershell\6.0.0.17\powershell" -c "`$psversiontable.psversion.tostring()"
+        $coreVersion = docker exec $client "$powershellcorepath" -c "`$psversiontable.psversion.tostring()"
+        if ( ! $coreVersion ) 
+        {
+            $pending = $true
+            write-warning "Cannot determine PowerShell core version, not running tests"
+            return
+        }
     }
 
     AfterAll {
@@ -39,7 +66,7 @@ Describe "Basic remoting test with docker" -tags @("Scenario","Slow"){
     }
 
     It "Full powershell can get correct remote powershell core version" -pending:$pending {
-        $result = docker exec $client powershell -c "`$ss = [security.securestring]::new(); '11aa!!AA'.ToCharArray() | %{ `$ss.appendchar(`$_)}; `$c = [pscredential]::new('testuser',`$ss); `$ses=new-pssession $serverhostname -configurationname powershell.6.0.0-alpha.17 -auth basic -credential `$c; invoke-command -session `$ses { `$psversiontable.psversion.tostring() }"
+        $result = docker exec $client powershell -c "`$ss = [security.securestring]::new(); '11aa!!AA'.ToCharArray() | %{ `$ss.appendchar(`$_)}; `$c = [pscredential]::new('testuser',`$ss); `$ses=new-pssession $serverhostname -configurationname $powershellcoreConfiguration -auth basic -credential `$c; invoke-command -session `$ses { `$psversiontable.psversion.tostring() }"
         $result | should be $coreVersion
     }
 
@@ -49,12 +76,12 @@ Describe "Basic remoting test with docker" -tags @("Scenario","Slow"){
     }
 
     It "Core powershell can get correct remote powershell core version" -pending:$pending {
-        $result = docker exec $client "C:\program files\powershell\6.0.0.17\powershell" -c "`$ss = [security.securestring]::new(); '11aa!!AA'.ToCharArray() | %{ `$ss.appendchar(`$_)}; `$c = [pscredential]::new('testuser',`$ss); `$ses=new-pssession $serverhostname -configurationname powershell.6.0.0-alpha.17 -auth basic -credential `$c; invoke-command -session `$ses { `$psversiontable.psversion.tostring() }"
+        $result = docker exec $client "$powershellcorepath" -c "`$ss = [security.securestring]::new(); '11aa!!AA'.ToCharArray() | %{ `$ss.appendchar(`$_)}; `$c = [pscredential]::new('testuser',`$ss); `$ses=new-pssession $serverhostname -configurationname $powershellcoreConfiguration -auth basic -credential `$c; invoke-command -session `$ses { `$psversiontable.psversion.tostring() }"
         $result | should be $coreVersion
     }
 
     It "Core powershell can get correct remote powershell full version" -pending:$pending {
-        $result = docker exec $client "C:\program files\powershell\6.0.0.17\powershell" -c "`$ss = [security.securestring]::new(); '11aa!!AA'.ToCharArray() | %{ `$ss.appendchar(`$_)}; `$c = [pscredential]::new('testuser',`$ss); `$ses=new-pssession $serverhostname -auth basic -credential `$c; invoke-command -session `$ses { `$psversiontable.psversion.tostring() }"
+        $result = docker exec $client "$powershellcorepath" -c "`$ss = [security.securestring]::new(); '11aa!!AA'.ToCharArray() | %{ `$ss.appendchar(`$_)}; `$c = [pscredential]::new('testuser',`$ss); `$ses=new-pssession $serverhostname -auth basic -credential `$c; invoke-command -session `$ses { `$psversiontable.psversion.tostring() }"
         $result | should be $fullVersion
     }
 }
