@@ -2826,8 +2826,6 @@ function Start-CrossGen {
     $commonAssembliesForAddType = @(
         "Microsoft.CodeAnalysis.CSharp.dll"
         "Microsoft.CodeAnalysis.dll"
-        "Microsoft.CodeAnalysis.VisualBasic.dll"
-        "Microsoft.CSharp.dll"
     )
 
     # Common PowerShell libraries to crossgen
