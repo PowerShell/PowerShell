@@ -40,7 +40,7 @@ We made a number of fixes to the progress bar rendering and the `ProgressRecord`
 ## v6.0.0-alpha.17 - 2017-03-08
 
 - Update PSRP client libraries for Linux and Mac.
-  - We now support customer configurations for Office 365 interaction, as well as NTLM authentication for WSMan based remoting from Linux (more information [here](https://github.com/PowerShell/psl-omi-provider/releases/tag/v1.0.0.18)). (#3271)
+    - We now support customer configurations for Office 365 interaction, as well as NTLM authentication for WSMan based remoting from Linux (more information [here](https://github.com/PowerShell/psl-omi-provider/releases/tag/v1.0.0.18)). (#3271)
 - We now support remote step-in debugging for `Invoke-Command -ComputerName`. (#3015)
 - Use prettier formatter with `ConvertTo-Json` output. (#2787) (Thanks to @kittholland!)
 - Port `*-CmsMessage` and `Get-PfxCertificate` cmdlets to Powershell Core. (#3224)
