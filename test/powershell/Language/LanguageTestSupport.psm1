@@ -7,7 +7,7 @@ function Get-ParseResults
     [CmdletBinding()]
     param(
         [Parameter(ValueFromPipeline=$True,Mandatory=$True)]
-        [string]$src, 
+        [string]$src,
         [switch]$Ast
     )
 
@@ -23,16 +23,15 @@ function Get-RuntimeError
 {
     [CmdletBinding()]
     param(
-        [Parameter(ValueFromPipeline=$True,Mandatory=$True)]
-        [string]$src
+        [Parameter(ValueFromPipeline=$True,Mandatory=$True)][string]$src
     )
-
+ 
     $errors = $null
-    try 
+    try
     {
         [scriptblock]::Create($src).Invoke() > $null
     }
-    catch 
+    catch
     {
         return $_.Exception.InnerException.ErrorRecord
     }
@@ -60,28 +59,46 @@ function ShouldBeParseError
 {
     [CmdletBinding()]
     param(
-        [string]$src, 
-        [string[]]$expectedErrors, 
-        [int[]]$expectedOffsets, 
+        [string]$src,
+        [string[]]$expectedErrors,
+        [int[]]$expectedOffsets,
         # This is a temporary solution after moving type creation from parse time to runtime
         [switch]$SkipAndCheckRuntimeError,
         # for test coverarage purpose, tests validate columnNumber or offset
-        [switch]$CheckColumnNumber
+        [switch]$CheckColumnNumber,
+        # Skip this test in Travis CI nightly build
+        [switch]$SkipInTravisFullBuild
     )
+
+    #
+    # CrossGen'ed assemblies cause a hang to happen when running tests with this helper function in Linux and OSX.
+    # The issue has been reported to CoreCLR team. We need to work around it for now with the following approach:
+    #  1. For pull request and push commit, build without '-CrossGen' and run the parsing tests
+    #  2. For nightly build, build with '-CrossGen' but don't run the parsing tests
+    # In this way, we will continue to exercise these parsing tests for each CI build, and skip them for nightly
+    # build to avoid a hang.
+    # Note: this change should be reverted once the 'CrossGen' issue is fixed by CoreCLR. The issue is tracked by
+    #       https://github.com/dotnet/coreclr/issues/9745
+    #
+    if ($SkipInTravisFullBuild) {
+        ## Report that we skipped the test and return
+        It "Parse error expected: <<$src>>" -Skip {}
+        return
+    }
 
     Context "Parse error expected: <<$src>>" {
         # Test case error if this fails
         $expectedErrors.Count | Should Be $expectedOffsets.Count
-        
-        if ($SkipAndCheckRuntimeError) 
+
+        if ($SkipAndCheckRuntimeError)
         {
             It "error should happen at parse time, not at runtime" -Skip {}
             $errors = Get-RuntimeError -Src $src
             # for runtime errors we will only get the first one
             $expectedErrors = ,$expectedErrors[0]
             $expectedOffsets = ,$expectedOffsets[0]
-        } 
-        else 
+        }
+        else
         {
             $errors = Get-ParseResults -Src $src
         }
@@ -95,7 +112,7 @@ function ShouldBeParseError
             {
                 $errorId = $err.FullyQualifiedErrorId
             }
-            else 
+            else
             {
                 $errorId = $err.ErrorId
             }
@@ -114,7 +131,7 @@ function Flatten-Ast
     param([System.Management.Automation.Language.Ast] $ast)
 
     $ast
-    $ast | gm -type property | ? { ($prop = $_.Name) -ne 'Parent' } | % { 
+    $ast | gm -type property | ? { ($prop = $_.Name) -ne 'Parent' } | % {
         $ast.$prop | ? { $_ -is [System.Management.Automation.Language.Ast] } | % { Flatten-Ast $_ }
     }
 }
@@ -127,7 +144,7 @@ function Test-ErrorStmt
         $ast = Get-ParseResults $src -Ast
         $asts = @(Flatten-Ast $ast.EndBlock.Statements[0])
 
-        It 'Type is ErrorStatementAst' { $asts[0].GetType() | Should Be System.Management.Automation.Language.ErrorStatementAst }        
+        It 'Type is ErrorStatementAst' { $asts[0] | Should BeOfType System.Management.Automation.Language.ErrorStatementAst }
         It "`$asts.count" { $asts.Count | Should Be ($a.Count + 1) }
         It "`$asts[0].Extent.Text" { $asts[0].Extent.Text | Should Be $errorStmtExtent }
         for ($i = 0; $i -lt $a.Count; ++$i)
@@ -160,7 +177,7 @@ function Test-Ast
         $ast = Get-ParseResults $src -Ast
         $ast = $ast.EndBlock.Statements[0]
         Context "Ast Validation: <<$src>>" {
-            $ast.GetType() | Should Be System.Management.Automation.Language.ErrorStatementAst
+            $ast | Should BeOfType System.Management.Automation.Language.ErrorStatementAst
             $ast.Flags.ContainsKey($flagName) | Should be $true
 
             $asts = @(Flatten-Ast $ast.Flags[$flagName].Item2)
@@ -171,6 +188,6 @@ function Test-Ast
                 $asts[$i].Extent.Text | Should Be $a[$i]
             }
         }
-    }    
+    }
 
 Export-ModuleMember -Function Test-ErrorStmt, Test-Ast, ShouldBeParseError, Get-ParseResults, Get-RuntimeError, Test-ErrorStmtForSwitchFlag

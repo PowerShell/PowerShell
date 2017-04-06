@@ -7,12 +7,12 @@
 
     It "Test conversion of an PSObject with Null Base Object to bool" {
         $mshObj = New-Object psobject
-        { [System.Management.Automation.LanguagePrimitives]::ConvertTo($mshObj, [bool]) } | Should Be $true             
+        { [System.Management.Automation.LanguagePrimitives]::ConvertTo($mshObj, [bool]) } | Should Be $true
     }
 
     It "Test conversion of an PSObject with Null Base Object to string" {
         $mshObj = New-Object psobject
-        { [System.Management.Automation.LanguagePrimitives]::ConvertTo($mshObj, [string]) -eq "" } | Should Be $true 
+        { [System.Management.Automation.LanguagePrimitives]::ConvertTo($mshObj, [string]) -eq "" } | Should Be $true
     }
 
     It "Test conversion of an PSObject with Null Base Object to object" {
@@ -24,5 +24,10 @@
         $col = [System.Diagnostics.Process]::GetCurrentProcess().Modules
         $ObjArray = [System.Management.Automation.LanguagePrimitives]::ConvertTo($col, [object[]])
         $ObjArray.Length | Should Be $col.Count
+    }
+
+    It "Casting recursive array to bool should not cause crash" {
+        $a[0] = $a = [PSObject](,1)
+        [System.Management.Automation.LanguagePrimitives]::IsTrue($a) | Should Be $true
     }
 }

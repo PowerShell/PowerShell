@@ -20,12 +20,12 @@ namespace Microsoft.PowerShell.Commands
     /// coming from a System.Management.Automation.TraceSwitch
     /// to be passed to the Msh host's RawUI methods.
     /// </summary>
-    /// 
+    ///
     /// <remarks>
     /// This trace listener cannot be specified in the app.config file.
     /// It must be added through the add-tracelistener cmdlet.
     /// </remarks>
-    /// 
+    ///
     internal class PSHostTraceListener
         : System.Diagnostics.TraceListener
     {
@@ -58,12 +58,12 @@ namespace Microsoft.PowerShell.Commands
         /// Closes the TraceListenerDialog so that it no longer
         /// receives trace output.
         /// </summary>
-        /// 
+        ///
         /// <param name="disposing">
         /// true if the TraceListener is being disposed, false
         /// otherwise.
         /// </param>
-        /// 
+        ///
         [SecurityPermission(SecurityAction.LinkDemand)]
         protected override void Dispose(bool disposing)
         {

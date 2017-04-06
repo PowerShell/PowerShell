@@ -32,7 +32,7 @@ namespace System.Management.Automation.Internal
             _stream = stream;
 #if (false)
             stream.WriteReady += new EventHandler (this.OnWriteReady);
-#endif                
+#endif
         }
 
         #region Properties
@@ -184,13 +184,13 @@ namespace System.Management.Automation.Internal
         {
             if (WriteReady != null)
             {
-                // call any event handlers on this, replacing the 
+                // call any event handlers on this, replacing the
                 // ObjectStream sender with 'this' since receivers
                 // are expecting an PipelineWriter
                 WriteReady (this, args);
             }
         }
-#endif        
+#endif
 
         #endregion Methods
 
@@ -211,7 +211,7 @@ namespace System.Management.Automation.Internal
     /// <remarks>
     /// PSDataCollection is introduced after 1.0. PSDataCollection
     /// is used to store data from the last command in
-    /// the pipeline and hence the writer will not 
+    /// the pipeline and hence the writer will not
     /// support certain features like Flush().
     /// </remarks>
     internal class PSDataCollectionWriter<T> : ObjectWriter

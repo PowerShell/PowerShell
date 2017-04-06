@@ -40,6 +40,6 @@ namespace Microsoft.PowerShell.Commands.ShowCommandInternal
             }
 
             viewModel.OnRefresh();
-        }        
+        }
     }
 }

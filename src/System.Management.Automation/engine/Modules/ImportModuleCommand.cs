@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Name { set; get; } = Utils.EmptyArray<string>();
 
         /// <summary>
-        /// This parameter specifies the current pipeline object 
+        /// This parameter specifies the current pipeline object
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_FQName, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [Parameter(ParameterSetName = ParameterSet_FQName_ViaPsrpSession, Mandatory = true, ValueFromPipeline = true, Position = 0)]
@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// This parameter specifies the current pipeline object 
+        /// This parameter specifies the current pipeline object
         /// </summary>
         [Parameter(ParameterSetName = ParameterSet_ModuleInfo, Mandatory = true, ValueFromPipeline = true, Position = 0)]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays", Justification = "Cmdlets use arrays for parameters.")]
@@ -575,7 +575,7 @@ namespace Microsoft.PowerShell.Commands
                 bool alreadyLoaded = false;
                 if (!String.IsNullOrEmpty(rootedPath))
                 {
-                    // TODO/FIXME: use IsModuleAlreadyLoaded to get consistent behavior 
+                    // TODO/FIXME: use IsModuleAlreadyLoaded to get consistent behavior
                     // TODO/FIXME: (for example checking ModuleType != Manifest below seems incorrect - cdxml modules also declare their own version)
                     // PSModuleInfo alreadyLoadedModule = null;
                     // Context.Modules.ModuleTable.TryGetValue(rootedPath, out alreadyLoadedModule);
@@ -668,7 +668,7 @@ namespace Microsoft.PowerShell.Commands
                         // Return the command if we found a module
                         if (snapin != null)
                         {
-                            // warn that this module already exists as a snapin 
+                            // warn that this module already exists as a snapin
                             string warningMessage = string.Format(
                                 CultureInfo.InvariantCulture,
                                 Modules.ModuleLoadedAsASnapin,
@@ -1377,7 +1377,7 @@ namespace Microsoft.PowerShell.Commands
                     localizedData = data;
                 }
 
-                // 
+                //
                 // flatten module contents and rewrite the manifest to point to the flattened file hierarchy
                 //
 
@@ -1429,8 +1429,8 @@ namespace Microsoft.PowerShell.Commands
                     localizedData = RemoteDiscoveryHelper.RewriteManifest(localizedData);
 
                     //
-                    // import the module 
-                    // (from memory - this avoids the authenticode signature problems 
+                    // import the module
+                    // (from memory - this avoids the authenticode signature problems
                     // that would be introduced by rewriting the contents of the manifest)
                     //
                     moduleInfo = LoadModuleManifest(
@@ -1483,7 +1483,7 @@ namespace Microsoft.PowerShell.Commands
                     }
 
                     //
-                    // store the default session 
+                    // store the default session
                     //
                     Dbg.Assert(moduleInfo.ModuleType == ModuleType.Manifest, "Remote discovery should always produce a 'manifest' module");
                     Dbg.Assert(moduleInfo.NestedModules != null, "Remote discovery should always produce a 'manifest' module with nested modules entry");
@@ -1761,7 +1761,7 @@ namespace Microsoft.PowerShell.Commands
         private void SetModuleBaseForEngineModules(string moduleName, System.Management.Automation.ExecutionContext context)
         {
             // Set modulebase of engine modules to point to $pshome
-            // This is so that Get-Help can load the correct help. 
+            // This is so that Get-Help can load the correct help.
             if (InitialSessionState.IsEngineModule(moduleName))
             {
                 foreach (var m in context.EngineSessionState.ModuleTable.Values)

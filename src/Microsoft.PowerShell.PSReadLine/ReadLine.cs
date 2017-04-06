@@ -557,12 +557,12 @@ namespace Microsoft.PowerShell
             _visualSelectionCommandCount = 0;
             _statusIsErrorMessage = false;
 
-            
+
 #if UNIX // TODO: not necessary if ReadBufferLines worked, or if rendering worked on spans instead of complete lines
             string newPrompt = GetPrompt();
             var bufferLineCount = (newPrompt.Length) / (_console.BufferWidth) + 1;
             _consoleBuffer = ReadBufferLines(_initialY, bufferLineCount);
-            
+
             for (int i=0; i<newPrompt.Length; ++i)
             {
                 _consoleBuffer[i].UnicodeChar = newPrompt[i];

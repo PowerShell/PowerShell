@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// Extract result objects corresponding to the specified 
+        /// Extract result objects corresponding to the specified
         /// names or expressions
         /// </summary>
         protected override void ProcessRecord()
@@ -192,7 +192,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Filter jobs based on HasMoreData
         /// </summary>
-        /// 
+        ///
         /// <param name="jobList"></param>
         /// <returns>return the list of jobs after applying HasMoreData filter</returns>
         private List<Job> ApplyHasMoreDataFiltering(List<Job> jobList)
@@ -220,7 +220,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Find the all child jobs with specified ChildJobState in the job list
         /// </summary>
-        /// 
+        ///
         /// <param name="jobList"></param>
         /// <returns>returns job list including all child jobs with ChildJobState or all if IncludeChildJob is specified</returns>
         private List<Job> FindChildJobs(List<Job> jobList)

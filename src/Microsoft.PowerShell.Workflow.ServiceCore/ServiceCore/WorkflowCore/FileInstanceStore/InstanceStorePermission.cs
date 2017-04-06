@@ -23,12 +23,12 @@ namespace Microsoft.PowerShell.Workflow
             AddDirectorySecurity(folderName, account, FileSystemRights.Modify, InheritanceFlags.ContainerInherit | InheritanceFlags.ObjectInherit, PropagationFlags.None, AccessControlType.Allow);
         }
 
-        private static void AddDirectorySecurity(string folderName, string account, FileSystemRights rights, InheritanceFlags inheritance, PropagationFlags propagation, AccessControlType controlType) 
-        { 
-            DirectoryInfo info = new DirectoryInfo(folderName); 
-            DirectorySecurity dSecurity = info.GetAccessControl(); 
-            dSecurity.AddAccessRule(new FileSystemAccessRule(account, rights, inheritance, propagation, controlType)); 
-            info.SetAccessControl(dSecurity); 
+        private static void AddDirectorySecurity(string folderName, string account, FileSystemRights rights, InheritanceFlags inheritance, PropagationFlags propagation, AccessControlType controlType)
+        {
+            DirectoryInfo info = new DirectoryInfo(folderName);
+            DirectorySecurity dSecurity = info.GetAccessControl();
+            dSecurity.AddAccessRule(new FileSystemAccessRule(account, rights, inheritance, propagation, controlType));
+            info.SetAccessControl(dSecurity);
         }
 
         private static void RemoveInheritablePermissions(string folderName)

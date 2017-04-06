@@ -24,7 +24,7 @@ using Microsoft.PowerShell.CoreClr.Stubs;
 #endif
 
 // Stops compiler from warning about unknown warnings
-#pragma warning disable 1634, 1691 
+#pragma warning disable 1634, 1691
 
 namespace System.Management.Automation
 {
@@ -45,7 +45,7 @@ namespace System.Management.Automation
         Running = 1,
 
         /// <summary>
-        /// execution of command completed in all 
+        /// execution of command completed in all
         /// computernames/runspaces
         /// </summary>
         Completed = 2,
@@ -94,7 +94,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Defines exception which is thrown when state of the PSJob is different 
+    /// Defines exception which is thrown when state of the PSJob is different
     /// from the expected state.
     /// </summary>
     [Serializable]
@@ -129,7 +129,7 @@ namespace System.Management.Automation
         /// Creates a new instance of InvalidPSJobStateException class.
         /// </summary>
         /// <param name="message">
-        /// The error message that explains the reason for the exception. 
+        /// The error message that explains the reason for the exception.
         /// </param>
         /// <param name="innerException">
         /// The exception that is the cause of the current exception.
@@ -162,7 +162,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the InvalidPSJobStateException and defines value of 
+        /// Initializes a new instance of the InvalidPSJobStateException and defines value of
         /// CurrentState.
         /// </summary>
         /// <param name="currentState">Current state of powershell</param>
@@ -188,11 +188,11 @@ namespace System.Management.Automation
         /// class with serialized data.
         /// </summary>
         /// <param name="info">
-        /// The <see cref="SerializationInfo"/> that holds the serialized object 
+        /// The <see cref="SerializationInfo"/> that holds the serialized object
         /// data about the exception being thrown.
         /// </param>
         /// <param name="context">
-        /// The <see cref="StreamingContext"/> that contains contextual information 
+        /// The <see cref="StreamingContext"/> that contains contextual information
         /// about the source or destination.
         /// </param>
         protected
@@ -222,7 +222,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Type which has information about JobState and Exception 
+    /// Type which has information about JobState and Exception
     /// ,if any, associated with JobState
     /// </summary>
     public sealed class JobStateInfo
@@ -242,7 +242,7 @@ namespace System.Management.Automation
         /// Constructor for state changes with an optional error.
         /// </summary>
         /// <param name="state">The new state.</param>
-        /// <param name="reason">A non-null exception if the state change was 
+        /// <param name="reason">A non-null exception if the state change was
         /// caused by an error,otherwise; null.
         /// </param>
         public JobStateInfo(JobState state, Exception reason)
@@ -281,8 +281,8 @@ namespace System.Management.Automation
         /// The reason for the state change, if caused by an error.
         /// </summary>
         /// <remarks>
-        /// The value of this property is non-null if the state 
-        /// changed due to an error. Otherwise, the value of this 
+        /// The value of this property is non-null if the state
+        /// changed due to an error. Otherwise, the value of this
         /// property is null.
         /// </remarks>
         public Exception Reason { get; }
@@ -563,7 +563,7 @@ namespace System.Management.Automation
         public string Command { get; }
 
         /// <summary>
-        /// Status of the  command execution. 
+        /// Status of the  command execution.
         /// </summary>
         public JobStateInfo JobStateInfo { get; private set; } = new JobStateInfo(JobState.NotStarted);
 
@@ -601,7 +601,7 @@ namespace System.Management.Automation
         public Guid InstanceId { get; } = Guid.NewGuid();
 
         /// <summary>
-        /// Short identifier for this result which will be 
+        /// Short identifier for this result which will be
         /// recycled and used within a process
         /// </summary>
         public Int32 Id { get; }
@@ -644,13 +644,13 @@ namespace System.Management.Automation
         }
 
         ///<summary>
-        /// Success status of the command execution. 
+        /// Success status of the command execution.
         /// </summary>
         public abstract String StatusMessage { get; }
 
         /// <summary>
         /// Indicates that more data is available in this
-        /// result object for reading. 
+        /// result object for reading.
         /// </summary>
         public abstract bool HasMoreData { get; }
 
@@ -679,8 +679,8 @@ namespace System.Management.Automation
         #region results
 
         /// <summary>
-        /// Result objects from this job. If this object is not a 
-        /// leaf node (with no children), then this will 
+        /// Result objects from this job. If this object is not a
+        /// leaf node (with no children), then this will
         /// aggregate the results from all child jobs
         /// </summary>
         internal PSDataCollection<PSStreamObject> Results
@@ -987,7 +987,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This method is introduce for delaying the loading of streams
-        /// for a particular job. 
+        /// for a particular job.
         /// </summary>
         protected virtual void DoLoadJobStreams()
         {
@@ -1227,12 +1227,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the warning buffer. Warnings of job are written to 
+        /// Gets or sets the warning buffer. Warnings of job are written to
         /// this buffer
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// Cannot set to a null value.
-        /// </exception>        
+        /// </exception>
         /// <exception cref="ObjectDisposedException">
         /// Object is disposed.
         /// </exception>
@@ -1261,12 +1261,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Gets or sets the information buffer. Information records of job are written to 
+        /// Gets or sets the information buffer. Information records of job are written to
         /// this buffer
         /// </summary>
         /// <exception cref="ArgumentNullException">
         /// Cannot set to a null value.
-        /// </exception>        
+        /// </exception>
         /// <exception cref="ObjectDisposedException">
         /// Object is disposed.
         /// </exception>
@@ -1305,7 +1305,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns boolean indicating whether the underlying
-        /// transport for the job (or child jobs) supports 
+        /// transport for the job (or child jobs) supports
         /// connect/disconnect semantics.
         /// </summary>
         internal virtual bool CanDisconnect
@@ -1421,7 +1421,7 @@ namespace System.Management.Automation
                     tracer.TraceException(exception);
                 }
 
-                // finished needs to be set after StateChanged event 
+                // finished needs to be set after StateChanged event
                 // has been raised
                 if (alldone)
                 {
@@ -1453,7 +1453,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns the items in results collection
-        /// after clearing up all the internal 
+        /// after clearing up all the internal
         /// structures
         /// </summary>
         /// <returns>collection of stream objects</returns>
@@ -1496,7 +1496,7 @@ namespace System.Management.Automation
         /// If changes are not allowed, throws an exception.
         /// </summary>
         /// <exception cref="InvalidOperationException">
-        /// Powershell instance cannot be changed in its 
+        /// Powershell instance cannot be changed in its
         /// current state.
         /// </exception>
         /// <exception cref="ObjectDisposedException">
@@ -1520,7 +1520,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <returns>auto generated job name</returns>
         /// <remarks>Since the user can script/program against the
-        /// job name, the auto generated name will not be 
+        /// job name, the auto generated name will not be
         /// localizable</remarks>
         protected String AutoGenerateJobName()
         {
@@ -1594,7 +1594,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Release all the resources. 
+        /// Release all the resources.
         /// </summary>
         /// <param name="disposing">
         /// if true, release all the managed objects.
@@ -1687,12 +1687,12 @@ namespace System.Management.Automation
         #region Internal Constructors
 
         /// <summary>
-        /// Internal constructor for initializing PSRemotingJob using 
+        /// Internal constructor for initializing PSRemotingJob using
         /// computer names
         /// </summary>
         /// <param name="computerNames">names of computers for
         /// which the job object is being created</param>
-        /// <param name="computerNameHelpers">list of helper objects 
+        /// <param name="computerNameHelpers">list of helper objects
         /// corresponding to the computer names
         /// </param>
         /// <param name="remoteCommand">remote command corresponding to this
@@ -1712,7 +1712,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="remoteRunspaceInfos">array of runspace info
         /// objects on which the remote command is executed</param>
-        /// <param name="runspaceHelpers">List of helper objects for the 
+        /// <param name="runspaceHelpers">List of helper objects for the
         /// runspaces</param>
         /// <param name="remoteCommand"> remote command corresponding to this
         /// job object</param>
@@ -1726,12 +1726,12 @@ namespace System.Management.Automation
 
 
         /// <summary>
-        /// Internal constructor for initializing PSRemotingJob using 
+        /// Internal constructor for initializing PSRemotingJob using
         /// computer names
         /// </summary>
         /// <param name="computerNames">names of computers for
         /// which the result object is being created</param>
-        /// <param name="computerNameHelpers">list of helper objects 
+        /// <param name="computerNameHelpers">list of helper objects
         /// corresponding to the computer names
         /// </param>
         /// <param name="remoteCommand">remote command corresponding to this
@@ -1765,7 +1765,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="remoteRunspaceInfos">array of runspace info
         /// objects on which the remote command is executed</param>
-        /// <param name="runspaceHelpers">List of helper objects for the 
+        /// <param name="runspaceHelpers">List of helper objects for the
         /// runspaces</param>
         /// <param name="remoteCommand"> remote command corresponding to this
         /// result object</param>
@@ -1808,7 +1808,7 @@ namespace System.Management.Automation
             : base(string.Empty, name)
         {
             // All pipeline objects must be in "disconnected" state and associated to running
-            // remote commands.  Once the jobs are connected they can be stopped using the 
+            // remote commands.  Once the jobs are connected they can be stopped using the
             // ExecutionCmdletHelperRunspace object and ThrottleManager.
             foreach (ExecutionCmdletHelper helper in helpers)
             {
@@ -1861,7 +1861,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get entity result for the specified computer
         /// </summary>
-        /// <param name="computerName">computername for which entity 
+        /// <param name="computerName">computername for which entity
         /// result is required</param>
         /// <returns>entity result</returns>
         internal List<Job> GetJobsForComputer(String computerName)
@@ -1885,7 +1885,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get entity result for the specified runspace
         /// </summary>
-        /// <param name="runspace">runspace for which entity 
+        /// <param name="runspace">runspace for which entity
         /// result is required</param>
         /// <returns>entity result</returns>
         internal List<Job> GetJobsForRunspace(PSSession runspace)
@@ -1907,7 +1907,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get entity result for the specified helper object
         /// </summary>
-        /// <param name="operation">helper for which entity 
+        /// <param name="operation">helper for which entity
         /// result is required</param>
         /// <returns>entity result</returns>
         internal List<Job> GetJobsForOperation(IThrottleOperation operation)
@@ -2084,7 +2084,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Finds the disconnected child job associated with this runspace and returns 
+        /// Finds the disconnected child job associated with this runspace and returns
         /// the PowerShell object that is remotely executing the command.
         /// </summary>
         /// <param name="runspaceInstanceId">Runspace instance Id.</param>
@@ -2102,7 +2102,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Helper method to find a disconnected child job associated with 
+        /// Helper method to find a disconnected child job associated with
         /// a given runspace.
         /// </summary>
         /// <param name="runspaceInstanceId">Runspace Id.</param>
@@ -2163,9 +2163,9 @@ namespace System.Management.Automation
         {
             get
             {
-                // moreData is initially set to true, and it 
-                // will remain so until the async result 
-                // object has completed execution. 
+                // moreData is initially set to true, and it
+                // will remain so until the async result
+                // object has completed execution.
 
                 if (_moreData && IsFinishedState(JobStateInfo.State))
                 {
@@ -2190,7 +2190,7 @@ namespace System.Management.Automation
 
         private bool _stopIsCalled = false;
         /// <summary>
-        /// Stop Job 
+        /// Stop Job
         /// </summary>
         public override void StopJob()
         {
@@ -2474,7 +2474,7 @@ namespace System.Management.Automation
 
                     if ((newState == JobState.Running) && (JobStateInfo.State == JobState.Disconnected))
                     {
-                        // Note that SetJobState() takes a lock so it is unnecessary to do 
+                        // Note that SetJobState() takes a lock so it is unnecessary to do
                         // this under a lock here.
                         SetJobState(JobState.Running, null);
                     }
@@ -2485,7 +2485,7 @@ namespace System.Management.Automation
         #endregion finish logic
 
         /// <summary>
-        /// Release all the resources. 
+        /// Release all the resources.
         /// </summary>
         /// <param name="disposing">
         /// if true, release all the managed objects.
@@ -2560,7 +2560,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns boolean indicating whether the underlying
-        /// transport for the job (or child jobs) supports 
+        /// transport for the job (or child jobs) supports
         /// connect/disconnect semantics.
         /// </summary>
         internal override bool CanDisconnect
@@ -2620,7 +2620,7 @@ namespace System.Management.Automation
 
         private ThrottleManager _throttleManager = new ThrottleManager();
 
-        private readonly object _syncObject = new object();           // sync object      
+        private readonly object _syncObject = new object();           // sync object
 
         #endregion Private Members
     }
@@ -2696,7 +2696,7 @@ namespace System.Management.Automation
 
     /// <summary>
     /// Class for RemotingChildJob object. This job object invokes command
-    /// on one remote machine. 
+    /// on one remote machine.
     /// </summary>
     /// <remarks>
     /// TODO: I am not sure whether to change this internal to just RemotingChildJob.
@@ -2712,7 +2712,7 @@ namespace System.Management.Automation
         /// Creates an instance of PSRemotingChildJob
         /// </summary>
         /// <param name="remoteCommand">command invoked by this job object</param>
-        /// 
+        ///
         /// <param name="helper"></param>
         /// <param name="throttleManager"></param>
         internal PSRemotingChildJob(string remoteCommand, ExecutionCmdletHelper helper, ThrottleManager throttleManager)
@@ -2742,7 +2742,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Constructs a disconnected child job that is able to connect to a remote
         /// runspace/command on a server.  The ExecutionCmdletHelperRunspace must
-        /// contain a remote pipeline object in a disconnected state.  In addition 
+        /// contain a remote pipeline object in a disconnected state.  In addition
         /// the pipeline runspace must be associated with a valid running remote
         /// command that can be connected to.
         /// </summary>
@@ -2801,15 +2801,6 @@ namespace System.Management.Automation
             }
 
             _remotePipeline.ConnectAsync();
-        }
-
-        /// <summary>
-        /// Removes job data aggregation callbacks.  Used for jobs
-        /// stopped in debugger so that debugger can access data.
-        /// </summary>
-        internal void RemoveJobAggregation()
-        {
-            RemoveAggreateCallbacksFromHelper(Helper);
         }
 
         #endregion
@@ -2888,7 +2879,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public Runspace Runspace { get; }
 
@@ -2929,7 +2920,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns boolean indicating whether the underlying
-        /// transport for the job (or child jobs) supports 
+        /// transport for the job (or child jobs) supports
         /// connect/disconnect semantics.
         /// </summary>
         internal override bool CanDisconnect
@@ -3004,7 +2995,7 @@ namespace System.Management.Automation
                 if (dataObject != null)
                 {
                     // if the server has already added some properties, which we do not
-                    // want to trust, we simply replace them with the server's 
+                    // want to trust, we simply replace them with the server's
                     // identity we know of
 
                     if (dataObject.Properties[RemotingConstants.ComputerNameNoteProperty] != null)
@@ -3037,7 +3028,7 @@ namespace System.Management.Automation
         /// pipeline. The error records are queued on to the
         /// internal stream
         /// </summary>
-        /// <param name="sender">the pipeline reader which raised 
+        /// <param name="sender">the pipeline reader which raised
         /// this event</param>
         /// <param name="eventArgs">information describing the ready event</param>
         private void HandleErrorReady(object sender, EventArgs eventArgs)
@@ -3058,7 +3049,7 @@ namespace System.Management.Automation
                         new RemotingErrorRecord(er, originInfo);
                     errorRecord.PreserveInvocationInfoOnce = true;
 
-                    //ISSUE: Add an Assert for ErrorRecord. 
+                    //ISSUE: Add an Assert for ErrorRecord.
                     //Add to the PSRemotingChild jobs streams
                     this.WriteError(errorRecord);
                 }
@@ -3075,32 +3066,6 @@ namespace System.Management.Automation
         {
             string message = StringUtil.Format(RemotingErrorIdStrings.URIRedirectWarningToHost, eventArgs.Data.OriginalString);
             this.WriteWarning(message);
-        }
-
-        /// <summary>
-        /// Used to detect an Invoke-Command running command breakpoint hit.
-        /// In this case disconnect the runspace so that a debugger can be
-        /// attached later by the user.
-        /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
-        protected void HandleRunspaceAvailabilityChangedForInvoke(object sender, RunspaceAvailabilityEventArgs e)
-        {
-            RemoteRunspace remoteRunspace = sender as RemoteRunspace;
-            if (remoteRunspace != null &&
-                e.RunspaceAvailability == RunspaceAvailability.RemoteDebug)
-            {
-                remoteRunspace.AvailabilityChanged -= HandleRunspaceAvailabilityChangedForInvoke;
-
-                try
-                {
-                    remoteRunspace.DisconnectAsync();
-                }
-                catch (PSNotImplementedException) { }
-                catch (InvalidRunspacePoolStateException) { }
-                catch (InvalidRunspaceStateException) { }
-                catch (PSInvalidOperationException) { }
-            }
         }
 
         /// <summary>
@@ -3146,10 +3111,6 @@ namespace System.Management.Automation
                 // since we got state changed event..we dont need to listen on
                 // URI redirections anymore
                 ((RemoteRunspace)Runspace).URIRedirectionReported -= HandleURIDirectionReported;
-
-                // We monitor runspace RemoteDebug availability only while
-                // this pipeline is running.
-                ((RemoteRunspace)Runspace).AvailabilityChanged -= HandleRunspaceAvailabilityChangedForInvoke;
             }
 
             PipelineState state = e.PipelineStateInfo.State;
@@ -3189,9 +3150,9 @@ namespace System.Management.Automation
         {
             //Question: Why do we register for HandleThrottleComplete when we have already
             //registered for PipelineStateChangedEvent?
-            //Answer: Because ThrottleManager at a given time can have some pipelines which are 
+            //Answer: Because ThrottleManager at a given time can have some pipelines which are
             //still not started. If TM.Stop() is called, then it simply discards those pipelines and
-            //PipelineStateChangedEvent is not called for them. For such jobs, we depend on 
+            //PipelineStateChangedEvent is not called for them. For such jobs, we depend on
             //HandleThrottleComplete to mark the finish of job.
 
             //Question: So it is possible in some cases DoFinish can be called twice.
@@ -3208,7 +3169,7 @@ namespace System.Management.Automation
         /// <param name="stateEventArgs">operation complete event args</param>
         protected virtual void HandleOperationComplete(object sender, OperationStateEventArgs stateEventArgs)
         {
-            //Question:Why are we registering for OperationComplete if we already 
+            //Question:Why are we registering for OperationComplete if we already
             //registering for StateChangedEvent and ThrottleComplete event
             //Answer:Because in case of computer, if Runspace.Open it self fails,
             //no pipeline is created and no pipeline state changed event is raised.
@@ -3223,7 +3184,7 @@ namespace System.Management.Automation
         private bool _doFinishCalled = false;
 
         /// <summary>
-        /// This method marks the completion state for Job. Also if job failed, it processes the 
+        /// This method marks the completion state for Job. Also if job failed, it processes the
         /// reason of failure.
         /// </summary>
         protected virtual void DoFinish()
@@ -3271,14 +3232,14 @@ namespace System.Management.Automation
                             out ErrorRecord failureErrorRecord)
         {
             //      There are three errors possible
-            //      1. The remote runspace is in (or went into) a 
+            //      1. The remote runspace is in (or went into) a
             //         broken state. This information is available
             //         in the runspace state information
             //      2. The remote pipeline failed because of an
             //         exception. This information is available
             //         in the pipeline state information
             //      3. Runspace.OpenAsync or Pipeline.InvokeAsync threw exception
-            //         They are in Helper.InternalException               
+            //         They are in Helper.InternalException
 
             Dbg.Assert(helper != null, "helper is null");
 
@@ -3309,7 +3270,8 @@ namespace System.Management.Automation
                             helper);
             }
             // there is a failure reason available in the runspace
-            else if (runspace.RunspaceStateInfo.State == RunspaceState.Broken)
+            else if ((runspace.RunspaceStateInfo.State == RunspaceState.Broken) ||
+                     (runspace.RunspaceStateInfo.Reason != null))
             {
                 failureException = runspace.RunspaceStateInfo.Reason;
                 object targetObject = runspace.ConnectionInfo.ComputerName;
@@ -3382,9 +3344,9 @@ namespace System.Management.Automation
                     else
                     {
                         // at this point, there may be no failure reason available in
-                        // the runspace because the remoting protocol 
+                        // the runspace because the remoting protocol
                         // layer may not have yet assigned it to the runspace
-                        // in such a case, the remoting protocol layer would have 
+                        // in such a case, the remoting protocol layer would have
                         // assigned an exception in the client end to the pipeline
                         // create an error record from it and write it out
                         errorRecord = new ErrorRecord(pipeline.PipelineStateInfo.Reason,
@@ -3399,11 +3361,11 @@ namespace System.Management.Automation
 
                     failureErrorRecord = new RemotingErrorRecord(errorRecord, originInfo);
                 } // if (exception != null...
-            } // if (pipeline...                                
+            } // if (pipeline...
         }
 
         /// <summary>
-        /// Release all the resources. 
+        /// Release all the resources.
         /// </summary>
         /// <param name="disposing">
         /// if true, release all the managed objects.
@@ -3481,7 +3443,7 @@ namespace System.Management.Automation
             pipeline.Error.DataReady += new EventHandler(HandleErrorReady);
             pipeline.StateChanged += new EventHandler<PipelineStateEventArgs>(HandlePipelineStateChanged);
 
-            // Register handler for method executor object stream. 
+            // Register handler for method executor object stream.
             Dbg.Assert(pipeline is RemotePipeline, "pipeline is RemotePipeline");
             RemotePipeline remotePipeline = pipeline as RemotePipeline;
             remotePipeline.MethodExecutorStream.DataReady += new EventHandler(HandleHostCalls);
@@ -3496,7 +3458,7 @@ namespace System.Management.Automation
             remotePipeline.PowerShell.Streams.Information.DataAdded +=
                 new EventHandler<DataAddedEventArgs>(HandleInformationAdded);
 
-            // Enable method executor stream so that host methods are queued up 
+            // Enable method executor stream so that host methods are queued up
             // on it instead of being executed asynchronously when they arrive.
             remotePipeline.IsMethodExecutorStreamEnabled = true;
 
@@ -3628,12 +3590,6 @@ namespace System.Management.Automation
         /// aggregation has to be stopped</param>
         protected void StopAggregateResultsFromHelper(ExecutionCmdletHelper helper)
         {
-            // Ensure the Runspace availability handler is removed on command completion.
-            if (helper.PipelineRunspace != null)
-            {
-                helper.PipelineRunspace.AvailabilityChanged -= HandleRunspaceAvailabilityChangedForInvoke;
-            }
-
             // Get the pipeline associated with this helper and register for appropriate events
             RemoveAggreateCallbacksFromHelper(helper);
 
@@ -3776,7 +3732,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Monitor runspace availability and if it goes to RemoteDebug then set 
+        /// Monitor runspace availability and if it goes to RemoteDebug then set
         /// job state to Debug.  Set back to Running when availability goes back to
         /// Busy (indicating the script/command is running again).
         /// </summary>
@@ -3827,7 +3783,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// This is a debugger wrapper class used to allow debugging of 
+    /// This is a debugger wrapper class used to allow debugging of
     /// remoting jobs that implement the IJobDebugger interface.
     /// </summary>
     internal sealed class RemotingJobDebugger : Debugger
@@ -3879,7 +3835,7 @@ namespace System.Management.Automation
         #region Debugger overrides
 
         /// <summary>
-        /// Evaluates provided command either as a debugger specific command 
+        /// Evaluates provided command either as a debugger specific command
         /// or a PowerShell command.
         /// </summary>
         /// <param name="command">PowerShell command</param>
@@ -4123,7 +4079,6 @@ namespace System.Management.Automation
                 RemoteRunspace remoteRS = helper.Pipeline.Runspace as RemoteRunspace;
                 if (null != remoteRS)
                 {
-                    remoteRS.AvailabilityChanged += HandleRunspaceAvailabilityChangedForInvoke;
                     remoteRS.StateChanged += HandleRunspaceStateChanged;
 
                     if (remoteRS.RunspaceStateInfo.State == RunspaceState.BeforeOpen)
@@ -4186,7 +4141,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// release all resources 
+        /// release all resources
         /// </summary>
         /// <param name="disposing">true if called by Dispose()</param>
         protected override void Dispose(bool disposing)
@@ -4241,8 +4196,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Checks for a condition where all pipelines are either finished 
-        /// or disconnected and at least one pipeline is disconnected.  
+        /// Checks for a condition where all pipelines are either finished
+        /// or disconnected and at least one pipeline is disconnected.
         /// In this case the Job state is set to Disconnected.
         /// </summary>
         private void CheckForAndSetDisconnectedState(PipelineState pipelineState)
@@ -4274,7 +4229,7 @@ namespace System.Management.Automation
 
             if (setJobStateToDisconnected)
             {
-                // Job cannot finish with pipelines in disconnected state.  
+                // Job cannot finish with pipelines in disconnected state.
                 // Set Job state to Disconnected.
                 SetJobState(JobState.Disconnected);
             }
@@ -4291,7 +4246,7 @@ namespace System.Management.Automation
         private bool _doFinishCalled = false;
 
         /// <summary>
-        /// This method marks the completion state for Job. Also if job failed, it processes the 
+        /// This method marks the completion state for Job. Also if job failed, it processes the
         /// reason of failure.
         /// </summary>
         protected override void DoFinish()
@@ -4357,7 +4312,6 @@ namespace System.Management.Automation
                     if (e.RunspaceStateInfo.State != RunspaceState.Opened)
                     {
                         remoteRS.StateChanged -= HandleRunspaceStateChanged;
-                        remoteRS.AvailabilityChanged -= HandleRunspaceAvailabilityChangedForInvoke;
                     }
                 }
             }

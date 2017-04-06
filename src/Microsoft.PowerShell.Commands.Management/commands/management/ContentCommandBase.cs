@@ -105,29 +105,29 @@ namespace Microsoft.PowerShell.Commands
         /// An array of content holder objects that contain the path information
         /// and content readers/writers for the item represented by the path information.
         /// </summary>
-        /// 
+        ///
         internal List<ContentHolder> contentStreams = new List<ContentHolder>();
 
         /// <summary>
         /// Wraps the content into a PSObject and adds context information as notes
         /// </summary>
-        /// 
+        ///
         /// <param name="content">
         /// The content being written out.
         /// </param>
-        /// 
+        ///
         /// <param name="readCount">
         /// The number of blocks that have been read so far.
         /// </param>
-        /// 
+        ///
         /// <param name="pathInfo">
         /// The context the content was retrieved from.
         /// </param>
-        /// 
+        ///
         /// <param name="context">
         /// The context the command is being run under.
         /// </param>
-        /// 
+        ///
         internal void WriteContentObject(object content, long readCount, PathInfo pathInfo, CmdletProviderContext context)
         {
             Dbg.Diagnostics.Assert(
@@ -251,11 +251,11 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// Constructs a content cache item.
             /// </summary>
-            /// 
+            ///
             /// <param name="pathInfo">
             /// The path information for which the cache will be bound.
             /// </param>
-            /// 
+            ///
             public ContentPathsCache(PathInfo pathInfo)
             {
                 PathInfo = pathInfo;
@@ -264,51 +264,51 @@ namespace Microsoft.PowerShell.Commands
             /// <summary>
             /// The path information for the cached item.
             /// </summary>
-            /// 
+            ///
             public PathInfo PathInfo { get; }
 
             /// <summary>
             /// The cached PSPath of the item.
             /// </summary>
-            /// 
+            ///
             public String PSPath { get; set; }
 
             /// <summary>
             /// The cached parent path of the item.
             /// </summary>
-            /// 
+            ///
             public String ParentPath { get; set; }
 
             /// <summary>
             /// The cached drive for the item.
             /// </summary>
-            /// 
+            ///
             public PSDriveInfo Drive { get; set; }
 
             /// <summary>
             /// The cached provider of the item.
             /// </summary>
-            /// 
+            ///
             public ProviderInfo Provider { get; set; }
 
             /// <summary>
             /// The cached child name of the item.
             /// </summary>
-            /// 
+            ///
             public String ChildName { get; set; }
 
             /// <summary>
             /// Attaches the cached notes to the specified PSObject.
             /// </summary>
-            /// 
+            ///
             /// <param name="content">
             /// The PSObject to attached the cached notes to.
             /// </param>
-            /// 
+            ///
             /// <returns>
             /// The PSObject that was passed in with the cached notes added.
             /// </returns>
-            /// 
+            ///
             public PSObject AttachNotes(PSObject content)
             {
                 // Construct a provider qualified path as the Path note
@@ -353,7 +353,7 @@ namespace Microsoft.PowerShell.Commands
         /// A struct to hold the path information and the content readers/writers
         /// for an item.
         /// </summary>
-        /// 
+        ///
         internal struct ContentHolder
         {
             internal ContentHolder(
@@ -472,16 +472,16 @@ namespace Microsoft.PowerShell.Commands
         /// Overridden by derived classes to support ShouldProcess with
         /// the appropriate information.
         /// </summary>
-        /// 
+        ///
         /// <param name="path">
         /// The path to the item from which the content writer will be
         /// retrieved.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// True if the action should continue or false otherwise.
         /// </returns>
-        /// 
+        ///
         internal virtual bool CallShouldProcess(string path)
         {
             return true;
@@ -490,11 +490,11 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Gets the IContentReaders for the current path(s)
         /// </summary>
-        /// 
+        ///
         /// <returns>
         /// An array of IContentReaders for the current path(s)
         /// </returns>
-        /// 
+        ///
         internal List<ContentHolder> GetContentReaders(
             string[] readerPaths,
             CmdletProviderContext currentCommandContext)
@@ -576,28 +576,28 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Resolves the specified paths to PathInfo objects
         /// </summary>
-        /// 
+        ///
         /// <param name="pathsToResolve">
         /// The paths to be resolved. Each path may contain glob characters.
         /// </param>
-        /// 
+        ///
         /// <param name="allowNonexistingPaths">
         /// If true, resolves the path even if it doesn't exist.
         /// </param>
-        /// 
+        ///
         /// <param name="allowEmptyResult">
         /// If true, allows a wildcard that returns no results.
         /// </param>
-        /// 
+        ///
         /// <param name="currentCommandContext">
         /// The context under which the command is running.
         /// </param>
-        /// 
+        ///
         /// <returns>
         /// An array of PathInfo objects that are the resolved paths for the
         /// <paramref name="pathsToResolve"/> parameter.
         /// </returns>
-        /// 
+        ///
         internal Collection<PathInfo> ResolvePaths(
             string[] pathsToResolve,
             bool allowNonexistingPaths,

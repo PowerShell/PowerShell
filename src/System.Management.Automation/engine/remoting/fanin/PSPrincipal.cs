@@ -162,6 +162,11 @@ namespace System.Management.Automation.Remoting
             internal set { _applicationArguments = value; }
         }
 
+        /// <summary>
+        /// "ConfigurationName" from the sever remote session
+        /// </summary>
+        public string ConfigurationName { get; internal set; }
+
         #endregion
     }
 
@@ -278,9 +283,9 @@ namespace System.Management.Automation.Remoting
         /// Gets the type of authentication used.
         /// For a WSMan service authenticated user this will be one of the following:
         ///  WSMAN_DEFAULT_AUTHENTICATION
-        ///  WSMAN_NO_AUTHENTICATION 
-        ///  WSMAN_AUTH_DIGEST           
-        ///  WSMAN_AUTH_NEGOTIATE 
+        ///  WSMAN_NO_AUTHENTICATION
+        ///  WSMAN_AUTH_DIGEST
+        ///  WSMAN_AUTH_NEGOTIATE
         ///  WSMAN_AUTH_BASIC
         ///  WSMAN_AUTH_KERBEROS
         ///  WSMAN_AUTH_CLIENT_CERTIFICATE
@@ -312,9 +317,9 @@ namespace System.Management.Automation.Remoting
         /// Type of authentication used to authenticate this user.
         /// For a WSMan service authenticated user this will be one of the following:
         ///  WSMAN_DEFAULT_AUTHENTICATION
-        ///  WSMAN_NO_AUTHENTICATION 
-        ///  WSMAN_AUTH_DIGEST           
-        ///  WSMAN_AUTH_NEGOTIATE 
+        ///  WSMAN_NO_AUTHENTICATION
+        ///  WSMAN_AUTH_DIGEST
+        ///  WSMAN_AUTH_NEGOTIATE
         ///  WSMAN_AUTH_BASIC
         ///  WSMAN_AUTH_KERBEROS
         ///  WSMAN_AUTH_CLIENT_CERTIFICATE

@@ -26,8 +26,11 @@ using Microsoft.PowerShell.CoreClr.Stubs;         /* used in facade API 'GetFile
 using System.Management.Automation.Internal;
 using System.Text.RegularExpressions;
 #else
-using Microsoft.PowerShell.Commands.Internal; /* used in the facade APIs related to 'SafeProcessHandle' */
 using System.Runtime.Serialization;           /* used in facade API 'GetUninitializedObject' */
+#endif
+#if !UNIX
+using System.ComponentModel;                  /* used in the facade API RetrieveProcessUserName */
+using Microsoft.PowerShell.Commands.Internal; /* used in the facade APIs related to 'SafeProcessHandle' and 'RetreiveUserName' */
 #endif
 
 namespace System.Management.Automation
@@ -35,7 +38,7 @@ namespace System.Management.Automation
     /// <summary>
     /// ClrFacade contains all diverging code (different implementation for FullCLR and CoreCLR using if/def).
     /// It exposes common APIs that can be used by the rest of the code base.
-    /// </summary>    
+    /// </summary>
     internal static class ClrFacade
     {
         /// <summary>
@@ -113,6 +116,160 @@ namespace System.Management.Automation
             return process.Handle;
 #endif
         }
+
+#region Facade for AddProcessProperties
+
+        /// <summary>
+        /// Ensures the 'UserName' and 'HandleCount' Properties exist the Process object.
+        /// </summary>
+        /// <param name="process"></param>
+        /// <param name="includeUserName"></param>
+        /// <returns></returns>
+        internal static PSObject AddProcessProperties(bool includeUserName, Process process)
+        {
+            PSObject processAsPsobj = includeUserName ? AddUserNameToProcess(process) : PSObject.AsPSObject(process);
+#if CORECLR
+            // In CoreCLR, the System.Diagnostics.Process.HandleCount property does not exist.
+            // I am adding a note property HandleCount and temporarily setting it to zero.
+            // This issue will be fix for RTM and it is tracked by 5024994: Get-process does not populate the Handles field.
+            PSMemberInfo hasHandleCount = processAsPsobj.Properties["HandleCount"];
+            if (hasHandleCount == null)
+            {
+                PSNoteProperty noteProperty = new PSNoteProperty("HandleCount", 0);
+                processAsPsobj.Properties.Add(noteProperty, true);
+                processAsPsobj.TypeNames.Insert(0, "System.Diagnostics.Process#HandleCount");
+            }
+#endif
+            return processAsPsobj;
+        }
+        /// <summary>
+        /// New PSTypeName added to the process object
+        /// </summary>
+        private const string TypeNameForProcessWithUserName = "System.Diagnostics.Process#IncludeUserName";
+
+        /// <summary>
+        /// Add the 'UserName' NoteProperty to the Process object
+        /// </summary>
+        /// <param name="process"></param>
+        /// <returns></returns>
+        private static PSObject AddUserNameToProcess(Process process)
+        {
+            // Return null if we failed to get the owner information
+            string userName = ClrFacade.RetrieveProcessUserName(process);
+
+            PSObject processAsPsobj = PSObject.AsPSObject(process);
+            PSNoteProperty noteProperty = new PSNoteProperty("UserName", userName);
+
+            processAsPsobj.Properties.Add(noteProperty, true);
+            processAsPsobj.TypeNames.Insert(0, TypeNameForProcessWithUserName);
+
+            return processAsPsobj;
+        }
+
+
+        /// <summary>
+        /// Retrieve the UserName through PInvoke
+        /// </summary>
+        /// <param name="process"></param>
+        /// <returns></returns>
+        private static string RetrieveProcessUserName(Process process)
+        {
+            string userName = null;
+#if UNIX
+            userName = Platform.NonWindowsGetUserFromPid(process.Id);
+#else
+            IntPtr tokenUserInfo = IntPtr.Zero;
+            IntPtr processTokenHandler = IntPtr.Zero;
+
+            const uint TOKEN_QUERY = 0x0008;
+
+            try
+            {
+                do
+                {
+                    int error;
+                    if (!Win32Native.OpenProcessToken(ClrFacade.GetSafeProcessHandle(process), TOKEN_QUERY, out processTokenHandler)) { break; }
+
+                    // Set the default length to be 256, so it will be sufficient for most cases
+                    int tokenInfoLength = 256;
+                    tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
+                    if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength))
+                    {
+                        error = Marshal.GetLastWin32Error();
+                        if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
+                        {
+                            Marshal.FreeHGlobal(tokenUserInfo);
+                            tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
+
+                            if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength)) { break; }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    var tokenUser = ClrFacade.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
+
+                    // Set the default length to be 256, so it will be sufficient for most cases
+                    int userNameLength = 256, domainNameLength = 256;
+                    var userNameStr = new StringBuilder(userNameLength);
+                    var domainNameStr = new StringBuilder(domainNameLength);
+                    Win32Native.SID_NAME_USE accountType;
+
+                    if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
+                    {
+                        error = Marshal.GetLastWin32Error();
+                        if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
+                        {
+                            userNameStr.EnsureCapacity(userNameLength);
+                            domainNameStr.EnsureCapacity(domainNameLength);
+
+                            if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType)) { break; }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    userName = domainNameStr + "\\" + userNameStr;
+                } while (false);
+            }
+            catch (NotSupportedException)
+            {
+                // The Process not started yet, or it's a process from a remote machine
+            }
+            catch (InvalidOperationException)
+            {
+                // The Process has exited, Process.Handle will raise this exception
+            }
+            catch (Win32Exception)
+            {
+                // We might get an AccessDenied error
+            }
+            catch (Exception)
+            {
+                // I don't expect to get other exceptions,
+            }
+            finally
+            {
+                if (tokenUserInfo != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(tokenUserInfo);
+                }
+
+                if (processTokenHandler != IntPtr.Zero)
+                {
+                    Win32Native.CloseHandle(processTokenHandler);
+                }
+            }
+
+#endif
+            return userName;
+        }
+
+#endregion
 
 #if CORECLR
         /// <summary>
@@ -258,7 +415,7 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="namespaceQualifiedTypeName">
         /// In CoreCLR context, if it's for string-to-type conversion and the namespace qualified type name is known, pass it in so that
-        /// powershell can load the necessary TPA if the target type is from an unloaded TPA. 
+        /// powershell can load the necessary TPA if the target type is from an unloaded TPA.
         /// </param>
         internal static IEnumerable<Assembly> GetAssemblies(string namespaceQualifiedTypeName = null)
         {
@@ -373,22 +530,26 @@ namespace System.Management.Automation
         #region Encoding
 
         /// <summary>
-        /// Facade for Encoding.Default
+        /// Facade for getting default encoding
         /// </summary>
         internal static Encoding GetDefaultEncoding()
         {
             if (s_defaultEncoding == null)
             {
-#if CORECLR     // Encoding.Default is not in CoreCLR
-                // As suggested by CoreCLR team (tarekms), use latin1 (ISO-8859-1, CodePage 28591) as the default encoding.
-                // We will revisit this if it causes any failures when running tests on Core PS.
-                s_defaultEncoding = Encoding.GetEncoding(28591);
-#else
+#if UNIX        // PowerShell Core on Unix
+                s_defaultEncoding = new UTF8Encoding(false);
+#elif CORECLR   // PowerShell Core on Windows
+                EncodingRegisterProvider();
+
+                uint currentAnsiCp = NativeMethods.GetACP();
+                s_defaultEncoding = Encoding.GetEncoding((int)currentAnsiCp);
+#else           // Windows PowerShell
                 s_defaultEncoding = Encoding.Default;
 #endif
             }
             return s_defaultEncoding;
         }
+
         private static volatile Encoding s_defaultEncoding;
 
         /// <summary>
@@ -398,17 +559,33 @@ namespace System.Management.Automation
         {
             if (s_oemEncoding == null)
             {
-#if CORECLR     // The OEM code page '437' is not supported by CoreCLR.
-                // Use the default encoding (ISO-8859-1, CodePage 28591) as the OEM encoding in OneCore powershell.
+#if UNIX        // PowerShell Core on Unix
                 s_oemEncoding = GetDefaultEncoding();
-#else
+#elif CORECLR   // PowerShell Core on Windows
+                EncodingRegisterProvider();
+
                 uint oemCp = NativeMethods.GetOEMCP();
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
-#endif   
+
+#else           // Windows PowerShell
+                uint oemCp = NativeMethods.GetOEMCP();
+                s_oemEncoding = Encoding.GetEncoding((int)oemCp);
+#endif
             }
             return s_oemEncoding;
         }
+
         private static volatile Encoding s_oemEncoding;
+
+#if CORECLR
+        private static void EncodingRegisterProvider()
+        {
+            if (s_defaultEncoding == null && s_oemEncoding == null)
+            {
+                Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
+            }
+        }
+#endif
 
         #endregion Encoding
 
@@ -427,7 +604,7 @@ namespace System.Management.Automation
             if (Utils.NativeFileExists(urlmonPath))
             {
                 return MapSecurityZoneWithUrlmon(filePath);
-            }	
+            }
             return MapSecurityZoneWithoutUrlmon(filePath);
 #else
             return MapSecurityZoneWithUrlmon(filePath);
@@ -443,10 +620,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// The algorithm is as follows:
-        /// 
+        ///
         /// 1. Alternate data stream "Zone.Identifier" is checked first. If this alternate data stream has content, then the content is parsed to determine the SecurityZone.
         /// 2. If the alternate data stream "Zone.Identifier" doesn't exist, or its content is not expected, then the file path will be analyzed to determine the SecurityZone.
-        /// 
+        ///
         /// For #1, the parsing rules are observed as follows:
         ///   A. Read content of the data stream line by line. Each line is trimmed.
         ///   B. Try to match the current line with '^\[ZoneTransfer\]'.
@@ -457,7 +634,7 @@ namespace System.Management.Automation
         ///        - if not matching, then continue to do step (#C) with the next line.
         ///   D. Reach EOF, then return 'NoZone'.
         /// After #1, if the returned SecurityZone is 'NoZone', then proceed with #2. Otherwise, return it as the mapping result.
-        /// 
+        ///
         /// For #2, the analysis rules are observed as follows:
         ///   A. If the path is a UNC path, then
         ///       - if the host name of the UNC path is IP address, then mapping it to "Internet" zone.
@@ -467,7 +644,7 @@ namespace System.Management.Automation
         ///       - if the drive is CDRom, mapping it to "Untrusted" zone
         ///       - if the drive is Network, mapping it to "Intranet" zone
         ///       - otherwise, mapping it to "MyComputer" zone.
-        /// 
+        ///
         /// The above algorithm has two changes comparing to the behavior of "Zone.CreateFromUrl" I observed:
         ///   (1) If a file downloaded from internet (ZoneId=3) is not on the local machine, "Zone.CreateFromUrl" won't respect the MOTW.
         ///       I think it makes more sense for powershell to always check the MOTW first, even for files not on local box.
@@ -479,7 +656,7 @@ namespace System.Management.Automation
             SecurityZone reval = ReadFromZoneIdentifierDataStream(filePath);
             if (reval != SecurityZone.NoZone) { return reval; }
 
-            // If it reaches here, then we either couldn't get the ZoneId information, or the ZoneId is invalid. 
+            // If it reaches here, then we either couldn't get the ZoneId information, or the ZoneId is invalid.
             // In this case, we try to determine the SecurityZone by analyzing the file path.
             Uri uri = new Uri(filePath);
             if (uri.IsUnc)
@@ -570,7 +747,7 @@ namespace System.Management.Automation
             }
             catch (FileNotFoundException)
             {
-                // FileNotFoundException may be thrown by AlternateDataStreamUtilities.CreateFileStream when the data stream 'Zone.Identifier' 
+                // FileNotFoundException may be thrown by AlternateDataStreamUtilities.CreateFileStream when the data stream 'Zone.Identifier'
                 // does not exist, or when the underlying file system doesn't support alternate data stream.
             }
 
@@ -660,6 +837,36 @@ namespace System.Management.Automation
         #endregion Culture
 
         #region Misc
+
+        /// <summary>
+        /// Facade for Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks)
+        /// Inserts line breaks after every 76 characters in the string representation.
+        /// </summary>
+        internal static string ToBase64StringWithLineBreaks(byte[] bytes)
+        {
+#if CORECLR
+            // Inserts line breaks after every 76 characters in the string representation.
+            string encodedRawString = Convert.ToBase64String(bytes);
+            if (encodedRawString.Length <= 76)
+                return encodedRawString;
+            
+            StringBuilder builder = new StringBuilder(encodedRawString.Length);
+            int index = 0, remainingLen = encodedRawString.Length;
+            while (remainingLen > 76)
+            {
+                builder.Append(encodedRawString, index, 76);
+                builder.Append(System.Environment.NewLine);
+
+                index += 76;
+                remainingLen -= 76;
+            }
+
+            builder.Append(encodedRawString, index, remainingLen);
+            return builder.ToString();
+#else
+            return Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);
+#endif
+        }
 
         /// <summary>
         /// Facade for RemotingServices.IsTransparentProxy(object)
@@ -756,11 +963,11 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Facade for FormatterServices.GetUninitializedObject.
-        /// 
+        ///
         /// In CORECLR, there are two peculiarities with its implementation that affect our own:
         /// 1. Structures cannot be instantiated using GetConstructor, so they must be filtered out.
         /// 2. Classes must have a default constructor implemented for GetConstructor to work.
-        /// 
+        ///
         /// See RemoteHostEncoder.IsEncodingAllowedForClassOrStruct for a list of the required types.
         /// </summary>
         /// <param name="type"></param>
@@ -845,6 +1052,12 @@ namespace System.Management.Automation
             /// </summary>
             [DllImport(PinvokeDllNames.GetOEMCPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
             internal static extern uint GetOEMCP();
+
+            /// <summary>
+            /// Pinvoke for GetACP to get the Windows operating system code page.
+            /// </summary>
+            [DllImport(PinvokeDllNames.GetACPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
+            internal static extern uint GetACP();
 
             public const int S_OK = 0x00000000;
 

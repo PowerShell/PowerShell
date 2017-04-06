@@ -3,7 +3,7 @@
 
     BeforeEach {
         Remove-Module -Name $moduleName -Force
-        (Get-Module -Name $moduleName).Name | Should BeNullOrEmpty 
+        (Get-Module -Name $moduleName).Name | Should BeNullOrEmpty
     }
 
     AfterEach {
@@ -12,7 +12,7 @@
     }
 
     It "should be able to add a module with using Name switch" {
-        { Import-Module -Name $moduleName } | Should Not Throw        
+        { Import-Module -Name $moduleName } | Should Not Throw
         (Get-Module -Name $moduleName).Name | Should Be $moduleName
     }
 

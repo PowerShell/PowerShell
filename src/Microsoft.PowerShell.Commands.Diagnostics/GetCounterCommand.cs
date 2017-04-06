@@ -205,15 +205,21 @@ namespace Microsoft.PowerShell.Commands
         //
         protected override void BeginProcessing()
         {
-            _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
 
 #if CORECLR
+            if (Platform.IsIoT)
+            {
+                // IoT does not have the '$env:windir\System32\pdh.dll' assembly which is required by this cmdlet.
+                throw new PlatformNotSupportedException();
+            }
+
             // PowerShell Core requires at least Windows 7,
             // so no version test is needed
             _pdhHelper = new PdhHelper(false);
 #else
             _pdhHelper = new PdhHelper(System.Environment.OSVersion.Version.Major < 6);
 #endif
+            _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
 
             uint res = _pdhHelper.ConnectToDataSource();
             if (res != 0)

@@ -9,7 +9,7 @@
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should be "PathNotFound,Microsoft.PowerShell.Commands.ResolvePathCommand"
+            $_.FullyQualifiedErrorId | Should be "PathNotFound,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
         }
     }
 
@@ -22,9 +22,9 @@
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should be "CouldNotParseAsPowerShellDataFile,Import-PowerShellDataFile"
+            $_.FullyQualifiedErrorId | Should be "PathNotFound,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
         }
-        
+
     }
 
     It "Generates a good error on an insecure file" {
@@ -37,7 +37,7 @@
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should be "InvalidOperationException,Import-PowerShellDataFile"
+            $_.FullyQualifiedErrorId | Should be "System.InvalidOperationException,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
         }
     }
 
@@ -46,21 +46,21 @@
         $path = setup -f NotAPSDataFile -content '"Hello World"' -Pass
         try
         {
-            Import-PowerShellDataFile $path -ErrorAction Stop 
+            Import-PowerShellDataFile $path -ErrorAction Stop
             Throw "Command did not throw exception"
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should be "CouldNotParseAsPowerShellDataFileNoHashtableRoot,Import-PowerShellDataFile"
+            $_.FullyQualifiedErrorId | Should be "CouldNotParseAsPowerShellDataFileNoHashtableRoot,Microsoft.PowerShell.Commands.ImportPowerShellDataFileCommand"
         }
     }
 
     It "Can parse a PowerShell Data File (detailed tests are in AST.SafeGetValue tests)" {
 
         $path = Setup -F gooddatafile -content '@{ "Hello" = "World" }' -pass
-        
+
         $result = Import-PowerShellDataFile $path -ErrorAction Stop
         $result.Hello | Should be "World"
     }
-    
+
 }

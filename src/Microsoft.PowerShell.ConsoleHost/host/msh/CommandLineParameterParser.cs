@@ -316,6 +316,14 @@ namespace Microsoft.PowerShell
             }
         }
 
+        internal bool ShowVersion
+        {
+            get
+            {
+                return _showVersion;
+            }
+        }
+
         internal Serialization.DataFormat OutputFormat
         {
             get
@@ -404,7 +412,7 @@ namespace Microsoft.PowerShell
                     // Nano doesn't support STA COM apartment, so on Nano powershell has to use MTA as the default.
                     return false;
 #else
-                    // Win8: 182409 PowerShell 3.0 should run in STA mode by default 
+                    // Win8: 182409 PowerShell 3.0 should run in STA mode by default
                     return true;
 #endif
                 }
@@ -413,29 +421,29 @@ namespace Microsoft.PowerShell
 
 
         /// <summary>
-        /// 
+        ///
         /// Processes all the command line parameters to ConsoleHost.  Returns the exit code to be used to terminate the process, or
         /// Success to indicate that the program should continue running.
-        /// 
+        ///
         /// </summary>
         /// <param name="args">
-        /// 
+        ///
         /// The command line parameters to be processed.
-        /// 
+        ///
         /// </param>
 
         internal void Parse(string[] args)
         {
             Dbg.Assert(!_dirty, "This instance has already been used. Create a new instance.");
 
-            // indicates that we've called this method on this instance, and that when it's done, the state variables 
+            // indicates that we've called this method on this instance, and that when it's done, the state variables
             // will reflect the parse.
 
             _dirty = true;
 
             ParseHelper(args);
 
-            // Check registry setting for a Group Policy ConfigurationName entry and 
+            // Check registry setting for a Group Policy ConfigurationName entry and
             // use it to override anything set by the user.
             var configurationName = GetConfigurationNameFromGroupPolicy();
             if (!string.IsNullOrEmpty(configurationName))
@@ -500,7 +508,6 @@ namespace Microsoft.PowerShell
 
                 // chop off the first character so that we're agnostic wrt specifying / or -
                 // in front of the switch name.
-
                 switchKey = switchKey.Substring(1);
 
                 // chop off the second dash so we're agnostic wrt specifying - or --
@@ -508,6 +515,18 @@ namespace Microsoft.PowerShell
                 {
                     switchKey = switchKey.Substring(1);
                 }
+
+                // If version is in the commandline, don't continue to look at any other parameters
+                if (MatchSwitch(switchKey, "version", "v"))
+                {
+                    _showVersion = true;
+                    _showBanner = false;
+                    _noInteractive = true;
+                    _skipUserInit = true;
+                    _noExit = false;
+                    break;
+                }
+
 
                 if (MatchSwitch(switchKey, "help", "h") || MatchSwitch(switchKey, "?", "?"))
                 {
@@ -719,12 +738,12 @@ namespace Microsoft.PowerShell
                     break;
                 }
 #if DEBUG
-                // this option is useful when debugging ConsoleHost remotely using VS remote debugging, as you can only 
+                // this option is useful when debugging ConsoleHost remotely using VS remote debugging, as you can only
                 // attach to an already running process with that debugger.
                 else if (MatchSwitch(switchKey, "wait", "w"))
                 {
-                    // This does not need to be localized: its chk only 
-                    
+                    // This does not need to be localized: its chk only
+
                     ((ConsoleHostUserInterface)_hostUI).WriteToConsole("Waiting - type enter to continue:", false);
                     _hostUI.ReadLine();
                 }
@@ -1091,6 +1110,7 @@ namespace Microsoft.PowerShell
         private bool _serverMode;
         private bool _namedPipeServerMode;
         private bool _sshServerMode;
+        private bool _showVersion;
         private string _configurationName;
         private PSHostUserInterface _hostUI;
         private bool _showHelp;

@@ -1,10 +1,10 @@
 ﻿Describe "Add-Member DRT Unit Tests" -Tags "CI" {
 
     It "Mandatory parameters should not be null nor empty" {
-        # when Name is null 
-        try 
+        # when Name is null
+        try
         {
-            Add-Member -Name $null 
+            Add-Member -Name $null
             Throw "Execution OK"
         }
         catch
@@ -12,10 +12,10 @@
             $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddMemberCommand"
         }
 
-        # when Name is empty            
-        try 
+        # when Name is empty
+        try
         {
-            Add-Member -Name "" 
+            Add-Member -Name ""
             Throw "Execution OK"
         }
         catch
@@ -24,9 +24,9 @@
         }
 
         # when MemberType is null
-        try 
+        try
         {
-            Add-Member -MemberType $null 
+            Add-Member -MemberType $null
             Throw "Execution OK"
         }
         catch
@@ -34,10 +34,10 @@
             $_.FullyQualifiedErrorId | Should Be "ParameterArgumentValidationErrorNullNotAllowed,Microsoft.PowerShell.Commands.AddMemberCommand"
         }
 
-        # when MemberType is empty            
-        try 
+        # when MemberType is empty
+        try
         {
-            Add-Member -MemberType "" 
+            Add-Member -MemberType ""
             Throw "Execution OK"
         }
         catch
@@ -46,9 +46,9 @@
         }
 
         # when InputObject is null
-        try 
+        try
         {
-            Add-Member -InputObject $null 
+            Add-Member -InputObject $null
             Throw "Execution OK"
         }
         catch
@@ -57,14 +57,14 @@
         }
     }
 
-    # It only support on AliasProperty, ScriptProperty, CodeProperty and CodeMethod 
+    # It only support on AliasProperty, ScriptProperty, CodeProperty and CodeMethod
     It "Should Not Have Value2" {
-        $memberTypesWhereV1CannotBeNull = "CodeMethod", "MemberSet", "PropertySet", "ScriptMethod", "NoteProperty" 
+        $memberTypesWhereV1CannotBeNull = "CodeMethod", "MemberSet", "PropertySet", "ScriptMethod", "NoteProperty"
         foreach ($memberType in $memberTypesWhereV1CannotBeNull)
         {
             try
             {
-                Add-Member -InputObject a -memberType $memberType -Name Name -Value something -SecondValue somethingElse 
+                Add-Member -InputObject a -memberType $memberType -Name Name -Value something -SecondValue somethingElse
                 Throw "Execution OK"
             }
             catch{
@@ -79,26 +79,26 @@
         {
             try
             {
-                Add-Member -InputObject a -memberType $member -Name Name  
+                Add-Member -InputObject a -memberType $member -Name Name
                 Throw "Execution OK"
             }
             catch
             {
                 $_.FullyQualifiedErrorId | Should Be "CannotAddMemberType,Microsoft.PowerShell.Commands.AddMemberCommand"
-                
+
             }
         }
 
         try
         {
-            Add-Member -InputObject a -memberType AnythingElse -Name Name  
+            Add-Member -InputObject a -memberType AnythingElse -Name Name
             Throw "Execution OK"
         }
         catch
         {
             $_.FullyQualifiedErrorId | Should Be "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.AddMemberCommand"
         }
-        
+
     }
 
     It "Value1 And Value2 Should Not Both Null" {
@@ -115,7 +115,7 @@
                 $_.FullyQualifiedErrorId | Should Be "Value1AndValue2AreNotBothNull,Microsoft.PowerShell.Commands.AddMemberCommand"
             }
         }
-        
+
     }
 
     It "Fail to add unexisting type" {
@@ -132,13 +132,13 @@
 
     It "Successful alias, no type" {
         $results = Add-Member -InputObject a -MemberType AliasProperty -Name Cnt -Value Length -passthru
-        $results.Cnt.GetType().Name | Should Be 'Int32'
+        $results.Cnt | Should BeOfType Int32
         $results.Cnt | Should Be 1
     }
 
     It "Successful alias, with type" {
         $results = add-member -InputObject a -MemberType AliasProperty -Name Cnt -Value Length -SecondValue String -passthru
-        $results.Cnt.GetType().Name | Should Be 'String'
+        $results.Cnt | Should BeOfType String
         $results.Cnt | Should Be '1'
     }
 
@@ -157,7 +157,7 @@
     It "Empty Member Set Null Value1" {
         $results = add-member -InputObject a -MemberType MemberSet -Name Name -Value $null -passthru
         $results.Length | Should Be 1
-        $results.Name.a | Should BeNullOrEmpty 
+        $results.Name.a | Should BeNullOrEmpty
     }
 
     It "Member Set With 1 Member" {
@@ -214,20 +214,20 @@
         set-alias ScriptPropertyTestAlias dir
         $al=(get-alias ScriptPropertyTestAlias)
         $al.Description="MyDescription"
-        $al | add-member -MemberType ScriptProperty -Name NewDescription -Value {$this.Description} -SecondValue {$this.Description=$args[0]} 
-        $al.NewDescription | Should Be 'MyDescription' 
+        $al | add-member -MemberType ScriptProperty -Name NewDescription -Value {$this.Description} -SecondValue {$this.Description=$args[0]}
+        $al.NewDescription | Should Be 'MyDescription'
         $al.NewDescription = "some description"
-        $al.NewDescription | Should Be 'some description'        
+        $al.NewDescription | Should Be 'some description'
     }
 
     It "Add TypeName MemberSet Success" {
-        $a = 'string' | add-member -MemberType NoteProperty -Name TestNote -Value Any -TypeName MyType -passthru 
-        $a.PSTypeNames[0] | Should Be MyType 
+        $a = 'string' | add-member -MemberType NoteProperty -Name TestNote -Value Any -TypeName MyType -passthru
+        $a.PSTypeNames[0] | Should Be MyType
     }
 
     It "Add TypeName Existing Name Success" {
         $a = 'string' | add-member -TypeName System.Object -passthru
-        $a.PSTypeNames[0] | Should Be System.Object 
+        $a.PSTypeNames[0] | Should Be System.Object
     }
 
     It "Add Single Note To Array" {
@@ -237,26 +237,26 @@
     }
 
     It "Add Multiple Note Members" {
-        $obj=new-object psobject 
+        $obj=new-object psobject
         $hash=@{Name='Name';TestInt=1;TestNull=$null}
-        add-member -InputObject $obj $hash 
+        add-member -InputObject $obj $hash
         $obj.Name | Should Be 'Name'
         $obj.TestInt | Should Be 1
-        $obj.TestNull | Should BeNullOrEmpty 
+        $obj.TestNull | Should BeNullOrEmpty
     }
 
     It "Add Multiple Note With TypeName" {
-        $obj=new-object psobject 
-        $hash=@{Name='Name';TestInt=1;TestNull=$null} 
+        $obj=new-object psobject
+        $hash=@{Name='Name';TestInt=1;TestNull=$null}
         $obj = add-member -InputObject $obj $hash -TypeName MyType -Passthru
         $obj.PSTypeNames[0] | Should Be MyType
     }
 
     It "Add Multiple Members With Force" {
-        $obj=new-object psobject 
-        $hash=@{TestNote='hello'} 
+        $obj=new-object psobject
+        $hash=@{TestNote='hello'}
         $obj | Add-Member -MemberType NoteProperty -Name TestNote -Value 1
-        $obj | add-member $hash -force 
+        $obj | add-member $hash -force
         $obj.TestNote | Should Be 'hello'
     }
 

@@ -1,0 +1,86 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <VersionPrefix>6.0.0</VersionPrefix>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <NoWarn>$(NoWarn);CS1570</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DelaySign>true</DelaySign>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>Microsoft.PowerShell.Commands.Management</AssemblyName>
+    <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <Compile Remove="commands\management\ClearRecycleBinCommand.cs" />
+    <Compile Remove="commands\management\ControlPanelItemCommand.cs" />
+    <Compile Remove="commands\management\CommitTransactionCommand.cs" />
+    <Compile Remove="commands\management\Eventlog.cs" />
+    <Compile Remove="commands\management\GetClipboardCommand.cs" />
+    <Compile Remove="commands\management\GetTransactionCommand.cs" />
+    <Compile Remove="commands\management\GetWMIObjectCommand.cs" />
+    <Compile Remove="commands\management\Hotfix.cs" />
+    <Compile Remove="commands\management\InvokeWMIMethodCommand.cs" />
+    <Compile Remove="commands\management\RegisterWMIEventCommand.cs" />
+    <Compile Remove="commands\management\RemoveWMIObjectCommand.cs" />
+    <Compile Remove="commands\management\RollbackTransactionCommand.cs" />
+    <Compile Remove="commands\management\SetClipboardCommand.cs" />
+    <Compile Remove="commands\management\SetWMIInstanceCommand.cs" />
+    <Compile Remove="commands\management\StartTransactionCommand.cs" />
+    <Compile Remove="commands\management\UseTransactionCommand.cs" />
+    <Compile Remove="commands\management\WMIHelper.cs" />
+    <Compile Remove="commands\management\WebServiceProxy.cs" />
+    <Compile Remove="singleshell\installer\MshManagementMshSnapin.cs" />
+    <Compile Remove="gen\EventlogResources.cs" />
+    <Compile Remove="gen\TransactionResources.cs" />
+    <Compile Remove="gen\WebServiceResources.cs" />
+    <Compile Remove="gen\HotFixResources.cs" />
+    <Compile Remove="gen\ControlPanelResources.cs" />
+    <Compile Remove="gen\WmiResources.cs" />
+    <Compile Remove="gen\ManagementMshSnapInResources.cs" />
+    <Compile Remove="gen\ClearRecycleBinResources.cs" />
+    <Compile Remove="gen\ClipboardResources.cs" />
+    
+    <EmbeddedResource Remove="resources\EventlogResources.resx" />
+    <EmbeddedResource Remove="resources\TransactionResources.resx" />
+    <EmbeddedResource Remove="resources\WebServiceResources.resx" />
+    <EmbeddedResource Remove="resources\HotFixResources.resx" />
+    <EmbeddedResource Remove="resources\ControlPanelResources.resx" />
+    <EmbeddedResource Remove="resources\WmiResources.resx" />
+    <EmbeddedResource Remove="resources\ManagementMshSnapInResources.resx" />
+    <EmbeddedResource Remove="resources\ClearRecycleBinResources.resx" />
+    <EmbeddedResource Remove="resources\ClipboardResources.resx" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Linux' ">
+    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.3.0" />
+    <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
+    <PackageReference Include="System.Net.Ping" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>

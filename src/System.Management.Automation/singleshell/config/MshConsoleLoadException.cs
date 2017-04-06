@@ -7,7 +7,7 @@ using System.Text;
 using System.Collections.ObjectModel;
 
 #if CORECLR
-// Use stubs for SystemException, SerializationInfo and SecurityPermissionAttribute 
+// Use stubs for SystemException, SerializationInfo and SecurityPermissionAttribute
 using Microsoft.PowerShell.CoreClr.Stubs;
 #else
 using System.Security.Permissions;
@@ -16,14 +16,14 @@ using System.Security.Permissions;
 namespace System.Management.Automation.Runspaces
 {
     /// <summary>
-    /// Defines exception thrown when a PSSnapin was not able to load into current runspace. 
+    /// Defines exception thrown when a PSSnapin was not able to load into current runspace.
     /// </summary>
     /// <!--
-    /// Implementation of PSConsoleLoadException requires it to 
-    ///     1. Implement IContainsErrorRecord, 
+    /// Implementation of PSConsoleLoadException requires it to
+    ///     1. Implement IContainsErrorRecord,
     ///     2. ISerializable
-    /// 
-    /// Basic information for this exception includes, 
+    ///
+    /// Basic information for this exception includes,
     ///     1. PSSnapin name
     ///     2. Inner exception.
     /// -->
@@ -99,7 +99,7 @@ namespace System.Management.Automation.Runspaces
         private ErrorRecord _errorRecord;
 
         /// <summary>
-        /// Gets error record embedded in this exception. 
+        /// Gets error record embedded in this exception.
         /// </summary>
         /// <!--
         /// This property is required as part of IErrorRecordContainer
@@ -125,7 +125,7 @@ namespace System.Management.Automation.Runspaces
         }
 
         /// <summary>
-        /// Gets message for this exception. 
+        /// Gets message for this exception.
         /// </summary>
         public override string Message
         {
@@ -145,7 +145,7 @@ namespace System.Management.Automation.Runspaces
         #region Serialization
 
         /// <summary>
-        /// Initiate a PSConsoleLoadException instance. 
+        /// Initiate a PSConsoleLoadException instance.
         /// </summary>
         /// <param name="info"> Serialization information </param>
         /// <param name="context"> Streaming context </param>

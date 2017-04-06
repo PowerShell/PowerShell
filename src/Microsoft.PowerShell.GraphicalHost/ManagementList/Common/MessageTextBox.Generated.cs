@@ -18,7 +18,7 @@ using System.Windows;
 
 namespace Microsoft.Management.UI.Internal
 {
-    
+
     /// <summary>
     /// A TextBox which shows a user provided text when it's empty.
     /// </summary>
@@ -32,7 +32,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the BackgroundText dependency property.
         /// </summary>
         public static readonly DependencyProperty BackgroundTextProperty = DependencyProperty.Register( "BackgroundText", typeof(string), typeof(MessageTextBox), new PropertyMetadata( string.Empty, BackgroundTextProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets a value for text presented to user when TextBox is empty.
         /// </summary>
@@ -51,18 +51,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(BackgroundTextProperty,value);
             }
         }
-        
+
         static private void BackgroundTextProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             MessageTextBox obj = (MessageTextBox) o;
             obj.OnBackgroundTextChanged( new PropertyChangedEventArgs<string>((string)e.OldValue, (string)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when BackgroundText property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<string>> BackgroundTextChanged;
-        
+
         /// <summary>
         /// Called when BackgroundText property changes.
         /// </summary>
@@ -71,9 +71,9 @@ namespace Microsoft.Management.UI.Internal
             OnBackgroundTextChangedImplementation(e);
             RaisePropertyChangedEvent(BackgroundTextChanged, e);
         }
-        
+
         partial void OnBackgroundTextChangedImplementation(PropertyChangedEventArgs<string> e);
-        
+
         //
         // IsBackgroundTextShown dependency property
         //
@@ -85,7 +85,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the IsBackgroundTextShown dependency property.
         /// </summary>
         public static readonly DependencyProperty IsBackgroundTextShownProperty = IsBackgroundTextShownPropertyKey.DependencyProperty;
-        
+
         /// <summary>
         /// Gets a value indicating if the background text is being shown.
         /// </summary>
@@ -104,18 +104,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(IsBackgroundTextShownPropertyKey,BooleanBoxes.Box(value));
             }
         }
-        
+
         static private void IsBackgroundTextShownProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             MessageTextBox obj = (MessageTextBox) o;
             obj.OnIsBackgroundTextShownChanged( new PropertyChangedEventArgs<bool>((bool)e.OldValue, (bool)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when IsBackgroundTextShown property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<bool>> IsBackgroundTextShownChanged;
-        
+
         /// <summary>
         /// Called when IsBackgroundTextShown property changes.
         /// </summary>
@@ -124,9 +124,9 @@ namespace Microsoft.Management.UI.Internal
             OnIsBackgroundTextShownChangedImplementation(e);
             RaisePropertyChangedEvent(IsBackgroundTextShownChanged, e);
         }
-        
+
         partial void OnIsBackgroundTextShownChangedImplementation(PropertyChangedEventArgs<bool> e);
-        
+
         /// <summary>
         /// Called when a property changes.
         /// </summary>
@@ -137,11 +137,11 @@ namespace Microsoft.Management.UI.Internal
                 eh(this,e);
             }
         }
-        
+
         //
         // Static constructor
         //
-        
+
         /// <summary>
         /// Called when the type is initialized.
         /// </summary>
@@ -150,9 +150,9 @@ namespace Microsoft.Management.UI.Internal
             DefaultStyleKeyProperty.OverrideMetadata(typeof(MessageTextBox), new FrameworkPropertyMetadata(typeof(MessageTextBox)));
             StaticConstructorImplementation();
         }
-        
+
         static partial void StaticConstructorImplementation();
-        
+
     }
 }
 #endregion

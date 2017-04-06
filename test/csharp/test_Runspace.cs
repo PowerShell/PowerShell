@@ -62,7 +62,7 @@ namespace PSTests
             }
         }
 
-	
+
         [Fact(Skip="Fails in Travis CI, need investigation")]
         public void TestRunspaceWithPowerShellAndInitialSessionState()
         {

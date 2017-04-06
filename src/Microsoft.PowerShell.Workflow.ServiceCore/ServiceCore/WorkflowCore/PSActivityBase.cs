@@ -89,9 +89,9 @@ namespace Microsoft.PowerShell.Activities
         internal PSDataCollection<object> HelperCommandInput { get; set; }
         internal int CleanupTimeout { get; set; }
 
-        internal RunCommandsArguments(ActivityParameters activityParameters, PSDataCollection<PSObject> output, PSDataCollection<PSObject> input, 
-                    PSActivityContext psActivityContext, PSWorkflowHost workflowHost, 
-                        bool runInProc, Dictionary<string, object> parameterDefaults, Type activityType, 
+        internal RunCommandsArguments(ActivityParameters activityParameters, PSDataCollection<PSObject> output, PSDataCollection<PSObject> input,
+                    PSActivityContext psActivityContext, PSWorkflowHost workflowHost,
+                        bool runInProc, Dictionary<string, object> parameterDefaults, Type activityType,
                             PrepareSessionDelegate prepareSession, object activityObject, ActivityImplementationContext implementationContext)
         {
             ActivityParameters = activityParameters;
@@ -121,7 +121,7 @@ namespace Microsoft.PowerShell.Activities
 
             if (connectionInfo != null)
             {
-                // check if this is an activity with custom remoting 
+                // check if this is an activity with custom remoting
                 // then we need to run it in proc
                 if (psActivityContext != null && psActivityContext.RunWithCustomRemoting)
                     return PSActivity.CommandRunInProc;
@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Activities
                 return PSActivity.CimCommandRunInProc;
             }
 
-            return PSActivity.CommandRunInProc;            
+            return PSActivity.CommandRunInProc;
         }
     }
 
@@ -470,7 +470,7 @@ namespace Microsoft.PowerShell.Activities
         internal object ActivityObject;
 
         /// <summary>
-        /// The .NET type implementing the cmdlet to call, used for 
+        /// The .NET type implementing the cmdlet to call, used for
         /// direct-call cmdlets.
         /// </summary>
         internal Type TypeImplementingCmdlet { get; set; }
@@ -582,10 +582,10 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <returns></returns>
-        /// <remarks>This function is designed to be lightweight and to 
+        /// <remarks>This function is designed to be lightweight and to
         /// run on the Workflow thread when Execute() is called. When
         /// any changes are made to this function the contract needs to
         /// be honored</remarks>
@@ -598,10 +598,10 @@ namespace Microsoft.PowerShell.Activities
             // Create the template of a thread that just pulls from the commandQueue
             // and processes the SMA.PowerShell given to it.
             /*
-             
+
                 A note about cancellation
                 -------------------------
-              
+
                 While a worker thread is running, there's
                 the possibility of the user cancelling the activity as a whole.
                 That means, at any line, there's the potential of us wanting
@@ -643,7 +643,7 @@ namespace Microsoft.PowerShell.Activities
                     result = commandQueue.TryDequeue(out implementationContext);
                 }
 
-                // at this point all commands in the activity context should have been 
+                // at this point all commands in the activity context should have been
                 // started
                 AllCommandsStarted = true;
             }
@@ -952,7 +952,7 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// Forces the activity to not call the persist functionality, which will be responsible for 
+        /// Forces the activity to not call the persist functionality, which will be responsible for
         /// persisting the workflow state onto the disk.
         /// </summary>
         [BehaviorCategory]
@@ -1123,7 +1123,7 @@ namespace Microsoft.PowerShell.Activities
 
         private Variable<PSActivityContext> psActivityContextImplementationVariable = new Variable<PSActivityContext>("psActivityContextImplementationVariable");
         private Variable<ActivityInstance> psRunningTimeoutDelayActivityInstanceVar = new Variable<ActivityInstance>("psRunningTimeoutDelayActivityInstanceVar");
-        private Delay cancelTimer;                
+        private Delay cancelTimer;
 
         // Instance variables. The following are OK to be an instance variables, as they are
         // not modified during runtime. If any variable holds activity-specific state,
@@ -1542,7 +1542,7 @@ namespace Microsoft.PowerShell.Activities
                     else
                     {
                         // After crash/shutdown, this entry is required for checking all activity level fanout tasks are completed
-                        remoteActivityState.SetRemoteActivityRunspaceEntry(this.Id, taskId, "notstarted", 
+                        remoteActivityState.SetRemoteActivityRunspaceEntry(this.Id, taskId, "notstarted",
                             commandToRun.ConnectionInfo != null ? commandToRun.ConnectionInfo.ComputerName: null);
                     }
                 }
@@ -1601,7 +1601,7 @@ namespace Microsoft.PowerShell.Activities
 
             if (maxRunningTime.HasValue)
             {
-                psRunningTimeoutDelayActivityInstanceVar.Set(context, context.ScheduleActivity(cancelTimer, MaxRunTimeElapsed));                
+                psRunningTimeoutDelayActivityInstanceVar.Set(context, context.ScheduleActivity(cancelTimer, MaxRunTimeElapsed));
             }
 
             Tracer.WriteMessage(String.Format(CultureInfo.InvariantCulture, "PowerShell activity ID={0}: Invoking command.", context.ActivityInstanceId));
@@ -1696,7 +1696,7 @@ namespace Microsoft.PowerShell.Activities
             psActivityContextInstance.ParameterDefaults = parameterDefaults;
             psActivityContextInstance.ActivityType = GetType();
             psActivityContextInstance.PrepareSession = PrepareSession;
-            psActivityContextInstance.ActivityObject = this;          
+            psActivityContextInstance.ActivityObject = this;
 
             if (IsActivityInlineScript(this) && RunWithCustomRemoting(context))
             {
@@ -1981,8 +1981,8 @@ namespace Microsoft.PowerShell.Activities
                     if (arguments.Error != null)
                     {
                         WriteProgressRecord(context, psprogress, Resources.FailedString, ProgressRecordType.Completed);
-                        
-                        Tracer.WriteMessage("PSActivity", "OnResumeBookmark", context.WorkflowInstanceId, 
+
+                        Tracer.WriteMessage("PSActivity", "OnResumeBookmark", context.WorkflowInstanceId,
                                             @"We are about to rethrow the exception in order to preserve the stack trace writing it into the logs.");
                         Tracer.TraceException(arguments.Error);
                         Dbg.Assert(String.IsNullOrWhiteSpace(arguments.Error.Message) == false, "Exception to be thrown doesnt have proper error message, throwing this will results in Suspended job state instead of Failed state !");
@@ -2003,7 +2003,7 @@ namespace Microsoft.PowerShell.Activities
                         WriteProgressRecord(context, psprogress,Resources.CompletedString, ProgressRecordType.Completed);
                     }
                 }
-                
+
                 return;
             }
 
@@ -2039,7 +2039,7 @@ namespace Microsoft.PowerShell.Activities
                         }
                     }
 
-                
+
                 }
                 else
                 {
@@ -2142,12 +2142,12 @@ namespace Microsoft.PowerShell.Activities
             {
                 HostPSPersistVariable = this.PSPersist.Get(context).Value;
             }
-            
+
             bool hostPersist = false;
             hostPersist = this.GetHostPersistFlag(context);
 
             // Schedule Persist activity if the preference variable was true, the activity explicitly requests it
-            // or the host has requested persistence.            
+            // or the host has requested persistence.
             if (((activityPersist == null) && (HostPSPersistVariable == true)) || hostPersist == true || activityPersist == true)
             {
                 string bookmarkname = PSActivity.PSPersistBookmarkPrefix + Guid.NewGuid().ToString().Replace("-", "_");
@@ -2188,7 +2188,7 @@ namespace Microsoft.PowerShell.Activities
             if (this.PSPersist.Expression != null && this.PSPersist.Get(context).HasValue)
             {
                 activityPersist = this.PSPersist.Get(context).Value;
-            }            
+            }
             else
             {
                 // Look to see if there is a PSPersistPreference variable in scope...
@@ -2219,7 +2219,7 @@ namespace Microsoft.PowerShell.Activities
                     if (incomingArguments.ContainsKey(Constants.Persist))
                     {
                         activityPersist = (bool)incomingArguments[Constants.Persist];
-                    }                    
+                    }
                 }
             }
             return activityPersist;
@@ -2289,7 +2289,7 @@ namespace Microsoft.PowerShell.Activities
                 }
             }
 
-            // setting the warning from arguments                        
+            // setting the warning from arguments
             if (arguments.Streams.WarningStream != null)
             {
                 if (this.PSWarning.Expression != null)
@@ -2417,7 +2417,7 @@ namespace Microsoft.PowerShell.Activities
             {
                 // Then, set the variables from the workflow
                 SetActivityVariables(context, activityContext.UserVariables);
-            }           
+            }
         }
 
         /// <summary>
@@ -2693,7 +2693,7 @@ namespace Microsoft.PowerShell.Activities
             {
                 // in case of inlinescript activity supporting custom remoting we need
                 // to ensure that PSComputerName is populated only for the specified
-                // index                
+                // index
                 if (RunWithCustomRemoting(context))
                 {
                     for(int i=0; i<tasks.Count;i++)
@@ -2833,12 +2833,12 @@ namespace Microsoft.PowerShell.Activities
         internal const int CleanupActivity = 5;
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="args"></param>
-        /// <remarks>THREADING CONTRACT: This function is designed to be 
-        /// lightweight and to run on the Workflow thread when Execute() 
-        /// is called. When any changes are made to this function the contract 
+        /// <remarks>THREADING CONTRACT: This function is designed to be
+        /// lightweight and to run on the Workflow thread when Execute()
+        /// is called. When any changes are made to this function the contract
         /// needs to be honored</remarks>
         internal static void BeginRunOneCommand(RunCommandsArguments args)
         {
@@ -2857,7 +2857,7 @@ namespace Microsoft.PowerShell.Activities
                 InitializeOneCommand(args);
 
                 // run the command based on type
-                if (args.CommandExecutionType != CommandRunRemotely && 
+                if (args.CommandExecutionType != CommandRunRemotely &&
                     args.CommandExecutionType != CommandRunInProc &&
                     args.CommandExecutionType != CimCommandRunInProc)
                 {
@@ -2873,9 +2873,9 @@ namespace Microsoft.PowerShell.Activities
         /// Initialize a single command for execution.
         /// </summary>
         /// <param name="args"></param>
-        /// <remarks>THREADING CONTRACT: This function is designed to be 
-        /// lightweight and to run on the Workflow thread when Execute() 
-        /// is called. When any changes are made to this function the 
+        /// <remarks>THREADING CONTRACT: This function is designed to be
+        /// lightweight and to run on the Workflow thread when Execute()
+        /// is called. When any changes are made to this function the
         /// contract needs to be honored</remarks>
         private static void InitializeOneCommand(RunCommandsArguments args)
         {
@@ -2956,7 +2956,7 @@ namespace Microsoft.PowerShell.Activities
 
                     case CommandRunOutOfProc:
                         {
-                            // out of proc commands do not require the runspace in the 
+                            // out of proc commands do not require the runspace in the
                             // powershell. However since this runspace was created by
                             // the local runspace provider it need to be released and
                             // not disposed We need to release the connection
@@ -3003,7 +3003,7 @@ namespace Microsoft.PowerShell.Activities
                         break;
                 }
             }
-        }        
+        }
 
         private static void InitializeActivityEnvironmentAndAddRequiredModules(ActivityImplementationContext implementationContext,
             ActivityParameters activityParameters)
@@ -3033,16 +3033,16 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="args"></param>
         /// <remarks>
         /// THREADING CONTRACT:
-        /// This function runs on the workflow thread when Execute() 
-        /// is called for all cases except the remote runspace case 
+        /// This function runs on the workflow thread when Execute()
+        /// is called for all cases except the remote runspace case
         /// where it runs on a WinRM thread or the connection manager
         /// servicing thread
-        /// Therefore this function is designed to be lightweight in 
+        /// Therefore this function is designed to be lightweight in
         /// all cases
         /// When any changes are made to this function the contract needs to
         /// be honored</remarks>
@@ -3103,7 +3103,7 @@ namespace Microsoft.PowerShell.Activities
                                 else
                                 {
                                     streams.InputStream = input;
-                                    streams.OutputStream = output; 
+                                    streams.OutputStream = output;
                                     streams.DebugStream = commandToRun.Streams.Debug;
                                     streams.ErrorStream = commandToRun.Streams.Error;
                                     streams.ProgressStream = commandToRun.Streams.Progress;
@@ -3152,7 +3152,7 @@ namespace Microsoft.PowerShell.Activities
                         break;
                     case CleanupActivity:
                         {
-                            ExecuteCleanupActivity(args);        
+                            ExecuteCleanupActivity(args);
                         }
                         break;
                 }
@@ -3166,9 +3166,9 @@ namespace Microsoft.PowerShell.Activities
         /// <param name="args">RunCommandsArguments</param>
         /// <remarks>
         /// THREADING CONTRACT:
-        /// This function runs on the workflow thread when Execute() 
-        /// is called 
-        /// Therefore this function is designed to be lightweight in 
+        /// This function runs on the workflow thread when Execute()
+        /// is called
+        /// Therefore this function is designed to be lightweight in
         /// all cases
         /// When any changes are made to this function the contract needs to
         /// be honored</remarks>
@@ -3190,7 +3190,7 @@ namespace Microsoft.PowerShell.Activities
         /// passed int</param>
         /// <remarks>
         /// THREADING CONTRACT:
-        /// The callback will happen on a WinRM thread. Hence the 
+        /// The callback will happen on a WinRM thread. Hence the
         /// function needs to be lightweight to release the thread
         /// back to WinRM
         /// </remarks>
@@ -3338,7 +3338,7 @@ namespace Microsoft.PowerShell.Activities
         /// <remarks>
         /// THREADING CONTRACT:
         /// The callback happens either in a WinRM thread or in the
-        /// connection manager servicing thread. Therefore any 
+        /// connection manager servicing thread. Therefore any
         /// operations that this thread initiates is supposed to
         /// be very small. Make sure that this contract is maintained
         /// when any changes are made to the function</remarks>
@@ -3567,7 +3567,7 @@ namespace Microsoft.PowerShell.Activities
                     if (CheckForCancel(psActivityContext)) return;
                 }
 
-                commandToRun.Runspace = runspace;               
+                commandToRun.Runspace = runspace;
 
                 // only after the runspace is set to commandToRun is the
                 // activity completely created. Raise the ActivityCreated
@@ -3594,7 +3594,7 @@ namespace Microsoft.PowerShell.Activities
                         if (cimImplContext.PSUseSsl.HasValue)
                         {
                             useSsl = cimImplContext.PSUseSsl.Value;
-                        }   
+                        }
 
                         uint port = 0;
                         if (cimImplContext.PSPort.HasValue)
@@ -3610,15 +3610,15 @@ namespace Microsoft.PowerShell.Activities
                         }
 
                         cimImplContext.Session =
-                            CimConnectionManager.GetGlobalCimConnectionManager().GetSession(cimImplContext.ComputerName, 
-                                                                                            cimImplContext.PSCredential, 
+                            CimConnectionManager.GetGlobalCimConnectionManager().GetSession(cimImplContext.ComputerName,
+                                                                                            cimImplContext.PSCredential,
                                                                                             cimImplContext.PSCertificateThumbprint,
                                                                                             authenticationMechanism,
-                                                                                            cimImplContext.SessionOptions, 
-                                                                                            useSsl, 
-                                                                                            port, 
+                                                                                            cimImplContext.SessionOptions,
+                                                                                            useSsl,
+                                                                                            port,
                                                                                             cimImplContext.PSSessionOption);
-                        
+
                         if (cimImplContext.Session == null)
                         {
                             throw new InvalidOperationException();
@@ -3630,7 +3630,7 @@ namespace Microsoft.PowerShell.Activities
                 BeginExecuteOneCommand(args);
 
                 tracer.WriteMessage("Returning from callback for GetRunspace for LocalRunspaceProvider");
-            }            
+            }
         }
 
         private static void ActivityHostManagerCallback(IAsyncResult asyncResult)
@@ -3688,7 +3688,7 @@ namespace Microsoft.PowerShell.Activities
                     Dbg.Assert(psActivityContext.Callback != null, "A callback should have been assigned in the context");
                     ThreadPool.QueueUserWorkItem(psActivityContext.Callback, psActivityContext.AsyncState);
                 }
-            }            
+            }
         }
 
         private static bool CheckForCancel(PSActivityContext psActivityContext)
@@ -3832,7 +3832,7 @@ namespace Microsoft.PowerShell.Activities
             }
         }
 
-        private static void InitializeCmdletInstanceParameters(Command command, PSObject wrappedCmdlet, bool isGenericCim, 
+        private static void InitializeCmdletInstanceParameters(Command command, PSObject wrappedCmdlet, bool isGenericCim,
                                 PSActivityContext psActivityContext, CimSessionOptions cimSessionOptions, ActivityImplementationContext implementationContext)
         {
 
@@ -3865,7 +3865,7 @@ namespace Microsoft.PowerShell.Activities
             }
 
             string[] computerNameArray = null;
-            CimActivityImplementationContext cimActivityImplementationContext = 
+            CimActivityImplementationContext cimActivityImplementationContext =
                 implementationContext as CimActivityImplementationContext;
 
             // Set the target computer for this command...
@@ -3884,7 +3884,7 @@ namespace Microsoft.PowerShell.Activities
                 if (isGenericCim && wrappedCmdlet.Properties["CimSession"] != null)
                 {
                     if (!sessionSet)
-                    {                            		                   
+                    {
                         if (cimActivityImplementationContext == null)
 			                    throw new ArgumentException(Resources.InvalidImplementationContext);
 
@@ -3900,7 +3900,7 @@ namespace Microsoft.PowerShell.Activities
                             port = cimActivityImplementationContext.PSPort.Value;
                         }
 
-                        AuthenticationMechanism authenticationMechanism = AuthenticationMechanism.Default;                            
+                        AuthenticationMechanism authenticationMechanism = AuthenticationMechanism.Default;
                         if (cimActivityImplementationContext.PSAuthentication.HasValue)
                         {
                             authenticationMechanism = cimActivityImplementationContext.PSAuthentication.Value;
@@ -3910,13 +3910,13 @@ namespace Microsoft.PowerShell.Activities
                         List<CimSession> cimSessions = computerNameArray
                             .ToList()
                                 .ConvertAll<CimSession>(
-                                    (string computer) => CimConnectionManager.GetGlobalCimConnectionManager().GetSession(computer, 
-                                                                                                                            cimActivityImplementationContext.PSCredential, 
-                                                                                                                            cimActivityImplementationContext.PSCertificateThumbprint, 
-                                                                                                                            authenticationMechanism, 
-                                                                                                                            cimSessionOptions, 
-                                                                                                                            useSsl, 
-                                                                                                                            port, 
+                                    (string computer) => CimConnectionManager.GetGlobalCimConnectionManager().GetSession(computer,
+                                                                                                                            cimActivityImplementationContext.PSCredential,
+                                                                                                                            cimActivityImplementationContext.PSCertificateThumbprint,
+                                                                                                                            authenticationMechanism,
+                                                                                                                            cimSessionOptions,
+                                                                                                                            useSsl,
+                                                                                                                            port,
                                                                                                                             cimActivityImplementationContext.PSSessionOption));
                         wrappedCmdlet.Properties["CimSession"].Value = cimSessions.ToArray<CimSession>();
 
@@ -3929,7 +3929,7 @@ namespace Microsoft.PowerShell.Activities
                 }
                 else if (wrappedCmdlet.Properties["ComputerName"] == null)
                 {
-                    // If the cmdlet takes ComputerName and it wasn't explicitly set already, 
+                    // If the cmdlet takes ComputerName and it wasn't explicitly set already,
                     // then set it to the ambient PSComputerName we got from the context...
                     wrappedCmdlet.Properties.Add(new PSNoteProperty("ComputerName", computerNameArray));
                 }
@@ -3971,17 +3971,17 @@ namespace Microsoft.PowerShell.Activities
                     }
                 }
                 actionTracer.WriteMessage("END SetVariablesInRunspaceUsingProxy");
-            }            
+            }
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="args"></param>
         /// <remarks>
         /// THREADING CONTRACT:
         /// This function runs in either a WinRM thread or in the
-        /// connection manager servicing thread. Therefore any 
+        /// connection manager servicing thread. Therefore any
         /// operations that this thread initiates is supposed to
         /// be very small. Make sure that this contract is maintained
         /// when any changes are made to the function
@@ -3998,7 +3998,7 @@ namespace Microsoft.PowerShell.Activities
             {
                 actionTracer.WriteMessage("BEGIN BeginSetVariablesInRemoteRunspace");
 
-                System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create();              
+                System.Management.Automation.PowerShell ps = System.Management.Automation.PowerShell.Create();
                 ps.Runspace = runspace;
                 ps.AddScript(RunspaceInitScript);
 
@@ -4012,16 +4012,16 @@ namespace Microsoft.PowerShell.Activities
                 BeginInvokeOnPowershellCommand(ps, vars, null, SetVariablesCallback, args);
 
                 actionTracer.WriteMessage("END BeginSetVariablesInRemoteRunspace");
-            }            
+            }
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="args"></param>
         /// <remarks>
         /// THREADING CONTRACT:
-        /// This function either runs on a thread pool thread, or in the 
+        /// This function either runs on a thread pool thread, or in the
         /// remote case runs on a WinRM/CM servicing thread. Therefore operations
         /// need to be light so that the thread can be released back quickly
         /// When changes are made this assumption need to be validated</remarks>
@@ -4167,16 +4167,16 @@ namespace Microsoft.PowerShell.Activities
                                                         "PowerShell activity: Finished running command."));
 
                 var remotingActivity = args.ActivityObject as PSRemotingActivity;
-                if ((remotingActivity != null) && 
+                if ((remotingActivity != null) &&
                     (args.PSActivityContext.HostExtension != null) &&
                     (args.PSActivityContext.HostExtension.RemoteActivityState != null) &&
                     (args.ImplementationContext != null))
                 {
-                    // remote activity task execution has finished 
+                    // remote activity task execution has finished
                     // change the task's state to Completed in RemoteActivityState
                     args.PSActivityContext.HostExtension.RemoteActivityState.SetRemoteActivityRunspaceEntry(
-                        remotingActivity.Id, 
-                        args.ImplementationContext.Id, 
+                        remotingActivity.Id,
+                        args.ImplementationContext.Id,
                         "completed", null);
                 }
 
@@ -4280,7 +4280,7 @@ namespace Microsoft.PowerShell.Activities
                 }
             }
 
-            // workaround: PSPR does not support rehydration of System.Text.ASCIIEncoding 
+            // workaround: PSPR does not support rehydration of System.Text.ASCIIEncoding
             // therefore we need to remove this otherwise FS RI is blocked - per their dev mgr
             // once the DCR is implemented on Engines side, we should remove
             if (nameValuePairs.ContainsKey("OutputEncoding"))
@@ -4292,11 +4292,11 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="asyncResult"></param>
         /// THREADING CONTRACT:
-        /// This callback runs in a WinRM thread - in the normal 
+        /// This callback runs in a WinRM thread - in the normal
         /// course of operation i.e unless PowerShell.EndInvoke() throws
         /// an exception, the operations performed on this thread
         /// should be minimal
@@ -4325,7 +4325,7 @@ namespace Microsoft.PowerShell.Activities
                     tracer.WriteMessage("Setting variables in remote runspace failed using script, trying with proxy");
 
                     try
-                    {                        
+                    {
                         SetVariablesInRunspaceUsingProxy(activityEnvironment, powerShell.Runspace);
                     }
                     catch (Exception ex)
@@ -4406,7 +4406,7 @@ namespace Microsoft.PowerShell.Activities
                     psRequiredModuleNames = psRequiredModuleNames.TrimEnd(',',' ');
 
                     string msg = string.Format(CultureInfo.InvariantCulture,
-                                                                       Resources.DependModuleImportFailed, 
+                                                                       Resources.DependModuleImportFailed,
                                                                        psRequiredModuleNames,
                                                                        activityType.Name);
                     Exception ex = new Exception(msg, e);
@@ -4439,8 +4439,8 @@ namespace Microsoft.PowerShell.Activities
 
                 // at this point the initialization is done and we need to execute
                 // the command
-                BeginPowerShellInvocation(args);                
-            }                        
+                BeginPowerShellInvocation(args);
+            }
         }
 
         private static void InitializeRunspaceAndExecuteCommandWorker(object state)
@@ -4451,7 +4451,7 @@ namespace Microsoft.PowerShell.Activities
 
             System.Management.Automation.PowerShell commandToRun = args.ImplementationContext.PowerShellInstance;
             PSActivityContext psActivityContext = args.PSActivityContext;
-         
+
             // Invoke the command. If we want to return the output, then call the overload
             // that streams output as well.
             try
@@ -4469,7 +4469,7 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="state"></param>
         /// <remarks>
@@ -4539,9 +4539,9 @@ namespace Microsoft.PowerShell.Activities
                         {
                             // Command invocation has started, save the tasks's runspace instance id to RemoteActivityState
                             args.PSActivityContext.HostExtension.RemoteActivityState.SetRemoteActivityRunspaceEntry(
-                                remotingActivity.Id, 
-                                args.ImplementationContext.Id, 
-                                commandToRun.Runspace.InstanceId, null); 
+                                remotingActivity.Id,
+                                args.ImplementationContext.Id,
+                                commandToRun.Runspace.InstanceId, null);
                         }
                     }
 
@@ -4599,7 +4599,7 @@ namespace Microsoft.PowerShell.Activities
         {
             ProgressRecord progressRecord = (ProgressRecord)e.ItemAdded;
             if (progressRecord == null) return;
-           
+
             string computerName;
             Guid jobInstanceId;
 
@@ -4704,7 +4704,7 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="powerShellId"></param>
         /// <param name="computerName"></param>
@@ -4774,7 +4774,7 @@ namespace Microsoft.PowerShell.Activities
                     }
                 }
             }
-        
+
             return args;
         }
 
@@ -4844,7 +4844,7 @@ namespace Microsoft.PowerShell.Activities
 
         private const string LocalHost = "localhost";
         private static String GetComputerNameFromCommand(System.Management.Automation.PowerShell commandToRun)
-        {            
+        {
             Runspace runspace = commandToRun.Runspace;
 
             return runspace.ConnectionInfo == null ? LocalHost : runspace.ConnectionInfo.ComputerName;
@@ -4938,7 +4938,7 @@ namespace Microsoft.PowerShell.Activities
         #endregion Object Decoration
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="asyncResult"></param>
         /// <remarks>
@@ -4977,7 +4977,7 @@ namespace Microsoft.PowerShell.Activities
                 }
                 catch (Exception e)
                 {
-                    attemptRetry = ProcessException(args, e); 
+                    attemptRetry = ProcessException(args, e);
                 }
                 finally
                 {
@@ -4991,11 +4991,11 @@ namespace Microsoft.PowerShell.Activities
                         ReleaseResourcesAndCheckForEnd(commandToRun, args, true, false);
                     }
                 }
-            }                                    
+            }
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="args"></param>
         /// <param name="runspaceDisconnectedException"></param>
@@ -5004,7 +5004,7 @@ namespace Microsoft.PowerShell.Activities
         /// This methods executes on a WinRM thread
         /// </remarks>
         private static void RunspaceDisconnectedCallback(RunCommandsArguments args, Exception runspaceDisconnectedException)
-        {            
+        {
             PSActivityContext psActivityContext = args.PSActivityContext;
             ActivityImplementationContext implementationContext = args.ImplementationContext;
             System.Management.Automation.PowerShell commandToRun = implementationContext.PowerShellInstance;
@@ -5048,7 +5048,7 @@ namespace Microsoft.PowerShell.Activities
                     DecrementRunningCountAndCheckForEnd(psActivityContext);
                 }
             }
-        }      
+        }
 
         // Handle a failure. Check if the attempt has gone over the number of allowed attempts,
         // and if not, sleep for the retry delay.
@@ -5233,7 +5233,7 @@ namespace Microsoft.PowerShell.Activities
                     workflowHost.LocalRunspaceProvider.ReleaseRunspace(runspace);
                     break;
 
-                case CommandRunRemotely:                    
+                case CommandRunRemotely:
                     UnregisterAndReleaseRunspace(runspace, workflowHost, psActivityContext);
                     break;
 
@@ -5245,7 +5245,7 @@ namespace Microsoft.PowerShell.Activities
                 case CommandRunOutOfProc:
                 case RunInProcNoRunspace:
                     {
-                        // do nothing        
+                        // do nothing
                     }
                     break;
                 default:
@@ -5318,7 +5318,7 @@ namespace Microsoft.PowerShell.Activities
                     return true;
             }
 
-            return false;            
+            return false;
         }
 
         #region Check In-Proc vs Out-of-Proc
@@ -5674,7 +5674,7 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// Forces the activity to not call the persist functionality, which will be responsible for 
+        /// Forces the activity to not call the persist functionality, which will be responsible for
         /// persisting the workflow state onto the disk.
         /// </summary>
         public bool? PSPersist
@@ -5697,7 +5697,7 @@ namespace Microsoft.PowerShell.Activities
         /// </summary>
         public bool? MergeErrorToOutput
         {
-            get; 
+            get;
             set;
         }
 
@@ -5857,7 +5857,7 @@ namespace Microsoft.PowerShell.Activities
         public AuthenticationLevel PSAuthenticationLevel { get; set; }
 
         /// <summary>
-        /// Specifies the impersonation level to use. Valid values are: 
+        /// Specifies the impersonation level to use. Valid values are:
         /// 0: Default (reads the local registry for the default impersonation level , which is usually set to "3: Impersonate".)
         ///  1: Anonymous (Hides the credentials of the caller.)
         ///  2: Identify (Allows objects to query the credentials of the caller.)
@@ -5866,7 +5866,7 @@ namespace Microsoft.PowerShell.Activities
         /// </summary>
         public ImpersonationLevel Impersonation { get; set; }
 
-        /* 
+        /*
          * Enables all the privileges of the current user before the command makes the WMI call.
          */
         /// <summary>
@@ -5876,7 +5876,7 @@ namespace Microsoft.PowerShell.Activities
 
         /// <summary>
         /// Specifies the authority to use to authenticate the WMI connection. You can specify
-        /// standard NTLM or Kerberos authentication. To use NTLM, set the authority setting 
+        /// standard NTLM or Kerberos authentication. To use NTLM, set the authority setting
         /// to ntlmdomain:"DomainName", where "DomainName" identifies a valid NTLM domain name.
         /// To use Kerberos, specify kerberos:"DomainName>\ServerName". You cannot include
         /// the authority setting when you connect to the local computer.
@@ -5910,7 +5910,7 @@ namespace Microsoft.PowerShell.Activities
         /// </summary>
         public virtual void CleanUp()
         {
-        }        
+        }
     }
 
     class RetryCount
@@ -6031,7 +6031,7 @@ namespace Microsoft.PowerShell.Activities
         public AuthenticationLevel PSAuthenticationLevel { get; set; }
 
         /// <summary>
-        /// Specifies the impersonation level to use. Valid values are: 
+        /// Specifies the impersonation level to use. Valid values are:
         /// 0: Default (reads the local registry for the default impersonation level , which is usually set to "3: Impersonate".)
         ///  1: Anonymous (Hides the credentials of the caller.)
         ///  2: Identify (Allows objects to query the credentials of the caller.)
@@ -6042,7 +6042,7 @@ namespace Microsoft.PowerShell.Activities
         [DefaultValue(null)]
         public ImpersonationLevel Impersonation { get; set; }
 
-        /* 
+        /*
          * Enables all the privileges of the current user before the command makes the WMI call.
          */
         /// <summary>
@@ -6054,7 +6054,7 @@ namespace Microsoft.PowerShell.Activities
 
         /// <summary>
         /// Specifies the authority to use to authenticate the WMI connection. You can specify
-        /// standard NTLM or Kerberos authentication. To use NTLM, set the authority setting 
+        /// standard NTLM or Kerberos authentication. To use NTLM, set the authority setting
         /// to ntlmdomain:"DomainName", where "DomainName" identifies a valid NTLM domain name.
         /// To use Kerberos, specify kerberos:"DomainName>\ServerName". You cannot include
         /// the authority setting when you connect to the local computer.
@@ -6448,7 +6448,7 @@ namespace Microsoft.PowerShell.Activities
         /// Write command detail info to the eventlog.
         /// </summary>
         /// <param name="text">Text to write.</param>
-        public void WriteCommandDetail(string text) 
+        public void WriteCommandDetail(string text)
         {
             PowerShellTraceSource tracer = PowerShellTraceSourceFactory.GetTraceSource();
             tracer.WriteMessage(text);

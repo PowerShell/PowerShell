@@ -1,8 +1,3 @@
-if ( ! (get-module -ea silentlycontinue TestHostCS ))
-{
-    $hostmodule = Join-Path $PSScriptRoot "../../Common/TestHostCS.psm1"
-    import-module $hostmodule
-}
 Describe "Read-Host Test" -tag "CI" {
     BeforeAll {
         $th = New-TestHost
@@ -32,7 +27,7 @@ Describe "Read-Host Test" -tag "CI" {
     }
     It "Read-Host returns a secure string when using -AsSecureString parameter" {
         $result = $ps.AddScript("Read-Host -AsSecureString").Invoke() | select-object -first 1
-        $result.GetType().Name | should be "SecureString"
+        $result | Should BeOfType SecureString
         [pscredential]::New("foo",$result).GetNEtworkCredential().Password | should BeExactly TEST
 
     }

@@ -21,7 +21,7 @@ using System.Windows.Input;
 
 namespace Microsoft.Management.UI.Internal
 {
-    
+
     /// <summary>
     /// Interaction logic for ManagementList.
     /// </summary>
@@ -36,7 +36,7 @@ namespace Microsoft.Management.UI.Internal
         //
         private ListOrganizer viewManager;
         private PickerBase viewSaver;
-        
+
         //
         // ViewsChanged RoutedEvent
         //
@@ -59,7 +59,7 @@ namespace Microsoft.Management.UI.Internal
                 RemoveHandler(ViewsChangedEvent,value);
             }
         }
-        
+
         //
         // ClearFilter routed command
         //
@@ -67,19 +67,19 @@ namespace Microsoft.Management.UI.Internal
         /// Informs the ManagementList that it should clear the filter that is applied.
         /// </summary>
         public static readonly RoutedCommand ClearFilterCommand = new RoutedCommand("ClearFilter",typeof(ManagementList));
-        
+
         static private void ClearFilterCommand_CommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             ManagementList obj = (ManagementList) sender;
             obj.OnClearFilterCanExecute( e );
         }
-        
+
         static private void ClearFilterCommand_CommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             ManagementList obj = (ManagementList) sender;
             obj.OnClearFilterExecuted( e );
         }
-        
+
         /// <summary>
         /// Called to determine if ClearFilter can execute.
         /// </summary>
@@ -87,9 +87,9 @@ namespace Microsoft.Management.UI.Internal
         {
             OnClearFilterCanExecuteImplementation(e);
         }
-        
+
         partial void OnClearFilterCanExecuteImplementation(CanExecuteRoutedEventArgs e);
-        
+
         /// <summary>
         /// Called when ClearFilter executes.
         /// </summary>
@@ -100,9 +100,9 @@ namespace Microsoft.Management.UI.Internal
         {
             OnClearFilterExecutedImplementation(e);
         }
-        
+
         partial void OnClearFilterExecutedImplementation(ExecutedRoutedEventArgs e);
-        
+
         //
         // SaveView routed command
         //
@@ -110,19 +110,19 @@ namespace Microsoft.Management.UI.Internal
         /// Informs the PickerBase that it should close the dropdown.
         /// </summary>
         public static readonly RoutedCommand SaveViewCommand = new RoutedCommand("SaveView",typeof(ManagementList));
-        
+
         static private void SaveViewCommand_CommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             ManagementList obj = (ManagementList) sender;
             obj.OnSaveViewCanExecute( e );
         }
-        
+
         static private void SaveViewCommand_CommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             ManagementList obj = (ManagementList) sender;
             obj.OnSaveViewExecuted( e );
         }
-        
+
         /// <summary>
         /// Called to determine if SaveView can execute.
         /// </summary>
@@ -130,9 +130,9 @@ namespace Microsoft.Management.UI.Internal
         {
             OnSaveViewCanExecuteImplementation(e);
         }
-        
+
         partial void OnSaveViewCanExecuteImplementation(CanExecuteRoutedEventArgs e);
-        
+
         /// <summary>
         /// Called when SaveView executes.
         /// </summary>
@@ -143,9 +143,9 @@ namespace Microsoft.Management.UI.Internal
         {
             OnSaveViewExecutedImplementation(e);
         }
-        
+
         partial void OnSaveViewExecutedImplementation(ExecutedRoutedEventArgs e);
-        
+
         //
         // StartFilter routed command
         //
@@ -153,19 +153,19 @@ namespace Microsoft.Management.UI.Internal
         /// Informs the ManagementList that it should apply the filter.
         /// </summary>
         public static readonly RoutedCommand StartFilterCommand = new RoutedCommand("StartFilter",typeof(ManagementList));
-        
+
         static private void StartFilterCommand_CommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             ManagementList obj = (ManagementList) sender;
             obj.OnStartFilterCanExecute( e );
         }
-        
+
         static private void StartFilterCommand_CommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             ManagementList obj = (ManagementList) sender;
             obj.OnStartFilterExecuted( e );
         }
-        
+
         /// <summary>
         /// Called to determine if StartFilter can execute.
         /// </summary>
@@ -173,9 +173,9 @@ namespace Microsoft.Management.UI.Internal
         {
             OnStartFilterCanExecuteImplementation(e);
         }
-        
+
         partial void OnStartFilterCanExecuteImplementation(CanExecuteRoutedEventArgs e);
-        
+
         /// <summary>
         /// Called when StartFilter executes.
         /// </summary>
@@ -186,9 +186,9 @@ namespace Microsoft.Management.UI.Internal
         {
             OnStartFilterExecutedImplementation(e);
         }
-        
+
         partial void OnStartFilterExecutedImplementation(ExecutedRoutedEventArgs e);
-        
+
         //
         // StopFilter routed command
         //
@@ -196,19 +196,19 @@ namespace Microsoft.Management.UI.Internal
         /// Informs the ManagementList that it should stop filtering that is in progress.
         /// </summary>
         public static readonly RoutedCommand StopFilterCommand = new RoutedCommand("StopFilter",typeof(ManagementList));
-        
+
         static private void StopFilterCommand_CommandCanExecute(object sender, CanExecuteRoutedEventArgs e)
         {
             ManagementList obj = (ManagementList) sender;
             obj.OnStopFilterCanExecute( e );
         }
-        
+
         static private void StopFilterCommand_CommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             ManagementList obj = (ManagementList) sender;
             obj.OnStopFilterExecuted( e );
         }
-        
+
         /// <summary>
         /// Called to determine if StopFilter can execute.
         /// </summary>
@@ -216,9 +216,9 @@ namespace Microsoft.Management.UI.Internal
         {
             OnStopFilterCanExecuteImplementation(e);
         }
-        
+
         partial void OnStopFilterCanExecuteImplementation(CanExecuteRoutedEventArgs e);
-        
+
         /// <summary>
         /// Called when StopFilter executes.
         /// </summary>
@@ -229,9 +229,9 @@ namespace Microsoft.Management.UI.Internal
         {
             OnStopFilterExecutedImplementation(e);
         }
-        
+
         partial void OnStopFilterExecutedImplementation(ExecutedRoutedEventArgs e);
-        
+
         //
         // AddFilterRulePicker dependency property
         //
@@ -243,7 +243,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the AddFilterRulePicker dependency property.
         /// </summary>
         public static readonly DependencyProperty AddFilterRulePickerProperty = AddFilterRulePickerPropertyKey.DependencyProperty;
-        
+
         /// <summary>
         /// Gets the filter rule picker.
         /// </summary>
@@ -262,18 +262,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(AddFilterRulePickerPropertyKey,value);
             }
         }
-        
+
         static private void AddFilterRulePickerProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ManagementList obj = (ManagementList) o;
             obj.OnAddFilterRulePickerChanged( new PropertyChangedEventArgs<AddFilterRulePicker>((AddFilterRulePicker)e.OldValue, (AddFilterRulePicker)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when AddFilterRulePicker property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<AddFilterRulePicker>> AddFilterRulePickerChanged;
-        
+
         /// <summary>
         /// Called when AddFilterRulePicker property changes.
         /// </summary>
@@ -282,9 +282,9 @@ namespace Microsoft.Management.UI.Internal
             OnAddFilterRulePickerChangedImplementation(e);
             RaisePropertyChangedEvent(AddFilterRulePickerChanged, e);
         }
-        
+
         partial void OnAddFilterRulePickerChangedImplementation(PropertyChangedEventArgs<AddFilterRulePicker> e);
-        
+
         //
         // CurrentView dependency property
         //
@@ -296,7 +296,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the CurrentView dependency property.
         /// </summary>
         public static readonly DependencyProperty CurrentViewProperty = CurrentViewPropertyKey.DependencyProperty;
-        
+
         /// <summary>
         /// Gets or sets current view.
         /// </summary>
@@ -315,18 +315,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(CurrentViewPropertyKey,value);
             }
         }
-        
+
         static private void CurrentViewProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ManagementList obj = (ManagementList) o;
             obj.OnCurrentViewChanged( new PropertyChangedEventArgs<StateDescriptor<ManagementList>>((StateDescriptor<ManagementList>)e.OldValue, (StateDescriptor<ManagementList>)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when CurrentView property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<StateDescriptor<ManagementList>>> CurrentViewChanged;
-        
+
         /// <summary>
         /// Called when CurrentView property changes.
         /// </summary>
@@ -335,9 +335,9 @@ namespace Microsoft.Management.UI.Internal
             OnCurrentViewChangedImplementation(e);
             RaisePropertyChangedEvent(CurrentViewChanged, e);
         }
-        
+
         partial void OnCurrentViewChangedImplementation(PropertyChangedEventArgs<StateDescriptor<ManagementList>> e);
-        
+
         //
         // Evaluator dependency property
         //
@@ -345,7 +345,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the Evaluator dependency property.
         /// </summary>
         public static readonly DependencyProperty EvaluatorProperty = DependencyProperty.Register( "Evaluator", typeof(ItemsControlFilterEvaluator), typeof(ManagementList), new PropertyMetadata( null, EvaluatorProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets the FilterEvaluator.
         /// </summary>
@@ -364,18 +364,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(EvaluatorProperty,value);
             }
         }
-        
+
         static private void EvaluatorProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ManagementList obj = (ManagementList) o;
             obj.OnEvaluatorChanged( new PropertyChangedEventArgs<ItemsControlFilterEvaluator>((ItemsControlFilterEvaluator)e.OldValue, (ItemsControlFilterEvaluator)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when Evaluator property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<ItemsControlFilterEvaluator>> EvaluatorChanged;
-        
+
         /// <summary>
         /// Called when Evaluator property changes.
         /// </summary>
@@ -384,9 +384,9 @@ namespace Microsoft.Management.UI.Internal
             OnEvaluatorChangedImplementation(e);
             RaisePropertyChangedEvent(EvaluatorChanged, e);
         }
-        
+
         partial void OnEvaluatorChangedImplementation(PropertyChangedEventArgs<ItemsControlFilterEvaluator> e);
-        
+
         //
         // FilterRulePanel dependency property
         //
@@ -398,7 +398,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the FilterRulePanel dependency property.
         /// </summary>
         public static readonly DependencyProperty FilterRulePanelProperty = FilterRulePanelPropertyKey.DependencyProperty;
-        
+
         /// <summary>
         /// Gets the filter rule panel.
         /// </summary>
@@ -417,18 +417,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(FilterRulePanelPropertyKey,value);
             }
         }
-        
+
         static private void FilterRulePanelProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ManagementList obj = (ManagementList) o;
             obj.OnFilterRulePanelChanged( new PropertyChangedEventArgs<FilterRulePanel>((FilterRulePanel)e.OldValue, (FilterRulePanel)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when FilterRulePanel property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<FilterRulePanel>> FilterRulePanelChanged;
-        
+
         /// <summary>
         /// Called when FilterRulePanel property changes.
         /// </summary>
@@ -437,9 +437,9 @@ namespace Microsoft.Management.UI.Internal
             OnFilterRulePanelChangedImplementation(e);
             RaisePropertyChangedEvent(FilterRulePanelChanged, e);
         }
-        
+
         partial void OnFilterRulePanelChangedImplementation(PropertyChangedEventArgs<FilterRulePanel> e);
-        
+
         //
         // IsFilterShown dependency property
         //
@@ -447,7 +447,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the IsFilterShown dependency property.
         /// </summary>
         public static readonly DependencyProperty IsFilterShownProperty = DependencyProperty.Register( "IsFilterShown", typeof(bool), typeof(ManagementList), new PropertyMetadata( BooleanBoxes.TrueBox, IsFilterShownProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets a value indicating whether the filter is shown.
         /// </summary>
@@ -466,18 +466,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(IsFilterShownProperty,BooleanBoxes.Box(value));
             }
         }
-        
+
         static private void IsFilterShownProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ManagementList obj = (ManagementList) o;
             obj.OnIsFilterShownChanged( new PropertyChangedEventArgs<bool>((bool)e.OldValue, (bool)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when IsFilterShown property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<bool>> IsFilterShownChanged;
-        
+
         /// <summary>
         /// Called when IsFilterShown property changes.
         /// </summary>
@@ -486,9 +486,9 @@ namespace Microsoft.Management.UI.Internal
             OnIsFilterShownChangedImplementation(e);
             RaisePropertyChangedEvent(IsFilterShownChanged, e);
         }
-        
+
         partial void OnIsFilterShownChangedImplementation(PropertyChangedEventArgs<bool> e);
-        
+
         //
         // IsLoadingItems dependency property
         //
@@ -496,7 +496,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the IsLoadingItems dependency property.
         /// </summary>
         public static readonly DependencyProperty IsLoadingItemsProperty = DependencyProperty.Register( "IsLoadingItems", typeof(bool), typeof(ManagementList), new PropertyMetadata( BooleanBoxes.FalseBox, IsLoadingItemsProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets a value indicating whether items are loading.
         /// </summary>
@@ -515,18 +515,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(IsLoadingItemsProperty,BooleanBoxes.Box(value));
             }
         }
-        
+
         static private void IsLoadingItemsProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ManagementList obj = (ManagementList) o;
             obj.OnIsLoadingItemsChanged( new PropertyChangedEventArgs<bool>((bool)e.OldValue, (bool)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when IsLoadingItems property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<bool>> IsLoadingItemsChanged;
-        
+
         /// <summary>
         /// Called when IsLoadingItems property changes.
         /// </summary>
@@ -535,9 +535,9 @@ namespace Microsoft.Management.UI.Internal
             OnIsLoadingItemsChangedImplementation(e);
             RaisePropertyChangedEvent(IsLoadingItemsChanged, e);
         }
-        
+
         partial void OnIsLoadingItemsChangedImplementation(PropertyChangedEventArgs<bool> e);
-        
+
         //
         // IsSearchShown dependency property
         //
@@ -545,7 +545,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the IsSearchShown dependency property.
         /// </summary>
         public static readonly DependencyProperty IsSearchShownProperty = DependencyProperty.Register( "IsSearchShown", typeof(bool), typeof(ManagementList), new PropertyMetadata( BooleanBoxes.TrueBox, IsSearchShownProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets a value indicating whether the search box is shown.
         /// </summary>
@@ -564,18 +564,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(IsSearchShownProperty,BooleanBoxes.Box(value));
             }
         }
-        
+
         static private void IsSearchShownProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ManagementList obj = (ManagementList) o;
             obj.OnIsSearchShownChanged( new PropertyChangedEventArgs<bool>((bool)e.OldValue, (bool)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when IsSearchShown property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<bool>> IsSearchShownChanged;
-        
+
         /// <summary>
         /// Called when IsSearchShown property changes.
         /// </summary>
@@ -584,9 +584,9 @@ namespace Microsoft.Management.UI.Internal
             OnIsSearchShownChangedImplementation(e);
             RaisePropertyChangedEvent(IsSearchShownChanged, e);
         }
-        
+
         partial void OnIsSearchShownChangedImplementation(PropertyChangedEventArgs<bool> e);
-        
+
         //
         // List dependency property
         //
@@ -598,7 +598,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the List dependency property.
         /// </summary>
         public static readonly DependencyProperty ListProperty = ListPropertyKey.DependencyProperty;
-        
+
         /// <summary>
         /// Gets the list.
         /// </summary>
@@ -617,18 +617,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(ListPropertyKey,value);
             }
         }
-        
+
         static private void ListProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ManagementList obj = (ManagementList) o;
             obj.OnListChanged( new PropertyChangedEventArgs<InnerList>((InnerList)e.OldValue, (InnerList)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when List property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<InnerList>> ListChanged;
-        
+
         /// <summary>
         /// Called when List property changes.
         /// </summary>
@@ -637,9 +637,9 @@ namespace Microsoft.Management.UI.Internal
             OnListChangedImplementation(e);
             RaisePropertyChangedEvent(ListChanged, e);
         }
-        
+
         partial void OnListChangedImplementation(PropertyChangedEventArgs<InnerList> e);
-        
+
         //
         // SearchBox dependency property
         //
@@ -651,7 +651,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the SearchBox dependency property.
         /// </summary>
         public static readonly DependencyProperty SearchBoxProperty = SearchBoxPropertyKey.DependencyProperty;
-        
+
         /// <summary>
         /// Gets the search box.
         /// </summary>
@@ -670,18 +670,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(SearchBoxPropertyKey,value);
             }
         }
-        
+
         static private void SearchBoxProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ManagementList obj = (ManagementList) o;
             obj.OnSearchBoxChanged( new PropertyChangedEventArgs<SearchBox>((SearchBox)e.OldValue, (SearchBox)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when SearchBox property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<SearchBox>> SearchBoxChanged;
-        
+
         /// <summary>
         /// Called when SearchBox property changes.
         /// </summary>
@@ -690,9 +690,9 @@ namespace Microsoft.Management.UI.Internal
             OnSearchBoxChangedImplementation(e);
             RaisePropertyChangedEvent(SearchBoxChanged, e);
         }
-        
+
         partial void OnSearchBoxChangedImplementation(PropertyChangedEventArgs<SearchBox> e);
-        
+
         //
         // ViewManagerUserActionState dependency property
         //
@@ -700,7 +700,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the ViewManagerUserActionState dependency property.
         /// </summary>
         public static readonly DependencyProperty ViewManagerUserActionStateProperty = DependencyProperty.Register( "ViewManagerUserActionState", typeof(UserActionState), typeof(ManagementList), new PropertyMetadata( UserActionState.Enabled, ViewManagerUserActionStateProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets the user interaction state of the view manager.
         /// </summary>
@@ -719,18 +719,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(ViewManagerUserActionStateProperty,value);
             }
         }
-        
+
         static private void ViewManagerUserActionStateProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ManagementList obj = (ManagementList) o;
             obj.OnViewManagerUserActionStateChanged( new PropertyChangedEventArgs<UserActionState>((UserActionState)e.OldValue, (UserActionState)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when ViewManagerUserActionState property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<UserActionState>> ViewManagerUserActionStateChanged;
-        
+
         /// <summary>
         /// Called when ViewManagerUserActionState property changes.
         /// </summary>
@@ -739,9 +739,9 @@ namespace Microsoft.Management.UI.Internal
             OnViewManagerUserActionStateChangedImplementation(e);
             RaisePropertyChangedEvent(ViewManagerUserActionStateChanged, e);
         }
-        
+
         partial void OnViewManagerUserActionStateChangedImplementation(PropertyChangedEventArgs<UserActionState> e);
-        
+
         //
         // ViewSaverUserActionState dependency property
         //
@@ -749,7 +749,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the ViewSaverUserActionState dependency property.
         /// </summary>
         public static readonly DependencyProperty ViewSaverUserActionStateProperty = DependencyProperty.Register( "ViewSaverUserActionState", typeof(UserActionState), typeof(ManagementList), new PropertyMetadata( UserActionState.Enabled, ViewSaverUserActionStateProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets the user interaction state of the view saver.
         /// </summary>
@@ -768,18 +768,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(ViewSaverUserActionStateProperty,value);
             }
         }
-        
+
         static private void ViewSaverUserActionStateProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             ManagementList obj = (ManagementList) o;
             obj.OnViewSaverUserActionStateChanged( new PropertyChangedEventArgs<UserActionState>((UserActionState)e.OldValue, (UserActionState)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when ViewSaverUserActionState property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<UserActionState>> ViewSaverUserActionStateChanged;
-        
+
         /// <summary>
         /// Called when ViewSaverUserActionState property changes.
         /// </summary>
@@ -788,9 +788,9 @@ namespace Microsoft.Management.UI.Internal
             OnViewSaverUserActionStateChangedImplementation(e);
             RaisePropertyChangedEvent(ViewSaverUserActionStateChanged, e);
         }
-        
+
         partial void OnViewSaverUserActionStateChangedImplementation(PropertyChangedEventArgs<UserActionState> e);
-        
+
         /// <summary>
         /// Called when a property changes.
         /// </summary>
@@ -801,11 +801,11 @@ namespace Microsoft.Management.UI.Internal
                 eh(this,e);
             }
         }
-        
+
         //
         // OnApplyTemplate
         //
-        
+
         /// <summary>
         /// Called when ApplyTemplate is called.
         /// </summary>
@@ -817,15 +817,15 @@ namespace Microsoft.Management.UI.Internal
             this.viewSaver = WpfHelp.GetTemplateChild<PickerBase>(this,"PART_ViewSaver");
             PostOnApplyTemplate();
         }
-        
+
         partial void PreOnApplyTemplate();
-        
+
         partial void PostOnApplyTemplate();
-        
+
         //
         // Static constructor
         //
-        
+
         /// <summary>
         /// Called when the type is initialized.
         /// </summary>
@@ -838,9 +838,9 @@ namespace Microsoft.Management.UI.Internal
             CommandManager.RegisterClassCommandBinding( typeof(ManagementList), new CommandBinding( ManagementList.StopFilterCommand, StopFilterCommand_CommandExecuted, StopFilterCommand_CommandCanExecute ));
             StaticConstructorImplementation();
         }
-        
+
         static partial void StaticConstructorImplementation();
-        
+
         //
         // CreateAutomationPeer
         //
@@ -854,7 +854,7 @@ namespace Microsoft.Management.UI.Internal
         {
             return new ExtendedFrameworkElementAutomationPeer(this,AutomationControlType.Pane);
         }
-        
+
     }
 }
 #endregion

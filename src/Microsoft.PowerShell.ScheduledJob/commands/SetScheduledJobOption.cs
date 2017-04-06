@@ -21,7 +21,7 @@ namespace Microsoft.PowerShell.ScheduledJob
         /// <summary>
         /// ScheduledJobOptions object.
         /// </summary>
-        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true, 
+        [Parameter(Position = 0, Mandatory = true, ValueFromPipeline = true,
                    ParameterSetName = ScheduledJobOptionCmdletBase.OptionsParameterSet)]
         [ValidateNotNull]
         public ScheduledJobOptions InputObject

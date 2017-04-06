@@ -2,9 +2,9 @@
     BeforeAll {
         Class MyTestParameter {
             [parameter(ParameterSetName = 'pset1', position=0, mandatory=1)]
-            [string] $name            
+            [string] $name
         }
-        
+
         function foo-bar
         {
             [CmdletBinding()]
@@ -18,19 +18,19 @@
 
                     $attributeCollection = [System.Collections.ObjectModel.Collection``1[System.Attribute]]::new()
                     $attributeCollection.Add($attributes)
-            
+
                     $dynParam1 = [System.Management.Automation.RuntimeDefinedParameter]::new("dp1", [Int32], $attributeCollection)
 
                     $paramDictionary = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
                     $paramDictionary.Add("dp1", $dynParam1)
-            
+
                     return $paramDictionary
                 }
                 elseif($PSBoundParameters["path"] -contains "class") {
                     $paramDictionary = [MyTestParameter]::new()
                     return $paramDictionary
                 }
-    
+
                 $paramDictionary = $null
                 return $null
             }
@@ -61,16 +61,16 @@
         foo-bar -path abc -dp1 42 | Should Be 42
     }
 
-    It "When the dynamic parameter is not available, and raises an error when specified" {        
+    It "When the dynamic parameter is not available, and raises an error when specified" {
         try {
             foo-bar -path def -dp1 42
             Throw "Exception expected, execution should not have reached here"
         } catch {
-            $_.FullyQualifiedErrorId | Should Be "NamedParameterNotFound,foo-bar"            
+            $_.FullyQualifiedErrorId | Should Be "NamedParameterNotFound,foo-bar"
         }
     }
 
-    It "No dynamic parameter shouldn't cause an errr " {        
+    It "No dynamic parameter shouldn't cause an errr " {
         foo-bar -path def  | Should Be 'no dynamic parameters'
     }
 

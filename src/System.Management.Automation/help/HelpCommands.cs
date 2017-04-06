@@ -97,13 +97,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <remarks>
         /// Currently we support following views:
-        /// 
+        ///
         /// 1. Reminder (Default - Experienced User)
         /// 2. Detailed (Beginner - Beginning User)
         /// 3. Full     (All Users)
-        /// 4. Examples 
-        /// 5. Parameters 
-        /// 
+        /// 4. Examples
+        /// 5. Parameters
+        ///
         /// Currently we support these views only for Cmdlets.
         /// A SnapIn developer can however change these views.
         /// </remarks>
@@ -124,13 +124,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <remarks>
         /// Currently we support following views:
-        /// 
+        ///
         /// 1. Reminder (Default - Experienced User)
         /// 2. Detailed (Beginner - Beginning User)
         /// 3. Full     (All Users)
-        /// 4. Examples 
-        /// 5. Parameters 
-        /// 
+        /// 4. Examples
+        /// 5. Parameters
+        ///
         /// Currently we support these views only for Cmdlets.
         /// A SnapIn developer can however change these views.
         /// </remarks>
@@ -151,12 +151,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <remarks>
         /// Currently we support following views:
-        /// 
+        ///
         /// 1. Reminder (Default - Experienced User)
         /// 2. Detailed (Beginner - Beginning User)
         /// 3. Full     (All Users)
-        /// 4. Examples 
-        /// 
+        /// 4. Examples
+        ///
         /// Currently we support these views only for Cmdlets.
         /// A SnapIn developer can however change these views.
         /// </remarks>
@@ -349,8 +349,8 @@ namespace Microsoft.PowerShell.Commands
                 if (((countOfHelpInfos == 0) && (!WildcardPattern.ContainsWildcardCharacters(helpRequest.Target)))
                     || this.Context.HelpSystem.VerboseHelpErrors)
                 {
-                    // Check if there is any error happened. If yes, 
-                    // pipe out errors. 
+                    // Check if there is any error happened. If yes,
+                    // pipe out errors.
                     if (this.Context.HelpSystem.LastErrors.Count > 0)
                     {
                         foreach (ErrorRecord errorRecord in this.Context.HelpSystem.LastErrors)
@@ -400,9 +400,9 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Change <paramref name="originalHelpObject"/> as per user request.
-        /// 
-        /// This method creates a new type to the existing typenames 
-        /// depending on Detailed,Full,Example parameters and adds this 
+        ///
+        /// This method creates a new type to the existing typenames
+        /// depending on Detailed,Full,Example parameters and adds this
         /// new type(s) to the top of the list.
         /// </summary>
         /// <param name="originalHelpObject">Full help object to transform.</param>
@@ -421,7 +421,7 @@ namespace Microsoft.PowerShell.Commands
 
             string tokenToAdd = _viewTokenToAdd.ToString();
             // We are changing the types without modifying the original object.
-            // The contract between help command and helpsystem does not 
+            // The contract between help command and helpsystem does not
             // allow us to modify returned help objects.
             PSObject objectToReturn = originalHelpObject.Copy();
             objectToReturn.TypeNames.Clear();
@@ -638,20 +638,17 @@ namespace Microsoft.PowerShell.Commands
                 browserProcess.StartInfo.Arguments = uriToLaunch.OriginalString;
                 browserProcess.Start();
 #elif CORECLR
-                // On FullCLR, ProcessStartInfo.UseShellExecute is true by default. This means that the shell will be used when starting the process.
-                // On CoreCLR, UseShellExecute is not supported. To work around this, we check if there is a default browser in the system.
-                // If there is, we lunch it to open the HelpURI. If there isn't, we error out.
-                string webBrowserPath = GetDefaultWebBrowser();
-                if (webBrowserPath == null)
+                if (Platform.IsNanoServer || Platform.IsIoT)
                 {
+                    // We cannot open the URL in browser on headless SKUs.
                     wrapCaughtException = false;
                     exception = PSTraceSource.NewInvalidOperationException(HelpErrors.CannotLaunchURI, uriToLaunch.OriginalString);
                 }
                 else
                 {
-                    browserProcess.StartInfo = new ProcessStartInfo(webBrowserPath);
-                    browserProcess.StartInfo.Arguments = "\"" + uriToLaunch.OriginalString + "\"";
-                    browserProcess.Start();
+                    // We can call ShellExecute directly on Full Windows.
+                    browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
+                    ShellExecuteHelper.Start(browserProcess.StartInfo);
                 }
 #else
                 browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
@@ -675,46 +672,6 @@ namespace Microsoft.PowerShell.Commands
                     throw exception;
             }
         }
-
-#if !UNIX
-        /// <summary>
-        /// Gets the path to the default browser by querying the Windows registry.
-        /// </summary>
-        /// <returns></returns>
-        private string GetDefaultWebBrowser()
-        {
-            // Check if there is a default browser in the system.
-            const string httpRegkey = @"HKEY_CURRENT_USER\Software\Microsoft\Windows\Shell\Associations\UrlAssociations\http\UserChoice";
-            object progId = Registry.GetValue(httpRegkey, "ProgId", null);
-            if (progId != null)
-            {
-                // Query the registry to find the web browser path.
-                using (RegistryKey browserRegKey = Registry.ClassesRoot.OpenSubKey(progId + "\\shell\\open\\command", false))
-                {
-                    string browserPath = browserRegKey?.GetValue(null)?.ToString().Replace(/* remove the quotes */ "\"", "");
-                    if (!string.IsNullOrEmpty(browserPath))
-                    {
-                        const string exeExtension = ".exe";
-                        if (!browserPath.EndsWith(exeExtension, StringComparison.OrdinalIgnoreCase))
-                        {
-                            // Remove any extra chars in the path after ".exe".
-                            int extIndex = browserPath.LastIndexOf(exeExtension, StringComparison.OrdinalIgnoreCase);
-                            browserPath = extIndex > 0 ? browserPath.Substring(0, extIndex + exeExtension.Length) : string.Empty;
-                        }
-
-                        // Make sure the path to the default browser exists.
-                        if (File.Exists(browserPath))
-                        {
-                            return browserPath;
-                        }
-                    }
-                }
-            }
-
-            // By default, return null.
-            return null;
-        }
-#endif
 
         #endregion
 

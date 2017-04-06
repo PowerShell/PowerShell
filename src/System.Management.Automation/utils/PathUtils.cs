@@ -18,7 +18,7 @@ namespace System.Management.Automation
     internal static class PathUtils
     {
         /// <summary>
-        /// THE method for opening a file for writing.  
+        /// THE method for opening a file for writing.
         /// Should be used by all cmdlets that write to a file.
         /// </summary>
         /// <param name="cmdlet">cmdlet that is opening the file (used mainly for error reporting)</param>
@@ -52,7 +52,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// THE method for opening a file for writing.  
+        /// THE method for opening a file for writing.
         /// Should be used by all cmdlets that write to a file.
         /// </summary>
         /// <param name="cmdlet">cmdlet that is opening the file (used mainly for error reporting)</param>

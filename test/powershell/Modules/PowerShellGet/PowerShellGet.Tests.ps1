@@ -1,4 +1,7 @@
-﻿$RepositoryName = 'INTGallery'
+﻿# no progress output during these tests
+$ProgressPreference = "SilentlyContinue"
+
+$RepositoryName = 'INTGallery'
 $SourceLocation = 'https://dtlgalleryint.cloudapp.net'
 $RegisteredINTRepo = $false
 $ContosoServer = 'ContosoServer'
@@ -37,7 +40,7 @@ if(IsInbox)
     $script:MyDocumentsPSPath = if($script:MyDocumentsFolderPath)
                                 {
                                     Microsoft.PowerShell.Management\Join-Path -Path $script:MyDocumentsFolderPath -ChildPath "WindowsPowerShell"
-                                } 
+                                }
                                 else
                                 {
                                     Microsoft.PowerShell.Management\Join-Path -Path $env:USERPROFILE -ChildPath "Documents\WindowsPowerShell"
@@ -68,10 +71,10 @@ $PSVersionTable
 $env:PSModulePath
 
 Get-Module -ListAvailable -Name PackageManagement, PowerShellGet
-Import-Module PackageManagement -force -verbose
+Import-Module PackageManagement -verbose
 Get-PackageProvider -ListAvailable
 
-$repo = Get-PSRepository -ErrorAction SilentlyContinue | 
+$repo = Get-PSRepository -ErrorAction SilentlyContinue |
             Where-Object {$_.SourceLocation.StartsWith($SourceLocation, [System.StringComparison]::OrdinalIgnoreCase)}
 if($repo)
 {

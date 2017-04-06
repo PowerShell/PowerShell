@@ -1,19 +1,19 @@
 ﻿Describe "TestData cmdlets" -Tags "CI" {
     Context "Get-TypeData" {
-        It "System.Array" {
-            (Get-TypeData System.Array).TypeName | Should Be System.Array
+        It "System.DateTime" {
+            (Get-TypeData System.DateTime).TypeName | Should Be System.DateTime
             # Supports pipelining?
-            ("System.Array" | Get-TypeData).TypeName | Should Be System.Array
+            ("System.DateTime" | Get-TypeData).TypeName | Should Be System.DateTime
         }
 
         It "Type accelerators" {
-            (Get-TypeData Array).TypeName | Should Be System.Array
+            (Get-TypeData DateTime).TypeName | Should Be System.DateTime
             (Get-TypeData psCredential).TypeName | Should Be System.Management.Automation.PSCredential
         }
 
         It "Accept multiple types" {
-            $types = Get-TypeData System.Array, System.Management.Automation* | Sort-Object -Property TypeName
-            $types[0].TypeName | Should Be System.Array
+            $types = Get-TypeData System.DateTime, System.Management.Automation* | Sort-Object -Property TypeName
+            $types[0].TypeName | Should Be System.DateTime
             for($i = 1; $i -lt $types.Count; $i++)
             {
                 $types[$i].TypeName.StartsWith("System.Management.Automation") | Should Be $true
@@ -71,7 +71,7 @@ Get-TypeData System.Void
         It "Remove type that doesn't exist" {
             $typeName = "TypeThatDoesNotExistsAnywhere" + (Get-Random)
             $ps.AddScript("Remove-TypeData -TypeName $typeName").Invoke()
-            $ps.Streams.Error[0].FullyQualifiedErrorId | Should Be "TypesDynamicRemoveException,Microsoft.PowerShell.Commands.RemoveTypeDataCommand" 
+            $ps.Streams.Error[0].FullyQualifiedErrorId | Should Be "TypesDynamicRemoveException,Microsoft.PowerShell.Commands.RemoveTypeDataCommand"
         }
 
         ##{ All of the following It blocks are intended to run in sequence, so don't reorder them.

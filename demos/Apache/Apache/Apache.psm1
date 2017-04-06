@@ -100,7 +100,7 @@ Class ApacheVirtualHost{
             $vHostDef += "</VirtualHost>"
             $filName = $ConfigurationFile
             $VhostDef | Out-File "/tmp/${filName}" -Force -Encoding:ascii
-            & $global:sudocmd "mv" "/tmp/${filName}" "${VhostsDirectory}/${filName}" 
+            & $global:sudocmd "mv" "/tmp/${filName}" "${VhostsDirectory}/${filName}"
             Write-Information "Restarting Apache HTTP Server"
             Restart-ApacheHTTPServer
         }

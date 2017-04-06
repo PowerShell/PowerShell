@@ -77,7 +77,7 @@ function Add-UserToGroup
 
 
 # tests if we should run a daily build
-# returns true if the build is scheduled 
+# returns true if the build is scheduled
 # or is a pushed tag
 Function Test-DailyBuild
 {
@@ -106,7 +106,7 @@ Function Set-BuildVariable
     {
         Set-AppveyorBuildVariable @PSBoundParameters
     }
-    else 
+    else
     {
         Set-Item env:/$name -Value $Value
     }
@@ -163,7 +163,9 @@ function Invoke-AppVeyorBuild
           Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -Publish
       }
 
-      Start-PSBuild -FullCLR -PSModuleRestore
+      ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+      ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+      <# Start-PSBuild -FullCLR -PSModuleRestore # Disable FullCLR Build #>
       Start-PSBuild -CrossGen -PSModuleRestore -Configuration 'Release'
 }
 
@@ -237,9 +239,9 @@ function Update-AppVeyorTestResults
 
     if($env:Appveyor)
     {
-        $retryCount = 0 
+        $retryCount = 0
         $pushedResults = $false
-        $pushedArtifacts = $false 
+        $pushedArtifacts = $false
         while( (!$pushedResults -or !$pushedResults) -and $retryCount -lt 3)
         {
             if($retryCount -gt 0)
@@ -271,30 +273,30 @@ function Update-AppVeyorTestResults
             Write-Warning "Failed to push all artifacts for $resultsFile"
         }
     }
-    else 
+    else
     {
         Write-Warning "Not running in appveyor, skipping upload of test results: $resultsFile"
     }
 }
 
 # Implement AppVeyor 'Test_script'
-function Invoke-AppVeyorTest 
+function Invoke-AppVeyorTest
 {
     [CmdletBinding()]
     param()
     #
     # CoreCLR
-    
+
     $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish -Configuration 'Release'))
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
     $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
-    $testResultsFileFullCLR = "$pwd\TestsResults.FullCLR.xml"
+    <# $testResultsFileFullCLR = "$pwd\TestsResults.FullCLR.xml" # Disable FullCLR Build #>
     if(!(Test-Path "$env:CoreOutput\powershell.exe"))
     {
         throw "CoreCLR PowerShell.exe was not built"
     }
-    
+
     if(-not (Test-DailyBuild))
     {
         # Pester doesn't allow Invoke-Pester -TagAll@('CI', 'RequireAdminOnWindows') currently
@@ -303,12 +305,12 @@ function Invoke-AppVeyorTest
         $ExcludeTag = @('Slow', 'Feature', 'Scenario')
         Write-Host -Foreground Green 'Running "CI" CoreCLR tests..'
     }
-    else 
+    else
     {
         $ExcludeTag = @()
         Write-Host -Foreground Green 'Running all CoreCLR tests..'
     }
-    
+
     Start-PSPester -bindir $env:CoreOutput -outputFile $testResultsNonAdminFile -Unelevate -Tag @() -ExcludeTag ($ExcludeTag + @('RequireAdminOnWindows'))
     Write-Host -Foreground Green 'Upload CoreCLR Non-Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsNonAdminFile
@@ -316,22 +318,24 @@ function Invoke-AppVeyorTest
     Start-PSPester -bindir $env:CoreOutput -outputFile $testResultsAdminFile -Tag @('RequireAdminOnWindows') -ExcludeTag $ExcludeTag
     Write-Host -Foreground Green 'Upload CoreCLR Admin test results'
     Update-AppVeyorTestResults -resultsFile $testResultsAdminFile
-    
+
+    <#
     #
-    # FullCLR
+    # FullCLR # Disable FullCLR Build
     $env:FullOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -FullCLR))
     Write-Host -Foreground Green 'Run FullCLR tests'
     Start-PSPester -FullCLR -bindir $env:FullOutput -outputFile $testResultsFileFullCLR -Tag $null -path 'test/fullCLR'
 
     Write-Host -Foreground Green 'Upload FullCLR test results'
     Update-AppVeyorTestResults -resultsFile $testResultsFileFullCLR
+    #>
 
     #
     # Fail the build, if tests failed
     @(
         $testResultsNonAdminFile,
-        $testResultsAdminFile,
-        $testResultsFileFullCLR
+        $testResultsAdminFile
+        <# $testResultsFileFullCLR # Disable FullCLR Build #>
     ) | % {
         Test-PSPesterResults -TestResultsFile $_
     }
@@ -348,7 +352,7 @@ function Invoke-AppVeyorAfterTest
     if(Test-DailyBuild)
     {
         ## Publish code coverage build, tests and OpenCover module to artifacts, so webhook has the information.
-        ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in AppveyorFinish. 
+        ## Build webhook is called after 'after_test' phase, hence we need to do this here and not in AppveyorFinish.
         $codeCoverageOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Configuration CodeCoverage))
         $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
 
@@ -371,7 +375,7 @@ function Compress-CoverageArtifacts
     Add-Type -AssemblyName System.IO.Compression.FileSystem
     $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath((Join-Path $PSScriptRoot '..\test\tools\OpenCover'))
     $zipOpenCoverPath = Join-Path $pwd 'OpenCover.zip'
-    [System.IO.Compression.ZipFile]::CreateFromDirectory($resolvedPath, $zipOpenCoverPath) 
+    [System.IO.Compression.ZipFile]::CreateFromDirectory($resolvedPath, $zipOpenCoverPath)
     $null = $artifacts.Add($zipOpenCoverPath)
 
     $zipCodeCoveragePath = Join-Path $pwd "CodeCoverage.zip"
@@ -401,13 +405,16 @@ function Invoke-AppveyorFinish
         $name = Get-PackageName
 
         $zipFilePath = Join-Path $pwd "$name.zip"
-        $zipFileFullPath = Join-Path $pwd "$name.FullCLR.zip"
+        <# $zipFileFullPath = Join-Path $pwd "$name.FullCLR.zip" # Disable FullCLR Build #>
 
         Add-Type -assemblyname System.IO.Compression.FileSystem
         Write-Verbose "Zipping ${env:CoreOutput} into $zipFilePath" -verbose
         [System.IO.Compression.ZipFile]::CreateFromDirectory($env:CoreOutput, $zipFilePath)
+        <#
+         # Disable FullCLR Build
         Write-Verbose "Zipping ${env:FullOutput} into $zipFileFullPath" -verbose
         [System.IO.Compression.ZipFile]::CreateFromDirectory($env:FullOutput, $zipFileFullPath)
+        #>
 
         $artifacts = New-Object System.Collections.ArrayList
         foreach ($package in $packages) {
@@ -415,7 +422,7 @@ function Invoke-AppveyorFinish
         }
 
         $null = $artifacts.Add($zipFilePath)
-        $null = $artifacts.Add($zipFileFullPath)
+        <# $null = $artifacts.Add($zipFileFullPath) # Disable FullCLR Build #>
 
         if ($env:APPVEYOR_REPO_TAG_NAME)
         {
@@ -447,7 +454,7 @@ function Invoke-AppveyorFinish
         }
 
         $pushedAllArtifacts = $true
-        $artifacts | ForEach-Object { 
+        $artifacts | ForEach-Object {
             Write-Host "Pushing $_ as Appveyor artifact"
             if(Test-Path $_)
             {
@@ -466,7 +473,7 @@ function Invoke-AppveyorFinish
         {
             throw "Some artifacts did not exist!"
         }
-    } 
+    }
     catch {
         Write-Host -Foreground Red $_
     }

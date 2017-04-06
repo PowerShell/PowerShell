@@ -23,11 +23,11 @@ namespace System.Management.Automation
     {
         #region Resource_Strings
 
-        // We cannot use a satellite resources.dll to store resource strings for Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll. This is because when retrieving resource strings, ResourceManager 
+        // We cannot use a satellite resources.dll to store resource strings for Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.dll. This is because when retrieving resource strings, ResourceManager
         // tries to load the satellite resources.dll using a probing approach, which will cause an infinite loop to PowerShellAssemblyLoadContext.Load(AssemblyName).
         // Take the 'en-US' culture as an example. When retrieving resource string to construct an exception, ResourceManager calls Assembly.Load(..) in the following order to load the resource dll:
         //     1. Load assembly with culture 'en-US' (Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.resources, Version=3.0.0.0, Culture=en-US, PublicKeyToken=31bf3856ad364e35)
-        //     2. Load assembly with culture 'en'    (Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.resources, Version=3.0.0.0, Culture=en, PublicKeyToken=31bf3856ad364e35) 
+        //     2. Load assembly with culture 'en'    (Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.resources, Version=3.0.0.0, Culture=en, PublicKeyToken=31bf3856ad364e35)
         // When the first attempt fails, we again need to retrieve the resource string to construct another exception, which ends up with an infinite loop.
         private const string BaseFolderDoesNotExist = "The base directory '{0}' does not exist.";
         private const string ManifestDefinitionDoesNotMatch = "Could not load file or assembly '{0}' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference.";
@@ -64,17 +64,17 @@ namespace System.Management.Automation
         /// They will be the default paths to probe assemblies.
         /// </param>
         /// <param name="useResolvingHandlerOnly">
-        /// Indicate whether this instance is going to be used as a 
+        /// Indicate whether this instance is going to be used as a
         /// full fledged ALC, or only its 'Resolve' handler is going
         /// to be used.
         /// </param>
         /// <remarks>
-        /// When <paramref name="useResolvingHandlerOnly"/> is true, we will register to the 'Resolving' event of the default 
+        /// When <paramref name="useResolvingHandlerOnly"/> is true, we will register to the 'Resolving' event of the default
         /// load context with our 'Resolve' method, and depend on the default load context to resolve/load assemblies for PS.
         /// This mode is used when TPA list of the native host only contains .NET Core libraries.
         /// In this case, TPA binder will be consulted before hitting our resolving logic. The binding order of Assembly.Load is:
         ///     TPA binder --> Resolving event
-        /// 
+        ///
         /// When <paramref name="useResolvingHandlerOnly"/> is false, we will use this instance as a full fledged load context
         /// to resolve/load assemblies for PS. This mode is used when TPA list of the native host contains both .NET Core libraries
         /// and PS assemblies.
@@ -156,13 +156,13 @@ namespace System.Management.Automation
         /// </summary>
         /// <remarks>
         /// We user the assembly short name (AssemblyName.Name) as the key.
-        /// According to the Spec of AssemblyLoadContext, "in the context of a given instance of AssemblyLoadContext, only one assembly with 
+        /// According to the Spec of AssemblyLoadContext, "in the context of a given instance of AssemblyLoadContext, only one assembly with
         /// a given name can be loaded. Attempt to load a second assembly with the same name and different MVID will result in an exception."
-        /// 
+        ///
         /// MVID is Module Version Identifier, which is a guid. Its purpose is solely to be unique for each time the module is compiled, and
         /// it gets regenerated for every compilation. That means AssemblyLoadContext cannot handle loading two assemblies with the same name
         /// but different versions, not even two assemblies with the exactly same code and version but built by two separate compilations.
-        /// 
+        ///
         /// Therefore, there is no need to use the full assembly name as the key. Short assembly name is sufficient.
         /// </remarks>
         private static readonly ConcurrentDictionary<string, Assembly> s_assemblyCache =

@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// writes out the formatting directives from the 
+        /// writes out the formatting directives from the
         /// collection to the specified XML file
         /// </summary>
         protected override void EndProcessing()

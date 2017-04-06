@@ -21,7 +21,7 @@ The `Start-PSBootstrap` function does the following:
 
 - Uses `brew` to install CMake, OpenSSL, and GNU WGet
 - Uninstalls any prior versions of .NET CLI
-- Downloads and installs the latest .NET CLI 1.0.0-preview3 SDK to `~/.dotnet`
+- Downloads and installs the latest .NET Core SDK 1.0.1 to `~/.dotnet`
 
 If you want to use `dotnet` outside of `Start-PSBuild`,
 add `~/.dotnet` to your `PATH` environment variable.

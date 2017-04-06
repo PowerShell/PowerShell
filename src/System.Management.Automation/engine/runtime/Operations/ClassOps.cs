@@ -15,14 +15,14 @@ using System.Threading;
 // These APIs are not part of the public contract.
 // They are implementation details and intended to be called from generated assemblies for PS classes.
 //
-// Because they are called from other assemblies, we have to make them public. 
+// Because they are called from other assemblies, we have to make them public.
 // We put them in Internal namespace to emphasise that despite the fact that they are public, it's not part of API contract.
 
 namespace System.Management.Automation.Internal
 {
     /// <summary>
     /// Every Runspace in one process contains SessionStateInternal per module (module SessionState).
-    /// Every RuntimeType is associated to only one SessionState in the Runspace, which creates it: 
+    /// Every RuntimeType is associated to only one SessionState in the Runspace, which creates it:
     /// it's ever global state or a module state.
     /// In the former case, module can be imported from the different runspaces in the same process.
     /// And so runspaces will share RuntimeType. But in every runspace, Type is associated with just one SessionState.
@@ -32,7 +32,7 @@ namespace System.Management.Automation.Internal
     /// </summary>
     public class SessionStateKeeper
     {
-        // We use ConditionalWeakTable, because if GC already collect Runspace, 
+        // We use ConditionalWeakTable, because if GC already collect Runspace,
         // then there is no way to call a ctor on the type in this Runspace.
         private readonly ConditionalWeakTable<Runspace, SessionStateInternal> _stateMap;
 
@@ -46,7 +46,7 @@ namespace System.Management.Automation.Internal
             SessionStateInternal ssInMap = null;
             Runspace rsToUse = Runspace.DefaultRunspace;
             SessionStateInternal ssToUse = rsToUse.ExecutionContext.EngineSessionState;
-            
+
             // Different threads will operate on different key/value pairs (default-runspace/session-state pairs),
             // and a ConditionalWeakTable itself is thread safe, so there won't be race condition here.
             if (!_stateMap.TryGetValue(rsToUse, out ssInMap))
@@ -165,7 +165,7 @@ namespace System.Management.Automation.Internal
     {
         /// <summary>
         /// This method calls all Validate attributes for the property to validate value.
-        /// Called from class property setters with ValidateArgumentsAttribute attributes. 
+        /// Called from class property setters with ValidateArgumentsAttribute attributes.
         /// </summary>
         /// <param name="type"></param>
         /// <param name="propertyName"></param>
@@ -232,7 +232,7 @@ namespace System.Management.Automation.Internal
         {
             DynamicMethod dm = s_nonVirtualCallCache.GetValue(mi, CreateDynamicMethod);
 
-            // The target object will be passed to the hidden parameter 'this' of the instance method 
+            // The target object will be passed to the hidden parameter 'this' of the instance method
             var newArgs = new List<object>(args.Length + 1) { target };
             newArgs.AddRange(args);
 

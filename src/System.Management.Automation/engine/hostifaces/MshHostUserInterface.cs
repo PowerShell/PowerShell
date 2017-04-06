@@ -11,16 +11,17 @@ using System.Security;
 using System.Globalization;
 using System.Management.Automation.Runspaces;
 using Microsoft.PowerShell.Commands;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace System.Management.Automation.Host
 {
     /// <summary>
-    /// 
+    ///
     /// Defines the properties and facilities providing by an hosting application deriving from
     /// <see cref="System.Management.Automation.Host.PSHost"/> that offers dialog-oriented and
     /// line-oriented interactive features.
-    /// 
+    ///
     /// </summary>
     /// <seealso cref="System.Management.Automation.Host.PSHost"/>
     /// <seealso cref="System.Management.Automation.Host.PSHostRawUserInterface"/>
@@ -28,12 +29,12 @@ namespace System.Management.Automation.Host
     public abstract class PSHostUserInterface
     {
         /// <summary>
-        /// Gets hosting application's implementation of the  
+        /// Gets hosting application's implementation of the
         /// <see cref="System.Management.Automation.Host.PSHostRawUserInterface"/> abstract base class
         /// that implements that class.
         /// </summary>
         /// <value>
-        /// A reference to an instance of the hosting application's implementation of a class derived from 
+        /// A reference to an instance of the hosting application's implementation of a class derived from
         /// <see cref="System.Management.Automation.Host.PSHostUserInterface"/>, or null to indicate that
         /// low-level user interaction is not supported.
         /// </value>
@@ -61,7 +62,7 @@ namespace System.Management.Automation.Host
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.Prompt"/>
         public abstract string ReadLine();
         /// <summary>
-        /// Same as ReadLine, except that the result is a SecureString, and that the input is not echoed to the user while it is 
+        /// Same as ReadLine, except that the result is a SecureString, and that the input is not echoed to the user while it is
         /// collected (or is echoed in some obfuscated way, such as showing a dot for each character).
         /// </summary>
         /// <returns>
@@ -198,8 +199,8 @@ namespace System.Management.Automation.Host
         /// Invoked by <see cref="System.Management.Automation.Cmdlet.WriteProgress(Int64, System.Management.Automation.ProgressRecord)"/> to display a progress record.
         /// </summary>
         /// <param name="sourceId">
-        /// Unique identifier of the source of the record.  An int64 is used because typically, the 'this' pointer of 
-        /// the command from whence the record is originating is used, and that may be from a remote Runspace on a 64-bit 
+        /// Unique identifier of the source of the record.  An int64 is used because typically, the 'this' pointer of
+        /// the command from whence the record is originating is used, and that may be from a remote Runspace on a 64-bit
         /// machine.
         /// </param>
         /// <param name="record">
@@ -234,7 +235,7 @@ namespace System.Management.Automation.Host
         public virtual void WriteInformation(InformationRecord record) { }
 
         // Gets the state associated with PowerShell transcription.
-        // 
+        //
         // Ideally, this would be associated with the host instance, but remoting recycles host instances
         // for each command that gets invoked (so that it can keep track of the order of commands and their
         // output.) Therefore, we store this transcription data in the runspace. However, the
@@ -390,7 +391,29 @@ namespace System.Management.Automation.Host
         /// so that when content is sent through Out-Default it doesn't
         /// make it to the actual host.
         /// </summary>
-        internal bool TranscribeOnly { get; set; }
+        internal bool TranscribeOnly => Interlocked.CompareExchange(ref _transcribeOnlyCount, 0, 0) != 0;
+        private int _transcribeOnlyCount = 0;
+        internal IDisposable SetTranscribeOnly() => new TranscribeOnlyCookie(this);
+        private sealed class TranscribeOnlyCookie : IDisposable
+        {
+            private PSHostUserInterface _ui;
+            private bool _disposed = false;
+            public TranscribeOnlyCookie(PSHostUserInterface ui)
+            {
+                _ui=ui;
+                Interlocked.Increment(ref _ui._transcribeOnlyCount);
+            }
+            public void Dispose()
+            {
+                if (!_disposed)
+                {
+                    Interlocked.Decrement(ref _ui._transcribeOnlyCount);
+                    _disposed = true;
+                    GC.SuppressFinalize(this);
+                }
+            }
+            ~TranscribeOnlyCookie() => Dispose();
+        }
 
         /// <summary>
         /// Flag to determine whether the host is transcribing.
@@ -453,7 +476,11 @@ namespace System.Management.Automation.Host
                     psVersionInfo.AppendLine(versionKey + ": " + valueString);
                 }
             }
-
+            string psConfigurationName = string.Empty;
+            if (senderInfo != null && !string.IsNullOrEmpty(senderInfo.ConfigurationName))
+            {
+                psConfigurationName = senderInfo.ConfigurationName;
+            }
             // Transcribe the transcript header
             string format = InternalHostUserInterfaceStrings.TranscriptPrologue;
             string line =
@@ -463,6 +490,7 @@ namespace System.Management.Automation.Host
                     DateTime.Now,
                     username,
                     runAsUser,
+                    psConfigurationName,
                     Environment.MachineName,
                     Environment.OSVersion.VersionString,
                     String.Join(" ", Environment.GetCommandLineArgs()),
@@ -683,13 +711,13 @@ namespace System.Management.Automation.Host
                     }
                     if(!Directory.Exists(baseDirectory))
                     {
-                        Directory.CreateDirectory(baseDirectory);   
+                        Directory.CreateDirectory(baseDirectory);
                     }
                     if(!File.Exists(transcript.Path))
                     {
                         File.Create(transcript.Path).Dispose();
                     }
-                    
+
                     // Do the actual writing in the background so that it doesn't hold up the UI thread.
                     Task writer = Task.Run(() =>
                     {
@@ -745,8 +773,8 @@ namespace System.Management.Automation.Host
         /// </param>
         /// <returns>
         /// A Dictionary object with results of prompting.  The keys are the field names from the FieldDescriptions, the values
-        /// are objects representing the values of the corresponding fields as collected from the user. To the extent possible, 
-        /// the host should return values of the type(s) identified in the FieldDescription.  When that is not possible (for 
+        /// are objects representing the values of the corresponding fields as collected from the user. To the extent possible,
+        /// the host should return values of the type(s) identified in the FieldDescription.  When that is not possible (for
         /// example, the type is not available to the host), the host should return the value as a string.
         /// </returns>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLine"/>
@@ -779,7 +807,7 @@ namespace System.Management.Automation.Host
         /// Name of the target for which the credential is being collected.
         /// </param>
         /// <returns>
-        /// User input credential. 
+        /// User input credential.
         /// </returns>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLine"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLineAsSecureString"/>
@@ -813,7 +841,7 @@ namespace System.Management.Automation.Host
         /// Options that control the credential gathering UI behavior
         /// </param>
         /// <returns>
-        /// User input credential. 
+        /// User input credential.
         /// </returns>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLine"/>
         /// <seealso cref="System.Management.Automation.Host.PSHostUserInterface.ReadLineAsSecureString"/>
@@ -838,7 +866,7 @@ namespace System.Management.Automation.Host
         /// An Collection of ChoiceDescription objects that describe each choice.
         /// </param>
         /// <param name="defaultChoice">
-        /// The index of the label in the choices collection element to be presented to the user as the default choice.  -1 
+        /// The index of the label in the choices collection element to be presented to the user as the default choice.  -1
         /// means "no default". Must be a valid index.
         /// </param>
         /// <returns>
@@ -877,7 +905,7 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Get Module Logging information from the registry. 
+        /// Get Module Logging information from the registry.
         /// </summary>
         internal static TranscriptionOption GetSystemTranscriptOption(TranscriptionOption currentTranscript)
         {
@@ -1168,11 +1196,11 @@ namespace System.Management.Automation.Host
         /// An Collection of ChoiceDescription objects that describe each choice.
         /// </param>
         /// <param name="defaultChoices">
-        /// The index of the labels in the choices collection element to be presented to the user as 
-        /// the default choice(s). 
+        /// The index of the labels in the choices collection element to be presented to the user as
+        /// the default choice(s).
         /// </param>
         /// <returns>
-        /// The indices of the choice elements that corresponds to the options selected. The 
+        /// The indices of the choice elements that corresponds to the options selected. The
         /// returned collection may contain duplicates depending on a particular host
         /// implementation.
         /// </returns>
@@ -1235,7 +1263,7 @@ namespace System.Management.Automation.Host
 
         /// <summary>
         /// Searches for a corresponding match between the response string and the choices.  A match is either the response
-        /// string is the full text of the label (sans hotkey marker), or is a hotkey.  Full labels are checked first, and take 
+        /// string is the full text of the label (sans hotkey marker), or is a hotkey.  Full labels are checked first, and take
         /// precedence over hotkey matches.
         /// </summary>
         /// <param name="response"></param>

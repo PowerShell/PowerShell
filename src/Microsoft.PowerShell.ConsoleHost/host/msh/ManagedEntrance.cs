@@ -9,6 +9,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Globalization;
+
 #if CORECLR
 using System.Runtime.InteropServices;
 #endif
@@ -57,10 +58,10 @@ namespace Microsoft.PowerShell
             PSEtwLog.LogOperationalInformation(PSEventId.Perftrack_ConsoleStartupStart, PSOpcode.WinStart,
                 PSTask.PowershellConsoleStartup, PSKeyword.UseAlwaysOperational);
 
-            // Windows Vista and later support non-traditional UI fallback ie., a 
+            // Windows Vista and later support non-traditional UI fallback ie., a
             // user on an Arabic machine can choose either French or English(US) as
             // UI fallback language.
-            // CLR does not support this (non-traditional) fallback mechanism. 
+            // CLR does not support this (non-traditional) fallback mechanism.
             // The currentUICulture returned NativeCultureResolver supports this non
             // traditional fallback on Vista. So it is important to set currentUICulture
             // in the beginning before we do anything.
@@ -109,7 +110,7 @@ namespace Microsoft.PowerShell
             try
             {
 #if CORECLR
-                    var banner = ManagedEntranceStrings.ShellBannerNonWindowsPowerShell;
+                var banner = ManagedEntranceStrings.ShellBannerNonWindowsPowerShell;
 #else
                 var banner = ManagedEntranceStrings.ShellBanner;
 #endif

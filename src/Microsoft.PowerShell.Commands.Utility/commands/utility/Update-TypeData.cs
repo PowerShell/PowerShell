@@ -17,7 +17,7 @@ using Dbg = System.Management.Automation.Diagnostics;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// This class implements update-typeData command.  
+    /// This class implements update-typeData command.
     /// </summary>
     [Cmdlet(VerbsData.Update, "TypeData", SupportsShouldProcess = true, DefaultParameterSetName = FileParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113421")]
     public class UpdateTypeDataCommand : UpdateData
@@ -895,14 +895,14 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// This class implements update-typeData command.  
+    /// This class implements update-typeData command.
     /// </summary>
     [Cmdlet(VerbsData.Update, "FormatData", SupportsShouldProcess = true, DefaultParameterSetName = FileParameterSet, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113420")]
     public class UpdateFormatDataCommand : UpdateData
     {
         /// <summary>
         /// This method verify if the Format database manager is shared and cannot be updated
-        /// </summary>   
+        /// </summary>
         protected override void BeginProcessing()
         {
             if (Context.FormatDBManager.isShared)
@@ -1149,7 +1149,7 @@ namespace Microsoft.PowerShell.Commands
                 Collection<string> typeFileTotal = UpdateData.Glob(_typeFiles, "TypePathException", this);
                 if (typeFileTotal.Count == 0) { return; }
 
-                // Key of the map is the name of the file that is in the cache. Value of the map is a index list. Duplicate files might 
+                // Key of the map is the name of the file that is in the cache. Value of the map is a index list. Duplicate files might
                 // exist in the cache because the user can add arbitrary files to the cache by $host.Runspace.InitialSessionState.Types.Add()
                 Dictionary<string, List<int>> fileToIndexMap = new Dictionary<string, List<int>>(StringComparer.OrdinalIgnoreCase);
                 List<int> indicesToRemove = new List<int>();
@@ -1171,7 +1171,7 @@ namespace Microsoft.PowerShell.Commands
                         string fileName = Context.InitialSessionState.Types[index].FileName;
                         if (fileName == null) { continue; }
 
-                        // Resolving the file path because the path to the types file in module manifest is now specified as 
+                        // Resolving the file path because the path to the types file in module manifest is now specified as
                         // ..\..\types.ps1xml which expands to C:\Windows\System32\WindowsPowerShell\v1.0\Modules\Microsoft.PowerShell.Core\..\..\types.ps1xml
                         fileName = ModuleCmdletBase.ResolveRootedFilePath(fileName, Context) ?? fileName;
                         ConstructFileToIndexMap(fileName, index, fileToIndexMap);

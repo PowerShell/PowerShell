@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
     /// Documentation on MSDN (http://msdn.microsoft.com/en-us/library/aa392263(VS.85).aspx) is
     /// 1) rather slim / incomplete
     /// 2) sometimes incorrect (i.e. says that '=' is used for character ranges, when it should have said '-')
-    /// 
+    ///
     /// The code below is therefore mainly based on reverse engineering of admin\wmi\wbem\winmgmt\wbecomn\like.cpp
     /// </remarks>
     internal class WildcardPatternToCimQueryParser : WildcardPatternParser
@@ -116,7 +116,7 @@ namespace Microsoft.PowerShell.Cmdletization.Cim
         }
 
         /// <summary>
-        /// Converts <paramref name="wildcardPattern"/> into a value of a right-hand-side operand of LIKE operator of a WQL query.  
+        /// Converts <paramref name="wildcardPattern"/> into a value of a right-hand-side operand of LIKE operator of a WQL query.
         /// Return value still has to be string-escaped (i.e. by doubling '\'' character), before embedding it into a query.
         /// </summary>
         internal static string Parse(WildcardPattern wildcardPattern, out bool needsClientSideFiltering)

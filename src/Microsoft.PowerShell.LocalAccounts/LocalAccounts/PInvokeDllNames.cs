@@ -6,9 +6,9 @@ namespace System.Management.Automation
 {
     /// <summary>
     /// PinvokeDllNames contains the DLL names to be use for PInvoke in FullCLR/CoreCLR powershell.
-    /// 
+    ///
     /// * When adding a new DLL name here, make sure that you add both the FullCLR and CoreCLR version
-    ///   of it. Add the comment '/*COUNT*/' with the new DLL name, and make sure the 'COUNT' is the 
+    ///   of it. Add the comment '/*COUNT*/' with the new DLL name, and make sure the 'COUNT' is the
     ///   same for both FullCLR and CoreCLR DLL names.
     /// </summary>
     internal static class PInvokeDllNames

@@ -1,5 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
-
 Describe "SSH Remoting API Tests" -Tags "Feature" {
 
     Context "SSHConnectionInfo Class Tests" {

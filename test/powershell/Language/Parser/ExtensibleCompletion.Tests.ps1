@@ -85,7 +85,7 @@ function Test-Completions
     param(
         [Parameter(ValueFromPipeline)]
         [CompletionTestCase[]]$TestCases)
-    
+
     process
     {
         foreach ($test in $TestCases)
@@ -226,6 +226,38 @@ Describe "Test extensible completion of native commands" -Tags "CI" {
             @{CompletionText = "bridge"; ResultType = "ParameterValue"}
             )
         TestInput = 'netsh '
+    } | Get-CompletionTestCaseData | Test-Completions
+}
+
+Describe "Test completion of parameters for native commands" -Tags "CI" {
+    Register-ArgumentCompleter -Native -CommandName foo -ScriptBlock {
+        Param($wordToComplete)
+
+        @("-dir", "-verbose", "-help", "-version") |
+        Where-Object {
+            $_ -match "$wordToComplete*"
+        } |
+        ForEach-Object {
+            [CompletionResult]::new($_, $_, [CompletionResultType]::ParameterName, $_)
+        }
+    }
+
+    @{
+        ExpectedResults = @(
+            @{CompletionText = "-version"; ResultType = "ParameterName"}
+            @{CompletionText = "-verbose"; ResultType = "ParameterName"}
+            @{CompletionText = "-dir"; ResultType = "ParameterName"}
+            @{CompletionText = "-help"; ResultType = "ParameterName"}
+        )
+        TestInput = 'foo -'
+    } | Get-CompletionTestCaseData | Test-Completions
+
+    @{
+        ExpectedResults = @(
+            @{CompletionText = "-version"; ResultType = "ParameterName"}
+            @{CompletionText = "-verbose"; ResultType = "ParameterName"}
+        )
+        TestInput = 'foo -v'
     } | Get-CompletionTestCaseData | Test-Completions
 }
 

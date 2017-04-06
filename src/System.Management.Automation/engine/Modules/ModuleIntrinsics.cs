@@ -14,6 +14,11 @@ using Dbg = System.Management.Automation.Diagnostics;
 
 namespace System.Management.Automation
 {
+    internal static class Constants
+    {
+        public const string PSModulePathEnvVar = "PSModulePath";
+    }
+
     /// <summary>
     /// Encapsulates the basic module operations for a PowerShell engine instance...
     /// </summary>
@@ -99,7 +104,7 @@ namespace System.Management.Automation
         /// <param name="name">The name of the module</param>
         /// <param name="path">The path to use for the module root</param>
         /// <param name="moduleCode">
-        /// The code to use to create the module. This can be one of ScriptBlock, string 
+        /// The code to use to create the module. This can be one of ScriptBlock, string
         /// or ExternalScriptInfo
         /// </param>
         /// <param name="arguments">
@@ -177,7 +182,7 @@ namespace System.Management.Automation
 
                 InvocationInfo invocationInfo = new InvocationInfo(scriptInfo, scriptPosition);
 
-                // Save the module string 
+                // Save the module string
                 module._definitionExtent = sb.Ast.Extent;
                 var ast = sb.Ast;
                 while (ast.Parent != null)
@@ -549,18 +554,18 @@ namespace System.Management.Automation
         {
             if (s_psHomeModulePath != null)
                 return s_psHomeModulePath;
-            
+
             try
             {
                 string psHome = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
                 if (!string.IsNullOrEmpty(psHome))
                 {
                     // Win8: 584267 Powershell Modules are listed twice in x86, and cannot be removed
-                    // This happens because ModuleTable uses Path as the key and CBS installer 
-                    // expands the path to include "SysWOW64" (for 
+                    // This happens because ModuleTable uses Path as the key and CBS installer
+                    // expands the path to include "SysWOW64" (for
                     // HKEY_LOCAL_MACHINE\SOFTWARE\Wow6432Node\Microsoft\PowerShell\3\PowerShellEngine ApplicationBase).
                     // Because of this, the module that is getting loaded during startup (through LocalRunspace)
-                    // is using "SysWow64" in the key. Later, when Import-Module is called, it loads the 
+                    // is using "SysWow64" in the key. Later, when Import-Module is called, it loads the
                     // module using ""System32" in the key.
 #if !UNIX
                     psHome = psHome.ToLowerInvariant().Replace("\\syswow64\\", "\\system32\\");
@@ -679,7 +684,7 @@ namespace System.Management.Automation
             Diagnostics.Assert(pathToAdd != null, "pathToAdd should not be null according to contract of the function");
 
             StringBuilder result = new StringBuilder(basePath);
-            
+
             if (!string.IsNullOrEmpty(pathToAdd)) // we don't want to append empty paths
             {
                 foreach (string subPathToAdd in pathToAdd.Split(Utils.Separators.PathSeparator, StringSplitOptions.RemoveEmptyEntries)) // in case pathToAdd is a 'combined path' (semicolon-separated)
@@ -707,10 +712,10 @@ namespace System.Management.Automation
 
             return result.ToString();
         }
-        
+
         /// <summary>
         /// Check if the current powershell is likely running in following scenarios:
-        ///  - sxs ps started on windows [machine-wide env:psmodulepath will influence]
+        ///  - sxs ps started on windows [machine-wide env:PSModulePath will influence]
         ///  - sxs ps started from full ps
         ///  - sxs ps started from inbox nano/iot ps
         ///  - full ps started from sxs ps
@@ -734,8 +739,8 @@ namespace System.Management.Automation
                 // so if the current process module path contains any of them, it's likely that the sxs
                 // ps was started directly on windows, or from full ps. The same goes for the legacy personal
                 // and shared module paths.
-                string hklmModulePath = GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.Machine);
-                string hkcuModulePath = GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.User);
+                string hklmModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Machine);
+                string hkcuModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.User);
                 string legacyPersonalModulePath = personalModulePath.Replace(winSxSModuleDirectory, winLegacyModuleDirectory);
                 string legacyProgramFilesModulePath = sharedModulePath.Replace(winSxSModuleDirectory, winLegacyModuleDirectory);
 
@@ -779,7 +784,7 @@ namespace System.Management.Automation
                     continue;
                 }
 
-                if (!trimedPath.Equals(personalModulePath, StringComparison.OrdinalIgnoreCase) && 
+                if (!trimedPath.Equals(personalModulePath, StringComparison.OrdinalIgnoreCase) &&
                     !trimedPath.Equals(sharedModulePath, StringComparison.OrdinalIgnoreCase) &&
                     !trimedPath.Equals(psHomeModulePath, StringComparison.OrdinalIgnoreCase) &&
                     trimedPath.EndsWith("Modules", StringComparison.OrdinalIgnoreCase))
@@ -820,11 +825,11 @@ namespace System.Management.Automation
 #else
             bool runningSxS = false;
 #endif
-            if (!string.IsNullOrEmpty(currentProcessModulePath) && 
+            if (!string.IsNullOrEmpty(currentProcessModulePath) &&
                 NeedToClearProcessModulePath(currentProcessModulePath, personalModulePath, sharedModulePath, runningSxS))
             {
                 // Clear the current process module path in the following cases
-                //  - start sxs ps on windows [machine-wide env:psmodulepath will influence]
+                //  - start sxs ps on windows [machine-wide env:PSModulePath will influence]
                 //  - start sxs ps from full ps
                 //  - start sxs ps from inbox nano/iot ps
                 //  - start full ps from sxs ps
@@ -883,7 +888,7 @@ namespace System.Management.Automation
                             if (psHomePosition >= 0) // if $PSHome\Modules IS found - insert <Program Files> location before $PSHome\Modules
                             {
 #if !CORECLR
-                                // for bug 6678623, if we are running wow64 process (x86 32-bit process on 64-bit (amd64) OS), then ensure that <SpecialFolder.MyDocuments> exists in currentProcessModulePath / return value                             
+                                // for bug 6678623, if we are running wow64 process (x86 32-bit process on 64-bit (amd64) OS), then ensure that <SpecialFolder.MyDocuments> exists in currentProcessModulePath / return value
                                 if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
                                 {
                                     currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePath, psHomePosition);
@@ -971,7 +976,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static string GetModulePath()
         {
-            string currentModulePath = GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.Process);
+            string currentModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
             return currentModulePath;
         }
         /// <summary>
@@ -981,7 +986,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static string SetModulePath()
         {
-            string currentModulePath = GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.Process);
+            string currentModulePath = GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Process);
             string systemWideModulePath = ConfigPropertyAccessor.Instance.GetModulePath(ConfigPropertyAccessor.PropertyScope.SystemWide);
             string personalModulePath = ConfigPropertyAccessor.Instance.GetModulePath(ConfigPropertyAccessor.PropertyScope.CurrentUser);
 
@@ -990,7 +995,7 @@ namespace System.Management.Automation
             if (!string.IsNullOrEmpty(newModulePathString))
             {
                 // Set the environment variable...
-                Environment.SetEnvironmentVariable("PSMODULEPATH", newModulePathString);
+                Environment.SetEnvironmentVariable(Constants.PSModulePathEnvVar, newModulePathString);
             }
 
             return newModulePathString;
@@ -1013,7 +1018,7 @@ namespace System.Management.Automation
         /// <returns>The module path as an array of strings</returns>
         internal static IEnumerable<string> GetModulePath(bool includeSystemModulePath, ExecutionContext context)
         {
-            string modulePathString = Environment.GetEnvironmentVariable("PSMODULEPATH") ?? SetModulePath();
+            string modulePathString = Environment.GetEnvironmentVariable(Constants.PSModulePathEnvVar) ?? SetModulePath();
 
             HashSet<string> processedPathSet = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -1146,7 +1151,7 @@ namespace System.Management.Automation
         /// <param name="cmdletPatterns">Patterns describing the cmdlets to export</param>
         /// <param name="aliasPatterns">Patterns describing the aliases to export</param>
         /// <param name="variablePatterns">Patterns describing the variables to export</param>
-        /// <param name="doNotExportCmdlets">List of Cmdlets that will not be exported,  
+        /// <param name="doNotExportCmdlets">List of Cmdlets that will not be exported,
         ///     even if they match in cmdletPatterns.</param>
         internal static void ExportModuleMembers(PSCmdlet cmdlet, SessionStateInternal sessionState,
             List<WildcardPattern> functionPatterns, List<WildcardPattern> cmdletPatterns,

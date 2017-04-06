@@ -29,7 +29,7 @@ namespace Microsoft.PowerShell.Commands
         public string[] Id { get; set; }
 
         /// <summary>
-        /// Specifies that the cmdlet should produce a collection of the 
+        /// Specifies that the cmdlet should produce a collection of the
         /// TimeZoneInfo objects that are available on the system.
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "ListAvailable")]
@@ -485,7 +485,7 @@ namespace Microsoft.PowerShell.Commands
             private const string PrivilegeCheckApiDllName = "api-ms-win-downlevel-advapi32-l1-1-1.dll";
             private const string AdjustTokenPrivilegesApiDllName = "api-ms-win-downlevel-advapi32-l1-1-1.dll";
             private const string CloseHandleApiDllName = "api-ms-win-downlevel-kernel32-l1-1-0.dll";
-            private const string SendMessageTimeoutApiDllName = "ext-ms-win-rtcore-ntuser-window-ext-l1-1-0.dll";            
+            private const string SendMessageTimeoutApiDllName = "ext-ms-win-rtcore-ntuser-window-ext-l1-1-0.dll";
 #else
             private const string SetDynamicTimeZoneApiDllName = "kernel32.dll";
             private const string GetTimeZoneInformationForYearApiDllName = "kernel32.dll";
@@ -836,7 +836,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Find the system time zone by checking first against StandardName and then, 
+        /// Find the system time zone by checking first against StandardName and then,
         /// if no matches were found, against the DaylightName.
         /// </summary>
         /// <param name="name">The name (or wildcard pattern) of the system time zone to find.</param>

@@ -6,21 +6,21 @@
 <#
     Purpose:
         Verify that New-TemporaryFile creates a temporary file.
-                
+
     Action:
         Run New-TemporaryFile.
-               
-    Expected Result: 
-        A FileInfo object for the temporary file is returned. 
+
+    Expected Result:
+        A FileInfo object for the temporary file is returned.
 #>
 
 Describe "NewTemporaryFile" -Tags "CI" {
 
     It "creates a new temporary file" {
-        $tempFile = New-TemporaryFile 
+        $tempFile = New-TemporaryFile
 
         Test-Path $tempFile | Should be $true
-        $tempFile.GetType().Name | Should be "FileInfo"
+        $tempFile | Should BeOfType System.IO.FileInfo
 
         if(Test-Path $tempFile)
         {

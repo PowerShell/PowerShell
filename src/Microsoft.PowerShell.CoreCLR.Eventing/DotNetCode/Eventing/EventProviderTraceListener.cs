@@ -15,13 +15,13 @@ namespace System.Diagnostics.Eventing
         //
         // The listener uses the EtwProvider base class.
         // Because Listener data is not schematized at the moment the listener will
-        // log events using WriteMessageEvent method. 
-        // 
-        // Because WriteMessageEvent takes a string as the event payload 
+        // log events using WriteMessageEvent method.
+        //
+        // Because WriteMessageEvent takes a string as the event payload
         // all the overridden logging methods convert the arguments into strings.
         // Event payload is "delimiter" separated, which can be configured
-        // 
-        // 
+        //
+        //
         private EventProvider _provider;
         private const string s_nullStringValue = "null";
         private const string s_nullStringComaValue = "null,";
@@ -54,9 +54,9 @@ namespace System.Diagnostics.Eventing
         /// <summary>
         /// This method creates an instance of the ETW provider.
         /// The guid argument must be a valid GUID or a format exception will be
-        /// thrown when creating an instance of the ControlGuid. 
-        /// We need to be running on Vista or above. If not an 
-        /// PlatformNotSupported exception will be thrown by the EventProvider. 
+        /// thrown when creating an instance of the ControlGuid.
+        /// We need to be running on Vista or above. If not an
+        /// PlatformNotSupported exception will be thrown by the EventProvider.
         /// </summary>
         public EventProviderTraceListener(string providerId)
         {
@@ -87,7 +87,7 @@ namespace System.Diagnostics.Eventing
             Guid controlGuid = new Guid(providerId);
             //
             // Create The ETW TraceProvider
-            //			
+            //
 
             _provider = new EventProvider(controlGuid);
         }
@@ -135,7 +135,7 @@ namespace System.Diagnostics.Eventing
         // m_delimiter separated data converted to string
         //
         // The source parameter is ignored.
-        // 
+        //
         public sealed override void TraceData(TraceEventCache eventCache, string source, TraceEventType eventType, int id, object data)
         {
             if (!_provider.IsEnabled())

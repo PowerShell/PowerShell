@@ -447,7 +447,7 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                // inside ctor we put logic to capture session state from execution context, 
+                // inside ctor we put logic to capture session state from execution context,
                 // we cannot delegate default ctor creation to _typeBuilder, if we have any methods.
                 // If there are only static methods, we still want to capture context to allow static method calls on instances in the right context.
                 if (hasAnyMethods)
@@ -556,7 +556,7 @@ namespace System.Management.Automation.Language
                     }
                 }
 
-                // The last argument of DefineProperty is null, because the property has no parameters. 
+                // The last argument of DefineProperty is null, because the property has no parameters.
                 PropertyBuilder property = _typeBuilder.DefineProperty(propertyMemberAst.Name, Reflection.PropertyAttributes.None, type, null);
 
                 // Define the "get" accessor method.
@@ -607,8 +607,8 @@ namespace System.Management.Automation.Language
                 }
                 setIlGen.Emit(OpCodes.Ret);
 
-                // Map the two methods created above to our PropertyBuilder to  
-                // their corresponding behaviors, "get" and "set" respectively. 
+                // Map the two methods created above to our PropertyBuilder to
+                // their corresponding behaviors, "get" and "set" respectively.
                 property.SetGetMethod(getMethod);
                 property.SetSetMethod(setMethod);
 

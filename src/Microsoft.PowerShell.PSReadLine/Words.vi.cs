@@ -138,7 +138,7 @@ namespace Microsoft.PowerShell
                 return i;
             }
 
-            if (IsWhiteSpace(i)) 
+            if (IsWhiteSpace(i))
             {
                 return FindPreviousWordFromWhiteSpace(i, wordDelimiters);
             }

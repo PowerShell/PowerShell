@@ -10,7 +10,7 @@ namespace Microsoft.Management.UI.Internal
     using System.Diagnostics;
 
     /// <summary>
-    /// The TextEndsWithFilterRule class evaluates a string item to 
+    /// The TextEndsWithFilterRule class evaluates a string item to
     /// check if it ends with the rule's value.
     /// </summary>
     [Serializable]

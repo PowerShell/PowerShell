@@ -21,18 +21,18 @@ using System.Windows.Input;
 
 namespace Microsoft.Management.UI.Internal
 {
-    
+
     /// <summary>
     /// This control provides basic functionality for Picker-like controls.
     /// </summary>
     /// <remarks>
-    /// 
-    /// 
+    ///
+    ///
     /// If a custom template is provided for this control, then the template MUST provide the following template parts:
-    /// 
+    ///
     /// 	PART_DropDown - A required template part which must be of type DismissiblePopup.  The dropdown which hosts the picker.
     /// 	PART_DropDownButton - A required template part which must be of type ToggleButton.  The ToggleButton which controls whether the dropdown is open.
-    /// 
+    ///
     /// </remarks>
     [TemplatePart(Name="PART_DropDown", Type=typeof(DismissiblePopup))]
     [TemplatePart(Name="PART_DropDownButton", Type=typeof(ToggleButton))]
@@ -44,7 +44,7 @@ namespace Microsoft.Management.UI.Internal
         //
         private DismissiblePopup dropDown;
         private ToggleButton dropDownButton;
-        
+
         //
         // CloseDropDown routed command
         //
@@ -52,13 +52,13 @@ namespace Microsoft.Management.UI.Internal
         /// Informs the PickerBase that it should close the dropdown.
         /// </summary>
         public static readonly RoutedCommand CloseDropDownCommand = new RoutedCommand("CloseDropDown",typeof(PickerBase));
-        
+
         static private void CloseDropDownCommand_CommandExecuted(object sender, ExecutedRoutedEventArgs e)
         {
             PickerBase obj = (PickerBase) sender;
             obj.OnCloseDropDownExecuted( e );
         }
-        
+
         /// <summary>
         /// Called when CloseDropDown executes.
         /// </summary>
@@ -69,9 +69,9 @@ namespace Microsoft.Management.UI.Internal
         {
             OnCloseDropDownExecutedImplementation(e);
         }
-        
+
         partial void OnCloseDropDownExecutedImplementation(ExecutedRoutedEventArgs e);
-        
+
         //
         // DropDownButtonTemplate dependency property
         //
@@ -79,7 +79,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the DropDownButtonTemplate dependency property.
         /// </summary>
         public static readonly DependencyProperty DropDownButtonTemplateProperty = DependencyProperty.Register( "DropDownButtonTemplate", typeof(ControlTemplate), typeof(PickerBase), new PropertyMetadata( null, DropDownButtonTemplateProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets a value that controls the visual tree of the DropDown button.
         /// </summary>
@@ -98,18 +98,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(DropDownButtonTemplateProperty,value);
             }
         }
-        
+
         static private void DropDownButtonTemplateProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             PickerBase obj = (PickerBase) o;
             obj.OnDropDownButtonTemplateChanged( new PropertyChangedEventArgs<ControlTemplate>((ControlTemplate)e.OldValue, (ControlTemplate)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when DropDownButtonTemplate property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<ControlTemplate>> DropDownButtonTemplateChanged;
-        
+
         /// <summary>
         /// Called when DropDownButtonTemplate property changes.
         /// </summary>
@@ -118,9 +118,9 @@ namespace Microsoft.Management.UI.Internal
             OnDropDownButtonTemplateChangedImplementation(e);
             RaisePropertyChangedEvent(DropDownButtonTemplateChanged, e);
         }
-        
+
         partial void OnDropDownButtonTemplateChangedImplementation(PropertyChangedEventArgs<ControlTemplate> e);
-        
+
         //
         // DropDownStyle dependency property
         //
@@ -128,7 +128,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the DropDownStyle dependency property.
         /// </summary>
         public static readonly DependencyProperty DropDownStyleProperty = DependencyProperty.Register( "DropDownStyle", typeof(Style), typeof(PickerBase), new PropertyMetadata( null, DropDownStyleProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets the style of the drop-down.
         /// </summary>
@@ -147,18 +147,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(DropDownStyleProperty,value);
             }
         }
-        
+
         static private void DropDownStyleProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             PickerBase obj = (PickerBase) o;
             obj.OnDropDownStyleChanged( new PropertyChangedEventArgs<Style>((Style)e.OldValue, (Style)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when DropDownStyle property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<Style>> DropDownStyleChanged;
-        
+
         /// <summary>
         /// Called when DropDownStyle property changes.
         /// </summary>
@@ -167,9 +167,9 @@ namespace Microsoft.Management.UI.Internal
             OnDropDownStyleChangedImplementation(e);
             RaisePropertyChangedEvent(DropDownStyleChanged, e);
         }
-        
+
         partial void OnDropDownStyleChangedImplementation(PropertyChangedEventArgs<Style> e);
-        
+
         //
         // IsOpen dependency property
         //
@@ -177,7 +177,7 @@ namespace Microsoft.Management.UI.Internal
         /// Identifies the IsOpen dependency property.
         /// </summary>
         public static readonly DependencyProperty IsOpenProperty = DependencyProperty.Register( "IsOpen", typeof(bool), typeof(PickerBase), new PropertyMetadata( BooleanBoxes.FalseBox, IsOpenProperty_PropertyChanged) );
-        
+
         /// <summary>
         /// Gets or sets a value indicating whether the Popup is visible.
         /// </summary>
@@ -196,18 +196,18 @@ namespace Microsoft.Management.UI.Internal
                 SetValue(IsOpenProperty,BooleanBoxes.Box(value));
             }
         }
-        
+
         static private void IsOpenProperty_PropertyChanged(DependencyObject o, DependencyPropertyChangedEventArgs e)
         {
             PickerBase obj = (PickerBase) o;
             obj.OnIsOpenChanged( new PropertyChangedEventArgs<bool>((bool)e.OldValue, (bool)e.NewValue) );
         }
-        
+
         /// <summary>
         /// Occurs when IsOpen property changes.
         /// </summary>
         public event EventHandler<PropertyChangedEventArgs<bool>> IsOpenChanged;
-        
+
         /// <summary>
         /// Called when IsOpen property changes.
         /// </summary>
@@ -216,9 +216,9 @@ namespace Microsoft.Management.UI.Internal
             OnIsOpenChangedImplementation(e);
             RaisePropertyChangedEvent(IsOpenChanged, e);
         }
-        
+
         partial void OnIsOpenChangedImplementation(PropertyChangedEventArgs<bool> e);
-        
+
         /// <summary>
         /// Called when a property changes.
         /// </summary>
@@ -229,11 +229,11 @@ namespace Microsoft.Management.UI.Internal
                 eh(this,e);
             }
         }
-        
+
         //
         // OnApplyTemplate
         //
-        
+
         /// <summary>
         /// Called when ApplyTemplate is called.
         /// </summary>
@@ -245,15 +245,15 @@ namespace Microsoft.Management.UI.Internal
             this.dropDownButton = WpfHelp.GetTemplateChild<ToggleButton>(this,"PART_DropDownButton");
             PostOnApplyTemplate();
         }
-        
+
         partial void PreOnApplyTemplate();
-        
+
         partial void PostOnApplyTemplate();
-        
+
         //
         // Static constructor
         //
-        
+
         /// <summary>
         /// Called when the type is initialized.
         /// </summary>
@@ -263,9 +263,9 @@ namespace Microsoft.Management.UI.Internal
             CommandManager.RegisterClassCommandBinding( typeof(PickerBase), new CommandBinding( PickerBase.CloseDropDownCommand, CloseDropDownCommand_CommandExecuted ));
             StaticConstructorImplementation();
         }
-        
+
         static partial void StaticConstructorImplementation();
-        
+
     }
 }
 #endregion

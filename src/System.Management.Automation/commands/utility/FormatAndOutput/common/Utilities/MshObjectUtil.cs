@@ -394,7 +394,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             PSObject so = PSObjectHelper.AsPSObject(val);
             if (directive != null && !string.IsNullOrEmpty(directive.formatString))
             {
-                // we have a formatting directive, apply it 
+                // we have a formatting directive, apply it
                 // NOTE: with a format directive, we do not make any attempt
                 // to deal with IEnumerable
                 try

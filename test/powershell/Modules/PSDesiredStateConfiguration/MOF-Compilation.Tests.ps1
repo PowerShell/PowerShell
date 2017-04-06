@@ -1,13 +1,13 @@
 Describe "DSC MOF Compilation" -tags "CI" {
 
     AfterAll {
-        $env:PSMODULEPATH = $_modulePath
+        $env:PSModulePath = $_modulePath
     }
     BeforeAll {
         $env:DSC_HOME = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath dsc
-        $_modulePath = $env:PSMODULEPATH
+        $_modulePath = $env:PSModulePath
         $powershellexe = (get-process -pid $PID).MainModule.FileName
-        $env:PSMODULEPATH = join-path ([io.path]::GetDirectoryName($powershellexe)) Modules
+        $env:PSModulePath = join-path ([io.path]::GetDirectoryName($powershellexe)) Modules
     }
 
     It "Should be able to compile a MOF from a basic configuration" -Skip:($IsOSX -or $IsWindows) {
@@ -26,7 +26,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
         DSCTestConfig
 "@).Invoke()
 
-        Remove-Item -Force -Recurse -Path DSCTestConfig 
+        Remove-Item -Force -Recurse -Path DSCTestConfig
     }
 
     It "Should be able to compile a MOF from another basic configuration" -Skip:($IsOSX -or $IsWindows) {
@@ -48,17 +48,17 @@ Describe "DSC MOF Compilation" -tags "CI" {
         DSCTestConfig
 "@).Invoke()
 
-        Remove-Item -Force -Recurse -Path DSCTestConfig 
+        Remove-Item -Force -Recurse -Path DSCTestConfig
     }
 
     It "Should be able to compile a MOF from a complex configuration" -Skip:($IsOSX -or $IsWindows) {
         [Scriptblock]::Create(@"
 	Configuration WordPressServer{
 
-                Import-DscResource -ModuleName PSDesiredStateConfiguration		
+                Import-DscResource -ModuleName PSDesiredStateConfiguration
 
 		Node CentOS{
-		
+
 			#Ensure Apache packages are installed
 				nxPackage httpd {
 					Ensure = "Present"
@@ -118,10 +118,10 @@ Describe "DSC MOF Compilation" -tags "CI" {
 			SourcePath = "/mnt/share/latest.zip"
 			DestinationPath = "/tmp/wordpress.zip"
 			Checksum = "md5"
-			Type = "file"    
+			Type = "file"
 			DependsOn = "[nxScript]nfsMount"
 		}
-		 
+
 		#Extract wordpress if changed
 		nxArchive ExtractSite{
 			SourcePath = "/tmp/wordpress.zip"
@@ -147,7 +147,7 @@ Describe "DSC MOF Compilation" -tags "CI" {
 			ContainsLine = "SELINUX=disabled"
 		 }
 
-		
+
 		nxScript SELinuxHTTPNet{
 		  GetScript = "#!/bin/bash`ngetsebool httpd_can_network_connect"
 		  setScript = "#!/bin/bash`nsetsebool -P httpd_can_network_connect=1"

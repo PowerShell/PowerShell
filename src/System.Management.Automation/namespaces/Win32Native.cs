@@ -101,12 +101,12 @@ namespace Microsoft.PowerShell.Commands.Internal
             internal SID_AND_ATTRIBUTES User;
         }
 
-        #endregion Struct 
+        #endregion Struct
 
-        #region PInvoke methods 
+        #region PInvoke methods
 
         /// <summary>
-        /// The LookupAccountSid function accepts a security identifier (SID) as input. It retrieves the name 
+        /// The LookupAccountSid function accepts a security identifier (SID) as input. It retrieves the name
         /// of the account for this SID and the name of the first domain on which this SID is found.
         /// </summary>
         /// <param name="lpSystemName"></param>
@@ -149,7 +149,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         internal static extern bool OpenProcessToken(SafeHandle processHandle, uint desiredAccess, out IntPtr tokenHandle);
 
         /// <summary>
-        /// The GetTokenInformation function retrieves a specified type of information about an access token. 
+        /// The GetTokenInformation function retrieves a specified type of information about an access token.
         /// The calling process must have appropriate access rights to obtain the information.
         /// </summary>
         /// <param name="tokenHandle"></param>
@@ -182,7 +182,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         internal const int SECURITY_ANONYMOUS = ((int)SECURITY_IMPERSONATION_LEVEL.Anonymous << 16);
         internal const int SECURITY_SQOS_PRESENT = 0x00100000;
 
-#if !CORECLR // Only enable/port what is needed by CORE CLR. 
+#if !CORECLR // Only enable/port what is needed by CORE CLR.
 
         private const string resBaseName = "RegistryProviderStrings";
         internal const int KEY_QUERY_VALUE = 0x0001;
@@ -260,7 +260,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         internal const int STANDARD_RIGHTS_WRITE = READ_CONTROL;
 
         // STANDARD_RIGHTS_REQUIRED  (0x000F0000L)
-        // SEMAPHORE_ALL_ACCESS          (STANDARD_RIGHTS_REQUIRED|SYNCHRONIZE|0x3) 
+        // SEMAPHORE_ALL_ACCESS          (STANDARD_RIGHTS_REQUIRED|SYNCHRONIZE|0x3)
 
         // SEMAPHORE and Event both use 0x0002
         // MUTEX uses 0x001 (MUTANT_QUERY_STATE)

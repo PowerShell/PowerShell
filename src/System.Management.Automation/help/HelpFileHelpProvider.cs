@@ -12,14 +12,14 @@ using System.Management.Automation.Internal;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Class HelpFileHelpProvider implement the help provider for help.txt kinds of 
+    ///
+    /// Class HelpFileHelpProvider implement the help provider for help.txt kinds of
     /// help contents.
-    /// 
+    ///
     /// Help File help information are stored in '.help.txt' files. These files are
     /// located in the Monad / CustomShell Path as well as in the Application Base
     /// of PSSnapIns
-    /// 
+    ///
     /// </summary>
     internal class HelpFileHelpProvider : HelpProviderWithCache
     {
@@ -280,9 +280,9 @@ namespace System.Management.Automation
 
             //Bug906435: Get-help for special devices throws an exception
             //There might be situations where path does not end with .help.txt extension
-            //The assumption that path ends with .help.txt is broken under special 
+            //The assumption that path ends with .help.txt is broken under special
             //conditions when user uses "get-help" with device names like "prn","com1" etc.
-            //First check whether path ends with .help.txt.                
+            //First check whether path ends with .help.txt.
 
             // If path does not end with ".help.txt" return.
             if (!path.EndsWith(".help.txt", StringComparison.OrdinalIgnoreCase))
@@ -371,8 +371,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// This will reset the help cache. Normally this corresponds to a 
-        /// help culture change. 
+        /// This will reset the help cache. Normally this corresponds to a
+        /// help culture change.
         /// </summary>
         internal override void Reset()
         {
@@ -386,9 +386,9 @@ namespace System.Management.Automation
         #region Private Data
 
         /// <summary>
-        /// This is a hashtable to track which help files are loaded already. 
-        /// 
-        /// This will avoid one help file getting loaded again and again. 
+        /// This is a hashtable to track which help files are loaded already.
+        ///
+        /// This will avoid one help file getting loaded again and again.
         /// </summary>
         private Hashtable _helpFiles = new Hashtable();
 

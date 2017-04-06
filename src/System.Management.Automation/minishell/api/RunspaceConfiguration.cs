@@ -14,27 +14,27 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 namespace System.Management.Automation.Runspaces
 {
     /// <summary>
-    /// Defines configuration information for runspace. 
-    /// 
+    /// Defines configuration information for runspace.
+    ///
     /// </summary>
     /// <remarks>
     ///
-    /// Developers may want to derive from this class when writing their own 
+    /// Developers may want to derive from this class when writing their own
     /// host to host monad engine. This will allow host to control the behaviour
     /// of monad engine through customized runspace configuration.
     ///
     ///
     /// </remarks>
     /// <!--
-    /// RunspaceConfiguration class encompass configuration information 
+    /// RunspaceConfiguration class encompass configuration information
     /// used to tailor the behaviour of mini-shell run time.
-    /// 
+    ///
     /// Information that defines mini-shell run time includes following
-    /// categories: 
-    /// 
-    ///     1. cmdlets: the list of cmdlets that are strong-bond with 
+    /// categories:
+    ///
+    ///     1. cmdlets: the list of cmdlets that are strong-bond with
     ///                 the mini-shell executable.
-    ///     2. providers: the list of providers that are strong-bond with 
+    ///     2. providers: the list of providers that are strong-bond with
     ///                 the mini-shell executable.
     ///     3. relationships: the list of relationships that are strong-bond
     ///                 with the mini-shell executable.
@@ -42,67 +42,67 @@ namespace System.Management.Automation.Runspaces
     ///                 in mini-shell executable.
     ///     5. formats: these are the display.xml which are embedded as resources
     ///                 in mini-shell executable.
-    ///     6. scripts: these are the scripts that are embedded as resources in 
+    ///     6. scripts: these are the scripts that are embedded as resources in
     ///                 mini-shell executable.
     ///     7. profile: this is a special kind of script to be executed at monad
     ///                 engine start-up.
     ///     8. help related information: help banner and minishell help. These are
     ///                 embedded as a resource in mini-shell.
-    ///     9. assemblies: this is a set of assemblies that will be loaded at 
-    ///                 engine start up time. This will make sure that a set of 
+    ///     9. assemblies: this is a set of assemblies that will be loaded at
+    ///                 engine start up time. This will make sure that a set of
     ///                 CLR types will be available to monad scripts.
-    ///     10. security manager: this is the security manager to be used for 
+    ///     10. security manager: this is the security manager to be used for
     ///                 enforcing script running, assembly loading policies.
-    ///                 
-    /// Runspace configuration information mentioned above comes into the 
-    /// system at different stages, 
-    /// 
-    ///     1. Intrinsic: these are the cmdlets, providers, relationships, types, 
-    ///        formats which are integrated parts of monad release and present in 
-    ///        every mini-shell executable. These information come into system at 
+    ///
+    /// Runspace configuration information mentioned above comes into the
+    /// system at different stages,
+    ///
+    ///     1. Intrinsic: these are the cmdlets, providers, relationships, types,
+    ///        formats which are integrated parts of monad release and present in
+    ///        every mini-shell executable. These information come into system at
     ///        design time.
-    /// 
-    ///     2. BuiltIn: these are the cmdlets, providers, relationships, types, formats, 
-    ///        scripts, profile, help which are provided when mini-shell executable 
-    ///        is built when running make-kit. These information come into system at 
+    ///
+    ///     2. BuiltIn: these are the cmdlets, providers, relationships, types, formats,
+    ///        scripts, profile, help which are provided when mini-shell executable
+    ///        is built when running make-kit. These information come into system at
     ///        compile time.
-    /// 
+    ///
     ///     3. Addon: these are the cmdlets, providers, relationships etc that are added
     ///        and mini-shell run time, either through RunspaceConfigurationModifier
-    ///        or directly changing the data in RunspaceConfiguration itself. 
+    ///        or directly changing the data in RunspaceConfiguration itself.
     ///        These information come into system at run time.
-    /// 
+    ///
     /// RunspaceConfiguration class is an abstracted class including limited implementation
-    /// on some interfaces related with format, type, script, profile and help. 
-    /// 
+    /// on some interfaces related with format, type, script, profile and help.
+    ///
     /// Concrete classes can be derived from this class. In most cases, concrete classes
     /// are directly generated by makekit with implementation of cmdlets, providers etc filled
-    /// in. 
-    /// 
-    /// Implementation of RunspaceConfiguration focus on following apects, 
-    /// 
-    ///     1. RunspaceConfiguration Information: these are instance-based interfaces to 
+    /// in.
+    ///
+    /// Implementation of RunspaceConfiguration focus on following apects,
+    ///
+    ///     1. RunspaceConfiguration Information: these are instance-based interfaces to
     ///        to return information from different configuration categories mentioned above.
-    ///     2. RunspaceConfiguration Factories: these are static interfaces for creating 
-    ///        one instance of RunspaceConfiguration-derived class. Implementation of these 
+    ///     2. RunspaceConfiguration Factories: these are static interfaces for creating
+    ///        one instance of RunspaceConfiguration-derived class. Implementation of these
     ///        functions normally has some logic about,
-    ///             
+    ///
     ///             a. finding appropriate RunspaceConfiguration class from which to create
     ///                an instance.
     ///             b. call RunspaceConfigurationModifier when necessary.
     ///             c. some caching capability.
-    /// 
+    ///
     /// This class will be built with monad engine code. Following monad engine components
-    /// will likely use this class, 
-    /// 
+    /// will likely use this class,
+    ///
     ///     1. Monad host will use configuration information like help banner and shell help.
-    ///     2. Runspace api will use a RunspaceConfiguration instance and store it as 
+    ///     2. Runspace api will use a RunspaceConfiguration instance and store it as
     ///        a member of execution context for use by command discovery, ETS, Format/Output
     ///     3. Engine start up will use information in profile and scripts.
     ///     4. Command Discovery will use cmdlet and provider information.
     ///     5. ETS will use assembly list for finding types accessible to monad scripts.
     ///     6. ETS will use type information.
-    ///     7. Format and output will use format information. 
+    ///     7. Format and output will use format information.
     /// -->
 #if CORECLR
     internal
@@ -116,7 +116,7 @@ namespace System.Management.Automation.Runspaces
 #if V2
 
         /// <summary>
-        /// Create an instance of default RunspaceConfiguration implementation. 
+        /// Create an instance of default RunspaceConfiguration implementation.
         /// </summary>
         /// <return>RunspaceConfiguration instance created</return>
         /// <exception cref="System.Management.Automation.PSInvalidOperationException">
@@ -124,7 +124,7 @@ namespace System.Management.Automation.Runspaces
         /// </exception>
         /// <!--
         /// This is a RunspaceConfiguration factory function which will create an instance
-        /// of default RunspaceConfiguration-derived type, whose name is decided by an 
+        /// of default RunspaceConfiguration-derived type, whose name is decided by an
         /// assembly attribute in mini-shell.
         /// -->
         internal static RunspaceConfiguration Create()
@@ -132,7 +132,7 @@ namespace System.Management.Automation.Runspaces
             Assembly assembly = Assembly.GetEntryAssembly();
 
             // If monad engine is hosted by an native application, Assembly.GetEntryAssembly()
-            // will actually return null. In this case, we should throw an exception back. 
+            // will actually return null. In this case, we should throw an exception back.
             if (assembly == null)
             {
                 throw tracer.NewInvalidOperationException("MiniShellErrors", "InvalidEntryAssembly");
@@ -148,11 +148,11 @@ namespace System.Management.Automation.Runspaces
         /// <param name="assemblyName">Assembly name from which to find runspace configuration implementation</param>
         /// <returns>Runspace configuration instance created</returns>
         /// <exception cref="System.ArgumentNullException">
-        /// Exception thrown when <paramref name="assemblyName"/> is null or empty. 
+        /// Exception thrown when <paramref name="assemblyName"/> is null or empty.
         /// </exception>
         /// <!--
         /// This is a RunspaceConfiguration factory function which will create an instance
-        /// of default RunspaceConfiguration-derived type, whose name is decided by an 
+        /// of default RunspaceConfiguration-derived type, whose name is decided by an
         /// assembly attribute in the assembly specified.
         /// -->
         public static RunspaceConfiguration Create(string assemblyName)
@@ -206,8 +206,8 @@ namespace System.Management.Automation.Runspaces
 #if V2
         /// <summary>
         /// This is a RunspaceConfiguration factory function which will create an instance
-        /// based on a type specified in a particular assembly. 
-        /// 
+        /// based on a type specified in a particular assembly.
+        ///
         /// This function will likely being exposed as a public interface in v2.
         /// </summary>
         /// <param name="assemblyName"></param>
@@ -234,12 +234,12 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Create an RunspaceConfiguration-derived instance based an RunspaceConfiguration-derived type
         /// in specified assembly. The type name is defined by assembly attribute:
-        /// RunspaceConfigurationTypeAttribute. 
+        /// RunspaceConfigurationTypeAttribute.
         /// </summary>
         /// <param name="assembly"></param>
         /// <returns>Runspace configuration instance created</returns>
         /// <exception cref="System.ArgumentNullException">
-        /// Exception thrown when <paramref name="assembly"/> is null or empty. 
+        /// Exception thrown when <paramref name="assembly"/> is null or empty.
         /// </exception>
         private static RunspaceConfiguration Create(Assembly assembly)
         {
@@ -307,7 +307,7 @@ namespace System.Management.Automation.Runspaces
         /// Add a PSSnapin to runspace configuration.
         /// </summary>
         /// <remarks>
-        /// This member provides logic for adding PSSnapin. 
+        /// This member provides logic for adding PSSnapin.
         ///
         /// RunspaceConfiguration derived class should not override this member.
         ///
@@ -329,7 +329,7 @@ namespace System.Management.Automation.Runspaces
         /// Remove a PSSnapin from runspace configuration.
         /// </summary>
         /// <remarks>
-        /// This member provides logic for removing PSSnapin. 
+        /// This member provides logic for removing PSSnapin.
         ///
         /// RunspaceConfiguration derived class should not override this member.
         /// </remarks>
@@ -385,9 +385,9 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Gets the relationships defined in runspace configuration.
         /// </summary>
-        public virtual Collection<RelationshipConfigurationEntry> RelationshipData 
-        { 
-            get; 
+        public virtual Collection<RelationshipConfigurationEntry> RelationshipData
+        {
+            get;
         }
         */
 
@@ -398,7 +398,7 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// types.ps1xml information
         /// </summary>
-        /// 
+        ///
         internal TypeTable TypeTable
         {
             get { return _typeTable ?? (_typeTable = new TypeTable()); }
@@ -411,7 +411,7 @@ namespace System.Management.Automation.Runspaces
         /// Gets the type data files defined in runspace configuration.
         /// </summary>
         /// <remarks>
-        /// RunspaceConfiguration derived class can override this member to provide its own types to be 
+        /// RunspaceConfiguration derived class can override this member to provide its own types to be
         /// loaded at engine start up.
         /// </remarks>
         public virtual RunspaceConfigurationEntryCollection<TypeConfigurationEntry> Types
@@ -425,7 +425,7 @@ namespace System.Management.Automation.Runspaces
         /// Gets the format data files defined in runspace configuration.
         /// </summary>
         /// <remarks>
-        /// RunspaceConfiguration derived class can override this member to provide its own formats to be 
+        /// RunspaceConfiguration derived class can override this member to provide its own formats to be
         /// loaded at engine start up.
         /// </remarks>
         public virtual RunspaceConfigurationEntryCollection<FormatConfigurationEntry> Formats
@@ -447,8 +447,8 @@ namespace System.Management.Automation.Runspaces
         /// Gets the scripts defined in runspace configuration.
         /// </summary>
         /// <remarks>
-        /// RunspaceConfiguration derived class can override this member to provide its own scripts 
-        /// to be include in monad engine. 
+        /// RunspaceConfiguration derived class can override this member to provide its own scripts
+        /// to be include in monad engine.
         /// </remarks>
         public virtual RunspaceConfigurationEntryCollection<ScriptConfigurationEntry> Scripts
         {
@@ -467,8 +467,8 @@ namespace System.Management.Automation.Runspaces
         /// Gets the initialization scripts defined in runspace configuration.
         /// </summary>
         /// <remarks>
-        /// RunspaceConfiguration derived class can override this member to provide its own initialization scripts 
-        /// to be run at the start up of monad engine. 
+        /// RunspaceConfiguration derived class can override this member to provide its own initialization scripts
+        /// to be run at the start up of monad engine.
         /// </remarks>
         public virtual RunspaceConfigurationEntryCollection<ScriptConfigurationEntry> InitializationScripts
         {
@@ -488,8 +488,8 @@ namespace System.Management.Automation.Runspaces
         /// Gets the assemblies defined in runspace configuration.
         /// </summary>
         /// <remarks>
-        /// RunspaceConfiguration derived class can override this member to provide its own assemblies 
-        /// to be loaded at the start up of monad engine. 
+        /// RunspaceConfiguration derived class can override this member to provide its own assemblies
+        /// to be loaded at the start up of monad engine.
         /// </remarks>
         public virtual RunspaceConfigurationEntryCollection<AssemblyConfigurationEntry> Assemblies
         {
@@ -506,11 +506,11 @@ namespace System.Management.Automation.Runspaces
         private AuthorizationManager _authorizationManager = null;
 
         /// <summary>
-        /// Gets the authorization manager to be used for runspace. 
+        /// Gets the authorization manager to be used for runspace.
         /// </summary>
         /// <remarks>
         /// RunspaceConfiguration derived class can override this member to provide its own authorization
-        /// manager for monad engine. 
+        /// manager for monad engine.
         /// </remarks>
         public virtual AuthorizationManager AuthorizationManager
         {
@@ -748,11 +748,11 @@ namespace System.Management.Automation.Runspaces
     }
 
     /// <summary>
-    /// Enum for describing different kind information that can be configured in runspace configuration. 
+    /// Enum for describing different kind information that can be configured in runspace configuration.
     /// </summary>
-    /// 
+    ///
     /// <!--
-    /// This is used in RunspaceConfiguration.Update() 
+    /// This is used in RunspaceConfiguration.Update()
     /// -->
     internal enum RunspaceConfigurationCategory
     {
@@ -811,7 +811,7 @@ namespace System.Management.Automation.Runspaces
         AllowConsoleApplication,
 
         /// <summary>
-        /// Allow user interaction. 
+        /// Allow user interaction.
         /// </summary>
         AllowUserInteraction,
 

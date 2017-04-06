@@ -119,18 +119,18 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// IsValidFileForUnblocking is a helper method used to validate if 
+        /// IsValidFileForUnblocking is a helper method used to validate if
         /// the supplied file path has to be considered for unblocking.
         /// </summary>
         /// <param name="resolvedpath">File or directory path.</param>
-        /// <returns>True is the supplied path is a 
-        /// valid file path or else false is returned. 
+        /// <returns>True is the supplied path is a
+        /// valid file path or else false is returned.
         /// If the supplied path is a directory path then false is returned.</returns>
         private bool IsValidFileForUnblocking(string resolvedpath)
         {
             bool isValidUnblockableFile = false;
 
-            // Bug 501423 : silently ignore folders given that folders cannot have 
+            // Bug 501423 : silently ignore folders given that folders cannot have
             // alternate data streams attached to them (i.e. they're already unblocked).
             if (!System.IO.Directory.Exists(resolvedpath))
             {

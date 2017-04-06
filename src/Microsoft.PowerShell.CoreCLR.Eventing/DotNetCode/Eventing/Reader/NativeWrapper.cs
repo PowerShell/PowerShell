@@ -2,14 +2,14 @@
 /*============================================================
 **
 **
-** Purpose: 
+** Purpose:
 ** This internal class contains wrapper methods over the Native
 ** Methods of the Eventlog API.   Unlike the raw Native Methods,
-** these methods throw EventLogExceptions, check platform 
-** availability and perform additional helper functionality 
+** these methods throw EventLogExceptions, check platform
+** availability and perform additional helper functionality
 ** specific to function.  Also, all methods of this class expose
 ** the Link Demand for Unmanaged Permission to callers.
-** 
+**
 ============================================================*/
 
 using System.Collections.Generic;
@@ -109,7 +109,7 @@ namespace System.Diagnostics.Eventing.Reader
         public static void EvtClose(IntPtr handle)
         {
             //
-            // purposely don't check and throw - this is 
+            // purposely don't check and throw - this is
             // always called in cleanup / finalize / etc..
             //
             UnsafeNativeMethods.EvtClose(handle);
@@ -124,7 +124,7 @@ namespace System.Diagnostics.Eventing.Reader
                             int flags)
         {
             //
-            // ignore locale and pass 0 instead: that way, the thread locale will be retrieved in the API layer 
+            // ignore locale and pass 0 instead: that way, the thread locale will be retrieved in the API layer
             // and the "strict rendering" flag will NOT be set.  Otherwise, the fall back logic is broken and the descriptions
             // are not returned if the exact locale is not present on the server.
             //
@@ -451,10 +451,10 @@ namespace System.Diagnostics.Eventing.Reader
                     EventLogException.Throw(error);
 
                 //
-                // note: there is a case where returned variant does have allocated native resources 
+                // note: there is a case where returned variant does have allocated native resources
                 // associated with (e.g. ConfigArrayHandle).  If PtrToStructure throws, then we would
-                // leak that resource - fortunately PtrToStructure only throws InvalidArgument which 
-                // is a logic error - not a possible runtime condition here.  Other System exceptions 
+                // leak that resource - fortunately PtrToStructure only throws InvalidArgument which
+                // is a logic error - not a possible runtime condition here.  Other System exceptions
                 // shouldn't be handled anyhow and the application will terminate.
                 //
                 UnsafeNativeMethods.EvtVariant varVal = Marshal.PtrToStructure<UnsafeNativeMethods.EvtVariant>(buffer);
@@ -605,10 +605,10 @@ namespace System.Diagnostics.Eventing.Reader
                     EventLogException.Throw(win32Error);
 
                 //
-                // note: there is a case where returned variant does have allocated native resources 
+                // note: there is a case where returned variant does have allocated native resources
                 // associated with (e.g. ConfigArrayHandle).  If PtrToStructure throws, then we would
-                // leak that resource - fortunately PtrToStructure only throws InvalidArgument which 
-                // is a logic error - not a possible runtime condition here.  Other System exceptions 
+                // leak that resource - fortunately PtrToStructure only throws InvalidArgument which
+                // is a logic error - not a possible runtime condition here.  Other System exceptions
                 // shouldn't be handled anyhow and the application will terminate.
                 //
                 UnsafeNativeMethods.EvtVariant varVal = Marshal.PtrToStructure<UnsafeNativeMethods.EvtVariant>(buffer);
@@ -950,7 +950,7 @@ namespace System.Diagnostics.Eventing.Reader
             {
                 //
                 // ERROR_EVT_UNRESOLVED_VALUE_INSERT can be returned.  It means
-                // message may have one or more unsubstituted strings.  This is 
+                // message may have one or more unsubstituted strings.  This is
                 // not an exception, but we have no way to convey the partial
                 // success out to enduser.
                 //
@@ -1109,7 +1109,7 @@ namespace System.Diagnostics.Eventing.Reader
             {
                 //
                 // ERROR_EVT_UNRESOLVED_VALUE_INSERT can be returned.  It means
-                // message may have one or more unsubstituted strings.  This is 
+                // message may have one or more unsubstituted strings.  This is
                 // not an exception, but we have no way to convey the partial
                 // success out to enduser.
                 //

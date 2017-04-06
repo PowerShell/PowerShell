@@ -39,25 +39,25 @@ Describe "bnot on enums" -Tags "CI" {
             It "max - 1" {
                 $res = -bnot $enumType::MaxMinus1
                 $res | Should Be $enumType::MinPlus1
-                $res.GetType() | Should Be $enumType
+                $res | Should BeOfType $enumType
             }
 
             It "min + 1" {
                 $res = -bnot $enumType::MinPlus1
                 $res | Should Be $enumType::MaxMinus1
-                $res.GetType() | Should Be $enumType
+                $res | Should BeOfType $enumType
             }
 
             It "Max" {
                 $res = -bnot $enumType::Max
                 $res | Should Be $enumType::Min
-                $res.GetType() | Should Be $enumType
+                $res | Should BeOfType $enumType
             }
 
             It "Min" {
                 $res = -bnot $enumType::Min
                 $res | Should Be $enumType::Max
-                $res.GetType() | Should Be $enumType
+                $res | Should BeOfType $enumType
             }
         }
     }
@@ -68,7 +68,7 @@ Describe "bnot on integral types" -Tags "CI" {
     {
         Context $baseType.Name  {
 
-            $max = $baseType::MaxValue 
+            $max = $baseType::MaxValue
             $maxMinus1 = $max - 1
             $min = $baseType::MinValue
             $minPlus1 = $min + 1
@@ -90,25 +90,25 @@ Describe "bnot on integral types" -Tags "CI" {
                 It "max - 1" {
                     $res = -bnot $maxMinus1
                     $res | Should Be (-bnot [int]$maxMinus1)
-                    $res.GetType() | Should Be $expectedResultType
+                    $res | Should BeOfType $expectedResultType
                 }
 
                 It "min + 1" {
                     $res = -bnot $minPlus1
                     $res | Should Be (-bnot [int]$minPlus1)
-                    $res.GetType() | Should Be $expectedResultType
+                    $res | Should BeOfType $expectedResultType
                 }
 
                 It "max" {
                     $res = -bnot $max
                     $res | Should Be (-bnot [int]$max)
-                    $res.GetType() | Should Be $expectedResultType
+                    $res | Should BeOfType $expectedResultType
                 }
 
                 It "min" {
                     $res = -bnot $min
                     $res | Should Be (-bnot [int]$min)
-                    $res.GetType() | Should Be $expectedResultType
+                    $res | Should BeOfType $expectedResultType
                 }
                 return
             }
@@ -116,25 +116,25 @@ Describe "bnot on integral types" -Tags "CI" {
             It "max - 1" {
                 $res = -bnot $maxMinus1
                 $res | Should Be $minPlus1
-                $res.GetType() | Should Be $expectedResultType
+                $res | Should BeOfType $expectedResultType
             }
 
             It "min + 1" {
                 $res = -bnot $minPlus1
                 $res | Should Be $maxMinus1
-                $res.GetType() | Should Be $expectedResultType
+                $res | Should BeOfType $expectedResultType
             }
 
             It "max" {
                 $res = -bnot $max
                 $res | Should Be $min
-                $res.GetType() | Should Be $expectedResultType
+                $res | Should BeOfType $expectedResultType
             }
 
             It "min" {
                 $res = -bnot $min
                 $res | Should Be $max
-                $res.GetType() | Should Be $expectedResultType
+                $res | Should BeOfType $expectedResultType
             }
         }
     }

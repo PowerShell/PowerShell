@@ -1,0 +1,97 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <VersionPrefix>6.0.0</VersionPrefix>
+    <TargetFramework>netstandard1.6</TargetFramework>
+    <NoWarn>$(NoWarn);CS1570</NoWarn>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <DelaySign>true</DelaySign>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AssemblyName>Microsoft.PowerShell.Commands.Utility</AssemblyName>
+    <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\ColumnInfo.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\ExpressionColumnInfo.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\HeaderInfo.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\OriginalColumnInfo.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\OutGridViewCommand.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\OutWindowProxy.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\ScalarTypeColumnInfo.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\OutGridView\TableView.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\out-printer\PrinterLineOutput.cs" />
+    <Compile Remove="commands\utility\FormatAndOutput\out-printer\out-printer.cs" />
+    <Compile Remove="commands\utility\Send-MailMessage.cs" />
+    <Compile Remove="commands\utility\ShowCommand\ShowCommand.cs" />
+    <Compile Remove="commands\utility\ShowCommand\ShowCommandCommandInfo.cs" />
+    <Compile Remove="commands\utility\ShowCommand\ShowCommandModuleInfo.cs" />
+    <Compile Remove="commands\utility\ShowCommand\ShowCommandParameterInfo.cs" />
+    <Compile Remove="commands\utility\ShowCommand\ShowCommandParameterSetInfo.cs" />
+    <Compile Remove="commands\utility\ShowCommand\ShowCommandParameterType.cs" />
+    <Compile Remove="commands\utility\ShowCommand\ShowCommandProxy.cs" />
+    <Compile Remove="commands\utility\update-list.cs" />
+    <Compile Remove="singleshell\installer\MshUtilityMshSnapin.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\BasicHtmlWebResponseObject.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\ContentHelper.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\HtmlWebResponseObject.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\InvokeRestMethodCommand.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\InvokeWebRequestCommand.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\JsonObjectTypeResolver.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\WebRequestPSCmdlet.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\WebResponseHelper.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\WebResponseObject.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\FullClr\WebResponseObjectFactory.FullClr.cs" />
+    <Compile Remove="commands\utility\WebCmdlet\CoreCLR\HtmlWebResponseObject.CoreClr.cs" />
+    <Compile Remove="gen\FormatAndOut_out_gridview.cs" />
+    <Compile Remove="gen\UtilityMshSnapinResources.cs" />
+    <Compile Remove="gen\OutPrinterDisplayStrings.cs" />
+    <Compile Remove="gen\UpdateListStrings.cs" />
+    <Compile Remove="gen\SendMailMessageStrings.cs" />
+    <Compile Remove="gen\ConvertFromStringResources.cs" />
+    <Compile Remove="gen\ConvertStringResources.cs" />
+    <Compile Remove="gen\FlashExtractStrings.cs" />
+    <Compile Remove="gen\ImmutableStrings.cs" />
+    
+    <EmbeddedResource Remove="resources\FormatAndOut_out_gridview.resx" />
+    <EmbeddedResource Remove="resources\UtilityMshSnapinResources.resx" />
+    <EmbeddedResource Remove="resources\OutPrinterDisplayStrings.resx" />
+    <EmbeddedResource Remove="resources\UpdateListStrings.resx" />
+    <EmbeddedResource Remove="resources\SendMailMessageStrings.resx" />
+    <EmbeddedResource Remove="resources\ConvertFromStringResources.resx" />
+    <EmbeddedResource Remove="resources\ConvertStringResources.resx" />
+    <EmbeddedResource Remove="resources\FlashExtractStrings.resx" />
+    <EmbeddedResource Remove="resources\ImmutableStrings.resx" />
+  </ItemGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
+    <DebugType>portable</DebugType>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'Linux' ">
+    <DefineConstants>$(DefineConstants);UNIX</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
+    <DebugType>full</DebugType>
+  </PropertyGroup>
+
+  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.0.0-rc" />
+    <PackageReference Include="System.Diagnostics.TextWriterTraceListener" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>

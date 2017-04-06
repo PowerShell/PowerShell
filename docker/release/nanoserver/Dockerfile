@@ -1,11 +1,11 @@
 # escape=`
-FROM microsoft/nanoserver
+FROM microsoft/nanoserver:latest
 MAINTAINER brycem@microsoft.com
 LABEL Readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
 LABEL Description="This Dockerfile will install the latest release of PS."
 
-ARG POWERSHELL_ZIP=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.14/powershell-6.0.0-alpha.14-win10-x64.zip
-ARG POWERSHELL_SHA256=257D5F081C112713DF17F6D0E4CBC794E5099664EDA8DBC543B996915834D5CE
+ARG POWERSHELL_ZIP=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.17/PowerShell_6.0.0-alpha.17-win10-win2016-x64.zip
+ARG POWERSHELL_SHA256=3D770CF4C5744992622E043A52F9A285C695BFE8F1B94BB070C4026582CA64B0
 
 # Setup PowerShell - Log-to > C:\Docker.log
 SHELL ["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-command"]
@@ -32,11 +32,11 @@ RUN $ErrorActionPreference='Stop'; `
     [System.IO.Compression.ZipFile]::ExtractToDirectory($ZipFile,$PsFolder) ; `
     if (Get-ChildItem -Path $PsFolder/powershell.exe) { `
       Remove-Item -Path $ZipFile ; `
-      New-Item -Type SymbolicLink -Path $PsFolder\ -Name Core -Value $PsFolder `
+      New-Item -Type SymbolicLink -Path $PsFolder\ -Name latest -Value $PsFolder `
     } else { throw 'Installation failed!  See c:\Dockerfile.log' } ;
 
 # Verify New Powershell.exe runs
-SHELL ["C:\\Program Files\\PowerShell\\Core\\PowerShell.exe", "-command"]
+SHELL ["C:\\Program Files\\PowerShell\\latest\\PowerShell.exe", "-command"]
 RUN Start-Transcript -path C:\Dockerfile.log -append -IncludeInvocationHeader ; `
     $ErrorActionPreference='Stop'; `
     Write-Output $PSVersionTable ; `
@@ -45,4 +45,6 @@ RUN Start-Transcript -path C:\Dockerfile.log -append -IncludeInvocationHeader ; 
     } ;
 
 # Persist %PSCORE% ENV variable for user convenience
-ENV PSCORE='"C:\Program Files\PowerShell\Core\PowerShell.exe"'
+ENV PSCORE='"C:\Program Files\PowerShell\latest\PowerShell.exe"'
+
+ENTRYPOINT ["C:\\Program Files\\PowerShell\\latest\\PowerShell.exe"]

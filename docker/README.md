@@ -1,7 +1,7 @@
 Docker
 ======
 
-These Dockerfiles enable building and running PowerShell in a container for each Linux distribution we support.
+These DockerFiles enable building and running PowerShell in a container for each Linux distribution we support.
 There are two sets: release and nightly.
 
 This requires an up-to-date version of Docker, such as 1.12.
@@ -33,7 +33,7 @@ The nightly containers derive from their respective release images,
 such as `microsoft/powershell:centos7`,
 then run the `bootstrap.ps1` script which clones the repository,
 runs `Start-PSBootstrap -Package` to install building and packaging tools,
-runs `Start-PSBuild -Crossgen` to build PowerShell with native-image DLLs,
+runs `Start-PSBuild -Crossgen -PSModuleRestore` to build PowerShell with native-image DLLs,
 runs `Start-PSPackage` to generate the platform's package,
 and finally installs the generated package.
 

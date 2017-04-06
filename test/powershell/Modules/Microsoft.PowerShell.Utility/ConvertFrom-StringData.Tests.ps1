@@ -30,7 +30,8 @@ bazz = 2
     }
 
     It "Should return a hashtable" {
-	$(ConvertFrom-StringData -StringData 'a=b').GetType().Name | Should Be "Hashtable"
+	$result = ConvertFrom-StringData -StringData 'a=b'
+    $result | Should BeOfType Hashtable
     }
 
     It "Should throw if not in x=y format" {
@@ -54,11 +55,11 @@ bazz = 2
     }
 
     It "Should return a keycollection for the keys" {
-	$(ConvertFrom-StringData -StringData 'a=b').Keys.gettype().Name | Should Be "KeyCollection"
+        $(ConvertFrom-StringData -StringData 'a=b').Keys.PSObject.TypeNames[0] | Should Be "System.Collections.Hashtable+KeyCollection"
     }
 
     It "Should return a valuecollection for the values" {
-	$(ConvertFrom-StringData -StringData 'a=b').Values.gettype().Name | Should Be "ValueCollection"
+	$(ConvertFrom-StringData -StringData 'a=b').Values.PSObject.TypeNames[0] | Should Be "System.Collections.Hashtable+ValueCollection"
     }
 
     It "Should work for multiple lines" {

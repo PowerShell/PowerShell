@@ -473,7 +473,7 @@ namespace System.Management.Automation
                             var argumentAst = specifiedParameter.Argument;
                             if (argumentAst == null)
                             {
-                                argumentAst = commandAst.CommandElements[i + 1] as ExpressionAst;
+                                argumentAst = commandAst.CommandElements[i] as ExpressionAst;
                                 if (argumentAst != null)
                                 {
                                     i += 1;

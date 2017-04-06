@@ -28,7 +28,7 @@ namespace Microsoft.PowerShell.Workflow
         #region Overrides of PSSessionConfiguration
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="senderInfo"></param>
         /// <exception cref="NotImplementedException"></exception>
@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Workflow
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sessionConfigurationData"></param>
         /// <param name="senderInfo"></param>
@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell.Workflow
                     throw;
                 }
             }
-            
+
             if (configProviderId.ToLower(CultureInfo.InvariantCulture).Equals("http://schemas.microsoft.com/powershell/microsoft.windows.servermanagerworkflows"))
             {
                 PSSessionConfigurationData.IsServerManager = true;

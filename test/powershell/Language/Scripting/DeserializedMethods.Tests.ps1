@@ -4,7 +4,7 @@
         $null = $a.Add(1)
         $null = $a.Add(2)
         $null = $a.Add(3)
-        
+
         # using linkedlist that implements IEnumerable,
         # but doesn't implement IList or IList<T>
         $x = [collections.generic.linkedlist[int]]::new()
@@ -12,8 +12,8 @@
         $null = $x.Add(456)
 
         $s = [System.Management.Automation.PSSerializer]::Serialize($x)
-        $d = [System.Management.Automation.PSSerializer]::Deserialize($s)	    
-        
-        $d | Get-Member -MemberType *Method* Add | Should Be $null            
+        $d = [System.Management.Automation.PSSerializer]::Deserialize($s)
+
+        $d | Get-Member -MemberType *Method* Add | Should Be $null
     }
 }

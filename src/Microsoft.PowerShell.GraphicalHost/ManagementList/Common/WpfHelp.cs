@@ -41,7 +41,7 @@ namespace Microsoft.Management.UI.Internal
     internal static class WpfHelp
     {
         #region RetryActionAfterLoaded
-        private static Dictionary<FrameworkElement, RetryActionAfterLoadedDataQueue> retryActionData = 
+        private static Dictionary<FrameworkElement, RetryActionAfterLoadedDataQueue> retryActionData =
             new Dictionary<FrameworkElement, RetryActionAfterLoadedDataQueue>();
 
         /// <summary>
@@ -70,7 +70,7 @@ namespace Microsoft.Management.UI.Internal
             }
 
             data.Enqueue(callback, parameter);
-            
+
             element.Loaded += new RoutedEventHandler(Element_Loaded);
             element.ApplyTemplate();
 

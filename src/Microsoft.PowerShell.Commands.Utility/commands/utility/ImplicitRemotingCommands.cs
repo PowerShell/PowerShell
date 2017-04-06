@@ -31,7 +31,7 @@ namespace Microsoft.PowerShell.Commands
     using PowerShell = System.Management.Automation.PowerShell;
 
     /// <summary>
-    /// This class implements Export-PSSession cmdlet.  
+    /// This class implements Export-PSSession cmdlet.
     /// Spec: TBD
     /// </summary>
     [Cmdlet(VerbsData.Export, "PSSession", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135213")]
@@ -103,7 +103,7 @@ namespace Microsoft.PowerShell.Commands
         private const string copyItemScript = @"
                 param($sourcePath, $destinationPath)
                 Copy-Item -Recurse $sourcePath\\* -Destination $destinationPath\\
-                Remove-item $sourcePath -Recurse -Force 
+                Remove-item $sourcePath -Recurse -Force
             ";
 
         private void DisplayDirectory(List<string> generatedFiles)
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// This class implements Import-PSSession cmdlet.  
+    /// This class implements Import-PSSession cmdlet.
     /// Spec: http://cmdletdesigner/SpecViewer/Default.aspx?Project=PowerShell&amp;Cmdlet=Import-Command
     /// </summary>
     [Cmdlet(VerbsData.Import, "PSSession", HelpUri = "https://go.microsoft.com/fwlink/?LinkID=135221")]
@@ -737,7 +737,7 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            // 
+            //
             // output a generic error message if exception is not recognized
             //
             errorId = "ErrorFromRemoteCommand";
@@ -1666,7 +1666,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="sender"></param>
         /// <param name="eventArgs"></param>
@@ -2042,7 +2042,7 @@ namespace Microsoft.PowerShell.Commands
 
         private const string HeaderTemplate = @"
 param(
-    <# {0} #>    
+    <# {0} #>
     [System.Management.Automation.Runspaces.PSSession] $PSSessionOverride,
     [System.Management.Automation.Remoting.PSSessionOption] $PSSessionOptionOverride
 )
@@ -2080,7 +2080,7 @@ $script:MyModule = $MyInvocation.MyCommand.ScriptBlock.Module
                 throw PSTraceSource.NewArgumentNullException("writer");
             }
 
-            // In Win8, we are no longer loading all assemblies by default. 
+            // In Win8, we are no longer loading all assemblies by default.
             // So we need to use the fully qualified name when accessing a type in that assembly
             string versionOfScriptGenerator = "[" + typeof(ExportPSSessionCommand).AssemblyQualifiedName + "]" + "::VersionOfScriptGenerator";
             GenerateTopComment(writer);
@@ -2105,7 +2105,7 @@ function Write-PSImplicitRemotingMessage
         [Parameter(Mandatory = $true, Position = 0)]
         [string]
         $message)
-        
+
     try { & $script:WriteHost -Object $message -ErrorAction SilentlyContinue } catch { }
 }
 ";
@@ -2133,8 +2133,8 @@ function Set-PSImplicitRemotingSession
     param(
         [Parameter(Mandatory = $true, Position = 0)]
         [AllowNull()]
-        [Management.Automation.Runspaces.PSSession] 
-        $PSSession, 
+        [Management.Automation.Runspaces.PSSession]
+        $PSSession,
 
         [Parameter(Mandatory = $false, Position = 1)]
         [bool] $createdByModule = $false)
@@ -2145,12 +2145,12 @@ function Set-PSImplicitRemotingSession
 
         if ($createdByModule -and ($script:PSSession -ne $null))
         {{
-            $moduleName = Get-PSImplicitRemotingModuleName 
+            $moduleName = Get-PSImplicitRemotingModuleName
             $script:PSSession.Name = '{0}' -f $moduleName
-            
+
             $oldCleanUpScript = $script:MyModule.OnRemove
             $removePSSessionCommand = $script:RemovePSSession
-            $script:MyModule.OnRemove = {{ 
+            $script:MyModule.OnRemove = {{
                 & $removePSSessionCommand -Session $PSSession -ErrorAction SilentlyContinue
                 if ($oldCleanUpScript)
                 {{
@@ -2330,7 +2330,7 @@ function Get-PSImplicitRemotingSession
 {{
     param(
         [Parameter(Mandatory = $true, Position = 0)]
-        [string] 
+        [string]
         $commandName
     )
 
@@ -2408,8 +2408,8 @@ function Get-PSImplicitRemotingSession
 
         private const string ReimportTemplate = @"
             try {{
-                & $script:InvokeCommand -Session $script:PSSession -ScriptBlock {{ 
-                    Get-Module -ListAvailable -Name '{0}' | Import-Module 
+                & $script:InvokeCommand -Session $script:PSSession -ScriptBlock {{
+                    Get-Module -ListAvailable -Name '{0}' | Import-Module
                 }} -ErrorAction SilentlyContinue
             }} catch {{ }}
 ";
@@ -2444,7 +2444,7 @@ function Get-PSImplicitRemotingSession
         // index 4 - authentication mechanism (empty string of full parameter + value)
         // index 5 - allow redirection
         private const string NewRunspaceTemplate = @"
-            $( 
+            $(
                 & $script:NewPSSession `
                     {0} -ConfigurationName '{1}' `
                     -SessionOption (Get-PSImplicitRemotingSessionOption) `
@@ -2459,7 +2459,7 @@ function Get-PSImplicitRemotingSession
         // index 1 - VM credential
         // index 2 - "-ConfigurationName <configuration name>" or empty string
         private const string NewVMRunspaceTemplate = @"
-            $( 
+            $(
                 & $script:NewPSSession `
                     {0} `
                     {1} `
@@ -2471,7 +2471,7 @@ function Get-PSImplicitRemotingSession
         // index 1 - "-RunAsAdministrator" or empty string
         // index 2 - "-ConfigurationName <configuration name>" or empty string
         private const string NewContainerRunspaceTemplate = @"
-            $( 
+            $(
                 & $script:NewPSSession `
                     {0} `
                     {1} `
@@ -2685,12 +2685,12 @@ function Modify-PSImplicitRemotingParameters
         [Parameter()]
         [switch]
         $leaveAsRemoteParameter)
-        
+
     if ($PSBoundParameters.ContainsKey($parameterName))
     {
         $clientSideParameters.Add($parameterName, $PSBoundParameters[$parameterName])
-        if (-not $leaveAsRemoteParameter) { 
-            $null = $PSBoundParameters.Remove($parameterName) 
+        if (-not $leaveAsRemoteParameter) {
+            $null = $PSBoundParameters.Remove($parameterName)
         }
     }
 }
@@ -3037,7 +3037,7 @@ function Get-PSImplicitRemotingClientSideParameters
             }
             // Sign psm1 file and format file
             // If certificate is passed, sign the file
-            // If certificate is not passed and executionPolicy is set to Restricted/AllSigned, output error 
+            // If certificate is not passed and executionPolicy is set to Restricted/AllSigned, output error
             // Since we will anyway be erroring out during Import-Module, it is better to fail fast
             ExecutionPolicy executionPolicy = SecuritySupport.GetExecutionPolicy(Utils.DefaultPowerShellShellID);
             if (executionPolicy == ExecutionPolicy.Restricted || executionPolicy == ExecutionPolicy.AllSigned)

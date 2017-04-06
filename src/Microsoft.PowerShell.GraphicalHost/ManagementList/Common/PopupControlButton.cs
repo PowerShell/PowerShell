@@ -84,10 +84,10 @@ namespace Microsoft.Management.UI.Internal
         {
             ////
             // If it looks like the button is in the act of being pressed,
-            // then we don't want to update the IsChecked since the button 
+            // then we don't want to update the IsChecked since the button
             // push will do it.
             //
-            // However we do need to handle the case where the mouse down is on the 
+            // However we do need to handle the case where the mouse down is on the
             // button, but mouse up isn't.
             //
             ////

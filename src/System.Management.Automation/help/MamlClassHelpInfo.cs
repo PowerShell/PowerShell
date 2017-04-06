@@ -7,10 +7,10 @@ using System.Xml;
 namespace System.Management.Automation
 {
     /// <summary>
-    /// 
-    /// Class MamlClassHelpInfo keeps track of help information to be returned by 
+    ///
+    /// Class MamlClassHelpInfo keeps track of help information to be returned by
     /// class help provider.
-    /// 
+    ///
     /// </summary>
     internal class MamlClassHelpInfo : HelpInfo
     {
@@ -47,7 +47,7 @@ namespace System.Management.Automation
         /// </summary>
         private PSObject _fullHelpObject;
 
-        #region Load 
+        #region Load
 
         /// <summary>
         /// Create a MamlClassHelpInfo object from an XmlNode.

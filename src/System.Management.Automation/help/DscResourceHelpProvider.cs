@@ -29,9 +29,9 @@ namespace System.Management.Automation
         private readonly ExecutionContext _context;
 
         /// <summary>
-        /// This is a hashtable to track which help files are loaded already. 
-        /// 
-        /// This will avoid one help file getting loaded again and again. 
+        /// This is a hashtable to track which help files are loaded already.
+        ///
+        /// This will avoid one help file getting loaded again and again.
         ///
         /// </summary>
         private readonly Hashtable _helpFiles = new Hashtable();
@@ -121,7 +121,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the help in for the DscResource Info.        /// 
+        /// Get the help in for the DscResource Info.        ///
         /// </summary>
         /// <param name="searcher">Searcher for DscResources.</param>
         /// <returns>Next HelpInfo object.</returns>
@@ -166,15 +166,15 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Check whether a HelpItems node indicates that the help content is 
-        /// authored using maml schema. 
-        /// 
-        /// This covers two cases: 
+        /// Check whether a HelpItems node indicates that the help content is
+        /// authored using maml schema.
+        ///
+        /// This covers two cases:
         ///     a. If the help file has an extension .maml.
         ///     b. If HelpItems node (which should be the top node of any command help file)
         ///        has an attribute "schema" with value "maml", its content is in maml
         ///        schema
-        /// 
+        ///
         /// </summary>
         /// <param name="helpFile">File name.</param>
         /// <param name="helpItemsNode">Nodes to check.</param>
@@ -290,13 +290,13 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Load help file for HelpInfo objects. The HelpInfo objects will be 
+        /// Load help file for HelpInfo objects. The HelpInfo objects will be
         /// put into help cache.
         /// </summary>
         /// <remarks>
-        /// 1. Needs to pay special attention about error handling in this function. 
+        /// 1. Needs to pay special attention about error handling in this function.
         /// Common errors include: file not found and invalid xml. None of these error
-        /// should cause help search to stop. 
+        /// should cause help search to stop.
         /// 2. a helpfile cache is used to avoid same file got loaded again and again.
         /// </remarks>
         private void LoadHelpFile(string helpFile, string helpFileIdentifier)

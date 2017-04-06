@@ -59,8 +59,8 @@
             : using a System.ComponentModel.TypeConverter
             : and then encoded with base64 encoding.
     -->
-  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
-    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xsd:schema id="root" xmlns="" xmlns:xsd="https://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="https://www.w3.org/XML/1998/namespace" />
     <xsd:element name="root" msdata:IsDataSet="true">
       <xsd:complexType>
         <xsd:choice maxOccurs="unbounded">
@@ -936,7 +936,7 @@ Do you want to continue?</value>
     <value>{0} may need to restart the WinRM service if a configuration using this name has recently been unregistered, certain system data structures may still be cached. In that case, a restart of WinRM may be required.
 All WinRM sessions connected to Windows PowerShell session configurations, such as Microsoft.PowerShell and session configurations that are created with the Register-PSSessionConfiguration cmdlet, are disconnected.</value>
   </data>
-   <data name="WinRMForceRestartWarning" xml:space="preserve">
+  <data name="WinRMForceRestartWarning" xml:space="preserve">
     <value>You are running in a remote session and have selected the Force option which means the WinRM service may restart.If the WinRM service restarts then this remote session will be terminated and you will need to create a new session to continue</value>
   </data>
   <data name="JobSourceAdapterCannotSaveNullJob" xml:space="preserve">
@@ -1359,9 +1359,6 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   <data name="ReceivePSSessionInDebugMode" xml:space="preserve">
     <value>The remote session command is currently stopped in the debugger.  Use the Enter-PSSession cmdlet to connect interactively to the remote session and automatically enter into the console debugger.</value>
   </data>
-  <data name="RCDisconnectDebug" xml:space="preserve">
-    <value>Session {0} with instance ID {1} on computer {2} has been disconnected because the script running on the session has stopped at a breakpoint. Use the Enter-PSSession cmdlet on this session to connect back to the session and begin interactive debugging.</value>
-  </data>
   <data name="RemoteDebuggingEndpointVersionError" xml:space="preserve">
     <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running Windows PowerShell {0} or greater.</value>
   </data>
@@ -1635,5 +1632,11 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   </data>
   <data name="SSHConnectionDuplicateKeyPath" xml:space="preserve">
     <value>The provided SSHConnection hashtable contains both a KeyFilePath and IdentityFilePath parameter.  Only one can be specified.</value>
+  </data>
+  <data name="CouldNotFindRoleCapabilityFile" xml:space="preserve">
+    <value>Could not find the provided role capability file {0}.</value>
+  </data>
+  <data name="InvalidRoleCapabilityFileExtension" xml:space="preserve">
+    <value>The provided role capability file {0} does not have the required .psrc extension.</value>
   </data>
 </root>

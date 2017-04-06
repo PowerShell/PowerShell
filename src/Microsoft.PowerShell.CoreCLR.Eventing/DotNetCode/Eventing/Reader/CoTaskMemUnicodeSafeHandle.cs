@@ -2,8 +2,8 @@
 /*============================================================
 **
 **
-** Purpose: 
-** This internal class is a SafeHandle implementation over a 
+** Purpose:
+** This internal class is a SafeHandle implementation over a
 ** native CoTaskMem allocated via SecureStringToCoTaskMemUnicode.
 **
 ============================================================*/

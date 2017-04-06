@@ -11,8 +11,8 @@ namespace Microsoft.Management.UI.Internal
     using System.Collections.ObjectModel;
 
     /// <summary>
-    /// The FilterExpressionNode class is the base class for derived 
-    /// FilterExpressionNodes. FilterExpressionNodes are used to 
+    /// The FilterExpressionNode class is the base class for derived
+    /// FilterExpressionNodes. FilterExpressionNodes are used to
     /// construct a logical evaluation tree which holds FilterRules as
     /// its operands.
     /// </summary>

@@ -2,7 +2,7 @@
 # Connect request https://connect.microsoft.com/PowerShell/feedback/details/524739/need-nonewline-parameter-on-out-file-add-content-and-set-content
 
 Describe "Tests for -NoNewline parameter of Out-File, Add-Content and Set-Content" -tags "Feature" {
-    
+
     It "NoNewline parameter works on Out-File" {
          $temp = "${TESTDRIVE}/test1.txt"
          1..5 | Out-File $temp -Encoding 'ASCII' -NoNewline

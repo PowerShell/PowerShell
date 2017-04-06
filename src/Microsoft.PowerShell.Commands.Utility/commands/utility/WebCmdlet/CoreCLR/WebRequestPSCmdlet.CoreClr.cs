@@ -20,6 +20,27 @@ using System.Xml;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
+    /// Exception class for webcmdlets to enable returning HTTP error response
+    /// </summary>    
+    public sealed class HttpResponseException : HttpRequestException
+    {
+        /// <summary>
+        /// Constructor for HttpResponseException
+        /// </summary>
+        /// <param name="message">Message for the exception</param>
+        /// <param name="response">Response from the HTTP server</param>
+        public HttpResponseException (string message, HttpResponseMessage response) : base(message)
+        {
+            Response = response;
+        }
+
+        /// <summary>
+        /// HTTP error response
+        /// </summary>
+        public HttpResponseMessage Response { get; private set; }
+    }
+
+    /// <summary>
     /// Base class for Invoke-RestMethod and Invoke-WebRequest commands.
     /// </summary>
     public abstract partial class WebRequestPSCmdlet : PSCmdlet
@@ -27,7 +48,7 @@ namespace Microsoft.PowerShell.Commands
         #region Abstract Methods
 
         /// <summary>
-        /// Read the supplied WebResponse object and push the 
+        /// Read the supplied WebResponse object and push the
         /// resulting output into the pipeline.
         /// </summary>
         /// <param name="response">Instance of a WebResponse object to be processed</param>
@@ -84,7 +105,11 @@ namespace Microsoft.PowerShell.Commands
                 handler.Credentials = WebSession.Credentials;
             }
 
-            if (WebSession.Proxy != null)
+            if (NoProxy)
+            {
+                handler.UseProxy = false;
+            }
+            else if (WebSession.Proxy != null)
             {
                 handler.Proxy = WebSession.Proxy;
             }
@@ -133,7 +158,26 @@ namespace Microsoft.PowerShell.Commands
         internal virtual HttpRequestMessage GetRequest(Uri uri)
         {
             Uri requestUri = PrepareUri(uri);
-            HttpMethod httpMethod = GetHttpMethod(Method);
+            HttpMethod httpMethod = null;
+
+            switch (ParameterSetName)
+            {
+                case "StandardMethodNoProxy":
+                    goto case "StandardMethod";
+                case "StandardMethod":
+                    // set the method if the parameter was provided
+                    httpMethod = GetHttpMethod(Method);
+                    break;
+                case "CustomMethodNoProxy":
+                    goto case "CustomMethod";
+                case "CustomMethod":
+                    if (!string.IsNullOrEmpty(CustomMethod))
+                    {
+                        // set the method if the parameter was provided
+                        httpMethod = new HttpMethod(CustomMethod.ToString().ToUpperInvariant());
+                    }
+                    break;
+            }
 
             // create the base WebRequest object
             var request = new HttpRequestMessage(httpMethod, requestUri);
@@ -191,7 +235,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Some web sites (e.g. Twitter) will return exception on POST when Expect100 is sent
             // Default behaviour is continue to send body content anyway after a short period
-            // Here it send the two part as a whole. 
+            // Here it send the two part as a whole.
             request.Headers.ExpectContinue = false;
 
             return (request);
@@ -208,7 +252,7 @@ namespace Microsoft.PowerShell.Commands
                 //request
             }
             // ContentType == null
-            else if (Method == WebRequestMethod.Post)
+            else if (Method == WebRequestMethod.Post || (IsCustomMethodSet() && CustomMethod.ToUpperInvariant() == "POST"))
             {
                 // Win8:545310 Invoke-WebRequest does not properly set MIME type for POST
                 string contentType = null;
@@ -280,10 +324,7 @@ namespace Microsoft.PowerShell.Commands
                 try
                 {
                     // open the input file
-                    using (FileStream fs = new FileStream(InFile, FileMode.Open))
-                    {
-                        SetRequestContent(request, fs);
-                    }
+                    SetRequestContent(request, new FileStream(InFile, FileMode.Open));
                 }
                 catch (UnauthorizedAccessException)
                 {
@@ -322,7 +363,7 @@ namespace Microsoft.PowerShell.Commands
         #region Overrides
 
         /// <summary>
-        /// the main execution method for cmdlets derived from WebRequestPSCmdlet. 
+        /// the main execution method for cmdlets derived from WebRequestPSCmdlet.
         /// </summary>
         protected override void ProcessRecord()
         {
@@ -331,55 +372,93 @@ namespace Microsoft.PowerShell.Commands
                 // Set cmdlet context for write progress
                 ValidateParameters();
                 PrepareSession();
-                HttpClient client = GetHttpClient();
-                HttpRequestMessage request = GetRequest(Uri);
-                FillRequestStream(request);
 
-                try
+                using (HttpClient client = GetHttpClient())
+                using (HttpRequestMessage request = GetRequest(Uri))
                 {
-                    long requestContentLength = 0;
-                    if (request.Content != null)
-                        requestContentLength = request.Content.Headers.ContentLength.Value;
-
-                    string reqVerboseMsg = String.Format(CultureInfo.CurrentCulture,
-                        "{0} {1} with {2}-byte payload",
-                        request.Method,
-                        request.RequestUri,
-                        requestContentLength);
-                    WriteVerbose(reqVerboseMsg);
-
-                    HttpResponseMessage response = GetResponse(client, request);
-                    response.EnsureSuccessStatusCode();
-
-                    string contentType = ContentHelper.GetContentType(response);
-                    string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
-                        "received {0}-byte response of content type {1}",
-                        response.Content.Headers.ContentLength,
-                        contentType);
-                    WriteVerbose(respVerboseMsg);
-                    ProcessResponse(response);
-                    UpdateSession(response);
-
-                    // If we hit our maximum redirection count, generate an error.
-                    // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
-                    // impossible to detect programmatically when we hit this limit. By handling this ourselves
-                    // (and still writing out the result), users can debug actual HTTP redirect problems.
-                    if (WebSession.MaximumRedirection == 0) // Indicate "HttpClientHandler.AllowAutoRedirect == false"
+                    FillRequestStream(request);
+                    try
                     {
-                        if (response.StatusCode == HttpStatusCode.Found ||
-                            response.StatusCode == HttpStatusCode.Moved ||
-                            response.StatusCode == HttpStatusCode.MovedPermanently)
+                        long requestContentLength = 0;
+                        if (request.Content != null)
+                            requestContentLength = request.Content.Headers.ContentLength.Value;
+
+                        string reqVerboseMsg = String.Format(CultureInfo.CurrentCulture,
+                            "{0} {1} with {2}-byte payload",
+                            request.Method,
+                            request.RequestUri,
+                            requestContentLength);
+                        WriteVerbose(reqVerboseMsg);
+
+                        HttpResponseMessage response = GetResponse(client, request);
+
+                        string contentType = ContentHelper.GetContentType(response);
+                        string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
+                            "received {0}-byte response of content type {1}",
+                            response.Content.Headers.ContentLength,
+                            contentType);
+                        WriteVerbose(respVerboseMsg);
+
+                        if (!response.IsSuccessStatusCode)
                         {
-                            ErrorRecord er = new ErrorRecord(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
-                            er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
-                            WriteError(er);
+                            string message = String.Format(CultureInfo.CurrentCulture, WebCmdletStrings.ResponseStatusCodeFailure,
+                                (int)response.StatusCode, response.ReasonPhrase);
+                            HttpResponseException httpEx = new HttpResponseException(message, response);
+                            ErrorRecord er = new ErrorRecord(httpEx, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                            string detailMsg = "";
+                            StreamReader reader = null;
+                            try
+                            {
+                                reader = new StreamReader(StreamHelper.GetResponseStream(response));
+                                // remove HTML tags making it easier to read
+                                detailMsg = System.Text.RegularExpressions.Regex.Replace(reader.ReadToEnd(), "<[^>]*>","");
+                            }
+                            catch (Exception)
+                            {
+                                // catch all
+                            }
+                            finally
+                            {
+                                if (reader != null)
+                                {
+                                    reader.Dispose();
+                                }
+                            }
+                            if (!String.IsNullOrEmpty(detailMsg))
+                            {
+                                er.ErrorDetails = new ErrorDetails(detailMsg);
+                            }
+                            ThrowTerminatingError(er);
+                        }
+
+                        ProcessResponse(response);
+                        UpdateSession(response);
+
+                        // If we hit our maximum redirection count, generate an error.
+                        // Errors with redirection counts of greater than 0 are handled automatically by .NET, but are
+                        // impossible to detect programmatically when we hit this limit. By handling this ourselves
+                        // (and still writing out the result), users can debug actual HTTP redirect problems.
+                        if (WebSession.MaximumRedirection == 0) // Indicate "HttpClientHandler.AllowAutoRedirect == false"
+                        {
+                            if (response.StatusCode == HttpStatusCode.Found ||
+                                response.StatusCode == HttpStatusCode.Moved ||
+                                response.StatusCode == HttpStatusCode.MovedPermanently)
+                            {
+                                ErrorRecord er = new ErrorRecord(new InvalidOperationException(), "MaximumRedirectExceeded", ErrorCategory.InvalidOperation, request);
+                                er.ErrorDetails = new ErrorDetails(WebCmdletStrings.MaximumRedirectionCountExceeded);
+                                WriteError(er);
+                            }
                         }
                     }
-                }
-                catch (HttpRequestException ex)
-                {
-                    ErrorRecord er = new ErrorRecord(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
-                    ThrowTerminatingError(er);
+                    catch (HttpRequestException ex)
+                    {
+                        ErrorRecord er = new ErrorRecord(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                        if (ex.InnerException != null)
+                        {
+                            er.ErrorDetails = new ErrorDetails(ex.InnerException.Message);
+                        }
+                        ThrowTerminatingError(er);
+                    }
                 }
             }
             catch (CryptographicException ex)
@@ -453,8 +532,8 @@ namespace Microsoft.PowerShell.Commands
             Encoding encoding = null;
             if (ContentType != null)
             {
-                // If Content-Type contains the encoding format (as CharSet), use this encoding format 
-                // to encode the Body of the WebRequest sent to the server. Default Encoding format 
+                // If Content-Type contains the encoding format (as CharSet), use this encoding format
+                // to encode the Body of the WebRequest sent to the server. Default Encoding format
                 // would be used if Charset is not supplied in the Content-Type property.
                 var mediaTypeHeaderValue = new MediaTypeHeaderValue(ContentType);
                 if (!string.IsNullOrEmpty(mediaTypeHeaderValue.CharSet))

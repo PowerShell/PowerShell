@@ -15,6 +15,7 @@
         try
         {
             test-PositionalBinding1 1
+            throw "No Exception!"
         }
         catch
         {
@@ -37,23 +38,23 @@
             Process {
                 switch ( $ShowMe )
                 {
-                    1 { 
+                    1 {
                         return $Parameter1
                         break
                         }
-                    2 { 
+                    2 {
                         return $Parameter2
                         break
                         }
-                    3 { 
+                    3 {
                         return $Parameter3
                         break
                         }
-                    4 { 
+                    4 {
                         return $Parameter4
                         break
                         }
-                    5 { 
+                    5 {
                         return $Parameter5
                         break
                         }
@@ -64,6 +65,7 @@
         try
         {
             test-allownullattributes -Parameter2 1 -Parameter3 $null -ShowMe 1
+            throw "No Exception!"
         }
         catch
         {
@@ -89,13 +91,14 @@
         try
         {
             test-namedwithboolishargument -Parameter2 -Parameter1
+            throw "No Exception!"
         }
         catch
         {
             $_.FullyQualifiedErrorId | should be "MissingArgument,test-namedwithboolishargument"
             $_.CategoryInfo | Should match "ParameterBindingException"
             $_.Exception.Message | should match "Parameter2"
-        }       
+        }
     }
 
     It "Verify that a SwitchParameter's IsPresent member is false if the parameter is not specified" {
@@ -148,6 +151,7 @@
         try
         {
             test-singleintparameter -Parameter1 'dookie'
+            throw "No Exception!"
         }
         catch
         {
@@ -164,7 +168,7 @@
             Param ()
 
             Process {
-                return 1     
+                return 1
             }
         }
 
@@ -224,7 +228,7 @@
             [CmdletBinding()]
             param (
             [array]$Parameter1 = "",
-            [int[]]$Parameter2 = ""           
+            [int[]]$Parameter2 = ""
             )
 
             Process {
@@ -259,13 +263,14 @@
             param (
             [Alias("Parameter2")]
             [int]$Parameter1 = 0,
-            [int]$Parameter2 = 0 
-            )         
+            [int]$Parameter2 = 0
+            )
         }
 
         try
         {
             test-nameconflicts6 -Parameter2 1
+            throw "No Exception!"
         }
         catch
         {
@@ -273,6 +278,6 @@
             $_.CategoryInfo | Should match "MetadataException"
             $_.Exception.Message | should match "Parameter1"
             $_.Exception.Message | should match "Parameter2"
-        }      
+        }
     }
 }

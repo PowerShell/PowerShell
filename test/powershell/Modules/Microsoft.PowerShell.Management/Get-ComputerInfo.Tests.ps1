@@ -7,7 +7,7 @@ $computerInfoAll > $null
 function Get-ComputerInfoForTest
 {
     param([string[]] $properties = $null, [bool] $forceRefresh = $false) # NOTE: $forceRefresh only applies to the case where $properties is null
-    
+
     $computerInfo = $null >$null # RETURN VALUE
     if ( $properties )
     {
@@ -47,7 +47,7 @@ function Get-PropertyNamesForComputerInfoTest
         "BiosOtherTargetOS",
         "BiosPrimaryBIOS",
         "BiosReleaseDate",
-        "BiosSeralNumber",
+        "BiosSerialNumber",
         "BiosSMBIOSBIOSVersion",
         "BiosSMBIOSPresent",
         "BiosSMBIOSMajorVersion",
@@ -118,14 +118,6 @@ function Get-PropertyNamesForComputerInfoTest
         "CsUserName",
         "CsWakeUpType",
         "CsWorkgroup")
-
-    $propertyNames += @("DeviceGuardAvailableSecurityProperties",
-        "DeviceGuardCodeIntegrityPolicyEnforcementStatus",
-        "DeviceGuardRequiredSecurityProperties",
-        "DeviceGuardSecurityServicesConfigured",
-        "DeviceGuardSecurityServicesRunning",
-        "DeviceGuardSmartStatus",
-        "DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus")
 
     $propertyNames += @("HyperVisorPresent",
         "HyperVRequirementDataExecutionPreventionAvailable",
@@ -203,8 +195,9 @@ function Get-PropertyNamesForComputerInfoTest
         "WindowsRegisteredOrganization",
         "WindowsRegisteredOwner",
         "WindowsSystemRoot",
-        "WindowsVersion")
-   
+        "WindowsVersion",
+        "WindowsUBR")
+
     if ([System.Management.Automation.Platform]::IsIoT)
     {
         Write-Verbose -Verbose -Message "WindowsInstallDateFromRegistry is not supported on IoT."
@@ -215,7 +208,7 @@ function Get-PropertyNamesForComputerInfoTest
     }
 
     $propertyNames += $WindowsPropertyArray
-    
+
     return $propertyNames
 }
 
@@ -251,7 +244,7 @@ $signature = @"
 public static extern bool GetPhysicallyInstalledSystemMemory(out ulong MemoryInKilobytes);
 "@
         Add-Type -MemberDefinition $signature -Name "Win32PhyicallyInstalledMemory" -Namespace Win32Functions -PassThru
-    }            
+    }
 
     function Get-PowerDeterminePlatformRole
     {
@@ -266,7 +259,7 @@ public static extern uint PowerDeterminePlatformRoleEx(uint version);
     {
 $signature = @"
 [DllImport("kernel32.dll", SetLastError = true, CharSet = CharSet.Unicode)]
-public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuilder localeName, int localeNameSize, int flags); 
+public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuilder localeName, int localeNameSize, int flags);
 "@
         Add-Type -MemberDefinition $signature -Name "Win32LCIDToLocaleNameDllName" -Namespace Win32Functions -PassThru
     }
@@ -296,7 +289,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         {
             (Get-PhysicallyInstalledSystemMemory)::GetPhysicallyInstalledSystemMemory([ref]$memoryInKilobytes)
         }
-            
+
         return $memoryInKilobytes
     }
 
@@ -316,7 +309,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
     function Get-CimClass
     {
         param([string]$className, [string] $namespace = "root\cimv2")
-            
+
         if (-not $cimClassList.ContainsKey($className))
         {
             $cimClassInstance = Get-CimInstance -ClassName $className -Namespace $namespace
@@ -334,24 +327,6 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         $cimClassInstance.$propertyName
     }
 
-    function Get-DeviceGuard
-    {
-        param([string]$propertyName)
-        $returnValue = $null
-        try
-        {
-            $returnValue = Get-CimClassPropVal Win32_DeviceGuard $propertyName -namespace 'root\Microsoft\Windows\DeviceGuard' -ErrorAction Stop
-        }
-        catch
-        {
-            #swallow this
-        }
-        if (($propertyName -eq 'SmartStatus') -and ($returnValue -eq $null)){
-            $returnValue = 0
-        }
-        return $returnValue
-    }
-
     function Get-CsNetworkAdapters
     {
         $networkAdapters = @()
@@ -360,9 +335,9 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         $configs = Get-CimClass Win32_NetworkAdapterConfiguration
         # easy-out: no adapters or configs
         if (!$adapters -or !$configs) { return $null }
-            
+
         # build config hashtable
-        $configHash = @{} 
+        $configHash = @{}
         foreach ($config in $configs)
         {
             if ($config.Index -ne $null)
@@ -383,7 +358,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
 
             $connectionStatus = 13 # default NetConnectionStatus.Other
             if ($adapter.NetConnectionStatus) { $connectionStatus = $adapter.NetConnectionStatus}
-                
+
 
             $config =$configHash.Item([string]$adapter.Index)
 
@@ -398,7 +373,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             }
 
             # new-up one adapter object
-            $properties = 
+            $properties =
                 @{
                     'Description'=$adapter.Description;
                     'ConnectionID'=$adapter.NetConnectionID;
@@ -409,7 +384,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
 
                 }
             $networkAdapter = New-Object -TypeName PSObject -Prop $properties
-                
+
             # add adapter to list
             $networkAdapters += $networkAdapter
         }
@@ -424,15 +399,15 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         foreach ($processor in $processors)
         {
             # new-up one adapter object
-            $properties = 
+            $properties =
                 @{
                     'Name'=$processor.Name;
                     'Manufacturer'=$processor.Manufacturer;
                     'Description'=$processor.Description;
                     'Architecture'=$processor.Architecture;
                     'AddressWidth'=$processor.AddressWidth;
-                        
-                        
+
+
                     'Availability'=$processor.Availability;
                     'CpuStatus'=$processor.CpuStatus;
                     'CurrentClockSpeed'=$processor.CurrentClockSpeed;
@@ -448,7 +423,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
                     'Status'=$processor.Status;
                 }
             $csProcessor = New-Object -TypeName PSObject -Prop $properties
-                
+
             # add adapter to list
             $csProcessors += $csProcessor
         }
@@ -476,7 +451,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         if (!$hotfixes) {return $null }
 
         $osHotFixes = @()
-            
+
         foreach ($hotfix in $hotfixes)
         {
             $installedOn = $null
@@ -485,7 +460,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
                 $installedOn = $hotfix.InstalledOn.ToString("M/d/yyyy")
             }
             # new-up one adapter object
-            $properties = 
+            $properties =
                 @{
                     'HotFixID'=$hotfix.HotFixID;
                     'Description'=$hotfix.Description;
@@ -493,14 +468,14 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
                     'FixComments'=$hotfix.FixComments;
                 }
             $osHotFix = New-Object -TypeName PSObject -Prop $properties
-                
+
             # add adapter to list
             $osHotFixes += $osHotFix
         }
         $osHotFixes
     }
 
-    function Get-OsInUseVirtualMemory 
+    function Get-OsInUseVirtualMemory
     {
         $osInUseVirtualMemory  = $null
         $os = Get-CimClass Win32_OperatingSystem
@@ -525,7 +500,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             if ($regKey -ne $null)
             {
                 $serverLevelNames = $regKey.GetValueNames()
-                
+
                 foreach ($serverLevelName in $serverLevelNames)
                 {
                     if ($regKey.GetValueKind($serverLevelName) -eq 4) # RegistryValueKind.DWord == 4
@@ -569,7 +544,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
                 }
             }
         }
-        
+
         return $rv
     }
 
@@ -578,7 +553,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         param($propertyName)
 
         $osProductSuites = @()
-        $suiteMask = Get-CimClassPropVal Win32_OperatingSystem $propertyName 
+        $suiteMask = Get-CimClassPropVal Win32_OperatingSystem $propertyName
         if ($suiteMask)
         {
             foreach($suite in [System.Enum]::GetValues('Microsoft.PowerShell.Commands.OSProductSuite'))
@@ -588,7 +563,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
                     $osProductSuites += $suite
                 }
             }
-                
+
         }
         return $osProductSuites
     }
@@ -598,7 +573,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         param([string]$propertyName)
 
         $hypervisorPresent = Get-CimClassPropVal Win32_ComputerSystem HypervisorPresent
-          
+
         $dataExecutionPrevention_Available = $null
         $secondLevelAddressTranslationExtensions  = $null
         $virtualizationFirmwareEnabled  = $null
@@ -612,8 +587,8 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             $virtualizationFirmwareEnabled = Get-CimClassPropVal Win32_Processor VirtualizationFirmwareEnabled
             $vMMonitorModeExtensions = Get-CimClassPropVal Win32_Processor VMMonitorModeExtensions
         }
-        switch ($propertyName) 
-        { 
+        switch ($propertyName)
+        {
             "HyperVisorPresent" { return $hypervisorPresent }
             "HyperVRequirementDataExecutionPreventionAvailable" { return $dataExecutionPrevention_Available }
             "HyperVRequirementSecondLevelAddressTranslation"{ return $secondLevelAddressTranslationExtensions }
@@ -624,7 +599,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
 
     function Get-KeyboardLayout
     {
-        $keyboards = Get-CimClass Win32_Keyboard 
+        $keyboards = Get-CimClass Win32_Keyboard
         $result = $null
         if ($keyboards)
         {
@@ -691,27 +666,27 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             $localeAsHex = [System.Convert]::ToUInt32($locale, 16)
             if ($localeAsHex -ne $null)
             {
-                
-                try 
+
+                try
                 {
                     $localeName = Convert-LocaleIdToLocaleName $localeAsHex
                 }
-                catch 
+                catch
                 {
                     # swallow this
                         # DEBUGGING
                         #return $_.Exception.Message
                 }
             }
-                
+
             if ($localeName -eq $null)
             {
-                try 
+                try
                 {
                     $cultureInfo = (New-Object System.Globalization.CultureInfo($locale))
-                    $localeName = $cultureInfo.Name 
+                    $localeName = $cultureInfo.Name
                 }
-                catch 
+                catch
                 {
                     # swallow this
                 }
@@ -738,18 +713,19 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
     function Get-UnixSecondsToDateTime
     {
         param([string]$seconds)
-            
+
         $origin = New-Object -Type DateTime -ArgumentList 1970, 1, 1, 0, 0, 0, 0
         $origin.AddSeconds($seconds)
     }
-    
+
     function Get-WinNtCurrentVersion
     {
         # This method was translated/converted from cmdlet impl method = RegistryInfo.GetWinNtCurrentVersion();
         param([string]$propertyName)
 
         $key = 'HKLM:\Software\Microsoft\Windows NT\CurrentVersion\'
-        $regValue = (Get-ItemProperty -Path $key -Name $propertyName).$propertyName
+        $regValue = (Get-ItemProperty -Path $key -Name $propertyName -ErrorAction SilentlyContinue).$propertyName
+
         if ($propertyName -eq "InstallDate")
         {
             # more complicated case: InstallDate
@@ -762,14 +738,16 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         {
             return $regValue
         }
+
+        return $null
     }
 
     function Get-ExpectedComputerInfoValue
     {
         param([string]$propertyName)
 
-        switch ($propertyName) 
-        { 
+        switch ($propertyName)
+        {
             "BiosBIOSVersion" {return Get-CimClassPropVal Win32_bios BiosVersion}
             "BiosBuildNumber" {return Get-CimClassPropVal Win32_bios BuildNumber}
             "BiosCaption" {return Get-CimClassPropVal Win32_bios Caption}
@@ -779,7 +757,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             "BiosDescription" {return Get-CimClassPropVal Win32_bios Description}
             "BiosEmbeddedControllerMajorVersion" {return Get-CimClassPropVal Win32_bios EmbeddedControllerMajorVersion}
             "BiosEmbeddedControllerMinorVersion" {return Get-CimClassPropVal Win32_bios EmbeddedControllerMinorVersion}
-            "BiosFirmwareType" {return Get-BiosFirmwareType} 
+            "BiosFirmwareType" {return Get-BiosFirmwareType}
             "BiosIdentificationCode" {return Get-CimClassPropVal Win32_bios IdentificationCode}
             "BiosInstallableLanguages" {return Get-CimClassPropVal Win32_bios InstallableLanguages}
             "BiosInstallDate" {return Get-CimClassPropVal Win32_bios InstallDate}
@@ -790,7 +768,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             "BiosOtherTargetOS" {return Get-CimClassPropVal Win32_bios OtherTargetOS}
             "BiosPrimaryBIOS" {return Get-CimClassPropVal Win32_bios PrimaryBIOS}
             "BiosReleaseDate" {return Get-CimClassPropVal Win32_bios ReleaseDate}
-            "BiosSeralNumber" {return Get-CimClassPropVal Win32_bios SerialNumber}
+            "BiosSerialNumber" {return Get-CimClassPropVal Win32_bios SerialNumber}
             "BiosSMBIOSBIOSVersion" {return Get-CimClassPropVal Win32_bios SMBIOSBIOSVersion}
             "BiosSMBIOSPresent" {return Get-CimClassPropVal Win32_bios SMBIOSPresent}
             "BiosSMBIOSMajorVersion" {return Get-CimClassPropVal Win32_bios SMBIOSMajorVersion}
@@ -801,7 +779,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             "BiosSystemBiosMinorVersion" {return Get-CimClassPropVal Win32_bios SystemBiosMinorVersion}
             "BiosTargetOperatingSystem" {return Get-CimClassPropVal Win32_bios TargetOperatingSystem}
             "BiosVersion" {return Get-CimClassPropVal Win32_bios Version}
-                
+
             "CsAdminPasswordStatus" {return Get-CimClassPropVal Win32_ComputerSystem AdminPasswordStatus}
             "CsAutomaticManagedPagefile" {return Get-CimClassPropVal Win32_ComputerSystem AutomaticManagedPagefile}
             "CsAutomaticResetBootOption" {return Get-CimClassPropVal Win32_ComputerSystem AutomaticResetBootOption}
@@ -864,14 +842,6 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             "CsWakeUpType" {return Get-CimClassPropVal Win32_ComputerSystem WakeUpType}
             "CsWorkgroup" {return Get-CimClassPropVal Win32_ComputerSystem Workgroup}
 
-            "DeviceGuardAvailableSecurityProperties" {return Get-DeviceGuard AvailableSecurityProperties}
-            "DeviceGuardCodeIntegrityPolicyEnforcementStatus" {return Get-DeviceGuard CodeIntegrityPolicyEnforcementStatus}
-            "DeviceGuardRequiredSecurityProperties" {return Get-DeviceGuard RequiredSecurityProperties}
-            "DeviceGuardSecurityServicesConfigured" {return Get-DeviceGuard SecurityServicesConfigured}
-            "DeviceGuardSecurityServicesRunning" {return Get-DeviceGuard SecurityServicesRunning}
-            "DeviceGuardSmartStatus" {return Get-DeviceGuard SmartStatus}
-            "DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus" {return Get-DeviceGuard UserModeCodeIntegrityPolicyEnforcementStatus}	
-              
             "HyperVisorPresent" {return Get-HyperVProperty $propertyName}
             "HyperVRequirementDataExecutionPreventionAvailable" {return Get-HyperVProperty $propertyName}
             "HyperVRequirementSecondLevelAddressTranslation" {return Get-HyperVProperty $propertyName}
@@ -879,7 +849,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             "HyperVRequirementVMMonitorModeExtensions" {return Get-HyperVProperty $propertyName}
             "KeyboardLayout" {return Get-KeyboardLayout}
             "LogonServer" {return [Microsoft.Win32.Registry]::GetValue("HKEY_Current_User\Volatile Environment", "LOGONSERVER", "")}
-             
+
             "OsArchitecture" {return Get-CimClassPropVal Win32_OperatingSystem OsArchitecture}
             "OsBootDevice" {return Get-CimClassPropVal Win32_OperatingSystem BootDevice}
             "OsBuildNumber" {return Get-CimClassPropVal Win32_OperatingSystem BuildNumber}
@@ -903,7 +873,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             #"OsFreeSpaceInPagingFiles" {return Get-CimClassPropVal Win32_OperatingSystem FreeSpaceInPagingFiles}
             # OsFreeVirtualMemory => fragile test: fluid/dynamic (see special cases)
             #"OsFreeVirtualMemory" {return Get-CimClassPropVal Win32_OperatingSystem FreeVirtualMemory}
-                
+
             "OsHardwareAbstractionLayer" {return Get-OsHardwareAbstractionLayer}
             "OsHotFixes" {return Get-OsHotFixes }
             "OsInstallDate" {return Get-CimClassPropVal Win32_OperatingSystem InstallDate}
@@ -964,7 +934,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
 
             "PowerPlatformRole" { return Get-PowerPlatformRole }
             "TimeZone" {return ([System.TimeZoneInfo]::Local).DisplayName}
-              
+
             "WindowsBuildLabEx" { return Get-WinNtCurrentVersion BuildLabEx }
             "WindowsCurrentVersion" { return Get-WinNtCurrentVersion CurrentVersion}
             "WindowsEditionId" { return Get-WinNtCurrentVersion EditionID}
@@ -975,6 +945,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             "WindowsRegisteredOrganization" {return Get-WinNtCurrentVersion RegisteredOrganization}
             "WindowsRegisteredOwner" {return Get-WinNtCurrentVersion RegisteredOwner}
             "WindowsVersion" {return Get-WinNtCurrentVersion ReleaseId}
+            "WindowsUBR" {return Get-WinNtCurrentVersion UBR}
 
             "WindowsSystemRoot" {return [System.Environment]::GetEnvironmentVariable("SystemRoot")}
 
@@ -1004,37 +975,37 @@ function Build-TestCases
         $expectedValue = $expected.PsObject.Properties.Item($propertyName).Value
         $observedValue = $observed.PsObject.Properties.Item($propertyName).Value
 
-        $testCase = @{            
-            "Expected" = $expectedValue;          
-            "Observed" = $observedValue;           
+        $testCase = @{
+            "Expected" = $expectedValue;
+            "Observed" = $observedValue;
             "PropertyName" = $propertyName}
-        $testCases += $testCase 
+        $testCases += $testCase
     }
-    $testCases      
+    $testCases
 }
 
 function Get-CommonProperties
 {
     param($observed,$expected)
-   
+
     if (!$observed) { return $null }
     if (!$expected) { return $null }
 
-    $propListObserved = $observed | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name | Select-Object -Unique 
-    $propListExpected = $expected | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name | Select-Object -Unique 
+    $propListObserved = $observed | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name | Select-Object -Unique
+    $propListExpected = $expected | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name | Select-Object -Unique
 
     $propCount = [math]::max($propListObserved.Count,$propListExpected.Count)
     $syncWinNum = [math]::round(($propCount/2),0)
 
     $commonProp = Compare-Object -SyncWindow $syncWinNum -ReferenceObject $propListExpected -DifferenceObject $propListObserved -ExcludeDifferent -IncludeEqual
-    return $commonProp | Select-Object -ExpandProperty InputObject 
+    return $commonProp | Select-Object -ExpandProperty InputObject
 }
 
 function Assert-Properties
 {
     param($refObject, [string[]] $propListExpected)
 
-    $propListObserved = $refObject | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name | Select-Object -Unique 
+    $propListObserved = $refObject | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name | Select-Object -Unique
     $compResult = Compare-Object $propListObserved $propListExpected | Select-Object -ExpandProperty InputObject
     if ($compResult)
     {
@@ -1063,7 +1034,7 @@ function Assert-NoProperties
 
     if ($refObject)
     {
-        $propListObserved = $refObject | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name | Select-Object -Unique 
+        $propListObserved = $refObject | Get-Member -MemberType Properties | Select-Object -ExpandProperty Name | Select-Object -Unique
         $propListObserved.Count | Should Be 0
     }
 }
@@ -1071,7 +1042,7 @@ function Assert-NoProperties
 function Assert-Default
 {
     param($observed,$expected)
-    
+
     if (($observed) -and ($observed.GetType().Name -eq "string"))
     {
         # we do NOT want to do case-sensitive comparisons for strings
@@ -1080,7 +1051,7 @@ function Assert-Default
     else
     {
         $observed | Should BeExactly $expected
-    } 
+    }
 }
 
 function Assert-ObjectsHaveSamePropertyValues
@@ -1098,7 +1069,7 @@ function Assert-ObjectsHaveSamePropertyValues
         {
             $propertyName = $item.PropertyName
             $exception = New-Object System.Exception ("Failure in Assert-ListsHavePropertyValues for list item index = $i and Property = $propertyName",$_.Exception)
-		    throw $exception 
+		    throw $exception
         }
     }
 }
@@ -1106,12 +1077,12 @@ function Assert-ObjectsHaveSamePropertyValues
 function Assert-ListsHaveSamePropertyValues
 {
     param($observed,$expected)
-    
+
     if ($expected.Count)
     {
         $observed.Count | Should Be $expected.Count
     }
-    for ($i=0; $i -lt $observed.Count; $i++) 
+    for ($i=0; $i -lt $observed.Count; $i++)
     {
         $itemObserved = $observed[$i]
         $itemExpected = $null
@@ -1123,9 +1094,9 @@ function Assert-ListsHaveSamePropertyValues
 function Exec-OneTestPass
 {
     param($testName, $propertyNames, $propertyFilter, $expectedProperties = $null, $forceRefresh = $false)
-   
-    if ($IsWindows) 
-    { 
+
+    if ($IsWindows)
+    {
         if ($propertyFilter)
         {
             $observed  = Get-ComputerInfoForTest $propertyFilter
@@ -1149,12 +1120,12 @@ function Exec-OneTestPass
             {
                Assert-NoProperties $observed
             }
-        } 
+        }
     }
 
     if ($expectedProperties)
     {
-        if ($IsWindows) 
+        if ($IsWindows)
         {
             $expected = New-ExpectedComputerInfo $propertyNames
             $expected | Should Not BeNullOrEmpty
@@ -1164,11 +1135,11 @@ function Exec-OneTestPass
 
         It "[$testName] Init common Test objects validation" {
             $testCases | Should Not BeNullOrEmpty
-        }   
+        }
 
         It "[$testName] Compare observed to expected for property = <PropertyName>" -TestCases $testCases {
             param($observed, $expected, $propertyName)
-        
+
             switch($propertyName)
             {
                 "CsNetworkAdapters" { Assert-ListsHaveSamePropertyValues $observed $expected }
@@ -1189,8 +1160,8 @@ try {
 
         It "Verify type returned by Get-ComputerInfo" {
             $computerInfo = Get-ComputerInfo
-            $computerInfo.GetType().Name | Should Be "ComputerInfo"
-        } 
+            $computerInfo | Should BeOfType Microsoft.PowerShell.Commands.ComputerInfo
+        }
     }
 
     Describe "Tests for Get-ComputerInfo" -tags "Feature", "RequireAdminOnWindows" {
@@ -1297,10 +1268,67 @@ try {
     Describe "Special Case Tests for Get-ComputerInfo" -tags "Feature", "RequireAdminOnWindows" {
 
         BeforeAll {
-            if ($IsWindows) 
+            if ($IsWindows)
             {
+                Add-Type -Name 'slc' -Namespace Win32Functions -MemberDefinition @'
+                    [DllImport("slc.dll", CharSet = CharSet.Unicode)]
+                    public static extern int SLGetWindowsInformationDWORD(string licenseProperty, out int propertyValue);
+'@
+                # Determine if the Software Licensing for CodeIntegrity is enabled
+                function HasDeviceGuardLicense
+                {
+                    try
+                    {
+                        $policy = $null
+                        if ([Win32Functions.slc]::SLGetWindowsInformationDWORD("CodeIntegrity-AllowConfigurablePolicy", [Ref]$policy) -eq 0 -and $policy -eq 1)
+                        {
+                            return $true
+                        }
+                    }
+                    catch
+                    {
+                        # fall through
+                    }
+
+                    return $false
+                }
+
+                function Get-DeviceGuard
+                {
+                    $returnValue = @{
+                        SmartStatus = 0     # Off
+                        AvailableSecurityProperties = $null
+                        CodeIntegrityPolicyEnforcementStatus = $null
+                        RequiredSecurityProperties = $null
+                        SecurityServicesConfigured = $null
+                        SecurityServicesRunning = $null
+                        UserModeCodeIntegrityPolicyEnforcementStatus = $null
+                    }
+                    try
+                    {
+                        $instance = Get-CimInstance Win32_DeviceGuard -Namespace 'root\Microsoft\Windows\DeviceGuard' -ErrorAction Stop
+                        $ss = $instance.VirtualizationBasedSecurityStatus;
+                        if ($ss -ne $null)
+                        {
+                            $returnValue.SmartStatus = $ss;
+                        }
+                        $returnValue.AvailableSecurityProperties = $instance.AvailableSecurityProperties
+                        $returnValue.CodeIntegrityPolicyEnforcementStatus = $instance.CodeIntegrityPolicyEnforcementStatus
+                        $returnValue.RequiredSecurityProperties = $instance.RequiredSecurityProperties
+                        $returnValue.SecurityServicesConfigured = $instance.SecurityServicesConfigured
+                        $returnValue.SecurityServicesRunning = $instance.SecurityServicesRunning
+                        $returnValue.UserModeCodeIntegrityPolicyEnforcementStatus = $instance.UserModeCodeIntegrityPolicyEnforcementStatus
+                    }
+                    catch
+                    {
+                        # Swallow any errors and keep the deviceGuardInfo properties empty
+                        # This is what the cmdlet is expected to do
+                    }
+
+                    return $returnValue
+                }
+
                 $observed = Get-ComputerInfoForTest
-                $observed | Should Not BeNullOrEmpty
             }
         }
 
@@ -1309,37 +1337,55 @@ try {
             $result | Should Be "gin"
         }
 
+        It "Test for DeviceGuard properties" {
+            if (-not (HasDeviceGuardLicense))
+            {
+                $observed.DeviceGuardSmartStatus | Should Be 0
+                $observed.DeviceGuardRequiredSecurityProperties | Should Be $null
+                $observed.DeviceGuardAvailableSecurityProperties | Should Be $null
+                $observed.DeviceGuardSecurityServicesConfigured | Should Be $null
+                $observed.DeviceGuardSecurityServicesRunning | Should Be $null
+                $observed.DeviceGuardCodeIntegrityPolicyEnforcementStatus | Should Be $null
+                $observed.DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus | Should Be $null
+            }
+            else
+            {
+                $deviceGuard = Get-DeviceGuard
+                $observed.DeviceGuardSmartStatus | Should Be $deviceGuard.SmartStatus
+                $observed.DeviceGuardRequiredSecurityProperties | Should Be $deviceGuard.RequiredSecurityProperties
+                $observed.DeviceGuardAvailableSecurityProperties | Should Be $deviceGuard.AvailableSecurityProperties
+                $observed.DeviceGuardSecurityServicesConfigured | Should Be $deviceGuard.SecurityServicesConfigured
+                $observed.DeviceGuardSecurityServicesRunning | Should Be $deviceGuard.SecurityServicesRunning
+                $observed.DeviceGuardCodeIntegrityPolicyEnforcementStatus | Should Be $deviceGuard.CodeIntegrityPolicyEnforcementStatus
+                $observed.DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus | Should Be $deviceGuard.UserModeCodeIntegrityPolicyEnforcementStatus
+            }
+        }
+
         #
         # TESTS FOR SPECIAL CASE PROPERTIES (i.e. those that are fluid/changing
         #
 
         It "(special case) Test for property = OsFreePhysicalMemory" {
             ($observed.OsFreePhysicalMemory -gt 0) | Should Be $true
-        } 
+        }
 
 
-        It "(special case) Test for property = OsFreeSpaceInPagingFiles" {
-            if ([System.Management.Automation.Platform]::IsIoT)
-            {
-                Write-Verbose -Verbose -Message "Win32_ComputerSystem.FreeSpaceInPagingFiles is not supported on IoT."
-                return
-            }
-
+        It "(special case) Test for property = OsFreeSpaceInPagingFiles" -Skip:([System.Management.Automation.Platform]::IsIoT -or !$IsWindows) {
             ($observed.OsFreeSpaceInPagingFiles -gt 0) | Should Be $true
-        } 
+        }
 
         It "(special case) Test for property = OsFreeVirtualMemory" {
             ($observed.OsFreeVirtualMemory -gt 0) | Should Be $true
-        } 
+        }
 
-        It "(special case) Test for property = OsLocalDateTime" {
+        It "(special case) Test for property = OsLocalDateTime" -Pending:$true {
             $computerInfo = Get-ComputerInfo
-            $computerInfo.GetType().Name | Should Be "ComputerInfo"
-        } 
+            $computerInfo | Should BeOfType "ComputerInfo"
+        }
 
         It "(special case) Test for property = OsMaxNumberOfProcesses" {
             ($observed.OsMaxNumberOfProcesses -gt 0) | Should Be $true
-        } 
+        }
 
         It "(special case) Test for property = OsNumberOfProcesses" {
             ($observed.OsNumberOfProcesses -gt 0) | Should Be $true
@@ -1347,21 +1393,20 @@ try {
 
         It "(special case) Test for property = OsUptime" {
             ($observed.OsUptime.Ticks -gt 0) | Should Be $true
-        }     
+        }
 
         It "(special case) Test for property = OsInUseVirtualMemory" {
             ($observed.OsInUseVirtualMemory -gt 0) | Should Be $true
-        } 
-        
-        
+        }
+
         It "(special case) Test for Filter Property - Property filter with special wild card * and fixed" {
             $propertyFilter = @("BiosC*","*")
             $computerInfo = Get-ComputerInfo -Property $propertyFilter
-            $computerInfo.GetType().Name | Should Be "ComputerInfo"
+            $computerInfo | Should BeOfType Microsoft.PowerShell.Commands.ComputerInfo
         }
     }
 }
-finally 
+finally
 {
     $global:PSDefaultParameterValues = $originalDefaultParameterValues
 }

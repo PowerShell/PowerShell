@@ -64,7 +64,7 @@ namespace System.Management.Automation
         #region public methods
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="input"></param>
         /// <param name="cursorIndex"></param>
@@ -86,7 +86,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="input">The input to complete</param>
         /// <param name="cursorIndex">The index of the cursor in the input</param>
@@ -104,7 +104,7 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         /// <param name="ast">Ast for pre-parsed input</param>
         /// <param name="tokens">Tokens for pre-parsed input</param>
@@ -168,7 +168,7 @@ namespace System.Management.Automation
             var remoteRunspace = powershell.Runspace as RemoteRunspace;
             if (remoteRunspace != null)
             {
-                // If the runspace is not available to run commands then exit here because nested commands are not 
+                // If the runspace is not available to run commands then exit here because nested commands are not
                 // supported on remote runspaces.
                 if (powershell.IsNested || (remoteRunspace.RunspaceAvailability != RunspaceAvailability.Available))
                 {
@@ -247,7 +247,7 @@ namespace System.Management.Automation
             var remoteRunspace = powershell.Runspace as RemoteRunspace;
             if (remoteRunspace != null)
             {
-                // If the runspace is not available to run commands then exit here because nested commands are not 
+                // If the runspace is not available to run commands then exit here because nested commands are not
                 // supported on remote runspaces.
                 if (powershell.IsNested || (remoteRunspace.RunspaceAvailability != RunspaceAvailability.Available))
                 {
@@ -688,13 +688,13 @@ namespace System.Management.Automation
 
         /// <summary>
         /// PSv2CompletionCompleter implements the algorithm we use to complete cmdlet/file names in PowerShell v2. This class
-        /// exists for legacy purpose only. It is used only in a remote interactive session from Win8 to Win7. V3 and forward 
+        /// exists for legacy purpose only. It is used only in a remote interactive session from Win8 to Win7. V3 and forward
         /// uses completely different completers.
         /// </summary>
-        /// 
+        ///
         /// <remarks>
         /// The implementation of file name completion is completely different on V2 and V3 for remote scenarios. On PSv3, the
-        /// CompletionResults are generated always on the target machine, and 
+        /// CompletionResults are generated always on the target machine, and
         /// </remarks>
         private static class PSv2CompletionCompleter
         {
@@ -1160,11 +1160,11 @@ namespace System.Management.Automation
             /// per LastWordFinder instance.
             /// </summary>
             /// <param name="replacementIndexOut">
-            /// Receives the character index (from the front of the string) of the starting point of the located word, or 0 if 
+            /// Receives the character index (from the front of the string) of the starting point of the located word, or 0 if
             /// the word starts at the beginning of the sentence.
             /// </param>
             /// <param name="closingQuote">
-            /// Receives the quote character that would be needed to end the sentence with a balanced pair of quotes.  For 
+            /// Receives the quote character that would be needed to end the sentence with a balanced pair of quotes.  For
             /// instance, if sentence is "foo then " is returned, if sentence if "foo" then nothing is returned, if sentence is
             /// 'foo then ' is returned, if sentence is 'foo' then nothing is returned.
             /// </param>

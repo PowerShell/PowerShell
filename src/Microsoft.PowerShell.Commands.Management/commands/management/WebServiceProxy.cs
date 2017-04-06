@@ -156,7 +156,7 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }
-            //check if system.web is available.This assembly is not available in win server core.           
+            //check if system.web is available.This assembly is not available in win server core.
             string AssemblyString = "System.Web, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
             try
             {
@@ -175,7 +175,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (s_uriCache.ContainsKey(_uri))
                 {
-                    //if uri is present in the cache                
+                    //if uri is present in the cache
                     string ns;
                     s_uriCache.TryGetValue(_uri, out ns);
                     string[] data = ns.Split('|');
@@ -251,7 +251,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             WriteObject(instance, true);
-        }//End BeginProcessing()     
+        }//End BeginProcessing()
 
         #endregion
 
@@ -376,7 +376,7 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord er = new ErrorRecord(ex, "NotImplementedException", ErrorCategory.ObjectNotFound, _uri);
                 WriteError(er);
             }
-            //generate the hashcode of the CodeCompileUnit            
+            //generate the hashcode of the CodeCompileUnit
             _sourceHash = codegenerator.ToString().GetHashCode();
 
             //if the sourcehash matches the hashcode in the cache,the proxy hasnt changed and so

@@ -1,5 +1,5 @@
 Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
-    
+
     BeforeAll {
 
         function ValidateTranscription {
@@ -46,9 +46,9 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         ## function ends here
 
         $transcriptFilePath = join-path $TestDrive "transcriptdata.txt"
-        Remove-Item $transcriptFilePath -Force -ErrorAction SilentlyContinue   
+        Remove-Item $transcriptFilePath -Force -ErrorAction SilentlyContinue
     }
-    
+
 
     AfterEach {
         Remove-Item $transcriptFilePath -ErrorAction SilentlyContinue
@@ -73,7 +73,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
     }
     It "Should create Transcript file with 'Path' parameter" {
         $script = "Start-Transcript -path $transcriptFilePath"
-        ValidateTranscription -scriptToExecute $script -outputFilePath $transcriptFilePath 
+        ValidateTranscription -scriptToExecute $script -outputFilePath $transcriptFilePath
     }
     It "Should create Transcript file with 'LiteralPath' parameter" {
         $script = "Start-Transcript -LiteralPath $transcriptFilePath"

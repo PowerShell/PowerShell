@@ -109,7 +109,7 @@ namespace System.Management.Automation.ComInterop
 
         /// <summary>
         /// Tries to perform binding of the dynamic invoke operation.
-        /// </summary>    
+        /// </summary>
         /// <param name="binder">An instance of the <see cref="InvokeBinder"/> that represents the details of the dynamic operation.</param>
         /// <param name="instance">The target of the dynamic operation. </param>
         /// <param name="args">An array of <see cref="DynamicMetaObject"/> instances - arguments to the invoke member operation.</param>
@@ -228,7 +228,7 @@ namespace System.Management.Automation.ComInterop
         {
             if (IsComObject(instance.Value))
             {
-                // Converting a COM object to any interface is always considered possible - it will result in 
+                // Converting a COM object to any interface is always considered possible - it will result in
                 // a QueryInterface at runtime
                 if (binder.Type.IsInterface)
                 {

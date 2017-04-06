@@ -23,12 +23,12 @@ Describe "Get-Member" -Tags "CI" {
 	$e = "anoeduntodeu" #test strings
 	$f = 'asntoheusth' #test strings
 
-	$a.GetType().Name | Should Be 'Int32'
-	$b.GetType().Name | Should Be 'Double'
-	$c.GetType().Name | Should Be 'Boolean'
-	$d.GetType().Name | Should Be 'Object[]'
-	$e.GetType().Name | Should Be 'String'
-	$f.GetType().Name | Should Be 'String'
+	$a | Should BeOfType 'Int32'
+	$b | Should BeOfType 'Double'
+	$c | Should BeOfType 'Boolean'
+	,$d | Should BeOfType 'Object[]'
+	$e | Should BeOfType 'String'
+	$f | Should BeOfType 'String'
     }
 
     It "Should be able to be called on a newly created PSObject" {
@@ -88,7 +88,7 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
                     yearsInMS = value;
                 }
             }
- 
+
             public Employee(string firstName, string lastName, int yearsInMS)
             {
                 this.firstName = firstName;
@@ -108,16 +108,16 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
         <PropertySet>
             <Name>PropertySetName</Name>
             <ReferencedProperties>
-                <Name>FirstName</Name> 
-                <Name>LastName</Name> 
+                <Name>FirstName</Name>
+                <Name>LastName</Name>
             </ReferencedProperties>
         </PropertySet>
         <PropertySet>
             <Name>FullSet</Name>
             <ReferencedProperties>
-                <Name>FirstName</Name> 
-                <Name>LastName</Name> 
-                <Name>YearsInMS</Name> 
+                <Name>FirstName</Name>
+                <Name>LastName</Name>
+                <Name>YearsInMS</Name>
             </ReferencedProperties>
         </PropertySet>
     </Members>
@@ -128,16 +128,16 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
         <PropertySet>
             <Name>PropertySetName</Name>
             <ReferencedProperties>
-                <Name>FirstName</Name> 
-                <Name>HoursPerWeek</Name> 
+                <Name>FirstName</Name>
+                <Name>HoursPerWeek</Name>
             </ReferencedProperties>
         </PropertySet>
         <PropertySet>
             <Name>FullSet</Name>
             <ReferencedProperties>
-                <Name>FirstName</Name> 
-                <Name>LastName</Name> 
-                <Name>HoursPerWeek</Name> 
+                <Name>FirstName</Name>
+                <Name>LastName</Name>
+                <Name>HoursPerWeek</Name>
             </ReferencedProperties>
         </PropertySet>
     </Members>
@@ -149,9 +149,9 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
         Update-TypeData -AppendPath $fileToDeleteName
 
         It "Fail to get member without any input" {
-            try 
+            try
             {
-                Get-Member -MemberType All -ErrorAction Stop 
+                Get-Member -MemberType All -ErrorAction Stop
                 Throw "Execution OK"
             }
             catch
@@ -175,7 +175,7 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
             $results = $emps | Get-Member -MemberType Method
             $results.Length | Should Be $methodList.Length
             $methodFound = @()
-        
+
             for ($i = 0;$i -lt $methodList.Length;$i++)
             {
                 for ($j = 0;$j -lt $results.Length;$j++)
@@ -184,7 +184,7 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
                     {
                         $methodFound += $true
                     }
-                } 
+                }
             }
 
             for ($i = 0;$i -lt $methodList.Length;$i++)
@@ -256,7 +256,7 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
     Context "Verify Get-Member with other parameters" {
         It 'works with View Parameter' {
             $results = [xml]'<a>some text</a>' | Get-Member -view adapted
-            $results.Length | Should Be 38       
+            $results.Length | Should Be 38
         }
 
         It 'Get hidden members'{

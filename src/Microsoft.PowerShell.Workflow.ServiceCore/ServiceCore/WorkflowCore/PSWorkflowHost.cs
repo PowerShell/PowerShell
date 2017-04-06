@@ -46,7 +46,7 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// The provider used to obtain local in-proc 
+        /// The provider used to obtain local in-proc
         /// runspaces
         /// </summary>
         [SuppressMessage("Microsoft.Design", "CA1065:DoNotRaiseExceptionsInUnexpectedLocations")]
@@ -161,7 +161,7 @@ namespace Microsoft.PowerShell.Activities
         {
             throw new NotImplementedException();
         }
-    }    
+    }
 
     #endregion RunspaceProvider
 
@@ -213,7 +213,7 @@ namespace Microsoft.PowerShell.Activities
         }
 
         /// <summary>
-        /// 
+        ///
         /// </summary>
         public override RunspaceProvider LocalRunspaceProvider
         {
@@ -234,7 +234,7 @@ namespace Microsoft.PowerShell.Activities
         internal void ResetLocalRunspaceProvider()
         {
             MethodInfo methodInfo = _localRunspaceProvider.GetType().GetMethod("Reset", BindingFlags.NonPublic | BindingFlags.Instance);
-            methodInfo.Invoke(_localRunspaceProvider, new object[]{});            
+            methodInfo.Invoke(_localRunspaceProvider, new object[]{});
         }
     }
 
