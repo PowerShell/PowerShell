@@ -181,9 +181,6 @@ sudo yum remove powershell
 
 Installation instruction for OpenSUSE 42.1.
 
-**Note:** OpenSUSE package will be released as part of the alpha 18 release.
-@TravisEz13 Has built an unofficial package of alpha 17 which is available in the [fork's release](https://github.com/TravisEz13/PowerShell/releases/tag/v6.0.0-alpha.18).
-
 ### Installation via Direct Download - OpenSUSE 42.1
 
 Using [OpenSUSE 42.1][], download the RPM package
@@ -193,12 +190,14 @@ from the [releases][] page onto the OpenSUSE machine.
 Then execute the following in the terminal:
 
 ```sh
+rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo zypper install ./powershell-6.0.0_alpha.18-1.suse.42.1.x86_64.rpm
 ```
 
 You can also install the RPM without the intermediate step of downloading it:
 
 ```sh
+rpm --import https://packages.microsoft.com/keys/microsoft.asc
 sudo zypper install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0_alpha.18-1.suse.42.1.x86_64.rpm
 ```
 
