@@ -972,8 +972,8 @@ function Start-PSxUnit {
 function Install-Dotnet {
     [CmdletBinding()]
     param(
-        [string]$Channel,
-        [string]$Version,
+        [string]$Channel = "preview",
+        [string]$Version = "2.0.0-preview1-005724",
         [switch]$NoSudo
     )
 
@@ -1040,11 +1040,10 @@ function Start-PSBootstrap {
         SupportsShouldProcess=$true,
         ConfirmImpact="High")]
     param(
-        [string]$Channel = "rel-1.0.0",
-        # we currently pin dotnet-cli version, because tool
-        # is currently migrating to msbuild toolchain
-        # and requires constant updates to our build process.
-        [string]$Version = "1.0.1",
+        [string]$Channel = "preview",
+        # we currently pin dotnet-cli version, and will
+        # update it when more stable version comes out.
+        [string]$Version = "2.0.0-preview1-005724",
         [switch]$Package,
         [switch]$NoSudo,
         [switch]$Force
