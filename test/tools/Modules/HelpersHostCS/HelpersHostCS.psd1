@@ -1,10 +1,10 @@
 #
-# Module manifest for module 'TestHostCS'
+# Module manifest for module 'HelpersHostCS'
 #
 
 @{
 
-RootModule = 'TestHostCS.psm1'
+RootModule = 'HelpersHostCS.psm1'
 
 ModuleVersion = '1.0'
 

@@ -4,7 +4,7 @@
 
 @{
 
-RootModule = 'TestRemoting.psm1'
+RootModule = 'HelpersRemoting.psm1'
 
 ModuleVersion = '1.0'
 

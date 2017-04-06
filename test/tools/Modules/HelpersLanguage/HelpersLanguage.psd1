@@ -1,10 +1,10 @@
 #
-# Module manifest for module 'TestLanguage'
+# Module manifest for module 'HelpersLanguage'
 #
 
 @{
 
-RootModule = 'TestLanguage.psm1'
+RootModule = 'HelpersLanguage.psm1'
 
 ModuleVersion = '1.0'
 
