@@ -275,6 +275,7 @@ namespace Microsoft.PowerShell.Commands
         public string ComputerName;
         public string UserName;
         public string KeyFilePath;
+        public int Port;
     }
 
     /// <summary>
@@ -561,6 +562,7 @@ namespace Microsoft.PowerShell.Commands
         /// to override the policy setting
         /// </remarks>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ComputerNameParameterSet)]
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
         [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
         public virtual Int32 Port { get; set; }
 
@@ -820,6 +822,7 @@ namespace Microsoft.PowerShell.Commands
         private const string UserNameParameter = "UserName";
         private const string KeyFilePathParameter = "KeyFilePath";
         private const string IdentityFilePathAlias = "IdentityFilePath";
+        private const string PortParameter = "Port";
 
         #endregion
 
@@ -870,6 +873,10 @@ namespace Microsoft.PowerShell.Commands
                     else if (paramName.Equals(KeyFilePathParameter, StringComparison.OrdinalIgnoreCase) || paramName.Equals(IdentityFilePathAlias, StringComparison.OrdinalIgnoreCase))
                     {
                         connectionInfo.KeyFilePath = paramValue;
+                    }
+                    else if (paramName.Equals(PortParameter, StringComparison.OrdinalIgnoreCase))
+                    {
+                        connectionInfo.Port = int.Parse(paramValue);
                     }
                     else
                     {
@@ -1312,7 +1319,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string computerName in ResolvedComputerNames)
             {
-                var sshConnectionInfo = new SSHConnectionInfo(this.UserName, computerName, this.KeyFilePath);
+                var sshConnectionInfo = new SSHConnectionInfo(this.UserName, computerName, this.KeyFilePath, this.Port);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
                 var pipeline = CreatePipeline(remoteRunspace);
@@ -1334,7 +1341,8 @@ namespace Microsoft.PowerShell.Commands
                 var sshConnectionInfo = new SSHConnectionInfo(
                     sshConnection.UserName,
                     sshConnection.ComputerName,
-                    sshConnection.KeyFilePath);
+                    sshConnection.KeyFilePath,
+                    sshConnection.Port);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
                 var pipeline = CreatePipeline(remoteRunspace);
