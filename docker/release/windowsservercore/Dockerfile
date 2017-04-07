@@ -1,16 +1,15 @@
 # escape=`
 FROM microsoft/windowsservercore:latest
-MAINTAINER brycem@microsoft.com
-LABEL Readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
-LABEL Description="This Dockerfile will install the latest release of PS."
+
+LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>"
+LABEL readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
+LABEL description="This Dockerfile will install the latest release of PS."
 
 ARG POWERSHELL_MSI=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win10-win2016-x64.msi
-ARG POWERSHELL_SHA256=07CAAB19CE891131AF7A64F267D59C15865B85ADB679E206389189E928C2E597
 
 # Setup PowerShell - Log-to > C:\Docker.log
 SHELL ["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-command"]
 ADD $POWERSHELL_MSI /PowerShell-win10-x64.msi
-ENV POWERSHELL_SHA256=$POWERSHELL_SHA256
 
 # Install PowerShell package and clean up
 RUN $ErrorActionPreference='Stop'; `
@@ -22,10 +21,6 @@ RUN $ErrorActionPreference='Stop'; `
     ('FullBuildString: '+$VerInfo.BuildLabEx) | Write-Output ; `
     ('OperatingSystem:  '+$VerInfo.ProductName+' '+$VerInfo.EditionId+' '+$VerInfo.InstallationType)  | Write-Output ; `
     [System.IO.FileInfo]$MsiFile = Get-Item -Path ./PowerShell-win10-x64.msi ; `
-    [String]$MsiHash=(Get-FileHash -Path $MSiFile -Algorithm SHA256 | select -ExpandProperty Hash) ; `
-    If ($MsiHash -notmatch $Env:POWERSHELL_SHA256) { `
-      Throw [String]$('['+$MsiHash+'] does not match ['+$Env:POWERSHELL_SHA256+']!') `
-    } ; `
     Start-Process -FilePath msiexec.exe -ArgumentList '-qn','-i c:\PowerShell-win10-x64.msi', `
       '-log c:\PowerShell-win10-x64.msi.log','-norestart' -wait ; `
     $log=get-content -Path C:\PowerShell-win10-x64.msi.log -Last 10 ; `
