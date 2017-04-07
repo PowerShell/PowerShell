@@ -414,6 +414,8 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         Start-TypeGen
     }
 
+    # Get the folder path where powershell.exe is located.
+    $publishPath = Split-Path $Options.Output -Parent
     try {
         # Relative paths do not work well if cwd is not changed to project
         Push-Location $Options.Top
@@ -421,7 +423,6 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         Start-NativeExecution { dotnet $Arguments }
 
         if ($CrossGen) {
-            $publishPath = Split-Path $Options.Output
             Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
             log "PowerShell.exe with ngen binaries is available at: $($Options.Output)"
         } else {
@@ -431,13 +432,26 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         Pop-Location
     }
 
+    # publish netcoreapp2.0 reference assemblies
+    try {
+        Push-Location "$PSScriptRoot/src/TypeCatalogGen"
+        $refAssemblies = Get-Content -Path "powershell.inc" | ? { $_ -like "*microsoft.netcore.app*" } | % { $_.TrimEnd(';') }
+        $refDestFolder = Join-Path -Path $publishPath -ChildPath "ref"
+
+        if (Test-Path $refDestFolder -PathType Container) {
+            Remove-Item $refDestFolder -Force -Recurse -ErrorAction Stop
+        }
+        New-Item -Path $refDestFolder -ItemType Directory -Force -ErrorAction Stop > $null
+        Copy-Item -Path $refAssemblies -Destination $refDestFolder -Force -ErrorAction Stop
+    } finally {
+        Pop-Location
+    }
+
+    # download modules from powershell gallery.
+    #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
     if($PSModuleRestore)
     {
         $ProgressPreference = "SilentlyContinue"
-        # Downloading the PowerShellGet and PackageManagement modules.
-        # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp2.0\win10-x64\publish\powershell.exe",
-        # so we need to get its parent directory
-        $publishPath = Split-Path $Options.Output -Parent
         log "Restore PowerShell modules to $publishPath"
 
         $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
