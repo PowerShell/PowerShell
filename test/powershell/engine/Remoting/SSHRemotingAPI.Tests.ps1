@@ -43,8 +43,6 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
         It "SSHConnectionInfo should throw argument exception for invalid port (non 16bit uint)" {
             try 
             {
-                
-                $File = Get-ChildItem -File | select -First 1
                 $sshConnectionInfo = [System.Management.Automation.Runspaces.SSHConnectionInfo]::new(
                     "UserName",
                     "localhost",
