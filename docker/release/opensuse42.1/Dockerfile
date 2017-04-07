@@ -1,6 +1,9 @@
 # Docker image file that describes an OpenSUSE 42.1 (AKA leap 42.1) image with PowerShell installed from PowerShell Release
 FROM opensuse:42.1
-LABEL maintainer Travis Plunk <travis.plunk@microsoft.com>
+
+LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>"
+LABEL readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
+LABEL description="This Dockerfile will install the latest release of PS."
 
 ARG POWERSHELL_VERSION=6.0.0_alpha.18
 ARG POWERSHELL_RELEASE=v6.0.0-alpha.18
