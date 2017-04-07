@@ -81,8 +81,7 @@ Describe "Import-Csv #Type Tests" -Tags "CI" {
         $processlist = (Get-Process)[0..1]
         $processlist | Export-Csv -Path $testfile -Force
         # Import-Csv add "CSV:" before actual type
-        # (Why #HandleCount ? See Issue #1812)
-        $expectedProcessType = "CSV:System.Diagnostics.Process#HandleCount"
+        $expectedProcessType = "CSV:System.Diagnostics.Process"
     }
 
     It "Test import-csv import Object" {

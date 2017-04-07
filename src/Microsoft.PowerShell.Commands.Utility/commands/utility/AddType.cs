@@ -1015,19 +1015,26 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private const string NetCoreAppRefFolderName = "ref";
-        private static string s_netcoreAppRefFolder = PathType.Combine(PathType.GetDirectoryName(typeof(PSObject).Assembly.Location), NetCoreAppRefFolderName);
+        // We now ship the NetCoreApp2.0 reference assemblies with PowerShell Core, so that Add-Type can work
+        // in a predicted way and won't be broken when we move to newer version of .NET Core.
+        // The NetCoreApp2.0 reference assemblies are located at '$PSHOME\ref'.
+        private static string s_netcoreAppRefFolder = PathType.Combine(PathType.GetDirectoryName(typeof(PSObject).Assembly.Location), "ref");
         private static string s_frameworkFolder = PathType.GetDirectoryName(typeof(object).Assembly.Location);
-
 
         // These assemblies are always automatically added to ReferencedAssemblies.
         private static Lazy<PortableExecutableReference[]> s_autoReferencedAssemblies = new Lazy<PortableExecutableReference[]>(InitAutoIncludedRefAssemblies);
+        
+        // A HashSet of assembly names to be ignored if they are specified in '-ReferencedAssemblies'
+        private static Lazy<HashSet<string>> s_refAssemblyNamesToIgnore = new Lazy<HashSet<string>>(InitRefAssemblyNamesToIgnore);
 
         // These assemblies are used, when ReferencedAssemblies parameter is not specified.
         private static Lazy<PortableExecutableReference[]> s_defaultAssemblies = new Lazy<PortableExecutableReference[]>(InitDefaultRefAssemblies);
 
         private bool InMemory { get { return String.IsNullOrEmpty(outputAssembly); } }
 
+        /// <summary>
+        /// Initialize the list of reference assemblies that will be used when '-ReferencedAssemblies' is not specified.
+        /// </summary>
         private static PortableExecutableReference[] InitDefaultRefAssemblies()
         {
             var defaultRefAssemblies = new List<PortableExecutableReference>(150);
@@ -1039,6 +1046,27 @@ namespace Microsoft.PowerShell.Commands
             return defaultRefAssemblies.ToArray();
         }
 
+        /// <summary>
+        /// Initialize the set of assembly names that should be ignored when they are specified in '-ReferencedAssemblies'.
+        ///   - System.Private.CoreLib.ni.dll - the runtim dll that contains most core/primitive types
+        ///   - System.Private.Uri.dll - the runtime dll that contains 'System.Uri' and related types
+        /// Referencing these runtime dlls may cause ambiguous type identity or other issues.
+        ///   - System.Runtime.dll - the corresponding reference dll will be automatically included
+        ///   - System.Runtime.InteropServices.dll - the corresponding reference dll will be automatically included
+        /// </summary>
+        private static HashSet<string> InitRefAssemblyNamesToIgnore()
+        {
+            return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+                PathType.GetFileName(typeof(object).Assembly.Location),
+                PathType.GetFileName(typeof(Uri).Assembly.Location),
+                PathType.GetFileName(GetReferenceAssemblyPathBasedOnType(typeof(object))),
+                PathType.GetFileName(GetReferenceAssemblyPathBasedOnType(typeof(SecureString)))
+            };
+        }
+
+        /// <summary>
+        /// Initialize the list of reference assemblies that will be automatically added when '-ReferencedAssemblies' is specified.
+        /// </summary>
         private static PortableExecutableReference[] InitAutoIncludedRefAssemblies()
         {
             return new PortableExecutableReference[] {
@@ -1046,6 +1074,10 @@ namespace Microsoft.PowerShell.Commands
                 MetadataReference.CreateFromFile(GetReferenceAssemblyPathBasedOnType(typeof(SecureString)))
             };
         }
+
+        /// <summary>
+        /// Get the path of reference assembly where the type is declared.
+        /// </summary>
         private static string GetReferenceAssemblyPathBasedOnType(Type type)
         {
             string refAsmFileName = PathType.GetFileName(ClrFacade.GetAssemblies(type.FullName).First().Location);
@@ -1068,10 +1100,19 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
-            string refAssemblyDll = assembly.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
-                                        ? assembly
-                                        : assembly + ".dll";
+            string refAssemblyDll = assembly;
+            if (!assembly.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+            {
+                // It could be a short assembly name or a full assembly name, but we
+                // alwasy want the short name to find the corresponding assembly file.
+                var assemblyName = new AssemblyName(assembly);
+                refAssemblyDll = assemblyName.Name + ".dll";
+            }
 
+            // We look up in reference/framework only when it's for resolving reference assemblies.
+            // In case of 'Add-Type -AssemblyName' scenario, we don't attempt to resolve against framework assemblies because
+            //   2. Explicitly loading a framework assembly usually is not necessary in PowerShell Core.
+            //   2. A user should use assembly name instead of path if they want to explicitly load a framework assembly.
             if (isForReferenceAssembly)
             {
                 // If it's for resolving a reference assembly, then we look in NetCoreApp ref assemblies first
@@ -1080,23 +1121,23 @@ namespace Microsoft.PowerShell.Commands
                 {
                     return netcoreAppRefPath;
                 }
-            }
 
-            // Look up the assembly in the framework folder
-            string frameworkPossiblePath = PathType.Combine(s_frameworkFolder, refAssemblyDll);
-            if (File.Exists(frameworkPossiblePath))
-            {
-                return frameworkPossiblePath;
-            }
-
-            if (isForReferenceAssembly && !assembly.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
-            {
-                // If it's for resolving a reference assembly, the assembly name may point to a third-party
-                // assembly that is already loaded at run time.
-                Assembly result = LoadAssemblyHelper(assembly);
-                if (result != null)
+                // Look up the assembly in the framework folder. This may happen when assembly is not part of
+                // NetCoreApp, but comes from an additional package, such as 'Json.Net'.
+                string frameworkPossiblePath = PathType.Combine(s_frameworkFolder, refAssemblyDll);
+                if (File.Exists(frameworkPossiblePath))
                 {
-                    return result.Location;
+                    return frameworkPossiblePath;
+                }
+
+                // The assembly name may point to a third-party assembly that is already loaded at run time.
+                if (!assembly.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                {
+                    Assembly result = LoadAssemblyHelper(assembly);
+                    if (result != null)
+                    {
+                        return result.Location;
+                    }
                 }
             }
 
@@ -1203,8 +1244,11 @@ namespace Microsoft.PowerShell.Commands
                 foreach (string assembly in ReferencedAssemblies)
                 {
                     if (string.IsNullOrWhiteSpace(assembly)) { continue; }
-
                     string resolvedAssemblyPath = ResolveAssemblyName(assembly, true);
+
+                    // Ignore some specified reference assemblies
+                    string fileName = PathType.GetFileName(resolvedAssemblyPath);
+                    if (s_refAssemblyNamesToIgnore.Value.Contains(fileName)) { continue; }
                     tempReferences.Add(MetadataReference.CreateFromFile(resolvedAssemblyPath));
                 }
                 references = tempReferences.ToArray();

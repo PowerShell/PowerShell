@@ -256,7 +256,7 @@ Describe "Get-Member DRT Unit Tests" -Tags "CI" {
     Context "Verify Get-Member with other parameters" {
         It 'works with View Parameter' {
             $results = [xml]'<a>some text</a>' | Get-Member -view adapted
-            $results.Length | Should Be 38
+            $results.Length | Should Be 46
         }
 
         It 'Get hidden members'{

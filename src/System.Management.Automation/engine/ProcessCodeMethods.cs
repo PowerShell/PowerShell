@@ -36,11 +36,10 @@ namespace Microsoft.PowerShell {
         /// </summary>
         /// <param name="obj"></param>
         /// <returns>the parent process, or null if the parent is no longer running</returns>
-        public static PSObject GetParentProcess(PSObject obj)
+        public static object GetParentProcess(PSObject obj)
         {
             var process = PSObject.Base(obj) as Process;
-            var parent = process?.GetParent();
-            return parent != null ? ClrFacade.AddProcessProperties(false, parent) : null;
+            return process?.GetParent();
         }
 
         /// <summary>
