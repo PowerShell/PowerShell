@@ -53,8 +53,8 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
 
                 $rs = [runspacefactory]::CreateRunspace($sshConnectionInfo)
                 $rs.Open()
-
-                throw "SSHConnectionInfo did not throw expected ArgumentException exception"
+                
+                throw "No Exception!"
             }
             catch
             {
