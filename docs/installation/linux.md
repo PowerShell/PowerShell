@@ -10,7 +10,7 @@ You should *never* run a script without reading it first!
 Please **read the [download][] script first**, and then if you want to run it, use:
 
 ```sh
-bash <(curl -fsSL https://raw.githubusercontent.com/PowerShell/PowerShell/v6.0.0-alpha.17/tools/download.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/PowerShell/PowerShell/v6.0.0-alpha.18/tools/download.sh)
 ```
 
 Once the package is installed, run `powershell` from a terminal.
@@ -21,7 +21,7 @@ Once the package is installed, run `powershell` from a terminal.
 [arch]: #arch-linux
 [lai]: #linux-appimage
 [mac]: #macos-1011
-[download]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-alpha.17/tools/download.sh
+[download]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-alpha.18/tools/download.sh
 
 ## Ubuntu 14.04
 
@@ -53,13 +53,13 @@ from then on, you just need to use `sudo apt-get upgrade powershell` to update i
 ### Installation via Direct Download
 
 Using [Ubuntu 14.04][], download the Debian package
-`powershell_6.0.0-alpha.17-1ubuntu1.14.04.1_amd64.deb`
+`powershell_6.0.0-alpha.18-1ubuntu1.14.04.1_amd64.deb`
 from the [releases][] page onto the Ubuntu machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo dpkg -i powershell_6.0.0-alpha.17-1ubuntu1.14.04.1_amd64.deb
+sudo dpkg -i powershell_6.0.0-alpha.18-1ubuntu1.14.04.1_amd64.deb
 sudo apt-get install -f
 ```
 
@@ -105,13 +105,13 @@ from then on, you just need to use `sudo apt-get upgrade powershell` to update i
 ### Installation via Direct Download - Ubuntu 16.04
 
 Using [Ubuntu 16.04][], download the Debian package
-`powershell_6.0.0-alpha.17-1ubuntu1.16.04.1_amd64.deb`
+`powershell_6.0.0-alpha.18-1ubuntu1.16.04.1_amd64.deb`
 from the [releases][] page onto the Ubuntu machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo dpkg -i powershell_6.0.0-alpha.17-1ubuntu1.16.04.1_amd64.deb
+sudo dpkg -i powershell_6.0.0-alpha.18-1ubuntu1.16.04.1_amd64.deb
 sudo apt-get install -f
 ```
 
@@ -154,19 +154,19 @@ you just need to use `sudo yum update powershell` to update PowerShell.
 ### Installation via Direct Download - CentOS 7
 
 Using [CentOS 7][], download the RPM package
-`powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm`
+`powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm`
 from the [releases][] page onto the CentOS machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo yum install ./powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm
+sudo yum install ./powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
 ```
 
 You can also install the RPM without the intermediate step of downloading it:
 
 ```sh
-sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.17/powershell-6.0.0_alpha.17-1.el7.centos.x86_64.rpm
+sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
 ```
 
 ### Uninstallation
@@ -181,25 +181,24 @@ sudo yum remove powershell
 
 Installation instruction for OpenSUSE 42.1.
 
-**Note:** OpenSUSE package will be released as part of the alpha 18 release.
-@TravisEz13 Has built an unofficial package of alpha 17 which is available in the [fork's release](https://github.com/TravisEz13/PowerShell/releases/tag/v6.0.0-alpha.17).
-
 ### Installation via Direct Download - OpenSUSE 42.1
 
 Using [OpenSUSE 42.1][], download the RPM package
-`powershell-6.0.0_alpha.17-1.suse.42.1.x86_64.rpm`
+`powershell-6.0.0_alpha.18-1.suse.42.1.x86_64.rpm`
 from the [releases][] page onto the OpenSUSE machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo zypper install ./powershell-6.0.0_alpha.17-1.suse.42.1.x86_64.rpm
+rpm --import https://packages.microsoft.com/keys/microsoft.asc
+sudo zypper install ./powershell-6.0.0_alpha.18-1.suse.42.1.x86_64.rpm
 ```
 
 You can also install the RPM without the intermediate step of downloading it:
 
 ```sh
-sudo zypper install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.17/powershell-6.0.0_alpha.17-1.suse.42.1.x86_64.rpm
+rpm --import https://packages.microsoft.com/keys/microsoft.asc
+sudo zypper install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0_alpha.18-1.suse.42.1.x86_64.rpm
 ```
 
 ### Uninstallation - OpenSUSE 42.1
@@ -225,14 +224,14 @@ For more information on installing packages from the AUR, see the [Arch Linux wi
 ## Linux AppImage
 
 Using a recent Linux distribution,
-download the AppImage `PowerShell-x86_64.AppImage`
+download the AppImage `PowerShell-6.0.0-alpha.18-x86_64.AppImage`
 from the [releases][] page onto the Linux machine.
 
 Then execute the following in the terminal:
 
 ```bash
-chmod a+x PowerShell-x86_64.AppImage
-./PowerShell-x86_64.AppImage
+chmod a+x PowerShell-6.0.0-alpha.18-x86_64.AppImage
+./PowerShell-6.0.0-alpha.18-x86_64.AppImage
 ```
 
 The [AppImage][] lets you run PowerShell without installing it.
@@ -246,14 +245,14 @@ and is a single binary.
 ## macOS 10.11
 
 Using macOS 10.11, download the PKG package
-`powershell-6.0.0-alpha.17.pkg`
+`powershell-6.0.0-alpha.18-osx.10.11-x64.pkg`
 from the [releases][] page onto the macOS machine.
 
 Either double-click the file and follow the prompts,
 or install it from the terminal:
 
 ```sh
-sudo installer -pkg powershell-6.0.0-alpha.17.pkg -target /
+sudo installer -pkg powershell-6.0.0-alpha.18-osx.10.11-x64.pkg -target /
 ```
 
 ### Uninstallation - macOS 10.11
@@ -318,7 +317,7 @@ You *can* run this command manually if you're having trouble with .NET Core's cr
 
 ## Paths
 
-* `$PSHOME` is `/opt/microsoft/powershell/6.0.0-alpha.17/`
+* `$PSHOME` is `/opt/microsoft/powershell/6.0.0-alpha.18/`
 * User profiles will be read from `~/.config/powershell/profile.ps1`
 * Default profiles will be read from `$PSHOME/profile.ps1`
 * User modules will be read from `~/.local/share/powershell/Modules`
@@ -333,7 +332,7 @@ On Linux and macOS, the [XDG Base Directory Specification][xdg-bds] is respected
 
 Note that because macOS is a derivation of BSD,
 instead of `/opt`, the prefix used is `/usr/local`.
-Thus, `$PSHOME` is `/usr/local/microsoft/powershell/6.0.0-alpha.17/`,
+Thus, `$PSHOME` is `/usr/local/microsoft/powershell/6.0.0-alpha.18/`,
 and the symlink is placed at `/usr/local/bin/powershell`.
 
 [releases]: https://github.com/PowerShell/PowerShell/releases/latest

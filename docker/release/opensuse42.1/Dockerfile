@@ -2,8 +2,8 @@
 FROM opensuse:42.1
 LABEL maintainer Travis Plunk <travis.plunk@microsoft.com>
 
-ARG POWERSHELL_VERSION=6.0.0_alpha.17
-ARG POWERSHELL_RELEASE=v6.0.0-alpha.17
+ARG POWERSHELL_VERSION=6.0.0_alpha.18
+ARG POWERSHELL_RELEASE=v6.0.0-alpha.18
 ARG FORK=PowerShell
 ARG POWERSHELL_PACKAGE=powershell-$POWERSHELL_VERSION-1.suse.42.1.x86_64.rpm
 
