@@ -7569,8 +7569,7 @@ namespace Microsoft.PowerShell.Commands
 
                 case FileSystemCmdletProviderEncoding.Oem:
                     {
-                        uint oemCP = NativeMethods.GetOEMCP();
-                        encoding = System.Text.Encoding.GetEncoding((int)oemCP);
+                        encoding = ClrFacade.GetOEMEncoding();
                     }
                     break;
 
@@ -7607,11 +7606,6 @@ namespace Microsoft.PowerShell.Commands
             } // get
         } // WasStreamTypeSpecified
 
-        private static class NativeMethods
-        {
-            [DllImport(PinvokeDllNames.GetOEMCPDllName, SetLastError = false, CharSet = CharSet.Unicode)]
-            internal static extern uint GetOEMCP();
-        }
     } // class FileSystemContentDynamicParametersBase
 
     /// <summary>

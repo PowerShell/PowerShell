@@ -801,6 +801,10 @@ WebRequest
 win7-x86
 WindowsVersion
 XPath
+alpha.18
+behavioral
+MiaRomero
+TheFlyingCorpse
  - test/tools/CodeCoverageAutomation/README.md
 CodeCoverage.zip
 Coveralls.exe

@@ -135,6 +135,7 @@ namespace System.Management.Automation
         internal const string CreateToolhelp32SnapshotDllName = "api-ms-win-core-toolhelp-l1-1-0";           /*120*/
         internal const string Process32FirstDllName = "api-ms-win-core-toolhelp-l1-1-0";                     /*121*/
         internal const string Process32NextDllName = "api-ms-win-core-toolhelp-l1-1-0";                      /*122*/
+        internal const string GetACPDllName = "api-ms-win-core-localization-l1-2-0.dll";                     /*123*/
 #else
         internal const string QueryDosDeviceDllName = "kernel32.dll";                                        /*1*/
         internal const string CreateSymbolicLinkDllName = "kernel32.dll";                                    /*2*/
@@ -257,6 +258,7 @@ namespace System.Management.Automation
         internal const string CreateToolhelp32SnapshotDllName = "kernel32.dll";                              /*120*/
         internal const string Process32FirstDllName = "kernel32.dll";                                        /*121*/
         internal const string Process32NextDllName = "kernel32.dll";                                         /*122*/
+        internal const string GetACPDllName = "kernel32.dll";                                                /*123*/
 #endif
     }
 }

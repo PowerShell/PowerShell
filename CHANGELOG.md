@@ -1,5 +1,42 @@
 # Changelog
 
+## v6.0.0-alpha.18 - 2017-04-05
+
+### Progress Bar
+
+We made a number of fixes to the progress bar rendering and the `ProgressRecord` object that improved cmdlet performance and fixed some rendering bugs on non-Windows platforms.
+
+- Fix a bug that caused the progress bar to drift on Unix platforms. (#3289)
+- Improve the performance of writing progress records. (#2822) (Thanks to @iSazonov!)
+- Fix the progress bar rendering on Unix platforms. (#3362) (#3453)
+- Reuse `ProgressRecord` in Web Cmdlets to reduce the GC overhead. (#3411) (Thanks to @iSazonov!)
+
+### Cmdlet updates
+
+- Use `ShellExecute` with `Start-Process`, `Invoke-Item`, and `Get-Help -Online` so that those cmdlets use standard shell associations to open a file/URI.
+  This means you `Get-Help -Online` will always use your default browser, and `Start-Process`/`Invoke-Item` can open any file or path with a handler.
+  (Note: there are still some problems with STA threads.) (#3281, partially fixes #2969)
+- Add `-Extension` and `-LeafBase` switches to `Split-Path` so that you can split paths between the filename extension and the rest of the filename. (#2721) (Thanks to @powercode!)
+- Implement `Format-Hex` in C# along with some behavioral changes to multiple parameters and the pipeline. (#3320) (Thanks to @MiaRomero!)
+- Add `-NoProxy` to web cmdlets so that they ignore the system-wide proxy setting. (#3447) (Thanks to @TheFlyingCorpse!)
+- Fix `Out-Default -Transcript` to properly revert out of the `TranscribeOnly` state, so that further output can be displayed on Console. (#3436) (Thanks to @PetSerAl!)
+- Fix `Get-Help` to not return multiple instances of the same help file. (#3410)
+
+### Interactive fixes
+
+- Enable argument auto-completion for `-ExcludeProperty` and `-ExpandProperty` of `Select-Object`. (#3443) (Thanks to @iSazonov!)
+- Fix a tab completion bug that prevented `Import-Module -n<tab>` from working. (#1345)
+
+### Cross-platform fixes
+
+- Ignore the `-ExecutionPolicy` switch when running PowerShell on non-Windows platforms because script signing is not currently supported. (#3481)
+- Standardize the casing of the `PSModulePath` environment variable. (#3255)
+
+### JEA fixes
+
+- Fix the JEA transcription to include the endpoint configuration name in the transcript header. (#2890)
+- Fix `Get-Help` in a JEA session. (#2988)
+
 ## v6.0.0-alpha.17 - 2017-03-08
 
 - Update PSRP client libraries for Linux and Mac.

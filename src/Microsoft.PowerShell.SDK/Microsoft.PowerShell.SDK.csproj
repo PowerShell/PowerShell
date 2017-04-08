@@ -85,7 +85,6 @@
     <PackageReference Include="System.ServiceModel.Primitives" Version="4.3.0" />
     <PackageReference Include="System.ServiceModel.Security" Version="4.3.0" />
     <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.3.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.3.0" />
     <PackageReference Include="System.Text.Encodings.Web" Version="4.3.0" />
     <PackageReference Include="System.Threading.AccessControl" Version="4.3.0" />
     <PackageReference Include="System.Threading.Overlapped" Version="4.3.0" />
