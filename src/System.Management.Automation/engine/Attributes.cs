@@ -1469,6 +1469,17 @@ namespace System.Management.Automation
         private string[] _validRootDrives;
 
         /// <summary>
+        /// Gets the values in the set
+        /// </summary>
+        public IList<string> ValidRootDrives
+        {
+            get
+            {
+                return _validRootDrives;
+            }
+        }
+
+        /// <summary>
         /// Initializes a new instance of the ValidateDrivePath class
         /// </summary>
         /// <param name="validRootDrives">List of approved root drives for path</param>
