@@ -1,4 +1,4 @@
-﻿# This is a Pester test suite to validate the Format-Hex cmdlet in the Microsoft.PowerShell.Utility module.
+# This is a Pester test suite to validate the Format-Hex cmdlet in the Microsoft.PowerShell.Utility module.
 #
 # Copyright (c) Microsoft Corporation, 2015
 #
@@ -132,6 +132,30 @@ function RunExpectedErrorTestCase($testCase)
 
         $thrownError | Should Not Be $null
         $thrownError.FullyQualifiedErrorId | Should Match $testCase.ExpectedFullyQualifiedErrorId
+    }
+}
+
+function RunCountTestCase($testCase)
+{
+    It "$($testCase.Name)" {
+
+        $result = Format-Hex -InputObject 'hello' -Count $testCase.Count
+
+        $result | Should Not Be $null
+        $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+        $result[0].Bytes.Length | Should Match $testCase.ExpectedResult
+    }
+}
+
+function RunOffsetTestCase($testCase)
+{
+    It "$($testCase.Name)" {
+
+        $result = Format-Hex -InputObject 'hello' -Offset $testCase.Offset
+
+        $result | Should Not Be $null
+        $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+        $result[0].ToString() | Should Match $testCase.ExpectedResult
     }
 }
 
@@ -394,6 +418,36 @@ Describe "FormatHex" -tags "CI" {
         RunEncodingTestCase $testCase
     }
 }
+
+    Context "Count Parameter" {
+        $testCases = @(
+            @{
+                Name = "Can select first three bytes of hello 'fhx -InputObject 'hello' -Count 3'"
+                Count = 3
+                ExpectedResult = 3
+            }
+        )
+
+        foreach ($testCase in $testCases)
+        {
+            RunCountTestCase $testCase
+        }
+    }
+
+     Context "Offset Parameter" {
+        $testCases = @(
+            @{
+                Name = "Skip the first two bytes of hello 'fhx -InputObject 'hello' -Offset 2'"
+                Offset = 2
+                ExpectedResult = "00000000   6C 6C 6F                                         llo             "
+            }
+        )
+
+        foreach ($testCase in $testCases)
+        {
+            RunOffsetTestCase $testCase
+        }
+    }
 
     Context "Validate Error Scenarios" {
 
