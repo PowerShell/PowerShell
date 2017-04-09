@@ -1883,14 +1883,6 @@ namespace System.Management.Automation.Runspaces
             string keyFilePath)
         {
             if (computerName == null) { throw new PSArgumentNullException("computerName"); }
-            if ((port < MinPort || port > MaxPort))
-            {
-                String message =
-                    PSRemotingErrorInvariants.FormatResourceString(
-                        RemotingErrorIdStrings.PortIsOutOfRange, port);
-                ArgumentException e = new ArgumentException(message);
-                throw e;
-            }
 
             this.UserName = userName;
             this.ComputerName = computerName;
