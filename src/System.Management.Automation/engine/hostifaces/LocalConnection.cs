@@ -1267,6 +1267,8 @@ namespace System.Management.Automation.Runspaces
                         RunspaceOpening = null;
                     }
 
+                    Platform.RemoveTemporaryDirectory();
+
                     // Dispose the event manager
                     if (this.ExecutionContext != null && this.ExecutionContext.Events != null)
                     {

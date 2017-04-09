@@ -403,6 +403,12 @@ foo
             [int]$output | Should BeGreaterThan 0
         }
     }
+
+    Context "HOME environment variable" {
+        It "Should start if HOME is not defined" -skip:($IsWindows) {
+            bash -c "unset HOME;$powershell -c '1+1'" | Should BeExactly 2
+        }
+    }
 }
 
 Describe "Console host api tests" -Tag CI {
