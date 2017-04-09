@@ -36,6 +36,12 @@ namespace Microsoft.PowerShell.Commands
             get { return base.CustomMethod; }
             set { base.CustomMethod = value; }
         }
+        
+        /// <summary>
+        /// Don't bother to parse the output just a string please.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter RawOutput { get; set; }
 
         #endregion Parameters
 
