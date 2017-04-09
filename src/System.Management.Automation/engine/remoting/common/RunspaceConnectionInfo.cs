@@ -1877,6 +1877,33 @@ namespace System.Management.Automation.Runspaces
         /// <param name="userName">User Name</param>
         /// <param name="computerName">Computer Name</param>
         /// <param name="keyFilePath">Key File Path</param>
+        public SSHConnectionInfo(
+            string userName,
+            string computerName,
+            string keyFilePath)
+        {
+            if (computerName == null) { throw new PSArgumentNullException("computerName"); }
+            if ((port < MinPort || port > MaxPort))
+            {
+                String message =
+                    PSRemotingErrorInvariants.FormatResourceString(
+                        RemotingErrorIdStrings.PortIsOutOfRange, port);
+                ArgumentException e = new ArgumentException(message);
+                throw e;
+            }
+
+            this.UserName = userName;
+            this.ComputerName = computerName;
+            this.KeyFilePath = keyFilePath;
+            this.Port = DefaultPort;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="userName">User Name</param>
+        /// <param name="computerName">Computer Name</param>
+        /// <param name="keyFilePath">Key File Path</param>
         /// <param name="port">Port number for connection (default 22)</param>
         public SSHConnectionInfo(
             string userName,
