@@ -1005,6 +1005,46 @@ namespace System.Management.Automation
             }
         }
 
+        internal ActionPreference NativeCommandExceptionPreferenceVariable
+        {
+            get
+            {
+                bool defaultUsed = false;
+                return this.GetEnumPreference<ActionPreference>(
+                    SpecialVariables.NativeCommandExceptionPreferenceVarPath,
+                    InitialSessionState.defaultNativeCommandExceptionPreference,
+                    out defaultUsed);
+            }
+            set
+            {
+                this.EngineSessionState.SetVariable(
+                    SpecialVariables.NativeCommandExceptionPreferenceVarPath,
+                    LanguagePrimitives.ConvertTo(value, typeof(ActionPreference), CultureInfo.InvariantCulture),
+                    true,
+                    CommandOrigin.Internal);
+            }
+        }
+
+        internal ActionPreference NativeCommandPipeFailPreferenceVariable
+        {
+            get
+            {
+                bool defaultUsed = false;
+                return this.GetEnumPreference<ActionPreference>(
+                    SpecialVariables.NativeCommandPipeFailPreferenceVarPath,
+                    InitialSessionState.defaultNativeCommandPipeFailPreference,
+                    out defaultUsed);
+            }
+            set
+            {
+                this.EngineSessionState.SetVariable(
+                    SpecialVariables.NativeCommandPipeFailPreferenceVarPath,
+                    LanguagePrimitives.ConvertTo(value, typeof(ActionPreference), CultureInfo.InvariantCulture),
+                    true,
+                    CommandOrigin.Internal);
+            }
+        }
+
         internal ActionPreference WarningActionPreferenceVariable
         {
             get

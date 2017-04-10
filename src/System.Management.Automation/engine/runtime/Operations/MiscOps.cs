@@ -172,7 +172,34 @@ namespace System.Management.Automation
                     commandProcessor.AddParameter(cpi);
                 }
             }
-
+            if(isNativeCommand)
+            {
+                // Native commands should not throw errors where the exit code is tested (if/switch/loop) and expessions
+                // Notes:
+                // Might be optimised to check the pipelineAst once as the pipeline is constructed.
+                // Would need to be done in both InvokePipeline and in GetSteppablePipeline.
+                // Might be optimised to use a member variable on CommandBaseAst instead of the Ast checks below.
+                //  e.g. A NativeFailureHandling member, populated by the parser when building the Ast.
+                //  n.b. Would want to avoid giveing a different result for the OutNullCommand optimisation in InvokePipeline
+                PipelineAst pipelineAst=commandBaseAst.Parent as PipelineAst;
+                Diagnostics.Assert(pipelineAst != null, "the command should be in a pipeline");
+                var pipeContext=pipelineAst.Parent;
+                if (!(pipeContext is IfStatementAst || pipeContext is LabeledStatementAst || pipeContext is ExpressionAst))
+                {
+                    NativeCommandProcessor nativeCommandProcessor=commandProcessor as NativeCommandProcessor;
+                    Diagnostics.Assert(nativeCommandProcessor != null, "the native command processor hould be a NativeCommandProcessor");
+                    ActionPreference errorPreference=context.NativeCommandPipeFailPreferenceVariable;
+                    // check for native commadn failure on every command in the pipeline for preference Stop
+                    // or only the last command in the pipeline for preference Continue
+                    nativeCommandProcessor.HandleFailure = 
+                       errorPreference==ActionPreference.Stop
+                       ||
+                       errorPreference==ActionPreference.Continue&&
+                        commandBaseAst==
+                        pipelineAst.PipelineElements[pipelineAst.PipelineElements.Count-1];
+                }
+             
+            }
             string helpTarget;
             HelpCategory helpCategory;
             if (commandProcessor.IsHelpRequested(out helpTarget, out helpCategory))

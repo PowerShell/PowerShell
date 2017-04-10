@@ -575,6 +575,9 @@ Possible matches are</value>
   <data name="ProgramFailedToExecute" xml:space="preserve">
     <value>Program '{0}' failed to run: {1}{2}.</value>
   </data>
+  <data name="ProgramFailedToComplete" xml:space="preserve">
+    <value>Program '{0}' failed: {1}{2}.</value>
+  </data>
   <data name="CantInvokeInBinaryModule" xml:space="preserve">
     <value>Cannot use '&amp;' to invoke in the context of binary module '{0}'. Specify a non-binary module after the '&amp;' and try the operation again.</value>
   </data>

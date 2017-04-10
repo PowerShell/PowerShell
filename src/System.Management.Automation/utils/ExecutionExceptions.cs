@@ -1096,6 +1096,7 @@ namespace System.Management.Automation
         #endregion Serialization
     } // HaltCommandException
     #endregion HaltCommandException
+
 } // namespace System.Management.Automation
 
 #pragma warning restore 56506

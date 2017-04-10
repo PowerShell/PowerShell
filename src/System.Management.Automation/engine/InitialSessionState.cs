@@ -4820,6 +4820,8 @@ end
 
         internal const ActionPreference defaultDebugPreference = ActionPreference.SilentlyContinue;
         internal const ActionPreference defaultErrorActionPreference = ActionPreference.Continue;
+        internal const ActionPreference defaultNativeCommandExceptionPreference = ActionPreference.Continue;
+        internal const ActionPreference defaultNativeCommandPipeFailPreference = ActionPreference.SilentlyContinue;
         internal const ActionPreference defaultProgressPreference = ActionPreference.Continue;
         internal const ActionPreference defaultVerbosePreference = ActionPreference.SilentlyContinue;
         internal const ActionPreference defaultWarningPreference = ActionPreference.Continue;
@@ -4873,6 +4875,20 @@ end
                 SpecialVariables.ErrorActionPreference,
                 defaultErrorActionPreference,
                 RunspaceInit.ErrorActionPreferenceDescription,
+                ScopedItemOptions.None,
+                new ArgumentTypeConverterAttribute(typeof(ActionPreference))
+                ),
+            new SessionStateVariableEntry(
+                SpecialVariables.NativeCommandExceptionPreference,
+                defaultNativeCommandExceptionPreference,
+                RunspaceInit.NativeCommandExceptionPreferenceDescription,
+                ScopedItemOptions.None,
+                new ArgumentTypeConverterAttribute(typeof(ActionPreference))
+                ),
+            new SessionStateVariableEntry(
+                SpecialVariables.NativeCommandPipeFailPreference,
+                defaultNativeCommandPipeFailPreference,
+                RunspaceInit.NativeCommandPipeFailPreferenceDescription,
                 ScopedItemOptions.None,
                 new ArgumentTypeConverterAttribute(typeof(ActionPreference))
                 ),

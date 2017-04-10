@@ -3313,6 +3313,79 @@ namespace System.Management.Automation
 
         internal PagingParameters PagingParameters { get; set; }
 
+        private ActionPreference _nativeCommandException = InitialSessionState.defaultNativeCommandExceptionPreference;
+        private bool _isNativeCommandExceptionPreferenceCached = false;
+        /// <summary>
+        /// ErrorActNativeCommandException tells the command what to do when throwing a native command failure exception
+        /// </summary>
+        /// <exception cref="System.Management.Automation.ExtendedTypeSystemException">
+        /// (get-only) An error occurred accessing $NativeCommandException.
+        /// </exception>
+        internal ActionPreference NativeCommandException
+        {
+            get
+            {
+                // Setting CommonParameters.ErrorAction has highest priority
+                if (IsNativeCommandExceptionSet)
+                    return _nativeCommandException;
+
+                // Do not exit if debugging
+                if (Debug)
+                    return ActionPreference.Continue;
+
+                // fall back to $NativeCommandException
+                if (!_isNativeCommandExceptionPreferenceCached)
+                {
+                    bool defaultUsed = false;
+                    _errorAction = Context.GetEnumPreference<ActionPreference>(SpecialVariables.NativeCommandExceptionPreferenceVarPath, _nativeCommandException, out defaultUsed);
+                    _isNativeCommandExceptionPreferenceCached = true;
+                }
+                return _nativeCommandException;
+            }
+            set
+            {
+                _nativeCommandException = value;
+                IsNativeCommandExceptionSet = true;
+            } // set
+        }
+
+        internal bool IsNativeCommandExceptionSet { get; private set; } = false;
+
+        private ActionPreference _nativeCommandPipeFail = InitialSessionState.defaultNativeCommandPipeFailPreference;
+        private bool _isNativeCommandPipeFailPreferenceCached = false;
+        /// <summary>
+        /// ErrorActNativeCommandException tells the command what to do when throwing a native command failure exception
+        /// </summary>
+        /// <exception cref="System.Management.Automation.ExtendedTypeSystemException">
+        /// (get-only) An error occurred accessing $NativeCommandException.
+        /// </exception>
+        internal ActionPreference NativeCommandPipeFail
+        {
+            get
+            {
+                // Setting CommonParameters.ErrorAction has highest priority
+                if (IsNativeCommandPipeFailSet)
+                    return _nativeCommandPipeFail;
+
+                // fall back to $NativeCommandException
+                if (!_isNativeCommandPipeFailPreferenceCached)
+                {
+                    bool defaultUsed = false;
+                    _errorAction = Context.GetEnumPreference<ActionPreference>(SpecialVariables.NativeCommandPipeFailPreferenceVarPath, _nativeCommandException, out defaultUsed);
+                    _isNativeCommandPipeFailPreferenceCached = true;
+                }
+                return _nativeCommandPipeFail;
+            }
+            set
+            {
+                _nativeCommandPipeFail = value;
+                IsNativeCommandPipeFailSet = true;
+            } // set
+        }
+
+        internal bool IsNativeCommandPipeFailSet { get; private set; } = false;
+
+
         #endregion Preference
 
         #region Continue/Confirm

@@ -193,6 +193,11 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Handle failure exit code
+        /// </summary>
+        public bool HandleFailure { get; set; }
+
+        /// <summary>
         /// Gets the NativeCommand associated with this command processor.
         /// </summary>
         private NativeCommand nativeCommand
@@ -371,7 +376,12 @@ namespace System.Management.Automation
         /// The pipeline is stopping
         /// </exception>
         /// <exception cref="ApplicationFailedException">
-        /// The native command could not be run
+        /// The native command was not succesful: either it failed to run or exited with a non-zero exit status
+        /// ApplicationFailedToCompleteException is thrown for a non-zero exit status if the relevant prreferences are set
+        /// ApplicationFailedToRunException indicates an exception occured trying to run the command.
+        /// </exception>
+        /// <exception cref="ExitException">
+        /// The comand exited with a non-zero exit status, and the relevat preferences are enabled
         /// </exception>
         private void InitNativeProcess()
         {
@@ -574,7 +584,7 @@ namespace System.Management.Automation
                 string message = StringUtil.Format(ParserStrings.ProgramFailedToExecute,
                     this.NativeCommandName, exceptionToRethrow.Message,
                     this.Command.MyInvocation.PositionMessage);
-                ApplicationFailedException appFailedException = new ApplicationFailedException(message, exceptionToRethrow);
+                ApplicationFailedToRunException appFailedException = new ApplicationFailedToRunException(message, exceptionToRethrow);
 
                 // There is no need to set this exception here since this exception will eventually be caught by pipeline processor.
                 // this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
@@ -660,6 +670,7 @@ namespace System.Management.Automation
         internal override void Complete()
         {
             Exception exceptionToRethrow = null;
+            int exitCode=0;
             try
             {
                 if (_isRunningInBackground == false)
@@ -711,7 +722,11 @@ namespace System.Management.Automation
 
                     this.Command.Context.SetVariable(SpecialVariables.LastExitCodeVarPath, _nativeProcess.ExitCode);
                     if (_nativeProcess.ExitCode != 0)
+                    {
                         this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
+                        if(HandleFailure)
+                                exitCode=_nativeProcess.ExitCode;
+                    }
                 }
             }
             catch (Win32Exception e)
@@ -745,15 +760,28 @@ namespace System.Management.Automation
                 string message = StringUtil.Format(ParserStrings.ProgramFailedToExecute,
                     this.NativeCommandName, exceptionToRethrow.Message,
                     this.Command.MyInvocation.PositionMessage);
-                ApplicationFailedException appFailedException = new ApplicationFailedException(message, exceptionToRethrow);
+                ApplicationFailedToRunException appFailedException = new ApplicationFailedToRunException(message, exceptionToRethrow);
 
                 // There is no need to set this exception here since this exception will eventually be caught by pipeline processor.
                 // this.commandRuntime.PipelineProcessor.ExecutionFailed = true;
 
                 throw appFailedException;
             }
+            if (exitCode != 0)
+            {
+                ActionPreference errorPreference=this.Command.Context.NativeCommandExceptionPreferenceVariable;
+                // terminate with an ExitException
+                if (errorPreference==ActionPreference.Stop)
+                    throw new ExitException(exitCode);
+                // throw a normal non-terminating (runtime) exception
+                string message = StringUtil.Format(ParserStrings.ProgramFailedToComplete,
+                    this.NativeCommandName, $"Exit Code {exitCode}\n",
+                    this.Command.MyInvocation.PositionMessage);
+                ApplicationFailedToCompleteException appFailedException = 
+                new ApplicationFailedToCompleteException(message);
+                throw appFailedException;
+            }
         }
-
 
         #region Process cleanup with Child Process cleanup
 

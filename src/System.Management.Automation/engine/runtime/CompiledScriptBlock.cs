@@ -2032,6 +2032,16 @@ namespace System.Management.Automation
                 _localsTuple.SetPreferenceVariable(PreferenceVariable.Confirm,
                                                    _commandRuntime.Confirm ? ConfirmImpact.Low : ConfirmImpact.None);
             }
+            if(_commandRuntime.IsNativeCommandExceptionSet)
+            {
+                _localsTuple.SetPreferenceVariable(PreferenceVariable.NativeCommandException,
+                                                   _commandRuntime.NativeCommandException);
+            }
+            if(_commandRuntime.IsNativeCommandPipeFailSet)
+            {
+                _localsTuple.SetPreferenceVariable(PreferenceVariable.NativeCommandPipeFail,
+                                                   _commandRuntime.NativeCommandPipeFail);
+            }
         }
 
         #region StopProcessing functionality for script cmdlets

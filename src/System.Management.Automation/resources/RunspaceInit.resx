@@ -162,6 +162,12 @@
   <data name="ErrorActionPreferenceDescription" xml:space="preserve">
     <value>Dictates the action taken when an error message is delivered</value>
   </data>
+  <data name="NativeCommandExceptionPreferenceDescription" xml:space="preserve">
+    <value>Dictates whether the exception thrown for a native command failure is non-terminating or terminating</value>
+  </data>
+  <data name="NativeCommandPipeFailPreferenceDescription" xml:space="preserve">
+    <value>Dictates if an exception is thrown when an native command returns a non-zero exit code</value>
+  </data>
   <data name="ProgressPreferenceDescription" xml:space="preserve">
     <value>Dictates the action taken when progress records are delivered</value>
   </data>

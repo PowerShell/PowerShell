@@ -178,6 +178,12 @@ namespace System.Management.Automation
         internal const string ErrorActionPreference = "ErrorActionPreference";
         internal static readonly VariablePath ErrorActionPreferenceVarPath = new VariablePath(ErrorActionPreference);
 
+        internal const string NativeCommandExceptionPreference = "NativeCommandExceptionPreference";
+        internal static readonly VariablePath NativeCommandExceptionPreferenceVarPath = new VariablePath(NativeCommandExceptionPreference);
+
+        internal const string NativeCommandPipeFailPreference = "NativeCommandPipeFailPreference";
+        internal static readonly VariablePath NativeCommandPipeFailPreferenceVarPath = new VariablePath(NativeCommandPipeFailPreference);
+
         internal const string ProgressPreference = "ProgressPreference";
         internal static readonly VariablePath ProgressPreferenceVarPath = new VariablePath(ProgressPreference);
 
@@ -279,6 +285,8 @@ namespace System.Management.Automation
                                                                     SpecialVariables.WarningPreference,
                                                                     SpecialVariables.InformationPreference,
                                                                     SpecialVariables.ConfirmPreference,
+                                                                    SpecialVariables.NativeCommandExceptionPreference,
+                                                                    SpecialVariables.NativeCommandPipeFailPreference,
                                                                 };
 
         internal static readonly Type[] PreferenceVariableTypes = {
@@ -289,6 +297,8 @@ namespace System.Management.Automation
                                                                     /* WarningPreference */     typeof(ActionPreference),
                                                                     /* InformationPreference */ typeof(ActionPreference),
                                                                     /* ConfirmPreference */     typeof(ConfirmImpact),
+                                                                    /* NativePreference */      typeof(ActionPreference),
+                                                                    /* NativePreference */      typeof(ActionPreference),
                                                                   };
 
         // The following variables are created in every session w/ AllScope.  We avoid creating local slots when we
@@ -356,5 +366,7 @@ namespace System.Management.Automation
         Warning = 13,
         Information = 14,
         Confirm = 15,
+        NativeCommandException = 15,
+        NativeCommandPipeFail = 15,
     }
 }
