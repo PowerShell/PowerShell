@@ -30,13 +30,7 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
             }
             catch
             {
-                $expectedFileNotFoundException = $_.Exception
-                if ($_.Exception.InnerException -ne $null -and $_.Exception.InnerException.InnerException -ne $null)
-                {
-                    $expectedFileNotFoundException = $_.Exception.InnerException.InnerException
-                }
-                
-                $expectedFileNotFoundException | Should BeOfType "System.IO.FileNotFoundException"
+                $_.Exception.InnerException.InnerException | Should BeOfType "System.IO.FileNotFoundException"
             }
         }
 
