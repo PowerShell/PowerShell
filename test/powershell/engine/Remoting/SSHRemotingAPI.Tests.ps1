@@ -4,6 +4,12 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
 
     Context "SSHConnectionInfo Class Tests" {
 
+        AfterEach {
+            if ($rs -ne $null) {
+                $rs.Dispose()
+            }
+        }
+
         It "SSHConnectionInfo constructor should throw null argument exception for null HostName parameter" {
 
             { [System.Management.Automation.Runspaces.SSHConnectionInfo]::new(
