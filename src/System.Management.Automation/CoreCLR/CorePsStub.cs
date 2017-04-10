@@ -776,6 +776,7 @@ namespace System.Management.Automation.Security
 // Porting note: Tracing is absolutely not available on Linux
 namespace System.Management.Automation.Tracing
 {
+    using System.Diagnostics.CodeAnalysis;
     using System.Management.Automation.Internal;
 
     /// <summary>

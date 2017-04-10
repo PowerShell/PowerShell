@@ -1,18 +1,16 @@
 Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
     It "Should work properly when sleeping with Second" {
-        $dtStart = [DateTime]::Now
+        $watch = [System.Diagnostics.Stopwatch]::StartNew()
         Start-Sleep -Seconds 1
-        $dtEnd = [DateTime]::Now
-        $milliseconds = (New-TimeSpan -Start $dtStart -End $dtEnd).TotalMilliseconds
-        $milliseconds | Should BeGreaterThan 999
+        $watch.Stop()
+        $watch.ElapsedMilliseconds -ge 999 | Should be $true
     }
 
     It "Should work properly when sleeping with Milliseconds" {
-        $dtStart = [DateTime]::Now
+        $watch = [System.Diagnostics.Stopwatch]::StartNew()
         Start-Sleep -Milliseconds 1000
-        $dtEnd = [DateTime]::Now
-        $milliseconds = (New-TimeSpan -Start $dtStart -End $dtEnd).TotalMilliseconds
-        $milliseconds | Should BeGreaterThan 999
+        $watch.Stop()
+        $watch.ElapsedMilliseconds -ge 999 | Should be $true
     }
 
 }
