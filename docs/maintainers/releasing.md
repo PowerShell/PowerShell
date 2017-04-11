@@ -268,7 +268,7 @@ On macOS:
 1. `cd /usr/local/Homebrew/Library/Taps/caskroom/homebrew-cask/Casks`
 1. Edit `./powershell.rb`, reference [file history](https://github.com/vors/homebrew-cask/commits/master/Casks/powershell.rb) for the guidelines:
 1. Update `version`
-1. Update `sha256` to the checksum of produced `.pkg` (note lowercase string for the consistent style)
+1. Update `sha256` to the checksum of produced `.pkg` (note lower-case string for the consistent style)
 1. Update `checkpoint` value. To do that run `brew cask _appcast_checkpoint --calculate 'https://github.com/PowerShell/PowerShell/releases.atom'`
 1. `brew cask style --fix ./powershell.rb`, make sure there are no errors
 1. `brew cask audit --download ./powershell.rb`, make sure there are no errors
