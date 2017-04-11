@@ -180,3 +180,49 @@ Describe "Validate that Get-Help returns provider-specific help" -Tags @('CI', '
         }
     }
 }
+
+Describe "Validate about_help.txt under culture specific folder works" -Tags @('CI') {
+    BeforeAll {
+        $modulePath = "$pshome\Modules\Test"
+        $null = New-Item -Path $modulePath\en-US -ItemType Directory -Force
+        New-ModuleManifest -Path $modulePath\test.psd1 -RootModule test.psm1
+        Set-Content -Path $modulePath\test.psm1 -Value "function foo{}"
+        Set-Content -Path $modulePath\en-US\about_testhelp.help.txt -Value "Hello" -NoNewline
+    }
+
+    AfterAll {
+        Remove-Item $modulePath -Recurse -Force
+    }
+
+    It "Get-Help should return help text and not multiple HelpInfo objects when help is under `$pshome path" {
+
+        $help = Get-Help about_testhelp
+        $help.count | Should Be 1
+        $help | Should BeExactly "Hello"
+    }
+}
+
+Describe "Get-Help should find help info within help files" -Tags @('CI', 'RequireAdminOnWindows') {
+    It "Get-Help should find help files under pshome" {
+        $helpFile = "about_testCase.help.txt"
+        $culture = (Get-Culture).Name
+        $helpFolderPath = Join-Path $PSHOME $culture
+        $helpFilePath = Join-Path $helpFolderPath $helpFile
+
+        if (!(Test-Path $helpFolderPath))
+        {
+            $null = New-Item -ItemType Directory -Path $helpFolderPath -ErrorAction SilentlyContinue
+        }
+        
+        try
+        {
+            $null = New-Item -ItemType File -Path $helpFilePath -Value "about_test" -ErrorAction SilentlyContinue
+            $helpContent = Get-Help about_testCase
+            $helpContent | Should Match "about_test"
+        }
+        finally
+        {
+            Remove-Item $helpFilePath -Force -ErrorAction SilentlyContinue
+        }
+    }
+}

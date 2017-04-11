@@ -222,29 +222,19 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Each Shell ( minishell ) will have its own path specified by the
-        /// registry HKLM\software\microsoft\msh\1\ShellIds\&lt;ShellID&gt;\path. Every help
-        /// provider should search this path for content.
+        /// application base folder, which should be the same as $pshome
         /// </summary>
         /// <returns>string representing base directory of the executing shell.</returns>
         internal string GetDefaultShellSearchPath()
         {
             string shellID = this.HelpSystem.ExecutionContext.ShellID;
-            string returnValue = CommandDiscovery.GetShellPathFromRegistry(shellID);
+            // Beginning in PowerShell 6.0.0.12, the $pshome is no longer registry specified, we search the application base instead.
+            string returnValue = Utils.GetApplicationBase(shellID);
 
             if (returnValue == null)
             {
                 // use executing assemblies location in case registry entry not found
                 returnValue = Path.GetDirectoryName(PsUtils.GetMainModule(System.Diagnostics.Process.GetCurrentProcess()).FileName);
-            }
-            else
-            {
-                // Get the directory path of the executing shell
-                returnValue = Path.GetDirectoryName(returnValue);
-                if (!Directory.Exists(returnValue))
-                {
-                    // use executing assemblies location in case registry entry not found
-                    returnValue = Path.GetDirectoryName(PsUtils.GetMainModule(System.Diagnostics.Process.GetCurrentProcess()).FileName);
-                }
             }
 
             return returnValue;
