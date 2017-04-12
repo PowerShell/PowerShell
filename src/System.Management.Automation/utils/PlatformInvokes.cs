@@ -558,7 +558,7 @@ namespace System.Management.Automation
 #if !UNIX
 
         // Fields
-        internal static readonly IntPtr INVALID_HANDLE_VALUE = IntPtr.Zero;
+        internal static readonly IntPtr INVALID_HANDLE_VALUE = new IntPtr(-1);
         internal static UInt32 GENERIC_READ = 0x80000000;
         internal static UInt32 GENERIC_WRITE = 0x40000000;
         internal static UInt32 FILE_ATTRIBUTE_NORMAL = 0x80000000;
