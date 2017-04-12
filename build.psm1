@@ -2780,19 +2780,9 @@ function Start-CrossGen {
             "win7-x64"
         }
     } elseif ($IsLinux) {
-        if ($IsUbuntu) {
-            "ubuntu.14.04-x64"
-        } elseif ($IsCentOS) {
-            "rhel.7-x64"
-        } elseif ($IsFedora) {
-            "fedora.24-x64"
-        } elseif ($IsOpenSUSE13) {
-            "opensuse.13.2-x64"
-        } elseif (${IsOpenSUSE42.1}) {
-            "opensuse.42.1-x64"
-        }
+        "linux-x64"
     } elseif ($IsOSX) {
-        "osx.10.10-x64"
+        "osx.10.12-x64"
     }
 
     if (-not $crossGenRuntime) {
