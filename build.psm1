@@ -265,15 +265,6 @@ function Start-PSBuild {
         }
 
         ($srcProjectDirs + $testProjectDirs) | % { Start-NativeExecution { dotnet restore $_ $RestoreArguments } }
-
-        # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
-        if ($IsOSX) {
-            # This is the restored library used to build
-            # This is allowed to fail since the user may have already restored
-            Write-Warning ".NET Core links the incorrect OpenSSL, correcting NuGet package libraries..."
-            find $env:HOME/.nuget -name System.Security.Cryptography.Native.OpenSsl.dylib | % { sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib $_ }
-            find $env:HOME/.nuget -name System.Net.Http.Native.dylib | % { sudo install_name_tool -change /usr/lib/libcurl.4.dylib /usr/local/opt/curl/lib/libcurl.4.dylib $_ }
-        }
     }
 
     # handle ResGen
@@ -430,6 +421,12 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         }
     } finally {
         Pop-Location
+    }
+
+    # add 'x' permission when building the standalone application
+    # this is temporary workaround to a bug in dotnet.exe, tracking by dotnet/cli issue #6286
+    if ($Options.Configuration -eq "Linux" -and $Options.Publish) {
+        chmod u+x $Options.Output
     }
 
     # publish netcoreapp2.0 reference assemblies
@@ -1020,14 +1017,6 @@ function Install-Dotnet {
         Start-NativeExecution {
             curl -sO $obtainUrl/$installScript
             bash ./$installScript -c $Channel -v $Version
-        }
-
-        # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
-        if ($IsOSX) {
-            # This is the library shipped with .NET Core
-            # This is allowed to fail as the user may have installed other versions of dotnet
-            Write-Warning ".NET Core links the incorrect OpenSSL, correcting .NET CLI libraries..."
-            find $env:HOME/.dotnet -name System.Security.Cryptography.Native.OpenSsl.dylib | % { sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib $_ }
         }
     } elseif ($IsWindows) {
         Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
