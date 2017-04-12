@@ -5,8 +5,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Diagnostics;
 using System.Reflection;
 using System.Collections;
-using System.Collections.Generic;
-using System.Linq;
 using System.Globalization;
 using System.Management.Automation.Internal;
 using Microsoft.Win32;
