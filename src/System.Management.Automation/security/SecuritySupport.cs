@@ -1076,7 +1076,7 @@ namespace System.Management.Automation
             StringBuilder output = new StringBuilder();
             output.AppendLine(BEGIN_CMS_SIGIL);
 
-            string encodedString = ClrFacade.ToBase64StringWithLineBreaks(bytes);
+            string encodedString = Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);
             output.AppendLine(encodedString);
             output.Append(END_CMS_SIGIL);
 

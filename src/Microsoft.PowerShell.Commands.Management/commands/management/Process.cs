@@ -1996,11 +1996,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         startInfo.Domain = nwcredential.Domain;
                     }
-#if CORECLR
-                    startInfo.PasswordInClearText = ClrFacade.ConvertSecureStringToString(_credential.Password);
-#else
                     startInfo.Password = _credential.Password;
-#endif
                 }
 
                 //RedirectionInput File Check -> Not Exist -> Throw Error
@@ -2525,11 +2521,7 @@ namespace Microsoft.PowerShell.Commands
                     IntPtr password = IntPtr.Zero;
                     try
                     {
-#if CORECLR
-                        password = (startinfo.PasswordInClearText == null) ? Marshal.StringToCoTaskMemUni(string.Empty) : Marshal.StringToCoTaskMemUni(startinfo.PasswordInClearText);
-#else
-                        password = (startinfo.Password == null) ? Marshal.StringToCoTaskMemUni(string.Empty) : ClrFacade.SecureStringToCoTaskMemUnicode(startinfo.Password);
-#endif
+                        password = (startinfo.Password == null) ? Marshal.StringToCoTaskMemUni(string.Empty) : Marshal.SecureStringToCoTaskMemUnicode(startinfo.Password);
                         flag = ProcessNativeMethods.CreateProcessWithLogonW(startinfo.UserName, startinfo.Domain, password, logonFlags, null, cmdLine, creationFlags, AddressOfEnvironmentBlock, startinfo.WorkingDirectory, lpStartupInfo, lpProcessInformation);
                         if (!flag)
                         {
