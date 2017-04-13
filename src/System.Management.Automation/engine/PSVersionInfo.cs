@@ -21,7 +21,7 @@ namespace System.Management.Automation
         internal const string PSVersionName = "PSVersion";
         internal const string SerializationVersionName = "SerializationVersion";
         internal const string WSManStackVersionName = "WSManStackVersion";
-        private static Hashtable s_psVersionTable = null;
+        private static PSVersionHashTable s_psVersionTable = null;
 
         /// <summary>
         /// A constant to track current PowerShell Version.
@@ -54,7 +54,7 @@ namespace System.Management.Automation
         // Static Constructor.
         static PSVersionInfo()
         {
-            s_psVersionTable = new Hashtable(StringComparer.OrdinalIgnoreCase);
+            s_psVersionTable = new PSVersionHashTable(StringComparer.OrdinalIgnoreCase);
 
             s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV6Version;
             s_psVersionTable["PSEdition"] = PSEditionValue;
@@ -71,7 +71,7 @@ namespace System.Management.Automation
 #endif
         }
 
-        internal static Hashtable GetPSVersionTable()
+        internal static PSVersionHashTable GetPSVersionTable()
         {
             return s_psVersionTable;
         }
@@ -313,6 +313,43 @@ namespace System.Management.Automation
         }
 
         #endregion
+    }
+
+    /// <summary>
+    /// Represents an implementation of '$PSVersionTable' variable.
+    /// The implementation contains ordered 'Keys' and 'GetEnumerator' to get user-friendly output.
+    /// </summary>
+    public sealed class PSVersionHashTable : Hashtable, IEnumerable
+    {
+        internal PSVersionHashTable(IEqualityComparer equalityComparer) : base(equalityComparer)
+        {
+        }
+
+        /// <summary>
+        /// Returns ordered collection with Keys of 'PSVersionHashTable'
+        /// </summary>
+        public override ICollection Keys
+        {
+            get
+            {
+                Array arr = new string[base.Keys.Count];
+                base.Keys.CopyTo(arr, 0);
+                Array.Sort(arr, StringComparer.OrdinalIgnoreCase);
+                return arr;
+            }
+        }
+
+        /// <summary>
+        /// Returns an enumerator for 'PSVersionHashTable'.
+        /// The enumeration is ordered (based on ordered version of 'Keys').
+        /// </summary>
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            foreach (string key in Keys)
+            {
+                yield return new System.Collections.DictionaryEntry(key, this[key]);
+            }
+        }
     }
 
     /// <summary>
