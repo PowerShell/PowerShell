@@ -127,7 +127,7 @@ Copyright (C) Microsoft Corporation. All rights reserved.</value>
   </data>
   <data name="ShellHelp" xml:space="preserve">
     <value>PowerShell[.exe] [-PSConsoleFile &lt;file&gt; | -Version &lt;version&gt;]
-    [-NoLogo] [-NoExit] [-Sta] [-Mta] [-NoProfile] [-NonInteractive]
+    [-NoLogo] [-NoExit] [-Sta] [-Mta] [-NoProfile] [-NonInteractive] [-Interactive]
     [-InputFormat {Text | XML}] [-OutputFormat {Text | XML}]
     [-WindowStyle &lt;style&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
     [-ConfigurationName &lt;string&gt;]
@@ -163,6 +163,9 @@ PowerShell[.exe] -Help | -? | /?
 
 -NonInteractive
     Does not present an interactive prompt to the user.
+
+-Interactive
+    Present an interactive prompt to the user.
 
 -InputFormat
     Describes the format of data sent to Windows PowerShell. Valid values are

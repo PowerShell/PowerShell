@@ -570,6 +570,10 @@ namespace Microsoft.PowerShell
                 {
                     _sshServerMode = true;
                 }
+                else if (MatchSwitch(switchKey, "interactive", "i"))
+                {
+                    _noInteractive = false;
+                }
                 else if (MatchSwitch(switchKey, "configurationname", "config"))
                 {
                     ++i;
@@ -801,7 +805,7 @@ namespace Microsoft.PowerShell
                 {
                     ParseFormat(args, ref i, ref _outFormat, CommandLineParameterParserStrings.MissingOutputFormatParameter);
                 }
-                else if (MatchSwitch(switchKey, "inputformat", "i") || MatchSwitch(switchKey, "if", "i"))
+                else if (MatchSwitch(switchKey, "inputformat", "in") || MatchSwitch(switchKey, "if", "if"))
                 {
                     ParseFormat(args, ref i, ref _inFormat, CommandLineParameterParserStrings.MissingInputFormatParameter);
                 }
