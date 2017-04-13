@@ -232,13 +232,13 @@ namespace Microsoft.PowerShell.Workflow
             {
                 if (_powerShellActivitiesAreAllowed == null)
                 {
-					lock (_syncObject) {
-						if (_powerShellActivitiesAreAllowed == null)
-						{
-							bool allowed = (AllowedActivity ?? new string[0]).Any(a => string.Equals(a, PSDefaultActivities, StringComparison.OrdinalIgnoreCase));
-						    _powerShellActivitiesAreAllowed = allowed;
-						}
-					}
+                    lock (_syncObject) {
+                        if (_powerShellActivitiesAreAllowed == null)
+                        {
+                            bool allowed = (AllowedActivity ?? new string[0]).Any(a => string.Equals(a, PSDefaultActivities, StringComparison.OrdinalIgnoreCase));
+                            _powerShellActivitiesAreAllowed = allowed;
+                        }
+                    }
                 }
                 return _powerShellActivitiesAreAllowed.Value;
             }
