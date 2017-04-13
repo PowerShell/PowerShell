@@ -3,16 +3,15 @@ Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
         $watch = [System.Diagnostics.Stopwatch]::StartNew()
         Start-Sleep -Seconds 1
         $watch.Stop()
-        $watch.ElapsedMilliseconds -ge 999 | Should be $true
+        $watch.ElapsedMilliseconds | Should BeGreaterThan 950
     }
 
     It "Should work properly when sleeping with Milliseconds" {
         $watch = [System.Diagnostics.Stopwatch]::StartNew()
         Start-Sleep -Milliseconds 1000
         $watch.Stop()
-        $watch.ElapsedMilliseconds -ge 999 | Should be $true
+        $watch.ElapsedMilliseconds | Should BeGreaterThan 950
     }
-
 }
 
 Describe "Start-Sleep" -Tags "CI" {
