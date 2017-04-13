@@ -23,7 +23,7 @@ namespace Microsoft.PowerShell.Workflow
         private RunspaceProvider _localRunspaceProvider;
         private RunspaceProvider _unboundedLocalRunspaceProvider;
 
-	    private static readonly Tracer _tracer = new Tracer();
+        private static readonly Tracer _tracer = new Tracer();
         private static readonly PSPerfCountersMgr _psPerfCountersMgrInst = PSPerfCountersMgr.Instance;
         private readonly PSWorkflowConfigurationProvider _configuration;
         private readonly object _syncObject = new object();

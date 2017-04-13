@@ -29,8 +29,8 @@ namespace Microsoft.Management.UI.Internal
     ///
     /// If a custom template is provided for this control, then the template MUST provide the following template parts:
     ///
-    /// 	PART_LeftGrip - A required template part which must be of type Thumb.  The grip on the left.
-    /// 	PART_RightGrip - A required template part which must be of type Thumb.  The grip on the right.
+    ///     PART_LeftGrip - A required template part which must be of type Thumb.  The grip on the left.
+    ///     PART_RightGrip - A required template part which must be of type Thumb.  The grip on the right.
     ///
     /// </remarks>
     [TemplatePart(Name="PART_LeftGrip", Type=typeof(Thumb))]

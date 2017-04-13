@@ -291,7 +291,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldProcess(setClipboardShouldProcessTarget, "Set-Clipboard"))
             {
-                //	Set file list formats to clipboard.
+                // Set file list formats to clipboard.
                 Clipboard.Clear();
                 StringCollection fileDropList = new StringCollection();
                 fileDropList.AddRange(dropFiles.ToArray());

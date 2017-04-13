@@ -31,10 +31,10 @@ namespace Microsoft.Management.UI.Internal
     ///
     /// If a custom template is provided for this control, then the template MUST provide the following template parts:
     ///
-    /// 	PART_DeleteButton - A required template part which must be of type Button.  Button which keeps track of whether the row should be deleted.
-    /// 	PART_EditBox - A required template part which must be of type TextBox.  Displays the text content in an editable manner.
-    /// 	PART_LinkButton - A required template part which must be of type Button.  Displays the text content in a read-only manner and allows single click selection.
-    /// 	PART_RenameButton - A required template part which must be of type ToggleButton.  Button which allows for editing the name of the item.
+    ///     PART_DeleteButton - A required template part which must be of type Button.  Button which keeps track of whether the row should be deleted.
+    ///     PART_EditBox - A required template part which must be of type TextBox.  Displays the text content in an editable manner.
+    ///     PART_LinkButton - A required template part which must be of type Button.  Displays the text content in a read-only manner and allows single click selection.
+    ///     PART_RenameButton - A required template part which must be of type ToggleButton.  Button which allows for editing the name of the item.
     ///
     /// </remarks>
     [TemplatePart(Name="PART_DeleteButton", Type=typeof(Button))]

@@ -123,7 +123,7 @@ namespace Microsoft.Management.UI.Internal
                     return LanguagePrimitives.Compare(firstValue, secondValue);
                 }
 
-		// otherwise compare them as strings
+                // otherwise compare them as strings
                 return string.Compare(firstValue.ToString(), secondValue.ToString(), stringComparison);
             }
 

@@ -121,7 +121,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// prompt message
         /// </summary>
         public string Message
-	{
+        {
             get
             {
                 return message;

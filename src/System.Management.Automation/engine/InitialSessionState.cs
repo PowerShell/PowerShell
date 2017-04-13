@@ -5307,7 +5307,7 @@ end
                         "Receive-PSSession",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("exsn",
                         "Exit-PSSession",  "", ScopedItemOptions.AllScope),
-                    // Win8: 121662/169179	Add "sls" alias for Select-String cmdlet
+                    // Win8: 121662/169179  Add "sls" alias for Select-String cmdlet
                     //   - do not use AllScope - this causes errors in profiles that set this somewhat commonly used alias.
                     new SessionStateAliasEntry("sls",
                         "Select-String", "", ScopedItemOptions.None),

@@ -129,7 +129,7 @@ namespace System.Management.Automation
 
             //new MITypeSerializationInfo(typeof(SecureString),
             //                          InternalSerializer.WriteSecureString),
-		};
+        };
 
         /// <summary>
         /// Dictionary of knowntypes.

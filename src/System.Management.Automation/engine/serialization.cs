@@ -375,13 +375,13 @@ namespace System.Management.Automation
             _cimClassIdToClass.Add(key, cimClass);
 
             /* PRINTF DEBUG
-			Console.WriteLine("Contents of deserialization cache (after  a call to AddCimClassToCache ({0})):", key);
-			Console.WriteLine("  Count = {0}", this._cimClassIdToClass.Count);
-			foreach (var t in this._cimClassIdToClass.Keys)
-			{
-				Console.WriteLine("  {0}", t);
-			}
-			 */
+            Console.WriteLine("Contents of deserialization cache (after  a call to AddCimClassToCache ({0})):", key);
+            Console.WriteLine("  Count = {0}", this._cimClassIdToClass.Count);
+            foreach (var t in this._cimClassIdToClass.Keys)
+            {
+                Console.WriteLine("  {0}", t);
+            }
+             */
         }
 
         internal CimClass GetCimClassFromCache(TKey key)
@@ -390,15 +390,15 @@ namespace System.Management.Automation
             if (_cimClassIdToClass.TryGetValue(key, out cimClass))
             {
                 /* PRINTF DEBUG
-				Console.WriteLine("GetCimClassFromCache - class found: {0}", key);
-				 */
+                Console.WriteLine("GetCimClassFromCache - class found: {0}", key);
+                 */
 
                 return cimClass;
             }
 
             /* PRINTF DEBUG
-			Console.WriteLine("GetCimClassFromCache - class NOT found: {0}", key);
-			 */
+            Console.WriteLine("GetCimClassFromCache - class NOT found: {0}", key);
+             */
 
             return null;
         }
@@ -424,13 +424,13 @@ namespace System.Management.Automation
             _cimClassesHeldByDeserializer.Add(key);
 
             /* PRINTF DEBUG
-			Console.WriteLine("Contents of serialization cache (after adding {0}):", key);
-			Console.WriteLine("  Count = {0}", this._cimClassesHeldByDeserializer.Count);
-			foreach (var t in _cimClassesHeldByDeserializer)
-			{
-				Console.WriteLine("  {0}", t);
-			}
-			 */
+            Console.WriteLine("Contents of serialization cache (after adding {0}):", key);
+            Console.WriteLine("  Count = {0}", this._cimClassesHeldByDeserializer.Count);
+            foreach (var t in _cimClassesHeldByDeserializer)
+            {
+                Console.WriteLine("  {0}", t);
+            }
+             */
         }
     }
 
@@ -5874,8 +5874,8 @@ namespace System.Management.Automation
                 typeof(Int64),
                 typeof(SByte),
                 typeof(Single),
-				// typeof(ScriptBlock) - don't want ScriptBlocks, because they are deserialized into strings
-				typeof(String),
+                // typeof(ScriptBlock) - don't want ScriptBlocks, because they are deserialized into strings
+                typeof(String),
                 typeof(TimeSpan),
                 typeof(UInt16),
                 typeof(UInt32),

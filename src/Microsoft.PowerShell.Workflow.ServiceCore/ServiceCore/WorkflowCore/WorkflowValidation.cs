@@ -15,7 +15,7 @@ namespace Microsoft.PowerShell.Workflow
     using System.Diagnostics.CodeAnalysis;
     using System.Management.Automation.Tracing;
     using Microsoft.PowerShell.Activities;
-	using System.Management.Automation;
+    using System.Management.Automation;
     using System.Collections.Concurrent;
     using System.Reflection;
 
