@@ -129,6 +129,8 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
     $FullyQualifiedFile   = Join-Path -Path $tmpDirectory -ChildPath $testfile
     $FullyQualifiedFolder = Join-Path -Path $tmpDirectory -ChildPath $testfolder
     $FullyQualifiedLink   = Join-Path -Path $tmpDirectory -ChildPath $testlink
+    $SymLinkMask          = [System.IO.FileAttributes]::ReparsePoint
+    $DirLinkMask          = $SymLinkMask -bor [System.IO.FileAttributes]::Directory
 
     BeforeEach {
         Clean-State
@@ -144,6 +146,7 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
         $fileInfo = Get-ChildItem $FullyQualifiedLink
         $fileInfo.Target | Should Match ([regex]::Escape($FullyQualifiedFile))
         $fileInfo.LinkType | Should Be "SymbolicLink"
+        $fileInfo.Attributes -band $DirLinkMask | Should Be $SymLinkMask
     }
 
     It "Should create a symbolic link to a non-existing file without error" {
@@ -155,18 +158,20 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
         $fileInfo.Target | Should Be $target
         Test-Path $fileInfo.Target | Should be $false
         $fileInfo.LinkType | Should Be "SymbolicLink"
+        $fileInfo.Attributes -band $DirLinkMask | Should Be $SymLinkMask
     }
 
-    It "Should create a symbolic link from directory without error" {
+    It "Should create a symbolic link to directory without error" {
         New-Item -Name $testFolder -Path $tmpDirectory -ItemType directory
         Test-Path $FullyQualifiedFolder | Should Be $true
 
         New-Item -ItemType SymbolicLink -Target $FullyQualifiedFolder -Name $testlink -Path $tmpDirectory
         Test-Path $FullyQualifiedLink | Should Be $true
 
-        $fileInfo = Get-ChildItem $FullyQualifiedLink
+        $fileInfo = Get-Item $FullyQualifiedLink
         $fileInfo.Target | Should Match ([regex]::Escape($FullyQualifiedFolder))
         $fileInfo.LinkType | Should Be "SymbolicLink"
+        $fileInfo.Attributes -band $DirLinkMask | Should Be $DirLinkMask
 
         # Remove the link explicitly to avoid broken symlink issue
         Remove-Item $FullyQualifiedLink -Force

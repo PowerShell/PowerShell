@@ -2138,9 +2138,9 @@ namespace Microsoft.PowerShell.Commands
                     // non-existing targets on either Windows or Linux.
                     try
                     {
-                        exists = (itemType == ItemType.SymbolicLink)
-                            ? true // pretend it exists if we're making a symbolic link
-                            : CheckItemExists(strTargetPath, out isDirectory);
+                        exists = CheckItemExists(strTargetPath, out isDirectory);
+                        if (itemType == ItemType.SymbolicLink)
+                            exists = true; // pretend the target exists if we're making a symbolic link
                     }
                     catch (Exception e)
                     {
