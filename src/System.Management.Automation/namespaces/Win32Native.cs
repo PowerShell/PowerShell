@@ -891,26 +891,4 @@ namespace Microsoft.PowerShell.Commands.Internal
 
 #endif
     }
-
-
-    internal sealed class SafeProcessHandle : SafeHandle
-    {
-        internal SafeProcessHandle() : base(IntPtr.Zero, true) { }
-
-        internal SafeProcessHandle(IntPtr existingHandle)
-            : base(IntPtr.Zero, true)
-        {
-            SetHandle(existingHandle);
-        }
-
-        protected override bool ReleaseHandle()
-        {
-            return base.IsClosed ? true : Win32Native.CloseHandle(base.handle);
-        }
-
-        public override bool IsInvalid
-        {
-            get { return handle == IntPtr.Zero || handle == new IntPtr(-1); }
-        }
-    }
 }

@@ -104,7 +104,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 {
                     throw new XmlException(schemaException.Message, schemaException, schemaException.LineNumber, schemaException.LinePosition);
                 }
-                
+
                 XmlException xmlException = e.InnerException as XmlException;
                 if (xmlException != null)
                 {

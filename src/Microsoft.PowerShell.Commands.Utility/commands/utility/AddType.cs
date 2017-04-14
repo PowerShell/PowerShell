@@ -1016,7 +1016,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         // We now ship the NetCoreApp2.0 reference assemblies with PowerShell Core, so that Add-Type can work
-        // in a predicted way and won't be broken when we move to newer version of .NET Core.
+        // in a predictable way and won't be broken when we move to newer version of .NET Core.
         // The NetCoreApp2.0 reference assemblies are located at '$PSHOME\ref'.
         private static string s_netcoreAppRefFolder = PathType.Combine(PathType.GetDirectoryName(typeof(PSObject).Assembly.Location), "ref");
         private static string s_frameworkFolder = PathType.GetDirectoryName(typeof(object).Assembly.Location);

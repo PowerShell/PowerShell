@@ -220,7 +220,7 @@ namespace System.Management.Automation.Runspaces
         ReuseThread = 2,
 
         /// <summary>
-        /// Doesn�t create a new thread; the execution occurs on the 
+        /// Doesn't create a new thread; the execution occurs on the 
         /// thread that calls Invoke.
         /// </summary>
         /// <remarks>
