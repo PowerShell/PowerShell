@@ -355,6 +355,32 @@ namespace System.Management.Automation.Runspaces
             throw new PSNotImplementedException();
         }
 
+        internal virtual void ValidatePortInRange(int port)
+        {
+            if ((port < MinPort || port > MaxPort))
+            {
+                String message =
+                    PSRemotingErrorInvariants.FormatResourceString(
+                        RemotingErrorIdStrings.PortIsOutOfRange, port);
+                ArgumentException e = new ArgumentException(message);
+                throw e;
+            }
+        }
+
+        #endregion
+
+        #region Constants
+
+        /// <summary>
+        /// Maximum value for port
+        /// </summary>
+        protected const int MaxPort = 0xFFFF;
+
+        /// <summary>
+        /// Minimum value for port
+        /// </summary>
+        protected const int MinPort = 0;
+
         #endregion
     }
 
@@ -1172,6 +1198,7 @@ namespace System.Management.Automation.Runspaces
 
             if (port.HasValue)
             {
+                ValidatePortRange(port.Value);
                 // resolve to default ports if required
                 if (port.Value == DefaultPort)
                 {
@@ -1184,14 +1211,6 @@ namespace System.Management.Automation.Runspaces
                 {
                     PortSetting = port.Value;
                     UseDefaultWSManPort = false;
-                }
-                else if ((port.Value < MinPort || port.Value > MaxPort))
-                {
-                    String message =
-                        PSRemotingErrorInvariants.FormatResourceString(
-                            RemotingErrorIdStrings.PortIsOutOfRange, port);
-                    ArgumentException e = new ArgumentException(message);
-                    throw e;
                 }
                 else
                 {
@@ -1390,16 +1409,6 @@ namespace System.Management.Automation.Runspaces
         /// default remote host name
         /// </summary>
         private const string DefaultComputerName = "localhost";
-
-        /// <summary>
-        /// Maximum value for port
-        /// </summary>
-        private const int MaxPort = 0xFFFF;
-
-        /// <summary>
-        /// Minimum value for port
-        /// </summary>
-        private const int MinPort = 0;
 
         /// <summary>
         /// String that represents the local host Uri
@@ -1901,21 +1910,10 @@ namespace System.Management.Automation.Runspaces
             string userName,
             string computerName,
             string keyFilePath,
-            int port)
+            int port) : this(userName, computerName, keyFilePath)
         {
-            if (computerName == null) { throw new PSArgumentNullException("computerName"); }
-            if ((port < MinPort || port > MaxPort))
-            {
-                String message =
-                    PSRemotingErrorInvariants.FormatResourceString(
-                        RemotingErrorIdStrings.PortIsOutOfRange, port);
-                ArgumentException e = new ArgumentException(message);
-                throw e;
-            }
+            ValidatePortRange(port);
 
-            this.UserName = userName;
-            this.ComputerName = computerName;
-            this.KeyFilePath = keyFilePath;
             this.Port = (port != 0) ? port : DefaultPort;
         }
 
@@ -2085,16 +2083,6 @@ namespace System.Management.Automation.Runspaces
         /// Default value for port
         /// </summary>
         private const int DefaultPort = 22;
-
-        /// <summary>
-        /// Maximum value for port
-        /// </summary>
-        private const int MaxPort = 0xFFFF;
-
-        /// <summary>
-        /// Minimum value for port
-        /// </summary>
-        private const int MinPort = 0;
 
         #endregion
 
