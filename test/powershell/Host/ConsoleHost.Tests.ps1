@@ -267,8 +267,13 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         # All of the following tests replace the prompt (either via an initial command or interactively)
         # so that we can read StandardOutput and reliably know exactly what the prompt is.
 
-        It "Interactive redirected input" {
-            $si = NewProcessStartInfo "-noprofile -nologo" -RedirectStdIn
+        It "Interactive redirected input" -TestCases @(
+            @{InteractiveSwitch = ""}
+            @{InteractiveSwitch = " -IntERactive"}
+            @{InteractiveSwitch = " -i"}
+        ) {
+            param($interactiveSwitch)
+            $si = NewProcessStartInfo "-noprofile -nologo$interactiveSwitch" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$function:prompt = { 'PS> ' }`n")
             $null = $process.StandardOutput.ReadLine()
