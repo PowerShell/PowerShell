@@ -332,10 +332,13 @@ namespace System.Management.Automation
         {
             get
             {
-                Array arr = new string[base.Keys.Count];
-                base.Keys.CopyTo(arr, 0);
-                Array.Sort(arr, StringComparer.OrdinalIgnoreCase);
-                return arr;
+                ArrayList keyList = new ArrayList(base.Keys);
+                keyList.Sort();
+                var index = keyList.IndexOf(PSVersionInfo.PSVersionName);
+                var item = keyList[index];
+                keyList.RemoveAt(index);
+                keyList.Insert(0, item);
+                return keyList.ToArray();
             }
         }
 

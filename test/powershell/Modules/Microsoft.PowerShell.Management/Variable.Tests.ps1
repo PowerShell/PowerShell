@@ -116,13 +116,16 @@ Describe "Validate special variables" -Tags "CI" {
         $PSVersionTable["PSEdition"] | Should Be "Core"
     }
 
-    It "Verify `$PSVersionTable is ordered" {
-        $keys1 = $PSVersionTable.Keys
+    It "Verify `$PSVersionTable is ordered and 'PSVersion' is on first place" {
+        $PSVersionName = "PSVersion"
+        $keys1 = ($PSVersionTable | Format-Table -HideTableHeaders -Property Name | Out-String) -split [System.Environment]::NewLine | Where-Object {$_} | ForEach-Object {$_.Trim()}
         $keys1sorted = $keys1 | Sort-Object
-        $keys2 = ($PSVersionTable | Format-Table -HideTableHeaders -Property Name | Out-String) -split [System.Environment]::NewLine | Where-Object {$_}
-        $keys2sorted = $keys2 | Sort-Object
 
-        Compare-Object -ReferenceObject $keys1 -DifferenceObject $keys1sorted -SyncWindow 0 | Should Be $null
-        Compare-Object -ReferenceObject $keys2 -DifferenceObject $keys2sorted -SyncWindow 0 | Should Be $null
+        $keys1[0] | Should Be "PSVersion"
+
+        $keys1last = $keys1[1..($keys1.length-1)]
+        $keys1sortedlast = $keys1[1..($keys1.length-1)] | Sort-Object
+
+        Compare-Object -ReferenceObject $keys1last -DifferenceObject $keys1sortedlast -SyncWindow 0 | Should Be $null
     }
 }
