@@ -223,6 +223,7 @@ namespace Microsoft.PowerShell.Commands
         /// </remarks>
         [Parameter(ParameterSetName = InvokeCommandCommand.ComputerNameParameterSet)]
         [Parameter(ParameterSetName = InvokeCommandCommand.FilePathComputerNameParameterSet)]
+        [Parameter(ParameterSetName = InvokeCommandCommand.SSHHostParameterSet)]
         [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
         public override Int32 Port
         {
