@@ -1139,11 +1139,6 @@ BOOL IsWow64()
 {
     HANDLE hCurrentProc = GetCurrentProcess();
 
-    if (INVALID_HANDLE_VALUE == hCurrentProc)
-    {
-        return false;
-    }
-
     BOOL isWow64Process = FALSE;
     BOOL ret = IsWow64Process(hCurrentProc, &isWow64Process);
 
@@ -1152,7 +1147,7 @@ BOOL IsWow64()
         return isWow64Process;
     }
 
-    return false;
+    return FALSE;
 }
 
 /**********************************************************************
