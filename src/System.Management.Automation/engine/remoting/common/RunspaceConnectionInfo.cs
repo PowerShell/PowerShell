@@ -1198,7 +1198,7 @@ namespace System.Management.Automation.Runspaces
 
             if (port.HasValue)
             {
-                ValidatePortRange(port.Value);
+                ValidatePortInRange(port.Value);
                 // resolve to default ports if required
                 if (port.Value == DefaultPort)
                 {
@@ -1912,7 +1912,7 @@ namespace System.Management.Automation.Runspaces
             string keyFilePath,
             int port) : this(userName, computerName, keyFilePath)
         {
-            ValidatePortRange(port);
+            ValidatePortInRange(port);
 
             this.Port = (port != 0) ? port : DefaultPort;
         }
