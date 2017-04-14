@@ -1374,40 +1374,40 @@ namespace System.Management.Automation
 
         internal static Encoding GetEncodingFromEnum(FileSystemCmdletProviderEncoding encoding)
         {
-            System.Text.Encoding result = System.Text.Encoding.Unicode;
+            Encoding result = Encoding.Unicode;
 
             switch (encoding)
             {
                 case FileSystemCmdletProviderEncoding.String:
-                    result = new UnicodeEncoding();
+                    result = Encoding.Unicode;
                     break;
 
                 case FileSystemCmdletProviderEncoding.Unicode:
-                    result = new UnicodeEncoding();
+                    result = Encoding.Unicode;
                     break;
 
                 case FileSystemCmdletProviderEncoding.BigEndianUnicode:
-                    result = new UnicodeEncoding(true, false);
+                    result = Encoding.BigEndianUnicode;
                     break;
 
                 case FileSystemCmdletProviderEncoding.UTF8:
-                    result = new UTF8Encoding();
+                    result = Encoding.UTF8;
                     break;
 
                 case FileSystemCmdletProviderEncoding.UTF7:
-                    result = new UTF7Encoding();
+                    result = Encoding.UTF7;
                     break;
 
                 case FileSystemCmdletProviderEncoding.UTF32:
-                    result = new UTF32Encoding();
+                    result = Encoding.UTF32;
                     break;
 
                 case FileSystemCmdletProviderEncoding.BigEndianUTF32:
-                    result = new UTF32Encoding(true, false);
+                    result = Encoding.BigEndianUnicode;
                     break;
 
                 case FileSystemCmdletProviderEncoding.Ascii:
-                    result = new ASCIIEncoding();
+                    result = Encoding.ASCII;
                     break;
 
                 case FileSystemCmdletProviderEncoding.Default:
