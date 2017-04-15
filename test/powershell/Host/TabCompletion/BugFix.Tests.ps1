@@ -54,4 +54,26 @@ Describe "Tab completion bug fix" -Tags "CI" {
            $result.CompletionMatches[1].CompletionText | Should Be $DatetimeProperties[1].Name # DateTime
        }
     }
+    It "Issue#3373 - '`$error[0].<tab>' should work" {
+        try {
+            5/0
+        }
+        catch {
+            $e = $error[0]
+        }
+        $cmd = "5/0;`$error[0]."
+        $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+        $result.CompletionMatches.Count | Should Be ($e | Get-Member).Count
+    }
+    It "'`$error[0].fullyQ<tab>' should work" {
+        try {
+            5/0
+        }
+        catch {
+            $e = $error[0]
+        }
+        $cmd = "5/0;`$error[0].fullyQ"
+        $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+        $result.CompletionMatches[0].CompletionText | Should BeExactly "FullyQualifiedErrorId"
+    }
 }

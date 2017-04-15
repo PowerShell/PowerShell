@@ -170,6 +170,10 @@ namespace System.Management.Automation
             CommandOrigin origin = sessionState.CurrentScope.ScopeOrigin;
 
             SessionStateScope scope;
+            if (String.Compare(variablePath.QualifiedName, SpecialVariables.Error, StringComparison.OrdinalIgnoreCase) == 0)
+            {
+                variablePath = new VariablePath(SpecialVariables.ErrorVarPath.UserPath);
+            }
             PSVariable var = sessionState.GetVariableItem(variablePath, out scope, origin);
 
             if (var != null)
