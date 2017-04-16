@@ -222,7 +222,7 @@ PowerShell[.exe] -Help | -? | /?
     interpreted as the command arguments.
 
     To write a string that runs a Windows PowerShell command, use the format:
-	"&amp; {&lt;command&gt;}"
+    "&amp; {&lt;command&gt;}"
     where the quotation marks indicate a string and the invoke operator (&amp;)
     causes the command to be executed.
 

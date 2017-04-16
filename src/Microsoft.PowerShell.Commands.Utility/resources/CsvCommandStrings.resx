@@ -120,11 +120,11 @@
   <data name="CannotAppendCsvWithMismatchedPropertyNames" xml:space="preserve">
     <value>Cannot append CSV content to the following file: {1}. The appended object does not have a property that corresponds to the following column: {0}. To continue with mismatched properties, add the -Force parameter, and then retry the command.</value>
     <comment>{0} is a placeholder for property name (i.e. ProcessId)
-	    {1} is a placeholder for filename (i.e. c:\users\lukasza\foo.csv)
+        {1} is a placeholder for filename (i.e. c:\users\lukasza\foo.csv)
 
-	    {StrContains="Force"}
+        {StrContains="Force"}
 
-	    Reviewed by TArcher on 2010-06-29.
+        Reviewed by TArcher on 2010-06-29.
     </comment>
   </data>
   <data name="CannotSpecifyPathAndLiteralPath" xml:space="preserve">
