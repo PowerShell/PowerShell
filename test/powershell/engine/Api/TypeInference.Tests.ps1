@@ -141,7 +141,7 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Name | Should be System.Int32
     }
 
-    It "Inferes type parameter from PSTypeNameAttribute type" {
+    It "Inferes type parameter from PSTypeNameAttribute type" -Skip:(!$IsWindows) {        
         $res = [AstTypeInference]::InferTypeOf( {                
                 param([int] $i, [PSTypeName('System.Management.ManagementObject#root\cimv2\Win32_Process')] $s)                
             }.Ast.ParamBlock.Parameters[1])
@@ -250,7 +250,7 @@ Describe "Type inference Tests" -tags "CI" {
 
     }
 
-    It "Inferes type from cim command" {
+    It "Inferes type from cim command"  -Skip:(!$IsWindows) {
         $res = [AstTypeInference]::InferTypeOf( { Get-CimInstance -Namespace root/CIMV2 -ClassName Win32_Bios }.Ast)
         $res.Count | Should Be 2
 
