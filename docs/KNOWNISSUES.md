@@ -21,10 +21,10 @@ On UNIX-like operating systems, the file system is case-sensitive and this is ex
 #### Indirectly
 
 - If a script tries to load a module and the module name is not cased correctly, then the module load will fail.
-This may cause a problem with existing scripts if the name by which the module is referenced doesn't match the actual file name.
+  This may cause a problem with existing scripts if the name by which the module is referenced doesn't match the actual file name.
 - Tab-completion will not auto-complete if the file name case is wrong.
-The fragment to complete must be cased properly.
-(Completion is case-insensitive for type name and type member completions.)
+  The fragment to complete must be cased properly.
+  (Completion is case-insensitive for type name and type member completions.)
 
 ### .PS1 File Extensions
 
@@ -78,7 +78,6 @@ Use `-Encoding Ascii` to write ASCII text (which, not being Unicode, will not ha
 (Note: see [RFC0020](https://github.com/PowerShell/PowerShell-RFC/issues/71) to give us feedback on improving the encoding experience for PowerShell Core across all platforms.
 We are working to support UTF-8 without a BOM and potentially changing the encoding defaults for various cmdlets across platforms.)
 
-
 ### Job Control
 
 There is no job-control support in PowerShell on Linux/macOS.
@@ -94,7 +93,7 @@ Currently, PowerShell Core supports PowerShell Remoting (PSRP) over WSMan with B
 The work for WSMan-based remoting is being done in the [psl-omi-provider](https://github.com/PowerShell/psl-omi-provider) repo.
 
 PowerShell Core also supports PowerShell Remoting (PSRP) over SSH on all platforms (Windows, macOS, and Linux).
-While this is not currently supported in production, you can learn more about setting this up [here](https://github.com/PowerShell/PowerShell/tree/master/demos/SSHRemoting). 
+While this is not currently supported in production, you can learn more about setting this up [here](https://github.com/PowerShell/PowerShell/tree/master/demos/SSHRemoting).
 
 ### Just-Enough-Administration (JEA) Support
 
