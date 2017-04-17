@@ -982,6 +982,11 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// Validates parameter value and returns as string
+        /// </summary>
+        /// <param name="param">Parameter value to be validated</param>
+        /// <returns>Parameter value as string</returns>
         private static string GetSSHConnectionStringParameter(object param)
         {
             var paramValue = param as string;
@@ -993,6 +998,12 @@ namespace Microsoft.PowerShell.Commands
             return paramValue;
         }
 
+
+        /// <summary>
+        /// Validates parameter value and returns as integer
+        /// </summary>
+        /// <param name="param">Parameter value to be validated</param>
+        /// <returns>Parameter value as integer</returns>
         private static int GetSSHConnectionIntParameter(object param)
         {
             int? paramValue = param as int?;
