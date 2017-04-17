@@ -1843,7 +1843,12 @@ namespace Microsoft.PowerShell.Commands
                 //UseNewEnvironment
                 if (_UseNewEnvironment)
                 {
-                    ClrFacade.GetProcessEnvironment(startInfo).Clear();
+                    var environmentVars = ClrFacade.GetProcessEnvironment(startInfo);
+                    string envProgramFiles = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+                    string envProgramFilesX86 = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86);
+                    environmentVars.Clear();
+                    environmentVars.Add("ProgramFiles", envProgramFiles);
+                    environmentVars.Add("ProgramFiles(x86)", envProgramFilesX86);
                     LoadEnvironmentVariable(startInfo, Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine));
                     LoadEnvironmentVariable(startInfo, Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User));
                 }
