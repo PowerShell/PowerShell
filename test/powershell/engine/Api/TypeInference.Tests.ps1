@@ -646,46 +646,47 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should be 0
     }
 
-        
-    It 'Inferes type of command parameter' {
-        $errors = $null
-        $tokens = $null
-        $p = Resolve-path TestDrive:/
-        $ast = [Language.Parser]::ParseInput("Get-ChildItem -Path $p/foo.txt", [ref] $tokens, [ref] $errors)
-        $cmdParam = $ast.EndBlock.Statements[0].Pipelineelements[0].CommandElements[1]
-        $res = [AstTypeInference]::InferTypeOf( $cmdParam )
-
-        $res.Count | Should be 0
-    }
-
-    It 'Inferes type of command parameter - second form' {
-        $errors = $null
-        $tokens = $null
-        $p = Resolve-path TestDrive:/
-        $ast = [Language.Parser]::ParseInput("Get-ChildItem -LiteralPath $p/foo.txt", [ref] $tokens, [ref] $errors)
-        $cmdParam = $ast.EndBlock.Statements[0].Pipelineelements[0].CommandElements[1]
-        $res = [AstTypeInference]::InferTypeOf( $cmdParam )
-        $res.Count | Should be 0
-    }
-    
-    It 'Inferes type of common commands with Path parameter' {
-        $cmdAst = { Get-ChildItem -Path:c:\foo.txt }.ast.EndBlock.Statements[0].Pipelineelements[0]
-        $res = [AstTypeInference]::InferTypeOf( $cmdAst )
-
-        $res.Count | Should be 2
-        foreach ($r in $res) {
-            $r.Name -in 'System.IO.FileInfo', 'System.IO.DirectoryInfo' | Should be $true
+    Context "TestDrivePath" {
+        BeforeAll {
+            $errors = $null
+            $tokens = $null
+            $p = Resolve-path TestDrive:/
         }
-    }
+        It 'Inferes type of command parameter' {            
+            $ast = [Language.Parser]::ParseInput("Get-ChildItem -Path $p/foo.txt", [ref] $tokens, [ref] $errors)
+            $cmdParam = $ast.EndBlock.Statements[0].Pipelineelements[0].CommandElements[1]
+            $res = [AstTypeInference]::InferTypeOf( $cmdParam )
 
-    It 'Inferes type of common commands with LiteralPath parameter' {
-        $p = resolve-path Testdrive:
-        $cmdAst = { Get-ChildItem -LiteralPath:c:\foo.txt }.ast.EndBlock.Statements[0].Pipelineelements[0]
-        $res = [AstTypeInference]::InferTypeOf( $cmdAst )
+            $res.Count | Should be 0
+        }
 
-        $res.Count | Should be 2
-        foreach ($r in $res) {
-            $r.Name -in 'System.IO.FileInfo', 'System.IO.DirectoryInfo' | Should be $true
+        It 'Inferes type of command parameter - second form' {
+            $ast = [Language.Parser]::ParseInput("Get-ChildItem -LiteralPath $p/foo.txt", [ref] $tokens, [ref] $errors)
+            $cmdParam = $ast.EndBlock.Statements[0].Pipelineelements[0].CommandElements[1]
+            $res = [AstTypeInference]::InferTypeOf( $cmdParam )
+            $res.Count | Should be 0
+        }
+    
+        It 'Inferes type of common commands with Path parameter' {
+            $ast = [Language.Parser]::ParseInput("Get-ChildItem -Path:$p/foo.txt", [ref] $tokens, [ref] $errors)
+            $cmdAst = $ast.EndBlock.Statements[0].Pipelineelements[0]
+            $res = [AstTypeInference]::InferTypeOf( $cmdAst )
+
+            $res.Count | Should be 2
+            foreach ($r in $res) {
+                $r.Name -in 'System.IO.FileInfo', 'System.IO.DirectoryInfo' | Should be $true
+            }
+        }
+
+        It 'Inferes type of common commands with LiteralPath parameter' {
+            $ast = [Language.Parser]::ParseInput("Get-ChildItem -LiteralPath:$p/foo.txt", [ref] $tokens, [ref] $errors)
+            $cmdAst = $ast.EndBlock.Statements[0].Pipelineelements[0]
+            $res = [AstTypeInference]::InferTypeOf( $cmdAst )
+
+            $res.Count | Should be 2
+            foreach ($r in $res) {
+                $r.Name -in 'System.IO.FileInfo', 'System.IO.DirectoryInfo' | Should be $true
+            }
         }
     }
 
