@@ -355,6 +355,10 @@ namespace System.Management.Automation.Runspaces
             throw new PSNotImplementedException();
         }
 
+        /// <summary>
+        /// Validates port number is in range
+        /// </summary>
+        /// <param name="port">Port number to validate</param>
         internal virtual void ValidatePortInRange(int port)
         {
             if ((port < MinPort || port > MaxPort))
