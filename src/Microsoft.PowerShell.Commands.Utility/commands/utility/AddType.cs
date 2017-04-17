@@ -1037,6 +1037,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         private static PortableExecutableReference[] InitDefaultRefAssemblies()
         {
+            // netcoreapp2.0 currently comes with 137 reference assemblies (maybe more in future), so we use a capacity of '150'.
             var defaultRefAssemblies = new List<PortableExecutableReference>(150);
             foreach (string file in Directory.EnumerateFiles(s_netcoreAppRefFolder, "*.dll", SearchOption.TopDirectoryOnly))
             {
@@ -1111,7 +1112,7 @@ namespace Microsoft.PowerShell.Commands
 
             // We look up in reference/framework only when it's for resolving reference assemblies.
             // In case of 'Add-Type -AssemblyName' scenario, we don't attempt to resolve against framework assemblies because
-            //   2. Explicitly loading a framework assembly usually is not necessary in PowerShell Core.
+            //   1. Explicitly loading a framework assembly usually is not necessary in PowerShell Core.
             //   2. A user should use assembly name instead of path if they want to explicitly load a framework assembly.
             if (isForReferenceAssembly)
             {
@@ -1248,7 +1249,11 @@ namespace Microsoft.PowerShell.Commands
 
                     // Ignore some specified reference assemblies
                     string fileName = PathType.GetFileName(resolvedAssemblyPath);
-                    if (s_refAssemblyNamesToIgnore.Value.Contains(fileName)) { continue; }
+                    if (s_refAssemblyNamesToIgnore.Value.Contains(fileName))
+                    {
+                        WriteVerbose(StringUtil.Format(AddTypeStrings.ReferenceAssemblyIgnored, resolvedAssemblyPath));
+                        continue;
+                    }
                     tempReferences.Add(MetadataReference.CreateFromFile(resolvedAssemblyPath));
                 }
                 references = tempReferences.ToArray();
