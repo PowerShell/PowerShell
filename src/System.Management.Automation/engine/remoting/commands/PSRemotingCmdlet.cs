@@ -854,42 +854,28 @@ namespace Microsoft.PowerShell.Commands
                         throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
                     }
 
-                    if (paramName.Equals(PortParameter, StringComparison.OrdinalIgnoreCase))
+                    if (paramName.Equals(ComputerNameParameter, StringComparison.OrdinalIgnoreCase) || paramName.Equals(HostNameAlias, StringComparison.OrdinalIgnoreCase))
                     {
-                        if (item[paramName] is int == false)
-                        {
-                            throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
-                        }
-
-                        connectionInfo.Port = Convert.ToInt32(item[paramName]);
+                        var resolvedComputerName = ResolveComputerName(GetSSHConnectionStringParameter(item[paramName]));
+                        ValidateComputerName(new string[] { resolvedComputerName });
+                        connectionInfo.ComputerName = resolvedComputerName;
+                    }
+                    else if (paramName.Equals(UserNameParameter, StringComparison.OrdinalIgnoreCase))
+                    {
+                        connectionInfo.UserName = GetSSHConnectionStringParameter(item[paramName]);
+                    }
+                    else if (paramName.Equals(KeyFilePathParameter, StringComparison.OrdinalIgnoreCase) || paramName.Equals(IdentityFilePathAlias, StringComparison.OrdinalIgnoreCase))
+                    {
+                        connectionInfo.KeyFilePath = GetSSHConnectionStringParameter(item[paramName]);
+                    }
+                    else if (paramName.Equals(PortParameter, StringComparison.OrdinalIgnoreCase))
+                    {
+                        connectionInfo.Port = GetSSHConnectionIntParameter(item[paramName]);
                     }
                     else
                     {
-                        string paramValue = item[paramName] as string;
-                        if (string.IsNullOrEmpty(paramValue))
-                        {
-                            throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
-                        }
-
-                        if (paramName.Equals(ComputerNameParameter, StringComparison.OrdinalIgnoreCase) || paramName.Equals(HostNameAlias, StringComparison.OrdinalIgnoreCase))
-                        {
-                            var resolvedComputerName = ResolveComputerName(paramValue);
-                            ValidateComputerName(new string[] { resolvedComputerName });
-                            connectionInfo.ComputerName = resolvedComputerName;
-                        }
-                        else if (paramName.Equals(UserNameParameter, StringComparison.OrdinalIgnoreCase))
-                        {
-                            connectionInfo.UserName = paramValue;
-                        }
-                        else if (paramName.Equals(KeyFilePathParameter, StringComparison.OrdinalIgnoreCase) || paramName.Equals(IdentityFilePathAlias, StringComparison.OrdinalIgnoreCase))
-                        {
-                            connectionInfo.KeyFilePath = paramValue;
-                        }
-                        else
-                        {
-                            throw new PSArgumentException(
-                                StringUtil.Format(RemotingErrorIdStrings.UnknownSSHConnectionParameter, paramName));
-                        }
+                        throw new PSArgumentException(
+                            StringUtil.Format(RemotingErrorIdStrings.UnknownSSHConnectionParameter, paramName));
                     }
                 }
 
@@ -994,6 +980,28 @@ namespace Microsoft.PowerShell.Commands
                                 ErrorCategory.InvalidArgument, computerNames));
                 }
             }
+        }
+
+        private static string GetSSHConnectionStringParameter(object param)
+        {
+            var paramValue = param as string;
+            if (string.IsNullOrEmpty(paramValue))
+            {
+                throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
+            }
+
+            return paramValue;
+        }
+
+        private static int GetSSHConnectionIntParameter(object param)
+        {
+            int? paramValue = param as int?;
+            if (paramValue == null)
+            {
+                throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
+            }
+
+            return paramValue.Value;
         }
 
         #endregion Private Methods
