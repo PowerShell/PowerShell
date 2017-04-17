@@ -62,3 +62,7 @@ gen
 
 # TestsResults
 TestsResults*.xml
+
+# Resharper settings
+PowerShell.sln.DotSettings.user
+
