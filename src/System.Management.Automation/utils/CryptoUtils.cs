@@ -7,17 +7,11 @@ using System.Security;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Runtime.ConstrainedExecution;
 using Microsoft.Win32.SafeHandles;
 using System.Diagnostics.CodeAnalysis;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Remoting;
-
-#if CORECLR
-// Use stubs for SerializableAttribute, SecurityPermissionAttribute, ReliabilityContractAttribute and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#else
-using System.Runtime.ConstrainedExecution;
-#endif
 
 namespace System.Management.Automation.Internal
 {
@@ -380,7 +374,6 @@ namespace System.Management.Automation.Internal
             _errorCode = unchecked((uint)-1);
         }
 
-#if !CORECLR
         /// <summary>
         /// Constructor which has type specific serialization logic
         /// </summary>
@@ -395,12 +388,10 @@ namespace System.Management.Automation.Internal
             _errorCode = unchecked(0xFFFFFFF);
             Dbg.Assert(false, "type-specific serialization logic not implemented and so this constructor should not be called");
         }
-#endif
+
         #endregion Constructors
 
         #region ISerializable Overrides
-
-#if !CORECLR
         /// <summary>
         /// Returns base implementation
         /// </summary>
@@ -410,7 +401,6 @@ namespace System.Management.Automation.Internal
         {
             base.GetObjectData(info, context);
         }
-#endif
         #endregion ISerializable Overrides
     }
 

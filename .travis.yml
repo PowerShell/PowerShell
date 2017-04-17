@@ -8,7 +8,7 @@ os:
   - osx
 sudo: required
 dist: trusty
-osx_image: xcode7.3
+osx_image: xcode8.1
 
 matrix:
   fast_finish: true
@@ -25,7 +25,7 @@ install:
   - popd
   # Default 2.0.0 Ruby is buggy
   # Default bundler version is buggy
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rvm use 2.3.1; gem uninstall bundler -v1.13.1; fi
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then rvm install ruby-2.3.1; rvm use 2.3.1; fi
   # spellcheck
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       nvm install 6.4.0 &&

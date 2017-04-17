@@ -15,10 +15,6 @@ using System.Xml;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Management.Automation.Language;
-#if CORECLR
-// Use stubs for SerializableAttribute, SecurityPermissionAttribute, ReliabilityContractAttribute and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
 
 namespace System.Management.Automation
 {

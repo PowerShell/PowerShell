@@ -16,13 +16,6 @@ using System.Management.Automation.Internal;
 using System.Diagnostics.CodeAnalysis;
 using Dbg = System.Management.Automation.Diagnostics;
 
-#if CORECLR
-// Some APIs are missing from System.Environment. We use System.Management.Automation.Environment as a proxy type:
-//  - for missing APIs, System.Management.Automation.Environment has extension implementation.
-//  - for existing APIs, System.Management.Automation.Environment redirect the call to System.Environment.
-using Environment = System.Management.Automation.Environment;
-#endif
-
 //
 // Now define the set of commands for manipulating modules.
 //
@@ -837,7 +830,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         protected override void EndProcessing()
         {
-            // Win8: 264471 - Error message for New-ModuleManifest –ProcessorArchitecture is obsolete.
+            // Win8: 264471 - Error message for New-ModuleManifest -ProcessorArchitecture is obsolete.
             // If an undefined value is passed for the ProcessorArchitecture parameter, the error message from parameter binder includes all the values from the enum. 
             // The value 'IA64' for ProcessorArchitecture is not supported. But since we do not own the enum System.Reflection.ProcessorArchitecture, we cannot control the values in it.
             // So, we add a separate check in our code to give an error if user specifies IA64

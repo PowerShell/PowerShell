@@ -171,4 +171,7 @@
   <data name="CannotDefineNewType" xml:space="preserve">
     <value>Cannot add type. Definition of new types is not supported in this language mode.</value>
   </data>
+  <data name="ReferenceAssemblyIgnored" xml:space="preserve">
+    <value>The specified reference assembly '{0}' is unnecessary and ignored.</value>
+  </data>
 </root>

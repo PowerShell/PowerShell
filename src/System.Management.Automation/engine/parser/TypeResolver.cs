@@ -12,6 +12,7 @@ using System.Linq;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Net;
+using System.Net.Mail;
 using System.Net.NetworkInformation;
 using System.Numerics;
 using System.Reflection;
@@ -25,7 +26,6 @@ using Microsoft.PowerShell.Commands;
 #if !CORECLR
 // System.DirectoryServices are not in CoreCLR
 using System.DirectoryServices;
-using System.Net.Mail;
 #endif
 
 namespace System.Management.Automation.Language
@@ -803,14 +803,14 @@ namespace System.Management.Automation
                     { typeof(X500DistinguishedName),                       new[] { "X500DistinguishedName" } },
                     { typeof(XmlDocument),                                 new[] { "xml" } },
                     { typeof(CimSession),                                  new[] { "CimSession" } },
+                    { typeof(MailAddress),                                 new[] { "mailaddress" } },
 #if !CORECLR
                     // Following types not in CoreCLR
                     { typeof(DirectoryEntry),                              new[] { "adsi" } },
                     { typeof(DirectorySearcher),                           new[] { "adsisearcher" } },
                     { typeof(ManagementClass),                             new[] { "wmiclass" } },
                     { typeof(ManagementObject),                            new[] { "wmi" } },
-                    { typeof(ManagementObjectSearcher),                    new[] { "wmisearcher" } },
-                    { typeof(MailAddress),                                 new[] { "mailaddress" } }
+                    { typeof(ManagementObjectSearcher),                    new[] { "wmisearcher" } }
 #endif
                 }
             );

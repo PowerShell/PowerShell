@@ -6,11 +6,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.Runtime.Serialization;
 
-#if CORECLR
-// Use stub for SerializableAttribute, SystemException, ThreadAbortException and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>

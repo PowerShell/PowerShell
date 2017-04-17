@@ -3,13 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System.Runtime.Serialization;
-
-#if !CORECLR
 using System.Security.Permissions;
-#else
-// Use stub for SerializableAttribute.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
 
 namespace System.Management.Automation
 {
@@ -68,7 +62,6 @@ namespace System.Management.Automation
         }
 
         #region Serialization
-#if !CORECLR // ArgumentOutOfRangeException Has No Serialization In CoreCLR
         /// <summary>
         /// Initializes a new instance of the PSArgumentOutOfRangeException class
         /// using data serialized via
@@ -100,7 +93,6 @@ namespace System.Management.Automation
             base.GetObjectData(info, context);
             info.AddValue("ErrorId", _errorId);
         }
-#endif
         #endregion Serialization
 
         /// <summary>

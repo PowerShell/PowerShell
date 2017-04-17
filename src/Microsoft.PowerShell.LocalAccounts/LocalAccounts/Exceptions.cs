@@ -4,10 +4,6 @@ using System.Management.Automation.SecurityAccountsManager;
 using System.Runtime.Serialization;
 using Microsoft.PowerShell.LocalAccounts;
 
-#if CORECLR
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
@@ -80,22 +76,12 @@ namespace Microsoft.PowerShell.Commands
         /// <param name="ex"></param>
         public LocalAccountsException(String message, Exception ex) : base(message, ex) { }
 
-#if CORECLR
-        /// <summary>
-        /// Compliance Constructor
-        /// </summary>
-        /// <param name="info"></param>
-        /// <param name="ctx"></param>
-        // This is not supported for CoreCLR
-        protected LocalAccountsException(SerializationInfo info, StreamingContext ctx) : base() { }
-#else
         /// <summary>
         /// Compliance Constructor
         /// </summary>
         /// <param name="info"></param>
         /// <param name="ctx"></param>
         protected LocalAccountsException(SerializationInfo info, StreamingContext ctx) : base(info, ctx) { }
-#endif
     }
 
     /// <summary>

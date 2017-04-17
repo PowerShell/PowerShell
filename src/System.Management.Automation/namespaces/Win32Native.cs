@@ -21,17 +21,11 @@ namespace Microsoft.PowerShell.Commands.Internal
     using System.Management.Automation;
     using System.Globalization;
     using System.Diagnostics.CodeAnalysis;
+    using System.Runtime.ConstrainedExecution;
 
     using BOOL = System.Int32;
     using DWORD = System.UInt32;
     using ULONG = System.UInt32;
-
-#if CORECLR
-    // Use stubs for SuppressUnmanagedCodeSecurityAttribute and ReliabilityContractAttribute
-    using Microsoft.PowerShell.CoreClr.Stubs;
-#else
-    using System.Runtime.ConstrainedExecution;
-#endif
 
     /**
      * Win32 encapsulation for MSCORLIB.
@@ -896,27 +890,5 @@ namespace Microsoft.PowerShell.Commands.Internal
         }
 
 #endif
-    }
-
-
-    internal sealed class SafeProcessHandle : SafeHandle
-    {
-        internal SafeProcessHandle() : base(IntPtr.Zero, true) { }
-
-        internal SafeProcessHandle(IntPtr existingHandle)
-            : base(IntPtr.Zero, true)
-        {
-            SetHandle(existingHandle);
-        }
-
-        protected override bool ReleaseHandle()
-        {
-            return base.IsClosed ? true : Win32Native.CloseHandle(base.handle);
-        }
-
-        public override bool IsInvalid
-        {
-            get { return handle == IntPtr.Zero || handle == new IntPtr(-1); }
-        }
     }
 }

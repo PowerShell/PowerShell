@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <VersionPrefix>6.0.0</VersionPrefix>
-    <TargetFramework>netstandard1.6</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <NoWarn>$(NoWarn);CS1570;CS1734</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -16,50 +16,22 @@
     <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+  <ItemGroup>
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.AssemblyLoadContext\Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.csproj" />
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.Eventing\Microsoft.PowerShell.CoreCLR.Eventing.csproj" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.3.0" />
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.3.0" />
-    <PackageReference Include="Newtonsoft.Json" Version="9.0.1" />
-    <PackageReference Include="System.Collections.Specialized" Version="4.3.0" />
-    <PackageReference Include="System.Collections.NonGeneric" Version="4.3.0" />
-    <PackageReference Include="System.ComponentModel.EventBasedAsync" Version="4.3.0" />
-    <PackageReference Include="System.ComponentModel.TypeConverter" Version="4.3.0" />
-    <PackageReference Include="System.Data.Common" Version="4.3.0" />
-    <PackageReference Include="System.Diagnostics.Contracts" Version="4.3.0" />
-    <PackageReference Include="System.Diagnostics.FileVersionInfo" Version="4.3.0" />
-    <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
-    <PackageReference Include="System.Diagnostics.StackTrace" Version="4.3.0" />
-    <PackageReference Include="System.Diagnostics.TraceSource" Version="4.3.0" />
-    <PackageReference Include="System.Dynamic.Runtime" Version="4.3.0" />
-    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.3.0" />
-    <PackageReference Include="System.IO.FileSystem.DriveInfo" Version="4.3.0" />
-    <PackageReference Include="System.IO.FileSystem.Watcher" Version="4.3.0" />
-    <PackageReference Include="System.IO.Pipes" Version="4.3.0" />
-    <PackageReference Include="System.IO.Compression.ZipFile" Version="4.3.0" />
-    <PackageReference Include="System.Linq.Expressions" Version="4.3.0" />
-    <PackageReference Include="System.Net.Http" Version="4.3.0" />
-    <PackageReference Include="System.Net.NetworkInformation" Version="4.3.0" />
-    <PackageReference Include="System.Reflection.Emit" Version="4.3.0" />
-    <PackageReference Include="System.Reflection.Emit.Lightweight" Version="4.3.0" />
-    <PackageReference Include="System.Security.AccessControl" Version="4.3.0" />
-    <PackageReference Include="System.Security.Cryptography.Algorithms" Version="4.3.0" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.3.0" />
-    <PackageReference Include="System.Security.Cryptography.X509Certificates" Version="4.3.0" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.3.0" />
-    <PackageReference Include="System.Threading.Thread" Version="4.3.0" />
-    <PackageReference Include="System.Threading.Tasks.Parallel" Version="4.3.0" />
-    <PackageReference Include="System.Xml.XPath.XmlDocument" Version="4.3.0" />
-    <PackageReference Include="System.Xml.XmlDocument" Version="4.3.0" />
-    <PackageReference Include="System.Xml.XmlSerializer" Version="4.3.0" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.4.0-preview1-25204-02" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.4.0-preview1-25204-02" />
+    <PackageReference Include="System.Security.AccessControl" Version="4.4.0-preview1-25204-02" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.4.0-preview1-25204-02" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.4.0-preview1-25204-02" />
   </ItemGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+  <PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+  <ItemGroup>
     <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.objectModel.autogen.cs" />
     <Compile Remove="cimSupport\cmdletization\xml\cmdlets-over-objects.xmlSerializer.autogen.cs" />
     <Compile Remove="engine\CodeMethods.cs" />
@@ -123,7 +95,6 @@
     <Compile Remove="engine\ComInterop\VariantBuilder.cs" />
     <Compile Remove="engine\ExtraAdapter.cs" />
     <Compile Remove="engine\ManagementObjectAdapter.cs" />
-    <Compile Remove="engine\MshObjectTypeDescriptor.cs" />
     <Compile Remove="engine\PSMI\PSNegotiationData.cs" />
     <Compile Remove="engine\PSMI\PSPowerShellPipeline.cs" />
     <Compile Remove="engine\PSMI\Serialization\InternalMISerializer.cs" />
@@ -137,6 +108,7 @@
     <Compile Remove="engine\hostifaces\RunspaceInvoke.cs" />
     <Compile Remove="logging\eventlog\EventLogLogProvider.cs" />
     <Compile Remove="namespaces\SafeTransactionHandle.cs" />
+    <Compile Remove="namespaces\SafeRegistryHandle.cs" />
     <Compile Remove="namespaces\TransactedRegistry.cs" />
     <Compile Remove="namespaces\TransactedRegistryKey.cs" />
     <Compile Remove="namespaces\TransactedRegistrySecurity.cs" />

@@ -19,10 +19,6 @@ using System.Linq;
 using System.Linq.Expressions;
 #endif
 
-#if CORECLR
-// Use stubs for Serializable attribute and SystemException
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;

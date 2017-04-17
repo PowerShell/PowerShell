@@ -23,13 +23,6 @@ using System.Management.Automation.Security;
 using System.Threading;
 using System.Runtime.InteropServices;
 using System.Management.Automation.Language;
-#if CORECLR
-using Microsoft.PowerShell.CoreClr.Stubs;
-// Some APIs are missing from System.Environment. We use System.Management.Automation.Environment as a proxy type:
-//  - for missing APIs, System.Management.Automation.Environment has extension implementation.
-//  - for existing APIs, System.Management.Automation.Environment redirect the call to System.Environment.
-using Environment = System.Management.Automation.Environment;
-#endif
 
 using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;

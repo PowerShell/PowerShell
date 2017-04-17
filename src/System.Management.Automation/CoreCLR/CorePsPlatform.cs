@@ -410,6 +410,73 @@ namespace System.Management.Automation
         }
 #endif
 
+        /// <summary>
+        /// The code is copied from the .NET implementation.
+        /// </summary>
+        internal static string GetFolderPath(System.Environment.SpecialFolder folder)
+        {
+            return InternalGetFolderPath(folder);
+        }
+
+        /// <summary>
+        /// The API set 'api-ms-win-shell-shellfolders-l1-1-0.dll' was removed from NanoServer, so we cannot depend on 'SHGetFolderPathW'
+        /// to get the special folder paths. Instead, we need to rely on the basic environment variables to get the special folder paths.
+        /// </summary>
+        /// <returns>
+        /// The path to the specified system special folder, if that folder physically exists on your computer.
+        /// Otherwise, an empty string ("").
+        /// </returns>
+        private static string InternalGetFolderPath(System.Environment.SpecialFolder folder)
+        {
+            string folderPath = null;
+#if UNIX
+            string envHome = System.Environment.GetEnvironmentVariable(Platform.CommonEnvVariableNames.Home);
+            if (null == envHome)
+            {
+                envHome = Platform.GetTemporaryDirectory();
+            }
+            switch (folder)
+            {
+                case System.Environment.SpecialFolder.ProgramFiles:
+                    folderPath = "/bin";
+                    if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+                    break;
+                case System.Environment.SpecialFolder.ProgramFilesX86:
+                    folderPath = "/usr/bin";
+                    if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+                    break;
+                case System.Environment.SpecialFolder.System:
+                case System.Environment.SpecialFolder.SystemX86:
+                    folderPath = "/sbin";
+                    if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
+                    break;
+                case System.Environment.SpecialFolder.Personal:
+                    folderPath = envHome; 
+                    break;
+                case System.Environment.SpecialFolder.LocalApplicationData:
+                    folderPath = System.IO.Path.Combine(envHome, ".config");
+                    if (!System.IO.Directory.Exists(folderPath)) 
+                    {
+                        try
+                        {
+                            System.IO.Directory.CreateDirectory(folderPath); 
+                        }
+                        catch (UnauthorizedAccessException)
+                        {
+                            // directory creation may fail if the account doesn't have filesystem permission such as some service accounts
+                            folderPath = String.Empty;
+                        }
+                    }
+                    break;
+                default:
+                    throw new NotSupportedException();
+            }
+#else
+            folderPath = System.Environment.GetFolderPath(folder);
+#endif
+            return folderPath ?? string.Empty;
+        }
+
         // Platform methods prefixed NonWindows are:
         // - non-windows by the definition of the IsWindows method above
         // - here, because porting to Linux and other operating systems

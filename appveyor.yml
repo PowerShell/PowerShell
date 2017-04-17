@@ -2,9 +2,10 @@ version: 6.0.0-alpha.18-{build}
 
 image: Visual Studio 2015
 
+# cache version - netcoreapp.2.0.0-preview1-001913-00
 cache:
-  - '%LocalAppData%\Microsoft\dotnet'
-  - '%HOMEDRIVE%%HOMEPATH%\.nuget\packages'
+  - '%LocalAppData%\Microsoft\dotnet -> appveyor.yml'
+  - '%HOMEDRIVE%%HOMEPATH%\.nuget\packages -> appveyor.yml'
 
 nuget:
   project_feed: true

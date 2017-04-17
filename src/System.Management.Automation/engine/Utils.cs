@@ -26,7 +26,6 @@ using TypeTable = System.Management.Automation.Runspaces.TypeTable;
 #if CORECLR
 using System.Diagnostics;
 using Microsoft.Win32.SafeHandles;
-using Microsoft.PowerShell.CoreClr.Stubs;
 #else
 using System.Security.Principal;
 using PSUtils = System.Management.Automation.PsUtils;
@@ -318,7 +317,7 @@ namespace System.Management.Automation
                 {
                     baseDirectories.Add(appBase);
                 }
-
+#if !UNIX
                 // Win8: 454976
                 // Now add the two variations of System32
                 baseDirectories.Add(Environment.GetFolderPath(Environment.SpecialFolder.System));
@@ -327,7 +326,7 @@ namespace System.Management.Automation
                 {
                     baseDirectories.Add(systemX86);
                 }
-
+#endif
                 // And built-in modules
                 string progFileDir;
                 // TODO: #1184 will resolve this work-around
@@ -345,9 +344,6 @@ namespace System.Management.Automation
                     baseDirectories.Add(Path.Combine(progFileDir, "PowerShellGet"));
                     baseDirectories.Add(Path.Combine(progFileDir, "Pester"));
                     baseDirectories.Add(Path.Combine(progFileDir, "PSReadLine"));
-#if CORECLR
-                    baseDirectories.Add(Path.Combine(progFileDir, "Json.Net"));
-#endif // CORECLR
                 }
                 Interlocked.CompareExchange(ref s_productFolderDirectories, baseDirectories.ToArray(), null);
             }

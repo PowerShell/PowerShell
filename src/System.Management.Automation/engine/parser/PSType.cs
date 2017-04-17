@@ -274,7 +274,7 @@ namespace System.Management.Automation.Language
                 _typeBuilder = module.DefineType(typeName, Reflection.TypeAttributes.Class | Reflection.TypeAttributes.Public, baseClass, interfaces.ToArray());
                 _staticHelpersTypeBuilder = module.DefineType(string.Format(CultureInfo.InvariantCulture, "{0}_<staticHelpers>", typeName), Reflection.TypeAttributes.Class);
                 DefineCustomAttributes(_typeBuilder, typeDefinitionAst.Attributes, _parser, AttributeTargets.Class);
-                _typeDefinitionAst.Type = _typeBuilder.AsType();
+                _typeDefinitionAst.Type = _typeBuilder;
 
                 _fieldsToInitForMemberFunctions = new List<Tuple<string, object>>();
                 _definedMethods = new Dictionary<string, List<Tuple<FunctionMemberAst, Type[]>>>(StringComparer.OrdinalIgnoreCase);
@@ -582,7 +582,7 @@ namespace System.Management.Automation.Language
 
                 if (hasValidateAttributes)
                 {
-                    var typeToLoad = _typeBuilder.AsType();
+                    Type typeToLoad = _typeBuilder;
                     setIlGen.Emit(OpCodes.Ldtoken, typeToLoad);
                     setIlGen.Emit(OpCodes.Call, typeof(Type).GetMethod("GetTypeFromHandle")); // load current Type on stack
                     setIlGen.Emit(OpCodes.Ldstr, propertyMemberAst.Name); // load name of Property
@@ -703,14 +703,14 @@ namespace System.Management.Automation.Language
 
             private bool MethodExistsOnBaseClassAndFinal(string methodName, Type[] parameterTypes)
             {
-                TypeInfo baseType = _typeBuilder.BaseType.GetTypeInfo();
+                Type baseType = _typeBuilder.BaseType;
 
                 // If baseType is PS class, then method will be virtual, once we define it.
                 if (baseType is TypeBuilder)
                 {
                     return false;
                 }
-                var mi = baseType.AsType().GetMethod(methodName, parameterTypes);
+                var mi = baseType.GetMethod(methodName, parameterTypes);
                 return mi != null && mi.IsFinal;
             }
 
@@ -1159,16 +1159,16 @@ namespace System.Management.Automation.Language
 
             foreach (var helper in defineTypeHelpers)
             {
-                Diagnostics.Assert(helper._typeDefinitionAst.Type.GetTypeInfo() is TypeBuilder, "Type should be the TypeBuilder");
+                Diagnostics.Assert(helper._typeDefinitionAst.Type is TypeBuilder, "Type should be the TypeBuilder");
                 bool runtimeTypeAssigned = false;
                 if (!helper.HasFatalErrors)
                 {
                     try
                     {
-                        var type = helper._typeBuilder.CreateTypeInfo().AsType();
+                        var type = helper._typeBuilder.CreateType();
                         helper._typeDefinitionAst.Type = type;
                         runtimeTypeAssigned = true;
-                        var helperType = helper._staticHelpersTypeBuilder.CreateTypeInfo().AsType();
+                        var helperType = helper._staticHelpersTypeBuilder.CreateType();
 
                         if (helper._fieldsToInitForMemberFunctions != null)
                         {

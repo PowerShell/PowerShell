@@ -300,9 +300,7 @@ function New-TestHost
 {
     If ($IsCoreCLR)
     {
-        $references = "mscorlib","System.Management.Automation",
-            "System.Collections.NonGeneric","System.Console","System.Collections",
-            "System.Globalization"
+        $references = @()
     }
     else
     {

@@ -18,11 +18,6 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.PowerShell.Telemetry.Internal;
 
-#if CORECLR
-// Use stub for Serializable attribute and ISerializable related types
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation
 {
     internal enum CompileInterpretChoice

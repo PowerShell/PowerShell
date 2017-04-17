@@ -1094,12 +1094,5 @@ namespace Microsoft.PowerShell.Internal
     }
 #endif
 
-#if CORECLR // TODO: remove if CORECLR adds this attribute back
-    [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Constructor | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Event)]
-    sealed class ExcludeFromCodeCoverageAttribute : Attribute
-    {
-    }
-#endif
-
 #pragma warning restore 1591
 }

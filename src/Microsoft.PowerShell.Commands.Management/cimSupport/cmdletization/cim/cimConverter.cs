@@ -8,6 +8,7 @@ using System.Diagnostics;
 using System.Globalization;
 using System.Management.Automation;
 using System.Net;
+using System.Net.Mail;
 using System.Net.NetworkInformation;
 using System.Reflection;
 using System.Security;
@@ -17,13 +18,6 @@ using System.Xml;
 using Microsoft.Management.Infrastructure;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Runtime.InteropServices;
-
-#if CORECLR
-// Use stub for MailAddress.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#else
-using System.Net.Mail;
-#endif
 
 // TODO/FIXME: Move this class to src/cimSupport/other directory (to map to the namespace it lives in and functionality it implements [cmdletization independent])
 

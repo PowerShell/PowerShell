@@ -10,11 +10,6 @@ using System.Text;
 using System.Threading;
 using Dbg = System.Diagnostics.Debug;
 
-#if CORECLR
-// Use stubs for SerializableAttribute.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation.Remoting
 {
     [SerializableAttribute]

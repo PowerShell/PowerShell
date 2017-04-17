@@ -10,7 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
-using System.Management.Automation.Security;
+using Microsoft.Win32;
 using System.Management.Automation.Internal;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -20,11 +20,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
-
-using Microsoft.Win32;
-
 using DWORD = System.UInt32;
-using BOOL = System.UInt32;
 
 namespace Microsoft.PowerShell
 {
@@ -1080,7 +1076,7 @@ namespace System.Management.Automation
             StringBuilder output = new StringBuilder();
             output.AppendLine(BEGIN_CMS_SIGIL);
 
-            string encodedString = ClrFacade.ToBase64StringWithLineBreaks(bytes);
+            string encodedString = Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);
             output.AppendLine(encodedString);
             output.Append(END_CMS_SIGIL);
 
