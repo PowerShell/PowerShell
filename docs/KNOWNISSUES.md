@@ -3,6 +3,7 @@
 ## Known Issues for PowerShell on Non-Windows Platforms
 
 Alpha releases of PowerShell on Linux and macOS are mostly functional but do have some significant limitations and usability issues.
+Beta releases of PowerShell on linux and macOS are more functional and stable than alpha releases, but still may be lacking some set of features, and can contain some bugs.
 In some cases, these issues are simply bugs that haven't been fixed yet.
 In other cases (as with the default aliases for ls, cp, etc.), we are looking for feedback from the community regarding the choices we make.
 
@@ -31,13 +32,13 @@ On UNIX-like operating systems, the file system is case-sensitive and this is ex
 PowerShell scripts must end in `.ps1` for the interpreter to understand how to load and run them in the current process.
 Running scripts in the current process is the expected usual behavior for PowerShell.
 The `#!` magic number may be added to a script that doesn't have a `.ps1` extension, but this will cause the script to be run in a new PowerShell instance preventing the script from working properly when interchanging objects.
-(Note: this may be the desirable behvaior when executing a PowerShell script from `bash` or another shell.)
+(Note: this may be the desirable behavior when executing a PowerShell script from `bash` or another shell.)
 
 ### Missing command aliases
 
 On Linux/macOS, the "convenience aliases" for the basic commands `ls`, `cp`, `mv`, `rm`, `cat`, `man`, `mount`, `ps` have been removed.
 On Windows, PowerShell provides a set of aliases that map to Linux command names for user convenience.
-These aliases have been removed from the default PowerShell on Linux/macOS distributions, allowing the native executable to be run instead.
+These aliases have been removed from the default PowerShell on Linux/macOS distributions, allowing the native executable to be run without specifying a path.
 
 There are pros and cons to doing this.
 Removing the aliases exposes the native command experience to the PowerShell user, but reduces functionality in the shell because the native commands return strings instead of objects.
@@ -52,7 +53,7 @@ Currently, PowerShell only does wildcard expansion (globbing) for built-in cmdle
 This means that a command like `ls *.txt` will fail because the asterisk will not be expanded to match file names.
 You can work around this by doing `ls (gci *.txt | % name)` or, more simply, `gci *.txt` using the PowerShell built-in equivalent to `ls`.
 
-See [RFC0009](https://github.com/PowerShell/PowerShell-RFC/issues/33) to give us feeedback on how to improve the globbing experience on Linux/macOS.
+See [#954](https://github.com/PowerShell/PowerShell/issues/954) to give us feedback on how to improve the globbing experience on Linux/macOS.
 
 ### .NET Framework vs .NET Core Framework
 
