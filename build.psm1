@@ -86,7 +86,6 @@ function Start-PSBuild {
         # to help avoid compilation error, because file are in use.
         [switch]$StopDevPowerShell,
 
-        [switch]$NoPath,
         [switch]$Restore,
         [string]$Output,
         [switch]$ResGen,
@@ -141,11 +140,6 @@ function Start-PSBuild {
                 }
             } |
         Stop-Process -Verbose
-    }
-
-    if ($CrossGen -and !$Publish) {
-        # By specifying -CrossGen, we implicitly set -Publish to $true, if not already specified.
-        $Publish = $true
     }
 
     if ($Clean) {
@@ -217,7 +211,6 @@ function Start-PSBuild {
 
     # set output options
     $OptionsArguments = @{
-        Publish=$Publish
         CrossGen=$CrossGen
         Output=$Output
         FullCLR=$FullCLR
@@ -233,12 +226,7 @@ function Start-PSBuild {
     }
 
     # setup arguments
-    $Arguments = @()
-    if ($Publish -or $FullCLR) {
-        $Arguments += "publish"
-    } else {
-        $Arguments += "build"
-    }
+    $Arguments = @("publish")
     if ($Output) {
         $Arguments += "--output", $Output
     }
@@ -425,7 +413,7 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
 
     # add 'x' permission when building the standalone application
     # this is temporary workaround to a bug in dotnet.exe, tracking by dotnet/cli issue #6286
-    if ($Options.Configuration -eq "Linux" -and $Options.Publish) {
+    if ($Options.Configuration -eq "Linux") {
         chmod u+x $Options.Output
     }
 
@@ -505,8 +493,6 @@ function New-PSOptions {
                      "opensuse.13.2-x64",
                      "opensuse.42.1-x64")]
         [string]$Runtime,
-
-        [switch]$Publish,
 
         [switch]$CrossGen,
 
@@ -599,32 +585,19 @@ function New-PSOptions {
 
     # Build the Output path
     if (!$Output) {
-        $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime)
-
-        # Publish injects the publish directory
-        if ($Publish -or $FullCLR) {
-            $Output = [IO.Path]::Combine($Output, "publish")
-        }
-
-        $Output = [IO.Path]::Combine($Output, $Executable)
+        $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
     }
 
-    $RealFramework = $Framework
     if ($SMAOnly)
     {
         $Top = [IO.Path]::Combine($PSScriptRoot, "src", "System.Management.Automation")
-        if ($Framework -match 'netcoreapp')
-        {
-            $RealFramework = 'netstandard1.6'
-        }
     }
 
     return @{ Top = $Top;
               Configuration = $Configuration;
-              Framework = $RealFramework;
+              Framework = $Framework;
               Runtime = $Runtime;
               Output = $Output;
-              Publish = $Publish;
               CrossGen = $CrossGen }
 }
 
