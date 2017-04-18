@@ -167,6 +167,9 @@ SystemD
 andschwa's
  - docs/building/internals.md
 Catalog
+src
+powershell-unix
+MSBuild
  - docs/building/macos.md
 preview3
  - docs/community/governance.md
