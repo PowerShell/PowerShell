@@ -186,4 +186,10 @@ Describe "New-Item with links" -Tags @('CI', 'RequireAdminOnWindows') {
             $_.FullyQualifiedErrorId | Should Be "NewItemSymbolicLinkElevationRequired,Microsoft.PowerShell.Commands.NewItemCommand"
         }
     }
+
+    It "New-Item -ItemType SymbolicLink should understand directory path ending with slash" {
+        $folderName = [System.IO.Path]::GetRandomFileName()            
+        $symbolicLinkPath = New-Item -ItemType SymbolicLink -Path "$tmpDirectory/$folderName/" -Value "/bar/"
+        $symbolicLinkPath | Should Not Be $null
+    }
 }
