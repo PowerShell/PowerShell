@@ -246,7 +246,8 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     }
 }
 
-Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI" {
+
+Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireAdminOnWindows" {
     BeforeAll {
         # In Windows, only Administrators can create symbolic links.
         # In Unix, anyone can.
@@ -254,11 +255,7 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI" {
         {
             if ($IsWindows)
             {
-                $winId = [System.Security.Principal.WindowsIdentity]::GetCurrent()
-                $principal = New-Object System.Security.Principal.WindowsPrincipal($WinId)
-                $admin = [System.Security.Principal.WindowsBuiltInRole]::Administrator
-
-                return $principal.IsInRole($admin)
+                return Test-IsElevated
             }
             else
             {
@@ -280,7 +277,8 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI" {
         # Names of files, directories, and links we'll be using to test
         $subDir = "$TestDrive/sub"
         $otherSubDir = "$TestDrive/other-sub"
-        $otherFile = "$otherSubDir/other-file"
+        $fileName = "file.txt"
+        $filePath = "$TestDrive/$fileName"
         $otherFileName = "other-file"
         $otherFile = "$otherSubDir/$otherFileName"
         $symToOther = "$subDir/sym-to-other"
@@ -291,7 +289,8 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI" {
         $symdToOther = "$subDir/symd-to-other"
         $junctionToOther = "$subDir/junction-to-other"
 
-        # Set up our directories and links
+        # Set up our files, directories, links
+        New-Item -ItemType File $filePath -Value "stuff" >$null
         New-Item -ItemType Directory $subDir >$null
         New-Item -ItemType Directory $otherSubDir >$null
         New-Item -ItemType File $otherFile -Value "some text" >$null
@@ -312,109 +311,115 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI" {
         {
             New-Item -ItemType SymbolicLink $symdToOther -Value $otherSubDir >$null
         }
-
-        # Test the ability to avoid an item copying onto itself
-        function TestSelfCopy($testCase)
-        {
-            It "$($testCase.Name)" -Skip:($testCase.SkipIf) {
-                try
-                {
-                    Copy-Item -Path $testCase.Source -Destination $testCase.Destination -ErrorAction Stop
-
-                    if ($testCase.SelfCopyExpected)
-                    {
-                        # we expected the copy to fail and it did not
-                        throw "Copy-Item should not have succeeded!"
-                    }
-                    else
-                    {
-                        # we expected the copy to succeed. make sure it did
-                        Test-Path $testCase.Destination | Should Be $true
-                        Remove-Item -Path $testCase.Destination -Force -ErrorAction SilentlyContinue
-                    }
-                }
-                catch
-                {
-                    # we expected the copy to fail and it did. make sure it failed the right way
-                    $_.FullyQualifiedErrorId | Should Be "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
-                    $_.Exception | Should BeOfType System.IO.IOException
-                    $_.Exception.Data[$selfCopyKey] | Should Not Be $null
-                }
-            }
-        }
-
-        # Set up our test cases
-        $testCases = @(
-            @{
-                Name = "Copy to same path"
-                Source = $otherFile
-                Destination = $otherFile
-                SelfCopyExpected = $true
-            }
-            @{
-                Name = "Copy to similar path, different case"
-                Source = $otherFile
-                Destination = "$otherSubDir/" + $otherFileName.ToUpper()
-                SelfCopyExpected = -Not $IsCaseSensitive
-            }
-            @{
-                Name = "Copy hard link"
-                Source = $hardToOtherFile
-                Destination = $otherFile
-                SelfCopyExpected = $true
-            }
-            @{
-                Name = "Copy hard link, reversed"
-                Source = $otherFile
-                Destination = $hardToOtherFile
-                SelfCopyExpected = $true
-            }
-
-            # Only do the symbolic link tests if we were priveliged to create the links
-            @{
-                Name = "Copy symbolic link to target"
-                Source = $symToOtherFile
-                Destination = $otherFile
-                SelfCopyExpected = $true
-                SkipIf = -Not $canSymlink
-            }
-            @{
-                Name = "Copy symbolic link to symbolic link with same target"
-                Source = $secondSymToOther
-                Destination = $symToOther
-                SelfCopyExpected = $true
-                SkipIf = -Not $canSymlink
-            }
-            @{
-                Name = "Copy through chain of symbolic links"
-                Source = $symToSym
-                Destination = $otherSubDir
-                SelfCopyExpected = $true
-                SkipIf = -Not $canSymlink
-            }
-
-            # Junctions and directory symbolic links are Windows and NTFS only
-            @{
-                Name = "Copy junction to target"
-                Source = $junctionToOther
-                Destination = $otherSubDir
-                SelfCopyExpected = $true
-                SkipIf = -Not $canJunction
-            }
-            @{
-                Name = "Copy directory symbolic link to target"
-                Source = $symdToOther
-                Destination = $otherSubDir
-                SelfCopyExpected = $true
-                SkipIf = -Not $canDirSymLink
-            }
-        )
     }
 
-    # run each of our tests
-    foreach ($case in $testCases)
-    {
-        TestSelfCopy($case)
+    Context "Copy-Item using different case (on case-sensitive file systems)" {
+        BeforeEach {
+            $sourcePath = $filePath
+            $destinationPath = "$TestDrive/" + $fileName.Toupper()
+        }
+        AfterEach {
+            Remove-Item -Path $destinationPath -Force -ErrorAction SilentlyContinue
+        }
+
+        It "Copy-Item can copy to file name differing only by case" {
+            if ($isCaseSensitive)
+            {
+                Copy-Item -Path $sourcePath -Destination $destinationPath -ErrorAction SilentlyContinue | Should Be $null
+                Test-Path -Path $destinationPath | Should Be $true
+            }
+            else
+            {
+                Copy-Item -Path $sourcePath -Destination $destinationPath -ErrorAction SilentlyContinue | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
+                $_.Exception | Should BeOfType System.IO.IOException
+                $_.Exception.Data[$selfCopyKey] | Should Not Be $null
+            }
+        }
+    }
+
+    Context "Copy-Item avoids copying an item onto itself" {
+        BeforeAll {
+            # Set up our test cases
+            $testCases = @(
+                @{
+                    Name = "Copy to same path"
+                    Source = $otherFile
+                    Destination = $otherFile
+                }
+                @{
+                    Name = "Copy hard link"
+                    Source = $hardToOtherFile
+                    Destination = $otherFile
+                }
+                @{
+                    Name = "Copy hard link, reversed"
+                    Source = $otherFile
+                    Destination = $hardToOtherFile
+                }
+
+                # Only do the symbolic link tests if we were priveliged to create the links
+                @{
+                    Name = "Copy symbolic link to target"
+                    Source = $symToOtherFile
+                    Destination = $otherFile
+                    SkipIf = -Not $canSymlink
+                }
+                @{
+                    Name = "Copy symbolic link to symbolic link with same target"
+                    Source = $secondSymToOther
+                    Destination = $symToOther
+                    SkipIf = -Not $canSymlink
+                }
+                @{
+                    Name = "Copy through chain of symbolic links"
+                    Source = $symToSym
+                    Destination = $otherSubDir
+                    SkipIf = -Not $canSymlink
+                }
+
+                # Junctions and directory symbolic links are Windows and NTFS only
+                @{
+                    Name = "Copy junction to target"
+                    Source = $junctionToOther
+                    Destination = $otherSubDir
+                    SkipIf = -Not $canJunction
+                }
+                @{
+                    Name = "Copy directory symbolic link to target"
+                    Source = $symdToOther
+                    Destination = $otherSubDir
+                    SkipIf = -Not $canDirSymLink
+                }
+            )
+        }
+
+        #It "<Name>" -TestCases $testCases -Skip:($testCase.SkipIf) {
+        It "<Name>" -TestCases $testCases {
+            Param (
+                [string]$Name,
+                [string]$Source,
+                [string]$Destination,
+                [bool]$SelfCopyExpected
+            )
+
+            # The source path must exist.
+            # If it does not, it's because it could not be created in the BeforeAll block
+            if (-Not (Test-Path -Path $Source))
+            {
+                return
+            }
+
+            # The destination path must exist.
+            # If it does not, it's because it could not be created in the BeforeAll block
+            if ($SelfCopyExpected -And (TestPath -Path $Destination))
+            {
+                return
+            }
+
+            $exc = { Copy-Item -Path $Source -Destination $Destination -ErrorAction Stop } | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
+            $Error[0].Exception | Should BeOfType System.IO.IOException
+            $Error[0].Exception.Data[$selfCopyKey] | Should Not Be $null
+        }
     }
 }
 
@@ -801,12 +806,11 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
             $result = Split-Path -Path $level1_0Full -Leaf
             $result | Should Be $level1_0
         }
-
+        
         It 'Validate LeafBase' {
             $result = Split-Path -Path "$level2_1Full$fileExt" -LeafBase
             $result | Should Be $level2_1
         }
-
         It 'Validate LeafBase is not over-zealous' {
 
             $result = Split-Path -Path "$level2_1Full$fileExt$fileExt" -LeafBase
