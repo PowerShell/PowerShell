@@ -19,6 +19,8 @@ namespace System.Management.Automation
         internal const string PSVersionTableName = "PSVersionTable";
         internal const string PSRemotingProtocolVersionName = "PSRemotingProtocolVersion";
         internal const string PSVersionName = "PSVersion";
+        internal const string PSEditionName = "PSEdition";
+        
         internal const string SerializationVersionName = "SerializationVersion";
         internal const string WSManStackVersionName = "WSManStackVersion";
         private static PSVersionHashTable s_psVersionTable = null;
@@ -57,7 +59,7 @@ namespace System.Management.Automation
             s_psVersionTable = new PSVersionHashTable(StringComparer.OrdinalIgnoreCase);
 
             s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV6Version;
-            s_psVersionTable["PSEdition"] = PSEditionValue;
+            s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;
             s_psVersionTable["BuildVersion"] = GetBuildVersion();
             s_psVersionTable["GitCommitId"] = GetCommitInfo();
             s_psVersionTable["PSCompatibleVersions"] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version };
@@ -189,7 +191,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (string)GetPSVersionTable()["PSEdition"];
+                return (string)GetPSVersionTable()[PSVersionInfo.PSEditionName];
             }
         }
 
@@ -334,12 +336,18 @@ namespace System.Management.Automation
             {
                 ArrayList keyList = new ArrayList(base.Keys);
                 keyList.Sort();
-                var index = keyList.IndexOf(PSVersionInfo.PSVersionName);
-                var item = keyList[index];
-                keyList.RemoveAt(index);
-                keyList.Insert(0, item);
+                MoveItemOnFirstPlace(PSVersionInfo.PSEditionName, keyList);
+                MoveItemOnFirstPlace(PSVersionInfo.PSVersionName, keyList);
                 return keyList.ToArray();
             }
+        }
+
+        private void MoveItemOnFirstPlace(string name, ArrayList list)
+        {
+            var index = list.IndexOf(name);
+            var item = list[index];
+            list.RemoveAt(index);
+            list.Insert(0, item);
         }
 
         /// <summary>

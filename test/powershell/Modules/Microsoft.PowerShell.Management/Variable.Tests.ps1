@@ -122,9 +122,10 @@ Describe "Validate special variables" -Tags "CI" {
         $keys1sorted = $keys1 | Sort-Object
 
         $keys1[0] | Should Be "PSVersion"
+        $keys1[1] | Should Be "PSEdition"
 
-        $keys1last = $keys1[1..($keys1.length-1)]
-        $keys1sortedlast = $keys1[1..($keys1.length-1)] | Sort-Object
+        $keys1last = $keys1[2..($keys1.length-1)]
+        $keys1sortedlast = $keys1[2..($keys1.length-1)] | Sort-Object
 
         Compare-Object -ReferenceObject $keys1last -DifferenceObject $keys1sortedlast -SyncWindow 0 | Should Be $null
     }
