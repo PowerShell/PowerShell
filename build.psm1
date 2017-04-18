@@ -1403,9 +1403,9 @@ function New-UnixPackage {
             # try adding them to the path and re-tesing first
             [string] $gemsPath = $null
             [string] $depenencyPath = $null
-            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems   | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName  
+            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems   | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
             if($gemsPath) {
-                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse  | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName  
+                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse  | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
                 $originalPath = $env:PATH
                 $env:PATH = $ENV:PATH +":" + $depenencyPath
                 if((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
@@ -1415,7 +1415,7 @@ function New-UnixPackage {
                     $env:PATH = $originalPath
                 }
             }
-            
+
             throw "Dependency precheck failed!"
         }
     }
@@ -1626,7 +1626,7 @@ esac
     }
 
     # We currently only support:
-    # CentOS 7 
+    # CentOS 7
     # Fedora 24+
     # OpenSUSE 42.1 (13.2 might build but is EOL)
     # Also SEE: https://fedoraproject.org/wiki/Packaging:DistTag
@@ -2483,7 +2483,7 @@ function New-MSIPackage
     [Environment]::SetEnvironmentVariable("ProductGuid", $ProductGuid, "Process")
     [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
     [Environment]::SetEnvironmentVariable("ProductSemanticVersion", $ProductSemanticVersion, "Process")
-    [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")    
+    [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
     [Environment]::SetEnvironmentVariable("ProductTargetArchitecture", $ProductTargetArchitecture, "Process")
     $ProductProgFilesDir = "ProgramFiles64Folder"
     if ($ProductTargetArchitecture -eq "x86")
@@ -2772,6 +2772,12 @@ function Start-CrossGen {
         throw "Unable to find latest version of crossgen.exe. 'Please run Start-PSBuild -Clean' first, and then try again."
     }
     Write-Verbose "Matched CrossGen.exe: $crossGenPath" -Verbose
+
+    # 'x' permission is not set for packages restored on Linux/OSX.
+    # this is temporary workaround to a bug in dotnet.exe, tracking by dotnet/cli issue #6286
+    if ($IsLinux -or $IsOSX) {
+        chmod u+x $crossGenPath
+    }
 
     # Crossgen.exe requires the following assemblies:
     # mscorlib.dll
