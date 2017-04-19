@@ -15,6 +15,52 @@ using System.Globalization;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
+    /// Don't use! The API is obsolete!
+    /// </summary>
+    public enum TextEncodingType
+    {
+        /// <summary>
+        /// No encoding.
+        /// </summary>
+        Unknown,
+
+        /// <summary>
+        /// Unicode encoding.
+        /// </summary>
+        String,
+
+        /// <summary>
+        /// Unicode encoding.
+        /// </summary>
+        Unicode,
+
+        /// <summary>
+        /// Byte encoding.
+        /// </summary>
+        Byte,
+
+        /// <summary>
+        /// Big Endian Unicode encoding.
+        /// </summary>
+        BigEndianUnicode,
+
+        /// <summary>
+        /// UTF8 encoding.
+        /// </summary>
+        Utf8,
+
+        /// <summary>
+        /// UTF7 encoding.
+        /// </summary>
+        Utf7,
+
+        /// <summary>
+        /// ASCII encoding.
+        /// </summary>
+        Ascii,
+    }
+
+    /// <summary>
     /// Utility class to contain resources for the Microsoft.PowerShell.Utility module
     /// </summary>
     public static class UtilityResources
