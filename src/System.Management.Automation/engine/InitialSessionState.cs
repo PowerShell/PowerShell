@@ -5151,6 +5151,8 @@ end
                         "Copy-ItemProperty",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("diff",
                         "Compare-Object",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
+                    new SessionStateAliasEntry("gin",
+                        "Get-ComputerInfo",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("sleep",
                         "Start-Sleep",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("sort",

@@ -81,7 +81,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
             "gdr -> Get-PSDrive"                      =             $FullCLR -or $CoreWindows -or $CoreUnix
             "ghy -> Get-History"                      =             $FullCLR -or $CoreWindows -or $CoreUnix
             "gi -> Get-Item"                          =             $FullCLR -or $CoreWindows -or $CoreUnix
-            "gin -> Get-ComputerInfo"                 =                          $CoreWindows -or $CoreUnix
+            "gin -> Get-ComputerInfo"                 =             $FullCLR -or $CoreWindows
             "gjb -> Get-Job"                          =             $FullCLR -or $CoreWindows -or $CoreUnix
             "gl -> Get-Location"                      =             $FullCLR -or $CoreWindows -or $CoreUnix
             "gm -> Get-Member"                        =             $FullCLR -or $CoreWindows -or $CoreUnix
@@ -198,7 +198,10 @@ Describe "Verify approved aliases list" -Tags "CI" {
         # We control only default engine aliases (Source -eq "") and aliases from following default loaded modules
         $moduleList = @("Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Management")
         $currentAliasList = Get-Alias | Where-Object { $_.Source -eq "" -or $moduleList -contains $_.Source } | Select-Object -ExpandProperty DisplayName
-
-        Compare-Object -ReferenceObject $currentAliasList -DifferenceObject $aliaslist | Should Be $null
+        $result = Compare-Object -ReferenceObject $currentAliasList -DifferenceObject $aliaslist
+        # Below 'Should Be' don't show full list wrong aliases so we output them explicitly
+        # if all aliases is Ok we output nothing
+        $result | Write-Host
+        $result | Should Be $null
     }
 }
