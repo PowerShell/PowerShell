@@ -330,9 +330,9 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
             }
             else
             {
-                Copy-Item -Path $sourcePath -Destination $destinationPath -ErrorAction SilentlyContinue | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
-                $_.Exception | Should BeOfType System.IO.IOException
-                $_.Exception.Data[$selfCopyKey] | Should Not Be $null
+                { Copy-Item -Path $sourcePath -Destination $destinationPath -ErrorAction Stop } | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
+                $Error[0].Exception | Should BeOfType System.IO.IOException
+                $Error[0].Exception.Data[$selfCopyKey] | Should Not Be $null
             }
         }
     }
@@ -806,7 +806,7 @@ Describe "Extended FileSystem Path/Location Cmdlet Provider Tests" -Tags "Featur
             $result = Split-Path -Path $level1_0Full -Leaf
             $result | Should Be $level1_0
         }
-        
+
         It 'Validate LeafBase' {
             $result = Split-Path -Path "$level2_1Full$fileExt" -LeafBase
             $result | Should Be $level2_1
