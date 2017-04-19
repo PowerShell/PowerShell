@@ -1284,6 +1284,13 @@ namespace System.Management.Automation
                     null, Metadata.ValidateCountNotInArray);
             }
 
+            if (MinLength == MaxLength && len != MaxLength)
+            {
+                throw new ValidationMetadataException("ValidateCountEqualLengthFailure",
+                    null, Metadata.ValidateCountEqualLengthFailure,
+                    MaxLength, len);
+            }
+
             if (len < MinLength)
             {
                 throw new ValidationMetadataException("ValidateCountSmallerThanMin",
