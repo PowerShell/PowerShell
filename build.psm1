@@ -160,6 +160,9 @@ function Start-PSBuild {
     # save Git description to file for PowerShell to include in PSVersionTable
     git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60 > "$psscriptroot/powershell.version"
 
+    # create the telemetry flag file
+    $null = new-item -force -type file "$psscriptroot/DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY"
+
     # simplify ParameterSetNames
     if ($PSCmdlet.ParameterSetName -eq 'FullCLR') {
         $FullCLR = $true

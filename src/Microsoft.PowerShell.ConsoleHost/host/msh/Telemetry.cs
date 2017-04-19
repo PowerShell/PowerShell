@@ -15,25 +15,39 @@ namespace Microsoft.PowerShell
     /// </summary>
     public class ApplicationInsightsTelemetry
     {
+        // The semaphore file which indicates whether telemetry should be sent
+        // This is temporary code waiting on the acceptance and implementation of the configuration spec
+        /// <summary>
+        /// The name of the file by when present in $PSHOME will enable telemetry.
+        /// If this file is not present, no telemetry will be sent.
+        /// </summary>
+        public const string TelemetrySemaphoreFilename = "DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY";
+
         // Telemetry client to be reused when we start sending more telemetry
         private static TelemetryClient telemetryClient = null;
         // TODO: Set this to false for release
         private static bool developerMode = true;
         // PSCoreInsight2 telemetry key
-        private const string psCoreTelemetryKey = "ee4b2115-d347-47b0-adb6-b19c2c763808"; // PSCoreInsight2
+        private const string psCoreTelemetryKey = "ee4b2115-d347-47b0-adb6-b19c2c763808";
         /// <summary>
         /// Send the telemetry
         /// </summary>
-        private static void SendTelemetry(string eventName, Dictionary<string,string>payload) 
+        private static void SendTelemetry(string eventName, Dictionary<string,string>payload)
         {
-            TelemetryConfiguration.Active.InstrumentationKey = psCoreTelemetryKey;
-            // This is set to be sure that the telemetry is quickly delivered
-            TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = developerMode;
-            if ( telemetryClient == null ) 
+            // if the semaphore file exists, send the telemetry
+            string assemblyPath = Path.GetDirectoryName(typeof(PSVersionInfo).GetTypeInfo().Assembly.Location);
+            string telemetrySemaphoreFilePath = Path.Combine(assemblyPath, TelemetrySemaphoreFilename);
+            if ( File.Exists(telemetrySemaphoreFilePath ) )
             {
-                telemetryClient = new TelemetryClient();
+                TelemetryConfiguration.Active.InstrumentationKey = psCoreTelemetryKey;
+                // This is set to be sure that the telemetry is quickly delivered
+                TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = developerMode;
+                if ( telemetryClient == null )
+                {
+                    telemetryClient = new TelemetryClient();
+                }
+                telemetryClient.TrackEvent(eventName, payload, null);
             }
-            telemetryClient.TrackEvent(eventName, payload, null);
         }
         /// <summary>
         /// Create the startup payload and send it up
@@ -42,14 +56,7 @@ namespace Microsoft.PowerShell
         {
             var properties = new Dictionary<string, string>();
             properties.Add("GitCommitID", PSVersionInfo.GitCommitId);
-            string OSVersion;
-            try {
-                OSVersion = Environment.OSVersion.ToString();
-            }
-            catch {
-                OSVersion = "unknown";
-            }
-            properties.Add("OSVersionInfo", OSVersion);
+            properties.Add("OSVersionInfo", Environment.OSVersion.VersionString);
             SendTelemetry("PSCoreStartup", properties);
         }
     }
