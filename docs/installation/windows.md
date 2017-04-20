@@ -15,7 +15,7 @@ There is a shortcut placed in the Start Menu upon installation.
 ### Prerequisites
 
 * Install the [Universal C Runtime](https://www.microsoft.com/en-us/download/details.aspx?id=50410). It is available via direct download or Windows Update. Fully patched (including optional packages), supported systems will already have this installed.
-* Install [Visual C++ Redistributable](http://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe) for VS2015.
+* Install the [Visual C++ Redistributable](https://www.microsoft.com/en-us/download/details.aspx?id=48145) for VS2015.
 
 ## Deploying on Nano Server
 
