@@ -186,7 +186,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
         $jsonContent.headers.Host | Should Match "httpbin.org"
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
@@ -235,7 +234,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         # TODO: There is a bug on ConvertFrom-Json that fails for utf8.
         <#
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.'Accept-Encoding' | Should Match "gzip, deflate"
         $jsonContent.headers.Host | Should Match "httpbin.org"
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
         #>
@@ -296,7 +294,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
         $jsonContent.headers.Host | Should Match "httpbin.org"
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
@@ -372,7 +369,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 # Validate response content
                 $jsonContent = $result.Output.Content | ConvertFrom-Json
                 $jsonContent.url | Should Match $uri
-                $jsonContent.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
                 $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
 
                 # For a GET request, there is no data property to validate.
@@ -557,7 +553,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
         $result.Output.headers.Host | Should Match "httpbin.org"
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
@@ -570,7 +565,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
         $result.Output.headers.Host | Should Match "httpbin.org"
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
 
@@ -606,7 +600,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
         # Validate response content
         # TODO: There is a bug on ConvertFrom-Json that fails for utf8.
-        $result.headers.'Accept-Encoding' | Should Match "gzip, deflate"
         $result.headers.Host | Should Match "httpbin.org"
         $result.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
@@ -727,7 +720,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
                 # Validate response
                 $result.Output.url | Should Match $uri
-                $result.Output.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
                 $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
 
                 # For a GET request, there is no data property to validate.
@@ -756,7 +748,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
         # Validate response
         $result.Output.url | Should Match $uri
-        $result.Output.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
 
         # Unfortunately, the connection information is not display in the output of Invoke-RestMethod
