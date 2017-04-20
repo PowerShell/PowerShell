@@ -27,7 +27,6 @@ Describe "Verify approved aliases list" -Tags "CI" {
         $FullCLR = !$isCoreCLR
         $CoreWindows = $isCoreCLR -and $IsWindows
         $CoreUnix = $isCoreCLR -and !$IsWindows
-        $FullCLR -or $CoreWindows -or $CoreUnix
         $aliasFullList = @{
             "% -> ForEach-Object"                     =             $FullCLR -or $CoreWindows -or $CoreUnix
             "? -> Where-Object"                       =             $FullCLR -or $CoreWindows -or $CoreUnix
@@ -92,7 +91,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
             "group -> Group-Object"                   =             $FullCLR -or $CoreWindows -or $CoreUnix
             "gsn -> Get-PSSession"                    =             $FullCLR -or $CoreWindows -or $CoreUnix
             "gsnp -> Get-PSSnapin"                    =             $FullCLR
-            "gsv -> Get-Service"                      =             $FullCLR -or $CoreWindows -or $CoreUnix
+            "gsv -> Get-Service"                      =             $FullCLR -or $CoreWindows
             "gtz -> Get-TimeZone"                     =             $FullCLR -or $CoreWindows -or $CoreUnix
             "gu -> Get-Unique"                        =             $FullCLR -or $CoreWindows -or $CoreUnix
             "gv -> Get-Variable"                      =             $FullCLR -or $CoreWindows -or $CoreUnix
@@ -160,7 +159,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
             "sajb -> Start-Job"                       =             $FullCLR -or $CoreWindows -or $CoreUnix
             "sal -> Set-Alias"                        =             $FullCLR -or $CoreWindows -or $CoreUnix
             "saps -> Start-Process"                   =             $FullCLR -or $CoreWindows -or $CoreUnix
-            "sasv -> Start-Service"                   =             $FullCLR -or $CoreWindows -or $CoreUnix
+            "sasv -> Start-Service"                   =             $FullCLR -or $CoreWindows
             "sbp -> Set-PSBreakpoint"                 =             $FullCLR -or $CoreWindows -or $CoreUnix
             "sc -> Set-Content"                       =             $FullCLR -or $CoreWindows -or $CoreUnix
             "scb -> Set-Clipboard"                    =             $FullCLR
@@ -175,7 +174,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
             "sp -> Set-ItemProperty"                  =             $FullCLR -or $CoreWindows -or $CoreUnix
             "spjb -> Stop-Job"                        =             $FullCLR -or $CoreWindows -or $CoreUnix
             "spps -> Stop-Process"                    =             $FullCLR -or $CoreWindows -or $CoreUnix
-            "spsv -> Stop-Service"                    =             $FullCLR -or $CoreWindows -or $CoreUnix
+            "spsv -> Stop-Service"                    =             $FullCLR -or $CoreWindows
             "start -> Start-Process"                  =             $FullCLR -or $CoreWindows
             "stz -> Set-TimeZone"                     =                          $CoreWindows
             "sujb -> Suspend-Job"                     =             $FullCLR

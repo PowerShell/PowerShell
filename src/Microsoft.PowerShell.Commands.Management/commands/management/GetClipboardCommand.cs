@@ -1,4 +1,6 @@
-﻿using System;
+﻿#if !CORECLR
+
+using System;
 using System.Management.Automation;
 using System.Collections.Generic;
 using System.Windows.Forms;
@@ -200,3 +202,5 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
+
+#endif

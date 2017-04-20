@@ -592,6 +592,7 @@ namespace Microsoft.PowerShell.Commands
     [Cmdlet(VerbsCommon.Get, "Service", DefaultParameterSetName = "Default",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113332", RemotingCapability = RemotingCapability.SupportedByCommand)]
     [OutputType(typeof(ServiceController))]
+    [Alias("gsv")]
     public sealed class GetServiceCommand : MultipleServiceCommandBase
     {
         #region Parameters
@@ -1208,6 +1209,7 @@ namespace Microsoft.PowerShell.Commands
     /// </remarks>
     [Cmdlet(VerbsLifecycle.Stop, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113414")]
     [OutputType(typeof(ServiceController))]
+    [Alias("spsv")]
     public sealed class StopServiceCommand : ServiceOperationBaseCommand
     {
         /// <summary>
@@ -1261,6 +1263,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsLifecycle.Start, "Service", DefaultParameterSetName = "InputObject", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=113406")]
     [OutputType(typeof(ServiceController))]
+    [Alias("sasv")]
     public sealed class StartServiceCommand : ServiceOperationBaseCommand
     {
         /// <summary>
