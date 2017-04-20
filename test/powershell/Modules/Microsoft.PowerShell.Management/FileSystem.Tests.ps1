@@ -252,13 +252,12 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
         # For now, we'll assume the tests are running the platform's
         # native filesystem, in its default mode
         $isCaseSensitive = $IsLinux
-        $canDirSymLink = $IsWindows
-        $canJunction = $IsWindows
 
         # The name of the key in an exception's Data dictionary when an
         # attempt is made to copy an item onto itself.
         $selfCopyKey = "SelfCopy"
 
+        $TestDrive = "TestDrive:"
         $subDir = "$TestDrive/sub"
         $otherSubDir = "$TestDrive/other-sub"
         $fileName = "file.txt"
@@ -283,12 +282,9 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
         New-Item -ItemType SymbolicLink $symToOtherFile -Value $otherFile >$null
         New-Item -ItemType HardLink $hardToOtherFile -Value $otherFile >$null
 
-        if ($canJunction)
+        if ($IsWindows)
         {
             New-Item -ItemType Junction $junctionToOther -Value $otherSubDir >$null
-        }
-        if ($canDirSymLink)
-        {
             New-Item -ItemType SymbolicLink $symdToOther -Value $otherSubDir >$null
         }
     }
@@ -376,14 +372,6 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
                 [string]$Source,
                 [string]$Destination
             )
-
-            # The source and destination paths must exist.
-            # If either do not, it's because they could not be created in the BeforeAll block
-            # This is not a test failure, but rather a precondition failure.
-            if ((-Not (Test-Path -Path $Source)) -or (-Not (Test-Path -Path $Destination)))
-            {
-                return
-            }
 
             { Copy-Item -Path $Source -Destination $Destination -ErrorAction Stop } | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
             $Error[0].Exception | Should BeOfType System.IO.IOException
