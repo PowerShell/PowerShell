@@ -151,7 +151,7 @@
     <value>The number of provided arguments, ({1}), exceeds the maximum number of allowed arguments ({0}). Provide fewer than {0} arguments, and then try the command again.</value>
   </data>
   <data name="ValidateCountEqualLengthFailure" xml:space="preserve">
-    <value>The number of provided arguments, ({1}), not equal the number of allowed arguments ({0}). Provide exactly {0} arguments, and then try the command again.</value>
+    <value>The number of provided arguments, ({1}), is not equal the number of allowed arguments ({0}). Provide exactly {0} arguments, and then try the command again.</value>
   </data>
   <data name="ValidateCountMaxLengthSmallerThanMinLength" xml:space="preserve">
     <value>The specified maximum number of arguments for a parameter is fewer than the specified minimum number of arguments. Update the ValidateCount attribute for the parameter.</value>
