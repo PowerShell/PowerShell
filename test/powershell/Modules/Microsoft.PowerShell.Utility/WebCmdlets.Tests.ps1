@@ -234,7 +234,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         # TODO: There is a bug on ConvertFrom-Json that fails for utf8.
         <#
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.'Accept-Encoding' | Should Match "gzip, deflate"
         $jsonContent.headers.Host | Should Match "httpbin.org"
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
         #>
@@ -601,7 +600,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
         # Validate response content
         # TODO: There is a bug on ConvertFrom-Json that fails for utf8.
-        $result.headers.'Accept-Encoding' | Should Match "gzip, deflate"
         $result.headers.Host | Should Match "httpbin.org"
         $result.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
