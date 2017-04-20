@@ -86,7 +86,6 @@ function Start-PSBuild {
         # to help avoid compilation error, because file are in use.
         [switch]$StopDevPowerShell,
 
-        [switch]$NoPath,
         [switch]$Restore,
         [string]$Output,
         [switch]$ResGen,
@@ -141,11 +140,6 @@ function Start-PSBuild {
                 }
             } |
         Stop-Process -Verbose
-    }
-
-    if ($CrossGen -and !$Publish) {
-        # By specifying -CrossGen, we implicitly set -Publish to $true, if not already specified.
-        $Publish = $true
     }
 
     if ($Clean) {
@@ -217,7 +211,6 @@ function Start-PSBuild {
 
     # set output options
     $OptionsArguments = @{
-        Publish=$Publish
         CrossGen=$CrossGen
         Output=$Output
         FullCLR=$FullCLR
@@ -233,12 +226,7 @@ function Start-PSBuild {
     }
 
     # setup arguments
-    $Arguments = @()
-    if ($Publish -or $FullCLR) {
-        $Arguments += "publish"
-    } else {
-        $Arguments += "build"
-    }
+    $Arguments = @("publish")
     if ($Output) {
         $Arguments += "--output", $Output
     }
@@ -425,7 +413,7 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
 
     # add 'x' permission when building the standalone application
     # this is temporary workaround to a bug in dotnet.exe, tracking by dotnet/cli issue #6286
-    if ($Options.Configuration -eq "Linux" -and $Options.Publish) {
+    if ($Options.Configuration -eq "Linux") {
         chmod u+x $Options.Output
     }
 
@@ -505,8 +493,6 @@ function New-PSOptions {
                      "opensuse.13.2-x64",
                      "opensuse.42.1-x64")]
         [string]$Runtime,
-
-        [switch]$Publish,
 
         [switch]$CrossGen,
 
@@ -599,32 +585,19 @@ function New-PSOptions {
 
     # Build the Output path
     if (!$Output) {
-        $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime)
-
-        # Publish injects the publish directory
-        if ($Publish -or $FullCLR) {
-            $Output = [IO.Path]::Combine($Output, "publish")
-        }
-
-        $Output = [IO.Path]::Combine($Output, $Executable)
+        $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
     }
 
-    $RealFramework = $Framework
     if ($SMAOnly)
     {
         $Top = [IO.Path]::Combine($PSScriptRoot, "src", "System.Management.Automation")
-        if ($Framework -match 'netcoreapp')
-        {
-            $RealFramework = 'netstandard1.6'
-        }
     }
 
     return @{ Top = $Top;
               Configuration = $Configuration;
-              Framework = $RealFramework;
+              Framework = $Framework;
               Runtime = $Runtime;
               Output = $Output;
-              Publish = $Publish;
               CrossGen = $CrossGen }
 }
 
@@ -1430,9 +1403,9 @@ function New-UnixPackage {
             # try adding them to the path and re-tesing first
             [string] $gemsPath = $null
             [string] $depenencyPath = $null
-            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems   | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName  
+            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems   | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
             if($gemsPath) {
-                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse  | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName  
+                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse  | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
                 $originalPath = $env:PATH
                 $env:PATH = $ENV:PATH +":" + $depenencyPath
                 if((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
@@ -1442,7 +1415,7 @@ function New-UnixPackage {
                     $env:PATH = $originalPath
                 }
             }
-            
+
             throw "Dependency precheck failed!"
         }
     }
@@ -1653,7 +1626,7 @@ esac
     }
 
     # We currently only support:
-    # CentOS 7 
+    # CentOS 7
     # Fedora 24+
     # OpenSUSE 42.1 (13.2 might build but is EOL)
     # Also SEE: https://fedoraproject.org/wiki/Packaging:DistTag
@@ -2510,7 +2483,7 @@ function New-MSIPackage
     [Environment]::SetEnvironmentVariable("ProductGuid", $ProductGuid, "Process")
     [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
     [Environment]::SetEnvironmentVariable("ProductSemanticVersion", $ProductSemanticVersion, "Process")
-    [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")    
+    [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
     [Environment]::SetEnvironmentVariable("ProductTargetArchitecture", $ProductTargetArchitecture, "Process")
     $ProductProgFilesDir = "ProgramFiles64Folder"
     if ($ProductTargetArchitecture -eq "x86")
@@ -2799,6 +2772,12 @@ function Start-CrossGen {
         throw "Unable to find latest version of crossgen.exe. 'Please run Start-PSBuild -Clean' first, and then try again."
     }
     Write-Verbose "Matched CrossGen.exe: $crossGenPath" -Verbose
+
+    # 'x' permission is not set for packages restored on Linux/OSX.
+    # this is temporary workaround to a bug in dotnet.exe, tracking by dotnet/cli issue #6286
+    if ($IsLinux -or $IsOSX) {
+        chmod u+x $crossGenPath
+    }
 
     # Crossgen.exe requires the following assemblies:
     # mscorlib.dll

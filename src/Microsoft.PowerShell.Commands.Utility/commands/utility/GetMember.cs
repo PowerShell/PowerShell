@@ -273,9 +273,8 @@ namespace Microsoft.PowerShell.Commands
         {
             if (_typesAlreadyDisplayed.Count == 0)
             {
-                ErrorDetails details = new ErrorDetails(this.GetType().GetTypeInfo().Assembly, "GetMember", "NoObjectSpecified");
                 ErrorRecord errorRecord = new ErrorRecord(
-                    new InvalidOperationException(details.Message),
+                    new InvalidOperationException(GetMember.NoObjectSpecified),
                     "NoObjectInGetMember",
                     ErrorCategory.CloseError,
                     null);
