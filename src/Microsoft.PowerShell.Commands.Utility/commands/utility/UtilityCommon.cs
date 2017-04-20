@@ -17,6 +17,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Don't use! The API is obsolete!
     /// </summary>
+    [Obsolete("This class is included in this SDK for completeness only. The members of this class cannot be used directly, nor should this class be used to derive other classes.", true)]
     public enum TextEncodingType
     {
         /// <summary>
