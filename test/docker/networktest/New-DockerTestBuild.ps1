@@ -7,6 +7,7 @@ $script:Constants =  @{
     ProjectName   = 'powershell-f975h'
     TestImageName = "remotetestimage"
     MsiName       = "PSCore.msi"
+    Token         = "" # in this particular use we don't need a token
 }
 
 function Get-AppVeyorBuildArtifact {
@@ -59,7 +60,6 @@ function Get-AppVeyorBuilds
     param(
         [ValidateNotNullOrEmpty()]
         [string]$ExtensionBranch = 'master',
-        [string]$Status = "success",
         [ValidateRange(1,7)][int]$Days = 7,
         [int]$Last = 1
     )
@@ -67,7 +67,6 @@ function Get-AppVeyorBuilds
     [datetime]$start = ((get-date).AddDays(-${Days}))
     $results = Get-AppVeyorBuildRange -Start $start -LastBuildId $null -ExtensionBranch $ExtensionBranch
     $results
-    #$results |?{$_.status -match "success"} | sort-object StartedDay | Select -First $Last
 }
 
 function Get-AppVeyorBuildRange
@@ -110,7 +109,6 @@ function Get-AppVeyorBuildRange
     $URI = "{0}/projects/{1}/{2}/history?recordsNumber={3}{4}&branch{5}" -f $Constants.ApiUrl,$Constants.AccountName,
         $Constants.ProjectName,$Records,$startBuildIdString,$ExtensionBranch
     $project = Invoke-RestMethod -Method Get -Uri $URI
-    # "$($Constants.ApiUrl)/projects/$($Constants.AccountName)/$($Constants.ProjectName)/history?recordsNumber=$Records$startBuildIdString&branch=$ExtensionBranch"
 
     foreach($build in $project.builds)
     {
@@ -231,7 +229,7 @@ if ( $dockerExe.name -ne "docker.exe" ) {
 }
 # Check to see if we already have an image, and if so
 # delete it if -Force was used, otherwise throw and exit
-$TestImage = docker images remotetestimage --format '{{.Repository}}'
+$TestImage = docker images $Constants.TestImageName --format '{{.Repository}}'
 if ( $TestImage -eq $Constants.TestImageName) 
 {
     if ( $Force ) 
@@ -240,7 +238,7 @@ if ( $TestImage -eq $Constants.TestImageName)
     }
     else
     {
-        throw "remotetestimage already exists, use '-Force' to remove"
+        throw ("{0} already exists, use '-Force' to remove" -f $Constants.TestImageName)
     }
 }
 # check again - there could be some permission problems
