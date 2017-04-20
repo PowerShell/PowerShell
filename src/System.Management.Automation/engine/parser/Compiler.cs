@@ -1313,6 +1313,10 @@ namespace System.Management.Automation.Language
                 {
                     result.IgnoreCase = s_attrArgToBoolConverter.Target(s_attrArgToBoolConverter, argValue);
                 }
+                else if (argumentName.Equals("ErrorMessage", StringComparison.OrdinalIgnoreCase))
+                {
+                    result.ErrorMessage = argValue.ToString();
+                }
                 else
                 {
                     throw InterpreterError.NewInterpreterException(namedArg, typeof(RuntimeException), namedArg.Extent,
