@@ -361,6 +361,18 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
                     Destination = $otherSubDir
                 }
             )
+
+            function TestSelfCopy
+            {
+                Param (
+                    [string]$Source,
+                    [string]$Destination
+                )
+
+                { Copy-Item -Path $Source -Destination $Destination -ErrorAction Stop } | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
+                $Error[0].Exception | Should BeOfType System.IO.IOException
+                $Error[0].Exception.Data[$selfCopyKey] | Should Not Be $null
+            }
         }
 
         It "<Name>" -TestCases $testCases {
@@ -370,9 +382,7 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
                 [string]$Destination
             )
 
-            { Copy-Item -Path $Source -Destination $Destination -ErrorAction Stop } | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
-            $Error[0].Exception | Should BeOfType System.IO.IOException
-            $Error[0].Exception.Data[$selfCopyKey] | Should Not Be $null
+            TestSelfCopy $Source $Destination
         }
 
         It "<Name>" -TestCases $windowsTestCases -Skip:(-not $IsWindows) {
@@ -382,9 +392,7 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
                 [string]$Destination
             )
 
-            { Copy-Item -Path $Source -Destination $Destination -ErrorAction Stop } | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
-            $Error[0].Exception | Should BeOfType System.IO.IOException
-            $Error[0].Exception.Data[$selfCopyKey] | Should Not Be $null
+            TestSelfCopy $Source $Destination
         }
     }
 }
