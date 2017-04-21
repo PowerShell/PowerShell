@@ -1288,21 +1288,21 @@ namespace System.Management.Automation
             {
                 throw new ValidationMetadataException("ValidateCountEqualLengthFailure",
                     null, Metadata.ValidateCountEqualLengthFailure,
-                    MaxLength, len);
+                    MinLength, MaxLength, len);
             }
 
             if (len < MinLength)
             {
                 throw new ValidationMetadataException("ValidateCountSmallerThanMin",
                     null, Metadata.ValidateCountMinLengthFailure,
-                    MinLength, len);
+                    MinLength, MaxLength, len);
             }
 
             if (len > MaxLength)
             {
                 throw new ValidationMetadataException("ValidateCountGreaterThanMax",
                     null, Metadata.ValidateCountMaxLengthFailure,
-                    MaxLength, len);
+                    MinLength, MaxLength, len);
             }
         }
 
