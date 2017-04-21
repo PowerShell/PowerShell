@@ -333,16 +333,34 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Returns ordered collection with Keys of 'PSVersionHashTable'
+        /// We want see special order:
+        ///     1. PSVersionName
+        ///     2. PSEditionName
+        ///     3. Remaining properties in alphabetical order
         /// </summary>
         public override ICollection Keys
         {
             get
             {
-                ArrayList keyList = new ArrayList(base.Keys);
-                keyList.Sort();
-                MoveItemOnFirstPlace(PSVersionInfo.PSEditionName, keyList);
-                MoveItemOnFirstPlace(PSVersionInfo.PSVersionName, keyList);
-                return keyList.ToArray();
+                Array keyList = new string[base.Keys.Count];
+                int index = 2;
+                foreach (string key in base.Keys)
+                {
+                    switch (key)
+                    {
+                        case PSVersionInfo.PSVersionName:
+                                keyList.SetValue(key, 0);
+                                break;
+                        case PSVersionInfo.PSEditionName:
+                                keyList.SetValue(key, 1);
+                                break;
+                        default:
+                                keyList.SetValue(key, index++);
+                                break;
+                    }
+                }
+                Array.Sort(keyList, 2, keyList.Length - 2, StringComparer.Ordinal);
+                return keyList;
             }
         }
 
