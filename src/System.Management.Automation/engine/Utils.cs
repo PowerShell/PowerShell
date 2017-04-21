@@ -1374,6 +1374,7 @@ namespace System.Management.Automation
 
         internal static Encoding GetEncodingFromEnum(FileSystemCmdletProviderEncoding encoding)
         {
+            // Default to unicode encoding
             Encoding result = Encoding.Unicode;
 
             switch (encoding)
@@ -1419,8 +1420,6 @@ namespace System.Management.Automation
                     break;
 
                 default:
-                    // Default to unicode encoding
-                    result = new UnicodeEncoding();
                     break;
             }
 
