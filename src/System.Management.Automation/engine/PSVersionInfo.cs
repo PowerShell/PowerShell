@@ -20,7 +20,11 @@ namespace System.Management.Automation
         internal const string PSRemotingProtocolVersionName = "PSRemotingProtocolVersion";
         internal const string PSVersionName = "PSVersion";
         internal const string PSEditionName = "PSEdition";
-        
+        internal const string PSBuildVersionName = "BuildVersion";
+        internal const string PSGitCommitIdName = "GitCommitId";
+        internal const string PSCompatibleVersionsName = "PSCompatibleVersions";
+        internal const string PSCLRVersionName = "CLRVersion";
+
         internal const string SerializationVersionName = "SerializationVersion";
         internal const string WSManStackVersionName = "WSManStackVersion";
         private static PSVersionHashTable s_psVersionTable = null;
@@ -60,16 +64,16 @@ namespace System.Management.Automation
 
             s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV6Version;
             s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;
-            s_psVersionTable["BuildVersion"] = GetBuildVersion();
-            s_psVersionTable["GitCommitId"] = GetCommitInfo();
-            s_psVersionTable["PSCompatibleVersions"] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version };
+            s_psVersionTable[PSBuildVersionName] = GetBuildVersion();
+            s_psVersionTable[PSGitCommitIdName] = GetCommitInfo();
+            s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version };
             s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
             s_psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
 #if CORECLR
-            s_psVersionTable["CLRVersion"] = null;
+            s_psVersionTable[PSCLRVersionName] = null;
 #else
-            s_psVersionTable["CLRVersion"] = Environment.Version;
+            s_psVersionTable[PSCLRVersionName] = Environment.Version;
 #endif
         }
 
@@ -159,7 +163,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (string)GetPSVersionTable()["GitCommitId"];
+                return (string)GetPSVersionTable()[PSGitCommitIdName];
             }
         }
 
@@ -167,7 +171,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (Version)GetPSVersionTable()["CLRVersion"];
+                return (Version)GetPSVersionTable()[PSCLRVersionName];
             }
         }
 
@@ -175,7 +179,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (Version)GetPSVersionTable()["BuildVersion"];
+                return (Version)GetPSVersionTable()[PSBuildVersionName];
             }
         }
 
@@ -183,7 +187,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (Version[])GetPSVersionTable()["PSCompatibleVersions"];
+                return (Version[])GetPSVersionTable()[PSCompatibleVersionsName];
             }
         }
 
@@ -199,7 +203,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (Version)GetPSVersionTable()["SerializationVersion"];
+                return (Version)GetPSVersionTable()[SerializationVersionName];
             }
         }
 
