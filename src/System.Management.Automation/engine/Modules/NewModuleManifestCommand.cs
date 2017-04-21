@@ -484,6 +484,10 @@ namespace Microsoft.PowerShell.Commands
         {
             if (name == null)
                 return "''";
+            else if (name is Uri)
+            {
+                name = ((Uri)name).AbsoluteUri;
+            }
             return "'" + name.ToString().Replace("'", "''") + "'";
         }
 
@@ -877,6 +881,10 @@ namespace Microsoft.PowerShell.Commands
             ValidateUriParameterValue(ProjectUri, "ProjectUri");
             ValidateUriParameterValue(LicenseUri, "LicenseUri");
             ValidateUriParameterValue(IconUri, "IconUri");
+            if (null != _helpInfoUri)
+            {
+                ValidateUriParameterValue(new Uri(_helpInfoUri), "HelpInfoUri");
+            }
 
             if (CompatiblePSEditions != null && (CompatiblePSEditions.Distinct(StringComparer.OrdinalIgnoreCase).Count() != CompatiblePSEditions.Count()))
             {
@@ -1003,7 +1011,7 @@ namespace Microsoft.PowerShell.Commands
 
                     BuildPrivateDataInModuleManifest(result, streamWriter);
 
-                    BuildModuleManifest(result, "HelpInfoURI", Modules.HelpInfoURI, !string.IsNullOrEmpty(_helpInfoUri), () => QuoteName(_helpInfoUri), streamWriter);
+                    BuildModuleManifest(result, "HelpInfoURI", Modules.HelpInfoURI, !string.IsNullOrEmpty(_helpInfoUri), () => QuoteName((null != _helpInfoUri) ? new Uri(_helpInfoUri) : null), streamWriter);
 
                     BuildModuleManifest(result, "DefaultCommandPrefix", Modules.DefaultCommandPrefix, !string.IsNullOrEmpty(_defaultCommandPrefix), () => QuoteName(_defaultCommandPrefix), streamWriter);
 
@@ -1128,7 +1136,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Dbg.Assert(!String.IsNullOrWhiteSpace(parameterName), "parameterName should not be null or whitespace");
 
-            if (uri != null && !Uri.IsWellFormedUriString(uri.ToString(), UriKind.Absolute))
+            if (uri != null && !Uri.IsWellFormedUriString(uri.AbsoluteUri, UriKind.Absolute))
             {
                 var message = StringUtil.Format(Modules.InvalidParameterValue, uri);
                 var ioe = new InvalidOperationException(message);
