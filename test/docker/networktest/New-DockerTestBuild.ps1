@@ -242,10 +242,10 @@ if ( $TestImage -eq $Constants.TestImageName)
     }
 }
 # check again - there could be some permission problems
-$TestImage = docker images remotetestimage --format '{{.Repository}}'
+$TestImage = docker images $Constants.TestImageName --format '{{.Repository}}'
 if ( $TestImage -eq $Constants.TestImageName) 
 {
-    throw "'remotetestimage' still exists, giving up"
+    throw ("'{0}' still exists, giving up" -f $Constants.TestImageName)
 }
 
 #### MSI CHECKS ####
