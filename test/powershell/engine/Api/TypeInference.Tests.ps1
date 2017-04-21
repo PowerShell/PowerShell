@@ -1,6 +1,40 @@
 using namespace System.Management.Automation
+using namespace System.Collections.Generic
 
 Describe "Type inference Tests" -tags "CI" {
+    BeforeAll {
+        $ati = [Cmdlet].Assembly.GetType("System.Management.Automation.AstTypeInference")        
+        $inferType = $ati.GetMethods().Where{$_.Name -ceq "InferTypeOf"}
+        $m1 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast)'
+        $m2 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast, System.Management.Automation.TypeInferenceRuntimePermissions)'
+        $m3 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast, System.Management.Automation.PowerShell)'
+        $m4 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast, System.Management.Automation.PowerShell, System.Management.Automation.TypeInferenceRuntimePermissions)'
+
+        $inferTypeOf1 = $inferType.Where{$m1 -eq $_}[0]
+        $inferTypeOf2 = $inferType.Where{$m2 -eq $_}[0]
+        $inferTypeOf3 = $inferType.Where{$m3 -eq $_}[0]
+        $inferTypeOf4 = $inferType.Where{$m4 -eq $_}[0]
+        
+        class AstTypeInference {
+            static [IList[PSTypeName]] InferTypeOf([Language.Ast] $ast) {
+                return  $script:inferTypeOf1.Invoke($null, $ast)
+            }
+
+            static [IList[PSTypeName]] InferTypeOf([Language.Ast] $ast, [System.Management.Automation.TypeInferenceRuntimePermissions] $runtimePermissions) {
+                return $script:inferTypeOf2.Invoke($null, @($ast, $runtimePermissions))
+            }
+            
+            static [IList[PSTypeName]] InferTypeOf([Language.Ast] $ast, [System.Management.Automation.PowerShell] $powershell) {
+                return $script:inferTypeOf3.Invoke($null, @($ast, $powershell))
+            }
+
+            static [IList[PSTypeName]] InferTypeOf([Language.Ast] $ast, [PowerShell] $powerShell, [System.Management.Automation.TypeInferenceRuntimePermissions] $runtimePermissions) {
+                return $script:inferTypeOf4.Invoke($null, @($ast, $powerShell, $runtimePermissions))
+            }
+        }
+           
+    }
+
     It "Inferes type from integer" {
         $res = [AstTypeInference]::InferTypeOf( { 1 }.Ast)
         $res.Count | Should Be 1

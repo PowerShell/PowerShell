@@ -29,9 +29,9 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// static class containting methods to work with type inference of abstract syntax trees
+    /// static class containing methods to work with type inference of abstract syntax trees
     /// </summary>
-    public static class AstTypeInference
+    internal static class AstTypeInference
     {
         /// <summary>
         /// Infers the type that the result of executing a statement would have without using runtime safe eval
@@ -47,11 +47,11 @@ namespace System.Management.Automation
         /// Infers the type that the result of executing a statement would have
         /// </summary>
         /// <param name="ast">the ast to infer the type from</param>
-        /// <param name="evalPersmissions">The runtime usage permissions allowed during type inference</param>
+        /// <param name="evalPermissions">The runtime usage permissions allowed during type inference</param>
         /// <returns></returns>
-        public static IList<PSTypeName> InferTypeOf(Ast ast, TypeInferenceRuntimePermissions evalPersmissions)
+        public static IList<PSTypeName> InferTypeOf(Ast ast, TypeInferenceRuntimePermissions evalPermissions)
         {
-            return InferTypeOf(ast, PowerShell.Create(RunspaceMode.CurrentRunspace), evalPersmissions);
+            return InferTypeOf(ast, PowerShell.Create(RunspaceMode.CurrentRunspace), evalPermissions);
         }
 
         /// <summary>
@@ -212,18 +212,12 @@ namespace System.Management.Automation
                 var propertyMember = member as PropertyMemberAst;
                 if (propertyMember != null)
                 {
-                    if (propertyMember.IsStatic == isStatic)
-                    {
-                        add = true;
-                    }
+                    add = propertyMember.IsStatic == isStatic;
                 }
                 else
                 {
                     var functionMember = (FunctionMemberAst) member;
-                    if (functionMember.IsStatic == isStatic)
-                    {
-                        add = true;
-                    }
+                    add = functionMember.IsStatic == isStatic;
                     foundConstructor |= functionMember.IsConstructor;
                 }
 
@@ -281,9 +275,13 @@ namespace System.Management.Automation
             if (CurrentTypeDefinitionAst == null || CurrentTypeDefinitionAst.Type != typename.Type)
             {
                 if (filterToCall == null)
+                {
                     filterToCall = o => !IsMemberHidden(o);
+                }
                 else
+                {
                     filterToCall = o => !IsMemberHidden(o) && filter(o);
+                }
             }
             IEnumerable<Type> elementTypes;
             if (typename.Type.IsArray)
@@ -425,6 +423,7 @@ namespace System.Management.Automation
     {
         private readonly TypeInferenceContext _context;
 
+		private static readonly PSTypeName StringPSTypeName = new PSTypeName(typeof(string));
 
         public TypeInferenceVisitor(TypeInferenceContext context)
         {
@@ -478,7 +477,7 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitExpandableStringExpression(ExpandableStringExpressionAst expandableStringExpressionAst)
         {
-            return new[] { new PSTypeName(typeof(string)) };
+            return new[] { StringPSTypeName };
         }
 
         object ICustomAstVisitor.VisitIndexExpression(IndexExpressionAst indexExpressionAst)
@@ -539,7 +538,7 @@ namespace System.Management.Automation
 
         object ICustomAstVisitor.VisitStringConstantExpression(StringConstantExpressionAst stringConstantExpressionAst)
         {
-            return new[] { new PSTypeName(typeof(string)) };
+            return new[] { StringPSTypeName };
         }
 
         object ICustomAstVisitor.VisitSubExpression(SubExpressionAst subExpressionAst)
@@ -1526,6 +1525,72 @@ namespace System.Management.Automation
                            name.StartsWith("get_") && propertyName.IndexOf(name, 4, StringComparison.Ordinal) == 4;
                 }
             );
+        }
+
+        public static bool AstAssignsToSameVariable(this VariableExpressionAst variableAst, Ast ast)
+        {
+            var parameterAst = ast as ParameterAst;
+            var variableAstVariablePath = variableAst.VariablePath;
+            if (parameterAst != null)
+            {
+                return variableAstVariablePath.IsUnscopedVariable &&
+                       parameterAst.Name.VariablePath.UnqualifiedPath.Equals(variableAstVariablePath.UnqualifiedPath, StringComparison.OrdinalIgnoreCase);
+            }
+
+            var foreachAst = ast as ForEachStatementAst;
+            if (foreachAst != null)
+            {
+                return variableAstVariablePath.IsUnscopedVariable &&
+                       foreachAst.Variable.VariablePath.UnqualifiedPath.Equals(variableAstVariablePath.UnqualifiedPath, StringComparison.OrdinalIgnoreCase);
+            }
+
+            var commandAst = ast as CommandAst;
+            if (commandAst != null)
+            {
+                string[] variableParameters = new string[] { "PV", "PipelineVariable", "OV", "OutVariable" };
+                StaticBindingResult bindingResult = StaticParameterBinder.BindCommand(commandAst, false, variableParameters);
+
+                if (bindingResult != null)
+                {
+                    ParameterBindingResult parameterBindingResult;
+
+                    foreach (string commandVariableParameter in variableParameters)
+                    {
+                        if (bindingResult.BoundParameters.TryGetValue(commandVariableParameter, out parameterBindingResult))
+                        {
+                            if (String.Equals(variableAstVariablePath.UnqualifiedPath, (string)parameterBindingResult.ConstantValue, StringComparison.OrdinalIgnoreCase))
+                            {
+                                return true;
+                            }
+                        }
+                    }
+                }
+
+                return false;
+            }
+
+            var assignmentAst = (AssignmentStatementAst)ast;
+            var lhs = assignmentAst.Left;
+            var convertExpr = lhs as ConvertExpressionAst;
+            if (convertExpr != null)
+            {
+                lhs = convertExpr.Child;
+            }
+
+            var varExpr = lhs as VariableExpressionAst;
+            if (varExpr == null)
+                return false;
+
+            var candidateVarPath = varExpr.VariablePath;
+            if (candidateVarPath.UserPath.Equals(variableAstVariablePath.UserPath, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            // The following condition is making an assumption that at script scope, we didn't use $script:, but in the local scope, we did
+            // If we are searching anything other than script scope, this is wrong.
+            if (variableAstVariablePath.IsScript && variableAstVariablePath.UnqualifiedPath.Equals(candidateVarPath.UnqualifiedPath, StringComparison.OrdinalIgnoreCase))
+                return true;
+
+            return false;
         }
     }
 }
