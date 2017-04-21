@@ -342,34 +342,47 @@ namespace System.Management.Automation
         {
             get
             {
-                Array keyList = new string[base.Keys.Count];
-                int index = 2;
-                foreach (string key in base.Keys)
+                int sortStartIndex = 0, psVersionNameIndex = -1, psEditionNameIndex = -1;
+                if (base.ContainsKey(PSVersionInfo.PSVersionName)) { psVersionNameIndex = sortStartIndex++; }
+                if (base.ContainsKey(PSVersionInfo.PSEditionName)) { psEditionNameIndex = sortStartIndex++; }
+
+                var keyArray = new string[base.Keys.Count];
+                int index = sortStartIndex;
+                bool hasNonStringKey = false;
+
+                foreach (object key in base.Keys)
                 {
-                    switch (key)
+                    string strKey = key as string;
+                    if (strKey == null)
+                    {
+                        hasNonStringKey = true;
+                        break;
+                    }
+
+                    switch (strKey)
                     {
                         case PSVersionInfo.PSVersionName:
-                                keyList.SetValue(key, 0);
-                                break;
+                            keyArray[psVersionNameIndex] = strKey;
+                            break;
                         case PSVersionInfo.PSEditionName:
-                                keyList.SetValue(key, 1);
-                                break;
+                            keyArray[psEditionNameIndex] = strKey;
+                            break;
                         default:
-                                keyList.SetValue(key, index++);
-                                break;
+                            keyArray[index++] = strKey;
+                            break;
                     }
                 }
-                Array.Sort(keyList, 2, keyList.Length - 2, StringComparer.Ordinal);
-                return keyList;
-            }
-        }
 
-        private void MoveItemOnFirstPlace(string name, ArrayList list)
-        {
-            var index = list.IndexOf(name);
-            var item = list[index];
-            list.RemoveAt(index);
-            list.Insert(0, item);
+                if (hasNonStringKey)
+                {
+                    return base.Keys;
+                }
+                else
+                {
+                    Array.Sort(keyArray, sortStartIndex, keyArray.Length - sortStartIndex, StringComparer.Ordinal);
+                    return keyArray;
+                }
+            }
         }
 
         /// <summary>
@@ -378,9 +391,9 @@ namespace System.Management.Automation
         /// </summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            foreach (string key in Keys)
+            foreach (object key in Keys)
             {
-                yield return new System.Collections.DictionaryEntry(key, this[key]);
+                yield return new DictionaryEntry(key, this[key]);
             }
         }
     }
