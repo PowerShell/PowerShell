@@ -1566,7 +1566,7 @@ namespace System.Management.Automation.Remoting.Client
                     var task = reader.ReadLineAsync();
                     if (task.Wait(1000) && (task.Result != null))
                     {
-                        sb.Append("\r\n");
+                        sb.Append(Environment.NewLine);
                         sb.Append(task.Result);
                     }
                     else
