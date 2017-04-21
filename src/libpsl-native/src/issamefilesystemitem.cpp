@@ -1,6 +1,6 @@
 //! @file issamefilesystemitem.cpp
 //! @author Jeff Bienstadt <v-jebien@microsoft.com>
-//! @brief returns if two paths ultimately point to the same filesystem object
+//! @brief Determines whether two paths ultimately point to the same filesystem object
 
 #include "getstat.h"
 #include "issamefilesystemitem.h"
@@ -10,7 +10,7 @@
 #include <sys/stat.h>
 #include <unistd.h>
 
-//! @brief returns if two paths ultimately refer to the same file or directory.
+//! @brief Returns a boolean value indicating whether two paths ultimately refer to the same file or directory.
 //!
 //! IsSameFileSystemItem
 //!

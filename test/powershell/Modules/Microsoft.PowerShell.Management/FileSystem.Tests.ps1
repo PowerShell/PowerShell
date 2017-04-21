@@ -349,24 +349,33 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
             )
 
             # Junctions and directory symbolic links are Windows and NTFS only
-            if ($IsWindows)
-            {
-                $testCases += @(
-                    @{
-                        Name = "Copy junction to target"
-                        Source = $junctionToOther
-                        Destination = $otherSubDir
-                    }
-                    @{
-                        Name = "Copy directory symbolic link to target"
-                        Source = $symdToOther
-                        Destination = $otherSubDir
-                    }
-                )
-            }
+            $windowsTestCases = @(
+                @{
+                    Name = "Copy junction to target"
+                    Source = $junctionToOther
+                    Destination = $otherSubDir
+                }
+                @{
+                    Name = "Copy directory symbolic link to target"
+                    Source = $symdToOther
+                    Destination = $otherSubDir
+                }
+            )
         }
 
         It "<Name>" -TestCases $testCases {
+            Param (
+                [string]$Name,
+                [string]$Source,
+                [string]$Destination
+            )
+
+            { Copy-Item -Path $Source -Destination $Destination -ErrorAction Stop } | ShouldBeErrorId "CopyError,Microsoft.PowerShell.Commands.CopyItemCommand"
+            $Error[0].Exception | Should BeOfType System.IO.IOException
+            $Error[0].Exception.Data[$selfCopyKey] | Should Not Be $null
+        }
+
+        It "<Name>" -TestCases $windowsTestCases -Skip:(-not $IsWindows) {
             Param (
                 [string]$Name,
                 [string]$Source,
