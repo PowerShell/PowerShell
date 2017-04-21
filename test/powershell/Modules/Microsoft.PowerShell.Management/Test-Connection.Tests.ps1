@@ -38,7 +38,7 @@ Describe "Test-Connection" -Tags "CI" {
     }
 }
 
-Describe  "Test-Connection Slow Tests" -Tags "Slow" {
+Describe  "Test-Connection Slow Tests" -Tags  @('CI', 'Slow') {
     BeforeAll {
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
         if ( ! $IsWindows )
