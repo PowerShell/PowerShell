@@ -582,6 +582,11 @@ namespace System.Management.Automation
             return Unix.NativeMethods.IsDirectory(path);
         }
 
+        internal static bool NonWindowsIsSameFileSystemItem(string pathOne, string pathTwo)
+        {
+            return Unix.NativeMethods.IsSameFileSystemItem(pathOne, pathTwo);
+        }
+
         internal static bool NonWindowsIsExecutable(string path)
         {
             return Unix.NativeMethods.IsExecutable(path);
@@ -597,7 +602,7 @@ namespace System.Management.Automation
             return IsOSX ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
         }
 
-       
+
 
         // Unix specific implementations of required functionality
         //
@@ -789,6 +794,11 @@ namespace System.Management.Automation
                 [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
                 [return: MarshalAs(UnmanagedType.I1)]
                 internal static extern bool IsDirectory([MarshalAs(UnmanagedType.LPStr)]string filePath);
+
+                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                [return: MarshalAs(UnmanagedType.I1)]
+                internal static extern bool IsSameFileSystemItem([MarshalAs(UnmanagedType.LPStr)]string filePathOne,
+                                                                 [MarshalAs(UnmanagedType.LPStr)]string filePathTwo);
             }
         }
     }

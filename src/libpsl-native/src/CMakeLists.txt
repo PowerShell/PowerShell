@@ -13,6 +13,7 @@ add_library(psl-native SHARED
   geterrorcategory.cpp
   isfile.cpp
   isdirectory.cpp
+  issamefilesystemitem.cpp
   issymlink.cpp
   isexecutable.cpp
   setdate.cpp

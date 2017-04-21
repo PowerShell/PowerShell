@@ -61,6 +61,11 @@ namespace Microsoft.PowerShell.Commands
         // copy script will accomodate the new value.
         private const int FILETRANSFERSIZE = 4 * 1024 * 1024;
 
+        // The name of the key in an exception's Data dictionary when attempting
+        // to copy an item onto itself.
+        private const string SelfCopyDataKey = "SelfCopy";
+
+
         /// <summary>
         /// An instance of the PSTraceSource class used for trace output
         /// using "FileSystemProvider" as the category.
@@ -3457,14 +3462,14 @@ namespace Microsoft.PowerShell.Commands
             _excludeMatcher = SessionStateUtilities.CreateWildcardsFromStrings(Exclude, WildcardOptions.IgnoreCase);
 
             // if the source and destination path are same (for a local copy) then flag it as error.
-            if ((toSession == null) && (fromSession == null) && path.Equals(destinationPath, StringComparison.OrdinalIgnoreCase))
+            if ((toSession == null) && (fromSession == null) && InternalSymbolicLinkLinkCodeMethods.IsSameFileSystemItem(path, destinationPath))
             {
                 String error = StringUtil.Format(FileSystemProviderStrings.CopyError, path);
                 Exception e = new IOException(error);
+                e.Data[SelfCopyDataKey] = destinationPath;
                 WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, path));
                 return;
             }
-
             // Copy-Item from session
             if (fromSession != null)
             {
@@ -3774,14 +3779,14 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 //if the source and destination path are same then flag it as error.
-                if (destinationPath.Equals(file.FullName, StringComparison.OrdinalIgnoreCase))
+                if (InternalSymbolicLinkLinkCodeMethods.IsSameFileSystemItem(destinationPath, file.FullName))
                 {
                     String error = StringUtil.Format(FileSystemProviderStrings.CopyError, destinationPath);
                     Exception e = new IOException(error);
+                    e.Data[SelfCopyDataKey] = file.FullName;
                     WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, destinationPath));
                     return;
                 }
-
                 // Verify that the target doesn't represent a device name
                 if (PathIsReservedDeviceName(destinationPath, "CopyError"))
                 {
@@ -8208,6 +8213,42 @@ namespace Microsoft.PowerShell.Commands
             return isHardLink;
         }
 
+        internal static bool IsSameFileSystemItem(string pathOne, string pathTwo)
+        {
+#if UNIX
+            return Platform.NonWindowsIsSameFileSystemItem(pathOne, pathTwo);
+#else
+            return WinIsSameFileSystemItem(pathOne, pathTwo);
+#endif
+        }
+
+        internal static bool WinIsSameFileSystemItem(string pathOne, string pathTwo)
+        {
+            var access = FileAccess.Read;
+            var share = FileShare.Read;
+            var creation = FileMode.Open;
+            var attributes = FileAttributes.BackupSemantics | FileAttributes.PosixSemantics;
+
+            using (var sfOne = AlternateDataStreamUtilities.NativeMethods.CreateFile(pathOne, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
+            using (var sfTwo = AlternateDataStreamUtilities.NativeMethods.CreateFile(pathTwo, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
+            {
+                if (!sfOne.IsInvalid && !sfTwo.IsInvalid)
+                {
+                    BY_HANDLE_FILE_INFORMATION  infoOne;
+                    BY_HANDLE_FILE_INFORMATION  infoTwo;
+                    if (   GetFileInformationByHandle(sfOne.DangerousGetHandle(), out infoOne)
+                        && GetFileInformationByHandle(sfTwo.DangerousGetHandle(), out infoTwo))
+                    {
+                        return    infoOne.VolumeSerialNumber == infoTwo.VolumeSerialNumber
+                               && infoOne.FileIndexHigh == infoTwo.FileIndexHigh
+                               && infoOne.FileIndexLow == infoTwo.FileIndexLow;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         internal static bool IsHardLink(ref IntPtr handle)
         {
 #if UNIX
@@ -8661,7 +8702,7 @@ namespace System.Management.Automation.Internal
             // the code above seems cleaner and more robust than the IAttachmentExecute approach
         }
 
-        private static class NativeMethods
+        internal static class NativeMethods
         {
             internal const int ERROR_HANDLE_EOF = 38;
             internal enum StreamInfoLevels { FindStreamInfoStandard = 0 }
