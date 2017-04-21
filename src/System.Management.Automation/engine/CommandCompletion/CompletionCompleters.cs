@@ -113,7 +113,7 @@ namespace System.Management.Automation
                 }
 
                 var powershell = context.Helper.CurrentPowerShell;
-                AddCommandWithPreferenceSetting(powershell, "Get-Command", typeof(GetCommandCommand))
+                powershell.AddCommandWithPreferenceSetting("Get-Command", typeof(GetCommandCommand))
                     .AddParameter("All")
                     .AddParameter("Name", commandName);
 
@@ -178,7 +178,7 @@ namespace System.Management.Automation
                     commandName = commandName.Substring(indexOfFirstBackslash + 1);
 
                     var powershell = context.Helper.CurrentPowerShell;
-                    AddCommandWithPreferenceSetting(powershell, "Get-Command", typeof(GetCommandCommand))
+                    powershell.AddCommandWithPreferenceSetting("Get-Command", typeof(GetCommandCommand))
                         .AddParameter("All")
                         .AddParameter("Name", commandName)
                         .AddParameter("Module", moduleName);
@@ -452,7 +452,7 @@ namespace System.Management.Automation
             }
 
             var powershell = context.Helper.CurrentPowerShell;
-            AddCommandWithPreferenceSetting(powershell, "Get-Module", typeof(GetModuleCommand)).AddParameter("Name", moduleName);
+            powershell.AddCommandWithPreferenceSetting("Get-Module", typeof(GetModuleCommand)).AddParameter("Name", moduleName);
             if (!loadedModulesOnly)
             {
                 powershell.AddParameter("ListAvailable", true);
@@ -2914,7 +2914,7 @@ namespace System.Management.Automation
                 var pattern = WildcardPattern.Get(logName, WildcardOptions.IgnoreCase);
 
                 var powershell = context.Helper.CurrentPowerShell;
-                AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Management\\Get-EventLog").AddParameter("LogName", "*");
+                powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-EventLog").AddParameter("LogName", "*");
 
                 Exception exceptionThrown;
                 var psObjects = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
@@ -2966,11 +2966,11 @@ namespace System.Management.Automation
 
             if (paramName.Equals("Name", StringComparison.OrdinalIgnoreCase))
             {
-                AddCommandWithPreferenceSetting(powershell, "Get-Job", typeof(GetJobCommand)).AddParameter("Name", wordToComplete);
+                powershell.AddCommandWithPreferenceSetting("Get-Job", typeof(GetJobCommand)).AddParameter("Name", wordToComplete);
             }
             else
             {
-                AddCommandWithPreferenceSetting(powershell, "Get-Job", typeof(GetJobCommand)).AddParameter("IncludeChildJob", true);
+                powershell.AddCommandWithPreferenceSetting("Get-Job", typeof(GetJobCommand)).AddParameter("IncludeChildJob", true);
             }
 
             Exception exceptionThrown;
@@ -3057,11 +3057,11 @@ namespace System.Management.Automation
 
             if (paramName.Equals("Name", StringComparison.OrdinalIgnoreCase))
             {
-                AddCommandWithPreferenceSetting(powershell, "PSScheduledJob\\Get-ScheduledJob").AddParameter("Name", wordToComplete);
+                powershell.AddCommandWithPreferenceSetting("PSScheduledJob\\Get-ScheduledJob").AddParameter("Name", wordToComplete);
             }
             else
             {
-                AddCommandWithPreferenceSetting(powershell, "PSScheduledJob\\Get-ScheduledJob");
+                powershell.AddCommandWithPreferenceSetting("PSScheduledJob\\Get-ScheduledJob");
             }
 
             Exception exceptionThrown;
@@ -3182,11 +3182,11 @@ namespace System.Management.Automation
 
             if (paramName.Equals("Id", StringComparison.OrdinalIgnoreCase))
             {
-                AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Management\\Get-Process");
+                powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-Process");
             }
             else
             {
-                AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Management\\Get-Process").AddParameter("Name", wordToComplete);
+                powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-Process").AddParameter("Name", wordToComplete);
             }
 
             Exception exceptionThrown;
@@ -3263,7 +3263,7 @@ namespace System.Management.Automation
                 providerName += "*";
             }
 
-            AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Management\\Get-PSProvider").AddParameter("PSProvider", providerName);
+            powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-PSProvider").AddParameter("PSProvider", providerName);
             Exception exceptionThrown;
             var psObjects = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
             if (psObjects == null)
@@ -3308,7 +3308,7 @@ namespace System.Management.Automation
                 wordToComplete += "*";
             }
 
-            AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Management\\Get-PSDrive").AddParameter("Name", wordToComplete);
+            powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-PSDrive").AddParameter("Name", wordToComplete);
             if (psProvider != null)
                 powershell.AddParameter("PSProvider", psProvider);
 
@@ -3359,9 +3359,9 @@ namespace System.Management.Automation
             {
                 RemoveLastNullCompletionResult(result);
 
-                AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Management\\Get-Service")
+                powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-Service")
                     .AddParameter("DisplayName", wordToComplete);
-                AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Utility\\Sort-Object")
+                powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object")
                     .AddParameter("Property", "DisplayName");
                 var psObjects = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
                 if (psObjects != null)
@@ -3393,7 +3393,7 @@ namespace System.Management.Automation
             {
                 RemoveLastNullCompletionResult(result);
 
-                AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Management\\Get-Service").AddParameter("Name", wordToComplete);
+                powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-Service").AddParameter("Name", wordToComplete);
                 var psObjects = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
                 if (psObjects != null)
                 {
@@ -3440,7 +3440,7 @@ namespace System.Management.Automation
                 variableName += "*";
             }
 
-            AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Utility\\Get-Variable").AddParameter("Name", variableName);
+            powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Get-Variable").AddParameter("Name", variableName);
             Exception exceptionThrown;
             var psObjects = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
             if (psObjects == null)
@@ -3501,7 +3501,7 @@ namespace System.Management.Automation
                 }
 
                 Exception exceptionThrown;
-                AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Utility\\Get-Alias").AddParameter("Name", commandName);
+                powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Get-Alias").AddParameter("Name", commandName);
                 var psObjects = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
                 if (psObjects != null)
                 {
@@ -3562,7 +3562,7 @@ namespace System.Management.Automation
                 traceSourceName += "*";
             }
 
-            AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Utility\\Get-TraceSource").AddParameter("Name", traceSourceName);
+            powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Get-TraceSource").AddParameter("Name", traceSourceName);
             Exception exceptionThrown;
             var psObjects = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
             if (psObjects == null)
@@ -4140,7 +4140,7 @@ namespace System.Management.Automation
                     context.ExecutionContext.SessionState.Drive.GetAtScope(wordToComplete.Substring(0, 1), "global");
                 }
 
-                AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Management\\Resolve-Path")
+                powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Resolve-Path")
                     .AddParameter("Path", wordToComplete + "*");
 
                 Exception exceptionThrown;
@@ -4263,7 +4263,7 @@ namespace System.Management.Automation
 
                         if (!hiddenFilesAreHandled)
                         {
-                            AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Management\\Get-ChildItem")
+                            powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-ChildItem")
                                 .AddParameter("Path", wordToComplete + "*")
                                 .AddParameter("Hidden", true);
 
@@ -4402,7 +4402,7 @@ namespace System.Management.Automation
                         }
                         else
                         {
-                            AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Management\\Get-Item")
+                            powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-Item")
                                 .AddParameter("LiteralPath", path);
                             var items = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
                             if (items != null && items.Count == 1)
@@ -4413,7 +4413,7 @@ namespace System.Management.Automation
                                 if (containerOnly && !isContainer)
                                     continue;
 
-                                AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Management\\Convert-Path")
+                                powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Convert-Path")
                                     .AddParameter("LiteralPath", item.PSPath);
                                 var tooltips = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
                                 string tooltip = null, listItemText = item.PSChildName;
@@ -4661,8 +4661,8 @@ namespace System.Management.Automation
             }
 
             var powershell = context.Helper.CurrentPowerShell;
-            AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Management\\Get-Item").AddParameter("Path", pattern);
-            AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Utility\\Sort-Object").AddParameter("Property", "Name");
+            powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-Item").AddParameter("Path", pattern);
+            powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object").AddParameter("Property", "Name");
 
             Exception exceptionThrown;
             var psobjs = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
@@ -4697,8 +4697,8 @@ namespace System.Management.Automation
             if (colon == -1 && "env".StartsWith(wordToComplete, StringComparison.OrdinalIgnoreCase))
             {
                 powershell = context.Helper.CurrentPowerShell;
-                AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Management\\Get-Item").AddParameter("Path", "env:*");
-                AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Utility\\Sort-Object").AddParameter("Property", "Key");
+                powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-Item").AddParameter("Path", "env:*");
+                powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object").AddParameter("Property", "Key");
 
                 psobjs = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
                 if (psobjs != null)
@@ -4736,8 +4736,8 @@ namespace System.Management.Automation
             {
                 // If no drive was specified, then look for matching drives/scopes
                 pattern = wordToComplete + "*";
-                AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Management\\Get-PSDrive").AddParameter("Name", pattern);
-                AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Utility\\Sort-Object").AddParameter("Property", "Name");
+                powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Get-PSDrive").AddParameter("Name", pattern);
+                powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object").AddParameter("Property", "Name");
                 psobjs = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
                 if (psobjs != null)
                 {
@@ -4880,7 +4880,7 @@ namespace System.Management.Automation
             int entryId;
             if (Regex.IsMatch(wordToComplete, @"^[0-9]+$") && LanguagePrimitives.TryConvertTo(wordToComplete, out entryId))
             {
-                AddCommandWithPreferenceSetting(powershell, "Get-History", typeof(GetHistoryCommand)).AddParameter("Id", entryId);
+                powershell.AddCommandWithPreferenceSetting("Get-History", typeof(GetHistoryCommand)).AddParameter("Id", entryId);
                 psobjs = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
 
                 if (psobjs != null && psobjs.Count == 1)
@@ -4905,7 +4905,7 @@ namespace System.Management.Automation
             }
 
             wordToComplete = "*" + wordToComplete + "*";
-            AddCommandWithPreferenceSetting(powershell, "Get-History", typeof(GetHistoryCommand));
+            powershell.AddCommandWithPreferenceSetting("Get-History", typeof(GetHistoryCommand));
 
             psobjs = context.Helper.ExecuteCurrentPowerShell(out exceptionThrown);
             var pattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase);
@@ -5214,7 +5214,7 @@ namespace System.Management.Automation
             if (results.Count > 0)
             {
                 // Sort the results
-                AddCommandWithPreferenceSetting(context.Helper.CurrentPowerShell, "Microsoft.PowerShell.Utility\\Sort-Object")
+                context.Helper.CurrentPowerShell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object")
                     .AddParameter("Property", new[] { "ResultType", "ListItemText" })
                     .AddParameter("Unique");
                 Exception unused;
@@ -5506,7 +5506,7 @@ namespace System.Management.Automation
                 string className;
                 if (NativeCompletionCimCommands_ParseTypeName(typename, out cimNamespace, out className))
                 {
-                    AddCommandWithPreferenceSetting(context.Helper.CurrentPowerShell, "CimCmdlets\\Get-CimClass")
+                    context.Helper.CurrentPowerShell.AddCommandWithPreferenceSetting("CimCmdlets\\Get-CimClass")
                         .AddParameter("Namespace", cimNamespace)
                         .AddParameter("Class", className);
                     Exception unused;
@@ -6472,11 +6472,6 @@ namespace System.Management.Automation
 
         #region Helpers
 
-        internal static PowerShell AddCommandWithPreferenceSetting(PowerShell powershell, string command, Type type = null)
-        {
-            return TypeInferenceContext.AddCommandWithPreferenceSetting(powershell, command, type);
-        }
-
         internal static bool IsPathSafelyExpandable(ExpandableStringExpressionAst expandableStringAst, string extraText, ExecutionContext executionContext, out string expandedString)
         {
             expandedString = null;
@@ -6605,11 +6600,11 @@ namespace System.Management.Automation
                 var powershell = context.Helper.CurrentPowerShell;
 
                 // Instead of Get-Member, we access the members directly and send as input to the pipe.
-                AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Core\\Where-Object")
+                powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Core\\Where-Object")
                     .AddParameter("Property", "Name")
                     .AddParameter("Like")
                     .AddParameter("Value", memberName);
-                AddCommandWithPreferenceSetting(powershell, "Microsoft.PowerShell.Utility\\Sort-Object")
+                powershell.AddCommandWithPreferenceSetting("Microsoft.PowerShell.Utility\\Sort-Object")
                     .AddParameter("Property", new object[] { "MemberType", "Name" });
 
                 IEnumerable members;

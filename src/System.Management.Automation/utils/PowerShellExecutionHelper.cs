@@ -224,4 +224,32 @@ namespace System.Management.Automation
 
         #endregion Helpers
     }
+
+    internal static class PowerShellExtensionHelpers
+    {
+        internal static PowerShell AddCommandWithPreferenceSetting(this PowerShell powershell, string command, Type type = null)
+        {
+            Diagnostics.Assert(powershell != null, "the passed-in powershell cannot be null");
+            Diagnostics.Assert(!String.IsNullOrWhiteSpace(command),
+                "the passed-in command name should not be null or whitespaces");
+
+            if (type != null)
+            {
+                var cmdletInfo = new CmdletInfo(command, type);
+                powershell.AddCommand(cmdletInfo);
+            }
+            else
+            {
+                powershell.AddCommand(command);
+            }
+            powershell
+                .AddParameter("ErrorAction", ActionPreference.Ignore)
+                .AddParameter("WarningAction", ActionPreference.Ignore)
+                .AddParameter("InformationAction", ActionPreference.Ignore)
+                .AddParameter("Verbose", false)
+                .AddParameter("Debug", false);
+
+            return powershell;
+        }
+    }
 }
