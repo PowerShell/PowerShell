@@ -1,4 +1,4 @@
-Describe "TabCompletion" {
+Describe "TabCompletion" -Tags CI {
     It 'Should complete Command' {
         $res = TabExpansion2 -inputScript 'Get-Com' -cursorColumn 'Get-Com'.Length 
         $res.CompletionMatches[0].CompletionText | Should be Get-Command
