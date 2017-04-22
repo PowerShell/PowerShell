@@ -4,7 +4,7 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should be Get-Command
     }
 
-    It 'Should complete native exe' {
+    It 'Should complete native exe' -Skip:(!$IsWindows) {
         $res = TabExpansion2 -inputScript 'notep' -cursorColumn 'notep'.Length 
         $res.CompletionMatches[0].CompletionText | Should be notepad.exe
     }
