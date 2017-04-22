@@ -7504,85 +7504,9 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return GetEncodingFromEnum(Encoding);
+                return Utils.GetEncodingFromEnum(Encoding);
             }
         } // EncodingType
-
-        /// <summary>
-        /// Converts the stream type string into an Encoding
-        /// </summary>
-        ///
-        /// <param name="type">
-        /// This is a string representation of the encoding. It can be
-        /// "string", "unicode", "bigendianunicode", "ascii", "utf7", or "utf8"
-        ///
-        /// Note, a ToLowerInvariant is done to the type before comparison is made.
-        /// </param>
-        ///
-        /// <returns>
-        /// The encoding that was represented by the string
-        /// </returns>
-        ///
-        /// <throws>
-        /// ArgumentException if type is null, empty, or does not represent one
-        /// of the known encoding types.
-        /// </throws>
-        private static Encoding GetEncodingFromEnum(FileSystemCmdletProviderEncoding type)
-        {
-            System.Text.Encoding encoding;
-
-            switch (type)
-            {
-                case FileSystemCmdletProviderEncoding.String:
-                    encoding = System.Text.Encoding.Unicode;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.Unicode:
-                    encoding = System.Text.Encoding.Unicode;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.BigEndianUnicode:
-                    encoding = System.Text.Encoding.BigEndianUnicode;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.UTF8:
-                    encoding = System.Text.Encoding.UTF8;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.UTF7:
-                    encoding = System.Text.Encoding.UTF7;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.UTF32:
-                    encoding = System.Text.Encoding.UTF32;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.BigEndianUTF32:
-                    encoding = System.Text.Encoding.GetEncoding("utf-32BE");
-                    break;
-
-                case FileSystemCmdletProviderEncoding.Ascii:
-                    encoding = System.Text.Encoding.ASCII;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.Default:
-                    encoding = ClrFacade.GetDefaultEncoding();
-                    break;
-
-                case FileSystemCmdletProviderEncoding.Oem:
-                    {
-                        encoding = ClrFacade.GetOEMEncoding();
-                    }
-                    break;
-
-                default:
-                    // Default to unicode encoding
-                    encoding = System.Text.Encoding.Unicode;
-                    break;
-            }
-
-            return encoding;
-        } // GetEncodingFromEnum
 
         /// <summary>
         /// Gets the Byte Encoding status of the StreamType parameter.  Returns true
