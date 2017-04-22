@@ -1309,18 +1309,25 @@ namespace System.Management.Automation
                     null, Metadata.ValidateCountNotInArray);
             }
 
+            if (MinLength == MaxLength && len != MaxLength)
+            {
+                throw new ValidationMetadataException("ValidateCountNotExactlyEqual",
+                    null, Metadata.ValidateCountFailure,
+                    MinLength, MaxLength, len);
+            }
+
             if (len < MinLength)
             {
                 throw new ValidationMetadataException("ValidateCountSmallerThanMin",
-                    null, Metadata.ValidateCountMinLengthFailure,
-                    MinLength, len);
+                    null, Metadata.ValidateCountFailure,
+                    MinLength, MaxLength, len);
             }
 
             if (len > MaxLength)
             {
                 throw new ValidationMetadataException("ValidateCountGreaterThanMax",
-                    null, Metadata.ValidateCountMaxLengthFailure,
-                    MaxLength, len);
+                    null, Metadata.ValidateCountFailure,
+                    MinLength, MaxLength, len);
             }
         }
 

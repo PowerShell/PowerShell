@@ -144,11 +144,8 @@
   <data name="ValidateCountNotInArray" xml:space="preserve">
     <value>The ValidateCount attribute cannot be applied to a non-array parameter. Either remove the attribute from the parameter or make the parameter an array parameter.</value>
   </data>
-  <data name="ValidateCountMinLengthFailure" xml:space="preserve">
-    <value>The number of provided arguments ({1}) is fewer than the minimum number of allowed arguments ({0}). Provide more than {0} arguments, and then try the command again.</value>
-  </data>
-  <data name="ValidateCountMaxLengthFailure" xml:space="preserve">
-    <value>The number of provided arguments, ({1}), exceeds the maximum number of allowed arguments ({0}). Provide fewer than {0} arguments, and then try the command again.</value>
+  <data name="ValidateCountFailure" xml:space="preserve">
+    <value>The parameter requires at least {0} value(s) and no more than {1} value(s) - {2} value(s) were provided.</value>
   </data>
   <data name="ValidateCountMaxLengthSmallerThanMinLength" xml:space="preserve">
     <value>The specified maximum number of arguments for a parameter is fewer than the specified minimum number of arguments. Update the ValidateCount attribute for the parameter.</value>
