@@ -6438,6 +6438,8 @@ namespace System.Management.Automation
                                     completionContext, inferredType,
                                     result, completionContext.WordToComplete + "*", IsWriteablePropertyMember, isStatic: false);
                                 return result;
+                            case "Select-Object":
+                                return GetSpecialHashTableKeyMembers("Name", "Expression");
                             case "Sort-Object":
                                 return GetSpecialHashTableKeyMembers("Expression", "Ascending", "Descending");
                             case "Group-Object":
