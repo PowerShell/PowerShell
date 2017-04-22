@@ -442,6 +442,14 @@ namespace System.Management.Automation
                             result = GetResultForEnumPropertyValueOfDSCResource(completionContext, string.Empty, ref replacementIndex, ref replacementLength, out unused);
                         }
                         break;
+                    case TokenKind.AtCurly:
+                        // Handle scenarios such as Sort-Object @{<tab> || gci | Format-Table @{
+                    {
+                        result = GetResultForHashtable(completionContext);
+                        replacementIndex += 2;
+                        replacementLength = 0;
+                        break;
+                    }
 
                     case TokenKind.Number:
                         // Handle scenarios such as Get-Process -Id 5<tab> || Get-Process -Id 5210, 3<tab> || Get-Process -Id: 5210, 3<tab>
