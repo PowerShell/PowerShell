@@ -114,7 +114,7 @@ namespace System.Management.Automation
             else
             {
                 var stringExpandableToken = tokenAtCursor as StringExpandableToken;
-                if (stringExpandableToken != null && stringExpandableToken.NestedTokens != null)
+                if (stringExpandableToken?.NestedTokens != null)
                 {
                     tokenAtCursor =
                         stringExpandableToken.NestedTokens.LastOrDefault(
@@ -156,7 +156,7 @@ namespace System.Management.Automation
             Tuple<Token, Ast> fileConditionTuple;
 
             var errorStatement = lastAst as ErrorStatementAst;
-            if (errorStatement != null && errorStatement.Flags != null && errorStatement.Kind != null && tokenBeforeCursor != null &&
+            if (errorStatement?.Flags != null && errorStatement.Kind != null && tokenBeforeCursor != null &&
                 errorStatement.Kind.Kind.Equals(TokenKind.Switch) && errorStatement.Flags.TryGetValue("file", out fileConditionTuple))
             {
                 // Handle "switch -file <tab>"
@@ -173,7 +173,7 @@ namespace System.Management.Automation
                 }
 
                 errorStatement = pipeline.Parent as ErrorStatementAst;
-                if (errorStatement == null || errorStatement.Kind == null || errorStatement.Flags == null)
+                if (errorStatement?.Kind == null || errorStatement.Flags == null)
                 {
                     return false;
                 }
@@ -206,15 +206,13 @@ namespace System.Management.Automation
 
             // Handle "switch -f<tab>"
             var errorStatement = lastAst as ErrorStatementAst;
-            if (errorStatement != null && errorStatement.Kind != null)
+            if (errorStatement?.Kind != null)
             {
                 switch (errorStatement.Kind.Kind)
                 {
                     case TokenKind.Switch:
                         kind = TokenKind.Switch;
                         return true;
-                    default:
-                        break;
                 }
             }
 
@@ -234,14 +232,12 @@ namespace System.Management.Automation
                     last = last.Parent;
                 }
 
-                if (errorStatement != null && errorStatement.Kind != null)
+                if (errorStatement?.Kind != null)
                 {
                     switch (errorStatement.Kind.Kind)
                     {
                         case TokenKind.Switch:
-
-                            Tuple<Token, Ast> value;
-                            if (errorStatement.Flags != null && errorStatement.Flags.TryGetValue(Parser.VERBATIM_ARGUMENT, out value))
+                            if (errorStatement.Flags != null && errorStatement.Flags.TryGetValue(Parser.VERBATIM_ARGUMENT, out Tuple<Token, Ast> value))
                             {
                                 if (IsTokenTheSame(value.Item1, token))
                                 {
@@ -249,9 +245,6 @@ namespace System.Management.Automation
                                     return true;
                                 }
                             }
-                            break;
-
-                        default:
                             break;
                     }
                 }
@@ -395,9 +388,8 @@ namespace System.Management.Automation
                         break;
 
                     case TokenKind.RBracket:
-                        if (lastAst is TypeExpressionAst)
+                        if (lastAst is TypeExpressionAst targetExpr)
                         {
-                            var targetExpr = (TypeExpressionAst)lastAst;
                             var memberResult = new List<CompletionResult>();
 
                             CompletionCompleters.CompleteMemberHelper(
@@ -483,7 +475,6 @@ namespace System.Management.Automation
                         {
                             completionContext.WordToComplete = tokenAtCursor.Text;
                             result = CompletionCompleters.CompleteStatementFlags(statementKind, completionContext.WordToComplete);
-                            break;
                         }
                         break;
 
@@ -493,10 +484,9 @@ namespace System.Management.Automation
                             ConfigurationDefinitionAst configureAst = GetAncestorConfigurationAstAndKeywordAst(
                                 completionContext.CursorPosition, lastAst, out keywordAst);
                             Diagnostics.Assert(configureAst != null, "ConfigurationDefinitionAst should never be null");
-                            bool matched = false;
                             completionContext.WordToComplete = tokenAtCursor.Text.Trim();
                             // Current token is within ConfigurationDefinitionAst or DynamicKeywordStatementAst
-                            return GetResultForIdentifierInConfiguration(completionContext, configureAst, null, out matched);
+                            return GetResultForIdentifierInConfiguration(completionContext, configureAst, null, out _);
                         }
                     case TokenKind.Equals:
                     case TokenKind.AtParen:
@@ -691,8 +681,6 @@ namespace System.Management.Automation
                                             ref replacementIndex, ref replacementLength, out unused);
                                     }
                                     break;
-                                default:
-                                    break;
                             }
                         }
                     }
@@ -883,7 +871,7 @@ namespace System.Management.Automation
             var arrayTypeName = type as ArrayTypeName;
             if (arrayTypeName != null)
             {
-                return FindTypeNameToComplete(arrayTypeName.ElementType, cursor) ?? null;
+                return FindTypeNameToComplete(arrayTypeName.ElementType, cursor);
             }
 
             return null;
@@ -982,136 +970,134 @@ namespace System.Management.Automation
                 {
                     IScriptPosition cursor = completionContext.CursorPosition;
                     var keyValuePairWithCursor = GetHashEntryContainsCursor(cursor, hashTableAst, isCursorInString);
-                    if (keyValuePairWithCursor != null)
+                    var propertyNameAst = keyValuePairWithCursor?.Item1 as StringConstantExpressionAst;
+                    if (propertyNameAst != null)
                     {
-                        var propertyNameAst = keyValuePairWithCursor.Item1 as StringConstantExpressionAst;
-                        if (propertyNameAst != null)
+                        DynamicKeywordProperty property;
+                        if (keywordAst.Keyword.Properties.TryGetValue(propertyNameAst.Value, out property))
                         {
-                            DynamicKeywordProperty property;
-                            if (keywordAst.Keyword.Properties.TryGetValue(propertyNameAst.Value, out property))
+                            List<String> existingValues = null;
+                            WildcardPattern wildcardPattern = null;
+                            bool isDependsOnProperty = String.Equals(property.Name, @"DependsOn", StringComparison.OrdinalIgnoreCase);
+                            bool hasNewLine = false;
+                            string stringQuote = (completionContext.TokenAtCursor is StringExpandableToken) ? "\"" : "'";
+                            if ((property.ValueMap != null && property.ValueMap.Count > 0) || isDependsOnProperty)
                             {
-                                List<String> existingValues = null;
-                                WildcardPattern wildcardPattern = null;
-                                bool isDependsOnProperty = String.Equals(property.Name, @"DependsOn", StringComparison.OrdinalIgnoreCase);
-                                bool hasNewLine = false;
-                                string stringQuote = (completionContext.TokenAtCursor is StringExpandableToken) ? "\"" : "'";
-                                if ((property.ValueMap != null && property.ValueMap.Count > 0) || isDependsOnProperty)
+                                shouldContinue = false;
+                                existingValues = new List<String>();
+                                if (String.Equals(property.TypeConstraint, "StringArray", StringComparison.OrdinalIgnoreCase))
                                 {
-                                    shouldContinue = false;
-                                    existingValues = new List<String>();
-                                    if (String.Equals(property.TypeConstraint, "StringArray", StringComparison.OrdinalIgnoreCase))
+                                    var arrayAst = Ast.GetAncestorAst<ArrayLiteralAst>(lastAst);
+                                    if (arrayAst != null && arrayAst.Elements.Count > 0)
                                     {
-                                        var arrayAst = Ast.GetAncestorAst<ArrayLiteralAst>(lastAst);
-                                        if (arrayAst != null && arrayAst.Elements.Count > 0)
+                                        foreach (ExpressionAst expression in arrayAst.Elements)
                                         {
-                                            foreach (ExpressionAst expression in arrayAst.Elements)
+                                            //
+                                            // stringAst can be null in following case
+                                            //      DependsOn='[user]x',|
+                                            //
+                                            var stringAst = expression as StringConstantExpressionAst;
+                                            if (stringAst != null && IsCursorOutsideOfExtent(cursor, expression.Extent))
                                             {
-                                                //
-                                                // stringAst can be null in following case
-                                                //      DependsOn='[user]x',|
-                                                //
-                                                var stringAst = expression as StringConstantExpressionAst;
-                                                if (stringAst != null && IsCursorOutsideOfExtent(cursor, expression.Extent))
-                                                {
-                                                    existingValues.Add(stringAst.Value);
-                                                }
+                                                existingValues.Add(stringAst.Value);
                                             }
                                         }
                                     }
-                                    //
-                                    // Make sure only auto-complete string value in current line
-                                    //
-                                    stringToComplete = GetFirstLineSubString(stringToComplete, out hasNewLine);
-                                    completionContext.WordToComplete = stringToComplete;
-                                    replacementLength = completionContext.ReplacementLength = stringToComplete.Length;
-                                    //
-                                    // Calculate the replacementIndex based on cursor location (relative to the string token)
-                                    //
-                                    if (completionContext.TokenAtCursor is StringToken)
-                                    {
-                                        replacementIndex = completionContext.TokenAtCursor.Extent.StartOffset + 1;
-                                    }
-                                    else
-                                    {
-                                        replacementIndex = completionContext.CursorPosition.Offset - replacementLength;
-                                    }
-                                    completionContext.ReplacementIndex = replacementIndex;
-                                    string matchString = stringToComplete + "*";
-                                    wildcardPattern = WildcardPattern.Get(matchString, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
-                                    result = new List<CompletionResult>();
                                 }
+                                //
+                                // Make sure only auto-complete string value in current line
+                                //
+                                stringToComplete = GetFirstLineSubString(stringToComplete, out hasNewLine);
+                                completionContext.WordToComplete = stringToComplete;
+                                replacementLength = completionContext.ReplacementLength = stringToComplete.Length;
+                                //
+                                // Calculate the replacementIndex based on cursor location (relative to the string token)
+                                //
+                                if (completionContext.TokenAtCursor is StringToken)
+                                {
+                                    replacementIndex = completionContext.TokenAtCursor.Extent.StartOffset + 1;
+                                }
+                                else
+                                {
+                                    replacementIndex = completionContext.CursorPosition.Offset - replacementLength;
+                                }
+                                completionContext.ReplacementIndex = replacementIndex;
+                                string matchString = stringToComplete + "*";
+                                wildcardPattern = WildcardPattern.Get(matchString, WildcardOptions.IgnoreCase | WildcardOptions.CultureInvariant);
+                                result = new List<CompletionResult>();
+                            }
 
-                                Diagnostics.Assert(isCursorInString || (!hasNewLine), "hasNoQuote and hasNewLine cannot be true at the same time");
-                                if (property.ValueMap != null && property.ValueMap.Count > 0)
+                            Diagnostics.Assert(isCursorInString || (!hasNewLine), "hasNoQuote and hasNewLine cannot be true at the same time");
+                            if (property.ValueMap != null && property.ValueMap.Count > 0)
+                            {
+                                IEnumerable<string> orderedValues = property.ValueMap.Keys.OrderBy(x => x).Where(v => !existingValues.Contains(v, StringComparer.OrdinalIgnoreCase));
+                                var matchedResults = orderedValues.Where(v => wildcardPattern.IsMatch(v));
+                                if (!matchedResults.Any())
                                 {
-                                    IEnumerable<string> orderedValues = property.ValueMap.Keys.OrderBy(x => x).Where(v => !existingValues.Contains(v, StringComparer.OrdinalIgnoreCase));
-                                    var matchedResults = orderedValues.Where(v => wildcardPattern.IsMatch(v));
-                                    if (matchedResults == null || !matchedResults.Any())
-                                    {
-                                        // Fallback to all allowed values
-                                        matchedResults = orderedValues;
-                                    }
-                                    foreach (var value in matchedResults)
-                                    {
-                                        string completionText = isCursorInString ? value : stringQuote + value + stringQuote;
-                                        if (hasNewLine)
-                                            completionText = completionText + stringQuote;
-                                        result.Add(new CompletionResult(
-                                            completionText,
-                                            value,
-                                            CompletionResultType.Text,
-                                            value));
-                                    }
+                                    // Fallback to all allowed values
+                                    matchedResults = orderedValues;
                                 }
-                                else if (isDependsOnProperty)
+                                foreach (var value in matchedResults)
                                 {
-                                    var configAst = Ast.GetAncestorAst<ConfigurationDefinitionAst>(keywordAst);
-                                    if (configAst != null)
+                                    string completionText = isCursorInString ? value : stringQuote + value + stringQuote;
+                                    if (hasNewLine)
                                     {
-                                        var namedBlockAst = Ast.GetAncestorAst<NamedBlockAst>(keywordAst);
-                                        if (namedBlockAst != null)
+                                        completionText = completionText + stringQuote;
+                                    }
+                                    result.Add(new CompletionResult(
+                                        completionText,
+                                        value,
+                                        CompletionResultType.Text,
+                                        value));
+                                }
+                            }
+                            else if (isDependsOnProperty)
+                            {
+                                var configAst = Ast.GetAncestorAst<ConfigurationDefinitionAst>(keywordAst);
+                                if (configAst != null)
+                                {
+                                    var namedBlockAst = Ast.GetAncestorAst<NamedBlockAst>(keywordAst);
+                                    if (namedBlockAst != null)
+                                    {
+                                        List<string> allResources = new List<string>();
+                                        foreach (var statementAst in namedBlockAst.Statements)
                                         {
-                                            List<string> allResources = new List<string>();
-                                            foreach (var statementAst in namedBlockAst.Statements)
+                                            if (statementAst is DynamicKeywordStatementAst dynamicKeywordAst &&
+                                                dynamicKeywordAst != keywordAst &&
+                                                !String.Equals(dynamicKeywordAst.Keyword.Keyword, @"Node", StringComparison.OrdinalIgnoreCase))
                                             {
-                                                var dynamicKeywordAst = statementAst as DynamicKeywordStatementAst;
-                                                if (dynamicKeywordAst != null &&
-                                                    dynamicKeywordAst != keywordAst &&
-                                                    !String.Equals(dynamicKeywordAst.Keyword.Keyword, @"Node", StringComparison.OrdinalIgnoreCase))
+                                                if (!String.IsNullOrEmpty(dynamicKeywordAst.ElementName))
                                                 {
-                                                    if (!String.IsNullOrEmpty(dynamicKeywordAst.ElementName))
+                                                    StringBuilder sb = new StringBuilder("[", 50);
+                                                    sb.Append(dynamicKeywordAst.Keyword.Keyword);
+                                                    sb.Append("]");
+                                                    sb.Append(dynamicKeywordAst.ElementName);
+                                                    var resource = sb.ToString();
+                                                    if (!existingValues.Contains(resource, StringComparer.OrdinalIgnoreCase) &&
+                                                        !allResources.Contains(resource, StringComparer.OrdinalIgnoreCase))
                                                     {
-                                                        StringBuilder sb = new StringBuilder("[");
-                                                        sb.Append(dynamicKeywordAst.Keyword.Keyword);
-                                                        sb.Append("]");
-                                                        sb.Append(dynamicKeywordAst.ElementName);
-                                                        var resource = sb.ToString();
-                                                        if (!existingValues.Contains(resource, StringComparer.OrdinalIgnoreCase) &&
-                                                            !allResources.Contains(resource, StringComparer.OrdinalIgnoreCase))
-                                                        {
-                                                            allResources.Add(resource);
-                                                        }
+                                                        allResources.Add(resource);
                                                     }
                                                 }
                                             }
-                                            var matchedResults = allResources.Where(r => wildcardPattern.IsMatch(r));
-                                            if (matchedResults == null || !matchedResults.Any())
-                                            {
-                                                // Fallback to all allowed values
-                                                matchedResults = allResources;
-                                            }
+                                        }
+                                        var matchedResults = allResources.Where(r => wildcardPattern.IsMatch(r));
+                                        if (!matchedResults.Any())
+                                        {
+                                            // Fallback to all allowed values
+                                            matchedResults = allResources;
+                                        }
 
-                                            foreach (var resource in matchedResults)
-                                            {
-                                                string completionText = isCursorInString ? resource : stringQuote + resource + stringQuote;
-                                                if (hasNewLine)
-                                                    completionText = completionText + stringQuote;
-                                                result.Add(new CompletionResult(
-                                                    completionText,
-                                                    resource,
-                                                    CompletionResultType.Text,
-                                                    resource));
-                                            }
+                                        foreach (var resource in matchedResults)
+                                        {
+                                            string completionText = isCursorInString ? resource : stringQuote + resource + stringQuote;
+                                            if (hasNewLine)
+                                                completionText = completionText + stringQuote;
+                                            result.Add(new CompletionResult(
+                                                completionText,
+                                                resource,
+                                                CompletionResultType.Text,
+                                                resource));
                                         }
                                     }
                                 }
@@ -1130,17 +1116,16 @@ namespace System.Management.Automation
             var tokenAtCursor = completionContext.TokenAtCursor;
             var lastAst = completionContext.RelatedAsts.Last();
 
-            List<CompletionResult> result = null;
             var expandableString = lastAst as ExpandableStringExpressionAst;
             var constantString = lastAst as StringConstantExpressionAst;
             if (constantString == null && expandableString == null) { return null; }
 
             string strValue = constantString != null ? constantString.Value : expandableString.Value;
-            StringConstantType strType = constantString != null ? constantString.StringConstantType : expandableString.StringConstantType;
+            StringConstantType strType = constantString?.StringConstantType ?? expandableString.StringConstantType;
             string subInput = null;
 
             bool shouldContinue;
-            result = GetResultForEnumPropertyValueOfDSCResource(completionContext, strValue, ref replacementIndex, ref replacementLength, out shouldContinue);
+            var result = GetResultForEnumPropertyValueOfDSCResource(completionContext, strValue, ref replacementIndex, ref replacementLength, out shouldContinue);
             if (!shouldContinue || (result != null && result.Count > 0))
             {
                 return result;
@@ -1359,49 +1344,45 @@ namespace System.Management.Automation
                     completionContext.WordToComplete = "";
                     return CompletionCompleters.CompleteVariable(completionContext);
                 }
-                else
+                if (strConst.Parent is UsingStatementAst usingState)
                 {
-                    UsingStatementAst usingState = strConst.Parent as UsingStatementAst;
-                    if (usingState != null)
+                    completionContext.ReplacementIndex = strConst.Extent.StartOffset;
+                    completionContext.ReplacementLength = strConst.Extent.EndOffset - replacementIndex;
+                    completionContext.WordToComplete = strConst.Extent.Text;
+                    switch (usingState.UsingStatementKind)
                     {
-                        completionContext.ReplacementIndex = strConst.Extent.StartOffset;
-                        completionContext.ReplacementLength = strConst.Extent.EndOffset - replacementIndex;
-                        completionContext.WordToComplete = strConst.Extent.Text;
-                        switch (usingState.UsingStatementKind)
+                        case UsingStatementKind.Assembly:
+                        break;
+                        case UsingStatementKind.Command:
+                        break;
+                        case UsingStatementKind.Module:
+                        var moduleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
+                            {
+                                StringLiterals.PowerShellModuleFileExtension,
+                                StringLiterals.PowerShellDataFileExtension,
+                                StringLiterals.PowerShellNgenAssemblyExtension,
+                                StringLiterals.DependentWorkflowAssemblyExtension,
+                                StringLiterals.PowerShellCmdletizationFileExtension,
+                                StringLiterals.WorkflowFileExtension
+                            };
+                        result = CompletionCompleters.CompleteFilename(completionContext, false, moduleExtensions).ToList();
+                        if (completionContext.WordToComplete.IndexOfAny(Utils.Separators.DirectoryOrDrive) != -1)
                         {
-                            case UsingStatementKind.Assembly:
-                                break;
-                            case UsingStatementKind.Command:
-                                break;
-                            case UsingStatementKind.Module:
-                                var moduleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase)
-                                {
-                                    StringLiterals.PowerShellModuleFileExtension,
-                                    StringLiterals.PowerShellDataFileExtension,
-                                    StringLiterals.PowerShellNgenAssemblyExtension,
-                                    StringLiterals.DependentWorkflowAssemblyExtension,
-                                    StringLiterals.PowerShellCmdletizationFileExtension,
-                                    StringLiterals.WorkflowFileExtension
-                                };
-                                result = CompletionCompleters.CompleteFilename(completionContext, false, moduleExtensions).ToList();
-                                if (completionContext.WordToComplete.IndexOfAny(Utils.Separators.DirectoryOrDrive) != -1)
-                                {
-                                    // The partial input is a path, then we don't iterate modules under $ENV:PSModulePath
-                                    return result;
-                                }
-
-                                var moduleResults = CompletionCompleters.CompleteModuleName(completionContext, false);
-                                if (moduleResults != null && moduleResults.Count > 0)
-                                    result.AddRange(moduleResults);
-                                return result;
-                            case UsingStatementKind.Namespace:
-                                result = CompletionCompleters.CompleteNamespace(completionContext);
-                                return result;
-                            case UsingStatementKind.Type:
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException("UsingStatementKind");
+                            // The partial input is a path, then we don't iterate modules under $ENV:PSModulePath
+                            return result;
                         }
+
+                        var moduleResults = CompletionCompleters.CompleteModuleName(completionContext, false);
+                        if (moduleResults != null && moduleResults.Count > 0)
+                            result.AddRange(moduleResults);
+                        return result;
+                        case UsingStatementKind.Namespace:
+                        result = CompletionCompleters.CompleteNamespace(completionContext);
+                        return result;
+                        case UsingStatementKind.Type:
+                        break;
+                        default:
+                        throw new ArgumentOutOfRangeException("UsingStatementKind");
                     }
                 }
             }
@@ -1476,7 +1457,7 @@ namespace System.Management.Automation
 
                 // Handle the StringExpandableToken;
                 var strToken = tokenAtCursor as StringExpandableToken;
-                if (strToken != null && strToken.NestedTokens != null && strConst != null)
+                if (strToken?.NestedTokens != null && strConst != null)
                 {
                     try
                     {
@@ -1554,7 +1535,7 @@ namespace System.Management.Automation
 
             TokenKind memberOperator = TokenKind.Unknown;
             bool isMemberCompletion = (lastAst.Parent is MemberExpressionAst);
-            bool isStatic = isMemberCompletion ? ((MemberExpressionAst)lastAst.Parent).Static : false;
+            bool isStatic = isMemberCompletion && ((MemberExpressionAst)lastAst.Parent).Static;
             bool isWildcard = false;
 
             if (!isMemberCompletion)
@@ -1621,9 +1602,9 @@ namespace System.Management.Automation
                 }
             }
 
-            if (lastAst.Parent is HashtableAst)
+            if (lastAst.Parent is HashtableAst hashtableAst)
             {
-                result = CompletionCompleters.CompleteHashtableKey(completionContext, (HashtableAst)lastAst.Parent);
+                result = CompletionCompleters.CompleteHashtableKey(completionContext, hashtableAst);
                 if (result != null && result.Any())
                 {
                     return result;
@@ -1649,8 +1630,7 @@ namespace System.Management.Automation
                 var command = lastAst.Parent as CommandBaseAst;
                 if (command != null && command.Redirections.Any())
                 {
-                    var fileRedirection = command.Redirections[0] as FileRedirectionAst;
-                    if (fileRedirection != null &&
+                    if (command.Redirections[0] is FileRedirectionAst fileRedirection &&
                         fileRedirection.Extent.EndLineNumber == lastAst.Extent.StartLineNumber &&
                         fileRedirection.Extent.EndColumnNumber == lastAst.Extent.StartColumnNumber)
                     {
@@ -1725,7 +1705,7 @@ namespace System.Management.Automation
                     if (pro.Name != "TypeId" && (pro.Name.StartsWith(argName, StringComparison.OrdinalIgnoreCase)))
                     {
                         result.Add(new CompletionResult(pro.Name, pro.Name, CompletionResultType.Property,
-                            pro.PropertyType.ToString() + " " + pro.Name));
+                            pro.PropertyType + " " + pro.Name));
                     }
                 }
                 return result;
