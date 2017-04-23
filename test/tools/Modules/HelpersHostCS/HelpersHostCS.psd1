@@ -18,10 +18,4 @@ Description = 'Simple console host for console IO tests.'
 
 FunctionsToExport = 'New-TestHost'
 
-#CmdletsToExport = '*'
-
-#VariablesToExport = '*'
-
-#AliasesToExport = '*'
-
 }

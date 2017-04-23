@@ -18,10 +18,4 @@ Description = 'Temporary module contains functions for using in tests'
 
 FunctionsToExport = 'Wait-UntilTrue', 'Test-IsElevated', 'ShouldBeErrorId'
 
-#CmdletsToExport = '*'
-
-#VariablesToExport = '*'
-
-#AliasesToExport = '*'
-
 }

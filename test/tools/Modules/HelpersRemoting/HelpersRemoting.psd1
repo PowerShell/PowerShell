@@ -18,10 +18,4 @@ Description = 'Temporary module for remoting tests'
 
 FunctionsToExport = 'New-RemoteRunspace', 'New-RemoteSession'
 
-#CmdletsToExport = '*'
-
-#VariablesToExport = '*'
-
-#AliasesToExport = '*'
-
 }
