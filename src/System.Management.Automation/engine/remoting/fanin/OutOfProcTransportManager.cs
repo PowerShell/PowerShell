@@ -1556,7 +1556,10 @@ namespace System.Management.Automation.Remoting.Client
                 return string.Empty;
             }
 
-            // SSH may return a multi-line error message
+            // SSH may return a multi-line error message.
+            // The StdError pipe stream is open ended causing StreamReader read operations to block
+            // if there is no incoming data.  Since we don't know how many error message lines there
+            // will be we use an asynchronous read with timeout to prevent blocking indefinitely.
             System.Text.StringBuilder sb = new Text.StringBuilder(error);
             var running = true;
             while (running)
