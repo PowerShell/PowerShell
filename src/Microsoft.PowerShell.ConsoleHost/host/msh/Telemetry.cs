@@ -23,9 +23,12 @@ namespace Microsoft.PowerShell
         /// </summary>
         public const string TelemetrySemaphoreFilename = "DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY";
 
+        /// <summary>
+        /// The path to the semaphore file which enables telemetry
+        /// </summary>
         public static string TelemetrySemaphoreFilePath = Path.Combine(
-            Path.GetDirectoryName(typeof(PSVersionInfo).GetTypeInfo().Assembly.Location),
-            TelemetrySemaphoreFileName);
+            Utils.GetApplicationBase(Utils.DefaultPowerShellShellID),
+            TelemetrySemaphoreFilename);
 
         // Telemetry client to be reused when we start sending more telemetry
         private static TelemetryClient _telemetryClient = null;
@@ -41,10 +44,10 @@ namespace Microsoft.PowerShell
         /// </summary>
         private static void SendTelemetry(string eventName, Dictionary<string,string>payload)
         {
-            // if the semaphore file exists, try to send telemetry
-            if ( File.Exists(TelemetrySemaphoreFilePath ) )
+            try
             {
-                try
+                // if the semaphore file exists, try to send telemetry
+                if (Utils.NativeFileExists(TelemetrySemaphoreFilePath))
                 {
                     TelemetryConfiguration.Active.InstrumentationKey = _psCoreTelemetryKey;
                     TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = _developerMode;
@@ -54,10 +57,10 @@ namespace Microsoft.PowerShell
                     }
                     _telemetryClient.TrackEvent(eventName, payload, null);
                 }
-                catch (Exception)
-                {
-                    ; // Do nothing, telemetry can't be sent
-                }
+            }
+            catch (Exception)
+            {
+                ; // Do nothing, telemetry can't be sent
             }
         }
 
