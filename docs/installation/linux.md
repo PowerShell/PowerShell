@@ -315,7 +315,7 @@ You *can* run this command manually if you're having trouble with .NET Core's cr
 [brew]: http://brew.sh/
 [homebrew-patch]: https://github.com/Homebrew/brew/pull/597
 
-## Kali Rolling
+## Kali
 
 ### Installation
 
@@ -332,7 +332,7 @@ dpkg -i powershell_6.0.0-alpha.18-1ubuntu1.16.04.1_amd64.deb
 powershell
 ```
 
-### Uninstallation - Kali Rolling
+### Uninstallation - Kali
 
 ```sh
 dpkg -r powershell_6.0.0-alpha.18-1ubuntu1.16.04.1_amd64
