@@ -989,13 +989,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Parameter value as string</returns>
         private static string GetSSHConnectionStringParameter(object param)
         {
-            var paramValue = param as string;
-            if (string.IsNullOrEmpty(paramValue))
+            if (param is string paramValue && !string.IsNullOrEmpty(paramValue))
             {
-                throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
+                return paramValue;
             }
 
-            return paramValue;
+            throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
         }
 
 
@@ -1006,13 +1005,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>Parameter value as integer</returns>
         private static int GetSSHConnectionIntParameter(object param)
         {
-            int? paramValue = param as int?;
-            if (paramValue == null)
+            if (param is int paramValue)
             {
-                throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
+                return paramValue;
             }
 
-            return paramValue.Value;
+            throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
         }
 
         #endregion Private Methods
