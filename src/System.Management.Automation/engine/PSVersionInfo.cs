@@ -5,6 +5,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Diagnostics;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Management.Automation.Internal;
 using Microsoft.Win32;
@@ -342,45 +343,37 @@ namespace System.Management.Automation
         {
             get
             {
-                int sortStartIndex = 0, psVersionNameIndex = -1, psEditionNameIndex = -1;
-                if (base.ContainsKey(PSVersionInfo.PSVersionName)) { psVersionNameIndex = sortStartIndex++; }
-                if (base.ContainsKey(PSVersionInfo.PSEditionName)) { psEditionNameIndex = sortStartIndex++; }
+                ArrayList keyList = new ArrayList(base.Keys);
+                keyList.Sort(new PSVersionTableComparer());
+                return keyList;
+            }
+        }
 
-                var keyArray = new string[base.Keys.Count];
-                int index = sortStartIndex;
-                bool hasNonStringKey = false;
-
-                foreach (object key in base.Keys)
+        private class PSVersionTableComparer : Comparer<object>
+        {
+            public override int Compare(object x, object y)
+            {
+                string xString = (string)LanguagePrimitives.ConvertTo(x, typeof(string), null);
+                string yString = (string)LanguagePrimitives.ConvertTo(y, typeof(string), null);
+                if (PSVersionInfo.PSVersionName == xString)
                 {
-                    string strKey = key as string;
-                    if (strKey == null)
-                    {
-                        hasNonStringKey = true;
-                        break;
-                    }
-
-                    switch (strKey)
-                    {
-                        case PSVersionInfo.PSVersionName:
-                            keyArray[psVersionNameIndex] = strKey;
-                            break;
-                        case PSVersionInfo.PSEditionName:
-                            keyArray[psEditionNameIndex] = strKey;
-                            break;
-                        default:
-                            keyArray[index++] = strKey;
-                            break;
-                    }
+                    return -1;
                 }
-
-                if (hasNonStringKey)
+                else if (PSVersionInfo.PSVersionName == yString)
                 {
-                    return base.Keys;
+                    return 1;
+                }
+                else if (PSVersionInfo.PSEditionName == xString)
+                {
+                    return -1;
+                }
+                else if (PSVersionInfo.PSEditionName == yString)
+                {
+                    return 1;
                 }
                 else
                 {
-                    Array.Sort(keyArray, sortStartIndex, keyArray.Length - sortStartIndex, StringComparer.Ordinal);
-                    return keyArray;
+                    return xString.CompareTo(yString);
                 }
             }
         }
