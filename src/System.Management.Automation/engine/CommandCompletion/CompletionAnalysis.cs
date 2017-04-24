@@ -113,8 +113,8 @@ namespace System.Management.Automation
             }
             else
             {
-                var stringExpandableToken = tokenAtCursor as StringExpandableToken;
-                if (stringExpandableToken?.NestedTokens != null)
+                if (tokenAtCursor  is  StringExpandableToken stringExpandableToken &&
+                    stringExpandableToken.NestedTokens != null)
                 {
                     tokenAtCursor =
                         stringExpandableToken.NestedTokens.LastOrDefault(
@@ -153,11 +153,9 @@ namespace System.Management.Automation
         /// </summary>
         private static bool CompleteAgainstSwitchFile(Ast lastAst, Token tokenBeforeCursor)
         {
-            Tuple<Token, Ast> fileConditionTuple;
-
             var errorStatement = lastAst as ErrorStatementAst;
             if (errorStatement?.Flags != null && errorStatement.Kind != null && tokenBeforeCursor != null &&
-                errorStatement.Kind.Kind.Equals(TokenKind.Switch) && errorStatement.Flags.TryGetValue("file", out fileConditionTuple))
+                errorStatement.Kind.Kind.Equals(TokenKind.Switch) && errorStatement.Flags.TryGetValue("file", out Tuple<Token, Ast> fileConditionTuple))
             {
                 // Handle "switch -file <tab>"
                 return fileConditionTuple.Item1.Extent.EndOffset == tokenBeforeCursor.Extent.EndOffset;
@@ -868,8 +866,7 @@ namespace System.Management.Automation
                 return null;
             }
 
-            var arrayTypeName = type as ArrayTypeName;
-            if (arrayTypeName != null)
+            if (type is ArrayTypeName arrayTypeName)
             {
                 return FindTypeNameToComplete(arrayTypeName.ElementType, cursor);
             }
