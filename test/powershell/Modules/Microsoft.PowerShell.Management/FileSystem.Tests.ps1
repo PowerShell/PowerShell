@@ -248,17 +248,30 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
 
 Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows" {
     BeforeAll {
-        $realFile = Join-Path $TestDrive "file.txt"
-        $nonFile = Join-Path $TestDrive "not-a-file"
+        # on macOS, the /tmp directory is a symlink, so we'll resolve it here
+        $TestPath = $TestDrive
+        if ($IsOSX)
+        {
+            $item = Get-Item $TestPath
+            $dirName = $item.BaseName
+            $item = Get-Item $item.PSParentPath
+            if ($item.LinkType -eq "SymbolicLink")
+            {
+                $TestPath = Join-Path $item.Target $dirName
+            }
+        }
+
+        $realFile = Join-Path $TestPath "file.txt"
+        $nonFile = Join-Path $TestPath "not-a-file"
         $fileContent = "some text"
-        $realDir = Join-Path $TestDrive "subdir"
-        $nonDir = Join-Path $TestDrive "not-a-dir"
-        $hardLinkToFile = Join-Path $TestDrive "hard-to-file.txt"
-        $symLinkToFile = Join-Path $TestDrive "sym-link-to-file.txt"
-        $symLinkToDir = Join-Path $TestDrive "sym-link-to-dir"
-        $symLinkToNothing = Join-Path $TestDrive "sym-link-to-nowhere"
-        $dirSymLinkToDir = Join-Path $TestDrive "symd-link-to-dir"
-        $junctionToDir = Join-Path $TestDrive "junction-to-dir"
+        $realDir = Join-Path $TestPath "subdir"
+        $nonDir = Join-Path $TestPath "not-a-dir"
+        $hardLinkToFile = Join-Path $TestPath "hard-to-file.txt"
+        $symLinkToFile = Join-Path $TestPath "sym-link-to-file.txt"
+        $symLinkToDir = Join-Path $TestPath "sym-link-to-dir"
+        $symLinkToNothing = Join-Path $TestPath "sym-link-to-nowhere"
+        $dirSymLinkToDir = Join-Path $TestPath "symd-link-to-dir"
+        $junctionToDir = Join-Path $TestPath "junction-to-dir"
 
         New-Item -ItemType File -Path $realFile -Value $fileContent >$null
         New-Item -ItemType Directory -Path $realDir >$null
