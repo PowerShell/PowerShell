@@ -10,14 +10,9 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using System.Management.Automation.Internal;
+using System.Runtime.ConstrainedExecution;
 using DWORD = System.UInt32;
 using BOOL = System.UInt32;
-#if CORECLR
-// Use stub for ReliabilityContractAttribute
-using Microsoft.PowerShell.CoreClr.Stubs;
-#else
-using System.Runtime.ConstrainedExecution;
-#endif
 
 namespace System.Management.Automation.Security
 {

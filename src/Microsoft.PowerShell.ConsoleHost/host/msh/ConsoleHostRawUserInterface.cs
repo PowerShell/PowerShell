@@ -1805,14 +1805,11 @@ namespace Microsoft.PowerShell
                 //if x is exceeding buffer width, reset to the next line
                 if (origin.X >= BufferSize.Width)
                 {
-                    origin.X = 1;
+                    origin.X = 0;
                 }
 
                 //write the character from contents
                 Console.Out.Write(charitem.Character);
-
-                //advance the character one position
-                origin.X++;
             }
 
             //reset the cursor to the original position

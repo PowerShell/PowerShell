@@ -22,11 +22,6 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using AstUtils = System.Management.Automation.Interpreter.Utils;
 
-#if CORECLR
-// Use stub for IRuntimeVariables.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation.Interpreter
 {
     /// <summary>

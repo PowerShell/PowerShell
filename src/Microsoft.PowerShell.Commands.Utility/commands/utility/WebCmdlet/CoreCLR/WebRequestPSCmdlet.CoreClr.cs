@@ -105,7 +105,11 @@ namespace Microsoft.PowerShell.Commands
                 handler.Credentials = WebSession.Credentials;
             }
 
-            if (WebSession.Proxy != null)
+            if (NoProxy)
+            {
+                handler.UseProxy = false;
+            }
+            else if (WebSession.Proxy != null)
             {
                 handler.Proxy = WebSession.Proxy;
             }
@@ -155,13 +159,17 @@ namespace Microsoft.PowerShell.Commands
         {
             Uri requestUri = PrepareUri(uri);
             HttpMethod httpMethod = null;
-          
+
             switch (ParameterSetName)
             {
+                case "StandardMethodNoProxy":
+                    goto case "StandardMethod";
                 case "StandardMethod":
                     // set the method if the parameter was provided
                     httpMethod = GetHttpMethod(Method);
                     break;
+                case "CustomMethodNoProxy":
+                    goto case "CustomMethod";
                 case "CustomMethod":
                     if (!string.IsNullOrEmpty(CustomMethod))
                     {
@@ -445,6 +453,10 @@ namespace Microsoft.PowerShell.Commands
                     catch (HttpRequestException ex)
                     {
                         ErrorRecord er = new ErrorRecord(ex, "WebCmdletWebResponseException", ErrorCategory.InvalidOperation, request);
+                        if (ex.InnerException != null)
+                        {
+                            er.ErrorDetails = new ErrorDetails(ex.InnerException.Message);
+                        }
                         ThrowTerminatingError(er);
                     }
                 }

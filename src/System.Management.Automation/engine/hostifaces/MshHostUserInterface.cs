@@ -11,6 +11,7 @@ using System.Security;
 using System.Globalization;
 using System.Management.Automation.Runspaces;
 using Microsoft.PowerShell.Commands;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace System.Management.Automation.Host
@@ -390,7 +391,29 @@ namespace System.Management.Automation.Host
         /// so that when content is sent through Out-Default it doesn't
         /// make it to the actual host.
         /// </summary>
-        internal bool TranscribeOnly { get; set; }
+        internal bool TranscribeOnly => Interlocked.CompareExchange(ref _transcribeOnlyCount, 0, 0) != 0;
+        private int _transcribeOnlyCount = 0;
+        internal IDisposable SetTranscribeOnly() => new TranscribeOnlyCookie(this);
+        private sealed class TranscribeOnlyCookie : IDisposable
+        {
+            private PSHostUserInterface _ui;
+            private bool _disposed = false;
+            public TranscribeOnlyCookie(PSHostUserInterface ui)
+            {
+                _ui=ui;
+                Interlocked.Increment(ref _ui._transcribeOnlyCount);
+            }
+            public void Dispose()
+            {
+                if (!_disposed)
+                {
+                    Interlocked.Decrement(ref _ui._transcribeOnlyCount);
+                    _disposed = true;
+                    GC.SuppressFinalize(this);
+                }
+            }
+            ~TranscribeOnlyCookie() => Dispose();
+        }
 
         /// <summary>
         /// Flag to determine whether the host is transcribing.
@@ -453,7 +476,11 @@ namespace System.Management.Automation.Host
                     psVersionInfo.AppendLine(versionKey + ": " + valueString);
                 }
             }
-
+            string psConfigurationName = string.Empty;
+            if (senderInfo != null && !string.IsNullOrEmpty(senderInfo.ConfigurationName))
+            {
+                psConfigurationName = senderInfo.ConfigurationName;
+            }
             // Transcribe the transcript header
             string format = InternalHostUserInterfaceStrings.TranscriptPrologue;
             string line =
@@ -463,6 +490,7 @@ namespace System.Management.Automation.Host
                     DateTime.Now,
                     username,
                     runAsUser,
+                    psConfigurationName,
                     Environment.MachineName,
                     Environment.OSVersion.VersionString,
                     String.Join(" ", Environment.GetCommandLineArgs()),
@@ -948,7 +976,7 @@ namespace System.Management.Automation.Host
 
         internal static string GetTranscriptPath()
         {
-            string baseDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+            string baseDirectory = Platform.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             return GetTranscriptPath(baseDirectory, false);
         }
 
@@ -956,14 +984,14 @@ namespace System.Management.Automation.Host
         {
             if (String.IsNullOrEmpty(baseDirectory))
             {
-                baseDirectory = Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments);
+                baseDirectory = Platform.GetFolderPath(Environment.SpecialFolder.MyDocuments);
             }
             else
             {
                 if (!Path.IsPathRooted(baseDirectory))
                 {
                     baseDirectory = Path.Combine(
-                        Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments),
+                        Platform.GetFolderPath(Environment.SpecialFolder.MyDocuments),
                         baseDirectory);
                 }
             }

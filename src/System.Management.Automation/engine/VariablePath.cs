@@ -5,11 +5,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 
-#if CORECLR
-// Use stubs for SerializableAttribute
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation
 {
     [Flags]

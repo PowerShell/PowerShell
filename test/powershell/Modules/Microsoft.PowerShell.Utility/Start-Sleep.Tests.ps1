@@ -1,20 +1,22 @@
 Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
-    It "Should be works properly when sleeping with Second" {
-        $dtStart = [DateTime]::Now
+
+    # WaitHandle.WaitOne(milliseconds, exitContext) is not accurate.
+    # The wait time varies from 980ms to 1020ms from observation, so
+    # the tests here are changed to be greater than 950ms.
+    
+    It "Should work properly when sleeping with Second" {
+        $watch = [System.Diagnostics.Stopwatch]::StartNew()
         Start-Sleep -Seconds 1
-        $dtEnd = [DateTime]::Now
-        $milliseconds = (New-TimeSpan -Start $dtStart -End $dtEnd).TotalMilliseconds
-        $milliseconds | Should BeGreaterThan 1000
+        $watch.Stop()
+        $watch.ElapsedMilliseconds | Should BeGreaterThan 950
     }
 
-    It "Should be works properly when sleeping with Milliseconds" {
-        $dtStart = [DateTime]::Now
+    It "Should work properly when sleeping with Milliseconds" {
+        $watch = [System.Diagnostics.Stopwatch]::StartNew()
         Start-Sleep -Milliseconds 1000
-        $dtEnd = [DateTime]::Now
-        $milliseconds = (New-TimeSpan -Start $dtStart -End $dtEnd).TotalMilliseconds
-        $milliseconds -ge 1000 | Should Be $true
+        $watch.Stop()
+        $watch.ElapsedMilliseconds | Should BeGreaterThan 950
     }
-
 }
 
 Describe "Start-Sleep" -Tags "CI" {

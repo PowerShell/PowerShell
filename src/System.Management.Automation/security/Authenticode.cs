@@ -13,11 +13,6 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Security;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
-#if CORECLR
-// Use stub for
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 using DWORD = System.UInt32;
 
 namespace System.Management.Automation

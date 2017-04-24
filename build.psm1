@@ -19,8 +19,13 @@ try {
     catch { }
 }
 
+# On Unix paths is separated by colon
+# On Windows paths is separated by semicolon
+$TestModulePathSeparator = ':'
+
 if ($IsWindows)
 {
+    $TestModulePathSeparator = ';'
     $IsAdmin = (New-Object Security.Principal.WindowsPrincipal ([Security.Principal.WindowsIdentity]::GetCurrent())).IsInRole([Security.Principal.WindowsBuiltinRole]::Administrator)
     # Can't use $env:HOME - not available on older systems (e.g. in AppVeyor)
     $nugetPackagesRoot = "${env:HOMEDRIVE}${env:HOMEPATH}\.nuget\packages"
@@ -40,6 +45,7 @@ if ($IsLinux) {
     $IsFedora = $LinuxInfo.ID -match 'fedora' -and $LinuxInfo.VERSION_ID -ge 24
     $IsOpenSUSE = $LinuxInfo.ID -match 'opensuse'
     $IsOpenSUSE13 = $IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '13'
+    ${IsOpenSUSE42.1} = $IsOpenSUSE -and $LinuxInfo.VERSION_ID  -match '42.1'
     $IsRedHatFamily = $IsCentOS -or $IsFedora -or $IsOpenSUSE
 
     # Workaround for temporary LD_LIBRARY_PATH hack for Fedora 24
@@ -48,6 +54,12 @@ if ($IsLinux) {
         Remove-Item -Force ENV:\LD_LIBRARY_PATH
         Get-ChildItem ENV:
     }
+}
+
+# Autoload (in current session) temporary modules used in our tests
+$TestModulePath = Join-Path $PSScriptRoot "test/tools/Modules"
+if ( $env:PSModulePath -notcontains $TestModulePath ) {
+    $env:PSModulePath = $TestModulePath+$TestModulePathSeparator+$($env:PSModulePath)
 }
 
 #
@@ -74,7 +86,6 @@ function Start-PSBuild {
         # to help avoid compilation error, because file are in use.
         [switch]$StopDevPowerShell,
 
-        [switch]$NoPath,
         [switch]$Restore,
         [string]$Output,
         [switch]$ResGen,
@@ -99,7 +110,8 @@ function Start-PSBuild {
                      "win10-x64",
                      "osx.10.11-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64")]
+                     "opensuse.13.2-x64",
+                     "opensuse.42.1-x64")]
         [Parameter(ParameterSetName='CoreCLR')]
         [string]$Runtime,
 
@@ -130,11 +142,6 @@ function Start-PSBuild {
         Stop-Process -Verbose
     }
 
-    if ($CrossGen -and !$Publish) {
-        # By specifying -CrossGen, we implicitly set -Publish to $true, if not already specified.
-        $Publish = $true
-    }
-
     if ($Clean) {
         log "Cleaning your working directory. You can also do it with 'git clean -fdX'"
         Push-Location $PSScriptRoot
@@ -156,6 +163,10 @@ function Start-PSBuild {
     # simplify ParameterSetNames
     if ($PSCmdlet.ParameterSetName -eq 'FullCLR') {
         $FullCLR = $true
+
+        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+        throw "Building against FullCLR is not supported"
     }
 
     # Add .NET CLI tools to PATH
@@ -200,7 +211,6 @@ function Start-PSBuild {
 
     # set output options
     $OptionsArguments = @{
-        Publish=$Publish
         CrossGen=$CrossGen
         Output=$Output
         FullCLR=$FullCLR
@@ -216,12 +226,7 @@ function Start-PSBuild {
     }
 
     # setup arguments
-    $Arguments = @()
-    if ($Publish -or $FullCLR) {
-        $Arguments += "publish"
-    } else {
-        $Arguments += "build"
-    }
+    $Arguments = @("publish")
     if ($Output) {
         $Arguments += "--output", $Output
     }
@@ -234,28 +239,20 @@ function Start-PSBuild {
     $Arguments += "--runtime", $Options.Runtime
 
     # handle Restore
-    if ($Restore -or -not (Test-Path "$($Options.Top)/project.lock.json")) {
+    if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
         log "Run dotnet restore"
+
+        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen")
+        $testProjectDirs = Get-ChildItem "$PSScriptRoot/test/*.csproj" -Recurse | % { [System.IO.Path]::GetDirectoryName($_) }
 
         $RestoreArguments = @("--verbosity")
         if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
-            $RestoreArguments += "Info"
+            $RestoreArguments += "detailed"
         } else {
-            $RestoreArguments += "Warning"
+            $RestoreArguments += "quiet"
         }
 
-        $RestoreArguments += "$PSScriptRoot"
-
-        Start-NativeExecution { dotnet restore $RestoreArguments }
-
-        # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
-        if ($IsOSX) {
-            # This is the restored library used to build
-            # This is allowed to fail since the user may have already restored
-            Write-Warning ".NET Core links the incorrect OpenSSL, correcting NuGet package libraries..."
-            find $env:HOME/.nuget -name System.Security.Cryptography.Native.OpenSsl.dylib | % { sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib $_ }
-            find $env:HOME/.nuget -name System.Net.Http.Native.dylib | % { sudo install_name_tool -change /usr/lib/libcurl.4.dylib /usr/local/opt/curl/lib/libcurl.4.dylib $_ }
-        }
+        ($srcProjectDirs + $testProjectDirs) | % { Start-NativeExecution { dotnet restore $_ $RestoreArguments } }
     }
 
     # handle ResGen
@@ -396,6 +393,8 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         Start-TypeGen
     }
 
+    # Get the folder path where powershell.exe is located.
+    $publishPath = Split-Path $Options.Output -Parent
     try {
         # Relative paths do not work well if cwd is not changed to project
         Push-Location $Options.Top
@@ -403,7 +402,6 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         Start-NativeExecution { dotnet $Arguments }
 
         if ($CrossGen) {
-            $publishPath = Split-Path $Options.Output
             Start-CrossGen -PublishPath $publishPath -Runtime $script:Options.Runtime
             log "PowerShell.exe with ngen binaries is available at: $($Options.Output)"
         } else {
@@ -413,16 +411,46 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         Pop-Location
     }
 
+    # add 'x' permission when building the standalone application
+    # this is temporary workaround to a bug in dotnet.exe, tracking by dotnet/cli issue #6286
+    if ($Options.Configuration -eq "Linux") {
+        chmod u+x $Options.Output
+    }
+
+    # publish netcoreapp2.0 reference assemblies
+    try {
+        Push-Location "$PSScriptRoot/src/TypeCatalogGen"
+        $refAssemblies = Get-Content -Path "powershell.inc" | ? { $_ -like "*microsoft.netcore.app*" } | % { $_.TrimEnd(';') }
+        $refDestFolder = Join-Path -Path $publishPath -ChildPath "ref"
+
+        if (Test-Path $refDestFolder -PathType Container) {
+            Remove-Item $refDestFolder -Force -Recurse -ErrorAction Stop
+        }
+        New-Item -Path $refDestFolder -ItemType Directory -Force -ErrorAction Stop > $null
+        Copy-Item -Path $refAssemblies -Destination $refDestFolder -Force -ErrorAction Stop
+    } finally {
+        Pop-Location
+    }
+
+    # download modules from powershell gallery.
+    #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
     if($PSModuleRestore)
     {
         $ProgressPreference = "SilentlyContinue"
-        # Downloading the PowerShellGet and PackageManagement modules.
-        # $Options.Output is pointing to something like "...\src\powershell-win-core\bin\Debug\netcoreapp1.1\win10-x64\publish\powershell.exe",
-        # so we need to get its parent directory
-        $publishPath = Split-Path $Options.Output -Parent
         log "Restore PowerShell modules to $publishPath"
-        # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
-        Restore-PSModule -Name @('PowerShellGet') -Destination (Join-Path -Path $publishPath -ChildPath "Modules")
+
+        $modulesDir = Join-Path -Path $publishPath -ChildPath "Modules"
+
+        # Restore modules from myget feed
+        Restore-PSModule -Destination $modulesDir -Name @(
+            # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
+            'PowerShellGet'
+        )
+
+        # Restore modules from powershellgallery feed
+        Restore-PSModule -Destination $modulesDir -Name @(
+            'Microsoft.PowerShell.Archive'
+        ) -SourceLocation "https://www.powershellgallery.com/api/v2/"
     }
 }
 
@@ -445,7 +473,7 @@ function New-PSOptions {
         [ValidateSet("Linux", "Debug", "Release", "CodeCoverage", "")]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp1.1", "net451")]
+        [ValidateSet("netcoreapp2.0", "net451")]
         [string]$Framework,
 
         # These are duplicated from Start-PSBuild
@@ -462,10 +490,9 @@ function New-PSOptions {
                      "win10-x64",
                      "osx.10.11-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64")]
+                     "opensuse.13.2-x64",
+                     "opensuse.42.1-x64")]
         [string]$Runtime,
-
-        [switch]$Publish,
 
         [switch]$CrossGen,
 
@@ -478,6 +505,12 @@ function New-PSOptions {
 
     # Add .NET CLI tools to PATH
     Find-Dotnet
+
+    if ($FullCLR) {
+        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+        throw "Building against FullCLR is not supported"
+    }
 
     $ConfigWarningMsg = "The passed-in Configuration value '{0}' is not supported on '{1}'. Use '{2}' instead."
     if (-not $Configuration) {
@@ -525,7 +558,7 @@ function New-PSOptions {
         $Framework = if ($FullCLR) {
             "net451"
         } else {
-            "netcoreapp1.1"
+            "netcoreapp2.0"
         }
         Write-Verbose "Using framework '$Framework'"
     }
@@ -552,32 +585,19 @@ function New-PSOptions {
 
     # Build the Output path
     if (!$Output) {
-        $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime)
-
-        # Publish injects the publish directory
-        if ($Publish -or $FullCLR) {
-            $Output = [IO.Path]::Combine($Output, "publish")
-        }
-
-        $Output = [IO.Path]::Combine($Output, $Executable)
+        $Output = [IO.Path]::Combine($Top, "bin", $Configuration, $Framework, $Runtime, "publish", $Executable)
     }
 
-    $RealFramework = $Framework
     if ($SMAOnly)
     {
         $Top = [IO.Path]::Combine($PSScriptRoot, "src", "System.Management.Automation")
-        if ($Framework -match 'netcoreapp')
-        {
-            $RealFramework = 'netstandard1.6'
-        }
     }
 
     return @{ Top = $Top;
               Configuration = $Configuration;
-              Framework = $RealFramework;
+              Framework = $Framework;
               Runtime = $Runtime;
               Output = $Output;
-              Publish = $Publish;
               CrossGen = $CrossGen }
 }
 
@@ -658,19 +678,29 @@ function Publish-PSTestTools {
 
     Find-Dotnet
 
-    $tools = "$PSScriptRoot/test/tools/EchoArgs","$PSScriptRoot/test/tools/CreateChildProcess"
-    # Publish EchoArgs so it can be run by tests
+    $tools = @("$PSScriptRoot/test/tools/EchoArgs", "echoargs"), @("$PSScriptRoot/test/tools/CreateChildProcess", "createchildprocess")
+    if ($Options -eq $null)
+    {
+        $Options = New-PSOptions
+    }
 
+    # Publish EchoArgs so it can be run by tests
     foreach ($tool in $tools)
     {
-        Push-Location $tool
+        Push-Location $tool[0]
         try {
-            dotnet publish --output bin
+            dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
+
+            # add 'x' permission when building the standalone application
+            # this is temporary workaround to a bug in dotnet.exe, tracking by dotnet/cli issue #6286
+            if ($Options.Configuration -eq "Linux") {
+                $executable = Join-Path -Path $tool[0] -ChildPath "bin/$($tool[1])"
+                chmod u+x $executable
+            }
         } finally {
             Pop-Location
         }
     }
-
 }
 
 function Start-PSPester {
@@ -680,7 +710,7 @@ function Start-PSPester {
         [string]$OutputFile = "pester-tests.xml",
         [string[]]$ExcludeTag = 'Slow',
         [string[]]$Tag = "CI",
-        [string]$Path = "$PSScriptRoot/test/powershell",
+        [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
         [switch]$ThrowOnFailure,
         [switch]$FullCLR,
         [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output),
@@ -690,6 +720,12 @@ function Start-PSPester {
         [switch]$Quiet,
         [switch]$PassThru
     )
+
+    if ($FullCLR) {
+        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+        throw "Building against FullCLR is not supported"
+    }
 
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
     if ($Unelevate)
@@ -719,8 +755,12 @@ function Start-PSPester {
 
     Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
     Publish-PSTestTools
+
     # All concatenated commands/arguments are suffixed with the delimiter (space)
     $Command = ""
+
+    # Autoload (in subprocess) temporary modules used in our tests
+    $Command += '$env:PSModulePath = '+"'$TestModulePath$TestModulePathSeparator'" + '+$($env:PSModulePath);'
 
     # Windows needs the execution policy adjusted
     if ($IsWindows) {
@@ -756,7 +796,7 @@ function Start-PSPester {
         $Command += "-PassThru "
     }
 
-    $Command += "'" + $Path + "'"
+    $Command += "'" + ($Path -join "','") + "'"
     if ($Unelevate)
     {
         $Command += " *> $outputBufferFilePath; '__UNELEVATED_TESTS_THE_END__' >> $outputBufferFilePath"
@@ -771,7 +811,7 @@ function Start-PSPester {
     }
     else {
         try {
-            $originalModulePath = $env:PSMODULEPATH
+            $originalModulePath = $env:PSModulePath
             if ($Unelevate)
             {
                 Start-UnelevatedProcess -process $powershell -arguments @('-noprofile', '-c', $Command)
@@ -801,7 +841,7 @@ function Start-PSPester {
                 & $powershell -noprofile -c $Command
             }
         } finally {
-            $env:PSMODULEPATH = $originalModulePath
+            $env:PSModulePath = $originalModulePath
             if ($Unelevate)
             {
                 Remove-Item $outputBufferFilePath
@@ -924,7 +964,7 @@ function Install-Dotnet {
     [CmdletBinding()]
     param(
         [string]$Channel = "preview",
-        [string]$Version,
+        [string]$Version = "2.0.0-preview1-005724",
         [switch]$NoSudo
     )
 
@@ -932,7 +972,7 @@ function Install-Dotnet {
     # Note that when it is null, Invoke-Expression (but not &) must be used to interpolate properly
     $sudo = if (!$NoSudo) { "sudo" }
 
-    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/v1.0.0-preview2-1-3177/scripts/obtain"
+    $obtainUrl = "https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain"
 
     # Install for Linux and OS X
     if ($IsLinux -or $IsOSX) {
@@ -957,14 +997,6 @@ function Install-Dotnet {
         Start-NativeExecution {
             curl -sO $obtainUrl/$installScript
             bash ./$installScript -c $Channel -v $Version
-        }
-
-        # .NET Core's crypto library needs brew's OpenSSL libraries added to its rpath
-        if ($IsOSX) {
-            # This is the library shipped with .NET Core
-            # This is allowed to fail as the user may have installed other versions of dotnet
-            Write-Warning ".NET Core links the incorrect OpenSSL, correcting .NET CLI libraries..."
-            find $env:HOME/.dotnet -name System.Security.Cryptography.Native.OpenSsl.dylib | % { sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib $_ }
         }
     } elseif ($IsWindows) {
         Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
@@ -992,10 +1024,9 @@ function Start-PSBootstrap {
         ConfirmImpact="High")]
     param(
         [string]$Channel = "preview",
-        # we currently pin dotnet-cli version, because tool
-        # is currently migrating to msbuild toolchain
-        # and requires constant updates to our build process.
-        [string]$Version = "1.0.0-preview2-1-003177",
+        # we currently pin dotnet-cli version, and will
+        # update it when more stable version comes out.
+        [string]$Version = "2.0.0-preview1-005724",
         [switch]$Package,
         [switch]$NoSudo,
         [switch]$Force
@@ -1168,71 +1199,6 @@ function Start-PSBootstrap {
     }
 }
 
-function Start-PSRelease {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory)]
-        [string]$Name, # i.e. v6.0.0-alpha.12
-        [Parameter(Mandatory)]
-        [string]$CommitSHA1 # i.e. 7985366f9ec43af47b24dd88f04c0afc5eab3825
-    )
-
-    Push-Location $PSScriptRoot
-    try {
-        # check that we are in the right location
-        if ($IsWindows) {
-            if ($PSScriptRoot -ne "C:\PowerShell") {
-                throw "To make the release, please clone the project to C:\PowerShell. Currently it's under $PSScriptRoot"
-            }
-        } else {
-            if ($PSScriptRoot -ne "/PowerShell") {
-                throw "To make the release, please clone the project to /PowerShell. Currently it's under $PSScriptRoot"
-            }
-        }
-
-        # check that there is no tag with $Name yet
-        if ((git tag) -eq $Name) {
-            throw "Tag $Name already exists"
-        }
-
-        if ((git rev-parse HEAD) -ne $CommitSHA1) {
-            throw "Checkout the release commit before making the release: git checkout $CommitSHA1"
-        }
-
-        # Check that there are any local changes
-        $changedFiles = git status --porcelain -uno
-        if ($changedFiles) {
-            throw "There are changes in: $changedFiles"
-        }
-
-        $untrackedFiles = git ls-files --other --exclude-standard --directory
-        if ($untrackedFiles) {
-            throw "There are untracked files (run 'git clean -fdx'): $untrackedFiles"
-        }
-
-        # make sure submodules are up-to-date
-        git submodule init
-        git submodule update
-
-        # Create temporarely release tag
-        (git tag $Name $CommitSHA1)
-
-        try {
-            # make sure that we have up-to-date version of build tools
-            Start-PSBootstrap -Package
-            # run the clean build that will use temporarely tag
-            Start-PSBuild -Clean -Crossgen -PSModuleRestore
-            # make the package
-            Start-PSPackage
-        } finally {
-            # cleanup temporarely tag
-            git tag -d $Name
-        }
-    } finally {
-        Pop-Location
-    }
-}
-
 
 function Start-PSPackage {
     [CmdletBinding()]param(
@@ -1266,7 +1232,7 @@ function Start-PSPackage {
         -not $Script:Options.CrossGen -or                       ## Last build didn't specify -CrossGen
         $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
         $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
-        $Script:Options.Framework -ne "netcoreapp1.1")          ## Last build wasn't for CoreCLR
+        $Script:Options.Framework -ne "netcoreapp2.0")          ## Last build wasn't for CoreCLR
     {
         # It's possible that the most recent build doesn't satisfy the package requirement but
         # an earlier build does. e.g., run the following in order on win10-x64:
@@ -1361,6 +1327,11 @@ function Start-PSPackage {
         "AppImage" {
             if ($IsUbuntu14) {
                 Start-NativeExecution { bash -iex "$PSScriptRoot/tools/appimage.sh" }
+                $appImage = Get-Item PowerShell-*.AppImage
+                if ($appImage.Count -gt 1) {
+                    throw "Found more than one AppImage package, remove all *.AppImage files and try to create the package again"
+                }
+                Rename-Item $appImage.Name $appImage.Name.Replace("-","-$Version-")
             } else {
                 Write-Warning "Ignoring AppImage type for non Ubuntu Trusty platform"
             }
@@ -1428,6 +1399,23 @@ function New-UnixPackage {
 
     foreach ($Dependency in "fpm", "ronn") {
         if (!(precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
+            # These tools are not added to the path automatically on OpenSUSE 13.2
+            # try adding them to the path and re-tesing first
+            [string] $gemsPath = $null
+            [string] $depenencyPath = $null
+            $gemsPath = Get-ChildItem -Path /usr/lib64/ruby/gems   | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty FullName
+            if($gemsPath) {
+                $depenencyPath  = Get-ChildItem -Path (Join-Path -Path $gemsPath -ChildPath "gems" -AdditionalChildPath $Dependency) -Recurse  | Sort-Object -Property LastWriteTime -Descending | Select-Object -First 1 -ExpandProperty DirectoryName
+                $originalPath = $env:PATH
+                $env:PATH = $ENV:PATH +":" + $depenencyPath
+                if((precheck $Dependency "Package dependency '$Dependency' not found. Run Start-PSBootstrap -Package")) {
+                    continue
+                }
+                else {
+                    $env:PATH = $originalPath
+                }
+            }
+
             throw "Dependency precheck failed!"
         }
     }
@@ -1638,16 +1626,16 @@ esac
     }
 
     # We currently only support:
-    # CentOS 7 
+    # CentOS 7
     # Fedora 24+
-    # OpenSUSE 13.2
+    # OpenSUSE 42.1 (13.2 might build but is EOL)
     # Also SEE: https://fedoraproject.org/wiki/Packaging:DistTag
     if ($IsCentOS) {
         $rpm_dist = "el7.centos"
     } elseif ($IsFedora) {
         $version_id = $LinuxInfo.VERSION_ID
         $rpm_dist = "fedora.$version_id"
-    } elseif ($IsOpenSUSE13) {
+    } elseif ($IsOpenSUSE) {
         $version_id = $LinuxInfo.VERSION_ID
         $rpm_dist = "suse.$version_id"
     }
@@ -1705,7 +1693,19 @@ esac
     }
 
     # Magic to get path output
-    return Get-Item (Join-Path $PSScriptRoot (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
+    $createdPackage = Get-Item (Join-Path $PSScriptRoot (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
+
+    if ($IsOSX) {
+        # Add the OS information to the OSX package file name.
+        $packageExt = [System.IO.Path]::GetExtension($createdPackage.Name)
+        $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($createdPackage.Name)
+
+        $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
+        $newPackagePath = Join-Path $createdPackage.DirectoryName $newPackageName
+        $createdPackage = Rename-Item $createdPackage.FullName $newPackagePath -PassThru
+    }
+
+    return $createdPackage
 }
 
 
@@ -1720,7 +1720,9 @@ function Publish-NuGetFeed
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    @(
+    try {
+        Push-Location $PSScriptRoot
+        @(
 'Microsoft.PowerShell.Commands.Management',
 'Microsoft.PowerShell.Commands.Utility',
 'Microsoft.PowerShell.Commands.Diagnostics',
@@ -1732,12 +1734,15 @@ function Publish-NuGetFeed
 'Microsoft.WSMan.Management',
 'Microsoft.WSMan.Runtime',
 'Microsoft.PowerShell.SDK'
-    ) | % {
-        if ($VersionSuffix) {
-            dotnet pack "src/$_" --output $OutputPath --version-suffix $VersionSuffix
-        } else {
-            dotnet pack "src/$_" --output $OutputPath
+        ) | % {
+            if ($VersionSuffix) {
+                dotnet pack "src/$_" --output $OutputPath --version-suffix $VersionSuffix /p:IncludeSymbols=true
+            } else {
+                dotnet pack "src/$_" --output $OutputPath
+            }
         }
+    } finally {
+        Pop-Location
     }
 }
 
@@ -1753,6 +1758,12 @@ function Start-DevPowerShell {
         [switch]$KeepPSModulePath
     )
 
+    if ($FullCLR) {
+        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
+        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
+        throw "Building against FullCLR is not supported"
+    }
+
     try {
         if ((-not $NoNewWindow) -and ($IsCoreCLR)) {
             Write-Warning "Start-DevPowerShell -NoNewWindow is currently implied in PowerShellCore edition https://github.com/PowerShell/PowerShell/issues/1543"
@@ -1767,7 +1778,7 @@ function Start-DevPowerShell {
             if (-not $Command) {
                 $ArgumentList = @('-NoExit') + $ArgumentList
             }
-            $Command = '$env:PSMODULEPATH = Join-Path $env:DEVPATH Modules; ' + $Command
+            $Command = '$env:PSModulePath = Join-Path $env:DEVPATH Modules; ' + $Command
         }
 
         if ($Command) {
@@ -2015,9 +2026,24 @@ function Start-TypeGen
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    Push-Location "$PSScriptRoot/src/TypeCatalogParser"
+    $GetDependenciesTargetPath = "$PSScriptRoot/src/Microsoft.PowerShell.SDK/obj/Microsoft.PowerShell.SDK.csproj.TypeCatalog.targets"
+    $GetDependenciesTargetValue = @'
+<Project>
+    <Target Name="_GetDependencies"
+            DependsOnTargets="ResolveAssemblyReferencesDesignTime">
+        <ItemGroup>
+            <_RefAssemblyPath Include="%(_ReferencesFromRAR.ResolvedPath)%3B" Condition=" '%(_ReferencesFromRAR.Type)' == 'assembly' And '%(_ReferencesFromRAR.PackageName)' != 'Microsoft.Management.Infrastructure' " />
+        </ItemGroup>
+        <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_RefAssemblyPath)" Overwrite="true" />
+    </Target>
+</Project>
+'@
+    Set-Content -Path $GetDependenciesTargetPath -Value $GetDependenciesTargetValue -Force -Encoding Ascii
+
+    Push-Location "$PSScriptRoot/src/Microsoft.PowerShell.SDK"
     try {
-        dotnet run
+        $ps_inc_file = "$PSScriptRoot/src/TypeCatalogGen/powershell.inc"
+        dotnet msbuild .\Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$ps_inc_file" /nologo
     } finally {
         Pop-Location
     }
@@ -2446,8 +2472,8 @@ function New-MSIPackage
     Write-Verbose "Place dependencies such as icons to $assetsInSourcePath"
     Copy-Item "$AssetsPath\*.ico" $assetsInSourcePath -Force
 
-    $productVersionWithName = $ProductName + "_" + $ProductVersion
-    $productSemanticVersionWithName = $ProductName + "_" + $ProductSemanticVersion
+    $productVersionWithName = $ProductName + '_' + $ProductVersion
+    $productSemanticVersionWithName = $ProductName + '-' + $ProductSemanticVersion
 
     Write-Verbose "Create MSI for Product $productSemanticVersionWithName"
 
@@ -2456,6 +2482,7 @@ function New-MSIPackage
     [Environment]::SetEnvironmentVariable("ProductName", $ProductName, "Process")
     [Environment]::SetEnvironmentVariable("ProductGuid", $ProductGuid, "Process")
     [Environment]::SetEnvironmentVariable("ProductVersion", $ProductVersion, "Process")
+    [Environment]::SetEnvironmentVariable("ProductSemanticVersion", $ProductSemanticVersion, "Process")
     [Environment]::SetEnvironmentVariable("ProductVersionWithName", $productVersionWithName, "Process")
     [Environment]::SetEnvironmentVariable("ProductTargetArchitecture", $ProductTargetArchitecture, "Process")
     $ProductProgFilesDir = "ProgramFiles64Folder"
@@ -2581,7 +2608,7 @@ function New-AppxPackage
     Write-Verbose "Place AppxManifest dependencies such as images to $assetsInSourcePath"
     Copy-Item "$AssetsPath\*.png" $assetsInSourcePath -Force
 
-    $appxPackageName = $PackageName + "_" + $PackageSemanticVersion
+    $appxPackageName = $PackageName + "-" + $PackageSemanticVersion
     if ($PackageNameSuffix) {
         $appxPackageName = $appxPackageName, $PackageNameSuffix -join "-"
     }
@@ -2623,7 +2650,7 @@ function New-ZipPackage
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
 
-    $zipPackageName = $PackageName + "_" + $ProductSemanticVersion
+    $zipPackageName = $PackageName + "-" + $ProductSemanticVersion
     if ($PackageNameSuffix) {
         $zipPackageName = $zipPackageName, $PackageNameSuffix -join "-"
     }
@@ -2667,7 +2694,8 @@ function Start-CrossGen {
                      "win10-x64",
                      "osx.10.11-x64",
                      "osx.10.12-x64",
-                     "opensuse.13.2-x64")]
+                     "opensuse.13.2-x64",
+                     "opensuse.42.1-x64")]
         [string]
         $Runtime
     )
@@ -2725,15 +2753,9 @@ function Start-CrossGen {
             "win7-x64"
         }
     } elseif ($IsLinux) {
-        if ($IsUbuntu) {
-            "ubuntu.14.04-x64"
-        } elseif ($IsCentOS) {
-            "rhel.7-x64"
-        } elseif ($IsFedora) {
-            "fedora.24-x64"
-        }
+        "linux-x64"
     } elseif ($IsOSX) {
-        "osx.10.10-x64"
+        "osx.10.12-x64"
     }
 
     if (-not $crossGenRuntime) {
@@ -2750,6 +2772,12 @@ function Start-CrossGen {
         throw "Unable to find latest version of crossgen.exe. 'Please run Start-PSBuild -Clean' first, and then try again."
     }
     Write-Verbose "Matched CrossGen.exe: $crossGenPath" -Verbose
+
+    # 'x' permission is not set for packages restored on Linux/OSX.
+    # this is temporary workaround to a bug in dotnet.exe, tracking by dotnet/cli issue #6286
+    if ($IsLinux -or $IsOSX) {
+        chmod u+x $crossGenPath
+    }
 
     # Crossgen.exe requires the following assemblies:
     # mscorlib.dll
@@ -2777,8 +2805,6 @@ function Start-CrossGen {
     $commonAssembliesForAddType = @(
         "Microsoft.CodeAnalysis.CSharp.dll"
         "Microsoft.CodeAnalysis.dll"
-        "Microsoft.CodeAnalysis.VisualBasic.dll"
-        "Microsoft.CSharp.dll"
     )
 
     # Common PowerShell libraries to crossgen

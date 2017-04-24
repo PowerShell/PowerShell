@@ -11,11 +11,6 @@ using System.Collections.Generic;
 using System.Management.Automation.Language;
 using System.Management.Automation.Security;
 
-#if CORECLR
-// Use stub for SerializableAttribute
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation
 {
     /// <summary>

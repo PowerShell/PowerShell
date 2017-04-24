@@ -51,7 +51,7 @@ These labels describe what feature area of PowerShell that an issue affects:
 * `Area-Portability`: anything affecting script portability
 * `Area-PowerShellGet`: PowerShellGet related issues
 * `Area-Providers`: PowerShell providers like FileSystem, Certificates, Registry, etc...
-* `Area-PSReadline`: PSReadLine related issues
+* `Area-PSReadline`: PSReadline related issues
 * `Area-Remoting`: PSRP issues with any transport layer
 * `Area-Security`: security related areas like [JEA](https://github.com/powershell/JEA)
 * `Area-SideBySide`: side by side support

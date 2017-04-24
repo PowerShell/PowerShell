@@ -1,11 +1,9 @@
 
 Describe "Test constrained language mode" -Tags "CI" {
     It "dynamic invocation on non-PowerShell thread should work" {
-        $refAssemblies = if ($IsCoreCLR) {
-            "Microsoft.CSharp","System.Dynamic.Runtime","System.Management.Automation"
-        }
-        else {
-            "Microsoft.CSharp"
+        $refAssemblies = @()
+        if (!$IsCoreCLR) {
+            $refAssemblies += "Microsoft.CSharp"
         }
 
         $t,$null = Add-Type -ReferencedAssemblies $refAssemblies -WarningAction Ignore -PassThru @"

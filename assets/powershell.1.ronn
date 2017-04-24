@@ -90,7 +90,7 @@ PowerShell accepts both `-` and `--` prefixed arguments.
 
 These are environment variables used by PowerShell.
 
-* `$PSMODULEPATH`:
+* `$PSModulePath`:
   A colon (`:`) separated load path for PowerShell modules.
 
 ## AUTOMATIC VARIABLES

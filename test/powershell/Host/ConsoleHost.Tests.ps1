@@ -267,8 +267,13 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         # All of the following tests replace the prompt (either via an initial command or interactively)
         # so that we can read StandardOutput and reliably know exactly what the prompt is.
 
-        It "Interactive redirected input" {
-            $si = NewProcessStartInfo "-noprofile -nologo" -RedirectStdIn
+        It "Interactive redirected input" -TestCases @(
+            @{InteractiveSwitch = ""}
+            @{InteractiveSwitch = " -IntERactive"}
+            @{InteractiveSwitch = " -i"}
+        ) {
+            param($interactiveSwitch)
+            $si = NewProcessStartInfo "-noprofile -nologo$interactiveSwitch" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$function:prompt = { 'PS> ' }`n")
             $null = $process.StandardOutput.ReadLine()
@@ -401,6 +406,12 @@ foo
             $env:XDG_CONFIG_HOME = "/dev/cpu"
             $output = & $powershell -noprofile -Command { (get-command).count }
             [int]$output | Should BeGreaterThan 0
+        }
+    }
+
+    Context "HOME environment variable" {
+        It "Should start if HOME is not defined" -skip:($IsWindows) {
+            bash -c "unset HOME;$powershell -c '1+1'" | Should BeExactly 2
         }
     }
 }

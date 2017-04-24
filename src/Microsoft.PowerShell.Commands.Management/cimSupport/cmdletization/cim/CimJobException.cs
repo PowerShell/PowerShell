@@ -9,11 +9,6 @@ using System.Runtime.Serialization;
 using Microsoft.Management.Infrastructure;
 using Dbg = System.Management.Automation.Diagnostics;
 
-#if CORECLR
-// Use stubs for SerializableAttribute, SystemException and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>

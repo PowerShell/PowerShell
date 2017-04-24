@@ -12,10 +12,6 @@ using System.Management.Automation;
 using Microsoft.Win32;
 
 #if CORECLR
-// Some APIs are missing from System.Environment. We use System.Management.Automation.Environment as a proxy type:
-//  - for missing APIs, System.Management.Automation.Environment has extension implementation.
-//  - for existing APIs, System.Management.Automation.Environment redirect the call to System.Environment.
-using Environment = System.Management.Automation.Environment;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 #endif
@@ -169,7 +165,7 @@ namespace System.Management.Automation
 
             string fileName = Path.Combine(scopeDirectory, configFileName);
 
-            string modulePath = ReadValueFromFile<string>(fileName, "PsModulePath");
+            string modulePath = ReadValueFromFile<string>(fileName, Constants.PSModulePathEnvVar);
             if (!string.IsNullOrEmpty(modulePath))
             {
                 modulePath = Environment.ExpandEnvironmentVariables(modulePath);
@@ -518,11 +514,11 @@ namespace System.Management.Automation
         {
             if (PropertyScope.CurrentUser == scope)
             {
-                return ModuleIntrinsics.GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.User);
+                return ModuleIntrinsics.GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.User);
             }
             else
             {
-                return ModuleIntrinsics.GetExpandedEnvironmentVariable("PSMODULEPATH", EnvironmentVariableTarget.Machine);
+                return ModuleIntrinsics.GetExpandedEnvironmentVariable(Constants.PSModulePathEnvVar, EnvironmentVariableTarget.Machine);
             }
         }
 

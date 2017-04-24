@@ -4,16 +4,10 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System.Threading;
 using PSHost = System.Management.Automation.Host.PSHost;
-using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces.Internal;
 using System.Collections.ObjectModel;
 using System.Runtime.Serialization;
-
-#if CORECLR
-// Use stub for SerializableAttribute, NonSerializedAttribute and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
 
 namespace System.Management.Automation.Runspaces
 {

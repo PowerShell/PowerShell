@@ -11,11 +11,6 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using Dbg = System.Management.Automation.Diagnostics;
 
-#if CORECLR
-// Use stub for SerializableAttribute, NonSerializedAttribute and ISerializable related types
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation.Runspaces
 {
     #region Exceptions
@@ -225,7 +220,7 @@ namespace System.Management.Automation.Runspaces
         ReuseThread = 2,
 
         /// <summary>
-        /// Doesn’t create a new thread; the execution occurs on the 
+        /// Doesn't create a new thread; the execution occurs on the 
         /// thread that calls Invoke.
         /// </summary>
         /// <remarks>

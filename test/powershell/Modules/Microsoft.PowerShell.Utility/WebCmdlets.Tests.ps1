@@ -186,7 +186,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
         $jsonContent.headers.Host | Should Match "httpbin.org"
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
@@ -235,7 +234,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         # TODO: There is a bug on ConvertFrom-Json that fails for utf8.
         <#
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.'Accept-Encoding' | Should Match "gzip, deflate"
         $jsonContent.headers.Host | Should Match "httpbin.org"
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
         #>
@@ -247,7 +245,65 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+    }
 
+    It "Validate Invoke-WebRequest error with -Proxy and -NoProxy option" {
+
+        $command = "Invoke-WebRequest -Uri http://httpbin.org/delay/:10 -Proxy 'http://localhost:8080' -NoProxy -TimeoutSec 2"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should Be "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+    }
+
+    $testCase = @(
+        @{ proxy_address = "http://localhost:9"; name = 'http_proxy'; protocol = 'http' }
+        @{ proxy_address = "http://localhost:9"; name = 'https_proxy'; protocol = 'https' }
+    )
+
+    It "Validate Invoke-WebRequest error with -Proxy option set - '<name>'" -TestCases $testCase {
+        param($proxy_address, $name, $protocol)
+
+        $command = "Invoke-WebRequest -Uri '${protocol}://httpbin.org/delay/:5' -TimeoutSec 5 -Proxy '${proxy_address}'"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+    }
+
+    It "Validate Invoke-WebRequest error with environment proxy set - '<name>'" -TestCases $testCase {
+        param($proxy_address, $name, $protocol)
+
+        # Configure the environment variable.
+        New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
+
+        $command = "Invoke-WebRequest -Uri '${protocol}://httpbin.org/delay/:5' -TimeoutSec 5"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+    }
+
+    It "Validate Invoke-WebRequest returns User-Agent where -NoProxy with envirionment proxy set - '<name>'" -TestCases $testCase {
+        param($proxy_address, $name, $protocol)
+
+        # Configure the environment variable.
+        New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
+
+        $command = "Invoke-WebRequest -Uri '${protocol}://httpbin.org/headers' -TimeoutSec 5 -NoProxy"
+
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse -response $result
+
+        # Validate response content
+        $jsonContent = $result.Output.Content | ConvertFrom-Json
+        $jsonContent.headers.Host | Should Match "httpbin.org"
+        $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
+    }
+
+    It "Invoke-WebRequest validate timeout option" {
+
+        $command = "Invoke-WebRequest -Uri http://httpbin.org/delay/:5 -TimeoutSec 10"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
     # Perform the following operation for Invoke-WebRequest
@@ -313,7 +369,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 # Validate response content
                 $jsonContent = $result.Output.Content | ConvertFrom-Json
                 $jsonContent.url | Should Match $uri
-                $jsonContent.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
                 $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
 
                 # For a GET request, there is no data property to validate.
@@ -441,6 +496,42 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Error.Exception.Message | Should Match ": 418 \(I'm a teapot\)\."
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
+
+    It "Validate Invoke-WebRequest returns native HTTPS error message in exception" {
+
+        $command = "Invoke-WebRequest -Uri https://incomplete.chain.badssl.com"
+        $result = ExecuteWebCommand -command $command
+
+        # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
+        $result.Error.ErrorDetails.Message | Should Match $result.Error.Exception.InnerException.Message
+        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+    }
+
+    BeforeEach {
+        if ($env:http_proxy) {
+            $savedHttpProxy = $env:http_proxy
+            $copiedHttpProxy = $true
+        }
+
+        if ($env:https_proxy) {
+            $savedHttpsProxy = $env:https_proxy
+            $copiedHttpsProxy = $true
+        }
+    }
+
+    AfterEach {
+        if ($copiedHttpProxy) {
+            $env:http_proxy = $savedHttpProxy
+        } else {
+            $env:http_proxy = $null
+        }
+
+        if ($copiedHttpsProxy) {
+            $env:https_proxy = $savedHttpsProxy
+        } else {
+            $env:https_proxy = $null
+        }
+    }
 }
 
 Describe "Invoke-RestMethod tests" -Tags "Feature" {
@@ -462,7 +553,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
         $result.Output.headers.Host | Should Match "httpbin.org"
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
@@ -475,7 +565,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
         $result.Output.headers.Host | Should Match "httpbin.org"
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
 
@@ -511,10 +600,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
         # Validate response content
         # TODO: There is a bug on ConvertFrom-Json that fails for utf8.
-        $result.headers.'Accept-Encoding' | Should Match "gzip, deflate"
         $result.headers.Host | Should Match "httpbin.org"
         $result.headers.'User-Agent' | Should Match "WindowsPowerShell"
-
     }
     #>
 
@@ -524,7 +611,54 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+    }
 
+    It "Validate Invoke-RestMethod error with -Proxy and -NoProxy option" {
+
+        $command = "Invoke-RestMethod -Uri http://httpbin.org/delay/:10 -Proxy 'http://localhost:8080' -NoProxy -TimeoutSec 2"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should Be "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+    }
+
+    $testCase = @(
+        @{ proxy_address = "http://localhost:9"; name = 'http_proxy'; protocol = 'http' }
+        @{ proxy_address = "http://localhost:9"; name = 'https_proxy'; protocol = 'https' }
+    )
+
+    It "Validate Invoke-RestMethod error with -Proxy option - '<name>'" -TestCases $testCase {
+        param($proxy_address, $name, $protocol)
+
+        $command = "Invoke-RestMethod -Uri '${protocol}://httpbin.org/' -Proxy '${proxy_address}'"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+    }
+
+    It "Validate Invoke-RestMethod error with environment proxy set - '<name>'" -TestCases $testCase {
+        param($proxy_address, $name, $protocol)
+
+        # Configure the environment variable.
+        New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
+
+        $command = "Invoke-RestMethod -Uri '${protocol}://httpbin.org/delay/:5' -TimeoutSec 5"
+
+        $result = ExecuteWebCommand -command $command
+        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+    }
+
+    It "Validate Invoke-RestMethod returns User-Agent with option -NoProxy when environment proxy set - '<name>'" -TestCases $testCase {
+        param($proxy_address, $name, $protocol)
+
+        # Configure the environment variable.
+        New-Item -Name ${name} -Value ${proxy_address} -ItemType Variable -Path Env: -Force
+
+        $command = "Invoke-RestMethod -Uri '${protocol}://httpbin.org/user-agent' -TimeoutSec 5 -NoProxy"
+
+        $result = ExecuteWebCommand -command $command
+
+        # Validate response
+        $result.Output.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
     # Perform the following operation for Invoke-RestMethod
@@ -586,7 +720,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
                 # Validate response
                 $result.Output.url | Should Match $uri
-                $result.Output.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
                 $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
 
                 # For a GET request, there is no data property to validate.
@@ -615,7 +748,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
         # Validate response
         $result.Output.url | Should Match $uri
-        $result.Output.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
 
         # Unfortunately, the connection information is not display in the output of Invoke-RestMethod
@@ -724,6 +856,42 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result.Error.Exception.Response.ReasonPhrase | Should Be "I'm a teapot"
         $result.Error.Exception.Message | Should Match ": 418 \(I'm a teapot\)\."
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+    }
+
+    It "Validate Invoke-RestMethod returns native HTTPS error message in exception" {
+
+        $command = "Invoke-RestMethod -Uri https://incomplete.chain.badssl.com"
+        $result = ExecuteWebCommand -command $command
+
+        # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
+        $result.Error.ErrorDetails.Message | Should Match $result.Error.Exception.InnerException.Message
+        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+    }
+
+    BeforeEach {
+        if ($env:http_proxy) {
+            $savedHttpProxy = $env:http_proxy
+            $copiedHttpProxy = $true
+        }
+
+        if ($env:https_proxy) {
+            $savedHttpsProxy = $env:https_proxy
+            $copiedHttpsProxy = $true
+        }
+    }
+
+    AfterEach {
+        if ($copiedHttpProxy) {
+            $env:http_proxy = $savedHttpProxy
+        } else {
+            $env:http_proxy = $null
+        }
+
+        if ($copiedHttpsProxy) {
+            $env:https_proxy = $savedHttpsProxy
+        } else {
+            $env:https_proxy = $null
+        }
     }
 }
 

@@ -3,13 +3,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
 using System.Runtime.Serialization;
-
-#if !CORECLR
 using System.Security.Permissions;
-#else
-// Use stub for SerializableAttribute.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
 
 namespace System.Management.Automation
 {
@@ -80,7 +74,6 @@ namespace System.Management.Automation
         }
 
         #region Serialization
-#if !CORECLR // ArgumentNullException Has No Serialization In CoreCLR
         /// <summary>
         /// Initializes a new instance of the PSArgumentNullException class
         /// using data serialized via
@@ -114,7 +107,6 @@ namespace System.Management.Automation
             info.AddValue("ErrorId", _errorId);
             info.AddValue("PSArgumentNullException_MessageOverride", _message);
         }
-#endif
         #endregion Serialization
         #endregion ctor
 

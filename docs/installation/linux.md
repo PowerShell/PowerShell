@@ -1,5 +1,4 @@
-Package installation instructions
-=================================
+# Package installation instructions
 
 Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16],
 [CentOS 7][cos], [Arch Linux][arch], [many Linux distributions (AppImage)][lai], and [macOS 10.11][mac].
@@ -11,7 +10,7 @@ You should *never* run a script without reading it first!
 Please **read the [download][] script first**, and then if you want to run it, use:
 
 ```sh
-bash <(curl -fsSL https://raw.githubusercontent.com/PowerShell/PowerShell/v6.0.0-alpha.16/tools/download.sh)
+bash <(curl -fsSL https://raw.githubusercontent.com/PowerShell/PowerShell/v6.0.0-alpha.18/tools/download.sh)
 ```
 
 Once the package is installed, run `powershell` from a terminal.
@@ -22,19 +21,45 @@ Once the package is installed, run `powershell` from a terminal.
 [arch]: #arch-linux
 [lai]: #linux-appimage
 [mac]: #macos-1011
-[download]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-alpha.16/tools/download.sh
+[download]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-alpha.18/tools/download.sh
 
-Ubuntu 14.04
-============
+## Ubuntu 14.04
+
+### Installation via Package Repository - Ubuntu 14.04
+
+PowerShell Core, for Linux, is published to package repositories for easy installation (and updates).
+This is the preferred method.
+
+```sh
+# Import the public repository GPG keys
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+
+# Register the Microsoft Ubuntu repository
+curl https://packages.microsoft.com/config/ubuntu/14.04/prod.list | sudo tee /etc/apt/sources.list.d/microsoft.list
+
+# Update apt-get
+sudo apt-get update
+
+# Install PowerShell
+sudo apt-get install -y powershell
+
+# Start PowerShell
+powershell
+```
+
+After registering the Microsoft repository once as superuser,
+from then on, you just need to use `sudo apt-get upgrade powershell` to update it.
+
+### Installation via Direct Download
 
 Using [Ubuntu 14.04][], download the Debian package
-`powershell_6.0.0-alpha.16-1ubuntu1.14.04.1_amd64.deb`
+`powershell_6.0.0-alpha.18-1ubuntu1.14.04.1_amd64.deb`
 from the [releases][] page onto the Ubuntu machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo dpkg -i powershell_6.0.0-alpha.16-1ubuntu1.14.04.1_amd64.deb
+sudo dpkg -i powershell_6.0.0-alpha.18-1ubuntu1.14.04.1_amd64.deb
 sudo apt-get install -f
 ```
 
@@ -42,7 +67,7 @@ sudo apt-get install -f
 > the next command, `apt-get install -f` resolves these
 > and then finishes configuring the PowerShell package.
 
-**Uninstallation**
+### Uninstallation - Ubuntu 14.04
 
 ```sh
 sudo apt-get remove powershell
@@ -50,17 +75,43 @@ sudo apt-get remove powershell
 
 [Ubuntu 14.04]: http://releases.ubuntu.com/14.04/
 
-Ubuntu 16.04
-============
+## Ubuntu 16.04
+
+### Installation via Package Repository - Ubuntu 16.04
+
+PowerShell Core, for Linux, is published to package repositories for easy installation (and updates).
+This is the preferred method.
+
+```sh
+# Import the public repository GPG keys
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+
+# Register the Microsoft Ubuntu repository
+curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | sudo tee /etc/apt/sources.list.d/microsoft.list
+
+# Update apt-get
+sudo apt-get update
+
+# Install PowerShell
+sudo apt-get install -y powershell
+
+# Start PowerShell
+powershell
+```
+
+After registering the Microsoft repository once as superuser,
+from then on, you just need to use `sudo apt-get upgrade powershell` to update it.
+
+### Installation via Direct Download - Ubuntu 16.04
 
 Using [Ubuntu 16.04][], download the Debian package
-`powershell_6.0.0-alpha.16-1ubuntu1.16.04.1_amd64.deb`
+`powershell_6.0.0-alpha.18-1ubuntu1.16.04.1_amd64.deb`
 from the [releases][] page onto the Ubuntu machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo dpkg -i powershell_6.0.0-alpha.16-1ubuntu1.16.04.1_amd64.deb
+sudo dpkg -i powershell_6.0.0-alpha.18-1ubuntu1.16.04.1_amd64.deb
 sudo apt-get install -f
 ```
 
@@ -68,7 +119,7 @@ sudo apt-get install -f
 > the next command, `apt-get install -f` resolves these
 > and then finishes configuring the PowerShell package.
 
-**Uninstallation**
+### Uninstallation - Ubuntu 16.04
 
 ```sh
 sudo apt-get remove powershell
@@ -78,28 +129,47 @@ sudo apt-get remove powershell
 
 This works for Debian Stretch (now testing) as well.
 
-CentOS 7
-========
+## CentOS 7
+
+> This package also works on Oracle Linux 7 and Red Hat Enterprise Linux (RHEL) 7.
+
+### Installation via Package Repository (preferred) - CentOS 7
+
+PowerShell Core for Linux is published to official Microsoft repositories for easy installation (and updates).
+
+```sh
+# Register the Microsoft RedHat repository
+curl https://packages.microsoft.com/config/rhel/7/prod.repo | sudo tee /etc/yum.repos.d/microsoft.repo
+
+# Install PowerShell
+sudo yum install -y powershell
+
+# Start PowerShell
+powershell
+```
+
+After registering the Microsoft repository once as superuser,
+you just need to use `sudo yum update powershell` to update PowerShell.
+
+### Installation via Direct Download - CentOS 7
 
 Using [CentOS 7][], download the RPM package
-`powershell-6.0.0_alpha.16-1.el7.centos.x86_64.rpm`
+`powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm`
 from the [releases][] page onto the CentOS machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo yum install ./powershell-6.0.0_alpha.16-1.el7.centos.x86_64.rpm
+sudo yum install ./powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
 ```
 
 You can also install the RPM without the intermediate step of downloading it:
 
 ```sh
-sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.16/powershell-6.0.0_alpha.16-1.el7.centos.x86_64.rpm
+sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
 ```
 
-> This package works on Oracle Linux 7. It should work on Red Hat Enterprise Linux 7 too.
-
-**Uninstallation**
+### Uninstallation
 
 ```sh
 sudo yum remove powershell
@@ -107,8 +177,39 @@ sudo yum remove powershell
 
 [CentOS 7]: https://www.centos.org/download/
 
-Arch Linux
-==========
+## OpenSUSE 42.1
+
+Installation instruction for OpenSUSE 42.1.
+
+### Installation via Direct Download - OpenSUSE 42.1
+
+Using [OpenSUSE 42.1][], download the RPM package
+`powershell-6.0.0_alpha.18-1.suse.42.1.x86_64.rpm`
+from the [releases][] page onto the OpenSUSE machine.
+
+Then execute the following in the terminal:
+
+```sh
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+sudo zypper install ./powershell-6.0.0_alpha.18-1.suse.42.1.x86_64.rpm
+```
+
+You can also install the RPM without the intermediate step of downloading it:
+
+```sh
+sudo rpm --import https://packages.microsoft.com/keys/microsoft.asc
+sudo zypper install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0_alpha.18-1.suse.42.1.x86_64.rpm
+```
+
+### Uninstallation - OpenSUSE 42.1
+
+```sh
+sudo zypper remove powershell
+```
+
+[OpenSUSE 42.1]: https://software.opensuse.org/421/en
+
+## Arch Linux
 
 PowerShell is available from the [Arch Linux][] User Repository (AUR) as a [release][arch-release] or the [latest development build][arch-git].
 
@@ -120,21 +221,17 @@ For more information on installing packages from the AUR, see the [Arch Linux wi
 [arch-release]: https://aur.archlinux.org/packages/powershell/
 [arch-git]: https://aur.archlinux.org/packages/powershell-git/
 
-Linux AppImage
-==============
-
-> Please note that we do not have an alpha.16 AppImage,
-> this is preparation for the next release!
+## Linux AppImage
 
 Using a recent Linux distribution,
-download the AppImage `powershell-6.0.0-alpha.16-x86_64.AppImage`
+download the AppImage `PowerShell-6.0.0-alpha.18-x86_64.AppImage`
 from the [releases][] page onto the Linux machine.
 
 Then execute the following in the terminal:
 
-```
-chmod a+x powershell-6.0.0-alpha.16-x86_64.AppImage
-./powershell-6.0.0-alpha.16-x86_64.AppImage
+```bash
+chmod a+x PowerShell-6.0.0-alpha.18-x86_64.AppImage
+./PowerShell-6.0.0-alpha.18-x86_64.AppImage
 ```
 
 The [AppImage][] lets you run PowerShell without installing it.
@@ -145,21 +242,20 @@ and is a single binary.
 
 [appimage]: http://appimage.org/
 
-macOS 10.11
-===========
+## macOS 10.11
 
 Using macOS 10.11, download the PKG package
-`powershell-6.0.0-alpha.16.pkg`
+`powershell-6.0.0-alpha.18-osx.10.11-x64.pkg`
 from the [releases][] page onto the macOS machine.
 
 Either double-click the file and follow the prompts,
 or install it from the terminal:
 
 ```sh
-sudo installer -pkg powershell-6.0.0-alpha.16.pkg -target /
+sudo installer -pkg powershell-6.0.0-alpha.18-osx.10.11-x64.pkg -target /
 ```
 
-**Uninstallation**
+### Uninstallation - macOS 10.11
 
 PowerShell on MacOS must be removed manually.
 
@@ -175,12 +271,11 @@ and remove the desired the paths with `sudo rm`.
 
 [paths]:#paths
 
-OpenSSL
--------
+## OpenSSL
 
 Also install [Homebrew's OpenSSL][openssl]:
 
-```
+```bash
 brew install openssl
 brew install curl --with-openssl
 ```
@@ -206,7 +301,7 @@ they will fail to work unless the libraries are manually placed there (security 
 or their libraries are patched (which we do).
 To patch .NET Core's cryptography libraries, we use `install_name_tool`:
 
-```
+```bash
 find ~/.nuget -name System.Security.Cryptography.Native.dylib | xargs sudo install_name_tool -add_rpath /usr/local/opt/openssl/lib
 find ~/.nuget -name System.Net.Http.Native.dylib | xargs sudo install_name_tool -change /usr/lib/libcurl.4.dylib /usr/local/opt/curl/lib/libcurl.4.dylib
 ```
@@ -216,31 +311,28 @@ The PowerShell macOS package come with the necessary libraries patched,
 and the build script patches the libraries on-the-fly when building from source.
 You *can* run this command manually if you're having trouble with .NET Core's cryptography libraries.
 
-
 [openssl]: https://github.com/Homebrew/homebrew-core/blob/master/Formula/openssl.rb
 [brew]: http://brew.sh/
 [homebrew-patch]: https://github.com/Homebrew/brew/pull/597
 
-Paths
-=====
+## Paths
 
-* `$PSHOME` is `/opt/microsoft/powershell/6.0.0-alpha.16/`
+* `$PSHOME` is `/opt/microsoft/powershell/6.0.0-alpha.18/`
 * User profiles will be read from `~/.config/powershell/profile.ps1`
 * Default profiles will be read from `$PSHOME/profile.ps1`
 * User modules will be read from `~/.local/share/powershell/Modules`
 * Shared modules will be read from `/usr/local/share/powershell/Modules`
 * Default modules will be read from `$PSHOME/Modules`
-* PSReadLine history will be recorded to `~/.local/share/powershell/PSReadLine/ConsoleHost_history.txt`
+* PSReadline history will be recorded to `~/.local/share/powershell/PSReadLine/ConsoleHost_history.txt`
 
 The profiles respect PowerShell's per-host configuration,
 so the default host-specific profiles exists at `Microsoft.PowerShell_profile.ps1` in the same locations.
 
 On Linux and macOS, the [XDG Base Directory Specification][xdg-bds] is respected.
 
-
 Note that because macOS is a derivation of BSD,
 instead of `/opt`, the prefix used is `/usr/local`.
-Thus, `$PSHOME` is `/usr/local/microsoft/powershell/6.0.0-alpha.16/`,
+Thus, `$PSHOME` is `/usr/local/microsoft/powershell/6.0.0-alpha.18/`,
 and the symlink is placed at `/usr/local/bin/powershell`.
 
 [releases]: https://github.com/PowerShell/PowerShell/releases/latest

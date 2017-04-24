@@ -6,11 +6,6 @@ using System.Collections.ObjectModel;
 using System.Management.Automation.Provider;
 using System.Security.AccessControl;
 
-#if CORECLR
-// Use stub for SystemException
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation
 {
     /// <summary>

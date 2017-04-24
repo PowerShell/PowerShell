@@ -15,11 +15,6 @@
 
 using System.Runtime.CompilerServices;
 
-#if CORECLR
-// Use stub for IRuntimeVariables.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation.Interpreter
 {
     internal sealed class RuntimeVariables : IRuntimeVariables

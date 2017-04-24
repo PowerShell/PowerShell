@@ -1,7 +1,4 @@
-﻿$remotingModule = Join-Path $PSScriptRoot "../Common/TestRemoting.psm1"
-Import-Module $remotingModule
-
-Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
+﻿Describe "InvokeOnRunspace method argument error handling" -tags "Feature" {
 
     BeforeAll {
         $command = [System.Management.Automation.PSCommand]::new()

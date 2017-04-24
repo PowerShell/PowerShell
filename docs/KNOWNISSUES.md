@@ -1,9 +1,10 @@
-Known Issues for PowerShell on Non-Windows Platforms
-====================================
+# Known Issues
+
+## Known Issues for PowerShell on Non-Windows Platforms
 
 The first Alpha release of PowerShell on Linux and macOS is mostly functional but
-does have some significant limitations and usability issues. 
-In some cases, these issues are simply bugs that haven't been fixed yet. 
+does have some significant limitations and usability issues.
+In some cases, these issues are simply bugs that haven't been fixed yet.
 In other cases (as with the default aliases for ls, cp, etc.) we are
 looking for feedback from the community regarding the choices we make.
 
@@ -12,142 +13,130 @@ and macOS tend to share the same level of maturity in both features and bugs.
 Except as noted below, the issues in this section will apply to both operating
 systems.
 
-Case-sensitivity in PowerShell
--------------------------------
+### Case-sensitivity in PowerShell
 
-Historically, PowerShell has been uniformly case-insensitive, with few exceptions. 
+Historically, PowerShell has been uniformly case-insensitive, with few exceptions.
 On UNIX-like operating systems, the file system is case-sensitive and this is exposed through a number
 of ways, obvious and non-obvious.
 
-### Directly:
+#### Directly
 
--   When specifying a file in PowerShell the correct case must be used.
+- When specifying a file in PowerShell the correct case must be used.
 
--   Only forward slashes can be used in path. 
+- Only forward slashes can be used in path.
     (On Windows either forward or backward slashes can be used.)
 
-### Indirectly:
+#### Indirectly
 
--   If a script tries to load a module and the module name is not cased
-    correctly, then the module load will fail. 
+- If a script tries to load a module and the module name is not cased
+    correctly, then the module load will fail.
     This may cause a problem with existing scripts if the name by which the module is referenced
     doesn't match the actual file name.
 
--   Tab-completion will not automatically auto-complete if the file name case is wrong. 
+- Tab-completion will not automatically auto-complete if the file name case is wrong.
     The fragment to complete must be cased properly.
     (Completion is case-insensitive for type name and type member completions.)
 
-.PS1 File Extensions
---------------------
+### .PS1 File Extensions
 
 PowerShell scripts must end in `.ps1` for the interpreter to understand
-how to load and run them in the current process. 
-Running scripts in the current process is the expected usual behavior for PowerShell. 
+how to load and run them in the current process.
+Running scripts in the current process is the expected usual behavior for PowerShell.
 The `#!` magic number may be added to a script that doesn't have a `.ps1` extension,
 but this will cause the script to be run in a new PowerShell instance
 preventing the script from working properly when interchanging objects.
 
-Missing command aliases
------------------------
+### Missing command aliases
 
 On Linux/macOS, the "convenience aliases" for the basic commands `ls`, `cp`,
-`mv`, `rm`, `cat`, `man`, `mount`, `ps` have been removed. 
+`mv`, `rm`, `cat`, `man`, `mount`, `ps` have been removed.
 On Windows, PowerShell provides a set of aliases that map to Linux command
-names for user convenience. 
-These aliases have been removed from the default PowerShell on Linux/macOS distributions, 
-allowing the native executable to be run instead. 
-There are pros and cons to having do this. 
+names for user convenience.
+These aliases have been removed from the default PowerShell on Linux/macOS distributions,
+allowing the native executable to be run instead.
+There are pros and cons to having do this.
 It exposes the native command experience to the PowerShell user but reduces
 functionality in the shell because the native commands return strings not objects.
 
-> NOTE: This is an area where the PowerShell team is looking for feedback. 
-> What is the preferred solution? Should we leave it as is or add the 
-> convenience aliases back? See 
+> NOTE: This is an area where the PowerShell team is looking for feedback.
+> What is the preferred solution? Should we leave it as is or add the
+> convenience aliases back? See
 > [Issue #929](https://github.com/PowerShell/PowerShell/issues/929).
 
-Missing Wildcard (globbing) Support 
-------------------------------------
+### Missing Wildcard (globbing) Support
 
 Currently, PowerShell only does wildcard expansion (globbing) for the
-built-ins but not for external commands. 
-This means that a command like `ls *.txt` will fail because the asterisk will not be 
-expanded to match file names. 
-You can work around this by doing `ls (gci *.txt | % name)` or, more simply, 
+built-ins but not for external commands.
+This means that a command like `ls *.txt` will fail because the asterisk will not be
+expanded to match file names.
+You can work around this by doing `ls (gci *.txt | % name)` or, more simply,
 `gci *.txt` using the PowerShell built-in equivalent to `ls`.
 [RFC0009](https://github.com/PowerShell/PowerShell-RFC/issues/33)
 
-.NET Framework vs .NET Core Framework
------------------
+### .NET Framework vs .NET Core Framework
 
 PowerShell on Linux/macOS uses the .NET Core which is a subset of the full
-.NET Framework on Microsoft Windows. 
+.NET Framework on Microsoft Windows.
 This is significant because PowerShell provides direct access to the underlying framework types,
-methods etc. 
-As a result, scripts that run on Windows may not run on non-Windows platforms because of the differences in the frameworks. 
+methods etc.
+As a result, scripts that run on Windows may not run on non-Windows platforms because of the differences in the frameworks.
 For more information about .NET Core Framework, see <https://www.dotnetfoundation.org/netcore>
 
-Redirection Issues
-------------------
+### Redirection Issues
 
-Input redirection is not supported in PowerShell on any platform. 
+Input redirection is not supported in PowerShell on any platform.
 [Issue #1629](https://github.com/PowerShell/PowerShell/issues/1629)
 
 Use either `Get-Content` to write the contents of a file into the pipeline.
 
-PowerShell does not currently support "direct pipelining" external commands. 
-Although the pipeline works properly for built-in PowerShell commands, 
+PowerShell does not currently support "direct pipelining" external commands.
+Although the pipeline works properly for built-in PowerShell commands,
 with external (also called native) commands, each individual
 command in the pipeline is run to completion and then the aggregated
-data is passed to the next command. 
+data is passed to the next command.
 (This behavior is intended to be fixed in a later release.)
 
-Redirected output will contain the Unicode byte order mark (BOM) when the default UTF-8 encoding is used. 
+Redirected output will contain the Unicode byte order mark (BOM) when the default UTF-8 encoding is used.
 The BOM will cause problems when working with utilities that do not expect it or when appending to a file.
 
 Use `-Encoding ascii` to write ASCII text (which, not being Unicode, will not have a BOM).
 
-Job Control
------------
+### Job Control
 
-There is no job-control support in PowerShell on Linux/macOS. 
+There is no job-control support in PowerShell on Linux/macOS.
 The `fg` and `bg` commands are not available.
 `Ctrl-Z` sends the `powershell` process to the background.
 
-Remoting Support
-----------------
+### Remoting Support
 
-Client-side remoting from Linux/macOS is not supported with the initial package. 
+Client-side remoting from Linux/macOS is not supported with the initial package.
 The work is being done in the [psl-omi-provider](https://github.com/PowerShell/psl-omi-provider) repo.
 
-Just-Enough-Administration (JEA) Support
-----------------------------------------
+### Just-Enough-Administration (JEA) Support
 
 The ability to create constrained administration (JEA) remoting
-endpoints is not currently available in PowerShell on Linux/macOS. 
+endpoints is not currently available in PowerShell on Linux/macOS.
 This feature is currently not in scope for 6.0 and something we will consider post 6.0 but requires significant design work.
 
-sudo, exec, and PowerShell
--------------------------
+### `sudo`, `exec`, and PowerShell
 
 Because PowerShell runs most commands in memory (like Python or Ruby)
-you can't use sudo directly with PowerShell built-ins. 
-(You can, of course, run `powershell` from sudo.) 
+you can't use sudo directly with PowerShell built-ins.
+(You can, of course, run `powershell` from sudo.)
 If it is necessary to run a PowerShell cmdlet from within PowerShell with sudo,
 for example `sudo Set-Date 8/18/2016`,
-then you would do `sudo powershell Set-Date 8/18/2016`. 
-Likewise, you can't exec a PowerShell built-in directly. 
+then you would do `sudo powershell Set-Date 8/18/2016`.
+Likewise, you can't exec a PowerShell built-in directly.
 Instead you would have to do `exec powershell item_to_exec`.
 
-Missing Cmdlets
----------------
+### Missing Cmdlets
 
-A large number of the commands (cmdlets) normally available in PowerShell are not available on Linux/macOS. 
-In many cases, these commands make no sense on these platforms (e.g. Windows-specific features like the registry). 
-Other commands like the service control commands (get/start/stop-service) are present, but not functional. 
+A large number of the commands (cmdlets) normally available in PowerShell are not available on Linux/macOS.
+In many cases, these commands make no sense on these platforms (e.g. Windows-specific features like the registry).
+Other commands like the service control commands (get/start/stop-service) are present, but not functional.
 Future releases will correct these problems, fixing the broken cmdlets and adding new ones over time.
 
-Command Availability
---------------------
+### Command Availability
 
 The following table lists commands that are known not to work in PowerShell on Linux/macOS.
 
@@ -159,7 +148,7 @@ The following table lists commands that are known not to work in PowerShell on L
 <td>These commands will not be recognized. This will be fixed in a future release.
 </tr>
 <tr>
-<td>Get-Acl, Set-Acl 
+<td>Get-Acl, Set-Acl
 <td>Not available.
 <td>These commands will not be recognized. This will be fixed in a future release.
 </tr>
@@ -199,21 +188,19 @@ The following table lists commands that are known not to work in PowerShell on L
 </tr>
 </table>
 
-Installing Software using PackageManagement and PowerShellGet Modules
----------------------------------------
-- (v6.0.0-alpha.9) A bug in handling of System.Management.Automation.SemanticVersion as described in [#1618](https://github.com/PowerShell/PowerShell/issues/1618) prevents installing modules using 
-the Install-Module cmdlet due to the inability to parse the Alpha version string "6.0.0-alpha".
-This similarly affects the Install-Package cmdlet. A fix has been merged and will be in a future
-release.
+### Installing Software using PackageManagement and PowerShellGet Modules
 
-Known Issues for PowerShell on Windows
-======================================
+- (v6.0.0-alpha.9) A bug in handling of System.Management.Automation.SemanticVersion as described in [#1618](https://github.com/PowerShell/PowerShell/issues/1618) prevents installing modules using
+    the Install-Module cmdlet due to the inability to parse the Alpha version string "6.0.0-alpha".
+    This similarly affects the Install-Package cmdlet. A fix has been merged and will be in a future
+    release.
 
-Remoting Endpoint Creation on Nano Server TP5
----------------------------------------------
+## Known Issues for PowerShell on Windows
 
-The [script](https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md) to create a new WinRM remoting 
+### Remoting Endpoint Creation on Nano Server TP5
+
+The [script](https://github.com/PowerShell/PowerShell/blob/master/docs/installation/windows.md) to create a new WinRM remoting
 endpoint (`Install-PowerShellRemoting.ps1`) encounters a bug in the in-box PowerShell Core on Nano Server TP5.
 The bug causes the script to create an incorrect directory for the plug-in and may result in creation of an invalid remoting endpoint.
-When the same command is run for the second time, the script executes as expected and successfully creates the WinRM remoting endpoint. 
+When the same command is run for the second time, the script executes as expected and successfully creates the WinRM remoting endpoint.
 The bug in in-box PowerShell Core on Nano Server TP5 does not occur in later versions of Nano Server.

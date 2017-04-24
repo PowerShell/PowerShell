@@ -1,22 +1,20 @@
-![logo][] PowerShell
-====================
+# ![logo][] PowerShell
 
 Welcome to the PowerShell GitHub Community!
-PowerShell is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework that works well with your existing tools and is optimized for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models.
-It includes a command-line shell, an associated scripting language and a framework for processing cmdlets.
-
+PowerShell is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework
+that works well with your existing tools and is optimized for dealing with structured data
+(e.g. JSON, CSV, XML, etc.), REST APIs, and object models.  It includes a command-line shell, an
+associated scripting language and a framework for processing cmdlets.
 
 [logo]: assets/Powershell_64.png
 
-New to PowerShell?
-------------------
+## New to PowerShell?
 
 If you are new to PowerShell and would like to learn more, we recommend reviewing the [getting started][] documentation.
 
 [getting started]: docs/learning-powershell
 
-Get PowerShell
---------------
+## Get PowerShell
 
 You can download and install a PowerShell package for any of the following platforms.
 
@@ -29,20 +27,22 @@ You can download and install a PowerShell package for any of the following platf
 | Ubuntu 16.04                       | [.deb][rl-ubuntu16]    | [Instructions][in-ubuntu16]   |
 | Ubuntu 14.04                       | [.deb][rl-ubuntu14]    | [Instructions][in-ubuntu14]   |
 | CentOS 7                           | [.rpm][rl-centos]      | [Instructions][in-centos]     |
+| OpenSUSE 42.1                      | [.rpm][rl-opensuse421] | [Instructions][in-opensuse421]|
 | Arch Linux                         |                        | [Instructions][in-archlinux]  |
 | Many Linux distributions           | [.AppImage][rl-ai]     | [Instructions][in-appimage]   |
 | macOS 10.11                        | [.pkg][rl-macos]       | [Instructions][in-macos]      |
 | Docker                             |                        | [Instructions][in-docker]     |
 
-[rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.16/PowerShell_6.0.0-alpha.16-win10-win2016-x64.msi
-[rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.16/PowerShell_6.0.0-alpha.16-win81-win2012r2-x64.msi
-[rl-windows7-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.16/PowerShell_6.0.0-alpha.16-win7-win2008r2-x64.msi
-[rl-windows7-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.16/PowerShell_6.0.0-alpha.16-win7-x86.msi
-[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.16/powershell_6.0.0-alpha.16-1ubuntu1.16.04.1_amd64.deb
-[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.16/powershell_6.0.0-alpha.16-1ubuntu1.14.04.1_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.16/powershell-6.0.0_alpha.16-1.el7.centos.x86_64.rpm
-[rl-ai]: TODO: Post link when available
-[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.16/powershell-6.0.0-alpha.16.pkg
+[rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win10-win2016-x64.msi
+[rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win81-win2012r2-x64.msi
+[rl-windows7-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win7-win2008r2-x64.msi
+[rl-windows7-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win7-x86.msi
+[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell_6.0.0-alpha.18-1ubuntu1.16.04.1_amd64.deb
+[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell_6.0.0-alpha.18-1ubuntu1.14.04.1_amd64.deb
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
+[rl-ai]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-x86_64.AppImage
+[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0-alpha.18-osx.10.11-x64.pkg
+[rl-opensuse421]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0_alpha.18-1.suse.42.1.x86_64.rpm
 
 [installation]: docs/installation
 [in-windows]: docs/installation/windows.md#msi
@@ -53,18 +53,17 @@ You can download and install a PowerShell package for any of the following platf
 [in-appimage]: docs/installation/linux.md#linux-appimage
 [in-macos]: docs/installation/linux.md#macos-1011
 [in-docker]: docker
+[in-opensuse421]: docs/installation/linux.md#opensuse-421
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 
-Community Dashboard
--------------------
+## Community Dashboard
 
 [Dashboard](https://aka.ms/psgithubbi) with visualizations for community contributions and project status using PowerShell, Azure, and PowerBI.
 
 For more information on how and why we built this dashboard, check out this [blog post](https://blogs.msdn.microsoft.com/powershell/2017/01/31/powershell-open-source-community-dashboard/).
 
-Chat Room
----------
+## Chat Room
 
 Want to chat with other members of the PowerShell community?
 
@@ -72,11 +71,11 @@ We have a Gitter Room which you can join below.
 
 [![Join the chat at https://gitter.im/PowerShell/PowerShell](https://badges.gitter.im/PowerShell/PowerShell.svg)](https://gitter.im/PowerShell/PowerShell?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-There is also the community driven PowerShell Slack Team which you can sign up for at [Slack Signup]. 
+There is also the community driven PowerShell Slack Team which you can sign up for at [Slack Sign up].
 
-[Slack Signup]: http://slack.poshcode.org
-Building the Repository
------------------------
+[Slack Sign up]: http://slack.poshcode.org
+
+## Building the Repository
 
 | Linux                    | Windows                    | macOS                   |
 |--------------------------|----------------------------|------------------------|
@@ -112,8 +111,7 @@ If you have any problems building, please consult the developer [FAQ][].
 [cc-site]: https://coveralls.io/github/PowerShell/PowerShell?branch=master
 [cc-image]: https://coveralls.io/repos/github/PowerShell/PowerShell/badge.svg?branch=master
 
-Downloading the Source Code
----------------------------
+## Downloading the Source Code
 
 The PowerShell repository has a number of other repositories embedded as submodules.
 
@@ -131,8 +129,7 @@ git submodule update --init
 
 See [working with the PowerShell repository](docs/git) for more information.
 
-Developing and Contributing
---------------------------
+## Developing and Contributing
 
 Please see the [Contribution Guide][] for how to develop and contribute.
 
@@ -148,22 +145,26 @@ Also make sure to check out our [PowerShell-RFC repository](https://github.com/p
 [GitHub issues]: https://github.com/PowerShell/PowerShell/issues
 [new issue]:https://github.com/PowerShell/PowerShell/issues/new
 
-Legal and Licensing
--------------------
+## Legal and Licensing
 
 PowerShell is licensed under the [MIT license][].
 
 [MIT license]: LICENSE.txt
 
-Governance
--------------------
+### Windows Docker Files and Images
 
-Governance policy for PowerShell project is described [here][].  
+License: By requesting and using the Container OS Image for Windows containers, you acknowledge, understand, and consent to the Supplemental License Terms available on Docker hub:
+
+- [Window Server Core](https://hub.docker.com/r/microsoft/windowsservercore/)
+- [Nano Server](https://hub.docker.com/r/microsoft/nanoserver/)
+
+## Governance
+
+Governance policy for PowerShell project is described [here][].
 
 [here]: https://github.com/PowerShell/PowerShell/blob/master/docs/community/governance.md
 
-Code of Conduct
----------------
+## Code of Conduct
 
 This project has adopted the [Microsoft Open Source Code of Conduct][conduct-code].
 For more information see the [Code of Conduct FAQ][conduct-FAQ] or contact [opencode@microsoft.com][conduct-email] with any additional questions or comments.

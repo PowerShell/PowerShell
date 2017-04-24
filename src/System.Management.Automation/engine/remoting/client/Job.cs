@@ -18,11 +18,6 @@ using System.Text;
 using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
 
-#if CORECLR
-// Use stubs for SerializableAttribute, SystemException, SerializationInfo and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 // Stops compiler from warning about unknown warnings
 #pragma warning disable 1634, 1691
 
@@ -3270,7 +3265,8 @@ namespace System.Management.Automation
                             helper);
             }
             // there is a failure reason available in the runspace
-            else if (runspace.RunspaceStateInfo.State == RunspaceState.Broken)
+            else if ((runspace.RunspaceStateInfo.State == RunspaceState.Broken) ||
+                     (runspace.RunspaceStateInfo.Reason != null))
             {
                 failureException = runspace.RunspaceStateInfo.Reason;
                 object targetObject = runspace.ConnectionInfo.ComputerName;

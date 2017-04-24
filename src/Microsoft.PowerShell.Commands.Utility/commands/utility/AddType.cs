@@ -22,6 +22,8 @@ using Microsoft.CodeAnalysis.CSharp;
 using System.IO;
 using Microsoft.CodeAnalysis.Emit;
 using System.Collections.Immutable;
+using System.Security;
+using PathType = System.IO.Path;
 #else
 using System.CodeDom.Compiler;
 using System.Runtime.CompilerServices;
@@ -324,7 +326,7 @@ namespace Microsoft.PowerShell.Commands
             string activeExtension = null;
             foreach (string path in resolvedPaths)
             {
-                string currentExtension = System.IO.Path.GetExtension(path).ToUpperInvariant();
+                string currentExtension = PathType.GetExtension(path).ToUpperInvariant();
 
                 switch (currentExtension)
                 {
@@ -452,11 +454,9 @@ namespace Microsoft.PowerShell.Commands
             get { return referencedAssemblies; }
             set
             {
-                referencedAssemblies = value ?? Utils.EmptyArray<string>();
-                referencedAssembliesSpecified = true;
+                if (value != null) { referencedAssemblies = value; }
             }
         }
-        internal bool referencedAssembliesSpecified = false;
         internal string[] referencedAssemblies = Utils.EmptyArray<string>();
 
         /// <summary>
@@ -964,7 +964,7 @@ namespace Microsoft.PowerShell.Commands
                 Assembly assembly = LoadAssemblyHelper(assemblyName);
                 if (assembly == null)
                 {
-                    assembly = LoadFrom(ResolveReferencedAssembly(assemblyName));
+                    assembly = LoadFrom(ResolveAssemblyName(assemblyName, false));
                 }
 
                 if (passThru)
@@ -1015,92 +1015,135 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        private static string s_frameworkFolder = System.IO.Path.GetDirectoryName(typeof(object).GetTypeInfo().Assembly.Location);
-
-        // there are two different assemblies: framework contract and framework implementation.
-        // Version 1.1.1 of Microsoft.CodeAnalysis doesn't provide a good way to handle contract separately from implementation.
-        // To simplify user experience we always add both of them to references.
-        // 1) It's a legitimate scenario, when user provides a custom referenced assembly that was built against the contract assembly
-        // (i.e. System.Management.Automation), so we need the contract one.
-        // 2) We have to provide implementation assembly explicitly, Roslyn doesn't have a way to figure out implementation by itself.
-        // So we are adding both.
-        private static PortableExecutableReference s_objectImplementationAssemblyReference =
-            MetadataReference.CreateFromFile(typeof(object).GetTypeInfo().Assembly.Location);
-
-        private static PortableExecutableReference s_mscorlibAssemblyReference =
-           MetadataReference.CreateFromFile(Assembly.Load(new AssemblyName("mscorlib")).Location);
-
-        // This assembly should be System.Runtime.dll
-        private static PortableExecutableReference s_systemRuntimeAssemblyReference =
-            MetadataReference.CreateFromFile(ClrFacade.GetAssemblies(typeof(object).FullName).First().Location);
-
-        // SecureString is defined in a separate assembly.
-        // This fact is an implementation detail and should not require the user to specify one more assembly,
-        // if they want to use SecureString in Add-Type -TypeDefinition.
-        // So this assembly should be in the default assemblies list to provide the best experience.
-        private static PortableExecutableReference s_secureStringAssemblyReference =
-            MetadataReference.CreateFromFile(typeof(System.Security.SecureString).GetTypeInfo().Assembly.Location);
-
+        // We now ship the NetCoreApp2.0 reference assemblies with PowerShell Core, so that Add-Type can work
+        // in a predictable way and won't be broken when we move to newer version of .NET Core.
+        // The NetCoreApp2.0 reference assemblies are located at '$PSHOME\ref'.
+        private static string s_netcoreAppRefFolder = PathType.Combine(PathType.GetDirectoryName(typeof(PSObject).Assembly.Location), "ref");
+        private static string s_frameworkFolder = PathType.GetDirectoryName(typeof(object).Assembly.Location);
 
         // These assemblies are always automatically added to ReferencedAssemblies.
-        private static PortableExecutableReference[] s_autoReferencedAssemblies = new PortableExecutableReference[]
-        {
-            s_mscorlibAssemblyReference,
-            s_systemRuntimeAssemblyReference,
-            s_secureStringAssemblyReference,
-            s_objectImplementationAssemblyReference
-        };
+        private static Lazy<PortableExecutableReference[]> s_autoReferencedAssemblies = new Lazy<PortableExecutableReference[]>(InitAutoIncludedRefAssemblies);
+        
+        // A HashSet of assembly names to be ignored if they are specified in '-ReferencedAssemblies'
+        private static Lazy<HashSet<string>> s_refAssemblyNamesToIgnore = new Lazy<HashSet<string>>(InitRefAssemblyNamesToIgnore);
 
         // These assemblies are used, when ReferencedAssemblies parameter is not specified.
-        private static PortableExecutableReference[] s_defaultAssemblies = new PortableExecutableReference[]
-        {
-            s_mscorlibAssemblyReference,
-            s_systemRuntimeAssemblyReference,
-            s_secureStringAssemblyReference,
-            s_objectImplementationAssemblyReference,
-            MetadataReference.CreateFromFile(typeof(PSObject).GetTypeInfo().Assembly.Location)
-        };
+        private static Lazy<PortableExecutableReference[]> s_defaultAssemblies = new Lazy<PortableExecutableReference[]>(InitDefaultRefAssemblies);
 
         private bool InMemory { get { return String.IsNullOrEmpty(outputAssembly); } }
 
-        private string ResolveReferencedAssembly(string referencedAssembly)
+        /// <summary>
+        /// Initialize the list of reference assemblies that will be used when '-ReferencedAssemblies' is not specified.
+        /// </summary>
+        private static PortableExecutableReference[] InitDefaultRefAssemblies()
+        {
+            // netcoreapp2.0 currently comes with 137 reference assemblies (maybe more in future), so we use a capacity of '150'.
+            var defaultRefAssemblies = new List<PortableExecutableReference>(150);
+            foreach (string file in Directory.EnumerateFiles(s_netcoreAppRefFolder, "*.dll", SearchOption.TopDirectoryOnly))
+            {
+                defaultRefAssemblies.Add(MetadataReference.CreateFromFile(file));
+            }
+            defaultRefAssemblies.Add(MetadataReference.CreateFromFile(typeof(PSObject).Assembly.Location));
+            return defaultRefAssemblies.ToArray();
+        }
+
+        /// <summary>
+        /// Initialize the set of assembly names that should be ignored when they are specified in '-ReferencedAssemblies'.
+        ///   - System.Private.CoreLib.ni.dll - the runtim dll that contains most core/primitive types
+        ///   - System.Private.Uri.dll - the runtime dll that contains 'System.Uri' and related types
+        /// Referencing these runtime dlls may cause ambiguous type identity or other issues.
+        ///   - System.Runtime.dll - the corresponding reference dll will be automatically included
+        ///   - System.Runtime.InteropServices.dll - the corresponding reference dll will be automatically included
+        /// </summary>
+        private static HashSet<string> InitRefAssemblyNamesToIgnore()
+        {
+            return new HashSet<string>(StringComparer.OrdinalIgnoreCase) {
+                PathType.GetFileName(typeof(object).Assembly.Location),
+                PathType.GetFileName(typeof(Uri).Assembly.Location),
+                PathType.GetFileName(GetReferenceAssemblyPathBasedOnType(typeof(object))),
+                PathType.GetFileName(GetReferenceAssemblyPathBasedOnType(typeof(SecureString)))
+            };
+        }
+
+        /// <summary>
+        /// Initialize the list of reference assemblies that will be automatically added when '-ReferencedAssemblies' is specified.
+        /// </summary>
+        private static PortableExecutableReference[] InitAutoIncludedRefAssemblies()
+        {
+            return new PortableExecutableReference[] {
+                MetadataReference.CreateFromFile(GetReferenceAssemblyPathBasedOnType(typeof(object))),
+                MetadataReference.CreateFromFile(GetReferenceAssemblyPathBasedOnType(typeof(SecureString)))
+            };
+        }
+
+        /// <summary>
+        /// Get the path of reference assembly where the type is declared.
+        /// </summary>
+        private static string GetReferenceAssemblyPathBasedOnType(Type type)
+        {
+            string refAsmFileName = PathType.GetFileName(ClrFacade.GetAssemblies(type.FullName).First().Location);
+            return PathType.Combine(s_netcoreAppRefFolder, refAsmFileName);
+        }
+
+        private string ResolveAssemblyName(string assembly, bool isForReferenceAssembly)
         {
             // if it's a path, resolve it
-            if (referencedAssembly.Contains(System.IO.Path.DirectorySeparatorChar) || referencedAssembly.Contains(System.IO.Path.AltDirectorySeparatorChar))
+            if (assembly.Contains(PathType.DirectorySeparatorChar) || assembly.Contains(PathType.AltDirectorySeparatorChar))
             {
-                if (System.IO.Path.IsPathRooted(referencedAssembly))
+                if (PathType.IsPathRooted(assembly))
                 {
-                    return referencedAssembly;
+                    return assembly;
                 }
                 else
                 {
-                    var paths = SessionState.Path.GetResolvedPSPathFromPSPath(referencedAssembly);
+                    var paths = SessionState.Path.GetResolvedPSPathFromPSPath(assembly);
                     return paths[0].Path;
                 }
             }
 
-            if (!String.Equals(System.IO.Path.GetExtension(referencedAssembly), ".dll", StringComparison.OrdinalIgnoreCase))
+            string refAssemblyDll = assembly;
+            if (!assembly.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
             {
-                // If we already load the assembly, we can reference it by name
-                Assembly result = LoadAssemblyHelper(referencedAssembly);
-                if (result != null)
+                // It could be a short assembly name or a full assembly name, but we
+                // alwasy want the short name to find the corresponding assembly file.
+                var assemblyName = new AssemblyName(assembly);
+                refAssemblyDll = assemblyName.Name + ".dll";
+            }
+
+            // We look up in reference/framework only when it's for resolving reference assemblies.
+            // In case of 'Add-Type -AssemblyName' scenario, we don't attempt to resolve against framework assemblies because
+            //   1. Explicitly loading a framework assembly usually is not necessary in PowerShell Core.
+            //   2. A user should use assembly name instead of path if they want to explicitly load a framework assembly.
+            if (isForReferenceAssembly)
+            {
+                // If it's for resolving a reference assembly, then we look in NetCoreApp ref assemblies first
+                string netcoreAppRefPath = PathType.Combine(s_netcoreAppRefFolder, refAssemblyDll);
+                if (File.Exists(netcoreAppRefPath))
                 {
-                    return result.Location;
+                    return netcoreAppRefPath;
                 }
-                else
+
+                // Look up the assembly in the framework folder. This may happen when assembly is not part of
+                // NetCoreApp, but comes from an additional package, such as 'Json.Net'.
+                string frameworkPossiblePath = PathType.Combine(s_frameworkFolder, refAssemblyDll);
+                if (File.Exists(frameworkPossiblePath))
                 {
-                    referencedAssembly += ".dll";
+                    return frameworkPossiblePath;
+                }
+
+                // The assembly name may point to a third-party assembly that is already loaded at run time.
+                if (!assembly.EndsWith(".dll", StringComparison.OrdinalIgnoreCase))
+                {
+                    Assembly result = LoadAssemblyHelper(assembly);
+                    if (result != null)
+                    {
+                        return result.Location;
+                    }
                 }
             }
 
-            // lookup in framework folders and the current folder
-            string frameworkPossiblePath = System.IO.Path.Combine(s_frameworkFolder, referencedAssembly);
-            if (File.Exists(frameworkPossiblePath))
-            {
-                return frameworkPossiblePath;
-            }
-
-            string currentFolderPath = SessionState.Path.GetResolvedPSPathFromPSPath(referencedAssembly)[0].Path;
+            // Look up the assembly in the current folder
+            string currentFolderPath = SessionState.Path.GetResolvedPSPathFromPSPath(refAssemblyDll)[0].Path;
             if (File.Exists(currentFolderPath))
             {
                 return currentFolderPath;
@@ -1108,10 +1151,10 @@ namespace Microsoft.PowerShell.Commands
 
             ErrorRecord errorRecord = new ErrorRecord(
                                 new Exception(
-                                    String.Format(ParserStrings.ErrorLoadingAssembly, referencedAssembly)),
+                                    String.Format(ParserStrings.ErrorLoadingAssembly, assembly)),
                                 "ErrorLoadingAssembly",
                                 ErrorCategory.InvalidOperation,
-                                referencedAssembly);
+                                assembly);
 
             ThrowTerminatingError(errorRecord);
             return null;
@@ -1195,17 +1238,29 @@ namespace Microsoft.PowerShell.Commands
             }
 
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source, parseOptions);
-            var references = s_defaultAssemblies;
-            if (referencedAssembliesSpecified)
+            var references = s_defaultAssemblies.Value;
+            if (ReferencedAssemblies.Length > 0)
             {
-                var tempReferences = ReferencedAssemblies.Select(a => MetadataReference.CreateFromFile(ResolveReferencedAssembly(a))).ToList();
-                tempReferences.AddRange(s_autoReferencedAssemblies);
+                var tempReferences = new List<PortableExecutableReference>(s_autoReferencedAssemblies.Value);
+                foreach (string assembly in ReferencedAssemblies)
+                {
+                    if (string.IsNullOrWhiteSpace(assembly)) { continue; }
+                    string resolvedAssemblyPath = ResolveAssemblyName(assembly, true);
 
+                    // Ignore some specified reference assemblies
+                    string fileName = PathType.GetFileName(resolvedAssemblyPath);
+                    if (s_refAssemblyNamesToIgnore.Value.Contains(fileName))
+                    {
+                        WriteVerbose(StringUtil.Format(AddTypeStrings.ReferenceAssemblyIgnored, resolvedAssemblyPath));
+                        continue;
+                    }
+                    tempReferences.Add(MetadataReference.CreateFromFile(resolvedAssemblyPath));
+                }
                 references = tempReferences.ToArray();
             }
 
             CSharpCompilation compilation = CSharpCompilation.Create(
-                System.IO.Path.GetRandomFileName(),
+                PathType.GetRandomFileName(),
                 syntaxTrees: new[] { syntaxTree },
                 references: references,
                 options: new CSharpCompilationOptions(OutputAssemblyTypeToOutputKind(OutputType)));

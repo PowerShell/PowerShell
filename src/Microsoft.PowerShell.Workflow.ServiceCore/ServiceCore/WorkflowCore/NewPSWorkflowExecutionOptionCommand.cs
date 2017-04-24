@@ -539,8 +539,8 @@ namespace Microsoft.PowerShell.Commands
             if (activityProcessIdleTimeoutSec != PSWorkflowConfigurationProvider.DefaultActivityProcessIdleTimeoutSec)
                 privateDataParams.Append(string.Format(CultureInfo.InvariantCulture, ParamToken, PSWorkflowConfigurationProvider.TokenActivityProcessIdleTimeoutSec, activityProcessIdleTimeoutSec));
 
-			if (workflowApplicationPersistUnloadTimeoutSec != PSWorkflowConfigurationProvider.DefaultWorkflowApplicationPersistUnloadTimeoutSec)
-				privateDataParams.Append(string.Format(CultureInfo.InvariantCulture, ParamToken, PSWorkflowConfigurationProvider.TokenWorkflowApplicationPersistUnloadTimeoutSec, workflowApplicationPersistUnloadTimeoutSec));
+            if (workflowApplicationPersistUnloadTimeoutSec != PSWorkflowConfigurationProvider.DefaultWorkflowApplicationPersistUnloadTimeoutSec)
+                privateDataParams.Append(string.Format(CultureInfo.InvariantCulture, ParamToken, PSWorkflowConfigurationProvider.TokenWorkflowApplicationPersistUnloadTimeoutSec, workflowApplicationPersistUnloadTimeoutSec));
 
             if (wsmanPluginReportCompletionOnZeroActiveSessionsWaitIntervalMSec != PSWorkflowConfigurationProvider.DefaultWSManPluginReportCompletionOnZeroActiveSessionsWaitIntervalMSec)
                 privateDataParams.Append(string.Format(CultureInfo.InvariantCulture, ParamToken, PSWorkflowConfigurationProvider.TokenWSManPluginReportCompletionOnZeroActiveSessionsWaitIntervalMSec, wsmanPluginReportCompletionOnZeroActiveSessionsWaitIntervalMSec));
@@ -549,7 +549,7 @@ namespace Microsoft.PowerShell.Commands
                 privateDataParams.Append(string.Format(CultureInfo.InvariantCulture, ParamToken, PSWorkflowConfigurationProvider.TokenActivitiesCacheCleanupIntervalMSec, activitiesCacheCleanupIntervalMSec));
 
             if (remoteNodeSessionIdleTimeoutSec != PSWorkflowConfigurationProvider.DefaultRemoteNodeSessionIdleTimeoutSec)
-				privateDataParams.Append(string.Format(CultureInfo.InvariantCulture, ParamToken, PSWorkflowConfigurationProvider.TokenRemoteNodeSessionIdleTimeoutSec, remoteNodeSessionIdleTimeoutSec));
+                privateDataParams.Append(string.Format(CultureInfo.InvariantCulture, ParamToken, PSWorkflowConfigurationProvider.TokenRemoteNodeSessionIdleTimeoutSec, remoteNodeSessionIdleTimeoutSec));
 
             if (sessionThrottleLimit != PSWorkflowConfigurationProvider.DefaultSessionThrottleLimit)
                 privateDataParams.Append(string.Format(CultureInfo.InvariantCulture, ParamToken, PSWorkflowConfigurationProvider.TokenSessionThrottleLimit, sessionThrottleLimit));

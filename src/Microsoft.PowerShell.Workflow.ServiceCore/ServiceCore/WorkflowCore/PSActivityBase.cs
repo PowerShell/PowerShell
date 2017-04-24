@@ -3886,7 +3886,7 @@ namespace Microsoft.PowerShell.Activities
                     if (!sessionSet)
                     {
                         if (cimActivityImplementationContext == null)
-			                    throw new ArgumentException(Resources.InvalidImplementationContext);
+                            throw new ArgumentException(Resources.InvalidImplementationContext);
 
                         bool useSsl = false;
                         if (cimActivityImplementationContext.PSUseSsl.HasValue)

@@ -1453,11 +1453,6 @@ namespace System.Management.Automation.Remoting.Client
                 out _stdOutReader,
                 out _stdErrReader);
 
-            _sshProcess.Exited += (sender, args) =>
-            {
-                CloseConnection();
-            };
-
             // Start error reader thread.
             StartErrorThread(_stdErrReader);
 
@@ -1515,38 +1510,77 @@ namespace System.Management.Automation.Remoting.Client
 
                 while (true)
                 {
-                    string error = reader.ReadLine();
+                    string error = ReadError(reader);
                     if (string.IsNullOrEmpty(error))
                     {
-                        // Ignore blank error messages.
                         continue;
                     }
-                    if (error.IndexOf("WARNING:", StringComparison.OrdinalIgnoreCase) > -1)
-                    {
-                        // Handle as interactive warning message.
-                        Console.WriteLine(error);
-                    }
-                    else
-                    {
-                        // Any SSH client error results in a broken session.
-                        PSRemotingTransportException psrte = new PSRemotingTransportException(
-                            PSRemotingErrorId.IPCServerProcessReportedError,
-                            RemotingErrorIdStrings.IPCServerProcessReportedError,
-                            string.IsNullOrEmpty(error) ?
-                                RemotingErrorIdStrings.SSHClientEndNoErrorMessage
-                                : StringUtil.Format(RemotingErrorIdStrings.SSHClientEndWithErrorMessage, error));
-                        RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CloseShellOperationEx));
-                        CloseConnection();
-                    }
+
+                    // Any SSH client error results in a broken session.
+                    PSRemotingTransportException psrte = new PSRemotingTransportException(
+                        PSRemotingErrorId.IPCServerProcessReportedError,
+                        RemotingErrorIdStrings.IPCServerProcessReportedError,
+                        StringUtil.Format(RemotingErrorIdStrings.SSHClientEndWithErrorMessage, error));
+                    HandleSSHError(psrte);
                 }
             }
-            catch (ObjectDisposedException) { }
             catch (Exception e)
             {
                 string errorMsg = (e.Message != null) ? e.Message : string.Empty;
                 _tracer.WriteMessage("SSHClientSessionTransportManager", "ProcessErrorThread", Guid.Empty,
                     "Transport manager error thread ended with error: {0}", errorMsg);
+
+                PSRemotingTransportException psrte = new PSRemotingTransportException(
+                    StringUtil.Format(RemotingErrorIdStrings.SSHClientEndWithErrorMessage, errorMsg), 
+                    e);
+                HandleSSHError(psrte);
             }
+        }
+
+        private void HandleSSHError(PSRemotingTransportException psrte)
+        {
+            RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.CloseShellOperationEx));
+            CloseConnection();
+        }
+
+        private static string ReadError(StreamReader reader)
+        {
+            // Blocking read from StdError stream
+            string error = reader.ReadLine();
+
+            if (string.IsNullOrEmpty(error) ||
+                error.IndexOf("WARNING:", StringComparison.OrdinalIgnoreCase) > -1)
+            {
+                // Handle as interactive warning message
+                Console.WriteLine(error);
+                return string.Empty;
+            }
+
+            // SSH may return a multi-line error message
+            System.Text.StringBuilder sb = new Text.StringBuilder(error);
+            var running = true;
+            while (running)
+            {
+                try
+                {
+                    var task = reader.ReadLineAsync();
+                    if (task.Wait(1000) && (task.Result != null))
+                    {
+                        sb.Append(Environment.NewLine);
+                        sb.Append(task.Result);
+                    }
+                    else
+                    {
+                        running = false;
+                    }
+                }
+                catch (Exception)
+                {
+                    running = false;
+                }
+            }
+
+            return sb.ToString();
         }
 
         private void StartReaderThread(

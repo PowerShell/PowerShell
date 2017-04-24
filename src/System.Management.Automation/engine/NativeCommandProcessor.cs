@@ -20,11 +20,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 
-#if CORECLR
-// Use stubs for SerializableAttribute and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation
 {
     /// <summary>

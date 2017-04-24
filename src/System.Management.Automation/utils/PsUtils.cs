@@ -15,10 +15,6 @@ using System.Xml;
 using Microsoft.Win32;
 using System.Collections.Generic;
 using System.Management.Automation.Language;
-#if CORECLR
-// Use stubs for SerializableAttribute, SecurityPermissionAttribute, ReliabilityContractAttribute and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
 
 namespace System.Management.Automation
 {
@@ -602,6 +598,30 @@ namespace System.Management.Automation
             NativeMethods.GetSystemInfo(ref sysInfo);
             return sysInfo.wProcessorArchitecture == NativeMethods.PROCESSOR_ARCHITECTURE_ARM;
 #endif
+        }
+
+        /// <summary>
+        /// Get a temporary directory to use, needs to be unique to avoid collision
+        /// </summary>
+        internal static string GetTemporaryDirectory()
+        {
+            string tempDir = String.Empty;
+            string tempPath = Path.GetTempPath();
+            do
+            {
+                tempDir = Path.Combine(tempPath,System.Guid.NewGuid().ToString());
+            }
+            while (Directory.Exists(tempDir));
+
+            try
+            {
+                Directory.CreateDirectory(tempDir);
+            }
+            catch (UnauthorizedAccessException)
+            {
+                tempDir = String.Empty; // will become current working directory
+            }
+            return tempDir;
         }
 
         internal static string GetHostName()

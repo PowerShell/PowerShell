@@ -19,10 +19,6 @@ using System.Linq.Expressions;
 using Microsoft.Scripting.Ast;
 #endif
 
-#if CORECLR
-// Use stub for SpecialNameAttribute
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
 using System.Runtime.CompilerServices;
 using System.Threading;
 
@@ -117,7 +113,6 @@ namespace System.Management.Automation.Interpreter
             }
         }
 
-#if !CORECLR // Thread.Abort and ThreadAbortException are not in CoreCLR.
         /// <summary>
         /// To get to the current AbortReason object on Thread.CurrentThread
         /// we need to use ExceptionState property of any ThreadAbortException instance.
@@ -153,14 +148,6 @@ namespace System.Management.Automation.Interpreter
                 }
             }
         }
-#else
-        /// <summary>
-        /// A thread cannot be aborted in CoreCLR, as Thread.Abort() is not available in CoreCLR (neither is ThreadAbortException).
-        /// So this method doesn't need to do anything when running with CoreCLR
-        /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static void AbortThreadIfRequested(InterpretedFrame frame, int targetLabelIndex) { }
-#endif
 
         internal int ReturnAndRethrowLabelIndex
         {

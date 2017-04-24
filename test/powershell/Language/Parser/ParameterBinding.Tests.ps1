@@ -45,7 +45,7 @@ Describe 'Argument transformation attribute on optional argument with explicit $
         }
     }
 '@
-    $mod = Add-Type -PassThru -TypeDefinition $tdefinition -refer mscorlib,System.Management.Automation
+    $mod = Add-Type -PassThru -TypeDefinition $tdefinition
 
     Import-Module $mod[0].Assembly
 

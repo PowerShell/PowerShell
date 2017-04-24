@@ -30,8 +30,8 @@ namespace Microsoft.Management.UI.Internal
     ///
     /// If a custom template is provided for this control, then the template MUST provide the following template parts:
     ///
-    /// 	PART_DropDown - A required template part which must be of type DismissiblePopup.  The dropdown which hosts the picker.
-    /// 	PART_DropDownButton - A required template part which must be of type ToggleButton.  The ToggleButton which controls whether the dropdown is open.
+    ///     PART_DropDown - A required template part which must be of type DismissiblePopup.  The dropdown which hosts the picker.
+    ///     PART_DropDownButton - A required template part which must be of type ToggleButton.  The ToggleButton which controls whether the dropdown is open.
     ///
     /// </remarks>
     [TemplatePart(Name="PART_DropDown", Type=typeof(DismissiblePopup))]

@@ -285,7 +285,7 @@ namespace System.Management.Automation
             ThrowIfWriteNotPermitted(true);
             _WriteObjectsSkipAllowCheck(sendToPipeline);
         }
-        // Trust:  public void WriteObject(object sendToPipeline, DataTrustCategory trustCategory);		// enumerateCollection defaults to false
+        // Trust:  public void WriteObject(object sendToPipeline, DataTrustCategory trustCategory);     // enumerateCollection defaults to false
         // Trust:  public void WriteObject(object sendToPipeline, bool enumerateCollection, DataTrustCategory trustCategory);
 
         // Variables needed to generate a unique SourceId for

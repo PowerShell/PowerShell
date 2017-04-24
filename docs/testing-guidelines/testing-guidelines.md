@@ -13,7 +13,7 @@ When adding new tests, place them in the directories as [outlined below](#test-l
 
 ## CI System
 
-We use [AppVeyor](http://www.appveyor.com/) as a continuous integration (CI) system for Windows 
+We use [AppVeyor](http://www.appveyor.com/) as a continuous integration (CI) system for Windows
 and [Travis CI](http://www.travis-ci.com) for non-Windows platforms.
 
 ### AppVeyor
@@ -53,7 +53,7 @@ They will bring you to the corresponding page with details.
 ### Pester
 
 Our script-based test framework is [Pester](https://github.com/Pester/Pester).
-This is the framework which we are using internally at Microsoft for new script-based tests, 
+This is the framework which we are using internally at Microsoft for new script-based tests,
 and a large number of the tests which are part of the PowerShell project have been migrated from that test base.
 Pester tests can be used to test most of PowerShell behavior (even some API operations can easily be tested in Pester).
 

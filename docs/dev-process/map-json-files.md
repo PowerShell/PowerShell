@@ -4,7 +4,7 @@ PowerShell/PowerShell utilizes `dotnet cli` project model.
 Source code for a library (executable) is located under `src/<library-name>`.
 I.e. System.Management.Automation.dll sources are located under `src/System.Management.Automation`
 
-In the windows source tree, this files located differently.
+In the windows source tree, the files are organized differently.
 That's why we use `map.json` files in `src/<library-name>`.
 This file is a simple json hashtable that describes mapping between files in source depot and GitHub.
 
@@ -13,31 +13,30 @@ This file is a simple json hashtable that describes mapping between files in sou
 
 #### Example
 
-There is an entry 
+There is an entry
 
 ```
 "monad/src/engine/COM/ComMethod.cs":  "engine/COM/ComMethod.cs",
 ```
 
 in `.\src\System.Management.Automation\map.json`.
-It tells us that file `ComMethod.cs` located in `monad/src/engine/COM/ComMethod.cs` in psl-monad (and sd enlistment).
-And in PowerShell/PowerShell it mapped into `src/System.Management.Automation/engine/COM/ComMethod.cs`
+It tells us that file `ComMethod.cs` located at `monad/src/engine/COM/ComMethod.cs` in psl-monad (and sd enlistment) is mapped to `src/System.Management.Automation/engine/COM/ComMethod.cs` in PowerShell/PowerShell.
 
 ### build.psm1
 
-Our dev module contains a number of functions to work that can be used to work with this mapping file.
+Our dev module contains a number of functions that can be used to work with this mapping file.
 
 * `Copy-MappedFiles` -- copies files from psl-monad into PowerShell/PowerShell. Used for "sd -> github" integration.
-* `Send-GitDiffToSd` -- applies patch from git to **admin** enlistment with respect to all `map.json` files. 
+* `Send-GitDiffToSd` -- applies patch from git to **admin** enlistment with respect to all `map.json` files.
   It supports `-WhatIf` switch.
 
 ```
-> Send-GitDiffToSd -diffArg1 32b90c048aa0c5bc8e67f96a98ea01c728c4a5be~1 -diffArg2 32b90c048aa0c5bc8e67f96a98ea01c728c4a5be -AdminRoot d:\e\ps_dev\admin 
+> Send-GitDiffToSd -diffArg1 32b90c048aa0c5bc8e67f96a98ea01c728c4a5be~1 -diffArg2 32b90c048aa0c5bc8e67f96a98ea01c728c4a5be -AdminRoot d:\e\ps_dev\admin
 > cd d:\e\ps_dev\admin
 > sd online ...
 > # move files to new change list (i.e. with sdb)
 > sd submit -c <n>
- 
+
 ```
 
 ## Updating `map.json`
@@ -46,7 +45,7 @@ If you are bringing new (that are not yet included) files from source-depot, you
 
 This way, we can keep track of changes and have ability to integrate changes back to Source Depot.
 
-Use this approach for any files from source-depot (including test files) 
+Use this approach for any files from source-depot (including test files)
 
 ## Creating `map.json`
 

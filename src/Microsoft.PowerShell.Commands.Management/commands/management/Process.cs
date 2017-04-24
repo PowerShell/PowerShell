@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics; // Process class
 using System.ComponentModel; // Win32Exception
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Management.Automation;
@@ -17,6 +18,7 @@ using System.Net;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Security.Permissions;
 using System.Security.Principal;
 using Microsoft.Win32.SafeHandles;
 using System.Management.Automation.Internal;
@@ -25,15 +27,6 @@ using Microsoft.Management.Infrastructure;
 
 using FileNakedHandle = System.IntPtr;
 using DWORD = System.UInt32;
-
-#if CORECLR
-// Use stubs for SafeHandleZeroOrMinusOneIsInvalid and SerializableAttribute
-using Microsoft.PowerShell.CoreClr.Stubs;
-using Environment = System.Management.Automation.Environment;
-#else
-using System.Runtime.ConstrainedExecution;
-using System.Security.Permissions;
-#endif
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -752,13 +745,143 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    WriteObject(ClrFacade.AddProcessProperties(IncludeUserName.IsPresent, process));
+                    WriteObject(IncludeUserName.IsPresent ? AddUserNameToProcess(process) : (object)process);
                 }
             }//for loop
         } // ProcessRecord
 
         #endregion Overrides
 
+        #region Privates
+
+        /// <summary>
+        /// New PSTypeName added to the process object
+        /// </summary>
+        private const string TypeNameForProcessWithUserName = "System.Diagnostics.Process#IncludeUserName";
+
+        /// <summary>
+        /// Add the 'UserName' NoteProperty to the Process object
+        /// </summary>
+        /// <param name="process"></param>
+        /// <returns></returns>
+        private static PSObject AddUserNameToProcess(Process process)
+        {
+            // Return null if we failed to get the owner information
+            string userName = RetrieveProcessUserName(process);
+
+            PSObject processAsPsobj = PSObject.AsPSObject(process);
+            PSNoteProperty noteProperty = new PSNoteProperty("UserName", userName);
+
+            processAsPsobj.Properties.Add(noteProperty, true);
+            processAsPsobj.TypeNames.Insert(0, TypeNameForProcessWithUserName);
+
+            return processAsPsobj;
+        }
+
+
+        /// <summary>
+        /// Retrieve the UserName through PInvoke
+        /// </summary>
+        /// <param name="process"></param>
+        /// <returns></returns>
+        private static string RetrieveProcessUserName(Process process)
+        {
+            string userName = null;
+#if UNIX
+            userName = Platform.NonWindowsGetUserFromPid(process.Id);
+#else
+            IntPtr tokenUserInfo = IntPtr.Zero;
+            IntPtr processTokenHandler = IntPtr.Zero;
+
+            const uint TOKEN_QUERY = 0x0008;
+
+            try
+            {
+                do
+                {
+                    int error;
+                    if (!Win32Native.OpenProcessToken(ClrFacade.GetSafeProcessHandle(process), TOKEN_QUERY, out processTokenHandler)) { break; }
+
+                    // Set the default length to be 256, so it will be sufficient for most cases
+                    int tokenInfoLength = 256;
+                    tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
+                    if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength))
+                    {
+                        error = Marshal.GetLastWin32Error();
+                        if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
+                        {
+                            Marshal.FreeHGlobal(tokenUserInfo);
+                            tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
+
+                            if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength)) { break; }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    var tokenUser = ClrFacade.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
+
+                    // Set the default length to be 256, so it will be sufficient for most cases
+                    int userNameLength = 256, domainNameLength = 256;
+                    var userNameStr = new StringBuilder(userNameLength);
+                    var domainNameStr = new StringBuilder(domainNameLength);
+                    Win32Native.SID_NAME_USE accountType;
+
+                    if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
+                    {
+                        error = Marshal.GetLastWin32Error();
+                        if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
+                        {
+                            userNameStr.EnsureCapacity(userNameLength);
+                            domainNameStr.EnsureCapacity(domainNameLength);
+
+                            if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType)) { break; }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    userName = domainNameStr + "\\" + userNameStr;
+                } while (false);
+            }
+            catch (NotSupportedException)
+            {
+                // The Process not started yet, or it's a process from a remote machine
+            }
+            catch (InvalidOperationException)
+            {
+                // The Process has exited, Process.Handle will raise this exception
+            }
+            catch (Win32Exception)
+            {
+                // We might get an AccessDenied error
+            }
+            catch (Exception)
+            {
+                // I don't expect to get other exceptions,
+            }
+            finally
+            {
+                if (tokenUserInfo != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(tokenUserInfo);
+                }
+
+                if (processTokenHandler != IntPtr.Zero)
+                {
+                    Win32Native.CloseHandle(processTokenHandler);
+                }
+            }
+
+#endif
+            return userName;
+        }
+
+        #endregion Privates
     }//GetProcessCommand
     #endregion GetProcessCommand
 
@@ -1542,6 +1665,18 @@ namespace Microsoft.PowerShell.Commands
         private ManualResetEvent _waithandle = null;
         private bool _isDefaultSetParameterSpecified = false;
 
+        private bool _useShellExecute;
+        private readonly bool _isOnFullWinSku;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        public StartProcessCommand()
+        {
+            _isOnFullWinSku = Platform.IsWindows && !Platform.IsNanoServer && !Platform.IsIoT;
+            _useShellExecute = _isOnFullWinSku;
+        }
+
         #region Parameters
 
         /// <summary>
@@ -1692,13 +1827,9 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Verb { get; set; }
 
-#if !CORECLR
         /// <summary>
         /// Window style of the process window
         /// </summary>
-        /// <remarks>
-        /// The 'WindowStyle' is not supported in CoreCLR
-        /// </remarks>
         [Parameter]
         [ValidateNotNullOrEmpty]
         public ProcessWindowStyle WindowStyle
@@ -1712,7 +1843,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private ProcessWindowStyle _windowstyle = ProcessWindowStyle.Normal;
         private bool _windowstyleSpecified = false;
-#endif
 
         /// <summary>
         ///  wait for th eprocess to terminate
@@ -1735,29 +1865,49 @@ namespace Microsoft.PowerShell.Commands
         }
         private SwitchParameter _UseNewEnvironment;
 
-        private StreamWriter _outputWriter;
-        private StreamWriter _errorWriter;
-
         #endregion
 
         #region overrides
 
         /// <summary>
-        /// 
+        /// BeginProcessing
         /// </summary>
         protected override void BeginProcessing()
         {
-#if CORECLR
-            if(this.ParameterSetName.Equals("UseShellExecute"))
+            string message = string.Empty;
+
+            // -Verb and -WindowStyle are not supported on non-Windows platforms as well as Windows headless SKUs
+            if (_isOnFullWinSku)
             {
-                String errorMessage = StringUtil.Format(ProcessResources.ParameterNotSupportedOnPSEdition, "-Verb", "Start-Process");
-                ErrorRecord er =  new ErrorRecord(new NotSupportedException(errorMessage), "NotSupportedException", ErrorCategory.NotImplemented, null);
-                ThrowTerminatingError(er);
+                // Parameters '-NoNewWindow' and '-WindowStyle' are both valid on full windows SKUs.
+                if (_nonewwindow && _windowstyleSpecified)
+                {
+                    message = StringUtil.Format(ProcessResources.ContradictParametersSpecified, "-NoNewWindow", "-WindowStyle");
+                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                    WriteError(er);
+                    return;
+                }
             }
-#endif
+            else
+            {
+                if (this.ParameterSetName.Equals("UseShellExecute"))
+                {
+                    message = StringUtil.Format(ProcessResources.ParameterNotSupportedOnPSEdition, "-Verb", "Start-Process");
+                }
+                else if (_windowstyleSpecified)
+                {
+                    message = StringUtil.Format(ProcessResources.ParameterNotSupportedOnPSEdition, "-WindowStyle", "Start-Process");
+                }
+
+                if (!string.IsNullOrEmpty(message))
+                {
+                    ErrorRecord er = new ErrorRecord(new NotSupportedException(message), "NotSupportedException", ErrorCategory.NotImplemented, null);
+                    ThrowTerminatingError(er);
+                }
+            }
+
             //create an instance of the ProcessStartInfo Class
             ProcessStartInfo startInfo = new ProcessStartInfo();
-            string message = String.Empty;
 
             //Path = Mandatory parameter -> Will not be empty.
             try
@@ -1809,6 +1959,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDefaultSetParameterSpecified)
                 {
+                    _useShellExecute = false;
                     startInfo.UseShellExecute = false;
                 }
 
@@ -1819,16 +1970,7 @@ namespace Microsoft.PowerShell.Commands
                     LoadEnvironmentVariable(startInfo, Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine));
                     LoadEnvironmentVariable(startInfo, Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User));
                 }
-
-#if !CORECLR    // 'WindowStyle' not supported in CoreCLR
-                if (_nonewwindow && _windowstyleSpecified)
-                {
-                    message = StringUtil.Format(ProcessResources.ContradictParametersSpecified, "-NoNewWindow", "-WindowStyle");
-                    ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
-                    WriteError(er);
-                    return;
-                }
-
+#if !CORECLR
                 //WindowStyle
                 startInfo.WindowStyle = _windowstyle;
 #endif
@@ -1837,13 +1979,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     startInfo.CreateNoWindow = _nonewwindow;
                 }
-
+#if !UNIX
                 //LoadUserProfile.
-                if (Platform.IsWindows)
-                {
-                    startInfo.LoadUserProfile = _loaduserprofile;
-                }
-
+                startInfo.LoadUserProfile = _loaduserprofile;
+#endif
                 if (_credential != null)
                 {
                     //Gets NetworkCredentials
@@ -1857,11 +1996,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         startInfo.Domain = nwcredential.Domain;
                     }
-#if CORECLR
-                    startInfo.PasswordInClearText = ClrFacade.ConvertSecureStringToString(_credential.Password);
-#else
                     startInfo.Password = _credential.Password;
-#endif
                 }
 
                 //RedirectionInput File Check -> Not Exist -> Throw Error
@@ -1919,47 +2054,19 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-#if !CORECLR // 'UseShellExecute' is not supported in CoreCLR
+#if !CORECLR // Properties 'Verb' and 'WindowStyle' are missing in CoreCLR
             else if (ParameterSetName.Equals("UseShellExecute"))
             {
-                startInfo.UseShellExecute = true;
                 //Verb
-                if (Verb != null)
-                {
-                    startInfo.Verb = Verb;
-                }
-
+                if (Verb != null) { startInfo.Verb = Verb; }
                 //WindowStyle
                 startInfo.WindowStyle = _windowstyle;
             }
 #endif
             //Starts the Process
-            Process process;
-            if (Platform.IsWindows)
-            {
-                process = start(startInfo);
-            }
-            else
-            {
-                process = new Process();
-                process.StartInfo = startInfo;
-                SetupInputOutputRedirection(process);
-                process.Start();
-                if (process.StartInfo.RedirectStandardOutput)
-                {
-                    process.BeginOutputReadLine();
-                }
-                if (process.StartInfo.RedirectStandardError)
-                {
-                    process.BeginErrorReadLine();
-                }
-                if (process.StartInfo.RedirectStandardInput)
-                {
-                    WriteToStandardInput(process);
-                }
-            }
-            //Wait and Passthru Implementation.
+            Process process = Start(startInfo);
 
+            //Wait and Passthru Implementation.
             if (PassThru.IsPresent)
             {
                 if (process != null)
@@ -1980,29 +2087,26 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (!process.HasExited)
                     {
-                        if (Platform.IsWindows)
-                        {
-                            _waithandle = new ManualResetEvent(false);
+#if UNIX
+                        process.WaitForExit();
+#else
+                        _waithandle = new ManualResetEvent(false);
 
-                            // Create and start the job object
-                            ProcessCollection jobObject = new ProcessCollection();
-                            if (jobObject.AssignProcessToJobObject(process))
-                            {
-                                // Wait for the job object to finish
-                                jobObject.WaitOne(_waithandle);
-                            }
-                            else if (!process.HasExited)
-                            {
-                                // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
-                                process.Exited += new EventHandler(myProcess_Exited);
-                                process.EnableRaisingEvents = true;
-                                process.WaitForExit();
-                            }
-                        }
-                        else
+                        // Create and start the job object
+                        ProcessCollection jobObject = new ProcessCollection();
+                        if (jobObject.AssignProcessToJobObject(process))
                         {
+                            // Wait for the job object to finish
+                            jobObject.WaitOne(_waithandle);
+                        }
+                        else if (!process.HasExited)
+                        {
+                            // WinBlue: 27537 Start-Process -Wait doesn't work in a remote session on Windows 7 or lower.
+                            process.Exited += new EventHandler(myProcess_Exited);
+                            process.EnableRaisingEvents = true;
                             process.WaitForExit();
                         }
+#endif
                     }
                 }
                 else
@@ -2024,11 +2128,35 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        #endregion
+
+        #region IDisposable Overrides
+
+        /// <summary>
+        /// Dispose WaitHandle used to honor -Wait parameter
+        /// </summary>
+        public void Dispose()
+        {
+            Dispose(true);
+            System.GC.SuppressFinalize(this);
+        }
+
+        private void Dispose(bool isDisposing)
+        {
+            if (_waithandle != null)
+            {
+                _waithandle.Dispose();
+                _waithandle = null;
+            }
+        }
+
+        #endregion
+
+        #region Private Methods
+
         /// <summary>
         /// When Process exits the wait handle is set. 
         /// </summary>
-        /// <param name="sender"></param>
-        /// <param name="e"></param>
         private void myProcess_Exited(object sender, System.EventArgs e)
         {
             if (_waithandle != null)
@@ -2037,7 +2165,11 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        #region Private Methods
+        private string ResolveFilePath(string path)
+        {
+            string filepath = PathUtils.ResolveFilePath(path, this);
+            return filepath;
+        }
 
         private void LoadEnvironmentVariable(ProcessStartInfo startinfo, IDictionary EnvironmentVariables)
         {
@@ -2058,6 +2190,43 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
         }
+
+        private Process Start(ProcessStartInfo startInfo)
+        {
+#if UNIX
+            Process process = new Process() { StartInfo = startInfo };
+            SetupInputOutputRedirection(process);
+            process.Start();
+            if (process.StartInfo.RedirectStandardOutput)
+            {
+                process.BeginOutputReadLine();
+            }
+            if (process.StartInfo.RedirectStandardError)
+            {
+                process.BeginErrorReadLine();
+            }
+            if (process.StartInfo.RedirectStandardInput)
+            {
+                WriteToStandardInput(process);
+            }
+            return process;
+#else
+            Process process = null;
+            if (_useShellExecute)
+            {
+                process = StartWithShellExecute(startInfo);
+            }
+            else
+            {
+                process = StartWithCreateProcess(startInfo);
+            }
+            return process;
+#endif
+        }
+
+#if UNIX
+        private StreamWriter _outputWriter;
+        private StreamWriter _errorWriter;
 
         private void StdOutputHandler(object sendingProcess, DataReceivedEventArgs outLine)
         {
@@ -2156,7 +2325,89 @@ namespace Microsoft.PowerShell.Commands
             }
             writer.Dispose();
         }
+#else
+        private SafeFileHandle GetSafeFileHandleForRedirection(string RedirectionPath, uint dwCreationDisposition)
+        {
+            System.IntPtr hFileHandle = System.IntPtr.Zero;
+            ProcessNativeMethods.SECURITY_ATTRIBUTES lpSecurityAttributes = new ProcessNativeMethods.SECURITY_ATTRIBUTES();
 
+
+            hFileHandle = ProcessNativeMethods.CreateFileW(RedirectionPath,
+                ProcessNativeMethods.GENERIC_READ | ProcessNativeMethods.GENERIC_WRITE,
+                ProcessNativeMethods.FILE_SHARE_WRITE | ProcessNativeMethods.FILE_SHARE_READ,
+                lpSecurityAttributes,
+                dwCreationDisposition,
+                ProcessNativeMethods.FILE_ATTRIBUTE_NORMAL,
+                System.IntPtr.Zero);
+            if (hFileHandle == System.IntPtr.Zero)
+            {
+                int error = Marshal.GetLastWin32Error();
+                Win32Exception win32ex = new Win32Exception(error);
+                string message = StringUtil.Format(ProcessResources.InvalidStartProcess, win32ex.Message);
+                ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
+                ThrowTerminatingError(er);
+            }
+            SafeFileHandle sf = new SafeFileHandle(hFileHandle, true);
+            return sf;
+        }
+
+        private static StringBuilder BuildCommandLine(string executableFileName, string arguments)
+        {
+            StringBuilder builder = new StringBuilder();
+            string str = executableFileName.Trim();
+            bool flag = str.StartsWith("\"", StringComparison.Ordinal) && str.EndsWith("\"", StringComparison.Ordinal);
+            if (!flag)
+            {
+                builder.Append("\"");
+            }
+            builder.Append(str);
+            if (!flag)
+            {
+                builder.Append("\"");
+            }
+            if (!string.IsNullOrEmpty(arguments))
+            {
+                builder.Append(" ");
+                builder.Append(arguments);
+            }
+            return builder;
+        }
+
+        private static byte[] ConvertEnvVarsToByteArray(
+#if CORECLR
+            IDictionary<string, string> sd)
+#else
+            StringDictionary sd)
+#endif
+        {
+            string[] array = new string[sd.Count];
+            byte[] bytes = null;
+            sd.Keys.CopyTo(array, 0);
+            string[] strArray2 = new string[sd.Count];
+            sd.Values.CopyTo(strArray2, 0);
+            Array.Sort(array, strArray2, StringComparer.OrdinalIgnoreCase);
+            StringBuilder builder = new StringBuilder();
+            for (int i = 0; i < sd.Count; i++)
+            {
+                builder.Append(array[i]);//
+                builder.Append('=');
+                builder.Append(strArray2[i]);
+                builder.Append('\0');
+            }
+            builder.Append('\0');
+
+            // Use Unicode encoding
+            bytes = Encoding.Unicode.GetBytes(builder.ToString());
+            if (bytes.Length > 0xffff)
+            {
+                throw new InvalidOperationException("EnvironmentBlockTooLong");
+            }
+            return bytes;
+        }
+
+        /// <summary>
+        /// This method will be used on all windows platforms, both full desktop and headless SKUs.
+        /// </summary>
         private Process StartWithCreateProcess(ProcessStartInfo startinfo)
         {
             ProcessNativeMethods.STARTUPINFO lpStartupInfo = new ProcessNativeMethods.STARTUPINFO();
@@ -2220,11 +2471,8 @@ namespace Microsoft.PowerShell.Commands
                     //STARTF_USESHOWWINDOW
                     lpStartupInfo.dwFlags |= 0x00000001;
 
-#if CORECLR
-                    //SW_SHOWNORMAL
-                    lpStartupInfo.wShowWindow = 1;
-#else
-                    switch (startinfo.WindowStyle)
+                    // On headless SKUs like NanoServer and IoT, window style can only be the default value 'Normal'.
+                    switch (WindowStyle)
                     {
                         case ProcessWindowStyle.Normal:
                             //SW_SHOWNORMAL
@@ -2243,7 +2491,6 @@ namespace Microsoft.PowerShell.Commands
                             lpStartupInfo.wShowWindow = 0;
                             break;
                     }
-#endif
                 }
 
                 // Create the new process suspended so we have a chance to get a corresponding Process object in case it terminates quickly.
@@ -2255,13 +2502,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (this.UseNewEnvironment)
                     {
-                        bool unicode = false;
-                        if (ProcessManager.IsNt)
-                        {
-                            creationFlags |= 0x400;
-                            unicode = true;
-                        }
-                        pinnedEnvironmentBlock = GCHandle.Alloc(EnvironmentBlock.ToByteArray(environmentVars, unicode), GCHandleType.Pinned);
+                        // All Windows Operating Systems that we support are Windows NT systems, so we use Unicode for environment.
+                        creationFlags |= 0x400;
+                        pinnedEnvironmentBlock = GCHandle.Alloc(ConvertEnvVarsToByteArray(environmentVars), GCHandleType.Pinned);
                         AddressOfEnvironmentBlock = pinnedEnvironmentBlock.AddrOfPinnedObject();
                     }
                 }
@@ -2278,11 +2521,7 @@ namespace Microsoft.PowerShell.Commands
                     IntPtr password = IntPtr.Zero;
                     try
                     {
-#if CORECLR
-                        password = (startinfo.PasswordInClearText == null) ? Marshal.StringToCoTaskMemUni(string.Empty) : Marshal.StringToCoTaskMemUni(startinfo.PasswordInClearText);
-#else
-                        password = (startinfo.Password == null) ? Marshal.StringToCoTaskMemUni(string.Empty) : ClrFacade.SecureStringToCoTaskMemUnicode(startinfo.Password);
-#endif
+                        password = (startinfo.Password == null) ? Marshal.StringToCoTaskMemUni(string.Empty) : Marshal.SecureStringToCoTaskMemUnicode(startinfo.Password);
                         flag = ProcessNativeMethods.CreateProcessWithLogonW(startinfo.UserName, startinfo.Domain, password, logonFlags, null, cmdLine, creationFlags, AddressOfEnvironmentBlock, startinfo.WorkingDirectory, lpStartupInfo, lpProcessInformation);
                         if (!flag)
                         {
@@ -2353,176 +2592,33 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
+        /// <summary>
+        /// This method will be used only on Windows full desktop.
+        /// </summary>
         private Process StartWithShellExecute(ProcessStartInfo startInfo)
         {
-            string message = String.Empty;
             Process result = null;
             try
             {
+#if CORECLR
+                result = ShellExecuteHelper.Start(startInfo, WindowStyle, Verb);
+#else
                 result = Process.Start(startInfo);
+#endif
             }
             catch (Win32Exception ex)
             {
-                message = StringUtil.Format(ProcessResources.InvalidStartProcess, ex.Message);
+                string message = StringUtil.Format(ProcessResources.InvalidStartProcess, ex.Message);
                 ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }
-            return result;
+            return result; 
         }
-
-        private Process start(ProcessStartInfo startInfo)
-        {
-            Process process = null;
-            if (startInfo.UseShellExecute)
-            {
-                process = StartWithShellExecute(startInfo);
-            }
-            else
-            {
-                process = StartWithCreateProcess(startInfo);
-            }
-            return process;
-        }
-        #endregion
-
-        #endregion
-
-        #region IDisposable Overrides
-
-        /// <summary>
-        /// Dispose WaitHandle used to honor -Wait parameter
-        /// </summary>
-        public void Dispose()
-        {
-            Dispose(true);
-            System.GC.SuppressFinalize(this);
-        }
-
-        private void Dispose(bool isDisposing)
-        {
-            if (_waithandle != null)
-            {
-                _waithandle.Dispose();
-                _waithandle = null;
-            }
-        }
-
-        #endregion
-
-        #region Private Methods
-
-        private string ResolveFilePath(string path)
-        {
-            string filepath = PathUtils.ResolveFilePath(path, this);
-            return filepath;
-        }
-
-        private SafeFileHandle GetSafeFileHandleForRedirection(string RedirectionPath, uint dwCreationDisposition)
-        {
-            System.IntPtr hFileHandle = System.IntPtr.Zero;
-            ProcessNativeMethods.SECURITY_ATTRIBUTES lpSecurityAttributes = new ProcessNativeMethods.SECURITY_ATTRIBUTES();
-
-
-            hFileHandle = ProcessNativeMethods.CreateFileW(RedirectionPath,
-                ProcessNativeMethods.GENERIC_READ | ProcessNativeMethods.GENERIC_WRITE,
-                ProcessNativeMethods.FILE_SHARE_WRITE | ProcessNativeMethods.FILE_SHARE_READ,
-                lpSecurityAttributes,
-                dwCreationDisposition,
-                ProcessNativeMethods.FILE_ATTRIBUTE_NORMAL,
-                System.IntPtr.Zero);
-            if (hFileHandle == System.IntPtr.Zero)
-            {
-                int error = Marshal.GetLastWin32Error();
-                Win32Exception win32ex = new Win32Exception(error);
-                string message = StringUtil.Format(ProcessResources.InvalidStartProcess, win32ex.Message);
-                ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
-                ThrowTerminatingError(er);
-            }
-            SafeFileHandle sf = new SafeFileHandle(hFileHandle, true);
-            return sf;
-        }
-
-        internal static class ProcessManager
-        {
-            // Properties
-            public static bool IsNt
-            {
-                get
-                {
-#if CORECLR
-                    return true;
-#else
-                    return (Environment.OSVersion.Platform == PlatformID.Win32NT);
 #endif
-                }
-            }
-        }
-
-        internal static class EnvironmentBlock
-        {
-#if CORECLR
-            public static byte[] ToByteArray(IDictionary<string, string> sd, bool unicode)
-#else
-            public static byte[] ToByteArray(StringDictionary sd, bool unicode)
-#endif
-            {
-                string[] array = new string[sd.Count];
-                byte[] bytes = null;
-                sd.Keys.CopyTo(array, 0);
-                string[] strArray2 = new string[sd.Count];
-                sd.Values.CopyTo(strArray2, 0);
-                Array.Sort(array, strArray2, StringComparer.OrdinalIgnoreCase);
-                StringBuilder builder = new StringBuilder();
-                for (int i = 0; i < sd.Count; i++)
-                {
-                    builder.Append(array[i]);//
-                    builder.Append('=');
-                    builder.Append(strArray2[i]);
-                    builder.Append('\0');
-                }
-                builder.Append('\0');
-                if (unicode)
-                {
-                    bytes = Encoding.Unicode.GetBytes(builder.ToString());
-                }
-                else
-                {
-                    bytes = ClrFacade.GetDefaultEncoding().GetBytes(builder.ToString());
-                }
-                if (bytes.Length > 0xffff)
-                {
-                    throw new InvalidOperationException("EnvironmentBlockTooLong");
-                }
-                return bytes;
-            }
-        }
-
-
-        private static StringBuilder BuildCommandLine(string executableFileName, string arguments)
-        {
-            StringBuilder builder = new StringBuilder();
-            string str = executableFileName.Trim();
-            bool flag = str.StartsWith("\"", StringComparison.Ordinal) && str.EndsWith("\"", StringComparison.Ordinal);
-            if (!flag)
-            {
-                builder.Append("\"");
-            }
-            builder.Append(str);
-            if (!flag)
-            {
-                builder.Append("\"");
-            }
-            if (!string.IsNullOrEmpty(arguments))
-            {
-                builder.Append(" ");
-                builder.Append(arguments);
-            }
-            return builder;
-        }
-
         #endregion
     }
 
+#if !UNIX
     /// <summary>
     /// ProcessCollection is a helper class used by Start-Process -Wait cmdlet to monitor the
     /// child processes created by the main process hosted by the Start-process cmdlet.
@@ -2618,7 +2714,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// A variable-length array of process identifiers returned by this call. 
-        /// Array elements 0 through NumberOfProcessIdsInList– 1 
+        /// Array elements 0 through NumberOfProcessIdsInList minus 1
         /// contain valid process identifiers.
         /// </summary>
         public IntPtr ProcessIdList;
@@ -2627,7 +2723,6 @@ namespace Microsoft.PowerShell.Commands
     internal static class ProcessNativeMethods
     {
         // Fields
-        internal static readonly IntPtr INVALID_HANDLE_VALUE = IntPtr.Zero;
         internal static UInt32 GENERIC_READ = 0x80000000;
         internal static UInt32 GENERIC_WRITE = 0x40000000;
         internal static UInt32 FILE_ATTRIBUTE_NORMAL = 0x80000000;
@@ -2842,20 +2937,6 @@ namespace Microsoft.PowerShell.Commands
     }
 
     [SuppressUnmanagedCodeSecurity]
-    internal sealed class SafeThreadHandle : SafeHandleZeroOrMinusOneIsInvalid
-    {
-        // Methods
-        internal SafeThreadHandle()
-            : base(true)
-        {
-        }
-        protected override bool ReleaseHandle()
-        {
-            return SafeNativeMethods.CloseHandle(base.handle);
-        }
-    }
-
-    [SuppressUnmanagedCodeSecurity, HostProtection(SecurityAction.LinkDemand, MayLeakOnAbort = true)]
     internal sealed class SafeJobHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
         internal SafeJobHandle(IntPtr jobHandle)
@@ -2869,7 +2950,7 @@ namespace Microsoft.PowerShell.Commands
             return SafeNativeMethods.CloseHandle(base.handle);
         }
     }
-
+#endif
     #endregion
 
     #region ProcessCommandException

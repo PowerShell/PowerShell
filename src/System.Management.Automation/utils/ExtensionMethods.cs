@@ -82,7 +82,6 @@ namespace System.Management.Automation
         /// Type.EmptyTypes is not in CoreCLR. Use this one to replace it.
         /// </summary>
         internal static Type[] EmptyTypes = new Type[0];
-        private static readonly Type s_comObjectType = Type.GetType("System.__ComObject");
 
         /// <summary>
         /// Check does the type have an instance default constructor with visibility that allows calling it from subclass.
@@ -133,8 +132,6 @@ namespace System.Management.Automation
         {
 #if UNIX
             return false;
-#elif CORECLR // Type.IsComObject(Type) is not in CoreCLR
-            return s_comObjectType.IsAssignableFrom(type);
 #else
             return type.IsCOMObject;
 #endif
@@ -143,11 +140,7 @@ namespace System.Management.Automation
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static TypeCode GetTypeCode(this Type type)
         {
-#if CORECLR // Type.GetTypeCode(Type) is not in CoreCLR
-            return GetTypeCodeInCoreClr(type);
-#else
             return Type.GetTypeCode(type);
-#endif
         }
 
         internal static IEnumerable<T> GetCustomAttributes<T>(this Type type, bool inherit)

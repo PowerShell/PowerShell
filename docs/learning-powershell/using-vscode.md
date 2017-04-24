@@ -27,10 +27,10 @@ Editing with Visual Studio Code
 
 **2. Installing PowerShell Extension**
 
--	Launch the Visual Studio Code app by:
-    *	**Windows**:      typing **code** in your PowerShell session
-    *	**Linux**:        typing **code** in your terminal
-    *	**macOS**:        typing **code** in your terminal
+- Launch the Visual Studio Code app by:
+    * **Windows**:      typing **code** in your PowerShell session
+    * **Linux**:        typing **code** in your terminal
+    * **macOS**:        typing **code** in your terminal
 
 - Launch **Quick Open** by pressing **Ctrl+P** (**Cmd+P** on Mac).
 - In Quick Open, type **ext install powershell** and hit **Enter**.
@@ -40,9 +40,9 @@ Editing with Visual Studio Code
   ![VSCode](vscode.png)
 
 - Click the **Install** button on the PowerShell extension from Microsoft.
--	After the install, you will see the **Install** button turns to **Reload**.
+- After the install, you will see the **Install** button turns to **Reload**.
   Click on **Reload**.
--	After Visual Studio Code has reload, you are ready for editing.
+- After Visual Studio Code has reload, you are ready for editing.
 
 For example, to create a new file, click **File->New**.
 To save it, click **File->Save** and then provide a file name, let's say "HelloWorld.ps1".
@@ -139,10 +139,10 @@ Once the debug configuration is established, you can select which configuration 
 
 There are a few blogs that may be helpful to get you started using PowerShell extension for Visual Studio Code
 
--	Visual Studio Code: [PowerShell Extension][ps-extension]
--	[Write and debug PowerShell scripts in Visual Studio Code][debug]
--	[Debugging Visual Studio Code Guidance][vscode-guide]
--	[Debugging PowerShell in Visual Studio Code][ps-vscode]
+- Visual Studio Code: [PowerShell Extension][ps-extension]
+- [Write and debug PowerShell scripts in Visual Studio Code][debug]
+- [Debugging Visual Studio Code Guidance][vscode-guide]
+- [Debugging PowerShell in Visual Studio Code][ps-vscode]
 - [Get started with PowerShell development in Visual Studio Code][getting-started]
 - [Visual Studio Code editing features for PowerShell development – Part 1][editing-part1]
 - [Visual Studio Code editing features for PowerShell development – Part 2][editing-part2]

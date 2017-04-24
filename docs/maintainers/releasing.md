@@ -136,7 +136,7 @@ package will instead be created.
 On macOS, create a new branch at the release tag. For example:
 ``` powershell
 git checkout -b local-release-branch v6.0.0-alpha.11
-``` 
+```
 Then run the following commands:
 ``` powershell
 Import-Module ./build.psm1
@@ -155,7 +155,7 @@ you can either run `Start-PSPackage` manually on each of the Linux distros or us
 On a supported Linux distro, Ubuntu 14.04 for instance, create a new branch at the release tag. For example:
 ``` powershell
 git checkout -b local-release-branch v6.0.0-alpha.11
-``` 
+```
 Then run the following commands:
 ``` powershell
 Import-Module ./build.psm1
@@ -211,25 +211,25 @@ The output of `Start-PSBuild` includes a `powershell.exe` executable which can s
 To create release packages, create a new branch at the release tag. For example:
 ``` powershell
 git checkout -b local-release-branch v6.0.0-alpha.11
-``` 
+```
 
-#### Windows 10 and Server 2016 
+#### Windows 10 and Server 2016
 
 ``` powershell
-Import-Module .\build.psm1 
-Start-PSBootstrap -Package 
-Start-PSBuild -Clean -CrossGen -PSModuleRestore -Runtime win10-x64 -Configuration Release 
+Import-Module .\build.psm1
+Start-PSBootstrap -Package
+Start-PSBuild -Clean -CrossGen -PSModuleRestore -Runtime win10-x64 -Configuration Release
 Start-PSPackage -Type msi
 Start-PSPackage -Type zip
 ```
 
-#### Windows 8.1 and Server 2012r2 
+#### Windows 8.1 and Server 2012r2
 
 ``` powershell
-Import-Module .\build.psm1 
-Start-PSBootstrap -Package 
-Start-PSBuild -Clean -CrossGen -PSModuleRestore -Runtime win81-x64 -Configuration Release 
-Start-PSPackage -Type msi -WindowsDownLevel win81-x64  
+Import-Module .\build.psm1
+Start-PSBootstrap -Package
+Start-PSBuild -Clean -CrossGen -PSModuleRestore -Runtime win81-x64 -Configuration Release
+Start-PSPackage -Type msi -WindowsDownLevel win81-x64
 Start-PSPackage -Type zip -WindowsDownLevel win81-x64
 ```
 
@@ -243,7 +243,7 @@ git checkout -b local-release-branch v6.0.0-alpha.11
 
 Run `Publish-NuGetFeed` to generate PowerShell NuGet packages:
 ``` powershell
-Import-Module .\build.psm1 
+Import-Module .\build.psm1
 Start-PSBootstrap -Package
 Start-PSBuild -Clean -Publish
 $VersionSuffix = ((git describe) -split '-')[-1] -replace "\."

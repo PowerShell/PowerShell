@@ -11,11 +11,15 @@ try {
 #  2. For nightly build, build with '-CrossGen' but don't run the parsing tests
 # In this way, we will continue to exercise these parsing tests for each CI build, and skip them for nightly
 # build to avoid a hang.
-# Note: this change should be reverted once the 'CrossGen' issue is fixed by CoreCLR.
+# Note: this change should be reverted once the 'CrossGen' issue is fixed by CoreCLR. The issue is tracked by
+#       https://github.com/dotnet/coreclr/issues/9745
 #
 $isFullBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
 $defaultParamValues = $PSdefaultParameterValues.Clone()
-$PSDefaultParameterValues["it:skip"] = (!$IsWindows -and $isFullBuild)
+$IsSkipped = (!$IsWindows -and $isFullBuild)
+$PSDefaultParameterValues["it:skip"] = $IsSkipped
+$PSDefaultParameterValues["ShouldBeParseError:SkipInTravisFullBuild"] = $IsSkipped
+
 
 Describe 'Positive Parse Properties Tests' -Tags "CI" {
     It 'PositiveParsePropertiesTest' {
@@ -425,7 +429,7 @@ Describe 'Property Attributes Test' -Tags "CI" {
         [ValidateSet]$v = $t[0]
         It "Should have 2 valid values" { $v.ValidValues.Count | should be 2 }
         It "first value should be a" { $v.ValidValues[0] | should be 'a' }
-        It "second value should be b" { $v.ValidValues[1] -eq 'b' }
+        It "second value should be b" { $v.ValidValues[1] | should be 'b' }
 }
 
 Describe 'Method Attributes Test' -Tags "CI" {

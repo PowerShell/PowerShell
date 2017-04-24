@@ -4,9 +4,6 @@
 
 if ($IsWindows)
 {
-    $remotingModule = Join-Path $PSScriptRoot "../../Common/TestRemoting.psm1"
-    Import-Module $remotingModule -ErrorAction SilentlyContinue
-
     $typeDef = @'
     using System;
     using System.Globalization;
@@ -132,7 +129,7 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
             "Hello!"
 '@)
 
-            Add-Type -TypeDefinition $typeDef -ReferencedAssemblies "System.Globalization","System.Management.Automation"
+            Add-Type -TypeDefinition $typeDef
 
             $dummyHost = [TestRunner.DummyHost]::new()
             [runspace] $rs = [runspacefactory]::CreateRunspace($dummyHost)
@@ -149,8 +146,6 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
 
             [powershell] $ps2 = [powershell]::Create()
             $ps2.Runspace = $rs2
-
-            $remoteSession = New-RemoteSession
         }
     }
 
@@ -171,9 +166,18 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
         }
     }
 
+    BeforeEach {
+
+        $remoteSession = New-RemoteSession
+    }
+
     AfterEach {
+
         $ps.Commands.Clear()
         $ps2.Commands.Clear()
+
+        Remove-PSSession $remoteSession -ErrorAction SilentlyContinue
+        $remoteSession = $null
     }
 
     It "Verifies that asynchronous 'Invoke-Command -RemoteDebug' is ignored" {

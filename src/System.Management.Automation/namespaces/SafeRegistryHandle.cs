@@ -18,14 +18,8 @@ using System.Security;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
 using Microsoft.Win32.SafeHandles;
-
-#if CORECLR
-// Use stubs for SafeHandleZeroOrMinusOneIsInvalid and ReliabilityContractAttribute
-using Microsoft.PowerShell.CoreClr.Stubs;
-#else
 using System.Runtime.ConstrainedExecution;
 using System.Security.Permissions;
-#endif
 
 namespace Microsoft.PowerShell.Commands.Internal
 {
@@ -52,13 +46,9 @@ namespace Microsoft.PowerShell.Commands.Internal
 
         protected override bool ReleaseHandle()
         {
-#if UNIX
-            return true;
-#else
             // Returns a Win32 error code, 0 for success
             int r = RegCloseKey(handle);
             return r == 0;
-#endif
         }
     }
 }

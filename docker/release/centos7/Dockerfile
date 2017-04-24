@@ -1,7 +1,10 @@
 # Docker image file that describes an Centos7 image with PowerShell installed from Microsoft YUM Repo
 
 FROM centos:7
-MAINTAINER Raghu Shantha <raghus@microsoft.com>
+
+LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>"
+LABEL readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
+LABEL description="This Dockerfile will install the latest release of PS."
 
 # Setup the locale
 ENV LANG en_US.UTF-8

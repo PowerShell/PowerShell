@@ -31,7 +31,7 @@ namespace System.Management.Automation.Runspaces
     /// </summary>
     /// <!--
     /// Monad Console File is in the following format:
-    /// 	    <?xml version="1.0"?>
+    ///     <?xml version="1.0"?>
     /// <PSConsoleFile ConsoleSchemaVersion=1.0>
     ///<PSVersion>1</PSVersion>
     ///<PSSnapIns>

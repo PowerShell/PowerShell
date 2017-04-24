@@ -27,4 +27,31 @@ Describe "Tab completion bug fix" -Tags "CI" {
         $result.CompletionMatches.Count | Should Be 1
         $result.CompletionMatches[0].CompletionText | Should Be "pscustomobject"
     }
+    It "Issue#1345 - 'Import-Module -n<tab>' should work" {
+        $cmd = "Import-Module -n"
+        $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+        $result.CompletionMatches.Count | Should Be 3
+        $result.CompletionMatches[0].CompletionText | Should Be "-Name"
+        $result.CompletionMatches[1].CompletionText | Should Be "-NoClobber"
+        $result.CompletionMatches[2].CompletionText | Should Be "-NoOverwrite"
+    }
+    Context "Issue#3416 - 'Select-Object'" {
+        BeforeAll {
+            $DatetimeProperties = @((Get-Date).psobject.baseobject.psobject.properties) | Sort-Object -Property Name
+        }
+        It "Issue#3416 - 'Select-Object -ExcludeProperty <tab>' should work" {
+            $cmd = "Get-Date | Select-Object -ExcludeProperty "
+            $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+            $result.CompletionMatches.Count | Should Be $DatetimeProperties.Count
+            $result.CompletionMatches[0].CompletionText | Should Be $DatetimeProperties[0].Name # Date
+            $result.CompletionMatches[1].CompletionText | Should Be $DatetimeProperties[1].Name # DateTime
+       }
+       It "Issue#3416 - 'Select-Object -ExpandProperty <tab>' should work" {
+           $cmd = "Get-Date | Select-Object -ExpandProperty "
+           $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+           $result.CompletionMatches.Count | Should Be $DatetimeProperties.Count
+           $result.CompletionMatches[0].CompletionText | Should Be $DatetimeProperties[0].Name # Date
+           $result.CompletionMatches[1].CompletionText | Should Be $DatetimeProperties[1].Name # DateTime
+       }
+    }
 }

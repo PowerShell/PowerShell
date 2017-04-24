@@ -84,23 +84,24 @@ Describe "Stream writer tests" -Tags "CI" {
         }
 
        It "Write-Information outputs an information object" -Pending:($IsOSX) {
-           # redirect the streams is sufficient
-           $result = Write-Information "Test Message" *>&1
-           $result.NativeThreadId | Should Not Be 0
-           $result.ProcessId | Should Be $pid
-           $result | Should BeOfType System.Management.Automation.InformationRecord
-           if ($IsWindows)
-           {
-               # Use Match instead of Be so we can avoid dealing with a potential domain name
-               $result.Computer | Should Match ".*${env:COMPUTERNAME}"
-               $result.User | Should Match ".*${env:USERNAME}"
-           }
-           else
-           {
-               $result.Computer | Should Be $(uname -n)
-               $result.User | Should Be $(whoami)
-           }
-           "$result" | Should be "Test Message"
+            # redirect the streams is sufficient
+            $result = Write-Information "Test Message" *>&1
+            $result.NativeThreadId | Should Not Be 0
+            $result.ProcessId | Should Be $pid
+            $result | Should BeOfType System.Management.Automation.InformationRecord
+
+            # Use Match instead of Be so we can avoid dealing with a potential domain name
+            $result.Computer | Should Match "^($([environment]::MachineName)){1}(\.[a-zA-Z0-9]+)*$"
+            if ($IsWindows)
+            {
+                $result.User | Should Match ".*${env:USERNAME}"
+            }
+            else
+            {
+                $result.User | Should Be $(whoami)
+            }
+
+            "$result" | Should be "Test Message"
        }
 
        It "Write-Information accept objects from pipe" {

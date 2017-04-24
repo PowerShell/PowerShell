@@ -1,13 +1,13 @@
 Describe "DSC MOF Compilation" -tags "CI" {
 
     AfterAll {
-        $env:PSMODULEPATH = $_modulePath
+        $env:PSModulePath = $_modulePath
     }
     BeforeAll {
         $env:DSC_HOME = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath dsc
-        $_modulePath = $env:PSMODULEPATH
+        $_modulePath = $env:PSModulePath
         $powershellexe = (get-process -pid $PID).MainModule.FileName
-        $env:PSMODULEPATH = join-path ([io.path]::GetDirectoryName($powershellexe)) Modules
+        $env:PSModulePath = join-path ([io.path]::GetDirectoryName($powershellexe)) Modules
     }
 
     It "Should be able to compile a MOF from a basic configuration" -Skip:($IsOSX -or $IsWindows) {

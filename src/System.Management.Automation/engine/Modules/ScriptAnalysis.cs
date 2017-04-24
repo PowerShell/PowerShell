@@ -10,11 +10,6 @@ using System.Text;
 using System.Management.Automation.Language;
 using System.Text.RegularExpressions;
 
-#if CORECLR
-// Use stub for SerializableAttribute.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation
 {
     /// <summary>
@@ -473,7 +468,7 @@ namespace System.Management.Automation
                             var argumentAst = specifiedParameter.Argument;
                             if (argumentAst == null)
                             {
-                                argumentAst = commandAst.CommandElements[i + 1] as ExpressionAst;
+                                argumentAst = commandAst.CommandElements[i] as ExpressionAst;
                                 if (argumentAst != null)
                                 {
                                     i += 1;

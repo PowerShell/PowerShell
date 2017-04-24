@@ -32,7 +32,7 @@ namespace Microsoft.Management.UI.Internal
     ///
     /// If a custom template is provided for this control, then the template MUST provide the following template parts:
     ///
-    /// 	PART_Picker - A required template part which must be of type PickerBase.  This control provides basic functionality for Picker-like controls.
+    ///     PART_Picker - A required template part which must be of type PickerBase.  This control provides basic functionality for Picker-like controls.
     ///
     /// </remarks>
     [TemplatePart(Name="PART_Picker", Type=typeof(PickerBase))]

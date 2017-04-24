@@ -27,13 +27,6 @@ using System.Security;
 using System.Collections.Generic;
 using System.Security.Principal;
 
-#if CORECLR
-// Some APIs are missing from System.Environment. We use System.Management.Automation.Environment as a proxy type:
-//  - for missing APIs, System.Management.Automation.Environment has extension implementation.
-//  - for existing APIs, System.Management.Automation.Environment redirect the call to System.Environment.
-using Environment = System.Management.Automation.Environment;
-#endif
-
 namespace Microsoft.PowerShell.Commands
 {
     #region Register-PSSessionConfiguration cmdlet
@@ -123,20 +116,20 @@ function Register-PSSessionConfiguration
         new-item -path WSMan:\localhost\Plugin -file ""$filepath"" -name ""$pluginName""
         # $? is to make sure the last operation is succeeded
 
-		if ($? -and $runAsUserName)
-		{{
-			try {{
-				$runAsCredential = new-object system.management.automation.PSCredential($runAsUserName, $runAsPassword)
-				set-item -WarningAction SilentlyContinue WSMan:\localhost\Plugin\""$pluginName""\RunAsUser $runAsCredential -confirm:$false
-			}} catch {{
-				remove-item WSMan:\localhost\Plugin\""$pluginName"" -recurse -force
-				write-error $_
+        if ($? -and $runAsUserName)
+        {{
+            try {{
+                $runAsCredential = new-object system.management.automation.PSCredential($runAsUserName, $runAsPassword)
+                set-item -WarningAction SilentlyContinue WSMan:\localhost\Plugin\""$pluginName""\RunAsUser $runAsCredential -confirm:$false
+            }} catch {{
+                remove-item WSMan:\localhost\Plugin\""$pluginName"" -recurse -force
+                write-error $_
                 # Do not add anymore clean up code after Write-Error, because if EA=Stop is set by user
                 # any code at this point will not execute.
 
-				return
-			}}
-		}}
+                return
+            }}
+        }}
 
         ## Replace the SDDL with any groups or restrictions defined in the PSSessionConfigurationFile
         if($? -and $configTableSddl -and (-not $isSddlSpecified))
@@ -236,13 +229,13 @@ function Register-PSSessionConfiguration
                 }}
 
             }} catch {{
-				remove-item WSMan:\localhost\Plugin\""$pluginName"" -recurse -force
-				write-error $_
+                remove-item WSMan:\localhost\Plugin\""$pluginName"" -recurse -force
+                write-error $_
                 # Do not add anymore clean up code after Write-Error, because if EA=Stop is set by user
                 # any code at this point will not execute.
 
-				return
-			}}
+                return
+            }}
         }}
 
         if ($?){{
@@ -293,10 +286,10 @@ else
 </PlugInConfiguration>
 ";
         private const string architectureAttribFormat = @"
-	Architecture='{0}'";
+    Architecture='{0}'";
 
         private const string sharedHostAttribFormat = @"
-	UseSharedProcess='{0}'";
+    UseSharedProcess='{0}'";
 
         private const string runasVirtualAccountAttribFormat = @"
     RunAsVirtualAccount='{0}'";
@@ -305,7 +298,7 @@ else
     RunAsVirtualAccountGroups='{0}'";
 
         private const string allowRemoteShellAccessFormat = @"
-	Enabled='{0}'";
+    Enabled='{0}'";
 
         private const string initParamFormat = @"
 <Param Name='{0}' Value='{1}' />{2}";
@@ -2992,7 +2985,7 @@ Set-SessionPluginOptions $args[0]
 function Set-RunAsCredential{{
     param (
         [string]$runAsUserName,
-	    [system.security.securestring]$runAsPassword
+        [system.security.securestring]$runAsPassword
     )
 
     $cred = new-object System.Management.Automation.PSCredential($runAsUserName, $runAsPassword)

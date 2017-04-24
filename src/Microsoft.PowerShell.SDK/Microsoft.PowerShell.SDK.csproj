@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <IncludeBuildOutput>false</IncludeBuildOutput>
+    <Description>PowerShell SDK metapackage</Description>
+    <VersionPrefix>6.0.0</VersionPrefix>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <PackageId>Microsoft.PowerShell.SDK</PackageId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Microsoft.PowerShell.Commands.Management\Microsoft.PowerShell.Commands.Management.csproj" />
+    <ProjectReference Include="..\Microsoft.PowerShell.Commands.Utility\Microsoft.PowerShell.Commands.Utility.csproj" />
+    <ProjectReference Include="..\Microsoft.PowerShell.ConsoleHost\Microsoft.PowerShell.ConsoleHost.csproj" />
+    <ProjectReference Include="..\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.csproj" />
+    <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Data.SqlClient" Version="4.4.0-preview1-25204-02" />
+    <PackageReference Include="System.IO.Packaging" Version="4.4.0-preview1-25204-02" />
+    <PackageReference Include="System.Net.Http.WinHttpHandler" Version="4.4.0-preview1-25204-02" />
+    <PackageReference Include="System.ServiceModel.Duplex" Version="4.4.0-beta-25205-01" />
+    <PackageReference Include="System.ServiceModel.Http" Version="4.4.0-beta-25205-01" />
+    <PackageReference Include="System.ServiceModel.NetTcp" Version="4.4.0-beta-25205-01" />
+    <PackageReference Include="System.ServiceModel.Primitives" Version="4.4.0-beta-25205-01" />
+    <PackageReference Include="System.ServiceModel.Security" Version="4.4.0-beta-25205-01" />
+    <PackageReference Include="System.Text.Encodings.Web" Version="4.4.0-preview1-25204-02" />
+    <PackageReference Include="System.Threading.AccessControl" Version="4.4.0-preview1-25204-02" />
+    <PackageReference Include="System.Private.ServiceModel" Version="4.4.0-beta-25205-01" />
+  </ItemGroup>
+
+</Project>
