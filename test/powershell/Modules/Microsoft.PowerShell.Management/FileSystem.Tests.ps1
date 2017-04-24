@@ -246,6 +246,158 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     }
 }
 
+Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows" {
+    BeforeAll {
+        $realFile = Join-Path $TestDrive "file.txt"
+        $nonFile = Join-Path $TestDrive "not-a-file"
+        $fileContent = "some text"
+        $realDir = Join-Path $TestDrive "subdir"
+        $nonDir = Join-Path $TestDrive "not-a-dir"
+        $hardLinkToFile = Join-Path $TestDrive "hard-to-file.txt"
+        $symLinkToFile = Join-Path $TestDrive "sym-link-to-file.txt"
+        $symLinkToDir = Join-Path $TestDrive "sym-link-to-dir"
+        $symLinkToNothing = Join-Path $TestDrive "sym-link-to-nowhere"
+        $dirSymLinkToDir = Join-Path $TestDrive "symd-link-to-dir"
+        $junctionToDir = Join-Path $TestDrive "junction-to-dir"
+
+        New-Item -ItemType File -Path $realFile -Value $fileContent >$null
+        New-Item -ItemType Directory -Path $realDir >$null
+    }
+
+    Context "New-Item and hard/symbolic links" {
+        It "New-Item can create a hard link to a file" {
+            New-Item -ItemType HardLink -Path $hardLinkToFile -Value $realFile
+            Test-Path $hardLinkToFile | Should Be $true
+            $link = Get-Item -Path $hardLinkToFile
+            $link.LinkType | Should Be "HardLink"
+            Get-Content -Path $hardLinkToFile | Should be $fileContent
+        }
+        It "New-Item can create symbolic link to file" {
+            New-Item -ItemType SymbolicLink -Path $symLinkToFile -Value $realFile
+            Test-Path $symLinkToFile | Should Be $true
+            $real = Get-Item -Path $realFile
+            $link = Get-Item -Path $symLinkToFile
+            $link.LinkType | Should Be "SymbolicLink"
+            $link.Target | Should Be $real.FullName
+            Get-Content -Path $symLinkToFile | Should be $fileContent
+        }
+        It "New-Item can create a symbolic link to nothing" {
+            New-Item -ItemType SymbolicLink -Path $symLinkToNothing -Value $nonFile
+            Test-Path $symLinkToNothing | Should Be $true
+            $link = Get-Item -Path $symLinkToNothing
+            $link.LinkType | Should Be "SymbolicLink"
+            $link.Target | Should Be $nonFile
+        }
+        It "New-Item can create a symbolic link to a directory" -Skip:($IsWindows) {
+            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir
+            Test-Path $symLinkToDir | Should Be $true
+            $real = Get-Item -Path $realDir
+            $link = Get-Item -Path $symLinkToDir
+            $link.LinkType | Should Be "SymbolicLink"
+            $link.Target | Should Be $real.FullName
+        }
+        It "New-Item can create a directory symbolic link to a directory" -Skip:(-Not $IsWindows) {
+            New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir
+            Test-Path $symLinkToDir | Should Be $true
+            $real = Get-Item -Path $realDir
+            $link = Get-Item -Path $symLinkToDir
+            $link | Should BeOfType System.IO.DirectoryInfo
+            $link.LinkType | Should Be "SymbolicLink"
+            $link.Target | Should Be $real.FullName
+        }
+        It "New-Item can create a directory junction to a directory" -Skip:(-Not $IsWindows) {
+            New-Item -ItemType Junction -Path $junctionToDir -Value $realDir
+            Test-Path $junctionToDir | Should Be $true
+        }
+    }
+
+    Context "Remove-Item and hard/symbolic links" {
+        BeforeAll {
+            $testCases = @(
+                @{
+                    Name = "Remove-Item can remove a hard link to a file"
+                    Link = $hardLinkToFile
+                    Target = $realFile
+                }
+                @{
+                    Name = "Remove-Item can remove a symbolic link to a file"
+                    Link = $symLinkToFile
+                    Target = $realFile
+                }
+            )
+
+            # New-Item on Windows will not create a "plain" symlink to a directory
+            $unixTestCases = @(
+                @{
+                    Name = "Remove-Item can remove a symbolic link to a directory"
+                    Link = $symLinkToDir
+                    Target = $realDir
+                }
+            )
+
+            # Junctions and directory symbolic links are Windows and NTFS only
+            $windowsTestCases = @(
+                @{
+                    Name = "Remove-Item can remove a symbolic link to a directory"
+                    Link = $symLinkToDir
+                    Target = $realDir
+                }
+                @{
+                    Name = "Remove-Item can remove a directory symbolic link to a directory"
+                    Link = $dirSymLinkToDir
+                    Target = $realDir
+                }
+                @{
+                    Name = "Remove-Item can remove a junction to a directory"
+                    Link = $junctionToDir
+                    Target = $realDir
+                }
+            )
+
+            function TestRemoveItem
+            {
+                Param (
+                    [string]$Link,
+                    [string]$Target
+                )
+
+                Remove-Item -Path $Link -ErrorAction SilentlyContinue >$null
+                Test-Path -Path $Link | Should Be $false
+                Test-Path -Path $Target | Should Be $true
+            }
+        }
+
+        It "<Name>" -TestCases $testCases {
+            Param (
+                [string]$Name,
+                [string]$Link,
+                [string]$Target
+            )
+
+            TestRemoveItem $Link $Target
+        }
+
+        It "<Name>" -TestCases $unixTestCases -Skip:($IsWindows) {
+            Param (
+                [string]$Name,
+                [string]$Link,
+                [string]$Target
+            )
+
+            TestRemoveItem $Link $Target
+        }
+
+        It "<Name>" -TestCases $windowsTestCases -Skip:(-not $IsWindows) {
+            Param (
+                [string]$Name,
+                [string]$Link,
+                [string]$Target
+            )
+
+            TestRemoveItem $Link $Target
+        }
+    }
+}
 
 Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireAdminOnWindows" {
     BeforeAll {
