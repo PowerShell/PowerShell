@@ -6,6 +6,7 @@ using System.Management.Automation;
 using System.Security.Cryptography;
 using System.Collections.Generic;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.IO;
 
 namespace Microsoft.PowerShell
@@ -13,20 +14,16 @@ namespace Microsoft.PowerShell
     /// <summary>
     /// send up telemetry for startup
     /// </summary>
-    public class ApplicationInsightsTelemetry
+    internal static class ApplicationInsightsTelemetry
     {
         // The semaphore file which indicates whether telemetry should be sent
         // This is temporary code waiting on the acceptance and implementation of the configuration spec
-        /// <summary>
-        /// The name of the file by when present in $PSHOME will enable telemetry.
-        /// If this file is not present, no telemetry will be sent.
-        /// </summary>
-        public const string TelemetrySemaphoreFilename = "DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY";
+        // The name of the file by when present in $PSHOME will enable telemetry.
+        // If this file is not present, no telemetry will be sent.
+        private const string TelemetrySemaphoreFilename = "DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY";
 
-        /// <summary>
-        /// The path to the semaphore file which enables telemetry
-        /// </summary>
-        public static string TelemetrySemaphoreFilePath = Path.Combine(
+        // The path to the semaphore file which enables telemetry
+        private static string TelemetrySemaphoreFilePath = Path.Combine(
             Utils.GetApplicationBase(Utils.DefaultPowerShellShellID),
             TelemetrySemaphoreFilename);
 
@@ -39,6 +36,12 @@ namespace Microsoft.PowerShell
         // PSCoreInsight2 telemetry key
         private const string _psCoreTelemetryKey = "ee4b2115-d347-47b0-adb6-b19c2c763808";
 
+        static ApplicationInsightsTelemetry()
+        {
+            TelemetryConfiguration.Active.InstrumentationKey = _psCoreTelemetryKey;
+            TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = _developerMode;
+        }
+
         /// <summary>
         /// Send the telemetry
         /// </summary>
@@ -49,8 +52,6 @@ namespace Microsoft.PowerShell
                 // if the semaphore file exists, try to send telemetry
                 if (Utils.NativeFileExists(TelemetrySemaphoreFilePath))
                 {
-                    TelemetryConfiguration.Active.InstrumentationKey = _psCoreTelemetryKey;
-                    TelemetryConfiguration.Active.TelemetryChannel.DeveloperMode = _developerMode;
                     if ( _telemetryClient == null )
                     {
                         _telemetryClient = new TelemetryClient();
@@ -67,11 +68,11 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// Create the startup payload and send it up
         /// </summary>
-        public static void SendPSCoreStartupTelemetry()
+        internal static void SendPSCoreStartupTelemetry()
         {
             var properties = new Dictionary<string, string>();
             properties.Add("GitCommitID", PSVersionInfo.GitCommitId);
-            properties.Add("OSVersionInfo", Environment.OSVersion.VersionString);
+            properties.Add("OSDescription", RuntimeInformation.OSDescription);
             SendTelemetry("ConsoleHostStartup", properties);
         }
     }
