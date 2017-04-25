@@ -55,7 +55,7 @@ Describe "Tab completion bug fix" -Tags "CI" {
        }
     }
                 
-    It "Issue#3628 - 'Sort-Object @{<tab> should work" {
+    It "Issue#3628 - 'Sort-Object @{<tab>' should work" {
         $cmd = "Get-Date | Sort-Object @{"
         $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
         $result.CompletionMatches.Count | Should Be 3
