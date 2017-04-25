@@ -25,7 +25,8 @@ namespace System.Management.Automation
         internal const string PSGitCommitIdName = "GitCommitId";
         internal const string PSCompatibleVersionsName = "PSCompatibleVersions";
         internal const string PSCLRVersionName = "CLRVersion";
-
+        internal const string PSPlatformName = "Platform";
+        internal const string PSOSName = "OS";
         internal const string SerializationVersionName = "SerializationVersion";
         internal const string WSManStackVersionName = "WSManStackVersion";
         private static PSVersionHashTable s_psVersionTable = null;
@@ -71,13 +72,13 @@ namespace System.Management.Automation
             s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
             s_psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
-            s_psVersionTable["Platform"] = Environment.OSVersion.Platform.ToString();
+            s_psVersionTable[PSPlatformName] = Environment.OSVersion.Platform.ToString();
 #if CORECLR
             s_psVersionTable[PSCLRVersionName] = null;
-            s_psVersionTable["OS"] = Runtime.InteropServices.RuntimeInformation.OSDescription.ToString();
+            s_psVersionTable[PSOSName] = Runtime.InteropServices.RuntimeInformation.OSDescription.ToString();
 #else
             s_psVersionTable[PSCLRVersionName] = Environment.Version;
-            s_psVersionTable["OS"] = Environment.OSVersion.ToString();
+            s_psVersionTable[PSOSName] = Environment.OSVersion.ToString();
 #endif
         }
 
@@ -347,36 +348,37 @@ namespace System.Management.Automation
             get
             {
                 ArrayList keyList = new ArrayList(base.Keys);
-                keyList.Sort(new PSVersionTableComparer());
+                keyList.Sort(keysComparer);
                 return keyList;
             }
         }
 
+        private static PSVersionTableComparer keysComparer = new PSVersionTableComparer();
         private class PSVersionTableComparer : Comparer<object>
         {
             public override int Compare(object x, object y)
             {
-                string xString = (string)LanguagePrimitives.ConvertTo(x, typeof(string), null);
-                string yString = (string)LanguagePrimitives.ConvertTo(y, typeof(string), null);
-                if (PSVersionInfo.PSVersionName == xString)
+                string xString = (string)LanguagePrimitives.ConvertTo(x, typeof(string), CultureInfo.CurrentCulture);
+                string yString = (string)LanguagePrimitives.ConvertTo(y, typeof(string), CultureInfo.CurrentCulture);
+                if (PSVersionInfo.PSVersionName.Equals(xString, StringComparison.OrdinalIgnoreCase))
                 {
                     return -1;
                 }
-                else if (PSVersionInfo.PSVersionName == yString)
+                else if (PSVersionInfo.PSVersionName.Equals(yString, StringComparison.OrdinalIgnoreCase))
                 {
                     return 1;
                 }
-                else if (PSVersionInfo.PSEditionName == xString)
+                else if (PSVersionInfo.PSEditionName.Equals(xString, StringComparison.OrdinalIgnoreCase))
                 {
                     return -1;
                 }
-                else if (PSVersionInfo.PSEditionName == yString)
+                else if (PSVersionInfo.PSEditionName.Equals(yString, StringComparison.OrdinalIgnoreCase))
                 {
                     return 1;
                 }
                 else
                 {
-                    return xString.CompareTo(yString);
+                    return String.Compare(xString, yString, StringComparison.OrdinalIgnoreCase);
                 }
             }
         }
