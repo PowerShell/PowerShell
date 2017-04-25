@@ -120,7 +120,7 @@ namespace System.Management.Automation
             }
 
             // Set variable $Error
-            PSVariable errorvariable = new PSVariable("Error", new ArrayList(), ScopedItemOptions.Constant);
+            PSVariable errorvariable = new PSVariable(SpecialVariables.Error, new ArrayList(), ScopedItemOptions.Constant);
             GlobalScope.SetVariable(errorvariable.Name, errorvariable, false, false, this, fastPath: true);
 
 

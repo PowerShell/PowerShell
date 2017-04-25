@@ -111,10 +111,10 @@ namespace System.Management.Automation
         internal const string PSCmdlet = "PSCmdlet";
         internal static readonly VariablePath PSCmdletVarPath = new VariablePath("PSCmdlet");
 
-        internal const string Error = "error";
+        internal const string Error = "Error";
         internal static readonly VariablePath ErrorVarPath = new VariablePath("global:" + Error);
 
-        internal const string EventError = "error";
+        internal const string EventError = "Error";
         internal static readonly VariablePath EventErrorVarPath = new VariablePath("script:" + EventError);
 
         internal const string PathExt = "env:PATHEXT";
