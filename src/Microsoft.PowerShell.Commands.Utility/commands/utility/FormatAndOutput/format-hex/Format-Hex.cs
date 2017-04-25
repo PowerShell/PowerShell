@@ -13,7 +13,6 @@ namespace Microsoft.PowerShell.Commands
     /// Displays the hexidecimal equivalent of the input data.
     /// </summary>
     [Cmdlet(VerbsCommon.Format, "Hex", SupportsShouldProcess = true, HelpUri ="https://go.microsoft.com/fwlink/?LinkId=526919")]
-    [Alias ("fhx")]
     [OutputType(typeof(Microsoft.PowerShell.Commands.ByteCollection))]
     public sealed class FormatHex : PSCmdlet
     {

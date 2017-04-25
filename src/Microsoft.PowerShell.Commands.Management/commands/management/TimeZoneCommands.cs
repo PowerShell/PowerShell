@@ -14,7 +14,6 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Get, "TimeZone", DefaultParameterSetName = "Name",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkId=799468")]
-    [Alias("gtz")]
     public class GetTimeZoneCommand : PSCmdlet
     {
 #region Parameters
@@ -118,7 +117,6 @@ namespace Microsoft.PowerShell.Commands
         SupportsShouldProcess = true,
         DefaultParameterSetName = "Name",
         HelpUri = "https://go.microsoft.com/fwlink/?LinkId=799469")]
-    [Alias("stz")]
     public class SetTimeZoneCommand : PSCmdlet
     {
 #region string constants
