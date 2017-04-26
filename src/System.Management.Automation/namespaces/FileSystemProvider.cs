@@ -4953,6 +4953,23 @@ namespace Microsoft.PowerShell.Commands
                                 return String.Empty;
                             }
 
+#if UNIX
+                            // We don't use the Directory class for Unix because the path
+                            // may contain additional globbing patterns such as '[ab]'
+                            // which Directory.EnumerateFiles() processes, giving undesireable
+                            // results in this context.
+                            if (!Utils.NativeItemExists(result))
+                            {
+                                String error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
+                                Exception e = new IOException(error);
+                                WriteError(new ErrorRecord(
+                                    e,
+                                    "ItemDoesNotExist",
+                                    ErrorCategory.ObjectNotFound,
+                                    path));
+                                break;
+                            }
+#else
                             string leafName = GetChildName(result);
 
                             // Use the Directory class to get the real path (this will
@@ -4978,6 +4995,7 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             result = files.First();
+#endif
 
                             if (result.StartsWith(basePath, StringComparison.CurrentCulture))
                             {
