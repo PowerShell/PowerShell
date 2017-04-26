@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Diagnostics; // Process class
 using System.ComponentModel; // Win32Exception
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.Serialization;
 using System.Threading;
 using System.Management.Automation;
@@ -17,6 +18,7 @@ using System.Net;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Security;
+using System.Security.Permissions;
 using System.Security.Principal;
 using Microsoft.Win32.SafeHandles;
 using System.Management.Automation.Internal;
@@ -25,15 +27,6 @@ using Microsoft.Management.Infrastructure;
 
 using FileNakedHandle = System.IntPtr;
 using DWORD = System.UInt32;
-
-#if CORECLR
-// Use stubs for SafeHandleZeroOrMinusOneIsInvalid and SerializableAttribute
-using Microsoft.PowerShell.CoreClr.Stubs;
-using Environment = System.Management.Automation.Environment;
-#else
-using System.Runtime.ConstrainedExecution;
-using System.Security.Permissions;
-#endif
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -752,13 +745,143 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else
                 {
-                    WriteObject(ClrFacade.AddProcessProperties(IncludeUserName.IsPresent, process));
+                    WriteObject(IncludeUserName.IsPresent ? AddUserNameToProcess(process) : (object)process);
                 }
             }//for loop
         } // ProcessRecord
 
         #endregion Overrides
 
+        #region Privates
+
+        /// <summary>
+        /// New PSTypeName added to the process object
+        /// </summary>
+        private const string TypeNameForProcessWithUserName = "System.Diagnostics.Process#IncludeUserName";
+
+        /// <summary>
+        /// Add the 'UserName' NoteProperty to the Process object
+        /// </summary>
+        /// <param name="process"></param>
+        /// <returns></returns>
+        private static PSObject AddUserNameToProcess(Process process)
+        {
+            // Return null if we failed to get the owner information
+            string userName = RetrieveProcessUserName(process);
+
+            PSObject processAsPsobj = PSObject.AsPSObject(process);
+            PSNoteProperty noteProperty = new PSNoteProperty("UserName", userName);
+
+            processAsPsobj.Properties.Add(noteProperty, true);
+            processAsPsobj.TypeNames.Insert(0, TypeNameForProcessWithUserName);
+
+            return processAsPsobj;
+        }
+
+
+        /// <summary>
+        /// Retrieve the UserName through PInvoke
+        /// </summary>
+        /// <param name="process"></param>
+        /// <returns></returns>
+        private static string RetrieveProcessUserName(Process process)
+        {
+            string userName = null;
+#if UNIX
+            userName = Platform.NonWindowsGetUserFromPid(process.Id);
+#else
+            IntPtr tokenUserInfo = IntPtr.Zero;
+            IntPtr processTokenHandler = IntPtr.Zero;
+
+            const uint TOKEN_QUERY = 0x0008;
+
+            try
+            {
+                do
+                {
+                    int error;
+                    if (!Win32Native.OpenProcessToken(ClrFacade.GetSafeProcessHandle(process), TOKEN_QUERY, out processTokenHandler)) { break; }
+
+                    // Set the default length to be 256, so it will be sufficient for most cases
+                    int tokenInfoLength = 256;
+                    tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
+                    if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength))
+                    {
+                        error = Marshal.GetLastWin32Error();
+                        if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
+                        {
+                            Marshal.FreeHGlobal(tokenUserInfo);
+                            tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
+
+                            if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength)) { break; }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    var tokenUser = ClrFacade.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
+
+                    // Set the default length to be 256, so it will be sufficient for most cases
+                    int userNameLength = 256, domainNameLength = 256;
+                    var userNameStr = new StringBuilder(userNameLength);
+                    var domainNameStr = new StringBuilder(domainNameLength);
+                    Win32Native.SID_NAME_USE accountType;
+
+                    if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
+                    {
+                        error = Marshal.GetLastWin32Error();
+                        if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
+                        {
+                            userNameStr.EnsureCapacity(userNameLength);
+                            domainNameStr.EnsureCapacity(domainNameLength);
+
+                            if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType)) { break; }
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+
+                    userName = domainNameStr + "\\" + userNameStr;
+                } while (false);
+            }
+            catch (NotSupportedException)
+            {
+                // The Process not started yet, or it's a process from a remote machine
+            }
+            catch (InvalidOperationException)
+            {
+                // The Process has exited, Process.Handle will raise this exception
+            }
+            catch (Win32Exception)
+            {
+                // We might get an AccessDenied error
+            }
+            catch (Exception)
+            {
+                // I don't expect to get other exceptions,
+            }
+            finally
+            {
+                if (tokenUserInfo != IntPtr.Zero)
+                {
+                    Marshal.FreeHGlobal(tokenUserInfo);
+                }
+
+                if (processTokenHandler != IntPtr.Zero)
+                {
+                    Win32Native.CloseHandle(processTokenHandler);
+                }
+            }
+
+#endif
+            return userName;
+        }
+
+        #endregion Privates
     }//GetProcessCommand
     #endregion GetProcessCommand
 
@@ -1873,11 +1996,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         startInfo.Domain = nwcredential.Domain;
                     }
-#if CORECLR
-                    startInfo.PasswordInClearText = ClrFacade.ConvertSecureStringToString(_credential.Password);
-#else
                     startInfo.Password = _credential.Password;
-#endif
                 }
 
                 //RedirectionInput File Check -> Not Exist -> Throw Error
@@ -2402,11 +2521,7 @@ namespace Microsoft.PowerShell.Commands
                     IntPtr password = IntPtr.Zero;
                     try
                     {
-#if CORECLR
-                        password = (startinfo.PasswordInClearText == null) ? Marshal.StringToCoTaskMemUni(string.Empty) : Marshal.StringToCoTaskMemUni(startinfo.PasswordInClearText);
-#else
-                        password = (startinfo.Password == null) ? Marshal.StringToCoTaskMemUni(string.Empty) : ClrFacade.SecureStringToCoTaskMemUnicode(startinfo.Password);
-#endif
+                        password = (startinfo.Password == null) ? Marshal.StringToCoTaskMemUni(string.Empty) : Marshal.SecureStringToCoTaskMemUnicode(startinfo.Password);
                         flag = ProcessNativeMethods.CreateProcessWithLogonW(startinfo.UserName, startinfo.Domain, password, logonFlags, null, cmdLine, creationFlags, AddressOfEnvironmentBlock, startinfo.WorkingDirectory, lpStartupInfo, lpProcessInformation);
                         if (!flag)
                         {
@@ -2821,7 +2936,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    [SuppressUnmanagedCodeSecurity, HostProtection(SecurityAction.LinkDemand, MayLeakOnAbort = true)]
+    [SuppressUnmanagedCodeSecurity]
     internal sealed class SafeJobHandle : SafeHandleZeroOrMinusOneIsInvalid
     {
         internal SafeJobHandle(IntPtr jobHandle)

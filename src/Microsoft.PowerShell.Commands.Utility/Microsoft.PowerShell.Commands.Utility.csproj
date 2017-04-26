@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <VersionPrefix>6.0.0</VersionPrefix>
-    <TargetFramework>netstandard1.6</TargetFramework>
+    <TargetFramework>netcoreapp2.0</TargetFramework>
     <NoWarn>$(NoWarn);CS1570</NoWarn>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
@@ -20,11 +20,11 @@
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
   </ItemGroup>
 
-  <PropertyGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+  <PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
+  <ItemGroup>
     <Compile Remove="commands\utility\FormatAndOutput\OutGridView\ColumnInfo.cs" />
     <Compile Remove="commands\utility\FormatAndOutput\OutGridView\ExpressionColumnInfo.cs" />
     <Compile Remove="commands\utility\FormatAndOutput\OutGridView\HeaderInfo.cs" />
@@ -89,9 +89,9 @@
     <DebugType>full</DebugType>
   </PropertyGroup>
 
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.6' ">
-    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.0.0-rc" />
-    <PackageReference Include="System.Diagnostics.TextWriterTraceListener" Version="4.3.0" />
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="2.0.0" />
+    <PackageReference Include="System.ValueTuple" Version="4.4.0-preview1-25204-02" />
   </ItemGroup>
 
 </Project>

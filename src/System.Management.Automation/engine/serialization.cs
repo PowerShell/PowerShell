@@ -14,6 +14,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
+using System.Net.Mail;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Security;
@@ -24,13 +25,6 @@ using Microsoft.Management.Infrastructure.Serialization;
 using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Remoting;
-
-#if CORECLR
-// Use stubs for SerializableAttribute and ISerializable related types
-using Microsoft.PowerShell.CoreClr.Stubs;
-#else
-using MailAddress = System.Net.Mail.MailAddress;
-#endif
 
 namespace System.Management.Automation
 {

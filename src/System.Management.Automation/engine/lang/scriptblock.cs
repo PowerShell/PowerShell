@@ -19,11 +19,6 @@ using System.Management.Automation.Runspaces;
 using System.Diagnostics.CodeAnalysis;
 using System.Runtime.ExceptionServices;
 
-#if CORECLR
-// Use stubs for Serializable attribute and SerializationInfo
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation
 {
     /// <summary>

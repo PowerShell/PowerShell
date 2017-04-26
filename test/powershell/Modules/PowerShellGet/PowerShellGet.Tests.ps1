@@ -6,6 +6,8 @@ $SourceLocation = 'https://dtlgalleryint.cloudapp.net'
 $RegisteredINTRepo = $false
 $ContosoServer = 'ContosoServer'
 $FabrikamServerScript = 'Fabrikam-ServerScript'
+$Initialized = $false
+
 
 #region Utility functions
 
@@ -65,25 +67,28 @@ $script:MyDocumentsScriptsPath = Microsoft.PowerShell.Management\Join-Path -Path
 
 #region Register a test repository
 
-# Check if the PackageManagement works in the base-oS or PowerShellCore
-$PSHome
-$PSVersionTable
-$env:PSModulePath
-
-Get-Module -ListAvailable -Name PackageManagement, PowerShellGet
-Import-Module PackageManagement -verbose
-Get-PackageProvider -ListAvailable
-
-$repo = Get-PSRepository -ErrorAction SilentlyContinue |
-            Where-Object {$_.SourceLocation.StartsWith($SourceLocation, [System.StringComparison]::OrdinalIgnoreCase)}
-if($repo)
+function Initialize
 {
-    $RepositoryName = $repo.Name
-}
-else
-{
-    Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -InstallationPolicy Trusted
-    $RegisteredINTRepo = $true
+    # Check if the PackageManagement works in the base-oS or PowerShellCore
+    $PSHome
+    $PSVersionTable
+    $env:PSModulePath
+
+    Get-Module -ListAvailable -Name PackageManagement, PowerShellGet
+    Import-Module PackageManagement -verbose
+    Get-PackageProvider -ListAvailable
+
+    $repo = Get-PSRepository -ErrorAction SilentlyContinue |
+                Where-Object {$_.SourceLocation.StartsWith($SourceLocation, [System.StringComparison]::OrdinalIgnoreCase)}
+    if($repo)
+    {
+        $script:RepositoryName = $repo.Name
+    }
+    else
+    {
+        Register-PSRepository -Name $RepositoryName -SourceLocation $SourceLocation -InstallationPolicy Trusted
+        $script:RegisteredINTRepo = $true
+    }
 }
 
 #endregion
@@ -94,6 +99,13 @@ function Remove-InstalledModules
 }
 
 Describe "PowerShellGet - Module tests" -tags "Feature" {
+
+    BeforeAll {
+        if ($script:Initialized -eq $false) {
+            Initialize
+            $script:Initialized = $true
+        }
+    }
 
     BeforeEach {
         Remove-InstalledModules
@@ -125,6 +137,13 @@ Describe "PowerShellGet - Module tests" -tags "Feature" {
 
 Describe "PowerShellGet - Module tests (Admin)" -tags @('Feature', 'RequireAdminOnWindows') {
 
+    BeforeAll {
+        if ($script:Initialized -eq $false) {
+            Initialize
+            $script:Initialized = $true
+        }
+    }
+
     BeforeEach {
         Remove-InstalledModules
     }
@@ -154,6 +173,13 @@ function Remove-InstalledScripts
 
 Describe "PowerShellGet - Script tests" -tags "Feature" {
 
+    BeforeAll {
+        if ($script:Initialized -eq $false) {
+            Initialize
+            $script:Initialized = $true
+        }
+    }
+
     BeforeEach {
         Remove-InstalledScripts
     }
@@ -179,6 +205,13 @@ Describe "PowerShellGet - Script tests" -tags "Feature" {
 }
 
 Describe "PowerShellGet - Script tests (Admin)" -tags @('Feature', 'RequireAdminOnWindows') {
+
+    BeforeAll {
+        if ($script:Initialized -eq $false) {
+            Initialize
+            $script:Initialized = $true
+        }
+    }
 
     BeforeEach {
         Remove-InstalledScripts

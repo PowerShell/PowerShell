@@ -28,10 +28,6 @@ using System.Text.RegularExpressions;
 #else
 using System.Runtime.Serialization;           /* used in facade API 'GetUninitializedObject' */
 #endif
-#if !UNIX
-using System.ComponentModel;                  /* used in the facade API RetrieveProcessUserName */
-using Microsoft.PowerShell.Commands.Internal; /* used in the facade APIs related to 'SafeProcessHandle' and 'RetreiveUserName' */
-#endif
 
 namespace System.Management.Automation
 {
@@ -46,24 +42,6 @@ namespace System.Management.Automation
         /// We use this convention for names to archive it.
         /// </summary>
         internal static readonly char FIRST_CHAR_PSASSEMBLY_MARK = (char)0x29f9;
-
-        #region Type
-
-        /// <summary>
-        /// Facade for Type.GetMember(string, BindingFlags) to return multiple matched Public Static methods
-        /// </summary>
-        internal static MemberInfo[] GetMethods(Type targetType, string methodName)
-        {
-#if CORECLR
-            const BindingFlags flagsToUse = BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Static;
-            return targetType.GetMethods(methodName, flagsToUse);
-#else
-            const BindingFlags flagsToUse = BindingFlags.FlattenHierarchy | BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod;
-            return targetType.GetMember(methodName, flagsToUse);
-#endif
-        }
-
-        #endregion Type
 
         #region Process
 
@@ -117,160 +95,6 @@ namespace System.Management.Automation
 #endif
         }
 
-#region Facade for AddProcessProperties
-
-        /// <summary>
-        /// Ensures the 'UserName' and 'HandleCount' Properties exist the Process object.
-        /// </summary>
-        /// <param name="process"></param>
-        /// <param name="includeUserName"></param>
-        /// <returns></returns>
-        internal static PSObject AddProcessProperties(bool includeUserName, Process process)
-        {
-            PSObject processAsPsobj = includeUserName ? AddUserNameToProcess(process) : PSObject.AsPSObject(process);
-#if CORECLR
-            // In CoreCLR, the System.Diagnostics.Process.HandleCount property does not exist.
-            // I am adding a note property HandleCount and temporarily setting it to zero.
-            // This issue will be fix for RTM and it is tracked by 5024994: Get-process does not populate the Handles field.
-            PSMemberInfo hasHandleCount = processAsPsobj.Properties["HandleCount"];
-            if (hasHandleCount == null)
-            {
-                PSNoteProperty noteProperty = new PSNoteProperty("HandleCount", 0);
-                processAsPsobj.Properties.Add(noteProperty, true);
-                processAsPsobj.TypeNames.Insert(0, "System.Diagnostics.Process#HandleCount");
-            }
-#endif
-            return processAsPsobj;
-        }
-        /// <summary>
-        /// New PSTypeName added to the process object
-        /// </summary>
-        private const string TypeNameForProcessWithUserName = "System.Diagnostics.Process#IncludeUserName";
-
-        /// <summary>
-        /// Add the 'UserName' NoteProperty to the Process object
-        /// </summary>
-        /// <param name="process"></param>
-        /// <returns></returns>
-        private static PSObject AddUserNameToProcess(Process process)
-        {
-            // Return null if we failed to get the owner information
-            string userName = ClrFacade.RetrieveProcessUserName(process);
-
-            PSObject processAsPsobj = PSObject.AsPSObject(process);
-            PSNoteProperty noteProperty = new PSNoteProperty("UserName", userName);
-
-            processAsPsobj.Properties.Add(noteProperty, true);
-            processAsPsobj.TypeNames.Insert(0, TypeNameForProcessWithUserName);
-
-            return processAsPsobj;
-        }
-
-
-        /// <summary>
-        /// Retrieve the UserName through PInvoke
-        /// </summary>
-        /// <param name="process"></param>
-        /// <returns></returns>
-        private static string RetrieveProcessUserName(Process process)
-        {
-            string userName = null;
-#if UNIX
-            userName = Platform.NonWindowsGetUserFromPid(process.Id);
-#else
-            IntPtr tokenUserInfo = IntPtr.Zero;
-            IntPtr processTokenHandler = IntPtr.Zero;
-
-            const uint TOKEN_QUERY = 0x0008;
-
-            try
-            {
-                do
-                {
-                    int error;
-                    if (!Win32Native.OpenProcessToken(ClrFacade.GetSafeProcessHandle(process), TOKEN_QUERY, out processTokenHandler)) { break; }
-
-                    // Set the default length to be 256, so it will be sufficient for most cases
-                    int tokenInfoLength = 256;
-                    tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
-                    if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength))
-                    {
-                        error = Marshal.GetLastWin32Error();
-                        if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
-                        {
-                            Marshal.FreeHGlobal(tokenUserInfo);
-                            tokenUserInfo = Marshal.AllocHGlobal(tokenInfoLength);
-
-                            if (!Win32Native.GetTokenInformation(processTokenHandler, Win32Native.TOKEN_INFORMATION_CLASS.TokenUser, tokenUserInfo, tokenInfoLength, out tokenInfoLength)) { break; }
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-
-                    var tokenUser = ClrFacade.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
-
-                    // Set the default length to be 256, so it will be sufficient for most cases
-                    int userNameLength = 256, domainNameLength = 256;
-                    var userNameStr = new StringBuilder(userNameLength);
-                    var domainNameStr = new StringBuilder(domainNameLength);
-                    Win32Native.SID_NAME_USE accountType;
-
-                    if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType))
-                    {
-                        error = Marshal.GetLastWin32Error();
-                        if (error == Win32Native.ERROR_INSUFFICIENT_BUFFER)
-                        {
-                            userNameStr.EnsureCapacity(userNameLength);
-                            domainNameStr.EnsureCapacity(domainNameLength);
-
-                            if (!Win32Native.LookupAccountSid(null, tokenUser.User.Sid, userNameStr, ref userNameLength, domainNameStr, ref domainNameLength, out accountType)) { break; }
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-
-                    userName = domainNameStr + "\\" + userNameStr;
-                } while (false);
-            }
-            catch (NotSupportedException)
-            {
-                // The Process not started yet, or it's a process from a remote machine
-            }
-            catch (InvalidOperationException)
-            {
-                // The Process has exited, Process.Handle will raise this exception
-            }
-            catch (Win32Exception)
-            {
-                // We might get an AccessDenied error
-            }
-            catch (Exception)
-            {
-                // I don't expect to get other exceptions,
-            }
-            finally
-            {
-                if (tokenUserInfo != IntPtr.Zero)
-                {
-                    Marshal.FreeHGlobal(tokenUserInfo);
-                }
-
-                if (processTokenHandler != IntPtr.Zero)
-                {
-                    Win32Native.CloseHandle(processTokenHandler);
-                }
-            }
-
-#endif
-            return userName;
-        }
-
-#endregion
-
 #if CORECLR
         /// <summary>
         /// Facade for ProcessStartInfo.Environment
@@ -286,32 +110,6 @@ namespace System.Management.Automation
         internal static System.Collections.Specialized.StringDictionary GetProcessEnvironment(ProcessStartInfo startInfo)
         {
             return startInfo.EnvironmentVariables;
-        }
-#endif
-#if CORECLR
-        /// <summary>
-        /// Converts the given SecureString to a string
-        /// </summary>
-        /// <param name="secureString"></param>
-        /// <returns></returns>
-        internal static string ConvertSecureStringToString(SecureString secureString)
-        {
-            string passwordInClearText;
-            IntPtr unmanagedMemory = IntPtr.Zero;
-
-            try
-            {
-                unmanagedMemory = SecureStringToCoTaskMemUnicode(secureString);
-                passwordInClearText = Marshal.PtrToStringUni(unmanagedMemory);
-            }
-            finally
-            {
-                if (unmanagedMemory != IntPtr.Zero)
-                {
-                    Marshal.ZeroFreeCoTaskMemUnicode(unmanagedMemory);
-                }
-            }
-            return passwordInClearText;
         }
 #endif
 
@@ -837,36 +635,6 @@ namespace System.Management.Automation
         #endregion Culture
 
         #region Misc
-
-        /// <summary>
-        /// Facade for Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks)
-        /// Inserts line breaks after every 76 characters in the string representation.
-        /// </summary>
-        internal static string ToBase64StringWithLineBreaks(byte[] bytes)
-        {
-#if CORECLR
-            // Inserts line breaks after every 76 characters in the string representation.
-            string encodedRawString = Convert.ToBase64String(bytes);
-            if (encodedRawString.Length <= 76)
-                return encodedRawString;
-            
-            StringBuilder builder = new StringBuilder(encodedRawString.Length);
-            int index = 0, remainingLen = encodedRawString.Length;
-            while (remainingLen > 76)
-            {
-                builder.Append(encodedRawString, index, 76);
-                builder.Append(System.Environment.NewLine);
-
-                index += 76;
-                remainingLen -= 76;
-            }
-
-            builder.Append(encodedRawString, index, remainingLen);
-            return builder.ToString();
-#else
-            return Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);
-#endif
-        }
 
         /// <summary>
         /// Facade for RemotingServices.IsTransparentProxy(object)

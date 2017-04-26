@@ -2624,7 +2624,7 @@ namespace System.Management.Automation.Language
                 // 2. TypeBuilder
                 // 3. RuntimeType
                 // We also allow wipe type (assign to null), because there could be errors.
-                Diagnostics.Assert(value == null || _type == null || _type.GetTypeInfo() is TypeBuilder, "Type must be assigned only once to RuntimeType");
+                Diagnostics.Assert(value == null || _type == null || _type is TypeBuilder, "Type must be assigned only once to RuntimeType");
                 _type = value;
             }
         }

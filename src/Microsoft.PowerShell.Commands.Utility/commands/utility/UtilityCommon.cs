@@ -15,59 +15,9 @@ using System.Globalization;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The base class for all command processor classes. It provides
-    /// abstract methods to execute a command.
+    /// Don't use! The API is obsolete!
     /// </summary>
-    internal static class UtilityCommon
-    {
-        /// <summary>
-        /// Converts the textencodingtype enum value to the corresponding encoding
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
-        internal static Encoding GetEncodingFromEnum(TextEncodingType type)
-        {
-            Encoding encoding = Encoding.ASCII;
-
-            switch (type)
-            {
-                case TextEncodingType.String:
-                    encoding = Encoding.Unicode;
-                    break;
-
-                case TextEncodingType.Unicode:
-                    encoding = Encoding.Unicode;
-                    break;
-
-                case TextEncodingType.BigEndianUnicode:
-                    encoding = Encoding.BigEndianUnicode;
-                    break;
-
-                case TextEncodingType.Utf8:
-                    encoding = Encoding.UTF8;
-                    break;
-
-                case TextEncodingType.Utf7:
-                    encoding = Encoding.UTF7;
-                    break;
-
-                case TextEncodingType.Ascii:
-                    encoding = Encoding.ASCII;
-                    break;
-
-                default:
-                    // Default to unicode encoding
-                    encoding = Encoding.ASCII;
-                    break;
-            }
-
-            return encoding;
-        }
-    } // class UtilityCommon
-    /// <summary>
-    /// abc
-    /// </summary>
+    [Obsolete("This class is included in this SDK for completeness only. The members of this class cannot be used directly, nor should this class be used to derive other classes.", true)]
     public enum TextEncodingType
     {
         /// <summary>

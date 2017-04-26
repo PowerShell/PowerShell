@@ -7,16 +7,9 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Security;
-using SafeString = System.String;
 using System.Runtime.Serialization;
 using System.Security.Cryptography;
 using Microsoft.PowerShell;
-
-#if CORECLR
-// Use stubs for ISerializable related types
-using Microsoft.PowerShell.CoreClr.Stubs;
-using System.Runtime.InteropServices;
-#endif
 
 // FxCop suppressions for resource strings:
 [module: SuppressMessage("Microsoft.Naming", "CA1703:ResourceStringsShouldBeSpelledCorrectly", Scope = "resource", Target = "Credential.resources", MessageId = "Cred")]
@@ -163,8 +156,8 @@ namespace System.Management.Automation
             _userName = (string)info.GetValue("UserName", typeof(string));
 
             // deserialize to secure string
-            SafeString safePassword = (SafeString)info.GetValue("Password", typeof(SafeString));
-            if (safePassword == SafeString.Empty)
+            string safePassword = (string)info.GetValue("Password", typeof(string));
+            if (safePassword == string.Empty)
             {
                 _password = new SecureString();
             }
@@ -272,28 +265,7 @@ namespace System.Management.Automation
 
                 if (IsValidUserName(_userName, out user, out domain))
                 {
-#if CORECLR
-                    // NetworkCredential constructor only accepts plain string password in .NET Core.
-                    // TODO: This raises security concerns about having the plain string password in memory
-                    // for an indefinite period of time. So we need to change back to the constructor that 
-                    // takes a SecureString password once it becomes available in .NET Core.
-                    IntPtr unmanagedPtr = IntPtr.Zero;
-                    try
-                    {
-                        unmanagedPtr = ClrFacade.SecureStringToCoTaskMemUnicode(_password);
-                        string pwdInPlainText = System.Runtime.InteropServices.Marshal.PtrToStringUni(unmanagedPtr);
-                        _netCred = new NetworkCredential(user, pwdInPlainText, domain);
-                    }
-                    finally
-                    {
-                        if (unmanagedPtr != IntPtr.Zero)
-                        {
-                            Marshal.ZeroFreeCoTaskMemUnicode(unmanagedPtr);
-                        }
-                    }
-#else
                     _netCred = new NetworkCredential(user, _password, domain);
-#endif
                 }
             }
 

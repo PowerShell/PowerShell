@@ -14,11 +14,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Diagnostics;
 using System.Text;
 
-#if CORECLR
-// Use stub for SystemException.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace System.Management.Automation
 {
     /// <summary>
@@ -63,7 +58,6 @@ namespace System.Management.Automation
     {
         internal static string StackTrace(int framesToSkip)
         {
-#if !CORECLR //TODO:CORECLR StackTrace - unable to get stack trace
             StackTrace trace = new StackTrace(true);
             StackFrame[] frames = trace.GetFrames();
             StringBuilder frameString = new StringBuilder();
@@ -75,9 +69,6 @@ namespace System.Management.Automation
                 frameString.Append(frame.ToString());
             }
             return frameString.ToString();
-#else
-            return string.Empty;
-#endif
         }
 
         private static object s_throwInsteadOfAssertLock = 1;
@@ -196,9 +187,6 @@ namespace System.Management.Automation
                 builder.Append(Diagnostics.StackTrace(2));
                 tracer.TraceError(builder.ToString());
             }
-#elif CORECLR // Debug.Fail is not in CoreCLR
-            string assertionMessage = "ASSERT: " + whyThisShouldNeverHappen + "  " + detailMessage + " ";
-            throw new AssertException(assertionMessage);
 #else
             if (Diagnostics.ThrowInsteadOfAssert)
             {

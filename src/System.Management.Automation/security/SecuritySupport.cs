@@ -10,7 +10,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
-using System.Management.Automation.Security;
+using Microsoft.Win32;
 using System.Management.Automation.Internal;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
@@ -20,11 +20,7 @@ using System.Globalization;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Runtime.InteropServices;
-
-using Microsoft.Win32;
-
 using DWORD = System.UInt32;
-using BOOL = System.UInt32;
 
 namespace Microsoft.PowerShell
 {
@@ -262,6 +258,69 @@ namespace System.Management.Automation.Internal
             return ExecutionPolicy.Restricted;
         }
 
+
+        private static bool? _hasGpScriptParent;
+
+        /// <summary>
+        /// A value indicating that the current process was launched by GPScript.exe
+        /// Used to determine execution policy when group policies are in effect
+        /// </summary>
+        /// <remarks>
+        /// This is somewhat expensive to determine and does not change within the lifetime of the current process		
+        /// </remarks>
+        private static bool HasGpScriptParent
+        {
+            get
+            {
+                if (!_hasGpScriptParent.HasValue)
+                {
+                    _hasGpScriptParent = IsCurrentProcessLaunchedByGpScript();
+                }
+                return _hasGpScriptParent.Value;
+            }
+        }
+
+        private static bool IsCurrentProcessLaunchedByGpScript()
+        {
+            Process currentProcess = Process.GetCurrentProcess();
+            string gpScriptPath = IO.Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.System),
+                "gpscript.exe");
+
+            bool foundGpScriptParent = false;
+            try
+            {
+                while (currentProcess != null)
+                {
+                    if (String.Equals(gpScriptPath,
+                            PsUtils.GetMainModule(currentProcess).FileName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        foundGpScriptParent = true;
+                        break;
+                    }
+                    else
+                    {
+                        currentProcess = PsUtils.GetParentProcess(currentProcess);
+                    }
+                }
+            }
+            catch (System.ComponentModel.Win32Exception)
+            {
+                // If you attempt to retrieve the MainModule of a 64-bit process
+                // from a WOW64 (32-bit) process, the Win32 API has a fatal
+                // flaw that causes this to return the error:
+                //   "Only part of a ReadProcessMemory or WriteProcessMemory
+                //   request was completed."
+                // In this case, we just catch the exception and eat it.
+                // The implication is that logon / logoff scripts that somehow
+                // launch the Wow64 version of PowerShell will be subject
+                // to the execution policy deployed by Group Policy (where
+                // our goal here is to not have the Group Policy execution policy
+                // affect logon / logoff scripts.
+            }
+            return foundGpScriptParent;
+        }
+
         internal static ExecutionPolicy GetExecutionPolicy(string shellId, ExecutionPolicyScope scope)
         {
 #if UNIX
@@ -296,55 +355,15 @@ namespace System.Management.Automation.Internal
                 case ExecutionPolicyScope.MachinePolicy:
                     {
                         string groupPolicyPreference = GetGroupPolicyValue(shellId, scope);
-                        if (!String.IsNullOrEmpty(groupPolicyPreference))
+
+                        // Be sure we aren't being called by Group Policy
+                        // itself. A group policy should never block a logon /
+                        // logoff script.     
+                        if (String.IsNullOrEmpty(groupPolicyPreference) || HasGpScriptParent)
                         {
-                            // Be sure we aren't being called by Group Policy
-                            // itself. A group policy should never block a logon /
-                            // logoff script.
-                            Process currentProcess = Process.GetCurrentProcess();
-                            string gpScriptPath = IO.Path.Combine(
-                                Environment.GetFolderPath(Environment.SpecialFolder.System),
-                                "gpscript.exe");
-                            bool foundGpScriptParent = false;
-
-                            try
-                            {
-                                while (currentProcess != null)
-                                {
-                                    if (String.Equals(gpScriptPath,
-                                            PsUtils.GetMainModule(currentProcess).FileName, StringComparison.OrdinalIgnoreCase))
-                                    {
-                                        foundGpScriptParent = true;
-                                        break;
-                                    }
-                                    else
-                                    {
-                                        currentProcess = PsUtils.GetParentProcess(currentProcess);
-                                    }
-                                }
-                            }
-                            catch (System.ComponentModel.Win32Exception)
-                            {
-                                // If you attempt to retrieve the MainModule of a 64-bit process
-                                // from a WOW64 (32-bit) process, the Win32 API has a fatal
-                                // flaw that causes this to return the error:
-                                //   "Only part of a ReadProcessMemory or WriteProcessMemory
-                                //   request was completed."
-                                // In this case, we just catch the exception and eat it.
-                                // The implication is that logon / logoff scripts that somehow
-                                // launch the Wow64 version of PowerShell will be subject
-                                // to the execution policy deployed by Group Policy (where
-                                // our goal here is to not have the Group Policy execution policy
-                                // affect logon / logoff scripts.
-                            }
-
-                            if (!foundGpScriptParent)
-                            {
-                                return ParseExecutionPolicy(groupPolicyPreference);
-                            }
-                        }
-
-                        return ExecutionPolicy.Undefined;
+                            return ExecutionPolicy.Undefined;
+                        }                                                                                                                                               
+                        return ParseExecutionPolicy(groupPolicyPreference);                                                
                     }
             }
 
@@ -1080,7 +1099,7 @@ namespace System.Management.Automation
             StringBuilder output = new StringBuilder();
             output.AppendLine(BEGIN_CMS_SIGIL);
 
-            string encodedString = ClrFacade.ToBase64StringWithLineBreaks(bytes);
+            string encodedString = Convert.ToBase64String(bytes, Base64FormattingOptions.InsertLineBreaks);
             output.AppendLine(encodedString);
             output.Append(END_CMS_SIGIL);
 

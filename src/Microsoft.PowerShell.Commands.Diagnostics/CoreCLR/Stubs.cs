@@ -1,7 +1,6 @@
 
 #if CORECLR
 using System.ComponentModel;
-using Microsoft.PowerShell.CoreClr.Stubs;
 
 namespace System.Diagnostics
 {

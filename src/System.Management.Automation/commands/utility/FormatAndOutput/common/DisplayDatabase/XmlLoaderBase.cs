@@ -11,11 +11,6 @@ using System.Management.Automation.Host;
 using System.Globalization;
 using System.Text;
 
-#if CORECLR
-// Use stubs for SystemException
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 /*
  SUMMARY: this file contains a general purpose, reusable framework for
     loading XML files, and do data validation.

@@ -129,7 +129,7 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
             "Hello!"
 '@)
 
-            Add-Type -TypeDefinition $typeDef -ReferencedAssemblies "System.Globalization","System.Management.Automation"
+            Add-Type -TypeDefinition $typeDef
 
             $dummyHost = [TestRunner.DummyHost]::new()
             [runspace] $rs = [runspacefactory]::CreateRunspace($dummyHost)

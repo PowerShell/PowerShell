@@ -13,11 +13,6 @@ using System.Management.Automation.Internal;
 using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
 
-#if CORECLR
-// Use stub for ICloneable
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>

@@ -355,6 +355,36 @@ namespace System.Management.Automation.Runspaces
             throw new PSNotImplementedException();
         }
 
+        /// <summary>
+        /// Validates port number is in range
+        /// </summary>
+        /// <param name="port">Port number to validate</param>
+        internal virtual void ValidatePortInRange(int port)
+        {
+            if ((port < MinPort || port > MaxPort))
+            {
+                String message =
+                    PSRemotingErrorInvariants.FormatResourceString(
+                        RemotingErrorIdStrings.PortIsOutOfRange, port);
+                ArgumentException e = new ArgumentException(message);
+                throw e;
+            }
+        }
+
+        #endregion
+
+        #region Constants
+
+        /// <summary>
+        /// Maximum value for port
+        /// </summary>
+        protected const int MaxPort = 0xFFFF;
+
+        /// <summary>
+        /// Minimum value for port
+        /// </summary>
+        protected const int MinPort = 0;
+
         #endregion
     }
 
@@ -1172,6 +1202,7 @@ namespace System.Management.Automation.Runspaces
 
             if (port.HasValue)
             {
+                ValidatePortInRange(port.Value);
                 // resolve to default ports if required
                 if (port.Value == DefaultPort)
                 {
@@ -1184,14 +1215,6 @@ namespace System.Management.Automation.Runspaces
                 {
                     PortSetting = port.Value;
                     UseDefaultWSManPort = false;
-                }
-                else if ((port.Value < MinPort || port.Value > MaxPort))
-                {
-                    String message =
-                        PSRemotingErrorInvariants.FormatResourceString(
-                            RemotingErrorIdStrings.PortIsOutOfRange, port);
-                    ArgumentException e = new ArgumentException(message);
-                    throw e;
                 }
                 else
                 {
@@ -1390,16 +1413,6 @@ namespace System.Management.Automation.Runspaces
         /// default remote host name
         /// </summary>
         private const string DefaultComputerName = "localhost";
-
-        /// <summary>
-        /// Maximum value for port
-        /// </summary>
-        private const int MaxPort = 0xFFFF;
-
-        /// <summary>
-        /// Minimum value for port
-        /// </summary>
-        private const int MinPort = 0;
 
         /// <summary>
         /// String that represents the local host Uri
@@ -1852,6 +1865,15 @@ namespace System.Management.Automation.Runspaces
             set;
         }
 
+        /// <summary>
+        /// Port for connection
+        /// </summary>
+        private int Port
+        {
+            get;
+            set;
+        }
+
         #endregion
 
         #region Constructors
@@ -1878,6 +1900,25 @@ namespace System.Management.Automation.Runspaces
             this.UserName = userName;
             this.ComputerName = computerName;
             this.KeyFilePath = keyFilePath;
+            this.Port = DefaultPort;
+        }
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="userName">User Name</param>
+        /// <param name="computerName">Computer Name</param>
+        /// <param name="keyFilePath">Key File Path</param>
+        /// <param name="port">Port number for connection (default 22)</param>
+        public SSHConnectionInfo(
+            string userName,
+            string computerName,
+            string keyFilePath,
+            int port) : this(userName, computerName, keyFilePath)
+        {
+            ValidatePortInRange(port);
+
+            this.Port = (port != 0) ? port : DefaultPort;
         }
 
         #endregion
@@ -1930,6 +1971,7 @@ namespace System.Management.Automation.Runspaces
             newCopy.ComputerName = this.ComputerName;
             newCopy.UserName = this.UserName;
             newCopy.KeyFilePath = this.KeyFilePath;
+            newCopy.Port = this.Port;
 
             return newCopy;
         }
@@ -2004,14 +2046,14 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 arguments = (string.IsNullOrEmpty(domainName)) ?
-                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" {1}@{2} -s powershell", this.KeyFilePath, userName, this.ComputerName) :
-                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" -l {1}@{2} {3} -s powershell", this.KeyFilePath, userName, domainName, this.ComputerName);
+                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" {1}@{2} -p {3} -s powershell", this.KeyFilePath, userName, this.ComputerName, this.Port) :
+                    string.Format(CultureInfo.InvariantCulture, @"-i ""{0}"" -l {1}@{2} {3} -p {4} -s powershell", this.KeyFilePath, userName, domainName, this.ComputerName, this.Port);
             }
             else
             {
                 arguments = (string.IsNullOrEmpty(domainName)) ?
-                    string.Format(CultureInfo.InvariantCulture, @"{0}@{1} -s powershell", userName, this.ComputerName) :
-                    string.Format(CultureInfo.InvariantCulture, @"-l {0}@{1} {2} -s powershell", userName, domainName, this.ComputerName);
+                    string.Format(CultureInfo.InvariantCulture, @"{0}@{1} -p {2} -s powershell", userName, this.ComputerName, this.Port) :
+                    string.Format(CultureInfo.InvariantCulture, @"-l {0}@{1} {2} -p {3} -s powershell", userName, domainName, this.ComputerName, this.Port);
             }
 
             System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo(
@@ -2037,7 +2079,16 @@ namespace System.Management.Automation.Runspaces
 #endif
         }
 
-#endregion
+        #endregion
+
+        #region Constants
+
+        /// <summary>
+        /// Default value for port
+        /// </summary>
+        private const int DefaultPort = 22;
+
+        #endregion
 
         #region SSH Process Creation
 

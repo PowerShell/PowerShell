@@ -10,11 +10,6 @@ using Microsoft.PowerShell.Commands.Internal.Format;
 using System.Management.Automation.Internal;
 using System.Diagnostics.CodeAnalysis;
 
-#if CORECLR
-// Use stubs for SystemException
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>

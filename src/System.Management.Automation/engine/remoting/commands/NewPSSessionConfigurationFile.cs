@@ -10,13 +10,6 @@ using System.Diagnostics;
 using System.Management.Automation.Internal;
 using System.Globalization;
 
-#if CORECLR
-// Some APIs are missing from System.Environment. We use System.Management.Automation.Environment as a proxy type:
-//  - for missing APIs, System.Management.Automation.Environment has extension implementation.
-//  - for existing APIs, System.Management.Automation.Environment redirect the call to System.Environment.
-using Environment = System.Management.Automation.Environment;
-#endif
-
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>

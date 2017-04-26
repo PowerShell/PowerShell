@@ -54,4 +54,13 @@ Describe "Tab completion bug fix" -Tags "CI" {
            $result.CompletionMatches[1].CompletionText | Should Be $DatetimeProperties[1].Name # DateTime
        }
     }
+                
+    It "Issue#3628 - 'Sort-Object @{<tab>' should work" {
+        $cmd = "Get-Date | Sort-Object @{"
+        $result = TabExpansion2 -inputScript $cmd -cursorColumn $cmd.Length
+        $result.CompletionMatches.Count | Should Be 3
+        $result.CompletionMatches[0].CompletionText | Should Be 'Expression'
+        $result.CompletionMatches[1].CompletionText | Should Be 'Ascending'
+        $result.CompletionMatches[2].CompletionText | Should Be 'Descending'
+    }
 }

@@ -17,7 +17,6 @@ using System.Security.Cryptography.X509Certificates;
 #if CORECLR
 // Use stub for SecurityZone
 using Microsoft.PowerShell.CoreClr.Stubs;
-using Environment = System.Management.Automation.Environment;
 #endif
 
 namespace Microsoft.PowerShell
@@ -329,8 +328,8 @@ namespace Microsoft.PowerShell
                 if (String.Equals(fi.Extension, ".ps1xml", StringComparison.OrdinalIgnoreCase))
                 {
                     string[] trustedDirectories = new string[]
-                        { Environment.GetFolderPath(Environment.SpecialFolder.System),
-                          Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles)
+                        { Platform.GetFolderPath(Environment.SpecialFolder.System),
+                          Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles)
                         };
 
                     foreach (string trustedDirectory in trustedDirectories)

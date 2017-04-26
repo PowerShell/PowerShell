@@ -17,13 +17,6 @@ using System.Runtime.InteropServices;
 using System.Reflection;
 using System.Text;
 using System.Security;
-using Dbg = System.Management.Automation.Diagnostics;
-
-#if CORECLR
-
-using Environment = System.Management.Automation.Environment;
-
-#endif
 
 namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 {
@@ -618,15 +611,6 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             Initialize(null, null);
         }
 
-#if CORECLR
-        /// <summary>
-        /// </summary>
-        private static string SystemDirectory
-        {
-            get { return Environment.GetFolderPath(Environment.SpecialFolder.System); }
-        }
-#endif
-
         /// <summary>
         /// Initialize the class cache with the default classes in $ENV:SystemDirectory\Configuration.
         /// </summary>
@@ -679,12 +663,8 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             }
             else
             {
-#if CORECLR
-                var systemResourceRoot = Path.Combine(SystemDirectory, "Configuration");
-#else
-                var systemResourceRoot = Path.Combine(Environment.SystemDirectory, "Configuration");
-#endif
-                var programFilesDirectory = Environment.GetEnvironmentVariable("ProgramFiles");
+                var systemResourceRoot = Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.System), "Configuration");
+                var programFilesDirectory = Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
                 Debug.Assert(programFilesDirectory != null, "Program Files environment variable does not exist!");
                 var customResourceRoot = Path.Combine(programFilesDirectory, "WindowsPowerShell\\Configuration");
                 Debug.Assert(Directory.Exists(customResourceRoot), "%ProgramFiles%\\WindowsPowerShell\\Configuration Directory does not exist");
@@ -724,11 +704,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                 List<string> modulePaths = new List<string>();
                 if (modulePathList == null || modulePathList.Count == 0)
                 {
-#if CORECLR
-                    modulePaths.Add(Path.Combine(SystemDirectory, InboxDscResourceModulePath));
-#else
-                    modulePaths.Add(Path.Combine(Environment.SystemDirectory, InboxDscResourceModulePath));
-#endif
+                    modulePaths.Add(Path.Combine(Platform.GetFolderPath(Environment.SpecialFolder.System), InboxDscResourceModulePath));
                     isInboxResource = true;
                 }
                 else
@@ -989,11 +965,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if (value != null)
             {
-#if CORECLR
-                IntPtr ptr = SecureStringMarshal.SecureStringToCoTaskMemUnicode(value);
-#else
                 IntPtr ptr = Marshal.SecureStringToCoTaskMemUnicode(value);
-#endif
                 passwordValueToAdd = Marshal.PtrToStringUni(ptr);
                 Marshal.ZeroFreeCoTaskMemUnicode(ptr);
             }

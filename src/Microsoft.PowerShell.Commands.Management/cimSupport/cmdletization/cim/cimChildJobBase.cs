@@ -15,13 +15,6 @@ using Microsoft.Management.Infrastructure.Options;
 using Microsoft.PowerShell.Cim;
 using Dbg = System.Management.Automation.Diagnostics;
 
-#if CORECLR
-// Some APIs are missing from System.Environment. We use System.Management.Automation.Environment as a proxy type:
-//  - for missing APIs, System.Management.Automation.Environment has extension implementation.
-//  - for existing APIs, System.Management.Automation.Environment redirect the call to System.Environment.
-using Environment = System.Management.Automation.Environment;
-#endif
-
 namespace Microsoft.PowerShell.Cmdletization.Cim
 {
     /// <summary>

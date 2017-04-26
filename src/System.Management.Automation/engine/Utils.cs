@@ -26,7 +26,6 @@ using TypeTable = System.Management.Automation.Runspaces.TypeTable;
 #if CORECLR
 using System.Diagnostics;
 using Microsoft.Win32.SafeHandles;
-using Microsoft.PowerShell.CoreClr.Stubs;
 #else
 using System.Security.Principal;
 using PSUtils = System.Management.Automation.PsUtils;
@@ -318,7 +317,7 @@ namespace System.Management.Automation
                 {
                     baseDirectories.Add(appBase);
                 }
-
+#if !UNIX
                 // Win8: 454976
                 // Now add the two variations of System32
                 baseDirectories.Add(Environment.GetFolderPath(Environment.SpecialFolder.System));
@@ -327,7 +326,7 @@ namespace System.Management.Automation
                 {
                     baseDirectories.Add(systemX86);
                 }
-
+#endif
                 // And built-in modules
                 string progFileDir;
                 // TODO: #1184 will resolve this work-around
@@ -345,9 +344,6 @@ namespace System.Management.Automation
                     baseDirectories.Add(Path.Combine(progFileDir, "PowerShellGet"));
                     baseDirectories.Add(Path.Combine(progFileDir, "Pester"));
                     baseDirectories.Add(Path.Combine(progFileDir, "PSReadLine"));
-#if CORECLR
-                    baseDirectories.Add(Path.Combine(progFileDir, "Json.Net"));
-#endif // CORECLR
                 }
                 Interlocked.CompareExchange(ref s_productFolderDirectories, baseDirectories.ToArray(), null);
             }
@@ -1374,40 +1370,41 @@ namespace System.Management.Automation
 
         internal static Encoding GetEncodingFromEnum(FileSystemCmdletProviderEncoding encoding)
         {
-            System.Text.Encoding result = System.Text.Encoding.Unicode;
+            // Default to unicode encoding
+            Encoding result = Encoding.Unicode;
 
             switch (encoding)
             {
                 case FileSystemCmdletProviderEncoding.String:
-                    result = new UnicodeEncoding();
+                    result = Encoding.Unicode;
                     break;
 
                 case FileSystemCmdletProviderEncoding.Unicode:
-                    result = new UnicodeEncoding();
+                    result = Encoding.Unicode;
                     break;
 
                 case FileSystemCmdletProviderEncoding.BigEndianUnicode:
-                    result = new UnicodeEncoding(true, false);
+                    result = Encoding.BigEndianUnicode;
                     break;
 
                 case FileSystemCmdletProviderEncoding.UTF8:
-                    result = new UTF8Encoding();
+                    result = Encoding.UTF8;
                     break;
 
                 case FileSystemCmdletProviderEncoding.UTF7:
-                    result = new UTF7Encoding();
+                    result = Encoding.UTF7;
                     break;
 
                 case FileSystemCmdletProviderEncoding.UTF32:
-                    result = new UTF32Encoding();
+                    result = Encoding.UTF32;
                     break;
 
                 case FileSystemCmdletProviderEncoding.BigEndianUTF32:
-                    result = new UTF32Encoding(true, false);
+                    result = Encoding.BigEndianUnicode;
                     break;
 
                 case FileSystemCmdletProviderEncoding.Ascii:
-                    result = new ASCIIEncoding();
+                    result = Encoding.ASCII;
                     break;
 
                 case FileSystemCmdletProviderEncoding.Default:
@@ -1419,8 +1416,6 @@ namespace System.Management.Automation
                     break;
 
                 default:
-                    // Default to unicode encoding
-                    result = new UnicodeEncoding();
                     break;
             }
 

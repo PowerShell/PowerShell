@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Dynamic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -23,14 +24,9 @@ using System.Runtime.Serialization;
 using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using Microsoft.Management.Infrastructure;
-using Dbg = System.Management.Automation.Diagnostics;
 
 #if !CORECLR
-using System.Data;
 using System.DirectoryServices;
-#else
-// Use stubs for Serializable attribute and ISerializable related types.
-using Microsoft.PowerShell.CoreClr.Stubs;
 #endif
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -47,9 +43,7 @@ namespace System.Management.Automation
     /// It is permitted to subclass <see cref="PSObject"/>
     /// but there is no established scenario for doing this, nor has it been tested.
     /// </remarks>
-#if !CORECLR // TypeDescriptionProvider is not supported in CoreCLR
     [TypeDescriptionProvider(typeof(PSObjectTypeDescriptionProvider))]
-#endif
     [Serializable]
     public class PSObject : IFormattable, IComparable, ISerializable, IDynamicMetaObjectProvider
     {
