@@ -19,6 +19,10 @@ Describe "Start-Process" -Tags @("CI","SLOW") {
         }
     }
 
+    AfterEach {
+        Remove-Item -Path $tempFile -Force -ErrorAction SilentlyContinue
+    }
+
     # Note that ProcessName may still be `powershell` due to dotnet/corefx#5378
     # This has been fixed on Linux, but not on OS X
 
@@ -72,6 +76,14 @@ Describe "Start-Process" -Tags @("CI","SLOW") {
 	    $dirEntry.Length | Should BeGreaterThan 0
     }
 
+    # It is not 'Start-Process' test. It tests that PowerShell can start after removing all environment variables.
+    It "Should run PowerShell subprocess with '-UseNewEnvironment' without error" {
+            $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+            $process = Start-Process $powershell -ArgumentList "-Command Set-Content -Path $tempfile -Value 'testvalue'" -Wait -UseNewEnvironment
+	    $dirEntry = get-childitem $tempFile
+	    $dirEntry.Length | Should BeGreaterThan 0
+    }
+
     # Marking this test 'pending' to unblock daily builds. Filed issue : https://github.com/PowerShell/PowerShell/issues/2396
     It "Should handle stdin redirection without error" -Pending {
 	    $process = Start-Process sort -Wait -RedirectStandardOutput $tempFile -RedirectStandardInput $assetsFile
@@ -115,6 +127,4 @@ Describe "Start-Process" -Tags @("CI","SLOW") {
         $process.Id | Should BeGreaterThan 1
         $process | Stop-Process
     }
-
-    Remove-Item -Path $tempFile -Force
 }
