@@ -64,10 +64,13 @@ namespace System.Management.Automation
             s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
             s_psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
+            s_psVersionTable["Platform"] = Environment.OSVersion.Platform.ToString();
 #if CORECLR
+            s_psVersionTable["OS"] = Runtime.InteropServices.RuntimeInformation.OSDescription.ToString();
             s_psVersionTable["CLRVersion"] = null;
 #else
             s_psVersionTable["CLRVersion"] = Environment.Version;
+            s_psVersionTable["OS"] = Environment.OSVersion.ToString();
 #endif
         }
 
