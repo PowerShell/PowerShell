@@ -480,11 +480,35 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="name">The string to quote</param>
         /// <returns>The quoted string</returns>
-        private string QuoteName(object name)
+        private string QuoteName(string name)
         {
             if (name == null)
                 return "''";
-            return "'" + name.ToString().Replace("'", "''") + "'";
+            return ("'" + name.ToString().Replace("'", "''") + "'");
+        }
+
+        /// <summary>
+        /// Return a single-quoted string using the AbsoluteUri member to ensure it is escaped correctly
+        /// </summary>
+        /// <param name="name">The Uri to quote</param>
+        /// <returns>The quoted AbsoluteUri</returns>
+        private string QuoteName(Uri name)
+        {
+            if (name == null)
+                return "''";
+            return QuoteName(name.AbsoluteUri);
+        }
+
+        /// <summary>
+        /// Return a single-quoted string from a Version object
+        /// </summary>
+        /// <param name="name">The Version object to quote</param>
+        /// <returns>The quoted Version string</returns>
+        private string QuoteName(Version name)
+        {
+            if (name == null)
+                return "''";
+            return QuoteName(name.ToString());
         }
 
         /// <summary>
@@ -877,6 +901,10 @@ namespace Microsoft.PowerShell.Commands
             ValidateUriParameterValue(ProjectUri, "ProjectUri");
             ValidateUriParameterValue(LicenseUri, "LicenseUri");
             ValidateUriParameterValue(IconUri, "IconUri");
+            if (_helpInfoUri != null)
+            {
+                ValidateUriParameterValue(new Uri(_helpInfoUri), "HelpInfoUri");
+            }
 
             if (CompatiblePSEditions != null && (CompatiblePSEditions.Distinct(StringComparer.OrdinalIgnoreCase).Count() != CompatiblePSEditions.Count()))
             {
@@ -949,7 +977,7 @@ namespace Microsoft.PowerShell.Commands
 
                     BuildModuleManifest(result, "RootModule", Modules.RootModule, !string.IsNullOrEmpty(_rootModule), () => QuoteName(_rootModule), streamWriter);
 
-                    BuildModuleManifest(result, "ModuleVersion", Modules.ModuleVersion, _moduleVersion != null && !string.IsNullOrEmpty(_moduleVersion.ToString()), () => QuoteName(_moduleVersion.ToString()), streamWriter);
+                    BuildModuleManifest(result, "ModuleVersion", Modules.ModuleVersion, _moduleVersion != null && !string.IsNullOrEmpty(_moduleVersion.ToString()), () => QuoteName(_moduleVersion), streamWriter);
 
                     BuildModuleManifest(result, "CompatiblePSEditions", Modules.CompatiblePSEditions, _compatiblePSEditions != null && _compatiblePSEditions.Length > 0, () => QuoteNames(_compatiblePSEditions, streamWriter), streamWriter);
 
@@ -973,7 +1001,7 @@ namespace Microsoft.PowerShell.Commands
 
                     BuildModuleManifest(result, "CLRVersion", StringUtil.Format(Modules.CLRVersion, Modules.PrerequisiteForDesktopEditionOnly), _ClrVersion != null && !string.IsNullOrEmpty(_ClrVersion.ToString()), () => QuoteName(_ClrVersion), streamWriter);
 
-                    BuildModuleManifest(result, "ProcessorArchitecture", Modules.ProcessorArchitecture, _processorArchitecture.HasValue, () => QuoteName(_processorArchitecture), streamWriter);
+                    BuildModuleManifest(result, "ProcessorArchitecture", Modules.ProcessorArchitecture, _processorArchitecture.HasValue, () => QuoteName(_processorArchitecture.ToString()), streamWriter);
 
                     BuildModuleManifest(result, "RequiredModules", Modules.RequiredModules, _requiredModules != null && _requiredModules.Length > 0, () => QuoteModules(_requiredModules, streamWriter), streamWriter);
 
@@ -1003,7 +1031,7 @@ namespace Microsoft.PowerShell.Commands
 
                     BuildPrivateDataInModuleManifest(result, streamWriter);
 
-                    BuildModuleManifest(result, "HelpInfoURI", Modules.HelpInfoURI, !string.IsNullOrEmpty(_helpInfoUri), () => QuoteName(_helpInfoUri), streamWriter);
+                    BuildModuleManifest(result, "HelpInfoURI", Modules.HelpInfoURI, !string.IsNullOrEmpty(_helpInfoUri), () => QuoteName((_helpInfoUri != null) ? new Uri(_helpInfoUri) : null), streamWriter);
 
                     BuildModuleManifest(result, "DefaultCommandPrefix", Modules.DefaultCommandPrefix, !string.IsNullOrEmpty(_defaultCommandPrefix), () => QuoteName(_defaultCommandPrefix), streamWriter);
 
@@ -1128,7 +1156,7 @@ namespace Microsoft.PowerShell.Commands
         {
             Dbg.Assert(!String.IsNullOrWhiteSpace(parameterName), "parameterName should not be null or whitespace");
 
-            if (uri != null && !Uri.IsWellFormedUriString(uri.ToString(), UriKind.Absolute))
+            if (uri != null && !Uri.IsWellFormedUriString(uri.AbsoluteUri, UriKind.Absolute))
             {
                 var message = StringUtil.Format(Modules.InvalidParameterValue, uri);
                 var ioe = new InvalidOperationException(message);
