@@ -409,6 +409,21 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
 
             TestRemoveItem $Link $Target
         }
+
+        It "Remove-Item ignores -Recurse switch when deleting symlink to directory" {
+            $folder = Join-Path $TestDrive "folder"
+            $file = Join-Path $TestDrive "folder" "file"
+            $link = Join-Path $TestDrive "sym-to-folder"
+            New-Item -ItemType Directory -Path $folder >$null
+            New-Item -ItemType File -Path $file -Value "some content" >$null
+            New-Item -ItemType SymbolicLink -Path $link -value $folder >$null
+            $childA = Get-Childitem $folder
+            Remove-Item -Path $link -Recurse
+            $childB = Get-ChildItem folder
+            $childB.Count | Should Be 1
+            $childB.Count -eq $childA.Count | Should Be $true
+            $childB.Name -eq $childA.Name | Should Be $true
+        }
     }
 }
 
