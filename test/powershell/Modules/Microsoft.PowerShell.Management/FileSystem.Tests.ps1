@@ -282,7 +282,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             New-Item -ItemType HardLink -Path $hardLinkToFile -Value $realFile
             Test-Path $hardLinkToFile | Should Be $true
             $link = Get-Item -Path $hardLinkToFile
-            $link.LinkType | Should Be "HardLink"
+            $link.LinkType | Should BeExactly "HardLink"
             Get-Content -Path $hardLinkToFile | Should be $fileContent
         }
         It "New-Item can create symbolic link to file" {
@@ -290,7 +290,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             Test-Path $symLinkToFile | Should Be $true
             $real = Get-Item -Path $realFile
             $link = Get-Item -Path $symLinkToFile
-            $link.LinkType | Should Be "SymbolicLink"
+            $link.LinkType | Should BeExactly "SymbolicLink"
             $link.Target | Should Be $real.FullName
             Get-Content -Path $symLinkToFile | Should be $fileContent
         }
@@ -298,7 +298,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             New-Item -ItemType SymbolicLink -Path $symLinkToNothing -Value $nonFile
             Test-Path $symLinkToNothing | Should Be $true
             $link = Get-Item -Path $symLinkToNothing
-            $link.LinkType | Should Be "SymbolicLink"
+            $link.LinkType | Should BeExactly "SymbolicLink"
             $link.Target | Should Be $nonFile
         }
         It "New-Item can create a symbolic link to a directory" -Skip:($IsWindows) {
@@ -306,7 +306,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             Test-Path $symLinkToDir | Should Be $true
             $real = Get-Item -Path $realDir
             $link = Get-Item -Path $symLinkToDir
-            $link.LinkType | Should Be "SymbolicLink"
+            $link.LinkType | Should BeExactly "SymbolicLink"
             $link.Target | Should Be $real.FullName
         }
         It "New-Item can create a directory symbolic link to a directory" -Skip:(-Not $IsWindows) {
@@ -315,7 +315,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $real = Get-Item -Path $realDir
             $link = Get-Item -Path $symLinkToDir
             $link | Should BeOfType System.IO.DirectoryInfo
-            $link.LinkType | Should Be "SymbolicLink"
+            $link.LinkType | Should BeExactly "SymbolicLink"
             $link.Target | Should Be $real.FullName
         }
         It "New-Item can create a directory junction to a directory" -Skip:(-Not $IsWindows) {
@@ -342,7 +342,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             # New-Item on Windows will not create a "plain" symlink to a directory
             $unixTestCases = @(
                 @{
-                    Name = "Remove-Item can remove a symbolic link to a directory"
+                    Name = "Remove-Item can remove a symbolic link to a directory on Unix"
                     Link = $symLinkToDir
                     Target = $realDir
                 }
@@ -351,12 +351,12 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             # Junctions and directory symbolic links are Windows and NTFS only
             $windowsTestCases = @(
                 @{
-                    Name = "Remove-Item can remove a symbolic link to a directory"
+                    Name = "Remove-Item can remove a symbolic link to a directory on Windows"
                     Link = $symLinkToDir
                     Target = $realDir
                 }
                 @{
-                    Name = "Remove-Item can remove a directory symbolic link to a directory"
+                    Name = "Remove-Item can remove a directory symbolic link to a directory on Windows"
                     Link = $dirSymLinkToDir
                     Target = $realDir
                 }
@@ -419,7 +419,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             New-Item -ItemType SymbolicLink -Path $link -value $folder >$null
             $childA = Get-Childitem $folder
             Remove-Item -Path $link -Recurse
-            $childB = Get-ChildItem folder
+            $childB = Get-ChildItem $folder
             $childB.Count | Should Be 1
             $childB.Count -eq $childA.Count | Should Be $true
             $childB.Name -eq $childA.Name | Should Be $true
