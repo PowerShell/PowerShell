@@ -421,8 +421,8 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             Remove-Item -Path $link -Recurse
             $childB = Get-ChildItem $folder
             $childB.Count | Should Be 1
-            $childB.Count -eq $childA.Count | Should Be $true
-            $childB.Name -eq $childA.Name | Should Be $true
+            $childB.Count | Should BeExactly $childA.Count
+            $childB.Name | Should BeExactly $childA.Name
         }
     }
 }
