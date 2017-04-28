@@ -255,18 +255,18 @@ Describe "Handling of globbing patterns" -Tags "CI" {
             $dirPath = Join-Path $TESTDRIVE "subdir"
         }
         BeforeEach {
-            $file = New-Item -ItemType File $filePath -Force
+            $file = New-Item -ItemType File -Path $filePath -Force
         }
         AfterEach
         {
-            Remove-Item -Force -Recurse $dirPath -ErrorAction SilentlyContinue
-            Remove-Item -Force $newPath -ErrorAction SilentlyContinue
+            Remove-Item -Force -Recurse -Path $dirPath -ErrorAction SilentlyContinue
+            Remove-Item -Force -LiteralPath $newPath -ErrorAction SilentlyContinue
         }
 
         It "Rename-Item -LiteralPath can rename a file with Unix globbing characters" {
-            Rename-Item -LiteralPath $file.FullName $newPath
+            Rename-Item -LiteralPath $file.FullName -NewName $newPath
             Test-Path -LiteralPath $file.FullName | Should Be $false
-            Test-Path -LiteralPath $newPath | should Be $true
+            Test-Path -LiteralPath $newPath | Should Be $true
         }
 
         It "Remove-Item -LiteralPath can delete a file with Unix globbing characters" {
@@ -275,11 +275,11 @@ Describe "Handling of globbing patterns" -Tags "CI" {
         }
 
         It "Move-Item -LiteralPath can move a file with Unix globbing characters" {
-            $dir = New-Item -ItemType Directory $dirPath
-            Move-Item -LiteralPath $file.FullName $dir.FullName
+            $dir = New-Item -ItemType Directory -Path $dirPath
+            Move-Item -LiteralPath $file.FullName -Destination $dir.FullName
             Test-Path -LiteralPath $file.FullName | Should Be $false
-            $newPath = Join-Path "$($dir.FullName)" $file.Name
-            Test-Path -LiteralPath $newPath | should Be $true
+            $newPath = Join-Path $dir.FullName $file.Name
+            Test-Path -LiteralPath $newPath | Should Be $true
         }
 
         It "Copy-Item -LiteralPath can copy a file with Unix globbing characters" {
