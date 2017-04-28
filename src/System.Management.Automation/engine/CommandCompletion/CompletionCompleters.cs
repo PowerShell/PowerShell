@@ -3201,12 +3201,14 @@ namespace System.Management.Automation
                 var pattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase);
                 foreach (dynamic process in psObjects)
                 {
-                    var completionText = process.Id.ToString();
-                    if (pattern.IsMatch(completionText))
+                    var processId = process.Id.ToString();
+                    if (pattern.IsMatch(processId))
                     {
-                        var listItemText = completionText;
-                        completionText = quote + completionText + quote;
-                        result.Add(new CompletionResult(completionText, listItemText, CompletionResultType.ParameterValue, listItemText));
+                        var processName = process.Name;
+
+                        var idAndName = $"{processId} - {processName}";
+                        processId = quote + processId + quote;
+                        result.Add(new CompletionResult(processId, idAndName, CompletionResultType.ParameterValue, idAndName));
                     }
                 }
 
