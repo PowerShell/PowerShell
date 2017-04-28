@@ -90,6 +90,13 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches.Foreach{$_.CompletionText -in 'A', 'B', 'C' | Should Be $true}
     }
 
+    It 'Should complete "Get-Process -Id " with Id and name in tooltip' {
+        $cmd = 'Get-Process -Id '
+        $res = TabExpansion2 -inputScript $cmd  -cursorColumn $cmd.Length
+        $res.CompletionMatches[0].CompletionText -match '^\d+$' | Should be true
+        $res.CompletionMatches[0].ToolTip -match '^\w' | Should be true
+    }
+
     It 'Should complete keyword' -skip {
         $res = TabExpansion2 -inputScript 'using nam' -cursorColumn 'using nam'.Length
         $res.CompletionMatches[0].CompletionText | Should be 'namespace'
