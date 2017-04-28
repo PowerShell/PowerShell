@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
 using System.Management.Automation.Language;
@@ -108,9 +109,16 @@ namespace System.Management.Automation
         {
         }
 
+        /// <summary>
+        /// Create a new Type Inference context.
+        /// The powerShell instance passed need to have a non null Runspace
+        /// </summary>
+        /// <param name="powerShell"></param>
         public TypeInferenceContext(PowerShell powerShell)
         {
+            Diagnostics.Assert(powerShell.Runspace != null, "Callers are required to ensure we have a runspace");
             _powerShell = powerShell;
+
             Helper = new PowerShellExecutionHelper(powerShell);
         }
 
@@ -121,7 +129,7 @@ namespace System.Management.Automation
 
         internal PowerShellExecutionHelper Helper { get; }
 
-        internal ExecutionContext ExecutionContext => _powerShell.Runspace?.ExecutionContext;
+        internal ExecutionContext ExecutionContext => _powerShell.Runspace.ExecutionContext;
 
         public bool TryGetRepresentativeTypeNameFromExpressionSafeEval(ExpressionAst expression, out PSTypeName typeName)
         {
@@ -136,18 +144,18 @@ namespace System.Management.Automation
                    TryGetRepresentativeTypeNameFromValue(value, out typeName);
         }
 
-        public IList<object> GetMembersByInferredType(PSTypeName typename, bool isStatic, Func<object, bool> filter)
+        internal static IList<object> GetMembersByInferredType(TypeInferenceContext typeInferenceContext, PSTypeName typename, bool isStatic, Func<object, bool> filter)
         {
             List<object> results = new List<object>();
 
             Func<object, bool> filterToCall = filter;
             if (typename.Type != null)
             {
-                AddMembersByInferredTypesClrType(typename, isStatic, filter, filterToCall, results);
+                AddMembersByInferredTypesClrType(typeInferenceContext, typename, isStatic, filter, filterToCall, results);
             }
             else if (typename.TypeDefinitionAst != null)
             {
-                AddMembersByInferredTypeDefinitionAst(typename, isStatic, filter, filterToCall, results);
+                AddMembersByInferredTypeDefinitionAst(typeInferenceContext, typename, isStatic, filter, filterToCall, results);
             }
             else
             {
@@ -155,40 +163,62 @@ namespace System.Management.Automation
                 if (!isStatic)
                 {
                     var consolidatedString = new ConsolidatedString(new[] { typename.Name });
-                    results.AddRange(ExecutionContext.TypeTable.GetMembers<PSMemberInfo>(consolidatedString));
+                    results.AddRange(typeInferenceContext.ExecutionContext.TypeTable.GetMembers<PSMemberInfo>(consolidatedString));
                 }
 
-                AddMembersByInferredTypeCimType(typename, results, filterToCall);
+                AddMembersByInferredTypeCimType(typeInferenceContext, typename, results, filterToCall);
             }
 
             return results;
         }
 
-        private void AddMembersByInferredTypeCimType(PSTypeName typename, List<object> results, Func<object, bool> filterToCall)
+
+        private static void AddMembersByInferredTypesClrType(TypeInferenceContext typeInferenceContext, PSTypeName typename, bool isStatic, Func<object, bool> filter, Func<object, bool> filterToCall, List<object> results)
         {
-            string cimNamespace;
-            string className;
-            if (ParseCimCommandsTypeName(typename, out cimNamespace, out className))
+            if (typeInferenceContext.CurrentTypeDefinitionAst == null || typeInferenceContext.CurrentTypeDefinitionAst.Type != typename.Type)
             {
-                Helper.AddCommandWithPreferenceSetting("CimCmdlets\\Get-CimClass")
-                    .AddParameter("Namespace", cimNamespace)
-                    .AddParameter("Class", className);
-                Exception unused;
-                var classes = Helper.ExecuteCurrentPowerShell(out unused);
-                foreach (var cimClass in classes.Select(PSObject.Base).OfType<CimClass>())
+                if (filterToCall == null)
                 {
-                    var collection = filterToCall != null
-                        ? cimClass.CimClassProperties.Where(filterToCall)
-                        : cimClass.CimClassProperties;
-                    results.AddRange(collection);
+                    filterToCall = o => !IsMemberHidden(o);
                 }
+                else
+                {
+                    filterToCall = o => !IsMemberHidden(o) && filter(o);
+                }
+            }
+            IEnumerable<Type> elementTypes;
+            if (typename.Type.IsArray)
+            {
+                elementTypes = new[] { typename.Type.GetElementType() };
+            }
+            else
+            {
+                elementTypes = typename.Type.GetInterfaces().Where(
+                    t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
+            }
+            foreach (var type in elementTypes.Prepend(typename.Type))
+            {
+                // Look in the type table first.
+                if (!isStatic)
+                {
+                    var consolidatedString = DotNetAdapter.GetInternedTypeNameHierarchy(type);
+                    results.AddRange(typeInferenceContext.ExecutionContext.TypeTable.GetMembers<PSMemberInfo>(consolidatedString));
+                }
+
+                var members = isStatic
+                    ? PSObject.dotNetStaticAdapter.BaseGetMembers<PSMemberInfo>(type)
+                    : PSObject.dotNetInstanceAdapter.GetPropertiesAndMethods(type, false);
+                results.AddRange(filterToCall != null ? members.Where(filterToCall) : members);
             }
         }
 
-        private void AddMembersByInferredTypeDefinitionAst(PSTypeName typename, bool isStatic, Func<object, bool> filter, Func<object, bool> filterToCall,
-            List<object> results)
+
+
+
+        internal static void AddMembersByInferredTypeDefinitionAst(TypeInferenceContext typeInferenceContext, PSTypeName typename, bool isStatic,
+            Func<object, bool> filter, Func<object, bool> filterToCall, List<object> results)
         {
-            if (CurrentTypeDefinitionAst != typename.TypeDefinitionAst)
+            if (typeInferenceContext.CurrentTypeDefinitionAst != typename.TypeDefinitionAst)
             {
                 if (filterToCall == null)
                     filterToCall = o => !IsMemberHidden(o);
@@ -229,7 +259,7 @@ namespace System.Management.Automation
                 var baseTypeName = baseType.TypeName as TypeName;
                 if (baseTypeName == null) continue;
                 var baseTypeDefinitionAst = baseTypeName._typeDefinitionAst;
-                results.AddRange(GetMembersByInferredType(new PSTypeName(baseTypeDefinitionAst), isStatic, filterToCall));
+                results.AddRange(GetMembersByInferredType(typeInferenceContext, new PSTypeName(baseTypeDefinitionAst), isStatic, filterToCall));
             }
 
             // Add stuff from our base class System.Object.
@@ -240,6 +270,7 @@ namespace System.Management.Automation
                 {
                     filterToCall = o => !IsConstructor(o);
                 }
+
                 else
                 {
                     filterToCall = o => !IsConstructor(o) && filter(o);
@@ -257,46 +288,39 @@ namespace System.Management.Automation
                 // Reset the filter because the recursive call will add IsHidden back if necessary.
                 filterToCall = filter;
             }
-            results.AddRange(GetMembersByInferredType(new PSTypeName(typeof(object)), isStatic, filterToCall));
+            results.AddRange(GetMembersByInferredType(typeInferenceContext, new PSTypeName(typeof(object)), isStatic, filterToCall));
         }
 
-        private void AddMembersByInferredTypesClrType(PSTypeName typename, bool isStatic, Func<object, bool> filter, Func<object, bool> filterToCall,
-            List<object> results)
-        {
-            if (CurrentTypeDefinitionAst == null || CurrentTypeDefinitionAst.Type != typename.Type)
-            {
-                if (filterToCall == null)
-                {
-                    filterToCall = o => !IsMemberHidden(o);
-                }
-                else
-                {
-                    filterToCall = o => !IsMemberHidden(o) && filter(o);
-                }
-            }
-            IEnumerable<Type> elementTypes;
-            if (typename.Type.IsArray)
-            {
-                elementTypes = new[] {typename.Type.GetElementType()};
-            }
-            else
-            {
-                elementTypes = typename.Type.GetInterfaces().Where(
-                    t => t.GetTypeInfo().IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
-            }
-            foreach (var type in elementTypes.Prepend(typename.Type))
-            {
-                // Look in the type table first.
-                if (!isStatic)
-                {
-                    var consolidatedString = DotNetAdapter.GetInternedTypeNameHierarchy(type);
-                    results.AddRange(ExecutionContext.TypeTable.GetMembers<PSMemberInfo>(consolidatedString));
-                }
 
-                var members = isStatic
-                    ? PSObject.dotNetStaticAdapter.BaseGetMembers<PSMemberInfo>(type)
-                    : PSObject.dotNetInstanceAdapter.GetPropertiesAndMethods(type, false);
-                results.AddRange(filterToCall != null ? members.Where(filterToCall) : members);
+        private static void AddMembersByInferredTypeCimType(TypeInferenceContext typeInferenceContext, PSTypeName typename, List<object> results, Func<object, bool> filterToCall)
+        {
+            string cimNamespace;
+            string className;
+            if (ParseCimCommandsTypeName(typename, out cimNamespace, out className))
+            {
+                var powerShellExecutionHelper = typeInferenceContext.Helper;
+                powerShellExecutionHelper
+                    .AddCommandWithPreferenceSetting("CimCmdlets\\Get-CimClass")
+                    .AddParameter("Namespace", cimNamespace)
+                    .AddParameter("Class", className);
+                var classes = powerShellExecutionHelper.ExecuteCurrentPowerShell(out _);
+                foreach (var cimClass in classes.Select(PSObject.Base).OfType<CimClass>())
+                {
+                    if (filterToCall == null)
+                    {
+                        results.AddRange(cimClass.CimClassProperties);
+                    }
+                    else
+                    {
+                        foreach (var prop in cimClass.CimClassProperties)
+                        {
+                            if (filterToCall(prop))
+                            {
+                                results.Add(prop);
+                            }
+                        }
+                    }
+                }
             }
         }
 
@@ -330,7 +354,7 @@ namespace System.Management.Automation
             return false;
         }
 
-        private static bool ParseCimCommandsTypeName(PSTypeName typename, out string cimNamespace, out string className)
+        internal static bool ParseCimCommandsTypeName(PSTypeName typename, out string cimNamespace, out string className)
         {
             cimNamespace = null;
             className = null;
@@ -967,7 +991,7 @@ namespace System.Management.Automation
             var memberNameList = new List<string> { memberAsStringConst.Value };
             foreach (var type in exprType)
             {
-                var members = _context.GetMembersByInferredType(type, isStatic, filter: null);
+                var members = TypeInferenceContext.GetMembersByInferredType(_context, type, isStatic, filter: null);
 
                 for (int i = 0; i < memberNameList.Count; i++)
                 {
