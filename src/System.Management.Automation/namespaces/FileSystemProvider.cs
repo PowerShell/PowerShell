@@ -2863,15 +2863,6 @@ namespace Microsoft.PowerShell.Commands
                 continueRemoval = ShouldProcess(directory.FullName, action);
             }
 
-            //if this is a reparse point and force is not specified then warn user but dont remove the directory.
-            if (Platform.IsWindows && ((directory.Attributes & FileAttributes.ReparsePoint) != 0) && !Force)
-            {
-                String error = StringUtil.Format(FileSystemProviderStrings.DirectoryReparsePoint, directory.FullName);
-                Exception e = new IOException(error);
-                WriteError(new ErrorRecord(e, "DirectoryNotEmpty", ErrorCategory.WriteError, directory));
-                return;
-            }
-
             if ((directory.Attributes & FileAttributes.ReparsePoint) != 0)
             {
                 bool success = InternalSymbolicLinkLinkCodeMethods.DeleteJunction(directory.FullName);
@@ -3327,13 +3318,14 @@ namespace Microsoft.PowerShell.Commands
             path = NormalizePath(path);
 
             // First check to see if it is a directory
-
             try
             {
                 DirectoryInfo directory = new DirectoryInfo(path);
 
                 // If the above didn't throw an exception, check to
-                // see if it contains any directories
+                // see if we should proceed and if it contains any children
+                if ((directory.Attributes & FileAttributes.Directory) != FileAttributes.Directory)
+                    return false;
 
                 result = DirectoryInfoHasChildItems(directory);
             }
