@@ -183,8 +183,9 @@ Describe "Tests for circular references in required modules" -tags "CI" {
 
         CreateTestModules $moduleRootPath $ModuleNames $AddVersion $AddGuid $AddCircularReference
         
-        $newpath = ";$moduleRootPath"
-        $env:psmodulepath += $newpath
+        $newpath = [system.io.path]::PathSeparator + "$moduleRootPath"
+        $OriginalPSModulePathLength = $env:PSModulePath.Length
+        $env:PSModulePath += $newpath
         $lastModule = $ModuleNames[$moduleCount - 1]
 
         try
@@ -196,7 +197,7 @@ Describe "Tests for circular references in required modules" -tags "CI" {
         {
             #cleanup
             Remove-Module $ModuleNames -Force -ErrorAction SilentlyContinue
-            $env:psmodulepath = $env:psmodulepath.TrimEnd($newpath)
+            $env:PSModulePath = $env:PSModulePath.Substring(0,$OriginalPSModulePathLength)
             Pop-Location
             Remove-Item $moduleRootPath -Recurse -Force -ErrorAction SilentlyContinue
         }
