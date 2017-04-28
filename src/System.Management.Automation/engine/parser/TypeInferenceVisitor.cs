@@ -16,7 +16,6 @@ namespace System.Management.Automation
     /// <summary>
     /// Enum describing permissions to use runtime evaluation during type inference
     /// </summary>
-    [Flags]
     public enum TypeInferenceRuntimePermissions {
         /// <summary>
         /// No runtime use is allowed
@@ -62,7 +61,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         public static IList<PSTypeName> InferTypeOf(Ast ast, PowerShell powerShell)
         {
-            return InferTypeOf(ast, TypeInferenceRuntimePermissions.None);
+            return InferTypeOf(ast,  powerShell, TypeInferenceRuntimePermissions.None);
         }
 
         /// <summary>
@@ -72,13 +71,10 @@ namespace System.Management.Automation
         /// <param name="powerShell">the instance of powershell to user for expression evalutaion needed for type inference</param>
         /// <param name="evalPersmissions">The runtime usage permissions allowed during type inference</param>
         /// <returns></returns>
-        public static IList<PSTypeName> InferTypeOf(Ast ast, PowerShell powerShell,TypeInferenceRuntimePermissions evalPersmissions)
+        public static IList<PSTypeName> InferTypeOf(Ast ast, PowerShell powerShell, TypeInferenceRuntimePermissions evalPersmissions)
         {
             var context = new TypeInferenceContext(powerShell);
-            using (new ContextPermissionScope(context, evalPersmissions))
-            {
-                return context.InferType(ast, new TypeInferenceVisitor(context)).ToList();
-            }
+            return InferTypeOf(ast, context, evalPersmissions);
         }
 
         /// <summary>
@@ -90,25 +86,15 @@ namespace System.Management.Automation
         /// <returns></returns>
         internal static IList<PSTypeName> InferTypeOf(Ast ast, TypeInferenceContext context, TypeInferenceRuntimePermissions evalPersmissions = TypeInferenceRuntimePermissions.None)
         {
-            using (new ContextPermissionScope(context, evalPersmissions)) {
+            var originalRuntimePermissions = context.RuntimePermissions;
+            try
+            {
+                context.RuntimePermissions = evalPersmissions;
                 return context.InferType(ast, new TypeInferenceVisitor(context)).ToList();
             }
-        }
-
-        struct ContextPermissionScope : IDisposable
-        {
-            private readonly TypeInferenceRuntimePermissions _permissions;
-            private readonly TypeInferenceContext _context;
-            internal ContextPermissionScope(TypeInferenceContext context, TypeInferenceRuntimePermissions scopePermissions)
+            finally
             {
-                _context = context;
-                _permissions = context.RuntimePermissions;
-                _context.RuntimePermissions = scopePermissions;
-            }
-
-            void IDisposable.Dispose()
-            {
-                _context.RuntimePermissions = _permissions;
+                context.RuntimePermissions = originalRuntimePermissions;
             }
         }
     }
@@ -117,7 +103,6 @@ namespace System.Management.Automation
     {
         public static readonly PSTypeName[] EmptyPSTypeNameArray = Utils.EmptyArray<PSTypeName>();
         private readonly PowerShell _powerShell;
-        internal PowerShellExecutionHelper Helper { get; }
 
         public TypeInferenceContext() : this(PowerShell.Create(RunspaceMode.CurrentRunspace))
         {
@@ -127,13 +112,21 @@ namespace System.Management.Automation
         {
             _powerShell = powerShell;
             Helper = new PowerShellExecutionHelper(powerShell);
-
         }
+
+
+        public TypeDefinitionAst CurrentTypeDefinitionAst { get; set; }
+
+        public TypeInferenceRuntimePermissions RuntimePermissions { get; set; }
+
+        internal PowerShellExecutionHelper Helper { get; }
+
+        internal ExecutionContext ExecutionContext => _powerShell.Runspace?.ExecutionContext;
 
         public bool TryGetRepresentativeTypeNameFromExpressionSafeEval(ExpressionAst expression, out PSTypeName typeName)
         {
             typeName = null;
-            if ((RuntimePermissions & TypeInferenceRuntimePermissions.AllowSafeEval) != TypeInferenceRuntimePermissions.AllowSafeEval)
+            if (RuntimePermissions != TypeInferenceRuntimePermissions.AllowSafeEval)
             {
                 return false;
             }
@@ -142,9 +135,6 @@ namespace System.Management.Automation
                    SafeExprEvaluator.TrySafeEval(expression, ExecutionContext, out value) &&
                    TryGetRepresentativeTypeNameFromValue(value, out typeName);
         }
-        public TypeDefinitionAst CurrentTypeDefinitionAst { get; set; }
-
-        public TypeInferenceRuntimePermissions RuntimePermissions { get; set; }
 
         public IList<object> GetMembersByInferredType(PSTypeName typename, bool isStatic, Func<object, bool> filter)
         {
@@ -180,16 +170,17 @@ namespace System.Management.Automation
             string className;
             if (ParseCimCommandsTypeName(typename, out cimNamespace, out className))
             {
-                _powerShell.AddCommandWithPreferenceSetting("CimCmdlets\\Get-CimClass")
+                Helper.AddCommandWithPreferenceSetting("CimCmdlets\\Get-CimClass")
                     .AddParameter("Namespace", cimNamespace)
                     .AddParameter("Class", className);
                 Exception unused;
                 var classes = Helper.ExecuteCurrentPowerShell(out unused);
                 foreach (var cimClass in classes.Select(PSObject.Base).OfType<CimClass>())
                 {
-                    results.AddRange(filterToCall != null
+                    var collection = filterToCall != null
                         ? cimClass.CimClassProperties.Where(filterToCall)
-                        : cimClass.CimClassProperties);
+                        : cimClass.CimClassProperties;
+                    results.AddRange(collection);
                 }
             }
         }
@@ -208,7 +199,7 @@ namespace System.Management.Automation
             bool foundConstructor = false;
             foreach (var member in typename.TypeDefinitionAst.Members)
             {
-                bool add = false;
+                bool add;
                 var propertyMember = member as PropertyMemberAst;
                 if (propertyMember != null)
                 {
@@ -319,7 +310,7 @@ namespace System.Management.Automation
             return (IEnumerable<PSTypeName>)res;
         }
 
-        internal static bool TryGetRepresentativeTypeNameFromValue(object value, out PSTypeName type)
+        private static bool TryGetRepresentativeTypeNameFromValue(object value, out PSTypeName type)
         {
             type = null;
             if (value != null)
@@ -338,8 +329,6 @@ namespace System.Management.Automation
             }
             return false;
         }
-
-        internal ExecutionContext ExecutionContext => _powerShell.Runspace.ExecutionContext;
 
         private static bool ParseCimCommandsTypeName(PSTypeName typename, out string cimNamespace, out string className)
         {
@@ -1528,11 +1517,9 @@ namespace System.Management.Automation
 
                 if (bindingResult != null)
                 {
-                    ParameterBindingResult parameterBindingResult;
-
                     foreach (string commandVariableParameter in variableParameters)
                     {
-                        if (bindingResult.BoundParameters.TryGetValue(commandVariableParameter, out parameterBindingResult))
+                        if (bindingResult.BoundParameters.TryGetValue(commandVariableParameter, out ParameterBindingResult parameterBindingResult))
                         {
                             if (String.Equals(variableAstVariablePath.UnqualifiedPath, (string)parameterBindingResult.ConstantValue, StringComparison.OrdinalIgnoreCase))
                             {
