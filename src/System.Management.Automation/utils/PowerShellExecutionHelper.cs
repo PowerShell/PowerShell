@@ -227,6 +227,12 @@ namespace System.Management.Automation
 
     internal static class PowerShellExtensionHelpers
     {
+        internal static PowerShell AddCommandWithPreferenceSetting(this PowerShellExecutionHelper helper,
+            string command, Type type = null)
+        {
+            return helper.CurrentPowerShell.AddCommandWithPreferenceSetting(command, type);
+        }
+
         internal static PowerShell AddCommandWithPreferenceSetting(this PowerShell powershell, string command, Type type = null)
         {
             Diagnostics.Assert(powershell != null, "the passed-in powershell cannot be null");
@@ -236,6 +242,7 @@ namespace System.Management.Automation
             if (type != null)
             {
                 var cmdletInfo = new CmdletInfo(command, type);
+
                 powershell.AddCommand(cmdletInfo);
             }
             else
