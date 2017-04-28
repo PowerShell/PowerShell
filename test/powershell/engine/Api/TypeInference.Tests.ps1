@@ -533,7 +533,7 @@ Describe "Type inference Tests" -tags "CI" {
         class X {
             [int] $Length
         }
-        Update-TypeData -Typename X -MemberType AliasProperty -MemberName AliasLength -Value Length
+        Update-TypeData -Typename X -MemberType AliasProperty -MemberName AliasLength -Value Length -Force
         $res = [AstTypeInference]::InferTypeOf( {
                 [x]::new().AliasLength
             }.Ast)
@@ -549,7 +549,7 @@ Describe "Type inference Tests" -tags "CI" {
         }
 
         class Y {}
-        update-typedata -TypeName Y -MemberName CodeProp -MemberType CodeProperty -Value ([X].GetMethod("CodeProp"))
+        Update-TypeData -TypeName Y -MemberName CodeProp -MemberType CodeProperty -Value ([X].GetMethod("CodeProp")) -Force
         $res = [AstTypeInference]::InferTypeOf( {
                 [Y]::new().CodeProp
             }.Ast)
@@ -560,7 +560,7 @@ Describe "Type inference Tests" -tags "CI" {
 
     It 'Inferes type of script property' {
         class Y {}
-        Update-TypeData -TypeName Y -MemberName ScriptProp -MemberType ScriptProperty -Value {1}
+        Update-TypeData -TypeName Y -MemberName ScriptProp -MemberType ScriptProperty -Value {1} -Force
         $res = [AstTypeInference]::InferTypeOf( {
                 [Y]::new().ScriptProp
             }.Ast)
@@ -570,7 +570,7 @@ Describe "Type inference Tests" -tags "CI" {
 
     It 'Inferes type of script property with outputtype' {
         class Y {}
-        update-typedata -TypeName Y -MemberName ScriptProp -MemberType ScriptProperty -Value {[OutputType([int])]param()1} -Force
+        Update-TypeData -TypeName Y -MemberName ScriptProp -MemberType ScriptProperty -Value {[OutputType([int])]param()1} -Force
         $res = [AstTypeInference]::InferTypeOf( {
                 [Y]::new().ScriptProp
             }.Ast)
@@ -817,7 +817,7 @@ Describe "Type inference Tests" -tags "CI" {
 
     It 'Inferes type of script property with safe eval' -Skip {
         class Y {}
-        update-typedata -TypeName Y -MemberName SafeEvalScriptProp -MemberType ScriptProperty -Value {1}
+        Update-TypeData -TypeName Y -MemberName SafeEvalScriptProp -MemberType ScriptProperty -Value {1} -Force
         $res = [AstTypeInference]::InferTypeOf( {
                 [Y]::new().SafeEvalScriptProp
             }.Ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
