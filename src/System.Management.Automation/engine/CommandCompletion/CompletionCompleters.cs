@@ -5163,7 +5163,7 @@ namespace System.Management.Automation
                     continue;
                 }
                 typeNameUsed.Add(psTypeName.Name);
-                var members = TypeInferenceContext.GetMembersByInferredType(context.TypeInferenceContext, psTypeName, isStatic, filter);
+                var members = context.TypeInferenceContext.GetMembersByInferredType(psTypeName, isStatic, filter);
                 foreach (var member in members)
                 {
                     AddInferredMember(member, memberNamePattern, results);
