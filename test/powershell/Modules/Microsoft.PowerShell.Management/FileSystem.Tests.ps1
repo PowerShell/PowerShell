@@ -246,7 +246,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     }
 }
 
-Describe "Handling of globbing patterns" {
+Describe "Handling of globbing patterns" -Tags "CI" {
 
     Context "Handling of Unix [ab] globbing patterns in literal paths" {
         BeforeAll {
