@@ -144,7 +144,7 @@
   <data name="ValidateCountNotInArray" xml:space="preserve">
     <value>The ValidateCount attribute cannot be applied to a non-array parameter. Either remove the attribute from the parameter or make the parameter an array parameter.</value>
   </data>
-  <data name="ValidateCountExactlyFailure" xml:space="preserve">
+  <data name="ValidateCountExactFailure" xml:space="preserve">
     <value>The parameter requires exactly {0} value(s) - {1} value(s) were provided.</value>
   </data>
   <data name="ValidateCountMinMaxFailure" xml:space="preserve">

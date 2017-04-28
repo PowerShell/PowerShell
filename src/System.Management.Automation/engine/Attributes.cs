@@ -1311,8 +1311,8 @@ namespace System.Management.Automation
 
             if (MinLength == MaxLength && len != MaxLength)
             {
-                throw new ValidationMetadataException("ValidateCountExactlyFailure",
-                    null, Metadata.ValidateCountExactlyFailure,
+                throw new ValidationMetadataException("ValidateCountExactFailure",
+                    null, Metadata.ValidateCountExactFailure,
                     MaxLength, len);
             }
 
