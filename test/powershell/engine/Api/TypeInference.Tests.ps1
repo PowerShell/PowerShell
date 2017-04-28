@@ -3,7 +3,7 @@ using namespace System.Collections.Generic
 
 Describe "Type inference Tests" -tags "CI" {
     BeforeAll {
-        $ati = [Cmdlet].Assembly.GetType("System.Management.Automation.AstTypeInference")        
+        $ati = [Cmdlet].Assembly.GetType("System.Management.Automation.AstTypeInference")
         $inferType = $ati.GetMethods().Where{$_.Name -ceq "InferTypeOf"}
         $m1 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast)'
         $m2 = 'System.Collections.Generic.IList`1[System.Management.Automation.PSTypeName] InferTypeOf(System.Management.Automation.Language.Ast, System.Management.Automation.TypeInferenceRuntimePermissions)'
@@ -14,7 +14,7 @@ Describe "Type inference Tests" -tags "CI" {
         $inferTypeOf2 = $inferType.Where{$m2 -eq $_}[0]
         $inferTypeOf3 = $inferType.Where{$m3 -eq $_}[0]
         $inferTypeOf4 = $inferType.Where{$m4 -eq $_}[0]
-        
+
         class AstTypeInference {
             static [IList[PSTypeName]] InferTypeOf([Language.Ast] $ast) {
                 return  $script:inferTypeOf1.Invoke($null, $ast)
@@ -23,7 +23,7 @@ Describe "Type inference Tests" -tags "CI" {
             static [IList[PSTypeName]] InferTypeOf([Language.Ast] $ast, [System.Management.Automation.TypeInferenceRuntimePermissions] $runtimePermissions) {
                 return $script:inferTypeOf2.Invoke($null, @($ast, $runtimePermissions))
             }
-            
+
             static [IList[PSTypeName]] InferTypeOf([Language.Ast] $ast, [System.Management.Automation.PowerShell] $powershell) {
                 return $script:inferTypeOf3.Invoke($null, @($ast, $powershell))
             }
@@ -32,7 +32,7 @@ Describe "Type inference Tests" -tags "CI" {
                 return $script:inferTypeOf4.Invoke($null, @($ast, $powerShell, $runtimePermissions))
             }
         }
-           
+
     }
 
     It "Inferes type from integer" {
@@ -139,7 +139,7 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should Be 0
     }
 
-    
+
     It "Inferes type from using statement" {
         $res = [AstTypeInference]::InferTypeOf( { $pid = 1; $using:pid }.Ast.EndBlock.Statements[1].PipelineElements[0].Expression)
         $res.Count | Should Be 1
@@ -154,7 +154,7 @@ Describe "Type inference Tests" -tags "CI" {
     It "Inferes type no type from Attribute" {
         $res = [AstTypeInference]::InferTypeOf( {
                 [OutputType([int])]
-                param(                
+                param(
                 )}.Ast.ParamBlock.Attributes[0])
         $res.Count | Should Be 0
     }
@@ -162,29 +162,29 @@ Describe "Type inference Tests" -tags "CI" {
     It "Inferes type no type from named Attribute argument" {
         $res = [AstTypeInference]::InferTypeOf( {
                 [OutputType(Type = [int])]
-                param(                
+                param(
                 )}.Ast.ParamBlock.Attributes[0].NamedArguments[0])
         $res.Count | Should Be 0
     }
 
     It "Inferes type parameter types" {
-        $res = [AstTypeInference]::InferTypeOf( {                
-                param([int] $i, [string] $s)                
+        $res = [AstTypeInference]::InferTypeOf( {
+                param([int] $i, [string] $s)
             }.Ast.ParamBlock.Parameters[0])
         $res.Count | Should Be 1
         $res.Name | Should be System.Int32
     }
 
-    It "Inferes type parameter from PSTypeNameAttribute type" -Skip:(!$IsWindows) {        
-        $res = [AstTypeInference]::InferTypeOf( {                
-                param([int] $i, [PSTypeName('System.Management.ManagementObject#root\cimv2\Win32_Process')] $s)                
+    It "Inferes type parameter from PSTypeNameAttribute type" -Skip:(!$IsWindows) {
+        $res = [AstTypeInference]::InferTypeOf( {
+                param([int] $i, [PSTypeName('System.Management.ManagementObject#root\cimv2\Win32_Process')] $s)
             }.Ast.ParamBlock.Parameters[1])
         $res.Count | Should Be 1
         $res.Name | Should be 'System.Management.ManagementObject#root\cimv2\Win32_Process'
     }
 
     It "Inferes type from DATA statement" {
-        $res = [AstTypeInference]::InferTypeOf( {                
+        $res = [AstTypeInference]::InferTypeOf( {
                 DATA {
                     "text"
                 }
@@ -192,16 +192,16 @@ Describe "Type inference Tests" -tags "CI" {
         $res.Count | Should Be 1
         $res.Name | Should be 'System.String'
     }
-    
+
 
     It "Inferes type from named block" {
         $res = [AstTypeInference]::InferTypeOf( { begin {1}}.Ast.BeginBlock)
         $res.Count | Should Be 1
-        $res.Name | Should Be System.Int32        
+        $res.Name | Should Be System.Int32
     }
 
     It "Inferes type from function definition" {
-        $res = [AstTypeInference]::InferTypeOf( {                
+        $res = [AstTypeInference]::InferTypeOf( {
                 function foo {
                     return 1
                 }
@@ -519,7 +519,7 @@ Describe "Type inference Tests" -tags "CI" {
         $res = [AstTypeInference]::InferTypeOf( $ast.EndBlock.Statements[0].PipelineElements[0].Redirections[0] )
         $res.Count | Should be 0
     }
-    
+
     It 'Inferes type from File redirection' {
         $errors = $null
         $tokens = $null
@@ -560,7 +560,7 @@ Describe "Type inference Tests" -tags "CI" {
 
     It 'Inferes type of script property' {
         class Y {}
-        update-typedata -TypeName Y -MemberName ScriptProp -MemberType ScriptProperty -Value {1}
+        Update-TypeData -TypeName Y -MemberName ScriptProp -MemberType ScriptProperty -Value {1}
         $res = [AstTypeInference]::InferTypeOf( {
                 [Y]::new().ScriptProp
             }.Ast)
@@ -570,7 +570,7 @@ Describe "Type inference Tests" -tags "CI" {
 
     It 'Inferes type of script property with outputtype' {
         class Y {}
-        update-typedata -TypeName Y -MemberName ScriptProp -MemberType ScriptProperty -Value {[OutputType([int])]param()1} -force
+        update-typedata -TypeName Y -MemberName ScriptProp -MemberType ScriptProperty -Value {[OutputType([int])]param()1} -Force
         $res = [AstTypeInference]::InferTypeOf( {
                 [Y]::new().ScriptProp
             }.Ast)
@@ -581,7 +581,7 @@ Describe "Type inference Tests" -tags "CI" {
 
     It 'Inferes type of script method with outputtype' {
         class Y {}
-        update-typedata -TypeName Y -MemberName MyScriptMethod -MemberType ScriptMethod -Value {[OutputType([int])]param()1} -force
+        Update-TypeData -TypeName Y -MemberName MyScriptMethod -MemberType ScriptMethod -Value {[OutputType([int])]param()1} -Force
         $res = [AstTypeInference]::InferTypeOf( {
                 [Y]::new().MyScriptMethod
             }.Ast)
@@ -624,7 +624,7 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It "Inferes type from trap statement" {
-        $res = [AstTypeInference]::InferTypeOf( {                
+        $res = [AstTypeInference]::InferTypeOf( {
                 trap {
                     "text"
                 }
@@ -634,7 +634,7 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It "Inferes type from exit statement" {
-        $res = [AstTypeInference]::InferTypeOf( {                
+        $res = [AstTypeInference]::InferTypeOf( {
                 exit
             }.Ast.EndBlock)
         $res.Count | Should Be 0
@@ -686,7 +686,7 @@ Describe "Type inference Tests" -tags "CI" {
             $tokens = $null
             $p = Resolve-path TestDrive:/
         }
-        It 'Inferes type of command parameter' {            
+        It 'Inferes type of command parameter' {
             $ast = [Language.Parser]::ParseInput("Get-ChildItem -Path $p/foo.txt", [ref] $tokens, [ref] $errors)
             $cmdParam = $ast.EndBlock.Statements[0].Pipelineelements[0].CommandElements[1]
             $res = [AstTypeInference]::InferTypeOf( $cmdParam )
@@ -700,7 +700,7 @@ Describe "Type inference Tests" -tags "CI" {
             $res = [AstTypeInference]::InferTypeOf( $cmdParam )
             $res.Count | Should be 0
         }
-    
+
         It 'Inferes type of common commands with Path parameter' {
             $ast = [Language.Parser]::ParseInput("Get-ChildItem -Path:$p/foo.txt", [ref] $tokens, [ref] $errors)
             $cmdAst = $ast.EndBlock.Statements[0].Pipelineelements[0]
@@ -768,7 +768,7 @@ Describe "Type inference Tests" -tags "CI" {
 
     It 'Inferes type of MemberExpression on class property' {
         class X {
-            [DateTime] $Date                     
+            [DateTime] $Date
         }
         $x = [X]::new()
         $res = [AstTypeInference]::InferTypeOf( {
@@ -781,7 +781,7 @@ Describe "Type inference Tests" -tags "CI" {
 
     It 'Inferes type of MemberExpression on class Method' {
         class X {
-            [DateTime] GetDate() { return [DateTime]::Now }                     
+            [DateTime] GetDate() { return [DateTime]::Now }
         }
         $x = [X]::new()
         $res = [AstTypeInference]::InferTypeOf( {
@@ -833,7 +833,7 @@ Describe "Type inference Tests" -tags "CI" {
                     BaseType([string]$s) {$this.s = $s}
                 }
                 class X : BaseType {
-                    X() : base("foo") {}                    
+                    X() : base("foo") {}
                 }
             }.Ast.Find( {param($ast) $ast -is [System.Management.Automation.Language.BaseCtorInvokeMemberExpressionAst]}, $true))
 
@@ -852,7 +852,7 @@ Describe "AstTypeInference tests" -Tags CI {
     It "Inferes type from integer with passed in powershell instance and typeinferencespermissions" {
         $powerShell = [PowerShell]::Create([RunspaceMode]::CurrentRunspace)
         $v = 1
-        $res = [AstTypeInference]::InferTypeOf( { $v }.Ast, $powerShell, [TypeInferenceRuntimePermissions]::AllowSafeEval)        
+        $res = [AstTypeInference]::InferTypeOf( { $v }.Ast, $powerShell, [TypeInferenceRuntimePermissions]::AllowSafeEval)
         $res.Name | Should be 'System.Int32'
     }
 
