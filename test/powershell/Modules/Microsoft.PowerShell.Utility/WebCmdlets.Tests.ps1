@@ -145,6 +145,14 @@ function GetTestData
 
 Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
+    BeforeAll {
+        $null = Start-HttpListener -AsJob
+    }
+
+    AfterAll {
+        $null = Stop-HttpListener
+    }
+
     # Validate the output of Invoke-WebRequest
     #
     function ValidateResponse
@@ -509,6 +517,35 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
+    It "Validate Invoke-WebRequest returns empty RelationLink property if there is no Link Header" {
+
+        $command = "Invoke-WebRequest -Uri http://localhost:8080/PowerShell?test=response"
+        $result = ExecuteWebCommand -command $command
+
+        $result.Output.RelationLink.Count | Should Be 0
+    }
+
+    It "Validate Invoke-WebRequest returns valid RelationLink property with absolute uris if Link Header is present" {
+
+        $command = "Invoke-WebRequest -Uri 'http://localhost:8080/PowerShell?test=linkheader&maxlinks=5'"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.RelationLink.Count | Should BeExactly 2
+        $result.Output.RelationLink["next"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=2"
+        $result.Output.RelationLink["last"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=5"
+    }
+
+    It "Validate Invoke-WebRequest quietly ignores invalid Link Headers in RelationLink property" -TestCases @(
+        @{ type = "noUrl" }
+        @{ type = "malformed" }
+        @{ type = "noRel" } 
+    ) {
+        param($type)
+        $command = "Invoke-WebRequest -Uri 'http://localhost:8080/PowerShell?test=linkheader&type=$type'"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.RelationLink.Count | Should BeExactly 1
+        $result.Output.RelationLink["last"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=3&linknumber=3"
+    }
+
     BeforeEach {
         if ($env:http_proxy) {
             $savedHttpProxy = $env:http_proxy
@@ -537,6 +574,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 }
 
 Describe "Invoke-RestMethod tests" -Tags "Feature" {
+
+    BeforeAll {
+        $null = Start-HttpListener -AsJob
+    }
+
+    AfterAll {
+        $null = Stop-HttpListener
+    }
 
     It "Invoke-RestMethod returns User-Agent" {
 
@@ -870,6 +915,46 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
         $result.Error.ErrorDetails.Message | Should Match $result.Error.Exception.InnerException.Message
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+    }
+
+    It "Validate Invoke-RestMethod -FollowRelLink doesn't fail if no Link Header is present" {
+
+        $command = "Invoke-RestMethod -Uri 'http://localhost:8080/PowerShell?test=response&output=foo' -FollowRelLink"
+        $result = ExecuteWebCommand -command $command
+
+        $result.Output | Should BeExactly "foo"
+    }
+
+    It "Validate Invoke-RestMethod -FollowRelLink correctly follows all the available relation links" {
+        $maxLinks = 5
+
+        $command = "Invoke-RestMethod -Uri 'http://localhost:8080/PowerShell?test=linkheader&maxlinks=$maxlinks' -FollowRelLink"
+        $result = ExecuteWebCommand -command $command
+
+        $result.Output.output.Count | Should BeExactly $maxLinks
+        1..$maxLinks | ForEach-Object { $result.Output.output[$_ - 1] | Should BeExactly $_ }
+    }
+
+    It "Validate Invoke-RestMethod -FollowRelLink correctly limits to -MaximumRelLink" {
+        $maxLinks = 10
+        $maxLinksToFollow = 6
+
+        $command = "Invoke-RestMethod -Uri 'http://localhost:8080/PowerShell?test=linkheader&maxlinks=$maxlinks' -FollowRelLink -MaximumFollowRelLink $maxLinksToFollow"
+        $result = ExecuteWebCommand -command $command
+
+        $result.Output.output.Count | Should BeExactly $maxLinksToFollow
+        1..$maxLinksToFollow | ForEach-Object { $result.Output.output[$_ - 1] | Should BeExactly $_ }
+    }
+
+    It "Validate Invoke-RestMethod quietly ignores invalid Link Headers if -FollowRelLink is specified" -TestCases @(
+        @{ type = "noUrl" }
+        @{ type = "malformed" }
+        @{ type = "noRel" } 
+    ) {
+        param($type)
+        $command = "Invoke-RestMethod -Uri 'http://localhost:8080/PowerShell?test=linkheader&type=$type' -FollowRelLink"
+        $result = ExecuteWebCommand -command $command
+        $result.Output.output | Should BeExactly 1
     }
 
     BeforeEach {

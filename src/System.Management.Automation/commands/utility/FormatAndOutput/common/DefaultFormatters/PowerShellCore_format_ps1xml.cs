@@ -1271,6 +1271,7 @@ namespace System.Management.Automation.Runspaces
                         .AddItemProperty(@"Links")
                         .AddItemProperty(@"ParsedHtml")
                         .AddItemProperty(@"RawContentLength")
+                        .AddItemProperty(@"RelationLink")
                     .EndEntry()
                 .EndList());
         }
@@ -1291,6 +1292,7 @@ namespace System.Management.Automation.Runspaces
                                 ", label: "RawContent")
                         .AddItemProperty(@"Headers")
                         .AddItemProperty(@"RawContentLength")
+                        .AddItemProperty(@"RelationLink")
                     .EndEntry()
                 .EndList());
         }

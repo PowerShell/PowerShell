@@ -46,6 +46,7 @@ namespace Microsoft.PowerShell.Commands
                 // creating a MemoryStream wrapper to response stream here to support IsStopping.
                 responseStream = new WebResponseContentMemoryStream(responseStream, StreamHelper.ChunkSize, this);
                 WebResponseObject ro = WebResponseObjectFactory.GetResponseObject(response, responseStream, this.Context, UseBasicParsing);
+                ro.RelationLink = _relationLink;
                 WriteObject(ro);
 
                 // use the rawcontent stream from WebResponseObject for further
