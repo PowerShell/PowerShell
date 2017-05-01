@@ -1723,6 +1723,15 @@ function Publish-NuGetFeed
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
+    if ($VersionSuffix) {
+        ## NuGet/Home #3953, #4337 -- dotnet pack - version suffix missing from ProjectReference
+        ## Workaround:
+        ##   dotnet restore /p:VersionSuffix=<suffix> # Bake the suffix into project.assets.json
+        ##   dotnet pack --version-suffix <suffix>
+        $TopProject = (New-PSOptions).Top
+        dotnet restore $TopProject "/p:VersionSuffix=$VersionSuffix"
+    }
+
     try {
         Push-Location $PSScriptRoot
         @(
