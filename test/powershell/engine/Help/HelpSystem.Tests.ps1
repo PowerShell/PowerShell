@@ -201,3 +201,28 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
         $help | Should BeExactly "Hello"
     }
 }
+
+Describe "Get-Help should find help info within help files" -Tags @('CI', 'RequireAdminOnWindows') {
+    It "Get-Help should find help files under pshome" {
+        $helpFile = "about_testCase.help.txt"
+        $culture = (Get-Culture).Name
+        $helpFolderPath = Join-Path $PSHOME $culture
+        $helpFilePath = Join-Path $helpFolderPath $helpFile
+
+        if (!(Test-Path $helpFolderPath))
+        {
+            $null = New-Item -ItemType Directory -Path $helpFolderPath -ErrorAction SilentlyContinue
+        }
+        
+        try
+        {
+            $null = New-Item -ItemType File -Path $helpFilePath -Value "about_test" -ErrorAction SilentlyContinue
+            $helpContent = Get-Help about_testCase
+            $helpContent | Should Match "about_test"
+        }
+        finally
+        {
+            Remove-Item $helpFilePath -Force -ErrorAction SilentlyContinue
+        }
+    }
+}
