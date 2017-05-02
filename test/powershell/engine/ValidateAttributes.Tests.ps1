@@ -8,9 +8,9 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                @{ sb = { function Local:foo { param([ValidateCount(-1,2)] [string[]] $bar) }; foo         }; FullyQualifiedErrorId = "ExceptionConstructingAttribute";             InnerErrorId = "" }
                @{ sb = { function Local:foo { param([ValidateCount(1,-1)] [string[]] $bar) }; foo         }; FullyQualifiedErrorId = "ExceptionConstructingAttribute";             InnerErrorId = "" }
                @{ sb = { function Local:foo { param([ValidateCount(2, 1)] [string[]] $bar) }; foo         }; FullyQualifiedErrorId = "ValidateRangeMaxLengthSmallerThanMinLength"; InnerErrorId = "" }
-               @{ sb = { function Local:foo { param([ValidateCount(2, 2)] [string[]] $bar) }; foo 1       }; FullyQualifiedErrorId = "ParameterArgumentValidationError,foo";       InnerErrorId = "ValidateCountNotExactlyEqual" }
-               @{ sb = { function Local:foo { param([ValidateCount(2, 3)] [string[]] $bar) }; foo 1       }; FullyQualifiedErrorId = "ParameterArgumentValidationError,foo";       InnerErrorId = "ValidateCountSmallerThanMin" }
-               @{ sb = { function Local:foo { param([ValidateCount(2, 3)] [string[]] $bar) }; foo 1,2,3,4 }; FullyQualifiedErrorId = "ParameterArgumentValidationError,foo";       InnerErrorId = "ValidateCountGreaterThanMax" }
+               @{ sb = { function Local:foo { param([ValidateCount(2, 2)] [string[]] $bar) }; foo 1       }; FullyQualifiedErrorId = "ParameterArgumentValidationError,foo";       InnerErrorId = "ValidateCountExactFailure" }
+               @{ sb = { function Local:foo { param([ValidateCount(2, 3)] [string[]] $bar) }; foo 1       }; FullyQualifiedErrorId = "ParameterArgumentValidationError,foo";       InnerErrorId = "ValidateCountMinMaxFailure" }
+               @{ sb = { function Local:foo { param([ValidateCount(2, 3)] [string[]] $bar) }; foo 1,2,3,4 }; FullyQualifiedErrorId = "ParameterArgumentValidationError,foo";       InnerErrorId = "ValidateCountMinMaxFailure" }
            )
         }
 
