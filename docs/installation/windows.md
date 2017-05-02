@@ -2,7 +2,7 @@
 
 ## MSI
 
-To install PowerShell on Windows Full SKU (works on Win8 and above - x64 based systems), download either the MSI from [AppVeyor][] for a nightly build,
+To install PowerShell on Windows Full SKU (works on Windows 7 SP1 and later), download either the MSI from [AppVeyor][] for a nightly build,
 or a released package from our GitHub [releases][] page. The MSI file looks like this - `PowerShell-6.0.0.<buildversion>.<os-arch>.msi`
 
 Once downloaded, double-click the installer and follow the prompts.
@@ -11,8 +11,13 @@ There is a shortcut placed in the Start Menu upon installation.
 
 * By default the package is installed to `$env:ProgramFiles\PowerShell\`
 * You can launch PowerShell via the Start Menu or `$env:ProgramFiles\PowerShell\powershell.exe`
-* Note: On Windows 8.1 / Windows 2012R2, ensure Visual C++ Redistributable
-    for VS2015 is installed from [here](http://download.microsoft.com/download/9/3/F/93FCF1E7-E6A4-478B-96E7-D4B285925B00/vc_redist.x64.exe).
+
+### Prerequisites
+
+* Install the [Universal C Runtime](https://www.microsoft.com/en-us/download/details.aspx?id=50410) on Windows versions prior to Windows 10.
+  It is available via direct download or Windows Update.
+  Fully patched (including optional packages), supported systems will already have this installed.
+* Install the [Visual C++ Redistributable](https://www.microsoft.com/en-us/download/details.aspx?id=48145) for VS2015.
 
 ## Deploying on Nano Server
 
