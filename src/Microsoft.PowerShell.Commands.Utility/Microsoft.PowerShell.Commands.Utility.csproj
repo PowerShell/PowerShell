@@ -35,7 +35,6 @@
     <Compile Remove="commands\utility\FormatAndOutput\OutGridView\TableView.cs" />
     <Compile Remove="commands\utility\FormatAndOutput\out-printer\PrinterLineOutput.cs" />
     <Compile Remove="commands\utility\FormatAndOutput\out-printer\out-printer.cs" />
-    <Compile Remove="commands\utility\Send-MailMessage.cs" />
     <Compile Remove="commands\utility\ShowCommand\ShowCommand.cs" />
     <Compile Remove="commands\utility\ShowCommand\ShowCommandCommandInfo.cs" />
     <Compile Remove="commands\utility\ShowCommand\ShowCommandModuleInfo.cs" />
@@ -60,17 +59,15 @@
     <Compile Remove="gen\UtilityMshSnapinResources.cs" />
     <Compile Remove="gen\OutPrinterDisplayStrings.cs" />
     <Compile Remove="gen\UpdateListStrings.cs" />
-    <Compile Remove="gen\SendMailMessageStrings.cs" />
     <Compile Remove="gen\ConvertFromStringResources.cs" />
     <Compile Remove="gen\ConvertStringResources.cs" />
     <Compile Remove="gen\FlashExtractStrings.cs" />
     <Compile Remove="gen\ImmutableStrings.cs" />
-    
+
     <EmbeddedResource Remove="resources\FormatAndOut_out_gridview.resx" />
     <EmbeddedResource Remove="resources\UtilityMshSnapinResources.resx" />
     <EmbeddedResource Remove="resources\OutPrinterDisplayStrings.resx" />
     <EmbeddedResource Remove="resources\UpdateListStrings.resx" />
-    <EmbeddedResource Remove="resources\SendMailMessageStrings.resx" />
     <EmbeddedResource Remove="resources\ConvertFromStringResources.resx" />
     <EmbeddedResource Remove="resources\ConvertStringResources.resx" />
     <EmbeddedResource Remove="resources\FlashExtractStrings.resx" />
