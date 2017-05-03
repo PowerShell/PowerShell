@@ -16,7 +16,7 @@ Describe "PSVersionTable" -Tags "CI" {
 
     }
     It "GitCommitId property should not contain an error" {
-       $PSVersionTable.GitCommitId | Should not match "powershell.version"
+       $PSVersionTable.GitCommitId | Should BeExactly $(Get-Content "$PsHome\powershell.version")
     }
 
     It "Should have the correct platform info" {
