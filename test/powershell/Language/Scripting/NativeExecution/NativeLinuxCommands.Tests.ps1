@@ -1,9 +1,6 @@
 if ( $IsWindows ) {
     $PesterSkipOrPending = @{ Skip = $true }
 }
-elseif ( $IsOSX ) {
-    $PesterSkipOrPending = @{ Pending = $true }
-}
 else {
     $PesterSkipOrPending = @{}
 }
@@ -27,15 +24,15 @@ Describe "NativeLinuxCommands" -tags "CI" {
     }
 
     It "Should not redirect standard input if native command is the first command in pipeline (1)" @PesterSkipOrPending {
-        stty | ForEach-Object -Begin { $out = @() } -Process { $out += $_ }
+        df | ForEach-Object -Begin { $out = @() } -Process { $out += $_ }
         $out.Length -gt 0 | Should Be $true
-        $out[0] -like "speed * baud; line =*" | Should Be $true
+        $out[0] -like "Filesystem*Available*" | Should Be $true
     }
 
     It "Should not redirect standard input if native command is the first command in pipeline (2)" @PesterSkipOrPending {
-        $out = stty
+        $out = df
         $out.Length -gt 0 | Should Be $true
-        $out[0] -like "speed * baud; line =*" | Should Be $true
+        $out[0] -like "Filesystem*Available*" | Should Be $true
     }
 }
 
