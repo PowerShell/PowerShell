@@ -246,6 +246,49 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
     }
 }
 
+Describe "Handling of globbing patterns" -Tags "CI" {
+
+    Context "Handling of Unix [ab] globbing patterns in literal paths" {
+        BeforeAll {
+            $filePath = Join-Path $TESTDRIVE "file[txt].txt"
+            $newPath = Join-Path $TESTDRIVE "file.txt.txt"
+            $dirPath = Join-Path $TESTDRIVE "subdir"
+        }
+        BeforeEach {
+            $file = New-Item -ItemType File -Path $filePath -Force
+        }
+        AfterEach
+        {
+            Remove-Item -Force -Recurse -Path $dirPath -ErrorAction SilentlyContinue
+            Remove-Item -Force -LiteralPath $newPath -ErrorAction SilentlyContinue
+        }
+
+        It "Rename-Item -LiteralPath can rename a file with Unix globbing characters" {
+            Rename-Item -LiteralPath $file.FullName -NewName $newPath
+            Test-Path -LiteralPath $file.FullName | Should Be $false
+            Test-Path -LiteralPath $newPath | Should Be $true
+        }
+
+        It "Remove-Item -LiteralPath can delete a file with Unix globbing characters" {
+            Remove-Item -LiteralPath $file.FullName
+            Test-Path -LiteralPath $file.FullName | Should Be $false
+        }
+
+        It "Move-Item -LiteralPath can move a file with Unix globbing characters" {
+            $dir = New-Item -ItemType Directory -Path $dirPath
+            Move-Item -LiteralPath $file.FullName -Destination $dir.FullName
+            Test-Path -LiteralPath $file.FullName | Should Be $false
+            $newPath = Join-Path $dir.FullName $file.Name
+            Test-Path -LiteralPath $newPath | Should Be $true
+        }
+
+        It "Copy-Item -LiteralPath can copy a file with Unix globbing characters" {
+            Copy-Item -LiteralPath $file.FullName -Destination $newPath
+            Test-Path -LiteralPath $newPath | Should Be $true
+        }
+    }
+}
+
 Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows" {
     BeforeAll {
         # on macOS, the /tmp directory is a symlink, so we'll resolve it here
