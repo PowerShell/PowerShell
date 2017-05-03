@@ -4105,9 +4105,13 @@ namespace Microsoft.PowerShell.Commands
                     {
                         requiredModules.Add(new ModuleSpecification(currentModule), new List<ModuleSpecification> { requiredModuleSpecification });
                     }
+                    if (requiredModuleSpecification != null)
+                    {
+                        requiredModules.Add(requiredModuleSpecification, new List<ModuleSpecification>(requiredModuleInfo.RequiredModulesSpecification));
+                    }
 
                     // We always need to check against the module name and not the file name
-                    hasRequiredModulesCyclicReference = HasRequiredModulesCyclicReference(requiredModuleInfo.Name,
+                    hasRequiredModulesCyclicReference = HasRequiredModulesCyclicReference(requiredModuleSpecification,
                                                                                           new List<ModuleSpecification>(requiredModuleInfo.RequiredModulesSpecification),
                                                                                           new Collection<PSModuleInfo> { requiredModuleInfo },
                                                                                           requiredModules,
@@ -4426,15 +4430,15 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        private static bool HasRequiredModulesCyclicReference(string currentModuleName, List<ModuleSpecification> requiredModules, IEnumerable<PSModuleInfo> moduleInfoList, Dictionary<ModuleSpecification, List<ModuleSpecification>> nonCyclicRequiredModules, out ErrorRecord error)
+        private static bool HasRequiredModulesCyclicReference(ModuleSpecification currentModuleSpecification, List<ModuleSpecification> requiredModules, IEnumerable<PSModuleInfo> moduleInfoList, Dictionary<ModuleSpecification, List<ModuleSpecification>> nonCyclicRequiredModules, out ErrorRecord error)
         {
             error = null;
-            if (requiredModules == null || requiredModules.Count == 0)
+            if (requiredModules == null || requiredModules.Count == 0 || currentModuleSpecification == null)
             {
                 return false;
             }
 
-            foreach (var moduleSpecification in requiredModules)
+            foreach (var requiredModuleSpecification in requiredModules)
             {
                 // The dictionary holds the key-value pair with the following convention
                 // Key --> Module
@@ -4447,56 +4451,47 @@ namespace Microsoft.PowerShell.Commands
 
                 // Cycle
                 // 1 --->2---->3---->4---> 2
-                if (nonCyclicRequiredModules.ContainsKey(moduleSpecification))
+                if (nonCyclicRequiredModules.ContainsKey(requiredModuleSpecification))
                 {
                     // Error out saying there is a cyclic reference
                     PSModuleInfo mo = null;
                     foreach (var i in moduleInfoList)
                     {
-                        if (i.Name.Equals(currentModuleName, StringComparison.OrdinalIgnoreCase))
+                        if (i.Name.Equals(currentModuleSpecification.Name, StringComparison.OrdinalIgnoreCase))
                         {
                             mo = i;
                             break;
                         }
                     }
                     Dbg.Assert(mo != null, "The moduleInfo should be present");
-                    string message = StringUtil.Format(Modules.RequiredModulesCyclicDependency, currentModuleName, moduleSpecification.Name, mo.Path);
+                    string message = StringUtil.Format(Modules.RequiredModulesCyclicDependency, currentModuleSpecification.ToString(), requiredModuleSpecification.ToString(), mo.Path);
                     MissingMemberException mm = new MissingMemberException(message);
                     error = new ErrorRecord(mm, "Modules_InvalidManifest", ErrorCategory.ResourceUnavailable, mo.Path);
                     return true;
                 }
-                else // Go for the recursive check for the RequiredModules of current module
+                else // Go for recursive check for the RequiredModules of current requiredModuleSpecification
                 {
-                    // Add required Modules of m to the list
-                    Collection<PSModuleInfo> availableModules = GetModuleIfAvailable(moduleSpecification);
-                    List<ModuleSpecification> list = new List<ModuleSpecification>();
-                    string moduleName = null;
+                    Collection<PSModuleInfo> availableModules = GetModuleIfAvailable(requiredModuleSpecification);
                     if (availableModules.Count == 1)
                     {
-                        moduleName = availableModules[0].Name;
-                        foreach (var rm in availableModules[0].RequiredModulesSpecification)
-                        {
-                            list.Add(rm);
-                        }
-                        // Only add if this element has a required module (meaning, it could lead to a circular reference)
+                        List<ModuleSpecification> list = new List<ModuleSpecification>(availableModules[0].RequiredModulesSpecification);
+                        // Only add if this required module has nested required modules (meaning, it could lead to a circular reference)
                         if (list.Count > 0)
                         {
-                            nonCyclicRequiredModules.Add(moduleSpecification, list);
+                            nonCyclicRequiredModules.Add(requiredModuleSpecification, list);
+                            // We always need to check against the module specification and not the file name
+                            if (HasRequiredModulesCyclicReference(requiredModuleSpecification, list, availableModules, nonCyclicRequiredModules, out error))
+                            {
+                                return true;
+                            }
                         }
-                    }
-
-                    // We always need to check against the module name and not the file name
-                    if (HasRequiredModulesCyclicReference(moduleName, list, availableModules, nonCyclicRequiredModules, out error))
-                    {
-                        return true;
                     }
                 }
             }
 
-            // Once depth recursive returns a value, we should remove the current module from the CyclicRequiredModules check list.
-            // This prevent non related modules get involved in the cycle list.
-            ModuleSpecification currentModule = new ModuleSpecification(currentModuleName);
-            nonCyclicRequiredModules.Remove(currentModule);
+            // Once nested recursive calls are complete, we should remove the current module from the nonCyclicRequiredModules check list.
+            // This prevents non related modules from getting involved in the cycle list.
+            nonCyclicRequiredModules.Remove(currentModuleSpecification); // this uses ModuleSpecificationComparer equality comparer
             return false;
         }
 

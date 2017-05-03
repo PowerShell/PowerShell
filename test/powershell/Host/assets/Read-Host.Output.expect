@@ -9,19 +9,13 @@ set timeout 60
 
 spawn $powershell -nologo -noprofile Read-Host prompt
 
-expect "prompt: $" {
-    send "input\r"
+expect  {
+    "prompt: $" { send "input\r" ; exp_continue }
+    "input\r\ninput\r" { exit 2 }
+    "input\r\n" { exit 0 }
 }
 
-# This is the old, incorrect behavior
-expect "input\r\ninput\r" {
-    exit 2
-}
-
-# This is the expected behavior
-expect "input\r\n" {
-    exit 0
-}
-
-# Anything else is wrong
+# ExitCode: 2 -- this is the old, incorrect behavior
+# ExitCode: 0 -- this is the expected behavior
+# ExitCode: 1 -- anything else is wrong
 exit 1

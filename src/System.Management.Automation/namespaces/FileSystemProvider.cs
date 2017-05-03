@@ -61,6 +61,11 @@ namespace Microsoft.PowerShell.Commands
         // copy script will accomodate the new value.
         private const int FILETRANSFERSIZE = 4 * 1024 * 1024;
 
+        // The name of the key in an exception's Data dictionary when attempting
+        // to copy an item onto itself.
+        private const string SelfCopyDataKey = "SelfCopy";
+
+
         /// <summary>
         /// An instance of the PSTraceSource class used for trace output
         /// using "FileSystemProvider" as the category.
@@ -2858,15 +2863,6 @@ namespace Microsoft.PowerShell.Commands
                 continueRemoval = ShouldProcess(directory.FullName, action);
             }
 
-            //if this is a reparse point and force is not specified then warn user but dont remove the directory.
-            if (Platform.IsWindows && ((directory.Attributes & FileAttributes.ReparsePoint) != 0) && !Force)
-            {
-                String error = StringUtil.Format(FileSystemProviderStrings.DirectoryReparsePoint, directory.FullName);
-                Exception e = new IOException(error);
-                WriteError(new ErrorRecord(e, "DirectoryNotEmpty", ErrorCategory.WriteError, directory));
-                return;
-            }
-
             if ((directory.Attributes & FileAttributes.ReparsePoint) != 0)
             {
                 bool success = InternalSymbolicLinkLinkCodeMethods.DeleteJunction(directory.FullName);
@@ -3322,13 +3318,14 @@ namespace Microsoft.PowerShell.Commands
             path = NormalizePath(path);
 
             // First check to see if it is a directory
-
             try
             {
                 DirectoryInfo directory = new DirectoryInfo(path);
 
                 // If the above didn't throw an exception, check to
-                // see if it contains any directories
+                // see if we should proceed and if it contains any children
+                if ((directory.Attributes & FileAttributes.Directory) != FileAttributes.Directory)
+                    return false;
 
                 result = DirectoryInfoHasChildItems(directory);
             }
@@ -3457,14 +3454,14 @@ namespace Microsoft.PowerShell.Commands
             _excludeMatcher = SessionStateUtilities.CreateWildcardsFromStrings(Exclude, WildcardOptions.IgnoreCase);
 
             // if the source and destination path are same (for a local copy) then flag it as error.
-            if ((toSession == null) && (fromSession == null) && path.Equals(destinationPath, StringComparison.OrdinalIgnoreCase))
+            if ((toSession == null) && (fromSession == null) && InternalSymbolicLinkLinkCodeMethods.IsSameFileSystemItem(path, destinationPath))
             {
                 String error = StringUtil.Format(FileSystemProviderStrings.CopyError, path);
                 Exception e = new IOException(error);
+                e.Data[SelfCopyDataKey] = destinationPath;
                 WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, path));
                 return;
             }
-
             // Copy-Item from session
             if (fromSession != null)
             {
@@ -3774,14 +3771,14 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 //if the source and destination path are same then flag it as error.
-                if (destinationPath.Equals(file.FullName, StringComparison.OrdinalIgnoreCase))
+                if (InternalSymbolicLinkLinkCodeMethods.IsSameFileSystemItem(destinationPath, file.FullName))
                 {
                     String error = StringUtil.Format(FileSystemProviderStrings.CopyError, destinationPath);
                     Exception e = new IOException(error);
+                    e.Data[SelfCopyDataKey] = file.FullName;
                     WriteError(new ErrorRecord(e, "CopyError", ErrorCategory.WriteError, destinationPath));
                     return;
                 }
-
                 // Verify that the target doesn't represent a device name
                 if (PathIsReservedDeviceName(destinationPath, "CopyError"))
                 {
@@ -4956,6 +4953,23 @@ namespace Microsoft.PowerShell.Commands
                                 return String.Empty;
                             }
 
+#if UNIX
+                            // We don't use the Directory class for Unix because the path
+                            // may contain additional globbing patterns such as '[ab]'
+                            // which Directory.EnumerateFiles() processes, giving undesireable
+                            // results in this context.
+                            if (!Utils.NativeItemExists(result))
+                            {
+                                String error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
+                                Exception e = new IOException(error);
+                                WriteError(new ErrorRecord(
+                                    e,
+                                    "ItemDoesNotExist",
+                                    ErrorCategory.ObjectNotFound,
+                                    path));
+                                break;
+                            }
+#else
                             string leafName = GetChildName(result);
 
                             // Use the Directory class to get the real path (this will
@@ -4981,6 +4995,7 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             result = files.First();
+#endif
 
                             if (result.StartsWith(basePath, StringComparison.CurrentCulture))
                             {
@@ -7499,85 +7514,9 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return GetEncodingFromEnum(Encoding);
+                return Utils.GetEncodingFromEnum(Encoding);
             }
         } // EncodingType
-
-        /// <summary>
-        /// Converts the stream type string into an Encoding
-        /// </summary>
-        ///
-        /// <param name="type">
-        /// This is a string representation of the encoding. It can be
-        /// "string", "unicode", "bigendianunicode", "ascii", "utf7", or "utf8"
-        ///
-        /// Note, a ToLowerInvariant is done to the type before comparison is made.
-        /// </param>
-        ///
-        /// <returns>
-        /// The encoding that was represented by the string
-        /// </returns>
-        ///
-        /// <throws>
-        /// ArgumentException if type is null, empty, or does not represent one
-        /// of the known encoding types.
-        /// </throws>
-        private static Encoding GetEncodingFromEnum(FileSystemCmdletProviderEncoding type)
-        {
-            System.Text.Encoding encoding;
-
-            switch (type)
-            {
-                case FileSystemCmdletProviderEncoding.String:
-                    encoding = System.Text.Encoding.Unicode;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.Unicode:
-                    encoding = System.Text.Encoding.Unicode;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.BigEndianUnicode:
-                    encoding = System.Text.Encoding.BigEndianUnicode;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.UTF8:
-                    encoding = System.Text.Encoding.UTF8;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.UTF7:
-                    encoding = System.Text.Encoding.UTF7;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.UTF32:
-                    encoding = System.Text.Encoding.UTF32;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.BigEndianUTF32:
-                    encoding = System.Text.Encoding.GetEncoding("utf-32BE");
-                    break;
-
-                case FileSystemCmdletProviderEncoding.Ascii:
-                    encoding = System.Text.Encoding.ASCII;
-                    break;
-
-                case FileSystemCmdletProviderEncoding.Default:
-                    encoding = ClrFacade.GetDefaultEncoding();
-                    break;
-
-                case FileSystemCmdletProviderEncoding.Oem:
-                    {
-                        encoding = ClrFacade.GetOEMEncoding();
-                    }
-                    break;
-
-                default:
-                    // Default to unicode encoding
-                    encoding = System.Text.Encoding.Unicode;
-                    break;
-            }
-
-            return encoding;
-        } // GetEncodingFromEnum
 
         /// <summary>
         /// Gets the Byte Encoding status of the StreamType parameter.  Returns true
@@ -8208,6 +8147,42 @@ namespace Microsoft.PowerShell.Commands
             return isHardLink;
         }
 
+        internal static bool IsSameFileSystemItem(string pathOne, string pathTwo)
+        {
+#if UNIX
+            return Platform.NonWindowsIsSameFileSystemItem(pathOne, pathTwo);
+#else
+            return WinIsSameFileSystemItem(pathOne, pathTwo);
+#endif
+        }
+
+        internal static bool WinIsSameFileSystemItem(string pathOne, string pathTwo)
+        {
+            var access = FileAccess.Read;
+            var share = FileShare.Read;
+            var creation = FileMode.Open;
+            var attributes = FileAttributes.BackupSemantics | FileAttributes.PosixSemantics;
+
+            using (var sfOne = AlternateDataStreamUtilities.NativeMethods.CreateFile(pathOne, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
+            using (var sfTwo = AlternateDataStreamUtilities.NativeMethods.CreateFile(pathTwo, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
+            {
+                if (!sfOne.IsInvalid && !sfTwo.IsInvalid)
+                {
+                    BY_HANDLE_FILE_INFORMATION  infoOne;
+                    BY_HANDLE_FILE_INFORMATION  infoTwo;
+                    if (   GetFileInformationByHandle(sfOne.DangerousGetHandle(), out infoOne)
+                        && GetFileInformationByHandle(sfTwo.DangerousGetHandle(), out infoTwo))
+                    {
+                        return    infoOne.VolumeSerialNumber == infoTwo.VolumeSerialNumber
+                               && infoOne.FileIndexHigh == infoTwo.FileIndexHigh
+                               && infoOne.FileIndexLow == infoTwo.FileIndexLow;
+                    }
+                }
+            }
+
+            return false;
+        }
+
         internal static bool IsHardLink(ref IntPtr handle)
         {
 #if UNIX
@@ -8661,7 +8636,7 @@ namespace System.Management.Automation.Internal
             // the code above seems cleaner and more robust than the IAttachmentExecute approach
         }
 
-        private static class NativeMethods
+        internal static class NativeMethods
         {
             internal const int ERROR_HANDLE_EOF = 38;
             internal enum StreamInfoLevels { FindStreamInfoStandard = 0 }

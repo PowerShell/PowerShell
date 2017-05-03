@@ -186,7 +186,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
         $jsonContent.headers.Host | Should Match "httpbin.org"
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
@@ -235,7 +234,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         # TODO: There is a bug on ConvertFrom-Json that fails for utf8.
         <#
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.'Accept-Encoding' | Should Match "gzip, deflate"
         $jsonContent.headers.Host | Should Match "httpbin.org"
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
         #>
@@ -296,7 +294,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
         # Validate response content
         $jsonContent = $result.Output.Content | ConvertFrom-Json
-        $jsonContent.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
         $jsonContent.headers.Host | Should Match "httpbin.org"
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
@@ -372,7 +369,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 # Validate response content
                 $jsonContent = $result.Output.Content | ConvertFrom-Json
                 $jsonContent.url | Should Match $uri
-                $jsonContent.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
                 $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
 
                 # For a GET request, there is no data property to validate.
@@ -438,7 +434,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
-    It "Validate Invoke-WebRequest -SkipCertificateCheck" {
+    ## 'HttpClientHandler.ServerCertificateCustomValidationCallback' currently doesn't work in netcoreapp2.0 on Mac at all.
+    ## This is tracked by powershell issue #3648.
+    It "Validate Invoke-WebRequest -SkipCertificateCheck" -Pending:$IsOSX {
 
         # validate that exception is thrown for URI with expired certificate
         $command = "Invoke-WebRequest -Uri 'https://expired.badssl.com'"
@@ -557,7 +555,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
         $result.Output.headers.Host | Should Match "httpbin.org"
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
@@ -570,7 +567,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
 
         # Validate response
-        $result.Output.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
         $result.Output.headers.Host | Should Match "httpbin.org"
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
 
@@ -606,7 +602,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
         # Validate response content
         # TODO: There is a bug on ConvertFrom-Json that fails for utf8.
-        $result.headers.'Accept-Encoding' | Should Match "gzip, deflate"
         $result.headers.Host | Should Match "httpbin.org"
         $result.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
@@ -727,7 +722,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
                 # Validate response
                 $result.Output.url | Should Match $uri
-                $result.Output.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
                 $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
 
                 # For a GET request, there is no data property to validate.
@@ -756,7 +750,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
         # Validate response
         $result.Output.url | Should Match $uri
-        $result.Output.headers.'Accept-Encoding' | Should Match "gzip, ?deflate"
         $result.Output.headers.'User-Agent' | Should Match "WindowsPowerShell"
 
         # Unfortunately, the connection information is not display in the output of Invoke-RestMethod
@@ -797,7 +790,9 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
-    It "Validate Invoke-RestMethod -SkipCertificateCheck" {
+    ## 'HttpClientHandler.ServerCertificateCustomValidationCallback' currently doesn't work in netcoreapp2.0 on Mac at all.
+    ## This is tracked by powershell issue #3648.
+    It "Validate Invoke-RestMethod -SkipCertificateCheck" -Pending:$IsOSX {
 
         # HTTP method HEAD must be used to not retrieve an unparsable HTTP body
         # validate that exception is thrown for URI with expired certificate

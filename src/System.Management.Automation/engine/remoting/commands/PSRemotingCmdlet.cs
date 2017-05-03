@@ -275,6 +275,7 @@ namespace Microsoft.PowerShell.Commands
         public string ComputerName;
         public string UserName;
         public string KeyFilePath;
+        public int Port;
     }
 
     /// <summary>
@@ -561,6 +562,7 @@ namespace Microsoft.PowerShell.Commands
         /// to override the policy setting
         /// </remarks>
         [Parameter(ParameterSetName = PSRemotingBaseCmdlet.ComputerNameParameterSet)]
+        [Parameter(ParameterSetName = PSRemotingBaseCmdlet.SSHHostParameterSet)]
         [ValidateRange((Int32)1, (Int32)UInt16.MaxValue)]
         public virtual Int32 Port { get; set; }
 
@@ -820,6 +822,7 @@ namespace Microsoft.PowerShell.Commands
         private const string UserNameParameter = "UserName";
         private const string KeyFilePathParameter = "KeyFilePath";
         private const string IdentityFilePathAlias = "IdentityFilePath";
+        private const string PortParameter = "Port";
 
         #endregion
 
@@ -851,25 +854,23 @@ namespace Microsoft.PowerShell.Commands
                         throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
                     }
 
-                    string paramValue = item[paramName] as string;
-                    if (string.IsNullOrEmpty(paramValue))
-                    {
-                        throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
-                    }
-
                     if (paramName.Equals(ComputerNameParameter, StringComparison.OrdinalIgnoreCase) || paramName.Equals(HostNameAlias, StringComparison.OrdinalIgnoreCase))
                     {
-                        var resolvedComputerName = ResolveComputerName(paramValue);
+                        var resolvedComputerName = ResolveComputerName(GetSSHConnectionStringParameter(item[paramName]));
                         ValidateComputerName(new string[] { resolvedComputerName });
                         connectionInfo.ComputerName = resolvedComputerName;
                     }
                     else if (paramName.Equals(UserNameParameter, StringComparison.OrdinalIgnoreCase))
                     {
-                        connectionInfo.UserName = paramValue;
+                        connectionInfo.UserName = GetSSHConnectionStringParameter(item[paramName]);
                     }
                     else if (paramName.Equals(KeyFilePathParameter, StringComparison.OrdinalIgnoreCase) || paramName.Equals(IdentityFilePathAlias, StringComparison.OrdinalIgnoreCase))
                     {
-                        connectionInfo.KeyFilePath = paramValue;
+                        connectionInfo.KeyFilePath = GetSSHConnectionStringParameter(item[paramName]);
+                    }
+                    else if (paramName.Equals(PortParameter, StringComparison.OrdinalIgnoreCase))
+                    {
+                        connectionInfo.Port = GetSSHConnectionIntParameter(item[paramName]);
                     }
                     else
                     {
@@ -979,6 +980,37 @@ namespace Microsoft.PowerShell.Commands
                                 ErrorCategory.InvalidArgument, computerNames));
                 }
             }
+        }
+
+        /// <summary>
+        /// Validates parameter value and returns as string
+        /// </summary>
+        /// <param name="param">Parameter value to be validated</param>
+        /// <returns>Parameter value as string</returns>
+        private static string GetSSHConnectionStringParameter(object param)
+        {
+            if (param is string paramValue && !string.IsNullOrEmpty(paramValue))
+            {
+                return paramValue;
+            }
+
+            throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
+        }
+
+
+        /// <summary>
+        /// Validates parameter value and returns as integer
+        /// </summary>
+        /// <param name="param">Parameter value to be validated</param>
+        /// <returns>Parameter value as integer</returns>
+        private static int GetSSHConnectionIntParameter(object param)
+        {
+            if (param is int paramValue)
+            {
+                return paramValue;
+            }
+
+            throw new PSArgumentException(RemotingErrorIdStrings.InvalidSSHConnectionParameter);
         }
 
         #endregion Private Methods
@@ -1312,7 +1344,7 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (string computerName in ResolvedComputerNames)
             {
-                var sshConnectionInfo = new SSHConnectionInfo(this.UserName, computerName, this.KeyFilePath);
+                var sshConnectionInfo = new SSHConnectionInfo(this.UserName, computerName, this.KeyFilePath, this.Port);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
                 var pipeline = CreatePipeline(remoteRunspace);
@@ -1334,7 +1366,8 @@ namespace Microsoft.PowerShell.Commands
                 var sshConnectionInfo = new SSHConnectionInfo(
                     sshConnection.UserName,
                     sshConnection.ComputerName,
-                    sshConnection.KeyFilePath);
+                    sshConnection.KeyFilePath,
+                    sshConnection.Port);
                 var typeTable = TypeTable.LoadDefaultTypeFiles();
                 var remoteRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
                 var pipeline = CreatePipeline(remoteRunspace);

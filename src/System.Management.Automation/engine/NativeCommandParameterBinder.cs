@@ -192,25 +192,8 @@ namespace System.Management.Automation
                         //
                         // We need to check quotes that the win32 argument parser checks which is currently
                         // just the normal double quotes, no other special quotes.  Also note that mismatched
-                        // quotes are supported.
-
-                        bool needQuotes = false, followingBackslash = false;
-                        int quoteCount = 0;
-                        for (int i = 0; i < arg.Length; i++)
-                        {
-                            if (arg[i] == '"' && !followingBackslash)
-                            {
-                                quoteCount += 1;
-                            }
-                            else if (char.IsWhiteSpace(arg[i]) && (quoteCount % 2 == 0))
-                            {
-                                needQuotes = true;
-                            }
-
-                            followingBackslash = arg[i] == '\\';
-                        }
-
-                        if (needQuotes)
+                        // quotes are supported
+                        if (NeedQuotes(arg))
                         {
                             _arguments.Append('"');
                             _arguments.Append(arg);
@@ -218,12 +201,130 @@ namespace System.Management.Automation
                         }
                         else
                         {
+#if UNIX
+                            // On UNIX systems, we expand arguments containing wildcard expressions against
+                            // the file system just like bash, etc.
+                            if (System.Management.Automation.WildcardPattern.ContainsWildcardCharacters(arg))
+                            {
+                                // See if the current working directory is a filesystem provider location
+                                // We won't do the expansion if it isn't since native commands can only access the file system.
+                                var cwdinfo = Context.EngineSessionState.CurrentLocation;
+
+                                // If it's a filesystem location then expand the wildcards
+                                if (string.Equals(cwdinfo.Provider.Name, Microsoft.PowerShell.Commands.FileSystemProvider.ProviderName,
+                                    StringComparison.OrdinalIgnoreCase))
+                                {
+                                    bool normalizePath = true;
+                                    // On UNIX, paths starting with ~ are not normalized
+                                    if (arg.Length > 0 && arg[0] == '~')
+                                    {
+                                        normalizePath = false;
+                                    }
+
+                                    // See if there are any matching paths otherwise just add the pattern as the argument
+                                    var paths = Context.EngineSessionState.InvokeProvider.ChildItem.Get(arg, false);
+                                    if (paths.Count > 0)
+                                    {
+                                        bool first = true;
+                                        foreach (var path in paths)
+                                        {
+                                            object pbo = path.BaseObject;
+                                            if (! first)
+                                            {
+                                                _arguments.Append(" ");
+                                            }
+                                            else
+                                            {
+                                                if (! (pbo is System.IO.FileSystemInfo))
+                                                {
+                                                    // If the object is not a filesystem object, then just append
+                                                    // the pattern unchanged
+                                                    _arguments.Append(arg);
+                                                    break;
+                                                }
+                                                first = false;
+                                            }
+                                            var expandedPath = (pbo as System.IO.FileSystemInfo).FullName;
+                                            if (normalizePath)
+                                            {
+                                                expandedPath = Context.SessionState.Path.NormalizeRelativePath(expandedPath, cwdinfo.ProviderPath);
+                                            }
+                                            // If the path contains spaces, then add quotes around it.
+                                            if (NeedQuotes(expandedPath))
+                                            {
+                                                _arguments.Append("\"");
+                                                _arguments.Append(expandedPath);
+                                                _arguments.Append("\"");
+                                            }
+                                            else
+                                            {
+                                                _arguments.Append(expandedPath);
+                                            }
+                                        }
+                                    }
+                                    else
+                                    {
+                                        _arguments.Append(arg);
+                                    }
+                                }
+                                else
+                                {
+                                    _arguments.Append(arg);
+                                }
+                            }
+                            else
+                            {
+                                // Even if there are no wildcards, we still need to possibly
+                                // expand ~ into the filesystem provider home directory path
+                                ProviderInfo fileSystemProvider = Context.EngineSessionState.GetSingleProvider(
+                                    Microsoft.PowerShell.Commands.FileSystemProvider.ProviderName);
+                                string home = fileSystemProvider.Home;
+                                if (string.Equals(arg, "~"))
+                                {
+                                    _arguments.Append(home);
+                                }
+                                else if (arg.StartsWith("~/", StringComparison.OrdinalIgnoreCase))
+                                {
+                                    var replacementString = home + arg.Substring(1);
+                                    _arguments.Append(replacementString);
+                                }
+                                else
+                                {
+                                    _arguments.Append(arg);
+                                }
+                            }
+#else
                             _arguments.Append(arg);
+#endif
                         }
                     }
                 }
             } while (list != null);
         }
+
+        /// <summary>
+        /// Check to see if the string contains spaces and therefore must be quoted.
+        /// </summary>
+        /// <param name="stringToCheck">The string to check for spaces</param>
+        private bool NeedQuotes(string stringToCheck)
+        {
+            bool needQuotes = false, followingBackslash = false;
+            int quoteCount = 0;
+            for (int i = 0; i < stringToCheck.Length; i++)
+            {
+                if (stringToCheck[i] == '"' && !followingBackslash)
+                {
+                    quoteCount += 1;
+                }
+                else if (char.IsWhiteSpace(stringToCheck[i]) && (quoteCount % 2 == 0))
+                {
+                    needQuotes = true;
+                }
+                followingBackslash = stringToCheck[i] == '\\';
+            }
+            return needQuotes;
+        }
+
 
         /// <summary>
         /// The native command to bind to

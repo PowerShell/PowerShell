@@ -412,6 +412,62 @@
 
             { get-fooh } | Should not throw
         }
+
+        It "ValidateScript can use custom ErrorMessage" {
+            function get-fooi {
+                [CmdletBinding()]
+                param([ValidateScript({$_ -gt 2}, ErrorMessage = "Item '{0}' failed '{1}' validation")] $p)
+                $p
+            }
+            $errMsg = ''
+            try
+            {
+                get-fooi -p 2
+            }
+            catch
+            {
+                $errMsg = $_.Exception.Message
+            }
+            $errMsg | Should Be "Cannot validate argument on parameter 'p'. Item '2' failed '`$_ -gt 2' validation"
+        }
+
+        It "ValidatePattern can use custom ErrorMessage" {
+            function get-fooj
+            {
+                [CmdletBinding()]
+                param([ValidatePattern("\s+", ErrorMessage = "Item '{0}' failed '{1}' regex")] $p)
+                $p
+            }
+            $errMsg = ''
+            try
+            {
+                get-fooj -p 2
+            }
+            catch
+            {
+                $errMsg = $_.Exception.Message
+            }
+            $errMsg | Should Be "Cannot validate argument on parameter 'p'. Item '2' failed '\s+' regex"
+        }
+
+        It "ValidateSet can use custom ErrorMessage" {
+            function get-fook
+            {
+                param([ValidateSet('A', 'B', 'C', IgnoreCase=$false, ErrorMessage="Item '{0}' is not in '{1}'")] $p)
+            }
+            $errMsg = ''
+            try
+            {
+                get-fook -p 2
+            }
+            catch
+            {
+                $errMsg = $_.Exception.Message
+            }
+            $set = 'A','B','C' -join [Globalization.CultureInfo]::CurrentUICulture.TextInfo.ListSeparator
+            $errMsg | Should Be "Cannot validate argument on parameter 'p'. Item '2' is not in '$set'"
+        }
+
     }
 
     #known issue 2069

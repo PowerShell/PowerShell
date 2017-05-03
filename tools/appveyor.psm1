@@ -160,7 +160,7 @@ function Invoke-AppVeyorBuild
 
       if(Test-DailyBuild)
       {
-          Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore -Publish
+          Start-PSBuild -Configuration 'CodeCoverage' -PSModuleRestore
       }
 
       ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
@@ -287,7 +287,7 @@ function Invoke-AppVeyorTest
     #
     # CoreCLR
 
-    $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Publish -Configuration 'Release'))
+    $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Configuration 'Release'))
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
     $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"

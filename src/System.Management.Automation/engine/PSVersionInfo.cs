@@ -71,10 +71,13 @@ namespace System.Management.Automation
             s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
             s_psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
+            s_psVersionTable["Platform"] = Environment.OSVersion.Platform.ToString();
 #if CORECLR
-            s_psVersionTable[PSCLRVersionName] = null;
+            s_psVersionTable[PSCLRVersionName] = null;
+            s_psVersionTable["OS"] = Runtime.InteropServices.RuntimeInformation.OSDescription.ToString();
 #else
             s_psVersionTable[PSCLRVersionName] = Environment.Version;
+            s_psVersionTable["OS"] = Environment.OSVersion.ToString();
 #endif
         }
 

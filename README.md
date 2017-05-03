@@ -158,6 +158,12 @@ License: By requesting and using the Container OS Image for Windows containers, 
 - [Window Server Core](https://hub.docker.com/r/microsoft/windowsservercore/)
 - [Nano Server](https://hub.docker.com/r/microsoft/nanoserver/)
 
+### Telemetry
+
+By default, PowerShell collects the OS description and the version of PowerShell (equivalent to `$PSVersionTable.OS` and `$PSVersionTable.GitCommitId`) using [Application Insights](https://azure.microsoft.com/en-us/services/application-insights/).
+To opt-out of sending telemetry, delete the file `DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY` before starting PowerShell from the installed location.
+The telemetry we collect fall under the [Microsoft Enterprise and Developer Privacy Statement](https://www.microsoft.com/en-us/privacystatement/EnterpriseDev/default.aspx).
+
 ## Governance
 
 Governance policy for PowerShell project is described [here][].

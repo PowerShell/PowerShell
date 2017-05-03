@@ -1,25 +1,45 @@
 Describe "PSVersionTable" -Tags "CI" {
     It "Should have version table entries" {
-	$PSVersionTable.Count | Should Be 9
+       $PSVersionTable.Count | Should Be 11
     }
 
     It "Should have the right version table entries" {
-	$PSVersionTable.ContainsKey("PSVersion")                 | Should Be True
-	$PSVersionTable.ContainsKey("PSEdition")                 | Should Be True
-	$PSVersionTable.ContainsKey("WSManStackVersion")         | Should Be True
-	$PSVersionTable.ContainsKey("SerializationVersion")      | Should Be True
-	$PSVersionTable.ContainsKey("CLRVersion")                | Should Be True
-	$PSVersionTable.ContainsKey("BuildVersion")              | Should Be True
-	$PSVersionTable.ContainsKey("PSCompatibleVersions")      | Should Be True
-	$PSVersionTable.ContainsKey("PSRemotingProtocolVersion") | Should Be True
-	$PSVersionTable.ContainsKey("GitCommitId")               | Should Be True
+       $PSVersionTable.ContainsKey("PSVersion")                 | Should Be True
+       $PSVersionTable.ContainsKey("PSEdition")                 | Should Be True
+       $PSVersionTable.ContainsKey("WSManStackVersion")         | Should Be True
+       $PSVersionTable.ContainsKey("SerializationVersion")      | Should Be True
+       $PSVersionTable.ContainsKey("CLRVersion")                | Should Be True
+       $PSVersionTable.ContainsKey("BuildVersion")              | Should Be True
+       $PSVersionTable.ContainsKey("PSCompatibleVersions")      | Should Be True
+       $PSVersionTable.ContainsKey("PSRemotingProtocolVersion") | Should Be True
+       $PSVersionTable.ContainsKey("GitCommitId")               | Should Be True
+       $PSVersionTable.ContainsKey("Platform")                  | Should Be True
+       $PSVersionTable.ContainsKey("OS")                        | Should Be True
 
     }
     It "GitCommitId property should not contain an error" {
-        $PSVersionTable.GitCommitId | Should not match "powershell.version"
+       $PSVersionTable.GitCommitId | Should not match "powershell.version"
     }
 
     It "Should have the correct edition" -Skip:(!$IsCoreCLR) {
-	$PSVersionTable["PSEdition"] | Should Be "Core"
+	   $PSVersionTable["PSEdition"] | Should Be "Core"
+    }
+
+    It "Should have the correct platform info" {
+       $platform = [String][System.Environment]::OSVersion.Platform
+	   [String]$PSVersionTable["Platform"] | Should Be $platform
+    }
+
+    It "Should have the correct OS info" {
+       if ($IsCoreCLR)
+       {
+           $OSDescription = [String][System.Runtime.InteropServices.RuntimeInformation]::OSDescription
+	       [String]$PSVersionTable["OS"] | Should Be $OSDescription
+       }
+       else
+       {
+           $OSDescription = [String][System.Environment]::OSVersion
+           [String]$PSVersionTable["OS"] | Should Be $OSDescription
+       }
     }
 }
