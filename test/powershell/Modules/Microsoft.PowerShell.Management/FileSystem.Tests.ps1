@@ -367,6 +367,32 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
         }
     }
 
+    Context "Get-ChildItem and symbolic links" {
+        BeforeAll {
+            $subDir = Join-Path $TestDrive "bar"
+            $subLink = Join-Path $TestDrive "foo"
+            $subFile1 = Join-Path $subDir "File1.txt"
+            $subFile2 = Join-Path $subDir "File2.txt"
+
+            New-Item -ItemType Directory -Path $subDir
+            New-Item -ItemType File -Path $subFile1
+            New-Item -ItemType File -Path $subFile2
+
+            $filenamePattern = "File[12]\.txt"
+        }
+        AfterAll {
+            Remove-Item -Path $subLink -Force
+        }
+
+        It "Get-ChildItem gets content of linked-to directory" {
+            New-Item -ItemType SymbolicLink -Path $subLink -Value $subDir
+            $ci = Get-ChildItem $subLink
+            $ci.Count | Should BeExactly 2
+            $ci[0].Name | Should MatchExactly $filenamePattern
+            $ci[1].Name | Should MatchExactly $filenamePattern
+        }
+    }
+
     Context "Remove-Item and hard/symbolic links" {
         BeforeAll {
             $testCases = @(

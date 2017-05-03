@@ -1521,14 +1521,6 @@ namespace Microsoft.PowerShell.Commands
                 if (isDirectory)
                 {
                     DirectoryInfo directory = new DirectoryInfo(path);
-
-                    if (!Platform.IsWindows && Platform.NonWindowsIsSymLink(directory))
-                    {
-                        // For Linux, treat symlink to directories like a file
-                        WriteItemObject(directory, path, false);
-                        return;
-                    }
-
                     // Enumerate the directory
                     Dir(directory, recurse, depth, nameOnly, returnContainers);
                 }
