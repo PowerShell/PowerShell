@@ -5,7 +5,6 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Diagnostics;
 using System.Reflection;
 using System.Collections;
-using System.Collections.Generic;
 using System.Globalization;
 using System.Management.Automation.Internal;
 using Microsoft.Win32;
@@ -332,6 +331,7 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class PSVersionHashTable : Hashtable, IEnumerable
     {
+        private static readonly PSVersionTableComparer s_keysComparer = new PSVersionTableComparer();
         internal PSVersionHashTable(IEqualityComparer equalityComparer) : base(equalityComparer)
         {
         }
@@ -348,15 +348,14 @@ namespace System.Management.Automation
             get
             {
                 ArrayList keyList = new ArrayList(base.Keys);
-                keyList.Sort(keysComparer);
+                keyList.Sort(s_keysComparer);
                 return keyList;
             }
         }
 
-        private static PSVersionTableComparer keysComparer = new PSVersionTableComparer();
-        private class PSVersionTableComparer : Comparer<object>
+        private class PSVersionTableComparer : IComparer
         {
-            public override int Compare(object x, object y)
+            public int Compare(object x, object y)
             {
                 string xString = (string)LanguagePrimitives.ConvertTo(x, typeof(string), CultureInfo.CurrentCulture);
                 string yString = (string)LanguagePrimitives.ConvertTo(y, typeof(string), CultureInfo.CurrentCulture);
