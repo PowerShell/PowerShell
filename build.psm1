@@ -2760,9 +2760,9 @@ function Start-CrossGen {
     # The crossgen tool is only published for these particular runtimes
     $crossGenRuntime = if ($IsWindows) {
         if ($Runtime -match "-x86") {
-            "win7-x86"
+            "win-x86"
         } else {
-            "win7-x64"
+            "win-x64"
         }
     } elseif ($IsLinux) {
         "linux-x64"
