@@ -78,7 +78,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.4.0-preview1-25204-02" />
+    <PackageReference Include="System.ServiceProcess.ServiceController" Version="4.4.0-preview1-25302-01" />
   </ItemGroup>
 
 </Project>

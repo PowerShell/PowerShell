@@ -14,10 +14,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
-#if CORECLR
-// Use stub for TypeLibTypeAttribute
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
 
 #pragma warning disable 1591
 
