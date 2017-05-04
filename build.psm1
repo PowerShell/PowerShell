@@ -2767,7 +2767,7 @@ function Start-CrossGen {
     } elseif ($IsLinux) {
         "linux-x64"
     } elseif ($IsOSX) {
-        "osx.10.12-x64"
+        "osx-x64"
     }
 
     if (-not $crossGenRuntime) {
