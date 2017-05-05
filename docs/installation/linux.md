@@ -128,9 +128,9 @@ sudo apt-get remove powershell
 
 [Ubuntu 16.04]: http://releases.ubuntu.com/16.04/
 
-## Debian 8 Jessie
+## Debian 8
 
-### Installation via Package Repository - Debian 8 Jessie
+### Installation via Package Repository - Debian 8
 
 PowerShell Core, for Linux, is published to package repositories for easy installation (and updates).
 This is the preferred method.
@@ -172,7 +172,7 @@ sudo apt-get install -f
 > the next command, `apt-get install -f` resolves these
 > and then finishes configuring the PowerShell package.
 
-### Uninstallation - Debian 8 Jessie
+### Uninstallation - Debian 8
 
 ```sh
 sudo apt-get remove powershell
@@ -180,7 +180,7 @@ sudo apt-get remove powershell
 
 ## CentOS 7
 
-> This package also works on Oracle Linux 7 and Red Hat Enterprise Linux (RHEL) 7.
+> This package also works on Oracle Linux 7.
 
 ### Installation via Package Repository (preferred) - CentOS 7
 
@@ -225,6 +225,50 @@ sudo yum remove powershell
 ```
 
 [CentOS 7]: https://www.centos.org/download/
+
+## Red Hat Enterprise Linux (RHEL) 7
+
+### Installation via Package Repository (preferred) - Red Hat Enterprise Linux (RHEL) 7
+
+PowerShell Core for Linux is published to official Microsoft repositories for easy installation (and updates).
+
+```sh
+# Register the Microsoft RedHat repository
+curl https://packages.microsoft.com/config/rhel/7/prod.repo | sudo tee /etc/yum.repos.d/microsoft.repo
+
+# Install PowerShell
+sudo yum install -y powershell
+
+# Start PowerShell
+powershell
+```
+
+After registering the Microsoft repository once as superuser,
+you just need to use `sudo yum update powershell` to update PowerShell.
+
+### Installation via Direct Download - Red Hat Enterprise Linux (RHEL) 7
+
+Download the RPM package
+`powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm`
+from the [releases][] page onto the Red Hat Enterprise Linux machine.
+
+Then execute the following in the terminal:
+
+```sh
+sudo yum install ./powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
+```
+
+You can also install the RPM without the intermediate step of downloading it:
+
+```sh
+sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
+```
+
+### Uninstallation
+
+```sh
+sudo yum remove powershell
+```
 
 ## OpenSUSE 42.1
 
