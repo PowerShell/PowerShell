@@ -30,6 +30,9 @@ EOF
    ## Generate 'powershell.version'
    git --git-dir="$(pwd)/.git" describe --dirty --abbrev=60 > "$(pwd)/powershell.version"
 
+   ## create the telemetry flag file
+   touch "$(pwd)/DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY"
+
    ## Generate resource binding C# files
    pushd src/ResGen
    dotnet run
