@@ -156,7 +156,7 @@ powershell
 After registering the Microsoft repository once as superuser,
 from then on, you just need to use `sudo apt-get upgrade powershell` to update it.
 
-### Installation via Direct Download
+### Installation via Direct Download - Debian 8
 
 Download the Debian package
 `powershell_6.0.0-alpha.18-1ubuntu1.14.04.1_amd64.deb`
@@ -219,7 +219,7 @@ You can also install the RPM without the intermediate step of downloading it:
 sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
 ```
 
-### Uninstallation
+### Uninstallation - CentOS 7
 
 ```sh
 sudo yum remove powershell
@@ -265,7 +265,7 @@ You can also install the RPM without the intermediate step of downloading it:
 sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
 ```
 
-### Uninstallation
+### Uninstallation - Red Hat Enterprise Linux (RHEL) 7
 
 ```sh
 sudo yum remove powershell
