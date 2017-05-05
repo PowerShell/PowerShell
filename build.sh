@@ -16,19 +16,22 @@ else
    targetFile="$(pwd)/src/Microsoft.PowerShell.SDK/obj/Microsoft.PowerShell.SDK.csproj.TypeCatalog.targets"
    cat > $targetFile <<-"EOF"
 <Project>
-    <Target Name="_GetDependencies"
-            DependsOnTargets="ResolvePackageDependenciesDesignTime">
-        <ItemGroup>
-            <_DependentAssemblyPath Include="%(_DependenciesDesignTime.Path)%3B" Condition=" '%(_DependenciesDesignTime.Type)' == 'Assembly' And '%(_DependenciesDesignTime.Name)' != 'Microsoft.Management.Infrastructure.Native.dll' And '%(_DependenciesDesignTime.Name)' != 'Microsoft.Management.Infrastructure.dll' " />
-        </ItemGroup>
-        <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_DependentAssemblyPath)" Overwrite="true" />
-    </Target>
+  <Target Name="_GetDependencies"
+          DependsOnTargets="ResolveAssemblyReferencesDesignTime">
+    <ItemGroup>
+      <_RefAssemblyPath Include="%(_ReferencesFromRAR.ResolvedPath)%3B" Condition=" '%(_ReferencesFromRAR.Type)' == 'assembly' And '%(_ReferencesFromRAR.PackageName)' != 'Microsoft.Management.Infrastructure' " />
+    </ItemGroup>
+    <WriteLinesToFile File="$(_DependencyFile)" Lines="@(_RefAssemblyPath)" Overwrite="true" />
+  </Target>
 </Project>
 EOF
    dotnet msbuild src/Microsoft.PowerShell.SDK/Microsoft.PowerShell.SDK.csproj /t:_GetDependencies "/property:DesignTimeBuild=true;_DependencyFile=$(pwd)/src/TypeCatalogGen/powershell.inc" /nologo
 
    ## Generate 'powershell.version'
    git --git-dir="$(pwd)/.git" describe --dirty --abbrev=60 > "$(pwd)/powershell.version"
+
+   ## create the telemetry flag file
+   touch "$(pwd)/DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY"
 
    ## Generate resource binding C# files
    pushd src/ResGen
