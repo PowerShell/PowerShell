@@ -1,7 +1,7 @@
 # Package installation instructions
 
 Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16], [Debian 8][deb8],
-[CentOS 7][cos], [Arch Linux][arch], [many Linux distributions (AppImage)][lai], and [macOS 10.11][mac].
+[CentOS 7][cos], [Red Hat Enterprise Linux (RHEL) 7][rhel7], [Arch Linux][arch], [many Linux distributions (AppImage)][lai], and [macOS 10.11][mac].
 All packages are available on our GitHub [releases][] page.
 
 All of these steps can be done automatically by the [`download.sh`][download] script.
@@ -19,6 +19,7 @@ Once the package is installed, run `powershell` from a terminal.
 [u16]: #ubuntu-1604
 [deb8]: #debian-8
 [cos]: #centos-7
+[rhel7]: #red-hat-enterprise-linux-rhel-7
 [arch]: #arch-linux
 [lai]: #linux-appimage
 [mac]: #macos-1011
