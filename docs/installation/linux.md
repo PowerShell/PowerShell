@@ -1,6 +1,6 @@
 # Package installation instructions
 
-Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16],
+Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16], [Debian 8][deb8],
 [CentOS 7][cos], [Arch Linux][arch], [many Linux distributions (AppImage)][lai], and [macOS 10.11][mac].
 All packages are available on our GitHub [releases][] page.
 
@@ -17,6 +17,7 @@ Once the package is installed, run `powershell` from a terminal.
 
 [u14]: #ubuntu-1404
 [u16]: #ubuntu-1604
+[deb8]: #debian-8
 [cos]: #centos-7
 [arch]: #arch-linux
 [lai]: #linux-appimage
@@ -127,7 +128,55 @@ sudo apt-get remove powershell
 
 [Ubuntu 16.04]: http://releases.ubuntu.com/16.04/
 
-This works for Debian Stretch (now testing) as well.
+## Debian 8 Jessie
+
+### Installation via Package Repository - Debian 8 Jessie
+
+PowerShell Core, for Linux, is published to package repositories for easy installation (and updates).
+This is the preferred method.
+
+```sh
+# Import the public repository GPG keys
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+
+# Register the Microsoft repository
+curl https://packages.microsoft.com/config/ubuntu/14.04/prod.list | sudo tee /etc/apt/sources.list.d/microsoft.list
+
+# Update apt-get
+sudo apt-get update
+
+# Install PowerShell
+sudo apt-get install -y powershell
+
+# Start PowerShell
+powershell
+```
+
+After registering the Microsoft repository once as superuser,
+from then on, you just need to use `sudo apt-get upgrade powershell` to update it.
+
+### Installation via Direct Download
+
+Download the Debian package
+`powershell_6.0.0-alpha.18-1ubuntu1.14.04.1_amd64.deb`
+from the [releases][] page onto the Debian machine.
+
+Then execute the following in the terminal:
+
+```sh
+sudo dpkg -i powershell_6.0.0-alpha.18-1ubuntu1.14.04.1_amd64.deb
+sudo apt-get install -f
+```
+
+> Please note that `dpkg -i` will fail with unmet dependencies;
+> the next command, `apt-get install -f` resolves these
+> and then finishes configuring the PowerShell package.
+
+### Uninstallation - Debian 8 Jessie
+
+```sh
+sudo apt-get remove powershell
+```
 
 ## CentOS 7
 
