@@ -336,4 +336,7 @@
   <data name="DriveMaxSizeError" xml:space="preserve">
     <value>Maximum size for drive has been exceeded: {0}.</value>
   </data>
+  <data name="ItemExists" xml:space="preserve">
+    <value>Item '{0}' already exists.</value>
+  </data>
 </root>
