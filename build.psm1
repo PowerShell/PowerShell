@@ -166,8 +166,14 @@ function Start-PSBuild {
     }
 
     # save Git description to file for PowerShell to include in PSVersionTable
-    $powershellVersion = git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60
-    $powershellVersion > "$PSScriptRoot/powershell.version"
+    $powershellVersion = git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60 --long
+    $matchVersion = ([regex]::Match($powershellVersion, "^(v.+)-(\d\d)-g(.+)-.+")).Groups.Value
+    $formattedVersion = "Version: $($matchVersion[1])"
+    if ($($matchVersion[1]) -ne "0") {
+        $formattedVersion += "  Additional commits: $($matchVersion[2])"
+    }
+    $formattedVersion += "  Commit Hash: $($matchVersion[3])"
+    $formattedVersion > "$PSScriptRoot/test/powershell/Host/assets/powershell.version"
 
     # Generate version constant for $PSVersionTable
     $template = @"
@@ -184,10 +190,11 @@ namespace System.Management.Automation
 {
     internal class GitCommitInfo
     {
-        internal const string s_GitCommitInfo = "$powershellVersion";
+        internal const string s_GitCommitInfo = "$formattedVersion";
     }
 }
 "@
+
     $null = New-Item -Path "$PSScriptRoot\src\System.Management.Automation" -Name "gen" -ItemType Directory -ErrorAction SilentlyContinue
     Set-Content -Path "$PSScriptRoot\src\System.Management.Automation\gen\PSVersionInfo.generated.cs" -Value $template
 

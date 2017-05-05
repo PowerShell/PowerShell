@@ -16,7 +16,9 @@ Describe "PSVersionTable" -Tags "CI" {
 
     }
     It "GitCommitId property should not contain an error" {
-       $PSVersionTable.GitCommitId | Should BeExactly $(Get-Content "$PsHome\powershell.version")
+       $powershellVersionFile = Join-Path -Path $PSScriptRoot -ChildPath "assets/powershell.version"
+       $powershellVersion = Get-Content $powershellVersionFile
+       $PSVersionTable.GitCommitId | Should BeExactly $powershellVersion
     }
 
     It "Should have the correct platform info" {
