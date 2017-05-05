@@ -967,7 +967,7 @@ function Install-Dotnet {
     [CmdletBinding()]
     param(
         [string]$Channel = "preview",
-        [string]$Version = "2.0.0-preview1-005724",
+        [string]$Version = "2.0.0-preview1-005952",
         [switch]$NoSudo
     )
 
@@ -1029,7 +1029,7 @@ function Start-PSBootstrap {
         [string]$Channel = "preview",
         # we currently pin dotnet-cli version, and will
         # update it when more stable version comes out.
-        [string]$Version = "2.0.0-preview1-005724",
+        [string]$Version = "2.0.0-preview1-005952",
         [switch]$Package,
         [switch]$NoSudo,
         [switch]$Force
@@ -2760,14 +2760,14 @@ function Start-CrossGen {
     # The crossgen tool is only published for these particular runtimes
     $crossGenRuntime = if ($IsWindows) {
         if ($Runtime -match "-x86") {
-            "win7-x86"
+            "win-x86"
         } else {
-            "win7-x64"
+            "win-x64"
         }
     } elseif ($IsLinux) {
         "linux-x64"
     } elseif ($IsOSX) {
-        "osx.10.12-x64"
+        "osx-x64"
     }
 
     if (-not $crossGenRuntime) {
