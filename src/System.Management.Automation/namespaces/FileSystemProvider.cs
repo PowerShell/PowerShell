@@ -2208,7 +2208,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (symLinkExists)
                         {
-                            string message = StringUtil.Format(FileSystemProviderStrings.ItemExists, path);
+                            string message = StringUtil.Format(FileSystemProviderStrings.SymlinkItemExists, path);
                             WriteError(new ErrorRecord(new IOException(message), "SymLinkExists", ErrorCategory.ResourceExists, path));
                             return;
                         }
