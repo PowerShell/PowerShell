@@ -344,6 +344,9 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $link.LinkType | Should BeExactly "SymbolicLink"
             $link.Target | Should Be $nonFile
         }
+        It "New-Item emits an error when path to symbolic link already exists." {
+            { New-Item -ItemType SymbolicLink -Path $realDir -Value $symLinkToDir -ErrorAction Stop } | ShouldBeErrorId "SymLinkExists,Microsoft.PowerShell.Commands.NewItemCommand"
+        }
         It "New-Item can create a symbolic link to a directory" -Skip:($IsWindows) {
             New-Item -ItemType SymbolicLink -Path $symLinkToDir -Value $realDir
             Test-Path $symLinkToDir | Should Be $true

@@ -2208,7 +2208,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (symLinkExists)
                         {
-                            WriteError(new ErrorRecord(new IOException("NewItemIOError"), "NewItemIOError", ErrorCategory.ResourceExists, path));
+                            string message = StringUtil.Format(FileSystemProviderStrings.SymlinkItemExists, path);
+                            WriteError(new ErrorRecord(new IOException(message), "SymLinkExists", ErrorCategory.ResourceExists, path));
                             return;
                         }
                     }
