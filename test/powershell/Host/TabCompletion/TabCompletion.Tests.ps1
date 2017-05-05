@@ -91,10 +91,12 @@ Describe "TabCompletion" -Tags CI {
     }
 
     It 'Should complete "Get-Process -Id " with Id and name in tooltip' {
+        Set-StrictMode -Version latest
         $cmd = 'Get-Process -Id '
-        $res = TabExpansion2 -inputScript $cmd  -cursorColumn $cmd.Length
+        [System.Management.Automation.CommandCompletion]$res = TabExpansion2 -inputScript $cmd  -cursorColumn $cmd.Length
         $res.CompletionMatches[0].CompletionText -match '^\d+$' | Should be true
-        $res.CompletionMatches[0].ToolTip -match '^\w' | Should be true
+        $res.CompletionMatches[0].ListItemText -match '^\d+ -' | Should be true
+        $res.CompletionMatches[0].ToolTip -match '^\d+ -' | Should be true
     }
 
     It 'Should complete keyword' -skip {
