@@ -3,7 +3,7 @@
 ## Known Issues for PowerShell on Non-Windows Platforms
 
 Alpha releases of PowerShell on Linux and macOS are mostly functional but do have some significant limitations and usability issues.
-Beta releases of PowerShell on linux and macOS are more functional and stable than alpha releases, but still may be lacking some set of features, and can contain some bugs.
+Beta releases of PowerShell on Linux and macOS are more functional and stable than alpha releases, but still may be lacking some set of features, and can contain some bugs.
 In some cases, these issues are simply bugs that haven't been fixed yet.
 In other cases (as with the default aliases for ls, cp, etc.), we are looking for feedback from the community regarding the choices we make.
 
