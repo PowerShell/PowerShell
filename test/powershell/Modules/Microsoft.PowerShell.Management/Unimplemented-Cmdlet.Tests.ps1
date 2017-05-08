@@ -18,7 +18,6 @@ Describe "Unimplemented Management Cmdlet Tests" -Tags "CI" {
 
         "Test-Connection",
 
-        "Get-TimeZone",
         "Set-TimeZone"
     )
 

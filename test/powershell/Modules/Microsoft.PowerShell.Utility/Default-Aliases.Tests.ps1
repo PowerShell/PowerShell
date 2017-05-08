@@ -93,7 +93,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
             "gsn -> Get-PSSession"                    =             $FullCLR -or $CoreWindows -or $CoreUnix
             "gsnp -> Get-PSSnapin"                    =             $FullCLR
             "gsv -> Get-Service"                      =             $FullCLR -or $CoreWindows -or $CoreUnix
-            "gtz -> Get-TimeZone"                     =                          $CoreWindows
+            "gtz -> Get-TimeZone"                     =             $FullCLR -or $CoreWindows -or $CoreUnix
             "gu -> Get-Unique"                        =             $FullCLR -or $CoreWindows -or $CoreUnix
             "gv -> Get-Variable"                      =             $FullCLR -or $CoreWindows -or $CoreUnix
             "gwmi -> Get-WmiObject"                   =             $FullCLR
