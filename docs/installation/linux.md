@@ -340,14 +340,14 @@ and is a single binary.
 ## macOS 10.11
 
 Using macOS 10.11, download the PKG package
-`powershell-6.0.0-beta.1-osx.10.11-x64.pkg`
+`powershell-6.0.0-beta.1-osx.10.12-x64.pkg`
 from the [releases][] page onto the macOS machine.
 
 Either double-click the file and follow the prompts,
 or install it from the terminal:
 
 ```sh
-sudo installer -pkg powershell-6.0.0-beta.1-osx.10.11-x64.pkg -target /
+sudo installer -pkg powershell-6.0.0-beta.1-osx.10.12-x64.pkg -target /
 ```
 
 ### Uninstallation - macOS 10.11

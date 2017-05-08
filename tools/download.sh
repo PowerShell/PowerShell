@@ -71,7 +71,7 @@ case "$OSTYPE" in
         ;;
     darwin*)
         # We don't check for curl as macOS should have a system version
-        package=powershell-6.0.0-beta.1-osx.10.11-x64.pkg
+        package=powershell-6.0.0-beta.1-osx.10.12-x64.pkg
         ;;
     *)
         echo "$OSTYPE is not supported!" >&2
