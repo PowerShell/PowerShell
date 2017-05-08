@@ -99,7 +99,7 @@ Note that all bash commands should continue working on PowerShell session.
 | rm test.txt                     |Remove-Item test.txt                   |Delete a file
 | rm -r &lt;folderName>           |Remove-Item &lt;folderName> -Recurse   |Delete a folder
 | find -name build*               |Get-ChildItem build* -Recurse          |Find a file or folder starting with 'build'
-| grep -Rin "sometext" --include="*.cs" |Get-ChildItem -Recurse -Filter *.cs <br> &#124; Select-String -Pattern "sometext" | Recursively case-insensitive search for text in files
+| grep -Rin "sometext" --include="*.cs" |Get-ChildItem -Recurse -Filter *.cs <br> \| Select-String -Pattern "sometext" | Recursively case-insensitive search for text in files
 
 
 Recommended Training and Reading
