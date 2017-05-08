@@ -465,6 +465,25 @@ namespace System.Management.Automation
             Label = null;
         }
 
+        /// <summary>
+        /// Construct a SemanticVersion.
+        /// </summary>
+        /// <param name="major">The major version</param>
+        /// <param name="minor">The minor version</param>
+        /// <exception cref="PSArgumentException">
+        /// If <paramref name="major"/> or <paramref name="minor"/> is less than 0.
+        /// </exception>
+        public SemanticVersion(int major, int minor) : this(major, minor, 0) {}
+
+        /// <summary>
+        /// Construct a SemanticVersion.
+        /// </summary>
+        /// <param name="major">The major version</param>
+        /// <exception cref="PSArgumentException">
+        /// If <paramref name="major"/> is less than 0.
+        /// </exception>
+        public SemanticVersion(int major) : this(major, 0, 0) {}
+
         private const string LabelPropertyName = "PSSemanticVersionLabel";
 
         /// <summary>
@@ -584,24 +603,24 @@ namespace System.Management.Automation
 
             var versionSansLabel = (dashIndex < 0) ? version : version.Substring(0, dashIndex);
             string[] parsedComponents = versionSansLabel.Split(Utils.Separators.Dot);
-            if (parsedComponents.Length != 3)
+            if (parsedComponents.Length > 3)
             {
                 result.SetFailure(ParseFailureKind.ArgumentException);
                 return false;
             }
 
-            int major, minor, patch;
+            int major = 0, minor = 0, patch = 0;
             if (!TryParseComponent(parsedComponents[0], "major", ref result, out major))
             {
                 return false;
             }
 
-            if (!TryParseComponent(parsedComponents[1], "minor", ref result, out minor))
+            if (parsedComponents.Length >= 2 && !TryParseComponent(parsedComponents[1], "minor", ref result, out minor))
             {
                 return false;
             }
 
-            if (!TryParseComponent(parsedComponents[2], "patch", ref result, out patch))
+            if (parsedComponents.Length == 3 && !TryParseComponent(parsedComponents[2], "patch", ref result, out patch))
             {
                 return false;
             }
