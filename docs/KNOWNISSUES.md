@@ -13,7 +13,7 @@ Except as noted below, the issues in this section will apply to both operating s
 ### Case-sensitivity in PowerShell
 
 Historically, PowerShell has been uniformly case-insensitive, with few exceptions.
-On UNIX-like operating systems, the file system is case-sensitive and this is exposed through a number of ways, obvious and non-obvious.
+On UNIX-like operating systems, the file system is predominantly case-sensitive and PowerShell adheres to the standard of the file system; this is exposed through a number of ways, obvious and non-obvious.
 
 #### Directly
 
@@ -49,7 +49,7 @@ Removing the aliases exposes the native command experience to the PowerShell use
 
 ### Missing Wildcard (globbing) Support
 
-Currently, PowerShell only does wildcard expansion (globbing) for built-in cmdlets, but not for external commands or binaries.
+Currently, PowerShell only does wildcard expansion (globbing) for built-in cmdlets on Windows, and for external commands or binaries as well as cmdlets on Linux.
 This means that a command like `ls *.txt` will fail because the asterisk will not be expanded to match file names.
 You can work around this by doing `ls (gci *.txt | % name)` or, more simply, `gci *.txt` using the PowerShell built-in equivalent to `ls`.
 
