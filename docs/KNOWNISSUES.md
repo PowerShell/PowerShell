@@ -3,7 +3,7 @@
 ## Known Issues for PowerShell on Non-Windows Platforms
 
 Alpha releases of PowerShell on Linux and macOS are mostly functional but do have some significant limitations and usability issues.
-Beta releases of PowerShell on Linux and macOS are more functional and stable than alpha releases, but still may be lacking some set of features, and can contain some bugs.
+Beta releases of PowerShell on Linux and macOS are more functional and stable than alpha releases, but still may be lacking some set of features, and can contain bugs.
 In some cases, these issues are simply bugs that haven't been fixed yet.
 In other cases (as with the default aliases for ls, cp, etc.), we are looking for feedback from the community regarding the choices we make.
 
@@ -99,13 +99,13 @@ While this is not currently supported in production, you can learn more about se
 ### Just-Enough-Administration (JEA) Support
 
 The ability to create constrained administration (JEA) remoting endpoints is not currently available in PowerShell on Linux/macOS.
-This feature is currently not in scope for 6.0 and something we will consider post-6.0 as it requires significant design work.
+This feature is currently not in scope for 6.0 and something we will consider post 6.0 as it requires significant design work.
 
 ### `sudo`, `exec`, and PowerShell
 
-Because PowerShell runs most commands in memory (like Python or Ruby) you can't use sudo directly with PowerShell built-ins.
+Because PowerShell runs most commands in memory (like Python or Ruby), you can't use sudo directly with PowerShell built-ins.
 (You can, of course, run `powershell` from sudo.)
-If it is necessary to run a PowerShell cmdlet from within PowerShell with sudo, for example `sudo Set-Date 8/18/2016`, then you would do `sudo powershell Set-Date 8/18/2016`.
+If it is necessary to run a PowerShell cmdlet from within PowerShell with sudo, for example, `sudo Set-Date 8/18/2016`, then you would do `sudo powershell Set-Date 8/18/2016`.
 Likewise, you can't exec a PowerShell built-in directly.
 Instead you would have to do `exec powershell item_to_exec`.
 
