@@ -55,9 +55,7 @@ case "$OSTYPE" in
                 
                 case "$VERSION_ID" in
                     42.1)
-                        # TODO during next release remove fork and fix package name
-                        fork=TravisEz13
-                        package=powershell-6.0.0_beta.1_41_g8598a51-1.suse.42.1.x86_64.rpm
+                        package=powershell-6.0.0_beta.1-1.suse.42.1.x86_64.rpm
                         ;;
                     *)
                         echo "OpenSUSE $VERSION_ID is not supported!" >&2
