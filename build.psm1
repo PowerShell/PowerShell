@@ -158,7 +158,10 @@ function Start-PSBuild {
     }
 
     # save Git description to file for PowerShell to include in PSVersionTable
-    git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60 > "$psscriptroot/powershell.version"
+    #git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60 > "$psscriptroot/powershell.version"
+
+    # temporary hack to resolve the version issue
+    "v6.0.0-beta.1" > "$psscriptroot/powershell.version"
 
     # create the telemetry flag file
     $null = new-item -force -type file "$psscriptroot/DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY"
