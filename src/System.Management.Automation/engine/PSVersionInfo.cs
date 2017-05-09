@@ -47,7 +47,7 @@ namespace System.Management.Automation
         private static Version s_psV4Version = new Version(4, 0);
         private static Version s_psV5Version = new Version(5, 0);
         private static Version s_psV51Version = new Version(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
-        private static SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, "alpha");
+        private static SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, "beta");
 
         /// <summary>
         /// A constant to track current PowerShell Edition
