@@ -135,7 +135,7 @@ sudo apt-get remove powershell
 
 PowerShell Core, for Linux, is published to package repositories for easy installation (and updates).
 This is the preferred method.
-Note that these instructions are the same as for Ubuntu14.04 as we have validated the same package works on Debian 8.
+Note that these instructions are the same as for Ubuntu 14.04 as we have validated the same package works on Debian 8.
 
 ```sh
 # Import the public repository GPG keys
