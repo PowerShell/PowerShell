@@ -1258,7 +1258,8 @@ function Start-PSPackage {
 
     # Use Git tag if not given a version
     if (-not $Version) {
-        $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
+        #$Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
+        $Version = "6.0.0-beta.1"
     }
 
     $Source = Split-Path -Path $Script:Options.Output -Parent
