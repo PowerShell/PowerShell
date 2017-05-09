@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <VersionPrefix>6.0.0</VersionPrefix>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <DelaySign>true</DelaySign>
+    <AssemblyName>System.Management.Automation</AssemblyName>
+     <PackageId>System.Management.Automation.ReferenceAssembly</PackageId>
+    <AssemblyOriginatorKeyFile>../../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
+    <SignAssembly>true</SignAssembly>
+    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
+    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
+    <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
+    <RuntimeIdentifiers>any</RuntimeIdentifiers>
+    <PackageTags>powershell;framework</PackageTags>
+    <PackageIconUrl>https://github.com/PowerShell/PowerShell/raw/master/assets/Powershell_64.png</PackageIconUrl>
+    <PackageProjectUrl>https://github.com/PowerShell/PowerShell</PackageProjectUrl>
+    <PackageLicenseUrl>https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt</PackageLicenseUrl>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <RepositoryType>git</RepositoryType>
+    <RepositoryUrl>https://github.com/PowerShell/PowerShell.git</RepositoryUrl>
+</PropertyGroup>
+
+  <ItemGroup>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Remove="System.Management.Automation.cs" />
+    <Compile Remove="AssemblyInfo.cs" />
+  </ItemGroup>
+
+</Project>
