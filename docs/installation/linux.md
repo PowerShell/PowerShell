@@ -1,7 +1,7 @@
 # Package installation instructions
 
-Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16],
-[CentOS 7][cos], [Arch Linux][arch], [many Linux distributions (AppImage)][lai], and [macOS 10.11][mac].
+Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16], [Debian 8][deb8],
+[CentOS 7][cos], [Red Hat Enterprise Linux (RHEL) 7][rhel7], [Arch Linux][arch], [many Linux distributions (AppImage)][lai], and [macOS 10.11][mac].
 All packages are available on our GitHub [releases][] page.
 
 All of these steps can be done automatically by the [`download.sh`][download] script.
@@ -17,7 +17,9 @@ Once the package is installed, run `powershell` from a terminal.
 
 [u14]: #ubuntu-1404
 [u16]: #ubuntu-1604
+[deb8]: #debian-8
 [cos]: #centos-7
+[rhel7]: #red-hat-enterprise-linux-rhel-7
 [arch]: #arch-linux
 [lai]: #linux-appimage
 [mac]: #macos-1011
@@ -127,11 +129,60 @@ sudo apt-get remove powershell
 
 [Ubuntu 16.04]: http://releases.ubuntu.com/16.04/
 
-This works for Debian Stretch (now testing) as well.
+## Debian 8
+
+### Installation via Package Repository - Debian 8
+
+PowerShell Core, for Linux, is published to package repositories for easy installation (and updates).
+This is the preferred method.
+Note that these instructions are the same as for Ubuntu 14.04 as we have validated the same package works on Debian 8.
+
+```sh
+# Import the public repository GPG keys
+curl https://packages.microsoft.com/keys/microsoft.asc | sudo apt-key add -
+
+# Register the Microsoft repository
+curl https://packages.microsoft.com/config/ubuntu/14.04/prod.list | sudo tee /etc/apt/sources.list.d/microsoft.list
+
+# Update apt-get
+sudo apt-get update
+
+# Install PowerShell
+sudo apt-get install -y powershell
+
+# Start PowerShell
+powershell
+```
+
+After registering the Microsoft repository once as superuser,
+from then on, you just need to use `sudo apt-get upgrade powershell` to update it.
+
+### Installation via Direct Download - Debian 8
+
+Download the Debian package
+`powershell_6.0.0-alpha.18-1ubuntu1.14.04.1_amd64.deb`
+from the [releases][] page onto the Debian machine.
+
+Then execute the following in the terminal:
+
+```sh
+sudo dpkg -i powershell_6.0.0-alpha.18-1ubuntu1.14.04.1_amd64.deb
+sudo apt-get install -f
+```
+
+> Please note that `dpkg -i` will fail with unmet dependencies;
+> the next command, `apt-get install -f` resolves these
+> and then finishes configuring the PowerShell package.
+
+### Uninstallation - Debian 8
+
+```sh
+sudo apt-get remove powershell
+```
 
 ## CentOS 7
 
-> This package also works on Oracle Linux 7 and Red Hat Enterprise Linux (RHEL) 7.
+> This package also works on Oracle Linux 7.
 
 ### Installation via Package Repository (preferred) - CentOS 7
 
@@ -169,13 +220,57 @@ You can also install the RPM without the intermediate step of downloading it:
 sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
 ```
 
-### Uninstallation
+### Uninstallation - CentOS 7
 
 ```sh
 sudo yum remove powershell
 ```
 
 [CentOS 7]: https://www.centos.org/download/
+
+## Red Hat Enterprise Linux (RHEL) 7
+
+### Installation via Package Repository (preferred) - Red Hat Enterprise Linux (RHEL) 7
+
+PowerShell Core for Linux is published to official Microsoft repositories for easy installation (and updates).
+
+```sh
+# Register the Microsoft RedHat repository
+curl https://packages.microsoft.com/config/rhel/7/prod.repo | sudo tee /etc/yum.repos.d/microsoft.repo
+
+# Install PowerShell
+sudo yum install -y powershell
+
+# Start PowerShell
+powershell
+```
+
+After registering the Microsoft repository once as superuser,
+you just need to use `sudo yum update powershell` to update PowerShell.
+
+### Installation via Direct Download - Red Hat Enterprise Linux (RHEL) 7
+
+Download the RPM package
+`powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm`
+from the [releases][] page onto the Red Hat Enterprise Linux machine.
+
+Then execute the following in the terminal:
+
+```sh
+sudo yum install ./powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
+```
+
+You can also install the RPM without the intermediate step of downloading it:
+
+```sh
+sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
+```
+
+### Uninstallation - Red Hat Enterprise Linux (RHEL) 7
+
+```sh
+sudo yum remove powershell
+```
 
 ## OpenSUSE 42.1
 

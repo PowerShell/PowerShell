@@ -26,7 +26,9 @@ You can download and install a PowerShell package for any of the following platf
 | Windows 7 (x86)                    | [.msi][rl-windows7-86] | [Instructions][in-windows]    |
 | Ubuntu 16.04                       | [.deb][rl-ubuntu16]    | [Instructions][in-ubuntu16]   |
 | Ubuntu 14.04                       | [.deb][rl-ubuntu14]    | [Instructions][in-ubuntu14]   |
+| Debian 8                           | [.deb][rl-ubuntu14]    | [Instructions][in-deb8]       |
 | CentOS 7                           | [.rpm][rl-centos]      | [Instructions][in-centos]     |
+| Red Hat Enterprise Linux 7         | [.rpm][rl-centos]      | [Instructions][in-rhel7]      |
 | OpenSUSE 42.1                      | [.rpm][rl-opensuse421] | [Instructions][in-opensuse421]|
 | Arch Linux                         |                        | [Instructions][in-archlinux]  |
 | Many Linux distributions           | [.AppImage][rl-ai]     | [Instructions][in-appimage]   |
@@ -48,7 +50,9 @@ You can download and install a PowerShell package for any of the following platf
 [in-windows]: docs/installation/windows.md#msi
 [in-ubuntu14]: docs/installation/linux.md#ubuntu-1404
 [in-ubuntu16]: docs/installation/linux.md#ubuntu-1604
+[in-deb8]: docs/installation/linux.md#debian-8
 [in-centos]: docs/installation/linux.md#centos-7
+[in-rhel7]: docs/installation/linux.md#red-hat-enterprise-linux-rhel-7
 [in-archlinux]: docs/installation/linux.md#arch-linux
 [in-appimage]: docs/installation/linux.md#linux-appimage
 [in-macos]: docs/installation/linux.md#macos-1011
