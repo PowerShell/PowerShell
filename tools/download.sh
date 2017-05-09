@@ -1,5 +1,9 @@
 #!/usr/bin/env bash
 
+#call this code direction from the web with:
+#bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/download.sh)
+#wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/download.sh | bash
+
 # Let's quit on interrupt of subcommands
 trap '
   trap - INT # restore default INT handler
@@ -7,9 +11,13 @@ trap '
   kill -s INT "$$"
 ' INT
 
+get_currentpshversion() {
+    release=`curl https://api.github.com/repos/powershell/powershell/releases/latest | sed '/tag_name/!d' | sed s/\"tag_name\"://g | sed s/\"//g | sed s/v//g | sed s/,//g | sed s/\ //g`
+    echo "$release"
+}
+
 get_url() {
     fork=$2
-    release=v6.0.0-alpha.18
     echo "https://github.com/$fork/PowerShell/releases/download/$release/$1"
 }
 
@@ -25,21 +33,22 @@ case "$OSTYPE" in
                     echo "curl not found, installing..."
                     sudo yum install -y curl
                 fi
-
-                package=powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
+                get_currentpshversion
+                package=powershell-$release-1.el7.centos.x86_64.rpm
                 ;;
             ubuntu)
                 if ! hash curl 2>/dev/null; then
                     echo "curl not found, installing..."
                     sudo apt-get install -y curl
                 fi
+                get_currentpshversion
 
                 case "$VERSION_ID" in
                     14.04)
-                        package=powershell_6.0.0-alpha.18-1ubuntu1.14.04.1_amd64.deb
+                        package=powershell_$release-1ubuntu1.14.04.1_amd64.deb
                         ;;
                     16.04)
-                        package=powershell_6.0.0-alpha.18-1ubuntu1.16.04.1_amd64.deb
+                        package=powershell_$release-1ubuntu1.16.04.1_amd64.deb
                         ;;
                     *)
                         echo "Ubuntu $VERSION_ID is not supported!" >&2
@@ -51,13 +60,13 @@ case "$OSTYPE" in
                     echo "curl not found, installing..."
                     sudo zypper install -y curl
                 fi
-
+                get_currentpshversion
                 
                 case "$VERSION_ID" in
                     42.1)
                         # TODO during next release remove fork and fix package name
                         fork=TravisEz13
-                        package=powershell-6.0.0_alpha.18_41_g8598a51-1.suse.42.1.x86_64.rpm
+                        package=powershell-$release_41_g8598a51-1.suse.42.1.x86_64.rpm
                         ;;
                     *)
                         echo "OpenSUSE $VERSION_ID is not supported!" >&2
@@ -71,7 +80,8 @@ case "$OSTYPE" in
         ;;
     darwin*)
         # We don't check for curl as macOS should have a system version
-        package=powershell-6.0.0-alpha.18-osx.10.11-x64.pkg
+        get_currentpshversion
+        package=powershell-$release-osx.10.11-x64.pkg
         ;;
     *)
         echo "$OSTYPE is not supported!" >&2
@@ -80,6 +90,7 @@ case "$OSTYPE" in
 esac
 
 curl -L -o "$package" $(get_url "$package" "$fork")
+echo -e "\n*** If platform is supported, will install PowerShell Core version: $release ***\n"
 
 if [[ ! -r "$package" ]]; then
     echo "ERROR: $package failed to download! Aborting..." >&2
