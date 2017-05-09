@@ -160,13 +160,13 @@ from then on, you just need to use `sudo apt-get upgrade powershell` to update i
 ### Installation via Direct Download - Debian 8
 
 Download the Debian package
-`powershell_6.0.0-alpha.18-1ubuntu1.14.04.1_amd64.deb`
+`powershell_6.0.0-beta.1-1ubuntu1.14.04.1_amd64.deb`
 from the [releases][] page onto the Debian machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo dpkg -i powershell_6.0.0-alpha.18-1ubuntu1.14.04.1_amd64.deb
+sudo dpkg -i powershell_6.0.0-beta.1-1ubuntu1.14.04.1_amd64.deb
 sudo apt-get install -f
 ```
 
@@ -251,19 +251,19 @@ you just need to use `sudo yum update powershell` to update PowerShell.
 ### Installation via Direct Download - Red Hat Enterprise Linux (RHEL) 7
 
 Download the RPM package
-`powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm`
+`powershell-6.0.0_beta.1-1.el7.centos.x86_64.rpm`
 from the [releases][] page onto the Red Hat Enterprise Linux machine.
 
 Then execute the following in the terminal:
 
 ```sh
-sudo yum install ./powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
+sudo yum install ./powershell-6.0.0_beta.1-1.el7.centos.x86_64.rpm
 ```
 
 You can also install the RPM without the intermediate step of downloading it:
 
 ```sh
-sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
+sudo yum install https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/powershell-6.0.0_beta.1-1.el7.centos.x86_64.rpm
 ```
 
 ### Uninstallation - Red Hat Enterprise Linux (RHEL) 7
