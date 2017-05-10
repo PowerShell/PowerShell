@@ -6,20 +6,21 @@ LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>"
 LABEL readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
 LABEL description="This Dockerfile will install the latest release of PS."
 
-# Setup the locale
-ENV LANG en_US.UTF-8
-ENV LC_ALL $LANG
-RUN locale-gen $LANG && update-locale
-
 # Install dependencies and clean up
 RUN apt-get update \
     && apt-get install -y --no-install-recommends \
         apt-utils \
         ca-certificates \
         curl \
-        apt-transport-https \	
+        apt-transport-https \
+        locales\
     && rm -rf /var/lib/apt/lists/*
-    
+
+# Setup the locale
+ENV LANG en_US.UTF-8
+ENV LC_ALL $LANG
+RUN locale-gen $LANG && update-locale
+
 # Import the public repository GPG keys for Microsoft
 RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key add -
 	
