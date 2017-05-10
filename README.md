@@ -37,8 +37,8 @@ You can download and install a PowerShell package for any of the following platf
 
 [rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/PowerShell-6.0.0-beta.1-win10-win2016-x64.msi
 [rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/PowerShell-6.0.0-beta.1-win81-win2012r2-x64.msi
-[rl-windows7-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/PowerShell-6.0.0-beta.1-win7-win2008r2-x64.msi
-[rl-windows7-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/PowerShell-6.0.0-beta.1-win7-x86.msi
+[rl-windows7-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win7-win2008r2-x64.msi
+[rl-windows7-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win7-x86.msi
 [rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/powershell_6.0.0-beta.1-1ubuntu1.16.04.1_amd64.deb
 [rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/powershell_6.0.0-beta.1-1ubuntu1.14.04.1_amd64.deb
 [rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/powershell-6.0.0_beta.1-1.el7.centos.x86_64.rpm
