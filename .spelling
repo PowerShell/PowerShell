@@ -830,3 +830,6 @@ v6.0.
  - docs/host-powershell/README.md
 CorePsAssemblyLoadContext.cs
 sample-dotnet1
+NTLM-based
+Kerberos-based
+post-6
