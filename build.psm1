@@ -166,8 +166,9 @@ function Start-PSBuild {
     }
 
     # save Git description to file for PowerShell to include in PSVersionTable
-    $powershellVersion = git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60 --long
-    $matchVersion = ([regex]::Match($powershellVersion, "^(v.+)-(\d\d)-g(.+)-.+")).Groups.Value
+    $powershellVersion = git --git-dir="$PSScriptRoot/.git" describe --abbrev=60 --long
+    $matchVersion = ([regex]::Match($powershellVersion, "^(v.+)-(\d+)-g(.+)")).Groups.Value
+    $null, $ps6MajorVersion, $ps6MinorVersion, $ps6PatchVersion, $ps6LabelVersion = ([regex]::Match($matchVersion[1], "^v(\d+).(\d+).(\d+)-(.+)")).Groups.Value
     $formattedVersion = "Version: $($matchVersion[1])"
     if ($($matchVersion[1]) -ne "0") {
         $formattedVersion += "  Additional commits: $($matchVersion[2])"
@@ -191,6 +192,7 @@ namespace System.Management.Automation
     internal class GitCommitInfo
     {
         internal const string s_GitCommitInfo = "$formattedVersion";
+        internal static readonly SemanticVersion s_psV6Version = new SemanticVersion($ps6MajorVersion, $ps6MinorVersion, $ps6PatchVersion, "$ps6LabelVersion");
     }
 }
 "@
