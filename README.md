@@ -32,7 +32,7 @@ You can download and install a PowerShell package for any of the following platf
 | OpenSUSE 42.1                      | [.rpm][rl-opensuse421] | [Instructions][in-opensuse421]|
 | Arch Linux                         |                        | [Instructions][in-archlinux]  |
 | Many Linux distributions           | [.AppImage][rl-ai]     | [Instructions][in-appimage]   |
-| macOS 10.11                        | [.pkg][rl-macos]       | [Instructions][in-macos]      |
+| macOS 10.12                        | [.pkg][rl-macos]       | [Instructions][in-macos]      |
 | Docker                             |                        | [Instructions][in-docker]     |
 
 [rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/PowerShell-6.0.0-beta.1-win10-win2016-x64.msi
@@ -55,7 +55,7 @@ You can download and install a PowerShell package for any of the following platf
 [in-rhel7]: docs/installation/linux.md#red-hat-enterprise-linux-rhel-7
 [in-archlinux]: docs/installation/linux.md#arch-linux
 [in-appimage]: docs/installation/linux.md#linux-appimage
-[in-macos]: docs/installation/linux.md#macos-1011
+[in-macos]: docs/installation/linux.md#macos-1012
 [in-docker]: docker
 [in-opensuse421]: docs/installation/linux.md#opensuse-421
 

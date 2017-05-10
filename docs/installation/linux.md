@@ -1,7 +1,7 @@
 # Package installation instructions
 
 Supports [Ubuntu 14.04][u14], [Ubuntu 16.04][u16], [Debian 8][deb8],
-[CentOS 7][cos], [Red Hat Enterprise Linux (RHEL) 7][rhel7], [Arch Linux][arch], [many Linux distributions (AppImage)][lai], and [macOS 10.11][mac].
+[CentOS 7][cos], [Red Hat Enterprise Linux (RHEL) 7][rhel7], [Arch Linux][arch], [many Linux distributions (AppImage)][lai], and [macOS 10.12][mac].
 All packages are available on our GitHub [releases][] page.
 
 All of these steps can be done automatically by the [`download.sh`][download] script.
@@ -22,7 +22,7 @@ Once the package is installed, run `powershell` from a terminal.
 [rhel7]: #red-hat-enterprise-linux-rhel-7
 [arch]: #arch-linux
 [lai]: #linux-appimage
-[mac]: #macos-1011
+[mac]: #macos-1012
 [download]: https://github.com/PowerShell/PowerShell/blob/v6.0.0-beta.1/tools/download.sh
 
 ## Ubuntu 14.04
@@ -337,9 +337,9 @@ and is a single binary.
 
 [appimage]: http://appimage.org/
 
-## macOS 10.11
+## macOS 10.12
 
-Using macOS 10.11, download the PKG package
+Using macOS 10.12, download the PKG package
 `powershell-6.0.0-beta.1-osx.10.12-x64.pkg`
 from the [releases][] page onto the macOS machine.
 
@@ -350,7 +350,7 @@ or install it from the terminal:
 sudo installer -pkg powershell-6.0.0-beta.1-osx.10.12-x64.pkg -target /
 ```
 
-### Uninstallation - macOS 10.11
+### Uninstallation - macOS 10.12
 
 PowerShell on MacOS must be removed manually.
 
