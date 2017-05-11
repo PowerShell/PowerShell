@@ -246,7 +246,7 @@ Run `Publish-NuGetFeed` to generate PowerShell NuGet packages:
 Import-Module .\build.psm1
 Start-PSBootstrap -Package
 Start-PSBuild -Clean -Publish
-$VersionSuffix = ((git describe) -split '-')[-1] -replace "\."
+$VersionSuffix = ((git describe) -split '-')[-1]
 Publish-NuGetFeed -VersionSuffix $VersionSuffix
 ```
 
