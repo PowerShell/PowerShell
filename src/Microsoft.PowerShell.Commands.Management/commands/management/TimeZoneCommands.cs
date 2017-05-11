@@ -1,5 +1,3 @@
-#if !UNIX
-
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -66,15 +64,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         WriteObject(TimeZoneInfo.FindSystemTimeZoneById(tzid));
                     }
-#if CORECLR
-                    // TimeZoneNotFoundException is thrown by TimeZoneInfo, but not
-                    // publicly visible (so can't be caught), so for now we're catching
-                    // the parent exception time. This should be removed once the more
-                    // specific exception is available.
-                    catch (Exception e)
-#else
                     catch (TimeZoneNotFoundException e)
-#endif
                     {
                         WriteError(new ErrorRecord(e, TimeZoneHelper.TimeZoneNotFoundError,
                             ErrorCategory.InvalidArgument, "Id"));
@@ -103,14 +93,8 @@ namespace Microsoft.PowerShell.Commands
                         {
                             string message = string.Format(CultureInfo.InvariantCulture,
                                 TimeZoneResources.TimeZoneNameNotFound, tzname);
-#if CORECLR
-                        // Because .NET Core does not currently expose the TimeZoneNotFoundException
-                        // we need to throw the more generic parent exception class for the time being.
-                        // This should be removed once the correct exception class is available.
-                        Exception e = new Exception(message);
-#else
+
                             Exception e = new TimeZoneNotFoundException(message);
-#endif
                             WriteError(new ErrorRecord(e, TimeZoneHelper.TimeZoneNotFoundError,
                                 ErrorCategory.InvalidArgument, "Name"));
                         }
@@ -125,6 +109,7 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
+#if !UNIX
 
     /// <summary>
     /// A cmdlet to set the system's local time zone.
@@ -804,7 +789,7 @@ namespace Microsoft.PowerShell.Commands
 #endregion Win32 interop helper
     }
 
-
+#endif
     /// <summary>
     /// static Helper class for working with system time zones.
     /// </summary>
@@ -862,5 +847,3 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
-
-#endif
