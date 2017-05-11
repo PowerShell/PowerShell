@@ -10,6 +10,7 @@ using System.Management.Automation.Internal;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Language;
 using System.Runtime.CompilerServices;
+using System.Linq;
 
 namespace System.Management.Automation.Internal
 {
@@ -1455,6 +1456,43 @@ namespace System.Management.Automation
 
             _validValues = validValues;
         }
+
+        /// <summary>
+        /// Initializes a new instance of the ValidateSetAttribute class
+        /// </summary>
+        /// <param name="type">list of valid values</param>
+        /// <exception cref="ArgumentNullException">for null arguments</exception>
+        /// <exception cref="ArgumentOutOfRangeException">for invalid arguments</exception>
+        public ValidateSetAttribute(Type type)
+        {
+            IValidateSetValuesGenerator validValuesGenerator;
+            if (typeof(IValidateSetValuesGenerator).IsAssignableFrom(type))
+            {
+                validValuesGenerator = (IValidateSetValuesGenerator)Activator.CreateInstance(type);
+            }
+            else
+            {
+                throw PSTraceSource.NewArgumentNullException("validValues");
+            }
+
+            _validValues = validValuesGenerator.GetValidValues().ToArray();
+
+            if (_validValues.Length == 0)
+            {
+                throw PSTraceSource.NewArgumentOutOfRangeException("IValidateSetValuesGenerator", type);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Allows dynamically generate set of values for ValidateSetAttribute.
+    /// </summary>
+    public interface IValidateSetValuesGenerator
+    {
+        /// <summary>
+        /// Get a valid values.
+        /// </summary>
+        IEnumerable<string> GetValidValues();
     }
 
     #region Allow

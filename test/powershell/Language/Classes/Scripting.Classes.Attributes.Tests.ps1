@@ -1,3 +1,5 @@
+Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
+
 Describe 'Attributes Test' -Tags "CI" {
 
     BeforeAll {
@@ -213,6 +215,99 @@ Describe 'Type resolution with attributes' -Tag "CI" {
 
             [MyEventSource]::new() | Should Not Be $null
 
+        }
+    }
+}
+
+Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
+    Context 'C# test' {
+
+        BeforeAll {
+            $a=@'
+            using System;
+            using System.Management.Automation;
+            using System.Collections.Generic;
+
+            namespace Test.Language {
+
+                [Cmdlet(VerbsCommon.Get, "TestValidateSet1")]
+                public class TestValidateSetCommand1 : PSCmdlet
+                {
+                    [Parameter]
+                    [ValidateSet(typeof(GenValuesForParam1))]
+                    public string Param1;
+
+                    protected override void EndProcessing()
+                    {
+                        WriteObject(Param1);
+                    }
+                }
+
+                [Cmdlet(VerbsCommon.Get, "TestValidateSet2")]
+                public class TestValidateSetCommand2 : PSCmdlet
+                {
+                    [Parameter]
+                    [ValidateSet(typeof(PSCmdlet))]
+                    public string Param1;
+
+                    protected override void EndProcessing()
+                    {
+                        WriteObject(Param1);
+                    }
+                }
+
+                [Cmdlet(VerbsCommon.Get, "TestValidateSet3")]
+                public class TestValidateSetCommand3 : PSCmdlet
+                {
+                    [Parameter]
+                    [ValidateSet(typeof(GenValuesForParam3))]
+                    public string Param1;
+
+                    protected override void EndProcessing()
+                    {
+                        WriteObject(Param1);
+                    }
+                }
+
+
+                /// Implement of test IValidateSetValuesGenerator
+                public class GenValuesForParam1 : IValidateSetValuesGenerator
+                {
+                    public IEnumerable<string> GetValidValues()
+                    {
+                        var testValues = new string[] {"Test1","TestString","Test2"};
+                        foreach (var value in testValues)
+                        {
+                            yield return value;
+                        }
+                    }
+                }
+
+                /// Implement of test IValidateSetValuesGenerator to return Null
+#pragma warning disable 0162
+                public class GenValuesForParam3 : IValidateSetValuesGenerator
+                {
+                    public IEnumerable<string> GetValidValues()
+                    {
+                        if (false) yield return "TestString";
+                    }
+                }
+            }
+'@
+
+            Add-Type -TypeDefinition $a -PassThru | % {$_.assembly} | Import-module -Force
+        }
+
+        It 'Dynamically generated set work' {
+            Get-TestValidateSet1 -Param1 "TestString" -ErrorAction SilentlyContinue | Should BeExactly "TestString"
+        }
+
+        It 'Throw if IValidateSetValuesGenerator is not implemented' {
+            { Get-TestValidateSet2 -Param1 "TestString" -ErrorAction Stop } | ShouldBeErrorId "ArgumentNull"
+        }
+
+        It 'Throw if IValidateSetValuesGenerator returns a null' {
+            { Get-TestValidateSet3 -Param1 "TestString" -ErrorAction Stop } | ShouldBeErrorId "ArgumentOutOfRange"
         }
     }
 }
