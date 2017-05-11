@@ -3803,8 +3803,8 @@ namespace System.Management.Automation.Language
         private StatementAst ClassDefinitionRule(List<AttributeBaseAst> customAttributes, Token classToken)
         {
             //G  class-statement:
-            //G      'class'   new-lines:opt   class-name   new-lines:opt  '{'   class-member-list   '}'
-            //G      'class'   new-lines:opt   class-name   new-lines:opt  ':'  base-type-list  '{'  new-lines:opt  class-member-list:opt  '}'
+            //G      attribute-list:opt   'class'   new-lines:opt   class-name   new-lines:opt  '{'   class-member-list   '}'
+            //G      attribute-list:opt   'class'   new-lines:opt   class-name   new-lines:opt  ':'  base-type-list  '{'  new-lines:opt  class-member-list:opt  '}'
             //G
             //G  class-name:
             //G      simple-name
@@ -3965,6 +3965,7 @@ namespace System.Management.Automation.Language
             //G  member-attribute:
             //G      attribute
             //G      'static'
+            //G      'hidden'
 
             IScriptExtent startExtent = null;
             var attributeList = new List<AttributeAst>();

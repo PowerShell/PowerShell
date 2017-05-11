@@ -808,6 +808,13 @@ alpha.18
 behavioral
 MiaRomero
 TheFlyingCorpse
+beta.1
+Youtube
+globbing
+_
+ExecutionPolicy
+0xfeeddeadbeef
+non-22
  - test/tools/CodeCoverageAutomation/README.md
 CodeCoverage.zip
 Coveralls.exe
@@ -823,3 +830,6 @@ v6.0.
  - docs/host-powershell/README.md
 CorePsAssemblyLoadContext.cs
 sample-dotnet1
+NTLM-based
+Kerberos-based
+post-6

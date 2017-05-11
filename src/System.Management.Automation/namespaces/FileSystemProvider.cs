@@ -1521,14 +1521,6 @@ namespace Microsoft.PowerShell.Commands
                 if (isDirectory)
                 {
                     DirectoryInfo directory = new DirectoryInfo(path);
-
-                    if (!Platform.IsWindows && Platform.NonWindowsIsSymLink(directory))
-                    {
-                        // For Linux, treat symlink to directories like a file
-                        WriteItemObject(directory, path, false);
-                        return;
-                    }
-
                     // Enumerate the directory
                     Dir(directory, recurse, depth, nameOnly, returnContainers);
                 }
@@ -2216,7 +2208,8 @@ namespace Microsoft.PowerShell.Commands
                     {
                         if (symLinkExists)
                         {
-                            WriteError(new ErrorRecord(new IOException("NewItemIOError"), "NewItemIOError", ErrorCategory.ResourceExists, path));
+                            string message = StringUtil.Format(FileSystemProviderStrings.SymlinkItemExists, path);
+                            WriteError(new ErrorRecord(new IOException(message), "SymLinkExists", ErrorCategory.ResourceExists, path));
                             return;
                         }
                     }
@@ -2863,15 +2856,6 @@ namespace Microsoft.PowerShell.Commands
                 continueRemoval = ShouldProcess(directory.FullName, action);
             }
 
-            //if this is a reparse point and force is not specified then warn user but dont remove the directory.
-            if (Platform.IsWindows && ((directory.Attributes & FileAttributes.ReparsePoint) != 0) && !Force)
-            {
-                String error = StringUtil.Format(FileSystemProviderStrings.DirectoryReparsePoint, directory.FullName);
-                Exception e = new IOException(error);
-                WriteError(new ErrorRecord(e, "DirectoryNotEmpty", ErrorCategory.WriteError, directory));
-                return;
-            }
-
             if ((directory.Attributes & FileAttributes.ReparsePoint) != 0)
             {
                 bool success = InternalSymbolicLinkLinkCodeMethods.DeleteJunction(directory.FullName);
@@ -3327,13 +3311,14 @@ namespace Microsoft.PowerShell.Commands
             path = NormalizePath(path);
 
             // First check to see if it is a directory
-
             try
             {
                 DirectoryInfo directory = new DirectoryInfo(path);
 
                 // If the above didn't throw an exception, check to
-                // see if it contains any directories
+                // see if we should proceed and if it contains any children
+                if ((directory.Attributes & FileAttributes.Directory) != FileAttributes.Directory)
+                    return false;
 
                 result = DirectoryInfoHasChildItems(directory);
             }
@@ -4961,6 +4946,23 @@ namespace Microsoft.PowerShell.Commands
                                 return String.Empty;
                             }
 
+#if UNIX
+                            // We don't use the Directory class for Unix because the path
+                            // may contain additional globbing patterns such as '[ab]'
+                            // which Directory.EnumerateFiles() processes, giving undesireable
+                            // results in this context.
+                            if (!Utils.NativeItemExists(result))
+                            {
+                                String error = StringUtil.Format(FileSystemProviderStrings.ItemDoesNotExist, path);
+                                Exception e = new IOException(error);
+                                WriteError(new ErrorRecord(
+                                    e,
+                                    "ItemDoesNotExist",
+                                    ErrorCategory.ObjectNotFound,
+                                    path));
+                                break;
+                            }
+#else
                             string leafName = GetChildName(result);
 
                             // Use the Directory class to get the real path (this will
@@ -4986,6 +4988,7 @@ namespace Microsoft.PowerShell.Commands
                             }
 
                             result = files.First();
+#endif
 
                             if (result.StartsWith(basePath, StringComparison.CurrentCulture))
                             {

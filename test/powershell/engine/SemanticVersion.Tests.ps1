@@ -17,6 +17,20 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             $v.Patch | Should Be 0
             $v.Label | Should BeNullOrEmpty
             $v.ToString() | Should Be "1.0.0"
+
+            $v = [SemanticVersion]::new("3.0")
+            $v.Major | Should Be 3
+            $v.Minor | Should Be 0
+            $v.Patch | Should Be 0
+            $v.Label | Should BeNullOrEmpty
+            $v.ToString() | Should Be "3.0.0"
+
+            $v = [SemanticVersion]::new("2")
+            $v.Major | Should Be 2
+            $v.Minor | Should Be 0
+            $v.Patch | Should Be 0
+            $v.Label | Should BeNullOrEmpty
+            $v.ToString() | Should Be "2.0.0"
         }
 
 	    # After the above test, we trust the properties and rely on ToString for validation
@@ -27,6 +41,12 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
 
             $v = [SemanticVersion]::new(3, 2, 0, "beta.1")
             $v.ToString() | Should Be "3.2.0-beta.1"
+
+            $v = [SemanticVersion]::new(3, 1)
+            $v.ToString() | Should Be "3.1.0"
+
+            $v = [SemanticVersion]::new(3)
+            $v.ToString() | Should Be "3.0.0"
         }
 
         It "version arg constructor" {
@@ -57,6 +77,8 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             @{ lhs = $v1_0_0_alpha; rhs = $v1_0_0_beta }
             @{ lhs = $v1_0_0_alpha; rhs = $v1_0_0 }
             @{ lhs = $v1_0_0_beta; rhs = $v1_0_0 }
+            @{ lhs = $v2_1_0; rhs = "3.0"}
+            @{ lhs = "1.5"; rhs = $v2_1_0}
         )
         It "less than" -TestCases $testCases {
             param($lhs, $rhs)
@@ -121,8 +143,8 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             @{ expectedResult = $false; version = "" }
             @{ expectedResult = $false; version = "1.0.0-" }
             @{ expectedResult = $false; version = "-" }
+            @{ expectedResult = $false; version = "." }
             @{ expectedResult = $false; version = "-alpha" }
-	        @{ expectedResult = $false; version = "1.0" }  # REVIEW - should this be allowed
 	        @{ expectedResult = $false; version = "1..0" }
 	        @{ expectedResult = $false; version = "1.0.-alpha" }
 	        @{ expectedResult = $false; version = "1.0." }
@@ -178,10 +200,6 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             # Revision isn't supported
             { [SemanticVersion]::new([Version]::new(0, 0, 0, 4)) } | Should Throw # PSArgumentException
             { [SemanticVersion]::new([Version]::new("1.2.3.4")) } | Should Throw # PSArgumentException
-
-            # Build is required
-            { [SemanticVersion]::new([Version]::new(1, 2)) } | Should Throw # PSArgumentException
-            { [SemanticVersion]::new([Version]::new("1.2")) } | Should Throw # PSArgumentException
         }
     }
 

@@ -1311,22 +1311,15 @@ namespace System.Management.Automation
 
             if (MinLength == MaxLength && len != MaxLength)
             {
-                throw new ValidationMetadataException("ValidateCountNotExactlyEqual",
-                    null, Metadata.ValidateCountFailure,
-                    MinLength, MaxLength, len);
+                throw new ValidationMetadataException("ValidateCountExactFailure",
+                    null, Metadata.ValidateCountExactFailure,
+                    MaxLength, len);
             }
 
-            if (len < MinLength)
+            if (len < MinLength || len > MaxLength)
             {
-                throw new ValidationMetadataException("ValidateCountSmallerThanMin",
-                    null, Metadata.ValidateCountFailure,
-                    MinLength, MaxLength, len);
-            }
-
-            if (len > MaxLength)
-            {
-                throw new ValidationMetadataException("ValidateCountGreaterThanMax",
-                    null, Metadata.ValidateCountFailure,
+                throw new ValidationMetadataException("ValidateCountMinMaxFailure",
+                    null, Metadata.ValidateCountMinMaxFailure,
                     MinLength, MaxLength, len);
             }
         }

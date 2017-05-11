@@ -1,5 +1,81 @@
 # Changelog
 
+## v6.0.0-beta.1 - 2017-05-08
+
+### Move to .NET Core 2.0 (.NET Standard 2.0 support)
+
+PowerShell Core has moved to using .NET Core 2.0 so that we can leverage all the benefits of .NET Standard 2.0. (#3556)
+To learn more about .NET Standard 2.0, there's some great starter content [on Youtube](https://www.youtube.com/playlist?list=PLRAdsfhKI4OWx321A_pr-7HhRNk7wOLLY),
+on [the .NET blog](https://blogs.msdn.microsoft.com/dotnet/2016/09/26/introducing-net-standard/),
+and [on GitHub](https://github.com/dotnet/standard/blob/master/docs/faq.md).
+We'll also have more content soon in our [repository documentation](https://github.com/PowerShell/PowerShell/tree/master/docs) (which will eventually make its way to [official documentation](https://github.com/powershell/powershell-docs)).
+In a nutshell, .NET Standard 2.0 allows us to have universal, portable modules between Windows PowerShell (which uses the full .NET Framework) and PowerShell Core (which uses .NET Core).
+Many modules and cmdlets that didn't work in the past may now work on .NET Core, so import your favorite modules and tell us what does and doesn't work in our GitHub Issues!
+
+### Telemetry
+
+- For the first beta of PowerShell Core 6.0, telemetry has been to the console host to report two values (#3620):
+    - the OS platform (`$PSVersionTable.OSDescription`)
+    - the exact version of PowerShell (`$PSVersionTable.GitCommitId`)
+
+If you want to opt-out of this telemetry, simply delete `$PSHome\DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY`.
+Even before the first run of Powershell, deleting this file will bypass all telemetry.
+In the future, we plan on also enabling a configuration value for whatever is approved as part of [RFC0015](https://github.com/PowerShell/PowerShell-RFC/blob/master/1-Draft/RFC0015-PowerShell-StartupConfig.md).
+We also plan on exposing this telemetry data (as well as whatever insights we leverage from the telemetry) in [our community dashboard](https://blogs.msdn.microsoft.com/powershell/2017/01/31/powershell-open-source-community-dashboard/).
+
+If you have any questions or comments about our telemetry, please file an issue.
+
+### Engine updates and fixes
+
+- Add support for native command globbing on Unix platforms. (#3643)
+    - This means you can now use wildcards with native binaries/commands (e.g. `ls *.txt`).
+- Fix PowerShell Core to find help content from `$PSHome` instead of the Windows PowerShell base directory. (#3528)
+    - This should fix issues where about_* topics couldn't be found on Unix platforms.
+- Add the `OS` entry to `$PSVersionTable`. (#3654)
+- Arrange the display of `$PSVersionTable` entries in the following way: (#3562) (Thanks to @iSazonov!)
+    - `PSVersion`
+    - `PSEdition`
+    - alphabetical order for rest entries based on the keys
+- Make PowerShell Core more resilient when being used with an account that doesn't have some key environment variables. (#3437)
+- Update PowerShell Core to accept the `-i` switch to indicate an interactive shell. (#3558)
+    - This will help when using PowerShell as a default shell on Unix platforms.
+- Relax the PowerShell `SemanticVersion` constructors to not require 'minor' and 'patch' portions of a semantic version name. (#3696)
+- Improve performance to security checks when group policies are in effect for ExecutionPolicy. (#2588) (Thanks to @powercode)
+- Fix code in PowerShell to use `IntPtr(-1)` for `INVALID_HANDLE_VALUE` instead of `IntPtr.Zero`. (#3544) (Thanks to @0xfeeddeadbeef)
+
+### General cmdlet updates and fixes
+
+- Change the default encoding and OEM encoding used in PowerShell Core to be compatible with Windows PowerShell. (#3467) (Thanks to @iSazonov!)
+- Fix a bug in `Import-Module` to avoid incorrect cyclic dependency detection. (#3594)
+- Fix `New-ModuleManifest` to correctly check if a URI string is well formed. (#3631)
+
+### Filesystem-specific updates and fixes
+
+- Use operating system calls to determine whether two paths refer to the same file in file system operations. (#3441)
+    - This will fix issues where case-sensitive file paths were being treated as case-insensitive on Unix platforms.
+- Fix `New-Item` to allow creating symbolic links to file/directory targets and even a non-existent target. (#3509)
+- Change the behavior of `Remove-Item` on a symbolic link to only removing the link itself. (#3637)
+- Use better error message when `New-Item` fails to create a symbolic link because the specified link path points to an existing item. (#3703)
+- Change `Get-ChildItem` to list the content of a link to a directory on Unix platforms. (#3697)
+- Fix `Rename-Item` to allow Unix globbing patterns in paths. (#3661)
+
+### Interactive fixes
+
+- Add Hashtable tab completion for `-Property` of `Select-Object`. (#3625) (Thanks to @powercode)
+- Fix tab completion with `@{<tab>` to avoid crash in PSReadline. (#3626) (Thanks to @powercode)
+- Use `<id> - <name>` as `ToolTip` and `ListItemText` when tab completing process ID. (#3664) (Thanks to @powercode)
+
+### Remoting fixes
+
+- Update PowerShell SSH remoting to handle multi-line error messages from OpenSSH client. (#3612)
+- Add `-Port` parameter to `New-PSSession` to create PowerShell SSH remote sessions on non-standard (non-22) ports. (#3499) (Thanks to @Lee303)
+
+### API Updates
+
+- Add the public property `ValidRootDrives` to `ValidateDriveAttribute` to make it easy to discover the attribute state via `ParameterMetadata` or `PSVariable` objects. (#3510) (Thanks to @indented-automation!)
+- Improve error messages for `ValidateCountAttribute`. (#3656) (Thanks to @iSazonov)
+- Update `ValidatePatternAttribute`, `ValidateSetAttribute` and `ValidateScriptAttribute` to allow users to more easily specify customized error messages. (#2728) (Thanks to @powercode)
+
 ## v6.0.0-alpha.18 - 2017-04-05
 
 ### Progress Bar
