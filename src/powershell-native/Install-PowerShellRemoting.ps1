@@ -20,7 +20,7 @@ param
     [parameter(ParameterSetName = "ByPath")]
     [ValidateNotNullOrEmpty()]
     [string]
-    $PowerShellVersion = "6.0.0-alpha.8"
+    $PowerShellVersion
 )
 
 function Register-WinRmPlugin
@@ -130,19 +130,9 @@ else
 {
     $targetPsHome = $PSHOME
 
-    # Parse the version string from the version file so that users do not have
-    # to enter it manually.
-    $targetPsVersionFilePath = Join-Path $targetPsHome "Powershell.Version"
-    $versionString = (Get-Content $targetPsVersionFilePath).Trim()
-    if($versionString.StartsWith("v"))
-    {
-        $versionString = $versionString.substring(1)
-    }
-    $index = $versionString.LastIndexOf(".")
-    $version = $versionString.Substring(0,$index)
-    $revision = $versionString.Substring($index).split("-")
-    $version= $version + $revision[0]
-    $targetPsVersion = $version
+    # Get the version string from PowerShell so that users do not have to enter it manually.
+    $powershell = Join-Path -Path $targetPsHome -ChildPath "powershell"
+    $targetPsVersion = & $powershell -c "$PSVersionTable.PSVersion.ToString()"
 
     Write-Verbose "Using PowerShell Version: $targetPsVersion" -Verbose
 }
