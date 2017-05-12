@@ -153,13 +153,13 @@ function Start-PSBuild {
     # Generate version constant for $PSVersionTable
     function Start-PowerShellVersionGen {
         $powershellVersion = git --git-dir="$PSScriptRoot/.git" describe --abbrev=60 --long
-        $matchVersion = ([regex]::Match($powershellVersion, "^(v.+)-(\d+)-g(.+)")).Groups.Value
-        $null, $ps6MajorVersion, $ps6MinorVersion, $ps6PatchVersion, $ps6LabelVersion = ([regex]::Match($matchVersion[1], "^v(\d+).(\d+).(\d+)-(.+)")).Groups.Value
-        $formattedVersion = "Version: $($matchVersion[1])"
+        $matchVersion = ([regex]::Match($powershellVersion, "^v(.+)-(\d+)-g(.+)")).Groups.Value
+        $null, $ps6MajorVersion, $ps6MinorVersion, $ps6PatchVersion, $ps6LabelVersion = ([regex]::Match($matchVersion[1], "^(\d+).(\d+).(\d+)-(.+)")).Groups.Value
+        $Global:formattedVersion = "$($matchVersion[1])"
         if ($($matchVersion[1]) -ne "0") {
-            $formattedVersion += "  Additional commits: $($matchVersion[2])"
+            $Global:formattedVersion += "  Additional commits: $($matchVersion[2])"
         }
-        $formattedVersion += "  Commit Hash: $($matchVersion[3])"
+        $Global:formattedVersion += "  Commit Hash: $($matchVersion[3])"
 
         $template = @"
 //------------------------------------------------------------------------------
@@ -182,6 +182,8 @@ namespace System.Management.Automation
 "@
 
         Set-Content -Path "$PSScriptRoot\src\System.Management.Automation\gen\PSVersionInfo.generated.cs" -Value $template
+
+        $Global:formattedVersion = $Global:formattedVersion -replace ' ', '%20'
     }
 
     if ($Clean) {
@@ -331,6 +333,10 @@ Fix steps:
     # Generate version constant for $PSVersionTable
     # (Call after 'Start-ResGen'!)
     Start-PowerShellVersionGen
+
+#    $Arguments += "/p:ProductVersion=$formattedVersion;InformationalVersion=$formattedVersion;"
+    $Arguments += "/p:ProductVersion=$formattedVersion;InformationalVersion=$formattedVersion"
+
 
     # handle xaml files
     # Heuristic to resolve xaml on the fresh machine

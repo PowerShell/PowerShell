@@ -9,6 +9,8 @@
     <RuntimeIdentifiers>win7-x86;win7-x64;win81-x64;win10-x64</RuntimeIdentifiers>
   </PropertyGroup>
 
+  <Import Project="powershell-win-core.targets"/>  
+
   <ItemGroup>
     <Compile Include="..\powershell\Program.cs" Exclude="bin\**;obj\**;**\*.xproj;packages\**" />
     <Content Include="..\System.Management.Automation\PowerShellProperties.json">

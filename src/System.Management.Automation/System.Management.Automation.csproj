@@ -9,6 +9,8 @@
     <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
   </PropertyGroup>
 
+  <Import Project="..\powershell-win-core\powershell-win-core.targets"/>  
+
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.AssemblyLoadContext\Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.csproj" />
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.Eventing\Microsoft.PowerShell.CoreCLR.Eventing.csproj" />

@@ -7,6 +7,8 @@
     <AssemblyName>Microsoft.WSMan.Management</AssemblyName>
   </PropertyGroup>
 
+  <Import Project="..\powershell-win-core\powershell-win-core.targets"/>  
+
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
     <ProjectReference Include="..\Microsoft.WSMan.Runtime\Microsoft.WSMan.Runtime.csproj" />

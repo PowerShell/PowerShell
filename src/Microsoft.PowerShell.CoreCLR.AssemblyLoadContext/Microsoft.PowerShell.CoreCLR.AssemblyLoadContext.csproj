@@ -7,6 +7,8 @@
     <AssemblyName>Microsoft.PowerShell.CoreCLR.AssemblyLoadContext</AssemblyName>
   </PropertyGroup>
 
+  <Import Project="..\powershell-win-core\powershell-win-core.targets"/>  
+
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
   </PropertyGroup>
