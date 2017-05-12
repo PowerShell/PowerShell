@@ -832,4 +832,7 @@ CorePsAssemblyLoadContext.cs
 sample-dotnet1
 NTLM-based
 Kerberos-based
+preview1-002106-00
+sample-dotnet2
+0-powershell
 post-6
