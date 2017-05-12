@@ -1,15 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\PowerShell.Common.props"/>  
+
   <PropertyGroup>
-    <VersionPrefix>6.0.0</VersionPrefix>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <DelaySign>true</DelaySign>
+    <Description>PowerShell Core's Microsoft.Management.Infrastructure.CimCmdlets project</Description>
+    <NoWarn>$(NoWarn);CS1570;CS1572;CS1573;CS1574;CS1584;CS1587;CS1591</NoWarn>
     <AssemblyName>Microsoft.Management.Infrastructure.CimCmdlets</AssemblyName>
-    <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
   </PropertyGroup>
 
   <ItemGroup>

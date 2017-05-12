@@ -23,13 +23,3 @@ using System.Resources;
 #endif
 
 [assembly: System.Runtime.InteropServices.ComVisible(false)]
-[assembly: System.Reflection.AssemblyVersion("3.0.0.0")]
-[assembly: System.Reflection.AssemblyProduct("Microsoft (R) Windows (R) Operating System")]
-[assembly: System.Reflection.AssemblyCopyright("Copyright (c) Microsoft Corporation. All rights reserved.")]
-[assembly: System.Reflection.AssemblyCompany("Microsoft Corporation")]
-
-internal static class AssemblyStrings
-{
-    internal const string AssemblyVersion = @"3.0.0.0";
-    internal const string AssemblyCopyright = "Copyright (C) 2006 Microsoft Corporation. All rights reserved.";
-}
