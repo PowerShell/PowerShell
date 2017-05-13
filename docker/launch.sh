@@ -79,7 +79,7 @@ for build in $BUILDS; do
                     docker run --rm --volume "$(pwd)/packages:/mnt" --entrypoint bash "$image" -c "$command"
                 fi
             fi
-        ) &>> "$logfile" &
+        ) & >> "$logfile" &
     done
     echo "Waiting for $build containers to finish; tail the logs for more information."
     wait
