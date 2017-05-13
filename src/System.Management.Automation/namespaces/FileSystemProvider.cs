@@ -1736,15 +1736,17 @@ namespace Microsoft.PowerShell.Commands
                                 return;
                             }
 
-
-                            bool hidden = false;
-                            if (!Force) hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
-
-                            // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
-                            // default hidden attribute filter.
-                            if (Force || !hidden || isFilterHiddenSpecified || isSwitchFilterHiddenSpecified)
+                            if (!InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory))
                             {
-                                Dir(recursiveDirectory, recurse, depth - 1, nameOnly, returnContainers);
+                                bool hidden = false;
+                                if (!Force) hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
+
+                                // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
+                                // default hidden attribute filter.
+                                if (Force || !hidden || isFilterHiddenSpecified || isSwitchFilterHiddenSpecified)
+                                {
+                                    Dir(recursiveDirectory, recurse, depth - 1, nameOnly, returnContainers);
+                                }
                             }
                         }//foreach
                     }//if
