@@ -1,3 +1,5 @@
+
+
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -1491,6 +1493,47 @@ namespace Microsoft.PowerShell.Commands
             return true;
         }
 
+        //Returns true if a given DirectoryInfo path is a recursive sym link.
+        private bool IsRecursiveSymLink(DirectoryInfo path)
+        {
+            string readSymLink = "";
+
+            if (Platform.IsWindows)
+            {
+                PSObject obj = PSObject.AsPSObject(path);
+
+                try
+                {
+                    readSymLink = InternalSymbolicLinkLinkCodeMethods.GetTarget(obj).First().ToString();
+                }
+                catch
+                {
+                    readSymLink = null;
+                }
+
+                //if the read symlink is not null or empty, and what it points to is the parent directory then it is recursive
+                if (!String.IsNullOrEmpty(readSymLink) && path.Parent.FullName.Contains(readSymLink))
+                {
+                    return true;
+                }
+
+                return false;
+            }
+
+            //Platform is Linux or Windows
+            else
+            {
+                readSymLink = Platform.NonWindowsInternalGetTarget(path.FullName);
+
+                if (readSymLink != null && path.FullName.Contains(readSymLink))
+                {
+                    return true;
+                }
+
+                return false;
+            }
+        }
+
         private void GetPathItems(
             string path,
             bool recurse,
@@ -1736,6 +1779,12 @@ namespace Microsoft.PowerShell.Commands
                                 return;
                             }
 
+                            //If symlink points to its parent directory then do not pursue symlink further
+                            if (IsRecursiveSymLink(recursiveDirectory))
+                            {
+                                    recurse=false;
+                                    return;
+                            }
 
                             bool hidden = false;
                             if (!Force) hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
