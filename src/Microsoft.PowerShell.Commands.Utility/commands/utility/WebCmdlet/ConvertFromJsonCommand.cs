@@ -76,33 +76,38 @@ namespace Microsoft.PowerShell.Commands
             // 2. The complete buffer input collectively represent a single JSon format. This is typically the majority of the case.
             if (_inputObjectBuffer.Count > 0)
             {
+                ErrorRecord error = null;
+                bool argumentException = false;
+
+                bool successfullyConverted = ConvertFromJsonHelper(_inputObjectBuffer[0], out  error, out  argumentException);
+                
                 if (_inputObjectBuffer.Count == 1)
                 {
-                    ConvertFromJsonHelper(_inputObjectBuffer[0]);
+                    // single input object
+                    if (!successfullyConverted)
+                    {
+                        WriteError(error);
+                    }
                 }
-                else
+                else if (argumentException)
                 {
-                    bool successfullyConverted = false;
-                    try
-                    {
-                        successfullyConverted = ConvertFromJsonHelper(_inputObjectBuffer[0]);
-                    }
-                    catch (ArgumentException)
-                    {
-                        // The first input string does not represent a complete Json Syntax.
-                        // Hence consider the the entire input as a single Json content.
-                    }
+                    // Merge all input objects into a single json string.
+                    string value = string.Join(System.Environment.NewLine, _inputObjectBuffer.ToArray());
 
-                    if (successfullyConverted)
+                    if (!ConvertFromJsonHelper(value, out error, out argumentException))
                     {
-                        for (int index = 1; index < _inputObjectBuffer.Count; index++)
-                        {
-                            ConvertFromJsonHelper(_inputObjectBuffer[index]);
-                        }
+                        WriteError(error);
                     }
-                    else
+                }
+                else if (successfullyConverted)
+                {
+                    // Consider each input object a json string.
+                    for (int index = 1; index < _inputObjectBuffer.Count; index++)
                     {
-                        ConvertFromJsonHelper(string.Join(System.Environment.NewLine, _inputObjectBuffer.ToArray()));
+                        if (!ConvertFromJsonHelper(_inputObjectBuffer[index], out error, out argumentException))
+                        {
+                            WriteError(error);   
+                        }
                     }
                 }
             }
@@ -112,18 +117,27 @@ namespace Microsoft.PowerShell.Commands
         /// ConvertFromJsonHelper is a helper method to convert to Json input to .Net Type.
         /// </summary>
         /// <param name="input">Input String.</param>
+        /// <param name="error">A non-null ErrorRecord if conversion failed.</param>
+        /// <param name="argumentException">true if parsing failed due to an argument exception; otherwise, false.</param>
         /// <returns>True if successfully converted, else returns false.</returns>
-        private bool ConvertFromJsonHelper(string input)
+        private bool ConvertFromJsonHelper(string input, out ErrorRecord error, out bool argumentException)
         {
-            ErrorRecord error = null;
-            object result = JsonObject.ConvertFromJson(input, out error);
+            argumentException = false;
+            object result = null;
 
-            if (error != null)
+            try
             {
-                ThrowTerminatingError(error);
+                result = JsonObject.ConvertFromJson(input, out error);
+                if (error == null)
+                {
+                    WriteObject(result);
+                }
             }
-
-            WriteObject(result);
+            catch (ArgumentException ex)
+            {
+                argumentException = true;
+                error = new ErrorRecord(ex, "ConvertFromJson", ErrorCategory.InvalidData, input);                
+            }
             return (result != null);
         }
 
