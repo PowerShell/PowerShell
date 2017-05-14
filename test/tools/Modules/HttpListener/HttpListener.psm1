@@ -44,14 +44,6 @@ Function Start-HTTPListener {
     Process {
         $ErrorActionPreference = "Stop"
 
-        if ($IsWindows)
-        {
-            $CurrentPrincipal = New-Object Security.Principal.WindowsPrincipal( [Security.Principal.WindowsIdentity]::GetCurrent())
-            if ( -not ($currentPrincipal.IsInRole( [Security.Principal.WindowsBuiltInRole]::Administrator ))) {
-                Write-Error "This script must be executed from an elevated PowerShell session" -ErrorAction Stop
-            }
-        }
-
         [scriptblock]$script = {
             param ($Port)
 
@@ -62,10 +54,14 @@ Function Start-HTTPListener {
                 $queryItems = @{}
                 foreach ($segment in $url.Split("&"))
                 {
-                    if ($segment -match "\??(?<name>\w*)(=(?<value>\w*))?$")
+                    if ($segment -match "\??(?<name>\w*)(=(?<value>.*?))?$")
                     {
                         $name = $matches["name"]
                         $value = $matches["value"]
+                        if ($value -ne $null)
+                        {
+                            $value = [System.Web.HttpUtility]::UrlDecode($value)
+                        }
                         $queryItems.Add($name, $value)
                         Write-Verbose "Found: $name = $value"
                     }
@@ -99,6 +95,8 @@ Function Start-HTTPListener {
                     $output = ""
                     # this is hashtable of headers in the response
                     $outputHeader = @{}
+                    # this is the contenttype, example 'application/json'
+                    $contentType = $null
 
                     switch ($test)
                     {
@@ -113,6 +111,12 @@ Function Start-HTTPListener {
                             $output = "Exit command received"
                             $exit = $true
                         }
+                        "response"
+                        {
+                            $statusCode = $queryItems["statuscode"]
+                            $contentType = $queryItems["contenttype"]
+                            $output = $queryItems["output"]
+                        }
                         default
                         {
                             $statusCode = [System.Net.HttpStatusCode]::NotFound
@@ -121,18 +125,29 @@ Function Start-HTTPListener {
                     }
 
                     $response = $context.Response
-                    $response.StatusCode = $statusCode
+                    if ($contentType -ne $null)
+                    {
+                        Write-Verbose "Setting ContentType to $contentType"
+                        $response.ContentType = $contentType
+                    }
+                    if ($statusCode -ne $null)
+                    {
+                        $response.StatusCode = $statusCode
+                    }
                     $response.Headers.Clear()
                     foreach ($header in $outputHeader.Keys)
                     {
                         $response.Headers.Add($header, $outputHeader[$header])
                     }
-                    $buffer = [System.Text.Encoding]::UTF8.GetBytes($output)
-
-                    $response.ContentLength64 = $buffer.Length
-                    $output = $response.OutputStream
-                    $output.Write($buffer,0,$buffer.Length)
-                    $output.Close()
+                    if ($output -ne $null)
+                    {
+                        $buffer = [System.Text.Encoding]::UTF8.GetBytes($output)
+                        $response.ContentLength64 = $buffer.Length
+                        $output = $response.OutputStream
+                        $output.Write($buffer,0,$buffer.Length)
+                        $output.Close()
+                    }
+                    $response.Close()
                 }
             }
             finally
