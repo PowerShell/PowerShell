@@ -1739,7 +1739,10 @@ namespace Microsoft.PowerShell.Commands
                             if (!InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory))
                             {
                                 bool hidden = false;
-                                if (!Force) hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
+                                if (!Force)
+                                {
+                                    hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
+                                }
 
                                 // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
                                 // default hidden attribute filter.
