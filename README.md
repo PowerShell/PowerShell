@@ -26,32 +26,36 @@ You can download and install a PowerShell package for any of the following platf
 | Windows 7 (x86)                    | [.msi][rl-windows7-86] | [Instructions][in-windows]    |
 | Ubuntu 16.04                       | [.deb][rl-ubuntu16]    | [Instructions][in-ubuntu16]   |
 | Ubuntu 14.04                       | [.deb][rl-ubuntu14]    | [Instructions][in-ubuntu14]   |
+| Debian 8                           | [.deb][rl-ubuntu14]    | [Instructions][in-deb8]       |
 | CentOS 7                           | [.rpm][rl-centos]      | [Instructions][in-centos]     |
+| Red Hat Enterprise Linux 7         | [.rpm][rl-centos]      | [Instructions][in-rhel7]      |
 | OpenSUSE 42.1                      | [.rpm][rl-opensuse421] | [Instructions][in-opensuse421]|
 | Arch Linux                         |                        | [Instructions][in-archlinux]  |
 | Many Linux distributions           | [.AppImage][rl-ai]     | [Instructions][in-appimage]   |
-| macOS 10.11                        | [.pkg][rl-macos]       | [Instructions][in-macos]      |
+| macOS 10.12                        | [.pkg][rl-macos]       | [Instructions][in-macos]      |
 | Docker                             |                        | [Instructions][in-docker]     |
 
-[rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win10-win2016-x64.msi
-[rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win81-win2012r2-x64.msi
+[rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/PowerShell-6.0.0-beta.1-win10-win2016-x64.msi
+[rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/PowerShell-6.0.0-beta.1-win81-win2012r2-x64.msi
 [rl-windows7-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win7-win2008r2-x64.msi
 [rl-windows7-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win7-x86.msi
-[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell_6.0.0-alpha.18-1ubuntu1.16.04.1_amd64.deb
-[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell_6.0.0-alpha.18-1ubuntu1.14.04.1_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0_alpha.18-1.el7.centos.x86_64.rpm
-[rl-ai]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-x86_64.AppImage
-[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0-alpha.18-osx.10.11-x64.pkg
-[rl-opensuse421]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/powershell-6.0.0_alpha.18-1.suse.42.1.x86_64.rpm
+[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/powershell_6.0.0-beta.1-1ubuntu1.16.04.1_amd64.deb
+[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/powershell_6.0.0-beta.1-1ubuntu1.14.04.1_amd64.deb
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/powershell-6.0.0_beta.1-1.el7.centos.x86_64.rpm
+[rl-ai]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/PowerShell-6.0.0-beta.1-x86_64.AppImage
+[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/powershell-6.0.0-beta.1-osx.10.12-x64.pkg
+[rl-opensuse421]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.1/powershell-6.0.0_beta.1-1.suse.42.1.x86_64.rpm
 
 [installation]: docs/installation
 [in-windows]: docs/installation/windows.md#msi
 [in-ubuntu14]: docs/installation/linux.md#ubuntu-1404
 [in-ubuntu16]: docs/installation/linux.md#ubuntu-1604
+[in-deb8]: docs/installation/linux.md#debian-8
 [in-centos]: docs/installation/linux.md#centos-7
+[in-rhel7]: docs/installation/linux.md#red-hat-enterprise-linux-rhel-7
 [in-archlinux]: docs/installation/linux.md#arch-linux
 [in-appimage]: docs/installation/linux.md#linux-appimage
-[in-macos]: docs/installation/linux.md#macos-1011
+[in-macos]: docs/installation/linux.md#macos-1012
 [in-docker]: docker
 [in-opensuse421]: docs/installation/linux.md#opensuse-421
 
@@ -157,6 +161,12 @@ License: By requesting and using the Container OS Image for Windows containers, 
 
 - [Window Server Core](https://hub.docker.com/r/microsoft/windowsservercore/)
 - [Nano Server](https://hub.docker.com/r/microsoft/nanoserver/)
+
+### Telemetry
+
+By default, PowerShell collects the OS description and the version of PowerShell (equivalent to `$PSVersionTable.OS` and `$PSVersionTable.GitCommitId`) using [Application Insights](https://azure.microsoft.com/en-us/services/application-insights/).
+To opt-out of sending telemetry, delete the file `DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY` before starting PowerShell from the installed location.
+The telemetry we collect fall under the [Microsoft Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement/).
 
 ## Governance
 

@@ -86,52 +86,42 @@ namespace System.Management.Automation
             return mainModule;
         }
 
+        // Cache of the current process' parentId
+        private static int? s_currentParentProcessId;
+        private static readonly int s_currentProcessId = Process.GetCurrentProcess().Id;
+
         /// <summary>
         /// Retrieve the parent process of a process.
         ///
         /// Previously this code used WMI, but WMI is causing a CPU spike whenever the query gets called as it results in
-        /// tzres.dll and tzres.mui.dll being loaded into every process to conver the time information to local format.
-        /// For perf reasons, we result to P/Invoke.
+        /// tzres.dll and tzres.mui.dll being loaded into every process to convert the time information to local format.
+        /// For perf reasons, we resort to P/Invoke.
         /// </summary>
         ///
         /// <param name="current">The process we want to find the
         /// parent of</param>
         internal static Process GetParentProcess(Process current)
         {
-            int parentPid = 0;
+            var processId = current.Id;
 
-#if !UNIX
-            PlatformInvokes.PROCESSENTRY32 pe32 = new PlatformInvokes.PROCESSENTRY32 { };
-            pe32.dwSize = (uint)ClrFacade.SizeOf<PlatformInvokes.PROCESSENTRY32>();
+            // This is a common query (parent id for the current process)
+            // Use cached value if available
+            var parentProcessId = processId == s_currentProcessId && s_currentParentProcessId.HasValue ?
+                 s_currentParentProcessId.Value :
+                 Microsoft.PowerShell.ProcessCodeMethods.GetParentPid(current);
 
-            using (PlatformInvokes.SafeSnapshotHandle hSnapshot = PlatformInvokes.CreateToolhelp32Snapshot(PlatformInvokes.SnapshotFlags.Process, (uint)current.Id))
+            // cache the current process parent pid if it hasn't been done yet
+            if (processId == s_currentProcessId && !s_currentParentProcessId.HasValue)
             {
-                if (!PlatformInvokes.Process32First(hSnapshot, ref pe32))
-                {
-                    int errno = Marshal.GetLastWin32Error();
-                    if (errno == PlatformInvokes.ERROR_NO_MORE_FILES)
-                    {
-                        return null;
-                    }
-                }
-                do
-                {
-                    if (pe32.th32ProcessID == (uint)current.Id)
-                    {
-                        parentPid = (int)pe32.th32ParentProcessID;
-                        break;
-                    }
-
-                } while (PlatformInvokes.Process32Next(hSnapshot, ref pe32));
+                s_currentParentProcessId = parentProcessId;
             }
-#endif
 
-            if (parentPid == 0)
+            if (parentProcessId == 0)
                 return null;
 
             try
             {
-                Process returnProcess = Process.GetProcessById(parentPid);
+                Process returnProcess = Process.GetProcessById(parentProcessId);
 
                 // Ensure the process started before the current
                 // process, as it could have gone away and had the

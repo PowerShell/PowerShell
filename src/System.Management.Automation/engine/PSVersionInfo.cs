@@ -19,6 +19,13 @@ namespace System.Management.Automation
         internal const string PSVersionTableName = "PSVersionTable";
         internal const string PSRemotingProtocolVersionName = "PSRemotingProtocolVersion";
         internal const string PSVersionName = "PSVersion";
+        internal const string PSEditionName = "PSEdition";
+        internal const string PSBuildVersionName = "BuildVersion";
+        internal const string PSGitCommitIdName = "GitCommitId";
+        internal const string PSCompatibleVersionsName = "PSCompatibleVersions";
+        internal const string PSCLRVersionName = "CLRVersion";
+        internal const string PSPlatformName = "Platform";
+        internal const string PSOSName = "OS";
         internal const string SerializationVersionName = "SerializationVersion";
         internal const string WSManStackVersionName = "WSManStackVersion";
         private static PSVersionHashTable s_psVersionTable = null;
@@ -40,7 +47,7 @@ namespace System.Management.Automation
         private static Version s_psV4Version = new Version(4, 0);
         private static Version s_psV5Version = new Version(5, 0);
         private static Version s_psV51Version = new Version(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
-        private static SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, "alpha");
+        private static SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, "beta");
 
         /// <summary>
         /// A constant to track current PowerShell Edition
@@ -57,17 +64,20 @@ namespace System.Management.Automation
             s_psVersionTable = new PSVersionHashTable(StringComparer.OrdinalIgnoreCase);
 
             s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV6Version;
-            s_psVersionTable["PSEdition"] = PSEditionValue;
-            s_psVersionTable["BuildVersion"] = GetBuildVersion();
-            s_psVersionTable["GitCommitId"] = GetCommitInfo();
-            s_psVersionTable["PSCompatibleVersions"] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version };
+            s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;
+            s_psVersionTable[PSBuildVersionName] = GetBuildVersion();
+            s_psVersionTable[PSGitCommitIdName] = GetCommitInfo();
+            s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version };
             s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
             s_psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
+            s_psVersionTable[PSPlatformName] = Environment.OSVersion.Platform.ToString();
 #if CORECLR
-            s_psVersionTable["CLRVersion"] = null;
+            s_psVersionTable[PSCLRVersionName] = null;
+            s_psVersionTable[PSOSName] = Runtime.InteropServices.RuntimeInformation.OSDescription.ToString();
 #else
-            s_psVersionTable["CLRVersion"] = Environment.Version;
+            s_psVersionTable[PSCLRVersionName] = Environment.Version;
+            s_psVersionTable[PSOSName] = Environment.OSVersion.ToString();
 #endif
         }
 
@@ -157,7 +167,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (string)GetPSVersionTable()["GitCommitId"];
+                return (string)GetPSVersionTable()[PSGitCommitIdName];
             }
         }
 
@@ -165,7 +175,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (Version)GetPSVersionTable()["CLRVersion"];
+                return (Version)GetPSVersionTable()[PSCLRVersionName];
             }
         }
 
@@ -173,7 +183,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (Version)GetPSVersionTable()["BuildVersion"];
+                return (Version)GetPSVersionTable()[PSBuildVersionName];
             }
         }
 
@@ -181,7 +191,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (Version[])GetPSVersionTable()["PSCompatibleVersions"];
+                return (Version[])GetPSVersionTable()[PSCompatibleVersionsName];
             }
         }
 
@@ -189,7 +199,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (string)GetPSVersionTable()["PSEdition"];
+                return (string)GetPSVersionTable()[PSVersionInfo.PSEditionName];
             }
         }
 
@@ -197,7 +207,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return (Version)GetPSVersionTable()["SerializationVersion"];
+                return (Version)GetPSVersionTable()[SerializationVersionName];
             }
         }
 
@@ -321,21 +331,54 @@ namespace System.Management.Automation
     /// </summary>
     public sealed class PSVersionHashTable : Hashtable, IEnumerable
     {
+        private static readonly PSVersionTableComparer s_keysComparer = new PSVersionTableComparer();
         internal PSVersionHashTable(IEqualityComparer equalityComparer) : base(equalityComparer)
         {
         }
 
         /// <summary>
         /// Returns ordered collection with Keys of 'PSVersionHashTable'
+        /// We want see special order:
+        ///     1. PSVersionName
+        ///     2. PSEditionName
+        ///     3. Remaining properties in alphabetical order
         /// </summary>
         public override ICollection Keys
         {
             get
             {
-                Array arr = new string[base.Keys.Count];
-                base.Keys.CopyTo(arr, 0);
-                Array.Sort(arr, StringComparer.OrdinalIgnoreCase);
-                return arr;
+                ArrayList keyList = new ArrayList(base.Keys);
+                keyList.Sort(s_keysComparer);
+                return keyList;
+            }
+        }
+
+        private class PSVersionTableComparer : IComparer
+        {
+            public int Compare(object x, object y)
+            {
+                string xString = (string)LanguagePrimitives.ConvertTo(x, typeof(string), CultureInfo.CurrentCulture);
+                string yString = (string)LanguagePrimitives.ConvertTo(y, typeof(string), CultureInfo.CurrentCulture);
+                if (PSVersionInfo.PSVersionName.Equals(xString, StringComparison.OrdinalIgnoreCase))
+                {
+                    return -1;
+                }
+                else if (PSVersionInfo.PSVersionName.Equals(yString, StringComparison.OrdinalIgnoreCase))
+                {
+                    return 1;
+                }
+                else if (PSVersionInfo.PSEditionName.Equals(xString, StringComparison.OrdinalIgnoreCase))
+                {
+                    return -1;
+                }
+                else if (PSVersionInfo.PSEditionName.Equals(yString, StringComparison.OrdinalIgnoreCase))
+                {
+                    return 1;
+                }
+                else
+                {
+                    return String.Compare(xString, yString, StringComparison.OrdinalIgnoreCase);
+                }
             }
         }
 
@@ -345,9 +388,9 @@ namespace System.Management.Automation
         /// </summary>
         IEnumerator IEnumerable.GetEnumerator()
         {
-            foreach (string key in Keys)
+            foreach (object key in Keys)
             {
-                yield return new System.Collections.DictionaryEntry(key, this[key]);
+                yield return new DictionaryEntry(key, this[key]);
             }
         }
     }
@@ -421,6 +464,25 @@ namespace System.Management.Automation
             Patch = patch;
             Label = null;
         }
+
+        /// <summary>
+        /// Construct a SemanticVersion.
+        /// </summary>
+        /// <param name="major">The major version</param>
+        /// <param name="minor">The minor version</param>
+        /// <exception cref="PSArgumentException">
+        /// If <paramref name="major"/> or <paramref name="minor"/> is less than 0.
+        /// </exception>
+        public SemanticVersion(int major, int minor) : this(major, minor, 0) {}
+
+        /// <summary>
+        /// Construct a SemanticVersion.
+        /// </summary>
+        /// <param name="major">The major version</param>
+        /// <exception cref="PSArgumentException">
+        /// If <paramref name="major"/> is less than 0.
+        /// </exception>
+        public SemanticVersion(int major) : this(major, 0, 0) {}
 
         private const string LabelPropertyName = "PSSemanticVersionLabel";
 
@@ -541,24 +603,24 @@ namespace System.Management.Automation
 
             var versionSansLabel = (dashIndex < 0) ? version : version.Substring(0, dashIndex);
             string[] parsedComponents = versionSansLabel.Split(Utils.Separators.Dot);
-            if (parsedComponents.Length != 3)
+            if (parsedComponents.Length > 3)
             {
                 result.SetFailure(ParseFailureKind.ArgumentException);
                 return false;
             }
 
-            int major, minor, patch;
+            int major = 0, minor = 0, patch = 0;
             if (!TryParseComponent(parsedComponents[0], "major", ref result, out major))
             {
                 return false;
             }
 
-            if (!TryParseComponent(parsedComponents[1], "minor", ref result, out minor))
+            if (parsedComponents.Length >= 2 && !TryParseComponent(parsedComponents[1], "minor", ref result, out minor))
             {
                 return false;
             }
 
-            if (!TryParseComponent(parsedComponents[2], "patch", ref result, out patch))
+            if (parsedComponents.Length == 3 && !TryParseComponent(parsedComponents[2], "patch", ref result, out patch))
             {
                 return false;
             }

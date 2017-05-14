@@ -48,5 +48,6 @@ CmdletsToExport=@("Add-Content",
     "Rename-ItemProperty",
     "Resolve-Path",
     "Set-Content",
-    "Set-ItemProperty")
+    "Set-ItemProperty",
+    "Get-TimeZone")
 }

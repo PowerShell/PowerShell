@@ -160,6 +160,9 @@ function Start-PSBuild {
     # save Git description to file for PowerShell to include in PSVersionTable
     git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60 > "$psscriptroot/powershell.version"
 
+    # create the telemetry flag file
+    $null = new-item -force -type file "$psscriptroot/DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY"
+
     # simplify ParameterSetNames
     if ($PSCmdlet.ParameterSetName -eq 'FullCLR') {
         $FullCLR = $true
@@ -964,7 +967,7 @@ function Install-Dotnet {
     [CmdletBinding()]
     param(
         [string]$Channel = "preview",
-        [string]$Version = "2.0.0-preview1-005724",
+        [string]$Version = "2.0.0-preview1-005952",
         [switch]$NoSudo
     )
 
@@ -1026,7 +1029,7 @@ function Start-PSBootstrap {
         [string]$Channel = "preview",
         # we currently pin dotnet-cli version, and will
         # update it when more stable version comes out.
-        [string]$Version = "2.0.0-preview1-005724",
+        [string]$Version = "2.0.0-preview1-005952",
         [switch]$Package,
         [switch]$NoSudo,
         [switch]$Force
@@ -1719,6 +1722,15 @@ function Publish-NuGetFeed
 
     # Add .NET CLI tools to PATH
     Find-Dotnet
+
+    if ($VersionSuffix) {
+        ## NuGet/Home #3953, #4337 -- dotnet pack - version suffix missing from ProjectReference
+        ## Workaround:
+        ##   dotnet restore /p:VersionSuffix=<suffix> # Bake the suffix into project.assets.json
+        ##   dotnet pack --version-suffix <suffix>
+        $TopProject = (New-PSOptions).Top
+        dotnet restore $TopProject "/p:VersionSuffix=$VersionSuffix"
+    }
 
     try {
         Push-Location $PSScriptRoot
@@ -2748,14 +2760,14 @@ function Start-CrossGen {
     # The crossgen tool is only published for these particular runtimes
     $crossGenRuntime = if ($IsWindows) {
         if ($Runtime -match "-x86") {
-            "win7-x86"
+            "win-x86"
         } else {
-            "win7-x64"
+            "win-x64"
         }
     } elseif ($IsLinux) {
         "linux-x64"
     } elseif ($IsOSX) {
-        "osx.10.12-x64"
+        "osx-x64"
     }
 
     if (-not $crossGenRuntime) {

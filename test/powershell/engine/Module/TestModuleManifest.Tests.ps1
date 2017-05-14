@@ -125,3 +125,97 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
     }
 }
+
+
+Describe "Tests for circular references in required modules" -tags "CI" {
+
+    function CreateTestModules([string]$RootPath, [string[]]$ModuleNames, [bool]$AddVersion, [bool]$AddGuid, [bool]$AddCircularReference)
+    {
+        $RequiredModulesSpecs = @();
+        foreach($moduleDir in New-Item $ModuleNames -ItemType Directory -Force)
+        {
+            if ($lastItem)
+            {
+                if ($AddVersion -or $AddGuid) {$RequiredModulesSpecs += $lastItem}
+                else {$RequiredModulesSpecs += $lastItem.ModuleName}
+            }
+
+            $ModuleVersion = '3.0'
+            $GUID = New-Guid
+
+            New-ModuleManifest ((join-path $moduleDir.Name $moduleDir.Name) + ".psd1") -RequiredModules $RequiredModulesSpecs -ModuleVersion $ModuleVersion -Guid $GUID
+
+            $lastItem = @{ ModuleName = $moduleDir.Name}
+            if ($AddVersion) {$lastItem += @{ ModuleVersion = $ModuleVersion}}
+            if ($AddGuid) {$lastItem += @{ GUID = $GUID}}
+        }
+
+        if ($AddCircularReference)
+        {
+            # rewrite first module's manifest to have a reference to the last module, i.e. making a circular reference
+            if ($AddVersion -or $AddGuid)
+            {
+                $firstModuleName = $RequiredModulesSpecs[0].ModuleName
+                $firstModuleVersion = $RequiredModulesSpecs[0].ModuleVersion
+                $firstModuleGuid = $RequiredModulesSpecs[0].GUID
+                $RequiredModulesSpecs = $lastItem
+            }
+            else
+            {
+                $firstModuleName = $RequiredModulesSpecs[0]
+                $firstModuleVersion = '3.0' # does not matter - not used in references
+                $firstModuleGuid = New-Guid # does not matter - not used in references
+                $RequiredModulesSpecs = $lastItem.ModuleName
+            }
+
+            New-ModuleManifest ((join-path $firstModuleName $firstModuleName) + ".psd1") -RequiredModules $RequiredModulesSpecs -ModuleVersion $firstModuleVersion -Guid $firstModuleGuid
+        }
+    }
+
+    function TestImportModule([bool]$AddVersion, [bool]$AddGuid, [bool]$AddCircularReference)
+    {
+        $moduleRootPath = Join-Path $TestDrive 'TestModules'
+        New-Item $moduleRootPath -ItemType Directory -Force
+        Push-Location $moduleRootPath
+
+        $moduleCount = 6 # this depth was enough to find a bug in cyclic reference detection product code; greater depth will slow tests down
+        $ModuleNames = 1..$moduleCount|%{"TestModule$_"}
+
+        CreateTestModules $moduleRootPath $ModuleNames $AddVersion $AddGuid $AddCircularReference
+        
+        $newpath = [system.io.path]::PathSeparator + "$moduleRootPath"
+        $OriginalPSModulePathLength = $env:PSModulePath.Length
+        $env:PSModulePath += $newpath
+        $lastModule = $ModuleNames[$moduleCount - 1]
+
+        try
+        {
+            Import-Module $lastModule -ErrorAction Stop
+            Get-Module $lastModule | Should Not BeNullOrEmpty
+        }
+        finally
+        {
+            #cleanup
+            Remove-Module $ModuleNames -Force -ErrorAction SilentlyContinue
+            $env:PSModulePath = $env:PSModulePath.Substring(0,$OriginalPSModulePathLength)
+            Pop-Location
+            Remove-Item $moduleRootPath -Recurse -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "No circular references and RequiredModules field has only module names" {
+        TestImportModule $false $false $false
+    }
+
+    It "No circular references and RequiredModules field has module names and versions" {
+        TestImportModule $true $false $false
+    }
+
+    It "No circular references and RequiredModules field has module names, versions and GUIDs" {
+        TestImportModule $true $true $false
+    }
+
+    It "Add a circular reference to RequiredModules and verify error" {
+        { TestImportModule $false $false $true } | ShouldBeErrorId "Modules_InvalidManifest,Microsoft.PowerShell.Commands.ImportModuleCommand"
+    }
+}

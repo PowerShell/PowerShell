@@ -32,18 +32,6 @@ namespace Microsoft.PowerShell.CoreClr.Stubs
         NoZone = -1,
     }
 
-    /// <summary>
-    /// Stub for TypeLibTypeAttribute
-    /// </summary>
-    public sealed class TypeLibTypeAttribute : Attribute
-    {
-        /// <summary>
-        ///
-        /// </summary>
-        /// <param name="flags"></param>
-        public TypeLibTypeAttribute(short flags) { }
-    }
-
     #endregion Misc_Types
 
     #region SystemManagementStubs
