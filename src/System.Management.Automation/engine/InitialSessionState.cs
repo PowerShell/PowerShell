@@ -5893,6 +5893,9 @@ if($paths) {
                         var aliasList = new List<SessionStateAliasEntry>();
                         foreach (var alias in aliasAttribute.AliasNames)
                         {
+                            // We add aliases from custom modules with 'ScopedItemOptions.None'
+                            // because only a module consumer (not the module author) decides
+                            // whether the alias is read only and available in all scopes.
                             var aliasEntry = new SessionStateAliasEntry(alias, cmdletName, "", ScopedItemOptions.None);
                             if (psSnapInInfo != null)
                             {
