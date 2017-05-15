@@ -184,14 +184,14 @@ Describe "Ampersand background test" -tag "CI","Slow" {
         It "doesn't cause error when variable is missing" {
             Remove-Item variable:name -ErrorAction Ignore
             $j = write-output "Hi $name" &
-            Receive-Job $j -Wait | Should Match "Hi "
+            Receive-Job $j -Wait | Should BeExactly "Hi "
         }
         It "Copies variables to the child process" {
             $n1 = "Bob"
             $n2 = "Mary"
             ${n 3} = "Bill"
             $j = Write-Output "Hi $n1! Hi ${n2}! Hi ${n 3}!" &
-            Receive-Job $j -Wait | Should Match "Hi Bob! Hi Mary! Hi Bill!"
+            Receive-Job $j -Wait | Should BeExactly "Hi Bob! Hi Mary! Hi Bill!"
         }
         It 'Make sure that $PID from the parent process does not overwrite $PID in the child process' {
             $j = Write-Output $pid &
@@ -218,20 +218,7 @@ Describe "Ampersand background test" -tag "CI","Slow" {
         }
         It "handles backgrounding mixed expressions" {
             $j = 1..10 | ForEach-Object -Begin {$s=0} -Process {$s += $_} -End {$s} &
-            Receive-Job -wait $j | should be 55
-        }
-    }
-    Context "Backgrounding expressions" {
-        AfterEach {
-            Get-Job | Remove-Job -force
-        }
-        It "handles backgrounding expressions" {
-            $j = 2+3 &
-            rcjb $j -wait | Should Be 5
-        }
-        It "handles backgrounding mixed expressions" {
-            $j = 1..10 | foreach { $_ } &
-            rcjb -wait $j | foreach {$s=0} {$s += $_} {$s} | should be 55
+            Receive-Job -Wait $j | Should Be 55
         }
     }
 }
