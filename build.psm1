@@ -2813,10 +2813,30 @@ function Start-CrossGen {
         }
     }
 
-    # Common assemblies used by Add-Type to crossgen
+    # Common assemblies used by Add-Type or assemblies with high JIT and no pdbs to crossgen
     $commonAssembliesForAddType = @(
         "Microsoft.CodeAnalysis.CSharp.dll"
         "Microsoft.CodeAnalysis.dll"
+        "System.Linq.Expressions.dll"
+        "Microsoft.CSharp.dll"
+        "System.Runtime.Extensions.dll"
+        "System.Linq.dll"
+        "System.Collections.Concurrent.dll"
+        "System.Collections.dll"
+        "Newtonsoft.Json.dll"
+        "System.IO.FileSystem.dll"
+        "System.Diagnostics.Process.dll"
+        "System.Threading.Tasks.Parallel.dll"
+        "System.Security.AccessControl.dll"
+        "System.Text.Encoding.CodePages.dll"
+        "System.Private.Uri.dll"
+        "System.Threading.dll"
+        "System.Security.Principal.Windows.dll"
+        "System.Console.dll"
+        "Microsoft.Win32.Registry.dll"
+        "System.IO.Pipes.dll"
+        "System.Diagnostics.FileVersionInfo.dll"
+        "System.Collections.Specialized.dll"
     )
 
     # Common PowerShell libraries to crossgen
