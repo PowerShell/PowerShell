@@ -1736,6 +1736,11 @@ namespace Microsoft.PowerShell.Commands
                                 return;
                             }
 
+                            // Once the recursion process has begun by being in this function,
+                            // we do not want to further recurse into directory symbolic links
+                            // so as to prevent the possibility of an endless symlink loop.
+                            // This is the behavior of both the Unix 'ls' command and the Windows
+                            // 'DIR' command.
                             if (!InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory))
                             {
                                 bool hidden = false;

@@ -404,7 +404,7 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $ci[1].Name | Should MatchExactly $filenamePattern
             $ci[2].Name | Should MatchExactly $filenamePattern
         }
-        It "Get-ChildItem does not recurse into symbolic links" {
+        It "Get-ChildItem does not recurse into symbolic links not explicitly given on the command line" {
             New-Item -ItemType SymbolicLink -Path $betaLink -Value $betaDir
             $ci = Get-ChildItem $alphaLink -Recurse
             $ci.Count | Should BeExactly 7
