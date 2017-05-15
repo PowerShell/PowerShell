@@ -84,13 +84,6 @@ Describe "New-Variable" -Tags "CI" {
 	(Get-Variable var1).Description | Should Be "Test Description"
     }
 
-    It "Should be able to be called with the nv alias" {
-	nv var1
-	$var1 | Should BeNullOrEmpty
-	nv var2 2
-	$var2 | Should Be 2
-    }
-
     It "Should not be able to set the name of a new variable to that of an old variable within same scope when the Force switch is missing" {
 	New-Variable var1
 	(New-Variable var1 -ErrorAction SilentlyContinue) | Should Throw

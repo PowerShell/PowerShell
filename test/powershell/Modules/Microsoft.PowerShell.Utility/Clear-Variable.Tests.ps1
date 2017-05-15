@@ -114,12 +114,6 @@ Describe "Clear-Variable" -Tags "CI" {
 	{ Get-Variable var1 } | Should Not Throw
 		}
 
-		It "Should work using the clv alias" {
-	clv -Name var1
-	$var1 | Should BeNullOrEmpty
-	{ Get-Variable var1 } | Should Not Throw
-		}
-
 		It "Should be able to include a set of variables to clear" {
 	$var1      = 2
 	$var2      = 3

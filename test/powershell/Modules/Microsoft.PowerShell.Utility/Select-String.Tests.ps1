@@ -9,14 +9,10 @@ Describe "Select-String" -Tags "CI" {
 	    { $testinputone | Select-String -Pattern "hello" } | Should Not Throw
 	}
 
-	it "Should be called without error using the sls alias" {
-	    { $testinputone | sls -Pattern "hello" } | Should Not Throw
-	}
-
-    it "Should return an array data type when multiple matches are found" {
-        $result = $testinputtwo | Select-String -Pattern "hello"
-        ,$result | Should BeOfType "System.Array"
-    }
+        it "Should return an array data type when multiple matches are found" {
+            $result = $testinputtwo | Select-String -Pattern "hello"
+           ,$result | Should BeOfType "System.Array"
+        }
 
 	it "Should return the same result for the alias sls and Select-String " {
 	    $firstMatch = $testinputone | Select-String -Pattern "hello"

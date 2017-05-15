@@ -49,16 +49,6 @@ Get-Date
 	}
     }
 
-    Context "Alias Tests" {
-	It "Should remove a breakpoint using the rbp alias" {
-	    $NumberOfBreakpoints = $(Get-PSBreakpoint).Id.length
-	    $BreakID = $(Get-PSBreakpoint).Id[0]
-	    rbp -Id $BreakID
-
-	    $(Get-PSBreakpoint).Id.length | Should Be ($NumberOfBreakpoints -1)
-	}
-    }
-
     It "Should Remove all breakpoints" {
 	$(Get-PSBreakpoint).Id.Length | Should Not BeNullOrEmpty
 
