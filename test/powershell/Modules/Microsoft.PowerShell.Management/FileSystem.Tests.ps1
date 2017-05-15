@@ -372,27 +372,42 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
 
     Context "Get-ChildItem and symbolic links" {
         BeforeAll {
-            $subDir = Join-Path $TestDrive "bar"
-            $subLink = Join-Path $TestDrive "foo"
-            $subFile1 = Join-Path $subDir "File1.txt"
-            $subFile2 = Join-Path $subDir "File2.txt"
+            $TestDrive = "TestDrive:"
+            $alphaDir = Join-Path $TestDrive "sub-alpha"
+            $alphaLink = Join-Path $TestDrive "link-alpha"
+            $alphaFile1 = Join-Path $alphaDir "AlphaFile1.txt"
+            $alphaFile2 = Join-Path $alphaDir "AlphaFile2.txt"
+            $betaDir = Join-Path $alphaDir "sub-beta"
+            $betaLink = Join-Path $alphaDir "link-beta"
+            $betaFile1 = Join-Path $betaDir "BetaFile1.txt"
+            $betaFile2 = Join-Path $betaDir "BetaFile2.txt"
+            $betaFile3 = Join-Path $betaDir "BetaFile3.txt"
 
-            New-Item -ItemType Directory -Path $subDir
-            New-Item -ItemType File -Path $subFile1
-            New-Item -ItemType File -Path $subFile2
-
-            $filenamePattern = "File[12]\.txt"
+            New-Item -ItemType Directory -Path $alphaDir
+            New-Item -ItemType File -Path $alphaFile1
+            New-Item -ItemType File -Path $alphaFile2
+            New-Item -ItemType Directory -Path $betaDir
+            New-Item -ItemType File -Path $betaFile1
+            New-Item -ItemType File -Path $betaFile2
+            New-Item -ItemType File -Path $betaFile3
         }
         AfterAll {
-            Remove-Item -Path $subLink -Force
+            Remove-Item -Path $alphaLink -Force -ErrorAction SilentlyContinue
+            Remove-Item -Path $betaLink -Force -ErrorAction SilentlyContinue
         }
 
         It "Get-ChildItem gets content of linked-to directory" {
-            New-Item -ItemType SymbolicLink -Path $subLink -Value $subDir
-            $ci = Get-ChildItem $subLink
-            $ci.Count | Should BeExactly 2
-            $ci[0].Name | Should MatchExactly $filenamePattern
+            $filenamePattern = "AlphaFile[12]\.txt"
+            New-Item -ItemType SymbolicLink -Path $alphaLink -Value $alphaDir
+            $ci = Get-ChildItem $alphaLink
+            $ci.Count | Should BeExactly 3
             $ci[1].Name | Should MatchExactly $filenamePattern
+            $ci[2].Name | Should MatchExactly $filenamePattern
+        }
+        It "Get-ChildItem does not recurse into symbolic links not explicitly given on the command line" {
+            New-Item -ItemType SymbolicLink -Path $betaLink -Value $betaDir
+            $ci = Get-ChildItem $alphaLink -Recurse
+            $ci.Count | Should BeExactly 7
         }
     }
 

@@ -1736,15 +1736,25 @@ namespace Microsoft.PowerShell.Commands
                                 return;
                             }
 
-
-                            bool hidden = false;
-                            if (!Force) hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
-
-                            // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
-                            // default hidden attribute filter.
-                            if (Force || !hidden || isFilterHiddenSpecified || isSwitchFilterHiddenSpecified)
+                            // Once the recursion process has begun by being in this function,
+                            // we do not want to further recurse into directory symbolic links
+                            // so as to prevent the possibility of an endless symlink loop.
+                            // This is the behavior of both the Unix 'ls' command and the Windows
+                            // 'DIR' command.
+                            if (!InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory))
                             {
-                                Dir(recursiveDirectory, recurse, depth - 1, nameOnly, returnContainers);
+                                bool hidden = false;
+                                if (!Force)
+                                {
+                                    hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
+                                }
+
+                                // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
+                                // default hidden attribute filter.
+                                if (Force || !hidden || isFilterHiddenSpecified || isSwitchFilterHiddenSpecified)
+                                {
+                                    Dir(recursiveDirectory, recurse, depth - 1, nameOnly, returnContainers);
+                                }
                             }
                         }//foreach
                     }//if
