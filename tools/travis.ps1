@@ -123,6 +123,12 @@ if ($isFullBuild) {
     $pesterParam['ThrowOnFailure'] = $true
 }
 
+# Remove telemetry semaphore file in CI
+$telemetrySemaphoreFilepath = Join-Path $output DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY
+if ( Test-Path "${telemetrySemaphoreFilepath}" ) {
+    Remove-Item -force ${telemetrySemaphoreFilepath}
+}
+
 Start-PSPester @pesterParam
 
 if (-not $isPr) {
