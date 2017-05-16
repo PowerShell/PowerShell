@@ -23,7 +23,6 @@ Function Start-HTTPListener {
         Creates a new HTTP Listener to be used for PowerShell tests rather than rely on 3rd party websites
     .Description
         Creates a new HTTP Listener supporting several test cases intended to be used only by PowerShell tests.
-        This cmdlet requires running from an elevated administrator prompt to open a port.
 
         Use Ctrl-C to stop the listener.  You'll need to send another web request to allow the listener to stop since
         it will be blocked waiting for a request.
@@ -33,7 +32,6 @@ Function Start-HTTPListener {
         Start-HTTPListener -Port 8080
         Invoke-WebRequest -Uri "http://localhost:8080/PowerShell/?test=linkheader&maxlinks=5"
     #>
-    
     Param (
         [Parameter()]
         [Int] $Port = 8080,
@@ -45,14 +43,6 @@ Function Start-HTTPListener {
     Process {
         $ErrorActionPreference = "Stop"
 
-        if ($IsWindows)
-        {
-            $CurrentPrincipal = New-Object Security.Principal.WindowsPrincipal( [Security.Principal.WindowsIdentity]::GetCurrent())
-            if ( -not ($currentPrincipal.IsInRole( [Security.Principal.WindowsBuiltInRole]::Administrator ))) {
-                Write-Error "This script must be executed from an elevated PowerShell session" -ErrorAction Stop
-            }
-        }
-
         [scriptblock]$script = {
             param ($Port)
 
@@ -60,15 +50,23 @@ Function Start-HTTPListener {
             Function ParseQueryString([string]$url)
             {
                 Write-Verbose "Parsing: $url"
+                $uri = [uri]$url
                 $queryItems = @{}
-                foreach ($segment in $url.Split("&"))
+                if ($uri.Query -ne $null)
                 {
-                    if ($segment -match "\??(?<name>\w*)(=(?<value>\w*))?$")
+                    foreach ($segment in $uri.Query.Split("&"))
                     {
-                        $name = $matches["name"]
-                        $value = $matches["value"]
-                        $queryItems.Add($name, $value)
-                        Write-Verbose "Found: $name = $value"
+                        if ($segment -match "\??(?<name>\w*)(=(?<value>.*?))?$")
+                        {
+                            $name = $matches["name"]
+                            $value = $matches["value"]
+                            if ($value -ne $null)
+                            {
+                                $value = [System.Web.HttpUtility]::UrlDecode($value)
+                            }
+                            $queryItems.Add($name, $value)
+                            Write-Verbose "Found: $name = $value"
+                        }
                     }
                 }
                 return $queryItems
@@ -76,20 +74,20 @@ Function Start-HTTPListener {
 
             $listener = [System.Net.HttpListener]::New()
             $urlPrefix = "/PowerShell"
-            $url = "http://localhost:$Port$urlPrefix/"
-            $listener.Prefixes.Add($url)
+            $url = "http://localhost:$Port$urlPrefix"
+            $listener.Prefixes.Add($url + "/")  # trailing slash required for registration
             $listener.AuthenticationSchemes = [System.Net.AuthenticationSchemes]::Anonymous 
             try {
                 Write-Warning "Note that thread is blocked waiting for a request.  After using Ctrl-C to stop listening, you need to send a valid HTTP request to stop the listener cleanly."
-                Write-Warning "Sending 'exit' command will cause listener to stop"
-                Write-Verbose "Listening on $url..."
+                Write-Warning "Use Stop-HttpListener or Invoke-WebRequest -Uri '${Url}?test=exit' to stop the listener."
+                Write-Verbose "Listening on $Url..."
                 $listener.Start()
                 $exit = $false
                 while ($exit -eq $false) {
                     $context = $listener.GetContext()
                     $request = $context.Request
                     
-                    $queryItems = ParseQueryString($request.RawUrl)
+                    $queryItems = ParseQueryString($request.Url)
 
                     $test = $queryItems["test"]
                     Write-Verbose "Testing: $test"
@@ -100,6 +98,8 @@ Function Start-HTTPListener {
                     $output = ""
                     # this is hashtable of headers in the response
                     $outputHeader = @{}
+                    # this is the contenttype, example 'application/json'
+                    $contentType = $null
 
                     switch ($test)
                     {
@@ -114,6 +114,28 @@ Function Start-HTTPListener {
                             $output = "Exit command received"
                             $exit = $true
                         }
+                        "response"
+                        {
+                            $statusCode = $queryItems["statuscode"]
+                            $contentType = $queryItems["contenttype"]
+                            $output = $queryItems["output"]
+                        }
+                        "redirect"
+                        {
+                            $redirect = $queryItems["redirect"]
+                            if ($redirect -eq $null)
+                            {
+                                $statusCode = [System.Net.HttpStatusCode]::Found
+                                $redirectedUrl = "${Url}?test=redirect&redirect=false"
+                                Write-Verbose "$redirectedUrl"
+                                $outputHeader.Add("Location",$redirectedUrl)
+                                Write-Verbose "Redirecting to $($outputHeader.Location)"
+                            }
+                            else
+                            {
+                                $output = $request | ConvertTo-Json
+                            }
+                        }
                         default
                         {
                             $statusCode = [System.Net.HttpStatusCode]::NotFound
@@ -122,18 +144,29 @@ Function Start-HTTPListener {
                     }
 
                     $response = $context.Response
-                    $response.StatusCode = $statusCode
+                    if ($contentType -ne $null)
+                    {
+                        Write-Verbose "Setting ContentType to $contentType"
+                        $response.ContentType = $contentType
+                    }
+                    if ($statusCode -ne $null)
+                    {
+                        $response.StatusCode = $statusCode
+                    }
                     $response.Headers.Clear()
                     foreach ($header in $outputHeader.Keys)
                     {
                         $response.Headers.Add($header, $outputHeader[$header])
                     }
-                    $buffer = [System.Text.Encoding]::UTF8.GetBytes($output)
-
-                    $response.ContentLength64 = $buffer.Length
-                    $output = $response.OutputStream
-                    $output.Write($buffer,0,$buffer.Length)
-                    $output.Close()
+                    if ($output -ne $null)
+                    {
+                        $buffer = [System.Text.Encoding]::UTF8.GetBytes($output)
+                        $response.ContentLength64 = $buffer.Length
+                        $output = $response.OutputStream
+                        $output.Write($buffer,0,$buffer.Length)
+                        $output.Close()
+                    }
+                    $response.Close()
                 }
             }
             finally
