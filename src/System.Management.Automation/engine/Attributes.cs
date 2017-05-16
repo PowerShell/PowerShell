@@ -1360,7 +1360,7 @@ namespace System.Management.Automation
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidateSetAttribute : ValidateEnumeratedArgumentsAttribute
     {
-        private string[] _validValues;
+        private IEnumerable<string> _validValues;
 
         /// <summary>
         /// Gets or sets the custom error message that is displayed to the user
@@ -1387,7 +1387,7 @@ namespace System.Management.Automation
         {
             get
             {
-                return _validValues;
+                return _validValues.ToList();
             }
         }
 
@@ -1410,16 +1410,13 @@ namespace System.Management.Automation
             }
 
             string objString = element.ToString();
-            for (int setIndex = 0; setIndex < _validValues.Length; setIndex++)
+            foreach (string setString in _validValues)
             {
-                string setString = _validValues[setIndex];
-
                 if (CultureInfo.InvariantCulture.
                         CompareInfo.Compare(setString, objString,
                                             IgnoreCase
                                                 ? CompareOptions.IgnoreCase
                                                 : CompareOptions.None) == 0)
-
                 {
                     return;
                 }
@@ -1460,27 +1457,23 @@ namespace System.Management.Automation
         /// <summary>
         /// Initializes a new instance of the ValidateSetAttribute class
         /// </summary>
-        /// <param name="type">list of valid values</param>
+        /// <param name="valuesGeneratorType">type that implements the 'IValidateSetValuesGenerator' interface</param>
         /// <exception cref="ArgumentNullException">for null arguments</exception>
         /// <exception cref="ArgumentOutOfRangeException">for invalid arguments</exception>
-        public ValidateSetAttribute(Type type)
+        public ValidateSetAttribute(Type valuesGeneratorType)
         {
             IValidateSetValuesGenerator validValuesGenerator;
-            if (typeof(IValidateSetValuesGenerator).IsAssignableFrom(type))
+
+            if (typeof(IValidateSetValuesGenerator).IsAssignableFrom(valuesGeneratorType))
             {
-                validValuesGenerator = (IValidateSetValuesGenerator)Activator.CreateInstance(type);
+                validValuesGenerator = (IValidateSetValuesGenerator)Activator.CreateInstance(valuesGeneratorType);
             }
             else
             {
-                throw PSTraceSource.NewArgumentNullException("validValues");
+                throw PSTraceSource.NewArgumentException("valuesGeneratorType");
             }
 
-            _validValues = validValuesGenerator.GetValidValues().ToArray();
-
-            if (_validValues.Length == 0)
-            {
-                throw PSTraceSource.NewArgumentOutOfRangeException("IValidateSetValuesGenerator", type);
-            }
+            _validValues = validValuesGenerator.GetValidValues();
         }
     }
 

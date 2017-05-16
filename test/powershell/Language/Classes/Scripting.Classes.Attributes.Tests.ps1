@@ -256,18 +256,6 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
                     }
                 }
 
-                [Cmdlet(VerbsCommon.Get, "TestValidateSet3")]
-                public class TestValidateSetCommand3 : PSCmdlet
-                {
-                    [Parameter]
-                    [ValidateSet(typeof(GenValuesForParam3))]
-                    public string Param1;
-
-                    protected override void EndProcessing()
-                    {
-                        WriteObject(Param1);
-                    }
-                }
 
 
                 /// Implement of test IValidateSetValuesGenerator
@@ -282,16 +270,6 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
                         }
                     }
                 }
-
-                /// Implement of test IValidateSetValuesGenerator to return Null
-#pragma warning disable 0162
-                public class GenValuesForParam3 : IValidateSetValuesGenerator
-                {
-                    public IEnumerable<string> GetValidValues()
-                    {
-                        if (false) yield return "TestString";
-                    }
-                }
             }
 '@
 
@@ -303,11 +281,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
         }
 
         It 'Throw if IValidateSetValuesGenerator is not implemented' {
-            { Get-TestValidateSet2 -Param1 "TestString" -ErrorAction Stop } | ShouldBeErrorId "ArgumentNull"
-        }
-
-        It 'Throw if IValidateSetValuesGenerator returns a null' {
-            { Get-TestValidateSet3 -Param1 "TestString" -ErrorAction Stop } | ShouldBeErrorId "ArgumentOutOfRange"
+            { Get-TestValidateSet2 -Param1 "TestString" -ErrorAction Stop } | ShouldBeErrorId "Argument"
         }
     }
 }
