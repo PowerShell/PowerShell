@@ -129,26 +129,28 @@ See [Contributing to documentation related to PowerShell](#contributing-to-docum
   New changes always go into the **Unreleased** section.
   Keeping the changelog up-to-date simplifies the release process for Maintainers.
   An example:
-    ```
-    Unreleased
-    ----------
+  ```
+  Unreleased
+  ----------
 
-    * `Update-Item` now supports `-FriendlyName`.
-    ```
-    Please use the present tense and imperative mood when describing your changes:
-
-      * Instead of "Adding support for Windows Server 2012 R2", write "Add support for Windows Server 2012 R2".
-
-      * Instead of "Fixed for server connection issue", write "Fix server connection issue".
+  * `Update-Item` now supports `-FriendlyName`.
+  ```
+  * Please use the present tense and imperative mood when describing your changes:
+    * Instead of "Adding support for Windows Server 2012 R2", write "Add support for Windows Server 2012 R2".
+    * Instead of "Fixed for server connection issue", write "Fix server connection issue".
 
     This form is akin to giving commands to the code base,
     and is recommended by the Git SCM developers.
     It is also used in the [Git commit messages](#common-engineering-practices).
 
-    Also, if change is related to a specific resource, please prefix the description with the resource name:
+  * If change is related to a specific resource, please prefix the description with the resource name:
+      * Instead of "New parameter 'ConnectionCredential' in New-SqlConnection",
+      write "New-SqlConnection: added parameter 'ConnectionCredential'".
 
-      * Instead of "New,parameter 'ConnectionCredential' in New-SqlConnection",
-        write "New-SqlConnection: added parameter 'ConnectionCredential'".
+* If your change warrants an update to user-facing documentation,
+  you may need to update [the PowerShell 6.0 reference documentation in the PowerShell-Docs repository][PowerShell-Docs].
+  This includes any changes to cmdlets (including cmdlet parameters) and features which have associated about_* topics.
+  Please link to your PowerShell-Docs repository in your original PowerShell pull request once you've created it.
 
 #### Pull Request - Automatic Checks
 
@@ -321,3 +323,4 @@ Once you sign a CLA, all your existing and future pull requests will be labeled 
 [open-issue]: https://github.com/PowerShell/PowerShell/issues
 [up-for-grabs]: https://github.com/powershell/powershell/issues?q=is%3Aopen+is%3Aissue+label%3AUp-for-Grabs
 [semantic linefeeds]: http://rhodesmill.org/brandon/2012/one-sentence-per-line/
+[PowerShell-Docs]: https://github.com/powershell/powershell-docs/tree/staging/reference/6
