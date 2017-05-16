@@ -50,6 +50,28 @@ Describe "Select-Object" -Tags "CI" {
 	}
     }
 
+    It "Should return correct object with Top parameter alias" {
+	$result = $dirObject | Select-Object -Top $TestLength
+
+	$result.Length | Should Be $TestLength
+
+	for ($i=0; $i -lt $TestLength; $i++)
+	{
+	    $result[$i].Name | Should Be $dirObject[$i].Name
+	}
+    }
+
+    It "Should return correct object with Bottom parameter alias" {
+	$result = $dirObject | Select-Object -Bottom $TestLength
+
+	$result.Length | Should Be $TestLength
+
+	for ($i=0; $i -lt $TestLength; $i++)
+	{
+	    $result[$i].Name | Should Be $dirObject[$dirObject.Length - $TestLength + $i].Name
+	}
+    }
+
     It "Should work correctly with Unique parameter" {
 	$result   = ("a","b","c","a","a","a" | Select-Object -Unique).Length
 	$expected = 3
