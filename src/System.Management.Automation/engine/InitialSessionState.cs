@@ -5054,8 +5054,6 @@ end
                         "Get-ItemPropertyValue",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("gps",
                         "Get-Process",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gtz",
-                        "Get-TimeZone",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("group",
                         "Group-Object",    "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("gu",
@@ -5149,12 +5147,8 @@ end
                         "Copy-ItemProperty",   "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("diff",
                         "Compare-Object",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("gin",
-                        "Get-ComputerInfo",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("gsv",
                         "Get-Service",  "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
-                    new SessionStateAliasEntry("stz",
-                        "Set-TimeZone",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("sleep",
                         "Start-Sleep",     "", ScopedItemOptions.ReadOnly | ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("sort",
@@ -5893,9 +5887,10 @@ if($paths) {
                         var aliasList = new List<SessionStateAliasEntry>();
                         foreach (var alias in aliasAttribute.AliasNames)
                         {
-                            // We add aliases from custom modules with 'ScopedItemOptions.None'
-                            // because only a module consumer (not the module author) decides
-                            // whether the alias is read only and available in all scopes.
+                            // Alias declared by AliasAttribute is set with the option 'ScopedItemOptions.None',
+                            // because we believe a user of the cmdlet, instead of the author of it,
+                            // should be the one to decide the option
+                            // ('ScopedItemOptions.ReadOnly' and/or 'ScopedItemOptions.AllScopes') of the alias usage."
                             var aliasEntry = new SessionStateAliasEntry(alias, cmdletName, "", ScopedItemOptions.None);
                             if (psSnapInInfo != null)
                             {
