@@ -5503,7 +5503,7 @@ namespace System.Management.Automation.Language
         /// <exception cref="PSArgumentException">
         /// If <paramref name="pipelineElements"/> is null or is an empty collection.
         /// </exception>
-        public PipelineAst(IScriptExtent extent, IEnumerable<CommandBaseAst> pipelineElements) :this (extent, pipelineElements, false)
+        public PipelineAst(IScriptExtent extent, IEnumerable<CommandBaseAst> pipelineElements) :this (extent, pipelineElements, backgroundProcess: false)
         {
 
         }
@@ -5538,7 +5538,7 @@ namespace System.Management.Automation.Language
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="commandAst"/> is null.
         /// </exception>
-        public PipelineAst(IScriptExtent extent, CommandBaseAst commandAst) :this (extent, commandAst, false)
+        public PipelineAst(IScriptExtent extent, CommandBaseAst commandAst) :this (extent, commandAst, backgroundProcess: false)
         {
 
         }
@@ -6701,7 +6701,7 @@ namespace System.Management.Automation.Language
 
             var cmdAst = new CommandAst(this.Extent, cea, TokenKind.Unknown, null);
 
-            var pipeLineAst = new PipelineAst(this.Extent, cmdAst, false);
+            var pipeLineAst = new PipelineAst(this.Extent, cmdAst, backgroundProcess: false);
             var funcStatements = ConfigurationExtraParameterStatements.Select(statement => (StatementAst)statement.Copy()).ToList();
             funcStatements.Add(pipeLineAst);
             var statmentBlockAst = new StatementBlockAst(this.Extent, funcStatements, null);
@@ -6741,7 +6741,7 @@ namespace System.Management.Automation.Language
             var setItemCmdlet = new CommandAst(this.Extent, setItemCmdElements, TokenKind.Unknown, null);
             #endregion
 
-            var returnPipelineAst = new PipelineAst(this.Extent, setItemCmdlet, false);
+            var returnPipelineAst = new PipelineAst(this.Extent, setItemCmdlet, backgroundProcess: false);
 
             SetParent(returnPipelineAst);
 

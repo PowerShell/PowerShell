@@ -200,12 +200,22 @@ Describe "Ampersand background test" -tag "CI","Slow" {
         }
         It 'Make sure that $global:PID from the parent process does not overwrite $global:PID in the child process' {
             $j = Write-Output $global:pid &
-            $cpid = Receive-Job $j -Wait
+            $cpid = Receive-Job -Wait $j
             $pid | Should Not BeExactly $cpid
         }
         It "starts in the current directory" {
             $j = Get-Location | Foreach-Object -MemberName Path &
             Receive-Job -Wait $j | Should Be ($pwd.Path)
+        }
+        It "Test that output redirection is done in the background job" {
+            $j = Write-Output hello > $TESTDRIVE/hello.txt &
+            Receive-Job -Wait $j | Should Be $null
+            Get-Content $TESTDRIVE/hello.txt | Should BeExactly "hello"
+        }
+        It "Test that error redirection is done in the background job" {
+            $j = Write-Error MyError 2> $TESTDRIVE/myerror.txt &
+            Receive-Job -Wait $j | Should Be $null
+            Get-Content -Raw $TESTDRIVE/myerror.txt | Should Match "MyError"
         }
     }
     Context "Backgrounding expressions" {

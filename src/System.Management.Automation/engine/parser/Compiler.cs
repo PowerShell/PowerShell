@@ -318,6 +318,8 @@ namespace System.Management.Automation.Language
             typeof(PipelineOps).GetMethod(nameof(PipelineOps.FlushPipe), staticFlags);
         internal static readonly MethodInfo PipelineOps_InvokePipeline =
             typeof(PipelineOps).GetMethod(nameof(PipelineOps.InvokePipeline), staticFlags);
+        internal static readonly MethodInfo PipelineOps_InvokePipelineInBackground =
+            typeof(PipelineOps).GetMethod(nameof(PipelineOps.InvokePipelineInBackground), staticFlags);
         internal static readonly MethodInfo PipelineOps_Nop =
             typeof(PipelineOps).GetMethod(nameof(PipelineOps.Nop), staticFlags);
         internal static readonly MethodInfo PipelineOps_PipelineResult =
@@ -3073,15 +3075,25 @@ namespace System.Management.Automation.Language
                     input = inputTemp;
                 }
 
-                Expression invokePipe = Expression.Call(
-                    CachedReflectionInfo.PipelineOps_InvokePipeline,
-                    input.Cast(typeof(object)),
-                    firstCommandExpr != null && !pipelineAst.BackgroundProcess ? ExpressionCache.FalseConstant : ExpressionCache.TrueConstant,
-                    Expression.NewArrayInit(typeof(CommandParameterInternal[]), 
-                        !pipelineAst.BackgroundProcess ? pipelineExprs : Utils.EmptyArray<Expression>()),
-                    Expression.Constant(pipeElementAsts),
-                    redirectionExpr,
-                    _functionContext);
+                Expression invokePipe;
+                if (pipelineAst.BackgroundProcess)
+                {
+                    invokePipe = Expression.Call(
+                        CachedReflectionInfo.PipelineOps_InvokePipelineInBackground,
+                        Expression.Constant(pipeElementAsts),
+                        _functionContext);
+                }
+                else
+                {
+                    invokePipe = Expression.Call(
+                        CachedReflectionInfo.PipelineOps_InvokePipeline,
+                        input.Cast(typeof(object)),
+                        firstCommandExpr != null ? ExpressionCache.FalseConstant : ExpressionCache.TrueConstant,
+                        Expression.NewArrayInit(typeof(CommandParameterInternal[]), pipelineExprs),
+                        Expression.Constant(pipeElementAsts),
+                        redirectionExpr,
+                        _functionContext);
+                }
 
                 exprs.Add(invokePipe);
             }

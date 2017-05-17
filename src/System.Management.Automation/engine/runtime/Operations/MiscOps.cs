@@ -404,79 +404,31 @@ namespace System.Management.Automation
                 CommandProcessorBase commandProcessor = null;
                 CommandRedirection[] commandRedirection = null;
 
-                var pipelineAst = (PipelineAst)pipeElementAsts[0].Parent;
-                if (pipelineAst.BackgroundProcess)
+                for (int i = 0; i < pipeElements.Length; i++)
                 {
-                    // For background jobs rewrite the pipeline as a Start-Job command
-                    var scriptblockBodyString = ((PipelineAst)pipeElementAsts[0].Parent).Extent.Text;
-                    var pipelineOffset = pipelineAst.Extent.StartOffset;
-                    var variables = pipelineAst.FindAll(x => x is VariableExpressionAst, true);
-                    // Used to make sure that the job runs in the current directory
-                    const string cmdPrefix = @"Microsoft.PowerShell.Management\Set-Location $using:pwd; ";
-                    // Minimize allocations by initializing the stringbuilder to the size of the source string + prefix + space for ${using:} * 2
-                    System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(cmdPrefix.Length + scriptblockBodyString.Length + 18);
-                    updatedScriptblock.Append(cmdPrefix);
-                    int position = 0;
-                    // Prefix variables in the scriptblock with $using: 
-                    foreach (var v in variables)
-                    {
-                        var vName = ((VariableExpressionAst) v).VariablePath.UserPath;
-                        // Skip variables that don't exist
-                        if (funcContext._executionContext.EngineSessionState.GetVariable(vName) == null)
-                            continue;
-                        // Skip PowerShell magic variables
-                        if (Regex.Match(vName,
-                                "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$", 
-                                    RegexOptions.IgnoreCase|RegexOptions.CultureInvariant).Success == false
-                        )
-                        {
-                            updatedScriptblock.Append(scriptblockBodyString.Substring(position, v.Extent.StartOffset - pipelineOffset - position));
-                            updatedScriptblock.Append("${using:");
-                            updatedScriptblock.Append(vName);
-                            updatedScriptblock.Append('}');
-                            position = v.Extent.EndOffset - pipelineOffset;
-                        }
-                    }
-                    updatedScriptblock.Append(scriptblockBodyString.Substring(position));
-                    var sb = ScriptBlock.Create(updatedScriptblock.ToString());
-                    var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
-                    commandProcessor = context.CommandDiscovery.LookupCommandProcessor(
-                        commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
-                    var parameter = CommandParameterInternal.CreateParameterWithArgument(
-                        pipelineAst.Extent, "ScriptBlock", null,
-                        pipelineAst.Extent, sb,
-                        false);
-                    commandProcessor.AddParameter(parameter);
-                    pipelineProcessor.Add(commandProcessor);
+                    commandRedirection = commandRedirections != null ? commandRedirections[i] : null;
+                    commandProcessor = AddCommand(pipelineProcessor, pipeElements[i], pipeElementAsts[i],
+                                                  commandRedirection, context);
                 }
-                else
+    
+                var cmdletInfo = commandProcessor?.CommandInfo as CmdletInfo;
+                if (cmdletInfo?.ImplementingType == typeof(OutNullCommand))
                 {
-                    for (int i = 0; i < pipeElements.Length; i++)
+                    var commandsCount = pipelineProcessor.Commands.Count;
+                    if (commandsCount == 1)
                     {
-                        commandRedirection = commandRedirections != null ? commandRedirections[i] : null;
-                        commandProcessor = AddCommand(pipelineProcessor, pipeElements[i], pipeElementAsts[i],
-                                                      commandRedirection, context);
+                        // Out-Null is the only command, bail without running anything
+                        return;
                     }
     
-                    var cmdletInfo = commandProcessor?.CommandInfo as CmdletInfo;
-                    if (cmdletInfo?.ImplementingType == typeof(OutNullCommand))
+                    // Out-Null is the last command, rewrite command before Out-Null to a null pipe, but
+                    // only if it didn't redirect anything, e.g. `Get-Stuff > o.txt | Out-Null`
+                    var nextToLastCommand = pipelineProcessor.Commands[commandsCount - 2];
+                    if (!nextToLastCommand.CommandRuntime.OutputPipe.IsRedirected)
                     {
-                        var commandsCount = pipelineProcessor.Commands.Count;
-                        if (commandsCount == 1)
-                        {
-                            // Out-Null is the only command, bail without running anything
-                            return;
-                        }
-    
-                        // Out-Null is the last command, rewrite command before Out-Null to a null pipe, but
-                        // only if it didn't redirect anything, e.g. `Get-Stuff > o.txt | Out-Null`
-                        var nextToLastCommand = pipelineProcessor.Commands[commandsCount - 2];
-                        if (!nextToLastCommand.CommandRuntime.OutputPipe.IsRedirected)
-                        {
-                            pipelineProcessor.Commands.RemoveAt(commandsCount - 1);
-                            commandProcessor = nextToLastCommand;
-                            nextToLastCommand.CommandRuntime.OutputPipe = new Pipe {NullPipe = true};
-                        }
+                        pipelineProcessor.Commands.RemoveAt(commandsCount - 1);
+                        commandProcessor = nextToLastCommand;
+                        nextToLastCommand.CommandRuntime.OutputPipe = new Pipe {NullPipe = true};
                     }
                 }
 
@@ -501,6 +453,84 @@ namespace System.Management.Automation
                 try
                 {
                     pipelineProcessor.SynchronousExecuteEnumerate(input);
+                }
+                finally
+                {
+                    context.PopPipelineProcessor(false);
+                }
+            }
+            finally
+            {
+                context.QuestionMarkVariableValue = !pipelineProcessor.ExecutionFailed;
+                pipelineProcessor.Dispose();
+            }
+        }
+
+        internal static void InvokePipelineInBackground(
+                                            CommandBaseAst[] pipeElementAsts,
+                                            FunctionContext funcContext)
+        {
+            PipelineProcessor pipelineProcessor = new PipelineProcessor();
+            ExecutionContext context = funcContext._executionContext;
+            Pipe outputPipe = funcContext._outputPipe;
+
+            try
+            {
+                if (context.Events != null)
+                {
+                    context.Events.ProcessPendingActions();
+                }
+
+                CommandProcessorBase commandProcessor = null;
+
+                var pipelineAst = (PipelineAst)pipeElementAsts[0].Parent;
+                // For background jobs rewrite the pipeline as a Start-Job command
+                var scriptblockBodyString = ((PipelineAst)pipeElementAsts[0].Parent).Extent.Text;
+                var pipelineOffset = pipelineAst.Extent.StartOffset;
+                var variables = pipelineAst.FindAll(x => x is VariableExpressionAst, true);
+                // Used to make sure that the job runs in the current directory
+                const string cmdPrefix = @"Microsoft.PowerShell.Management\Set-Location -LiteralPath $using:pwd ; ";
+                // Minimize allocations by initializing the stringbuilder to the size of the source string + prefix + space for ${using:} * 2
+                System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(cmdPrefix.Length + scriptblockBodyString.Length + 18);
+                updatedScriptblock.Append(cmdPrefix);
+                int position = 0;
+                // Prefix variables in the scriptblock with $using: 
+                foreach (var v in variables)
+                {
+                    var vName = ((VariableExpressionAst) v).VariablePath.UserPath;
+                    // Skip variables that don't exist
+                    if (funcContext._executionContext.EngineSessionState.GetVariable(vName) == null)
+                        continue;
+                    // Skip PowerShell magic variables
+                    if (Regex.Match(vName,
+                            "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$", 
+                                RegexOptions.IgnoreCase|RegexOptions.CultureInvariant).Success == false
+                    )
+                    {
+                        updatedScriptblock.Append(scriptblockBodyString.Substring(position, v.Extent.StartOffset - pipelineOffset - position));
+                        updatedScriptblock.Append("${using:");
+                        updatedScriptblock.Append(CodeGeneration.EscapeVariableName(vName));
+                        updatedScriptblock.Append('}');
+                        position = v.Extent.EndOffset - pipelineOffset;
+                    }
+                }
+                updatedScriptblock.Append(scriptblockBodyString.Substring(position));
+                var sb = ScriptBlock.Create(updatedScriptblock.ToString());
+                var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
+                commandProcessor = context.CommandDiscovery.LookupCommandProcessor(
+                    commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
+                var parameter = CommandParameterInternal.CreateParameterWithArgument(
+                    pipelineAst.Extent, "ScriptBlock", null,
+                    pipelineAst.Extent, sb,
+                    false);
+                commandProcessor.AddParameter(parameter);
+                pipelineProcessor.Add(commandProcessor);
+                pipelineProcessor.LinkPipelineSuccessOutput(outputPipe ?? new Pipe(new List<object>()));
+
+                context.PushPipelineProcessor(pipelineProcessor);
+                try
+                {
+                    pipelineProcessor.SynchronousExecuteEnumerate(AutomationNull.Value);
                 }
                 finally
                 {
