@@ -50,6 +50,9 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
         }
 
         It "version arg constructor" {
+            $v = [SemanticVersion]::new([Version]::new(1, 2))
+            $v.ToString() | Should Be '1.2.0'
+
             $v = [SemanticVersion]::new([Version]::new(1, 2, 3))
             $v.ToString() | Should Be '1.2.3'
         }
