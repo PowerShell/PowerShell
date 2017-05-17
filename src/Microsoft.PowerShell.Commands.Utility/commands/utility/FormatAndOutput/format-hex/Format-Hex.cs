@@ -14,6 +14,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     [Cmdlet(VerbsCommon.Format, "Hex", SupportsShouldProcess = true, HelpUri ="https://go.microsoft.com/fwlink/?LinkId=526919")]
     [OutputType(typeof(Microsoft.PowerShell.Commands.ByteCollection))]
+    [Alias ("fhx")]
     public sealed class FormatHex : PSCmdlet
     {
         private const int BUFFERSIZE = 16;
