@@ -5279,8 +5279,6 @@ end
                     new SessionStateAliasEntry("wjb",
                         "Wait-Job",  "", ScopedItemOptions.AllScope),
 #if !CORECLR
-                    new SessionStateAliasEntry("cfs",
-                        "ConvertFrom-String", "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("sujb",
                         "Suspend-Job", "", ScopedItemOptions.AllScope),
                     new SessionStateAliasEntry("rujb",
