@@ -274,6 +274,23 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
 '@
 
             Add-Type -TypeDefinition $a -PassThru | % {$_.assembly} | Import-module -Force
+
+            class GenValuesForParam2 : System.Management.Automation.IValidateSetValuesGenerator {
+                [System.Collections.Generic.IEnumerable[String]] GetValidValues() { return [string[]]("Test1","TestString","Test2") }
+            }
+
+            function Get-TestValidateSet3
+            {
+                [CmdletBinding()]
+                Param
+                (
+                    [ValidateSet([GenValuesForParam2])]
+                    $Param1
+                )
+
+                $Param1
+            }
+
         }
 
         It 'Dynamically generated set work' {
