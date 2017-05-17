@@ -1,5 +1,3 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
-
 Describe "New-ModuleManifest tests" -tags "CI" {
     BeforeEach {
         New-Item -ItemType Directory -Path testdrive:/module

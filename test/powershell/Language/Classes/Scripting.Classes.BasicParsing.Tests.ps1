@@ -1,7 +1,6 @@
 #
 # Copyright (c) Microsoft Corporation, 2014
 #
-Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
 
 try {
 #

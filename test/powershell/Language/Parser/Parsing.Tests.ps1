@@ -1,5 +1,4 @@
-﻿Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
-set-strictmode -v 2
+﻿set-strictmode -v 2
 
 Describe 'for statement parsing' -Tags "CI" {
     ShouldBeParseError 'for' MissingOpenParenthesisAfterKeyword 4 -CheckColumnNumber
