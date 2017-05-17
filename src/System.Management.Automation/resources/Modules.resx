@@ -274,7 +274,7 @@
     <value>Unknown</value>
   </data>
   <data name="DefaultCopyrightMessage" xml:space="preserve">
-    <value>(c) {0} {1}. All rights reserved.</value>
+    <value>(c) {0}. All rights reserved.</value>
   </data>
   <data name="RemovingImportedFunction" xml:space="preserve">
     <value>Removing the imported "{0}" function.</value>
