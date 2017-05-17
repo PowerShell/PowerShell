@@ -60,6 +60,28 @@ Describe "Get-ChildItem" -Tags "CI" {
             $file.Count | Should be 1
             $file.Name | Should be "pagefile.sys"
         }
+        It "Should continue enumerating a directory when a contained item is deleted" -Skip:($IsWindows) {
+            $Error.Clear()
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionFilename", "c")
+            $result = Get-ChildItem -Path $TestDrive -ErrorAction SilentlyContinue
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionFilename", $null)
+            $Error.Count | Should BeExactly 1
+            $Error[0].FullyQualifiedErrorId | Should BeExactly "DirIOError,Microsoft.PowerShell.Commands.GetChildItemCommand"
+            $Error[0].Exception | Should BeOfType System.Io.FileNotFoundException
+            $result.Count | Should BeExactly 4
+        }
+        It "Should continue enumerating a directory when a contained item is renamed" -Skip:($IsWindows) {
+            $Error.Clear()
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionFilename", "B")
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionRename", "Z")
+            $result = Get-ChildItem -Path $TestDrive -ErrorAction SilentlyContinue
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionRename", $null)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionFilename", $null)
+            $Error.Count | Should BeExactly 1
+            $Error[0].FullyQualifiedErrorId | Should BeExactly "DirIOError,Microsoft.PowerShell.Commands.GetChildItemCommand"
+            $Error[0].Exception | Should BeOfType System.Io.FileNotFoundException
+            $result.Count | Should BeExactly 3
+        }
     }
 
     Context 'Env: Provider' {

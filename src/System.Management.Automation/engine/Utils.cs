@@ -13,6 +13,7 @@ using Microsoft.Win32;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Collections;
 using System.Collections.ObjectModel;
 using System.Collections.Generic;
 using System.Collections.Concurrent;
@@ -1580,8 +1581,13 @@ namespace System.Management.Automation.Internal
         // Simulate 'System.Diagnostics.Stopwatch.IsHighResolution is false' to test Get-Uptime throw
         internal static bool StopwatchIsNotHighResolution;
 
+        // Name of a file to either delete or rename during directory enumeration.
+        internal static string GciEnumerationActionFilename = null;
+        // New name of the above file when renaming. Used only when GciEnumerationActionFilename is set.
+        internal static string GciEnumerationActionRename = null;
+
         /// <summary>This member is used for internal test purposes.</summary>
-        public static void SetTestHook(string property, bool value)
+        public static void SetTestHook(string property, object value)
         {
             var fieldInfo = typeof(InternalTestHooks).GetField(property, BindingFlags.Static | BindingFlags.NonPublic);
             if (fieldInfo != null)
