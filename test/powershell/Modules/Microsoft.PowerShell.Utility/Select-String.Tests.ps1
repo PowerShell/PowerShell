@@ -14,14 +14,6 @@ Describe "Select-String" -Tags "CI" {
            ,$result | Should BeOfType "System.Array"
         }
 
-	it "Should return the same result for the alias sls and Select-String " {
-	    $firstMatch = $testinputone | Select-String -Pattern "hello"
-	    $secondMatch = $testinputone | sls -Pattern "hello"
-
-	    $equal = @(compare-object $firstMatch $secondMatch).Length -eq 0
-	    $equal | Should Be True
-	}
-
     it "Should return an object type when one match is found" {
         $result = $testinputtwo | Select-String -Pattern "hello" -CaseSensitive
         ,$result | Should BeOfType "System.Object"
