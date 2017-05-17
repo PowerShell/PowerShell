@@ -469,12 +469,6 @@ Describe "Verify approved aliases list" -Tags "CI" {
             # We control only default engine Cmdlets (Source -eq "") and Cmdlets from following default loaded modules
             $moduleList = @("Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Management", "Microsoft.PowerShell.Security", "Microsoft.PowerShell.Host", "Microsoft.PowerShell.Diagnostics", "PSWorkflow", "Microsoft.WSMan.Management", "Microsoft.PowerShell.Core")
             Import-Module -Name $moduleList -ErrorAction SilentlyContinue
-
-            # We would use the session state to get default alias and cmdlet list
-            # instead of Get-Alias and Get-Command
-            # but latest is more simple use.
-            #$iis = [initialsessionstate]::CreateDefault()
-            #$currentCmdletList = $iis.Commands | Where-Object { $_.CommandType -eq "Cmdlet"} | Select-Object -ExpandProperty Name
     }
 
     It "All approved aliases present (no aliases removed, no new aliases added)" {
