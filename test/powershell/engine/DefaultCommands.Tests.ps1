@@ -3,167 +3,172 @@ Describe "Verify approved aliases list" -Tags "CI" {
         $FullCLR = !$isCoreCLR
         $CoreWindows = $isCoreCLR -and $IsWindows
         $CoreUnix = $isCoreCLR -and !$IsWindows
-        $commandList = @"
-"CommandType", "Name",                          "Definition",                       "Present"
-"Alias",  "%",                                  "ForEach-Object",                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "?",                                  "Where-Object",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "ac",                                 "Add-Content",                        $($FullCLR -or $CoreWindows              )
-"Alias",  "asnp",                               "Add-PSSnapIn",                       $($FullCLR                               )
-"Alias",  "cat",                                "Get-Content",                        $($FullCLR -or $CoreWindows              )
-"Alias",  "cd",                                 "Set-Location",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "CFS",                                "ConvertFrom-String",                 $($FullCLR                               )
-"Alias",  "chdir",                              "Set-Location",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "clc",                                "Clear-Content",                      $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "clear",                              "Clear-Host",                         $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "clhy",                               "Clear-History",                      $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "cli",                                "Clear-Item",                         $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "clp",                                "Clear-ItemProperty",                 $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "cls",                                "Clear-Host",                         $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "clv",                                "Clear-Variable",                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "cnsn",                               "Connect-PSSession",                  $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "compare",                            "Compare-Object",                     $($FullCLR -or $CoreWindows              )
-"Alias",  "copy",                               "Copy-Item",                          $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "cp",                                 "Copy-Item",                          $($FullCLR -or $CoreWindows              )
-"Alias",  "cpi",                                "Copy-Item",                          $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "cpp",                                "Copy-ItemProperty",                  $($FullCLR -or $CoreWindows              )
-"Alias",  "curl",                               "Invoke-WebRequest",                  $($FullCLR                               )
-"Alias",  "cvpa",                               "Convert-Path",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "dbp",                                "Disable-PSBreakpoint",               $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "del",                                "Remove-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "diff",                               "Compare-Object",                     $($FullCLR -or $CoreWindows              )
-"Alias",  "dir",                                "Get-ChildItem",                      $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "dnsn",                               "Disconnect-PSSession",               $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "ebp",                                "Enable-PSBreakpoint",                $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "echo",                               "Write-Output",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "epal",                               "Export-Alias",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "epcsv",                              "Export-Csv",                         $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "epsn",                               "Export-PSSession",                   $($FullCLR                               )
-"Alias",  "erase",                              "Remove-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "etsn",                               "Enter-PSSession",                    $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "exsn",                               "Exit-PSSession",                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "fc",                                 "Format-Custom",                      $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "fhx",                                "Format-Hex",                         $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "fl",                                 "Format-List",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "foreach",                            "ForEach-Object",                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "ft",                                 "Format-Table",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "fw",                                 "Format-Wide",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gal",                                "Get-Alias",                          $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gbp",                                "Get-PSBreakpoint",                   $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gc",                                 "Get-Content",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gcb",                                "Get-Clipboard",                      $($FullCLR                               )
-"Alias",  "gci",                                "Get-ChildItem",                      $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gcm",                                "Get-Command",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gcs",                                "Get-PSCallStack",                    $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gdr",                                "Get-PSDrive",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "ghy",                                "Get-History",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gi",                                 "Get-Item",                           $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gin",                                "Get-ComputerInfo",                   $($FullCLR -or $CoreWindows              )
-"Alias",  "gjb",                                "Get-Job",                            $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gl",                                 "Get-Location",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gm",                                 "Get-Member",                         $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gmo",                                "Get-Module",                         $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gp",                                 "Get-ItemProperty",                   $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gps",                                "Get-Process",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gpv",                                "Get-ItemPropertyValue",              $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "group",                              "Group-Object",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gsn",                                "Get-PSSession",                      $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gsnp",                               "Get-PSSnapIn",                       $($FullCLR                               )
-"Alias",  "gsv",                                "Get-Service",                        $($FullCLR -or $CoreWindows              )
-"Alias",  "gtz",                                "Get-TimeZone",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gu",                                 "Get-Unique",                         $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gv",                                 "Get-Variable",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "gwmi",                               "Get-WmiObject",                      $($FullCLR                               )
-"Alias",  "h",                                  "Get-History",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "history",                            "Get-History",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "icm",                                "Invoke-Command",                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "iex",                                "Invoke-Expression",                  $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "ihy",                                "Invoke-History",                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "ii",                                 "Invoke-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "ipal",                               "Import-Alias",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "ipcsv",                              "Import-Csv",                         $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "ipmo",                               "Import-Module",                      $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "ipsn",                               "Import-PSSession",                   $($FullCLR                               )
-"Alias",  "irm",                                "Invoke-RestMethod",                  $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "ise",                                "powershell_ise.exe",                 $($FullCLR                               )
-"Alias",  "iwmi",                               "Invoke-WMIMethod",                   $($FullCLR                               )
-"Alias",  "iwr",                                "Invoke-WebRequest",                  $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "kill",                               "Stop-Process",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "lp",                                 "Out-Printer",                        $($FullCLR                               )
-"Alias",  "ls",                                 "Get-ChildItem",                      $($FullCLR -or $CoreWindows              )
-"Alias",  "man",                                "help",                               $($FullCLR -or $CoreWindows              )
-"Alias",  "md",                                 "mkdir",                              $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "measure",                            "Measure-Object",                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "mi",                                 "Move-Item",                          $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "mount",                              "New-PSDrive",                        $($FullCLR -or $CoreWindows              )
-"Alias",  "move",                               "Move-Item",                          $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "mp",                                 "Move-ItemProperty",                  $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "mv",                                 "Move-Item",                          $($FullCLR -or $CoreWindows              )
-"Alias",  "nal",                                "New-Alias",                          $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "ndr",                                "New-PSDrive",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "ni",                                 "New-Item",                           $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "nmo",                                "New-Module",                         $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "npssc",                              "New-PSSessionConfigurationFile",     $($FullCLR                               )
-"Alias",  "nsn",                                "New-PSSession",                      $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "nv",                                 "New-Variable",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "nwsn",                               "New-PSWorkflowSession",              $($FullCLR                               )
-"Alias",  "ogv",                                "Out-GridView",                       $($FullCLR                               )
-"Alias",  "oh",                                 "Out-Host",                           $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "popd",                               "Pop-Location",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "ps",                                 "Get-Process",                        $($FullCLR -or $CoreWindows              )
-"Alias",  "pushd",                              "Push-Location",                      $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "pwd",                                "Get-Location",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "r",                                  "Invoke-History",                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "rbp",                                "Remove-PSBreakpoint",                $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "rcjb",                               "Receive-Job",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "rcsn",                               "Receive-PSSession",                  $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "rd",                                 "Remove-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "rdr",                                "Remove-PSDrive",                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "ren",                                "Rename-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "ri",                                 "Remove-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "rjb",                                "Remove-Job",                         $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "rm",                                 "Remove-Item",                        $($FullCLR -or $CoreWindows              )
-"Alias",  "rmdir",                              "Remove-Item",                        $($FullCLR -or $CoreWindows              )
-"Alias",  "rmo",                                "Remove-Module",                      $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "rni",                                "Rename-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "rnp",                                "Rename-ItemProperty",                $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "rp",                                 "Remove-ItemProperty",                $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "rsn",                                "Remove-PSSession",                   $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "rsnp",                               "Remove-PSSnapin",                    $($FullCLR                               )
-"Alias",  "rujb",                               "Resume-Job",                         $($FullCLR                               )
-"Alias",  "rv",                                 "Remove-Variable",                    $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "rvpa",                               "Resolve-Path",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "rwmi",                               "Remove-WMIObject",                   $($FullCLR                               )
-"Alias",  "sajb",                               "Start-Job",                          $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "sal",                                "Set-Alias",                          $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "saps",                               "Start-Process",                      $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "sasv",                               "Start-Service",                      $($FullCLR -or $CoreWindows              )
-"Alias",  "sbp",                                "Set-PSBreakpoint",                   $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "sc",                                 "Set-Content",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "scb",                                "Set-Clipboard",                      $($FullCLR                               )
-"Alias",  "select",                             "Select-Object",                      $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "set",                                "Set-Variable",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "shcm",                               "Show-Command",                       $($FullCLR                               )
-"Alias",  "si",                                 "Set-Item",                           $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "sl",                                 "Set-Location",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "sleep",                              "Start-Sleep",                        $($FullCLR -or $CoreWindows              )
-"Alias",  "sls",                                "Select-String",                      $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "sort",                               "Sort-Object",                        $($FullCLR -or $CoreWindows              )
-"Alias",  "sp",                                 "Set-ItemProperty",                   $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "spjb",                               "Stop-Job",                           $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "spps",                               "Stop-Process",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "spsv",                               "Stop-Service",                       $($FullCLR -or $CoreWindows              )
-"Alias",  "start",                              "Start-Process",                      $($FullCLR -or $CoreWindows              )
-"Alias",  "stz",                                "Set-TimeZone",                       $($FullCLR -or $CoreWindows              )
-"Alias",  "sujb",                               "Suspend-Job",                        $($FullCLR                               )
-"Alias",  "sv",                                 "Set-Variable",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "swmi",                               "Set-WMIInstance",                    $($FullCLR                               )
-"Alias",  "tee",                                "Tee-Object",                         $($FullCLR -or $CoreWindows              )
-"Alias",  "trcm",                               "Trace-Command",                      $($FullCLR                               )
-"Alias",  "type",                               "Get-Content",                        $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "wget",                               "Invoke-WebRequest",                  $($FullCLR                               )
-"Alias",  "where",                              "Where-Object",                       $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "wjb",                                "Wait-Job",                           $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Alias",  "write",                              "Write-Output",                       $($FullCLR -or $CoreWindows              )
+
+        $AllScope = '[System.Management.Automation.ScopedItemOptions]::AllScope'
+        $ReadOnly = '[System.Management.Automation.ScopedItemOptions]::ReadOnly'
+        $None     = '[System.Management.Automation.ScopedItemOptions]::None'
+
+        $commandString = @"
+"CommandType", "Name",                          "Definition",                         "Present",                                    "ReadOnlyOption",   "AllScopeOption"
+"Alias",  "%",                                  "ForEach-Object",                     $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "?",                                  "Where-Object",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "ac",                                 "Add-Content",                        $($FullCLR -or $CoreWindows              ),   "ReadOnly",         "AllScope"
+"Alias",  "asnp",                               "Add-PSSnapIn",                       $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "cat",                                "Get-Content",                        $($FullCLR -or $CoreWindows              ),   "",                 "AllScope"
+"Alias",  "cd",                                 "Set-Location",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "CFS",                                "ConvertFrom-String",                 $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "chdir",                              "Set-Location",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "clc",                                "Clear-Content",                      $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "clear",                              "Clear-Host",                         $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "clhy",                               "Clear-History",                      $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "cli",                                "Clear-Item",                         $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "clp",                                "Clear-ItemProperty",                 $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "cls",                                "Clear-Host",                         $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "clv",                                "Clear-Variable",                     $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "cnsn",                               "Connect-PSSession",                  $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "compare",                            "Compare-Object",                     $($FullCLR -or $CoreWindows              ),   "ReadOnly",         "AllScope"
+"Alias",  "copy",                               "Copy-Item",                          $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "cp",                                 "Copy-Item",                          $($FullCLR -or $CoreWindows              ),   "",                 "AllScope"
+"Alias",  "cpi",                                "Copy-Item",                          $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "cpp",                                "Copy-ItemProperty",                  $($FullCLR -or $CoreWindows              ),   "ReadOnly",         "AllScope"
+"Alias",  "curl",                               "Invoke-WebRequest",                  $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "cvpa",                               "Convert-Path",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "dbp",                                "Disable-PSBreakpoint",               $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "del",                                "Remove-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "diff",                               "Compare-Object",                     $($FullCLR -or $CoreWindows              ),   "ReadOnly",         "AllScope"
+"Alias",  "dir",                                "Get-ChildItem",                      $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "dnsn",                               "Disconnect-PSSession",               $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "ebp",                                "Enable-PSBreakpoint",                $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "echo",                               "Write-Output",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "epal",                               "Export-Alias",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "epcsv",                              "Export-Csv",                         $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "epsn",                               "Export-PSSession",                   $($FullCLR                               ),   "",                 "AllScope"
+"Alias",  "erase",                              "Remove-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "etsn",                               "Enter-PSSession",                    $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "exsn",                               "Exit-PSSession",                     $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "fc",                                 "Format-Custom",                      $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "fhx",                                "Format-Hex",                         $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 ""
+"Alias",  "fl",                                 "Format-List",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "foreach",                            "ForEach-Object",                     $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "ft",                                 "Format-Table",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "fw",                                 "Format-Wide",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gal",                                "Get-Alias",                          $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gbp",                                "Get-PSBreakpoint",                   $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gc",                                 "Get-Content",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gcb",                                "Get-Clipboard",                      $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "gci",                                "Get-ChildItem",                      $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gcm",                                "Get-Command",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gcs",                                "Get-PSCallStack",                    $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gdr",                                "Get-PSDrive",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "ghy",                                "Get-History",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gi",                                 "Get-Item",                           $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gin",                                "Get-ComputerInfo",                   $($FullCLR -or $CoreWindows              ),   "",                 ""
+"Alias",  "gjb",                                "Get-Job",                            $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "gl",                                 "Get-Location",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gm",                                 "Get-Member",                         $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gmo",                                "Get-Module",                         $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gp",                                 "Get-ItemProperty",                   $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gps",                                "Get-Process",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gpv",                                "Get-ItemPropertyValue",              $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "group",                              "Group-Object",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gsn",                                "Get-PSSession",                      $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "gsnp",                               "Get-PSSnapIn",                       $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "gsv",                                "Get-Service",                        $($FullCLR -or $CoreWindows              ),   "ReadOnly",         "AllScope"
+"Alias",  "gtz",                                "Get-TimeZone",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 ""
+"Alias",  "gu",                                 "Get-Unique",                         $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gv",                                 "Get-Variable",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "gwmi",                               "Get-WmiObject",                      $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "h",                                  "Get-History",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "history",                            "Get-History",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "icm",                                "Invoke-Command",                     $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "iex",                                "Invoke-Expression",                  $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "ihy",                                "Invoke-History",                     $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "ii",                                 "Invoke-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "ipal",                               "Import-Alias",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "ipcsv",                              "Import-Csv",                         $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "ipmo",                               "Import-Module",                      $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "ipsn",                               "Import-PSSession",                   $($FullCLR                               ),   "",                 "AllScope"
+"Alias",  "irm",                                "Invoke-RestMethod",                  $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "ise",                                "powershell_ise.exe",                 $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "iwmi",                               "Invoke-WMIMethod",                   $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "iwr",                                "Invoke-WebRequest",                  $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "kill",                               "Stop-Process",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "lp",                                 "Out-Printer",                        $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "ls",                                 "Get-ChildItem",                      $($FullCLR -or $CoreWindows              ),   "",                 "AllScope"
+"Alias",  "man",                                "help",                               $($FullCLR -or $CoreWindows              ),   "",                 "AllScope"
+"Alias",  "md",                                 "mkdir",                              $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "measure",                            "Measure-Object",                     $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "mi",                                 "Move-Item",                          $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "mount",                              "New-PSDrive",                        $($FullCLR -or $CoreWindows              ),   "",                 "AllScope"
+"Alias",  "move",                               "Move-Item",                          $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "mp",                                 "Move-ItemProperty",                  $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "mv",                                 "Move-Item",                          $($FullCLR -or $CoreWindows              ),   "",                 "AllScope"
+"Alias",  "nal",                                "New-Alias",                          $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "ndr",                                "New-PSDrive",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "ni",                                 "New-Item",                           $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "nmo",                                "New-Module",                         $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "npssc",                              "New-PSSessionConfigurationFile",     $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "nsn",                                "New-PSSession",                      $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "nv",                                 "New-Variable",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "nwsn",                               "New-PSWorkflowSession",              $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "ogv",                                "Out-GridView",                       $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "oh",                                 "Out-Host",                           $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "popd",                               "Pop-Location",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "ps",                                 "Get-Process",                        $($FullCLR -or $CoreWindows              ),   "",                 "AllScope"
+"Alias",  "pushd",                              "Push-Location",                      $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "pwd",                                "Get-Location",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "r",                                  "Invoke-History",                     $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "rbp",                                "Remove-PSBreakpoint",                $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "rcjb",                               "Receive-Job",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "rcsn",                               "Receive-PSSession",                  $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "rd",                                 "Remove-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "rdr",                                "Remove-PSDrive",                     $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "ren",                                "Rename-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "ri",                                 "Remove-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "rjb",                                "Remove-Job",                         $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "rm",                                 "Remove-Item",                        $($FullCLR -or $CoreWindows              ),   "",                 "AllScope"
+"Alias",  "rmdir",                              "Remove-Item",                        $($FullCLR -or $CoreWindows              ),   "",                 "AllScope"
+"Alias",  "rmo",                                "Remove-Module",                      $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "rni",                                "Rename-Item",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "rnp",                                "Rename-ItemProperty",                $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "rp",                                 "Remove-ItemProperty",                $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "rsn",                                "Remove-PSSession",                   $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "rsnp",                               "Remove-PSSnapin",                    $($FullCLR                               ),   "",                 "AllScope"
+"Alias",  "rujb",                               "Resume-Job",                         $($FullCLR                               ),   "",                 "AllScope"
+"Alias",  "rv",                                 "Remove-Variable",                    $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "rvpa",                               "Resolve-Path",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "rwmi",                               "Remove-WMIObject",                   $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "sajb",                               "Start-Job",                          $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "sal",                                "Set-Alias",                          $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "saps",                               "Start-Process",                      $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "sasv",                               "Start-Service",                      $($FullCLR -or $CoreWindows              ),   "ReadOnly",         "AllScope"
+"Alias",  "sbp",                                "Set-PSBreakpoint",                   $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "sc",                                 "Set-Content",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "scb",                                "Set-Clipboard",                      $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "select",                             "Select-Object",                      $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "set",                                "Set-Variable",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "shcm",                               "Show-Command",                       $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "si",                                 "Set-Item",                           $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "sl",                                 "Set-Location",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "sleep",                              "Start-Sleep",                        $($FullCLR -or $CoreWindows              ),   "ReadOnly",         "AllScope"
+"Alias",  "sls",                                "Select-String",                      $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 ""
+"Alias",  "sort",                               "Sort-Object",                        $($FullCLR -or $CoreWindows              ),   "ReadOnly",         "AllScope"
+"Alias",  "sp",                                 "Set-ItemProperty",                   $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "spjb",                               "Stop-Job",                           $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "spps",                               "Stop-Process",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "spsv",                               "Stop-Service",                       $($FullCLR -or $CoreWindows              ),   "ReadOnly",         "AllScope"
+"Alias",  "start",                              "Start-Process",                      $($FullCLR -or $CoreWindows              ),   "ReadOnly",         "AllScope"
+"Alias",  "stz",                                "Set-TimeZone",                       $($FullCLR -or $CoreWindows              ),   "",                 ""
+"Alias",  "sujb",                               "Suspend-Job",                        $($FullCLR                               ),   "",                 "AllScope"
+"Alias",  "sv",                                 "Set-Variable",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "swmi",                               "Set-WMIInstance",                    $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "tee",                                "Tee-Object",                         $($FullCLR -or $CoreWindows              ),   "ReadOnly",         "AllScope"
+"Alias",  "trcm",                               "Trace-Command",                      $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "type",                               "Get-Content",                        $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "wget",                               "Invoke-WebRequest",                  $($FullCLR                               ),   "ReadOnly",         "AllScope"
+"Alias",  "where",                              "Where-Object",                       $($FullCLR -or $CoreWindows -or $CoreUnix),   "ReadOnly",         "AllScope"
+"Alias",  "wjb",                                "Wait-Job",                           $($FullCLR -or $CoreWindows -or $CoreUnix),   "",                 "AllScope"
+"Alias",  "write",                              "Write-Output",                       $($FullCLR -or $CoreWindows              ),   "ReadOnly",         "AllScope"
 "Cmdlet", "Add-Computer",                                       ,                     $($FullCLR                               )
 "Cmdlet", "Add-Content",                                        ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Add-History",                                        ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
@@ -462,27 +467,58 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Write-Warning",                                      ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "@
 
-            $aliaslist  = $commandList | ConvertFrom-CSV -Delimiter "," | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias"  } | ForEach-Object { "{0} -> {1}" -f $_.Name, $_.Definition}
-            $cmdletlist = $commandList | ConvertFrom-CSV -Delimiter "," | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Cmdlet" } | Select-Object -ExpandProperty Name
-
             # We control only default engine aliases (Source -eq "") and aliases from following default loaded modules
             # We control only default engine Cmdlets (Source -eq "") and Cmdlets from following default loaded modules
             $moduleList = @("Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Management", "Microsoft.PowerShell.Security", "Microsoft.PowerShell.Host", "Microsoft.PowerShell.Diagnostics", "PSWorkflow", "Microsoft.WSMan.Management", "Microsoft.PowerShell.Core")
             Import-Module -Name $moduleList -ErrorAction SilentlyContinue
+            $currentAliasList = Get-Alias | Where-Object { $_.Source -eq "" -or $moduleList -contains $_.Source }
+
+            $commandList  = $commandString | ConvertFrom-CSV -Delimiter ","
+            $aliasFullList  = $commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Alias"  }
     }
 
-    It "All approved aliases present (no aliases removed, no new aliases added)" {
-        $currentAliasList = Get-Alias | Where-Object { $_.Source -eq "" -or $moduleList -contains $_.Source } | Select-Object -ExpandProperty DisplayName
-        $result = Compare-Object -ReferenceObject $currentAliasList -DifferenceObject $aliaslist
+    It "All approved aliases present (no new aliases added, no aliases removed)" {
+        $currentDisplayNameAliasList = $currentAliasList | Select-Object -ExpandProperty DisplayName
+        $aliasDisplayNameAliasList  = $aliasFullList | ForEach-Object { "{0} -> {1}" -f $_.Name, $_.Definition}
+
+        $result = Compare-Object -ReferenceObject $currentDisplayNameAliasList -DifferenceObject $aliasDisplayNameAliasList
+
         # Below 'Should Be' don't show full list wrong aliases so we output them explicitly
         # if all aliases is Ok we output nothing
         $result | Write-Host
         $result | Should Be $null
     }
 
-    It "All approved Cmdlets present (no Cmdlets removed, no new Cmdlets added)" {
+    It "All approved aliases have the correct 'AllScope' option" {
+        $aliasAllScopeOptionList = $aliasFullList | Where-Object { $_.AllScopeOption -eq "AllScope"} | ForEach-Object { "{0} -> {1}" -f $_.Name, $_.Definition}
+        $currentAllScopeOptionList = $currentAliasList | Where-Object { $_.Options -band [System.Management.Automation.ScopedItemOptions]::AllScope } | Select-Object -ExpandProperty DisplayName
+
+        $result = Compare-Object -ReferenceObject $currentAllScopeOptionList -DifferenceObject  $aliasAllScopeOptionList
+
+        # Below 'Should Be' don't show full list wrong aliases so we output them explicitly
+        # if all aliases is Ok we output nothing
+        $result | Write-Host
+        $result | Should Be $null
+    }
+
+    It "All approved aliases have the correct 'ReadOnly' option" {
+        $aliasReadOnlyOptionList = $aliasFullList | Where-Object { $_.ReadOnlyOption -eq "ReadOnly"} | ForEach-Object { "{0} -> {1}" -f $_.Name, $_.Definition}
+        $currentReadOnlyOptionList = $currentAliasList | Where-Object { $_.Options -band [System.Management.Automation.ScopedItemOptions]::ReadOnly } | Select-Object -ExpandProperty DisplayName
+
+        $result = Compare-Object -ReferenceObject $currentReadOnlyOptionList -DifferenceObject  $aliasReadOnlyOptionList
+
+        # Below 'Should Be' don't show full list wrong aliases so we output them explicitly
+        # if all aliases is Ok we output nothing
+        $result | Write-Host
+        $result | Should Be $null
+    }
+
+    It "All approved Cmdlets present (no new Cmdlets added, no Cmdlets removed)" {
+        $cmdletList = $commandList | Where-Object { $_.Present -eq "True" -and $_.CommandType -eq "Cmdlet" } | Select-Object -ExpandProperty Name
         $currentCmdletList = (Get-Command -CommandType Cmdlet | Where-Object { $moduleList -contains $_.Source }).Name
-        $result = Compare-Object -ReferenceObject $currentCmdletList -DifferenceObject $cmdletlist
+
+        $result = Compare-Object -ReferenceObject $currentCmdletList -DifferenceObject $cmdletList
+
         # Below 'Should Be' don't show full list wrong Cmdlets so we output them explicitly
         # if all Cmdlets is Ok we output nothing
         $result | Write-Host
