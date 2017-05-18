@@ -8,6 +8,7 @@ PowerShellVersion="3.0"
 CLRVersion="4.0"
 NestedModules="Microsoft.PowerShell.Commands.Management.dll"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=390785'
+AliasesToExport = @("gcb", "scb", "gin", "gtz", "stz")
 FunctionsToExport = @()
 CmdletsToExport=@("Add-Content",
     "Clear-Content",
