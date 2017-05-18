@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
@@ -691,7 +691,15 @@ namespace Microsoft.PowerShell.Internal
 
             CONSOLE_FONT_INFO_EX fontInfo = new CONSOLE_FONT_INFO_EX();
             fontInfo.cbSize = Marshal.SizeOf(fontInfo);
-            bool result = NativeMethods.GetCurrentConsoleFontEx(consoleHandle.DangerousGetHandle(), false, ref fontInfo);
+            bool result = true;
+            try
+            {
+                result = NativeMethods.GetCurrentConsoleFontEx(consoleHandle.DangerousGetHandle(), false, ref fontInfo);
+            }
+            catch (System.EntryPointNotFoundException)
+            {
+                // ignore for Nanoserver
+            }
 
             if (result == false)
             {
@@ -865,7 +873,6 @@ namespace Microsoft.PowerShell.Internal
             CONSOLE_FONT_INFO_EX fontInfo = ConhostConsole.GetConsoleFontInfo(consoleHandle);
             int fontType = fontInfo.FontFamily & NativeMethods.FontTypeMask;
             _trueTypeInUse = (fontType & NativeMethods.TrueTypeFont) == NativeMethods.TrueTypeFont;
-
         }
 
         public void EndRender()

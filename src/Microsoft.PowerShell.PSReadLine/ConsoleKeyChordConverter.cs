@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
@@ -323,8 +323,16 @@ namespace Microsoft.PowerShell
 
             // get corresponding character  - may be 0, 1 or 2 in length (diacritics)
             var chars = new char[2];
-            int charCount = NativeMethods.ToUnicode(
-                virtualKey, scanCode, state, chars, chars.Length, NativeMethods.MENU_IS_INACTIVE);
+            int charCount = 1;
+            try
+            {
+                charCount = NativeMethods.ToUnicode(
+                    virtualKey, scanCode, state, chars, chars.Length, NativeMethods.MENU_IS_INACTIVE);
+            }
+            catch (System.EntryPointNotFoundException)
+            {
+                // assume not unicode
+            }
 
             // TODO: support diacritics (charCount == 2)
             if (charCount == 1)
