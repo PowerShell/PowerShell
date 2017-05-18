@@ -108,9 +108,9 @@ namespace Microsoft.PowerShell
         new
         public static ConsoleKeyInfo Equals      = new ConsoleKeyInfo('=', ConsoleKey.OemPlus, false, false, false);
 
-        public static ConsoleKeyInfo CtrlAt       = new ConsoleKeyInfo((char)0, ConsoleKey.D2, true, false, true);
+        public static ConsoleKeyInfo CtrlAt       = new ConsoleKeyInfo('@', ConsoleKey.D2, true, false, true);
         public static ConsoleKeyInfo AltUnderbar = new ConsoleKeyInfo('_', ConsoleKey.OemMinus, true, true, false);
-        public static ConsoleKeyInfo CtrlUnderbar = new ConsoleKeyInfo((char)31, ConsoleKey.OemMinus, true, false, true);
+        public static ConsoleKeyInfo CtrlUnderbar = new ConsoleKeyInfo('_', ConsoleKey.OemMinus, true, false, true);
         public static ConsoleKeyInfo AltEquals    = new ConsoleKeyInfo('=', ConsoleKey.OemPlus, false, true, false);
         public static ConsoleKeyInfo Space        = new ConsoleKeyInfo(' ', ConsoleKey.Spacebar, false, false, false);
         // Useless because it's caught by the console to bring up the system menu.
@@ -118,10 +118,10 @@ namespace Microsoft.PowerShell
         public static ConsoleKeyInfo CtrlSpace   = new ConsoleKeyInfo(' ', ConsoleKey.Spacebar, false, false, true);
         public static ConsoleKeyInfo AltLess     = new ConsoleKeyInfo('<', ConsoleKey.OemComma, true, true, false);
         public static ConsoleKeyInfo AltGreater  = new ConsoleKeyInfo('>', ConsoleKey.OemPeriod, true, true, false);
-        public static ConsoleKeyInfo CtrlRBracket = new ConsoleKeyInfo((char)29, ConsoleKey.Oem6, false, false, true);
-        public static ConsoleKeyInfo AltCtrlRBracket = new ConsoleKeyInfo((char)0, ConsoleKey.Oem6, false, true, true);
+        public static ConsoleKeyInfo CtrlRBracket = new ConsoleKeyInfo(']', ConsoleKey.Oem6, false, false, true);
+        public static ConsoleKeyInfo AltCtrlRBracket = new ConsoleKeyInfo(']', ConsoleKey.Oem6, false, true, true);
         public static ConsoleKeyInfo AltPeriod    = new ConsoleKeyInfo('.', ConsoleKey.OemPeriod, false, true, false);
-        public static ConsoleKeyInfo CtrlAltQuestion  = new ConsoleKeyInfo((char)0, ConsoleKey.Oem2, true, true, true);
+        public static ConsoleKeyInfo CtrlAltQuestion  = new ConsoleKeyInfo('?', ConsoleKey.Oem2, true, true, true);
         public static ConsoleKeyInfo AltQuestion  = new ConsoleKeyInfo('?', ConsoleKey.Oem2, true, true, false);
 
         public static ConsoleKeyInfo Alt0 = new ConsoleKeyInfo('0', ConsoleKey.D0, false, true, false);
