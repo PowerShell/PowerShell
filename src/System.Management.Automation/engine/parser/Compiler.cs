@@ -2986,106 +2986,106 @@ namespace System.Management.Automation.Language
                 exprs.Add(UpdatePosition(pipelineAst));
             }
 
-            var pipeElements = pipelineAst.PipelineElements;
-            var firstCommandExpr = (pipeElements[0] as CommandExpressionAst);
-
-            if (firstCommandExpr != null && pipeElements.Count == 1 && ! pipelineAst.BackgroundProcess)
+            if (pipelineAst.BackgroundProcess)
             {
-                if (firstCommandExpr.Redirections.Count > 0)
-                {
-                    exprs.Add(GetRedirectedExpression(firstCommandExpr, captureForInput: false));
-                }
-                else
-                {
-                    exprs.Add(Compile(firstCommandExpr));
-                }
+                Expression invokeBackgroundPipe = Expression.Call(
+                    CachedReflectionInfo.PipelineOps_InvokePipelineInBackground,
+                    Expression.Constant(pipelineAst),
+                    _functionContext);
+                exprs.Add(invokeBackgroundPipe);
             }
             else
             {
-                Expression input;
-                int i, commandsInPipe;
-
-                if (firstCommandExpr != null  && !pipelineAst.BackgroundProcess)
+                var pipeElements = pipelineAst.PipelineElements;
+                var firstCommandExpr = (pipeElements[0] as CommandExpressionAst);
+    
+                if (firstCommandExpr != null && pipeElements.Count == 1 && ! pipelineAst.BackgroundProcess)
                 {
                     if (firstCommandExpr.Redirections.Count > 0)
                     {
-                        input = GetRedirectedExpression(firstCommandExpr, captureForInput: true);
+                        exprs.Add(GetRedirectedExpression(firstCommandExpr, captureForInput: false));
                     }
                     else
                     {
-                        input = GetRangeEnumerator(firstCommandExpr.Expression) ??
-                                Compile(firstCommandExpr.Expression);
+                        exprs.Add(Compile(firstCommandExpr));
                     }
-                    i = 1;
-                    commandsInPipe = pipeElements.Count - 1;
                 }
                 else
                 {
-                    // Compiled code normally never sees AutomationNull.  We use that value
-                    // here so that we can tell the difference b/w $null and no input when
-                    // starting the pipeline, in other words, PipelineOps.InvokePipe will
-                    // not pass this value to the pipe.
-
-                    input = ExpressionCache.AutomationNullConstant;
-                    i = 0;
-                    commandsInPipe = pipeElements.Count;
-                }
-                Expression[] pipelineExprs = new Expression[commandsInPipe];
-                CommandBaseAst[] pipeElementAsts = new CommandBaseAst[commandsInPipe];
-                var commandRedirections = new object[commandsInPipe];
-
-                for (int j = 0; i < pipeElements.Count; ++i, ++j)
-                {
-                    var pipeElement = pipeElements[i];
-                    pipelineExprs[j] = Compile(pipeElement);
-
-                    commandRedirections[j] = GetCommandRedirections(pipeElement);
-                    pipeElementAsts[j] = pipeElement;
-                }
-
-                // The redirections are passed as a CommandRedirection[][] - one dimension for each command in the pipe,
-                // one dimension because each command may have multiple redirections.  Here we create the array for
-                // each command in the pipe, either a compile time constant or created at runtime if necessary.
-                Expression redirectionExpr;
-                if (commandRedirections.Any(r => r is Expression))
-                {
-                    // If any command redirections are non-constant, commandRedirections will have a Linq.Expression in it,
-                    // in which case we must create the array at runtime
-                    redirectionExpr =
-                        Expression.NewArrayInit(typeof(CommandRedirection[]),
-                                                commandRedirections.Select(r => (r as Expression) ?? Expression.Constant(r, typeof(CommandRedirection[]))));
-                }
-                else if (commandRedirections.Any(r => r != null))
-                {
-                    // There were redirections, but all were compile time constant, so build the array at compile time.
-                    redirectionExpr =
-                        Expression.Constant(commandRedirections.Map(r => r as CommandRedirection[]));
-                }
-                else
-                {
-                    // No redirections.
-                    redirectionExpr = ExpressionCache.NullCommandRedirections;
-                }
-
-                if (firstCommandExpr != null)
-                {
-                    var inputTemp = Expression.Variable(input.Type);
-                    temps.Add(inputTemp);
-                    exprs.Add(Expression.Assign(inputTemp, input));
-                    input = inputTemp;
-                }
-
-                Expression invokePipe;
-                if (pipelineAst.BackgroundProcess)
-                {
-                    invokePipe = Expression.Call(
-                        CachedReflectionInfo.PipelineOps_InvokePipelineInBackground,
-                        Expression.Constant(pipeElementAsts),
-                        _functionContext);
-                }
-                else
-                {
-                    invokePipe = Expression.Call(
+                    Expression input;
+                    int i, commandsInPipe;
+    
+                    if (firstCommandExpr != null  && !pipelineAst.BackgroundProcess)
+                    {
+                        if (firstCommandExpr.Redirections.Count > 0)
+                        {
+                            input = GetRedirectedExpression(firstCommandExpr, captureForInput: true);
+                        }
+                        else
+                        {
+                            input = GetRangeEnumerator(firstCommandExpr.Expression) ??
+                                    Compile(firstCommandExpr.Expression);
+                        }
+                        i = 1;
+                        commandsInPipe = pipeElements.Count - 1;
+                    }
+                    else
+                    {
+                        // Compiled code normally never sees AutomationNull.  We use that value
+                        // here so that we can tell the difference b/w $null and no input when
+                        // starting the pipeline, in other words, PipelineOps.InvokePipe will
+                        // not pass this value to the pipe.
+    
+                        input = ExpressionCache.AutomationNullConstant;
+                        i = 0;
+                        commandsInPipe = pipeElements.Count;
+                    }
+                    Expression[] pipelineExprs = new Expression[commandsInPipe];
+                    CommandBaseAst[] pipeElementAsts = new CommandBaseAst[commandsInPipe];
+                    var commandRedirections = new object[commandsInPipe];
+    
+                    for (int j = 0; i < pipeElements.Count; ++i, ++j)
+                    {
+                        var pipeElement = pipeElements[i];
+                        pipelineExprs[j] = Compile(pipeElement);
+    
+                        commandRedirections[j] = GetCommandRedirections(pipeElement);
+                        pipeElementAsts[j] = pipeElement;
+                    }
+    
+                    // The redirections are passed as a CommandRedirection[][] - one dimension for each command in the pipe,
+                    // one dimension because each command may have multiple redirections.  Here we create the array for
+                    // each command in the pipe, either a compile time constant or created at runtime if necessary.
+                    Expression redirectionExpr;
+                    if (commandRedirections.Any(r => r is Expression))
+                    {
+                        // If any command redirections are non-constant, commandRedirections will have a Linq.Expression in it,
+                        // in which case we must create the array at runtime
+                        redirectionExpr =
+                            Expression.NewArrayInit(typeof(CommandRedirection[]),
+                                                    commandRedirections.Select(r => (r as Expression) ?? Expression.Constant(r, typeof(CommandRedirection[]))));
+                    }
+                    else if (commandRedirections.Any(r => r != null))
+                    {
+                        // There were redirections, but all were compile time constant, so build the array at compile time.
+                        redirectionExpr =
+                            Expression.Constant(commandRedirections.Map(r => r as CommandRedirection[]));
+                    }
+                    else
+                    {
+                        // No redirections.
+                        redirectionExpr = ExpressionCache.NullCommandRedirections;
+                    }
+    
+                    if (firstCommandExpr != null)
+                    {
+                        var inputTemp = Expression.Variable(input.Type);
+                        temps.Add(inputTemp);
+                        exprs.Add(Expression.Assign(inputTemp, input));
+                        input = inputTemp;
+                    }
+    
+                    Expression invokePipe = Expression.Call(
                         CachedReflectionInfo.PipelineOps_InvokePipeline,
                         input.Cast(typeof(object)),
                         firstCommandExpr != null ? ExpressionCache.FalseConstant : ExpressionCache.TrueConstant,
@@ -3093,9 +3093,8 @@ namespace System.Management.Automation.Language
                         Expression.Constant(pipeElementAsts),
                         redirectionExpr,
                         _functionContext);
+                    exprs.Add(invokePipe);
                 }
-
-                exprs.Add(invokePipe);
             }
 
             return Expression.Block(temps, exprs);
