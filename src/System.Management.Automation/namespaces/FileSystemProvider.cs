@@ -1659,8 +1659,9 @@ namespace Microsoft.PowerShell.Commands
                             return;
                         }
 
+#if DEBUG
                         // Internal test code, run only if the
-                        // "GciEnumerationActionFilename" test hook is set
+                        // 'GciEnumerationActionFilename' test hook is set
                         var testActionFilename = InternalTestHooks.GciEnumerationActionFilename;
                         if (filesystemInfo.Name == testActionFilename)
                         {
@@ -1676,31 +1677,37 @@ namespace Microsoft.PowerShell.Commands
                                 File.Move(fullName, newFullName);
                             }
                         }
+#endif
 
                         try
                         {
                             bool attributeFilter = true;
                             bool switchAttributeFilter = true;
-                            bool filterHidden = false;           // "Hidden" is specified somewhere in the expression
-                            bool switchFilterHidden = false;     // "Hidden" is specified somewhere in the parameters
+                            // 'Hidden' is specified somewhere in the expression
+                            bool filterHidden = false;
+                            // 'Hidden' is specified somewhere in the parameters
+                            bool switchFilterHidden = false;
 
                             if (null != evaluator)
                             {
-                                attributeFilter = evaluator.Evaluate(filesystemInfo.Attributes);  // expressions
+                                attributeFilter = evaluator.Evaluate(filesystemInfo.Attributes);
                                 filterHidden = evaluator.ExistsInExpression(FileAttributes.Hidden);
                             }
                             if (null != switchEvaluator)
                             {
-                                switchAttributeFilter = switchEvaluator.Evaluate(filesystemInfo.Attributes);  // switch parameters
+                                switchAttributeFilter = switchEvaluator.Evaluate(filesystemInfo.Attributes);
                                 switchFilterHidden = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
                             }
 
                             bool hidden = false;
-                            if (!Force) hidden = (filesystemInfo.Attributes & FileAttributes.Hidden) != 0;
+                            if (!Force)
+                            {
+                                hidden = (filesystemInfo.Attributes & FileAttributes.Hidden) != 0;
+                            }
 
-                            // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
+                            // If 'Hidden' is explicitly specified anywhere in the attribute filter, then override
                             // default hidden attribute filter.
-                            // if specification is to return all containers, then do not do attribute filter on
+                            // If specification is to return all containers, then do not do attribute filter on
                             // the containers.
                             bool attributeSatisfy =
                                 ((attributeFilter && switchAttributeFilter) ||
