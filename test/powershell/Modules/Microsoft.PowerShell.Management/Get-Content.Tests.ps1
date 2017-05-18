@@ -63,11 +63,11 @@ Describe "Get-Content" -Tags "CI" {
 	  Get-Content -Path $testPath2 -Last 1 | Should Be $fifthline
   }
   It "Should be able to get content within a different drive" {
-	  pushd env:
+	  Push-Location env:
 	  $expectedoutput = [Environment]::GetEnvironmentVariable("PATH");
     { Get-Content PATH } | Should Not Throw
 	  Get-Content PATH     | Should Be $expectedoutput
-  	popd
+  	Pop-Location
   }
   #[BugId(BugDatabase.WindowsOutOfBandReleases, 906022)]
   It "should throw 'PSNotSupportedException' when you set-content to an unsupported provider" -Skip:($IsLinux -Or $IsOSX) {
@@ -102,29 +102,28 @@ Describe "Get-Content" -Tags "CI" {
     for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
     $result=get-content -path $testPath -delimiter "," -tail 2
     $result.Length    | Should Be 2
-    if ($IsWindows) {$expected = "World3`r`nHello4,","World4`r`n"
-    } else {$expected = "World3`nHello4,","World4`n"}
+    $expected = "World3${nl}Hello4", "World4${nl}"
     for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
     $result=get-content -path $testPath -delimiter "o" -tail 3
     $result.Length    | Should Be 3
-    if ($IsWindows) {$expected = "rld3`r`nHello","4,Wo","rld4"
-    } else {$expected = "rld3`nHello","4,Wo","rld4"}
-    for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i].Trim()  | Should BeExactly $expected[$i]}
+    $expected = "rld3${nl}Hell", '4,W', "rld4${nl}"
+    for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
     $result=get-content -path $testPath -encoding:Byte -tail 10
     $result.Length    | Should Be 10
     if ($IsWindows) {
-      $expected = "52","44","87","111","114","108","100","52","13","10"
-      for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+      $expected =      52, 44, 87, 111, 114, 108, 100, 52, 13, 10
+    } else {
+      $expected = 111, 52, 44, 87, 111, 114, 108, 100, 52, 10
     }
+    for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
   }
   #[BugId(BugDatabase.WindowsOutOfBandReleases, 905829)]
   It "should get-content that matches the input string"{
     set-content $testPath "Hello,llllWorlld","Hello2,llllWorlld2"
     $result=get-content $testPath -delimiter "ll"
     $result.Length    | Should Be 9
-    if ($IsWindows) {$expected = "Hell","o,ll","ll","Worll","d`r`nHell","o2,ll","ll","Worll","d2`r`n"
-    } else {$expected = "Hell","o,ll","ll","Worll","d`nHell","o2,ll","ll","Worll","d2`n"}
-    for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+    $expected = 'He', 'o,', '', 'Wor', "d${nl}He", 'o2,', '', 'Wor', "d2${nl}"
+    for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]    | Should BeExactly $expected[$i]}
   }
 
   It "Should support NTFS streams using colon syntax" -Skip:(!$IsWindows) {
