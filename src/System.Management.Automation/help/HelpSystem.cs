@@ -612,15 +612,6 @@ namespace System.Management.Automation
             helpProvider = new HelpFileHelpProvider(this);
             _helpProviders.Add(helpProvider);
 
-            helpProvider = new FaqHelpProvider(this);
-            _helpProviders.Add(helpProvider);
-
-            helpProvider = new GlossaryHelpProvider(this);
-            _helpProviders.Add(helpProvider);
-
-            helpProvider = new GeneralHelpProvider(this);
-            _helpProviders.Add(helpProvider);
-
             helpProvider = new DefaultHelpProvider(this);
             _helpProviders.Add(helpProvider);
         }
