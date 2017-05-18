@@ -135,15 +135,15 @@ Additional references:
   * Instead of "Adding support for Windows Server 2012 R2", write "Add support for Windows Server 2012 R2".
   * Instead of "Fixed for server connection issue", write "Fix server connection issue".
 
-  This form is akin to giving commands to the code base,
+  This form is akin to giving commands to the code base
   and is recommended by the Git SCM developers.
   It is also used in the [Git commit messages](#common-engineering-practices).
 * If the change is related to a specific resource, please prefix the description with the resource name:
   * Instead of "New parameter 'ConnectionCredential' in New-SqlConnection",
   write "New-SqlConnection: added parameter 'ConnectionCredential'".
 * If your change warrants an update to user-facing documentation,
-  you may need to update [the PowerShell 6.0 reference documentation in the PowerShell-Docs repository][PowerShell-Docs].
-  This includes any changes to cmdlets (including cmdlet parameters) and features which have associated about_* topics.
+  you must update [the PowerShell 6.0 reference documentation in the PowerShell-Docs repository][PowerShell-Docs].
+  For example, this requirement includes any changes to cmdlets (including cmdlet parameters) and features which have associated about_* topics.
   Please link to your PowerShell-Docs repository in your original PowerShell pull request once you've created it.
 
 #### Pull Request - Automatic Checks
@@ -202,7 +202,7 @@ Additional references:
   all merge conflicts are resolved,
   and the CI system build status is passing,
   the PR Assignee will merge your changes.
-* For more information on the the PowerShell Maintainers' process,
+* For more information on the PowerShell Maintainers' process,
   see the [documentation](../docs/maintainers).
 
 ## Making Breaking Changes
