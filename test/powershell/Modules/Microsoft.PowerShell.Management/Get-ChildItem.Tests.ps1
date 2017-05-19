@@ -62,9 +62,9 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
         It "Should continue enumerating a directory when a contained item is deleted" {
             $Error.Clear()
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionFilename", "c")
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationAction", "delete")
             $result = Get-ChildItem -Path $TestDrive -ErrorAction SilentlyContinue
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionFilename", $null)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationAction", $null)
             if ($IsWindows)
             {
                 $Error.Count | Should BeExactly 0
@@ -80,11 +80,9 @@ Describe "Get-ChildItem" -Tags "CI" {
         }
         It "Should continue enumerating a directory when a contained item is renamed" {
             $Error.Clear()
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionFilename", "B")
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionRename", "Z")
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationAction", "rename")
             $result = Get-ChildItem -Path $TestDrive -ErrorAction SilentlyContinue
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionRename", $null)
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionFilename", $null)
+            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationAction", $null)
             if ($IsWindows)
             {
                 $Error.Count | Should BeExactly 0

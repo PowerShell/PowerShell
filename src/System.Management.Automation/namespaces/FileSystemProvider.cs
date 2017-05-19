@@ -1660,19 +1660,21 @@ namespace Microsoft.PowerShell.Commands
                         }
 
                         // Internal test code, run only if the
-                        // 'GciEnumerationActionFilename' test hook is set
-                        var testActionFilename = InternalTestHooks.GciEnumerationActionFilename;
-                        if (filesystemInfo.Name == testActionFilename)
+                        // 'GciEnumerationAction' test hook is set
+                        if (InternalTestHooks.GciEnumerationAction == "delete")
                         {
-                            var fullName = Path.Combine(directory.FullName, filesystemInfo.Name);
-                            var newFilename = InternalTestHooks.GciEnumerationActionRename;
-                            if (String.IsNullOrEmpty(newFilename))
+                            if (filesystemInfo.Name == "c")
                             {
+                                var fullName = Path.Combine(directory.FullName, filesystemInfo.Name);
                                 File.Delete(fullName);
                             }
-                            else
+                        }
+                        else if (InternalTestHooks.GciEnumerationAction == "rename")
+                        {
+                            if (filesystemInfo.Name == "B")
                             {
-                                var newFullName = Path.Combine(directory.FullName, newFilename);
+                                var fullName = Path.Combine(directory.FullName, filesystemInfo.Name);
+                                var newFullName = Path.Combine(directory.FullName, "Z");
                                 File.Move(fullName, newFullName);
                             }
                         }

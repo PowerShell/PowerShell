@@ -1580,10 +1580,8 @@ namespace System.Management.Automation.Internal
         // Simulate 'System.Diagnostics.Stopwatch.IsHighResolution is false' to test Get-Uptime throw
         internal static bool StopwatchIsNotHighResolution;
 
-        // Name of a file to either delete or rename during directory enumeration.
-        internal static string GciEnumerationActionFilename = null;
-        // New name of the above file when renaming. Used only when GciEnumerationActionFilename is set.
-        internal static string GciEnumerationActionRename = null;
+        // Will be either "delete" or "rename" during tests.
+        internal static string GciEnumerationAction = null;
 
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, object value)
