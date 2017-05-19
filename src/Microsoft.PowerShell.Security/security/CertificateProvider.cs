@@ -3426,6 +3426,9 @@ namespace Microsoft.PowerShell.Commands
     public sealed class DnsNameProperty
     {
         private List<DnsNameRepresentation> _dnsList = new List<DnsNameRepresentation>();
+        private System.Globalization.IdnMapping idnMapping = new System.Globalization.IdnMapping();
+        private static string dnsNamePrefix = "DNS Name=";
+        private static string distinguishedNamePrefix = "CN=";
 
         /// <summary>
         /// get property of DnsNameList
@@ -3443,7 +3446,33 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public DnsNameProperty(X509Certificate2 cert)
         {
+            string name;
+            string unicodeName;
+            DnsNameRepresentation dnsName;
             _dnsList = new List<DnsNameRepresentation>();
+
+            // extract DNS name from subject distinguish name
+            // if it exists and does not contain a comma
+            // a comma, indicates it is not a DNS name
+            if(cert.Subject.Length > distinguishedNamePrefix.Length && 
+                cert.Subject.StartsWith(distinguishedNamePrefix, System.StringComparison.InvariantCulture) && 
+                cert.Subject.IndexOf(",",System.StringComparison.InvariantCulture)==-1)
+            {
+                name = cert.Subject.Substring(distinguishedNamePrefix.Length);
+                try
+                {
+                    unicodeName = idnMapping.GetUnicode(name);
+                }
+                catch(System.ArgumentException)
+                {
+                    // The name is not valid punyCode, assume it's valid ascii.
+                    unicodeName = name;
+                }
+
+                dnsName = new DnsNameRepresentation(name,unicodeName);
+                _dnsList.Add(dnsName);
+            }
+
             foreach (X509Extension extension in cert.Extensions)
             {
                 if (extension.Oid.FriendlyName == "Subject Alternative Name")
@@ -3452,12 +3481,26 @@ namespace Microsoft.PowerShell.Commands
                     foreach(string nameLine in names)
                     {
                         // Get the part after 'DNS Name='
-                        if(nameLine.Length > 9)
+                        if(nameLine.Length > dnsNamePrefix.Length && nameLine.StartsWith(dnsNamePrefix, System.StringComparison.InvariantCulture))
                         {
-                            //TODO: detect and handle punyCode
-                            string name = nameLine.Substring(9);
-                            DnsNameRepresentation dnsName = new DnsNameRepresentation(name);
-                            _dnsList.Add(dnsName);
+                            name = nameLine.Substring(dnsNamePrefix.Length);
+                            try
+                            {
+                                unicodeName = idnMapping.GetUnicode(name);
+                            }
+                            catch(System.ArgumentException)
+                            {
+                                // The name is not valid punyCode, assume it's valid ascii.
+                                unicodeName = name;
+                            }
+
+                            dnsName = new DnsNameRepresentation(name,unicodeName);
+
+                            // Only add the name if it is not the same as an existing name.
+                            if(!_dnsList.Contains(dnsName))
+                            {
+                                _dnsList.Add(dnsName);
+                            }
                         }
                     }
                 }
