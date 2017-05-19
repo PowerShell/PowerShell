@@ -1659,7 +1659,6 @@ namespace Microsoft.PowerShell.Commands
                             return;
                         }
 
-#if DEBUG
                         // Internal test code, run only if the
                         // 'GciEnumerationActionFilename' test hook is set
                         var testActionFilename = InternalTestHooks.GciEnumerationActionFilename;
@@ -1677,7 +1676,6 @@ namespace Microsoft.PowerShell.Commands
                                 File.Move(fullName, newFullName);
                             }
                         }
-#endif
 
                         try
                         {
