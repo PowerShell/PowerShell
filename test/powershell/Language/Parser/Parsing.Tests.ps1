@@ -277,7 +277,6 @@ Describe 'Pipes parsing' -Tags "CI" {
     ShouldBeParseError 'gps|' EmptyPipeElement 4
     ShouldBeParseError '1|1' ExpressionsMustBeFirstInPipeline 2
     ShouldBeParseError '$a=' ExpectedValueExpression 3
-    ShouldBeParseError '1 &' UnexpectedToken,MissingExpression 2,2
 }
 
 Describe 'commands parsing' -Tags "CI" {

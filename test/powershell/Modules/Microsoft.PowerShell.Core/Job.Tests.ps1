@@ -165,3 +165,69 @@ Describe "Debug-job test" -tag "Feature" {
         $result.Command | Should be "<ScriptBlock>"
     }
 }
+
+Describe "Ampersand background test" -tag "CI","Slow" {
+    Context "Simple background job" {
+        AfterEach {
+            Get-Job | Remove-Job -Force
+        }
+        It "Background with & produces a job object" {
+            $j = Write-Output Hi &
+            $j | Should BeOfType System.Management.Automation.Job
+        }
+    }
+    Context "Variable tests" {
+        AfterEach {
+            Get-Job | Remove-Job -Force
+        }
+        It "doesn't cause error when variable is missing" {
+            Remove-Item variable:name -ErrorAction Ignore
+            $j = write-output "Hi $name" &
+            Receive-Job $j -Wait | Should BeExactly "Hi "
+        }
+        It "Copies variables to the child process" {
+            $n1 = "Bob"
+            $n2 = "Mary"
+            ${n 3} = "Bill"
+            $j = Write-Output "Hi $n1! Hi ${n2}! Hi ${n 3}!" &
+            Receive-Job $j -Wait | Should BeExactly "Hi Bob! Hi Mary! Hi Bill!"
+        }
+        It 'Make sure that $PID from the parent process does not overwrite $PID in the child process' {
+            $j = Write-Output $pid &
+            $cpid = Receive-Job $j -Wait
+            $pid | Should Not BeExactly $cpid
+        }
+        It 'Make sure that $global:PID from the parent process does not overwrite $global:PID in the child process' {
+            $j = Write-Output $global:pid &
+            $cpid = Receive-Job -Wait $j
+            $pid | Should Not BeExactly $cpid
+        }
+        It "starts in the current directory" {
+            $j = Get-Location | Foreach-Object -MemberName Path &
+            Receive-Job -Wait $j | Should Be ($pwd.Path)
+        }
+        It "Test that output redirection is done in the background job" {
+            $j = Write-Output hello > $TESTDRIVE/hello.txt &
+            Receive-Job -Wait $j | Should Be $null
+            Get-Content $TESTDRIVE/hello.txt | Should BeExactly "hello"
+        }
+        It "Test that error redirection is done in the background job" {
+            $j = Write-Error MyError 2> $TESTDRIVE/myerror.txt &
+            Receive-Job -Wait $j | Should Be $null
+            Get-Content -Raw $TESTDRIVE/myerror.txt | Should Match "MyError"
+        }
+    }
+    Context "Backgrounding expressions" {
+        AfterEach {
+            Get-Job | Remove-Job -Force
+        }
+        It "handles backgrounding expressions" {
+            $j = 2+3 &
+            Receive-Job $j -Wait | Should Be 5
+        }
+        It "handles backgrounding mixed expressions" {
+            $j = 1..10 | ForEach-Object -Begin {$s=0} -Process {$s += $_} -End {$s} &
+            Receive-Job -Wait $j | Should Be 55
+        }
+    }
+}
