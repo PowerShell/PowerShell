@@ -1,5 +1,4 @@
 Import-Module (Join-Path -Path $PSScriptRoot 'certificateCommon.psm1') -Force
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1 -Force
 
 $currentUserMyLocations = @(
     @{path = 'Cert:\CurrentUser\my'}
