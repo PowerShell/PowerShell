@@ -739,7 +739,6 @@ namespace System.Management.Automation.Language
             s_builtinAttributeGenerator.Add(typeof(ParameterAttribute), NewParameterAttribute);
             s_builtinAttributeGenerator.Add(typeof(OutputTypeAttribute), NewOutputTypeAttribute);
             s_builtinAttributeGenerator.Add(typeof(AliasAttribute), NewAliasAttribute);
-            s_builtinAttributeGenerator.Add(typeof(ValidateSetAttribute), NewValidateSetAttribute);
             s_builtinAttributeGenerator.Add(typeof(DebuggerHiddenAttribute), NewDebuggerHiddenAttribute);
             s_builtinAttributeGenerator.Add(typeof(ValidateNotNullAttribute), NewValidateNotNullAttribute);
             s_builtinAttributeGenerator.Add(typeof(ValidateNotNullOrEmptyAttribute), NewValidateNotNullOrEmptyAttribute);
