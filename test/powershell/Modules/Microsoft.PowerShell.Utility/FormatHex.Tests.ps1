@@ -14,150 +14,19 @@
         Hexadecimal equivalent of the input data is displayed.
 #>
 
-function RunInputObjectTestCase($testCases)
-{
-    It "<Name>" -TestCase $testCases{
-
-        param ($Name, $InputObject, $Count, $ExpectedResult)
-
-        $result = Format-Hex -InputObject $InputObject
-
-        $result | Should Not Be $null
-        $result.count | Should Be $Count
-        $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
-        $result.ToString() | Should Match $ExpectedResult
-    }
-}
-
-function RunObjectFromPipelineTestCase($testCases)
-{
-    It "<Name>" -Testcase $testCases {
-
-        param ($Name, $InputObject, $Count, $ExpectedResult, $ExpectedSecondResult)
-
-        $result = $InputObject | Format-Hex
-
-        $result | Should Not Be $null
-        $result.count | Should Be $Count
-        $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
-        $result[0].ToString() | Should Match $ExpectedResult
-
-        if ($result.count > 1)
-        {
-            $result[1].ToString() | Should Match $ExpectedSecondResult
-        }
-    }
-}
-
-function RunPathAndLiteralPathParameterTestCase($testCases)
-{
-    It "<Name>" -TestCase $testCases {
-
-        param ($Name, $PathCase, $Path, $ExpectedResult, $ExpectedSecondResult)
-
-        if ($PathCase)
-        {
-            $result =  Format-Hex -Path $Path
-        }
-        else # LiteralPath
-        {
-            $result = Format-Hex -LiteralPath $Path
-        }
-
-        $result | Should Not Be $null
-        $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
-        $result[0].ToString() | Should Match $ExpectedResult
-
-        if ($result.count > 1)
-        {
-            $result[1].ToString() | Should Match $ExpectedSecondResult
-        }
-    }
-}
-
-function RunEncodingTestCase($testCases)
-{
-    It "<Name>" -TestCase $testCases {
-
-        param ($Name, $Encoding, $Count, $ExpectedResult)
-
-        $result = Format-Hex -InputObject 'hello' -Encoding $Encoding
-
-        $result | Should Not Be $null
-        $result.count | Should Be $Count
-        $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
-        $result[0].ToString() | Should Match $ExpectedResult
-    }
-}
-
-function RunContinuesToProcessCase($testCases)
-{
-    $skipTest = ([System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsOSX)
-
-    It "<Name>" -Skip:$($skipTest -or (-not $certProviderAvailable)) -TestCase $testCases {
-
-        param ($Name, $PathCase, $InvalidPath, $ExpectedFullyQualifiedErrorId)
-
-        $output = $null
-        $errorThrown = $null
-
-        if ($PathCase)
-        {
-            $output = Format-Hex -Path $InvalidPath, $inputFile1 -ErrorVariable errorThrown -ErrorAction SilentlyContinue
-        }
-        else # LiteralPath
-        {
-            $output = Format-Hex -LiteralPath $InvalidPath, $inputFile1 -ErrorVariable errorThrown -ErrorAction SilentlyContinue
-        }
-
-        $errorThrown | Should Not Be $null
-        $errorThrown.FullyQualifiedErrorId | Should Match $ExpectedFullyQualifiedErrorId
-
-        $output | Should Not Be $null
-        $output[0].ToString() | Should Match $inputText1
-    }
-}
-
-function RunExpectedErrorTestCase($testCases)
-{
-    $skipTest = ([System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsOSX)
-
-    It "<Name>" -Skip:$($skipTest -or (-not $certProviderAvailable)) -TestCase $testCases {
-
-        param ($Name, $PathParameterErrorCase, $Path, $InputObject, $InputObjectErrorCase, $ExpectedFullyQualifiedErrorId)
-
-        try
-        {
-            if ($PathParameterErrorCase)
-            {
-                $result = Format-Hex -Path $Path -ErrorAction Stop
-            }
-            if ($InputObjectErrorCase)
-            {
-                $result = Format-Hex -InputObject $InputObject -ErrorAction Stop
-            }
-        }
-        catch
-        {
-            $thrownError = $_
-        }
-
-        $thrownError | Should Not Be $null
-        $thrownError.FullyQualifiedErrorId | Should Match $ExpectedFullyQualifiedErrorId
-    }
-}
-
 Describe "FormatHex" -tags "CI" {
 
     BeforeAll {
 
         Setup -d FormatHexDataDir
         $inputText1 = 'Hello World'
-        $inputText2 = 'This is a bit more text'
+        $inputText2 = 'More text'
         $inputText3 = 'Literal path'
+        $inputText4 = 'Now is the winter of our discontent'
         $inputFile1 = setup -f "FormatHexDataDir/SourceFile-1.txt" -content $inputText1 -pass
         $inputFile2 = setup -f "FormatHexDataDir/SourceFile-2.txt" -content $inputText2 -pass
         $inputFile3 = setup -f "FormatHexDataDir/SourceFile literal [3].txt" -content $inputText3 -pass
+        $inputFile4 = setup -f "FormatHexDataDir/SourceFile-4.txt" -content $inputText4 -pass
 
         $certificateProvider = Get-ChildItem Cert:\CurrentUser\My\ -ErrorAction SilentlyContinue
         $thumbprint = $null
@@ -228,7 +97,16 @@ Describe "FormatHex" -tags "CI" {
             }
         )
 
-        RunInputObjectTestCase $testCases
+        It "<Name>" -TestCase $testCases{
+
+            param ($Name, $InputObject, $Count, $ExpectedResult)
+
+            $result = Format-Hex -InputObject $InputObject
+
+            $result.count | Should Be $Count
+            $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+            $result.ToString() | Should Match $ExpectedResult
+        }
     }
 
     Context "InputObject From Pipeline" {
@@ -293,10 +171,24 @@ Describe "FormatHex" -tags "CI" {
             }
         )
 
-        RunObjectFromPipelineTestCase $testCases
+        It "<Name>" -Testcase $testCases {
+
+            param ($Name, $InputObject, $Count, $ExpectedResult, $ExpectedSecondResult)
+
+            $result = $InputObject | Format-Hex
+
+            $result.count | Should Be $Count
+            $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+            $result[0].ToString() | Should Match $ExpectedResult
+
+            if ($result.count -gt 1)
+            {
+                $result[1].ToString() | Should Match $ExpectedSecondResult
+            }
+        }
     }
 
-    Context "Path Paramater" {
+    Context "Path and LiteralPath Paramaters" {
 
         $testDirectory = $inputFile1.DirectoryName
 
@@ -324,13 +216,6 @@ Describe "FormatHex" -tags "CI" {
                 ExpectedResult = $inputText1
                 ExpectedSecondResult = $inputText2
             }
-        )
-
-        RunPathAndLiteralPathParameterTestCase $testCases
-    }
-
-    Context "LiteralPath Paramater" {
-        $testCases = @(
             @{
                 Name = "Can process file content from given file path 'fhx -LiteralPath `$inputFile3'"
                 Path =  $inputFile3
@@ -346,7 +231,27 @@ Describe "FormatHex" -tags "CI" {
             }
         )
 
-        RunPathAndLiteralPathParameterTestCase $testCases
+        It "<Name>" -TestCase $testCases {
+
+            param ($Name, $PathCase, $Path, $ExpectedResult, $ExpectedSecondResult)
+
+            if ($PathCase)
+            {
+                $result =  Format-Hex -Path $Path
+            }
+            else # LiteralPath
+            {
+                $result = Format-Hex -LiteralPath $Path
+            }
+
+            $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+            $result[0].ToString() | Should Match $ExpectedResult
+
+            if ($result.count -gt 1)
+            {
+                $result[1].ToString() | Should Match $ExpectedSecondResult
+            }
+        }
     }
 
     Context "Encoding Parameter" {
@@ -389,12 +294,22 @@ Describe "FormatHex" -tags "CI" {
             }
         )
 
-    RunEncodingTestCase $testCases
-}
+        It "<Name>" -TestCase $testCases {
+
+            param ($Name, $Encoding, $Count, $ExpectedResult)
+
+            $result = Format-Hex -InputObject 'hello' -Encoding $Encoding
+
+            $result.count | Should Be $Count
+            $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
+            $result[0].ToString() | Should Match $ExpectedResult
+        }
+    }
 
     Context "Validate Error Scenarios" {
 
         $testDirectory = $inputFile1.DirectoryName
+        $skipTest = ([System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsOSX)
 
         $testCases = @(
             @{
@@ -412,10 +327,33 @@ Describe "FormatHex" -tags "CI" {
             }
         )
 
-        RunExpectedErrorTestCase $testCases
+        It "<Name>" -Skip:$($skipTest -or (-not $certProviderAvailable)) -TestCase $testCases {
+
+            param ($Name, $PathParameterErrorCase, $Path, $InputObject, $InputObjectErrorCase, $ExpectedFullyQualifiedErrorId)
+
+            try
+            {
+                if ($PathParameterErrorCase)
+                {
+                    $result = Format-Hex -Path $Path -ErrorAction Stop
+                }
+                if ($InputObjectErrorCase)
+                {
+                    $result = Format-Hex -InputObject $InputObject -ErrorAction Stop
+                }
+            }
+            catch
+            {
+                $thrownError = $_
+            }
+
+            $thrownError.FullyQualifiedErrorId | Should Match $ExpectedFullyQualifiedErrorId
+        }
     }
 
     Context "Continues to Process Valid Paths" {
+
+        $skipTest = ([System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsOSX)
 
         $testCases = @(
             @{
@@ -437,7 +375,27 @@ Describe "FormatHex" -tags "CI" {
             }
         )
 
-        RunContinuesToProcessCase $testCases
+        It "<Name>" -Skip:$($skipTest -or (-not $certProviderAvailable)) -TestCase $testCases {
+
+            param ($Name, $PathCase, $InvalidPath, $ExpectedFullyQualifiedErrorId)
+
+            $output = $null
+            $errorThrown = $null
+
+            if ($PathCase)
+            {
+                $output = Format-Hex -Path $InvalidPath, $inputFile1 -ErrorVariable errorThrown -ErrorAction SilentlyContinue
+            }
+            else # LiteralPath
+            {
+                $output = Format-Hex -LiteralPath $InvalidPath, $inputFile1 -ErrorVariable errorThrown -ErrorAction SilentlyContinue
+            }
+
+            $errorThrown.FullyQualifiedErrorId | Should Match $ExpectedFullyQualifiedErrorId
+
+            $output.Length | Should Be 1
+            $output[0].ToString() | Should Match $inputText1
+        }
     }
 
     Context "Cmdlet Functionality" {
@@ -471,14 +429,15 @@ Describe "FormatHex" -tags "CI" {
             $result.ToString() | Should be "00000000   61 61 61 61 61 61 61 61 61 61 61 61 61 61 61 61  aaaaaaaaaaaaaaaa`r`n00000010   61 61 61 61 61 61 61 61 61 61 61 61 61 61        aaaaaaaaaaaaaa  "
         }
 
-        It "Validate that files do not have buffer underrun problems 'Format-Hex -path `$InputFile2'" {
+        It "Validate that files do not have buffer underrun problems 'Format-Hex -path `$InputFile4'" {
 
-            $result = Format-Hex -path $InputFile2
+            $result = Format-Hex -path $InputFile4
 
             $result | Should Not BeNullOrEmpty
-            $result.Count | should be 2
-            $result[0].ToString() | Should be "00000000   54 68 69 73 20 69 73 20 61 20 62 69 74 20 6D 6F  This is a bit mo"
-            $result[1].ToString() | Should be "00000010   72 65 20 74 65 78 74                             re text         "
+            $result.Count | Should Be 3
+            $result[0].ToString() | Should be "00000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
+            $result[1].ToString() | Should be "00000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"
+            $result[2].ToString() | Should be "00000020   65 6E 74                                         ent             "
         }
     }
 }
