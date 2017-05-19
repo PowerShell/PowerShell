@@ -9,8 +9,6 @@ using System.Text;
 using System.Net.Http;
 using System.Collections.Generic;
 using System.IO;
-using System.Text.RegularExpressions;
-using System.Linq;
 
 namespace Microsoft.PowerShell.Commands
 {
