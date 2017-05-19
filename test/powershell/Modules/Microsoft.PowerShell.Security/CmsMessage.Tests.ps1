@@ -3,7 +3,7 @@ Import-Module (Join-Path -Path $PSScriptRoot 'certificateCommon.psm1') -Force
 Describe "CmsMessage cmdlets and Get-PfxCertificate basic tests" -Tags "CI" {
     
     BeforeAll {
-        $certLocation = Create-GoodCertificate
+        $certLocation = New-GoodCertificate
         $certLocation | Should Not BeNullOrEmpty | Out-Null
     }
 

@@ -1,4 +1,4 @@
-Function Create-GoodCertificate
+Function New-GoodCertificate
 {
     $dataEnciphermentCert = "
 MIIKYAIBAzCCCiAGCSqGSIb3DQEHAaCCChEEggoNMIIKCTCCBgoGCSqGSIb3DQEHAaCCBfsEggX3
@@ -58,7 +58,7 @@ OksttXT1kXf+aez9EzDlsgQU4ck78h0WTy01zHLwSKNWK4wFFQM=
     return $certLocation
 }
 
-Function Create-BadCertificate
+Function New-BadCertificate
 {
     $codeSigningCert = "
 MIIDAjCCAeqgAwIBAgIQW/oHcNaftoFGOYb4w5A0JTANBgkqhkiG9w0BAQsFADAZMRcwFQYDVQQD
@@ -87,10 +87,10 @@ nMbw+XY4C8xdDnHfS6mF+Hol98dURB/MC/x3sZ3gSjKo
 
 function Install-TestCertificates
 {
-    $script:certLocation = Create-GoodCertificate
+    $script:certLocation = New-GoodCertificate
     $script:certLocation | Should Not BeNullOrEmpty | Out-Null
 
-    $script:badCertLocation = Create-BadCertificate
+    $script:badCertLocation = New-BadCertificate
     $script:badCertLocation | Should Not BeNullOrEmpty | Out-Null
 
     if ($IsCoreCLR)
