@@ -1945,7 +1945,7 @@ namespace System.Management.Automation.Language
 
             var pipelineAst = stmt as PipelineAst;
             // If it's a pipeline that isn't being backgrounded, try to optimize expression
-            if (pipelineAst != null && ! pipelineAst.BackgroundProcess)
+            if (pipelineAst != null && ! pipelineAst.Background)
             {
                 var expr = pipelineAst.GetPureExpression();
                 if (expr != null) { return Compile(expr); }
@@ -2986,7 +2986,7 @@ namespace System.Management.Automation.Language
                 exprs.Add(UpdatePosition(pipelineAst));
             }
 
-            if (pipelineAst.BackgroundProcess)
+            if (pipelineAst.Background)
             {
                 Expression invokeBackgroundPipe = Expression.Call(
                     CachedReflectionInfo.PipelineOps_InvokePipelineInBackground,
@@ -2999,7 +2999,7 @@ namespace System.Management.Automation.Language
                 var pipeElements = pipelineAst.PipelineElements;
                 var firstCommandExpr = (pipeElements[0] as CommandExpressionAst);
     
-                if (firstCommandExpr != null && pipeElements.Count == 1 && ! pipelineAst.BackgroundProcess)
+                if (firstCommandExpr != null && pipeElements.Count == 1)
                 {
                     if (firstCommandExpr.Redirections.Count > 0)
                     {
@@ -3015,7 +3015,7 @@ namespace System.Management.Automation.Language
                     Expression input;
                     int i, commandsInPipe;
     
-                    if (firstCommandExpr != null  && !pipelineAst.BackgroundProcess)
+                    if (firstCommandExpr != null)
                     {
                         if (firstCommandExpr.Redirections.Count > 0)
                         {

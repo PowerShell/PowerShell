@@ -2451,7 +2451,7 @@ namespace System.Management.Automation.Language
                     {
                         endErrorStatement = fileNameExpr.Extent;
                         condition = new PipelineAst(fileNameExpr.Extent,
-                                                    new CommandExpressionAst(fileNameExpr.Extent, fileNameExpr, null), false);
+                                                    new CommandExpressionAst(fileNameExpr.Extent, fileNameExpr, null), background: false);
 
                         if (!specifiedFlags.ContainsKey("file"))
                         {
@@ -5182,7 +5182,7 @@ namespace System.Management.Automation.Language
 
             Token pipeToken = null;
             bool scanning = true;
-            bool backgroundProcess = false;
+            bool background = false;
             while (scanning)
             {
                 CommandBaseAst commandAst;
@@ -5297,7 +5297,7 @@ namespace System.Management.Automation.Language
                     case TokenKind.Ampersand:
                         SkipToken();
                         scanning = false;
-                        backgroundProcess = true;
+                        background = true;
                         break;
                     case TokenKind.Pipe:
                         SkipToken();
@@ -5334,7 +5334,7 @@ namespace System.Management.Automation.Language
                 return null;
             }
 
-            return new PipelineAst(ExtentOf(startExtent, pipelineElements[pipelineElements.Count - 1]), pipelineElements, backgroundProcess);
+            return new PipelineAst(ExtentOf(startExtent, pipelineElements[pipelineElements.Count - 1]), pipelineElements, background);
         }
 
         private RedirectionAst RedirectionRule(RedirectionToken redirectionToken, RedirectionAst[] redirections, ref IScriptExtent extent)

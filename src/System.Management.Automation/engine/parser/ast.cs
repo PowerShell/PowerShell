@@ -5472,14 +5472,14 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="extent">The extent of the pipeline.</param>
         /// <param name="pipelineElements">The collection of commands representing the pipeline.</param>
-        /// <param name="backgroundProcess">Indicates that this pipeline should be run in the background</param>
+        /// <param name="background">Indicates that this pipeline should be run in the background</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> is null.
         /// </exception>
         /// <exception cref="PSArgumentException">
         /// If <paramref name="pipelineElements"/> is null or is an empty collection.
         /// </exception>
-        public PipelineAst(IScriptExtent extent, IEnumerable<CommandBaseAst> pipelineElements, bool backgroundProcess)
+        public PipelineAst(IScriptExtent extent, IEnumerable<CommandBaseAst> pipelineElements, bool background)
             : base(extent)
         {
             if (pipelineElements == null || !pipelineElements.Any())
@@ -5487,7 +5487,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentException("pipelineElements");
             }
 
-            this.BackgroundProcess = backgroundProcess;
+            this.Background = background;
             this.PipelineElements = new ReadOnlyCollection<CommandBaseAst>(pipelineElements.ToArray());
             SetParents(PipelineElements);
         }
@@ -5503,7 +5503,7 @@ namespace System.Management.Automation.Language
         /// <exception cref="PSArgumentException">
         /// If <paramref name="pipelineElements"/> is null or is an empty collection.
         /// </exception>
-        public PipelineAst(IScriptExtent extent, IEnumerable<CommandBaseAst> pipelineElements) :this (extent, pipelineElements, backgroundProcess: false)
+        public PipelineAst(IScriptExtent extent, IEnumerable<CommandBaseAst> pipelineElements) :this (extent, pipelineElements, background: false)
         {
 
         }
@@ -5513,11 +5513,11 @@ namespace System.Management.Automation.Language
         /// </summary>
         /// <param name="extent">The extent of the pipeline (which should be the extent of the command).</param>
         /// <param name="commandAst">The command for the pipeline.</param>
-        /// <param name="backgroundProcess">Indicates that this pipeline should be run in the background</param>
+        /// <param name="background">Indicates that this pipeline should be run in the background</param>
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="commandAst"/> is null.
         /// </exception>
-        public PipelineAst(IScriptExtent extent, CommandBaseAst commandAst, bool backgroundProcess)
+        public PipelineAst(IScriptExtent extent, CommandBaseAst commandAst, bool background)
             : base(extent)
         {
             if (commandAst == null)
@@ -5525,7 +5525,7 @@ namespace System.Management.Automation.Language
                 throw PSTraceSource.NewArgumentNullException("commandAst");
             }
 
-            this.BackgroundProcess = backgroundProcess;
+            this.Background = background;
             this.PipelineElements = new ReadOnlyCollection<CommandBaseAst>(new CommandBaseAst[] { commandAst });
             SetParent(commandAst);
         }
@@ -5538,7 +5538,7 @@ namespace System.Management.Automation.Language
         /// <exception cref="PSArgumentNullException">
         /// If <paramref name="extent"/> or <paramref name="commandAst"/> is null.
         /// </exception>
-        public PipelineAst(IScriptExtent extent, CommandBaseAst commandAst) :this (extent, commandAst, backgroundProcess: false)
+        public PipelineAst(IScriptExtent extent, CommandBaseAst commandAst) :this (extent, commandAst, background: false)
         {
 
         }
@@ -5551,7 +5551,7 @@ namespace System.Management.Automation.Language
         /// <summary>
         /// Indicates that this pipeline should be run in the background.
         /// </summary>
-        public bool BackgroundProcess { get; private set; }
+        public bool Background { get; private set; }
 
         /// <summary>
         /// If the pipeline represents a pure expression, the expression is returned, otherwise null is returned.
@@ -5578,7 +5578,7 @@ namespace System.Management.Automation.Language
         public override Ast Copy()
         {
             var newPipelineElements = CopyElements(this.PipelineElements);
-            return new PipelineAst(this.Extent, newPipelineElements, this.BackgroundProcess);
+            return new PipelineAst(this.Extent, newPipelineElements, this.Background);
         }
 
         internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
@@ -6355,7 +6355,7 @@ namespace System.Management.Automation.Language
             // If the assignment is just an expression and the expression is not backgrounded then
             // remove the pipeline wrapping the expression.
             var pipelineAst = right as PipelineAst;
-            if (pipelineAst != null && ! pipelineAst.BackgroundProcess)
+            if (pipelineAst != null && ! pipelineAst.Background)
             {
                 if (pipelineAst.PipelineElements.Count == 1)
                 {
@@ -6701,7 +6701,7 @@ namespace System.Management.Automation.Language
 
             var cmdAst = new CommandAst(this.Extent, cea, TokenKind.Unknown, null);
 
-            var pipeLineAst = new PipelineAst(this.Extent, cmdAst, backgroundProcess: false);
+            var pipeLineAst = new PipelineAst(this.Extent, cmdAst, background: false);
             var funcStatements = ConfigurationExtraParameterStatements.Select(statement => (StatementAst)statement.Copy()).ToList();
             funcStatements.Add(pipeLineAst);
             var statmentBlockAst = new StatementBlockAst(this.Extent, funcStatements, null);
@@ -6741,7 +6741,7 @@ namespace System.Management.Automation.Language
             var setItemCmdlet = new CommandAst(this.Extent, setItemCmdElements, TokenKind.Unknown, null);
             #endregion
 
-            var returnPipelineAst = new PipelineAst(this.Extent, setItemCmdlet, backgroundProcess: false);
+            var returnPipelineAst = new PipelineAst(this.Extent, setItemCmdlet, background: false);
 
             SetParent(returnPipelineAst);
 
@@ -7286,7 +7286,7 @@ namespace System.Management.Automation.Language
             //
             var cmdAst = new CommandAst(FunctionName.Extent, cea, TokenKind.Unknown, null);
             cmdAst.DefiningKeyword = Keyword;
-            _commandCallPipelineAst = new PipelineAst(FunctionName.Extent, cmdAst, false);
+            _commandCallPipelineAst = new PipelineAst(FunctionName.Extent, cmdAst, background: false);
             return _commandCallPipelineAst;
         }
 
