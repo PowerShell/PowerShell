@@ -1,7 +1,6 @@
 Describe 'native commands lifecycle' -tags 'Feature' {
 
     BeforeAll {
-        Import-Module $helperModule
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
     }
 
