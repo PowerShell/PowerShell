@@ -1581,10 +1581,11 @@ namespace System.Management.Automation.Internal
         internal static bool StopwatchIsNotHighResolution;
 
         // Will be either "delete" or "rename" during tests.
-        internal static string GciEnumerationAction = null;
+        internal static bool GciEnumerationActionDelete = false;
+        internal static bool GciEnumerationActionRename = false;
 
         /// <summary>This member is used for internal test purposes.</summary>
-        public static void SetTestHook(string property, object value)
+        public static void SetTestHook(string property, bool value)
         {
             var fieldInfo = typeof(InternalTestHooks).GetField(property, BindingFlags.Static | BindingFlags.NonPublic);
             if (fieldInfo != null)

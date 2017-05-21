@@ -1659,22 +1659,22 @@ namespace Microsoft.PowerShell.Commands
                             return;
                         }
 
-                        // Internal test code, run only if the
-                        // 'GciEnumerationAction' test hook is set
-                        if (InternalTestHooks.GciEnumerationAction == "delete")
+                        // Internal test code, run only if one of the
+                        // 'GciEnumerationAction' test hooks are set.
+                        if (InternalTestHooks.GciEnumerationActionDelete)
                         {
-                            if (filesystemInfo.Name == "c")
+                            if (filesystemInfo.Name == "c283d143-2116-4809-bf11-4f7d61613f92")
                             {
                                 var fullName = Path.Combine(directory.FullName, filesystemInfo.Name);
                                 File.Delete(fullName);
                             }
                         }
-                        else if (InternalTestHooks.GciEnumerationAction == "rename")
+                        else if (InternalTestHooks.GciEnumerationActionRename)
                         {
-                            if (filesystemInfo.Name == "B")
+                            if (filesystemInfo.Name == "B1B691A9-B7B1-4584-AED7-5259511BEEC4")
                             {
                                 var fullName = Path.Combine(directory.FullName, filesystemInfo.Name);
-                                var newFullName = Path.Combine(directory.FullName, "Z");
+                                var newFullName = Path.Combine(directory.FullName, "77efd2bb-92aa-4ad3-979a-18936a4bd565");
                                 File.Move(fullName, newFullName);
                             }
                         }
