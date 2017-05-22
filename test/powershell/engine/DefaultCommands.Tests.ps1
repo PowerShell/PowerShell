@@ -524,4 +524,8 @@ Describe "Verify approved aliases list" -Tags "CI" {
         $result | Write-Host
         $result | Should Be $null
     }
+
+    It "Should have 'more' as a function" {
+        Test-Path Function:more | Should Be $true
+    }
 }
