@@ -1,17 +1,21 @@
-Import-Module (Join-Path -Path $PSScriptRoot 'certificateCommon.psm1') -Force
+# The import and table creation work on non-windows, but are currently not needed
+if($IsWindows)
+{
+    Import-Module (Join-Path -Path $PSScriptRoot 'certificateCommon.psm1') -Force
 
-$currentUserMyLocations = @(
-    @{path = 'Cert:\CurrentUser\my'}
-    @{path = 'cert:\currentuser\my'}
-    @{path = 'Microsoft.PowerShell.Security\Certificate::CurrentUser\My'}
-    @{path = 'Microsoft.PowerShell.Security\certificate::currentuser\my'}        
-)
+    $currentUserMyLocations = @(
+        @{path = 'Cert:\CurrentUser\my'}
+        @{path = 'cert:\currentuser\my'}
+        @{path = 'Microsoft.PowerShell.Security\Certificate::CurrentUser\My'}
+        @{path = 'Microsoft.PowerShell.Security\certificate::currentuser\my'}        
+    )
 
-$testLocations = @(
-    @{path = 'cert:\'}
-    @{path = 'CERT:\'}
-    @{path = 'Microsoft.PowerShell.Security\Certificate::'}
-)
+    $testLocations = @(
+        @{path = 'cert:\'}
+        @{path = 'CERT:\'}
+        @{path = 'Microsoft.PowerShell.Security\Certificate::'}
+    )
+}
 
 # Add CurrentUserMyLocations to TestLocations
 foreach($location in $currentUserMyLocations)
