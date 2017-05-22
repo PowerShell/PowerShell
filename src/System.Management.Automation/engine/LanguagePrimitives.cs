@@ -4791,7 +4791,7 @@ namespace System.Management.Automation
                 return CacheConversion<object>(fromType, toType, LanguagePrimitives.ConvertIntegerToEnum, ConversionRank.Language);
             }
 
-            if (fromType == typeof(PSMethod) && toType.IsSubclassOf(typeof(MulticastDelegate)))
+            if (fromType == typeof(PSMethod) && toType.IsSubclassOf(typeof(Delegate)))
             {
                 var psMethod = (PSMethod) fromInstance;
 
