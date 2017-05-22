@@ -93,7 +93,7 @@ function Install-TestCertificates
     $script:badCertLocation = New-BadCertificate
     $script:badCertLocation | Should Not BeNullOrEmpty | Out-Null
 
-    if ($IsCoreCLR)
+    if ($IsCoreCLR -and $IsWindows)
     {
         # PKI module is not available for PowerShell Core, so we need to use Windows PowerShell to import the cert
         $fullPowerShell = Join-Path "$env:SystemRoot" "System32\WindowsPowerShell\v1.0\powershell.exe"
@@ -115,10 +115,13 @@ Import-Certificate $script:badCertLocation -CertStoreLocation Cert:\CurrentUser\
             $env:PSModulePath = $modulePathCopy
         }
     }
-    else
+    elseif($IsWindows)
     {
         $script:importedCert = Import-PfxCertificate $script:certLocation -CertStoreLocation cert:\CurrentUser\My
         $script:testBadCert = Import-Certificate $script:badCertLocation -CertStoreLocation Cert:\CurrentUser\My
+    }
+    else {
+        throw 'Not supported on non-windows platforms'
     }
 }
 
@@ -139,12 +142,18 @@ function Get-BadCertificateObject
 
 function Remove-TestCertificates
 {
-    if ($script:importedCert)
+    if($IsWindows)
     {
-        Remove-Item (Join-Path Cert:\CurrentUser\My $script:importedCert.Thumbprint) -Force -ErrorAction SilentlyContinue
+        if ($script:importedCert)
+        {
+            Remove-Item (Join-Path Cert:\CurrentUser\My $script:importedCert.Thumbprint) -Force -ErrorAction SilentlyContinue
+        }
+        if ($script:testBadCert)
+        {
+            Remove-Item (Join-Path Cert:\CurrentUser\My $script:testBadCert.Thumbprint) -Force -ErrorAction SilentlyContinue
+        }
     }
-    if ($script:testBadCert)
-    {
-        Remove-Item (Join-Path Cert:\CurrentUser\My $script:testBadCert.Thumbprint) -Force -ErrorAction SilentlyContinue
+    else {
+        throw 'Not supported on non-windows platforms'
     }
 }
