@@ -2,8 +2,7 @@ using namespace System.Diagnostics
 
 Describe "Invoke-Item basic tests" -Tags "CI" {
     BeforeAll {
-        $isNanoOrIot = [System.Management.Automation.Platform]::IsNanoServer -or
-                       [System.Management.Automation.Platform]::IsIoT
+        $powershell = Join-Path $PSHOME -ChildPath powershell
 
         $testFile1 = Join-Path -Path $TestDrive -ChildPath "text1.txt"
         New-Item -Path $testFile1 -ItemType File -Force > $null
@@ -18,39 +17,27 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
             @{ TestFile = $testFile2 })
     }
 
-    It "Should invoke text file '<TestFile>' without error" -Skip:$isNanoOrIot -TestCases $textFileTestCases {
+    It "Should invoke text file '<TestFile>' without error" -Skip:$IsWindows -TestCases $textFileTestCases {
         param($TestFile)
 
-        $old_pids = Get-Process | ForEach-Object Id
-        Invoke-Item -Path $TestFile
-        $new_pids = Get-Process | ForEach-Object Id
-
-        $diff = @(Compare-Object $old_pids $new_pids)
-        $diff.Count | Should Be 1
-        $diff[0].SideIndicator | Should Be "=>"
-        $proc_name = Get-Process -Id $diff[0].InputObject | ForEach-Object Name
-
-        if ($IsLinux) {
-            $proc_name | Should Be "xdg-open"
-        } elseif ($IsOSX) {
-            $proc_name | Should Be "open"
-        }
-        ## On Windows, the name would be the default application associated with the file extension.
-        ## It varies depending on the setting, so we don't test the name for Windows.
+        $redirectFile = Join-Path -Path $TestDrive -ChildPath "redirect1.txt"
+        ## Redirect stderr to a file. So if 'xdg-open' or 'open' fail to open the text file, an error
+        ## message from 'xdg-open' or 'open' will be written to the file. 
+        & $powershell -noprofile "Invoke-Item '$TestFile'" 2> $redirectFile
+        ## If the text file was successfully opened, the length of redirection file should be 0 as no
+        ## error message was written to it.
+        Get-Item -Path $redirectFile | ForEach-Object Length | Should Be 0
     }
 
     It "Should invoke an executable file without error" {
-        $executable, $procName = if ($IsLinux -or $IsOSX) {
-            Get-Command "ifconfig" -CommandType Application | ForEach-Object Source
-            "ifconfig"
-        } else {
-            Get-Command "ipconfig" -CommandType Application | ForEach-Object Source
-            "ipconfig"
-        }
+        $executable = Get-Command "ping" -CommandType Application | ForEach-Object Source
+        $redirectFile = Join-Path -Path $TestDrive -ChildPath "redirect2.txt"
 
-        Invoke-Item -Path $executable
-        $proc = Get-Process -Name $procName
-        $proc | Should Not BeNullOrEmpty
+        ## Redirect stderr to stdout, and then redirect to a file.
+        ## This is needed because 'ping' on Unix write out usage to stderr,
+        ## while 'ping.exe' on Windows writes out usage to stdout.
+        & $powershell -noprofile "Invoke-Item $executable" 2>&1 > $redirectFile
+        Select-String -Path $redirectFile -Pattern "ping" -SimpleMatch | Should Not BeNullOrEmpty
     }
 }
 
