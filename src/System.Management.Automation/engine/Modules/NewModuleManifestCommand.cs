@@ -930,7 +930,7 @@ namespace Microsoft.PowerShell.Commands
 
                 if (string.IsNullOrEmpty(_copyright))
                 {
-                    _copyright = StringUtil.Format(Modules.DefaultCopyrightMessage, DateTime.Now.Year, _author);
+                    _copyright = StringUtil.Format(Modules.DefaultCopyrightMessage, _author);
                 }
 
                 FileStream fileStream;
