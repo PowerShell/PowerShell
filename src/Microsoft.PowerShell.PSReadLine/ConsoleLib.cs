@@ -426,6 +426,7 @@ namespace Microsoft.PowerShell.Internal
         private bool _istmInitialized = false;
         private TEXTMETRIC _tm = new TEXTMETRIC();
         private bool _trueTypeInUse = false;
+        private static bool _getCurrentConsoleFontExApiAvailable = true;
 
         private readonly Lazy<SafeFileHandle> _outputHandle = new Lazy<SafeFileHandle>(() =>
         {
@@ -692,13 +693,16 @@ namespace Microsoft.PowerShell.Internal
             CONSOLE_FONT_INFO_EX fontInfo = new CONSOLE_FONT_INFO_EX();
             fontInfo.cbSize = Marshal.SizeOf(fontInfo);
             bool result = true;
-            try
+            if (_getCurrentConsoleFontExApiAvailable)
             {
-                result = NativeMethods.GetCurrentConsoleFontEx(consoleHandle.DangerousGetHandle(), false, ref fontInfo);
-            }
-            catch (System.EntryPointNotFoundException)
-            {
-                // ignore for Nanoserver
+                try
+                {
+                    result = NativeMethods.GetCurrentConsoleFontEx(consoleHandle.DangerousGetHandle(), false, ref fontInfo);
+                }
+                catch (System.EntryPointNotFoundException)
+                {
+                    _getCurrentConsoleFontExApiAvailable = false;  // api not available on NanoServer
+                }
             }
 
             if (result == false)

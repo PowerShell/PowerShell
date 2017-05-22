@@ -304,6 +304,8 @@ namespace Microsoft.PowerShell
             return default(ConsoleKey);
         }
 #else
+        private static bool _toUnicodeApiAvailable = true;
+
         internal static char GetCharFromConsoleKey(ConsoleKey key, ConsoleModifiers modifiers)
         {
             // default for unprintables and unhandled
@@ -324,14 +326,17 @@ namespace Microsoft.PowerShell
             // get corresponding character  - may be 0, 1 or 2 in length (diacritics)
             var chars = new char[2];
             int charCount = 1;
-            try
+            if (_toUnicodeApiAvailable)
             {
-                charCount = NativeMethods.ToUnicode(
-                    virtualKey, scanCode, state, chars, chars.Length, NativeMethods.MENU_IS_INACTIVE);
-            }
-            catch (System.EntryPointNotFoundException)
-            {
-                // assume not unicode
+                try
+                {
+                    charCount = NativeMethods.ToUnicode(
+                        virtualKey, scanCode, state, chars, chars.Length, NativeMethods.MENU_IS_INACTIVE);
+                }
+                catch (System.EntryPointNotFoundException)
+                {
+                    _toUnicodeApiAvailable = false;  // api not available on NanoServer
+                }
             }
 
             // TODO: support diacritics (charCount == 2)
