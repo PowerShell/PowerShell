@@ -1360,7 +1360,11 @@ namespace System.Management.Automation
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
     public sealed class ValidateSetAttribute : ValidateEnumeratedArgumentsAttribute
     {
-        private IEnumerable<string> _validValues;
+        /// We can use either static '_validValues' or dynamic '_validValuesGenerator' valid values list
+        private string[] _validValues;
+        private Type validValuesGeneratorType = null;
+        private IValidateSetValuesGenerator validValuesGenerator = null;
+        private DateTime cacheExpiration = DateTime.MinValue;
 
         /// <summary>
         /// Gets or sets the custom error message that is displayed to the user
@@ -1381,13 +1385,31 @@ namespace System.Management.Automation
         public bool IgnoreCase { get; set; } = true;
 
         /// <summary>
+        /// Sets a time interval in seconds to reset the '_validValues' dynamic valid values cache.
+        /// </summary>
+         public int CacheExpiration { get; set; } = 0;
+
+        /// <summary>
         /// Gets the values in the set
         /// </summary>
         public IList<string> ValidValues
         {
             get
             {
-                return _validValues.ToList();
+                if (validValuesGeneratorType != null)
+                {
+                    var currentTime = DateTime.Now;
+                    if (DateTime.Compare(cacheExpiration, currentTime) < 0)
+                    {
+                        cacheExpiration = currentTime.AddSeconds(CacheExpiration);
+                        if (validValuesGenerator == null)
+                        {
+                            validValuesGenerator = (IValidateSetValuesGenerator)Activator.CreateInstance(validValuesGeneratorType);
+                        }
+                        _validValues = validValuesGenerator.GetValidValues().ToArray();
+                    }
+                }
+                return _validValues;
             }
         }
 
@@ -1410,7 +1432,7 @@ namespace System.Management.Automation
             }
 
             string objString = element.ToString();
-            foreach (string setString in _validValues)
+            foreach (string setString in ValidValues)
             {
                 if (CultureInfo.InvariantCulture.
                         CompareInfo.Compare(setString, objString,
@@ -1455,25 +1477,19 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Initializes a new instance of the ValidateSetAttribute class
+        /// Initializes a new instance of the ValidateSetAttribute class.
+        /// Valid values is returned dynamically from a custom class implementing 'IValidateSetValuesGenerator' interface.
         /// </summary>
-        /// <param name="valuesGeneratorType">type that implements the 'IValidateSetValuesGenerator' interface</param>
-        /// <exception cref="ArgumentNullException">for null arguments</exception>
-        /// <exception cref="ArgumentOutOfRangeException">for invalid arguments</exception>
+        /// <param name="valuesGeneratorType">class that implements the 'IValidateSetValuesGenerator' interface</param>
+        /// <exception cref="ArgumentException">for null arguments</exception>
         public ValidateSetAttribute(Type valuesGeneratorType)
         {
-            IValidateSetValuesGenerator validValuesGenerator;
-
-            if (typeof(IValidateSetValuesGenerator).IsAssignableFrom(valuesGeneratorType))
-            {
-                validValuesGenerator = (IValidateSetValuesGenerator)Activator.CreateInstance(valuesGeneratorType);
-            }
-            else
+            if (!typeof(IValidateSetValuesGenerator).IsAssignableFrom(valuesGeneratorType))
             {
                 throw PSTraceSource.NewArgumentException("valuesGeneratorType");
             }
 
-            _validValues = validValuesGenerator.GetValidValues();
+            validValuesGeneratorType = valuesGeneratorType;
         }
     }
 

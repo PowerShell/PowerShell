@@ -220,85 +220,179 @@ Describe 'Type resolution with attributes' -Tag "CI" {
 }
 
 Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
-    Context 'C# test' {
 
-        BeforeAll {
-            $a=@'
-            using System;
-            using System.Management.Automation;
-            using System.Collections.Generic;
+    BeforeAll {
+        $a=@'
+        using System;
+        using System.Management.Automation;
+        using System.Collections.Generic;
 
-            namespace Test.Language {
+        namespace Test.Language {
 
-                [Cmdlet(VerbsCommon.Get, "TestValidateSet1")]
-                public class TestValidateSetCommand1 : PSCmdlet
+            [Cmdlet(VerbsCommon.Get, "TestValidateSet1")]
+            public class TestValidateSetCommand1 : PSCmdlet
+            {
+                [Parameter]
+                [ValidateSet(typeof(PSCmdlet))]
+                public string Param1;
+
+                protected override void EndProcessing()
                 {
-                    [Parameter]
-                    [ValidateSet(typeof(GenValuesForParam1))]
-                    public string Param1;
-
-                    protected override void EndProcessing()
-                    {
-                        WriteObject(Param1);
-                    }
+                    WriteObject(Param1);
                 }
+            }
 
-                [Cmdlet(VerbsCommon.Get, "TestValidateSet2")]
-                public class TestValidateSetCommand2 : PSCmdlet
+            [Cmdlet(VerbsCommon.Get, "TestValidateSet2")]
+            public class TestValidateSetCommand2 : PSCmdlet
+            {
+                [Parameter]
+                [ValidateSet(typeof(GenValuesForParam1))]
+                public string Param1;
+
+                protected override void EndProcessing()
                 {
-                    [Parameter]
-                    [ValidateSet(typeof(PSCmdlet))]
-                    public string Param1;
-
-                    protected override void EndProcessing()
-                    {
-                        WriteObject(Param1);
-                    }
+                    WriteObject(Param1);
                 }
+            }
 
+            [Cmdlet(VerbsCommon.Get, "TestValidateSet3")]
+            public class TestValidateSetCommand3 : PSCmdlet
+            {
+                [Parameter]
+                [ValidateSet(typeof(GenValuesForParam1Cache), CacheExpiration = 2)]
+                public string Param1;
 
-
-                /// Implement of test IValidateSetValuesGenerator
-                public class GenValuesForParam1 : IValidateSetValuesGenerator
+                protected override void EndProcessing()
                 {
-                    public IEnumerable<string> GetValidValues()
+                    WriteObject(Param1);
+                }
+            }
+
+
+
+            /// Implement of test IValidateSetValuesGenerator
+            public class GenValuesForParam1 : IValidateSetValuesGenerator
+            {
+                public IEnumerable<string> GetValidValues()
+                {
+                    var testValues = new string[] {"Test1","TestString1","Test2"};
+                    foreach (var value in testValues)
                     {
-                        var testValues = new string[] {"Test1","TestString","Test2"};
-                        foreach (var value in testValues)
-                        {
-                            yield return value;
-                        }
+                        yield return value;
                     }
                 }
             }
+
+            public class GenValuesForParam1Cache : IValidateSetValuesGenerator
+            {
+                public IEnumerable<string> GetValidValues()
+                {
+                    var testValues1 = new string[] {"Test1","TestString1","Test2"};
+                    var testValues2 = new string[] {"Test1","TestString2","Test2"};
+                    string[] testValues;
+
+                    var currentTime = DateTime.Now;
+                    if (DateTime.Compare(_cacheTime, currentTime) <= 0)
+                    {
+                        testValues = testValues1;
+                        //_cacheTime = currentTime.AddSeconds(2);
+                    }
+                    else
+                    {
+                        testValues = testValues2;
+                    }
+                    foreach (var value in testValues)
+                    {
+                        yield return value;
+                    }
+                }
+                private static DateTime _cacheTime = DateTime.Now.AddSeconds(2);
+            }
+        }
 '@
 
-            Add-Type -TypeDefinition $a -PassThru | % {$_.assembly} | Import-module -Force
+        Add-Type -TypeDefinition $a -PassThru | % {$_.assembly} | Import-module -Force
 
-            class GenValuesForParam2 : System.Management.Automation.IValidateSetValuesGenerator {
-                [System.Collections.Generic.IEnumerable[String]] GetValidValues() { return [string[]]("Test1","TestString","Test2") }
+        class GenValuesForParam : System.Management.Automation.IValidateSetValuesGenerator {
+            [System.Collections.Generic.IEnumerable[String]] GetValidValues() {
+
+                return [string[]]("Test1","TestString1","Test2")
             }
 
-            function Get-TestValidateSet3
-            {
-                [CmdletBinding()]
-                Param
-                (
-                    [ValidateSet([GenValuesForParam2])]
-                    $Param1
-                )
+            [DateTime] $cacheTime;
+        }
 
+        # Return '$testValues2' and after 2 seconds after first use return another array '$testValues1'.
+        class GenValuesForParamCache : System.Management.Automation.IValidateSetValuesGenerator {
+            [System.Collections.Generic.IEnumerable[String]] GetValidValues() {
+
+                $testValues1 = "Test1","TestString1","Test2"
+                $testValues2 = "Test1","TestString2","Test2"
+
+                $currentTime = [DateTime]::Now
+                if ([DateTime]::Compare([GenValuesForParamCache]::cacheTime, $currentTime) -le 0)
+                {
+                    $testValues = $testValues1;
+                }
+                else
+                {
+                    $testValues = $testValues2;
+                }
+                return [string[]]$testValues
+            }
+
+            static [DateTime] $cacheTime = [DateTime]::Now.AddSeconds(2);
+        }
+
+        function Get-TestValidateSet4
+        {
+            [CmdletBinding()]
+            Param
+            (
+                [ValidateSet([GenValuesForParam])]
                 $Param1
-            }
+            )
 
+            $Param1
         }
 
-        It 'Dynamically generated set work' {
-            Get-TestValidateSet1 -Param1 "TestString" -ErrorAction SilentlyContinue | Should BeExactly "TestString"
+        function Get-TestValidateSet5
+        {
+            [CmdletBinding()]
+            Param
+            (
+                [ValidateSet([GenValuesForParamCache], CacheExpiration = 2)]
+                $Param1
+            )
+
+            $Param1
         }
 
-        It 'Throw if IValidateSetValuesGenerator is not implemented' {
-            { Get-TestValidateSet2 -Param1 "TestString" -ErrorAction Stop } | ShouldBeErrorId "Argument"
-        }
+    }
+
+    It 'Throw if IValidateSetValuesGenerator is not implemented' {
+        { Get-TestValidateSet1 -Param1 "TestString" -ErrorAction Stop } | ShouldBeErrorId "Argument"
+    }
+
+    It 'Dynamically generated set work in C#' {
+        Get-TestValidateSet2 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
+    }
+
+    It 'Dynamically generated set work in C# with cache expiration' {
+        Get-TestValidateSet3 -Param1 "TestString2" -ErrorAction SilentlyContinue | Should BeExactly "TestString2"
+        Get-TestValidateSet3 -Param1 "TestString2" -ErrorAction SilentlyContinue | Should BeExactly "TestString2"
+        Start-Sleep -Seconds 2
+        Get-TestValidateSet3 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
+    }
+
+    It 'Dynamically generated set work in PowerShell script' {
+        Get-TestValidateSet4 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
+    }
+
+    It 'Dynamically generated set work in PowerShell script with cache expiration' {
+        Get-TestValidateSet5 -Param1 "TestString2" -ErrorAction SilentlyContinue | Should BeExactly "TestString2"
+        Get-TestValidateSet5 -Param1 "TestString2" -ErrorAction SilentlyContinue | Should BeExactly "TestString2"
+        Start-Sleep -Seconds 2
+        Get-TestValidateSet5 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
     }
 }
