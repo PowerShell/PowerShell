@@ -1,47 +1,56 @@
 using namespace System.Diagnostics
 
-Describe "Invoke-Item on non-Windows" -Tags "CI" {
-
-    function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
-    {
-        return [ProcessStartInfo]@{
-            FileName               = $powershell
-            Arguments              = $CommandLine
-            RedirectStandardInput  = $RedirectStdIn
-            RedirectStandardOutput = $true
-            RedirectStandardError  = $true
-            UseShellExecute        = $false
-        }
-    }
-
-    function RunPowerShell([ProcessStartInfo]$debugfn)
-    {
-        $process = [Process]::Start($debugfn)
-        return $process
-    }
-
-    function EnsureChildHasExited([Process]$process, [int]$WaitTimeInMS = 15000)
-    {
-        $process.WaitForExit($WaitTimeInMS)
-
-        if (!$process.HasExited)
-        {
-            $process.HasExited | Should Be $true
-            $process.Kill()
-        }
-    }
-
+Describe "Invoke-Item basic tests" -Tags "CI" {
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
-        Setup -File testfile.txt -Content "Hello World"
-        $testfile = Join-Path $TestDrive testfile.txt
+        $isNanoOrIot = [System.Management.Automation.Platform]::IsNanoServer -or
+                       [System.Management.Automation.Platform]::IsIoT
+
+        $testFile1 = Join-Path -Path $TestDrive -ChildPath "text1.txt"
+        New-Item -Path $testFile1 -ItemType File -Force > $null
+
+        $testFolder = Join-Path -Path $TestDrive -ChildPath "My Folder"
+        New-Item -Path $testFolder -ItemType Directory -Force > $null
+        $testFile2 = Join-Path -Path $testFolder -ChildPath "text2.txt"
+        New-Item -Path $testFile2 -ItemType File -Force > $null
+
+        $textFileTestCases = @(
+            @{ TestFile = $testFile1 },
+            @{ TestFile = $testFile2 })
     }
 
-    It "Should invoke a text file without error on non-Windows" -Skip:($IsWindows) {
-        $debugfn = NewProcessStartInfo "-noprofile ""``Invoke-Item $testfile`n" -RedirectStdIn
-        $process = RunPowerShell $debugfn
-        EnsureChildHasExited $process
-        $process.ExitCode | Should Be 0
+    It "Should invoke text file '<TestFile>' without error" -Skip:$isNanoOrIot -TestCases $textFileTestCases {
+        param($TestFile)
+
+        $old_pids = Get-Process | ForEach-Object Id
+        Invoke-Item -Path $TestFile
+        $new_pids = Get-Process | ForEach-Object Id
+
+        $diff = @(Compare-Object $old_pids $new_pids)
+        $diff.Count | Should Be 1
+        $diff[0].SideIndicator | Should Be "=>"
+        $proc_name = Get-Process -Id $diff[0].InputObject | ForEach-Object Name
+
+        if ($IsLinux) {
+            $proc_name | Should Be "xdg-open"
+        } elseif ($IsOSX) {
+            $proc_name | Should Be "open"
+        }
+        ## On Windows, the name would be the default application associated with the file extension.
+        ## It varies depending on the setting, so we don't test the name for Windows.
+    }
+
+    It "Should invoke an executable file without error" {
+        $executable, $procName = if ($IsLinux -or $IsOSX) {
+            Get-Command "ifconfig" -CommandType Application | ForEach-Object Source
+            "ifconfig"
+        } else {
+            Get-Command "ipconfig" -CommandType Application | ForEach-Object Source
+            "ipconfig"
+        }
+
+        Invoke-Item -Path $executable
+        $proc = Get-Process -Name $procName
+        $proc | Should Not BeNullOrEmpty
     }
 }
 
