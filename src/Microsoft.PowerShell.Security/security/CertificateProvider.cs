@@ -156,134 +156,6 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Defines the Certificate Provider dynamic parameters.
-    ///
-    /// We only support one dynamic parameter for Win 7 and earlier:
-    /// CodeSigningCert
-    /// If provided, we only return certificates valid for signing code or
-    /// scripts.
-    ///
-    /// For Win 8 and later, we also support:
-    /// SSLServerAuthentication
-    /// If provided, only return certificates valid for server authentication.
-    ///
-    /// DnsName
-    /// If provided, only return certificates matching the supplied DNS Name.
-    ///
-    /// Eku
-    /// If provided, only return certificates containing all of the OIDs
-    /// supplied.
-    ///
-    /// ExpiringInDays
-    /// If provided, only return certificates expiring within the specified
-    /// number of days.
-    ///
-    /// </summary>
-
-    internal sealed class CertificateProviderDynamicParameters
-    {
-        /// <summary>
-        /// switch that controls whether we only return
-        /// code signing certs.
-        /// </summary>
-        [Parameter()]
-        public SwitchParameter CodeSigningCert
-        {
-            get { return _codeSigningCert; }
-
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "This method is used by command line processing")]
-            set
-            { _codeSigningCert = value; }
-        }
-        private SwitchParameter _codeSigningCert = new SwitchParameter();
-
-        /// <summary>
-        /// switch that controls whether we only return
-        /// data encipherment certs.
-        /// </summary>
-        [Parameter()]
-        public SwitchParameter DocumentEncryptionCert
-        {
-            get { return _documentEncryptionCert; }
-
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "This method is used by command line processing")]
-            set
-            { _documentEncryptionCert = value; }
-        }
-        private SwitchParameter _documentEncryptionCert = new SwitchParameter();
-
-        /// <summary>
-        /// switch that controls whether we only return
-        /// code signing certs.
-        /// </summary>
-        [Parameter()]
-        public SwitchParameter SSLServerAuthentication
-        {
-            get { return _sslServerAuthentication; }
-
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "This method is used by command line processing")]
-            set
-            { _sslServerAuthentication = value; }
-        }
-
-        private SwitchParameter _sslServerAuthentication = new SwitchParameter();
-
-        /// <summary>
-        /// string to filter certs by DNSName
-        /// Expected content is a single DNS Name that may start and/or end
-        /// with '*': "contoso.com" or "*toso.c*"
-        /// </summary>
-        [Parameter()]
-        public DnsNameRepresentation DnsName
-        {
-            get { return _dnsName; }
-
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "This method is used by command line processing")]
-            set
-            { _dnsName = value; }
-        }
-
-        private DnsNameRepresentation _dnsName;
-
-        /// <summary>
-        /// string to filter certs by EKU
-        /// Expected content is one or more OID strings:
-        /// "1.3.6.1.5.5.7.3.1", etc.
-        /// For a cert to match, it must be valid for all listed OIDs.
-        /// </summary>
-        [Parameter()]
-        public string[] Eku
-        {
-            get { return _eku; }
-
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "This method is used by command line processing")]
-            set
-            { _eku = value; }
-        }
-
-        private string[] _eku = null;
-
-        /// <summary>
-        /// string to filter certs by the number of valid days
-        /// Expected content is a non-negative integer.
-        /// "0" matches all certs that have already expired.
-        /// "1" matches all certs that are currently valid and will expire
-        /// by midnight tonight (local time).
-        /// </summary>
-        [Parameter()]
-        public int ExpiringInDays
-        {
-            get { return _expiringInDays; }
-
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "This method is used by command line processing")]
-            set
-            { _expiringInDays = value; }
-        }
-
-        private int _expiringInDays = -1;
-    }
-
-    /// <summary>
     /// Defines the Certificate Provider remove-item dynamic parameters.
     ///
     /// Currently, we only support one dynamic parameter: DeleteKey
@@ -442,8 +314,7 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        public IntPtr GetFirstCert(
-            CertificateFilterInfo filter)
+        public IntPtr GetFirstCert()
         {
             return GetNextCert(IntPtr.Zero);
         }
@@ -1171,7 +1042,7 @@ namespace Microsoft.PowerShell.Commands
                     if (store != null)
                     {
                         store.Open(IncludeArchivedCerts());
-                        IntPtr certContext = store.GetFirstCert(null);
+                        IntPtr certContext = store.GetFirstCert();
                         if (IntPtr.Zero != certContext)
                         {
                             store.FreeCert(certContext);
@@ -1882,7 +1753,7 @@ namespace Microsoft.PowerShell.Commands
                 //
                 // enumerate over each cert and remove it
                 //
-                IntPtr certContext = store.GetFirstCert(null);
+                IntPtr certContext = store.GetFirstCert();
                 while (IntPtr.Zero != certContext)
                 {
                     X509Certificate2 cert = new X509Certificate2(certContext);
@@ -2628,7 +2499,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // enumerate over each cert and return it (or its name)
             //
-            IntPtr certContext = store.GetFirstCert(filter);
+            IntPtr certContext = store.GetFirstCert();
 
             while (IntPtr.Zero != certContext)
             {
@@ -3405,14 +3276,18 @@ namespace Microsoft.PowerShell.Commands
         {
             foreach (X509Extension extension in cert.Extensions)
             {
-                if (extension.Oid.FriendlyName == "Enhanced Key Usage")
+                // Filter to the OID for EKU
+                if (extension.Oid.Value == "2.5.29.37")
                 {
-                    X509EnhancedKeyUsageExtension ext = (X509EnhancedKeyUsageExtension)extension;
-                    OidCollection oids = ext.EnhancedKeyUsages;
-                    foreach (Oid oid in oids)
+                    X509EnhancedKeyUsageExtension ext = extension as X509EnhancedKeyUsageExtension;
+                    if(ext != null)
                     {
-                        EnhancedKeyUsageRepresentation ekuString = new EnhancedKeyUsageRepresentation(oid.FriendlyName, oid.Value);
-                        _ekuList.Add(ekuString);
+                        OidCollection oids = ext.EnhancedKeyUsages;
+                        foreach (Oid oid in oids)
+                        {
+                            EnhancedKeyUsageRepresentation ekuString = new EnhancedKeyUsageRepresentation(oid.FriendlyName, oid.Value);
+                            _ekuList.Add(ekuString);
+                        }
                     }
                 }
             }
@@ -3427,8 +3302,8 @@ namespace Microsoft.PowerShell.Commands
     {
         private List<DnsNameRepresentation> _dnsList = new List<DnsNameRepresentation>();
         private System.Globalization.IdnMapping idnMapping = new System.Globalization.IdnMapping();
-        private static string dnsNamePrefix = "DNS Name=";
-        private static string distinguishedNamePrefix = "CN=";
+        private const string dnsNamePrefix = "DNS Name=";
+        private const string distinguishedNamePrefix = "CN=";
 
         /// <summary>
         /// get property of DnsNameList
@@ -3454,8 +3329,7 @@ namespace Microsoft.PowerShell.Commands
             // extract DNS name from subject distinguish name
             // if it exists and does not contain a comma
             // a comma, indicates it is not a DNS name
-            if(cert.Subject.Length > distinguishedNamePrefix.Length && 
-                cert.Subject.StartsWith(distinguishedNamePrefix, System.StringComparison.InvariantCulture) && 
+            if(cert.Subject.StartsWith(distinguishedNamePrefix, System.StringComparison.InvariantCultureIgnoreCase) && 
                 cert.Subject.IndexOf(",",System.StringComparison.InvariantCulture)==-1)
             {
                 name = cert.Subject.Substring(distinguishedNamePrefix.Length);
@@ -3475,13 +3349,14 @@ namespace Microsoft.PowerShell.Commands
 
             foreach (X509Extension extension in cert.Extensions)
             {
-                if (extension.Oid.FriendlyName == "Subject Alternative Name")
+                // Filter to the OID for Subject Alternative Name
+                if (extension.Oid.Value == "2.5.29.17")
                 {
                     string[] names = extension.Format(true).Split(Environment.NewLine);
                     foreach(string nameLine in names)
                     {
                         // Get the part after 'DNS Name='
-                        if(nameLine.Length > dnsNamePrefix.Length && nameLine.StartsWith(dnsNamePrefix, System.StringComparison.InvariantCulture))
+                        if(nameLine.StartsWith(dnsNamePrefix, System.StringComparison.InvariantCultureIgnoreCase))
                         {
                             name = nameLine.Substring(dnsNamePrefix.Length);
                             try
