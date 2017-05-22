@@ -8,7 +8,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             $item_B = "B1B691A9-B7B1-4584-AED7-5259511BEEC4"
             $item_c = "c283d143-2116-4809-bf11-4f7d61613f92"
             $item_D = "D39B4FD9-3E1D-4DD5-8718-22FE2C934CE3"
-            $item_E = "D1AB99AD-4A24-49CE-AECF-E2A77376ACC0"
+            $item_E = "EE150FEB-0F21-4AFF-8066-AF59E925810C"
             $item_F = ".F81D8514-8862-4227-B041-0529B1656A43" 
             $null = New-Item -Path $TestDrive -Name $item_a -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_B -ItemType "File" -Force
@@ -51,7 +51,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             $files = Get-ChildItem -path $TestDrive -Force
             $files | Should not be $null
             $files.Count | Should be 6
-            $files.Name.Contains($item_F)
+            $files.Name.Contains($item_F) | Should Be $true
         }
 
         It "Should list only hidden files when 'Hidden' parameter is used" {
