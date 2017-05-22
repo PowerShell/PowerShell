@@ -107,6 +107,31 @@ Describe "Certificate Provider tests" -Tags "Feature" {
             $cert | should not be null
             $cert.Thumbprint | should be $expectedThumbprint
         }
+        it "Should be able to get DnsNameList of certifate by path: <path>" -TestCases $currentUserMyLocations {
+            param([string] $path)
+            $expectedThumbprint = (Get-GoodCertificateObject).Thumbprint
+            $expectedName = (Get-GoodCertificateObject).DnsNameList[0].Unicode
+            $expectedEncodedName = (Get-GoodCertificateObject).DnsNameList[0].Punycode
+            $leafPath = Join-Path -Path $path -ChildPath $expectedThumbprint
+            $cert = (Get-item -LiteralPath $leafPath)
+            $cert | should not be null
+            $cert.DnsNameList | should not be null
+            $cert.DnsNameList.Count | should be 1
+            $cert.DnsNameList[0].Unicode | should be $expectedName
+            $cert.DnsNameList[0].Punycode | should be $expectedEncodedName
+        }
+        it "Should be able to get DNSNameList of certifate by path: <path>" -TestCases $currentUserMyLocations {
+            param([string] $path)
+            $expectedThumbprint = (Get-GoodCertificateObject).Thumbprint
+            $expectedOid = (Get-GoodCertificateObject).EnhancedKeyUsageList[0].ObjectId
+            $leafPath = Join-Path -Path $path -ChildPath $expectedThumbprint
+            $cert = (Get-item -LiteralPath $leafPath)
+            $cert | should not be null
+            $cert.EnhancedKeyUsageList | should not be null
+            $cert.EnhancedKeyUsageList.Count | should be 1
+            $cert.EnhancedKeyUsageList[0].ObjectId.Length | should not be 0
+            $cert.EnhancedKeyUsageList[0].ObjectId | should be $expectedOid
+        }
         it "Should filter to codesign certificates" {
             $allCerts = get-item cert:\CurrentUser\My\*
             $codeSignCerts = get-item cert:\CurrentUser\My\* -CodeSigningCert
