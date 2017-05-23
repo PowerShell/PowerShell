@@ -44,7 +44,7 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
         ## This is needed because 'ping' on Unix write out usage to stderr,
         ## while 'ping.exe' on Windows writes out usage to stdout.
         & $powershell -noprofile "Invoke-Item $executable" 2>&1 > $redirectFile
-        Select-String -Path $redirectFile -Pattern "ping" -SimpleMatch | Should Not BeNullOrEmpty
+        Select-String -Path $redirectFile -Pattern "usage: ping" -SimpleMatch | Should Not BeNullOrEmpty
     }
 }
 
