@@ -21,14 +21,16 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
         param($TestFile)
 
         $redirectFile = Join-Path -Path $TestDrive -ChildPath "redirect1.txt"
-        ## Redirect stderr to a file. So if 'xdg-open' or 'open' fail to open the text file, an error
-        ## message from 'xdg-open' or 'open' will be written to the file.
-        & $powershell -noprofile "Invoke-Item '$TestFile'" 2> $redirectFile
+        ## Redirect stderr to a file. So if 'xdg-open' or 'open' failed to open the text file, an error
+        ## message from 'xdg-open' or 'open' would be written to the redirection file.
+        Start-Process -FilePath $powershell -ArgumentList "-noprofile Invoke-Item '$TestFile'" -RedirectStandardError $redirectFile
+
         ## If the text file was successfully opened, the length of redirection file should be 0 as no
         ## error message was written to it.
         $item = Get-Item -Path $redirectFile
         if ($item.Length > 0) {
-            Get-Content $redirectFile -Raw
+            ## Write the error message out in case the test fails
+            Get-Content $redirectFile -Raw | Write-Host
         }
         $item.Length | Should Be 0
     }
