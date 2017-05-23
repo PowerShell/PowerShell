@@ -213,4 +213,13 @@
   <data name="ResponseStatusCodeFailure" xml:space="preserve">
     <value>Response status code does not indicate success: {0} ({1}).</value>
   </data>
+  <data name="FollowingRelLinkVerboseMsg" xml:space="preserve">
+    <value>Following rel link {0}</value>
+  </data>
+  <data name="WebMethodInvocationVerboseMsg" xml:space="preserve">
+    <value>{0} {1} with {2}-byte payload</value>
+  </data>
+  <data name="WebResponseVerboseMsg" xml:space="preserve">
+    <value>received {0}-byte response of content type {1}</value>
+  </data>
 </root>

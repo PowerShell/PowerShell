@@ -44,7 +44,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// gets the RelationLink property
         /// </summary>
-        public Dictionary<string, string> RelationLink { get; set; }
+        public Dictionary<string, string> RelationLink { get; internal set; }
 
         #endregion
 

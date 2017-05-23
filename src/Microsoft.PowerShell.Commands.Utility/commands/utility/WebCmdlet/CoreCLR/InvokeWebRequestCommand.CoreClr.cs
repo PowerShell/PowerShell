@@ -21,6 +21,14 @@ namespace Microsoft.PowerShell.Commands
         #region Virtual Method Overrides
 
         /// <summary>
+        /// Default constructor for InvokeWebRequestCommand
+        /// </summary>
+        public InvokeWebRequestCommand() : base()
+        {
+            this._parseRelLink = true;
+        }
+
+        /// <summary>
         /// Process the web response and output corresponding objects.
         /// </summary>
         /// <param name="response"></param>

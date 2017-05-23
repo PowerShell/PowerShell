@@ -65,6 +65,11 @@ namespace Microsoft.PowerShell.Commands
         private CancellationTokenSource _cancelToken = null;
 
         /// <summary>
+        /// Parse Rel Links
+        /// </summary>
+        internal bool _parseRelLink = false;
+
+        /// <summary>
         /// Automatically follow Rel Links
         /// </summary>
         internal bool _followRelLink = false;
@@ -77,7 +82,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Maximum number of Rel Links to follow
         /// </summary>
-        internal int _maximumFollowRelLink = -1;
+        internal int _maximumFollowRelLink = Int32.MaxValue;
 
         private HttpMethod GetHttpMethod(WebRequestMethod method)
         {
@@ -252,7 +257,7 @@ namespace Microsoft.PowerShell.Commands
             }
 
             // Some web sites (e.g. Twitter) will return exception on POST when Expect100 is sent
-            // Default behaviour is continue to send body content anyway after a short period
+            // Default behavior is continue to send body content anyway after a short period
             // Here it send the two part as a whole.
             request.Headers.ExpectContinue = false;
 
@@ -394,17 +399,18 @@ namespace Microsoft.PowerShell.Commands
                 using (HttpClient client = GetHttpClient())
                 {
                     int followedRelLink = 0;
+                    Uri uri = Uri;
                     do
                     {
                         if (followedRelLink > 0)
                         {
                             string linkVerboseMsg = string.Format(CultureInfo.CurrentCulture,
-                                "Following rel link {0}",
-                                Uri.AbsoluteUri);
+                                WebCmdletStrings.FollowingRelLinkVerboseMsg,
+                                uri.AbsoluteUri);
                             WriteVerbose(linkVerboseMsg);
                         }
 
-                        using (HttpRequestMessage request = GetRequest(Uri))
+                        using (HttpRequestMessage request = GetRequest(uri))
                         {
                             FillRequestStream(request);
                             try
@@ -414,7 +420,7 @@ namespace Microsoft.PowerShell.Commands
                                     requestContentLength = request.Content.Headers.ContentLength.Value;
 
                                 string reqVerboseMsg = String.Format(CultureInfo.CurrentCulture,
-                                    "{0} {1} with {2}-byte payload",
+                                    WebCmdletStrings.WebMethodInvocationVerboseMsg,
                                     request.Method,
                                     request.RequestUri,
                                     requestContentLength);
@@ -424,7 +430,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 string contentType = ContentHelper.GetContentType(response);
                                 string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
-                                    "received {0}-byte response of content type {1}",
+                                    WebCmdletStrings.WebResponseVerboseMsg,
                                     response.Content.Headers.ContentLength,
                                     contentType);
                                 WriteVerbose(respVerboseMsg);
@@ -461,7 +467,10 @@ namespace Microsoft.PowerShell.Commands
                                     ThrowTerminatingError(er);
                                 }
 
-                                ParseLinkHeader(response, Uri);
+                                if (_parseRelLink || _followRelLink)
+                                {
+                                    ParseLinkHeader(response, uri);
+                                }
                                 ProcessResponse(response);
                                 UpdateSession(response);
 
@@ -497,7 +506,7 @@ namespace Microsoft.PowerShell.Commands
                                 {
                                     return;
                                 }
-                                Uri = new Uri(_relationLink["next"]);
+                                uri = new Uri(_relationLink["next"]);
                                 followedRelLink++;
                             }
                         }
@@ -676,18 +685,18 @@ namespace Microsoft.PowerShell.Commands
 
             // we only support the URL in angle brackets and `rel`, other attributes are ignored
             // user can still parse it themselves via the Headers property
-            Regex regex = new Regex("<(?<url>.*?)>;\\srel=\"(?<rel>.*?)\"");
+            string pattern = "<(?<url>.*?)>;\\srel=\"(?<rel>.*?)\"";
             IEnumerable<string> links;
             if (response.Headers.TryGetValues("Link", out links))
             {
                 foreach(string link in links.FirstOrDefault().Split(","))
                 {
-                    Match match = regex.Match(link);
+                    Match match = Regex.Match(link, pattern);
                     if (match.Success)
                     {
                         string url = match.Groups["url"].Value;
                         string rel = match.Groups["rel"].Value;
-                        if (!_relationLink.ContainsKey(rel))
+                        if (url != String.Empty && rel != String.Empty && !_relationLink.ContainsKey(rel))
                         {
                             Uri absoluteUri = new Uri(requestUri, url);
                             _relationLink.Add(rel, absoluteUri.AbsoluteUri.ToString());
