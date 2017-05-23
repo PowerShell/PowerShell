@@ -370,6 +370,23 @@ namespace Microsoft.PowerShell.Internal
 
     internal static class ConsoleKeyInfoExtension
     {
+#if !UNIX
+        private static bool _toUnicodeApiAvailable = true;
+
+        static ConsoleKeyInfoExtension()
+        {
+            try
+            {
+                var chars = new char[2];
+                NativeMethods.ToUnicode(13, 28, null, chars, chars.Length, 0);
+            }
+            catch (System.EntryPointNotFoundException)
+            {
+                _toUnicodeApiAvailable = false;  // api not available on NanoServer
+            }
+        }
+#endif
+
         public static string ToGestureString(this ConsoleKeyInfo key)
         {
             var mods = key.Modifiers;
@@ -386,13 +403,16 @@ namespace Microsoft.PowerShell.Internal
                 sb.Append("Alt");
             }
 
-#if UNIX
             char c = key.KeyChar;
-#else
-            // Windows cannot use KeyChar as some chords (like Ctrl+[) show up as control characters.
-            char c = ConsoleKeyChordConverter.GetCharFromConsoleKey(key.Key,
-                (mods & ConsoleModifiers.Shift) != 0 ? ConsoleModifiers.Shift : 0);
+#if !UNIX
+            if (_toUnicodeApiAvailable)
+            {
+                // Windows cannot use KeyChar as some chords (like Ctrl+[) show up as control characters.
+                c = ConsoleKeyChordConverter.GetCharFromConsoleKey(key.Key,
+                    (mods & ConsoleModifiers.Shift) != 0 ? ConsoleModifiers.Shift : 0);
+            }
 #endif
+
             if (char.IsControl(c) || char.IsWhiteSpace(c))
             {
                 if (key.Modifiers.HasFlag(ConsoleModifiers.Shift))

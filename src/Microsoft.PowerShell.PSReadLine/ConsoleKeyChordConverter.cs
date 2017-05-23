@@ -231,7 +231,6 @@ namespace Microsoft.PowerShell
             return valid;
         }
 
-#if UNIX
         // this is borrowed from the CoreFX internal System.IO.StdInReader class
         // https://github.com/dotnet/corefx/blob/5b2ae6aa485773cd5569f56f446698633c9ad945/src/System.Console/src/System/IO/StdInReader.cs#L222
         private static ConsoleKey GetKeyFromCharValue(char x, out bool isShift, out bool isCtrl)
@@ -303,9 +302,8 @@ namespace Microsoft.PowerShell
 
             return default(ConsoleKey);
         }
-#else
-        private static bool _toUnicodeApiAvailable = true;
 
+#if !UNIX
         internal static char GetCharFromConsoleKey(ConsoleKey key, ConsoleModifiers modifiers)
         {
             // default for unprintables and unhandled
@@ -325,19 +323,8 @@ namespace Microsoft.PowerShell
 
             // get corresponding character  - may be 0, 1 or 2 in length (diacritics)
             var chars = new char[2];
-            int charCount = 1;
-            if (_toUnicodeApiAvailable)
-            {
-                try
-                {
-                    charCount = NativeMethods.ToUnicode(
+            int charCount = NativeMethods.ToUnicode(
                         virtualKey, scanCode, state, chars, chars.Length, NativeMethods.MENU_IS_INACTIVE);
-                }
-                catch (System.EntryPointNotFoundException)
-                {
-                    _toUnicodeApiAvailable = false;  // api not available on NanoServer
-                }
-            }
 
             // TODO: support diacritics (charCount == 2)
             if (charCount == 1)
