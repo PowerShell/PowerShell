@@ -1332,11 +1332,6 @@ try {
             }
         }
 
-        It "Verify that alias 'gin' exists" {
-            $result = (Get-Alias -Name "gin").Name
-            $result | Should Be "gin"
-        }
-
         It "Test for DeviceGuard properties" {
             if (-not (HasDeviceGuardLicense))
             {

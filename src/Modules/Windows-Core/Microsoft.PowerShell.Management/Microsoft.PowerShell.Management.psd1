@@ -7,7 +7,7 @@ ModuleVersion="3.1.0.0"
 PowerShellVersion="3.0"
 NestedModules="Microsoft.PowerShell.Commands.Management.dll"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=390785'
-AliasesToExport = @("gin", "gtz", "stz")
+AliasesToExport = @("gin", "gtz", "stz") 
 FunctionsToExport = @()
 CmdletsToExport=@("Add-Content",
     "Clear-Content",

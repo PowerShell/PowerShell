@@ -28,17 +28,6 @@ Describe "Remove-Variable" -Tags "CI" {
 	Remove-Variable -Name nonexistentVariable -ErrorAction SilentlyContinue | Should Throw
     }
 
-    It "Should be able to remove a variable using the rv alias" {
-	New-Variable var1 -Value 2
-
-	$var1 | Should Be 2
-
-	rv -Name var1
-
-	$var1 | Should Be #nothing.  it should be Nothing at all.
-
-    }
-
     It "Should be able to remove a set of variables using wildcard characters" {
 	New-Variable tmpvar1 -Value "tempvalue"
 	New-Variable tmpvar2 -Value 2

@@ -113,10 +113,6 @@ Describe "Get-Timezone test cases" -Tags "CI" {
         Assert-ListsSame $expectedIdList $result
     }
 
-    It "Verify that alias 'gtz' exists" {
-        (Get-Alias -Name "gtz").Name | Should Be "gtz"
-    }
-
     It "Call Get-TimeZone Name parameter from pipeline by value " {
         $result = ("Pacific*" | Get-TimeZone).Id
         $expectedIdList = ($TimeZonesAvailable | Where-Object { $_.StandardName -match "^Pacific" }).Id
@@ -209,10 +205,6 @@ try {
             catch {
                 $_.FullyQualifiedErrorID | Should Be "TimeZoneNotFound,Microsoft.PowerShell.Commands.SetTimeZoneCommand"
             }
-        }
-
-        It "Verify that alias 'stz' exists" {
-            (Get-Alias -Name "stz").Name | Should Be "stz"
         }
 
         It "Call Set-TimeZone from pipeline input object of type TimeZoneInfo" {

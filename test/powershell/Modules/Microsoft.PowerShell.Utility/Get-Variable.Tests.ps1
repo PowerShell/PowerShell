@@ -71,10 +71,6 @@ Describe "Get-Variable" -Tags "CI" {
 		(Get-Variable tempVar).Value | Should Be (1)
     }
 
-    It "Should be able to call using the gv alias" {
-		(get-alias gv).Definition | Should be "Get-Variable"
-    }
-
     It "Should be able to call using the Name switch" {
 		New-Variable -Name var1 -Value 4
 
