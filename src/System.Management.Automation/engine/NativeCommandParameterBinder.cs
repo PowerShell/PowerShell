@@ -306,7 +306,7 @@ namespace System.Management.Automation
         /// Check to see if the string contains spaces and therefore must be quoted.
         /// </summary>
         /// <param name="stringToCheck">The string to check for spaces</param>
-        private bool NeedQuotes(string stringToCheck)
+        internal static bool NeedQuotes(string stringToCheck)
         {
             bool needQuotes = false, followingBackslash = false;
             int quoteCount = 0;
