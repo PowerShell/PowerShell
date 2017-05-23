@@ -348,6 +348,11 @@ you need to install Homebrew following [their instructions][brew].
 Once you've installed Homebrew, installing PowerShell is easy.
 Just install [Homebrew-Cask][cask] and then you can install PowerShell:
 
+```sh
+brew tap caskroom/cask
+brew cask install powershell
+```
+
 When new versions of PowerShell are released,
 simply update Homebrew's formulae and upgrade PowerShell:
 
