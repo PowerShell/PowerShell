@@ -15,6 +15,7 @@ using System.Collections.ObjectModel;
 using System.Collections;
 using System.Runtime.InteropServices;
 using System.Management.Automation.Provider;
+using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using System.Text.RegularExpressions;
 using System.Globalization;
@@ -155,134 +156,6 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// Defines the Certificate Provider dynamic parameters.
-    ///
-    /// We only support one dynamic parameter for Win 7 and earlier:
-    /// CodeSigningCert
-    /// If provided, we only return certificates valid for signing code or
-    /// scripts.
-    ///
-    /// For Win 8 and later, we also support:
-    /// SSLServerAuthentication
-    /// If provided, only return certificates valid for server authentication.
-    ///
-    /// DnsName
-    /// If provided, only return certificates matching the supplied DNS Name.
-    ///
-    /// Eku
-    /// If provided, only return certificates containing all of the OIDs
-    /// supplied.
-    ///
-    /// ExpiringInDays
-    /// If provided, only return certificates expiring within the specified
-    /// number of days.
-    ///
-    /// </summary>
-
-    internal sealed class CertificateProviderDynamicParameters
-    {
-        /// <summary>
-        /// switch that controls whether we only return
-        /// code signing certs.
-        /// </summary>
-        [Parameter()]
-        public SwitchParameter CodeSigningCert
-        {
-            get { return _codeSigningCert; }
-
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "This method is used by command line processing")]
-            set
-            { _codeSigningCert = value; }
-        }
-        private SwitchParameter _codeSigningCert = new SwitchParameter();
-
-        /// <summary>
-        /// switch that controls whether we only return
-        /// data encipherment certs.
-        /// </summary>
-        [Parameter()]
-        public SwitchParameter DocumentEncryptionCert
-        {
-            get { return _documentEncryptionCert; }
-
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "This method is used by command line processing")]
-            set
-            { _documentEncryptionCert = value; }
-        }
-        private SwitchParameter _documentEncryptionCert = new SwitchParameter();
-
-        /// <summary>
-        /// switch that controls whether we only return
-        /// code signing certs.
-        /// </summary>
-        [Parameter()]
-        public SwitchParameter SSLServerAuthentication
-        {
-            get { return _sslServerAuthentication; }
-
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "This method is used by command line processing")]
-            set
-            { _sslServerAuthentication = value; }
-        }
-
-        private SwitchParameter _sslServerAuthentication = new SwitchParameter();
-
-        /// <summary>
-        /// string to filter certs by DNSName
-        /// Expected content is a single DNS Name that may start and/or end
-        /// with '*': "contoso.com" or "*toso.c*"
-        /// </summary>
-        [Parameter()]
-        public DnsNameRepresentation DnsName
-        {
-            get { return _dnsName; }
-
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "This method is used by command line processing")]
-            set
-            { _dnsName = value; }
-        }
-
-        private DnsNameRepresentation _dnsName;
-
-        /// <summary>
-        /// string to filter certs by EKU
-        /// Expected content is one or more OID strings:
-        /// "1.3.6.1.5.5.7.3.1", etc.
-        /// For a cert to match, it must be valid for all listed OIDs.
-        /// </summary>
-        [Parameter()]
-        public string[] Eku
-        {
-            get { return _eku; }
-
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "This method is used by command line processing")]
-            set
-            { _eku = value; }
-        }
-
-        private string[] _eku = null;
-
-        /// <summary>
-        /// string to filter certs by the number of valid days
-        /// Expected content is a non-negative integer.
-        /// "0" matches all certs that have already expired.
-        /// "1" matches all certs that are currently valid and will expire
-        /// by midnight tonight (local time).
-        /// </summary>
-        [Parameter()]
-        public int ExpiringInDays
-        {
-            get { return _expiringInDays; }
-
-            [SuppressMessage("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode", Justification = "This method is used by command line processing")]
-            set
-            { _expiringInDays = value; }
-        }
-
-        private int _expiringInDays = -1;
-    }
-
-    /// <summary>
     /// Defines the Certificate Provider remove-item dynamic parameters.
     ///
     /// Currently, we only support one dynamic parameter: DeleteKey
@@ -340,42 +213,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 fResult = Security.NativeMethods.CertCloseStore(handle, 0);
                 handle = IntPtr.Zero;
-            }
-            return fResult;
-        }
-
-        public IntPtr Handle
-        {
-            get { return handle; }
-            set { handle = value; }
-        }
-    }
-
-    /// <summary>
-    /// Defines the safe handle class for native cert store handles,
-    /// HCERTSTORE.
-    /// </summary>
-    internal sealed class CertificateFilterHandle : SafeHandle
-    {
-        public CertificateFilterHandle() : base(IntPtr.Zero, true)
-        {
-            return;
-        }
-
-        public override bool IsInvalid
-        {
-            get { return handle == IntPtr.Zero; }
-        }
-
-        protected override bool ReleaseHandle()
-        {
-            bool fResult = false;
-
-            if (IntPtr.Zero != handle)
-            {
-                Security.NativeMethods.CCFindCertificateFreeFilter(handle);
-                handle = IntPtr.Zero;
-                fResult = true;
             }
             return fResult;
         }
@@ -477,25 +314,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        public IntPtr GetFirstCert(
-            CertificateFilterInfo filter)
+        public IntPtr GetFirstCert()
         {
-            _filterHandle = null;
-            if (DownLevelHelper.NativeFilteringSupported() && filter != null)
-            {
-                IntPtr hFilter = IntPtr.Zero;
-
-                _filterHandle = new CertificateFilterHandle();
-                int hr = Security.NativeMethods.CCFindCertificateBuildFilter(
-                                                    filter.FilterString,
-                                                    ref hFilter);
-                if (hr != Security.NativeConstants.S_OK)
-                {
-                    _filterHandle = null;
-                    throw new System.ComponentModel.Win32Exception(hr);
-                }
-                _filterHandle.Handle = hFilter;
-            }
             return GetNextCert(IntPtr.Zero);
         }
 
@@ -508,19 +328,9 @@ namespace Microsoft.PowerShell.Commands
             }
             if (Valid)
             {
-                if (_filterHandle != null)
-                {
-                    certContext = Security.NativeMethods.CCFindCertificateFromFilter(
-                                                        _storeHandle.Handle,
-                                                        _filterHandle.Handle,
-                                                        certContext);
-                }
-                else
-                {
-                    certContext = Security.NativeMethods.CertEnumCertificatesInStore(
-                                                        _storeHandle.Handle,
-                                                        certContext);
-                }
+                certContext = Security.NativeMethods.CertEnumCertificatesInStore(
+                                                    _storeHandle.Handle,
+                                                    certContext);
             }
             else
             {
@@ -635,7 +445,6 @@ namespace Microsoft.PowerShell.Commands
         private X509StoreLocation _storeLocation = null;
         private string _storeName = null;
         private CertificateStoreHandle _storeHandle = null;
-        private CertificateFilterHandle _filterHandle = null;
         private bool _valid = false;
         private bool _open = false;
     }
@@ -1233,7 +1042,7 @@ namespace Microsoft.PowerShell.Commands
                     if (store != null)
                     {
                         store.Open(IncludeArchivedCerts());
-                        IntPtr certContext = store.GetFirstCert(null);
+                        IntPtr certContext = store.GetFirstCert();
                         if (IntPtr.Zero != certContext)
                         {
                             store.FreeCert(certContext);
@@ -1944,7 +1753,7 @@ namespace Microsoft.PowerShell.Commands
                 //
                 // enumerate over each cert and remove it
                 //
-                IntPtr certContext = store.GetFirstCert(null);
+                IntPtr certContext = store.GetFirstCert();
                 while (IntPtr.Zero != certContext)
                 {
                     X509Certificate2 cert = new X509Certificate2(certContext);
@@ -2092,10 +1901,7 @@ namespace Microsoft.PowerShell.Commands
                     CommitUserDS(context.hCertStore);
                 }
 
-                if (DownLevelHelper.LogCertChangeSupported())
-                {
-                    Security.NativeMethods.LogCertDelete(fMachine, cert.Handle);
-                }
+                //TODO: Log Cert Delete
 
                 //delete private key
                 if (fDeleteKey && fHasPrivateKey)
@@ -2173,18 +1979,7 @@ namespace Microsoft.PowerShell.Commands
                     throw new System.ComponentModel.Win32Exception(Marshal.GetLastWin32Error());
                 }
 
-                if (DownLevelHelper.LogCertChangeSupported())
-                {
-                    bool fMachine = store.Location.Location == StoreLocation.LocalMachine;
-
-                    if (cert.HasPrivateKey &&
-                        String.Equals(store.StoreName, "MY", StringComparison.OrdinalIgnoreCase))
-                    {
-                        Security.NativeMethods.LogCertCopy(fMachine, cert.Handle);
-                    }
-
-                    Security.NativeMethods.LogCertDelete(fMachine, cert.Handle);
-                }
+                //TODO: log cert move
             }
 
             //commit the change to physical store
@@ -2499,14 +2294,7 @@ namespace Microsoft.PowerShell.Commands
         ///
         protected override object GetItemDynamicParameters(string path)
         {
-            if (DownLevelHelper.NativeFilteringSupported())
-            {
-                return new CertificateProviderDynamicParameters();
-            }
-            else
-            {
-                return new CertificateProviderCodeSigningDynamicParameters();
-            }
+            return new CertificateProviderCodeSigningDynamicParameters();
         }
 
         /// <summary>
@@ -2531,14 +2319,7 @@ namespace Microsoft.PowerShell.Commands
         /// </returns>
         protected override object GetChildItemsDynamicParameters(string path, bool recurse)
         {
-            if (DownLevelHelper.NativeFilteringSupported())
-            {
-                return new CertificateProviderDynamicParameters();
-            }
-            else
-            {
-                return new CertificateProviderCodeSigningDynamicParameters();
-            }
+            return new CertificateProviderCodeSigningDynamicParameters();
         }
 
         #endregion DriveCmdletProvider overrides
@@ -2718,7 +2499,7 @@ namespace Microsoft.PowerShell.Commands
             //
             // enumerate over each cert and return it (or its name)
             //
-            IntPtr certContext = store.GetFirstCert(filter);
+            IntPtr certContext = store.GetFirstCert();
 
             while (IntPtr.Zero != certContext)
             {
@@ -2952,62 +2733,14 @@ namespace Microsoft.PowerShell.Commands
 
             if (DynamicParameters != null)
             {
-                if (DownLevelHelper.NativeFilteringSupported())
+                CertificateProviderCodeSigningDynamicParameters dp =
+                    DynamicParameters as CertificateProviderCodeSigningDynamicParameters;
+                if (dp != null)
                 {
-                    CertificateProviderDynamicParameters dp =
-                        DynamicParameters as CertificateProviderDynamicParameters;
-                    if (dp != null)
+                    if (dp.CodeSigningCert)
                     {
-                        bool filterSpecified = false;
-
                         filter = new CertificateFilterInfo();
-                        if (dp.CodeSigningCert)
-                        {
-                            filter.Purpose = CertificatePurpose.CodeSigning;
-                            filterSpecified = true;
-                        }
-                        if (dp.DocumentEncryptionCert)
-                        {
-                            filter.Purpose = CertificatePurpose.DocumentEncryption;
-                            filterSpecified = true;
-                        }
-                        if (dp.SSLServerAuthentication)
-                        {
-                            filter.SSLServerAuthentication = true;
-                            filterSpecified = true;
-                        }
-                        if (dp.DnsName.Punycode != null)
-                        {
-                            filter.DnsName = dp.DnsName.Punycode;
-                            filterSpecified = true;
-                        }
-                        if (dp.Eku != null)
-                        {
-                            filter.Eku = dp.Eku;
-                            filterSpecified = true;
-                        }
-                        if (dp.ExpiringInDays >= 0)
-                        {
-                            filter.ExpiringInDays = dp.ExpiringInDays;
-                            filterSpecified = true;
-                        }
-                        if (!filterSpecified)
-                        {
-                            filter = null;
-                        }
-                    }
-                }
-                else
-                {
-                    CertificateProviderCodeSigningDynamicParameters dp =
-                        DynamicParameters as CertificateProviderCodeSigningDynamicParameters;
-                    if (dp != null)
-                    {
-                        if (dp.CodeSigningCert)
-                        {
-                            filter = new CertificateFilterInfo();
-                            filter.Purpose = CertificatePurpose.CodeSigning;
-                        }
+                        filter.Purpose = CertificatePurpose.CodeSigning;
                     }
                 }
             }
@@ -3541,33 +3274,20 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public EnhancedKeyUsageProperty(X509Certificate2 cert)
         {
-            if (DownLevelHelper.NativeFilteringSupported())
+            foreach (X509Extension extension in cert.Extensions)
             {
-                Collection<string> ekuCollection = System.Management.Automation.Internal.SecuritySupport.GetCertEKU(cert);
-
-                foreach (string oidString in ekuCollection)
+                // Filter to the OID for EKU
+                if (extension.Oid.Value == "2.5.29.37")
                 {
-                    if (!String.IsNullOrEmpty(oidString))
+                    X509EnhancedKeyUsageExtension ext = extension as X509EnhancedKeyUsageExtension;
+                    if(ext != null)
                     {
-                        IntPtr stringAnsi = (IntPtr)Marshal.StringToHGlobalAnsi(oidString);
-
-                        EnhancedKeyUsageRepresentation ekuString;
-                        IntPtr oidPtr = Security.NativeMethods.CryptFindOIDInfo(
-                                            Security.NativeConstants.CRYPT_OID_INFO_OID_KEY,
-                                            stringAnsi,
-                                            0);
-                        if (oidPtr != IntPtr.Zero)
+                        OidCollection oids = ext.EnhancedKeyUsages;
+                        foreach (Oid oid in oids)
                         {
-                            Security.NativeMethods.CRYPT_OID_INFO oidInfo =
-                                ClrFacade.PtrToStructure<Security.NativeMethods.CRYPT_OID_INFO>(oidPtr);
-                            ekuString = new EnhancedKeyUsageRepresentation(oidInfo.pwszName, oidString);
+                            EnhancedKeyUsageRepresentation ekuString = new EnhancedKeyUsageRepresentation(oid.FriendlyName, oid.Value);
+                            _ekuList.Add(ekuString);
                         }
-                        else //if oidInfo is not available
-                        {
-                            ekuString = new EnhancedKeyUsageRepresentation(null, oidString);
-                        }
-
-                        _ekuList.Add(ekuString);
                     }
                 }
             }
@@ -3581,6 +3301,9 @@ namespace Microsoft.PowerShell.Commands
     public sealed class DnsNameProperty
     {
         private List<DnsNameRepresentation> _dnsList = new List<DnsNameRepresentation>();
+        private System.Globalization.IdnMapping idnMapping = new System.Globalization.IdnMapping();
+        private const string dnsNamePrefix = "DNS Name=";
+        private const string distinguishedNamePrefix = "CN=";
 
         /// <summary>
         /// get property of DnsNameList
@@ -3598,81 +3321,65 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         public DnsNameProperty(X509Certificate2 cert)
         {
-            if (DownLevelHelper.NativeFilteringSupported())
+            string name;
+            string unicodeName;
+            DnsNameRepresentation dnsName;
+            _dnsList = new List<DnsNameRepresentation>();
+
+            // extract DNS name from subject distinguish name
+            // if it exists and does not contain a comma
+            // a comma, indicates it is not a DNS name
+            if(cert.Subject.StartsWith(distinguishedNamePrefix, System.StringComparison.InvariantCultureIgnoreCase) && 
+                cert.Subject.IndexOf(",",System.StringComparison.InvariantCulture)==-1)
             {
-                if (cert != null)
-                {
-                    //need to get subject alternative name from the certificate context
-                    _dnsList = GetCertNames(
-                            cert.Handle,
-                            Security.NativeMethods.AltNameType.CERT_ALT_NAME_DNS_NAME);
-                }
-            }
-        }
-
-        // Wrapper function for CCGetCertNameList and CCFreeStringArray
-        private List<DnsNameRepresentation> GetCertNames(IntPtr certHandle, Security.NativeMethods.AltNameType nameType)
-        {
-            DWORD cPunycodeName;
-            IntPtr papwszPunycodeNames = IntPtr.Zero;
-            IntPtr papwszUnicodeNames = IntPtr.Zero;
-            List<DnsNameRepresentation> names = new List<DnsNameRepresentation>();
-            int hr;
-
-            if (certHandle != IntPtr.Zero)
-            {
-                hr = Security.NativeMethods.CCGetCertNameList(
-                            certHandle,
-                            nameType,
-                            0,              // no conversion to Unicode
-                            out cPunycodeName,
-                            out papwszPunycodeNames);
-                if (hr != Security.NativeConstants.S_OK)
-                {
-                    if (hr != Security.NativeMethods.CRYPT_E_NOT_FOUND)
-                    {
-                        throw Marshal.GetExceptionForHR(hr);
-                    }
-                    cPunycodeName = 0;
-                }
-
+                name = cert.Subject.Substring(distinguishedNamePrefix.Length);
                 try
                 {
-                    if (0 < cPunycodeName)
-                    {
-                        DWORD cUnicodeName;
+                    unicodeName = idnMapping.GetUnicode(name);
+                }
+                catch(System.ArgumentException)
+                {
+                    // The name is not valid punyCode, assume it's valid ascii.
+                    unicodeName = name;
+                }
 
-                        hr = Security.NativeMethods.CCGetCertNameList(
-                                    certHandle,
-                                    nameType,
-                                    Security.NativeMethods.CryptDecodeFlags.CRYPT_DECODE_ENABLE_IA5CONVERSION_FLAG,
-                                    out cUnicodeName,
-                                    out papwszUnicodeNames);
-                        if (hr != Security.NativeConstants.S_OK)
+                dnsName = new DnsNameRepresentation(name,unicodeName);
+                _dnsList.Add(dnsName);
+            }
+
+            foreach (X509Extension extension in cert.Extensions)
+            {
+                // Filter to the OID for Subject Alternative Name
+                if (extension.Oid.Value == "2.5.29.17")
+                {
+                    string[] names = extension.Format(true).Split(Environment.NewLine);
+                    foreach(string nameLine in names)
+                    {
+                        // Get the part after 'DNS Name='
+                        if(nameLine.StartsWith(dnsNamePrefix, System.StringComparison.InvariantCultureIgnoreCase))
                         {
-                            throw Marshal.GetExceptionForHR(hr);
-                        }
-                        if (cPunycodeName != cUnicodeName)
-                        {
-                            throw Marshal.GetExceptionForHR(
-                                        Security.NativeMethods.E_INVALID_DATA);
-                        }
-                        for (int i = 0; i < cPunycodeName; i++)
-                        {
-                            names.Add(new DnsNameRepresentation(
-                                Marshal.PtrToStringUni(Marshal.ReadIntPtr(papwszPunycodeNames, i * Marshal.SizeOf(papwszPunycodeNames))),
-                                Marshal.PtrToStringUni(Marshal.ReadIntPtr(papwszUnicodeNames, i * Marshal.SizeOf(papwszUnicodeNames)))));
+                            name = nameLine.Substring(dnsNamePrefix.Length);
+                            try
+                            {
+                                unicodeName = idnMapping.GetUnicode(name);
+                            }
+                            catch(System.ArgumentException)
+                            {
+                                // The name is not valid punyCode, assume it's valid ascii.
+                                unicodeName = name;
+                            }
+
+                            dnsName = new DnsNameRepresentation(name,unicodeName);
+
+                            // Only add the name if it is not the same as an existing name.
+                            if(!_dnsList.Contains(dnsName))
+                            {
+                                _dnsList.Add(dnsName);
+                            }
                         }
                     }
                 }
-                finally
-                {
-                    Security.NativeMethods.CCFreeStringArray(papwszPunycodeNames);
-                    Security.NativeMethods.CCFreeStringArray(papwszUnicodeNames);
-                }
             }
-
-            return names;
         }
     }
 
@@ -3689,9 +3396,6 @@ namespace Microsoft.PowerShell.Commands
         {
             if (!s_isWin8Set)
             {
-#if CORECLR
-                s_isWin8 = true;
-#else
                 System.OperatingSystem osInfo = System.Environment.OSVersion;
                 PlatformID platform = osInfo.Platform;
                 Version version = osInfo.Version;
@@ -3702,42 +3406,10 @@ namespace Microsoft.PowerShell.Commands
                 {
                     s_isWin8 = true;
                 }
-#endif
+
                 s_isWin8Set = true;
             }
             return s_isWin8;
-        }
-
-        private static bool s_nativeFilteringSet = false;
-        private static bool s_nativeFiltering = false;
-
-        internal static bool NativeFilteringSupported()
-        {
-            if (!s_nativeFilteringSet)
-            {
-                if (IsWin8AndAbove() && Security.NativeMethods.IsSystem32DllPresent("certca.dll"))
-                {
-                    s_nativeFiltering = true;
-                }
-                s_nativeFilteringSet = true;
-            }
-            return s_nativeFiltering;
-        }
-
-        private static bool s_logChangesSet = false;
-        private static bool s_logChanges = false;
-
-        internal static bool LogCertChangeSupported()
-        {
-            if (!s_logChangesSet)
-            {
-                if (IsWin8AndAbove() && Security.NativeMethods.IsSystem32DllPresent("certenroll.dll"))
-                {
-                    s_logChanges = true;
-                }
-                s_logChangesSet = true;
-            }
-            return s_logChanges;
         }
 
         internal static bool TrustedIssuerSupported()
