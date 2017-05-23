@@ -17,20 +17,36 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
             @{ TestFile = $testFile2 })
     }
 
-    It "Should invoke text file '<TestFile>' without error" -Skip:$IsWindows -TestCases $textFileTestCases {
-        param($TestFile)
-
-        $redirectFile = Join-Path -Path $TestDrive -ChildPath "redirect1.txt"
-        ## Redirect stderr to a file. So if 'xdg-open' or 'open' failed to open the text file, an error
-        ## message from 'xdg-open' or 'open' would be written to the redirection file.
-        $proc = Start-Process -FilePath $powershell -ArgumentList "-noprofile Invoke-Item '$TestFile'" -RedirectStandardError $redirectFile -PassThru
-        $proc.WaitForExit(3000) > $null
-        if (!$proc.HasExited) {
-            try { $proc.Kill() } catch { }
+    Context "Invoke a text file on Unix" {
+        BeforeEach {
+            $redirectErr = Join-Path -Path $TestDrive -ChildPath "error.txt"
+            $redirectOut = Join-Path -Path $TestDrive -ChildPath "output.txt"
+            $redirectIn  = Join-Path -Path $TestDrive -ChildPath "in.txt"
+            Set-Content -Path $redirectIn -Value "Fake input" -Force
         }
-        ## If the text file was successfully opened, the redirection file should be empty since no error
-        ## message was written to it.
-        Get-Content $redirectFile -Raw | Should BeNullOrEmpty
+
+        AfterEach {
+            Remove-Item -Path $redirectErr, $redirectOut, $redirectIn -Force -ErrorAction SilentlyContinue
+        }
+
+        It "Should invoke text file '<TestFile>' without error" -Skip:$IsWindows -TestCases $textFileTestCases {
+            param($TestFile)
+
+            ## Redirect stderr to a file. So if 'xdg-open' or 'open' failed to open the text file, an error
+            ## message from 'xdg-open' or 'open' would be written to the redirection file.
+            $proc = Start-Process -FilePath $powershell -ArgumentList "-noprofile Invoke-Item '$TestFile'" `
+                                  -RedirectStandardError $redirectErr `
+                                  -RedirectStandardOutput $redirectOut `
+                                  -RedirectStandardInput $redirectIn `
+                                  -PassThru
+            $proc.WaitForExit(3000) > $null
+            if (!$proc.HasExited) {
+                try { $proc.Kill() } catch { }
+            }
+            ## If the text file was successfully opened, the redirection file should be empty since no error
+            ## message was written to it.
+            Get-Content $redirectErr -Raw | Should BeNullOrEmpty
+        }
     }
 
     It "Should invoke an executable file without error" {
