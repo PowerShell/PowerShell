@@ -304,12 +304,17 @@ namespace System.Management.Automation
         /// </remarks>
         private static string GetMshDefaultInstallationPath()
         {
-            string returnValue = CommandDiscovery.GetShellPathFromRegistry(Utils.DefaultPowerShellShellID);
+            string returnValue = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
 
+            //On CoreCLR we use ApplicationBase assembly location. That gives us the directory name.
+            //Hence we do not need to extract the directory name from returnValue.
+
+#if !CORECLR
             if (returnValue != null)
             {
                 returnValue = Path.GetDirectoryName(returnValue);
             }
+#endif
 
             // returnValue can be null.
             return returnValue;

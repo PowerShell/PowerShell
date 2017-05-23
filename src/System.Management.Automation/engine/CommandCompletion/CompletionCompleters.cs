@@ -4076,7 +4076,8 @@ namespace System.Management.Automation
             {
                 // We want to prefer relative paths in a completion result unless the user has already
                 // specified a drive or portion of the path.
-                var executionContext = context.ExecutionContext;
+                var powershell = context.Helper.CurrentPowerShell;
+                var executionContext = powershell.GetContextFromTLS();
                 var defaultRelative = string.IsNullOrWhiteSpace(wordToComplete)
                                       || (wordToComplete.IndexOfAny(Utils.Separators.Directory) != 0 &&
                                           !Regex.Match(wordToComplete, @"^~[\\/]+.*").Success &&
@@ -4089,11 +4090,11 @@ namespace System.Management.Automation
                     wordToComplete = WildcardPattern.Escape(wordToComplete, Utils.Separators.StarOrQuestion);
                 }
 
-                if (!defaultRelative && wordToComplete.Length >= 2 && wordToComplete[1] == ':' && char.IsLetter(wordToComplete[0]) && executionContext != null)
+                if (!defaultRelative && wordToComplete.Length >= 2 && wordToComplete[1] == ':' && char.IsLetter(wordToComplete[0]) && context.ExecutionContext != null)
                 {
                     // We don't actually need the drive, but the drive must be "mounted" in PowerShell before completion
                     // can succeed.  This call will mount the drive if it wasn't already.
-                    executionContext.SessionState.Drive.GetAtScope(wordToComplete.Substring(0, 1), "global");
+                    context.ExecutionContext.SessionState.Drive.GetAtScope(wordToComplete.Substring(0, 1), "global");
                 }
 
                 var powerShellExecutionHelper = context.Helper;
@@ -5952,14 +5953,15 @@ namespace System.Management.Automation
         internal static List<CompletionResult> CompleteHelpTopics(CompletionContext context)
         {
             var results = new List<CompletionResult>();
-            var dirPath = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID) + "\\" + CultureInfo.CurrentCulture.Name;
+            var dirPath = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID) + Path.DirectorySeparatorChar + CultureInfo.CurrentCulture.Name;
             var wordToComplete = context.WordToComplete + "*";
             var topicPattern = WildcardPattern.Get("about_*.help.txt", WildcardOptions.IgnoreCase);
             string[] files = null;
 
             try
             {
-                files = Directory.GetFiles(dirPath, wordToComplete);
+                var wildcardPattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase);
+                files = Directory.GetFiles(dirPath).Where(f => wildcardPattern.IsMatch(Path.GetFileName(f))).ToArray();
             }
             catch (Exception)
             {
