@@ -312,7 +312,8 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
         $processed.Message | Should Be $expected
     }
 
-    It "Verify -DocumentEncryptionCert parameter works" {
+    # Pending due to #3847
+    It "Verify -DocumentEncryptionCert parameter works" -Pending {
         $foundCerts = Get-ChildItem Cert:\CurrentUser -Recurse -DocumentEncryptionCert
 
         # Validate they all match the EKU
