@@ -177,11 +177,6 @@ Describe "Feature tests for Export-Counter cmdlet" -Tags "Feature" {
                 Parameters = "-MaxSize -2"
                 ExpectedErrorId = "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.ExportCounterCommand"
             }
-            @{
-                Name = "Fails when given invalid file format"
-                FileFormat = "dat"
-                ExpectedErrorId = "CounterInvalidFormat,Microsoft.PowerShell.Commands.ExportCounterCommand"
-            }
         )
 
         foreach ($testCase in $testCases)
