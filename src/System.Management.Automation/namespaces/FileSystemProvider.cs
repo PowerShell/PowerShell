@@ -1327,27 +1327,45 @@ namespace Microsoft.PowerShell.Commands
             {
                 System.Diagnostics.Process invokeProcess = new System.Diagnostics.Process();
 
-#if UNIX
-                invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
-                invokeProcess.StartInfo.Arguments = path;
-                invokeProcess.Start();
-#elif CORECLR
                 try
                 {
-                    // Try Process.Start first. This works for executables even on headless SKUs.
+                    // Try Process.Start first.
+                    //  - In FullCLR, this is all we need to do.
+                    //  - In CoreCLR, this works for executables on Win/Unix platforms
                     invokeProcess.StartInfo.FileName = path;
                     invokeProcess.Start();
                 }
-                catch (Win32Exception)
+#if UNIX
+                catch (Win32Exception ex) when (ex.NativeErrorCode == 13)
                 {
+                    // Error code 13 -- Permission denied.
+                    // The file is possibly not an executable, so we try invoking the default program that handles this file.
+                    const string quoteFormat = "\"{0}\"";
+                    invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
+                    if (NativeCommandParameterBinder.NeedQuotes(path))
+                    {
+                        path = string.Format(CultureInfo.InvariantCulture, quoteFormat, path);
+                    }
+                    invokeProcess.StartInfo.Arguments = path;
+                    invokeProcess.Start();
+                }
+#elif CORECLR
+                catch (Win32Exception ex) when (ex.NativeErrorCode == 193)
+                {
+                    // Error code 193 -- BAD_EXE_FORMAT (not a valid Win32 application).
                     // If it's headless SKUs, rethrow.
                     if (Platform.IsNanoServer || Platform.IsIoT) { throw; }
                     // If it's full Windows, then try ShellExecute.
                     ShellExecuteHelper.Start(invokeProcess.StartInfo);
                 }
 #else
-                invokeProcess.StartInfo.FileName = path;
-                invokeProcess.Start();
+                finally
+                {
+                    // Nothing to do in FullCLR.
+                    // This empty 'finally' block is just to match the 'try' block above so that the code can be organized
+                    // in a clean way without too many if/def's.
+                    // Empty finally block will be ignored in release build, so there is no performance concern.
+                }
 #endif
             }
         } // InvokeDefaultAction
