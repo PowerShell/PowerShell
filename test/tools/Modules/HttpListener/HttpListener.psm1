@@ -136,6 +136,51 @@ Function Start-HTTPListener {
                                 $output = $request | ConvertTo-Json
                             }
                         }
+                        "linkheader"
+                        {
+                            $maxLinks = $queryItems["maxlinks"]
+                            if ($maxlinks -eq $null)
+                            {
+                                $maxLinks = 3
+                            }
+                            $linkNumber = [int]$queryItems["linknumber"]
+                            $prev = ""
+                            if ($linkNumber -eq 0)
+                            {
+                                $linkNumber = 1
+                            }
+                            else
+                            {
+                                # use $urlPrefix to ensure output is resolved to absolute uri
+                                $prev = ", <$($urlPrefix)?test=linkheader&maxlinks=$maxlinks&linknumber=$($linkNumber-1); rel=`"prev`""
+                            }
+                            $links = ""
+                            if ($linkNumber -lt $maxLinks)
+                            {
+                                switch ($queryItems["type"])
+                                {
+                                    "noUrl"
+                                    {
+                                        $links = "<>; rel=`"next`","
+                                    }
+                                    "malformed"
+                                    {
+                                        $links = "{url}; foo,"
+                                    }
+                                    "noRel"
+                                    {
+                                        $links = "<url>; foo=`"bar`","
+                                    }
+                                    default
+                                    {
+                                        $links = "<$($urlPrefix)?test=linkheader&maxlinks=$maxlinks&linknumber=$($linkNumber+1)>; rel=`"next`", "
+                                    }
+                                }
+                            }
+                            $links = "$links<$($urlPrefix)?test=linkheader&maxlinks=$maxlinks&linknumber=$maxlinks>; rel=`"last`"$prev"
+                            $outputHeader.Add("Link", $links)
+                            $output = "{ `"output`": `"$linkNumber`"}"
+                        }                        
                         default
                         {
                             $statusCode = [System.Net.HttpStatusCode]::NotFound
