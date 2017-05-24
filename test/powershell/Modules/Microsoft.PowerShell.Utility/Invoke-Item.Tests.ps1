@@ -20,24 +20,21 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
     Context "Invoke a text file on Unix" {
         BeforeEach {
             $redirectErr = Join-Path -Path $TestDrive -ChildPath "error.txt"
-            $redirectOut = Join-Path -Path $TestDrive -ChildPath "output.txt"
-            $redirectIn  = Join-Path -Path $TestDrive -ChildPath "in.txt"
-            Set-Content -Path $redirectIn -Value "Fake input" -Force
         }
 
         AfterEach {
-            Remove-Item -Path $redirectErr, $redirectOut, $redirectIn -Force -ErrorAction SilentlyContinue
+            Remove-Item -Path $redirectErr -Force -ErrorAction SilentlyContinue
         }
 
-        It "Should invoke text file '<TestFile>' without error" -Skip:$IsWindows -TestCases $textFileTestCases {
+        ## Run this test only on OSX because redirecting stderr of 'xdg-open' results in weird behavior in our Linux CI,
+        ## causing this test to fail or the build to hang.
+        It "Should invoke text file '<TestFile>' without error" -Skip:(!$IsOSX) -TestCases $textFileTestCases {
             param($TestFile)
 
-            ## Redirect stderr to a file. So if 'xdg-open' or 'open' failed to open the text file, an error
-            ## message from 'xdg-open' or 'open' would be written to the redirection file.
+            ## Redirect stderr to a file. So if 'open' failed to open the text file, an error
+            ## message from 'open' would be written to the redirection file.
             $proc = Start-Process -FilePath $powershell -ArgumentList "-noprofile Invoke-Item '$TestFile'" `
                                   -RedirectStandardError $redirectErr `
-                                  -RedirectStandardOutput $redirectOut `
-                                  -RedirectStandardInput $redirectIn `
                                   -PassThru
             $proc.WaitForExit(3000) > $null
             if (!$proc.HasExited) {
