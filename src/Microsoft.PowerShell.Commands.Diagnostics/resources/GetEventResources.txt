@@ -52,7 +52,6 @@ CounterExportSampleNotInInitialSet=The {0} performance counter cannot be exporte
 CounterPathTranslationFailed=The default values for this command failed. Error: {0:x8}.
 CounterContinuousOrMaxSamples=The Continuous parameter and the MaxSamples parameter cannot be used in the same command.
 CounterSampleDataInvalid=The data in one of the performance counter samples is not valid. View the Status property for each PerformanceCounterSample object to make sure it contains valid data.
-CounterInvalidFormat=The {0} format type is not a valid format for a counter file. Possible values for the Format parameter are .blg, .csv, or .tsv.
 CounterCircularNoMaxSize=The Circular parameter will be ignored unless the MaxSize parameter is also specified.
 ExportCtrWin7Required=This cmdlet can be run only on Microsoft Windows 7 and above.
 FileOpenFailed=Unable to open the {0} file for writing.

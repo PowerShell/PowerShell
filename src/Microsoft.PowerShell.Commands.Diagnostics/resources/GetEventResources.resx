@@ -216,9 +216,6 @@ The defined template is following:
   <data name="IncorrectEventVersion" xml:space="preserve">
     <value>Event cannot be written because the specified version {0} for event {1} is not defined for the provider {2}.  Please correct the version and try again.</value>
   </data>
-  <data name="CounterInvalidFormat" xml:space="preserve">
-    <value>The {0} format type is not a valid format for a counter file. Possible values for the Format parameter are .blg, .csv, or .tsv.</value>
-  </data>
   <data name="Counter32FileLimit" xml:space="preserve">
     <value>You cannot import more than 32 .blg counter log files in each command.</value>
   </data>

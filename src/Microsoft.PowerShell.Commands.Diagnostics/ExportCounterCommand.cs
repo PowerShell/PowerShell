@@ -65,12 +65,13 @@ namespace Microsoft.PowerShell.Commands
                 ValueFromPipelineByPropertyName = false,
                 HelpMessageBaseName = "GetEventResources")]
         [ValidateNotNull]
+        [ValidateSet("blg", "csv", "tsv")]
         public string FileFormat
         {
             get { return _format; }
             set { _format = value; }
         }
-        private string _format = "BLG";
+        private string _format = "blg";
 
 
 
@@ -180,9 +181,9 @@ namespace Microsoft.PowerShell.Commands
             _resourceMgr = Microsoft.PowerShell.Commands.Diagnostics.Common.CommonUtilities.GetResourceManager();
 
             //
-            // Validate the Format and CounterSamples arguments
+            // Set output format (log file type)
             //
-            ValidateFormat();
+            SetOutputFormat();
 
             if (Circular.IsPresent && _maxSize == 0)
             {
@@ -311,26 +312,20 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        // ValidateFormat() helper.
-        // Validates Format argument: only "BLG", "TSV" and "CSV" are valid strings (case-insensitive)
+        // Determines Log File Type based on FileFormat parameter
         //
-        private void ValidateFormat()
+        private void SetOutputFormat()
         {
             switch (_format.ToLowerInvariant())
             {
-                case "blg":
-                    _outputFormat = PdhLogFileType.PDH_LOG_TYPE_BINARY;
-                    break;
                 case "csv":
                     _outputFormat = PdhLogFileType.PDH_LOG_TYPE_CSV;
                     break;
                 case "tsv":
                     _outputFormat = PdhLogFileType.PDH_LOG_TYPE_TSV;
                     break;
-                default:
-                    string msg = string.Format(CultureInfo.InvariantCulture, _resourceMgr.GetString("CounterInvalidFormat"), _format);
-                    Exception exc = new Exception(msg);
-                    ThrowTerminatingError(new ErrorRecord(exc, "CounterInvalidFormat", ErrorCategory.InvalidArgument, null));
+                default:  // By default file format is blg
+                    _outputFormat = PdhLogFileType.PDH_LOG_TYPE_BINARY;
                     break;
             }
         }
