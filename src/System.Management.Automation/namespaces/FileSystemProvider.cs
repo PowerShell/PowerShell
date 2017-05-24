@@ -1359,7 +1359,13 @@ namespace Microsoft.PowerShell.Commands
                     ShellExecuteHelper.Start(invokeProcess.StartInfo);
                 }
 #else
-                finally { /* Nothing to do in FullCLR */ }
+                finally
+                {
+                    // Nothing to do in FullCLR.
+                    // This empty 'finally' block is just to match the 'try' block above so that the code can be organized
+                    // in a clean way without too many if/def's.
+                    // Empty finally block will be ignored in release build, so there is no performance concern.
+                }
 #endif
             }
         } // InvokeDefaultAction
