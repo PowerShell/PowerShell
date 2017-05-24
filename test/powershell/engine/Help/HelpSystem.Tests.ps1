@@ -226,3 +226,45 @@ Describe "Get-Help should find help info within help files" -Tags @('CI', 'Requi
         }
     }
 }
+
+Describe "Get-Help should find pattern help files" -Tags "CI" {
+    
+    # There is a bug specific to Travis CI that hangs the test if "get-help" is used to search pattern string. This doesn't repro locally. 
+    # This occurs even if Unix system just returns "Directory.GetFiles(path, pattern);" as the windows' code does.
+    # Since there's currently no way to get the vm from Travis CI and the test PASSES locally on both Ubuntu and MacOS, excluding pattern test under Unix system.
+  
+  BeforeAll {
+    $helpFile1 = "about_testCase1.help.txt"
+    $helpFile2 = "about_testCase.2.help.txt"
+    $culture = (Get-Culture).Name
+    $helpFolderPath = Join-Path $PSHOME $culture
+    $helpFilePath1 = Join-Path $helpFolderPath $helpFile1
+    $helpFilePath2 = Join-Path $helpFolderPath $helpFile2
+    $null = New-Item -ItemType Directory -Path $helpFolderPath -ErrorAction SilentlyContinue -Force
+    # Create at least one help file matches "about*" pattern
+    $null = New-Item -ItemType File -Path $helpFilePath1 -Value "about_test1" -ErrorAction SilentlyContinue
+    $null = New-Item -ItemType File -Path $helpFilePath2 -Value "about_test2" -ErrorAction SilentlyContinue 
+  }
+
+  # Remove the test files
+  AfterAll {
+    Remove-Item $helpFilePath1 -Force -ErrorAction SilentlyContinue
+    Remove-Item $helpFilePath2 -Force -ErrorAction SilentlyContinue
+  }
+
+  $testcases = @(
+                  @{command = {Get-Help about_testCas?1}; testname = "test ? pattern"; result = "about_test1"}
+                  @{command = {Get-Help about_testCase.?}; testname = "test ? pattern with dot"; result = "about_test2"}
+                  @{command = {(Get-Help about_testCase*).Count}; testname = "test * pattern"; result = "2"}
+                  @{command = {Get-Help about_testCas?.2*}; testname = "test ?, * pattern with dot"; result = "about_test2"}
+               )
+
+    It "Get-Help should find pattern help files - <testname>" -TestCases $testcases -Pending: (-not $IsWindows){
+            param (
+            $command,
+            $result
+        )
+        $command.Invoke() | Should Be $result
+    }
+
+}
