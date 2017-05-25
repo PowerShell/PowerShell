@@ -1663,7 +1663,7 @@ namespace Microsoft.PowerShell.Commands
                         // 'GciEnumerationAction' test hooks are set.
                         if (InternalTestHooks.GciEnumerationActionDelete)
                         {
-                            if (string.Equals(filesystemInfo.Name, "c283d143-2116-4809-bf11-4f7d61613f92", StringComparison.Ordinal))
+                            if (string.Equals(filesystemInfo.Name, "c283d143-2116-4809-bf11-4f7d61613f92", StringComparison.InvariantCulture))
                             {
                                 File.Delete(filesystemInfo.FullName);
                             }
