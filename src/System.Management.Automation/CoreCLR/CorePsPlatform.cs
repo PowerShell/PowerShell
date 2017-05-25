@@ -814,7 +814,7 @@ namespace System.Management.Automation
         }
 
         internal static unsafe void CreateProcess(
-            string filename, string[] argv, string[] envp, string cwp,
+            string filename, string[] argv, string[] envp, string cwd,
             bool redirectStdin, bool redirectStdout, bool redirectStderr, int creationFlags,
             out int lpChildPid, out int stdinFd, out int stdoutFd, out int stderrFd)
         {
@@ -823,9 +823,9 @@ namespace System.Management.Automation
             {
                 AllocNullTerminatedArray(argv, ref argvPtr);
                 AllocNullTerminatedArray(envp, ref envpPtr);
-                int result = ForkAndExecProcess(
+                int result = Unix.NativeMethods.ForkAndExecProcess(
                     filename, argvPtr, envpPtr, cwd,
-                    redirectStdin ? 1 : 0, redirectStdout ? 1 : 0, redirectStderr ? 1 : 0, createNewProcessGroup ? 1 : 0,
+                    redirectStdin ? 1 : 0, redirectStdout ? 1 : 0, redirectStderr ? 1 : 0, creationFlags,
                     out lpChildPid, out stdinFd, out stdoutFd, out stderrFd);
                 if (result != 0)
                 {
@@ -856,7 +856,7 @@ namespace System.Management.Automation
             // Allocate the unmanaged array to hold each string pointer.
             // It needs to have an extra element to null terminate the array.
             arrPtr = (byte**)Marshal.AllocHGlobal(sizeof(IntPtr) * arrLength);
-            Debug.Assert(arrPtr != null);
+            System.Diagnostics.Debug.Assert(arrPtr != null);
 
             // Zero the memory so that if any of the individual string allocations fails,
             // we can loop through the array to free any that succeeded.
@@ -870,10 +870,10 @@ namespace System.Management.Automation
             // We need the data to be an unmanaged, null-terminated array of UTF8-encoded bytes.
             for (int i = 0; i < arr.Length; i++)
             {
-                byte[] byteArr = Encoding.UTF8.GetBytes(arr[i]);
+                byte[] byteArr = System.Text.Encoding.UTF8.GetBytes(arr[i]);
 
                 arrPtr[i] = (byte*)Marshal.AllocHGlobal(byteArr.Length + 1); //+1 for null termination
-                Debug.Assert(arrPtr[i] != null);
+                System.Diagnostics.Debug.Assert(arrPtr[i] != null);
 
                 Marshal.Copy(byteArr, 0, (IntPtr)arrPtr[i], byteArr.Length); // copy over the data from the managed byte array
                 arrPtr[i][byteArr.Length] = (byte)'\0'; // null terminate
