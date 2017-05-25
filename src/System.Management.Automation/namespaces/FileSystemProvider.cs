@@ -1663,19 +1663,17 @@ namespace Microsoft.PowerShell.Commands
                         // 'GciEnumerationAction' test hooks are set.
                         if (InternalTestHooks.GciEnumerationActionDelete)
                         {
-                            if (filesystemInfo.Name == "c283d143-2116-4809-bf11-4f7d61613f92")
+                            if (string.Equals(filesystemInfo.Name, "c283d143-2116-4809-bf11-4f7d61613f92", StringComparison.Ordinal))
                             {
-                                var fullName = Path.Combine(directory.FullName, filesystemInfo.Name);
-                                File.Delete(fullName);
+                                File.Delete(filesystemInfo.FullName);
                             }
                         }
                         else if (InternalTestHooks.GciEnumerationActionRename)
                         {
-                            if (filesystemInfo.Name == "B1B691A9-B7B1-4584-AED7-5259511BEEC4")
+                            if (string.Equals(filesystemInfo.Name, "B1B691A9-B7B1-4584-AED7-5259511BEEC4", StringComparison.InvariantCulture))
                             {
-                                var fullName = Path.Combine(directory.FullName, filesystemInfo.Name);
                                 var newFullName = Path.Combine(directory.FullName, "77efd2bb-92aa-4ad3-979a-18936a4bd565");
-                                File.Move(fullName, newFullName);
+                                File.Move(filesystemInfo.FullName, newFullName);
                             }
                         }
 
