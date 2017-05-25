@@ -326,7 +326,25 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        ///
+        /// Gets and sets the character used for the progress bar.
+        ///
+        /// </summary>
 
+        public
+        char
+        ProgressCharacter
+        {
+            get 
+            {
+                return _progressCharacter;
+            }
+            set 
+            {
+                _progressCharacter = value;
+            }
+        }
 
         /// <summary>
         ///
@@ -496,6 +514,9 @@ namespace System.Management.Automation
 
         [DataMemberAttribute()]
         private ProgressRecordType _type = ProgressRecordType.Processing;
+
+        [DataMemberAttribute()]
+        private char _progressCharacter = 'o';
 
         #region Serialization / deserialization for remoting
 
