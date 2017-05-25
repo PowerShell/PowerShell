@@ -564,7 +564,7 @@ namespace Microsoft.PowerShell
             if (index != -1)
             {
                 // The prompt text could be a multi-line string, and in such case
-                // we only want the part of it shown on the current line.
+                // we only want the part of it that is shown on the input line.
                 newPrompt = newPrompt.Substring(index + 1);
             }
             var bufferLineCount = (newPrompt.Length) / (_console.BufferWidth) + 1;
