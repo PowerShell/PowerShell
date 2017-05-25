@@ -382,7 +382,7 @@ sudo installer -pkg powershell-6.0.0-beta.2-osx.10.12-x64.pkg -target /
 If you PowerShell with Homebrew, uninstallation is easy:
 
 ```sh
-brew uninstall powershell
+brew cask uninstall powershell
 ```
 
 If you installed PowerShell via direct download,
