@@ -62,7 +62,7 @@ int32_t ForkAndExecProcess(
 {
     int success = true;
     int processId = -1;
-    int stdinFds = { -1, -1 };
+    int stdinFds[2] = { -1, -1 };
     int stdoutFds[2] = { -1, -1 };
     int stderrFds[2] = { -1, -1 };
 
