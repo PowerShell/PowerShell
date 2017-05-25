@@ -8,6 +8,8 @@ using System.ComponentModel;
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 using System.IO;
+using System.Diagnostics;
+using System.Text;
 
 namespace System.Management.Automation
 {
@@ -602,14 +604,220 @@ namespace System.Management.Automation
             return IsOSX ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
         }
 
-        #region CreateProcess
+        #region UNIX CreateProcess
+
+        //
+        // This code was taken from GitHub DotNet CoreFx
+        //
+
+#if UNIX
+        private static readonly UTF8Encoding s_utf8NoBom =
+            new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+
+        private const int StreamBufferSize = 4096;
+
+        internal static bool StartProcess(
+            ProcessStartInfo startInfo,
+            ref StreamWriter standardInput,
+            ref StreamReader standardOutput,
+            ref StreamReader standardError)
+        {
+            string filename;
+            string[] argv;
+
+            if (startInfo.UseShellExecute)
+            {
+                if (startInfo.RedirectStandardInput || startInfo.RedirectStandardOutput || startInfo.RedirectStandardError)
+                {
+                    // TODO: 
+                    throw new InvalidOperationException("Can't redirect streams.");
+                }
+
+                const string ShellPath = "/bin/sh";
+
+                filename = ShellPath;
+                argv = new string[3] { ShellPath, "-c", startInfo.FileName + " " + startInfo.Arguments };
+            }
+            else
+            {
+                // We currently require a fully qualified path and don't do any path resolution.
+                filename = startInfo.FileName;
+                argv = ParseArgv(startInfo);
+            }
+
+            string[] envp = CreateEnvp(startInfo);
+            string cwd = !string.IsNullOrWhiteSpace(startInfo.WorkingDirectory) ? startInfo.WorkingDirectory : null;
+
+            // Invoke the shim fork/execve routine.  It will create pipes for all requested
+            // redirects, fork a child process, map the pipe ends onto the appropriate stdin/stdout/stderr
+            // descriptors, and execve to execute the requested process.  The shim implementation
+            // is used to fork/execve as executing managed code in a forked process is not safe (only
+            // the calling thread will transfer, thread IDs aren't stable across the fork, etc.)
+            int childPid, stdinFd, stdoutFd, stderrFd;
+            CreateProcess(
+                filename, argv, envp, cwd,
+                startInfo.RedirectStandardInput, startInfo.RedirectStandardOutput, startInfo.RedirectStandardError, startInfo.CreateNewProcessGroup,
+                out childPid,
+                out stdinFd, out stdoutFd, out stderrFd);
+
+            // Configure the parent's ends of the redirection streams.
+            // We use UTF8 encoding without BOM by-default(instead of Console encoding as on Windows)
+            // as there is no good way to get this information from the native layer
+            // and we do not want to take dependency on Console contract.
+            if (startInfo.RedirectStandardInput)
+            {
+                Debug.Assert(stdinFd >= 0);
+                standardInput = new StreamWriter(OpenStream(stdinFd, FileAccess.Write),
+                    s_utf8NoBom, StreamBufferSize)
+                { AutoFlush = true };
+            }
+            if (startInfo.RedirectStandardOutput)
+            {
+                Debug.Assert(stdoutFd >= 0);
+                standardOutput = new StreamReader(OpenStream(stdoutFd, FileAccess.Read),
+                    startInfo.StandardOutputEncoding ?? s_utf8NoBom, true, StreamBufferSize);
+            }
+            if (startInfo.RedirectStandardError)
+            {
+                Debug.Assert(stderrFd >= 0);
+                standardError = new StreamReader(OpenStream(stderrFd, FileAccess.Read),
+                    startInfo.StandardErrorEncoding ?? s_utf8NoBom, true, StreamBufferSize);
+            }
+
+            return true;
+        }
+
+        /// <summary>Opens a stream around the specified file descriptor and with the specified access.</summary>
+        /// <param name="fd">The file descriptor.</param>
+        /// <param name="access">The access mode.</param>
+        /// <returns>The opened stream.</returns>
+        private static FileStream OpenStream(int fd, FileAccess access)
+        {
+            Debug.Assert(fd >= 0);
+            return new FileStream(
+                new SafeFileHandle((IntPtr)fd, ownsHandle: true),
+                access, StreamBufferSize, isAsync: false);
+        }
+
+        /// <summary>Converts the filename and arguments information from a ProcessStartInfo into an argv array.</summary>
+        /// <param name="psi">The ProcessStartInfo.</param>
+        /// <returns>The argv array.</returns>
+        private static string[] ParseArgv(ProcessStartInfo psi)
+        {
+            string argv0 = psi.FileName; // pass filename (instead of resolved path) as argv[0], to match what caller supplied
+            if (string.IsNullOrEmpty(psi.Arguments))
+            {
+                return new string[] { argv0 };
+            }
+            else
+            {
+                var argvList = new List<string>();
+                argvList.Add(argv0);
+                ParseArgumentsIntoList(psi.Arguments, argvList);
+                return argvList.ToArray();
+            }
+        }
+
+        /// <summary>Converts the environment variables information from a ProcessStartInfo into an envp array.</summary>
+        /// <param name="psi">The ProcessStartInfo.</param>
+        /// <returns>The envp array.</returns>
+        private static string[] CreateEnvp(ProcessStartInfo psi)
+        {
+            var envp = new string[psi.Environment.Count];
+            int index = 0;
+            foreach (var pair in psi.Environment)
+            {
+                envp[index++] = pair.Key + "=" + pair.Value;
+            }
+            return envp;
+        }
+
+        /// <summary>Parses a command-line argument string into a list of arguments.</summary>
+        /// <param name="arguments">The argument string.</param>
+        /// <param name="results">The list into which the component arguments should be stored.</param>
+        /// <remarks>
+        /// This follows the rules outlined in "Parsing C++ Command-Line Arguments" at 
+        /// https://msdn.microsoft.com/en-us/library/17w5ykft.aspx.
+        /// </remarks>
+        private static void ParseArgumentsIntoList(string arguments, List<string> results)
+        {
+            var currentArgument = new StringBuilder();
+            bool inQuotes = false;
+
+            // Iterate through all of the characters in the argument string.
+            for (int i = 0; i < arguments.Length; i++)
+            {
+                // From the current position, iterate through contiguous backslashes.
+                int backslashCount = 0;
+                for (; i < arguments.Length && arguments[i] == '\\'; i++, backslashCount++) ;
+                if (backslashCount > 0)
+                {
+                    if (i >= arguments.Length || arguments[i] != '"')
+                    {
+                        // Backslashes not followed by a double quote:
+                        // they should all be treated as literal backslashes.
+                        currentArgument.Append('\\', backslashCount);
+                        i--;
+                    }
+                    else
+                    {
+                        // Backslashes followed by a double quote:
+                        // - Output a literal slash for each complete pair of slashes
+                        // - If one remains, use it to make the subsequent quote a literal.
+                        currentArgument.Append('\\', backslashCount / 2);
+                        if (backslashCount % 2 == 0)
+                        {
+                            i--;
+                        }
+                        else
+                        {
+                            currentArgument.Append('"');
+                        }
+                    }
+                    continue;
+                }
+
+                char c = arguments[i];
+
+                // If this is a double quote, track whether we're inside of quotes or not.
+                // Anything within quotes will be treated as a single argument, even if
+                // it contains spaces.
+                if (c == '"')
+                {
+                    inQuotes = !inQuotes;
+                    continue;
+                }
+
+                // If this is a space/tab and we're not in quotes, we're done with the current
+                // argument, and if we've built up any characters in the current argument,
+                // it should be added to the results and then reset for the next one.
+                if ((c == ' ' || c == '\t') && !inQuotes)
+                {
+                    if (currentArgument.Length > 0)
+                    {
+                        results.Add(currentArgument.ToString());
+                        currentArgument.Clear();
+                    }
+                    continue;
+                }
+
+                // Nothing special; add the character to the current argument.
+                currentArgument.Append(c);
+            }
+
+            // If we reach the end of the string and we still have anything in our current
+            // argument buffer, treat it as an argument to be added to the results.
+            if (currentArgument.Length > 0)
+            {
+                results.Add(currentArgument.ToString());
+            }
+        }
 
         internal static unsafe void CreateProcess(
             string filename, string[] argv, string[] envp, string cwp,
             bool redirectStdin, bool redirectStdout, bool redirectStderr, int creationFlags,
             out int lpChildPid, out int stdinFd, out int stdoutFd, out int stderrFd)
         {
-#if UNIX
             byte** argvPtr = null, envpPtr = null;
             try
             {
@@ -639,12 +847,8 @@ namespace System.Management.Automation
                 FreeArray(envpPtr, envp.Length);
                 FreeArray(argvPtr, argv.Length);
             }
-#else
-            throw new PSNotSupportedException();
-#endif
         }
 
-#if UNIX
         private static unsafe void AllocNullTerminatedArray(string[] arr, ref byte** arrPtr)
         {
             int arrLength = arr.Length + 1; // +1 is for null termination
