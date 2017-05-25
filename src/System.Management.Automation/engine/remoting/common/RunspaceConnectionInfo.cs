@@ -1999,25 +1999,21 @@ namespace System.Management.Automation.Runspaces
         /// StartSSHProcess
         /// </summary>
         /// <returns></returns>
-        internal System.Diagnostics.Process StartSSHProcess(
+        internal int StartSSHProcess(
             out StreamWriter stdInWriterVar,
             out StreamReader stdOutReaderVar,
             out StreamReader stdErrReaderVar)
         {
             string filePath = string.Empty;
-#if !UNIX
             var context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
             if (context != null)
             {
-                var cmdInfo = context.CommandDiscovery.LookupCommandInfo("ssh.exe", CommandOrigin.Internal) as ApplicationInfo;
+                var cmdInfo = context.CommandDiscovery.LookupCommandInfo("ssh", CommandOrigin.Internal) as ApplicationInfo;
                 if (cmdInfo != null)
                 {
                     filePath = cmdInfo.Path;
                 }
             }
-#else
-            filePath = @"ssh";
-#endif
 
             // Extract an optional domain name if provided.
             string domainName = null;
@@ -2094,11 +2090,15 @@ namespace System.Management.Automation.Runspaces
 
 #if UNIX
 
+        private const int CREATE_NEW_PROCESS_SESSION = 0x00000001;
+
         /// <summary>
-        /// Create a process through managed APIs and return StdIn, StdOut, StdError reader/writers
-        /// This works for non-Windows platforms and is simpler.
+        /// Create a process through managed APIs and returns StdIn, StdOut, StdError reader/writers.
+        /// This works for Linux platforms and creates the SSH process in its own session which means
+        /// Ctrl+C signals will not propagate from parent (PowerShell) process to SSH process so that
+        /// PSRP handles them correctly.
         /// </summary>
-        private static System.Diagnostics.Process StartSSHProcessImpl(
+        private static int StartSSHProcessImpl(
             System.Diagnostics.ProcessStartInfo startInfo,
             out StreamWriter stdInWriterVar,
             out StreamReader stdOutReaderVar,
@@ -2108,16 +2108,21 @@ namespace System.Management.Automation.Runspaces
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
 
-            System.Diagnostics.Process process = new Process();
-            process.StartInfo = startInfo;
+            StreamWriter stdInWriter = null;
+            StreamReader stdOutReader = null;
+            StreamReader stdErrReader = null;
+            int pid = Platform.StartProcess(
+                startInfo,
+                CREATE_NEW_PROCESS_SESSION, // Create Unix process in its own session
+                ref stdInWriter,
+                ref stdOutReader,
+                ref stdErrReader);
 
-            process.Start();
+            stdInWriterVar = stdInWriter;
+            stdOutReaderVar = stdOutReader;
+            stdErrReaderVar = stdErrReader;
 
-            stdInWriterVar = process.StandardInput;
-            stdOutReaderVar = process.StandardOutput;
-            stdErrReaderVar = process.StandardError;
-
-            return process;
+            return pid;
         }
 
 #else
@@ -2129,7 +2134,7 @@ namespace System.Management.Automation.Runspaces
         /// be through named pipes.  Managed code for named pipes is unreliable and so this is done via
         /// P-Invoking native APIs.
         /// </summary>
-        private static System.Diagnostics.Process StartSSHProcessImpl(
+        private static int StartSSHProcessImpl(
             System.Diagnostics.ProcessStartInfo startInfo,
             out StreamWriter stdInWriterVar,
             out StreamReader stdOutReaderVar,
@@ -2187,7 +2192,7 @@ namespace System.Management.Automation.Runspaces
                 throw;
             }
 
-            return sshProcess;
+            return sshProcess.Id;
         }
 
         // Process creation flags
