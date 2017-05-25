@@ -27,9 +27,11 @@ function Start-Trace
     [string]
     $SessionName,
     [Parameter(Position=1)]
+    [ValidateNotNullOrEmpty()]
     [string]
     $OutputFilePath,
     [Parameter(Position=2)]
+    [ValidateNotNullOrEmpty()]
     [string]
     $ProviderFilePath,
     [Parameter()]
@@ -63,12 +65,12 @@ function Start-Trace
 
         if ($OutputFilePath -ne $null)
         {
-            $executestring += " -o $OutputFilePath"
+            $executestring += " -o ""$OutputFilePath"""
         }
 
         if ($ProviderFilePath -ne $null)
         {
-            $executestring += " -pf $ProviderFilePath"
+            $executestring += " -pf ""$ProviderFilePath"""
         }
 
         if ($Format -ne $null)
