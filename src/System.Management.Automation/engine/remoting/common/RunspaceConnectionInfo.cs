@@ -2108,6 +2108,24 @@ namespace System.Management.Automation.Runspaces
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
 
+            StreamWriter stdInWriter = null;
+            StreamReader stdOutReader = null;
+            StreamReader stdErrReader = null;
+            int pid = Platform.StartProcess(
+                startInfo,
+                0x00000001,         // Create Unix process in its own session
+                ref stdInWriter,
+                ref stdOutReader,
+                ref stdErrReader);
+
+            stdInWriterVar = stdInWriter;
+            stdOutReaderVar = stdOutReader;
+            stdErrReaderVar = stdErrReader;
+
+            // TODO: Need to return pid
+            return null;
+
+            /*
             System.Diagnostics.Process process = new Process();
             process.StartInfo = startInfo;
 
@@ -2118,6 +2136,7 @@ namespace System.Management.Automation.Runspaces
             stdErrReaderVar = process.StandardError;
 
             return process;
+            */
         }
 
 #else

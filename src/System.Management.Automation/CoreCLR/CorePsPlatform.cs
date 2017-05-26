@@ -616,8 +616,9 @@ namespace System.Management.Automation
 
         private const int StreamBufferSize = 4096;
 
-        internal static bool StartProcess(
+        internal static int StartProcess(
             ProcessStartInfo startInfo,
+            int creationFlags,
             ref StreamWriter standardInput,
             ref StreamReader standardOutput,
             ref StreamReader standardError)
@@ -656,9 +657,11 @@ namespace System.Management.Automation
             int childPid, stdinFd, stdoutFd, stderrFd;
             CreateProcess(
                 filename, argv, envp, cwd,
-                startInfo.RedirectStandardInput, startInfo.RedirectStandardOutput, startInfo.RedirectStandardError, startInfo.CreateNewProcessGroup,
+                startInfo.RedirectStandardInput, startInfo.RedirectStandardOutput, startInfo.RedirectStandardError, creationFlags,
                 out childPid,
                 out stdinFd, out stdoutFd, out stderrFd);
+
+            Debug.Assert(childPid >= 0);
 
             // Configure the parent's ends of the redirection streams.
             // We use UTF8 encoding without BOM by-default(instead of Console encoding as on Windows)
@@ -684,7 +687,7 @@ namespace System.Management.Automation
                     startInfo.StandardErrorEncoding ?? s_utf8NoBom, true, StreamBufferSize);
             }
 
-            return true;
+            return childPid;
         }
 
         /// <summary>Opens a stream around the specified file descriptor and with the specified access.</summary>
