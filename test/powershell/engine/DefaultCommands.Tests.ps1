@@ -392,7 +392,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "Select-Object",                                      ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Select-String",                                      ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Select-Xml",                                         ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
-"Cmdlet", "Send-MailMessage",                                   ,                     $($FullCLR                               )
+"Cmdlet", "Send-MailMessage",                                   ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Set-Acl",                                            ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "Set-Alias",                                          ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Set-AuthenticodeSignature",                          ,                     $($FullCLR -or $CoreWindows              )
