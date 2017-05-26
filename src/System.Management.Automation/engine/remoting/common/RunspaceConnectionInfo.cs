@@ -1999,7 +1999,7 @@ namespace System.Management.Automation.Runspaces
         /// StartSSHProcess
         /// </summary>
         /// <returns></returns>
-        internal System.Diagnostics.Process StartSSHProcess(
+        internal int StartSSHProcess(
             out StreamWriter stdInWriterVar,
             out StreamReader stdOutReaderVar,
             out StreamReader stdErrReaderVar)
@@ -2098,7 +2098,7 @@ namespace System.Management.Automation.Runspaces
         /// Create a process through managed APIs and return StdIn, StdOut, StdError reader/writers
         /// This works for non-Windows platforms and is simpler.
         /// </summary>
-        private static System.Diagnostics.Process StartSSHProcessImpl(
+        private static int StartSSHProcessImpl(
             System.Diagnostics.ProcessStartInfo startInfo,
             out StreamWriter stdInWriterVar,
             out StreamReader stdOutReaderVar,
@@ -2122,8 +2122,7 @@ namespace System.Management.Automation.Runspaces
             stdOutReaderVar = stdOutReader;
             stdErrReaderVar = stdErrReader;
 
-            // TODO: Need to return pid
-            return null;
+            return pid;
 
             /*
             System.Diagnostics.Process process = new Process();
@@ -2135,7 +2134,7 @@ namespace System.Management.Automation.Runspaces
             stdOutReaderVar = process.StandardOutput;
             stdErrReaderVar = process.StandardError;
 
-            return process;
+            return process.Id;
             */
         }
 
@@ -2148,7 +2147,7 @@ namespace System.Management.Automation.Runspaces
         /// be through named pipes.  Managed code for named pipes is unreliable and so this is done via
         /// P-Invoking native APIs.
         /// </summary>
-        private static System.Diagnostics.Process StartSSHProcessImpl(
+        private static int StartSSHProcessImpl(
             System.Diagnostics.ProcessStartInfo startInfo,
             out StreamWriter stdInWriterVar,
             out StreamReader stdOutReaderVar,
@@ -2206,7 +2205,7 @@ namespace System.Management.Automation.Runspaces
                 throw;
             }
 
-            return sshProcess;
+            return sshProcess.Id;
         }
 
         // Process creation flags
