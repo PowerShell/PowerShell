@@ -70,12 +70,17 @@ namespace System.Management.Automation.Internal
         /// It's not intended to be a public API, but because we generate type in a different assembly it has to be public.
         /// Return type should be SessionStateInternal, but it violates accessibility consistency, so we use object.
         /// </summary>
+        /// <remarks>
+        /// By default, PowerShell class instantiation usually happens in the same Runspace where the class is defined. In
+        /// that case, the created instance will be bound to the session state used to define that class in the Runspace.
+        /// However, if the instantiation happens in a different Runspace where the class is not defined, then the created
+        /// instance won't be bound to any session state.
+        /// </remarks>
         /// <returns>SessionStateInternal</returns>
         public object GetSessionState()
         {
             SessionStateInternal ss = null;
-            bool found = _stateMap.TryGetValue(Runspace.DefaultRunspace, out ss);
-            Diagnostics.Assert(found, "We always should be able to find corresponding SessionState");
+            _stateMap.TryGetValue(Runspace.DefaultRunspace, out ss);
             return ss;
         }
     }
