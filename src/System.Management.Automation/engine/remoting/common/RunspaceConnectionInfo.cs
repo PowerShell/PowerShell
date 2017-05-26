@@ -2005,19 +2005,15 @@ namespace System.Management.Automation.Runspaces
             out StreamReader stdErrReaderVar)
         {
             string filePath = string.Empty;
-#if !UNIX
             var context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
             if (context != null)
             {
-                var cmdInfo = context.CommandDiscovery.LookupCommandInfo("ssh.exe", CommandOrigin.Internal) as ApplicationInfo;
+                var cmdInfo = context.CommandDiscovery.LookupCommandInfo("ssh", CommandOrigin.Internal) as ApplicationInfo;
                 if (cmdInfo != null)
                 {
                     filePath = cmdInfo.Path;
                 }
             }
-#else
-            filePath = @"ssh";
-#endif
 
             // Extract an optional domain name if provided.
             string domainName = null;
