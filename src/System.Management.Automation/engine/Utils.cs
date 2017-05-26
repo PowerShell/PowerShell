@@ -653,23 +653,22 @@ namespace System.Management.Automation
 #else
             lock (s_cachedGroupPolicySettings)
             {
-                // Return cached information, if we have it
-                Dictionary<string, object> settings;
-                if ((s_cachedGroupPolicySettings.TryGetValue(settingName, out settings)) &&
-                    !InternalTestHooks.BypassGroupPolicyCaching)
-                {
-                    return settings;
-                }
-
+                Dictionary<string, object> settings = null;
                 if (!String.Equals(".", settingName, StringComparison.OrdinalIgnoreCase))
                 {
                     groupPolicyBase += "\\" + settingName;
                 }
 
-                settings = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
-
                 foreach (RegistryKey searchKey in preferenceOrder)
                 {
+                    // Return cached information, if we have it
+                    string uniqueSettingName = searchKey.Name + "\\" + groupPolicyBase;
+                    if (!InternalTestHooks.BypassGroupPolicyCaching &&
+                        (s_cachedGroupPolicySettings.TryGetValue(uniqueSettingName, out settings)))
+                    {
+                        return settings;
+                    }
+
                     try
                     {
                         // Look up the machine-wide group policy
@@ -677,6 +676,8 @@ namespace System.Management.Automation
                         {
                             if (key != null)
                             {
+                                settings = new Dictionary<string, object>(StringComparer.OrdinalIgnoreCase);
+
                                 foreach (string subkeyName in key.GetValueNames())
                                 {
                                     // A null or empty subkey name string corresponds to a (Default) key.
@@ -701,6 +702,12 @@ namespace System.Management.Automation
                                     }
                                 }
 
+                                // No group policy settings, then return null
+                                if (settings.Count == 0)
+                                {
+                                    settings = null;
+                                }
+
                                 break;
                             }
                         }
@@ -709,18 +716,12 @@ namespace System.Management.Automation
                     {
                         // User doesn't have access to open group policy key
                     }
-                }
 
-                // No group policy settings, then return null
-                if (settings.Count == 0)
-                {
-                    settings = null;
-                }
-
-                // Cache the data
-                if (!InternalTestHooks.BypassGroupPolicyCaching)
-                {
-                    s_cachedGroupPolicySettings[settingName] = settings;
+                    // Cache the data
+                    if (!InternalTestHooks.BypassGroupPolicyCaching)
+                    {
+                        s_cachedGroupPolicySettings[uniqueSettingName] = settings;
+                    }
                 }
 
                 return settings;
