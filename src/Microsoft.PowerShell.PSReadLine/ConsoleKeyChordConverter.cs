@@ -324,7 +324,7 @@ namespace Microsoft.PowerShell
             // get corresponding character  - may be 0, 1 or 2 in length (diacritics)
             var chars = new char[2];
             int charCount = NativeMethods.ToUnicode(
-                        virtualKey, scanCode, state, chars, chars.Length, NativeMethods.MENU_IS_INACTIVE);
+                virtualKey, scanCode, state, chars, chars.Length, NativeMethods.MENU_IS_INACTIVE);
 
             // TODO: support diacritics (charCount == 2)
             if (charCount == 1)
