@@ -861,11 +861,14 @@ namespace System.Management.Automation.Runspaces
             var securityDescriptorCommandsBaseType = Language.TypeResolver.ResolveType("Microsoft.PowerShell.Commands.SecurityDescriptorCommandsBase", out exception);
 
             var td102 = new TypeData(@"System.Security.AccessControl.ObjectSecurity", true);
-            td102.Members.Add("Path", new CodePropertyData("Path", GetMethodInfo(securityDescriptorCommandsBaseType, "GetPath"), null));
-            td102.Members.Add("Owner", new CodePropertyData("Owner", GetMethodInfo(securityDescriptorCommandsBaseType, "GetOwner"), null));
-            td102.Members.Add("Group", new CodePropertyData("Group", GetMethodInfo(securityDescriptorCommandsBaseType, "GetGroup"), null));
-            td102.Members.Add("Access", new CodePropertyData("Access", GetMethodInfo(securityDescriptorCommandsBaseType, "GetAccess"), null));
-            td102.Members.Add("Sddl", new CodePropertyData("Sddl", GetMethodInfo(securityDescriptorCommandsBaseType, "GetSddl"), null));
+            if (securityDescriptorCommandsBaseType != null)
+            {
+                td102.Members.Add("Path", new CodePropertyData("Path", GetMethodInfo(securityDescriptorCommandsBaseType, "GetPath"), null));
+                td102.Members.Add("Owner", new CodePropertyData("Owner", GetMethodInfo(securityDescriptorCommandsBaseType, "GetOwner"), null));
+                td102.Members.Add("Group", new CodePropertyData("Group", GetMethodInfo(securityDescriptorCommandsBaseType, "GetGroup"), null));
+                td102.Members.Add("Access", new CodePropertyData("Access", GetMethodInfo(securityDescriptorCommandsBaseType, "GetAccess"), null));
+                td102.Members.Add("Sddl", new CodePropertyData("Sddl", GetMethodInfo(securityDescriptorCommandsBaseType, "GetSddl"), null));
+            }
             td102.Members.Add("AccessToString",
                 new ScriptPropertyData(@"AccessToString", GetScriptBlock(@"$toString = """";
           $first = $true;
