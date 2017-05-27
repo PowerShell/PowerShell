@@ -79,9 +79,9 @@ There is also the community driven PowerShell Slack Team which you can sign up f
 
 [Slack Sign up]: http://slack.poshcode.org
 
-## Addons and libraries
+## Add-ons and libraries
 
-[Awesome powershell](https://github.com/janikvonrotz/awesome-powershell) is a great curated list of addons and resources. 
+[Awesome powershell](https://github.com/janikvonrotz/awesome-powershell) is a great curated list of add-ons and resources. 
 
 ## Building the Repository
 
