@@ -3510,7 +3510,7 @@ namespace Microsoft.PowerShell.Commands
             Collection<PathInfo> results = new Collection<PathInfo>();
             try
             {
-                results = SessionState.Path.GetResolvedPSPathFromPSPath(path);
+                results = SessionState.Path.GetResolvedPSPathFromPSPath(path, CmdletProviderContext);
             }
             catch (PSNotSupportedException notSupported)
             {
