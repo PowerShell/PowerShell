@@ -35,18 +35,10 @@ namespace System.Management.Automation
     {
         static CompletionCompleters()
         {
-#if CORECLR
-            ClrFacade.AddAssemblyLoadHandler(UpdateTypeCacheOnAssemblyLoad);
-#else
             AppDomain.CurrentDomain.AssemblyLoad += UpdateTypeCacheOnAssemblyLoad;
-#endif
         }
 
-#if CORECLR
-        static void UpdateTypeCacheOnAssemblyLoad(Assembly loadedAssembly)
-#else
         private static void UpdateTypeCacheOnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
-#endif
         {
             // Just null out the cache - we'll rebuild it the next time someone tries to complete a type.
             // We could rebuild it now, but we could be loading multiple assemblies (e.g. dependent assemblies)

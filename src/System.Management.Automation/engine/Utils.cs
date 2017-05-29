@@ -175,7 +175,7 @@ namespace System.Management.Automation
 
             try
             {
-                p = ClrFacade.SecureStringToCoTaskMemUnicode(ss);
+                p = Marshal.SecureStringToCoTaskMemUnicode(ss);
                 s = Marshal.PtrToStringUni(p);
             }
             finally

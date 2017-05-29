@@ -348,7 +348,7 @@ namespace System.Management.Automation.Remoting.Client
                 _cred.userName = name;
                 if (null != pwd)
                 {
-                    _cred.password = ClrFacade.SecureStringToCoTaskMemUnicode(pwd);
+                    _cred.password = Marshal.SecureStringToCoTaskMemUnicode(pwd);
                 }
 
                 _data = MarshalledObject.Create<WSManUserNameCredentialStruct>(_cred);

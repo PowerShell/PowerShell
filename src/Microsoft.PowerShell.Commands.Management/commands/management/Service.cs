@@ -2054,7 +2054,7 @@ namespace Microsoft.PowerShell.Commands
                 if (null != Credential)
                 {
                     username = Credential.UserName;
-                    password = ClrFacade.SecureStringToCoTaskMemUnicode(Credential.Password);
+                    password = Marshal.SecureStringToCoTaskMemUnicode(Credential.Password);
                 }
 
                 // Create the service

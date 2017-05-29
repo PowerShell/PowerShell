@@ -31,11 +31,7 @@ namespace System.Management.Automation
         // When the first attempt fails, we again need to retrieve the resource string to construct another exception, which ends up with an infinite loop.
         private const string BaseFolderDoesNotExist = "The base directory '{0}' does not exist.";
         private const string ManifestDefinitionDoesNotMatch = "Could not load file or assembly '{0}' or one of its dependencies. The located assembly's manifest definition does not match the assembly reference.";
-        private const string AssemblyPathDoesNotExist = "Could not load file or assembly '{0}' or one of its dependencies. The system cannot find the file specified.";
-        private const string InvalidAssemblyExtensionName = "Could not load file or assembly '{0}' or one of its dependencies. The file specified is not a DLL file.";
-        private const string AbsolutePathRequired = "Absolute path information is required.";
         private const string SingletonAlreadyInitialized = "The singleton of PowerShellAssemblyLoadContext has already been initialized.";
-        private const string UseResolvingEventHandlerOnly = "PowerShellAssemblyLoadContext was initialized to use its 'Resolving' event handler only.";
 
         #endregion Resource_Strings
 
@@ -148,96 +144,7 @@ namespace System.Management.Automation
 
         #endregion Properties
 
-        #region Events
-
-        /// <summary>
-        /// Assembly load event
-        /// </summary>
-        internal event Action<Assembly> AssemblyLoad;
-
-        #endregion Events
-
         #region Internal_Methods
-
-        /// <summary>
-        /// Load an IL or NI assembly from its file path.
-        /// </summary>
-        internal Assembly LoadFrom(string assemblyPath)
-        {
-            ValidateAssemblyPath(assemblyPath, "assemblyPath");
-
-            Assembly asmLoaded;
-            AssemblyName assemblyName = AssemblyLoadContext.GetAssemblyName(assemblyPath);
-
-            // Probe the assembly cache
-            if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
-                return asmLoaded;
-
-            // Prepare to load the assembly
-            lock (s_syncObj)
-            {
-                // Probe the cache again in case it's already loaded
-                if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
-                    return asmLoaded;
-
-                // Load the assembly through 'LoadFromNativeImagePath' or 'LoadFromAssemblyPath'
-                asmLoaded = assemblyPath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
-                    ? AssemblyLoadContext.Default.LoadFromNativeImagePath(assemblyPath, null)
-                    : AssemblyLoadContext.Default.LoadFromAssemblyPath(assemblyPath);
-
-                if (asmLoaded != null)
-                {
-                    // Add the loaded assembly to the cache
-                    s_assemblyCache.TryAdd(assemblyName.Name, asmLoaded);
-                    // Add its parent path to our probing paths
-                    string parentPath = Path.GetDirectoryName(assemblyPath);
-                    if (!_probingPaths.Contains(parentPath))
-                    {
-                        _probingPaths.Add(parentPath);
-                    }
-                }
-            }
-
-            // Raise AssemblyLoad event
-            OnAssemblyLoaded(asmLoaded);
-            return asmLoaded;
-        }
-
-        /// <summary>
-        /// Load assembly from byte stream.
-        /// </summary>
-        internal Assembly LoadFrom(Stream assembly)
-        {
-            if (assembly == null)
-                throw new ArgumentNullException("assembly");
-
-            Assembly asmLoaded;
-            AssemblyName assemblyName = GetAssemblyName(assembly);
-
-            // Probe the assembly cache
-            if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
-                return asmLoaded;
-
-            // Prepare to load the assembly
-            lock (s_syncObj)
-            {
-                // Probe the cache again in case it's already loaded
-                if (TryGetAssemblyFromCache(assemblyName, out asmLoaded))
-                    return asmLoaded;
-
-                // Load the assembly through 'LoadFromStream'
-                asmLoaded = AssemblyLoadContext.Default.LoadFromStream(assembly);
-                if (asmLoaded != null)
-                {
-                    // Add the loaded assembly to the cache
-                    s_assemblyCache.TryAdd(assemblyName.Name, asmLoaded);
-                }
-            }
-
-            // Raise AssemblyLoad event
-            OnAssemblyLoaded(asmLoaded);
-            return asmLoaded;
-        }
 
         /// <summary>
         /// Get the current loaded assemblies
@@ -385,77 +292,7 @@ namespace System.Management.Automation
                 }
             }
 
-            // Raise AssemblyLoad event
-            OnAssemblyLoaded(asmLoaded);
             return asmLoaded;
-        }
-
-        /// <summary>
-        /// Handle the AssemblyLoad event
-        /// </summary>
-        private void OnAssemblyLoaded(Assembly assemblyLoaded)
-        {
-            Action<Assembly> assemblyLoadHandler = AssemblyLoad;
-            if (assemblyLoaded != null && assemblyLoadHandler != null)
-            {
-                try
-                {
-                    assemblyLoadHandler(assemblyLoaded);
-                }
-                catch
-                {
-                    // Catch all exceptions, same behavior as AppDomain.AssemblyLoad
-                }
-            }
-        }
-
-        /// <summary>
-        /// Validate assembly path value for the specified parameter
-        /// </summary>
-        private void ValidateAssemblyPath(string assemblyPath, string parameterName)
-        {
-            if (string.IsNullOrEmpty(assemblyPath))
-            {
-                throw new ArgumentNullException(parameterName);
-            }
-
-            if (!Path.IsPathRooted(assemblyPath))
-            {
-                throw new ArgumentException(AbsolutePathRequired, parameterName);
-            }
-
-            if (!File.Exists(assemblyPath))
-            {
-                ThrowFileNotFoundException(
-                    AssemblyPathDoesNotExist,
-                    assemblyPath);
-            }
-
-            if (!string.Equals(Path.GetExtension(assemblyPath), ".DLL", StringComparison.OrdinalIgnoreCase))
-            {
-                ThrowFileLoadException(
-                    InvalidAssemblyExtensionName,
-                    assemblyPath);
-            }
-        }
-
-        /// <summary>
-        /// Get AssemblyName of an assembly stream
-        /// </summary>
-        private AssemblyName GetAssemblyName(Stream assembly)
-        {
-            if (assembly == null)
-                throw new ArgumentNullException("assembly");
-
-            string strongAssemblyName = null;
-            using (PEReader peReader = new PEReader(assembly, PEStreamOptions.LeaveOpen | PEStreamOptions.PrefetchMetadata))
-            {
-                MetadataReader metadataReader = peReader.GetMetadataReader();
-                strongAssemblyName = AssemblyMetadataHelper.GetAssemblyStrongName(metadataReader);
-            }
-
-            assembly.Seek(0, SeekOrigin.Begin);
-            return new AssemblyName(strongAssemblyName);
         }
 
         /// <summary>

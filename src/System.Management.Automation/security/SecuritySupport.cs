@@ -1565,7 +1565,7 @@ namespace System.Management.Automation
                 {
                     var processModule = PsUtils.GetMainModule(currentProcess);
                     hostname = string.Concat("PowerShell_", processModule.FileName, "_",
-                        ClrFacade.GetProcessModuleFileVersionInfo(processModule).ProductVersion);
+                        processModule.FileVersionInfo.ProductVersion);
                 }
                 catch (ComponentModel.Win32Exception)
                 {

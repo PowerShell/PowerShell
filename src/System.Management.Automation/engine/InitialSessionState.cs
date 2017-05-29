@@ -4467,7 +4467,7 @@ namespace System.Management.Automation.Runspaces
         {
             s_PSSnapInTracer.WriteLine("Loading assembly for psSnapIn {0}", fileName);
 
-            Assembly assembly = ClrFacade.LoadFrom(fileName);
+            Assembly assembly = Assembly.LoadFrom(fileName);
             if (assembly == null)
             {
                 s_PSSnapInTracer.TraceError("Loading assembly for psSnapIn {0} failed", fileName);
@@ -5543,7 +5543,7 @@ if($paths) {
 
             try
             {
-                AssemblyName assemblyName = ClrFacade.GetAssemblyName(psSnapInInfo.AbsoluteModulePath);
+                AssemblyName assemblyName = AssemblyName.GetAssemblyName(psSnapInInfo.AbsoluteModulePath);
 
                 if (!string.Equals(assemblyName.FullName, psSnapInInfo.AssemblyName, StringComparison.OrdinalIgnoreCase))
                 {
@@ -5552,7 +5552,7 @@ if($paths) {
                     throw new PSSnapInException(psSnapInInfo.Name, message);
                 }
 
-                assembly = ClrFacade.LoadFrom(psSnapInInfo.AbsoluteModulePath);
+                assembly = Assembly.LoadFrom(psSnapInInfo.AbsoluteModulePath);
             }
             catch (FileLoadException e)
             {
