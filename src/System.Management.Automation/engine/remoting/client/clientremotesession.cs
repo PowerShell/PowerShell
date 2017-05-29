@@ -531,7 +531,7 @@ namespace System.Management.Automation.Remoting
                     new PSRemotingDataStructureException(RemotingErrorIdStrings.ClientNegotiationFailed,
                         RemoteDataNameStrings.PS_STARTUP_PROTOCOL_VERSION_NAME,
                         serverProtocolVersion,
-                        PSVersionInfo.BuildVersion,
+                        PSVersionInfo.GitCommitId,
                         RemotingConstants.ProtocolVersion);
                 throw reasonOfFailure;
             }
@@ -545,7 +545,7 @@ namespace System.Management.Automation.Remoting
                     new PSRemotingDataStructureException(RemotingErrorIdStrings.ClientNegotiationFailed,
                         RemoteDataNameStrings.PSVersion,
                         serverPSVersion.ToString(),
-                        PSVersionInfo.BuildVersion,
+                        PSVersionInfo.GitCommitId,
                         RemotingConstants.ProtocolVersion);
                 throw reasonOfFailure;
             }
@@ -559,7 +559,7 @@ namespace System.Management.Automation.Remoting
                     new PSRemotingDataStructureException(RemotingErrorIdStrings.ClientNegotiationFailed,
                         RemoteDataNameStrings.SerializationVersion,
                         serverSerVersion.ToString(),
-                        PSVersionInfo.BuildVersion,
+                        PSVersionInfo.GitCommitId,
                         RemotingConstants.ProtocolVersion);
                 throw reasonOfFailure;
             }

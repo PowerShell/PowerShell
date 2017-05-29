@@ -1056,7 +1056,7 @@ namespace System.Management.Automation.Remoting
                             StringUtil.Format(
                                 RemotingErrorIdStrings.WSManPluginOptionNotUnderstood,
                                 option.name,
-                                System.Management.Automation.PSVersionInfo.BuildVersion,
+                                System.Management.Automation.PSVersionInfo.GitCommitId,
                                 WSManPluginConstants.PowerShellStartupProtocolVersionValue));
                         return false;
                     }
@@ -1071,7 +1071,7 @@ namespace System.Management.Automation.Remoting
                     StringUtil.Format(
                         RemotingErrorIdStrings.WSManPluginProtocolVersionNotFound,
                         WSManPluginConstants.PowerShellStartupProtocolVersionName,
-                        System.Management.Automation.PSVersionInfo.BuildVersion,
+                        System.Management.Automation.PSVersionInfo.GitCommitId,
                         WSManPluginConstants.PowerShellStartupProtocolVersionValue));
                 return false;
             }
@@ -1113,7 +1113,7 @@ namespace System.Management.Automation.Remoting
                 StringUtil.Format(
                     RemotingErrorIdStrings.WSManPluginProtocolVersionNotMatch,
                     WSManPluginConstants.PowerShellStartupProtocolVersionValue,
-                    System.Management.Automation.PSVersionInfo.BuildVersion,
+                    System.Management.Automation.PSVersionInfo.GitCommitId,
                     clientVersionString));
             return false;
         }
