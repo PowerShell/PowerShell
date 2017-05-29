@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Management.Automation.Language;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -37,6 +36,18 @@ namespace System.Management.Automation
     /// </summary>
     internal static class ClrFacade
     {
+        /// <summary>
+        /// Initialize powershell AssemblyLoadContext and register the 'Resolving' event, if it's not done already.
+        /// If powershell is hosted by a native host such as DSC, then PS ALC might be initialized via 'SetPowerShellAssemblyLoadContext' before loading S.M.A.
+        /// </summary>
+        static ClrFacade()
+        {
+            if (PowerShellAssemblyLoadContext.Instance == null)
+            {
+                PowerShellAssemblyLoadContext.InitializeSingleton(string.Empty);
+            }
+        }     
+
         /// <summary>
         /// We need it to avoid calling lookups inside dynamic assemblies with PS Types, so we exclude it from GetAssemblies().
         /// We use this convention for names to archive it.
@@ -217,11 +228,11 @@ namespace System.Management.Automation
         /// </param>
         internal static IEnumerable<Assembly> GetAssemblies(string namespaceQualifiedTypeName = null)
         {
+            return
 #if CORECLR
-            return PSAssemblyLoadContext.GetAssemblies(namespaceQualifiedTypeName);
-#else
-            return AppDomain.CurrentDomain.GetAssemblies().Where(a => !(a.FullName.Length > 0 && a.FullName[0] == FIRST_CHAR_PSASSEMBLY_MARK));
+            PSAssemblyLoadContext.GetAssembly(namespaceQualifiedTypeName) ??
 #endif
+            AppDomain.CurrentDomain.GetAssemblies().Where(a => !(a.FullName.Length > 0 && a.FullName[0] == FIRST_CHAR_PSASSEMBLY_MARK));
         }
 
         /// <summary>
@@ -237,42 +248,7 @@ namespace System.Management.Automation
 #endif
         }
 
-        /// <summary>
-        /// Facade for EnumBuilder.CreateTypeInfo
-        /// </summary>
-        /// <remarks>
-        /// In Core PowerShell, we need to track the dynamic assemblies that powershell generates.
-        /// </remarks>
-        internal static void CreateEnumType(EnumBuilder enumBuilder)
-        {
 #if CORECLR
-            // Create the enum type and add the dynamic assembly to assembly cache.
-            TypeInfo enumTypeinfo = enumBuilder.CreateTypeInfo();
-            PSAssemblyLoadContext.TryAddAssemblyToCache(enumTypeinfo.Assembly);
-#else
-            enumBuilder.CreateTypeInfo();
-#endif
-        }
-
-#if CORECLR
-        /// <summary>
-        /// Probe (look for) the assembly file with the specified short name.
-        /// </summary>
-        /// <remarks>
-        /// In Core PowerShell, we need to analyze the metadata of assembly files for binary modules. Sometimes we
-        /// need to find an assembly file that is referenced by the assembly file that is being processed. To find
-        /// the reference assembly file, we need to probe the PSBase and the additional searching path if it's specified.
-        /// </remarks>
-        internal static string ProbeAssemblyPath(string assemblyShortName, string additionalSearchPath = null)
-        {
-            if (string.IsNullOrWhiteSpace(assemblyShortName))
-            {
-                throw new ArgumentNullException("assemblyShortName");
-            }
-
-            return PSAssemblyLoadContext.ProbeAssemblyFileForMetadataAnalysis(assemblyShortName, additionalSearchPath);
-        }
-
         /// <summary>
         /// Get the namespace-qualified type names of all available CoreCLR .NET types.
         /// This is used for type name auto-completion in PS engine.

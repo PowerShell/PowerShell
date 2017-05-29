@@ -424,7 +424,7 @@ using System.Runtime.Loader;
 
 namespace System.Management.Automation
 {{
-    internal partial class PowerShellAssemblyLoadContext : AssemblyLoadContext
+    internal partial class PowerShellAssemblyLoadContext
     {{
         private Dictionary<string, string> InitializeTypeCatalog()
         {{

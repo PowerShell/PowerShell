@@ -64,8 +64,8 @@ namespace Microsoft.PowerShell.Cmdletization
                 object integerValue = LanguagePrimitives.ConvertTo(value.Value, underlyingType, CultureInfo.InvariantCulture);
                 eb.DefineLiteral(name, integerValue);
             }
-
-            ClrFacade.CreateEnumType(eb);
+            
+            eb.CreateTypeInfo();
         }
     }
 }
