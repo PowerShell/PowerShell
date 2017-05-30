@@ -66,7 +66,9 @@ Describe "Get-ChildItem" -Tags "CI" {
             $file.Count | Should be 1
             $file.Name | Should be "pagefile.sys"
         }
-        It "Should continue enumerating a directory when a contained item is deleted" {
+        # Test is pending on Unix platforms because of a behavior change in the latest .NET Core.
+        # Tracked by https://github.com/dotnet/corefx/issues/20456
+        It "Should continue enumerating a directory when a contained item is deleted" -Pending:(!$IsWindows) {
             $Error.Clear()
             [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionDelete", $true)
             $result = Get-ChildItem -Path $TestDrive -ErrorAction SilentlyContinue
@@ -84,7 +86,9 @@ Describe "Get-ChildItem" -Tags "CI" {
                 $result.Count | Should BeExactly 4
             }
         }
-        It "Should continue enumerating a directory when a contained item is renamed" {
+        # Test is pending on Unix platforms because of a behavior change in the latest .NET Core.
+        # Tracked by https://github.com/dotnet/corefx/issues/20456
+        It "Should continue enumerating a directory when a contained item is renamed" -Pending:(!$IsWindows) {
             $Error.Clear()
             [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionRename", $true)
             $result = Get-ChildItem -Path $TestDrive -ErrorAction SilentlyContinue
