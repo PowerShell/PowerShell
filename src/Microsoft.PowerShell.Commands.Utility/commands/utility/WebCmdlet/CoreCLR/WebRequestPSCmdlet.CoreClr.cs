@@ -428,7 +428,6 @@ namespace Microsoft.PowerShell.Commands
             );
         }
 
-
         internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool stripAuthorization)
         {
             if (client == null) { throw new ArgumentNullException("client"); }
