@@ -224,6 +224,43 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
+    # Verifies Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves
+    # the authorization header whe a 302 redirection
+    It "Validate Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header on 302 redirects" {
+        try {
+            Start-HttpListener -AsJob
+
+            $headers = @{"Authorization" = "test"}
+            $response = Invoke-WebRequest -Uri "http://localhost:8080/PowerShell?test=redirect" -Headers $headers -PreserveAuthorizationOnRedirect
+            # ensure Authorization header has been preserved.
+            $response.Headers.ContainsKey("Authorization") | Should Be $true
+        }
+        finally
+        {
+            Stop-HttpListener
+        }
+    }
+
+    # Verifies Invoke-WebRequest removes the authorization header
+    # when a 302 redirection occurs
+    It "Validate Invoke-WebRequest strips the authorization header on 302 redirects" {
+        try {
+            Start-HttpListener -AsJob
+
+            $headers = @{"Authorization" = "test"}
+            $response = Invoke-WebRequest -Uri "http://localhost:8080/PowerShell?test=redirect" -Headers $headers
+            # ensure user-agent is present (i.e., no false positives )
+            $response.Headers.ContainsKey("User-Agent") | Should Be $true           
+            # ensure Authorization header has been removed.
+            $response.Headers.ContainsKey("Authorization") | Should Be $false
+        }
+        finally
+        {
+            Stop-HttpListener
+        }
+    }
+
+
     It "Validate Invoke-WebRequest error for -MaximumRedirection" {
 
         $command = "Invoke-WebRequest -Uri 'http://httpbin.org/redirect/3' -MaximumRedirection 2 -TimeoutSec 5"
