@@ -44,39 +44,57 @@ Describe "Move-Item tests" -Tag "CI" {
         }
         It "Can move to different directory, filtered with -Include" {
             Move-Item -Path $filePath -Destination $moveToPath -Include "bar*"
+            $? | Should Be $true
             Test-Path -Path $barPath | Should Be $false
             Test-Path -Path $newBarPath | Should Be $true
+            Test-Path -Path $booPath | Should Be $true
+            Test-Path -Path $fooPath | Should Be $true
             $newBarPath | Should ContainExactly $barContent
         }
         It "Can move to different directory, filtered with -Exclude" {
             Move-Item -Path $filePath -Destination $moveToPath -Exclude "b*"
+            $? | Should Be $true
             Test-Path -Path $fooPath | Should Be $false
             Test-Path -Path $newFooPath | Should Be $true
+            Test-Path -Path $booPath | Should Be $true
+            Test-Path -Path $barPath | Should Be $true
             $newFooPath | Should ContainExactly $fooContent
         }
         It "Can move to different directory, filtered with -Filter" {
             Move-Item -Path $filePath -Destination $moveToPath -Filter "bo*"
+            $? | Should Be $true
             Test-Path -Path $booPath | Should Be $false
             Test-Path -Path $newBooPath | Should Be $true
+            Test-Path -Path $barPath | Should Be $true
+            Test-Path -Path $fooPath | Should Be $true
             $newBooPath | Should ContainExactly $booContent
         }
 
         It "Can rename via move, filtered with -Include" {
             Move-Item -Path $filePath -Destination $renameToPath -Include "bar*"
+            $? | Should Be $true
             Test-Path -Path $renameToPath | Should Be $true
             Test-Path -Path $barPath | Should Be $false
+            Test-Path -Path $booPath | Should Be $true
+            Test-Path -Path $fooPath | Should Be $true
             $renameToPath | Should ContainExactly $barContent
         }
         It "Can rename via move, filtered with -Exclude" {
             Move-Item -Path $filePath -Destination $renameToPath -Exclude "b*"
+            $? | Should Be $true
             Test-Path -Path $renameToPath | Should Be $true
             Test-Path -Path $fooPath | Should Be $false
+            Test-Path -Path $booPath | Should Be $true
+            Test-Path -Path $barPath | Should Be $true
             $renameToPath | Should ContainExactly $fooContent
         }
         It "Can rename via move, filtered with -Filter" {
             Move-Item -Path $filePath -Destination $renameToPath -Filter "bo*"
+            $? | Should Be $true
             Test-Path -Path $renameToPath | Should Be $true
             Test-Path -Path $booPath | Should Be $false
+            Test-Path -Path $fooPath | Should Be $true
+            Test-Path -Path $barPath | Should Be $true
             $renameToPath | Should ContainExactly $booContent
         }
     }
