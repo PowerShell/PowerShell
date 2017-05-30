@@ -2769,37 +2769,57 @@ namespace Microsoft.PowerShell.Commands
 
             if (scriptsToProcess != null)
             {
-                foreach (string scriptFile in scriptsToProcess)
+                Version savedBaseMinimumVersion = BaseMinimumVersion;
+                Version savedBaseMaximumVersion = BaseMaximumVersion;
+                Version savedBaseRequiredVersion = BaseRequiredVersion;
+                Guid? savedBaseGuid = BaseGuid;
+
+                try
                 {
-                    bool found = false;
-                    PSModuleInfo module = LoadModule(scriptFile,
-                        moduleBase,
-                        string.Empty, // prefix (-Prefix shouldn't be applied to dot sourced scripts)
-                        null,
-                        ref options,
-                        manifestProcessingFlags,
-                        out found);
+                    BaseMinimumVersion = null;
+                    BaseMaximumVersion = null;
+                    BaseRequiredVersion = null;
+                    BaseGuid = null;
 
-                    // If we're in analysis, add the detected exports to this module's
-                    // exports
-                    if (found && (ss == null))
+                    foreach (string scriptFile in scriptsToProcess)
                     {
-                        foreach (string detectedCmdlet in module.ExportedCmdlets.Keys)
-                        {
-                            manifestInfo.AddDetectedCmdletExport(detectedCmdlet);
-                        }
+                        bool found = false;
+                        PSModuleInfo module = LoadModule(scriptFile,
+                            moduleBase,
+                            string.Empty, // prefix (-Prefix shouldn't be applied to dot sourced scripts)
+                            null,
+                            ref options,
+                            manifestProcessingFlags,
+                            out found);
 
-                        foreach (string detectedFunction in module.ExportedFunctions.Keys)
+                        // If we're in analysis, add the detected exports to this module's
+                        // exports
+                        if (found && (ss == null))
                         {
-                            manifestInfo.AddDetectedFunctionExport(detectedFunction);
-                        }
+                            foreach (string detectedCmdlet in module.ExportedCmdlets.Keys)
+                            {
+                                manifestInfo.AddDetectedCmdletExport(detectedCmdlet);
+                            }
 
-                        foreach (string detectedAlias in module.ExportedAliases.Keys)
-                        {
-                            manifestInfo.AddDetectedAliasExport(detectedAlias,
-                                module.ExportedAliases[detectedAlias].Definition);
+                            foreach (string detectedFunction in module.ExportedFunctions.Keys)
+                            {
+                                manifestInfo.AddDetectedFunctionExport(detectedFunction);
+                            }
+
+                            foreach (string detectedAlias in module.ExportedAliases.Keys)
+                            {
+                                manifestInfo.AddDetectedAliasExport(detectedAlias,
+                                    module.ExportedAliases[detectedAlias].Definition);
+                            }
                         }
                     }
+                }
+                finally
+                {
+                    BaseMinimumVersion = savedBaseMinimumVersion;
+                    BaseMaximumVersion = savedBaseMaximumVersion;
+                    BaseRequiredVersion = savedBaseRequiredVersion;
+                    BaseGuid = savedBaseGuid;
                 }
             }
 
