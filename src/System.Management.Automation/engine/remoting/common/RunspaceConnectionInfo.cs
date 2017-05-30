@@ -2090,6 +2090,8 @@ namespace System.Management.Automation.Runspaces
 
 #if UNIX
 
+        private const int CREATE_NEW_PROCESS_SESSION = 0x00000001;
+
         /// <summary>
         /// Create a process through managed APIs and returns StdIn, StdOut, StdError reader/writers.
         /// This works for Linux platforms and creates the SSH process in its own session which means
@@ -2111,7 +2113,7 @@ namespace System.Management.Automation.Runspaces
             StreamReader stdErrReader = null;
             int pid = Platform.StartProcess(
                 startInfo,
-                0x00000001,         // Create Unix process in its own session
+                CREATE_NEW_PROCESS_SESSION, // Create Unix process in its own session
                 ref stdInWriter,
                 ref stdOutReader,
                 ref stdErrReader);
