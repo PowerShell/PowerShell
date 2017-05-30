@@ -2091,8 +2091,10 @@ namespace System.Management.Automation.Runspaces
 #if UNIX
 
         /// <summary>
-        /// Create a process through managed APIs and return StdIn, StdOut, StdError reader/writers
-        /// This works for non-Windows platforms and is simpler.
+        /// Create a process through managed APIs and returns StdIn, StdOut, StdError reader/writers.
+        /// This works for Linux platforms and creates the SSH process in its own session which means
+        /// Ctrl+C signals will not propagate from parent (PowerShell) process to SSH process so that
+        /// PSRP handles them correctly.
         /// </summary>
         private static int StartSSHProcessImpl(
             System.Diagnostics.ProcessStartInfo startInfo,
@@ -2119,19 +2121,6 @@ namespace System.Management.Automation.Runspaces
             stdErrReaderVar = stdErrReader;
 
             return pid;
-
-            /*
-            System.Diagnostics.Process process = new Process();
-            process.StartInfo = startInfo;
-
-            process.Start();
-
-            stdInWriterVar = process.StandardInput;
-            stdOutReaderVar = process.StandardOutput;
-            stdErrReaderVar = process.StandardError;
-
-            return process.Id;
-            */
         }
 
 #else

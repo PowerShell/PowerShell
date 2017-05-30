@@ -630,8 +630,7 @@ namespace System.Management.Automation
             {
                 if (startInfo.RedirectStandardInput || startInfo.RedirectStandardOutput || startInfo.RedirectStandardError)
                 {
-                    // TODO: 
-                    throw new InvalidOperationException("Can't redirect streams.");
+                    throw new InvalidOperationException(RemotingErrorIdStrings.CantRedirectStreams);
                 }
 
                 const string ShellPath = "/bin/sh";
@@ -903,7 +902,7 @@ namespace System.Management.Automation
         }
 #endif
 
-#endregion
+        #endregion
 
         // Unix specific implementations of required functionality
         //

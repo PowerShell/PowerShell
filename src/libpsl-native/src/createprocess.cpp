@@ -31,8 +31,8 @@ static void CloseIfOpen(int fd)
     }
 }
 
-// Checks if the IO operation was interupted and needs to be retried.
-// Returns true if the operation was interupted; otherwise, false.
+// Checks if the IO operation was interrupted and needs to be retried.
+// Returns true if the operation was interrupted; otherwise, false.
 template <typename TInt>
 static inline bool CheckInterrupted(TInt result)
 {
@@ -142,7 +142,6 @@ int32_t ForkAndExecProcess(
 
         // If CREATE_NEW_PROCESS_SESSION was chosen then set the child process to be in its own
         // session.  The processId, processGroupId, and sessionId will all be the same.
-        // Note that this creates an "orphaned" process.
         if (creationFlags & CREATE_NEW_PROCESS_SESSION)
         {
             int result;
