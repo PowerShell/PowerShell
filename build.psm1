@@ -1634,7 +1634,7 @@ esac
     # OpenSUSE 42.1 (13.2 might build but is EOL)
     # Also SEE: https://fedoraproject.org/wiki/Packaging:DistTag
     if ($IsCentOS) {
-        $rpm_dist = "el7.centos"
+        $rpm_dist = "el7"
     } elseif ($IsFedora) {
         $version_id = $LinuxInfo.VERSION_ID
         $rpm_dist = "fedora.$version_id"
