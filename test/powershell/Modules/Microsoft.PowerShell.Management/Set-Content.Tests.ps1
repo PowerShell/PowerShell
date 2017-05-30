@@ -85,13 +85,13 @@ Describe "Set-Content cmdlet tests" -Tags "CI" {
 Describe "Set-Content should work for PSDrive with UNC path as root" -Tags @('CI', 'RequireAdminOnWindows') {
     BeforeAll {
         $file1 = "file1.txt"
-        $filePath1 = join-path $testdrive $file1
         #create a random folder
         $randomFolderName = "TestFolder_" + (Get-Random).ToString()
         $randomFolderPath = join-path $testdrive $randomFolderName
         $null = New-Item -Path $randomFolderPath -ItemType Directory -ErrorAction SilentlyContinue
     }
-    It "should create a file in a psdrive with UNC path as root" -skip:(-not $IsWindows){
+    # test is Pending due to https://github.com/PowerShell/PowerShell/issues/3883
+    It "should create a file in a psdrive with UNC path as root" -Pending {
         try
         {
             # create share
