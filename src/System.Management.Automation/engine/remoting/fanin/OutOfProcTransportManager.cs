@@ -1611,13 +1611,9 @@ namespace System.Management.Automation.Remoting.Client
                     string data = reader.ReadLine();
                     if (data == null)
                     {
-                        // End of stream indicates the target process was lost.
-                        // Raise transport exception to invalidate the client remote runspace.
-                        PSRemotingTransportException psrte = new PSRemotingTransportException(
-                            PSRemotingErrorId.IPCServerProcessReportedError,
-                            RemotingErrorIdStrings.IPCServerProcessReportedError,
-                            RemotingErrorIdStrings.NamedPipeTransportProcessEnded);
-                        RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
+                        // End of stream indicates that the SSH transport is broken.
+                        // SSH will return the appropriate error in StdErr stream so 
+                        // let the error reader thread report the error.
                         break;
                     }
 
