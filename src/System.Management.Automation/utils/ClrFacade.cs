@@ -46,7 +46,7 @@ namespace System.Management.Automation
             {
                 PowerShellAssemblyLoadContext.InitializeSingleton(string.Empty);
             }
-        }     
+        }
 
         /// <summary>
         /// We need it to avoid calling lookups inside dynamic assemblies with PS Types, so we exclude it from GetAssemblies().
@@ -160,13 +160,16 @@ namespace System.Management.Automation
 
 #if CORECLR
         /// <summary>
-        /// Get the namespace-qualified type names of all available CoreCLR .NET types.
+        /// Get the namespace-qualified type names of all available .NET Core types shipped with PowerShell Core.
         /// This is used for type name auto-completion in PS engine.
         /// </summary>
-        internal static IEnumerable<string> GetAvailableCoreClrDotNetTypes()
-        {
-            return PSAssemblyLoadContext.GetAvailableDotNetTypes();
-        }
+        internal static IEnumerable<string> AvailableDotNetTypeNames => PSAssemblyLoadContext.AvailableDotNetTypeNames;
+
+        /// <summary>
+        /// Get the assembly names of all available .NET Core assemblies shipped with PowerShell Core.
+        /// This is used for type name auto-completion in PS engine.
+        /// </summary>
+        internal static HashSet<string> AvailableDotNetAssemblyNames => PSAssemblyLoadContext.AvailableDotNetAssemblyNames;
 
         private static PowerShellAssemblyLoadContext PSAssemblyLoadContext => PowerShellAssemblyLoadContext.Instance;
 #endif

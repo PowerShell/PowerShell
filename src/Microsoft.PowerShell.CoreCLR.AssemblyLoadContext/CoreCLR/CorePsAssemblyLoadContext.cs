@@ -61,35 +61,30 @@ namespace System.Management.Automation
         /// </param>
         private PowerShellAssemblyLoadContext(string basePaths)
         {
-            #region Validation
+            // FIRST: Validate and populate probing paths
             if (string.IsNullOrEmpty(basePaths))
             {
-                _basePaths = Array.Empty<string>();
+                _probingPaths = Array.Empty<string>();
             }
             else
             {
-                _basePaths = basePaths.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
-                for (int i = 0; i < _basePaths.Length; i++)
+                _probingPaths = basePaths.Split(new char[] { ';' }, StringSplitOptions.RemoveEmptyEntries);
+                for (int i = 0; i < _probingPaths.Length; i++)
                 {
-                    string basePath = _basePaths[i];
+                    string basePath = _probingPaths[i];
                     if (!Directory.Exists(basePath))
                     {
-                        string message = string.Format(
-                            CultureInfo.CurrentCulture,
-                            BaseFolderDoesNotExist,
-                            basePath);
+                        string message = string.Format(CultureInfo.CurrentCulture, BaseFolderDoesNotExist, basePath);
                         throw new ArgumentException(message, "basePaths");
                     }
-                    _basePaths[i] = basePath.Trim();
+                    _probingPaths[i] = basePath.Trim();
                 }
             }
-            #endregion Validation
-
-            // FIRST: Add basePaths to probing paths
-            _probingPaths = new List<string>(_basePaths);
 
             // NEXT: Initialize the CoreCLR type catalog dictionary [OrdinalIgnoreCase]
             _coreClrTypeCatalog = InitializeTypeCatalog();
+            _availableDotNetAssemblyNames = new Lazy<HashSet<string>>(
+                    () => new HashSet<string>(_coreClrTypeCatalog.Values, StringComparer.Ordinal));
 
             // LAST: Register 'Resolving' handler on the default load context.
             AssemblyLoadContext.Default.Resolving += Resolve;
@@ -100,18 +95,13 @@ namespace System.Management.Automation
         #region Fields
 
         private readonly static object s_syncObj = new object();
-        private readonly string[] _basePaths;
-        // Initially, 'probingPaths' only contains psbase path. But every time we load an assembly through 'LoadFrom(string AssemblyPath)', we
-        // add its parent path to 'probingPaths', so that we are able to support implicit loading of an assembly from the same place where the
-        // requesting assembly is located.
-        // We don't need to worry about removing any paths from 'probingPaths', because once an assembly is loaded, it won't be unloaded until
-        // the current process exits, and thus the assembly itself and its parent folder cannot be deleted or renamed.
-        private readonly List<string> _probingPaths;
+        private readonly string[] _probingPaths;
+        private readonly string[] _extensions = new string[] { ".ni.dll", ".dll" };
         // CoreCLR type catalog dictionary
         //  - Key: namespace qualified type name (FullName)
         //  - Value: strong name of the TPA that contains the type represented by Key.
         private readonly Dictionary<string, string> _coreClrTypeCatalog;
-        private readonly string[] _extensions = new string[] { ".ni.dll", ".dll" };
+        private readonly Lazy<HashSet<string>> _availableDotNetAssemblyNames;
 
         /// <summary>
         /// Assembly cache across the AppDomain
@@ -142,6 +132,24 @@ namespace System.Management.Automation
             get; private set;
         }
 
+        /// <summary>
+        /// Get the namespace-qualified type names of all available .NET Core types shipped with PowerShell Core.
+        /// This is used for type name auto-completion in PS engine.
+        /// </summary>
+        internal IEnumerable<string> AvailableDotNetTypeNames
+        {
+            get { return _coreClrTypeCatalog.Keys; }
+        }
+
+        /// <summary>
+        /// Get the assembly names of all available .NET Core assemblies shipped with PowerShell Core.
+        /// This is used for type name auto-completion in PS engine.
+        /// </summary>
+        internal HashSet<string> AvailableDotNetAssemblyNames
+        {
+            get { return _availableDotNetAssemblyNames.Value; }
+        }
+
         #endregion Properties
 
         #region Internal_Methods
@@ -155,22 +163,13 @@ namespace System.Management.Automation
             // then we only return that specific TPA assembly.
             if (!string.IsNullOrEmpty(namespaceQualifiedTypeName))
             {
-                string tpaStrongName;
-                if (_coreClrTypeCatalog.TryGetValue(namespaceQualifiedTypeName, out tpaStrongName))
+                if (_coreClrTypeCatalog.TryGetValue(namespaceQualifiedTypeName, out string tpaStrongName))
                 {
                     try
                     {
                         return new Assembly[] { GetTrustedPlatformAssembly(tpaStrongName) };
                     }
-                    catch (FileNotFoundException)
-                    {
-                        // It's possible that the type catalog generated in OPS contains more entries than
-                        // the one generated in windows build. This is because in OPS we have more freedom
-                        // to control what packages to depend on, such as Json.NET.
-                        // If we deploy the PSALC.dll generated from OPS to NanoServer, then it's possible
-                        // that 'GetTrustedPlatformAssembly(tpaStrongName)' may fail for such entries. In
-                        // this case, we ignore the exception and return our cached assemblies.
-                    }
+                    catch (FileNotFoundException) { }
                 }
             }
 
@@ -179,26 +178,8 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Get the namespace-qualified type names of all available CoreCLR .NET types.
-        /// This is used for type name auto-completion in PS engine.
-        /// </summary>
-        internal IEnumerable<string> GetAvailableDotNetTypes()
-        {
-            return _coreClrTypeCatalog.Keys;
-        }
-
-        /// <summary>
         /// Set the profile optimization root on the appropriate load context
         /// </summary>
-        /// <remarks>
-        /// When using PS ALC as a full fledged ALC in OPS, we don't enable profile optimization.
-        /// This is because PS assemblies will be recorded in the profile, and the next time OPS
-        /// starts up, the default context will load the PS assemblies pretty early to ngen them
-        /// in another CPU core, so our Load override won't track the loading of them, and thus
-        /// OPS will fail to work.
-        /// The root cause is that dotnet.exe put all PS assemblies in TPA list. If PS assemblies
-        /// are not in TPA list, then we can enable profile optimization without a problem.
-        /// </remarks>
         internal void SetProfileOptimizationRootImpl(string directoryPath)
         {
             AssemblyLoadContext.Default.SetProfileOptimizationRoot(directoryPath);
@@ -207,15 +188,6 @@ namespace System.Management.Automation
         /// <summary>
         /// Start the profile optimization on the appropriate load context
         /// </summary>
-        /// <remarks>
-        /// When using PS ALC as a full fledged ALC in OPS, we don't enable profile optimization.
-        /// This is because PS assemblies will be recorded in the profile, and the next time OPS
-        /// starts up, the default context will load the PS assemblies pretty early to ngen them
-        /// in another CPU core, so our Load override won't track the loading of them, and thus
-        /// OPS will fail to work.
-        /// The root cause is that dotnet.exe put all PS assemblies in TPA list. If PS assemblies
-        /// are not in TPA list, then we can enable profile optimization without a problem.
-        /// </remarks>
         internal void StartProfileOptimizationImpl(string profile)
         {
             AssemblyLoadContext.Default.StartProfileOptimization(profile);
@@ -248,7 +220,7 @@ namespace System.Management.Automation
                 string asmCultureName = assemblyName.CultureName ?? string.Empty;
                 string asmFilePath = null;
 
-                for (int i = 0; i < _probingPaths.Count; i++)
+                for (int i = 0; i < _probingPaths.Length; i++)
                 {
                     string probingPath = _probingPaths[i];
                     string asmCulturePath = Path.Combine(probingPath, asmCultureName);
