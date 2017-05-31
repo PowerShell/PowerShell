@@ -146,11 +146,11 @@ function GetTestData
 Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     BeforeAll {
-        $null = Start-HttpListener -AsJob
+        $null = Start-HttpListener -AsJob -Port 8080
     }
 
     AfterAll {
-        $null = Stop-HttpListener
+        $null = Stop-HttpListener -Port 8080
     }
 
     # Validate the output of Invoke-WebRequest
@@ -576,11 +576,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     BeforeAll {
-        $null = Start-HttpListener -AsJob
+        $null = Start-HttpListener -AsJob -Port 8081
     }
 
     AfterAll {
-        $null = Stop-HttpListener
+        $null = Stop-HttpListener -Port 8081
     }
 
     It "Invoke-RestMethod returns User-Agent" {
@@ -919,7 +919,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Validate Invoke-RestMethod -FollowRelLink doesn't fail if no Link Header is present" {
 
-        $command = "Invoke-RestMethod -Uri 'http://localhost:8080/PowerShell?test=response&output=foo' -FollowRelLink"
+        $command = "Invoke-RestMethod -Uri 'http://localhost:8081/PowerShell?test=response&output=foo' -FollowRelLink"
         $result = ExecuteWebCommand -command $command
 
         $result.Output | Should BeExactly "foo"
@@ -928,7 +928,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     It "Validate Invoke-RestMethod -FollowRelLink correctly follows all the available relation links" {
         $maxLinks = 5
 
-        $command = "Invoke-RestMethod -Uri 'http://localhost:8080/PowerShell?test=linkheader&maxlinks=$maxlinks' -FollowRelLink"
+        $command = "Invoke-RestMethod -Uri 'http://localhost:8081/PowerShell?test=linkheader&maxlinks=$maxlinks' -FollowRelLink"
         $result = ExecuteWebCommand -command $command
 
         $result.Output.output.Count | Should BeExactly $maxLinks
@@ -939,7 +939,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $maxLinks = 10
         $maxLinksToFollow = 6
 
-        $command = "Invoke-RestMethod -Uri 'http://localhost:8080/PowerShell?test=linkheader&maxlinks=$maxlinks' -FollowRelLink -MaximumFollowRelLink $maxLinksToFollow"
+        $command = "Invoke-RestMethod -Uri 'http://localhost:8081/PowerShell?test=linkheader&maxlinks=$maxlinks' -FollowRelLink -MaximumFollowRelLink $maxLinksToFollow"
         $result = ExecuteWebCommand -command $command
 
         $result.Output.output.Count | Should BeExactly $maxLinksToFollow
@@ -952,7 +952,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         @{ type = "noRel" } 
     ) {
         param($type)
-        $command = "Invoke-RestMethod -Uri 'http://localhost:8080/PowerShell?test=linkheader&type=$type' -FollowRelLink"
+        $command = "Invoke-RestMethod -Uri 'http://localhost:8081/PowerShell?test=linkheader&type=$type' -FollowRelLink"
         $result = ExecuteWebCommand -command $command
         $result.Output.output | Should BeExactly 1
     }
