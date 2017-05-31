@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
@@ -370,6 +370,23 @@ namespace Microsoft.PowerShell.Internal
 
     internal static class ConsoleKeyInfoExtension
     {
+#if !UNIX
+        private static bool _toUnicodeApiAvailable = true;
+
+        static ConsoleKeyInfoExtension()
+        {
+            try
+            {
+                var chars = new char[2];
+                NativeMethods.ToUnicode(13, 28, null, chars, chars.Length, 0);
+            }
+            catch (System.EntryPointNotFoundException)
+            {
+                _toUnicodeApiAvailable = false;  // api not available on NanoServer
+            }
+        }
+#endif
+
         public static string ToGestureString(this ConsoleKeyInfo key)
         {
             var mods = key.Modifiers;
@@ -386,13 +403,16 @@ namespace Microsoft.PowerShell.Internal
                 sb.Append("Alt");
             }
 
-#if UNIX
             char c = key.KeyChar;
-#else
-            // Windows cannot use KeyChar as some chords (like Ctrl+[) show up as control characters.
-            char c = ConsoleKeyChordConverter.GetCharFromConsoleKey(key.Key,
-                (mods & ConsoleModifiers.Shift) != 0 ? ConsoleModifiers.Shift : 0);
+#if !UNIX
+            if (_toUnicodeApiAvailable)
+            {
+                // Windows cannot use KeyChar as some chords (like Ctrl+[) show up as control characters.
+                c = ConsoleKeyChordConverter.GetCharFromConsoleKey(key.Key,
+                    (mods & ConsoleModifiers.Shift) != 0 ? ConsoleModifiers.Shift : 0);
+            }
 #endif
+
             if (char.IsControl(c) || char.IsWhiteSpace(c))
             {
                 if (key.Modifiers.HasFlag(ConsoleModifiers.Shift))
@@ -426,6 +446,7 @@ namespace Microsoft.PowerShell.Internal
         private bool _istmInitialized = false;
         private TEXTMETRIC _tm = new TEXTMETRIC();
         private bool _trueTypeInUse = false;
+        private static bool _getCurrentConsoleFontExApiAvailable = true;
 
         private readonly Lazy<SafeFileHandle> _outputHandle = new Lazy<SafeFileHandle>(() =>
         {
@@ -691,7 +712,18 @@ namespace Microsoft.PowerShell.Internal
 
             CONSOLE_FONT_INFO_EX fontInfo = new CONSOLE_FONT_INFO_EX();
             fontInfo.cbSize = Marshal.SizeOf(fontInfo);
-            bool result = NativeMethods.GetCurrentConsoleFontEx(consoleHandle.DangerousGetHandle(), false, ref fontInfo);
+            bool result = true;
+            if (_getCurrentConsoleFontExApiAvailable)
+            {
+                try
+                {
+                    result = NativeMethods.GetCurrentConsoleFontEx(consoleHandle.DangerousGetHandle(), false, ref fontInfo);
+                }
+                catch (System.EntryPointNotFoundException)
+                {
+                    _getCurrentConsoleFontExApiAvailable = false;  // api not available on NanoServer
+                }
+            }
 
             if (result == false)
             {
@@ -865,7 +897,6 @@ namespace Microsoft.PowerShell.Internal
             CONSOLE_FONT_INFO_EX fontInfo = ConhostConsole.GetConsoleFontInfo(consoleHandle);
             int fontType = fontInfo.FontFamily & NativeMethods.FontTypeMask;
             _trueTypeInUse = (fontType & NativeMethods.TrueTypeFont) == NativeMethods.TrueTypeFont;
-
         }
 
         public void EndRender()
