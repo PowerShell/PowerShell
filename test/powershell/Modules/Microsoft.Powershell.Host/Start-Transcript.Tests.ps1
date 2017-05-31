@@ -106,4 +106,34 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         $expectedError = "CannotStartTranscription,Microsoft.PowerShell.Commands.StartTranscriptCommand"
         ValidateTranscription -scriptToExecute $script -outputFilePath $null -expectedError $expectedError
     }
+    It "Transcription should remain active if other runspace in the host get closed" {
+        try{
+            $ps = [powershell]::Create()
+            $ps.addscript("Start-Transcript -path $transcriptFilePath").Invoke()
+            $ps.addscript('$rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace()').Invoke()      
+            $ps.addscript('$rs.open()').Invoke()
+            $ps.addscript('$rs.Dispose()').Invoke()
+            $ps.addscript('Write-Host "After Dispose"').Invoke()
+            $ps.addscript("Stop-Transcript").Invoke()
+            } finally {
+                if ($ps -ne $null) {
+                    $ps.Dispose()
+                }
+            }
+
+        
+        Test-Path $transcriptFilePath | Should be $true
+        $transcriptFilePath | Should contain "After Dispose"
+    }
+
+    It "Transcription should be closed if the only runspace gets closed" {
+        $powerShellPath = [System.Diagnostics.Process]::GetCurrentProcess().Path
+        $powerShellCommand = $powerShellPath + ' "start-transcript $transcriptFilePath; Write-Host ''Before Dispose'';"'
+        Invoke-Expression $powerShellCommand
+        
+        Test-Path $transcriptFilePath | Should be $true
+        $transcriptFilePath | Should contain "Before Dispose"
+        $transcriptFilePath | Should contain "Windows PowerShell transcript end"
+    }
+
 }

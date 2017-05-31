@@ -863,12 +863,24 @@ namespace System.Management.Automation.Runspaces
                 }
 
                 if ((hostRunspace == null) || (this == hostRunspace))
-                {
+                {                   
+                    // We should close transcripting only if we are closing the last opened runspace.
+                    foreach (Runspace runspace in RunspaceList)
+                    {
+                        // At this stage, the last opened runspace should be at closing state.
+                        if (runspace.RunspaceStateInfo.State == RunspaceState.Opened)
+                        {
+                            return;
+                        }
+                    }
+
                     PSHostUserInterface host = executionContext.EngineHostInterface.UI;
                     if (host != null)
                     {
                         host.StopAllTranscribing();
                     }
+
+                    AmsiUtils.Uninitialize();
                 }
             }
 
@@ -913,10 +925,7 @@ namespace System.Management.Automation.Runspaces
 
             //Log engine lifecycle event.
             MshLog.LogEngineLifecycleEvent(_engine.Context, EngineState.Stopped);
-
-            // Uninitialize the AMSI scan interface
-            AmsiUtils.Uninitialize();
-
+  
             //All pipelines have been canceled. Close the runspace.
             _engine = null;
             _commandFactory = null;
