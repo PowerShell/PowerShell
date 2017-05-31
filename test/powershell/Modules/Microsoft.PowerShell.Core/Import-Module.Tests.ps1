@@ -38,7 +38,6 @@ Describe "Import-Module with ScriptsToProcess" -Tags "CI" {
 
     AfterAll {
         Pop-Location
-        #Remove-Item $moduleRootPath -Recurse -Force -ErrorAction SilentlyContinue
     }
 
     BeforeEach {
