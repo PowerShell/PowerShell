@@ -108,6 +108,12 @@ namespace System.Management.Automation
         internal abstract string GetDefaultSourcePath();
         internal abstract void SetDefaultSourcePath(string defaultPath);
 
+        /// <summary>
+        /// Allow loading assemblies by searching in GAC.
+        /// </summary>
+        /// <returns>Boolean indicating whether assemblies should be loaded from the GAC</returns>
+        internal abstract bool GetAllowGacLoading();
+
         #endregion // Interface Methods
     }
 
@@ -316,6 +322,16 @@ namespace System.Management.Automation
             string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
 
             WriteValueToFile<string>(fileName, "DefaultSourcePath", defaultPath);
+        }
+
+        /// <summary>
+        /// Allow loading assemblies by searching in GAC.
+        /// </summary>
+        /// <returns>Boolean indicating whether assemblies should be loaded from the GAC</returns>
+        internal override bool GetAllowGacLoading()
+        {
+            string fileName = Path.Combine(psHomeConfigDirectory, configFileName);
+            return ReadValueFromFile<bool>(fileName, "AllowGacLoading");
         }
 
         private T ReadValueFromFile<T>(string fileName, string key)
@@ -678,6 +694,15 @@ namespace System.Management.Automation
         internal override void SetDefaultSourcePath(string defaultPath)
         {
             SetRegistryString(Registry.LocalMachine, DefaultSourcePathRegPath, DefaultSourcePathRegKey, defaultPath);
+        }
+
+        /// <summary>
+        /// Allow loading assemblies by searching in GAC.
+        /// </summary>
+        /// <returns>Always true, as this is for Full CLR.</returns>
+        internal override bool GetAllowGacLoading()
+        {
+            return true;
         }
 
         /// <summary>

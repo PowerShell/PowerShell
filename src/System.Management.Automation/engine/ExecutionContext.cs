@@ -1318,7 +1318,6 @@ namespace System.Management.Automation
             }
         }
 
-
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadWithPartialName")]
         [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
         internal static Assembly LoadAssembly(string name, string filename, out Exception error)
@@ -1327,14 +1326,11 @@ namespace System.Management.Automation
 
             Assembly loadedAssembly = null;
             error = null;
-
             string fixedName = null;
             if (!String.IsNullOrEmpty(name))
             {
                 // Remove the '.dll' if it's there...
-                fixedName = name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
-                                ? Path.GetFileNameWithoutExtension(name)
-                                : name;
+                fixedName = GetAssemblyFixedName(name);
 
                 var assemblyString = Utils.IsPowerShellAssembly(fixedName)
                                          ? Utils.GetPowerShellAssemblyStrongName(fixedName)
@@ -1346,7 +1342,21 @@ namespace System.Management.Automation
                 }
                 catch (FileNotFoundException fileNotFound)
                 {
-                    error = fileNotFound;
+                    if(Platform.IsWindows && ConfigPropertyAccessor.Instance.GetAllowGacLoading())
+                    {
+                        // Try to load dependencies from GAC.
+                        loadedAssembly = LoadAssemblyFromGac(name);
+
+                        if(loadedAssembly == null)
+                        {
+                            error = fileNotFound;
+                            return null;
+                        }
+                    }
+                    else
+                    {
+                        error = fileNotFound;
+                    }
                 }
                 catch (FileLoadException fileLoadException)
                 {
@@ -1426,6 +1436,88 @@ namespace System.Management.Automation
                 }
             }
 #endif
+            return null;
+        }
+
+        // Try loading assembly from GAC.
+        // 'fileName' is the name of the DLL to be searched in GAC.
+        private static Assembly LoadAssemblyFromGac(string fileName)
+        {
+            var gacFileName = GetValidGacPath(fileName);
+
+            Assembly loadedAssembly = null;
+
+            // Proceed loading if assembly is found in GAC.
+            if(!String.IsNullOrEmpty(gacFileName))
+            {
+                try
+                {
+                    loadedAssembly = ClrFacade.LoadFrom(gacFileName);
+
+                    // Get exported types to force dependency loading.
+                    // If a dependency is missing loadedAssembly.ExportedTypes will throw FileNotFoundException.
+                    var exportedTypes = loadedAssembly.ExportedTypes;
+                }
+                catch(FileNotFoundException fileNotFound)
+                {
+                    // Missing dependency assembly full name is in the inner exception.
+                    string dependencyFileName = ((FileNotFoundException)fileNotFound.InnerException)?.FileName;
+                    // Ignore the return value of dependencies so that the exported types of
+                    // the cmdlet assembly are correct.
+                    LoadAssemblyFromGac(dependencyFileName);
+                }
+            }
+
+            return loadedAssembly;
+        }
+
+        private static string GetAssemblyFixedName(string name)
+        {
+            return name.EndsWith(".dll", StringComparison.OrdinalIgnoreCase)
+                        ? Path.GetFileNameWithoutExtension(name)
+                        : name;
+        }
+
+        // Search the GAC for the assembly.
+        // First try MSIL and then try the GAC_<PROCESS_ARCH>
+        private static string GetValidGacPath(string assemblyName)
+        {
+            // Get name of assembly without '.dll'. This is the folder name in GAC.
+            // In some cases '.dll' might not be present at the end.
+            string fixedName = GetAssemblyFixedName(assemblyName);
+
+            string winDirPath = Environment.GetEnvironmentVariable("WINDIR");
+            System.Text.StringBuilder gacPath = new System.Text.StringBuilder();
+            gacPath.AppendFormat("{0}\\Microsoft.Net\\assembly\\GAC_MSIL\\{1}", winDirPath, fixedName);
+
+            if(!Utils.NativeDirectoryExists(gacPath.ToString()))
+            {
+                gacPath.Clear();
+
+                if(Environment.Is64BitProcess)
+                {
+                    gacPath.AppendFormat("{0}\\Microsoft.Net\\assembly\\GAC_64\\{1}", winDirPath, fixedName);
+                }
+                else
+                {
+                    gacPath.AppendFormat("{0}\\Microsoft.Net\\assembly\\GAC_32\\{1}", winDirPath, fixedName);
+                }
+
+                if(!Utils.NativeDirectoryExists(gacPath.ToString()))
+                {
+                    return null;
+                }
+            }
+
+            var fileToSearch = fixedName + ".dll";
+            var fileList = Directory.GetFiles(gacPath.ToString(), fileToSearch, System.IO.SearchOption.AllDirectories);
+
+            if(fileList.Length > 0)
+            {
+                // GAC only has 1 file in the folder, so we can pick index 0.
+                return fileList[0];
+            }
+
             return null;
         }
 
