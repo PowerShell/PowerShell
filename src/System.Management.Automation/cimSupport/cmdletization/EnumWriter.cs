@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 object integerValue = LanguagePrimitives.ConvertTo(value.Value, underlyingType, CultureInfo.InvariantCulture);
                 eb.DefineLiteral(name, integerValue);
             }
-            
+
             eb.CreateTypeInfo();
         }
     }
