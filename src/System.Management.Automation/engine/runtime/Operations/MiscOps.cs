@@ -403,13 +403,14 @@ namespace System.Management.Automation
 
                 CommandProcessorBase commandProcessor = null;
                 CommandRedirection[] commandRedirection = null;
+
                 for (int i = 0; i < pipeElements.Length; i++)
                 {
                     commandRedirection = commandRedirections != null ? commandRedirections[i] : null;
                     commandProcessor = AddCommand(pipelineProcessor, pipeElements[i], pipeElementAsts[i],
                                                   commandRedirection, context);
                 }
-
+    
                 var cmdletInfo = commandProcessor?.CommandInfo as CmdletInfo;
                 if (cmdletInfo?.ImplementingType == typeof(OutNullCommand))
                 {
@@ -419,7 +420,7 @@ namespace System.Management.Automation
                         // Out-Null is the only command, bail without running anything
                         return;
                     }
-
+    
                     // Out-Null is the last command, rewrite command before Out-Null to a null pipe, but
                     // only if it didn't redirect anything, e.g. `Get-Stuff > o.txt | Out-Null`
                     var nextToLastCommand = pipelineProcessor.Commands[commandsCount - 2];
@@ -452,6 +453,83 @@ namespace System.Management.Automation
                 try
                 {
                     pipelineProcessor.SynchronousExecuteEnumerate(input);
+                }
+                finally
+                {
+                    context.PopPipelineProcessor(false);
+                }
+            }
+            finally
+            {
+                context.QuestionMarkVariableValue = !pipelineProcessor.ExecutionFailed;
+                pipelineProcessor.Dispose();
+            }
+        }
+
+        internal static void InvokePipelineInBackground(
+                                            PipelineAst pipelineAst,
+                                            FunctionContext funcContext)
+        {
+            PipelineProcessor pipelineProcessor = new PipelineProcessor();
+            ExecutionContext context = funcContext._executionContext;
+            Pipe outputPipe = funcContext._outputPipe;
+
+            try
+            {
+                if (context.Events != null)
+                {
+                    context.Events.ProcessPendingActions();
+                }
+
+                CommandProcessorBase commandProcessor = null;
+
+                // For background jobs rewrite the pipeline as a Start-Job command
+                var scriptblockBodyString = pipelineAst.Extent.Text;
+                var pipelineOffset = pipelineAst.Extent.StartOffset;
+                var variables = pipelineAst.FindAll(x => x is VariableExpressionAst, true);
+                // Used to make sure that the job runs in the current directory
+                const string cmdPrefix = @"Microsoft.PowerShell.Management\Set-Location -LiteralPath $using:pwd ; ";
+                // Minimize allocations by initializing the stringbuilder to the size of the source string + prefix + space for ${using:} * 2
+                System.Text.StringBuilder updatedScriptblock = new System.Text.StringBuilder(cmdPrefix.Length + scriptblockBodyString.Length + 18);
+                updatedScriptblock.Append(cmdPrefix);
+                int position = 0;
+                // Prefix variables in the scriptblock with $using: 
+                foreach (var v in variables)
+                {
+                    var vName = ((VariableExpressionAst) v).VariablePath.UserPath;
+                    // Skip variables that don't exist
+                    if (funcContext._executionContext.EngineSessionState.GetVariable(vName) == null)
+                        continue;
+                    // Skip PowerShell magic variables
+                    if (Regex.Match(vName,
+                            "^(global:){0,1}(PID|PSVersionTable|PSEdition|PSHOME|HOST|TRUE|FALSE|NULL)$", 
+                                RegexOptions.IgnoreCase|RegexOptions.CultureInvariant).Success == false
+                    )
+                    {
+                        updatedScriptblock.Append(scriptblockBodyString.Substring(position, v.Extent.StartOffset - pipelineOffset - position));
+                        updatedScriptblock.Append("${using:");
+                        updatedScriptblock.Append(CodeGeneration.EscapeVariableName(vName));
+                        updatedScriptblock.Append('}');
+                        position = v.Extent.EndOffset - pipelineOffset;
+                    }
+                }
+                updatedScriptblock.Append(scriptblockBodyString.Substring(position));
+                var sb = ScriptBlock.Create(updatedScriptblock.ToString());
+                var commandInfo = new CmdletInfo("Start-Job", typeof(StartJobCommand));
+                commandProcessor = context.CommandDiscovery.LookupCommandProcessor(
+                    commandInfo, CommandOrigin.Internal, false, context.EngineSessionState);
+                var parameter = CommandParameterInternal.CreateParameterWithArgument(
+                    pipelineAst.Extent, "ScriptBlock", null,
+                    pipelineAst.Extent, sb,
+                    false);
+                commandProcessor.AddParameter(parameter);
+                pipelineProcessor.Add(commandProcessor);
+                pipelineProcessor.LinkPipelineSuccessOutput(outputPipe ?? new Pipe(new List<object>()));
+
+                context.PushPipelineProcessor(pipelineProcessor);
+                try
+                {
+                    pipelineProcessor.SynchronousExecuteEnumerate(AutomationNull.Value);
                 }
                 finally
                 {
@@ -716,7 +794,7 @@ namespace System.Management.Automation
         internal static void Nop() { }
     }
 
-    #region Redirections
+#region Redirections
 
     internal abstract class CommandRedirection
     {
@@ -1105,7 +1183,7 @@ namespace System.Management.Automation
         }
     }
 
-    #endregion Redirections
+#endregion Redirections
 
     internal static class FunctionOps
     {

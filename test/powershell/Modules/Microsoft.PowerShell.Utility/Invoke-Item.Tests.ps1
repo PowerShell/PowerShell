@@ -1,47 +1,63 @@
 using namespace System.Diagnostics
 
-Describe "Invoke-Item on non-Windows" -Tags "CI" {
-
-    function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
-    {
-        return [ProcessStartInfo]@{
-            FileName               = $powershell
-            Arguments              = $CommandLine
-            RedirectStandardInput  = $RedirectStdIn
-            RedirectStandardOutput = $true
-            RedirectStandardError  = $true
-            UseShellExecute        = $false
-        }
-    }
-
-    function RunPowerShell([ProcessStartInfo]$debugfn)
-    {
-        $process = [Process]::Start($debugfn)
-        return $process
-    }
-
-    function EnsureChildHasExited([Process]$process, [int]$WaitTimeInMS = 15000)
-    {
-        $process.WaitForExit($WaitTimeInMS)
-
-        if (!$process.HasExited)
-        {
-            $process.HasExited | Should Be $true
-            $process.Kill()
-        }
-    }
-
+Describe "Invoke-Item basic tests" -Tags "CI" {
     BeforeAll {
-        $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
-        Setup -File testfile.txt -Content "Hello World"
-        $testfile = Join-Path $TestDrive testfile.txt
+        $powershell = Join-Path $PSHOME -ChildPath powershell
+
+        $testFile1 = Join-Path -Path $TestDrive -ChildPath "text1.txt"
+        New-Item -Path $testFile1 -ItemType File -Force > $null
+
+        $testFolder = Join-Path -Path $TestDrive -ChildPath "My Folder"
+        New-Item -Path $testFolder -ItemType Directory -Force > $null
+        $testFile2 = Join-Path -Path $testFolder -ChildPath "text2.txt"
+        New-Item -Path $testFile2 -ItemType File -Force > $null
+
+        $textFileTestCases = @(
+            @{ TestFile = $testFile1 },
+            @{ TestFile = $testFile2 })
     }
 
-    It "Should invoke a text file without error on non-Windows" -Skip:($IsWindows) {
-        $debugfn = NewProcessStartInfo "-noprofile ""``Invoke-Item $testfile`n" -RedirectStdIn
-        $process = RunPowerShell $debugfn
-        EnsureChildHasExited $process
-        $process.ExitCode | Should Be 0
+    Context "Invoke a text file on Unix" {
+        BeforeEach {
+            $redirectErr = Join-Path -Path $TestDrive -ChildPath "error.txt"
+        }
+
+        AfterEach {
+            Remove-Item -Path $redirectErr -Force -ErrorAction SilentlyContinue
+        }
+
+        ## Run this test only on OSX because redirecting stderr of 'xdg-open' results in weird behavior in our Linux CI,
+        ## causing this test to fail or the build to hang.
+        It "Should invoke text file '<TestFile>' without error" -Skip:(!$IsOSX) -TestCases $textFileTestCases {
+            param($TestFile)
+
+            ## Redirect stderr to a file. So if 'open' failed to open the text file, an error
+            ## message from 'open' would be written to the redirection file.
+            $proc = Start-Process -FilePath $powershell -ArgumentList "-noprofile Invoke-Item '$TestFile'" `
+                                  -RedirectStandardError $redirectErr `
+                                  -PassThru
+            $proc.WaitForExit(3000) > $null
+            if (!$proc.HasExited) {
+                try { $proc.Kill() } catch { }
+            }
+            ## If the text file was successfully opened, the redirection file should be empty since no error
+            ## message was written to it.
+            Get-Content $redirectErr -Raw | Should BeNullOrEmpty
+        }
+    }
+
+    It "Should invoke an executable file without error" {
+        $executable = Get-Command "ping" -CommandType Application | ForEach-Object Source
+        $redirectFile = Join-Path -Path $TestDrive -ChildPath "redirect2.txt"
+
+        if ($IsWindows) {
+            ## 'ping.exe' on Windows writes out usage to stdout.
+            & $powershell "-noprofile" "Invoke-Item '$executable'" > $redirectFile
+        } else {
+            ## 'ping' on Unix write out usage to stderr
+            & $powershell "-noprofile" "Invoke-Item '$executable'" 2> $redirectFile
+        }
+        Get-Content $redirectFile -Raw | Should Match "usage: ping"
     }
 }
 

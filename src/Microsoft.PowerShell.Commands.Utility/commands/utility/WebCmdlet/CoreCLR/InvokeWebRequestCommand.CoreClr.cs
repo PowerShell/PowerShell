@@ -21,6 +21,14 @@ namespace Microsoft.PowerShell.Commands
         #region Virtual Method Overrides
 
         /// <summary>
+        /// Default constructor for InvokeWebRequestCommand
+        /// </summary>
+        public InvokeWebRequestCommand() : base()
+        {
+            this._parseRelLink = true;
+        }
+
+        /// <summary>
         /// Process the web response and output corresponding objects.
         /// </summary>
         /// <param name="response"></param>
@@ -46,6 +54,7 @@ namespace Microsoft.PowerShell.Commands
                 // creating a MemoryStream wrapper to response stream here to support IsStopping.
                 responseStream = new WebResponseContentMemoryStream(responseStream, StreamHelper.ChunkSize, this);
                 WebResponseObject ro = WebResponseObjectFactory.GetResponseObject(response, responseStream, this.Context, UseBasicParsing);
+                ro.RelationLink = _relationLink;
                 WriteObject(ro);
 
                 // use the rawcontent stream from WebResponseObject for further

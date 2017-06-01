@@ -2,6 +2,8 @@
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
+#if !UNIX
+
 using System;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
@@ -5179,3 +5181,5 @@ namespace Microsoft.PowerShell.Commands
     }
     #endregion Native
 }
+
+#endif

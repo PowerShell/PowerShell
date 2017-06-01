@@ -37,6 +37,29 @@ namespace Microsoft.PowerShell.Commands
             set { base.CustomMethod = value; }
         }
 
+        /// <summary>
+        /// enable automatic following of rel links
+        /// </summary>
+        [Parameter]
+        [Alias("FL")]
+        public SwitchParameter FollowRelLink
+        {
+            get { return base._followRelLink; }
+            set { base._followRelLink = value; }
+        }
+
+        /// <summary>
+        /// gets or sets the maximum number of rel links to follow
+        /// </summary>
+        [Parameter]
+        [Alias("ML")]
+        [ValidateRange(1, Int32.MaxValue)]
+        public int MaximumFollowRelLink
+        {
+            get { return base._maximumFollowRelLink; }
+            set { base._maximumFollowRelLink = value; }
+        }
+
         #endregion Parameters
 
         #region Helper Methods

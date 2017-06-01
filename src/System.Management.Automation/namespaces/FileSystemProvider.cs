@@ -1327,27 +1327,45 @@ namespace Microsoft.PowerShell.Commands
             {
                 System.Diagnostics.Process invokeProcess = new System.Diagnostics.Process();
 
-#if UNIX
-                invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
-                invokeProcess.StartInfo.Arguments = path;
-                invokeProcess.Start();
-#elif CORECLR
                 try
                 {
-                    // Try Process.Start first. This works for executables even on headless SKUs.
+                    // Try Process.Start first.
+                    //  - In FullCLR, this is all we need to do.
+                    //  - In CoreCLR, this works for executables on Win/Unix platforms
                     invokeProcess.StartInfo.FileName = path;
                     invokeProcess.Start();
                 }
-                catch (Win32Exception)
+#if UNIX
+                catch (Win32Exception ex) when (ex.NativeErrorCode == 13)
                 {
+                    // Error code 13 -- Permission denied.
+                    // The file is possibly not an executable, so we try invoking the default program that handles this file.
+                    const string quoteFormat = "\"{0}\"";
+                    invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
+                    if (NativeCommandParameterBinder.NeedQuotes(path))
+                    {
+                        path = string.Format(CultureInfo.InvariantCulture, quoteFormat, path);
+                    }
+                    invokeProcess.StartInfo.Arguments = path;
+                    invokeProcess.Start();
+                }
+#elif CORECLR
+                catch (Win32Exception ex) when (ex.NativeErrorCode == 193)
+                {
+                    // Error code 193 -- BAD_EXE_FORMAT (not a valid Win32 application).
                     // If it's headless SKUs, rethrow.
                     if (Platform.IsNanoServer || Platform.IsIoT) { throw; }
                     // If it's full Windows, then try ShellExecute.
                     ShellExecuteHelper.Start(invokeProcess.StartInfo);
                 }
 #else
-                invokeProcess.StartInfo.FileName = path;
-                invokeProcess.Start();
+                finally
+                {
+                    // Nothing to do in FullCLR.
+                    // This empty 'finally' block is just to match the 'try' block above so that the code can be organized
+                    // in a clean way without too many if/def's.
+                    // Empty finally block will be ignored in release build, so there is no performance concern.
+                }
 #endif
             }
         } // InvokeDefaultAction
@@ -1659,50 +1677,84 @@ namespace Microsoft.PowerShell.Commands
                             return;
                         }
 
-                        bool attributeFilter = true;
-                        bool switchAttributeFilter = true;
-                        bool filterHidden = false;           // "Hidden" is specified somewhere in the expression
-                        bool switchFilterHidden = false;     // "Hidden" is specified somewhere in the parameters
-
-                        if (null != evaluator)
+                        // Internal test code, run only if one of the
+                        // 'GciEnumerationAction' test hooks are set.
+                        if (InternalTestHooks.GciEnumerationActionDelete)
                         {
-                            attributeFilter = evaluator.Evaluate(filesystemInfo.Attributes);  // expressions
-                            filterHidden = evaluator.ExistsInExpression(FileAttributes.Hidden);
-                        }
-                        if (null != switchEvaluator)
-                        {
-                            switchAttributeFilter = switchEvaluator.Evaluate(filesystemInfo.Attributes);  // switch parameters
-                            switchFilterHidden = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
-                        }
-
-                        bool hidden = false;
-                        if (!Force) hidden = (filesystemInfo.Attributes & FileAttributes.Hidden) != 0;
-
-                        // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
-                        // default hidden attribute filter.
-                        // if specification is to return all containers, then do not do attribute filter on
-                        // the containers.
-                        bool attributeSatisfy =
-                            ((attributeFilter && switchAttributeFilter) ||
-                                ((returnContainers == ReturnContainers.ReturnAllContainers) &&
-                                ((filesystemInfo.Attributes & FileAttributes.Directory) != 0)));
-
-                        if (attributeSatisfy && (filterHidden || switchFilterHidden || Force || !hidden))
-                        {
-                            if (nameOnly)
+                            if (string.Equals(filesystemInfo.Name, "c283d143-2116-4809-bf11-4f7d61613f92", StringComparison.InvariantCulture))
                             {
-                                WriteItemObject(
-                                    filesystemInfo.Name,
-                                    filesystemInfo.FullName,
-                                    false);
+                                File.Delete(filesystemInfo.FullName);
                             }
-                            else
+                        }
+                        else if (InternalTestHooks.GciEnumerationActionRename)
+                        {
+                            if (string.Equals(filesystemInfo.Name, "B1B691A9-B7B1-4584-AED7-5259511BEEC4", StringComparison.InvariantCulture))
                             {
-                                if (filesystemInfo is FileInfo)
-                                    WriteItemObject(filesystemInfo, filesystemInfo.FullName, false);
+                                var newFullName = Path.Combine(directory.FullName, "77efd2bb-92aa-4ad3-979a-18936a4bd565");
+                                File.Move(filesystemInfo.FullName, newFullName);
+                            }
+                        }
+
+                        try
+                        {
+                            bool attributeFilter = true;
+                            bool switchAttributeFilter = true;
+                            // 'Hidden' is specified somewhere in the expression
+                            bool filterHidden = false;
+                            // 'Hidden' is specified somewhere in the parameters
+                            bool switchFilterHidden = false;
+
+                            if (null != evaluator)
+                            {
+                                attributeFilter = evaluator.Evaluate(filesystemInfo.Attributes);
+                                filterHidden = evaluator.ExistsInExpression(FileAttributes.Hidden);
+                            }
+                            if (null != switchEvaluator)
+                            {
+                                switchAttributeFilter = switchEvaluator.Evaluate(filesystemInfo.Attributes);
+                                switchFilterHidden = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
+                            }
+
+                            bool hidden = false;
+                            if (!Force)
+                            {
+                                hidden = (filesystemInfo.Attributes & FileAttributes.Hidden) != 0;
+                            }
+
+                            // If 'Hidden' is explicitly specified anywhere in the attribute filter, then override
+                            // default hidden attribute filter.
+                            // If specification is to return all containers, then do not do attribute filter on
+                            // the containers.
+                            bool attributeSatisfy =
+                                ((attributeFilter && switchAttributeFilter) ||
+                                    ((returnContainers == ReturnContainers.ReturnAllContainers) &&
+                                    ((filesystemInfo.Attributes & FileAttributes.Directory) != 0)));
+
+                            if (attributeSatisfy && (filterHidden || switchFilterHidden || Force || !hidden))
+                            {
+                                if (nameOnly)
+                                {
+                                    WriteItemObject(
+                                        filesystemInfo.Name,
+                                        filesystemInfo.FullName,
+                                        false);
+                                }
                                 else
-                                    WriteItemObject(filesystemInfo, filesystemInfo.FullName, true);
+                                {
+                                    if (filesystemInfo is FileInfo)
+                                        WriteItemObject(filesystemInfo, filesystemInfo.FullName, false);
+                                    else
+                                        WriteItemObject(filesystemInfo, filesystemInfo.FullName, true);
+                                }
                             }
+                        }
+                        catch (System.IO.FileNotFoundException ex)
+                        {
+                            WriteError(new ErrorRecord(ex, "DirIOError", ErrorCategory.ReadError, directory.FullName));
+                        }
+                        catch (UnauthorizedAccessException ex)
+                        {
+                            WriteError(new ErrorRecord(ex, "DirUnauthorizedAccessError", ErrorCategory.PermissionDenied, directory.FullName));
                         }
                     }// foreach
                 }// foreach
@@ -1736,15 +1788,25 @@ namespace Microsoft.PowerShell.Commands
                                 return;
                             }
 
-
-                            bool hidden = false;
-                            if (!Force) hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
-
-                            // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
-                            // default hidden attribute filter.
-                            if (Force || !hidden || isFilterHiddenSpecified || isSwitchFilterHiddenSpecified)
+                            // Once the recursion process has begun by being in this function,
+                            // we do not want to further recurse into directory symbolic links
+                            // so as to prevent the possibility of an endless symlink loop.
+                            // This is the behavior of both the Unix 'ls' command and the Windows
+                            // 'DIR' command.
+                            if (!InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory))
                             {
-                                Dir(recursiveDirectory, recurse, depth - 1, nameOnly, returnContainers);
+                                bool hidden = false;
+                                if (!Force)
+                                {
+                                    hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
+                                }
+
+                                // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
+                                // default hidden attribute filter.
+                                if (Force || !hidden || isFilterHiddenSpecified || isSwitchFilterHiddenSpecified)
+                                {
+                                    Dir(recursiveDirectory, recurse, depth - 1, nameOnly, returnContainers);
+                                }
                             }
                         }//foreach
                     }//if

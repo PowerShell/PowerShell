@@ -2,6 +2,13 @@
 
 > This documentation is based on PowerShell Core packages built against .NET Core 1.1 and prior.
 > Things may change after we move to .NET Core 2.0.
+>
+> **Note** PowerShell v6.0.0-beta.1 has been released, which is on top of .NET Core 2.0 ([preview1-002106-00][netcoreapp20-preview1]).
+> The existing design of `PowerShell AssemblyLoadContext` is not changed in `beta.1` release,
+> so the way to host PowerShell `beta.1` is the same as before from the C# code perspective.
+> However, you will need the 2.0 preview version of .NET Core SDK <sub>(the version `2.0.0-preview1-005952` is currently used to build PowerShell Core)</sub>,
+> and the `.csproj` file will need to be updated.
+> A .NET Core 2.0 version of the sample application project `"MyApp"` can be found under [sample-dotnet2.0-powershell.beta.1](./sample-dotnet2.0-powershell.beta.1) for your reference.
 
 ## PowerShell Core targeting .NET Core 1.1 and Prior
 
@@ -153,6 +160,7 @@ PowerShell Core builds separately for Windows and Unix, so the assemblies are di
 Unfortunately, all PowerShell NuGet packages that have been published so far only contain PowerShell assemblies built specifically for Windows.
 The issue [#3417](https://github.com/PowerShell/PowerShell/issues/3417) was opened to track publishing PowerShell NuGet packages for Unix platforms.
 
+[netcoreapp20-preview1]: https://dotnet.myget.org/feed/dotnet-core/package/nuget/Microsoft.NETCore.App/2.0.0-preview1-002106-00
 [CorePsAssemblyLoadContext.cs]: https://github.com/PowerShell/PowerShell/blob/master/src/Microsoft.PowerShell.CoreCLR.AssemblyLoadContext/CoreCLR/CorePsAssemblyLoadContext.cs
 [Resolving]: https://github.com/dotnet/corefx/blob/ec2a6190efa743ab600317f44d757433e44e859b/src/System.Runtime.Loader/ref/System.Runtime.Loader.cs#L35
 [bootstrapping]: https://github.com/PowerShell/PowerShell/blob/master/src/powershell/Program.cs#L27

@@ -57,14 +57,14 @@ function ShouldBeErrorId
 
         try
         {
-            & $sb
-            Throw "Exception expected, execution should not have reached here"
+            & $sb | Out-Null
+            Throw "No Exception!"
         }
         catch
         {
-            $_.FullyQualifiedErrorId | Should Be $FullyQualifiedErrorId
+            $_.FullyQualifiedErrorId | Should Be $FullyQualifiedErrorId | Out-Null
+            # Write the exception to output that allow us to check later other properies of the exception
+            Write-Output $_
         }
 }
-
-export-modulemember -function Wait-UntilTrue,Test-IsElevated, ShouldBeErrorId
 

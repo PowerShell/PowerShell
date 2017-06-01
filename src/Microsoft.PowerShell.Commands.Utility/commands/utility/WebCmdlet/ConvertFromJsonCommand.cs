@@ -72,8 +72,8 @@ namespace Microsoft.PowerShell.Commands
         protected override void EndProcessing()
         {
             // When Input is provided through pipeline, the input can be represented in the following two ways:
-            // 1. Each input to the buffer is a complete Json content. There can be multiple inputs of this format.
-            // 2. The complete buffer input collectively represent a single JSon format. This is typically the majority of the case.
+            // 1. Each input in the collection is a complete Json content. There can be multiple inputs of this format.
+            // 2. The complete input is a collection which represents a single Json content. This is typically the majority of the case.
             if (_inputObjectBuffer.Count > 0)
             {
                 if (_inputObjectBuffer.Count == 1)
@@ -85,6 +85,7 @@ namespace Microsoft.PowerShell.Commands
                     bool successfullyConverted = false;
                     try
                     {
+                        // Try to deserialize the first element.
                         successfullyConverted = ConvertFromJsonHelper(_inputObjectBuffer[0]);
                     }
                     catch (ArgumentException)
@@ -102,6 +103,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
+                        // Process the entire input as a single Json content.
                         ConvertFromJsonHelper(string.Join(System.Environment.NewLine, _inputObjectBuffer.ToArray()));
                     }
                 }

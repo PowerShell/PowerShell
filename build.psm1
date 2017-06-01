@@ -1634,7 +1634,7 @@ esac
     # OpenSUSE 42.1 (13.2 might build but is EOL)
     # Also SEE: https://fedoraproject.org/wiki/Packaging:DistTag
     if ($IsCentOS) {
-        $rpm_dist = "el7.centos"
+        $rpm_dist = "el7"
     } elseif ($IsFedora) {
         $version_id = $LinuxInfo.VERSION_ID
         $rpm_dist = "fedora.$version_id"
@@ -2462,13 +2462,18 @@ function New-MSIPackage
 
     )
 
-    $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset v3.10\bin"
+    ## AppVeyor base image might update the version for Wix. Hence, we should
+    ## not hard code version numbers.
+    $wixToolsetBinPath = "${env:ProgramFiles(x86)}\WiX Toolset *\bin"
 
     Write-Verbose "Ensure Wix Toolset is present on the machine @ $wixToolsetBinPath"
     if (-not (Test-Path $wixToolsetBinPath))
     {
         throw "Wix Toolset is required to create MSI package. Please install Wix from https://wix.codeplex.com/downloads/get/1540240"
     }
+
+    ## Get the latest if multiple versions exist.
+    $wixToolsetBinPath = (Get-ChildItem $wixToolsetBinPath).FullName | Sort-Object -Descending | Select-Object -First 1
 
     Write-Verbose "Initialize Wix executables - Heat.exe, Candle.exe, Light.exe"
     $wixHeatExePath = Join-Path $wixToolsetBinPath "Heat.exe"
@@ -2813,10 +2818,30 @@ function Start-CrossGen {
         }
     }
 
-    # Common assemblies used by Add-Type to crossgen
+    # Common assemblies used by Add-Type or assemblies with high JIT and no pdbs to crossgen
     $commonAssembliesForAddType = @(
         "Microsoft.CodeAnalysis.CSharp.dll"
         "Microsoft.CodeAnalysis.dll"
+        "System.Linq.Expressions.dll"
+        "Microsoft.CSharp.dll"
+        "System.Runtime.Extensions.dll"
+        "System.Linq.dll"
+        "System.Collections.Concurrent.dll"
+        "System.Collections.dll"
+        "Newtonsoft.Json.dll"
+        "System.IO.FileSystem.dll"
+        "System.Diagnostics.Process.dll"
+        "System.Threading.Tasks.Parallel.dll"
+        "System.Security.AccessControl.dll"
+        "System.Text.Encoding.CodePages.dll"
+        "System.Private.Uri.dll"
+        "System.Threading.dll"
+        "System.Security.Principal.Windows.dll"
+        "System.Console.dll"
+        "Microsoft.Win32.Registry.dll"
+        "System.IO.Pipes.dll"
+        "System.Diagnostics.FileVersionInfo.dll"
+        "System.Collections.Specialized.dll"
     )
 
     # Common PowerShell libraries to crossgen

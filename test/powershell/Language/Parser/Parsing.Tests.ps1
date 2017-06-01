@@ -1,5 +1,4 @@
-﻿Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
-set-strictmode -v 2
+﻿set-strictmode -v 2
 
 Describe 'for statement parsing' -Tags "CI" {
     ShouldBeParseError 'for' MissingOpenParenthesisAfterKeyword 4 -CheckColumnNumber
@@ -278,7 +277,6 @@ Describe 'Pipes parsing' -Tags "CI" {
     ShouldBeParseError 'gps|' EmptyPipeElement 4
     ShouldBeParseError '1|1' ExpressionsMustBeFirstInPipeline 2
     ShouldBeParseError '$a=' ExpectedValueExpression 3
-    ShouldBeParseError '1 &' UnexpectedToken,MissingExpression 2,2
 }
 
 Describe 'commands parsing' -Tags "CI" {

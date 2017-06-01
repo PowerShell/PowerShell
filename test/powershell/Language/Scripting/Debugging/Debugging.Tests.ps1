@@ -12,10 +12,6 @@ $script2 = @'
 "line 3"
 '@
 
-$testroot = resolve-path (join-path $psscriptroot ../../..)
-$common = join-path $testroot Common
-$helperModule = join-path $common Test.Helpers.psm1
-
 Describe "Breakpoints when set should be hit" -tag "CI" {
     BeforeAll {
         $path = setup -pass -f TestScript_1.ps1 -content $script1
@@ -34,7 +30,6 @@ Describe "Breakpoints when set should be hit" -tag "CI" {
 
 Describe "It should be possible to reset runspace debugging" -tag "Feature" {
     BeforeAll {
-        import-module $helperModule
         $path = setup -pass -f TestScript_2.ps1 -content $script2
         $scriptPath = "$testdrive/TestScript_2.ps1"
         $iss = [initialsessionstate]::CreateDefault2();

@@ -560,6 +560,13 @@ namespace Microsoft.PowerShell
 
 #if UNIX // TODO: not necessary if ReadBufferLines worked, or if rendering worked on spans instead of complete lines
             string newPrompt = GetPrompt();
+            int index = newPrompt.LastIndexOf('\n');
+            if (index != -1)
+            {
+                // The prompt text could be a multi-line string, and in such case
+                // we only want the part of it that is shown on the input line.
+                newPrompt = newPrompt.Substring(index + 1);
+            }
             var bufferLineCount = (newPrompt.Length) / (_console.BufferWidth) + 1;
             _consoleBuffer = ReadBufferLines(_initialY, bufferLineCount);
 

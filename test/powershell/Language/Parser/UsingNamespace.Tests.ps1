@@ -9,9 +9,6 @@ using namespace System.Diagnostics
 using namespace System.Diagnostics; using namespace System.Runtime.CompilerServices
 using namespace System.Collections.Generic
 
-Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
-
 # Flags is System.FlagsAttribute
 # This tests our implicit 'using namespace System'
 # despite having other explicit using namespace statements.

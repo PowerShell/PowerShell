@@ -658,7 +658,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (String.IsNullOrEmpty(_copyright))
                     {
-                        _copyright = StringUtil.Format(Modules.DefaultCopyrightMessage, DateTime.Now.Year, _author);
+                        _copyright = StringUtil.Format(Modules.DefaultCopyrightMessage, _author);
                     }
                     result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Copyright, RemotingErrorIdStrings.DISCCopyrightComment,
                         SessionConfigurationUtils.QuoteName(_copyright), streamWriter, false));
@@ -1505,7 +1505,7 @@ namespace Microsoft.PowerShell.Commands
                 // Copyright
                 if (String.IsNullOrEmpty(_copyright))
                 {
-                    _copyright = StringUtil.Format(Modules.DefaultCopyrightMessage, DateTime.Now.Year, _author);
+                    _copyright = StringUtil.Format(Modules.DefaultCopyrightMessage, _author);
                 }
                 result.Append(SessionConfigurationUtils.ConfigFragment(ConfigFileConstants.Copyright, RemotingErrorIdStrings.DISCCopyrightComment,
                     SessionConfigurationUtils.QuoteName(_copyright), streamWriter, false));

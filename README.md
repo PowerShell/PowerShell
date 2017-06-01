@@ -22,7 +22,7 @@ You can download and install a PowerShell package for any of the following platf
 | ---------------------------------- | ---------------------- | ----------------------------- |
 | Windows 10 / Server 2016 (x64)     | [.msi][rl-windows10]   | [Instructions][in-windows]    |
 | Windows 8.1 / Server 2012 R2 (x64) | [.msi][rl-windows81]   | [Instructions][in-windows]    |
-| Windows 7 (x64)                    | [.msi][rl-windows7-64] | [Instructions][in-windows]    |
+| Windows 7 / Server 2008 R2 (x64)   | [.msi][rl-windows7-64] | [Instructions][in-windows]    |
 | Windows 7 (x86)                    | [.msi][rl-windows7-86] | [Instructions][in-windows]    |
 | Ubuntu 16.04                       | [.deb][rl-ubuntu16]    | [Instructions][in-ubuntu16]   |
 | Ubuntu 14.04                       | [.deb][rl-ubuntu14]    | [Instructions][in-ubuntu14]   |
@@ -166,7 +166,7 @@ License: By requesting and using the Container OS Image for Windows containers, 
 
 By default, PowerShell collects the OS description and the version of PowerShell (equivalent to `$PSVersionTable.OS` and `$PSVersionTable.GitCommitId`) using [Application Insights](https://azure.microsoft.com/en-us/services/application-insights/).
 To opt-out of sending telemetry, delete the file `DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY` before starting PowerShell from the installed location.
-The telemetry we collect fall under the [Microsoft Enterprise and Developer Privacy Statement](https://www.microsoft.com/en-us/privacystatement/EnterpriseDev/default.aspx).
+The telemetry we collect fall under the [Microsoft Privacy Statement](https://privacy.microsoft.com/en-us/privacystatement/).
 
 ## Governance
 

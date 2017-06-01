@@ -2,8 +2,6 @@
 # Copyright (c) Microsoft Corporation, 2015
 #
 
-Import-Module $PSScriptRoot\..\LanguageTestSupport.psm1
-
 Describe 'Classes inheritance syntax' -Tags "CI" {
 
     It 'Base types' {

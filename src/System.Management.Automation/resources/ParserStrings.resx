@@ -446,9 +446,6 @@ Possible matches are</value>
   <data name="InvalidEndOfLine" xml:space="preserve">
     <value>The token '{0}' is not a valid statement separator in this version.</value>
   </data>
-  <data name="AmpersandNotAllowed" xml:space="preserve">
-    <value>The ampersand (&amp;) character is not allowed. The &amp; operator is reserved for future use; wrap an ampersand in double quotation marks ("&amp;") to pass it as part of a string.</value>
-  </data>
   <data name="FromKeywordNotAllowed" xml:space="preserve">
     <value>The 'from' keyword is not supported in this version of the language.</value>
   </data>

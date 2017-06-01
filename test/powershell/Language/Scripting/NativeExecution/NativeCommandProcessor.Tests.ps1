@@ -1,11 +1,6 @@
-$testroot = resolve-path (join-path $psscriptroot ../../..)
-$common = join-path $testroot Common
-$helperModule = join-path $common Test.Helpers.psm1
-
 Describe 'native commands lifecycle' -tags 'Feature' {
 
     BeforeAll {
-        Import-Module $helperModule
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
     }
 

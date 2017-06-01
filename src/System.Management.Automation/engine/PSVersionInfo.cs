@@ -493,11 +493,11 @@ namespace System.Management.Automation
         /// <param name="version">The version.</param>
         public SemanticVersion(Version version)
         {
-            if (version.Revision > 0 || version.Build < 0) throw PSTraceSource.NewArgumentException(nameof(version));
+            if (version.Revision > 0) throw PSTraceSource.NewArgumentException(nameof(version));
 
             Major = version.Major;
             Minor = version.Minor;
-            Patch = version.Build;
+            Patch = version.Build == -1 ? 0 : version.Build;
             var psobj = new PSObject(version);
             var labelNote = psobj.Properties[LabelPropertyName];
             if (labelNote != null)
