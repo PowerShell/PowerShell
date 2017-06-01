@@ -53,8 +53,8 @@ namespace Microsoft.PowerShell.Commands
                 // This issue is being tracked by https://github.com/JamesNK/Newtonsoft.Json/issues/1321.
                 // To work around this, we need to identify when input is a Json array, and then try to parse it via JArray.Parse().
 
-                // If input starts with '[' or ends with ']' (ignoring white spaces).
-                if ((Regex.Match(input, @"(^\s*\[)|(\s*\]$)")).Success)
+                // If input starts with '[' (ignoring white spaces).
+                if ((Regex.Match(input, @"^\s*\[")).Success)
                 {
                     // JArray.Parse() will throw a JsonException if the array is invalid.
                     // This will be caught by the catch block below, and then throw an
