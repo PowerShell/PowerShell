@@ -32,7 +32,7 @@
 - Change to not expose unsupported aliases and cmdlets on macOS/Linux. (#3595) (Thanks to @iSazonov!)
 - Fix `Invoke-Item` to accept a file path that includes spaces on macOS/Linux. (#3850)
 - Fix an issue where PSReadline was not rendering multi-line prompts correctly on macOS/Linux. (#3867)
-- Fix an issue where PSReadline was not working on NanoServer. (#3815)
+- Fix an issue where PSReadline was not working on Nano Server. (#3815)
 
 ## v6.0.0-beta.1 - 2017-05-08
 
