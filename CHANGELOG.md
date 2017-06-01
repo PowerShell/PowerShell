@@ -1,5 +1,39 @@
 # Changelog
 
+## v6.0.0-beta.2 - 2017-06-01
+
+### Support backgrounding of pipelines with ampersand (`&`) (#3360)
+
+- Putting `&` at the end of a pipeline will cause the pipeline to be run as a PowerShell job.
+- When a pipeline is backgrounded, a job object is returned.
+- Once the pipeline is running as a job, all of the standard `*-Job` cmdlets can be used to manage the job.
+- Variables (ignoring process-specific variables) used in the pipeline are automatically copied to the job so `Copy-Item $foo $bar &` just works.
+- The job is also run in the current directory instead of the user's home directory.
+- For more information about PowerShell jobs, see [about_Jobs](https://msdn.microsoft.com/en-us/powershell/reference/6/about/about_jobs).
+
+### Engine updates and fixes
+
+- Crossgen more of the .NET Core assemblies to improve PowerShell Core startup time. (#3787)
+- Enable comparison between a `SemanticVersion` instance and a `Version` instance that is constructed only with `Major` and `Minor` version values.
+  This will fix some cases where PowerShell Core was failing to import older Windows PowerShell modules. (#3793) (Thanks to @mklement0!)
+
+### General cmdlet updates and fixes
+
+- Support Link header pagination in web cmdlets (#3828)
+    - For `Invoke-WebRequest`, when the response includes a Link header we create a RelationLink property as a Dictionary representing the URLs and `rel` attributes and ensure the URLs are absolute to make it easier for the developer to use.
+    - For `Invoke-RestMethod`, when the response includes a Link header we expose a `-FollowRelLink` switch to automatically follow `next` `rel` links until they no longer exist or once we hit the optional `-MaximumFollowRelLink` parameter value.
+- Update `Get-ChildItem` to be more in line with the way that the *nix `ls -R` and the Windows `DIR /S` native commands handle symbolic links to directories during a recursive search.
+  Now, `Get-ChildItem` returns the symbolic links it encountered during the search, but it won't search the directories those links target. (#3780)
+- Fix `Get-ChildItem` to continue enumeration after throwing an error in the middle of a set of items.
+  This fixes some issues where inaccessible directories or files would halt execution of `Get-ChildItem`. (#3806)
+- Fix `ConvertFrom-Json` to deserialize an array of strings from the pipeline that together construct a complete JSON string.
+  This fixes some cases where newlines would break JSON parsing. (#3823)
+- Enable `Get-TimeZone` for macOS/Linux. (#3735)
+- Change to not expose unsupported aliases and cmdlets on macOS/Linux. (#3595) (Thanks to @iSazonov!)
+- Fix `Invoke-Item` to accept a file path that includes spaces on macOS/Linux. (#3850)
+- Fix an issue where PSReadline was not rendering multi-line prompts correctly on macOS/Linux. (#3867)
+- Fix an issue where PSReadline was not working on Nano Server. (#3815)
+
 ## v6.0.0-beta.1 - 2017-05-08
 
 ### Move to .NET Core 2.0 (.NET Standard 2.0 support)
