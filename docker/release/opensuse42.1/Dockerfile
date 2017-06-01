@@ -5,8 +5,8 @@ LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>"
 LABEL readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
 LABEL description="This Dockerfile will install the latest release of PS."
 
-ARG POWERSHELL_VERSION=6.0.0_beta.1
-ARG POWERSHELL_RELEASE=v6.0.0-beta.1
+ARG POWERSHELL_VERSION=6.0.0_beta.2
+ARG POWERSHELL_RELEASE=v6.0.0-beta.2
 ARG FORK=PowerShell
 ARG POWERSHELL_PACKAGE=powershell-$POWERSHELL_VERSION-1.suse.42.1.x86_64.rpm
 
