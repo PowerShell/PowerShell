@@ -555,6 +555,18 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
 
                 $Param1
             }
+
+            function Get-TestValidateSetPS6
+            {
+                [CmdletBinding()]
+                Param
+                (
+                    [ValidateSet([UnImplementedGeneratorOfValues])]
+                    $Param1
+                )
+
+                $Param1
+            }
         }
 
         It 'Dynamically generated set works in PowerShell script with cache expiration' {
@@ -598,6 +610,12 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
                 Get-TestValidateSetPS5 -Param1 "TestString1" -ErrorAction Stop
             } | ShouldBeErrorId "ParameterArgumentValidationError,Get-TestValidateSetPS5"
             $exc.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should BeExactly "ValidateSetGeneratedValidValuesListIsEmpty"
+        }
+
+        It 'Unimplemented valid values generator type throws in PowerShell script' {
+            $exc = {
+                Get-TestValidateSetPS6 -Param1 "AnyTestString" -ErrorAction Stop
+            } | ShouldBeErrorId "CustomValidValuesGeneratorTypeNotFound"
         }
     }
 }

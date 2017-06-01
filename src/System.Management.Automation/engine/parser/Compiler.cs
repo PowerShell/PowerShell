@@ -739,6 +739,7 @@ namespace System.Management.Automation.Language
             s_builtinAttributeGenerator.Add(typeof(ParameterAttribute), NewParameterAttribute);
             s_builtinAttributeGenerator.Add(typeof(OutputTypeAttribute), NewOutputTypeAttribute);
             s_builtinAttributeGenerator.Add(typeof(AliasAttribute), NewAliasAttribute);
+            s_builtinAttributeGenerator.Add(typeof(ValidateSetAttribute), NewValidateSetAttribute);
             s_builtinAttributeGenerator.Add(typeof(DebuggerHiddenAttribute), NewDebuggerHiddenAttribute);
             s_builtinAttributeGenerator.Add(typeof(ValidateNotNullAttribute), NewValidateNotNullAttribute);
             s_builtinAttributeGenerator.Add(typeof(ValidateNotNullOrEmptyAttribute), NewValidateNotNullOrEmptyAttribute);
@@ -1297,15 +1298,35 @@ namespace System.Management.Automation.Language
 
         private static Attribute NewValidateSetAttribute(AttributeAst ast)
         {
+            ValidateSetAttribute result;
             var cvv = new ConstantValueVisitor { AttributeArgument = true };
-            var args = new string[ast.PositionalArguments.Count];
-            for (int i = 0; i < ast.PositionalArguments.Count; i++)
+
+            // 'ValidateSet([CustomGeneratorType], IgnoreCase=$false)' is supported in scripts.
+            if (ast.PositionalArguments.Count == 1 && ast.PositionalArguments[0] is TypeExpressionAst generatorTypeAst)
             {
-                args[i] = _attrArgToStringConverter.Target(_attrArgToStringConverter,
-                    ast.PositionalArguments[i].Accept(cvv));
+                if (TypeResolver.TryResolveType(generatorTypeAst.TypeName.FullName, out Type generatorType))
+                {
+                    result = new ValidateSetAttribute(generatorType);
+                }
+                else
+                {
+                    throw InterpreterError.NewInterpreterException(ast, typeof(RuntimeException), ast.Extent,
+                        "CustomValidValuesGeneratorTypeNotFound", ParserStrings.CustomValidValuesGeneratorTypeNotFound, generatorTypeAst.TypeName.FullName, typeof(System.Management.Automation.IValidateSetValuesGenerator).FullName);
+                }
+            }
+            else
+            {
+                // 'ValidateSet("value1","value2", IgnoreCase=$false)' is supported in scripts.
+                var args = new string[ast.PositionalArguments.Count];
+                for (int i = 0; i < ast.PositionalArguments.Count; i++)
+                {
+                    args[i] = _attrArgToStringConverter.Target(_attrArgToStringConverter,
+                        ast.PositionalArguments[i].Accept(cvv));
+                }
+
+                result = new ValidateSetAttribute(args);
             }
 
-            var result = new ValidateSetAttribute(args);
             foreach (var namedArg in ast.NamedArguments)
             {
                 var argValue = namedArg.Argument.Accept(cvv);
@@ -1313,6 +1334,10 @@ namespace System.Management.Automation.Language
                 if (argumentName.Equals("IgnoreCase", StringComparison.OrdinalIgnoreCase))
                 {
                     result.IgnoreCase = s_attrArgToBoolConverter.Target(s_attrArgToBoolConverter, argValue);
+                }
+                else if (argumentName.Equals("CacheExpiration", StringComparison.OrdinalIgnoreCase))
+                {
+                    result.CacheExpiration = s_attrArgToIntConverter.Target(s_attrArgToIntConverter, argValue);
                 }
                 else if (argumentName.Equals("ErrorMessage", StringComparison.OrdinalIgnoreCase))
                 {
