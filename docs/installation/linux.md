@@ -23,7 +23,7 @@ Once the package is installed, run `powershell` from a terminal.
 [arch]: #arch-linux
 [lai]: #linux-appimage
 [mac]: #macos-1012
-[download]: https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/download.sh 
+[download]: https://github.com/PowerShell/PowerShell/blob/master/tools/download.sh
 
 ## Ubuntu 14.04
 
