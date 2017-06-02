@@ -61,7 +61,27 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "ByInputObject")]
         public SwitchParameter Raw { get; set; }
 
+        /// <summary>
+        /// Offset of bytes to start reading the stream from.
+        /// </summary>
+        [Parameter()]
+        public UInt32 Offset { get; set; }
+
+        /// <summary>
+        /// The number of bytes to return.
+        /// </summary>
+        [Parameter()]
+        public UInt32 Count { get; set; }
+
         #endregion
+
+        /// <summary>
+        ///     Constructor
+        /// </summary>
+        public FormatHex() {
+            Offset = 0;
+            Count = UInt32.MaxValue;
+        }
 
         #region Overrides
 
@@ -169,11 +189,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 using (BinaryReader reader = new BinaryReader(File.Open(path, FileMode.Open, FileAccess.Read)))
                 {
-                    UInt32 offset = 0;
+                    UInt32 offset = Offset;
                     Int32 bytesRead = 0;
+                    reader.BaseStream.Position = Offset;
+                    UInt32 remainingCount = Count;
 
-                    while ((bytesRead = reader.Read(buffer, 0, BUFFERSIZE)) > 0)
+                    while ((bytesRead = reader.Read(buffer, 0, BUFFERSIZE)) > 0 && remainingCount > 0)
                     {
+                        if (bytesRead > remainingCount) {
+                            bytesRead = (int)remainingCount;
+                        }
+
                         if (bytesRead == BUFFERSIZE)
                         {
                             // We are reusing the same buffer so if we save the output to a variable, the variable
@@ -194,6 +220,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                         // Update offset value.
                         offset += (UInt32)bytesRead;
+                        remainingCount -= (UInt32)bytesRead;
                     }
                 }
             }
@@ -301,6 +328,16 @@ namespace Microsoft.PowerShell.Commands
 
             if (inputBytes != null)
             {
+                Int32 targetLength = inputBytes.Length - (int)Offset;
+                
+                if ((targetLength) > Count) {
+                    targetLength = (int)Count;
+                }
+
+                byte[] remainingBytes = new byte[targetLength];
+                Array.Copy(inputBytes, (int)Offset, remainingBytes, 0, targetLength);
+                inputBytes = remainingBytes;
+
                 ConvertToHexidecimal(inputBytes, null, 0);
             }
         }
