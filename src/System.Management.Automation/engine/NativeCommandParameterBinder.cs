@@ -162,8 +162,31 @@ namespace System.Management.Automation
                     arg = PSObject.ToStringParser(context, ParserOps.Current(null, list));
                 }
 
+                Collection<string> resolvedPaths = new Collection<string>();
                 if (!String.IsNullOrEmpty(arg))
                 {
+                    // perform globbing if verbatim marker wasn't specified,
+                    // and there is globbing to be performed
+                    if (!sawVerbatimArgumentMarker
+                        && LocationGlobber.StringContainsGlobCharacters(arg))
+                    {
+                        Provider.CmdletProvider providerInstance;
+                        ProviderInfo provider;
+                        resolvedPaths =
+                            context.LocationGlobber.GetGlobbedProviderPathsFromMonadPath(
+                                arg, false, out provider, out providerInstance);
+                    }
+
+                    // either no there was no globbing to perform, or it failed, so add the original argument
+                    if (resolvedPaths.Count == 0)
+                    {
+                        resolvedPaths.Add(arg);
+                    }
+                }
+
+                foreach (string path in resolvedPaths)
+                {
+                    arg = path;
                     if (needSeparator)
                     {
                         _arguments.Append(separator);
