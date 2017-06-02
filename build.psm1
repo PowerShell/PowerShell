@@ -131,7 +131,7 @@ function Start-PSBuild {
         [switch]$CrossGen,
 
         [Parameter(ParameterSetName='CoreCLR')]
-        [ValidatePattern("^v\d+\.\d+\.\d+-\w+\.\d+$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag
     )
@@ -1220,7 +1220,7 @@ function Start-PSPackage {
         [string]$Version,
 
         [Parameter(ParameterSetName = "ReleaseTag")]
-        [ValidatePattern("^v\d+\.\d+\.\d+-\w+\.\d+$")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag,
 
