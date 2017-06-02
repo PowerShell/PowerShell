@@ -1859,6 +1859,83 @@ function Start-DevPowerShell {
     }
 }
 
+
+<#
+.EXAMPLE
+PS C:> Copy-MappedFiles -PslMonadRoot .\src\monad
+copy files FROM .\src\monad (old location of submodule) TO src/<project> folders
+#>
+function Copy-MappedFiles {
+
+    [CmdletBinding()]
+    param(
+        [Parameter(ValueFromPipeline=$true)]
+        [string[]]$Path = "$PSScriptRoot",
+        [Parameter(Mandatory=$true)]
+        [string]$PslMonadRoot,
+        [switch]$Force,
+        [switch]$WhatIf
+    )
+
+    begin {
+        function MaybeTerminatingWarning {
+            param([string]$Message)
+
+            if ($Force) {
+                Write-Warning "$Message : ignoring (-Force)"
+            } elseif ($WhatIf) {
+                Write-Warning "$Message : ignoring (-WhatIf)"
+            } else {
+                throw "$Message : use -Force to ignore"
+            }
+        }
+
+        if (-not (Test-Path -PathType Container $PslMonadRoot)) {
+            throw "$pslMonadRoot is not a valid folder"
+        }
+
+        # Do some intelligence to prevent shooting us in the foot with CL management
+
+        # finding base-line CL
+        $cl = git --git-dir="$PSScriptRoot/.git" tag | % {if ($_ -match 'SD.(\d+)$') {[int]$Matches[1]} } | Sort-Object -Descending | Select-Object -First 1
+        if ($cl) {
+            log "Current base-line CL is SD:$cl (based on tags)"
+        } else {
+            MaybeTerminatingWarning "Could not determine base-line CL based on tags"
+        }
+
+        try {
+            Push-Location $PslMonadRoot
+            if (git status --porcelain -uno) {
+                MaybeTerminatingWarning "$pslMonadRoot has changes"
+            }
+
+            if (git log --grep="SD:$cl" HEAD^..HEAD) {
+                log "$pslMonadRoot HEAD matches [SD:$cl]"
+            } else {
+                Write-Warning "Try to checkout this commit in $pslMonadRoot :"
+                git log --grep="SD:$cl" | Write-Warning
+                MaybeTerminatingWarning "$pslMonadRoot HEAD doesn't match [SD:$cl]"
+            }
+        } finally {
+            Pop-Location
+        }
+
+        $map = @{}
+    }
+
+    process {
+        $map += Get-Mappings $Path -Root $PslMonadRoot
+    }
+
+    end {
+        $map.GetEnumerator() | % {
+            New-Item -ItemType Directory (Split-Path $_.Value) -ErrorAction SilentlyContinue > $null
+            Copy-Item $_.Key $_.Value -Verbose:([bool]$PSBoundParameters['Verbose']) -WhatIf:$WhatIf
+        }
+    }
+}
+
 function Get-Mappings
 {
     [CmdletBinding()]
