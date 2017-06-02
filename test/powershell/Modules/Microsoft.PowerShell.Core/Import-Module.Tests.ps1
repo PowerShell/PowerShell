@@ -49,24 +49,17 @@ Describe "Import-Module with ScriptsToProcess" -Tags "CI" {
         remove-module $m -Force -ErrorAction SilentlyContinue
         Remove-Item out.txt -Force -ErrorAction SilentlyContinue
     }
-    
-    It "Verify ScriptsToProcess are executed for top-level module" {
-        Import-Module .\module1.psd1
-        Get-Content out.txt | Should Be '1'
-    }
 
-    It "Verify ScriptsToProcess are executed for top-level and nested module" {
-        Import-Module .\module2.psd1
-        Get-Content out.txt | Should Be '21'
-    }
-    
-    It "Verify ScriptsToProcess are executed for top-level module when -Version is specified" {
-        Import-Module .\module1.psd1 -Version 1.0
-        Get-Content out.txt | Should Be '1'
-    }
+    $testCases = @(
+            @{ TestNameSuffix = 'for top-level module'; ipmoParms =  @{'Name'='.\module1.psd1'}; Expected = '1' }
+            @{ TestNameSuffix = 'for top-level and nested module'; ipmoParms =  @{'Name'='.\module2.psd1'}; Expected = '21' }
+            @{ TestNameSuffix = 'for top-level module when -Version is specified'; ipmoParms =  @{'Name'='.\module1.psd1'; 'Version'='1.0'}; Expected = '1' }
+            @{ TestNameSuffix = 'for top-level and nested module when -Version is specified'; ipmoParms =  @{'Name'='.\module2.psd1'; 'Version'='1.0'}; Expected = '21' }
+        )
 
-    It "Verify ScriptsToProcess are executed for top-level and nested module when -Version is specified" {
-        Import-Module .\module2.psd1 -Version 1.0
-        Get-Content out.txt | Should Be '21'
+    It "Verify ScriptsToProcess are executed <TestNameSuffix>" -TestCases $testCases {
+        param($TestNameSuffix,$ipmoParms,$Expected)
+        Import-Module @ipmoParms
+        Get-Content out.txt | Should Be $Expected
     }
 }
