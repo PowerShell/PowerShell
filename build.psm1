@@ -128,7 +128,12 @@ function Start-PSBuild {
         [switch]$Publish,
 
         [Parameter(ParameterSetName='CoreCLR')]
-        [switch]$CrossGen
+        [switch]$CrossGen,
+
+        [Parameter(ParameterSetName='CoreCLR')]
+        [ValidatePattern("^v\d+\.\d+\.\d+-\w+\.\d+$")]
+        [ValidateNotNullOrEmpty()]
+        [string]$ReleaseTag
     )
 
     function Stop-DevPowerShell {
@@ -157,8 +162,13 @@ function Start-PSBuild {
         }
     }
 
-    # save Git description to file for PowerShell to include in PSVersionTable
-    git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60 > "$psscriptroot/powershell.version"
+    # save git commit id to file for PowerShell to include in PSVersionTable
+    $gitCommitId = $ReleaseTag
+    if (-not $gitCommitId) {
+        # if ReleaseTag is not specified, use 'git describe' to get the commit id
+        $gitCommitId = git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60
+    }
+    $gitCommitId > "$psscriptroot/powershell.version"
 
     # create the telemetry flag file
     $null = new-item -force -type file "$psscriptroot/DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY"
@@ -1206,7 +1216,13 @@ function Start-PSBootstrap {
 function Start-PSPackage {
     [CmdletBinding()]param(
         # PowerShell packages use Semantic Versioning http://semver.org/
+        [Parameter(ParameterSetName = "Version")]
         [string]$Version,
+
+        [Parameter(ParameterSetName = "ReleaseTag")]
+        [ValidatePattern("^v\d+\.\d+\.\d+-\w+\.\d+$")]
+        [ValidateNotNullOrEmpty()]
+        [string]$ReleaseTag,
 
         # Package name
         [ValidatePattern("^powershell")]
@@ -1251,6 +1267,11 @@ function Start-PSPackage {
         # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
         # are generated, it'll be hard to verify if they were built from the correct content.
         throw "Please ensure you have run 'Start-PSBuild -Clean -CrossGen -Runtime $Runtime -Configuration $Configuration'!"
+    }
+
+    # If ReleaseTag is specified, use the given tag to calculate Vesrion
+    if ($PSCmdlet.ParameterSetName -eq "ReleaseTag") {
+        $Version = $ReleaseTag -Replace '^v'
     }
 
     # Use Git tag if not given a version
@@ -1834,84 +1855,6 @@ function Start-DevPowerShell {
 
         if ($ZapDisable) {
             Remove-Item env:COMPLUS_ZapDisable
-        }
-    }
-}
-
-
-<#
-.EXAMPLE
-PS C:> Copy-MappedFiles -PslMonadRoot .\src\monad
-
-copy files FROM .\src\monad (old location of submodule) TO src/<project> folders
-#>
-function Copy-MappedFiles {
-
-    [CmdletBinding()]
-    param(
-        [Parameter(ValueFromPipeline=$true)]
-        [string[]]$Path = "$PSScriptRoot",
-        [Parameter(Mandatory=$true)]
-        [string]$PslMonadRoot,
-        [switch]$Force,
-        [switch]$WhatIf
-    )
-
-    begin {
-        function MaybeTerminatingWarning {
-            param([string]$Message)
-
-            if ($Force) {
-                Write-Warning "$Message : ignoring (-Force)"
-            } elseif ($WhatIf) {
-                Write-Warning "$Message : ignoring (-WhatIf)"
-            } else {
-                throw "$Message : use -Force to ignore"
-            }
-        }
-
-        if (-not (Test-Path -PathType Container $PslMonadRoot)) {
-            throw "$pslMonadRoot is not a valid folder"
-        }
-
-        # Do some intelligence to prevent shooting us in the foot with CL management
-
-        # finding base-line CL
-        $cl = git --git-dir="$PSScriptRoot/.git" tag | % {if ($_ -match 'SD.(\d+)$') {[int]$Matches[1]} } | Sort-Object -Descending | Select-Object -First 1
-        if ($cl) {
-            log "Current base-line CL is SD:$cl (based on tags)"
-        } else {
-            MaybeTerminatingWarning "Could not determine base-line CL based on tags"
-        }
-
-        try {
-            Push-Location $PslMonadRoot
-            if (git status --porcelain -uno) {
-                MaybeTerminatingWarning "$pslMonadRoot has changes"
-            }
-
-            if (git log --grep="SD:$cl" HEAD^..HEAD) {
-                log "$pslMonadRoot HEAD matches [SD:$cl]"
-            } else {
-                Write-Warning "Try to checkout this commit in $pslMonadRoot :"
-                git log --grep="SD:$cl" | Write-Warning
-                MaybeTerminatingWarning "$pslMonadRoot HEAD doesn't match [SD:$cl]"
-            }
-        } finally {
-            Pop-Location
-        }
-
-        $map = @{}
-    }
-
-    process {
-        $map += Get-Mappings $Path -Root $PslMonadRoot
-    }
-
-    end {
-        $map.GetEnumerator() | % {
-            New-Item -ItemType Directory (Split-Path $_.Value) -ErrorAction SilentlyContinue > $null
-            Copy-Item $_.Key $_.Value -Verbose:([bool]$PSBoundParameters['Verbose']) -WhatIf:$WhatIf
         }
     }
 }
