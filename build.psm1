@@ -1863,6 +1863,7 @@ function Start-DevPowerShell {
 <#
 .EXAMPLE
 PS C:> Copy-MappedFiles -PslMonadRoot .\src\monad
+
 copy files FROM .\src\monad (old location of submodule) TO src/<project> folders
 #>
 function Copy-MappedFiles {
