@@ -143,6 +143,217 @@ function GetTestData
     return $body
 }
 
+<#
+    Extract the raw content from a response and
+    convert the embedded json to PSObjects.
+    Assumes the raw content is from the  HTTPListener.
+#>
+function Convert-ResponseRawContent
+{
+    param
+    (
+        [Parameter(Mandatory)]
+        [ValidateNotNull()]
+        [Microsoft.PowerShell.Commands.WebResponseObject] $Response
+    )
+
+    $index = $Response.RawContent.IndexOf("{")
+    [string] $rawContent = $Response.RawContent.SubString($index)
+    return ($rawContent | ConvertFrom-Json)
+}
+
+Describe "Invoke-WebRequest redirect tests" -Tags ("Feature", "Redirect") {
+
+   BeforeAll {
+        # $null = Start-HttpListener -AsJob -Port 8080
+    }
+
+    AfterAll {
+        # $null = Stop-HttpListener -Port 8080
+    }
+
+    # Verifies Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves
+    # the authorization header on a 302 redirect
+    It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header 302 redirect" {
+        $headers = @{"Authorization" = "test"}
+        $response = Invoke-WebRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=Found" -Headers $headers -PreserveAuthorizationOnRedirect
+
+        # Get the raw content as json from the response.
+        $content = Convert-ResponseRawContent -Response $response
+        
+        # ensure Authorization header has been preserved.
+        $content.Headers -contains "Authorization" | Should Be $true
+    }
+
+    # Verifies Invoke-WebRequest removes the authorization header
+    # when a 302 redirection occurs
+    It "Validates Invoke-WebRequest strips the authorization header on 302 redirects" {
+        $headers = @{"Authorization" = "test"}
+        $response = Invoke-WebRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=Found" -Headers $headers
+
+        # Get the raw content as json from the response.
+        $content = Convert-ResponseRawContent -Response $response
+
+        # ensure user-agent is present (i.e., no false positives )
+        $content.Headers -contains "User-Agent" | Should Be $true           
+
+        # ensure Authorization header has been removed.
+        $content.Headers -contains "Authorization" | Should Be $false
+    }
+
+    # Verifies Invoke-WebRequest removes the authorization header
+    # when a 302 redirection occurs
+    It "Validates Invoke-WebRequest strips the authorization header on 302 redirects" {
+        $headers = @{"Authorization" = "test"}
+        $response = Invoke-WebRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=Found" -Headers $headers
+
+        # Get the raw content as json from the response.
+        $content = Convert-ResponseRawContent -Response $response
+
+        # ensure user-agent is present (i.e., no false positives )
+        $content.Headers -contains "User-Agent" | Should Be $true           
+
+        # ensure Authorization header has been removed.
+        $content.Headers -contains "Authorization" | Should Be $false
+    }
+    
+    # Verifies Invoke-WebRequest preserves the authorization header on multiple redirects
+    It "Validates Invoke-WebRequest strips the authorization header on multiple redirects." {
+
+        $headers = @{"Authorization" = "test"}
+        $response = Invoke-WebRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=Found&multiredirect=true" -Headers $headers -PreserveAuthorizationOnRedirect
+
+        # Get the raw content as json from the response.
+        $content = Convert-ResponseRawContent -Response $response
+
+        # ensure Authorization header was stripped
+        $content.Headers -contains "Authorization" | Should Be $true
+    }       
+
+    It "Validates Invoke-WebRequest strips the authorization header on 300 (MultipleChoices) redirects" {
+        $headers = @{"Authorization" = "test"}
+        $response = Invoke-WebRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=MultipleChoices" -Headers $headers
+
+        # Get the raw content as json from the response.
+        $content = Convert-ResponseRawContent -Response $response
+
+        # ensure user-agent is present (i.e., no false positives )
+        $content.Headers -contains "User-Agent" | Should Be $true           
+
+        # ensure Authorization header has been removed.
+        $content.Headers -contains "Authorization" | Should Be $false
+    } 
+
+    It "Validates Invoke-WebRequest strips the authorization header on 301 (Moved) redirects" {
+        $headers = @{"Authorization" = "test"}
+        $response = Invoke-WebRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=Moved" -Headers $headers
+
+        # Get the raw content as json from the response.
+        $content = Convert-ResponseRawContent -Response $response
+
+        # ensure user-agent is present (i.e., no false positives )
+        $content.Headers -contains "User-Agent" | Should Be $true           
+
+        # ensure Authorization header has been removed.
+        $content.Headers -contains "Authorization" | Should Be $false
+    }    
+
+    It "Validates Invoke-WebRequest strips the authorization header on 303 (SeeOther) redirects" {  
+        $headers = @{"Authorization" = "test"}
+        $response = Invoke-WebRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=SeeOther" -Headers $headers
+
+        # Get the raw content as json from the response.
+        $content = Convert-ResponseRawContent -Response $response
+
+        # ensure user-agent is present (i.e., no false positives )
+        $content.Headers -contains "User-Agent" | Should Be $true           
+
+        # ensure Authorization header has been removed.
+        $content.Headers -contains "Authorization" | Should Be $false
+    }                      
+
+    It "Validates Invoke-WebRequest strips the authorization header on 307 (TemporaryRedirect) redirects" {  
+        $headers = @{"Authorization" = "test"}
+        $response = Invoke-WebRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=TemporaryRedirect" -Headers $headers
+
+        # Get the raw content as json from the response.
+        $content = Convert-ResponseRawContent -Response $response
+
+        # ensure user-agent is present (i.e., no false positives )
+        $content.Headers -contains "User-Agent" | Should Be $true           
+
+        # ensure Authorization header has been removed.
+        $content.Headers -contains "Authorization" | Should Be $false
+    }  
+
+    It "Validates Invoke-WebRequest strips the authorization header on 302 (Found) redirects and switches from POST to GET when it handles the redirect" {  
+        $headers = @{"Authorization" = "test"}
+        $response = Invoke-WebRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=Found" -Method POST -Headers $headers
+
+        # Get the raw content as json from the response.
+        $content = Convert-ResponseRawContent -Response $response
+
+        # ensure user-agent is present (i.e., no false positives )
+        $content.Headers -contains "User-Agent" | Should Be $true           
+
+        # ensure Authorization header has been removed.
+        $content.Headers -contains "Authorization" | Should Be $false
+        # ensure POST was changed to GET in the redirection
+        $content.HttpMethod | Should Be 'GET'
+    }   
+
+    # NOTE: Only testing redirection of POST -> GET for unique underlying values of HttpStatusCode.
+    # Some names overlap in underlying value.
+
+    It "Validates Invoke-WebRequest strips the authorization header on 301 (Moved) redirects and switches from POST to GET when it handles the redirect" {  
+        $headers = @{"Authorization" = "test"}
+        $response = Invoke-WebRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=Moved" -Method POST -Headers $headers
+
+        # Get the raw content as json from the response.
+        $content = Convert-ResponseRawContent -Response $response
+
+        # ensure user-agent is present (i.e., no false positives )
+        $content.Headers -contains "User-Agent" | Should Be $true           
+
+        # ensure Authorization header has been removed.
+        $content.Headers -contains "Authorization" | Should Be $false
+        # ensure POST was changed to GET in the redirection
+        $content.HttpMethod | Should Be 'GET'
+    } 
+
+    It "Validates Invoke-WebRequest strips the authorization header on 303 (RedirectMethod) redirects and switches from POST to GET when it handles the redirect" {  
+        $headers = @{"Authorization" = "test"}
+        $response = Invoke-WebRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=RedirectMethod" -Method POST -Headers $headers
+
+        # Get the raw content as json from the response.
+        $content = Convert-ResponseRawContent -Response $response
+
+        # ensure user-agent is present (i.e., no false positives )
+        $content.Headers -contains "User-Agent" | Should Be $true           
+
+        # ensure Authorization header has been removed.
+        $content.Headers -contains "Authorization" | Should Be $false
+        # ensure POST was changed to GET in the redirection
+        $content.HttpMethod | Should Be 'GET'
+    }   
+
+    It "Validates Invoke-WebRequest strips the authorization header on 307 (TemporaryRedirect) redirects and switches from POST to GET when it handles the redirect" {  
+        $headers = @{"Authorization" = "test"}
+        $response = Invoke-WebRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=TemporaryRedirect" -Method POST -Headers $headers
+
+        # Get the raw content as json from the response.
+        $content = Convert-ResponseRawContent -Response $response
+
+        # ensure user-agent is present (i.e., no false positives )
+        $content.Headers -contains "User-Agent" | Should Be $true           
+
+        # ensure Authorization header has been removed.
+        $content.Headers -contains "Authorization" | Should Be $false
+        # ensure POST was changed to GET in the redirection
+        $content.HttpMethod | Should Be 'GET'
+    }                                                                                                             
+}
+
 Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     BeforeAll {
@@ -223,44 +434,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $jsonContent.headers.Host | Should Match "httpbin.org"
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
-
-    # Verifies Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves
-    # the authorization header whe a 302 redirection
-    It "Validate Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header on 302 redirects" {
-        try {
-            Start-HttpListener -AsJob
-
-            $headers = @{"Authorization" = "test"}
-            $response = Invoke-WebRequest -Uri "http://localhost:8080/PowerShell?test=redirect" -Headers $headers -PreserveAuthorizationOnRedirect
-            # ensure Authorization header has been preserved.
-            $response.Headers.ContainsKey("Authorization") | Should Be $true
-        }
-        finally
-        {
-            Stop-HttpListener
-        }
-    }
-
-    # Verifies Invoke-WebRequest removes the authorization header
-    # when a 302 redirection occurs
-    It "Validate Invoke-WebRequest strips the authorization header on 302 redirects" {
-        try {
-            Start-HttpListener -AsJob
-
-            $headers = @{"Authorization" = "test"}
-            $response = Invoke-WebRequest -Uri "http://localhost:8080/PowerShell?test=redirect" -Headers $headers
-            # ensure user-agent is present (i.e., no false positives )
-            $response.Headers.ContainsKey("User-Agent") | Should Be $true           
-            # ensure Authorization header has been removed.
-            $response.Headers.ContainsKey("Authorization") | Should Be $false
-        }
-        finally
-        {
-            Stop-HttpListener
-        }
-    }
-
-
+    
     It "Validate Invoke-WebRequest error for -MaximumRedirection" {
 
         $command = "Invoke-WebRequest -Uri 'http://httpbin.org/redirect/3' -MaximumRedirection 2 -TimeoutSec 5"
@@ -268,7 +442,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
-
+    
     It "Invoke-WebRequest supports request that returns page containing UTF-8 data." {
 
         $command = "Invoke-WebRequest -Uri http://httpbin.org/encoding/utf8 -TimeoutSec 5"
