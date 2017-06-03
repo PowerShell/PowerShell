@@ -26,7 +26,6 @@
     <PackageReference Include="System.ServiceModel.Primitives" Version="4.4.0-preview3-25423-01" />
     <PackageReference Include="System.ServiceModel.Security" Version="4.4.0-preview3-25423-01" />
     <PackageReference Include="System.Text.Encodings.Web" Version="4.4.0-preview3-25423-02" />
-    <PackageReference Include="System.Threading.AccessControl" Version="4.4.0-preview3-25423-02" />
     <PackageReference Include="System.Private.ServiceModel" Version="4.4.0-preview3-25423-01" />
   </ItemGroup>
 
