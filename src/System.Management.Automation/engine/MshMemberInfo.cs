@@ -1248,10 +1248,10 @@ namespace System.Management.Automation
         /// </summary>
         /// <param name="name">name of the property</param>
         /// <param name="value">value of the property</param>
-        /// <exception cref="ArgumentException">for an empty or null name</exception>
+        /// <exception cref="ArgumentException">for a null name</exception>
         public PSNoteProperty(string name, object value)
         {
-            if (String.IsNullOrEmpty(name))
+            if (name == null)
             {
                 throw PSTraceSource.NewArgumentException("name");
             }
@@ -3913,7 +3913,7 @@ namespace System.Management.Automation
         {
             get
             {
-                if (String.IsNullOrEmpty(name))
+                if (name == null)
                 {
                     throw PSTraceSource.NewArgumentException("name");
                 }
@@ -4467,7 +4467,7 @@ namespace System.Management.Automation
             {
                 using (PSObject.memberResolution.TraceScope("Lookup"))
                 {
-                    if (String.IsNullOrEmpty(name))
+                    if (name == null)
                     {
                         throw PSTraceSource.NewArgumentException("name");
                     }
