@@ -331,10 +331,10 @@ namespace Microsoft.PowerShell.Commands
                 _expandMshParameterList = processor.ProcessParameters(new string[] { ExpandProperty }, invocationContext);
             }
 
-            if (ExcludeProperty != null)
+            if (ExcludeProperty != null && ExcludeProperty.Length > 0)
             {
                 _exclusionFilter = new MshExpressionFilter(ExcludeProperty);
-                // ExcludeProperty implies -Property * for better UX
+                // Non-empty ExcludeProperty implies '-Property *' for better UX
                 if ((Property == null) || (Property.Length == 0))
                 {
                     Property = new Object[]{"*"};
