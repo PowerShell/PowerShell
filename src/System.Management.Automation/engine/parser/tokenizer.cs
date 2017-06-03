@@ -507,6 +507,10 @@ namespace System.Management.Automation.Language
         private static readonly Dictionary<string, TokenKind> s_operatorTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
 
+        // Unicode replacement char used to represent an unknown, unrecognized or unrepresentable character in a 
+        // Unicode escape sequence.
+        private static readonly string s_unknownUnicodeChar = ((char)0xffdd).ToString();
+
         private readonly Parser _parser;
         private PositionHelper _positionHelper;
         private int _nestedTokensAdjustment;
@@ -1229,21 +1233,132 @@ namespace System.Management.Automation.Language
             return i;
         }
 
-        private static char Backtick(char c)
+        private string Backtick(char c)
         {
             switch (c)
             {
-                case '0': return '\0';
-                case 'a': return '\a';
-                case 'b': return '\b';
-                case 'e': return '\u001b';
-                case 'f': return '\f';
-                case 'n': return '\n';
-                case 'r': return '\r';
-                case 't': return '\t';
-                case 'v': return '\v';
-                default: return c;
+                case '0': return "\0";
+                case 'a': return "\a";
+                case 'b': return "\b";
+                case 'e': return "\u001b";
+                case 'f': return "\f";
+                case 'n': return "\n";
+                case 'r': return "\r";
+                case 't': return "\t";
+                case 'u': return ScanUnicodeEscapeSequence();
+                case 'v': return "\v";
+                default: return c.ToString();
             }
+        }
+
+        private string ScanUnicodeEscapeSequence()
+        {
+            int escSeqStartIndex = _currentIndex - 2;
+            bool isBracketedSequence = false;
+            bool isTerminated = false;
+
+            char c = PeekChar();
+            if (c == '{')
+            {
+                SkipChar();
+                isBracketedSequence = true;
+            }
+
+            int maxNumberOfHexDigits = (isBracketedSequence ? 6 : 4);
+
+            // Scan hex chars after the Unicode escape sequence start.
+            var sb = GetStringBuilder();
+            int i;
+            for (i = 0; i < maxNumberOfHexDigits; i++)
+            {
+                c = GetChar();
+
+                // Bracketed sequence has been terminated.
+                if (isBracketedSequence && (c == '}'))
+                {
+                    if (i == 0)
+                    {
+                        // Variable sequence must have at least one hex char.
+                        IScriptExtent errorExtent = NewScriptExtent(escSeqStartIndex, _currentIndex);
+                        ReportError(errorExtent, () => ParserStrings.EmptyUnicodeEscapeSequence);
+                        return s_unknownUnicodeChar;
+                    }
+
+                    isTerminated = true;
+                    break;
+                }
+
+                if (!c.IsHexDigit())
+                {
+                    UngetChar();
+
+                    if (isBracketedSequence)
+                    {
+                        ReportError(_currentIndex, () => ParserStrings.MissingUnicodeEscapeSequenceTerminator);
+                    }
+                    else
+                    {
+                        IScriptExtent errorExtent = NewScriptExtent(escSeqStartIndex, _currentIndex);
+                        ReportError(errorExtent, () => ParserStrings.InvalidUnicodeEscapeSequence);
+                    }
+
+                    return s_unknownUnicodeChar;
+                }
+
+                sb.Append(c);
+            }
+
+            if (isBracketedSequence && !isTerminated)
+            {
+                c = GetChar();
+                if (c != '}')
+                {
+                    UngetChar();
+                    ReportError(_currentIndex,
+                        i == maxNumberOfHexDigits && c.IsHexDigit()
+                            ? (Expression<Func<string>>)(() => ParserStrings.TooManyDigitsInUnicodeEscapeSequence)
+                            : () => ParserStrings.MissingUnicodeEscapeSequenceTerminator);
+                    return s_unknownUnicodeChar;
+                }
+            }
+
+            string hexStr = GetStringAndRelease(sb);
+
+            int unicodeValue = int.Parse(hexStr, NumberStyles.AllowHexSpecifier, NumberFormatInfo.InvariantInfo);
+            if (unicodeValue <= Char.MaxValue)
+            {
+                return ((char)unicodeValue).ToString();
+            }
+            else if (unicodeValue <= 0x10FFFF)
+            {
+                return Char.ConvertFromUtf32(unicodeValue);
+            }
+            else
+            {
+                // Place the error indicator under only the hex digits in the esc sequence.
+                IScriptExtent errorExtent = NewScriptExtent(escSeqStartIndex + 3, _currentIndex - 1);
+                ReportError(errorExtent, () => ParserStrings.InvalidUnicodeEscapeSequenceValue);
+                return s_unknownUnicodeChar;
+            }
+        }
+
+        private bool IsSurrogatePair(string str, ref char nonSurrogatePairChar, StringBuilder sb1 = null, StringBuilder sb2 = null) 
+        {
+            Diagnostics.Assert(!string.IsNullOrEmpty(str), "Caller never calls us with an empty string");
+            Diagnostics.Assert((str.Length <= 2), "Caller never calls us with a string length greater than two");
+            Diagnostics.Assert((str.Length == 1) || Char.IsSurrogate(str, 0), 
+                "Caller never calls us with a string length of two and not be a surrogate pair");                
+            
+            if (str.Length == 1) 
+            {
+                nonSurrogatePairChar = str[0];
+                return false;
+            }
+
+            sb1?.Append(str);
+            sb2?.Append(str);
+
+            return true;
         }
 
         private void ScanToEndOfCommentLine(out bool sawBeginSig, out bool matchedRequires)
@@ -2029,7 +2144,12 @@ namespace System.Management.Automation.Language
                     if (c1 != 0)
                     {
                         SkipChar();
-                        c = Backtick(c1);
+                        string str = Backtick(c1);
+                        if (IsSurrogatePair(str, ref c, sb, formatSb))
+                        {
+                            // The character has been processed and appended to the string builders
+                            continue;
+                        } 
                     }
                 }
                 if (c == '{' || c == '}')
@@ -2338,7 +2458,12 @@ namespace System.Management.Automation.Language
                         if (c1 != 0)
                         {
                             SkipChar();
-                            c = Backtick(c1);
+                            string str = Backtick(c1);
+                            if (IsSurrogatePair(str, ref c, sb, formatSb))
+                            {
+                                // The character has been processed and appended to the string builders
+                                continue;
+                            } 
                         }
                     }
                     if (c == '{' || c == '}')
@@ -2407,7 +2532,12 @@ namespace System.Management.Automation.Language
                                     UngetChar();
                                     goto end_braced_variable_scan;
                                 }
-                                c = Backtick(c1);
+                                string str = Backtick(c1);
+                                if (IsSurrogatePair(str, ref c, sb))
+                                {
+                                    // The character has been processed and appended to the string builder
+                                    continue;
+                                } 
                                 break;
                             }
                         case '"':
@@ -2845,6 +2975,13 @@ namespace System.Management.Automation.Language
             return ScanGenericToken(sb);
         }
 
+        private Token ScanGenericToken(string str)
+        {
+            var sb = GetStringBuilder();
+            sb.Append(str);
+            return ScanGenericToken(sb);
+        }
+
         private Token ScanGenericToken(StringBuilder sb)
         {
             // On entry, we've already scanned an unknown number of characters
@@ -2871,6 +3008,7 @@ namespace System.Management.Automation.Language
             // Make sure our token does not start with any of these characters.
             //Contract.Requires(Contract.ForAll("{}()@#;,|&\r\n\t ", c1 => sb[0] != c1));
 
+            string str;
             List<Token> nestedTokens = new List<Token>();
             var formatSb = GetStringBuilder();
             formatSb.Append(sb);
@@ -2885,7 +3023,12 @@ namespace System.Management.Automation.Language
                     if (c1 != 0)
                     {
                         SkipChar();
-                        c = Backtick(c1);
+                        str = Backtick(c1);
+                        if (IsSurrogatePair(str, ref c, sb, formatSb))
+                        {
+                            // The character has been processed and appended to the string builders
+                            continue;
+                        } 
                     }
                 }
                 else if (c.IsSingleQuote())
@@ -2919,7 +3062,7 @@ namespace System.Management.Automation.Language
             }
             UngetChar();
 
-            var str = GetStringAndRelease(sb);
+            str = GetStringAndRelease(sb);
             if (nestedTokens.Count > 0)
             {
                 return NewGenericExpandableToken(str, GetStringAndRelease(formatSb), nestedTokens);
