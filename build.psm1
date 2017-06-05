@@ -249,7 +249,11 @@ function Start-PSBuild {
 
     $Arguments += "--configuration", $Options.Configuration
     $Arguments += "--framework", $Options.Framework
-    $Arguments += "--runtime", $Options.Runtime
+
+    if (-not $SMAOnly) {
+        # libraries should not have runtime
+        $Arguments += "--runtime", $Options.Runtime
+    }
 
     # handle Restore
     if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
