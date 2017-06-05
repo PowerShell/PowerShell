@@ -135,9 +135,6 @@ package will instead be created.
 On macOS or a supported Linux distro, run the following commands:
 
 ```powershell
-# Import the build script module
-Import-Module ./build.psm1
-
 # Install dependencies
 Start-PSBootstrap -Package
 
@@ -148,21 +145,26 @@ Start-PSBuild -Clean -Crossgen -PSModuleRestore -ReleaseTag v6.0.0-beta.1
 Start-PSPackage -ReleaseTag v6.0.0-beta.1
 ```
 
-On Windows, the `-Runtime` parameter should be specified to indicate what version of OS the package is targeting.
+On Windows, the `-Runtime` parameter should be specified for `Start-PSBuild` to indicate what version of OS the build is targeting.
 
-``` powershell
-# Import the build script module
-Import-Module .\build.psm1
-
+```powershell
 # Install dependencies
 Start-PSBootstrap -Package
 
 # Build for v6.0.0-beta.1 release targeting Windows 10 and Server 2016
 Start-PSBuild -Clean -CrossGen -PSModuleRestore -Runtime win10-x64 -Configuration Release -ReleaseTag v6.0.0-beta.1
+```
 
-# Create packages for v6.0.0-beta.1 release
-Start-PSPackage -Type msi -ReleaseTag v6.0.0-beta.1
-Start-PSPackage -Type zip -ReleaseTag v6.0.0-beta.1
+If the package is targeting a downlevel Windows (not Windows 10 or Server 2016),
+the `-WindowsDownLevel` parameter should be specified for `Start-PSPackage`.
+Otherwise, the `-WindowsDownLevel` parameter should be left out.
+
+```powershell
+# Create packages for v6.0.0-beta.1 release targeting Windows 10 and Server 2016.
+# When creating packages for downlevel Windows, such as Windows 8.1 or Server 2012R2,
+# the parameter '-WindowsDownLevel' must be specified.
+Start-PSPackage -Type msi -ReleaseTag v6.0.0-beta.1 <# -WindowsDownLevel win81-x64 #>
+Start-PSPackage -Type zip -ReleaseTag v6.0.0-beta.1 <# -WindowsDownLevel win81-x64 #>
 ```
 
 ## NuGet Packages
