@@ -296,15 +296,13 @@ vors
  - docs/maintainers/releasing.md
 2012r2
 CHANGELOG.md
+Dockerfiles
+Effing
+PowerShellCore
+Ronn
 Toolset
 v6
 WiX
-Dockerfiles
-PowerShellWindowsDocker
-Effing
-Ronn
-vesion
-PowerShellCore
  - docs/testing-guidelines/PowerShellCoreTestStatus.md
 Add-LocalGroupMember
 adhoc

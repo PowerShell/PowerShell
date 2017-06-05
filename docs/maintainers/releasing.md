@@ -6,28 +6,30 @@
 1. Prepare packages
    - [Build release packages](#building-packages)
    - Sign the MSI packages and DEB/RPM packages.
-   - Install and verify the packages. (_could be automated for at least Linux packages_)
+   - Install and verify the packages. (_could be automated [Issue #3942][]_)
 1. Update documentation, scripts and Dockerfiles
    - Summarize the change log for the release. It should be reviewed by PM(s) to make it more user-friendly.
    - Update [CHANGELOG.md](../../CHANGELOG.md) with the finalized change log draft.
    - Update other documents and scripts to use the new package names and links.
-1. Verify the release Dockerfiles. (_could be automated_)
+1. Verify the release Dockerfiles. (_could be automated [Issue #3942][]_)
 1. Publish Linux packages to Microsoft YUM/APT repositories.
 1. [Create NuGet packages](#nuget-packages) and publish them to [powershell-core feed][ps-core-feed].
 1. [Create the release tag](#release-tag) and push the tag to `PowerShell/PowerShell` repository.
 1. Merge the `release` branch to `master` and delete the `release` branch.
 1. Publish the release in Github.
 1. Trigger the release docker builds for Linux and Windows container images.
-   - Linux: push a branch named `docker` to `powershell/powershell` repository to trigger the build.
-     Delete the `docker` branch once the builds successful at [powershell docker hub](https://hub.docker.com/r/microsoft/powershell/builds/).
-   - Windows: queue a new build from [PowerShellWindowsDocker](https://dscsolutions.visualstudio.com/PowerShellWindowsDocker).
-1. Verify the generated docker container images. (_could be automated_)
+   - Linux: push a branch named `docker` to `powershell/powershell` repository to trigger the build at [powershell docker hub](https://hub.docker.com/r/microsoft/powershell/builds/).
+     Delete the `docker` branch once the builds succeed.
+   - Windows: queue a new build in `PowerShell Windows Docker Build` on VSTS.
+1. Verify the generated docker container images. (_could be automated [Issue #3942][]_)
 1. [Update the homebrew formula](#homebrew) for the OSX package.
    This task usually will be taken care of by the community,
    so we can wait for one day or two and see if the homebrew formula has already been updated,
    and only do the update if it hasn't.
 
 > Note: Step 2, 3 and 4 can be done in parallel. Step 5 and 6 can be done in parallel.
+
+[Issue #3942]: https://github.com/PowerShell/PowerShell/issues/3942
 
 ## Building Packages
 
@@ -146,7 +148,7 @@ Start-PSBuild -Clean -Crossgen -PSModuleRestore -ReleaseTag v6.0.0-beta.1
 Start-PSPackage -ReleaseTag v6.0.0-beta.1
 ```
 
-On Windows, the `-Runtime` parameter should be specified to indicate what vesion of OS the package is targeting.
+On Windows, the `-Runtime` parameter should be specified to indicate what version of OS the package is targeting.
 
 ``` powershell
 # Import the build script module
