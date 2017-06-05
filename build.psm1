@@ -1214,7 +1214,8 @@ function Start-PSBootstrap {
 
 
 function Start-PSPackage {
-    [CmdletBinding()]param(
+    [CmdletBinding(DefaultParameterSetName='Version')]
+    param(
         # PowerShell packages use Semantic Versioning http://semver.org/
         [Parameter(ParameterSetName = "Version")]
         [string]$Version,
