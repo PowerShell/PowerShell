@@ -75,7 +75,6 @@ The following labels are used on PRs:
 * `Review - Abandoned` : The PR was not updated for significant number of days (the exact number could vary over time).
   Maintainers should look into such PRs and re-evaluate them.
 * `Review - Committee` : The PR/Issue needs a review from [powershell-committee](../community/governance.md#powershell-committee)
-* `Review - Need Documentation` : The PR has changes that require a documentation change or new documentation added to [PowerShell-Docs](http://github.com/powershell/powershell-docs)
 
 ### Miscellaneous labels
 
@@ -90,3 +89,4 @@ The following labels are used on PRs:
   because they more directly affect the usability of a particular feature or area.
 * `Changelog Needed`: The PR requires an addition to the changelog,
   and should be removed when it has been added.
+* `Documentation Needed` : The PR has changes that require a documentation change or new documentation added to [PowerShell-Docs](http://github.com/powershell/powershell-docs)
