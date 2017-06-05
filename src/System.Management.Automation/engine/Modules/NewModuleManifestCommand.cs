@@ -941,7 +941,7 @@ namespace Microsoft.PowerShell.Commands
                 PathUtils.MasterStreamOpen(
                     this,
                     filePath,
-                    EncodingConversion.Unicode,
+                    new UTF8Encoding(false), // UTF-8, no BOM
                     /* defaultEncoding */ false,
                     /* Append */ false,
                     /* Force */ false,

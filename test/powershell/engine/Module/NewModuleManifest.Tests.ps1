@@ -20,6 +20,12 @@ Describe "New-ModuleManifest tests" -tags "CI" {
         $module.PrivateData.PSData.ProjectUri | Should BeExactly $absoluteUri
     }
 
+    It "Verify module manifest encoding" {
+        New-ModuleManifest -Path $testModulePath
+        # verify first line of the manifest - 3 bytes - '#' '\r' '\n' - in UTF-8 no BOM this should be @(35,13,10)
+        Get-Content -Encoding Byte -Path $testModulePath -TotalCount 3 | Should Be @(35,13,10)
+    }
+
     It "Relative URIs are not allowed" {
         $testUri = [Uri]"../foo"
 
