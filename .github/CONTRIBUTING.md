@@ -142,9 +142,12 @@ Additional references:
   * Instead of "New parameter 'ConnectionCredential' in New-SqlConnection",
   write "New-SqlConnection: added parameter 'ConnectionCredential'".
 * If your change warrants an update to user-facing documentation,
-  you must update [the PowerShell 6.0 reference documentation in the PowerShell-Docs repository][PowerShell-Docs].
-  For example, this requirement includes any changes to cmdlets (including cmdlet parameters) and features which have associated about_* topics.
-  Please link to your PowerShell-Docs repository in your original PowerShell pull request once you've created it.
+  a Maintainer will add the `Documentation Needed` label to your PR and add an issue to the [PowerShell-Docs repository][PowerShell-Docs],
+  so that we make sure to update official documentation to reflect your contribution.
+  As an example, this requirement includes any changes to cmdlets (including cmdlet parameters) and features which have associated about_* topics.
+  While not required, we appreciate any contributors who add this label and the issue themselves.
+  Even better, all contributors are free to contribute the documentation themselves.
+  (See [Contributing to documentation related to PowerShell](#contributing-to-documentation-related-to-powershell) for more info.)
 
 #### Pull Request - Automatic Checks
 
@@ -299,4 +302,4 @@ Once you sign a CLA, all your existing and future pull requests will be labeled 
 [open-issue]: https://github.com/PowerShell/PowerShell/issues
 [up-for-grabs]: https://github.com/powershell/powershell/issues?q=is%3Aopen+is%3Aissue+label%3AUp-for-Grabs
 [semantic linefeeds]: http://rhodesmill.org/brandon/2012/one-sentence-per-line/
-[PowerShell-Docs]: https://github.com/powershell/powershell-docs/tree/staging/reference/6
+[PowerShell-Docs]: https://github.com/powershell/powershell-docs/
