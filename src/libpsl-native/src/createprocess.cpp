@@ -14,7 +14,7 @@
 
 enum
 {
-    CREATE_NEW_PROCESS_SESSION = 0x00000001
+    SUPPRESS_PROCESS_SIGINT = 0x00000001
 };
 
 enum
@@ -140,12 +140,17 @@ int32_t ForkAndExecProcess(
             }
         }
 
-        // If CREATE_NEW_PROCESS_SESSION was chosen then set the child process to be in its own
-        // session.  The processId, processGroupId, and sessionId will all be the same.
-        if (creationFlags & CREATE_NEW_PROCESS_SESSION)
+        // If SUPPRESS_PROCESS_SIGINT was chosen then create a process that ignores
+        // interrupt signals
+        if (creationFlags & SUPPRESS_PROCESS_SIGINT)
         {
-            int result;
-            while (CheckInterrupted(result = setsid()));
+            struct sigaction sa, saOld;
+            memset(&sa, 0, sizeof(sa));
+            memset(&saOld, 0, sizeof(saOld));
+            sigemptyset(&(sa.sa_mask));
+            sa.sa_handler = SIG_IGN;        // Ignore the signal
+
+            int result = sigaction(SIGINT, &sa, &saOld);
             if (result == -1)
             {
                 _exit(errno != 0 ? errno : EXIT_FAILURE);

@@ -2090,7 +2090,7 @@ namespace System.Management.Automation.Runspaces
 
 #if UNIX
 
-        private const int CREATE_NEW_PROCESS_SESSION = 0x00000001;
+        private const int SUPPRESS_PROCESS_SIGINT = 0x00000001;
 
         /// <summary>
         /// Create a process through managed APIs and returns StdIn, StdOut, StdError reader/writers.
@@ -2113,7 +2113,7 @@ namespace System.Management.Automation.Runspaces
             StreamReader stdErrReader = null;
             int pid = Platform.StartProcess(
                 startInfo,
-                CREATE_NEW_PROCESS_SESSION, // Create Unix process in its own session
+                SUPPRESS_PROCESS_SIGINT, // Create SSH process so that it ignores interrupt signals
                 ref stdInWriter,
                 ref stdOutReader,
                 ref stdErrReader);
