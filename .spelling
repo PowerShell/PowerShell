@@ -299,6 +299,12 @@ CHANGELOG.md
 Toolset
 v6
 WiX
+Dockerfiles
+PowerShellWindowsDocker
+Effing
+Ronn
+vesion
+PowerShellCore
  - docs/testing-guidelines/PowerShellCoreTestStatus.md
 Add-LocalGroupMember
 adhoc
