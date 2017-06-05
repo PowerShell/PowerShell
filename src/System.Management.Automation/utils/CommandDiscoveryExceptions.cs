@@ -347,6 +347,36 @@ namespace System.Management.Automation
         /// The name of the script containing the #requires statement.
         /// </param>
         ///
+        /// <param name="requiredOS">
+        /// OS name for this exception.
+        /// </param>
+        ///
+        /// <param name="approvedOSList">
+        /// Approved OS names for this exception.
+        /// </param>
+        internal ScriptRequiresException(
+            string commandName,
+            string requiredOS,
+            string[] approvedOSList)
+            : base(BuildMessage(commandName, requiredOS, approvedOSList))
+        {
+            Diagnostics.Assert(!string.IsNullOrEmpty(commandName), "commandName is null or empty when constructing ScriptRequiresException");
+            Diagnostics.Assert(!string.IsNullOrEmpty(requiredOS), "requiredOS is null or empty when constructing ScriptRequiresException");
+            _commandName = commandName;
+            this.SetErrorId("ScriptRequiresUnmatchedOS");
+            this.SetTargetObject(commandName);
+            this.SetErrorCategory(ErrorCategory.InvalidArgument);
+        }
+
+        /// <summary>
+        /// Constructs an ScriptRequiresException. Recommended constructor for the class for
+        /// #requires -RunAsAdministrator statement.
+        /// </summary>
+        ///
+        /// <param name="commandName">
+        /// The name of the script containing the #requires statement.
+        /// </param>
+        ///
         /// <param name="errorId">
         /// The error id for this exception.
         /// </param>
@@ -492,6 +522,17 @@ namespace System.Management.Automation
         #region Private
 
 
+        private static string BuildMessage(
+            string commandName,
+            string requiredOS,
+            string[] approvedOSList)
+        {
+            return StringUtil.Format(
+                    DiscoveryExceptions.RequiresOSNotCompatible,
+                    commandName,
+                    requiredOS,
+                    approvedOSList);
+        }
 
         private static string BuildMessage(
             string commandName,

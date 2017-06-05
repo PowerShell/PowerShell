@@ -368,6 +368,15 @@ namespace System.Management.Automation
             get { return 0; }
         }
 
+        internal string RequiredOS
+        {
+            get
+            {
+                var data = GetRequiresData();
+                return data == null ? null : data.RequiredOS;
+            }
+        }
+
         internal Version RequiresPSVersion
         {
             get
