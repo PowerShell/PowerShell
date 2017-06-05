@@ -727,9 +727,7 @@ namespace Microsoft.PowerShell.Internal
 
             if (result == false)
             {
-                int err = Marshal.GetLastWin32Error();
-                Win32Exception innerException = new Win32Exception(err);
-                throw new Exception("Failed to get console font information.", innerException);
+                _getCurrentConsoleFontExApiAvailable = false; // api not supported on ServerCore
             }
             return fontInfo;
         }
