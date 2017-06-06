@@ -346,10 +346,15 @@ If the `brew` command is not found,
 you need to install Homebrew following [their instructions][brew].
 
 Once you've installed Homebrew, installing PowerShell is easy.
-Just install [Homebrew-Cask][cask] and then you can install PowerShell:
+First, install [Homebrew-Cask][cask], so you can install more packages:
 
 ```sh
 brew tap caskroom/cask
+```
+
+Now, you can install PowerShell:
+
+```sh
 brew cask install powershell
 ```
 
@@ -379,7 +384,7 @@ sudo installer -pkg powershell-6.0.0-beta.2-osx.10.12-x64.pkg -target /
 
 ### Uninstallation - macOS 10.12
 
-If you PowerShell with Homebrew, uninstallation is easy:
+If you installed PowerShell with Homebrew, uninstallation is easy:
 
 ```sh
 brew cask uninstall powershell
@@ -408,7 +413,11 @@ This requirement is not a hard requirement for all of PowerShell.
 However, most networking functions (such as `Invoke-WebRequest`)
 do require OpenSSL to work properly.
 
-The easiest fix is to install [Homebrew's OpenSSL][openssl]:
+The PowerShell formula for Homebrew includes this OpenSSL as a dependency,
+so you if you installed via Homebrew, you shouldn't run into these problems.
+
+If you installed via direct download (or through some means other than Homebrew),
+the easiest fix for these issues is to install [Homebrew's OpenSSL][openssl]:
 
 ```bash
 brew install openssl
