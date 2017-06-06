@@ -10,7 +10,7 @@
 1. Update documentation, scripts and Dockerfiles
    - Summarize the change log for the release. It should be reviewed by PM(s) to make it more user-friendly.
    - Update [CHANGELOG.md](../../CHANGELOG.md) with the finalized change log draft.
-   - Update other documents and scripts to use the new package names and links.
+   - Update other documents and scripts to use the new package names and links. (_could be automated [Issue #3942][]_)
 1. Verify the release Dockerfiles. (_could be automated [Issue #3942][]_)
 1. Publish Linux packages to Microsoft YUM/APT repositories.
 1. [Create NuGet packages](#nuget-packages) and publish them to [powershell-core feed][ps-core-feed].
