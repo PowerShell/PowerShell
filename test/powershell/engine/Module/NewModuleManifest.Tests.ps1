@@ -35,9 +35,9 @@ Describe "New-ModuleManifest tests" -tags "CI" {
 
     It "Verify module manifest encoding on non-Windows " -Skip:($IsWindows) {
         
-        # verify first line of the manifest - 3 characters - '#' '\r' '\n'
-        # On non-Windows platforms - in UTF-8 no BOM - this should be @(35,13,10)
-        TestNewModuleManifestEncoding -expected @(35,13,10)
+        # verify first line of the manifest - 2 characters - '#' '\n'
+        # On non-Windows platforms - in UTF-8 no BOM - this should be @(35,10)
+        TestNewModuleManifestEncoding -expected @(35,10)
     }
 
     It "Relative URIs are not allowed" {
