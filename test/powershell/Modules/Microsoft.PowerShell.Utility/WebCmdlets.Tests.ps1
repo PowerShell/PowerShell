@@ -84,7 +84,6 @@ function ExecuteRequestWithHeaders
         [string]
         $uri = "http://httpbin.org/get"
     )
-
     $result = [PSObject]@{Output = $null; Error = $null}
     try
     {
