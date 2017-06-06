@@ -2370,7 +2370,7 @@ namespace System.Management.Automation.Language
 #endif
                 if (File.Exists(assemblyFileName))
                 {
-                    assembly = ClrFacade.LoadFrom(assemblyFileName);
+                    assembly = Assembly.LoadFrom(assemblyFileName);
                 }
             }
             catch

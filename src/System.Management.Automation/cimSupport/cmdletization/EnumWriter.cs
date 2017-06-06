@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Cmdletization
                 eb.DefineLiteral(name, integerValue);
             }
 
-            ClrFacade.CreateEnumType(eb);
+            eb.CreateTypeInfo();
         }
     }
 }

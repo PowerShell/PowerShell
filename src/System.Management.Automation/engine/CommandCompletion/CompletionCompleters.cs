@@ -35,18 +35,10 @@ namespace System.Management.Automation
     {
         static CompletionCompleters()
         {
-#if CORECLR
-            ClrFacade.AddAssemblyLoadHandler(UpdateTypeCacheOnAssemblyLoad);
-#else
             AppDomain.CurrentDomain.AssemblyLoad += UpdateTypeCacheOnAssemblyLoad;
-#endif
         }
 
-#if CORECLR
-        static void UpdateTypeCacheOnAssemblyLoad(Assembly loadedAssembly)
-#else
         private static void UpdateTypeCacheOnAssemblyLoad(object sender, AssemblyLoadEventArgs args)
-#endif
         {
             // Just null out the cache - we'll rebuild it the next time someone tries to complete a type.
             // We could rebuild it now, but we could be loading multiple assemblies (e.g. dependent assemblies)
@@ -5862,34 +5854,11 @@ namespace System.Management.Automation
 
             #endregion Process_TypeAccelerators
 
-            #region Process_LoadedAssemblies
-
-            var assembliesExcludingPSGenerated = ClrFacade.GetAssemblies();
-            var allPublicTypes = assembliesExcludingPSGenerated.SelectMany(assembly =>
-            {
-                try
-                {
-                    return assembly.GetTypes().Where(TypeResolver.IsPublic);
-                }
-                catch (ReflectionTypeLoadException)
-                {
-                }
-                return Type.EmptyTypes;
-            });
-
-            foreach (var type in allPublicTypes)
-            {
-                HandleNamespace(entries, type.Namespace);
-                HandleType(entries, type.FullName, type.Name, type);
-            }
-
-            #endregion Process_LoadedAssemblies
-
             #region Process_CoreCLR_TypeCatalog
 #if CORECLR
-            // In CoreCLR, we have namespace-qualified type names of all available .NET types stored in TypeCatalog of the AssemblyLoadContext.
+            // In CoreCLR, we have namespace-qualified type names of all available .NET Core types stored in TypeCatalog.
             // Populate the type completion cache using the namespace-qualified type names.
-            foreach (string fullTypeName in ClrFacade.GetAvailableCoreClrDotNetTypes())
+            foreach (string fullTypeName in ClrFacade.AvailableDotNetTypeNames)
             {
                 var typeCompInString = new TypeCompletionInStringFormat { FullTypeName = fullTypeName };
                 HandleNamespace(entries, typeCompInString.Namespace);
@@ -5897,6 +5866,32 @@ namespace System.Management.Automation
             }
 #endif
             #endregion Process_CoreCLR_TypeCatalog
+
+            #region Process_LoadedAssemblies
+
+            foreach (Assembly assembly in ClrFacade.GetAssemblies())
+            {
+#if CORECLR
+                // Ignore the assemblies that are already covered by the type catalog
+                if (ClrFacade.AvailableDotNetAssemblyNames.Contains(assembly.FullName)) { continue; }
+#endif
+                try
+                {
+                    foreach (Type type in assembly.GetTypes())
+                    {
+                        // Ignore non-public types
+                        if (!TypeResolver.IsPublic(type)) { continue; }
+
+                        HandleNamespace(entries, type.Namespace);
+                        HandleType(entries, type.FullName, type.Name, type);
+                    }
+                }
+                catch (ReflectionTypeLoadException)
+                {
+                }
+            }
+
+            #endregion Process_LoadedAssemblies
 
             var grouping = entries.Values.GroupBy(t => t.Key.Count(c => c == '.')).OrderBy(g => g.Key).ToArray();
             var localTypeCache = new TypeCompletionMapping[grouping.Last().Key + 1][];

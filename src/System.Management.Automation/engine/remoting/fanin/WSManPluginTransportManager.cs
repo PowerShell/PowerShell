@@ -337,7 +337,7 @@ namespace System.Management.Automation.Remoting
                     // Wrap the provided handle so it can be passed to the registration function
                     SafeWaitHandle safeWaitHandle = new SafeWaitHandle(requestDetails.shutdownNotificationHandle, false); // Owned by WinRM
                     EventWaitHandle eventWaitHandle = new EventWaitHandle(false, EventResetMode.AutoReset);
-                    ClrFacade.SetSafeWaitHandle(eventWaitHandle, safeWaitHandle);
+                    eventWaitHandle.SafeWaitHandle = safeWaitHandle;
 
                     _registeredShutDownWaitHandle = ThreadPool.RegisterWaitForSingleObject(
                             eventWaitHandle,

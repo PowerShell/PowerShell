@@ -641,7 +641,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             //assigning to tempmodule to rethrow for exceptions on 64 bit machines
                             tempmodule = pmodule;
-                            WriteObject(ClrFacade.GetProcessModuleFileVersionInfo(pmodule), true);
+                            WriteObject(pmodule.FileVersionInfo, true);
                         }
                     }
                     catch (InvalidOperationException exception)
@@ -658,7 +658,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (exception.HResult == 299)
                             {
-                                WriteObject(ClrFacade.GetProcessModuleFileVersionInfo(tempmodule), true);
+                                WriteObject(tempmodule.FileVersionInfo, true);
                             }
                             else
                             {
@@ -710,7 +710,7 @@ namespace Microsoft.PowerShell.Commands
                     //if fileversion of each process is to be displayed
                     try
                     {
-                        WriteObject(ClrFacade.GetProcessModuleFileVersionInfo(PsUtils.GetMainModule(process)), true);
+                        WriteObject(PsUtils.GetMainModule(process).FileVersionInfo, true);
                     }
                     catch (InvalidOperationException exception)
                     {
@@ -726,7 +726,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if (exception.HResult == 299)
                             {
-                                WriteObject(ClrFacade.GetProcessModuleFileVersionInfo(PsUtils.GetMainModule(process)), true);
+                                WriteObject(PsUtils.GetMainModule(process).FileVersionInfo, true);
                             }
                             else
                             {
@@ -1966,7 +1966,7 @@ namespace Microsoft.PowerShell.Commands
                 //UseNewEnvironment
                 if (_UseNewEnvironment)
                 {
-                    ClrFacade.GetProcessEnvironment(startInfo).Clear();
+                    startInfo.EnvironmentVariables.Clear();
                     LoadEnvironmentVariable(startInfo, Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine));
                     LoadEnvironmentVariable(startInfo, Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User));
                 }
@@ -2173,7 +2173,7 @@ namespace Microsoft.PowerShell.Commands
 
         private void LoadEnvironmentVariable(ProcessStartInfo startinfo, IDictionary EnvironmentVariables)
         {
-            var processEnvironment = ClrFacade.GetProcessEnvironment(startinfo);
+            var processEnvironment = startinfo.EnvironmentVariables;
             foreach (DictionaryEntry entry in EnvironmentVariables)
             {
                 if (processEnvironment.ContainsKey(entry.Key.ToString()))
@@ -2373,12 +2373,7 @@ namespace Microsoft.PowerShell.Commands
             return builder;
         }
 
-        private static byte[] ConvertEnvVarsToByteArray(
-#if CORECLR
-            IDictionary<string, string> sd)
-#else
-            StringDictionary sd)
-#endif
+        private static byte[] ConvertEnvVarsToByteArray(StringDictionary sd)
         {
             string[] array = new string[sd.Count];
             byte[] bytes = null;
@@ -2497,7 +2492,7 @@ namespace Microsoft.PowerShell.Commands
                 creationFlags |= 0x00000004;
 
                 IntPtr AddressOfEnvironmentBlock = IntPtr.Zero;
-                var environmentVars = ClrFacade.GetProcessEnvironment(startinfo);
+                var environmentVars = startinfo.EnvironmentVariables;
                 if (environmentVars != null)
                 {
                     if (this.UseNewEnvironment)
@@ -2647,7 +2642,7 @@ namespace Microsoft.PowerShell.Commands
         internal bool AssignProcessToJobObject(Process process)
         {
             // Add the process to the job object
-            bool result = NativeMethods.AssignProcessToJobObject(_jobObjectHandle, ClrFacade.GetRawProcessHandle(process));
+            bool result = NativeMethods.AssignProcessToJobObject(_jobObjectHandle, process.Handle);
             return result;
         }
 

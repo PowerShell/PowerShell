@@ -217,8 +217,8 @@ namespace System.Management.Automation.Runspaces
                         finally
                         {
                             NestedPipelineExecutionThread = oldNestedPipelineThread;
-                            ClrFacade.SetCurrentThreadCulture(oldCurrentCulture);
-                            ClrFacade.SetCurrentThreadUiCulture(oldCurrentUICulture);
+                            Thread.CurrentThread.CurrentCulture = oldCurrentCulture;
+                            Thread.CurrentThread.CurrentUICulture = oldCurrentUICulture;
                         }
                         break;
                     }
