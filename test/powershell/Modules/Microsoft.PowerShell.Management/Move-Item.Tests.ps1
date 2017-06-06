@@ -45,7 +45,6 @@ Describe "Move-Item tests" -Tag "CI" {
         It "Can move to different directory, filtered with -Include" {
             Move-Item -Path $filePath -Destination $moveToPath -Include "bar*" -ErrorVariable e -ErrorAction SilentlyContinue
             $e | Should BeNullOrEmpty
-            #Test-Path -Path $barPath | Should Be $false
             $barPath | Should Not Exist
             $newBarPath | Should Exist
             $booPath | Should Exist
