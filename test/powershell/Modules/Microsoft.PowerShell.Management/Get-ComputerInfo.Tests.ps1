@@ -1356,6 +1356,30 @@ try {
             }
         }
 
+        It "Test for DeviceGuard properties" {
+            if (-not (HasDeviceGuardLicense))
+            {
+                $observed.DeviceGuardSmartStatus | Should Be 0
+                $observed.DeviceGuardRequiredSecurityProperties | Should Be $null
+                $observed.DeviceGuardAvailableSecurityProperties | Should Be $null
+                $observed.DeviceGuardSecurityServicesConfigured | Should Be $null
+                $observed.DeviceGuardSecurityServicesRunning | Should Be $null
+                $observed.DeviceGuardCodeIntegrityPolicyEnforcementStatus | Should Be $null
+                $observed.DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus | Should Be $null
+            }
+            else
+            {
+                $deviceGuard = Get-DeviceGuard
+                $observed.DeviceGuardSmartStatus | Should Be $deviceGuard.SmartStatus
+                $observed.DeviceGuardRequiredSecurityProperties | Should Be $deviceGuard.RequiredSecurityProperties
+                $observed.DeviceGuardAvailableSecurityProperties | Should Be $deviceGuard.AvailableSecurityProperties
+                $observed.DeviceGuardSecurityServicesConfigured | Should Be $deviceGuard.SecurityServicesConfigured
+                $observed.DeviceGuardSecurityServicesRunning | Should Be $deviceGuard.SecurityServicesRunning
+                $observed.DeviceGuardCodeIntegrityPolicyEnforcementStatus | Should Be $deviceGuard.CodeIntegrityPolicyEnforcementStatus
+                $observed.DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus | Should Be $deviceGuard.UserModeCodeIntegrityPolicyEnforcementStatus
+            }
+        }
+
         #
         # TESTS FOR SPECIAL CASE PROPERTIES (i.e. those that are fluid/changing
         #
