@@ -33,7 +33,7 @@
 
 ## Building Packages
 
-> Note: Linux and Windows packages are taken care of by our [release build pipeline](https://dscsolutions.visualstudio.com/PowerShellWindowsDocker/_Build/index?path=%5C&_a=allDefinitions),
+> Note: Linux and Windows packages are taken care of by our release build pipeline in VSTS,
 while the OSX package needs to be built separately on a macOS.
 
 The release build should be started based on the `release` branch.
