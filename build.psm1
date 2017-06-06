@@ -1650,7 +1650,7 @@ esac
     # iteration is "debian_revision"
     # usage of this to differentiate distributions is allowed by non-standard
     if ($IsUbuntu14) {
-        $Iteration += "ubuntu1.14.04.1"
+        $Iteration += "ubuntu1.14.04.1-debian8"
     } elseif ($IsUbuntu16) {
         $Iteration += "ubuntu1.16.04.1"
     }
