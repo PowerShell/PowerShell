@@ -423,12 +423,13 @@ function Invoke-OpenCover
     [CmdletBinding(SupportsShouldProcess=$true)]
     param (
         [parameter()]$OutputLog = "$home/Documents/OpenCover.xml",
-        [parameter()]$TestDirectory = "$($script:psRepoPath)/test/powershell",
+        [parameter()]$TestDirectory = "${script:psRepoPath}/test/powershell",
         [parameter()]$OpenCoverPath = "$home/OpenCover",
-        [parameter()]$PowerShellExeDirectory = "$($script:psRepoPath)/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win10-x64/publish",
+        [parameter()]$PowerShellExeDirectory = "${script:psRepoPath}/src/powershell-win-core/bin/CodeCoverage/netcoreapp2.0/win10-x64/publish",
         [parameter()]$PesterLogElevated = "$pwd/TestResultsElevated.xml",
         [parameter()]$PesterLogUnelevated = "$pwd/TestResultsUnelevated.xml",
         [parameter()]$PesterLogFormat = "NUnitXml",
+        [parameter()]$TestToolsModulesPath = "${script:psRepoPath}/test/tools/Modules",
         [switch]$CIOnly
         )
 
@@ -453,7 +454,9 @@ function Invoke-OpenCover
     }
 
     # create the arguments for OpenCover
-    $targetArgs = "-c", "Set-ExecutionPolicy Bypass -Force -Scope Process;", "Invoke-Pester","${TestDirectory}"
+
+    $startupArgs =  '$env:PSModulePath = "${env:PSModulePath};$TestToolsPath";Set-ExecutionPolicy Bypass -Force -Scope Process;'
+    $targetArgs = "-c","${startupArgs}", "Invoke-Pester","${TestDirectory}"
 
     if ( $CIOnly )
     {

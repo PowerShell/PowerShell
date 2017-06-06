@@ -73,6 +73,7 @@ $psCodeZip = "$outputBaseFolder\PSCode.zip"
 $psCodePath = "$outputBaseFolder\PSCode"
 $elevatedLogs = "$outputBaseFolder\TestResults_Elevated.xml"
 $unelevatedLogs = "$outputBaseFolder\TestResults_Unelevated.xml"
+$testToolsPath = "$testPath\tools"
 
 try
 {
@@ -107,13 +108,15 @@ try
     Write-LogPassThru -Message "psbinpath : $psBinPath"
     Write-LogPassThru -Message "elevatedLog : $elevatedLogs"
     Write-LogPassThru -Message "unelevatedLog : $unelevatedLogs"
+    Write-LogPassThru -Message "TestToolsPath : $testToolsPath"
 
     $openCoverParams = @{outputlog = $outputLog;
         TestDirectory = $testPath;
         OpenCoverPath = "$openCoverTargetDirectory\OpenCover";
-        PowerShellExeDirectory = "$psBinPath\publish";
+        PowerShellExeDirectory = "$psBinPath";
         PesterLogElevated = $elevatedLogs;
         PesterLogUnelevated = $unelevatedLogs;
+        TestToolsModulesPath = "$testToolsPath\Modules";
     }
 
     $openCoverParams | Out-String | Write-LogPassThru
@@ -133,7 +136,7 @@ try
 
     Write-LogPassThru -Message "Test run done."
 
-    $gitCommitId = & "$psBinPath\publish\powershell.exe" -noprofile -command { $PSVersiontable.GitCommitId }
+    $gitCommitId = & "$psBinPath\powershell.exe" -noprofile -command { $PSVersiontable.GitCommitId }
     $commitId = $gitCommitId.substring($gitCommitId.LastIndexOf('-g') + 2)
 
     Write-LogPassThru -Message $commitId

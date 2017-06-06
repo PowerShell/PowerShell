@@ -59,7 +59,7 @@ Describe 'Get-Help -Online opens the default web browser and navigates to the cm
             $progId = (Get-ItemProperty $regKey).ProgId
             if($progId)
             {
-                if ((Get-PSDrive -Name HKCR) -eq $Null)
+                if (-not (Test-Path 'HKCR:\'))
                 {
                     New-PSDrive -PSProvider registry -Root HKEY_CLASSES_ROOT -Name HKCR | Should NotBeNullOrEmpty
                 }
