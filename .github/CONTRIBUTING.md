@@ -140,12 +140,12 @@ Additional references:
   It is also used in the [Git commit messages](#common-engineering-practices).
 * If the change is related to a specific resource, please prefix the description with the resource name:
   * Instead of "New parameter 'ConnectionCredential' in New-SqlConnection",
-  write "New-SqlConnection: added parameter 'ConnectionCredential'".
+  write "New-SqlConnection: add parameter 'ConnectionCredential'".
 * If your change warrants an update to user-facing documentation,
   a Maintainer will add the `Documentation Needed` label to your PR and add an issue to the [PowerShell-Docs repository][PowerShell-Docs],
   so that we make sure to update official documentation to reflect your contribution.
   As an example, this requirement includes any changes to cmdlets (including cmdlet parameters) and features which have associated about_* topics.
-  While not required, we appreciate any contributors who add this label and the issue themselves.
+  While not required, we appreciate any contributors who add this label and create the issue themselves.
   Even better, all contributors are free to contribute the documentation themselves.
   (See [Contributing to documentation related to PowerShell](#contributing-to-documentation-related-to-powershell) for more info.)
 
