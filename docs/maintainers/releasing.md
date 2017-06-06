@@ -2,16 +2,18 @@
 
 ## Release Steps
 
+> Note: Step 2, 3 and 4 can be done in parallel. Step 5 and 6 can be done in parallel.
+
 1. Create a branch named `release` in `PowerShell/PowerShell` repository. All release related changes should happen in this branch.
 1. Prepare packages
    - [Build release packages](#building-packages)
    - Sign the MSI packages and DEB/RPM packages.
-   - Install and verify the packages. (_could be automated [Issue #3942][]_)
+   - Install and verify the packages.
 1. Update documentation, scripts and Dockerfiles
    - Summarize the change log for the release. It should be reviewed by PM(s) to make it more user-friendly.
    - Update [CHANGELOG.md](../../CHANGELOG.md) with the finalized change log draft.
-   - Update other documents and scripts to use the new package names and links. (_could be automated [Issue #3942][]_)
-1. Verify the release Dockerfiles. (_could be automated [Issue #3942][]_)
+   - Update other documents and scripts to use the new package names and links.
+1. Verify the release Dockerfiles.
 1. Publish Linux packages to Microsoft YUM/APT repositories.
 1. [Create NuGet packages](#nuget-packages) and publish them to [powershell-core feed][ps-core-feed].
 1. [Create the release tag](#release-tag) and push the tag to `PowerShell/PowerShell` repository.
@@ -21,15 +23,11 @@
    - Linux: push a branch named `docker` to `powershell/powershell` repository to trigger the build at [powershell docker hub](https://hub.docker.com/r/microsoft/powershell/builds/).
      Delete the `docker` branch once the builds succeed.
    - Windows: queue a new build in `PowerShell Windows Docker Build` on VSTS.
-1. Verify the generated docker container images. (_could be automated [Issue #3942][]_)
+1. Verify the generated docker container images.
 1. [Update the homebrew formula](#homebrew) for the OSX package.
    This task usually will be taken care of by the community,
    so we can wait for one day or two and see if the homebrew formula has already been updated,
    and only do the update if it hasn't.
-
-> Note: Step 2, 3 and 4 can be done in parallel. Step 5 and 6 can be done in parallel.
-
-[Issue #3942]: https://github.com/PowerShell/PowerShell/issues/3942
 
 ## Building Packages
 
