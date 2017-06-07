@@ -17,15 +17,6 @@ Function Stop-HTTPListener {
     Invoke-WebRequest -Uri "http://localhost:$port/PowerShell?test=exit"
 }
 
-$script:supportedRedirects = @{
-    [System.Net.HttpStatusCode]::Ok = 1; # No redirect
-    [System.Net.HttpStatusCode]::Found = 1;
-    [System.Net.HttpStatusCode]::MultipleChoices = 1;
-    [System.Net.HttpStatusCode]::Moved = 1;
-    [System.Net.HttpStatusCode]::SeeOther = 1;
-    [System.Net.HttpStatusCode]::TemporaryRedirect = 1;
-}
-
 Function Start-HTTPListener {
     <#
     .Synopsis
