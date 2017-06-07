@@ -17,15 +17,6 @@ Function Stop-HTTPListener {
     Invoke-WebRequest -Uri "http://localhost:$port/PowerShell?test=exit"
 }
 
-$script:supportedRedirects = @{
-    [System.Net.HttpStatusCode]::Ok = 1; # No redirect
-    [System.Net.HttpStatusCode]::Found = 1;
-    [System.Net.HttpStatusCode]::MultipleChoices = 1;
-    [System.Net.HttpStatusCode]::Moved = 1;
-    [System.Net.HttpStatusCode]::SeeOther = 1;
-    [System.Net.HttpStatusCode]::TemporaryRedirect = 1;
-}
-
 Function Start-HTTPListener {
     <#
     .Synopsis
@@ -54,6 +45,15 @@ Function Start-HTTPListener {
 
         [scriptblock]$script = {
             param ($Port)
+
+            $script:supportedRedirects = @{
+                [System.Net.HttpStatusCode]::Ok = 1; # No redirect
+                [System.Net.HttpStatusCode]::Found = 1;
+                [System.Net.HttpStatusCode]::MultipleChoices = 1;
+                [System.Net.HttpStatusCode]::Moved = 1;
+                [System.Net.HttpStatusCode]::SeeOther = 1;
+                [System.Net.HttpStatusCode]::TemporaryRedirect = 1;
+            }
 
             # HttpListener.QueryString is not being populated, need to follow-up with CoreFx, workaround is to parse it ourselves
             Function ParseQueryString([string]$url)
@@ -172,7 +172,7 @@ Function Start-HTTPListener {
                             {
                                 Write-Verbose -Message "Invalid request type: $type"
                                 $statusCode = [System.Net.HttpStatusCode]::BadRequest
-                                $output = 'Invalid Redirect Type: $type'
+                                $output = "Invalid Redirect Type: $type"
                             }
                             elseif ($type -eq [System.Net.HttpStatusCode]::Ok)
                             {
@@ -202,7 +202,7 @@ Function Start-HTTPListener {
                                 if (-not [string]::IsNullOrEmpty($redirectedUrl))
                                 {
                                     $outputHeader.Add("Location",$redirectedUrl)
-                                    Write-Verbose "Redirecting to $($outputHeader.Location)" 
+                                    Write-Verbose -Message "Redirecting to $($outputHeader.Location)" 
                                 }
                             }                               
                         }

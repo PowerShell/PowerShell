@@ -199,7 +199,7 @@ function ExecuteRedirectRequest
 Describe "Invoke-WebRequest redirect tests" -Tags ("Feature", "Redirect") {
 
     BeforeAll {
-        $null = Start-HttpListener -AsJob -Port 8082 -Verbose
+        $null = Start-HttpListener -AsJob -Port 8082
     }
 
     AfterAll {
