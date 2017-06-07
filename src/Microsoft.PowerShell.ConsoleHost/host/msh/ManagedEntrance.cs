@@ -115,9 +115,10 @@ namespace Microsoft.PowerShell
 #else
                 var banner = ManagedEntranceStrings.ShellBanner;
 #endif
+                var formattedBanner = string.Format(CultureInfo.InvariantCulture, banner, PSVersionInfo.GitCommitId);
                 exitCode = Microsoft.PowerShell.ConsoleShell.Start(
                     configuration,
-                    banner,
+                    formattedBanner,
                     ManagedEntranceStrings.ShellHelp,
                     warning == null ? null : warning.Message,
                     args);
