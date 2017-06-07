@@ -24,7 +24,7 @@ namespace System.Management.Automation
         internal Token TokenBeforeCursor { get; set; }
         internal IScriptPosition CursorPosition { get; set; }
 
-        internal CompletionExecutionHelper Helper { get; set; }
+        internal PowerShellExecutionHelper Helper { get; set; }
         internal Hashtable Options { get; set; }
         internal Dictionary<string, ScriptBlock> CustomArgumentCompleters { get; set; }
         internal Dictionary<string, ScriptBlock> NativeArgumentCompleters { get; set; }
@@ -33,7 +33,7 @@ namespace System.Management.Automation
         internal int ReplacementLength { get; set; }
         internal ExecutionContext ExecutionContext { get; set; }
         internal PseudoBindingInfo PseudoBindingInfo { get; set; }
-        internal TypeDefinitionAst CurrentTypeDefinitionAst { get; set; }
+        internal TypeInferenceContext TypeInferenceContext { get; set; }
 
         internal bool GetOption(string option, bool @default)
         {
@@ -96,15 +96,26 @@ namespace System.Management.Automation
             return cursor.Offset < extent.StartOffset || cursor.Offset > extent.EndOffset;
         }
 
-        internal CompletionContext CreateCompletionContext(ExecutionContext executionContext)
+
+        internal CompletionContext CreateCompletionContext(PowerShell powerShell)
+        {
+            var typeInferenceContext = new TypeInferenceContext(powerShell);
+            return InitializeCompletionContext(typeInferenceContext);
+        }
+        internal CompletionContext CreateCompletionContext(TypeInferenceContext typeInferenceContext)
+        {
+            return InitializeCompletionContext(typeInferenceContext);
+        }
+
+        private CompletionContext InitializeCompletionContext(TypeInferenceContext typeInferenceContext)
         {
             Token tokenBeforeCursor = null;
             IScriptPosition positionForAstSearch = _cursorPosition;
             var adjustLineAndColumn = false;
-            var tokenAtCursor = _tokens.LastOrDefault(token => IsCursorWithinOrJustAfterExtent(_cursorPosition, token.Extent) && IsInterestingToken(token));
+            var tokenAtCursor = InterstingTokenAtCursorOrDefault(_tokens, _cursorPosition);
             if (tokenAtCursor == null)
             {
-                tokenBeforeCursor = _tokens.LastOrDefault(token => IsCursorAfterExtent(_cursorPosition, token.Extent) && IsInterestingToken(token));
+                tokenBeforeCursor = InterstingTokenBeforeCursorOrDefault(_tokens, _cursorPosition);
                 if (tokenBeforeCursor != null)
                 {
                     positionForAstSearch = tokenBeforeCursor.Extent.EndScriptPosition;
@@ -114,17 +125,22 @@ namespace System.Management.Automation
             else
             {
                 var stringExpandableToken = tokenAtCursor as StringExpandableToken;
-                if (stringExpandableToken != null && stringExpandableToken.NestedTokens != null)
+                if (stringExpandableToken?.NestedTokens != null)
                 {
-                    tokenAtCursor =
-                        stringExpandableToken.NestedTokens.LastOrDefault(
-                            token => IsCursorWithinOrJustAfterExtent(_cursorPosition, token.Extent) && IsInterestingToken(token)) ?? stringExpandableToken;
+                    tokenAtCursor = InterstingTokenAtCursorOrDefault(stringExpandableToken.NestedTokens, _cursorPosition) ?? stringExpandableToken;
                 }
             }
 
             var asts = AstSearcher.FindAll(_ast, ast => IsCursorWithinOrJustAfterExtent(positionForAstSearch, ast.Extent), searchNestedScriptBlocks: true).ToList();
 
             Diagnostics.Assert(tokenAtCursor == null || tokenBeforeCursor == null, "Only one of these tokens can be non-null");
+
+            if (typeInferenceContext.CurrentTypeDefinitionAst == null)
+            {
+                typeInferenceContext.CurrentTypeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(asts.Last());
+            }
+            ExecutionContext executionContext = typeInferenceContext.ExecutionContext;
+
             return new CompletionContext
             {
                 TokenAtCursor = tokenAtCursor,
@@ -134,11 +150,23 @@ namespace System.Management.Automation
                 Options = _options,
                 ExecutionContext = executionContext,
                 ReplacementIndex = adjustLineAndColumn ? _cursorPosition.Offset : 0,
-                CurrentTypeDefinitionAst = Ast.GetAncestorTypeDefinitionAst(asts.Last()),
+                TypeInferenceContext = typeInferenceContext,
+                Helper = typeInferenceContext.Helper,
                 CustomArgumentCompleters = executionContext.CustomArgumentCompleters,
                 NativeArgumentCompleters = executionContext.NativeArgumentCompleters,
             };
         }
+
+        private static Token InterstingTokenAtCursorOrDefault(IEnumerable<Token> tokens, IScriptPosition cursorPosition)
+        {
+            return tokens.LastOrDefault(token => IsCursorWithinOrJustAfterExtent(cursorPosition, token.Extent) && IsInterestingToken(token));
+        }
+
+        private static Token InterstingTokenBeforeCursorOrDefault(IEnumerable<Token> tokens, IScriptPosition cursorPosition)
+        {
+            return tokens.LastOrDefault(token => IsCursorAfterExtent(cursorPosition, token.Extent) && IsInterestingToken(token));
+        }
+
 
         private static Ast GetLastAstAtCursor(ScriptBlockAst scriptBlockAst, IScriptPosition cursorPosition)
         {
@@ -278,8 +306,7 @@ namespace System.Management.Automation
 
         internal List<CompletionResult> GetResults(PowerShell powerShell, out int replacementIndex, out int replacementLength)
         {
-            var completionContext = CreateCompletionContext(powerShell.GetContextFromTLS());
-            completionContext.Helper = new CompletionExecutionHelper(powerShell);
+            var completionContext = CreateCompletionContext(powerShell);
 
             PSLanguageMode? previousLanguageMode = null;
             try
@@ -1173,8 +1200,7 @@ namespace System.Management.Automation
                     cursorIndexInString = strValue.Length;
 
                 var analysis = new CompletionAnalysis(_ast, _tokens, _cursorPosition, _options);
-                var subContext = analysis.CreateCompletionContext(completionContext.ExecutionContext);
-                subContext.Helper = completionContext.Helper;
+                var subContext = analysis.CreateCompletionContext(completionContext.TypeInferenceContext);
 
                 int subReplaceIndex, subReplaceLength;
                 var subResult = analysis.GetResultHelper(subContext, out subReplaceIndex, out subReplaceLength, true);
