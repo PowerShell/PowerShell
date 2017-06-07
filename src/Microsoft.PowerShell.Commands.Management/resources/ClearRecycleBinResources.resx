@@ -142,3 +142,4 @@
     <value>The drive with the name '{0}' is not a Fixed drive and does not support the Recycle Bin. Please run the '{1}' cmdlet to see the available Fixed drives in the system.</value>
   </data>
 </root>
+
