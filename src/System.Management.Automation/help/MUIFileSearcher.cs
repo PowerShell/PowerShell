@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
+using System.Text.RegularExpressions;
 
 namespace System.Management.Automation
 {
@@ -120,11 +121,25 @@ namespace System.Management.Automation
             // extra logic to select the files that match the given pattern.
             ArrayList result = new ArrayList();
             string[] files = Directory.GetFiles(path);
+
+            string regexPattern = pattern.Replace(".", @"\.");
+            regexPattern = regexPattern.Replace("*", ".*");
+            regexPattern = regexPattern.Replace("?", ".?");
+
             foreach (string filePath in files)
             {
                 if (filePath.IndexOf(pattern, StringComparison.OrdinalIgnoreCase) >= 0)
                 {
                     result.Add(filePath);
+                    break;
+                }
+                // If the input is pattern instead of string, we need to use Regex expression.
+                if (pattern.Contains("*") || pattern.Contains("?"))
+                {             
+                    if (Regex.IsMatch(filePath, regexPattern))
+                    {
+                        result.Add(filePath);
+                    }
                 }
             }
             return (String[])result.ToArray(typeof(string));
