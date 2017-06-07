@@ -2090,8 +2090,6 @@ namespace System.Management.Automation.Runspaces
 
 #if UNIX
 
-        private const int SUPPRESS_PROCESS_SIGINT = 0x00000001;
-
         /// <summary>
         /// Create a process through managed APIs and returns StdIn, StdOut, StdError reader/writers.
         /// This works for Linux platforms and creates the SSH process in its own session which means
@@ -2113,7 +2111,6 @@ namespace System.Management.Automation.Runspaces
             StreamReader stdErrReader = null;
             int pid = Platform.StartProcess(
                 startInfo,
-                SUPPRESS_PROCESS_SIGINT, // Create SSH process so that it ignores interrupt signals
                 ref stdInWriter,
                 ref stdOutReader,
                 ref stdErrReader);
