@@ -29,7 +29,6 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should be 'System'
     }
 
-
     It 'Should complete format-table hashtable' {
         $res = TabExpansion2 -inputScript 'Get-ChildItem | Format-Table @{ ' -cursorColumn 'Get-ChildItem | Format-Table @{ '.Length
         $res.CompletionMatches.Count | Should Be 5
@@ -101,6 +100,75 @@ Describe "TabCompletion" -Tags CI {
 
     It 'Should complete keyword' -skip {
         $res = TabExpansion2 -inputScript 'using nam' -cursorColumn 'using nam'.Length
-        $res.CompletionMatches[0].CompletionText | Should be 'namespace'
+        $res.CompletionMatches[0].CompletionText | Should Be 'namespace'
+    }
+
+    Context NativeCommand {
+        BeforeAll {
+            $nativeCommand = (Get-Command -CommandType Application -TotalCount 1).Name
+        }
+        It 'Completes native commands with -' {
+            Register-ArgumentCompleter -Native -CommandName $nativeCommand -ScriptBlock {
+                param($wordToComplete, $ast, $cursorColumn)
+                if ($wordToComplete -eq '-') {
+                    return "-flag"
+                }
+                else {
+                    return "unexpected wordtocomplete"
+                }
+            }
+            $line = "$nativeCommand -"
+            $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
+            $res.CompletionMatches.Count | Should Be 1
+            $res.CompletionMatches.CompletionText | Should Be "-flag"
+        }
+
+        It 'Completes native commands with --' {
+            Register-ArgumentCompleter -Native -CommandName $nativeCommand -ScriptBlock {
+                param($wordToComplete, $ast, $cursorColumn)
+                if ($wordToComplete -eq '--') {
+                    return "--flag"
+                }
+                else {
+                    return "unexpected wordtocomplete"
+                }
+            }
+            $line = "$nativeCommand --"
+            $res = TabExpansion2 -inputScript $line -cursorColumn $line.Length
+            $res.CompletionMatches.Count | Should Be 1
+            $res.CompletionMatches.CompletionText | Should Be "--flag"
+        }
+
+        It 'Completes native commands with --f' {
+            Register-ArgumentCompleter -Native -CommandName $nativeCommand -ScriptBlock {
+                param($wordToComplete, $ast, $cursorColumn)
+                if ($wordToComplete -eq '--f') {
+                    return "--flag"
+                }
+                else {
+                    return "unexpected wordtocomplete"
+                }
+            }
+            $line = "$nativeCommand --f"
+            $res = TaBexpansion2 -inputScript $line -cursorColumn $line.Length
+            $res.CompletionMatches.Count | Should Be 1
+            $res.CompletionMatches.CompletionText | Should Be "--flag"
+        }
+
+        It 'Completes native commands with -o' {
+            Register-ArgumentCompleter -Native -CommandName $nativeCommand -ScriptBlock {
+                param($wordToComplete, $ast, $cursorColumn)
+                if ($wordToComplete -eq '-o') {
+                    return "-option"
+                }
+                else {
+                    return "unexpected wordtocomplete"
+                }
+            }
+            $line = "$nativeCommand -o"
+            $res = TaBexpansion2 -inputScript $line -cursorColumn $line.Length
+            $res.CompletionMatches.Count | Should Be 1
+            $res.CompletionMatches.CompletionText | Should Be "-option"
+        }
     }
 }

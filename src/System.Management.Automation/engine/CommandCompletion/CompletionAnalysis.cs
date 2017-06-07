@@ -354,6 +354,7 @@ namespace System.Management.Automation
 
                     case TokenKind.Multiply:
                     case TokenKind.Generic:
+                    case TokenKind.MinusMinus: // for native commands '--'
                     case TokenKind.Identifier:
                         result = GetResultForIdentifier(completionContext, ref replacementIndex, ref replacementLength, isQuotedString);
                         break;
@@ -1113,7 +1114,7 @@ namespace System.Management.Automation
                                                 {
                                                     if (!String.IsNullOrEmpty(dynamicKeywordAst.ElementName))
                                                     {
-                                                        StringBuilder sb = new StringBuilder("[");
+                                                        StringBuilder sb = new StringBuilder("[", 50);
                                                         sb.Append(dynamicKeywordAst.Keyword.Keyword);
                                                         sb.Append("]");
                                                         sb.Append(dynamicKeywordAst.ElementName);
@@ -1379,7 +1380,8 @@ namespace System.Management.Automation
             var lastAst = completionContext.RelatedAsts.Last();
 
             List<CompletionResult> result = null;
-            completionContext.WordToComplete = tokenAtCursor.Text;
+            var tokenAtCursorText = tokenAtCursor.Text;
+            completionContext.WordToComplete = tokenAtCursorText;
 
             var strConst = lastAst as StringConstantExpressionAst;
             if (strConst != null)
@@ -1445,7 +1447,7 @@ namespace System.Management.Automation
                 {
                     Ast cursorAst = null;
                     var cursorPosition = (InternalScriptPosition)_cursorPosition;
-                    int offsetBeforeCmdName = cursorPosition.Offset - tokenAtCursor.Text.Length;
+                    int offsetBeforeCmdName = cursorPosition.Offset - tokenAtCursorText.Length;
                     if (offsetBeforeCmdName >= 0)
                     {
                         var cursorBeforeCmdName = cursorPosition.CloneWithNewOffset(offsetBeforeCmdName);
@@ -1457,10 +1459,10 @@ namespace System.Management.Automation
                         cursorAst.Extent.EndLineNumber == tokenAtCursor.Extent.StartLineNumber &&
                         cursorAst.Extent.EndColumnNumber == tokenAtCursor.Extent.StartColumnNumber)
                     {
-                        if (tokenAtCursor.Text.IndexOfAny(Utils.Separators.Directory) == 0)
+                        if (tokenAtCursorText.IndexOfAny(Utils.Separators.Directory) == 0)
                         {
                             string wordToComplete =
-                                CompletionCompleters.ConcatenateStringPathArguments(cursorAst as CommandElementAst, tokenAtCursor.Text, completionContext);
+                                CompletionCompleters.ConcatenateStringPathArguments(cursorAst as CommandElementAst, tokenAtCursorText, completionContext);
                             if (wordToComplete != null)
                             {
                                 completionContext.WordToComplete = wordToComplete;
@@ -1478,7 +1480,7 @@ namespace System.Management.Automation
                                 string fullPath = variableAst != null
                                     ? CompletionCompleters.CombineVariableWithPartialPath(
                                         variableAst: variableAst,
-                                        extraText: tokenAtCursor.Text,
+                                        extraText: tokenAtCursorText,
                                         executionContext: completionContext.ExecutionContext)
                                     : null;
 
@@ -1564,16 +1566,27 @@ namespace System.Management.Automation
                 return result;
             }
 
-            if (tokenAtCursor.Text.Length == 1 && tokenAtCursor.Text[0].IsDash() && (lastAst.Parent is CommandAst || lastAst.Parent is DynamicKeywordStatementAst))
+            var isSingleDash = tokenAtCursorText.Length == 1 && tokenAtCursorText[0].IsDash();
+            var isDoubleDash = tokenAtCursorText.Length == 2 && tokenAtCursorText[0].IsDash() && tokenAtCursorText[1].IsDash();
+            var isParentCommandOrDynamicKeyword = (lastAst.Parent is CommandAst || lastAst.Parent is DynamicKeywordStatementAst);
+            if ((isSingleDash || isDoubleDash) && isParentCommandOrDynamicKeyword)
             {
                 // When it's the content of a quoted string, we only handle variable/member completion
-                if (isQuotedString) { return result; }
-                return CompletionCompleters.CompleteCommandParameter(completionContext);
+                if (isSingleDash)
+                {
+                    if (isQuotedString) { return result; }
+                    var res = CompletionCompleters.CompleteCommandParameter(completionContext);
+                    if (res.Count != 0)
+                    {
+                        return res;
+                    }
+                }
+                return CompletionCompleters.CompleteCommandArgument(completionContext);
             }
 
             TokenKind memberOperator = TokenKind.Unknown;
             bool isMemberCompletion = (lastAst.Parent is MemberExpressionAst);
-            bool isStatic = isMemberCompletion ? ((MemberExpressionAst)lastAst.Parent).Static : false;
+            bool isStatic = isMemberCompletion && ((MemberExpressionAst)lastAst.Parent).Static;
             bool isWildcard = false;
 
             if (!isMemberCompletion)
@@ -1582,12 +1595,12 @@ namespace System.Management.Automation
                 // We need to know if the previous element before the token is adjacent because
                 // we don't have a MemberExpressionAst, we might have 2 command arguments.
 
-                if (tokenAtCursor.Text.Equals(TokenKind.Dot.Text(), StringComparison.Ordinal))
+                if (tokenAtCursorText.Equals(TokenKind.Dot.Text(), StringComparison.Ordinal))
                 {
                     memberOperator = TokenKind.Dot;
                     isMemberCompletion = true;
                 }
-                else if (tokenAtCursor.Text.Equals(TokenKind.ColonColon.Text(), StringComparison.Ordinal))
+                else if (tokenAtCursorText.Equals(TokenKind.ColonColon.Text(), StringComparison.Ordinal))
                 {
                     memberOperator = TokenKind.ColonColon;
                     isMemberCompletion = true;
@@ -1633,7 +1646,7 @@ namespace System.Management.Automation
                 {
                     if (!isWildcard && memberOperator != TokenKind.Unknown)
                     {
-                        replacementIndex += tokenAtCursor.Text.Length;
+                        replacementIndex += tokenAtCursorText.Length;
                         replacementLength = 0;
                     }
                     return result;
@@ -1663,7 +1676,7 @@ namespace System.Management.Automation
                     completionContext.WordToComplete = wordToComplete;
                 }
             }
-            else if (tokenAtCursor.Text.IndexOfAny(Utils.Separators.Directory) == 0)
+            else if (tokenAtCursorText.IndexOfAny(Utils.Separators.Directory) == 0)
             {
                 var command = lastAst.Parent as CommandBaseAst;
                 if (command != null && command.Redirections.Any())
@@ -1674,7 +1687,7 @@ namespace System.Management.Automation
                         fileRedirection.Extent.EndColumnNumber == lastAst.Extent.StartColumnNumber)
                     {
                         string wordToComplete =
-                            CompletionCompleters.ConcatenateStringPathArguments(fileRedirection.Location, tokenAtCursor.Text, completionContext);
+                            CompletionCompleters.ConcatenateStringPathArguments(fileRedirection.Location, tokenAtCursorText, completionContext);
 
                         if (wordToComplete != null)
                         {
