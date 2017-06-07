@@ -146,11 +146,12 @@ function GetTestData
 Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     BeforeAll {
-        $null = Start-HttpListener -AsJob -Port 8080
+        $response = Start-HttpListener -Port 8080
     }
 
     AfterAll {
         $null = Stop-HttpListener -Port 8080
+        $response.PowerShell.Dispose()
     }
 
     # Validate the output of Invoke-WebRequest
@@ -576,11 +577,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     BeforeAll {
-        $null = Start-HttpListener -AsJob -Port 8081
+        $response = Start-HttpListener -Port 8081
     }
 
     AfterAll {
         $null = Stop-HttpListener -Port 8081
+        $response.PowerShell.Dispose()
     }
 
     It "Invoke-RestMethod returns User-Agent" {
