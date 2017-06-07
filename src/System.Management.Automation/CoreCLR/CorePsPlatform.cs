@@ -625,9 +625,6 @@ namespace System.Management.Automation
             ref StreamReader standardOutput,
             ref StreamReader standardError)
         {
-            string filename;
-            string[] argv;
-
             if (startInfo.UseShellExecute)
             {
                 throw new PSNotSupportedException();

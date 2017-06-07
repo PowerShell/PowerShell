@@ -2109,7 +2109,7 @@ namespace System.Management.Automation.Runspaces
             StreamWriter stdInWriter = null;
             StreamReader stdOutReader = null;
             StreamReader stdErrReader = null;
-            int pid = Platform.StartProcess(
+            int pid = Platform.StartSSHProcess(
                 startInfo,
                 ref stdInWriter,
                 ref stdOutReader,
