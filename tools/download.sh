@@ -67,6 +67,9 @@ case "$OSTYPE" in
                 exit 2
         esac
         ;;
+    freebsd*)
+        version=pkg
+        ;;
     darwin*)
         # We don't check for curl as macOS should have a system version
         package=powershell-6.0.0-beta.2-osx.10.12-x64.pkg
