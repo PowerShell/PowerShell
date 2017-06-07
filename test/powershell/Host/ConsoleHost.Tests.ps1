@@ -176,6 +176,18 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             # no extraneous output
             $observed | should be $currentVersion
         }
+
+        $testCases =
+            @{interpreter = "#!${pshome}/powershell"},
+            @{interpreter = "#!${pshome}/powershell.exe"}
+
+        It "Should properly execute shebang script that doesn't have .ps1 extension" -TestCases $testCases {
+            param($Interpreter)
+            $scriptPath = "~/shebangtest"
+            Set-Content -Path $scriptPath -Value $Interpreter
+            Add-Content -Path $scriptPath -Value "'hello'"
+            & $powershell $scriptPath | Should BeExactly 'hello'
+        }
     }
 
     Context "Pipe to/from powershell" {
