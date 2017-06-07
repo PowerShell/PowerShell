@@ -1153,9 +1153,9 @@ namespace System.Management.Automation
 
         internal class NativeMethods
         {
-            private static string EnsureLongPathPrefix(string path)
+            private static string EnsureLongPathPrefixIfNeeded(string path)
             {
-                if (!path.StartsWith(@"\\?\", StringComparison.Ordinal))
+                if (path.Length >= MAX_PATH && !path.StartsWith(@"\\?\", StringComparison.Ordinal))
                     return @"\\?\" + path;
 
                 return path;
@@ -1166,7 +1166,7 @@ namespace System.Management.Automation
 
             internal static int GetFileAttributes(string fileName)
             {
-                fileName = EnsureLongPathPrefix(fileName);
+                fileName = EnsureLongPathPrefixIfNeeded(fileName);
                 return GetFileAttributesPrivate(fileName);
             }
 
