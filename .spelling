@@ -306,6 +306,7 @@ v6
 WiX
  - docs/testing-guidelines/PowerShellCoreTestStatus.md
 Add-LocalGroupMember
+add-on
 adhoc
 Clear-ItemProperty
 Connect-PSSession
