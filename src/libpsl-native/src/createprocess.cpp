@@ -11,6 +11,7 @@
 #include <sys/wait.h>
 #include <syslog.h>
 #include <unistd.h>
+#include <fcntl.h>
 
 enum
 {
@@ -43,6 +44,32 @@ static int Dup2WithInterruptedRetry(int oldfd, int newfd)
 {
     int result;
     while (CheckInterrupted(result = dup2(oldfd, newfd)));
+    return result;
+}
+
+int32_t SystemNative_Pipe(int32_t pipeFds[2], int32_t flags)
+{
+    int32_t result;
+    while (CheckInterrupted(result = pipe(pipeFds)));
+
+    // Then, if O_CLOEXEC was specified, use fcntl to configure the file descriptors appropriately.
+    if ((flags & O_CLOEXEC) != 0 && result == 0)
+    {
+        while (CheckInterrupted(result = fcntl(pipeFds[0], F_SETFD, FD_CLOEXEC)));
+        if (result == 0)
+        {
+            while (CheckInterrupted(result = fcntl(pipeFds[1], F_SETFD, FD_CLOEXEC)));
+        }
+
+        if (result != 0)
+        {
+            int tmpErrno = errno;
+            close(pipeFds[0]);
+            close(pipeFds[1]);
+            errno = tmpErrno;
+        }
+    }
+
     return result;
 }
 
@@ -96,8 +123,9 @@ int32_t ForkAndExecProcess(
     }
 
     // Open pipes for any requests to redirect stdin/stdout/stderr
-    if ((redirectStdin && pipe(stdinFds) != 0) || (redirectStdout && pipe(stdoutFds) != 0) ||
-        (redirectStderr && pipe(stderrFds) != 0))
+    if ((redirectStdin && SystemNative_Pipe(stdinFds, O_CLOEXEC) != 0) || 
+        (redirectStdout && SystemNative_Pipe(stdoutFds, O_CLOEXEC) != 0) ||
+        (redirectStderr && SystemNative_Pipe(stderrFds, O_CLOEXEC) != 0))
     {
         success = false;
         goto done;

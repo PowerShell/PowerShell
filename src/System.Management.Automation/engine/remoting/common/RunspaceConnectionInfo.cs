@@ -2005,10 +2005,15 @@ namespace System.Management.Automation.Runspaces
             out StreamReader stdErrReaderVar)
         {
             string filePath = string.Empty;
+#if UNIX
+            string sshCommand = "ssh";
+#else
+            string sshCommand = "ssh.exe";
+#endif
             var context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
             if (context != null)
             {
-                var cmdInfo = context.CommandDiscovery.LookupCommandInfo("ssh", CommandOrigin.Internal) as ApplicationInfo;
+                var cmdInfo = context.CommandDiscovery.LookupCommandInfo(sshCommand, CommandOrigin.Internal) as ApplicationInfo;
                 if (cmdInfo != null)
                 {
                     filePath = cmdInfo.Path;

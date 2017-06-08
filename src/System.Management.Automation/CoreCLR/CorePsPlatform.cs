@@ -614,8 +614,6 @@ namespace System.Management.Automation
         //
 
 #if UNIX
-        private static readonly UTF8Encoding s_utf8NoBom =
-            new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
         private const int StreamBufferSize = 4096;
         private const int SUPPRESS_PROCESS_SIGINT = 0x00000001;
 
@@ -648,7 +646,7 @@ namespace System.Management.Automation
                 out childPid,
                 out stdinFd, out stdoutFd, out stderrFd);
 
-            Debug.Assert(childPid >= 0);
+            Debug.Assert(childPid >= 0, "Invalid process id");
 
             // Configure the parent's ends of the redirection streams.
             // We use UTF8 encoding without BOM by-default(instead of Console encoding as on Windows)
@@ -656,22 +654,22 @@ namespace System.Management.Automation
             // and we do not want to take dependency on Console contract.
             if (startInfo.RedirectStandardInput)
             {
-                Debug.Assert(stdinFd >= 0);
+                Debug.Assert(stdinFd >= 0, "Invalid Fd");
                 standardInput = new StreamWriter(OpenStream(stdinFd, FileAccess.Write),
-                    s_utf8NoBom, StreamBufferSize)
+                    Utils.utf8NoBom, StreamBufferSize)
                 { AutoFlush = true };
             }
             if (startInfo.RedirectStandardOutput)
             {
-                Debug.Assert(stdoutFd >= 0);
+                Debug.Assert(stdoutFd >= 0, "Invalid Fd");
                 standardOutput = new StreamReader(OpenStream(stdoutFd, FileAccess.Read),
-                    startInfo.StandardOutputEncoding ?? s_utf8NoBom, true, StreamBufferSize);
+                    startInfo.StandardOutputEncoding ?? Utils.utf8NoBom, true, StreamBufferSize);
             }
             if (startInfo.RedirectStandardError)
             {
-                Debug.Assert(stderrFd >= 0);
+                Debug.Assert(stderrFd >= 0, "Invalid Fd");
                 standardError = new StreamReader(OpenStream(stderrFd, FileAccess.Read),
-                    startInfo.StandardErrorEncoding ?? s_utf8NoBom, true, StreamBufferSize);
+                    startInfo.StandardErrorEncoding ?? Utils.utf8NoBom, true, StreamBufferSize);
             }
 
             return childPid;
@@ -683,7 +681,7 @@ namespace System.Management.Automation
         /// <returns>The opened stream.</returns>
         private static FileStream OpenStream(int fd, FileAccess access)
         {
-            Debug.Assert(fd >= 0);
+            Debug.Assert(fd >= 0, "Invalid Fd");
             return new FileStream(
                 new SafeFileHandle((IntPtr)fd, ownsHandle: true),
                 access, StreamBufferSize, isAsync: false);
@@ -743,7 +741,7 @@ namespace System.Management.Automation
             // Allocate the unmanaged array to hold each string pointer.
             // It needs to have an extra element to null terminate the array.
             arrPtr = (byte**)Marshal.AllocHGlobal(sizeof(IntPtr) * arrLength);
-            System.Diagnostics.Debug.Assert(arrPtr != null);
+            System.Diagnostics.Debug.Assert(arrPtr != null, "Invalid array ptr");
 
             // Zero the memory so that if any of the individual string allocations fails,
             // we can loop through the array to free any that succeeded.
@@ -760,7 +758,7 @@ namespace System.Management.Automation
                 byte[] byteArr = System.Text.Encoding.UTF8.GetBytes(arr[i]);
 
                 arrPtr[i] = (byte*)Marshal.AllocHGlobal(byteArr.Length + 1); //+1 for null termination
-                System.Diagnostics.Debug.Assert(arrPtr[i] != null);
+                System.Diagnostics.Debug.Assert(arrPtr[i] != null, "Invalid array ptr");
 
                 Marshal.Copy(byteArr, 0, (IntPtr)arrPtr[i], byteArr.Length); // copy over the data from the managed byte array
                 arrPtr[i][byteArr.Length] = (byte)'\0'; // null terminate
