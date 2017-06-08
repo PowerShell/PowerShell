@@ -238,20 +238,35 @@ namespace System.Management.Automation
         }
 #endif
 
+        private static string s_GetApplicationBaseDefaultPowerShell = InitGetApplicationBaseDefaultPowerShell();
+
+        private static string InitGetApplicationBaseDefaultPowerShell()
+        {
+            return GetApplicationBase(Utils.DefaultPowerShellShellID);
+        }
+
         /// <summary>
-        /// Gets the application base for current monad version
+        /// Gets the application base for current PowerShell version.
         /// </summary>
         /// <returns>
-        /// applicationbase path for current monad version installation
+        /// Applicationbase path for current PowerShell version installation.
         /// </returns>
         /// <exception cref="SecurityException">
-        /// if caller doesn't have permission to read the key
+        /// if caller doesn't have permission to read the key.
         /// </exception>
+        internal static string GetApplicationBaseDefaultPowerShell()
+        {
+            return s_GetApplicationBaseDefaultPowerShell;
+        }
+
         internal static string GetApplicationBase(string shellId)
         {
 #if CORECLR
-            // Use the location of SMA.dll as the application base
-            // Assembly.GetEntryAssembly and GAC are not in CoreCLR.
+            if (s_GetApplicationBaseDefaultPowerShell != null)
+            {
+                return s_GetApplicationBaseDefaultPowerShell;
+            }
+            // Use the location of SMA.dll as the application base.
             Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
             return Path.GetDirectoryName(assembly.Location);
 #else
@@ -312,7 +327,7 @@ namespace System.Management.Automation
                 List<string> baseDirectories = new List<string>();
 
                 // Retrieve the application base from the registry
-                string appBase = GetApplicationBase(DefaultPowerShellShellID);
+                string appBase = Utils.GetApplicationBaseDefaultPowerShell();
                 if (!string.IsNullOrEmpty(appBase))
                 {
                     baseDirectories.Add(appBase);
@@ -381,7 +396,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool IsRunningFromSysWOW64()
         {
-            return Utils.GetApplicationBase(Utils.DefaultPowerShellShellID).Contains("SysWOW64");
+            return GetApplicationBaseDefaultPowerShell().Contains("SysWOW64");
         }
 
         /// <summary>

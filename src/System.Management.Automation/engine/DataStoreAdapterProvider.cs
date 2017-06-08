@@ -105,7 +105,7 @@ namespace System.Management.Automation
                 string psHome = null;
                 try
                 {
-                    psHome = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
+                    psHome = Utils.GetApplicationBaseDefaultPowerShell();
                 }
                 catch (System.Security.SecurityException)
                 {
