@@ -196,7 +196,7 @@ function ExecuteRedirectRequest
     return $result
 }
 
-Describe "Invoke-WebRequest redirect tests" -Tags ("Feature", "Redirect") {
+Describe "Invoke-WebRequest redirect tests" -Tags "Feature" {
 
     BeforeAll {
         $null = Start-HttpListener -AsJob -Port 8082
@@ -206,58 +206,76 @@ Describe "Invoke-WebRequest redirect tests" -Tags ("Feature", "Redirect") {
         $null = Stop-HttpListener -Port 8082
     }
 
-    It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header 302 (Found) redirect" {
-        $response = ExecuteRedirectRequest -Uri 'http://localhost:8082/PowerShell?test=redirect&type=Found' -PreserveAuthorizationOnRedirect
-        $response.Error | Should BeNullOrEmpty
+    <#
+        Defines the list of redirect codes to test as well as the
+        expected Method when the redirection is handled.
+        See https://msdn.microsoft.com/en-us/library/windows/apps/system.net.httpstatuscode(v=vs.105).aspx 
+        for additonal details.
+    #>
+    $redirectTests = @(
+      @{redirectType = 'MultipleChoices'; redirectedMethod='POST'}
+      @{redirectType = 'Ambiguous'; redirectedMethod='POST'} # Synonym for MultipleChoices
 
+      @{redirectType = 'Moved'; redirectedMethod='GET'}
+      @{redirectType = 'MovedPermanently'; redirectedMethod='GET'} # Synonym for Moved
+
+      @{redirectType = 'Found'; redirectedMethod='GET'}
+      @{redirectType = 'Redirect'; redirectedMethod='GET'} # Synonym for Found
+
+      @{redirectType = 'redirectMethod'; redirectedMethod='GET'}
+      @{redirectType = 'SeeOther'; redirectedMethod='GET'} # Synonym for RedirectMethod
+
+      @{redirectType = 'TemporaryRedirect'; redirectedMethod='GET'}
+      @{redirectType = 'RedirectKeepVerb'; redirectedMethod='GET'} # Synonym for TemporaryRedirect
+    )
+
+    It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect" -TestCases $redirectTests {
+        param($redirectType, $redirectedMethod)
+
+        $response = ExecuteRedirectRequest -Uri "http://localhost:8082/PowerShell?test=redirect&type=$redirectType" -PreserveAuthorizationOnRedirect
+        
+        $response.Error | Should BeNullOrEmpty
         # ensure Authorization header has been preserved.
         $response.Content.Headers -contains "Authorization" | Should Be $true
     }
 
-    It "Validates Invoke-WebRequest preserves the authorization header on multiple redirects." {
-        $response = ExecuteRedirectRequest -Uri "http://localhost:8082/PowerShell?test=redirect&type=Found&multiredirect=true" -PreserveAuthorizationOnRedirect
+    It "Validates Invoke-WebRequest preserves the authorization header on multiple redirects." -TestCases $redirectTests {
+        param($redirectType, $redirectedMethod)
+
+        $response = ExecuteRedirectRequest -Uri "http://localhost:8082/PowerShell?test=redirect&type=$redirectType&multiredirect=true" -PreserveAuthorizationOnRedirect
 
         $response.Error | Should BeNullOrEmpty
         # ensure Authorization header was stripped
         $response.Content.Headers -contains "Authorization" | Should Be $true
     }
 
-    It "Validates Invoke-WebRequest strips the authorization header on various redirects" -TestCases @(
-      @{redirectType = 'Found'}
-      @{redirectType = 'Moved'}
-      @{redirectType = 'RedirectMethod'}
-      @{redirectType = 'TemporaryRedirect'}
-    ) {
-        param($redirectType)
+    It "Validates Invoke-WebRequest strips the authorization header on various redirects" -TestCases $redirectTests {
+        param($redirectType, $redirectedMethod)
 
         $response = ExecuteRedirectRequest -Uri "http://localhost:8082/PowerShell?test=redirect&type=$redirectType"
-        $response.Error | Should BeNullOrEmpty
 
+        $response.Error | Should BeNullOrEmpty
         # ensure user-agent is present (i.e., no false positives )
         $response.Content.Headers -contains "User-Agent" | Should Be $true
         # ensure Authorization header has been removed.
         $response.Content.Headers -contains "Authorization" | Should Be $false
     }
 
+
     # NOTE: Only testing redirection of POST -> GET for unique underlying values of HttpStatusCode.
     # Some names overlap in underlying value.
-    It "Validates Invoke-WebRequest strips the authorization header redirects and switches from POST to GET when it handles the redirect" -TestCases @(
-      @{redirectType = 'Found'}
-      @{redirectType = 'Moved'}
-      @{redirectType = 'RedirectMethod'}
-      @{redirectType = 'TemporaryRedirect'}
-    ) {
-        param($redirectType)
+    It "Validates Invoke-WebRequest strips the authorization header redirects and switches from POST to GET when it handles the redirect" -TestCases $redirectTests {
+        param($redirectType, $redirectedMethod)
 
         $response = ExecuteRedirectRequest -Uri "http://localhost:8082/PowerShell?test=redirect&type=$redirectType" -UsePost
+        
         $response.Error | Should BeNullOrEmpty
-
         # ensure user-agent is present (i.e., no false positives )
         $response.Content.Headers -contains "User-Agent" | Should Be $true
         # ensure Authorization header has been removed.
         $response.Content.Headers -contains "Authorization" | Should Be $false
-        # ensure POST was changed to GET in the redirection
-        $response.Content.HttpMethod | Should Be 'GET'
+        # ensure POST was changed to GET for selected redirections and remains as POST for others.
+        $response.Content.HttpMethod | Should Be $redirectedMethod
     }
 }
 
