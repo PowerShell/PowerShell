@@ -834,6 +834,16 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $jsonContent.headers.Host | Should Match "httpbin.org"
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
+    
+    It "Validate Invoke-RestMethod -rawouput" {
+
+        $jsonContent = Invoke-RestMethod -uri http://httpbin.org/get -rawoutput
+        $jsonContent -is [String] | Should Be $true
+        $resp = $jsonContent  | ConvertFrom-Json
+        $resp.headers.Host | Should Match "httpbin.org"
+        $resp.headers.'User-Agent' | Should Match "WindowsPowerShell"
+    }
+
 
     ## 'HttpClientHandler.ServerCertificateCustomValidationCallback' currently doesn't work in netcoreapp2.0 on Mac at all.
     ## This is tracked by powershell issue #3648.

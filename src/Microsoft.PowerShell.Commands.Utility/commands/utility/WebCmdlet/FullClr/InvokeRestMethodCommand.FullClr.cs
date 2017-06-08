@@ -44,32 +44,11 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        // determine the response type
-                        RestReturnType returnType = CheckReturnType(response);
                         // get the response encoding
                         Encoding encoding = ContentHelper.GetEncoding(response);
-
-                        object obj = null;
-                        Exception ex = null;
-
                         string str = StreamHelper.DecodeStream(responseStream, encoding);
-                        bool convertSuccess = false;
-                        if (returnType == RestReturnType.Json)
-                        {
-                            convertSuccess = TryConvertToJson(str, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
-                        }
-                        // default to try xml first since it's more common
-                        else
-                        {
-                            convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(str, out obj, ref ex);
-                        }
-
-                        if (!convertSuccess)
-                        {
-                            // fallback to string
-                            obj = str;
-                        }
-
+                        RestReturnType returnType = CheckReturnType(response);
+                        Object obj = ConvertOutput(str, returnType);
                         WriteObject(obj);
                     }
                 }
@@ -84,6 +63,36 @@ namespace Microsoft.PowerShell.Commands
         #endregion Virtual Method Overrides
 
         #region Helper Methods
+        
+        private Object ConvertOutput(string str, RestReturnType returnType)
+        {
+            if (RawOutput)
+            {
+                return str; //nothing to do.
+            }
+            
+            Exception ex = null;;
+            object obj = null;
+            bool convertSuccess = false;
+            // determine the response type
+            
+            if (returnType == RestReturnType.Json)
+            {
+                convertSuccess = TryConvertToJson(str, out obj, ref ex) || TryConvertToXml(str, out obj, ref ex);
+            }
+            // default to try xml first since it's more common
+            else
+            {
+                convertSuccess = TryConvertToXml(str, out obj, ref ex) || TryConvertToJson(str, out obj, ref ex);
+            }
+
+            if (!convertSuccess)
+            {
+                // fallback to string
+                return str;
+            }
+            return obj;
+        }
 
         private RestReturnType CheckReturnType(WebResponse response)
         {
