@@ -663,6 +663,47 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
     }
 }
 
+Describe "Handling long paths" -Tags "CI" {
+    BeforeAll {
+        $longDir = 'a' * 250
+        $longSubDir = 'b' * 250
+        $fileName = "file1.txt"
+        $topPath = Join-Path $TestDrive $longDir
+        $longDirPath = Join-Path $topPath $longSubDir
+        $longFilePath = Join-Path $longDirPath $fileName
+        $cwd = Get-Location
+    }
+    BeforeEach {
+        New-Item -ItemType File -Path $longFilePath -Force | Out-Null
+    }
+    AfterEach {
+        Remove-Item -Path $topPath -Force -Recurse -ErrorAction SilentlyContinue
+        Set-Location $cwd
+    }
+
+    It "Can remove a file via a long path" {
+        Remove-Item -Path $longFilePath -ErrorVariable e -ErrorAction SilentlyContinue
+        $e | Should BeNullOrEmpty
+        $longFilePath | Should Not Exist
+    }
+    It "Can rename a file via a long path" {
+        $newFileName = "new-file.txt"
+        $newPath = Join-Path $longDirPath $newFileName
+        Rename-Item -Path $longFilePath -NewName $newFileName
+        $longFilePath | Should Not Exist
+        $newPath | Should Exist
+    }
+    It "Can change into a directory via a long path" {
+        Set-Location -Path $longDirPath -ErrorVariable e -ErrorAction SilentlyContinue
+        $e | Should BeNullOrEmpty
+        $c = Get-Location
+        $fileName | Should Exist
+    }
+    It "Can use Test-Path to check for a file via a long path" {
+        Test-Path $longFilePath | Should Be $true
+    }
+}
+
 Describe "Extended FileSystem Item/Content Cmdlet Provider Tests" -Tags "Feature" {
     BeforeAll {
         $testDir = "testDir"

@@ -1153,8 +1153,22 @@ namespace System.Management.Automation
 
         internal class NativeMethods
         {
-            [DllImport(PinvokeDllNames.GetFileAttributesDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            internal static extern int GetFileAttributes(string lpFileName);
+            private static string EnsureLongPathPrefixIfNeeded(string path)
+            {
+                if (path.Length >= MAX_PATH && !path.StartsWith(@"\\?\", StringComparison.Ordinal))
+                    return @"\\?\" + path;
+
+                return path;
+            }
+
+            [DllImport(PinvokeDllNames.GetFileAttributesDllName, EntryPoint = "GetFileAttributesW", CharSet = CharSet.Unicode, SetLastError = true)]
+            private static extern int GetFileAttributesPrivate(string lpFileName);
+
+            internal static int GetFileAttributes(string fileName)
+            {
+                fileName = EnsureLongPathPrefixIfNeeded(fileName);
+                return GetFileAttributesPrivate(fileName);
+            }
 
             [Flags]
             internal enum FileAttributes
