@@ -122,9 +122,9 @@ namespace System.Management.Automation
             ArrayList result = new ArrayList();
             string[] files = Directory.GetFiles(path);
 
-            string regexPattern = pattern.Replace(".", @"\.");
-            regexPattern = regexPattern.Replace("*", ".*");
-            regexPattern = regexPattern.Replace("?", ".?");
+            var wildcardPattern = WildcardPattern.ContainsWildcardCharacters(pattern)
+                ? WildcardPattern.Get(pattern, WildcardOptions.IgnoreCase)
+                : null;
 
             foreach (string filePath in files)
             {
@@ -133,11 +133,12 @@ namespace System.Management.Automation
                     result.Add(filePath);
                     break;
                 }
-                // If the input is pattern instead of string, we need to use Regex expression.
-                if (pattern.Contains("*") || pattern.Contains("?"))
-                {             
-                    if (Regex.IsMatch(filePath, regexPattern))
-                    {
+
+                if (wildcardPattern != null)
+                {
+                    string fileName = Path.GetFileName(filePath);
+                    if (wildcardPattern.IsMatch(fileName))
+                    {             
                         result.Add(filePath);
                     }
                 }
