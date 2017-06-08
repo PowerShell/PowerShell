@@ -302,6 +302,12 @@ Describe "Type inference Tests" -tags "CI" {
         }
     }
 
+    It "Infers type from foreach-object with membername" {
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | ForEach-Object -MemberName Directory }.Ast)
+        $res.Count | Should Be 1
+        $res.Name | Should Be "System.IO.DirectoryInfo"
+    }
+
     It "Infers type from OutputTypeAttribute" {
         $res = [AstTypeInference]::InferTypeOf( { Get-Process -Id 2345 }.Ast)
         $gpsOutput = [Microsoft.PowerShell.Commands.GetProcessCommand].GetCustomAttributes([System.Management.Automation.OutputTypeAttribute], $false).Type
@@ -565,7 +571,8 @@ Describe "Type inference Tests" -tags "CI" {
                 [Y]::new().ScriptProp
             }.Ast)
 
-        $res.Count | Should be 0
+        $res.Count | Should be 1
+        $res.Name | Should be System.Int32
     }
 
     It 'Infers type of script property with outputtype' {
