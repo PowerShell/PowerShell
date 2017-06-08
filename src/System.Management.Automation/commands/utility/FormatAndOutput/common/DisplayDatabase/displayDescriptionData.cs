@@ -546,6 +546,11 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         internal bool outOfBand;
 
         /// <summary>
+        /// Override default console host width.
+        /// </summary>
+        internal int? width;
+
+        /// <summary>
         /// Set if the view is for help output, used so we can prune the view from Get-FormatData
         /// because those views are too complicated and big for remoting.
         /// </summary>
@@ -712,6 +717,11 @@ namespace System.Management.Automation
         /// regardless of previous objects that may have selected the shape.
         /// </summary>
         public bool OutOfBand { get; set; }
+
+        /// <summary>
+        /// Set explicit limit for Width. Default width is a console host width.
+        /// </summary>
+        public int? Width { get; set; }
 
         internal abstract void WriteToXml(FormatXmlWriter writer);
 

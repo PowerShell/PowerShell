@@ -568,6 +568,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
             FormatEntryData fed = outOfBandViewGenerator.GeneratePayload(so, enumerationLimit);
             fed.outOfBand = true;
+            fed.width = view?.width;
             fed.SetStreamTypeFromPSObject(so);
 
             errors = outOfBandViewGenerator.ErrorManager.DrainFailedResultList();
