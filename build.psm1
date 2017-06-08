@@ -248,6 +248,7 @@ function Start-PSBuild {
     }
 
     $Arguments += "--configuration", $Options.Configuration
+    $RefAssemblyArguments = $Arguments.Clone()
     $Arguments += "--framework", $Options.Framework
 
     if (-not $SMAOnly) {
@@ -259,7 +260,7 @@ function Start-PSBuild {
     if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
         log "Run dotnet restore"
 
-        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen")
+        $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen", $Options.ReferenceAssembly)
         $testProjectDirs = Get-ChildItem "$PSScriptRoot/test/*.csproj" -Recurse | % { [System.IO.Path]::GetDirectoryName($_) }
 
         $RestoreArguments = @("--verbosity")
@@ -428,6 +429,18 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         Pop-Location
     }
 
+    # Build ReferenceAssembly
+    try {
+        # Relative paths do not work well if cwd is not changed to project
+        Push-Location $Options.ReferenceAssembly
+        log "Run dotnet $RefAssemblyArguments from $pwd"
+        Start-NativeExecution { dotnet $RefAssemblyArguments }
+
+        log "PowerShell output: $($Options.Output)"
+    } finally {
+        Pop-Location
+    }
+
     # add 'x' permission when building the standalone application
     # this is temporary workaround to a bug in dotnet.exe, tracking by dotnet/cli issue #6286
     if ($Options.Configuration -eq "Linux") {
@@ -569,6 +582,7 @@ function New-PSOptions {
         "powershell-win-core"
     }
     $Top = [IO.Path]::Combine($PSScriptRoot, "src", $PowerShellDir)
+    $ReferenceAssembly = [IO.Path]::Combine($PSScriptRoot, 'src', 'ReferenceAssemblies', 'System.Management.Automation')
     Write-Verbose "Top project directory is $Top"
 
 
@@ -611,12 +625,13 @@ function New-PSOptions {
         $Top = [IO.Path]::Combine($PSScriptRoot, "src", "System.Management.Automation")
     }
 
-    return @{ Top = $Top;
-              Configuration = $Configuration;
-              Framework = $Framework;
-              Runtime = $Runtime;
-              Output = $Output;
-              CrossGen = $CrossGen }
+    return @{ Top = $Top
+              Configuration     = $Configuration
+              Framework         = $Framework
+              Runtime           = $Runtime
+              Output            = $Output
+              CrossGen          = $CrossGen
+              ReferenceAssembly = $ReferenceAssembly }
 }
 
 
@@ -1744,44 +1759,77 @@ function Publish-NuGetFeed
     param(
         [string]$OutputPath = "$PSScriptRoot/nuget-artifacts",
         [Parameter(Mandatory=$true)]
-        [string]$VersionSuffix
+        [string]$VersionSuffix,
+        [ValidateSet("All","Core","ReferenceAssemblies")]
+        [string]$PackageSet = "All"
     )
 
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
+    $CommonArgument = @('/p:NoPackageAnalysis=true','--output',$OutputPath)
     if ($VersionSuffix) {
-        ## NuGet/Home #3953, #4337 -- dotnet pack - version suffix missing from ProjectReference
-        ## Workaround:
-        ##   dotnet restore /p:VersionSuffix=<suffix> # Bake the suffix into project.assets.json
-        ##   dotnet pack --version-suffix <suffix>
-        $TopProject = (New-PSOptions).Top
-        dotnet restore $TopProject "/p:VersionSuffix=$VersionSuffix"
+        $CommonArgument += '--version-suffix', $VersionSuffix
     }
 
-    try {
-        Push-Location $PSScriptRoot
-        @(
-'Microsoft.PowerShell.Commands.Management',
-'Microsoft.PowerShell.Commands.Utility',
-'Microsoft.PowerShell.Commands.Diagnostics',
-'Microsoft.PowerShell.ConsoleHost',
-'Microsoft.PowerShell.Security',
-'System.Management.Automation',
-'Microsoft.PowerShell.CoreCLR.AssemblyLoadContext',
-'Microsoft.PowerShell.CoreCLR.Eventing',
-'Microsoft.WSMan.Management',
-'Microsoft.WSMan.Runtime',
-'Microsoft.PowerShell.SDK'
-        ) | % {
-            if ($VersionSuffix) {
-                dotnet pack "src/$_" --output $OutputPath --version-suffix $VersionSuffix /p:IncludeSymbols=true
-            } else {
-                dotnet pack "src/$_" --output $OutputPath
-            }
+
+    if(@('All','Core') -icontains $PackageSet )
+    {
+        if ($VersionSuffix) {
+            ## NuGet/Home #3953, #4337 -- dotnet pack - version suffix missing from ProjectReference
+            ## Workaround:
+            ##   dotnet restore /p:VersionSuffix=<suffix> # Bake the suffix into project.assets.json
+            ##   dotnet pack --version-suffix <suffix>
+            $TopProject = (New-PSOptions).Top
+            dotnet restore $TopProject "/p:VersionSuffix=$VersionSuffix"
         }
-    } finally {
-        Pop-Location
+
+        # Publish Windows Assemblies that haven't been made into reference assembiles
+        try {
+            Push-Location $PSScriptRoot
+            @(
+    'Microsoft.PowerShell.Commands.Management'
+    'Microsoft.PowerShell.Commands.Utility'
+    'Microsoft.PowerShell.Commands.Diagnostics'
+    'Microsoft.PowerShell.ConsoleHost'
+    'Microsoft.PowerShell.Security'
+    'Microsoft.PowerShell.CoreCLR.AssemblyLoadContext'
+    'Microsoft.PowerShell.CoreCLR.Eventing'
+    'Microsoft.WSMan.Management'
+    'Microsoft.WSMan.Runtime'
+    'Microsoft.PowerShell.SDK'
+    'System.Management.Automation'
+            ) | % {
+                dotnet pack "src/$_" $CommonArgument /p:IncludeSymbols=true
+                log "Published $_ Core Assembly"
+            }
+        } finally {
+            Pop-Location
+        }
+    }
+
+    if(@('All','ReferenceAssemblies') -icontains $PackageSet )
+    {
+        if ($VersionSuffix) {
+            ## NuGet/Home #3953, #4337 -- dotnet pack - version suffix missing from ProjectReference
+            ## Workaround:
+            ##   dotnet restore /p:VersionSuffix=<suffix> # Bake the suffix into project.assets.json
+            ##   dotnet pack --version-suffix <suffix>
+            $TopProject = (New-PSOptions).ReferenceAssembly
+            dotnet restore $TopProject "/p:VersionSuffix=$VersionSuffix"
+        }
+        # Publish Reference Assemblies
+        try {
+            Push-Location $PSScriptRoot
+            @(
+    'System.Management.Automation'
+            ) | % {
+                dotnet pack "src/ReferenceAssemblies/$_" $CommonArgument --configuration Release
+                log "Published $_ Reference Assembly"
+            }
+        } finally {
+            Pop-Location
+        }
     }
 }
 
