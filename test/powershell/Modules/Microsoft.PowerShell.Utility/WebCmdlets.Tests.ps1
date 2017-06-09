@@ -143,11 +143,10 @@ function GetTestData
 }
 
 <#
-    Extract the raw content from a response and
+    Extract the content from a response and
     convert the embedded json to PSObjects.
-    Assumes the raw content is from the  HTTPListener.
 #>
-function Convert-ResponseRawContent
+function Convert-ResponseContent
 {
     param
     (
@@ -156,9 +155,17 @@ function Convert-ResponseRawContent
         [Microsoft.PowerShell.Commands.WebResponseObject] $Response
     )
 
-    $index = $Response.RawContent.IndexOf("{")
-    [string] $rawContent = $Response.RawContent.SubString($index)
-    return ($rawContent | ConvertFrom-Json)
+    $content = $null
+    if ($Response.Content -is [byte[]])
+    {
+        # ISSUE: Recieving a BYTE[] from the httplistener.
+        $content = [string]::new($response.Content) | ConvertFrom-Json
+    }
+    else 
+    {
+        $content = $Response.Content | ConvertFrom-Json    
+    }
+    return $content    
 }
 
 function ExecuteRedirectRequest
@@ -168,7 +175,8 @@ function ExecuteRedirectRequest
         [string]
         $uri,
 
-        [switch] $UsePost,
+        [ValidateSet('POST', 'GET')]
+        [string] $Method = 'GET',
 
         [switch] $PreserveAuthorizationOnRedirect
     )
@@ -177,16 +185,8 @@ function ExecuteRedirectRequest
     try
     {
         $headers = @{"Authorization" = "test"}
-        if ($UsePost)
-        {
-            $result.Output = Invoke-WebRequest -Uri $uri -TimeoutSec 5 -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method POST
-        }
-        else
-        {
-            $result.Output = Invoke-WebRequest -Uri $uri -TimeoutSec 5 -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent
-        }
-
-        $result.Content = Convert-ResponseRawContent -Response $result.Output
+        $result.Output = Invoke-WebRequest -Uri $uri -TimeoutSec 5 -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method
+        $result.Content = Convert-ResponseContent -Response $result.Output
     }
     catch
     {
@@ -200,6 +200,10 @@ Describe "Invoke-WebRequest redirect tests" -Tags "Feature" {
 
     BeforeAll {
         $null = Start-HttpListener -AsJob -Port 8082
+        # ISSUE: On slower systems, initial load of the HTTPListener is taking longer 
+        # than tests expect causing 1 or more tests to fail due to the listener not being ready.
+        # Remove this when switching to a background runspace.
+        Start-Sleep -Seconds 5
     }
 
     AfterAll {
@@ -240,7 +244,7 @@ Describe "Invoke-WebRequest redirect tests" -Tags "Feature" {
     }
 
     It "Validates Invoke-WebRequest preserves the authorization header on multiple redirects." -TestCases $redirectTests {
-        param($redirectType, $redirectedMethod)
+        param($redirectType)
 
         $response = ExecuteRedirectRequest -Uri "http://localhost:8082/PowerShell?test=redirect&type=$redirectType&multiredirect=true" -PreserveAuthorizationOnRedirect
 
@@ -250,7 +254,7 @@ Describe "Invoke-WebRequest redirect tests" -Tags "Feature" {
     }
 
     It "Validates Invoke-WebRequest strips the authorization header on various redirects" -TestCases $redirectTests {
-        param($redirectType, $redirectedMethod)
+        param($redirectType)
 
         $response = ExecuteRedirectRequest -Uri "http://localhost:8082/PowerShell?test=redirect&type=$redirectType"
 
@@ -267,7 +271,7 @@ Describe "Invoke-WebRequest redirect tests" -Tags "Feature" {
     It "Validates Invoke-WebRequest strips the authorization header redirects and switches from POST to GET when it handles the redirect" -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
 
-        $response = ExecuteRedirectRequest -Uri "http://localhost:8082/PowerShell?test=redirect&type=$redirectType" -UsePost
+        $response = ExecuteRedirectRequest -Uri "http://localhost:8082/PowerShell?test=redirect&type=$redirectType" -Method 'POST'
         
         $response.Error | Should BeNullOrEmpty
         # ensure user-agent is present (i.e., no false positives )
