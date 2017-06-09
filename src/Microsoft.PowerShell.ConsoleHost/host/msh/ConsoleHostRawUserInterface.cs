@@ -1745,10 +1745,10 @@ namespace Microsoft.PowerShell
         /// from the keyboard device, blocking processing until a keystroke is
         /// typed that matches the specified keystroke options.
         /// </summary>
-        /// <param name="options">Unused</param>
+        /// <param name="options">Only NoEcho is supported.</param>
         public override KeyInfo ReadKey(ReadKeyOptions options)
         {
-            ConsoleKeyInfo key = Console.ReadKey();
+            ConsoleKeyInfo key = Console.ReadKey((options & ReadKeyOptions.NoEcho) != 0);
             return new KeyInfo((int)key.Key, key.KeyChar, new ControlKeyStates(), true);
         }
 
