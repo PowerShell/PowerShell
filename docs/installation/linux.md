@@ -410,6 +410,29 @@ You *can* run this command manually if you're having trouble with .NET Core's cr
 [brew]: http://brew.sh/
 [homebrew-patch]: https://github.com/Homebrew/brew/pull/597
 
+## Kali
+
+### Installation
+
+```sh
+# Install prerequisites
+apt-get install libunwind8 libicu55
+wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u6_amd64.deb
+dpkg -i libssl1.0.0_1.0.1t-1+deb8u6_amd64.deb
+
+# Install PowerShell
+dpkg -i powershell_6.0.0-alpha.18-1ubuntu1.16.04.1_amd64.deb
+
+# Start PowerShell
+powershell
+```
+
+### Uninstallation - Kali
+
+```sh
+dpkg -r powershell_6.0.0-alpha.18-1ubuntu1.16.04.1_amd64
+```
+
 ## Paths
 
 * `$PSHOME` is `/opt/microsoft/powershell/6.0.0-beta.2/`

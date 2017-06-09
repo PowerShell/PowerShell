@@ -34,6 +34,7 @@ You can download and install a PowerShell package for any of the following platf
 | Many Linux distributions           | [.AppImage][rl-ai]     | [Instructions][in-appimage]   |
 | macOS 10.12                        | [.pkg][rl-macos]       | [Instructions][in-macos]      |
 | Docker                             |                        | [Instructions][in-docker]     |
+| Kali Linux                         | [.deb][rl-ubuntu16]    | [Instructions][in-kali]
 
 [rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.2/PowerShell-6.0.0-beta.2-win10-win2016-x64.msi
 [rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.2/PowerShell-6.0.0-beta.2-win81-win2012r2-x64.msi
@@ -58,6 +59,7 @@ You can download and install a PowerShell package for any of the following platf
 [in-macos]: docs/installation/linux.md#macos-1012
 [in-docker]: docker
 [in-opensuse421]: docs/installation/linux.md#opensuse-421
+[in-kali]: docs/installation/linux.md#kali
 
 To install a specific version, visit [releases](https://github.com/PowerShell/PowerShell/releases).
 
