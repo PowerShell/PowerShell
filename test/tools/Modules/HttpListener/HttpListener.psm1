@@ -273,6 +273,14 @@ Function Start-HTTPListener {
                     {
                         $response.Headers.Add($header, $outputHeader[$header])
                     }
+                    
+                    # Ensure the response.Content on the receiver is plain text
+                    # unless overridden above.
+                    if ($outputHeader.ContainsKey('Content-Type') -eq $false)
+                    {
+                        $response.Headers.Add('Content-Type', 'text/plain')
+                    }
+
                     if ($output -ne $null)
                     {
                         $buffer = [System.Text.Encoding]::UTF8.GetBytes($output)

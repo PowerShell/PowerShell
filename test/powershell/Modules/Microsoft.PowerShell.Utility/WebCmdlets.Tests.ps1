@@ -142,32 +142,6 @@ function GetTestData
     return $body
 }
 
-<#
-    Extract the content from a response and
-    convert the embedded json to PSObjects.
-#>
-function Convert-ResponseContent
-{
-    param
-    (
-        [Parameter(Mandatory)]
-        [ValidateNotNull()]
-        [Microsoft.PowerShell.Commands.WebResponseObject] $Response
-    )
-
-    $content = $null
-    if ($Response.Content -is [byte[]])
-    {
-        # ISSUE: Recieving a BYTE[] from the httplistener.
-        $content = [string]::new($response.Content) | ConvertFrom-Json
-    }
-    else 
-    {
-        $content = $Response.Content | ConvertFrom-Json    
-    }
-    return $content    
-}
-
 function ExecuteRedirectRequest
 {
     param (
@@ -186,7 +160,7 @@ function ExecuteRedirectRequest
     {
         $headers = @{"Authorization" = "test"}
         $result.Output = Invoke-WebRequest -Uri $uri -TimeoutSec 5 -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method
-        $result.Content = Convert-ResponseContent -Response $result.Output
+        $result.Content = $result.Output.Content | ConvertFrom-Json
     }
     catch
     {
