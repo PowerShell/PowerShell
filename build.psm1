@@ -681,13 +681,13 @@ function Publish-PSTestTools {
 
     Find-Dotnet
 
-    $tools = @("$PSScriptRoot/test/tools/EchoArgs", "echoargs"), @("$PSScriptRoot/test/tools/CreateChildProcess", "createchildprocess")
+    $tools = ,@("${PSScriptRoot}/test/tools/TestExe", "testexe")
     if ($Options -eq $null)
     {
         $Options = New-PSOptions
     }
 
-    # Publish EchoArgs so it can be run by tests
+    # Publish tools so it can be run by tests
     foreach ($tool in $tools)
     {
         Push-Location $tool[0]
