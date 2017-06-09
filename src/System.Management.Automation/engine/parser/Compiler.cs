@@ -1335,10 +1335,6 @@ namespace System.Management.Automation.Language
                 {
                     result.IgnoreCase = s_attrArgToBoolConverter.Target(s_attrArgToBoolConverter, argValue);
                 }
-                else if (argumentName.Equals("CacheExpiration", StringComparison.OrdinalIgnoreCase))
-                {
-                    result.CacheExpiration = s_attrArgToIntConverter.Target(s_attrArgToIntConverter, argValue);
-                }
                 else if (argumentName.Equals("ErrorMessage", StringComparison.OrdinalIgnoreCase))
                 {
                     result.ErrorMessage = argValue.ToString();
