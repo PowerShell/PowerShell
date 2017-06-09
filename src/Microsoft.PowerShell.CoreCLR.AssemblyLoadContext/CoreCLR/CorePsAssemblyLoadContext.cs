@@ -64,7 +64,7 @@ namespace System.Management.Automation
         private PowerShellAssemblyLoadContext(string basePaths)
         {
             // Set GAC related member variables to null
-            winDir = gacPath32 = gacPath64 = gacPathMSIL = null;
+            _winDir = _gacPath32 = _gacPath64 = _gacPathMSIL = null;
 
             // FIRST: Validate and populate probing paths
             if (string.IsNullOrEmpty(basePaths))
@@ -108,10 +108,10 @@ namespace System.Management.Automation
         private readonly Dictionary<string, string> _coreClrTypeCatalog;
         private readonly Lazy<HashSet<string>> _availableDotNetAssemblyNames;
 
-        private string winDir;
-        private string gacPathMSIL;
-        private string gacPath32;
-        private string gacPath64;
+        private string _winDir;
+        private string _gacPathMSIL;
+        private string _gacPath32;
+        private string _gacPath64;
 
         /// <summary>
         /// Assembly cache across the AppDomain
@@ -261,11 +261,15 @@ namespace System.Management.Automation
                 // In this case, return null so that other Resolving event handlers can kick in to resolve the request.
                 if (!isAssemblyFileFound || !isAssemblyFileMatching)
                 {
+#if !UNIX
                     //Try loading from GAC
                     if(!TryFindInGAC(assemblyName, out asmFilePath))
                     {
                          return null;
                     }
+#else
+                    return null;
+#endif
                 }
 
                 asmLoaded = asmFilePath.EndsWith(".ni.dll", StringComparison.OrdinalIgnoreCase)
@@ -281,6 +285,7 @@ namespace System.Management.Automation
             return asmLoaded;
         }
 
+#if !UNIX
         // Try to find the assembly in GAC by looking up the directories in well know locations.
         // First try to find in GAC_MSIL, then depending on process bitness; GAC_64 or GAC32.
         // If there are multiple version of the assembly, load the latest.
@@ -290,21 +295,21 @@ namespace System.Management.Automation
             assemblyFilePath = null;
             char dirSeparator = IO.Path.DirectorySeparatorChar;
 
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows) && PowerShellAssemblyLoadContextTestHooks.AllowGACLoading)
+            if (PowerShellAssemblyLoadContextTestHooks.AllowGACLoading)
             {
-                if(String.IsNullOrEmpty(winDir))
+                if(String.IsNullOrEmpty(_winDir))
                 {
-                    //cache value of 'windir' folder in member variable.
-                    winDir = Environment.GetEnvironmentVariable("WINDIR");
+                    //cache value of '_winDir' folder in member variable.
+                    _winDir = Environment.GetEnvironmentVariable("_winDir");
                 }
 
-                if (String.IsNullOrEmpty(gacPathMSIL))
+                if (String.IsNullOrEmpty(_gacPathMSIL))
                 {
-                    //cache value of 'gacPathMSIL' folder in member variable.
-                    gacPathMSIL = $"{winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_MSIL";
+                    //cache value of '_gacPathMSIL' folder in member variable.
+                    _gacPathMSIL = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_MSIL";
                 }
 
-                assemblyFound = FindInGac(gacPathMSIL, assemblyName, out assemblyFilePath);
+                assemblyFound = FindInGac(_gacPathMSIL, assemblyName, out assemblyFilePath);
 
                 if(!assemblyFound)
                 {
@@ -312,23 +317,23 @@ namespace System.Management.Automation
 
                     if(Environment.Is64BitProcess)
                     {
-                        if(String.IsNullOrEmpty(gacPath64))
+                        if(String.IsNullOrEmpty(_gacPath64))
                         {
-                            //cache value of 'gacPath64' folder in member variable.
-                            gacPath64 = $"{winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_64";
+                            //cache value of '_gacPath64' folder in member variable.
+                            _gacPath64 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_64";
                         }
 
-                        gacBitnessAwarePath = gacPath64;
+                        gacBitnessAwarePath = _gacPath64;
                     }
                     else
                     {
-                        if(String.IsNullOrEmpty(gacPath32))
+                        if(String.IsNullOrEmpty(_gacPath32))
                         {
-                            //cache value of 'gacPath32' folder in member variable.
-                            gacPath32 = $"{winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_32";
+                            //cache value of '_gacPath32' folder in member variable.
+                            _gacPath32 = $"{_winDir}{dirSeparator}Microsoft.NET{dirSeparator}assembly{dirSeparator}GAC_32";
                         }
 
-                        gacBitnessAwarePath = gacPath32;
+                        gacBitnessAwarePath = _gacPath32;
                     }
 
                     assemblyFound = FindInGac(gacBitnessAwarePath, assemblyName, out assemblyFilePath);
@@ -350,12 +355,12 @@ namespace System.Management.Automation
             if(Directory.Exists(tempAssemblyDirPath))
             {
                 //Enumerate all directories, sort by name and select the last. This selects the latest version.
-                var choosenVersionDirectory = Directory.GetDirectories(tempAssemblyDirPath).OrderBy(d => d).LastOrDefault();
+                var chosenVersionDirectory = Directory.GetDirectories(tempAssemblyDirPath).OrderBy(d => d).LastOrDefault();
 
-                if(!String.IsNullOrEmpty(choosenVersionDirectory))
+                if(!String.IsNullOrEmpty(chosenVersionDirectory))
                 {
                     //Select first or default as the directory will contain only one assembly. If nothing then default is null;
-                    var foundAssemblyPath = Directory.GetFiles(choosenVersionDirectory, $"{assemblyName.Name}*").FirstOrDefault();
+                    var foundAssemblyPath = Directory.GetFiles(chosenVersionDirectory, $"{assemblyName.Name}*").FirstOrDefault();
 
                     if(!String.IsNullOrEmpty(foundAssemblyPath))
                     {
@@ -371,6 +376,7 @@ namespace System.Management.Automation
 
             return assemblyFound;
         }
+#endif
 
         /// <summary>
         /// Try to get the specified assembly from cache
