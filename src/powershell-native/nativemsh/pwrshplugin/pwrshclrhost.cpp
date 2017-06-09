@@ -32,12 +32,6 @@ typedef DWORD (WINAPI *InitPluginWkrPtrsFuncPtr)(__out PwrshPluginWkr_Ptrs* wkrP
 
 #ifdef CORECLR
 
-// Define the function pointer for the powershell entry point.
-typedef int (STDMETHODCALLTYPE *MonadRunHelperFp)(int length, LPCWSTR* commands);
-
-// Define the function pointer for AssemblyLoadContext initializer.
-typedef void (STDMETHODCALLTYPE *LoaderRunHelperFp)(LPCWSTR appPath);
-
 unsigned int PowerShellCoreClrWorker::LaunchClr(
     _In_ LPCWSTR wszMonadVersion,
     _In_ LPCWSTR wszRuntimeVersion,
@@ -54,34 +48,17 @@ unsigned int PowerShellCoreClrWorker::LoadWorkerCallbackPtrs(
 
     *pPluginException = NULL;
 
-    // Set the powershell custom assembly loader to be the default
-    LoaderRunHelperFp initDelegate = NULL;
-    HRESULT hr = hostWrapper->CreateDelegate(
-        "Microsoft.PowerShell.CoreCLR.AssemblyLoadContext, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
-        "System.Management.Automation.PowerShellAssemblyLoadContextInitializer",
-        "SetPowerShellAssemblyLoadContext",
-        //(INT_PTR*)&initDelegate);
-        (void**)&initDelegate);
-
-    if (FAILED(hr))
-    {
-        output->DisplayMessage(false, g_CREATING_MSH_ENTRANCE_FAILED, hr);
-    }
-    else
-    {
-        initDelegate(hostEnvironment.GetHostDirectoryPathW());
-    }
-
     // Call into powershell entry point
     InitPluginWkrPtrsFuncPtr entryPointDelegate = NULL;
 
     // Create the function pointer for the managed entry point
     // It must be targeted at a static method in the managed code.
-    hr = hostWrapper->CreateDelegate(
+    HRESULT hr = hostWrapper->CreateDelegate(
         "System.Management.Automation, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35",
         "System.Management.Automation.Remoting.WSManPluginManagedEntryWrapper",
         "InitPlugin",
         (void**)&entryPointDelegate);
+    
     if (FAILED(hr))
     {
         output->DisplayMessage(false, g_CREATING_MSH_ENTRANCE_FAILED, hr);
