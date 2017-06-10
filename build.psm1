@@ -128,7 +128,12 @@ function Start-PSBuild {
         [switch]$Publish,
 
         [Parameter(ParameterSetName='CoreCLR')]
-        [switch]$CrossGen
+        [switch]$CrossGen,
+
+        [Parameter(ParameterSetName='CoreCLR')]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
+        [ValidateNotNullOrEmpty()]
+        [string]$ReleaseTag
     )
 
     function Stop-DevPowerShell {
@@ -157,8 +162,13 @@ function Start-PSBuild {
         }
     }
 
-    # save Git description to file for PowerShell to include in PSVersionTable
-    git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60 > "$psscriptroot/powershell.version"
+    # save git commit id to file for PowerShell to include in PSVersionTable
+    $gitCommitId = $ReleaseTag
+    if (-not $gitCommitId) {
+        # if ReleaseTag is not specified, use 'git describe' to get the commit id
+        $gitCommitId = git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60
+    }
+    $gitCommitId > "$psscriptroot/powershell.version"
 
     # create the telemetry flag file
     $null = new-item -force -type file "$psscriptroot/DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY"
@@ -239,7 +249,11 @@ function Start-PSBuild {
 
     $Arguments += "--configuration", $Options.Configuration
     $Arguments += "--framework", $Options.Framework
-    $Arguments += "--runtime", $Options.Runtime
+
+    if (-not $SMAOnly) {
+        # libraries should not have runtime
+        $Arguments += "--runtime", $Options.Runtime
+    }
 
     # handle Restore
     if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
@@ -463,7 +477,8 @@ function Compress-TestContent {
         $Destination
     )
 
-    $powerShellTestRoot =  Join-Path $PSScriptRoot 'test\powershell'
+    Publish-PSTestTools
+    $powerShellTestRoot =  Join-Path $PSScriptRoot 'test'
     Add-Type -AssemblyName System.IO.Compression.FileSystem
 
     $resolvedPath = $ExecutionContext.SessionState.Path.GetUnresolvedProviderPathFromPSPath($Destination)
@@ -1204,9 +1219,16 @@ function Start-PSBootstrap {
 
 
 function Start-PSPackage {
-    [CmdletBinding()]param(
+    [CmdletBinding(DefaultParameterSetName='Version')]
+    param(
         # PowerShell packages use Semantic Versioning http://semver.org/
+        [Parameter(ParameterSetName = "Version")]
         [string]$Version,
+
+        [Parameter(ParameterSetName = "ReleaseTag")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
+        [ValidateNotNullOrEmpty()]
+        [string]$ReleaseTag,
 
         # Package name
         [ValidatePattern("^powershell")]
@@ -1251,6 +1273,11 @@ function Start-PSPackage {
         # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
         # are generated, it'll be hard to verify if they were built from the correct content.
         throw "Please ensure you have run 'Start-PSBuild -Clean -CrossGen -Runtime $Runtime -Configuration $Configuration'!"
+    }
+
+    # If ReleaseTag is specified, use the given tag to calculate Vesrion
+    if ($PSCmdlet.ParameterSetName -eq "ReleaseTag") {
+        $Version = $ReleaseTag -Replace '^v'
     }
 
     # Use Git tag if not given a version
@@ -1634,7 +1661,7 @@ esac
     # OpenSUSE 42.1 (13.2 might build but is EOL)
     # Also SEE: https://fedoraproject.org/wiki/Packaging:DistTag
     if ($IsCentOS) {
-        $rpm_dist = "el7.centos"
+        $rpm_dist = "el7"
     } elseif ($IsFedora) {
         $version_id = $LinuxInfo.VERSION_ID
         $rpm_dist = "fedora.$version_id"

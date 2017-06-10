@@ -127,3 +127,4 @@
     <value>Cannot unprotect message. The input contained no encrypted content. Specify the '{0}' parameter if you wish to output the original content when no encrypted content is detected.</value>
   </data>
 </root>
+

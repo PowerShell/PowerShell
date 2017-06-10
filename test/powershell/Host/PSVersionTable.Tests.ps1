@@ -1,6 +1,6 @@
 Describe "PSVersionTable" -Tags "CI" {
     It "Should have version table entries" {
-       $PSVersionTable.Count | Should Be 11
+       $PSVersionTable.Count | Should Be 10
     }
 
     It "Should have the right version table entries" {
@@ -9,7 +9,6 @@ Describe "PSVersionTable" -Tags "CI" {
        $PSVersionTable.ContainsKey("WSManStackVersion")         | Should Be True
        $PSVersionTable.ContainsKey("SerializationVersion")      | Should Be True
        $PSVersionTable.ContainsKey("CLRVersion")                | Should Be True
-       $PSVersionTable.ContainsKey("BuildVersion")              | Should Be True
        $PSVersionTable.ContainsKey("PSCompatibleVersions")      | Should Be True
        $PSVersionTable.ContainsKey("PSRemotingProtocolVersion") | Should Be True
        $PSVersionTable.ContainsKey("GitCommitId")               | Should Be True

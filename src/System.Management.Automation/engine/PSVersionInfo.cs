@@ -20,7 +20,6 @@ namespace System.Management.Automation
         internal const string PSRemotingProtocolVersionName = "PSRemotingProtocolVersion";
         internal const string PSVersionName = "PSVersion";
         internal const string PSEditionName = "PSEdition";
-        internal const string PSBuildVersionName = "BuildVersion";
         internal const string PSGitCommitIdName = "GitCommitId";
         internal const string PSCompatibleVersionsName = "PSCompatibleVersions";
         internal const string PSCLRVersionName = "CLRVersion";
@@ -65,7 +64,6 @@ namespace System.Management.Automation
 
             s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV6Version;
             s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;
-            s_psVersionTable[PSBuildVersionName] = GetBuildVersion();
             s_psVersionTable[PSGitCommitIdName] = GetCommitInfo();
             s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version };
             s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
@@ -92,13 +90,6 @@ namespace System.Management.Automation
             // Downlevel systems don't support SemanticVersion, but Version is most likely good enough anyway.
             result[PSVersionInfo.PSVersionName] = (Version)(SemanticVersion)s_psVersionTable[PSVersionInfo.PSVersionName];
             return result;
-        }
-
-        internal static Version GetBuildVersion()
-        {
-            string assemblyPath = typeof(PSVersionInfo).GetTypeInfo().Assembly.Location;
-            string buildVersion = FileVersionInfo.GetVersionInfo(assemblyPath).FileVersion;
-            return new Version(buildVersion);
         }
 
         // Get the commit id from the powershell.version file. If the powershell.version file doesn't exist, use the string "N/A"
@@ -176,14 +167,6 @@ namespace System.Management.Automation
             get
             {
                 return (Version)GetPSVersionTable()[PSCLRVersionName];
-            }
-        }
-
-        internal static Version BuildVersion
-        {
-            get
-            {
-                return (Version)GetPSVersionTable()[PSBuildVersionName];
             }
         }
 

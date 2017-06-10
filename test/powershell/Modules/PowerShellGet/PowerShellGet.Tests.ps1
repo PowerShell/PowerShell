@@ -69,14 +69,9 @@ $script:MyDocumentsScriptsPath = Microsoft.PowerShell.Management\Join-Path -Path
 
 function Initialize
 {
-    # Check if the PackageManagement works in the base-oS or PowerShellCore
-    $PSHome
-    $PSVersionTable
-    $env:PSModulePath
-
-    Get-Module -ListAvailable -Name PackageManagement, PowerShellGet
-    Import-Module PackageManagement -verbose
-    Get-PackageProvider -ListAvailable
+    # Cleaned up commands whose output to console by deleting or piping to Out-Null
+    Import-Module PackageManagement
+    Get-PackageProvider -ListAvailable | Out-Null
 
     $repo = Get-PSRepository -ErrorAction SilentlyContinue |
                 Where-Object {$_.SourceLocation.StartsWith($SourceLocation, [System.StringComparison]::OrdinalIgnoreCase)}

@@ -80,7 +80,7 @@ namespace Microsoft.PowerShell.Cim
 
             internal void Copy(SecureString source, int offset)
             {
-                IntPtr plainTextString = ClrFacade.SecureStringToCoTaskMemUnicode(source);
+                IntPtr plainTextString = Marshal.SecureStringToCoTaskMemUnicode(source);
                 try
                 {
                     unsafe

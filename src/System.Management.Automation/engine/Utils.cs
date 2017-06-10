@@ -175,7 +175,7 @@ namespace System.Management.Automation
 
             try
             {
-                p = ClrFacade.SecureStringToCoTaskMemUnicode(ss);
+                p = Marshal.SecureStringToCoTaskMemUnicode(ss);
                 s = Marshal.PtrToStringUni(p);
             }
             finally
@@ -1153,8 +1153,22 @@ namespace System.Management.Automation
 
         internal class NativeMethods
         {
-            [DllImport(PinvokeDllNames.GetFileAttributesDllName, CharSet = CharSet.Unicode, SetLastError = true)]
-            internal static extern int GetFileAttributes(string lpFileName);
+            private static string EnsureLongPathPrefixIfNeeded(string path)
+            {
+                if (path.Length >= MAX_PATH && !path.StartsWith(@"\\?\", StringComparison.Ordinal))
+                    return @"\\?\" + path;
+
+                return path;
+            }
+
+            [DllImport(PinvokeDllNames.GetFileAttributesDllName, EntryPoint = "GetFileAttributesW", CharSet = CharSet.Unicode, SetLastError = true)]
+            private static extern int GetFileAttributesPrivate(string lpFileName);
+
+            internal static int GetFileAttributes(string fileName)
+            {
+                fileName = EnsureLongPathPrefixIfNeeded(fileName);
+                return GetFileAttributesPrivate(fileName);
+            }
 
             [Flags]
             internal enum FileAttributes
@@ -1579,6 +1593,11 @@ namespace System.Management.Automation.Internal
         internal static bool IgnoreScriptBlockCache;
         // Simulate 'System.Diagnostics.Stopwatch.IsHighResolution is false' to test Get-Uptime throw
         internal static bool StopwatchIsNotHighResolution;
+
+        // Used in the FileSystemProvider to simulate deleting a file during enumeration in Get-ChildItem
+        internal static bool GciEnumerationActionDelete = false;
+        // Used in the FileSystemProvider to simulate renaming a file during enumeration in Get-ChildItem
+        internal static bool GciEnumerationActionRename = false;
 
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, bool value)

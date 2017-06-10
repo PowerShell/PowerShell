@@ -1,4 +1,4 @@
-﻿/********************************************************************++
+/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
@@ -231,7 +231,6 @@ namespace Microsoft.PowerShell
             return valid;
         }
 
-#if UNIX
         // this is borrowed from the CoreFX internal System.IO.StdInReader class
         // https://github.com/dotnet/corefx/blob/5b2ae6aa485773cd5569f56f446698633c9ad945/src/System.Console/src/System/IO/StdInReader.cs#L222
         private static ConsoleKey GetKeyFromCharValue(char x, out bool isShift, out bool isCtrl)
@@ -303,7 +302,8 @@ namespace Microsoft.PowerShell
 
             return default(ConsoleKey);
         }
-#else
+
+#if !UNIX
         internal static char GetCharFromConsoleKey(ConsoleKey key, ConsoleModifiers modifiers)
         {
             // default for unprintables and unhandled

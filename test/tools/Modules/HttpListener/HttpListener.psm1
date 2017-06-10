@@ -37,7 +37,7 @@ Function Start-HTTPListener {
         [Int] $Port = 8080,
 
         [Parameter()]
-        [switch] $AsJob
+        [switch] $Foreground
         )
 
     Process {
@@ -214,19 +214,36 @@ Function Start-HTTPListener {
                     $response.Close()
                 }
             }
+            catch
+            {
+                $errormsg = $_ | convertto-json
+                Write-Error $errormsg
+            }
             finally
             {
                 $listener.Stop()
+                Write-Information "Listener is stopped" -InformationAction Continue
             }
         }
 
-        if ($AsJob)
+        if ($Foreground)
         {
-            Start-Job -ScriptBlock $script -ArgumentList $Port
+            & $script -Port $Port
         }
         else
         {
-            & $script -Port $Port
+            $ps = [powershell]::Create()
+            $null = $ps.AddScript($script)
+            $null = $ps.AddParameter("port",$port)
+            $AsyncResponse = $ps.BeginInvoke()
+            # include the AsyncResponse in the return object
+            # it can be used to determine whether execution
+            # is still underway, and may be useful in debugging
+            # if something goes amiss
+            [pscustomobject]@{
+                PowerShell = $ps
+                AsyncResponse  = $AsyncResponse
+                }
         }
     }
 }

@@ -1375,7 +1375,7 @@ namespace System.Management.Automation
 
                 try
                 {
-                    loadedAssembly = ClrFacade.LoadFrom(filename);
+                    loadedAssembly = Assembly.LoadFrom(filename);
                     return loadedAssembly;
                 }
                 catch (FileNotFoundException fileNotFound)

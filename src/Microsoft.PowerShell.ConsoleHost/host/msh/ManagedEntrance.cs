@@ -9,6 +9,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Globalization;
+using System.Threading;
 
 #if CORECLR
 using System.Runtime.InteropServices;
@@ -65,8 +66,8 @@ namespace Microsoft.PowerShell
             // The currentUICulture returned NativeCultureResolver supports this non
             // traditional fallback on Vista. So it is important to set currentUICulture
             // in the beginning before we do anything.
-            ClrFacade.SetCurrentThreadUiCulture(NativeCultureResolver.UICulture);
-            ClrFacade.SetCurrentThreadCulture(NativeCultureResolver.Culture);
+            Thread.CurrentThread.CurrentUICulture = NativeCultureResolver.UICulture;
+            Thread.CurrentThread.CurrentCulture = NativeCultureResolver.Culture;
 
             RunspaceConfigForSingleShell configuration = null;
             PSConsoleLoadException warning = null;
@@ -114,9 +115,10 @@ namespace Microsoft.PowerShell
 #else
                 var banner = ManagedEntranceStrings.ShellBanner;
 #endif
+                var formattedBanner = string.Format(CultureInfo.InvariantCulture, banner, PSVersionInfo.GitCommitId);
                 exitCode = Microsoft.PowerShell.ConsoleShell.Start(
                     configuration,
-                    banner,
+                    formattedBanner,
                     ManagedEntranceStrings.ShellHelp,
                     warning == null ? null : warning.Message,
                     args);

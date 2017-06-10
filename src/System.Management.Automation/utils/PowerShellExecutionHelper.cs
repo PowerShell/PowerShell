@@ -1,34 +1,28 @@
-
-/********************************************************************++
+﻿/********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Management.Automation.Runspaces;
+
 namespace System.Management.Automation
 {
-    using System;
-    using System.Collections.ObjectModel;
-    using System.Collections.Generic;
-    using System.Management.Automation.Runspaces;
-    using System.Collections;
-
-    /// <summary>
-    /// Auxiliary class to the execution of commands as needed by
-    /// CommandCompletion
-    /// </summary>
-    internal class CompletionExecutionHelper
+    internal class PowerShellExecutionHelper
     {
         #region Constructors
 
-        // Creates a new CompletionExecutionHelper with the PowerShell instance that will be used to execute the tab expansion commands
+        // Creates a new PowerShellExecutionHelper with the PowerShell instance that will be used to execute the tab expansion commands
         // Used by the ISE
-        internal CompletionExecutionHelper(PowerShell powershell)
+        internal PowerShellExecutionHelper(PowerShell powershell)
         {
             if (powershell == null)
             {
                 throw PSTraceSource.NewArgumentNullException("powershell");
             }
 
-            this.CurrentPowerShell = powershell;
+            CurrentPowerShell = powershell;
         }
 
         #endregion Constructors
@@ -44,16 +38,10 @@ namespace System.Management.Automation
         internal PowerShell CurrentPowerShell { get; set; }
 
         // Returns true if this instance is currently executing a command
-        internal bool IsRunning
-        {
-            get { return CurrentPowerShell.InvocationStateInfo.State == PSInvocationState.Running; }
-        }
+        internal bool IsRunning => CurrentPowerShell.InvocationStateInfo.State == PSInvocationState.Running;
 
         // Returns true if the command executed by this instance was stopped
-        internal bool IsStopped
-        {
-            get { return CurrentPowerShell.InvocationStateInfo.State == PSInvocationState.Stopped; }
-        }
+        internal bool IsStopped => CurrentPowerShell.InvocationStateInfo.State == PSInvocationState.Stopped;
 
         #endregion Fields and Properties
 
@@ -62,7 +50,7 @@ namespace System.Management.Automation
         internal Collection<PSObject> ExecuteCommand(string command)
         {
             Exception unused;
-            return this.ExecuteCommand(command, true, out unused, null);
+            return ExecuteCommand(command, true, out unused, null);
         }
 
         internal bool ExecuteCommandAndGetResultAsBool()
@@ -106,7 +94,7 @@ namespace System.Management.Automation
             exceptionThrown = null;
 
             // This flag indicates a previous call to this method had its pipeline cancelled
-            if (this.CancelTabCompletion)
+            if (CancelTabCompletion)
             {
                 return new Collection<PSObject>();
             }
@@ -130,10 +118,10 @@ namespace System.Management.Automation
 
                 // If this pipeline has been stopped lets set a flag to cancel all future tab completion calls
                 // untill the next completion
-                if (this.IsStopped)
+                if (IsStopped)
                 {
                     results = new Collection<PSObject>();
-                    this.CancelTabCompletion = true;
+                    CancelTabCompletion = true;
                 }
             }
             catch (Exception e)
@@ -149,7 +137,7 @@ namespace System.Management.Automation
             exceptionThrown = null;
 
             // This flag indicates a previous call to this method had its pipeline cancelled
-            if (this.CancelTabCompletion)
+            if (CancelTabCompletion)
             {
                 return new Collection<PSObject>();
             }
@@ -161,10 +149,10 @@ namespace System.Management.Automation
 
                 // If this pipeline has been stopped lets set a flag to cancel all future tab completion calls
                 // untill the next completion
-                if (this.IsStopped)
+                if (IsStopped)
                 {
                     results = new Collection<PSObject>();
-                    this.CancelTabCompletion = true;
+                    CancelTabCompletion = true;
                 }
             }
             catch (Exception e)
@@ -235,5 +223,40 @@ namespace System.Management.Automation
         }
 
         #endregion Helpers
+    }
+
+    internal static class PowerShellExtensionHelpers
+    {
+        internal static PowerShell AddCommandWithPreferenceSetting(this PowerShellExecutionHelper helper,
+            string command, Type type = null)
+        {
+            return helper.CurrentPowerShell.AddCommandWithPreferenceSetting(command, type);
+        }
+
+        internal static PowerShell AddCommandWithPreferenceSetting(this PowerShell powershell, string command, Type type = null)
+        {
+            Diagnostics.Assert(powershell != null, "the passed-in powershell cannot be null");
+            Diagnostics.Assert(!String.IsNullOrWhiteSpace(command),
+                "the passed-in command name should not be null or whitespaces");
+
+            if (type != null)
+            {
+                var cmdletInfo = new CmdletInfo(command, type);
+
+                powershell.AddCommand(cmdletInfo);
+            }
+            else
+            {
+                powershell.AddCommand(command);
+            }
+            powershell
+                .AddParameter("ErrorAction", ActionPreference.Ignore)
+                .AddParameter("WarningAction", ActionPreference.Ignore)
+                .AddParameter("InformationAction", ActionPreference.Ignore)
+                .AddParameter("Verbose", false)
+                .AddParameter("Debug", false);
+
+            return powershell;
+        }
     }
 }

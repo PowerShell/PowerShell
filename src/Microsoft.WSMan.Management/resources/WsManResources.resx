@@ -221,11 +221,11 @@ Do you want to enable CredSSP authentication?</value>
   <data name="QuickConfigContinueQuery" xml:space="preserve">
     <value>Running the Set-WSManQuickConfig command has significant security implications, as it enables remote management through the WinRM service on this computer.
 This command:
-	1. Checks whether the WinRM service is running. If the WinRM service is not running, the service is started.
-	2. Sets the WinRM service startup type to automatic.
-	3. Creates a listener to accept requests on any IP address. By default, the transport is HTTP.
-	4. Enables a firewall exception for WS-Management traffic.
-	5. Enables Kerberos and Negotiate service authentication.
+    1. Checks whether the WinRM service is running. If the WinRM service is not running, the service is started.
+    2. Sets the WinRM service startup type to automatic.
+    3. Creates a listener to accept requests on any IP address. By default, the transport is HTTP.
+    4. Enables a firewall exception for WS-Management traffic.
+    5. Enables Kerberos and Negotiate service authentication.
 Do you want to enable remote management through the WinRM service on this computer?</value>
   </data>
   <data name="SetItemOnRunAsPasswordNoRunAsUser" xml:space="preserve">

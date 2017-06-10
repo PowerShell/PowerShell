@@ -1677,50 +1677,84 @@ namespace Microsoft.PowerShell.Commands
                             return;
                         }
 
-                        bool attributeFilter = true;
-                        bool switchAttributeFilter = true;
-                        bool filterHidden = false;           // "Hidden" is specified somewhere in the expression
-                        bool switchFilterHidden = false;     // "Hidden" is specified somewhere in the parameters
-
-                        if (null != evaluator)
+                        // Internal test code, run only if one of the
+                        // 'GciEnumerationAction' test hooks are set.
+                        if (InternalTestHooks.GciEnumerationActionDelete)
                         {
-                            attributeFilter = evaluator.Evaluate(filesystemInfo.Attributes);  // expressions
-                            filterHidden = evaluator.ExistsInExpression(FileAttributes.Hidden);
-                        }
-                        if (null != switchEvaluator)
-                        {
-                            switchAttributeFilter = switchEvaluator.Evaluate(filesystemInfo.Attributes);  // switch parameters
-                            switchFilterHidden = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
-                        }
-
-                        bool hidden = false;
-                        if (!Force) hidden = (filesystemInfo.Attributes & FileAttributes.Hidden) != 0;
-
-                        // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
-                        // default hidden attribute filter.
-                        // if specification is to return all containers, then do not do attribute filter on
-                        // the containers.
-                        bool attributeSatisfy =
-                            ((attributeFilter && switchAttributeFilter) ||
-                                ((returnContainers == ReturnContainers.ReturnAllContainers) &&
-                                ((filesystemInfo.Attributes & FileAttributes.Directory) != 0)));
-
-                        if (attributeSatisfy && (filterHidden || switchFilterHidden || Force || !hidden))
-                        {
-                            if (nameOnly)
+                            if (string.Equals(filesystemInfo.Name, "c283d143-2116-4809-bf11-4f7d61613f92", StringComparison.InvariantCulture))
                             {
-                                WriteItemObject(
-                                    filesystemInfo.Name,
-                                    filesystemInfo.FullName,
-                                    false);
+                                File.Delete(filesystemInfo.FullName);
                             }
-                            else
+                        }
+                        else if (InternalTestHooks.GciEnumerationActionRename)
+                        {
+                            if (string.Equals(filesystemInfo.Name, "B1B691A9-B7B1-4584-AED7-5259511BEEC4", StringComparison.InvariantCulture))
                             {
-                                if (filesystemInfo is FileInfo)
-                                    WriteItemObject(filesystemInfo, filesystemInfo.FullName, false);
+                                var newFullName = Path.Combine(directory.FullName, "77efd2bb-92aa-4ad3-979a-18936a4bd565");
+                                File.Move(filesystemInfo.FullName, newFullName);
+                            }
+                        }
+
+                        try
+                        {
+                            bool attributeFilter = true;
+                            bool switchAttributeFilter = true;
+                            // 'Hidden' is specified somewhere in the expression
+                            bool filterHidden = false;
+                            // 'Hidden' is specified somewhere in the parameters
+                            bool switchFilterHidden = false;
+
+                            if (null != evaluator)
+                            {
+                                attributeFilter = evaluator.Evaluate(filesystemInfo.Attributes);
+                                filterHidden = evaluator.ExistsInExpression(FileAttributes.Hidden);
+                            }
+                            if (null != switchEvaluator)
+                            {
+                                switchAttributeFilter = switchEvaluator.Evaluate(filesystemInfo.Attributes);
+                                switchFilterHidden = switchEvaluator.ExistsInExpression(FileAttributes.Hidden);
+                            }
+
+                            bool hidden = false;
+                            if (!Force)
+                            {
+                                hidden = (filesystemInfo.Attributes & FileAttributes.Hidden) != 0;
+                            }
+
+                            // If 'Hidden' is explicitly specified anywhere in the attribute filter, then override
+                            // default hidden attribute filter.
+                            // If specification is to return all containers, then do not do attribute filter on
+                            // the containers.
+                            bool attributeSatisfy =
+                                ((attributeFilter && switchAttributeFilter) ||
+                                    ((returnContainers == ReturnContainers.ReturnAllContainers) &&
+                                    ((filesystemInfo.Attributes & FileAttributes.Directory) != 0)));
+
+                            if (attributeSatisfy && (filterHidden || switchFilterHidden || Force || !hidden))
+                            {
+                                if (nameOnly)
+                                {
+                                    WriteItemObject(
+                                        filesystemInfo.Name,
+                                        filesystemInfo.FullName,
+                                        false);
+                                }
                                 else
-                                    WriteItemObject(filesystemInfo, filesystemInfo.FullName, true);
+                                {
+                                    if (filesystemInfo is FileInfo)
+                                        WriteItemObject(filesystemInfo, filesystemInfo.FullName, false);
+                                    else
+                                        WriteItemObject(filesystemInfo, filesystemInfo.FullName, true);
+                                }
                             }
+                        }
+                        catch (System.IO.FileNotFoundException ex)
+                        {
+                            WriteError(new ErrorRecord(ex, "DirIOError", ErrorCategory.ReadError, directory.FullName));
+                        }
+                        catch (UnauthorizedAccessException ex)
+                        {
+                            WriteError(new ErrorRecord(ex, "DirUnauthorizedAccessError", ErrorCategory.PermissionDenied, directory.FullName));
                         }
                     }// foreach
                 }// foreach

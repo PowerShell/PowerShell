@@ -964,7 +964,7 @@ namespace Microsoft.PowerShell.Commands
                 Assembly assembly = LoadAssemblyHelper(assemblyName);
                 if (assembly == null)
                 {
-                    assembly = LoadFrom(ResolveAssemblyName(assemblyName, false));
+                    assembly = Assembly.LoadFrom(ResolveAssemblyName(assemblyName, false));
                 }
 
                 if (passThru)
@@ -1276,7 +1276,7 @@ namespace Microsoft.PowerShell.Commands
                     {
                         ms.Flush();
                         ms.Seek(0, SeekOrigin.Begin);
-                        Assembly assembly = LoadFrom(ms);
+                        Assembly assembly = Assembly.Load(ms.ToArray());
                         CheckTypesForDuplicates(assembly);
                         if (passThru)
                         {
@@ -1292,7 +1292,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (passThru)
                     {
-                        Assembly assembly = LoadFrom(outputAssembly);
+                        Assembly assembly = Assembly.LoadFrom(outputAssembly);
                         CheckTypesForDuplicates(assembly);
                         WriteTypes(assembly);
                     }
@@ -1317,16 +1317,6 @@ namespace Microsoft.PowerShell.Commands
                     Column = d.Location.GetMappedLineSpan().StartLinePosition.Character + 1, // Convert 0-based to 1-based
                     ErrorNumber = d.Id
                 }).ToArray();
-        }
-
-        private Assembly LoadFrom(Stream assembly)
-        {
-            return ClrFacade.LoadFrom(assembly);
-        }
-
-        private Assembly LoadFrom(string path)
-        {
-            return ClrFacade.LoadFrom(path);
         }
     }
 
@@ -1955,7 +1945,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 foreach (string path in paths)
                 {
-                    generatedTypes.AddRange(ClrFacade.LoadFrom(path).GetTypes());
+                    generatedTypes.AddRange(Assembly.LoadFrom(path).GetTypes());
                 }
             }
             // Load the assembly by name

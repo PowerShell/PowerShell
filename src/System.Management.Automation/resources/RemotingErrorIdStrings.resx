@@ -1637,3 +1637,4 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>The provided role capability file {0} does not have the required .psrc extension.</value>
   </data>
 </root>
+

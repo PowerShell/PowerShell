@@ -1079,8 +1079,8 @@ namespace Microsoft.PowerShell
             }
 #endif
 
-            ClrFacade.SetCurrentThreadUiCulture(this.CurrentUICulture);
-            ClrFacade.SetCurrentThreadCulture(this.CurrentCulture);
+            Thread.CurrentThread.CurrentUICulture = this.CurrentUICulture;
+            Thread.CurrentThread.CurrentCulture = this.CurrentCulture;
             // BUG: 610329. Tell PowerShell engine to apply console
             // related properties while launching Pipeline Execution
             // Thread.

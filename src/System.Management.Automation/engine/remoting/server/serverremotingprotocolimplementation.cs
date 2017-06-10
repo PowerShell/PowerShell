@@ -211,7 +211,7 @@ namespace System.Management.Automation.Remoting
                         // this will happen if expected properties are not
                         // received for session capability
                         throw new PSRemotingDataStructureException(RemotingErrorIdStrings.ServerNotFoundCapabilityProperties,
-                            dse.Message, PSVersionInfo.BuildVersion, RemotingConstants.ProtocolVersion);
+                            dse.Message, PSVersionInfo.GitCommitId, RemotingConstants.ProtocolVersion);
                     }
 
                     RemoteSessionStateMachineEventArgs capabilityArg = new RemoteSessionStateMachineEventArgs(RemoteSessionEvent.NegotiationReceived);

@@ -995,7 +995,7 @@ namespace System.Management.Automation.Internal
 
             if (_rsaCryptoProvider.CanEncrypt)
             {
-                IntPtr ptr = ClrFacade.SecureStringToCoTaskMemUnicode(secureString);
+                IntPtr ptr = Marshal.SecureStringToCoTaskMemUnicode(secureString);
 
                 if (ptr != IntPtr.Zero)
                 {

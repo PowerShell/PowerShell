@@ -8,6 +8,7 @@ Issues are opened for many different reasons.
 We use the following labels for issue classifications:
 
 * `Issue-Bug`: the issue is reporting a bug
+* `Issue-Code Cleanup`: the issue is for cleaning up the code with no impact on functionality
 * `Issue-Discussion`: the issue may not have a clear classification yet.
   The issue may generate an [RFC][ln-rfc] or may be reclassified as a bug or enhancement.
 * `Issue-Enhancement`: the issue is more of a feature request than a bug.
@@ -88,3 +89,4 @@ The following labels are used on PRs:
   because they more directly affect the usability of a particular feature or area.
 * `Changelog Needed`: The PR requires an addition to the changelog,
   and should be removed when it has been added.
+* `Documentation Needed` : The PR has changes that require a documentation change or new documentation added to [PowerShell-Docs](http://github.com/powershell/powershell-docs)
