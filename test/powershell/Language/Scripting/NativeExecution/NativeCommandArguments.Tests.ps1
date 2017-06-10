@@ -1,11 +1,4 @@
 Describe "Native Command Arguments" -tags "CI" {
-    # Find where test/powershell is so we can find the testexe command relative to it
-    $powershellTestDir = $PSScriptRoot
-    while ($powershellTestDir -notmatch 'test[\\/]powershell$') {
-        $powershellTestDir = Split-Path $powershellTestDir
-    }
-    $testexe = Join-Path (Split-Path $powershellTestDir) tools/TestExe/bin/testexe
-
     # When passing arguments to native commands, quoted segments that contain
     # spaces need to be quoted with '"' characters when they are passed to the
     # native command (or to bash or sh on Linux).
@@ -14,7 +7,7 @@ Describe "Native Command Arguments" -tags "CI" {
     # to the testexe native command and looking at how it got the arguments.
     It "Should handle quoted spaces correctly" {
         $a = 'a"b c"d'
-        $lines = & $testexe -echoargs $a 'a"b c"d' a"b c"d
+        $lines = testexe -echoargs $a 'a"b c"d' a"b c"d
         ($lines | measure).Count | Should Be 3
         $lines[0] | Should Be 'Arg 0 is <ab cd>'
         $lines[1] | Should Be 'Arg 1 is <ab cd>'
@@ -33,7 +26,7 @@ Describe "Native Command Arguments" -tags "CI" {
     # passing arguments with escaped quotes to the testexe native command and
     # looking at how it got the arguments.
     It "Should handle spaces between escaped quotes" {
-        $lines = & $testexe -echoargs 'a\"b c\"d' "a\`"b c\`"d"
+        $lines = testexe -echoargs 'a\"b c\"d' "a\`"b c\`"d"
         ($lines | measure).Count | Should Be 2
         $lines[0] | Should Be 'Arg 0 is <a"b c"d>'
         $lines[1] | Should Be 'Arg 1 is <a"b c"d>'

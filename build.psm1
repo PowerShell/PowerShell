@@ -693,12 +693,16 @@ function Publish-PSTestTools {
         Push-Location $tool[0]
         try {
             dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
+            $toolPath = Join-Path -Path $tool[0] -ChildPath "bin"
 
             # add 'x' permission when building the standalone application
             # this is temporary workaround to a bug in dotnet.exe, tracking by dotnet/cli issue #6286
             if ($Options.Configuration -eq "Linux") {
-                $executable = Join-Path -Path $tool[0] -ChildPath "bin/$($tool[1])"
+                $executable = Join-Path -Path $toolPath -ChildPath "$($tool[1])"
                 chmod u+x $executable
+            }
+            if ( $env:PATH -notcontains $toolPath ) {
+                $env:PATH = $toolPath+$TestModulePathSeparator+$($env:PATH)
             }
         } finally {
             Pop-Location

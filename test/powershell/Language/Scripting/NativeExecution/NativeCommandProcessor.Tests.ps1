@@ -27,17 +27,7 @@ Describe 'native commands lifecycle' -tags 'Feature' {
 
 Describe "Native Command Processor" -tags "Feature" {
 
-    BeforeAll {
-        # Find where test/powershell is so we can find the testexe command relative to it
-        $powershellTestDir = $PSScriptRoot
-        while ($powershellTestDir -notmatch 'test[\\/]powershell$') {
-            $powershellTestDir = Split-Path $powershellTestDir
-        }
-        $testexe = Join-Path (Split-Path $powershellTestDir) tools/TestExe/bin/testexe
-    }
-
     # If powershell receives a StopProcessing, it should kill the native process and all child processes
-
     # this test should pass and no longer Pending when #2561 is fixed
     It "Should kill native process tree" -Pending {
 
@@ -46,7 +36,7 @@ Describe "Native Command Processor" -tags "Feature" {
 
         [int] $numToCreate = 2
 
-        $ps = [PowerShell]::Create().AddCommand($testexe)
+        $ps = [PowerShell]::Create().AddCommand("testexe")
         $ps.AddArgument("-createchildprocess")
         $ps.AddArgument($numToCreate)
         $async = $ps.BeginInvoke()
