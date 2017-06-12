@@ -10,7 +10,7 @@ namespace TestExe
         {
             if (args.Length > 0)
             {
-                switch(args[0])
+                switch(args[0].ToLowerInvariant())
                 {
                     case "-echoargs":
                         EchoArgs(args);
