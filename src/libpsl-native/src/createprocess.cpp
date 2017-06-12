@@ -140,22 +140,14 @@ int32_t ForkAndExecProcess(
 
     if (processId == 0) // processId == 0 if this is child process
     {
-        // Close the child's copy of the parent end of any open pipes
-        CloseIfOpen(stdinFds[WRITE_END_OF_PIPE]);
-        CloseIfOpen(stdoutFds[READ_END_OF_PIPE]);
-        CloseIfOpen(stderrFds[READ_END_OF_PIPE]);
-
         // For any redirections that should happen, dup the pipe descriptors onto stdin/out/err.
-        // Then close out the old pipe descriptors, which we no longer need.
+        // We don't explicitly close out the old pipe descriptors because they are set to close on execve.
         if ((redirectStdin && Dup2WithInterruptedRetry(stdinFds[READ_END_OF_PIPE], STDIN_FILENO) == -1) ||
             (redirectStdout && Dup2WithInterruptedRetry(stdoutFds[WRITE_END_OF_PIPE], STDOUT_FILENO) == -1) ||
             (redirectStderr && Dup2WithInterruptedRetry(stderrFds[WRITE_END_OF_PIPE], STDERR_FILENO) == -1))
         {
             _exit(errno != 0 ? errno : EXIT_FAILURE);
         }
-        CloseIfOpen(stdinFds[READ_END_OF_PIPE]);
-        CloseIfOpen(stdoutFds[WRITE_END_OF_PIPE]);
-        CloseIfOpen(stderrFds[WRITE_END_OF_PIPE]);
 
         // Change to the designated working directory, if one was specified
         if (nullptr != cwd)
