@@ -11,6 +11,7 @@ add_library(psl-native SHARED
   getlinkcount.cpp
   getfullyqualifiedname.cpp
   geterrorcategory.cpp
+  getinodedata.cpp
   isfile.cpp
   isdirectory.cpp
   issamefilesystemitem.cpp

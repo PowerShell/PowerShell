@@ -172,6 +172,23 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
+        /// Gets or sets whether symbolic links are to be followed when recursing.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter FollowSymlink
+        {
+            get
+            {
+                return _followSymlink;
+            }
+            set
+            {
+                _followSymlink = value;
+            }
+        }
+        private bool _followSymlink = false;
+
+        /// <summary>
         /// Gets or sets the force property
         /// </summary>
         ///

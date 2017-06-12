@@ -31,6 +31,72 @@ using Microsoft.PowerShell.CoreClr.Stubs;
 
 namespace Microsoft.PowerShell.Commands
 {
+    #region InodeTracker
+    /// <summary>
+    /// Tracks visited files/directories by caching their device IDs and inodes.
+    /// </summary>
+    internal class InodeTracker
+    {
+        private Dictionary<UInt64, Dictionary<UInt64, bool>> _visitations;
+
+        /// <summary>
+        /// Construct a new InodeTracker
+        /// </summary>
+        public InodeTracker()
+        {
+            _visitations = new Dictionary<UInt64, Dictionary<UInt64, bool>>();
+        }
+
+        /// <summary>
+        /// Determine if a path has been visited.
+        /// </summary>
+        /// <param name="path">Path to the file or directory to be checked.</param>
+        /// <returns>True if the path has been visited, false otherwise</returns>
+        public bool Visited(string path)
+        {
+            UInt64 dev;
+            UInt64 inode;
+
+            if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out dev, out inode))
+            {
+                if (_visitations.ContainsKey(dev))
+                {
+                    return _visitations[dev].ContainsKey(inode);
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Mark a path as visited.
+        /// </summary>
+        /// <param name="path">Path to the file or directory to be marked as visited.</param>
+        /// <returns>True if the path was successfully added to the visited list, false otherwise</returns>
+        public bool Visit(string path)
+        {
+            UInt64 dev;
+            UInt64 inode;
+
+            if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out dev, out inode))
+            {
+                if (!_visitations.ContainsKey(dev))
+                    _visitations[dev] = new Dictionary<UInt64, bool>();
+
+                if (!_visitations[dev].ContainsKey(inode))
+                    _visitations[dev][inode] = true;
+
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
+
+    #endregion
+
     #region FileSystemProvider
 
     /// <summary>
@@ -1539,8 +1605,15 @@ namespace Microsoft.PowerShell.Commands
                 if (isDirectory)
                 {
                     DirectoryInfo directory = new DirectoryInfo(path);
+                    InodeTracker tracker = null;
+
+                    if (recurse && Context.MyInvocation.BoundParameters.ContainsKey("FollowSymlink"))
+                    {
+                        tracker = new InodeTracker();
+                    }
+
                     // Enumerate the directory
-                    Dir(directory, recurse, depth, nameOnly, returnContainers);
+                    Dir(directory, recurse, depth, tracker, nameOnly, returnContainers);
                 }
                 else
                 {
@@ -1608,9 +1681,13 @@ namespace Microsoft.PowerShell.Commands
             DirectoryInfo directory,
             bool recurse,
             uint depth,
+            InodeTracker tracker,   // This will be non-null only if the user invoked the -FollowSymLinks switch parameter.
             bool nameOnly,
             ReturnContainers returnContainers)
         {
+            if (tracker != null)
+                tracker.Visit(directory.FullName);
+
             List<IEnumerable<FileSystemInfo>> target = new List<IEnumerable<FileSystemInfo>>();
 
             try
@@ -1788,12 +1865,27 @@ namespace Microsoft.PowerShell.Commands
                                 return;
                             }
 
-                            // Once the recursion process has begun by being in this function,
-                            // we do not want to further recurse into directory symbolic links
-                            // so as to prevent the possibility of an endless symlink loop.
-                            // This is the behavior of both the Unix 'ls' command and the Windows
-                            // 'DIR' command.
-                            if (!InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory))
+                            bool enterDir = true;
+                            if (tracker != null)
+                            {
+                                if (tracker.Visited(recursiveDirectory.FullName))
+                                {
+                                    enterDir = false;
+                                    WriteWarning(StringUtil.Format(FileSystemProviderStrings.AlreadyListedDirectory,
+                                                                    recursiveDirectory.FullName));
+                                }
+                            }
+                            // We only want to recurse into symlinks if a) the user has asked to with
+                            // the -FollowSymLinks switch parameter and b) the directory the symlink
+                            // points to has not already been visited, preventing symlink loops.
+                            if (enterDir && InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory))
+                            {
+                                if (tracker == null)
+                                {
+                                    enterDir = false;
+                                }
+                            }
+                            if (enterDir)
                             {
                                 bool hidden = false;
                                 if (!Force)
@@ -1805,7 +1897,7 @@ namespace Microsoft.PowerShell.Commands
                                 // default hidden attribute filter.
                                 if (Force || !hidden || isFilterHiddenSpecified || isSwitchFilterHiddenSpecified)
                                 {
-                                    Dir(recursiveDirectory, recurse, depth - 1, nameOnly, returnContainers);
+                                    Dir(recursiveDirectory, recurse, depth - 1, tracker, nameOnly, returnContainers);
                                 }
                             }
                         }//foreach
@@ -8235,6 +8327,47 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            return false;
+        }
+
+        internal static bool GetInodeData(string path, out UInt64 dev, out UInt64 inode)
+        {
+#if UNIX
+            return Platform.NonWindowsGetInodeData(path, out dev, out inode);
+#else
+            return WinGetInodeData(path, out dev, out inode);
+#endif
+        }
+
+        internal static bool WinGetInodeData(string path, out UInt64 dev, out UInt64 inode)
+        {
+            var access = FileAccess.Read;
+            var share = FileShare.Read;
+            var creation = FileMode.Open;
+            var attributes = FileAttributes.BackupSemantics | FileAttributes.PosixSemantics;
+
+            using (var sf = AlternateDataStreamUtilities.NativeMethods.CreateFile(path, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
+            {
+                if (!sf.IsInvalid)
+                {
+                    BY_HANDLE_FILE_INFORMATION info;
+
+                    if (GetFileInformationByHandle(sf.DangerousGetHandle(), out info))
+                    {
+                        UInt64 tmp = info.FileIndexHigh;
+                        tmp <<= 32;
+                        tmp |= info.FileIndexLow;
+
+                        dev = info.VolumeSerialNumber;
+                        inode = tmp;
+
+                        return true;
+                    }
+                }
+            }
+
+            dev = 0;
+            inode = 0;
             return false;
         }
 
