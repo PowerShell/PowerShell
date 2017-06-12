@@ -145,12 +145,10 @@ Function Start-HTTPListener {
                             For example: The following indicates that a 302 redirection (found) should be used.
                              ?test=redirectex&type=Found
 
-                            WebRequest cmdlet tests also use a special option called auth. This produces two redirects
-                            where the second redirects adds an artificial Authorization header expressly to verify 
-                            WebRequestPSCmdlet doesn't strip the header after the first redirection.
-                            the test verifies the Authorization header with the value 'redirectauth' after 
-                            all redirects complete.
-                            Example: test=redirectex&type=Moved&auth=true
+                            WebRequest cmdlet tests also use a special option called multiredirect. This produces two redirects
+                            where the second 
+
+                            Example: test=redirectex&type=Moved&multiredirect=true
 
                             See also https://msdn.microsoft.com/en-us/library/system.net.httpstatuscode(v=vs.110).aspx
                         #>
@@ -259,11 +257,19 @@ Function Start-HTTPListener {
                     }
 
                     $response = $context.Response
-                    if ($contentType -ne $null)
+
+                    if ($outputHeader.ContainsKey('Content-Type') -eq $false)
                     {
-                        Write-Verbose "Setting ContentType to $contentType"
+                        if ([string]::IsNullOrEmpty($contentType))
+                        {
+                            $contentType = 'application/json'
+                        }
+                        
+                        $outputHeader.Add('Content-Type', $contentType)
                         $response.ContentType = $contentType
+                        Write-Verbose -Message "Setting ContentType to $contentType"
                     }
+
                     if ($statusCode -ne $null)
                     {
                         $response.StatusCode = $statusCode
@@ -274,13 +280,6 @@ Function Start-HTTPListener {
                         $response.Headers.Add($header, $outputHeader[$header])
                     }
                     
-                    # Ensure the response.Content on the receiver is plain text
-                    # unless overridden above.
-                    if ($outputHeader.ContainsKey('Content-Type') -eq $false)
-                    {
-                        $response.Headers.Add('Content-Type', 'text/plain')
-                    }
-
                     if ($output -ne $null)
                     {
                         $buffer = [System.Text.Encoding]::UTF8.GetBytes($output)
