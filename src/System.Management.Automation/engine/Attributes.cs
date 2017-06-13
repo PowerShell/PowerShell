@@ -12,6 +12,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Language;
 using System.Runtime.CompilerServices;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace System.Management.Automation.Internal
 {
@@ -1363,8 +1364,6 @@ namespace System.Management.Automation
         // Cached valid values.
         private string[] _validValues;
 
-        private DateTime cacheCreateTime = DateTime.MinValue;
-
         /// <summary>
         /// Sets a time interval in seconds to reset the '_validValues' dynamic valid values cache.
         /// By default 'ValidValuesCacheExpiration = 0' and no valid values is cached (is re-evaluated every time it is used).
@@ -1381,16 +1380,14 @@ namespace System.Management.Automation
         /// </summary>
         public IEnumerable<string> GetValidValues()
         {
-            var currentTime = DateTime.Now;
-            if (_validValues != null && DateTime.Compare(cacheCreateTime.AddSeconds(ValidValuesCacheExpiration), currentTime) > 0)
+            if (_validValues != null)
             {
                 return _validValues;
             }
 
-            _validValues = GenerateValidValues();
-            cacheCreateTime = currentTime;
+            var _validValuesNoCache = GenerateValidValues();
 
-            if (_validValues == null)
+            if (_validValuesNoCache == null)
             {
                 throw new ValidationMetadataException(
                     "ValidateSetGeneratedValidValuesListIsEmpty",
@@ -1398,7 +1395,13 @@ namespace System.Management.Automation
                     Metadata.ValidateSetGeneratedValidValuesListIsEmpty);
             }
 
-            return _validValues;
+            if (ValidValuesCacheExpiration > 0)
+            {
+                Task.Delay(ValidValuesCacheExpiration).ContinueWith((task) => _validValues = null);
+                _validValues = _validValuesNoCache;
+            }
+
+            return _validValuesNoCache;
         }
     }
 
