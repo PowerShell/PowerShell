@@ -175,6 +175,9 @@ The #requires statement must be in one of the following formats:
  "#requires -modules &lt;ModuleSpecification&gt;"
  "#requires -runasadministrator"</value>
   </data>
+  <data name="RequiresOSNotCompatible" xml:space="preserve">
+    <value>The script '{0}' cannot be run because it contained a "#requires" statement with an OS of '{1}' that doesn't match the current OS. Approved OS argument values is {2}.</value>
+  </data>
   <data name="RequiresInterpreterNotCompatible" xml:space="preserve">
     <value>The script '{0}' cannot be run because it contained a "#requires" statement with a shell ID of {1} that is incompatible with the current shell. To run this script you must use the shell located at '{2}'.</value>
   </data>

@@ -744,6 +744,13 @@ namespace System.Management.Automation.Language
         /// If nothing is specified, this property is false.
         /// </summary>
         public bool IsElevationRequired { get; internal set; }
+
+        /// <summary>
+        /// Specifies if this script requires OS type, specified like:
+        ///     <code>#requires -OS OSX</code>
+        /// If nothing is specified, this property is empty.
+        /// </summary>
+        public string RequiredOS { get; internal set; }
     }
 
     /// <summary>

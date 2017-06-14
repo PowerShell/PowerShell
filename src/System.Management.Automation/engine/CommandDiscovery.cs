@@ -558,11 +558,55 @@ namespace System.Management.Automation
         // #Requires -Module
         internal static void VerifyScriptRequirements(ExternalScriptInfo scriptInfo, ExecutionContext context)
         {
+            VerifyOS(scriptInfo);
             VerifyElevatedPrivileges(scriptInfo);
             VerifyPSVersion(scriptInfo);
             VerifyPSEdition(scriptInfo);
             VerifyRequiredModules(scriptInfo, context);
         }
+
+        internal static void VerifyOS(ExternalScriptInfo scriptInfo)
+        {
+            string requiredOS = scriptInfo.RequiredOS;
+            bool trueOS = false;
+
+            if (string.Equals(requiredOS, "Windows", StringComparison.OrdinalIgnoreCase) && Platform.IsWindows)
+            {
+                trueOS = true;
+            } else if (string.Equals(requiredOS, "Linux", StringComparison.OrdinalIgnoreCase) && Platform.IsLinux)
+            {
+                trueOS = true;
+            } else if (string.Equals(requiredOS, "OSX", StringComparison.OrdinalIgnoreCase) && Platform.IsOSX)
+            {
+                trueOS = true;
+            } else if (string.Equals(requiredOS, "Unix", StringComparison.OrdinalIgnoreCase) && !Platform.IsWindows)
+            {
+                trueOS = true;
+            } else if (string.Equals(requiredOS, "Inbox", StringComparison.OrdinalIgnoreCase) && Platform.IsInbox)
+            {
+                trueOS = true;
+            } else if (string.Equals(requiredOS, "IoT", StringComparison.OrdinalIgnoreCase) && Platform.IsIoT)
+            {
+                trueOS = true;
+            } else if (string.Equals(requiredOS, "Nano", StringComparison.OrdinalIgnoreCase) && Platform.IsNanoServer)
+            {
+                trueOS = true;
+            }
+
+            if (requiredOS != null)
+            {
+                if (!trueOS)
+                {
+                    ScriptRequiresException scriptRequiresException =
+                        new ScriptRequiresException(
+                            scriptInfo.Name,
+                            requiredOS,
+                            approvedOSList);
+                    throw scriptRequiresException;
+                }
+            }
+        }
+        internal static string[] approvedOSList = new string[] {"Windows", "Linux", "OSX", "Unix", "Inbox", "IoT", "Nano"};
 
         internal static void VerifyPSVersion(ExternalScriptInfo scriptInfo)
         {

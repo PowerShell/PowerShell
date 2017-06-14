@@ -1531,6 +1531,7 @@ namespace System.Management.Automation.Language
             List<PSSnapInSpecification> requiredSnapins = null;
             List<string> requiredAssemblies = null;
             bool requiresElevation = false;
+            string requiredOS = null;
 
             foreach (var token in requiresTokens)
             {
@@ -1575,7 +1576,7 @@ namespace System.Management.Automation.Language
                         {
                             HandleRequiresParameter(parameter, commandAst.CommandElements, snapinSpecified,
                                 ref i, ref snapinName, ref snapinVersion,
-                                ref requiredShellId, ref requiredVersion, ref requiredEditions, ref requiredModules, ref requiredAssemblies, ref requiresElevation);
+                                ref requiredShellId, ref requiredVersion, ref requiredEditions, ref requiredModules, ref requiredAssemblies, ref requiresElevation, ref requiredOS);
                         }
                         else
                         {
@@ -1606,7 +1607,8 @@ namespace System.Management.Automation.Language
                 RequiredModules = requiredModules != null
                                                     ? new ReadOnlyCollection<ModuleSpecification>(requiredModules)
                                                     : ScriptRequirements.EmptyModuleCollection,
-                IsElevationRequired = requiresElevation
+                IsElevationRequired = requiresElevation,
+                RequiredOS = requiredOS
             };
         }
 
@@ -1617,6 +1619,7 @@ namespace System.Management.Automation.Language
         private const string assemblyToken = "assembly";
         private const string modulesToken = "modules";
         private const string elevationToken = "runasadministrator";
+        private const string osToken = "os";
 
         private void HandleRequiresParameter(CommandParameterAst parameter,
                                              ReadOnlyCollection<CommandElementAst> commandElements,
@@ -1629,7 +1632,8 @@ namespace System.Management.Automation.Language
                                              ref List<string> requiredEditions,
                                              ref List<ModuleSpecification> requiredModules,
                                              ref List<string> requiredAssemblies,
-                                             ref bool requiresElevation)
+                                             ref bool requiresElevation,
+                                             ref string requiredOS)
         {
             Ast argumentAst = parameter.Argument ?? (index + 1 < commandElements.Count ? commandElements[++index] : null);
 
@@ -1669,6 +1673,19 @@ namespace System.Management.Automation.Language
                     return;
                 }
                 requiredShellId = (string)argumentValue;
+            } else  if (osToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
+            {
+                if (requiredOS != null)
+                {
+                    ReportError(parameter.Extent, () => ParameterBinderStrings.ParameterAlreadyBound, null, osToken);
+                    return;
+                }
+                if (!(argumentValue is string))
+                {
+                    ReportError(argumentAst.Extent, () => ParserStrings.RequiresInvalidStringArgument, osToken);
+                    return;
+                }
+                requiredOS = (string)argumentValue;
             }
             else if (PSSnapinToken.StartsWith(parameter.ParameterName, StringComparison.OrdinalIgnoreCase))
             {
