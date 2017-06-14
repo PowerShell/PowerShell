@@ -144,7 +144,8 @@ See [working with the PowerShell repository](docs/git) for more information.
 > Note: To develop with VSCode on OSX and Linux, you need to install the [`v1.11.0-beta4`][beta-csharp] C# extension by following these [instructions][install-beta-csharp].
 >
 > PowerShell is building against the .NET Core `2.0.0-preview2` packages using the .NET Core `2.0.0-preview2` SDK.
-`v1.13.0` VSCode + `v1.10.0` C# extension works fine with the .NET Core `2.0.0-preview2` SDK on Windows. However, on OSX and Linux you need to use the `v1.11.0-beta4` C# extension due to [OmniSharp/omnisharp-vscode#1495][omnisharp-1495].
+`v1.13.0` VSCode + `v1.10.0` C# extension works fine with the .NET Core `2.0.0-preview2` SDK on Windows.
+However, on OSX and Linux you need to use the `v1.11.0-beta4` C# extension due to [omnisharp-vscode issue #1495][omnisharp-1495].
 
 [beta-csharp]: https://github.com/OmniSharp/omnisharp-vscode/releases/tag/v1.11.0-beta4
 [install-beta-csharp]: https://github.com/OmniSharp/omnisharp-vscode/wiki/Installing-Beta-Releases
