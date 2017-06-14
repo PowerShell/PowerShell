@@ -63,8 +63,10 @@ namespace System.Management.Automation
         /// </param>
         private PowerShellAssemblyLoadContext(string basePaths)
         {
+#if !UNIX
             // Set GAC related member variables to null
             _winDir = _gacPath32 = _gacPath64 = _gacPathMSIL = null;
+#endif
 
             // FIRST: Validate and populate probing paths
             if (string.IsNullOrEmpty(basePaths))
@@ -108,10 +110,12 @@ namespace System.Management.Automation
         private readonly Dictionary<string, string> _coreClrTypeCatalog;
         private readonly Lazy<HashSet<string>> _availableDotNetAssemblyNames;
 
+#if !UNIX
         private string _winDir;
         private string _gacPathMSIL;
         private string _gacPath32;
         private string _gacPath64;
+#endif
 
         /// <summary>
         /// Assembly cache across the AppDomain
