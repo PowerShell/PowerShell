@@ -1,4 +1,4 @@
-Describe 'native commands lifecycle' -tags 'Feature' {
+Describe 'native commands with pipeline' -tags 'Feature' {
 
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
@@ -22,6 +22,17 @@ Describe 'native commands lifecycle' -tags 'Feature' {
 
         $ps.Stop()
         $rs.ResetRunspaceState()
+    }
+
+    It "native | native | native should work fine" {
+
+        if ($IsWindows) {
+            $result = @(ping.exe | findstr.exe count | findstr.exe ping)
+            $result[0] | Should Match "Usage: ping"
+        } else {
+            $result = @(ps aux | grep powershell | grep -v grep)
+            $result[0] | Should Match "powershell"
+        }
     }
 }
 
