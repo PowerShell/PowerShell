@@ -32,7 +32,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.4.0-preview1-25302-01" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="4.4.0-preview2-25405-01" />
   </ItemGroup>
 
 </Project>
