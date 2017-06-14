@@ -1401,7 +1401,7 @@ namespace System.Management.Automation.Remoting.Client
         #region Data
 
         private SSHConnectionInfo _connectionInfo;
-        private Process _sshProcess;
+        private int _sshProcessId;
         private StreamWriter _stdInWriter;
         private StreamReader _stdOutReader;
         private StreamReader _stdErrReader;
@@ -1448,7 +1448,7 @@ namespace System.Management.Automation.Remoting.Client
         internal override void CreateAsync()
         {
             // Create the ssh client process with connection to host target.
-            _sshProcess = _connectionInfo.StartSSHProcess(
+            _sshProcessId = _connectionInfo.StartSSHProcess(
                 out _stdInWriter,
                 out _stdOutReader,
                 out _stdErrReader);
@@ -1478,18 +1478,18 @@ namespace System.Management.Automation.Remoting.Client
             var stdErrReader = _stdErrReader;
             if (stdErrReader != null) { stdErrReader.Dispose(); }
 
-            var sshProcess = _sshProcess;
-            if ((sshProcess != null) && !sshProcess.HasExited)
+            try
             {
-                _sshProcess = null;
-                try
+                var sshProcess = System.Diagnostics.Process.GetProcessById(_sshProcessId);
+                if ((sshProcess != null) && !sshProcess.HasExited)
                 {
                     sshProcess.Kill();
                 }
-                catch (InvalidOperationException) { }
-                catch (NotSupportedException) { }
-                catch (System.ComponentModel.Win32Exception) { }
             }
+            catch (ArgumentException) { }
+            catch (InvalidOperationException) { }
+            catch (NotSupportedException) { }
+            catch (System.ComponentModel.Win32Exception) { }
         }
 
         private void StartErrorThread(
@@ -1611,13 +1611,9 @@ namespace System.Management.Automation.Remoting.Client
                     string data = reader.ReadLine();
                     if (data == null)
                     {
-                        // End of stream indicates the target process was lost.
-                        // Raise transport exception to invalidate the client remote runspace.
-                        PSRemotingTransportException psrte = new PSRemotingTransportException(
-                            PSRemotingErrorId.IPCServerProcessReportedError,
-                            RemotingErrorIdStrings.IPCServerProcessReportedError,
-                            RemotingErrorIdStrings.NamedPipeTransportProcessEnded);
-                        RaiseErrorHandler(new TransportErrorOccuredEventArgs(psrte, TransportMethodEnum.ReceiveShellOutputEx));
+                        // End of stream indicates that the SSH transport is broken.
+                        // SSH will return the appropriate error in StdErr stream so 
+                        // let the error reader thread report the error.
                         break;
                     }
 

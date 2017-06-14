@@ -602,8 +602,6 @@ namespace System.Management.Automation
             return IsOSX ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
         }
 
-
-
         // Unix specific implementations of required functionality
         //
         // Please note that `Win32Exception(Marshal.GetLastWin32Error())`

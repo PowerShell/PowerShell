@@ -7,6 +7,7 @@ using System.Net.Sockets;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Collections.Generic;
 using System.IO;
 using System.IO.Pipes;
 using System.ComponentModel; // Win32Exception
@@ -1999,25 +2000,26 @@ namespace System.Management.Automation.Runspaces
         /// StartSSHProcess
         /// </summary>
         /// <returns></returns>
-        internal System.Diagnostics.Process StartSSHProcess(
+        internal int StartSSHProcess(
             out StreamWriter stdInWriterVar,
             out StreamReader stdOutReaderVar,
             out StreamReader stdErrReaderVar)
         {
             string filePath = string.Empty;
-#if !UNIX
+#if UNIX
+            string sshCommand = "ssh";
+#else
+            string sshCommand = "ssh.exe";
+#endif
             var context = Runspaces.LocalPipeline.GetExecutionContextFromTLS();
             if (context != null)
             {
-                var cmdInfo = context.CommandDiscovery.LookupCommandInfo("ssh.exe", CommandOrigin.Internal) as ApplicationInfo;
+                var cmdInfo = context.CommandDiscovery.LookupCommandInfo(sshCommand, CommandOrigin.Internal) as ApplicationInfo;
                 if (cmdInfo != null)
                 {
                     filePath = cmdInfo.Path;
                 }
             }
-#else
-            filePath = @"ssh";
-#endif
 
             // Extract an optional domain name if provided.
             string domainName = null;
@@ -2095,10 +2097,12 @@ namespace System.Management.Automation.Runspaces
 #if UNIX
 
         /// <summary>
-        /// Create a process through managed APIs and return StdIn, StdOut, StdError reader/writers
-        /// This works for non-Windows platforms and is simpler.
+        /// Create a process through managed APIs and returns StdIn, StdOut, StdError reader/writers.
+        /// This works for Linux platforms and creates the SSH process in its own session which means
+        /// Ctrl+C signals will not propagate from parent (PowerShell) process to SSH process so that
+        /// PSRP handles them correctly.
         /// </summary>
-        private static System.Diagnostics.Process StartSSHProcessImpl(
+        private static int StartSSHProcessImpl(
             System.Diagnostics.ProcessStartInfo startInfo,
             out StreamWriter stdInWriterVar,
             out StreamReader stdOutReaderVar,
@@ -2108,17 +2112,208 @@ namespace System.Management.Automation.Runspaces
             startInfo.RedirectStandardOutput = true;
             startInfo.RedirectStandardError = true;
 
-            System.Diagnostics.Process process = new Process();
-            process.StartInfo = startInfo;
+            StreamWriter stdInWriter = null;
+            StreamReader stdOutReader = null;
+            StreamReader stdErrReader = null;
+            int pid = StartSSHProcess(
+                startInfo,
+                ref stdInWriter,
+                ref stdOutReader,
+                ref stdErrReader);
 
-            process.Start();
+            stdInWriterVar = stdInWriter;
+            stdOutReaderVar = stdOutReader;
+            stdErrReaderVar = stdErrReader;
 
-            stdInWriterVar = process.StandardInput;
-            stdOutReaderVar = process.StandardOutput;
-            stdErrReaderVar = process.StandardError;
-
-            return process;
+            return pid;
         }
+
+        #region UNIX Create Process
+
+        //
+        // This code is based on GitHub DotNet CoreFx
+        // It is specific to launching the SSH process for use in
+        // SSH based remoting, and is not intended to be general
+        // process creation code.
+        //
+
+        private const int StreamBufferSize = 4096;
+        private const int SUPPRESS_PROCESS_SIGINT = 0x00000001;
+
+        internal static int StartSSHProcess(
+            ProcessStartInfo startInfo,
+            ref StreamWriter standardInput,
+            ref StreamReader standardOutput,
+            ref StreamReader standardError)
+        {
+            if (startInfo.UseShellExecute)
+            {
+                throw new PSNotSupportedException();
+            }
+
+            string filename = startInfo.FileName;
+            string[] argv = ParseArgv(startInfo);
+            string[] envp = new string[0];
+            string cwd = !string.IsNullOrWhiteSpace(startInfo.WorkingDirectory) ? startInfo.WorkingDirectory : null;
+
+            // Invoke the shim fork/execve routine.  It will create pipes for all requested
+            // redirects, fork a child process, map the pipe ends onto the appropriate stdin/stdout/stderr
+            // descriptors, and execve to execute the requested process.  The shim implementation
+            // is used to fork/execve as executing managed code in a forked process is not safe (only
+            // the calling thread will transfer, thread IDs aren't stable across the fork, etc.)
+            int childPid, stdinFd, stdoutFd, stderrFd;
+            CreateProcess(
+                filename, argv, envp, cwd,
+                startInfo.RedirectStandardInput, startInfo.RedirectStandardOutput, startInfo.RedirectStandardError,
+                SUPPRESS_PROCESS_SIGINT,    // Create SSH process to ignore SIGINT signals
+                out childPid,
+                out stdinFd, out stdoutFd, out stderrFd);
+
+            Debug.Assert(childPid >= 0, "Invalid process id");
+
+            // Configure the parent's ends of the redirection streams.
+            // We use UTF8 encoding without BOM by-default(instead of Console encoding as on Windows)
+            // as there is no good way to get this information from the native layer
+            // and we do not want to take dependency on Console contract.
+            if (startInfo.RedirectStandardInput)
+            {
+                Debug.Assert(stdinFd >= 0, "Invalid Fd");
+                standardInput = new StreamWriter(OpenStream(stdinFd, FileAccess.Write),
+                    Utils.utf8NoBom, StreamBufferSize)
+                { AutoFlush = true };
+            }
+            if (startInfo.RedirectStandardOutput)
+            {
+                Debug.Assert(stdoutFd >= 0, "Invalid Fd");
+                standardOutput = new StreamReader(OpenStream(stdoutFd, FileAccess.Read),
+                    startInfo.StandardOutputEncoding ?? Utils.utf8NoBom, true, StreamBufferSize);
+            }
+            if (startInfo.RedirectStandardError)
+            {
+                Debug.Assert(stderrFd >= 0, "Invalid Fd");
+                standardError = new StreamReader(OpenStream(stderrFd, FileAccess.Read),
+                    startInfo.StandardErrorEncoding ?? Utils.utf8NoBom, true, StreamBufferSize);
+            }
+
+            return childPid;
+        }
+
+        /// <summary>Opens a stream around the specified file descriptor and with the specified access.</summary>
+        /// <param name="fd">The file descriptor.</param>
+        /// <param name="access">The access mode.</param>
+        /// <returns>The opened stream.</returns>
+        private static FileStream OpenStream(int fd, FileAccess access)
+        {
+            Debug.Assert(fd >= 0, "Invalid Fd");
+            return new FileStream(
+                new SafeFileHandle((IntPtr)fd, ownsHandle: true),
+                access, StreamBufferSize, isAsync: false);
+        }
+
+        /// <summary>Converts the filename and arguments information from a ProcessStartInfo into an argv array.</summary>
+        /// <param name="psi">The ProcessStartInfo.</param>
+        /// <returns>The argv array.</returns>
+        private static string[] ParseArgv(ProcessStartInfo psi)
+        {
+            var argvList = new List<string>();
+            argvList.Add(psi.FileName);
+            argvList.AddRange(psi.Arguments.Split(' '));
+            return argvList.ToArray();
+        }
+
+        internal static unsafe void CreateProcess(
+            string filename, string[] argv, string[] envp, string cwd,
+            bool redirectStdin, bool redirectStdout, bool redirectStderr, int creationFlags,
+            out int lpChildPid, out int stdinFd, out int stdoutFd, out int stderrFd)
+        {
+            byte** argvPtr = null, envpPtr = null;
+            try
+            {
+                AllocNullTerminatedArray(argv, ref argvPtr);
+                AllocNullTerminatedArray(envp, ref envpPtr);
+                int result = ForkAndExecProcess(
+                    filename, argvPtr, envpPtr, cwd,
+                    redirectStdin ? 1 : 0, redirectStdout ? 1 : 0, redirectStderr ? 1 : 0, creationFlags,
+                    out lpChildPid, out stdinFd, out stdoutFd, out stderrFd);
+                if (result != 0)
+                {
+                    // Normally we'd simply make this method return the result of the native
+                    // call and allow the caller to use GetLastWin32Error.  However, we need
+                    // to free the native arrays after calling the function, and doing so
+                    // stomps on the runtime's captured last error.  So we need to access the
+                    // error here, and without SetLastWin32Error available, we can't propagate
+                    // the error to the caller via the normal GetLastWin32Error mechanism.  We could
+                    // return 0 on success or the GetLastWin32Error value on failure, but that's
+                    // technically ambiguous, in the case of a failure with a 0 errno.  Simplest
+                    // solution then is just to throw here the same exception the Process caller
+                    // would have.  This can be revisited if we ever have another call site.
+                    throw new Win32Exception();
+                }
+            }
+            finally
+            {
+                FreeArray(envpPtr, envp.Length);
+                FreeArray(argvPtr, argv.Length);
+            }
+        }
+
+        private static unsafe void AllocNullTerminatedArray(string[] arr, ref byte** arrPtr)
+        {
+            int arrLength = arr.Length + 1; // +1 is for null termination
+
+            // Allocate the unmanaged array to hold each string pointer.
+            // It needs to have an extra element to null terminate the array.
+            arrPtr = (byte**)Marshal.AllocHGlobal(sizeof(IntPtr) * arrLength);
+            System.Diagnostics.Debug.Assert(arrPtr != null, "Invalid array ptr");
+
+            // Zero the memory so that if any of the individual string allocations fails,
+            // we can loop through the array to free any that succeeded.
+            // The last element will remain null.
+            for (int i = 0; i < arrLength; i++)
+            {
+                arrPtr[i] = null;
+            }
+
+            // Now copy each string to unmanaged memory referenced from the array.
+            // We need the data to be an unmanaged, null-terminated array of UTF8-encoded bytes.
+            for (int i = 0; i < arr.Length; i++)
+            {
+                byte[] byteArr = System.Text.Encoding.UTF8.GetBytes(arr[i]);
+
+                arrPtr[i] = (byte*)Marshal.AllocHGlobal(byteArr.Length + 1); //+1 for null termination
+                System.Diagnostics.Debug.Assert(arrPtr[i] != null, "Invalid array ptr");
+
+                Marshal.Copy(byteArr, 0, (IntPtr)arrPtr[i], byteArr.Length); // copy over the data from the managed byte array
+                arrPtr[i][byteArr.Length] = (byte)'\0'; // null terminate
+            }
+        }
+
+        private static unsafe void FreeArray(byte** arr, int length)
+        {
+            if (arr != null)
+            {
+                // Free each element of the array
+                for (int i = 0; i < length; i++)
+                {
+                    if (arr[i] != null)
+                    {
+                        Marshal.FreeHGlobal((IntPtr)arr[i]);
+                        arr[i] = null;
+                    }
+                }
+
+                // And then the array itself
+                Marshal.FreeHGlobal((IntPtr)arr);
+            }
+        }
+
+        [DllImport("libpsl-native", CharSet = CharSet.Ansi, SetLastError = true)]
+        internal static extern unsafe int ForkAndExecProcess(
+            string filename, byte** argv, byte** envp, string cwd,
+            int redirectStdin, int redirectStdout, int redirectStderr, int creationFlags,
+            out int lpChildPid, out int stdinFd, out int stdoutFd, out int stderrFd);
+
+        #endregion
 
 #else
 
@@ -2129,7 +2324,7 @@ namespace System.Management.Automation.Runspaces
         /// be through named pipes.  Managed code for named pipes is unreliable and so this is done via
         /// P-Invoking native APIs.
         /// </summary>
-        private static System.Diagnostics.Process StartSSHProcessImpl(
+        private static int StartSSHProcessImpl(
             System.Diagnostics.ProcessStartInfo startInfo,
             out StreamWriter stdInWriterVar,
             out StreamReader stdOutReaderVar,
@@ -2187,7 +2382,7 @@ namespace System.Management.Automation.Runspaces
                 throw;
             }
 
-            return sshProcess;
+            return sshProcess.Id;
         }
 
         // Process creation flags
