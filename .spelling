@@ -503,6 +503,7 @@ throw-testcasesItMockDescribe
 Gitter
 microsoft.com
 msi
+omnisharp-vscode
 opencode
 pkg
  - src/libpsl-native/README.md
