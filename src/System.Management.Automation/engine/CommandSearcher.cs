@@ -635,7 +635,41 @@ namespace System.Management.Automation
                     break;
                 }
 
-                if (String.Equals(extension, StringLiterals.PowerShellScriptFileExtension, StringComparison.OrdinalIgnoreCase))
+                // handle case where we are called by the OS to handle a shebang script using us as the interpreter
+                bool isShebangScript = false;
+                try
+                {
+                    using(FileStream fileStream = new FileStream(path, FileMode.Open, FileAccess.Read))
+                    {
+                        byte[] bytes = new byte[2];
+                        int bytesRead = fileStream.Read(bytes, 0, 2);  // read the first two bytes to determine if shebang
+                        if (bytesRead == 2)
+                        {
+                            if (bytes[0] == '#' && bytes[1] == '!')
+                            {
+                                // see if we are supposed to be the interpreter
+                                using(StreamReader file = new StreamReader(fileStream))
+                                {
+                                    string interpreter = file.ReadLine();
+                                    System.Reflection.Assembly assembly = System.Reflection.Assembly.GetEntryAssembly();
+                                    // this returns path to powershell.dll
+                                    string powershellPath = assembly.Location.Replace(".dll","");
+                                    // need to handle both powershell and powershell.exe
+                                    if (interpreter.Split(' ',2)[0].Replace(".exe","") == powershellPath)
+                                    {
+                                        isShebangScript = true;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                catch(Exception)
+                {
+                    // If we can't read the file, safe to assume it's not a script
+                }
+
+                if (isShebangScript || String.Equals(extension, StringLiterals.PowerShellScriptFileExtension, StringComparison.OrdinalIgnoreCase) || isShebangScript)
                 {
                     if ((_commandTypes & CommandTypes.ExternalScript) != 0)
                     {
