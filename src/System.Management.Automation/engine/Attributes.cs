@@ -1380,14 +1380,17 @@ namespace System.Management.Automation
         /// </summary>
         public IEnumerable<string> GetValidValues()
         {
-            if (_validValues != null)
+            // Because we have a background task to clear the cache by '_validValues = null'
+            // we use the local variable to exclude a race condition.
+            var validValuesLocal = _validValues;
+            if (validValuesLocal != null)
             {
-                return _validValues;
+                return validValuesLocal;
             }
 
-            var _validValuesNoCache = GenerateValidValues();
+            var validValuesNoCache = GenerateValidValues();
 
-            if (_validValuesNoCache == null)
+            if (validValuesNoCache == null)
             {
                 throw new ValidationMetadataException(
                     "ValidateSetGeneratedValidValuesListIsEmpty",
@@ -1398,10 +1401,10 @@ namespace System.Management.Automation
             if (ValidValuesCacheExpiration > 0)
             {
                 Task.Delay(ValidValuesCacheExpiration).ContinueWith((task) => _validValues = null);
-                _validValues = _validValuesNoCache;
+                _validValues = validValuesNoCache;
             }
 
-            return _validValuesNoCache;
+            return validValuesNoCache;
         }
     }
 
