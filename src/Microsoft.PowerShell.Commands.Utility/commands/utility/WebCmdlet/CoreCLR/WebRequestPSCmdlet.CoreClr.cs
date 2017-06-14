@@ -55,11 +55,11 @@ namespace Microsoft.PowerShell.Commands
         /// <remarks>
         /// This property overrides compatibility with web requests on Windows.
         /// On FullCLR (WebRequest), authorization headers are stripped during redirect.
-        /// CoreCLR (HTTPClient) does not have this behavior so web reqeusts that work on
+        /// CoreCLR (HTTPClient) does not have this behavior so web requests that work on
         /// PowerShell/FullCLR can fail with PowerShell/CoreCLR.  To provide compatibility,
-        /// we'll detect request with an Authorization header and automatically strip
-        /// the header.  This switch turns off this logic for edge cases where the
-        /// authorization header needs to be preserved across redirects.
+        /// we'll detect requests with an Authorization header and automatically strip
+        /// the header when the first redirect occurs. This switch turns off this logic for 
+        /// edge cases where the authorization header needs to be preserved across redirects.
         /// </remarks>
         [Parameter]
         public virtual SwitchParameter PreserveAuthorizationOnRedirect { get; set; }
@@ -240,7 +240,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (stripAuthorization && entry.Key == HttpKnownHeaderNames.Authorization.ToString())
+                        if (stripAuthorization 
+                            && 
+                            String.Equals(entry.Key, HttpKnownHeaderNames.Authorization.ToString(), StringComparison.OrdinalIgnoreCase)
+                        )
                         {
                             continue;
                         }
@@ -457,7 +460,7 @@ namespace Microsoft.PowerShell.Commands
 
                 // recreate the HttpClient with redirection enabled since the first call suppressed redirection
                 using (client = GetHttpClient(false))
-                using (HttpRequestMessage redirectRequest = GetRequest(response.Headers.Location, true))
+                using (HttpRequestMessage redirectRequest = GetRequest(response.Headers.Location, stripAuthorization:true))
                 {
                     FillRequestStream(redirectRequest);
                     _cancelToken = new CancellationTokenSource();
@@ -511,7 +514,7 @@ namespace Microsoft.PowerShell.Commands
                             WriteVerbose(linkVerboseMsg);
                         }
 
-                        using (HttpRequestMessage request = GetRequest(uri, false))
+                        using (HttpRequestMessage request = GetRequest(uri, stripAuthorization:false))
                         {
                             FillRequestStream(request);
                             try
