@@ -696,24 +696,30 @@ function Publish-PSTestTools {
 
     Find-Dotnet
 
-    $tools = @("$PSScriptRoot/test/tools/EchoArgs", "echoargs"), @("$PSScriptRoot/test/tools/CreateChildProcess", "createchildprocess")
+    $tools = @(
+        @{Path="${PSScriptRoot}/test/tools/TestExe";Output="testexe"}
+    )
     if ($Options -eq $null)
     {
         $Options = New-PSOptions
     }
 
-    # Publish EchoArgs so it can be run by tests
+    # Publish tools so it can be run by tests
     foreach ($tool in $tools)
     {
-        Push-Location $tool[0]
+        Push-Location $tool.Path
         try {
             dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
+            $toolPath = Join-Path -Path $tool.Path -ChildPath "bin"
 
             # add 'x' permission when building the standalone application
             # this is temporary workaround to a bug in dotnet.exe, tracking by dotnet/cli issue #6286
             if ($Options.Configuration -eq "Linux") {
-                $executable = Join-Path -Path $tool[0] -ChildPath "bin/$($tool[1])"
+                $executable = Join-Path -Path $toolPath -ChildPath "$($tool.Output)"
                 chmod u+x $executable
+            }
+            if ( $env:PATH -notcontains $toolPath ) {
+                $env:PATH = $toolPath+$TestModulePathSeparator+$($env:PATH)
             }
         } finally {
             Pop-Location
