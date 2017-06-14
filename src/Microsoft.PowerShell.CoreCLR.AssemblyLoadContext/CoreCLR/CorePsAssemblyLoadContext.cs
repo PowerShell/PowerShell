@@ -300,7 +300,7 @@ namespace System.Management.Automation
                 if(String.IsNullOrEmpty(_winDir))
                 {
                     //cache value of '_winDir' folder in member variable.
-                    _winDir = Environment.GetEnvironmentVariable("_winDir");
+                    _winDir = Environment.GetEnvironmentVariable("winDir");
                 }
 
                 if (String.IsNullOrEmpty(_gacPathMSIL))
