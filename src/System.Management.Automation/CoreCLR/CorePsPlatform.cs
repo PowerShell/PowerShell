@@ -8,8 +8,6 @@ using System.ComponentModel;
 using Microsoft.Win32;
 using Microsoft.Win32.SafeHandles;
 using System.IO;
-using System.Diagnostics;
-using System.Text;
 
 namespace System.Management.Automation
 {
