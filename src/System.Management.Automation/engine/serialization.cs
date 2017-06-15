@@ -7428,6 +7428,7 @@ namespace Microsoft.PowerShell
 
             result.GroupBy = GetPropertyValue<PSControlGroupBy>(deserializedControl, "GroupBy", RehydrationFlags.MissingPropertyOk);
             result.OutOfBand = GetPropertyValue<bool>(deserializedControl, "OutOfBand", RehydrationFlags.MissingPropertyOk);
+            result.Width = GetPropertyValue<int?>(deserializedControl, "Width", RehydrationFlags.MissingPropertyOk);
             return result;
         }
 
