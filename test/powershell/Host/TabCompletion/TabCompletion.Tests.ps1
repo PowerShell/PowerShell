@@ -103,6 +103,12 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should Be 'namespace'
     }
 
+    It 'Should complete about help topic' {
+        $res = TabExpansion2 -inputScript 'get-help about_forea' -cursorColumn 'get-help about_fo'.Length
+        $res.CompletionMatches.Count | Should Be 1
+        $res.CompletionMatches[0].CompletionText | Should BeExactly 'about_ForEach'
+    }
+
     Context NativeCommand {
         BeforeAll {
             $nativeCommand = (Get-Command -CommandType Application -TotalCount 1).Name

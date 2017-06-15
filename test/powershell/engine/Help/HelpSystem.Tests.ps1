@@ -206,12 +206,6 @@ Describe "Validate about_help.txt under culture specific folder works" -Tags @('
         $help = Get-Help about_Variables
         $help.count | Should Be 1
     }
-
-    It "Get-Help for about_* should return more than 1 help objects" {
-
-        $help = Get-Help about_*
-        $help.Count | Should BeGreaterThan 1
-    }
 }
 
 Describe "Get-Help should find help info within help files" -Tags @('CI', 'RequireAdminOnWindows') {
