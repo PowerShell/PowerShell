@@ -499,10 +499,10 @@ namespace Microsoft.PowerShell
 
                 if (!SpecialCharacters.IsDash(switchKey[0]) && switchKey[0] != '/')
                 {
-                    // then its a command
+                    // then its a file
 
                     --i;
-                    ParseCommand(args, ref i, noexitSeen, false);
+                    ParseFile(args, ref i, noexitSeen);
                     break;
                 }
 
@@ -620,126 +620,10 @@ namespace Microsoft.PowerShell
 #endif
                 else if (MatchSwitch(switchKey, "file", "f"))
                 {
-                    // Process file execution. We don't need to worry about checking -command
-                    // since if -command comes before -file, -file will be treated as part
-                    // of the script to evaluate. If -file comes before -command, it will
-                    // treat -command as an argument to the script...
-
-                    ++i;
-                    if (i >= args.Length)
+                    if (!ParseFile(args, ref i, noexitSeen))
                     {
-                        WriteCommandLineError(
-                            CommandLineParameterParserStrings.MissingFileArgument,
-                            showHelp: true,
-                            showBanner: true);
                         break;
                     }
-
-                    // Don't show the startup banner unless -noexit has been specified.
-                    if (!noexitSeen)
-                        _showBanner = false;
-
-                    // Process interactive input...
-                    if (args[i] == "-")
-                    {
-                        // the arg to -file is -, which is secret code for "read the commands from stdin with prompts"
-
-                        _explicitReadCommandsFromStdin = true;
-                        _noPrompt = false;
-                    }
-                    else
-                    {
-                        // Exit on script completion unless -noexit was specified...
-                        if (!noexitSeen)
-                            _noExit = false;
-
-                        // We need to get the full path to the script because it will be
-                        // executed after the profiles are run and they may change the current
-                        // directory.
-                        string exceptionMessage = null;
-                        try
-                        {
-                            // Normalize slashes
-                            _file = args[i].Replace(StringLiterals.AlternatePathSeparator,
-                                                   StringLiterals.DefaultPathSeparator);
-                            _file = Path.GetFullPath(_file);
-                        }
-                        catch (Exception e)
-                        {
-                            // Catch all exceptions - we're just going to exit anyway so there's
-                            // no issue of the system being destabilized.
-                            exceptionMessage = e.Message;
-                        }
-
-                        if (exceptionMessage != null)
-                        {
-                            WriteCommandLineError(
-                                string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidFileArgument, args[i], exceptionMessage),
-                                showBanner: true);
-                            break;
-                        }
-
-                        if (!Path.GetExtension(_file).Equals(".ps1", StringComparison.OrdinalIgnoreCase))
-                        {
-                            WriteCommandLineError(
-                                string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidFileArgumentExtension, args[i]),
-                                showBanner: true);
-                            break;
-                        }
-
-                        if (!System.IO.File.Exists(_file))
-                        {
-                            WriteCommandLineError(
-                                string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.ArgumentFileDoesNotExist, args[i]),
-                                showBanner: true);
-                            break;
-                        }
-
-                        i++;
-
-                        Regex argPattern = new Regex(@"^.\w+\:", RegexOptions.CultureInvariant);
-                        string pendingParameter = null;
-
-                        // Accumulate the arguments to this script...
-                        while (i < args.Length)
-                        {
-                            string arg = args[i];
-
-                            // If there was a pending parameter, add a named parameter
-                            // using the pending parameter and current argument
-                            if (pendingParameter != null)
-                            {
-                                _collectedArgs.Add(new CommandParameter(pendingParameter, arg));
-                                pendingParameter = null;
-                            }
-                            else if (!string.IsNullOrEmpty(arg) && SpecialCharacters.IsDash(arg[0]))
-                            {
-                                Match m = argPattern.Match(arg);
-                                if (m.Success)
-                                {
-                                    int offset = arg.IndexOf(':');
-                                    if (offset == arg.Length - 1)
-                                    {
-                                        pendingParameter = arg.TrimEnd(':');
-                                    }
-                                    else
-                                    {
-                                        _collectedArgs.Add(new CommandParameter(arg.Substring(0, offset), arg.Substring(offset + 1)));
-                                    }
-                                }
-                                else
-                                {
-                                    _collectedArgs.Add(new CommandParameter(arg));
-                                }
-                            }
-                            else
-                            {
-                                _collectedArgs.Add(new CommandParameter(null, arg));
-                            }
-                            ++i;
-                        }
-                    }
-                    break;
                 }
 #if DEBUG
                 // this option is useful when debugging ConsoleHost remotely using VS remote debugging, as you can only
@@ -858,10 +742,10 @@ namespace Microsoft.PowerShell
 #endif
                 else
                 {
-                    // The first parameter we fail to recognize marks the beginning of the command string.
+                    // The first parameter we fail to recognize marks the beginning of the file string.
 
                     --i;
-                    if (!ParseCommand(args, ref i, noexitSeen, false))
+                    if (!ParseFile(args, ref i, noexitSeen))
                     {
                         break;
                     }
@@ -965,6 +849,122 @@ namespace Microsoft.PowerShell
             }
 
             executionPolicy = args[i];
+        }
+
+        private bool ParseFile(string[] args, ref int i, bool noexitSeen)
+        {
+            // Process file execution. We don't need to worry about checking -command
+            // since if -command comes before -file, -file will be treated as part
+            // of the script to evaluate. If -file comes before -command, it will
+            // treat -command as an argument to the script...
+
+            ++i;
+            if (i >= args.Length)
+            {
+                WriteCommandLineError(
+                    CommandLineParameterParserStrings.MissingFileArgument,
+                    showHelp: true,
+                    showBanner: true);
+                return false;
+            }
+
+            // Don't show the startup banner unless -noexit has been specified.
+            if (!noexitSeen)
+                _showBanner = false;
+
+            // Process interactive input...
+            if (args[i] == "-")
+            {
+                // the arg to -file is -, which is secret code for "read the commands from stdin with prompts"
+
+                _explicitReadCommandsFromStdin = true;
+                _noPrompt = false;
+            }
+            else
+            {
+                // Exit on script completion unless -noexit was specified...
+                if (!noexitSeen)
+                    _noExit = false;
+
+                // We need to get the full path to the script because it will be
+                // executed after the profiles are run and they may change the current
+                // directory.
+                string exceptionMessage = null;
+                try
+                {
+                    // Normalize slashes
+                    _file = args[i].Replace(StringLiterals.AlternatePathSeparator,
+                                            StringLiterals.DefaultPathSeparator);
+                    _file = Path.GetFullPath(_file);
+                }
+                catch (Exception e)
+                {
+                    // Catch all exceptions - we're just going to exit anyway so there's
+                    // no issue of the system being destabilized.
+                    exceptionMessage = e.Message;
+                }
+
+                if (exceptionMessage != null)
+                {
+                    WriteCommandLineError(
+                        string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidFileArgument, args[i], exceptionMessage),
+                        showBanner: true);
+                    return false;
+                }
+
+                if (!System.IO.File.Exists(_file))
+                {
+                    WriteCommandLineError(
+                        string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.ArgumentFileDoesNotExist, args[i]),
+                        showBanner: true);
+                    return false;
+                }
+
+                i++;
+
+                Regex argPattern = new Regex(@"^.\w+\:", RegexOptions.CultureInvariant);
+                string pendingParameter = null;
+
+                // Accumulate the arguments to this script...
+                while (i < args.Length)
+                {
+                    string arg = args[i];
+
+                    // If there was a pending parameter, add a named parameter
+                    // using the pending parameter and current argument
+                    if (pendingParameter != null)
+                    {
+                        _collectedArgs.Add(new CommandParameter(pendingParameter, arg));
+                        pendingParameter = null;
+                    }
+                    else if (!string.IsNullOrEmpty(arg) && SpecialCharacters.IsDash(arg[0]))
+                    {
+                        Match m = argPattern.Match(arg);
+                        if (m.Success)
+                        {
+                            int offset = arg.IndexOf(':');
+                            if (offset == arg.Length - 1)
+                            {
+                                pendingParameter = arg.TrimEnd(':');
+                            }
+                            else
+                            {
+                                _collectedArgs.Add(new CommandParameter(arg.Substring(0, offset), arg.Substring(offset + 1)));
+                            }
+                        }
+                        else
+                        {
+                            _collectedArgs.Add(new CommandParameter(arg));
+                        }
+                    }
+                    else
+                    {
+                        _collectedArgs.Add(new CommandParameter(null, arg));
+                    }
+                    ++i;
+                }
+            }
+            return true;
         }
 
         private bool ParseCommand(string[] args, ref int i, bool noexitSeen, bool isEncoded)

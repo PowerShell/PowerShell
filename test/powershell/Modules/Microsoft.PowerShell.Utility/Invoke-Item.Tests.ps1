@@ -52,10 +52,10 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
 
         if ($IsWindows) {
             ## 'ping.exe' on Windows writes out usage to stdout.
-            & $powershell "-noprofile" "Invoke-Item '$executable'" > $redirectFile
+            & $powershell -noprofile -c "Invoke-Item '$executable'" > $redirectFile
         } else {
             ## 'ping' on Unix write out usage to stderr
-            & $powershell "-noprofile" "Invoke-Item '$executable'" 2> $redirectFile
+            & $powershell -noprofile -c "Invoke-Item '$executable'" 2> $redirectFile
         }
         Get-Content $redirectFile -Raw | Should Match "usage: ping"
     }
