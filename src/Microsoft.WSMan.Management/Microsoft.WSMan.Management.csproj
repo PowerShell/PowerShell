@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\PowerShellCommon.props"/>  
+
   <PropertyGroup>
     <Description>PowerShell Core's Microsoft.WSMan.Management project</Description>
     <AssemblyName>Microsoft.WSMan.Management</AssemblyName>
   </PropertyGroup>
-
-  <Import Project="..\..\PowerShellCommon.props"/>  
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />

@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\PowerShellCommon.props"/>  
+
   <PropertyGroup>
     <Description>PowerShell Host</Description>
     <NoWarn>$(NoWarn);CS1570</NoWarn>
     <AssemblyName>Microsoft.PowerShell.ConsoleHost</AssemblyName>
   </PropertyGroup>
-
-  <Import Project="..\..\PowerShellCommon.props"/>  
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />

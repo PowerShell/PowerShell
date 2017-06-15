@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\PowerShellCommon.props"/>  
+
   <PropertyGroup>
     <Description>PowerShell Core's Microsoft.PowerShell.LocalAccounts project</Description>
     <AssemblyName>Microsoft.PowerShell.LocalAccounts</AssemblyName>
     <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
   </PropertyGroup>
-
-  <Import Project="..\..\PowerShellCommon.props"/>  
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />

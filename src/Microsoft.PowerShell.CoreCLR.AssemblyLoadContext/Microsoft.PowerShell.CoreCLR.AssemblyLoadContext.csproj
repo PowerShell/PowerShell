@@ -1,11 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\PowerShellCommon.props"/>  
+
   <PropertyGroup>
     <Description>PowerShell Core's Microsoft.PowerShell.CoreCLR.AssemblyLoadContext project</Description>
     <AssemblyName>Microsoft.PowerShell.CoreCLR.AssemblyLoadContext</AssemblyName>
   </PropertyGroup>
-
-  <Import Project="..\..\PowerShellCommon.props"/>  
 
   <PropertyGroup>
     <DefineConstants>$(DefineConstants);CORECLR</DefineConstants>
