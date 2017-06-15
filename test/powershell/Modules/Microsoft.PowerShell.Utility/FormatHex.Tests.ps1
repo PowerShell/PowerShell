@@ -1,4 +1,4 @@
-﻿# This is a Pester test suite to validate the Format-Hex cmdlet in the Microsoft.PowerShell.Utility module.
+# This is a Pester test suite to validate the Format-Hex cmdlet in the Microsoft.PowerShell.Utility module.
 #
 # Copyright (c) Microsoft Corporation, 2015
 #
@@ -38,7 +38,7 @@ function RunObjectFromPipelineTestCase($testCase)
         $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         $result[0].ToString() | Should Match $testCase.ExpectedResult
 
-        if ($result.count > 1)
+        if ($result.count -gt 1)
         {
             $result[1].ToString() | Should Match $testCase.ExpectedSecondResult
         }
@@ -51,7 +51,7 @@ function RunPathAndLiteralPathParameterTestCase($testCase)
 
         if ($testCase.PathCase)
         {
-            $result =  Format-Hex -Path $testCase.Path
+            $result = Format-Hex -Path $testCase.Path
         }
         else # LiteralPath
         {
@@ -62,9 +62,14 @@ function RunPathAndLiteralPathParameterTestCase($testCase)
         $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
         $result[0].ToString() | Should Match $testCase.ExpectedResult
 
-        if ($result.count > 1)
+        if ($result.count -gt 1)
         {
-            $result[1].ToString() | Should Match $testCase.ExpectedSecondResult
+            $expectedResult = $testCase.ExpectedSecondResult
+            if ($expectedResult.Length -gt 16)  # content larger than 16 bytes show up in next row
+            {
+                $expectedResult = $expectedResult.SubString(0, 16)
+            }
+            $result[1].ToString() | Should Match $expectedResult
         }
     }
 }
