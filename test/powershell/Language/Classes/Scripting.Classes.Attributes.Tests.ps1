@@ -219,26 +219,6 @@ Describe 'Type resolution with attributes' -Tag "CI" {
 
 Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
 
-    Context 'Common tests' {
-        It 'Check default value [ValidateSet]::ValidValuesGeneratorCacheExpiration' {
-            [ValidateSet]::ValidValuesGeneratorCacheExpiration | Should Be 900
-        }
-
-        It 'Can set value [ValidateSet]::ValidValuesGeneratorCacheExpiration' {
-            [ValidateSet]::ValidValuesGeneratorCacheExpiration = 60
-            [ValidateSet]::ValidValuesGeneratorCacheExpiration | Should Be 60
-        }
-
-        It 'Check default value [ValidateSet]::ValidValuesGeneratorCacheSize' {
-            [ValidateSet]::ValidValuesGeneratorCacheSize | Should Be 31
-        }
-
-        It 'Check default value [ValidateSet]::ValidValuesGeneratorCacheSize' {
-            [ValidateSet]::ValidValuesGeneratorCacheSize = 15
-            [ValidateSet]::ValidValuesGeneratorCacheSize | Should Be 15
-        }
-}
-
     Context 'C# tests' {
 
         BeforeAll {
@@ -292,7 +272,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
             /// Implement of test IValidateSetValuesGenerator
             public class GenValuesForParamNull : IValidateSetValuesGenerator
             {
-                public IEnumerable<string> GetValidValues()
+                public string[] GetValidValues()
                 {
                     var testValues = new string[] {"Test1","TestString1","Test2"};
                     return null;
@@ -301,19 +281,18 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
 
             public class GenValuesForParam : IValidateSetValuesGenerator
             {
-                public IEnumerable<string> GetValidValues()
+                public string[] GetValidValues()
                 {
                     var testValues = new string[] {"Test1","TestString1","Test2"};
-                    foreach (var value in testValues)
-                    {
-                        yield return value;
-                    }
+                    return testValues;
                 }
             }
         }
 '@
 
-            Add-Type -TypeDefinition $a -PassThru | ForEach-Object {$_.assembly} | Import-module -Force
+            $testAssemply = "$TestDrive\tst-$(New-Guid).dll"
+            Add-Type -TypeDefinition $a -OutputAssembly $testAssemply
+            Import-Module $testAssemply
         }
 
         It 'Throw if IValidateSetValuesGenerator is not implemented' {
@@ -336,14 +315,14 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
 
         BeforeAll {
             class GenValuesForParam : System.Management.Automation.IValidateSetValuesGenerator {
-                [System.Collections.Generic.IEnumerable[String]] GetValidValues() {
+                [String[]] GetValidValues() {
 
                     return [string[]]("Test1","TestString1","Test2")
                 }
             }
 
             class GenValuesForParamNull : System.Management.Automation.IValidateSetValuesGenerator {
-                [System.Collections.Generic.IEnumerable[String]] GetValidValues() {
+                [String[]] GetValidValues() {
 
                     return [string[]]$null
                 }
@@ -351,7 +330,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
 
             # Return '$testValues2' and after 2 seconds after first use return another array '$testValues1'.
             class GenValuesForParamCache1 : System.Management.Automation.IValidateSetValuesGenerator {
-                [System.Collections.Generic.IEnumerable[String]] GetValidValues() {
+                [String[]] GetValidValues() {
 
                     $testValues1 = "Test11","TestString11","Test22"
                     $testValues2 = "Test11","TestString22","Test22"

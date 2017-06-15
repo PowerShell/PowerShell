@@ -1368,8 +1368,18 @@ namespace System.Management.Automation
         /// Sets a time interval in seconds to reset the '_validValues' dynamic valid values cache.
         /// By default 'ValidValuesCacheExpiration = 0' and no valid values is cached (is re-evaluated every time it is used).
         /// </summary>
-        public int ValidValuesCacheExpiration { get; set; } = 0;
+        public int ValidValuesCacheExpiration { 
+            get
+            {
+                return _ValidValuesCacheExpiration / 1000;
+            }
+            set
+            {
+                _ValidValuesCacheExpiration = value * 1000;
+            }
+        }
 
+        private int _ValidValuesCacheExpiration;
         /// <summary>
         /// Abstract method to generate a valid values.
         /// </summary>
@@ -1378,7 +1388,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a valid values.
         /// </summary>
-        public IEnumerable<string> GetValidValues()
+        public string[] GetValidValues()
         {
             // Because we have a background task to clear the cache by '_validValues = null'
             // we use the local variable to exclude a race condition.
@@ -1419,95 +1429,8 @@ namespace System.Management.Automation
         private string[] _validValues;
 
         // The valid values generator cache works across 'ValidateSetAttribute' instances.
-        private static ConcurrentDictionary<Type, ValidValuesGeneratorCacheEntry> s_ValidValuesGeneratorCache = new ConcurrentDictionary<Type, ValidValuesGeneratorCacheEntry>();
+        private static ConcurrentDictionary<Type, IValidateSetValuesGenerator> s_ValidValuesGeneratorCache = new ConcurrentDictionary<Type, IValidateSetValuesGenerator>();
 
-        // The default is from CoreFX for 'ConcurrentDictionary' type.
-        // https://github.com/dotnet/corefx/blob/master/src/System.Collections.Concurrent/src/System/Collections/Concurrent/ConcurrentDictionary.cs#L73
-        // Value = 0 - disable the cache and recreate a valid values generator in each call 'ValidValues'.
-        internal static int s_validValuesGeneratorCacheSize = 31;
-
-        // We should adjust the default value based on a user feedback.
-        // Since we have a public interface to configure the value, we can set a large default value.
-        internal static int s_validValuesGeneratorCacheExpiration = 900;
-
-        /// <summary>
-        /// Allow get/set the valid values generator cache expiration at runtime.
-        /// </summary>
-        public static int ValidValuesGeneratorCacheExpiration
-        {
-            get
-            {
-                return s_validValuesGeneratorCacheExpiration;
-            }
-            set
-            {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException("ValidValuesGeneratorCacheSize");
-                }
-
-                s_validValuesGeneratorCacheExpiration = value;
-
-                CleanExpiredValidValuesGeneratorCache();
-            }
-        }
-
-        /// <summary>
-        /// Allow get/set the valid values generator cache size at runtime.
-        /// </summary>
-        public static int ValidValuesGeneratorCacheSize
-        {
-            get
-            {
-                return s_validValuesGeneratorCacheSize;
-            }
-            set
-            {
-                if (value < 0)
-                {
-                    throw new ArgumentOutOfRangeException("ValidValuesGeneratorCacheSize");
-                }
-
-                s_validValuesGeneratorCacheSize = value;
-
-                AdjustValidValuesGeneratorCache();
-            }
-        }
-        private static void AdjustValidValuesGeneratorCache()
-        {
-            CleanExpiredValidValuesGeneratorCache();
-            // If after removing all expired entries the cache still remains overflowed
-            // we should increase a size of the cache but this is a user privilege.
-            // So here we can only remove random items.
-            while (s_ValidValuesGeneratorCache.Count > s_validValuesGeneratorCacheSize)
-            {
-                s_ValidValuesGeneratorCache.First();
-            }
-        }
-
-        private static void CleanExpiredValidValuesGeneratorCache()
-        {
-            var currentTime = DateTime.Now;
-            foreach (var item in s_ValidValuesGeneratorCache)
-            {
-                if (DateTime.Compare(item.Value.cacheEntryAccessTime.AddSeconds(ValidValuesGeneratorCacheExpiration), currentTime) < 0)
-                {
-                    s_ValidValuesGeneratorCache.TryRemove(item.Key, out var ignore);
-                }
-            }
-        }
-        private class ValidValuesGeneratorCacheEntry
-        {
-            public IValidateSetValuesGenerator validValuesGenerator = null;
-
-            public DateTime cacheEntryAccessTime = DateTime.MinValue;
-
-            public ValidValuesGeneratorCacheEntry(IValidateSetValuesGenerator validValuesGenerator, DateTime cacheEntryAccessTime)
-            {
-                this.validValuesGenerator = validValuesGenerator;
-                this.cacheEntryAccessTime = cacheEntryAccessTime;
-            }
-        }
         private Type validValuesGeneratorType = null;
 
         /// <summary>
@@ -1535,41 +1458,25 @@ namespace System.Management.Automation
         {
             get
             {
-                if (validValuesGeneratorType != null)
+                if (validValuesGeneratorType == null)
                 {
-                    ValidValuesGeneratorCacheEntry ValidValuesGeneratorCacheEntry;
-                    if (s_ValidValuesGeneratorCache.TryGetValue(validValuesGeneratorType, out ValidValuesGeneratorCacheEntry))
-                    {
-                        // The valid values generator is in the cache.
-                        // Update last access time. We use this for cache cleanup.
-                        var currentTime = DateTime.Now;
-                        ValidValuesGeneratorCacheEntry.cacheEntryAccessTime = currentTime;
-                        s_ValidValuesGeneratorCache[validValuesGeneratorType] = ValidValuesGeneratorCacheEntry;
-                    }
-                    else
-                    {
-                        // Add a valid values generator to the cache.
-                        // We don't cache valid values.
-                        // We expect that valid values can be cached in the valid values generator.
-                        var validValuesGenerator = (IValidateSetValuesGenerator)Activator.CreateInstance(validValuesGeneratorType);
-                        var cacheEntryAccessTime = DateTime.Now;
-                        ValidValuesGeneratorCacheEntry = new ValidValuesGeneratorCacheEntry(validValuesGenerator, cacheEntryAccessTime);
-                        s_ValidValuesGeneratorCache.TryAdd(validValuesGeneratorType, ValidValuesGeneratorCacheEntry);
-                    }
-
-                    _validValues = ValidValuesGeneratorCacheEntry.validValuesGenerator.GetValidValues()?.ToArray();
-
-                    AdjustValidValuesGeneratorCache();
-
-                    if (_validValues == null)
-                    {
-                        throw new ValidationMetadataException(
-                            "ValidateSetGeneratedValidValuesListIsEmpty",
-                            null,
-                            Metadata.ValidateSetGeneratedValidValuesListIsEmpty);
-                    }
+                    return _validValues;
                 }
-                return _validValues;
+
+                IValidateSetValuesGenerator  ValidValuesGeneratorCacheEntry;
+                s_ValidValuesGeneratorCache.TryGetValue(validValuesGeneratorType, out ValidValuesGeneratorCacheEntry);
+
+                var validValuesLocal = ValidValuesGeneratorCacheEntry?.GetValidValues();
+
+                if (validValuesLocal == null)
+                {
+                    throw new ValidationMetadataException(
+                        "ValidateSetGeneratedValidValuesListIsEmpty",
+                        null,
+                        Metadata.ValidateSetGeneratedValidValuesListIsEmpty);
+                }
+
+                return validValuesLocal;
             }
         }
 
@@ -1650,6 +1557,12 @@ namespace System.Management.Automation
             }
 
             validValuesGeneratorType = valuesGeneratorType;
+
+            // Add a valid values generator to the cache.
+            // We don't cache valid values.
+            // We expect that valid values can be cached in the valid values generator.
+            var ValidValuesGeneratorCacheEntry = (IValidateSetValuesGenerator)Activator.CreateInstance(validValuesGeneratorType);
+            s_ValidValuesGeneratorCache.TryAdd(validValuesGeneratorType, ValidValuesGeneratorCacheEntry);
         }
     }
 
@@ -1661,7 +1574,7 @@ namespace System.Management.Automation
         /// <summary>
         /// Get a valid values.
         /// </summary>
-        IEnumerable<string> GetValidValues();
+        string[] GetValidValues();
     }
 
     #region Allow
