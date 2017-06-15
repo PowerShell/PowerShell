@@ -147,7 +147,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (SkipCertificateCheck)
             {
-                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                handler.ServerCertificateCustomValidationCallback = delegate { return true; };
             }
 
             if (WebSession.MaximumRedirection > -1)
