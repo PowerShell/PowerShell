@@ -104,9 +104,18 @@ Describe "TabCompletion" -Tags CI {
     }
 
     It 'Should complete about help topic' {
-        $res = TabExpansion2 -inputScript 'get-help about_forea' -cursorColumn 'get-help about_fo'.Length
+
+        $aboutHelpPath = Join-Path $PSHOME (Get-Culture).Name
+
+        ## If help content does not exist, tab completion will not work. So update it first.
+        if(-not (Test-Path (Join-Path $aboutHelpPath "about_ForEach-Parallel.help.txt")))
+        {
+            Update-Help -Force -ErrorAction SilentlyContinue
+        }
+
+        $res = TabExpansion2 -inputScript 'get-help about_foreach-p' -cursorColumn 'get-help about_foreach-p'.Length
         $res.CompletionMatches.Count | Should Be 1
-        $res.CompletionMatches[0].CompletionText | Should BeExactly 'about_ForEach'
+        $res.CompletionMatches[0].CompletionText | Should BeExactly 'about_ForEach-Parallel'
     }
 
     Context NativeCommand {
