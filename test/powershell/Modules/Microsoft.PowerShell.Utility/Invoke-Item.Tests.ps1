@@ -33,7 +33,7 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
 
             ## Redirect stderr to a file. So if 'open' failed to open the text file, an error
             ## message from 'open' would be written to the redirection file.
-            $proc = Start-Process -FilePath $powershell -ArgumentList "-noprofile Invoke-Item '$TestFile'" `
+            $proc = Start-Process -FilePath $powershell -ArgumentList "-noprofile -c Invoke-Item '$TestFile'" `
                                   -RedirectStandardError $redirectErr `
                                   -PassThru
             $proc.WaitForExit(3000) > $null
