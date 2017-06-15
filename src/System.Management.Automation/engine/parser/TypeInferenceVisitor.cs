@@ -62,7 +62,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         public static IList<PSTypeName> InferTypeOf(Ast ast, PowerShell powerShell)
         {
-            return InferTypeOf(ast,  powerShell, TypeInferenceRuntimePermissions.None);
+            return InferTypeOf(ast, powerShell, TypeInferenceRuntimePermissions.None);
         }
 
         /// <summary>
@@ -91,12 +91,25 @@ namespace System.Management.Automation
             try
             {
                 context.RuntimePermissions = evalPersmissions;
-                return context.InferType(ast, new TypeInferenceVisitor(context)).ToList();
+                return context.InferType(ast, new TypeInferenceVisitor(context)).Distinct(new PSTypeNameComparer()).ToList();
             }
             finally
             {
                 context.RuntimePermissions = originalRuntimePermissions;
             }
+        }
+    }
+
+    class PSTypeNameComparer : IEqualityComparer<PSTypeName>
+    {
+        public bool Equals(PSTypeName x, PSTypeName y)
+        {
+            return x.Name.Equals(y.Name);
+        }
+
+        public int GetHashCode(PSTypeName obj)
+        {
+            return obj.Name.GetHashCode();
         }
     }
 
@@ -900,64 +913,54 @@ namespace System.Management.Automation
 
         private IEnumerable<PSTypeName> InferTypesFromForeachCommand(PseudoBindingInfo pseudoBinding, CommandAst commandAst)
         {
-            var previousPipelineElement = GetPreviousPipelineCommand(commandAst);
-            if (previousPipelineElement == null)
+            AstParameterArgumentPair argument;
+            if (pseudoBinding.BoundArguments.TryGetValue("MemberName", out argument))
             {
-                yield break;
-            }
-            foreach (var t in InferTypes(previousPipelineElement))
-            {
-                var thisToRestore = _context.CurrentThisType;
-                try
+                var previousPipelineElement = GetPreviousPipelineCommand(commandAst);
+                if (previousPipelineElement == null)
                 {
-                    _context.CurrentThisType = t;
-                    AstParameterArgumentPair argument;
-                    if (pseudoBinding.BoundArguments.TryGetValue("MemberName", out argument))
+                    yield break;
+                }
+                foreach (var t in InferTypes(previousPipelineElement))
+                {
+                    var memberName = (((AstPair)argument).Argument as StringConstantExpressionAst)?.Value;
+                    
+                    if (memberName != null)
                     {
-                        var memberName = (((AstPair) argument).Argument as StringConstantExpressionAst)?.Value;
-                        if (memberName != null)
-                        {
-                            var types = _context.GetMembersByInferredType(t, false, null);
-                            bool maybeWantDefaultCtor = false;
-                            var res = new List<PSTypeName>(10);
-                            foreach (var type in GetTypesOfMembers(memberName, types, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst: false))
-                            {
-                                yield return type;
-                            }
-                        }
-                    }
-
-                    if (pseudoBinding.BoundArguments.TryGetValue("Begin", out argument))
-                    {
-                        foreach (var type in GetInferredTypeFromScriptBlockParameter(argument))
-                        {
-                            yield return type;
-                        }
-                    }
-
-                    if (pseudoBinding.BoundArguments.TryGetValue("Process", out argument))
-                    {
-                        foreach (var type in GetInferredTypeFromScriptBlockParameter(argument))
-                        {
-                            yield return type;
-                        }
-                    }
-
-                    if (pseudoBinding.BoundArguments.TryGetValue("End", out argument))
-                    {
-                        foreach (var type in GetInferredTypeFromScriptBlockParameter(argument))
+                        var members = _context.GetMembersByInferredType(t, false, null);
+                        bool maybeWantDefaultCtor = false;
+                        foreach (var type in GetTypesOfMembers(t, memberName, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst: false))
                         {
                             yield return type;
                         }
                     }
                 }
-                finally
+            }
+
+            if (pseudoBinding.BoundArguments.TryGetValue("Begin", out argument))
+            {
+                foreach (var type in GetInferredTypeFromScriptBlockParameter(argument))
                 {
-                    _context.CurrentThisType = thisToRestore;
+                    yield return type;
                 }
             }
 
+            if (pseudoBinding.BoundArguments.TryGetValue("Process", out argument))
+            {
+                foreach (var type in GetInferredTypeFromScriptBlockParameter(argument))
+                {
+                    yield return type;
+                }
             }
+
+            if (pseudoBinding.BoundArguments.TryGetValue("End", out argument))
+            {
+                foreach (var type in GetInferredTypeFromScriptBlockParameter(argument))
+                {
+                    yield return type;
+                }
+            }
+        }
 
         private IEnumerable<PSTypeName> InferTypesFromWhereAndSortCommand(CommandAst commandAst)
         {
@@ -1004,27 +1007,33 @@ namespace System.Management.Automation
             // If the member name isn't simple, don't even try.
             var memberAsStringConst = memberCommandElement as StringConstantExpressionAst;
             if (memberAsStringConst == null)
-                return new PSTypeName[0];
+                return Utils.EmptyArray<PSTypeName>();
 
-            var exprType = GetExpressionType(expression, isStatic);
+            var exprType = GetExpressionType(expression, isStatic);                
             if (exprType == null || exprType.Length == 0)
             {
-                return new PSTypeName[0];
+                return Utils.EmptyArray<PSTypeName>();
             }
+            
             var res = new List<PSTypeName>(10);
             bool isInvokeMemberExpressionAst = memberExpressionAst is InvokeMemberExpressionAst;
             var maybeWantDefaultCtor = isStatic
                 && isInvokeMemberExpressionAst
-                && memberAsStringConst.Value.EqualsOrdinalIgnoreCase("new");
+                && memberAsStringConst.Value.EqualsOrdinalIgnoreCase("new");            
 
             // We use a list of member names because we might discover aliases properties
             // and if we do, we'll add to the list.
             var memberNameList = new List<string> { memberAsStringConst.Value };
             foreach (var type in exprType)
             {
+                if (type.Type == typeof(PSObject))
+                {
+                    
+                    continue;
+                }
                 var members = _context.GetMembersByInferredType(type, isStatic, filter: null);
 
-                AddTypesOfMembers(memberNameList, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, res);
+                AddTypesOfMembers(type, memberNameList, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, res);
 
                 // We didn't find any constructors but they used [T]::new() syntax
                 if (maybeWantDefaultCtor)
@@ -1035,32 +1044,31 @@ namespace System.Management.Automation
             return res;
         }
 
-        private List<PSTypeName> GetTypesOfMembers(string memberName, IList<object> members, ref bool maybeWantDefaultCtor, bool isInvokeMemberExpressionAst)
+        private List<PSTypeName> GetTypesOfMembers(PSTypeName thisType, string memberName, IList<object> members, ref bool maybeWantDefaultCtor, bool isInvokeMemberExpressionAst)
         {
             var memberNamesToCheck = new List<string> { memberName };
             var res = new List<PSTypeName>(10);
 
-            AddTypesOfMembers(memberNamesToCheck, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, res);
+            AddTypesOfMembers(thisType, memberNamesToCheck, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, res);
             return res;
         }
 
-        private void AddTypesOfMembers(List<string> memberNamesToCheck, IList<object> members, ref bool maybeWantDefaultCtor, bool isInvokeMemberExpressionAst, List<PSTypeName> result)
+        private void AddTypesOfMembers(PSTypeName currentType, List<string> memberNamesToCheck, IList<object> members, ref bool maybeWantDefaultCtor, bool isInvokeMemberExpressionAst, List<PSTypeName> result)
         {
             for (int i = 0; i < memberNamesToCheck.Count; i++)
             {
                 string memberNameToCheck = memberNamesToCheck[i];
                 foreach (var member in members)
                 {
-                    if (TryGetTypeFromMember(member, memberNameToCheck, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, result, memberNamesToCheck))
+                    if (TryGetTypeFromMember(currentType, member, memberNameToCheck, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, result, memberNamesToCheck))
                     {
-                        goto NextMemberNameToCheck;
+                        break;
                     }
                 }
-                NextMemberNameToCheck: { }
             }
         }
 
-        private bool TryGetTypeFromMember(object member, string memberName, ref bool maybeWantDefaultCtor, bool isInvokeMemberExpressionAst, List<PSTypeName> result, List<string> memberNamesToCheck)
+        private bool TryGetTypeFromMember(PSTypeName currentType, object member, string memberName, ref bool maybeWantDefaultCtor, bool isInvokeMemberExpressionAst, List<PSTypeName> result, List<string> memberNamesToCheck)
         {
             switch (member)
             {
@@ -1181,16 +1189,25 @@ namespace System.Management.Automation
                     }
                     if (scriptBlock != null)
                     {
-                        var outputType = scriptBlock.OutputType;
-                        if (outputType != null && outputType.Count != 0)
+                        var thisToRestore = _context.CurrentThisType;
+                        try
                         {
-                            result.AddRange(outputType);
-                            return true;
+                            _context.CurrentThisType = currentType;
+                            var outputType = scriptBlock.OutputType;
+                            if (outputType != null && outputType.Count != 0)
+                            {
+                                result.AddRange(outputType);
+                                return true;
+                            }
+                            else
+                            {
+                                result.AddRange(InferTypes(scriptBlock.Ast).ToArray());
+                                return true;
+                            }
                         }
-                        else
+                        finally
                         {
-                            result.AddRange(InferTypes(scriptBlock.Ast).ToArray());
-                            return true;
+                            _context.CurrentThisType = thisToRestore;
                         }
                     }
                 }

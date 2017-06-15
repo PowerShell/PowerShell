@@ -32,7 +32,6 @@ Describe "Type inference Tests" -tags "CI" {
                 return $script:inferTypeOf4.Invoke($null, @($ast, $powerShell, $runtimePermissions))
             }
         }
-
     }
 
     It "Infers type from integer" {
@@ -306,6 +305,64 @@ Describe "Type inference Tests" -tags "CI" {
         $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | ForEach-Object -MemberName Directory }.Ast)
         $res.Count | Should Be 1
         $res.Name | Should Be "System.IO.DirectoryInfo"
+    }
+
+    It 'Infers typeof Foreach-Object -Member when Member is Property' {
+        $ast = {Get-Process | Foreach-Object -Member FileVersion}.Ast
+        $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+        $typeNames.Count | Should be 1
+        $typeNames[0] | Should be 'System.String'
+    }
+
+    It 'Infers typeof Foreach-Object -Member when member is ScriptProperty' {
+        $ast = {Get-Process | Foreach-Object -Member Description}.Ast
+        $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+        $typeNames.Count | Should be 1
+        $typeNames[0] | Should be 'System.String'
+    }
+
+    It 'Infers typeof Foreach-Object -Member when Member is Alias' {
+        $ast = {Get-Process | Foreach-Object -Member Handles}.Ast
+        $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+        $typeNames.Count | Should be 1
+        $typeNames[0] | Should be 'System.Int32'
+    }
+
+    It 'Infers typeof Foreach-Object -Member when using dependent scriptproperties' {
+        class XSP {
+            [string] $Value
+            X() {
+                $this.Value = "TheValue"
+            }
+        }
+        class YSP {
+            [XSP] $X
+            YSP() {$this.X = [XSP]::new()}
+        }
+        Update-TypeData -TypeName XSP -MemberName TheValue -MemberType ScriptProperty -Value { return $this.Value } -Force
+        Update-TypeData -TypeName YSP -MemberName XVal -MemberType ScriptProperty -Value {return $this.X } -Force
+
+        $ast = {[YSP]::new() | Foreach-Object -MemberName XVal | ForEach-Object -MemberName TheValue}.Ast
+        $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+        $typeNames.Count | Should be 1
+        $typeNames[0] | Should be 'System.String'
+    }
+
+    # Not yet implementet
+    It 'Infers typeof Foreach-Object -Member when using dependent scriptproperties on pscustomobject' -Skip {
+        $x = [pscustomobject] @{
+            Value = "TheValue"
+        }
+        $y = [pscustomobject] @{
+            X = $x
+        }
+        Add-Member -InputObject $x -NotePropertyName TheValue -NotePropertyValue { return $this.Value }
+        Add-Member -InputObject $y -NotePropertyName XVal -NotePropertyValue {return $this.X }
+
+        $ast = {$y | Foreach-Object -MemberName XVal | ForEach-Object -MemberName TheValue}.Ast
+        $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+        $typeNames.Count | Should be 1
+        $typeNames[0] | Should be 'System.String'
     }
 
     It "Infers type from OutputTypeAttribute" {
