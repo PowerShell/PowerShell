@@ -165,7 +165,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (SkipCertificateCheck)
             {
-                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                handler.ServerCertificateCustomValidationCallback = delegate { return true; };
             }
 
             // This indicates GetResponse will handle redirects.

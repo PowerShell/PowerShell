@@ -507,7 +507,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
-    It "Validate Invoke-WebRequest -SkipCertificateCheck" {
+    ## 'HttpClientHandler.ServerCertificateCustomValidationCallback' currently doesn't work in netcoreapp2.0 on Mac at all.
+    ## This is tracked by powershell issue #3648.
+    It "Validate Invoke-WebRequest -SkipCertificateCheck" -Pending:$IsOSX {
 
         # validate that exception is thrown for URI with expired certificate
         $command = "Invoke-WebRequest -Uri 'https://expired.badssl.com'"
@@ -952,7 +954,9 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
-    It "Validate Invoke-RestMethod -SkipCertificateCheck" {
+    ## 'HttpClientHandler.ServerCertificateCustomValidationCallback' currently doesn't work in netcoreapp2.0 on Mac at all.
+    ## This is tracked by powershell issue #3648.
+    It "Validate Invoke-RestMethod -SkipCertificateCheck" -Pending:$IsOSX {
 
         # HTTP method HEAD must be used to not retrieve an unparsable HTTP body
         # validate that exception is thrown for URI with expired certificate

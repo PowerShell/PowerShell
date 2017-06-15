@@ -988,7 +988,7 @@ function Install-Dotnet {
     [CmdletBinding()]
     param(
         [string]$Channel = "preview",
-        [string]$Version = "2.0.0-preview2-006388",
+        [string]$Version = "2.0.0-preview1-005952",
         [switch]$NoSudo
     )
 
@@ -1050,7 +1050,7 @@ function Start-PSBootstrap {
         [string]$Channel = "preview",
         # we currently pin dotnet-cli version, and will
         # update it when more stable version comes out.
-        [string]$Version = "2.0.0-preview2-006388",
+        [string]$Version = "2.0.0-preview1-005952",
         [switch]$Package,
         [switch]$NoSudo,
         [switch]$Force
