@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
     /// Exception class for webcmdlets to enable returning HTTP error response
-    /// </summary>    
+    /// </summary>
     public sealed class HttpResponseException : HttpRequestException
     {
         /// <summary>
@@ -48,6 +48,22 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public abstract partial class WebRequestPSCmdlet : PSCmdlet
     {
+
+        /// <summary>
+        /// gets or sets the PreserveAuthorizationOnRedirect property
+        /// </summary>
+        /// <remarks>
+        /// This property overrides compatibility with web requests on Windows.
+        /// On FullCLR (WebRequest), authorization headers are stripped during redirect.
+        /// CoreCLR (HTTPClient) does not have this behavior so web requests that work on
+        /// PowerShell/FullCLR can fail with PowerShell/CoreCLR.  To provide compatibility,
+        /// we'll detect requests with an Authorization header and automatically strip
+        /// the header when the first redirect occurs. This switch turns off this logic for 
+        /// edge cases where the authorization header needs to be preserved across redirects.
+        /// </remarks>
+        [Parameter]
+        public virtual SwitchParameter PreserveAuthorizationOnRedirect { get; set; }
+
         #region Abstract Methods
 
         /// <summary>
@@ -111,7 +127,9 @@ namespace Microsoft.PowerShell.Commands
 
         #region Virtual Methods
 
-        internal virtual HttpClient GetHttpClient()
+        // NOTE: Only pass true for handleRedirect if the original request has an authorization header
+        // and PreserveAuthorizationOnRedirect is NOT set.
+        internal virtual HttpClient GetHttpClient(bool handleRedirect)
         {
             // By default the HttpClientHandler will automatically decompress GZip and Deflate content
             HttpClientHandler handler = new HttpClientHandler();
@@ -150,7 +168,12 @@ namespace Microsoft.PowerShell.Commands
                 handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
             }
 
-            if (WebSession.MaximumRedirection > -1)
+            // This indicates GetResponse will handle redirects.
+            if (handleRedirect)
+            {
+                handler.AllowAutoRedirect = false;
+            }
+            else if (WebSession.MaximumRedirection > -1)
             {
                 if (WebSession.MaximumRedirection == 0)
                 {
@@ -178,7 +201,7 @@ namespace Microsoft.PowerShell.Commands
             return httpClient;
         }
 
-        internal virtual HttpRequestMessage GetRequest(Uri uri)
+        internal virtual HttpRequestMessage GetRequest(Uri uri, bool stripAuthorization)
         {
             Uri requestUri = PrepareUri(uri);
             HttpMethod httpMethod = null;
@@ -217,6 +240,13 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
+                        if (stripAuthorization 
+                            && 
+                            String.Equals(entry.Key, HttpKnownHeaderNames.Authorization.ToString(), StringComparison.OrdinalIgnoreCase)
+                        )
+                        {
+                            continue;
+                        }
                         request.Headers.Add(entry.Key, entry.Value);
                     }
                 }
@@ -367,13 +397,77 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request)
+        // Returns true if the status code is one of the supported redirection codes.
+        static bool IsRedirectCode(HttpStatusCode code)
+        {
+            int intCode = (int) code;
+            return
+            (
+                (intCode >= 300 && intCode < 304)
+                ||
+                intCode == 307
+            );
+        }
+
+        // Returns true if the status code is a redirection code and the action requires switching from POST to GET on redirection.
+        // NOTE: Some of these status codes map to the same underlying value but spelling them out for completeness.
+        static bool IsRedirectToGet(HttpStatusCode code)
+        {
+            return
+            (
+                code == HttpStatusCode.Found
+                ||
+                code == HttpStatusCode.Moved
+                ||
+                code == HttpStatusCode.Redirect
+                ||
+                code == HttpStatusCode.RedirectMethod
+                ||
+                code == HttpStatusCode.TemporaryRedirect
+                ||
+                code == HttpStatusCode.RedirectKeepVerb
+                ||
+                code == HttpStatusCode.SeeOther
+            );
+        }
+
+        internal virtual HttpResponseMessage GetResponse(HttpClient client, HttpRequestMessage request, bool stripAuthorization)
         {
             if (client == null) { throw new ArgumentNullException("client"); }
             if (request == null) { throw new ArgumentNullException("request"); }
 
             _cancelToken = new CancellationTokenSource();
-            return client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
+            HttpResponseMessage response = client.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
+
+            if (stripAuthorization && IsRedirectCode(response.StatusCode))
+            {
+                _cancelToken.Cancel();
+                _cancelToken = null;
+
+                // if explicit count was provided, reduce it for this redirection.
+                if (WebSession.MaximumRedirection > 0)
+                {
+                    WebSession.MaximumRedirection--;
+                }
+                // For selected redirects that used POST, GET must be used with the
+                // redirected Location.
+                // Since GET is the default; POST only occurs when -Method POST is used.
+                if (Method == WebRequestMethod.Post && IsRedirectToGet(response.StatusCode))
+                {
+                    // See https://msdn.microsoft.com/en-us/library/system.net.httpstatuscode(v=vs.110).aspx
+                    Method = WebRequestMethod.Get;
+                }
+
+                // recreate the HttpClient with redirection enabled since the first call suppressed redirection
+                using (client = GetHttpClient(false))
+                using (HttpRequestMessage redirectRequest = GetRequest(response.Headers.Location, stripAuthorization:true))
+                {
+                    FillRequestStream(redirectRequest);
+                    _cancelToken = new CancellationTokenSource();
+                    response = client.SendAsync(redirectRequest, HttpCompletionOption.ResponseHeadersRead, _cancelToken.Token).GetAwaiter().GetResult();
+                }
+            }
+            return response;
         }
 
         internal virtual void UpdateSession(HttpResponseMessage response)
@@ -396,7 +490,17 @@ namespace Microsoft.PowerShell.Commands
                 ValidateParameters();
                 PrepareSession();
 
-                using (HttpClient client = GetHttpClient())
+                // if the request contains an authorization header and PreserveAuthorizationOnRedirect is not set,
+                // it needs to be stripped on the first redirect.
+                bool stripAuthorization = null != WebSession
+                                          &&
+                                          null != WebSession.Headers
+                                          &&
+                                          !PreserveAuthorizationOnRedirect.IsPresent
+                                          &&
+                                          WebSession.Headers.ContainsKey(HttpKnownHeaderNames.Authorization.ToString());
+
+                using (HttpClient client = GetHttpClient(stripAuthorization))
                 {
                     int followedRelLink = 0;
                     Uri uri = Uri;
@@ -410,7 +514,7 @@ namespace Microsoft.PowerShell.Commands
                             WriteVerbose(linkVerboseMsg);
                         }
 
-                        using (HttpRequestMessage request = GetRequest(uri))
+                        using (HttpRequestMessage request = GetRequest(uri, stripAuthorization:false))
                         {
                             FillRequestStream(request);
                             try
@@ -426,7 +530,7 @@ namespace Microsoft.PowerShell.Commands
                                     requestContentLength);
                                 WriteVerbose(reqVerboseMsg);
 
-                                HttpResponseMessage response = GetResponse(client, request);
+                                HttpResponseMessage response = GetResponse(client, request, stripAuthorization);
 
                                 string contentType = ContentHelper.GetContentType(response);
                                 string respVerboseMsg = string.Format(CultureInfo.CurrentCulture,
