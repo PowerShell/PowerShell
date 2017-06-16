@@ -22,7 +22,6 @@ namespace System.Management.Automation
         internal const string PSEditionName = "PSEdition";
         internal const string PSGitCommitIdName = "GitCommitId";
         internal const string PSCompatibleVersionsName = "PSCompatibleVersions";
-        internal const string PSCLRVersionName = "CLRVersion";
         internal const string PSPlatformName = "Platform";
         internal const string PSOSName = "OS";
         internal const string SerializationVersionName = "SerializationVersion";
@@ -158,14 +157,6 @@ namespace System.Management.Automation
             get
             {
                 return (string)GetPSVersionTable()[PSGitCommitIdName];
-            }
-        }
-
-        internal static Version CLRVersion
-        {
-            get
-            {
-                return (Version)GetPSVersionTable()[PSCLRVersionName];
             }
         }
 
