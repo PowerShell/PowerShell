@@ -8,6 +8,17 @@ Describe "New-ModuleManifest tests" -tags "CI" {
         Remove-Item -Recurse -Force -ErrorAction SilentlyContinue testdrive:/module
     }
 
+    BeforeAll {
+        if ($IsWindows)
+        {
+            $ExpectedManifestBytes = @(255,254,35,0,13,0,10,0)
+        }
+        else
+        {
+            $ExpectedManifestBytes = @(35,10)
+        }
+    }
+
     It "Uris with spaces are allowed and escaped correctly" {
         $testUri = [Uri]"http://foo.com/hello world"
         $absoluteUri = $testUri.AbsoluteUri
@@ -26,18 +37,12 @@ Describe "New-ModuleManifest tests" -tags "CI" {
         (Get-Content -Encoding Byte -Path $testModulePath -TotalCount $expected.Length) -join ',' | Should Be ($expected -join ',')
     }
 
-    It "Verify module manifest encoding on Windows " -Skip:(-not $IsWindows) {
+    It "Verify module manifest encoding" {
         
-        # verify first line of the manifest - 3 characters - '#' '\r' '\n'
-        # On Windows platforms - in UTF-16 with BOM - this should be @(255,254,35,0,13,0,10,0)
-        TestNewModuleManifestEncoding -expected @(255,254,35,0,13,0,10,0)
-    }
-
-    It "Verify module manifest encoding on non-Windows " -Skip:($IsWindows) {
-        
-        # verify first line of the manifest - 2 characters - '#' '\n'
-        # On non-Windows platforms - in UTF-8 no BOM - this should be @(35,10)
-        TestNewModuleManifestEncoding -expected @(35,10)
+        # verify first line of the manifest:
+        # on Windows platforms - 3 characters - '#' '\r' '\n' - in UTF-16 with BOM - this should be @(255,254,35,0,13,0,10,0)
+        # on non-Windows platforms - 2 characters - '#' '\n' - in UTF-8 no BOM - this should be @(35,10)
+        TestNewModuleManifestEncoding -expected $ExpectedManifestBytes
     }
 
     It "Relative URIs are not allowed" {
