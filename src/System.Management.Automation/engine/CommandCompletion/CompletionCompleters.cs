@@ -1325,7 +1325,7 @@ namespace System.Management.Automation
                 {
                     // For argument completion, we don't want to complete against pseudo commands that only work in the script workflow.
                     // The way to avoid that is to pass in a CompletionContext with RelatedAst = null
-                    var commandResults = CompleteCommand(new CompletionContext { WordToComplete = context.WordToComplete, Helper = context.Helper });
+                    var commandResults = CompleteCommand(new CompletionContext { WordToComplete = context.WordToComplete, Helper = context.Helper, ExecutionContext = context.ExecutionContext });
                     if (commandResults != null)
                         result.AddRange(commandResults);
                 }
@@ -2088,7 +2088,7 @@ namespace System.Management.Automation
                         {
                             // For argument completion, we don't want to complete against pseudo commands that only work in the script workflow.
                             // The way to avoid that is to pass in a CompletionContext with RelatedAst = null
-                            var commandResults = CompleteCommand(new CompletionContext { WordToComplete = context.WordToComplete, Helper = context.Helper });
+                            var commandResults = CompleteCommand(new CompletionContext { WordToComplete = context.WordToComplete, Helper = context.Helper, ExecutionContext = context.ExecutionContext });
                             if (commandResults != null)
                                 result.AddRange(commandResults);
                         }
@@ -2778,7 +2778,7 @@ namespace System.Management.Automation
                 RemoveLastNullCompletionResult(result);
 
                 // Available commands
-                var commandResults = CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = context.Helper }, moduleName);
+                var commandResults = CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, moduleName);
                 if (commandResults != null)
                     result.AddRange(commandResults);
 
@@ -2788,7 +2788,7 @@ namespace System.Management.Automation
                     // ps1 files and directories. We only complete the files with .ps1 extension for Get-Command, because the -Syntax
                     // may only works on files with .ps1 extension
                     var ps1Extension = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { StringLiterals.PowerShellScriptFileExtension };
-                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = commandName, Helper = context.Helper }, false, ps1Extension));
+                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = commandName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, false, ps1Extension));
                     if (moduleFilesResults.Count > 0)
                         result.AddRange(moduleFilesResults);
                 }
@@ -2813,7 +2813,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                moduleResults = CompleteModuleName(new CompletionContext { WordToComplete = commandName, Helper = context.Helper }, false);
+                moduleResults = CompleteModuleName(new CompletionContext { WordToComplete = commandName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, false);
                 if (moduleResults != null)
                 {
                     foreach (CompletionResult moduleResult in moduleResults)
@@ -2838,20 +2838,20 @@ namespace System.Management.Automation
 
                 // Available commands
                 const CommandTypes commandTypes = CommandTypes.Cmdlet | CommandTypes.Function | CommandTypes.Alias | CommandTypes.ExternalScript | CommandTypes.Workflow | CommandTypes.Configuration;
-                var commandResults = CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = context.Helper }, null, commandTypes);
+                var commandResults = CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, null, commandTypes);
                 if (commandResults != null)
                     result.AddRange(commandResults);
 
                 // ps1 files and directories
                 var ps1Extension = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { StringLiterals.PowerShellScriptFileExtension };
-                var fileResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = commandName, Helper = context.Helper }, false, ps1Extension));
+                var fileResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = commandName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, false, ps1Extension));
                 if (fileResults.Count > 0)
                     result.AddRange(fileResults);
 
                 if (isHelpRelated)
                 {
                     // Available topics
-                    var helpTopicResults = CompleteHelpTopics(new CompletionContext { WordToComplete = commandName, Helper = context.Helper });
+                    var helpTopicResults = CompleteHelpTopics(new CompletionContext { WordToComplete = commandName, Helper = context.Helper, ExecutionContext = context.ExecutionContext });
                     if (helpTopicResults != null)
                         result.AddRange(helpTopicResults);
                 }
@@ -3093,7 +3093,7 @@ namespace System.Management.Automation
                                 StringLiterals.PowerShellCmdletizationFileExtension,
                                 StringLiterals.WorkflowFileExtension
                             };
-                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = assemblyOrModuleName, Helper = context.Helper }, false, moduleExtensions));
+                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = assemblyOrModuleName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, false, moduleExtensions));
                     if (moduleFilesResults.Count > 0)
                         result.AddRange(moduleFilesResults);
 
@@ -3104,7 +3104,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                var moduleResults = CompleteModuleName(new CompletionContext { WordToComplete = assemblyOrModuleName, Helper = context.Helper }, loadedModulesOnly);
+                var moduleResults = CompleteModuleName(new CompletionContext { WordToComplete = assemblyOrModuleName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, loadedModulesOnly);
                 if (moduleResults != null && moduleResults.Count > 0)
                     result.AddRange(moduleResults);
 
@@ -3115,7 +3115,7 @@ namespace System.Management.Automation
                 RemoveLastNullCompletionResult(result);
 
                 var moduleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".dll" };
-                var moduleFilesResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = assemblyOrModuleName, Helper = context.Helper }, false, moduleExtensions));
+                var moduleFilesResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = assemblyOrModuleName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, false, moduleExtensions));
                 if (moduleFilesResults.Count > 0)
                     result.AddRange(moduleFilesResults);
 
@@ -3490,12 +3490,12 @@ namespace System.Management.Automation
                 // Complete for the parameter Definition
                 // Available commands
                 const CommandTypes commandTypes = CommandTypes.Cmdlet | CommandTypes.Function | CommandTypes.ExternalScript | CommandTypes.Workflow | CommandTypes.Configuration;
-                var commandResults = CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = powerShellExecutionHelper }, null, commandTypes);
+                var commandResults = CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = powerShellExecutionHelper, ExecutionContext = context.ExecutionContext }, null, commandTypes);
                 if (commandResults != null && commandResults.Count > 0)
                     result.AddRange(commandResults);
 
                 // The parameter Definition takes a file
-                var fileResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = commandName, Helper = powerShellExecutionHelper }));
+                var fileResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = commandName, Helper = powerShellExecutionHelper, ExecutionContext = context.ExecutionContext }));
                 if (fileResults.Count > 0)
                     result.AddRange(fileResults);
             }
@@ -4076,8 +4076,7 @@ namespace System.Management.Automation
             {
                 // We want to prefer relative paths in a completion result unless the user has already
                 // specified a drive or portion of the path.
-                var powershell = context.Helper.CurrentPowerShell;
-                var executionContext = powershell.GetContextFromTLS();
+                var executionContext = context.ExecutionContext;
                 var defaultRelative = string.IsNullOrWhiteSpace(wordToComplete)
                                       || (wordToComplete.IndexOfAny(Utils.Separators.Directory) != 0 &&
                                           !Regex.Match(wordToComplete, @"^~[\\/]+.*").Success &&
@@ -5956,12 +5955,19 @@ namespace System.Management.Automation
             var dirPath = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID) + Path.DirectorySeparatorChar + CultureInfo.CurrentCulture.Name;
             var wordToComplete = context.WordToComplete + "*";
             var topicPattern = WildcardPattern.Get("about_*.help.txt", WildcardOptions.IgnoreCase);
-            string[] files = null;
+            ArrayList files = new ArrayList();
 
             try
             {
                 var wildcardPattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase);
-                files = Directory.GetFiles(dirPath).Where(f => wildcardPattern.IsMatch(Path.GetFileName(f))).ToArray();
+
+                foreach(var file in Directory.GetFiles(dirPath))
+                {
+                    if(wildcardPattern.IsMatch(Path.GetFileName(file)))
+                    {
+                        files.Add(file);
+                    }
+                }
             }
             catch (Exception)
             {
