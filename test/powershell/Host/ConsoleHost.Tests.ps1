@@ -200,6 +200,16 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed[0] | Should Be "foo"
             $observed[1] | Should Be "bar"
         }
+
+        It "-File should return exit code from script"  -TestCases @(
+            @{Filename = "test.ps1"},
+            @{Filename = "test"}
+        ) {
+            param($Filename)
+            Set-Content -Path $testdrive/$Filename -Value 'exit 123'
+            & $powershell $testdrive/$Filename
+            $LASTEXITCODE | Should Be 123
+        }        
     }
 
     Context "Pipe to/from powershell" {
