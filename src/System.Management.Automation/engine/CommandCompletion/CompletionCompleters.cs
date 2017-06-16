@@ -76,7 +76,7 @@ namespace System.Management.Automation
             }
 
             var helper = new PowerShellExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
-            return CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = helper }, moduleName, commandTypes);
+            return CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = helper, ExecutionContext = helper.CurrentPowerShell.GetContextFromTLS() }, moduleName, commandTypes);
         }
 
         internal static List<CompletionResult> CompleteCommand(CompletionContext context)
@@ -2800,7 +2800,7 @@ namespace System.Management.Automation
                 RemoveLastNullCompletionResult(result);
 
                 var modules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                var moduleResults = CompleteModuleName(new CompletionContext { WordToComplete = commandName, Helper = context.Helper }, true);
+                var moduleResults = CompleteModuleName(new CompletionContext { WordToComplete = commandName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, true);
                 if (moduleResults != null)
                 {
                     foreach (CompletionResult moduleResult in moduleResults)
@@ -4035,7 +4035,7 @@ namespace System.Management.Automation
             }
 
             var helper = new PowerShellExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
-            return CompleteFilename(new CompletionContext { WordToComplete = fileName, Helper = helper });
+            return CompleteFilename(new CompletionContext { WordToComplete = fileName, Helper = helper, ExecutionContext = helper.CurrentPowerShell.GetContextFromTLS() });
         }
 
         internal static IEnumerable<CompletionResult> CompleteFilename(CompletionContext context)
@@ -4484,7 +4484,7 @@ namespace System.Management.Automation
             }
 
             var helper = new PowerShellExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
-            return CompleteVariable(new CompletionContext { WordToComplete = variableName, Helper = helper });
+            return CompleteVariable(new CompletionContext { WordToComplete = variableName, Helper = helper, ExecutionContext = helper.CurrentPowerShell.GetContextFromTLS() });
         }
 
         private static readonly string[] s_variableScopes = new string[] { "Global:", "Local:", "Script:", "Private:" };
@@ -5861,7 +5861,7 @@ namespace System.Management.Automation
                                  : PowerShell.Create(RunspaceMode.CurrentRunspace);
 
             var helper = new PowerShellExecutionHelper(powershell);
-            return CompleteType(new CompletionContext { WordToComplete = typeName, Helper = helper });
+            return CompleteType(new CompletionContext { WordToComplete = typeName, Helper = helper, ExecutionContext = helper.CurrentPowerShell.GetContextFromTLS() });
         }
 
         internal static List<CompletionResult> CompleteType(CompletionContext context, string prefix = "", string suffix = "")
