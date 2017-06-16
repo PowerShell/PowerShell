@@ -4089,11 +4089,11 @@ namespace System.Management.Automation
                     wordToComplete = WildcardPattern.Escape(wordToComplete, Utils.Separators.StarOrQuestion);
                 }
 
-                if (!defaultRelative && wordToComplete.Length >= 2 && wordToComplete[1] == ':' && char.IsLetter(wordToComplete[0]) && context.ExecutionContext != null)
+                if (!defaultRelative && wordToComplete.Length >= 2 && wordToComplete[1] == ':' && char.IsLetter(wordToComplete[0]) && executionContext != null)
                 {
                     // We don't actually need the drive, but the drive must be "mounted" in PowerShell before completion
                     // can succeed.  This call will mount the drive if it wasn't already.
-                    context.ExecutionContext.SessionState.Drive.GetAtScope(wordToComplete.Substring(0, 1), "global");
+                    executionContext.SessionState.Drive.GetAtScope(wordToComplete.Substring(0, 1), "global");
                 }
 
                 var powerShellExecutionHelper = context.Helper;
@@ -5955,7 +5955,7 @@ namespace System.Management.Automation
             var dirPath = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID) + Path.DirectorySeparatorChar + CultureInfo.CurrentCulture.Name;
             var wordToComplete = context.WordToComplete + "*";
             var topicPattern = WildcardPattern.Get("about_*.help.txt", WildcardOptions.IgnoreCase);
-            ArrayList files = new ArrayList();
+            List<string> files = new List<string>();
 
             try
             {
