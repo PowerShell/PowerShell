@@ -414,7 +414,7 @@ You *can* run this command manually if you're having trouble with .NET Core's cr
 
 ### Installation
 
-```bash
+```sh
 # Install prerequisites
 apt-get install libunwind8 libicu55
 wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u6_amd64.deb
