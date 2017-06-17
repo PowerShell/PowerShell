@@ -1177,21 +1177,6 @@ namespace System.Management.Automation.Security
             }
         }
 
-        /// Return Type: BOOL->int
-        ///pSignerCert: PCCERT_CONTEXT->CERT_CONTEXT*
-        ///hCertBag: HCERTSTORE->void*
-        ///fTrustTestCert: BOOL->int
-        [DllImportAttribute("wintrust.dll", EntryPoint = "WTHelperIsChainedToMicrosoft")]
-        [return: MarshalAsAttribute(UnmanagedType.Bool)]
-        internal static extern bool WTHelperIsChainedToMicrosoft([InAttribute()] ref CERT_CONTEXT pSignerCert, [InAttribute()] System.IntPtr hCertBag, [MarshalAsAttribute(UnmanagedType.Bool)] bool fTrustTestCert);
-
-        /// Return Type: BOOL->int
-        ///hWVTStateData: HANDLE->void*
-        ///fTrustTestCert: BOOL->int
-        [DllImportAttribute("wintrust.dll", EntryPoint = "WTHelperIsChainedToMicrosoftFromStateData")]
-        [return: MarshalAsAttribute(UnmanagedType.Bool)]
-        internal static extern bool WTHelperIsChainedToMicrosoftFromStateData([InAttribute()] System.IntPtr hWVTStateData, [MarshalAsAttribute(UnmanagedType.Bool)] bool fTrustTestCert);
-
         //
         // stuff required for getting cert extensions
         //
