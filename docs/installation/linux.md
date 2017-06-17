@@ -414,22 +414,20 @@ You *can* run this command manually if you're having trouble with .NET Core's cr
 
 ### Installation
 
-```sh
+```bash
 # Install prerequisites
 apt-get install libunwind8 libicu55
 wget http://security.debian.org/debian-security/pool/updates/main/o/openssl/libssl1.0.0_1.0.1t-1+deb8u6_amd64.deb
 dpkg -i libssl1.0.0_1.0.1t-1+deb8u6_amd64.deb
-
 # Install PowerShell
 dpkg -i powershell_6.0.0-alpha.18-1ubuntu1.16.04.1_amd64.deb
-
 # Start PowerShell
 powershell
 ```
 
 ### Run PowerShell in latest Kali (Kali GNU/Linux Rolling) without installing it
 
-```
+```bash
 # Grab the latest App Image
 wget https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-x86_64.AppImag
 
