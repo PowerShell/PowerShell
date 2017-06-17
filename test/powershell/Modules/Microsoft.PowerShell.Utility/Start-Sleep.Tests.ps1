@@ -17,6 +17,13 @@ Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
         $watch.Stop()
         $watch.ElapsedMilliseconds | Should BeGreaterThan 950
     }
+
+    It "Should work properly when sleeping with ms alias" {
+        $watch = [System.Diagnostics.Stopwatch]::StartNew()
+        Start-Sleep -ms 1000
+        $watch.Stop()
+        $watch.ElapsedMilliseconds | Should BeGreaterThan 950
+    }
 }
 
 Describe "Start-Sleep" -Tags "CI" {
