@@ -54,6 +54,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(Mandatory = true, ParameterSetName = "Milliseconds", ValueFromPipelineByPropertyName = true)]
         [ValidateRangeAttribute(0, int.MaxValue)]
+        [Alias("ms")]
         public int Milliseconds { get; set; }
 
         #endregion
