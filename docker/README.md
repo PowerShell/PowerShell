@@ -87,7 +87,7 @@ Step 9/12 : RUN curl https://packages.microsoft.com/keys/microsoft.asc | apt-key
 Step 10/12 : RUN curl https://packages.microsoft.com/config/ubuntu/16.04/prod.list | tee /etc/apt/sources.list.d/microsoft.list
  ---> Using cache
  ---> 909ca8e33a3b
-Step 11/12 : RUN apt-get update     && apt-get install -y --no-install-recommends 	powershell
+Step 11/12 : RUN apt-get update     && apt-get install -y --no-install-recommends     powershell
  ---> Using cache
  ---> f32b54204619
 Step 12/12 : ENTRYPOINT powershell
