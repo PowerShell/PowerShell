@@ -77,19 +77,7 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag
         /// </summary>
         [Parameter]
-        [ValidateSetAttribute(new string[] { "Unicode", "UTF7", "UTF8", "ASCII", "UTF32", "BigEndianUnicode", "Default", "OEM" })]
-        public string Encoding
-        {
-            get
-            {
-                return _encoding.GetType().Name;
-            }
-            set
-            {
-                _encoding = EncodingConversion.Convert(this, value);
-            }
-        }
-        private Encoding _encoding = System.Text.Encoding.UTF8;
+        public FileEncoding Encoding { get; set; } = FileEncoding.Unknown;
 
         #endregion Parameters
 
@@ -144,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
             List<string> generatedFiles = GenerateProxyModule(
                 tempDirectory,
                 Path.GetFileName(directory.FullName),
-                _encoding,
+                PowerShellEncoding.GetEncoding(this, Encoding),
                 _force,
                 listOfCommandMetadata,
                 alias2resolvedCommandName,

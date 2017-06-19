@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Runtime.InteropServices;
+using Microsoft.PowerShell;
 using System.Text;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -796,7 +797,7 @@ namespace Microsoft.PowerShell.Commands
                 // the changes
                 if (waitChanges)
                 {
-                    WaitForChanges(_path, _mode, _access, _share, ClrFacade.GetDefaultEncoding());
+                    WaitForChanges(_path, _mode, _access, _share, PowerShellEncoding.GetDefaultEncoding());
                     byteRead = _stream.ReadByte();
                 }
             }
@@ -1160,8 +1161,10 @@ namespace Microsoft.PowerShell.Commands
                 _currentPosition = _stream.Position;
 
                 // Get the oem encoding and system current ANSI code page
-                _oemEncoding = EncodingConversion.Convert(null, EncodingConversion.OEM);
-                _defaultAnsiEncoding = EncodingConversion.Convert(null, EncodingConversion.Default);
+                // _oemEncoding = EncodingConversion.Convert(null, EncodingConversion.OEM);
+                // _defaultAnsiEncoding = EncodingConversion.Convert(null, EncodingConversion.Default);
+                _oemEncoding = PowerShellEncoding.GetEncoding(FileEncoding.Oem);
+                _defaultAnsiEncoding = PowerShellEncoding.GetEncoding(FileEncoding.Default);
             }
         }
 

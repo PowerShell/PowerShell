@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Text;
+using Microsoft.PowerShell;
 
 using System.Management.Automation.Internal;
 using Dbg = System.Management.Automation.Diagnostics;
@@ -17,6 +18,41 @@ namespace System.Management.Automation
     /// </summary>
     internal static class PathUtils
     {
+
+        /// <summary>
+        /// THE method for opening a file for writing.
+        /// Should be used by all cmdlets that write to a file.
+        /// </summary>
+        /// <param name="cmdlet">cmdlet that is opening the file (used mainly for error reporting)</param>
+        /// <param name="filePath">path to the file (as specified on the command line - this method will resolve the path)</param>
+        /// <param name="encoding">encoding (this method will convert the command line string to an Encoding instance)</param>
+        /// <param name="defaultEncoding">if <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter</param>
+        /// <param name="Append"></param>
+        /// <param name="Force"></param>
+        /// <param name="NoClobber"></param>
+        /// <param name="fileStream">Result1: <see cref="FileStream"/> opened for writing</param>
+        /// <param name="streamWriter">Result2: <see cref="StreamWriter"/> (inherits from <see cref="TextWriter"/>) opened for writing</param>
+        /// <param name="readOnlyFileInfo">Result3: file info that should be used to restore file attributes after done with the file (<c>null</c> is this is not needed)</param>
+        /// <param name="isLiteralPath">True if wildcard expansion should be bypassed.</param>
+        internal static void MasterStreamOpen(
+            PSCmdlet cmdlet,
+            string filePath,
+            FileEncoding encoding,
+            bool defaultEncoding,
+            bool Append,
+            bool Force,
+            bool NoClobber,
+            out FileStream fileStream,
+            out StreamWriter streamWriter,
+            out FileInfo readOnlyFileInfo,
+            bool isLiteralPath
+            )
+        {
+            Encoding resolvedEncoding = PowerShellEncoding.GetEncoding(cmdlet, encoding);
+
+            MasterStreamOpen(cmdlet, filePath, resolvedEncoding, defaultEncoding, Append, Force, NoClobber, out fileStream, out streamWriter, out readOnlyFileInfo, isLiteralPath);
+        }
+
         /// <summary>
         /// THE method for opening a file for writing.
         /// Should be used by all cmdlets that write to a file.
@@ -186,6 +222,12 @@ namespace System.Management.Automation
                 null);
 
             cmdlet.ThrowTerminatingError(errorRecord);
+        }
+
+        internal static StreamReader OpenStreamReader(PSCmdlet command, string filePath, FileEncoding encoding, bool isLiteralPath)
+        {
+            FileStream fileStream = OpenFileStream(filePath, command, isLiteralPath);
+            return new StreamReader(fileStream, PowerShellEncoding.GetEncoding(command, encoding));
         }
 
         internal static StreamReader OpenStreamReader(PSCmdlet command, string filePath, string encoding, bool isLiteralPath)
@@ -490,7 +532,7 @@ namespace System.Management.Automation
                 return System.Text.Encoding.UTF32;
 
             if (string.Equals(encoding, Default, StringComparison.OrdinalIgnoreCase))
-                return ClrFacade.GetDefaultEncoding();
+                return PowerShellEncoding.GetDefaultEncoding();
 
             if (string.Equals(encoding, OEM, StringComparison.OrdinalIgnoreCase))
             {

@@ -196,6 +196,9 @@ namespace System.Management.Automation
         internal const string InformationPreference = "InformationPreference";
         internal static readonly VariablePath InformationPreferenceVarPath = new VariablePath(InformationPreference);
 
+        internal const string DefaultFileEncodingPreference = "PSDefaultFileEncoding";
+        internal static readonly VariablePath DefaultFileEncodingVarPath = new VariablePath(DefaultFileEncodingPreference);
+
         #endregion Preference Variables
 
         internal const string ErrorView = "ErrorView";
@@ -279,6 +282,7 @@ namespace System.Management.Automation
                                                                     SpecialVariables.WarningPreference,
                                                                     SpecialVariables.InformationPreference,
                                                                     SpecialVariables.ConfirmPreference,
+                                                                    SpecialVariables.DefaultFileEncodingPreference,
                                                                 };
 
         internal static readonly Type[] PreferenceVariableTypes = {
@@ -289,6 +293,7 @@ namespace System.Management.Automation
                                                                     /* WarningPreference */     typeof(ActionPreference),
                                                                     /* InformationPreference */ typeof(ActionPreference),
                                                                     /* ConfirmPreference */     typeof(ConfirmImpact),
+                                                                    /* PSDefaultFileEncoding */ typeof(Microsoft.PowerShell.FileEncoding),
                                                                   };
 
         // The following variables are created in every session w/ AllScope.  We avoid creating local slots when we

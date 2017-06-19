@@ -8,6 +8,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Security;
 using System.Reflection;
+using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
 using System.Globalization;
@@ -1309,7 +1310,7 @@ namespace System.Management.Automation
                     break;
 
                 case FileSystemCmdletProviderEncoding.Default:
-                    result = ClrFacade.GetDefaultEncoding();
+                    result = PowerShellEncoding.GetDefaultEncoding();
                     break;
 
                 case FileSystemCmdletProviderEncoding.Oem:

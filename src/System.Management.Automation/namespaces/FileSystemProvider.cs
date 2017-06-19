@@ -23,6 +23,7 @@ using Microsoft.Win32.SafeHandles;
 using Dbg = System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Management.Automation.Runspaces;
+using Microsoft.PowerShell;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -6557,7 +6558,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Defaults for the file read operation
             string delimiter = "\n";
-            Encoding encoding = ClrFacade.GetDefaultEncoding();
+            Encoding encoding = PowerShellEncoding.GetDefaultEncoding();
             bool waitForChanges = false;
 
             bool streamTypeSpecified = false;
@@ -6592,7 +6593,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (streamTypeSpecified)
                     {
-                        encoding = dynParams.EncodingType;
+                        encoding = PowerShellEncoding.GetProviderEncoding(this, dynParams.Encoding);
                     }
 
                     // Get the wait value
@@ -6720,7 +6721,8 @@ namespace Microsoft.PowerShell.Commands
             // If this is true, then the content will be read as bytes
             bool usingByteEncoding = false;
             bool streamTypeSpecified = false;
-            Encoding encoding = ClrFacade.GetDefaultEncoding();
+            // we need to discover the encoding
+            Encoding encoding = PowerShellEncoding.GetProviderEncoding(this, FileEncoding.Unknown);
             FileMode filemode = FileMode.OpenOrCreate;
             string streamName = null;
             bool suppressNewline = false;
@@ -6739,7 +6741,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (streamTypeSpecified)
                     {
-                        encoding = dynParams.EncodingType;
+                        encoding = PowerShellEncoding.GetProviderEncoding(this, dynParams.Encoding);
                     }
 
                     streamName = dynParams.Stream;
@@ -7610,25 +7612,14 @@ namespace Microsoft.PowerShell.Commands
         /// reading data from the file.
         /// </summary>
         [Parameter]
-        public FileSystemCmdletProviderEncoding Encoding { get; set; } = FileSystemCmdletProviderEncoding.String;
+        // public FileSystemCmdletProviderEncoding Encoding { get; set; } = FileSystemCmdletProviderEncoding.String;
+        public FileEncoding Encoding { get; set; } = FileEncoding.Unknown;
 
         /// <summary>
         /// A parameter to return a stream of an item.
         /// </summary>
         [Parameter]
         public String Stream { get; set; }
-
-
-        /// <summary>
-        /// Gets the encoding from the specified StreamType parameter.
-        /// </summary>
-        public Encoding EncodingType
-        {
-            get
-            {
-                return Utils.GetEncodingFromEnum(Encoding);
-            }
-        } // EncodingType
 
         /// <summary>
         /// Gets the Byte Encoding status of the StreamType parameter.  Returns true
@@ -7638,7 +7629,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return Encoding == FileSystemCmdletProviderEncoding.Byte;
+                return Encoding == FileEncoding.Byte;
             } // get
         } // UsingByteEncoding
 
@@ -7650,7 +7641,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-                return (Encoding != FileSystemCmdletProviderEncoding.String);
+                return (Encoding != FileEncoding.String);
             } // get
         } // WasStreamTypeSpecified
 

@@ -8,6 +8,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
 using System.IO;
 using Microsoft.PowerShell.Commands.Internal.Format;
+using Microsoft.PowerShell;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -72,25 +73,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         ///
         [Parameter(Position = 1)]
-        [ValidateNotNullOrEmpty]
-        [ValidateSetAttribute(new string[] {
-            EncodingConversion.Unknown,
-            EncodingConversion.String,
-            EncodingConversion.Unicode,
-            EncodingConversion.BigEndianUnicode,
-            EncodingConversion.Utf8,
-            EncodingConversion.Utf7,
-            EncodingConversion.Utf32,
-            EncodingConversion.Ascii,
-            EncodingConversion.Default,
-            EncodingConversion.OEM })]
-        public string Encoding
+        public FileEncoding Encoding
         {
             get { return _encoding; }
             set { _encoding = value; }
         }
 
-        private string _encoding;
+        private FileEncoding _encoding;
 
         /// <summary>
         /// Property that sets append parameter.

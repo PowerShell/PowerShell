@@ -604,7 +604,7 @@ namespace Microsoft.PowerShell.Commands
             PathUtils.MasterStreamOpen(
                 this,
                 filePath,
-                EncodingConversion.Unicode,
+                FileEncoding.Unicode,
                 /* defaultEncoding */ false,
                 /* Append */ false,
                 /* Force */ false,
@@ -1460,7 +1460,7 @@ namespace Microsoft.PowerShell.Commands
             PathUtils.MasterStreamOpen(
                 this,
                 filePath,
-                EncodingConversion.Unicode,
+                FileEncoding.Unicode,
                 /* defaultEncoding */ false,
                 /* Append */ false,
                 /* Force */ false,
