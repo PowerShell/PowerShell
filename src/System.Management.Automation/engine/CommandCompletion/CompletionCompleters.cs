@@ -3597,8 +3597,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            var powershell = context.Helper.CurrentPowerShell;
-            var executionContext = powershell.GetContextFromTLS();
+            var executionContext = context.ExecutionContext;
 
             var boundArgs = GetBoundArgumentsAsHashtable(context);
             var providedPath = boundArgs["Path"] as string ?? executionContext.SessionState.Path.CurrentLocation.Path;
