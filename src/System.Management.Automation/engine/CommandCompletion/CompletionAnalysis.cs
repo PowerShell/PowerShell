@@ -35,6 +35,23 @@ namespace System.Management.Automation
         internal PseudoBindingInfo PseudoBindingInfo { get; set; }
         internal TypeInferenceContext TypeInferenceContext { get; set; }
 
+        /// <summary>
+        /// Default constructor.
+        /// </summary>
+        internal CompletionContext() { }
+
+        /// <summary>
+        /// In 'CompletionCompleters.cs', we sometimes need to create a new 'CompletionContext' for a new 'wordToCompletion',
+        /// but we want to reuse the 'PowerShellExecutionHelper' and 'ExecutionContext' from the existing 'CompletionContext'.
+        /// This constructor is for this purpose.
+        /// </summary>
+        internal CompletionContext(string wordToComplete, CompletionContext context)
+        {
+            this.WordToComplete = wordToComplete;
+            this.Helper = context.Helper;
+            this.ExecutionContext = context.ExecutionContext;
+        }
+
         internal bool GetOption(string option, bool @default)
         {
             if (Options == null || !Options.ContainsKey(option))
