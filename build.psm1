@@ -190,7 +190,7 @@ function Start-PSBuild {
 
     if ($IsWindows) {
         # cmake is needed to build powershell.exe
-        $precheck = $precheck -and (precheck 'cmake' 'cmake not found. Run Start-PSBootstrap. You can also install it from https://chocolatey.org/packages/cmake')
+        $precheck = $precheck -and (precheck 'cmake' 'cmake not found. Run "Start-PSBootstrap -BuildNative". You can also install it from https://chocolatey.org/packages/cmake')
 
         Use-MSBuild
 
@@ -213,7 +213,7 @@ function Start-PSBuild {
 
     } elseif ($IsLinux -or $IsOSX) {
         foreach ($Dependency in 'cmake', 'make', 'g++') {
-            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run Start-PSBootstrap.")
+            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap -BuildNative'.")
         }
     }
 

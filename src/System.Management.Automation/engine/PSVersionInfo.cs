@@ -22,7 +22,6 @@ namespace System.Management.Automation
         internal const string PSEditionName = "PSEdition";
         internal const string PSGitCommitIdName = "GitCommitId";
         internal const string PSCompatibleVersionsName = "PSCompatibleVersions";
-        internal const string PSCLRVersionName = "CLRVersion";
         internal const string PSPlatformName = "Platform";
         internal const string PSOSName = "OS";
         internal const string SerializationVersionName = "SerializationVersion";
@@ -71,10 +70,8 @@ namespace System.Management.Automation
             s_psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
             s_psVersionTable[PSPlatformName] = Environment.OSVersion.Platform.ToString();
 #if CORECLR
-            s_psVersionTable[PSCLRVersionName] = null;
             s_psVersionTable[PSOSName] = Runtime.InteropServices.RuntimeInformation.OSDescription.ToString();
 #else
-            s_psVersionTable[PSCLRVersionName] = Environment.Version;
             s_psVersionTable[PSOSName] = Environment.OSVersion.ToString();
 #endif
         }
@@ -159,14 +156,6 @@ namespace System.Management.Automation
             get
             {
                 return (string)GetPSVersionTable()[PSGitCommitIdName];
-            }
-        }
-
-        internal static Version CLRVersion
-        {
-            get
-            {
-                return (Version)GetPSVersionTable()[PSCLRVersionName];
             }
         }
 
