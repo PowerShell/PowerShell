@@ -33,7 +33,7 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
 
             ## Redirect stderr to a file. So if 'open' failed to open the text file, an error
             ## message from 'open' would be written to the redirection file.
-            $proc = Start-Process -FilePath $powershell -ArgumentList "-noprofile Invoke-Item '$TestFile'" `
+            $proc = Start-Process -FilePath $powershell -ArgumentList "-noprofile -c Invoke-Item '$TestFile'" `
                                   -RedirectStandardError $redirectErr `
                                   -PassThru
             $proc.WaitForExit(3000) > $null
@@ -52,10 +52,10 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
 
         if ($IsWindows) {
             ## 'ping.exe' on Windows writes out usage to stdout.
-            & $powershell "-noprofile" "Invoke-Item '$executable'" > $redirectFile
+            & $powershell -noprofile -c "Invoke-Item '$executable'" > $redirectFile
         } else {
             ## 'ping' on Unix write out usage to stderr
-            & $powershell "-noprofile" "Invoke-Item '$executable'" 2> $redirectFile
+            & $powershell -noprofile -c "Invoke-Item '$executable'" 2> $redirectFile
         }
         Get-Content $redirectFile -Raw | Should Match "usage: ping"
     }

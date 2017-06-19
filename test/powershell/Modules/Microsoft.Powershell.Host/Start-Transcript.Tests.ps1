@@ -110,7 +110,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
         try{
             $ps = [powershell]::Create()
             $ps.addscript("Start-Transcript -path $transcriptFilePath").Invoke()
-            $ps.addscript('$rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace()').Invoke()      
+            $ps.addscript('$rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace()').Invoke()
             $ps.addscript('$rs.open()').Invoke()
             $ps.addscript('$rs.Dispose()').Invoke()
             $ps.addscript('Write-Host "After Dispose"').Invoke()
@@ -121,16 +121,16 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
                 }
             }
 
-        
+
         Test-Path $transcriptFilePath | Should be $true
         $transcriptFilePath | Should contain "After Dispose"
     }
 
     It "Transcription should be closed if the only runspace gets closed" {
         $powerShellPath = [System.Diagnostics.Process]::GetCurrentProcess().Path
-        $powerShellCommand = $powerShellPath + ' "start-transcript $transcriptFilePath; Write-Host ''Before Dispose'';"'
+        $powerShellCommand = $powerShellPath + ' -c "start-transcript $transcriptFilePath; Write-Host ''Before Dispose'';"'
         Invoke-Expression $powerShellCommand
-        
+
         Test-Path $transcriptFilePath | Should be $true
         $transcriptFilePath | Should contain "Before Dispose"
         $transcriptFilePath | Should contain "Windows PowerShell transcript end"

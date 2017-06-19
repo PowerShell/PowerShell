@@ -131,9 +131,9 @@ Copyright (C) Microsoft Corporation. All rights reserved.</value>
     [-InputFormat {Text | XML}] [-OutputFormat {Text | XML}]
     [-WindowStyle &lt;style&gt;] [-EncodedCommand &lt;Base64EncodedCommand&gt;]
     [-ConfigurationName &lt;string&gt;]
-    [-File &lt;filePath&gt; &lt;args&gt;] [-ExecutionPolicy &lt;ExecutionPolicy&gt;]
     [-Command { - | &lt;script-block&gt; [-args &lt;arg-array&gt;]
                   | &lt;string&gt; [&lt;CommandParameters&gt;] } ]
+    [-File &lt;filePath&gt; &lt;args&gt;] [-ExecutionPolicy &lt;ExecutionPolicy&gt;]
 
 PowerShell[.exe] -Help | -? | /?
 
@@ -237,6 +237,7 @@ EXAMPLES
     PowerShell -ConfigurationName AdminRoles
     PowerShell -Command {Get-EventLog -LogName security}
     PowerShell -Command "&amp; {Get-EventLog -LogName security}"
+    PowerShell HelloWorld.ps1
 
     # To use the -EncodedCommand parameter:
     $command = 'dir "c:\program files" '
