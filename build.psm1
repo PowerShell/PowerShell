@@ -19,6 +19,8 @@ try {
     catch { }
 }
 
+$dotnetRequiredVersion = "2.0.0-preview1-005952"
+
 # On Unix paths is separated by colon
 # On Windows paths is separated by semicolon
 $TestModulePathSeparator = ':'
@@ -187,6 +189,12 @@ function Start-PSBuild {
 
     # verify we have all tools in place to do the build
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
+
+    $dotnetIntalledVersion = (dotnet --version)
+    If ( $dotnetIntalledVersion -ne $dotnetRequiredVersion ) {
+        Write-Warning ".Net Core version mismatch: installed version is $dotnetIntalledVersion, required version is $dotnetRequiredVersion.`nRun Start-PSBootstrap and Start-PSBuild -Clean -Restore.`nAlso see: https://dotnet.github.io/getting-started/"
+        return
+    }
 
     if ($IsWindows) {
         # cmake is needed to build powershell.exe
@@ -988,7 +996,7 @@ function Install-Dotnet {
     [CmdletBinding()]
     param(
         [string]$Channel = "preview",
-        [string]$Version = "2.0.0-preview2-006388",
+        [string]$Version = $dotnetRequiredVersion,
         [switch]$NoSudo
     )
 
@@ -1050,7 +1058,7 @@ function Start-PSBootstrap {
         [string]$Channel = "preview",
         # we currently pin dotnet-cli version, and will
         # update it when more stable version comes out.
-        [string]$Version = "2.0.0-preview2-006388",
+        [string]$Version = $dotnetRequiredVersion,
         [switch]$Package,
         [switch]$NoSudo,
         [switch]$Force
