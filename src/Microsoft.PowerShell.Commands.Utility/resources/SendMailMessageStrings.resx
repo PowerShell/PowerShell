@@ -121,4 +121,3 @@
     <value>The email cannot be sent because no SMTP server was specified. You must specify an SMTP server by using either the SmtpServer parameter or the $PSEmailServer variable.</value>
   </data>
 </root>
-
