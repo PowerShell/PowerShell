@@ -9,7 +9,7 @@ Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
         Start-Sleep -Seconds 1
         $watch.Stop()
         $watch.ElapsedMilliseconds | Should BeGreaterThan 950
-        $watch.ElapsedMilliseconds | Should BeLessThan 1050
+        $watch.ElapsedMilliseconds | Should BeLessThan 1100
     }
 
     It "Should work properly when sleeping with Milliseconds" {
@@ -17,7 +17,7 @@ Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
         Start-Sleep -Milliseconds 1000
         $watch.Stop()
         $watch.ElapsedMilliseconds | Should BeGreaterThan 950
-        $watch.ElapsedMilliseconds | Should BeLessThan 1050
+        $watch.ElapsedMilliseconds | Should BeLessThan 1100
     }
 
     It "Should work properly when sleeping with ms alias" {
@@ -25,7 +25,7 @@ Describe "Start-Sleep DRT Unit Tests" -Tags "CI" {
         Start-Sleep -ms 1000
         $watch.Stop()
         $watch.ElapsedMilliseconds | Should BeGreaterThan 950
-        $watch.ElapsedMilliseconds | Should BeLessThan 1050
+        $watch.ElapsedMilliseconds | Should BeLessThan 1100
     }
 }
 
