@@ -37,14 +37,14 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     internal class InodeTracker
     {
-        private Dictionary<UInt64, Dictionary<UInt64, bool>> _visitations;
+        private Dictionary<(UInt64, UInt64), bool>  _visitations;
 
         /// <summary>
         /// Construct a new InodeTracker
         /// </summary>
         public InodeTracker()
         {
-            _visitations = new Dictionary<UInt64, Dictionary<UInt64, bool>>();
+            _visitations = new Dictionary<(UInt64, UInt64), bool>();
         }
 
         /// <summary>
@@ -59,10 +59,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out dev, out inode))
             {
-                if (_visitations.ContainsKey(dev))
-                {
-                    return _visitations[dev].ContainsKey(inode);
-                }
+                return _visitations.ContainsKey((dev, inode));
             }
 
             return false;
@@ -80,11 +77,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out dev, out inode))
             {
-                if (!_visitations.ContainsKey(dev))
-                    _visitations[dev] = new Dictionary<UInt64, bool>();
-
-                if (!_visitations[dev].ContainsKey(inode))
-                    _visitations[dev][inode] = true;
+                _visitations[(dev, inode)] = true;
 
                 return true;
             }
@@ -1865,40 +1858,38 @@ namespace Microsoft.PowerShell.Commands
                                 return;
                             }
 
-                            bool enterDir = true;
-                            if (tracker != null)
+                            // We only want to recurse into symlinks if
+                            //  a) the user has asked to with the -FollowSymLinks switch parameter and
+                            //  b) the directory pointed to by the symlink has not already been visited,
+                            //     preventing symlink loops.
+                            if (tracker == null)
+                            {
+                                if (InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory))
+                                {
+                                    continue;
+                                }
+                            }
+                            else
                             {
                                 if (tracker.Visited(recursiveDirectory.FullName))
                                 {
-                                    enterDir = false;
                                     WriteWarning(StringUtil.Format(FileSystemProviderStrings.AlreadyListedDirectory,
-                                                                    recursiveDirectory.FullName));
+                                                                recursiveDirectory.FullName));
+                                    continue;
                                 }
                             }
-                            // We only want to recurse into symlinks if a) the user has asked to with
-                            // the -FollowSymLinks switch parameter and b) the directory the symlink
-                            // points to has not already been visited, preventing symlink loops.
-                            if (enterDir && InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory))
-                            {
-                                if (tracker == null)
-                                {
-                                    enterDir = false;
-                                }
-                            }
-                            if (enterDir)
-                            {
-                                bool hidden = false;
-                                if (!Force)
-                                {
-                                    hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
-                                }
 
-                                // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
-                                // default hidden attribute filter.
-                                if (Force || !hidden || isFilterHiddenSpecified || isSwitchFilterHiddenSpecified)
-                                {
-                                    Dir(recursiveDirectory, recurse, depth - 1, tracker, nameOnly, returnContainers);
-                                }
+                            bool hidden = false;
+                            if (!Force)
+                            {
+                                hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
+                            }
+
+                            // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
+                            // default hidden attribute filter.
+                            if (Force || !hidden || isFilterHiddenSpecified || isSwitchFilterHiddenSpecified)
+                            {
+                                Dir(recursiveDirectory, recurse, depth - 1, tracker, nameOnly, returnContainers);
                             }
                         }//foreach
                     }//if

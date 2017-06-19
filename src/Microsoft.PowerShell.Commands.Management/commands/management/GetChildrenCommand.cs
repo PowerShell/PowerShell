@@ -184,6 +184,8 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _followSymlink = value;
+                if (value == true)
+                    Recurse = true;
             }
         }
         private bool _followSymlink = false;
