@@ -433,6 +433,16 @@ function Invoke-OpenCover
         [switch]$CIOnly
         )
 
+    # check for elevation
+    $identity  = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object System.Security.Principal.WindowsPrincipal($identity)
+    $isElevated = $principal.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)
+
+    if(-not $isElevated)
+    {
+        throw 'Please run from an elevated PowerShell.'
+    }
+
     # check to be sure that OpenCover is present
 
     $OpenCoverBin = "$OpenCoverPath\opencover.console.exe"

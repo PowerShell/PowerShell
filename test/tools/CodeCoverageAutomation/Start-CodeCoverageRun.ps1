@@ -17,25 +17,17 @@ function GetFileTable()
 # Get sequence points for a particular file
 function GetSequencePointsForFile([string] $fileId)
 {
-    $lineCoverage = @{}
-    $sequencePoints = $script:covData | Select-Xml ".//SequencePoint[@fileid = `"$fileId`"]"
+    $lineCoverage = [System.Collections.Generic.Dictionary[string,int]]::new()
+
+    $sequencePoints = $script:covData | Select-Xml ".//SequencePoint[@fileid = '$fileId']"
 
     if($sequencePoints.Count -gt 0)
     {
         foreach($sp in $sequencePoints)
         {
-            $visitedCount = $sp.Node.vc
-            $lineNumber = $sp.Node.sl
-
-            ##If this line has already been hit, add the hit count.
-            if($lineCoverage.Contains($lineNumber))
-            {
-                $lineCoverage[$lineNumber] += [int]::Parse($visitedCount)
-            }
-            else ## This line has been hit for the first time, ceate an entry in $lineCoverage
-            {
-                $lineCoverage.Add($lineNumber, [int]::Parse($visitedCount))
-            }
+            $visitedCount = [int]::Parse($sp.Node.vc)
+            $lineNumber = [int]::Parse($sp.Node.sl)
+            $lineCoverage[$lineNumber] += [int]::Parse($visitedCount)
         }
 
         return $lineCoverage
@@ -71,15 +63,7 @@ function ConvertTo-CodeCovJson
         {
             foreach($lineNumber in $fileCoverage.Keys)
             {
-                if($previousFileCoverage.contains($lineNumber))
-                {
-                    ## if this line has been hit before add the new hit count.
-                    $previousFileCoverage[$lineNumber] += [int]::Parse($fileCoverage[$lineNumber])
-                }
-                else
-                {
-                    $previousFileCoverage[$lineNumber] = [int]::Parse($fileCoverage[$lineNumber])
-                }
+                $previousFileCoverage[$lineNumber] += [int]::Parse($fileCoverage[$lineNumber])
             }
         }
         else ## the file is new, so add the values as a new NoteProperty.
