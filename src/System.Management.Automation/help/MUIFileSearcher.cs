@@ -283,7 +283,7 @@ namespace System.Management.Automation
             }
 
             // step 3: locate the file in the default PowerShell installation directory.
-            string defaultPSPath = GetMshDefaultInstallationPath();
+            string defaultPSPath = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
             if (defaultPSPath != null &&
                 !result.Contains(defaultPSPath) &&
                 Directory.Exists(defaultPSPath))
@@ -292,27 +292,6 @@ namespace System.Management.Automation
             }
 
             return result;
-        }
-
-        /// <summary>
-        /// Helper method which returns the default monad installation path based on ShellID
-        /// registry key.
-        /// </summary>
-        /// <returns>string representing path.</returns>
-        /// <remarks>
-        /// If ShellID is not defined or Path property is not defined returns null.
-        /// </remarks>
-        private static string GetMshDefaultInstallationPath()
-        {
-            string returnValue = CommandDiscovery.GetShellPathFromRegistry(Utils.DefaultPowerShellShellID);
-
-            if (returnValue != null)
-            {
-                returnValue = Path.GetDirectoryName(returnValue);
-            }
-
-            // returnValue can be null.
-            return returnValue;
         }
 
         #endregion
