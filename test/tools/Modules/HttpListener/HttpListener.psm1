@@ -46,6 +46,15 @@ Function Start-HTTPListener {
         [scriptblock]$script = {
             param ($Port)
 
+            $script:supportedRedirects = @{
+                [System.Net.HttpStatusCode]::Ok = 1; # No redirect
+                [System.Net.HttpStatusCode]::Found = 1;
+                [System.Net.HttpStatusCode]::MultipleChoices = 1;
+                [System.Net.HttpStatusCode]::Moved = 1;
+                [System.Net.HttpStatusCode]::SeeOther = 1;
+                [System.Net.HttpStatusCode]::TemporaryRedirect = 1;
+            }
+
             # HttpListener.QueryString is not being populated, need to follow-up with CoreFx, workaround is to parse it ourselves
             Function ParseQueryString([string]$url)
             {
@@ -92,6 +101,11 @@ Function Start-HTTPListener {
                     $test = $queryItems["test"]
                     Write-Verbose "Testing: $test"
 
+                    foreach ($key in $request.Headers.Keys)
+                    {
+                        Write-Verbose -Message "Found Header: $key, $($request.Headers[$key])"
+                    }
+                    
                     # the status code to return for the response
                     $statusCode = [System.Net.HttpStatusCode]::OK
                     # this is the body of the response, return json/xml as appropriate
@@ -120,21 +134,75 @@ Function Start-HTTPListener {
                             $contentType = $queryItems["contenttype"]
                             $output = $queryItems["output"]
                         }
+                        
+                        <# 
+                            This test provides support for multiple redirection types as well as a custom
+                            multi-hop redirection to handle Authorization stripping logic.
+                            The following  redirection types are supported:
+                                 MultipleChoices (300), Moved (301), Found (302), SeeOther (303), TemporaryRedirect (307)
+
+                            The original URL should  indicate the type of redirection.
+                            For example: The following indicates that a 302 redirection (found) should be used.
+                             ?test=redirectex&type=Found
+
+                            WebRequest cmdlet tests also use a special option called multiredirect. This produces two redirects
+                            where the second 
+
+                            Example: test=redirectex&type=Moved&multiredirect=true
+
+                            See also https://msdn.microsoft.com/en-us/library/system.net.httpstatuscode(v=vs.110).aspx
+                        #>
                         "redirect"
                         {
-                            $redirect = $queryItems["redirect"]
-                            if ($redirect -eq $null)
+                            $redirectedUrl = [string]::Empty
+                            $redirectType = $queryItems["type"]
+                            $multiredirect = $queryItems["multiredirect"]
+
+                            if ($redirectType -eq $null)
                             {
-                                $statusCode = [System.Net.HttpStatusCode]::Found
-                                $redirectedUrl = "${Url}?test=redirect&redirect=false"
-                                Write-Verbose "$redirectedUrl"
-                                $outputHeader.Add("Location",$redirectedUrl)
-                                Write-Verbose "Redirecting to $($outputHeader.Location)"
+                                # End of redirection
+                                $redirectType = 'Ok'
                             }
-                            else
+
+                            [System.Net.HttpStatusCode] $type = [System.Net.HttpStatusCode]::Found
+                            [bool] $isValid = [System.Enum]::TryParse($redirectType, $true, [ref] $type)
+                            if ($isValid -eq $false -or $script:supportedRedirects.ContainsKey($type) -eq $false)
                             {
-                                $output = $request | ConvertTo-Json
+                                Write-Verbose -Message "Invalid request type: $type"
+                                $statusCode = [System.Net.HttpStatusCode]::BadRequest
+                                $output = "Invalid Redirect Type: $type"
                             }
+                            elseif ($type -eq [System.Net.HttpStatusCode]::Ok)
+                            {
+                                # no redirection
+                                Write-Verbose -Message "No redirection"
+                                $output = $request | ConvertTo-Json -Depth 6
+                            }
+                            elseif ($multiredirect -eq $null)
+                            {
+                                Write-Verbose -Message "Standard redirection"
+                                $redirectedUrl = "${Url}?test=redirect&type=Ok"
+                            }
+                            elseif ($multiredirect -eq $true)
+                            {
+                               Write-Verbose -Message "Redirect 1 of 2"
+                               $redirectedUrl = "${Url}?test=redirect&type=$type&multiredirect=false"
+                            }
+                            elseif ($multiredirect -eq $false)
+                            {                      
+                                Write-Verbose -Message "Redirect 2 of 2"
+                                $redirectedUrl = "${Url}?test=redirect&type=$type"
+                            }
+
+                            if ($isValid)
+                            {
+                                $statusCode = $type
+                                if (-not [string]::IsNullOrEmpty($redirectedUrl))
+                                {
+                                    $outputHeader.Add("Location",$redirectedUrl)
+                                    Write-Verbose -Message "Redirecting to $($outputHeader.Location)" 
+                                }
+                            }                               
                         }
                         "linkheader"
                         {
@@ -189,11 +257,19 @@ Function Start-HTTPListener {
                     }
 
                     $response = $context.Response
-                    if ($contentType -ne $null)
+
+                    if ($outputHeader.ContainsKey('Content-Type') -eq $false)
                     {
-                        Write-Verbose "Setting ContentType to $contentType"
+                        if ([string]::IsNullOrEmpty($contentType))
+                        {
+                            $contentType = 'application/json'
+                        }
+                        
+                        $outputHeader.Add('Content-Type', $contentType)
                         $response.ContentType = $contentType
+                        Write-Verbose -Message "Setting ContentType to $contentType"
                     }
+
                     if ($statusCode -ne $null)
                     {
                         $response.StatusCode = $statusCode
@@ -203,6 +279,7 @@ Function Start-HTTPListener {
                     {
                         $response.Headers.Add($header, $outputHeader[$header])
                     }
+                    
                     if ($output -ne $null)
                     {
                         $buffer = [System.Text.Encoding]::UTF8.GetBytes($output)

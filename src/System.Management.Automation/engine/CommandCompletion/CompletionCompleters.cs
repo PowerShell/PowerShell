@@ -76,7 +76,7 @@ namespace System.Management.Automation
             }
 
             var helper = new PowerShellExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
-            return CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = helper }, moduleName, commandTypes);
+            return CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = helper, ExecutionContext = helper.CurrentPowerShell.GetContextFromTLS() }, moduleName, commandTypes);
         }
 
         internal static List<CompletionResult> CompleteCommand(CompletionContext context)
@@ -1325,7 +1325,7 @@ namespace System.Management.Automation
                 {
                     // For argument completion, we don't want to complete against pseudo commands that only work in the script workflow.
                     // The way to avoid that is to pass in a CompletionContext with RelatedAst = null
-                    var commandResults = CompleteCommand(new CompletionContext { WordToComplete = context.WordToComplete, Helper = context.Helper });
+                    var commandResults = CompleteCommand(new CompletionContext { WordToComplete = context.WordToComplete, Helper = context.Helper, ExecutionContext = context.ExecutionContext });
                     if (commandResults != null)
                         result.AddRange(commandResults);
                 }
@@ -2088,7 +2088,7 @@ namespace System.Management.Automation
                         {
                             // For argument completion, we don't want to complete against pseudo commands that only work in the script workflow.
                             // The way to avoid that is to pass in a CompletionContext with RelatedAst = null
-                            var commandResults = CompleteCommand(new CompletionContext { WordToComplete = context.WordToComplete, Helper = context.Helper });
+                            var commandResults = CompleteCommand(new CompletionContext { WordToComplete = context.WordToComplete, Helper = context.Helper, ExecutionContext = context.ExecutionContext });
                             if (commandResults != null)
                                 result.AddRange(commandResults);
                         }
@@ -2778,7 +2778,7 @@ namespace System.Management.Automation
                 RemoveLastNullCompletionResult(result);
 
                 // Available commands
-                var commandResults = CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = context.Helper }, moduleName);
+                var commandResults = CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, moduleName);
                 if (commandResults != null)
                     result.AddRange(commandResults);
 
@@ -2788,7 +2788,7 @@ namespace System.Management.Automation
                     // ps1 files and directories. We only complete the files with .ps1 extension for Get-Command, because the -Syntax
                     // may only works on files with .ps1 extension
                     var ps1Extension = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { StringLiterals.PowerShellScriptFileExtension };
-                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = commandName, Helper = context.Helper }, false, ps1Extension));
+                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = commandName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, false, ps1Extension));
                     if (moduleFilesResults.Count > 0)
                         result.AddRange(moduleFilesResults);
                 }
@@ -2800,7 +2800,7 @@ namespace System.Management.Automation
                 RemoveLastNullCompletionResult(result);
 
                 var modules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                var moduleResults = CompleteModuleName(new CompletionContext { WordToComplete = commandName, Helper = context.Helper }, true);
+                var moduleResults = CompleteModuleName(new CompletionContext { WordToComplete = commandName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, true);
                 if (moduleResults != null)
                 {
                     foreach (CompletionResult moduleResult in moduleResults)
@@ -2813,7 +2813,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                moduleResults = CompleteModuleName(new CompletionContext { WordToComplete = commandName, Helper = context.Helper }, false);
+                moduleResults = CompleteModuleName(new CompletionContext { WordToComplete = commandName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, false);
                 if (moduleResults != null)
                 {
                     foreach (CompletionResult moduleResult in moduleResults)
@@ -2838,20 +2838,20 @@ namespace System.Management.Automation
 
                 // Available commands
                 const CommandTypes commandTypes = CommandTypes.Cmdlet | CommandTypes.Function | CommandTypes.Alias | CommandTypes.ExternalScript | CommandTypes.Workflow | CommandTypes.Configuration;
-                var commandResults = CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = context.Helper }, null, commandTypes);
+                var commandResults = CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, null, commandTypes);
                 if (commandResults != null)
                     result.AddRange(commandResults);
 
                 // ps1 files and directories
                 var ps1Extension = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { StringLiterals.PowerShellScriptFileExtension };
-                var fileResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = commandName, Helper = context.Helper }, false, ps1Extension));
+                var fileResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = commandName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, false, ps1Extension));
                 if (fileResults.Count > 0)
                     result.AddRange(fileResults);
 
                 if (isHelpRelated)
                 {
                     // Available topics
-                    var helpTopicResults = CompleteHelpTopics(new CompletionContext { WordToComplete = commandName, Helper = context.Helper });
+                    var helpTopicResults = CompleteHelpTopics(new CompletionContext { WordToComplete = commandName, Helper = context.Helper, ExecutionContext = context.ExecutionContext });
                     if (helpTopicResults != null)
                         result.AddRange(helpTopicResults);
                 }
@@ -3093,7 +3093,7 @@ namespace System.Management.Automation
                                 StringLiterals.PowerShellCmdletizationFileExtension,
                                 StringLiterals.WorkflowFileExtension
                             };
-                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = assemblyOrModuleName, Helper = context.Helper }, false, moduleExtensions));
+                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = assemblyOrModuleName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, false, moduleExtensions));
                     if (moduleFilesResults.Count > 0)
                         result.AddRange(moduleFilesResults);
 
@@ -3104,7 +3104,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                var moduleResults = CompleteModuleName(new CompletionContext { WordToComplete = assemblyOrModuleName, Helper = context.Helper }, loadedModulesOnly);
+                var moduleResults = CompleteModuleName(new CompletionContext { WordToComplete = assemblyOrModuleName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, loadedModulesOnly);
                 if (moduleResults != null && moduleResults.Count > 0)
                     result.AddRange(moduleResults);
 
@@ -3115,7 +3115,7 @@ namespace System.Management.Automation
                 RemoveLastNullCompletionResult(result);
 
                 var moduleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".dll" };
-                var moduleFilesResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = assemblyOrModuleName, Helper = context.Helper }, false, moduleExtensions));
+                var moduleFilesResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = assemblyOrModuleName, Helper = context.Helper, ExecutionContext = context.ExecutionContext }, false, moduleExtensions));
                 if (moduleFilesResults.Count > 0)
                     result.AddRange(moduleFilesResults);
 
@@ -3490,12 +3490,12 @@ namespace System.Management.Automation
                 // Complete for the parameter Definition
                 // Available commands
                 const CommandTypes commandTypes = CommandTypes.Cmdlet | CommandTypes.Function | CommandTypes.ExternalScript | CommandTypes.Workflow | CommandTypes.Configuration;
-                var commandResults = CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = powerShellExecutionHelper }, null, commandTypes);
+                var commandResults = CompleteCommand(new CompletionContext { WordToComplete = commandName, Helper = powerShellExecutionHelper, ExecutionContext = context.ExecutionContext }, null, commandTypes);
                 if (commandResults != null && commandResults.Count > 0)
                     result.AddRange(commandResults);
 
                 // The parameter Definition takes a file
-                var fileResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = commandName, Helper = powerShellExecutionHelper }));
+                var fileResults = new List<CompletionResult>(CompleteFilename(new CompletionContext { WordToComplete = commandName, Helper = powerShellExecutionHelper, ExecutionContext = context.ExecutionContext }));
                 if (fileResults.Count > 0)
                     result.AddRange(fileResults);
             }
@@ -3597,8 +3597,7 @@ namespace System.Management.Automation
                 return;
             }
 
-            var powershell = context.Helper.CurrentPowerShell;
-            var executionContext = powershell.GetContextFromTLS();
+            var executionContext = context.ExecutionContext;
 
             var boundArgs = GetBoundArgumentsAsHashtable(context);
             var providedPath = boundArgs["Path"] as string ?? executionContext.SessionState.Path.CurrentLocation.Path;
@@ -4035,7 +4034,7 @@ namespace System.Management.Automation
             }
 
             var helper = new PowerShellExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
-            return CompleteFilename(new CompletionContext { WordToComplete = fileName, Helper = helper });
+            return CompleteFilename(new CompletionContext { WordToComplete = fileName, Helper = helper, ExecutionContext = helper.CurrentPowerShell.GetContextFromTLS() });
         }
 
         internal static IEnumerable<CompletionResult> CompleteFilename(CompletionContext context)
@@ -4484,7 +4483,7 @@ namespace System.Management.Automation
             }
 
             var helper = new PowerShellExecutionHelper(PowerShell.Create(RunspaceMode.CurrentRunspace));
-            return CompleteVariable(new CompletionContext { WordToComplete = variableName, Helper = helper });
+            return CompleteVariable(new CompletionContext { WordToComplete = variableName, Helper = helper, ExecutionContext = helper.CurrentPowerShell.GetContextFromTLS() });
         }
 
         private static readonly string[] s_variableScopes = new string[] { "Global:", "Local:", "Script:", "Private:" };
@@ -5861,7 +5860,7 @@ namespace System.Management.Automation
                                  : PowerShell.Create(RunspaceMode.CurrentRunspace);
 
             var helper = new PowerShellExecutionHelper(powershell);
-            return CompleteType(new CompletionContext { WordToComplete = typeName, Helper = helper });
+            return CompleteType(new CompletionContext { WordToComplete = typeName, Helper = helper, ExecutionContext = helper.CurrentPowerShell.GetContextFromTLS() });
         }
 
         internal static List<CompletionResult> CompleteType(CompletionContext context, string prefix = "", string suffix = "")
@@ -5952,14 +5951,22 @@ namespace System.Management.Automation
         internal static List<CompletionResult> CompleteHelpTopics(CompletionContext context)
         {
             var results = new List<CompletionResult>();
-            var dirPath = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID) + "\\" + CultureInfo.CurrentCulture.Name;
+            var dirPath = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID) + Path.DirectorySeparatorChar + CultureInfo.CurrentCulture.Name;
             var wordToComplete = context.WordToComplete + "*";
             var topicPattern = WildcardPattern.Get("about_*.help.txt", WildcardOptions.IgnoreCase);
-            string[] files = null;
+            List<string> files = new List<string>();
 
             try
             {
-                files = Directory.GetFiles(dirPath, wordToComplete);
+                var wildcardPattern = WildcardPattern.Get(wordToComplete, WildcardOptions.IgnoreCase);
+
+                foreach(var file in Directory.GetFiles(dirPath))
+                {
+                    if(wildcardPattern.IsMatch(Path.GetFileName(file)))
+                    {
+                        files.Add(file);
+                    }
+                }
             }
             catch (Exception)
             {

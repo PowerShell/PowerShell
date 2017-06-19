@@ -63,3 +63,28 @@ Describe "Import-Module with ScriptsToProcess" -Tags "CI" {
         Get-Content out.txt | Should Be $Expected
     }
 }
+
+Describe "Import-Module for Binary Modules in GAC" -Tags 'CI' {
+    Context "Modules are not loaded from GAC" {
+        BeforeAll {
+            [System.Management.Automation.PowerShellAssemblyLoadContextTestHooks]::SetTestHook('AllowGACLoading', $false)
+        }
+
+        AfterAll {
+            [System.Management.Automation.PowerShellAssemblyLoadContextTestHooks]::SetTestHook('AllowGACLoading', $true)
+        }
+
+        It "Load PSScheduledJob from Windows Powershell Modules folder should fail" -Skip:(-not $IsWindows) {
+            $modulePath = Join-Path $env:windir "System32/WindowsPowershell/v1.0/Modules/PSScheduledJob"
+            { Import-Module $modulePath -ErrorAction SilentlyContinue } | ShouldBeErrorId 'FormatXmlUpdateException,Microsoft.PowerShell.Commands.ImportModuleCommand'
+        }
+    }
+
+    Context "Modules are loaded from GAC" {
+        It "Load PSScheduledJob from Windows Powershell Modules folder" -Skip:(-not $IsWindows) {
+            $modulePath = Join-Path $env:windir "System32/WindowsPowershell/v1.0/Modules/PSScheduledJob"
+            Import-Module $modulePath
+            (Get-Command New-JobTrigger).Name | Should Be 'New-JobTrigger'
+        }
+    }
+}
