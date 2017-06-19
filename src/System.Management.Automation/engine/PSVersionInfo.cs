@@ -72,7 +72,6 @@ namespace System.Management.Automation
 #if CORECLR
             s_psVersionTable[PSOSName] = Runtime.InteropServices.RuntimeInformation.OSDescription.ToString();
 #else
-            s_psVersionTable[PSCLRVersionName] = Environment.Version;
             s_psVersionTable[PSOSName] = Environment.OSVersion.ToString();
 #endif
         }
