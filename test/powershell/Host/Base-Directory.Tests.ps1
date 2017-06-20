@@ -38,12 +38,12 @@ Describe "Configuration file locations" -tags "CI","Slow" {
         }
 
         It @ItArgs "Profile location should be correct" {
-            & $powershell -noprofile `$PROFILE | Should Be $expectedProfile
+            & $powershell -noprofile -c `$PROFILE | Should Be $expectedProfile
         }
 
         It @ItArgs "PSModulePath should contain the correct path" {
             $env:PSModulePath = ""
-            $actual = & $powershell -noprofile `$env:PSModulePath
+            $actual = & $powershell -noprofile -c `$env:PSModulePath
             $actual | Should Match ([regex]::Escape($expectedModule))
         }
 
