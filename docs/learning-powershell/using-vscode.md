@@ -75,7 +75,7 @@ If you wish to use a specific installation of PowerShell with Visual Studio Code
 
 By using the steps in the previous paragraph you can add onfiguration settings in `settings.json`.
 
-We recommend the following  configuration settings for Visual Studio Code:
+We recommend the following configuration settings for Visual Studio Code:
 
 ```json
 {
