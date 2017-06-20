@@ -6,7 +6,7 @@
 
 - Remove the `BuildVersion` property from `$PSVersionTable`.
  This property was strongly tied to the Windows build version.
- Instead, we recommend that you use `GitCommitId` to retreive the exact build version of PowerShell Core.
+ Instead, we recommend that you use `GitCommitId` to retrieve the exact build version of PowerShell Core.
  (#3877) (Thanks to @iSazonov!)
 - Change positional parameter for `powershell.exe` from `-Command` to `-File`.
  This fixes the usage of `#!` (aka as a shebang) in PowerShell scripts that are being executed from non-PowerShell shells on non-Windows platforms.
@@ -15,13 +15,13 @@
  (#4019)
 - Remove `ClrVersion` property from `$PSVersionTable`.
  (This property is largely irrelevant PowerShell Core,
- and was only preserved in .NET Core for specific legacy purposes that are unapplicable to PowerShell.)
+ and was only preserved in .NET Core for specific legacy purposes that are inapplicable to PowerShell.)
  (#4027)
 
 ### Engine updates and fixes
 
-- Add support to probe and load assemblies from GAC on Windows platform. 
- This means that you can now load Windows PowerShell modules with assmebly dependencies which reside in the GAC.
+- Add support to probe and load assemblies from GAC on Windows platform.
+ This means that you can now load Windows PowerShell modules with assembly dependencies which reside in the GAC.
  If you're interested in running your traditional Windows PowerShell scripts and cmdlets using the power of .NET Standard 2.0,
  try adding your Windows PowerShell module directories to your PowerShell Core `$PSModulePath`.
  (E.g. `$env:PSModulePath += ';C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules'`)
@@ -36,7 +36,7 @@
  Now you don't have to run `$PSVersionTable` as soon as you start PowerShell to get the version! (#3916) (Thanks to @iSazonov!)
 - Fix a bug in tab completion to make `native.exe --<tab>` call into native completer. (#3633) (Thanks to @powercode!)
 - Fix PowerShell Core to allow use of long paths that are more than 260 characters. (#3960)
-- Fix ConsoleHost to honor `NoEcho` on Unix platforms. (#3801)
+- Fix ConsoleHost to honour `NoEcho` on Unix platforms. (#3801)
 - Fix transcription to not stop when a Runspace is closed during the transcription. (#3896)
 
 ### General cmdlet updates and fixes
@@ -45,7 +45,7 @@
 - Fix `Get-Help` to support case insensitive pattern matching on Unix platforms. (#3852)
 - Fix tab completion on `Get-Help` for `about_*` topics. (#4014)
 - Fix PSReadline to work in Windows Server Core container image. (#3937)
-- Fix `Import-Module` to honor `ScriptsToProcess` when `-Version` is specified. (#3897)
+- Fix `Import-Module` to honour `ScriptsToProcess` when `-Version` is specified. (#3897)
 - Strip authorization header on redirects with web cmdlets. (#3885)
 - `Start-Sleep`: add the alias `ms` to the parameter `-Milliseconds`. (#4039) (Thanks to @Tadas!)
 
