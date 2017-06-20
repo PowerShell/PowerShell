@@ -2059,7 +2059,7 @@ namespace System.Management.Automation
                     {
                         if (parameterName.Equals("Module", StringComparison.OrdinalIgnoreCase))
                         {
-                            NativeCompletionGetCommand(context, null, parameterName, result);
+                            NativeCompletionGetCommand(context, /* moduleName: */ null, parameterName, result);
                             break;
                         }
                         if (parameterName.Equals("Name", StringComparison.OrdinalIgnoreCase))
@@ -2075,7 +2075,7 @@ namespace System.Management.Automation
                             }
                             else
                             {
-                                NativeCompletionGetCommand(context, null, parameterName, result);
+                                NativeCompletionGetCommand(context, /* moduleName: */ null, parameterName, result);
                             }
                             break;
                         }
@@ -2090,13 +2090,13 @@ namespace System.Management.Automation
                     }
                 case "Show-Command":
                     {
-                        NativeCompletionGetHelpCommand(context, parameterName, false, result);
+                        NativeCompletionGetHelpCommand(context, parameterName, /* isHelpRelated: */ false, result);
                         break;
                     }
                 case "help":
                 case "Get-Help":
                     {
-                        NativeCompletionGetHelpCommand(context, parameterName, true, result);
+                        NativeCompletionGetHelpCommand(context, parameterName, /* isHelpRelated: */ true, result);
                         break;
                     }
                 case "Invoke-Expression":
@@ -2143,17 +2143,17 @@ namespace System.Management.Automation
                 case "Get-Module":
                     {
                         bool loadedModulesOnly = boundArguments == null || !boundArguments.ContainsKey("ListAvailable");
-                        NativeCompletionModuleCommands(context, parameterName, loadedModulesOnly, false, result);
+                        NativeCompletionModuleCommands(context, parameterName, loadedModulesOnly, /* isImportModule: */ false, result);
                         break;
                     }
                 case "Remove-Module":
                     {
-                        NativeCompletionModuleCommands(context, parameterName, true, false, result);
+                        NativeCompletionModuleCommands(context, parameterName, /* loadedModulesOnly: */ true, /* isImportModule: */ false, result);
                         break;
                     }
                 case "Import-Module":
                     {
-                        NativeCompletionModuleCommands(context, parameterName, false, true, result);
+                        NativeCompletionModuleCommands(context, parameterName, /* loadedModulesOnly: */ false, /* isImportModule: */ true, result);
                         break;
                     }
                 case "Debug-Process":
@@ -2184,7 +2184,7 @@ namespace System.Management.Automation
                             }
                             else
                             {
-                                NativeCompletionDriveCommands(context, null, parameterName, result);
+                                NativeCompletionDriveCommands(context, /* psProvider: */ null, parameterName, result);
                             }
                         }
 
