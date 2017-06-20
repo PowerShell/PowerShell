@@ -92,6 +92,7 @@ function Start-PSBuild {
         [switch]$TypeGen,
         [switch]$Clean,
         [switch]$PSModuleRestore,
+        [switch]$BuildNative,
 
         # this switch will re-build only System.Management.Automation.dll
         # it's useful for development, to do a quick changes in the engine
@@ -188,7 +189,7 @@ function Start-PSBuild {
     # verify we have all tools in place to do the build
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
 
-    if ($IsWindows) {
+    if ($IsWindows -and $BuildNative) {
         # cmake is needed to build powershell.exe
         $precheck = $precheck -and (precheck 'cmake' 'cmake not found. Run "Start-PSBootstrap -BuildNative". You can also install it from https://chocolatey.org/packages/cmake')
 
@@ -211,9 +212,9 @@ function Start-PSBuild {
             $msbuildConfiguration = 'Release'
         }
 
-    } elseif ($IsLinux -or $IsOSX) {
+    } elseif (($IsLinux -or $IsOSX) -and $BuildNative) {
         foreach ($Dependency in 'cmake', 'make', 'g++') {
-            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap -BuildNative'.")
+            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap -BuildNative'")
         }
     }
 
@@ -286,122 +287,191 @@ function Start-PSBuild {
         Start-XamlGen -MSBuildConfiguration $msbuildConfiguration
     }
 
-    # Build native components
-    if (($IsLinux -or $IsOSX) -and -not $SMAOnly) {
-        $Ext = if ($IsLinux) {
-            "so"
-        } elseif ($IsOSX) {
-            "dylib"
-        }
-
-        $Native = "$PSScriptRoot/src/libpsl-native"
-        $Lib = "$($Options.Top)/libpsl-native.$Ext"
-        log "Start building $Lib"
-
-        try {
-            Push-Location $Native
-            Start-NativeExecution { cmake -DCMAKE_BUILD_TYPE=Debug . }
-            Start-NativeExecution { make -j }
-            Start-NativeExecution { ctest --verbose }
-        } finally {
-            Pop-Location
-        }
-
-        if (-not (Test-Path $Lib)) {
-            throw "Compilation of $Lib failed"
-        }
-    } elseif ($IsWindows -and (-not $SMAOnly)) {
-        log "Start building native Windows binaries"
-
-        try {
-            Push-Location "$PSScriptRoot\src\powershell-native"
-
-            $NativeHostArch = "x64"
-            if ($script:Options.Runtime -match "-x86")
-            {
-                $NativeHostArch = "x86"
+    if ($BuildNative)
+    {
+        # Build native components
+        if (($IsLinux -or $IsOSX) -and -not $SMAOnly) {
+            $Ext = if ($IsLinux) {
+                "so"
+            } elseif ($IsOSX) {
+                "dylib"
             }
 
-            # setup cmakeGenerator
-            if ($NativeHostArch -eq 'x86') {
-                $cmakeGenerator = 'Visual Studio 14 2015'
-            } else {
-                $cmakeGenerator = 'Visual Studio 14 2015 Win64'
+            $Native = "$PSScriptRoot/src/libpsl-native"
+            $Lib = "$($Options.Top)/libpsl-native.$Ext"
+            log "Start building $Lib"
+
+            try {
+                Push-Location $Native
+                Start-NativeExecution { cmake -DCMAKE_BUILD_TYPE=Debug . }
+                Start-NativeExecution { make -j }
+                Start-NativeExecution { ctest --verbose }
+            } finally {
+                Pop-Location
             }
 
-            # Compile native resources
-            $currentLocation = Get-Location
-            @("nativemsh/pwrshplugin") | % {
-                $nativeResourcesFolder = $_
-                Get-ChildItem $nativeResourcesFolder -Filter "*.mc" | % {
-                    $command = @"
-cmd.exe /C cd /d "$currentLocation" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" mc.exe -o -d -c -U "$($_.FullName)" -h "$nativeResourcesFolder" -r "$nativeResourcesFolder"
-"@
-                    log "  Executing mc.exe Command: $command"
-                    Start-NativeExecution { Invoke-Expression -Command:$command 2>&1 }
-                }
+            if (-not (Test-Path $Lib)) {
+                throw "Compilation of $Lib failed"
             }
+        } elseif ($IsWindows -and (-not $SMAOnly)) {
+            log "Start building native Windows binaries"
 
-            function Build-NativeWindowsBinaries {
-                param(
-                    # Describes wither it should build the CoreCLR or FullCLR version
-                    [ValidateSet("ON", "OFF")]
-                    [string]$OneCoreValue,
+            try {
+                Push-Location "$PSScriptRoot\src\powershell-native"
 
-                    # Array of file names to copy from the local build directory to the packaging directory
-                    [string[]]$FilesToCopy
-                )
-
-# Disabling until I figure out if it is necessary
-#                $overrideFlags = "-DCMAKE_USER_MAKE_RULES_OVERRIDE=$PSScriptRoot\src\powershell-native\windows-compiler-override.txt"
-                $overrideFlags = ""
-                $location = Get-Location
-
-                $command = @"
-cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=$OneCoreValue -DBUILD_TARGET_ARCH=$NativeHostArch -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$msbuildConfiguration"
-"@
-                log "  Executing Build Command: $command"
-                Start-NativeExecution { Invoke-Expression -Command:$command }
-
-                $clrTarget = "FullClr"
-                if ($OneCoreValue -eq "ON")
+                $NativeHostArch = "x64"
+                if ($script:Options.Runtime -match "-x86")
                 {
-                    $clrTarget = "CoreClr"
+                    $NativeHostArch = "x86"
                 }
 
-                # Copy the binaries from the local build directory to the packaging directory
-                $dstPath = ($script:Options).Top
-                $FilesToCopy | % {
-                    $srcPath = Join-Path (Join-Path (Join-Path (Get-Location) "bin") $msbuildConfiguration) "$clrTarget/$_"
-                    log "  Copying $srcPath to $dstPath"
-                    Copy-Item $srcPath $dstPath
+                # setup cmakeGenerator
+                if ($NativeHostArch -eq 'x86') {
+                    $cmakeGenerator = 'Visual Studio 14 2015'
+                } else {
+                    $cmakeGenerator = 'Visual Studio 14 2015 Win64'
                 }
-            }
 
-            if ($FullCLR) {
-                $fullBinaries = @(
-                    'powershell.exe',
-                    'powershell.pdb',
-                    'pwrshplugin.dll',
-                    'pwrshplugin.pdb'
-                )
-                Build-NativeWindowsBinaries "OFF" $fullBinaries
-            }
-            else
-            {
-                $coreClrBinaries = @(
-                    'pwrshplugin.dll',
-                    'pwrshplugin.pdb'
-                )
-                Build-NativeWindowsBinaries "ON" $coreClrBinaries
+                # Compile native resources
+                $currentLocation = Get-Location
+                @("nativemsh/pwrshplugin") | % {
+                    $nativeResourcesFolder = $_
+                    Get-ChildItem $nativeResourcesFolder -Filter "*.mc" | % {
+                        $command = @"
+    cmd.exe /C cd /d "$currentLocation" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" mc.exe -o -d -c -U "$($_.FullName)" -h "$nativeResourcesFolder" -r "$nativeResourcesFolder"
+"@
+                        log "  Executing mc.exe Command: $command"
+                        Start-NativeExecution { Invoke-Expression -Command:$command 2>&1 }
+                    }
+                }
 
-                # Place the remoting configuration script in the same directory
-                # as the binary so it will get published.
-                Copy-Item .\Install-PowerShellRemoting.ps1 ($script:Options).Top
+                function Build-NativeWindowsBinaries {
+                    param(
+                        # Describes wither it should build the CoreCLR or FullCLR version
+                        [ValidateSet("ON", "OFF")]
+                        [string]$OneCoreValue,
+
+                        # Array of file names to copy from the local build directory to the packaging directory
+                        [string[]]$FilesToCopy
+                    )
+
+    # Disabling until I figure out if it is necessary
+    #                $overrideFlags = "-DCMAKE_USER_MAKE_RULES_OVERRIDE=$PSScriptRoot\src\powershell-native\windows-compiler-override.txt"
+                    $overrideFlags = ""
+                    $location = Get-Location
+
+                    $command = @"
+    cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=$OneCoreValue -DBUILD_TARGET_ARCH=$NativeHostArch -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$msbuildConfiguration"
+"@
+                    log "  Executing Build Command: $command"
+                    Start-NativeExecution { Invoke-Expression -Command:$command }
+
+                    $clrTarget = "FullClr"
+                    if ($OneCoreValue -eq "ON")
+                    {
+                        $clrTarget = "CoreClr"
+                    }
+
+                    # Copy the binaries from the local build directory to the packaging directory
+                    $dstPath = ($script:Options).Top
+                    $FilesToCopy | % {
+                        $srcPath = Join-Path (Join-Path (Join-Path (Get-Location) "bin") $msbuildConfiguration) "$clrTarget/$_"
+                        log "  Copying $srcPath to $dstPath"
+                        Copy-Item $srcPath $dstPath
+                    }
+                }
+
+                if ($FullCLR) {
+                    $fullBinaries = @(
+                        'powershell.exe',
+                        'powershell.pdb',
+                        'pwrshplugin.dll',
+                        'pwrshplugin.pdb'
+                    )
+                    Build-NativeWindowsBinaries "OFF" $fullBinaries
+                }
+                else
+                {
+                    $coreClrBinaries = @(
+                        'pwrshplugin.dll',
+                        'pwrshplugin.pdb'
+                    )
+                    Build-NativeWindowsBinaries "ON" $coreClrBinaries
+                }
+            } finally {
+                Pop-Location
             }
-        } finally {
-            Pop-Location
         }
+    }
+    else
+    {
+        # use native binaries from $PSHOME, assume it is latest
+        $nativeBinaries = @()
+        if ($IsWindows)
+        {
+            if ($PSVersionTable.PSEdition -ne "Core")
+            {
+                # if running under Windows PowerShell, we'll need to get the binaries from GitHub release
+                $latestReleaseUri = "https://api.github.com/repos/powershell/powershell/releases/latest"
+                $psOption = New-PSOptions -Runtime $runtime
+                $pattern = $psOption.Runtime.Split("-")[0] + ".*\.zip"
+                Write-Verbose "Getting latest release from $latestReleaseUri"
+                $latestReleases = Invoke-RestMethod -Uri $latestReleaseUri
+                $release = $latestReleases.assets | Where-Object { $_.Name -match $pattern }
+                if ($release.count -gt 1)
+                {
+                    throw "Found more than one release for $runtime, cannot continue"
+                }
+                $savedProgressPreference = $ProgressPreference
+                $ProgressPreference = "SilentlyContinue"
+                Write-Verbose "Downloading ${release.browser_download_url}"
+                $zipPath = Join-Path $env:temp "pscore.zip"
+                Invoke-WebRequest $release.browser_download_url -OutFile $zipPath
+                $pscoredir = Join-Path $env:temp "pscore"
+                Write-Verbose "Expanding $zipPath"
+                Expand-Archive -Path $zipPath -DestinationPath $pscoredir -Force
+                Remove-Item $zipPath -Force
+                $ProgressPreference = $savedProgressPreference
+                $nativeBinaries = @(
+                    (Join-Path $pscoredir 'pwrshplugin.dll'),
+                    (Join-Path $pscoredir 'pwrshplugin.pdb')
+                )
+            }
+            else 
+            {
+                $nativeBinaries = @(
+                    (Join-Path $PSHOME 'pwrshplugin.dll'),
+                    (Join-Path $PSHOME 'pwrshplugin.pdb')
+                )
+            }
+        }
+        else
+        {
+            $Ext = if ($IsLinux) {
+                "so"
+            } elseif ($IsOSX) {
+                "dylib"
+            }
+            
+            $nativeBinaries = @(
+                Join-Path $PSHOME "libpsl-native.$Ext"
+            )
+        }
+        foreach ($binary in $nativeBinaries)
+        {
+            $dstPath = ($script:Options).Top
+            log "  Copying $binary to $dstPath"
+            Copy-Item $binary $dstPath
+        }
+    }
+
+    if ($IsWindows -and (-not $SMAOnly))
+    {
+        Push-Location "$PSScriptRoot\src\powershell-native"
+        # Place the remoting configuration script in the same directory
+        # as the binary so it will get published.
+        Copy-Item .\Install-PowerShellRemoting.ps1 ($script:Options).Top
+        Pop-Location
     }
 
     # handle TypeGen
@@ -1053,7 +1123,8 @@ function Start-PSBootstrap {
         [string]$Version = "2.0.0-preview1-005952",
         [switch]$Package,
         [switch]$NoSudo,
-        [switch]$Force
+        [switch]$Force,
+        [switch]$BuildNative
     )
 
     log "Installing PowerShell build dependencies"
@@ -1065,15 +1136,18 @@ function Start-PSBootstrap {
     $sudo = if (!$NoSudo) { "sudo" }
 
     try {
-        # Update googletest submodule for linux native cmake
-        if ($IsLinux -or $IsOSX) {
-            try {
-                Push-Location $PSScriptRoot
-                $Submodule = "$PSScriptRoot/src/libpsl-native/test/googletest"
-                Remove-Item -Path $Submodule -Recurse -Force -ErrorAction SilentlyContinue
-                git submodule update --init -- $submodule
-            } finally {
-                Pop-Location
+        if ($BuildNative)
+        {
+            # Update googletest submodule for linux native cmake
+            if ($IsLinux -or $IsOSX) {
+                try {
+                    Push-Location $PSScriptRoot
+                    $Submodule = "$PSScriptRoot/src/libpsl-native/test/googletest"
+                    Remove-Item -Path $Submodule -Recurse -Force -ErrorAction SilentlyContinue
+                    git submodule update --init -- $submodule
+                } finally {
+                    Pop-Location
+                }
             }
         }
 
@@ -1081,7 +1155,11 @@ function Start-PSBootstrap {
         $Deps = @()
         if ($IsUbuntu) {
             # Build tools
-            $Deps += "curl", "g++", "cmake", "make"
+            $Deps += "curl"
+            if ($BuildNative)
+            {
+                $Deps += "g++", "cmake", "make"
+            }
 
             # .NET Core required runtime libraries
             $Deps += "libunwind8"
@@ -1098,7 +1176,11 @@ function Start-PSBootstrap {
             }
         } elseif ($IsRedHatFamily) {
             # Build tools
-            $Deps += "which", "curl", "gcc-c++", "cmake", "make"
+            $Deps += "which", "curl"
+            if ($BuildNative)
+            {
+                $Deps += "gcc-c++", "cmake", "make"
+            }
 
             # .NET Core required runtime libraries
             $Deps += "libicu", "libunwind"
@@ -1123,8 +1205,11 @@ function Start-PSBootstrap {
         } elseif ($IsOSX) {
             precheck 'brew' "Bootstrap dependency 'brew' not found, must install Homebrew! See http://brew.sh/"
 
-            # Build tools
-            $Deps += "cmake"
+            if ($BuildNative)
+            {
+                # Build tools
+                $Deps += "cmake"
+            }
 
             # .NET Core required runtime libraries
             $Deps += "openssl"
@@ -1155,65 +1240,68 @@ function Start-PSBootstrap {
             $machinePath = [Environment]::GetEnvironmentVariable('Path', 'MACHINE')
             $newMachineEnvironmentPath = $machinePath
 
-            $cmakePresent = precheck 'cmake' $null
-            $sdkPresent = Test-Win10SDK
+            if ($BuildNative)
+            {
+                $cmakePresent = precheck 'cmake' $null
+                $sdkPresent = Test-Win10SDK
 
-            # Install chocolatey
-            $chocolateyPath = "$env:AllUsersProfile\chocolatey\bin"
+                # Install chocolatey
+                $chocolateyPath = "$env:AllUsersProfile\chocolatey\bin"
 
-            if(precheck 'choco' $null) {
-                log "Chocolatey is already installed. Skipping installation."
-            }
-            elseif(($cmakePresent -eq $false) -or ($sdkPresent -eq $false)) {
-                log "Chocolatey not present. Installing chocolatey."
-                if ($Force -or $PSCmdlet.ShouldProcess("Install chocolatey via https://chocolatey.org/install.ps1")) {
-                    Invoke-Expression ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
-                    if (-not ($machinePath.ToLower().Contains($chocolateyPath.ToLower()))) {
-                        log "Adding $chocolateyPath to Path environment variable"
-                        $env:Path += ";$chocolateyPath"
-                        $newMachineEnvironmentPath += ";$chocolateyPath"
+                if(precheck 'choco' $null) {
+                    log "Chocolatey is already installed. Skipping installation."
+                }
+                elseif(($cmakePresent -eq $false) -or ($sdkPresent -eq $false)) {
+                    log "Chocolatey not present. Installing chocolatey."
+                    if ($Force -or $PSCmdlet.ShouldProcess("Install chocolatey via https://chocolatey.org/install.ps1")) {
+                        Invoke-Expression ((new-object net.webclient).DownloadString('https://chocolatey.org/install.ps1'))
+                        if (-not ($machinePath.ToLower().Contains($chocolateyPath.ToLower()))) {
+                            log "Adding $chocolateyPath to Path environment variable"
+                            $env:Path += ";$chocolateyPath"
+                            $newMachineEnvironmentPath += ";$chocolateyPath"
+                        } else {
+                            log "$chocolateyPath already present in Path environment variable"
+                        }
                     } else {
-                        log "$chocolateyPath already present in Path environment variable"
+                        Write-Error "Chocolatey is required to install missing dependencies. Please install it from https://chocolatey.org/ manually. Alternatively, install cmake and Windows 10 SDK."
+                        return $null
                     }
                 } else {
-                    Write-Error "Chocolatey is required to install missing dependencies. Please install it from https://chocolatey.org/ manually. Alternatively, install cmake and Windows 10 SDK."
-                    return $null
+                    log "Skipping installation of chocolatey, cause both cmake and Win 10 SDK are present."
                 }
-            } else {
-                log "Skipping installation of chocolatey, cause both cmake and Win 10 SDK are present."
-            }
 
-            # Install cmake
-            $cmakePath = "${env:ProgramFiles}\CMake\bin"
-            if($cmakePresent) {
-                log "Cmake is already installed. Skipping installation."
-            } else {
-                log "Cmake not present. Installing cmake."
-                Start-NativeExecution { choco install cmake -y --version 3.6.0 }
-                if (-not ($machinePath.ToLower().Contains($cmakePath.ToLower()))) {
-                    log "Adding $cmakePath to Path environment variable"
-                    $env:Path += ";$cmakePath"
-                    $newMachineEnvironmentPath = "$cmakePath;$newMachineEnvironmentPath"
+                # Install cmake
+                $cmakePath = "${env:ProgramFiles}\CMake\bin"
+                if($cmakePresent) {
+                    log "Cmake is already installed. Skipping installation."
                 } else {
-                    log "$cmakePath already present in Path environment variable"
+                    log "Cmake not present. Installing cmake."
+                    Start-NativeExecution { choco install cmake -y --version 3.6.0 }
+                    if (-not ($machinePath.ToLower().Contains($cmakePath.ToLower()))) {
+                        log "Adding $cmakePath to Path environment variable"
+                        $env:Path += ";$cmakePath"
+                        $newMachineEnvironmentPath = "$cmakePath;$newMachineEnvironmentPath"
+                    } else {
+                        log "$cmakePath already present in Path environment variable"
+                    }
                 }
-            }
 
-            # Install Windows 10 SDK
-            $packageName = "windows-sdk-10.0"
+                # Install Windows 10 SDK
+                $packageName = "windows-sdk-10.0"
 
-            if (-not $sdkPresent) {
-                log "Windows 10 SDK not present. Installing $packageName."
-                Start-NativeExecution { choco install windows-sdk-10.0 -y }
-            } else {
-                log "Windows 10 SDK present. Skipping installation."
-            }
+                if (-not $sdkPresent) {
+                    log "Windows 10 SDK not present. Installing $packageName."
+                    Start-NativeExecution { choco install windows-sdk-10.0 -y }
+                } else {
+                    log "Windows 10 SDK present. Skipping installation."
+                }
 
-            # Update path machine environment variable
-            if ($newMachineEnvironmentPath -ne $machinePath) {
-                log "Updating Path machine environment variable"
-                if ($Force -or $PSCmdlet.ShouldProcess("Update Path machine environment variable to $newMachineEnvironmentPath")) {
-                    [Environment]::SetEnvironmentVariable('Path', $newMachineEnvironmentPath, 'MACHINE')
+                # Update path machine environment variable
+                if ($newMachineEnvironmentPath -ne $machinePath) {
+                    log "Updating Path machine environment variable"
+                    if ($Force -or $PSCmdlet.ShouldProcess("Update Path machine environment variable to $newMachineEnvironmentPath")) {
+                        [Environment]::SetEnvironmentVariable('Path', $newMachineEnvironmentPath, 'MACHINE')
+                    }
                 }
             }
 
