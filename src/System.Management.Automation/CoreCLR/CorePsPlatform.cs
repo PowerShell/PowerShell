@@ -587,9 +587,14 @@ namespace System.Management.Automation
             return Unix.NativeMethods.IsSameFileSystemItem(pathOne, pathTwo);
         }
 
-        internal static bool NonWindowsGetInodeData(string path, out UInt64 device, out UInt64 inode)
+        internal static bool NonWindowsGetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
         {
-            return Unix.NativeMethods.GetInodeData(path, out device, out inode) == 0;
+            UInt64 device = 0UL;
+            UInt64 inode = 0UL;
+            var result = Unix.NativeMethods.GetInodeData(path, out device, out inode);
+
+            inodeData = (device, inode);
+            return result == 0;
         }
 
         internal static bool NonWindowsIsExecutable(string path)

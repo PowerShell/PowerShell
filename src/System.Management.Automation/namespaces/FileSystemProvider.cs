@@ -54,14 +54,12 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True if the path has been visited, false otherwise</returns>
         public bool Visited(string path)
         {
-            UInt64 dev;
-            UInt64 inode;
+            var inodeData = (0UL, 0UL);
 
-            if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out dev, out inode))
+            if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out inodeData))
             {
-                return _visitations.ContainsKey((dev, inode));
+                return _visitations.ContainsKey(inodeData);
             }
-
             return false;
         }
 
@@ -72,12 +70,10 @@ namespace Microsoft.PowerShell.Commands
         /// <returns>True if the path was successfully added to the visited list, false otherwise</returns>
         public bool Visit(string path)
         {
-            UInt64 dev;
-            UInt64 inode;
-
-            if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out dev, out inode))
+            var inodeData = (0UL, 0UL);
+            if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out inodeData))
             {
-                _visitations[(dev, inode)] = true;
+                _visitations[inodeData] = true;
 
                 return true;
             }
@@ -8321,16 +8317,17 @@ namespace Microsoft.PowerShell.Commands
             return false;
         }
 
-        internal static bool GetInodeData(string path, out UInt64 dev, out UInt64 inode)
+        internal static bool GetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
         {
 #if UNIX
-            return Platform.NonWindowsGetInodeData(path, out dev, out inode);
+            bool rv = Platform.NonWindowsGetInodeData(path, out inodeData);
 #else
-            return WinGetInodeData(path, out dev, out inode);
+            bool rv = WinGetInodeData(path, out inodeData);
 #endif
+            return rv;
         }
 
-        internal static bool WinGetInodeData(string path, out UInt64 dev, out UInt64 inode)
+        internal static bool WinGetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
         {
             var access = FileAccess.Read;
             var share = FileShare.Read;
@@ -8349,16 +8346,14 @@ namespace Microsoft.PowerShell.Commands
                         tmp <<= 32;
                         tmp |= info.FileIndexLow;
 
-                        dev = info.VolumeSerialNumber;
-                        inode = tmp;
+                        inodeData = (info.VolumeSerialNumber, tmp);
 
                         return true;
                     }
                 }
             }
 
-            dev = 0;
-            inode = 0;
+            inodeData = (0, 0);
             return false;
         }
 
