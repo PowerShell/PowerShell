@@ -363,10 +363,23 @@ namespace System.Management.Automation
                             DWORD error = GetErrorFromSignatureState(sigInfo.nSignatureState);
 
                             X509Certificate2 cert = null;
+
                             if (ppCertContext != IntPtr.Zero)
                             {
                                 cert = new X509Certificate2(ppCertContext);
-                                signature = new Signature(filename, error, cert);
+
+                                // Get the time stamper certificate if available
+                                IntPtr pProvSigner = IntPtr.Zero;
+                                X509Certificate2 timestamperCert = null;
+                                TryGetProviderSigner(phStateData, ref pProvSigner, ref timestamperCert);
+                                if (timestamperCert != null)
+                                {
+                                    signature = new Signature(filename, error, cert, timestamperCert);
+                                }
+                                else
+                                {
+                                    signature = new Signature(filename, error, cert);
+                                }
 
                                 switch (sigInfo.nSignatureType)
                                 {
@@ -578,59 +591,35 @@ namespace System.Management.Automation
             DWORD error,
             NativeMethods.WINTRUST_DATA wtd)
         {
-            Signature signature = null;
-            X509Certificate2 signerCert = null;
-            X509Certificate2 timestamperCert = null;
-
             s_tracer.WriteLine("GetSignatureFromWintrustData: error: {0}", error);
 
-            // The GetLastWin32Error of this is checked, but PreSharp doesn't seem to be
-            // able to see that.
-#pragma warning disable 56523
-            IntPtr pProvData =
-                NativeMethods.WTHelperProvDataFromStateData(wtd.hWVTStateData);
-#pragma warning enable 56523
-
-            if (pProvData != IntPtr.Zero)
+            Signature signature = null;
+            IntPtr pProvSigner = IntPtr.Zero;
+            X509Certificate2 timestamperCert = null;
+            if (TryGetProviderSigner(wtd.hWVTStateData, ref pProvSigner, ref timestamperCert))
             {
-                IntPtr pProvSigner =
-                    NativeMethods.WTHelperGetProvSignerFromChain(pProvData, 0, 0, 0);
-                if (pProvSigner != IntPtr.Zero)
+                //
+                // get cert of the signer
+                //
+                X509Certificate2 signerCert = GetCertFromChain(pProvSigner);
+
+                if (signerCert != null)
                 {
-                    //
-                    // get cert of the signer
-                    //
-                    signerCert = GetCertFromChain(pProvSigner);
-
-                    if (signerCert != null)
+                    if (timestamperCert != null)
                     {
-                        NativeMethods.CRYPT_PROVIDER_SGNR provSigner =
-                            (NativeMethods.CRYPT_PROVIDER_SGNR)
-                            ClrFacade.PtrToStructure<NativeMethods.CRYPT_PROVIDER_SGNR>(pProvSigner);
-                        if (provSigner.csCounterSigners == 1)
-                        {
-                            //
-                            // time stamper cert available
-                            //
-                            timestamperCert = GetCertFromChain(provSigner.pasCounterSigners);
-                        }
-
-                        if (timestamperCert != null)
-                        {
-                            signature = new Signature(filePath,
-                                                      error,
-                                                      signerCert,
-                                                      timestamperCert);
-                        }
-                        else
-                        {
-                            signature = new Signature(filePath,
-                                                        error,
-                                                        signerCert);
-                        }
-
-                        signature.SignatureType = SignatureType.Authenticode;
+                        signature = new Signature(filePath,
+                                                  error,
+                                                  signerCert,
+                                                  timestamperCert);
                     }
+                    else
+                    {
+                        signature = new Signature(filePath,
+                                                  error,
+                                                  signerCert);
+                    }
+
+                    signature.SignatureType = SignatureType.Authenticode;
                 }
             }
 
@@ -642,6 +631,41 @@ namespace System.Management.Automation
             }
 
             return signature;
+        }
+
+        [ArchitectureSensitive]
+        private static bool TryGetProviderSigner(IntPtr wvtStateData, ref IntPtr pProvSigner, ref X509Certificate2 timestamperCert)
+        {
+            // The GetLastWin32Error of this is checked, but PreSharp doesn't seem to be
+            // able to see that.
+#pragma warning disable 56523
+            IntPtr pProvData =
+                NativeMethods.WTHelperProvDataFromStateData(wvtStateData);
+#pragma warning enable 56523
+
+            if (pProvData != IntPtr.Zero)
+            {
+                pProvSigner =
+                    NativeMethods.WTHelperGetProvSignerFromChain(pProvData, 0, 0, 0);
+
+                if (pProvSigner != IntPtr.Zero)
+                {
+                    NativeMethods.CRYPT_PROVIDER_SGNR provSigner =
+                        (NativeMethods.CRYPT_PROVIDER_SGNR)
+                        ClrFacade.PtrToStructure<NativeMethods.CRYPT_PROVIDER_SGNR>(pProvSigner);
+                    if (provSigner.csCounterSigners == 1)
+                    {
+                        //
+                        // time stamper cert available
+                        //
+                        timestamperCert = GetCertFromChain(provSigner.pasCounterSigners);
+                    }
+
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         [ArchitectureSensitive]
