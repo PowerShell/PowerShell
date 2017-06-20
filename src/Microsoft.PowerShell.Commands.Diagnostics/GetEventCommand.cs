@@ -865,58 +865,55 @@ namespace Microsoft.PowerShell.Commands
         {
             using (EventLogReader readerObj = new EventLogReader(logQuery))
             {
-                if (readerObj != null)
+                Int64 numEvents = 0;
+                EventRecord evtObj = null;
+
+                while (true)
                 {
-                    Int64 numEvents = 0;
-                    EventRecord evtObj = null;
-
-                    while (true)
+                    try
                     {
-                        try
-                        {
-                            evtObj = readerObj.ReadEvent();
-                        }
-                        catch (Exception exc)
-                        {
-                            WriteError(new ErrorRecord(exc, exc.Message, ErrorCategory.NotSpecified, null));
-                            continue;
-                        }
-                        if (evtObj == null)
-                        {
-                            break;
-                        }
-                        if (_maxEvents != -1 && numEvents >= _maxEvents)
-                        {
-                            break;
-                        }
-
-                        PSObject outputObj = new PSObject(evtObj);
-
-                        string evtMessage = _resourceMgr.GetString("NoEventMessage");
-                        try
-                        {
-                            evtMessage = evtObj.FormatDescription();
-                        }
-                        catch (Exception exc)
-                        {
-                            WriteError(new ErrorRecord(exc, exc.Message, ErrorCategory.NotSpecified, null));
-                        }
-                        outputObj.Properties.Add(new PSNoteProperty("Message", evtMessage));
-
-
-                        //
-                        // Enumerate the object one level to get to event payload
-                        //
-                        WriteObject(outputObj, true);
-                        numEvents++;
+                        evtObj = readerObj.ReadEvent();
+                    }
+                    catch (Exception exc)
+                    {
+                        WriteError(new ErrorRecord(exc, exc.Message, ErrorCategory.NotSpecified, null));
+                        continue;
+                    }
+                    if (evtObj == null)
+                    {
+                        break;
+                    }
+                    if (_maxEvents != -1 && numEvents >= _maxEvents)
+                    {
+                        break;
                     }
 
-                    if (numEvents == 0)
+                    PSObject outputObj = new PSObject(evtObj);
+
+                    string evtMessage = _resourceMgr.GetString("NoEventMessage");
+                    try
                     {
-                        string msg = _resourceMgr.GetString("NoMatchingEventsFound");
-                        Exception exc = new Exception(msg);
-                        WriteError(new ErrorRecord(exc, "NoMatchingEventsFound", ErrorCategory.ObjectNotFound, null));
+                        evtMessage = evtObj.FormatDescription();
                     }
+                    catch (Exception exc)
+                    {
+                        WriteError(new ErrorRecord(exc, exc.Message, ErrorCategory.NotSpecified, null));
+                    }
+                    outputObj.Properties.Add(new PSNoteProperty("Message", evtMessage));
+
+
+                    //
+                    // Enumerate the object one level to get to event payload
+                    //
+                    WriteObject(outputObj, true);
+                    numEvents++;
+                }
+
+                if (numEvents == 0)
+                {
+                    string msg = _resourceMgr.GetString("NoMatchingEventsFound");
+                    Exception exc = new Exception(msg);
+                    WriteError(new ErrorRecord(exc, "NoMatchingEventsFound", ErrorCategory.ObjectNotFound, null));
                 }
             }
         }
