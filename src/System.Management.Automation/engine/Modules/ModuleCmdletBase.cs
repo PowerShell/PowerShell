@@ -4680,7 +4680,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (listOfStrings != null)
             {
-                var psHome = Utils.GetApplicationBaseDefaultPowerShell();
+                var psHome = Utils.DefaultPowerShellAppBase;
                 string alternateDirToCheck = null;
                 if (moduleBase.StartsWith(psHome, StringComparison.OrdinalIgnoreCase))
                 {

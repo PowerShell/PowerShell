@@ -306,7 +306,7 @@ namespace System.Management.Automation.Runspaces
         /// <returns></returns>
         public static FormatTable LoadDefaultFormatFiles()
         {
-            string psHome = Utils.GetApplicationBaseDefaultPowerShell();
+            string psHome = Utils.DefaultPowerShellAppBase;
             List<string> defaultFormatFiles = new List<string>();
             if (!string.IsNullOrEmpty(psHome))
             {

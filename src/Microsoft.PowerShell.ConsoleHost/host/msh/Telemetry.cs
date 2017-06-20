@@ -24,7 +24,7 @@ namespace Microsoft.PowerShell
 
         // The path to the semaphore file which enables telemetry
         private static string TelemetrySemaphoreFilePath = Path.Combine(
-            Utils.GetApplicationBaseDefaultPowerShell(),
+            Utils.DefaultPowerShellAppBase,
             TelemetrySemaphoreFilename);
 
         // Telemetry client to be reused when we start sending more telemetry

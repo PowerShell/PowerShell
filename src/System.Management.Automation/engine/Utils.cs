@@ -238,33 +238,14 @@ namespace System.Management.Automation
         }
 #endif
 
-        private static string s_GetApplicationBaseDefaultPowerShell = InitGetApplicationBaseDefaultPowerShell();
-
-        private static string InitGetApplicationBaseDefaultPowerShell()
-        {
-            return GetApplicationBase(Utils.DefaultPowerShellShellID);
-        }
-
-        /// <summary>
-        /// Gets the application base for current PowerShell version.
-        /// </summary>
-        /// <returns>
-        /// Applicationbase path for current PowerShell version installation.
-        /// </returns>
-        /// <exception cref="SecurityException">
-        /// if caller doesn't have permission to read the key.
-        /// </exception>
-        internal static string GetApplicationBaseDefaultPowerShell()
-        {
-            return s_GetApplicationBaseDefaultPowerShell;
-        }
+        internal static string DefaultPowerShellAppBase { get; } = GetApplicationBase(DefaultPowerShellShellID);
 
         internal static string GetApplicationBase(string shellId)
         {
 #if CORECLR
-            if (s_GetApplicationBaseDefaultPowerShell != null)
+            if (DefaultPowerShellAppBase != null)
             {
-                return s_GetApplicationBaseDefaultPowerShell;
+                return DefaultPowerShellAppBase;
             }
             // Use the location of SMA.dll as the application base.
             Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
@@ -327,7 +308,7 @@ namespace System.Management.Automation
                 List<string> baseDirectories = new List<string>();
 
                 // Retrieve the application base from the registry
-                string appBase = Utils.GetApplicationBaseDefaultPowerShell();
+                string appBase = Utils.DefaultPowerShellAppBase;
                 if (!string.IsNullOrEmpty(appBase))
                 {
                     baseDirectories.Add(appBase);
@@ -396,7 +377,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool IsRunningFromSysWOW64()
         {
-            return GetApplicationBaseDefaultPowerShell().Contains("SysWOW64");
+            return DefaultPowerShellAppBase.Contains("SysWOW64");
         }
 
         /// <summary>
