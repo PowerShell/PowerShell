@@ -40,7 +40,7 @@ if (!$skipTests) {
     $tabsRegEx  = [Regex]::new('(?m)^\s*[\t]+\s*\w*|[ \t]+\r?$', [RegexOptions]::Multiline+[RegexOptions]::Compiled)
 
     # The regex catch itself so mask it
-    $strHttp = '(?m)=(.|\n)*"http'
+    $strHttp = '(?m)HelpUri[ \r\n]*?=[ \r\n]*?"http'
     $strHttp += '://.*?"'
     $HttpRegEx  = [Regex]::new($strHttp, [RegexOptions]::Multiline+[RegexOptions]::Compiled)
 
