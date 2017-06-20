@@ -830,6 +830,9 @@ startup
 mklement0
 RelationLink
 deserialize
+beta.3
+shebang
+Tadas
  - test/tools/CodeCoverageAutomation/README.md
 CodeCoverage.zip
 Coveralls.exe
