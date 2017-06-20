@@ -14,7 +14,7 @@
  However, this change now requires that you explicitly specify `-c` or `-Command` when trying to do things like `powershell.exe Get-Command`.
  (#4019)
 - Remove `ClrVersion` property from `$PSVersionTable`.
- (This property is largely irrelevant PowerShell Core,
+ (This property is largely irrelevant for .NET Core,
  and was only preserved in .NET Core for specific legacy purposes that are inapplicable to PowerShell.)
  (#4027)
 
@@ -25,7 +25,7 @@
  If you're interested in running your traditional Windows PowerShell scripts and cmdlets using the power of .NET Standard 2.0,
  try adding your Windows PowerShell module directories to your PowerShell Core `$PSModulePath`.
  (E.g. `$env:PSModulePath += ';C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules'`)
- Even if the module isn't owned by the PowerShell Team, please file issues to tell us what works and what doesn't! (#3981)
+ Even if the module isn't owned by the PowerShell Team, please tell us what works and what doesn't by leaving a comment in [issue #4062][issue-4062]! (#3981)
 - Enhance type inference in tab completion based on runtime variable values. (#2744) (Thanks to @powercode!)
  This enables tab completion in situations like:
  ```powershell
@@ -38,6 +38,8 @@
 - Fix PowerShell Core to allow use of long paths that are more than 260 characters. (#3960)
 - Fix ConsoleHost to honour `NoEcho` on Unix platforms. (#3801)
 - Fix transcription to not stop when a Runspace is closed during the transcription. (#3896)
+
+[issue-4062]: https://github.com/PowerShell/PowerShell/issues/4062
 
 ### General cmdlet updates and fixes
 
