@@ -63,7 +63,7 @@ To run the spellchecker, follow the steps as follows:
 
 ### Code Editors
 
-[You can use multiplatform Visual Studio Code (VS Code)][use-vscode-editor]
+You should use the multi-platform [Visual Studio Code (VS Code)][use-vscode-editor]
 
 ### Building and testing
 
