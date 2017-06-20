@@ -37,10 +37,10 @@ namespace System.Management.Automation.Runspaces
         static PowerShellProcessInstance()
         {
 #if UNIX
-            s_PSExePath = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID),
+            s_PSExePath = Path.Combine(Utils.DefaultPowerShellAppBase,
                             "powershell");
 #else
-            s_PSExePath = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID),
+            s_PSExePath = Path.Combine(Utils.DefaultPowerShellAppBase,
                             "powershell.exe");
 #endif
         }

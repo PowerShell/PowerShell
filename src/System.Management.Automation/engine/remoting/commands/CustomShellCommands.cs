@@ -964,7 +964,7 @@ else
                     }
                 }
 
-                string destPath = System.IO.Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID), "SessionConfig",
+                string destPath = System.IO.Path.Combine(Utils.DefaultPowerShellAppBase, "SessionConfig",
                     shellName + "_" + sessionGuid.ToString() + StringLiterals.PowerShellDISCFileExtension);
                 if (string.Equals(ProcessorArchitecture, "x86", StringComparison.OrdinalIgnoreCase))
                 {
@@ -3414,7 +3414,7 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                     _gmsaAccount = _configTable[ConfigFileConstants.GMSAAccount] as string;
                 }
 
-                string destPath = System.IO.Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID), "SessionConfig",
+                string destPath = System.IO.Path.Combine(Utils.DefaultPowerShellAppBase, "SessionConfig",
                     shellName + "_" + sessionGuid.ToString() + StringLiterals.PowerShellDISCFileExtension);
 
                 // If the config file with the same guid name already exists then it would be overwritten.

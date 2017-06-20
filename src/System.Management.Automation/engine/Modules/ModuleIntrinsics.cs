@@ -557,7 +557,7 @@ namespace System.Management.Automation
 
             try
             {
-                string psHome = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
+                string psHome = Utils.DefaultPowerShellAppBase;
                 if (!string.IsNullOrEmpty(psHome))
                 {
                     // Win8: 584267 Powershell Modules are listed twice in x86, and cannot be removed

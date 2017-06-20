@@ -159,7 +159,7 @@ namespace System.Management.Automation
                 if (IsNanoServer || IsIoT)
                 {
                     _isInbox = string.Equals(
-                        Utils.GetApplicationBase(Utils.DefaultPowerShellShellID),
+                        Utils.DefaultPowerShellAppBase,
                         Utils.GetApplicationBaseFromRegistry(Utils.DefaultPowerShellShellID),
                         StringComparison.OrdinalIgnoreCase);
                 }

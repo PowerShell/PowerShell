@@ -46,7 +46,7 @@ namespace System.Management.Automation.Runspaces
             {
                 // Building the catalog is expensive, so force that to happen early on a background thread, and do so
                 // on a file we are very likely to read anyway.
-                var pshome = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
+                var pshome = Utils.DefaultPowerShellAppBase;
                 var unused = SecuritySupport.IsProductBinary(Path.Combine(pshome, "Modules", "Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Utility.psm1"));
             });
 
@@ -1597,7 +1597,7 @@ namespace System.Management.Automation.Runspaces
 
         private static void IncludePowerShellCoreFormats(InitialSessionState iss)
         {
-            string psHome = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
+            string psHome = Utils.DefaultPowerShellAppBase;
             if (string.IsNullOrEmpty(psHome))
             {
                 return;
@@ -4207,7 +4207,7 @@ namespace System.Management.Automation.Runspaces
 
             // We skip checking if the file exists when it's in $PSHOME because of magic
             // where we have the former contents of those files built into the engine directly.
-            var psHome = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
+            var psHome = Utils.DefaultPowerShellAppBase;
 
             foreach (string file in psSnapInInfo.Types)
             {

@@ -381,7 +381,7 @@ namespace Microsoft.PowerShell.Commands
 #if !CORECLR // Side-By-Side directories are not present in OneCore environments.
                         if (IsSystemModule(module.ModuleName) && Environment.Is64BitOperatingSystem)
                         {
-                            string path = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID).Replace("System32", "SysWOW64");
+                            string path = Utils.DefaultPowerShellAppBase.Replace("System32", "SysWOW64");
 
                             destPaths.Add(path);
                         }

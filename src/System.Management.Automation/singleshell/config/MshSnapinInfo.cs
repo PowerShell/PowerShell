@@ -896,7 +896,7 @@ namespace System.Management.Automation
 
         internal static void ReadRegistryInfo(out Version assemblyVersion, out string publicKeyToken, out string culture, out string architecture, out string applicationBase, out Version psVersion)
         {
-            applicationBase = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
+            applicationBase = Utils.DefaultPowerShellAppBase;
             Dbg.Assert(!string.IsNullOrEmpty(applicationBase),
                 string.Format(CultureInfo.CurrentCulture, "{0} is empty or null", RegistryStrings.MonadEngine_ApplicationBase));
 

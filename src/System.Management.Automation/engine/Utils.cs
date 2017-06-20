@@ -238,20 +238,12 @@ namespace System.Management.Automation
         }
 #endif
 
-        /// <summary>
-        /// Gets the application base for current monad version
-        /// </summary>
-        /// <returns>
-        /// applicationbase path for current monad version installation
-        /// </returns>
-        /// <exception cref="SecurityException">
-        /// if caller doesn't have permission to read the key
-        /// </exception>
+        internal static string DefaultPowerShellAppBase { get; } = GetApplicationBase(DefaultPowerShellShellID);
+
         internal static string GetApplicationBase(string shellId)
         {
 #if CORECLR
-            // Use the location of SMA.dll as the application base
-            // Assembly.GetEntryAssembly and GAC are not in CoreCLR.
+            // Use the location of SMA.dll as the application base.
             Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
             return Path.GetDirectoryName(assembly.Location);
 #else
@@ -312,7 +304,7 @@ namespace System.Management.Automation
                 List<string> baseDirectories = new List<string>();
 
                 // Retrieve the application base from the registry
-                string appBase = GetApplicationBase(DefaultPowerShellShellID);
+                string appBase = Utils.DefaultPowerShellAppBase;
                 if (!string.IsNullOrEmpty(appBase))
                 {
                     baseDirectories.Add(appBase);
@@ -381,7 +373,7 @@ namespace System.Management.Automation
         /// </summary>
         internal static bool IsRunningFromSysWOW64()
         {
-            return Utils.GetApplicationBase(Utils.DefaultPowerShellShellID).Contains("SysWOW64");
+            return DefaultPowerShellAppBase.Contains("SysWOW64");
         }
 
         /// <summary>

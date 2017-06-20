@@ -386,7 +386,7 @@ namespace System.Management.Automation
 
                             if (!Signature.CatalogApiAvailable.HasValue)
                             {
-                                string productFile = Path.Combine(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID), "Modules\\Microsoft.PowerShell.Utility\\Microsoft.PowerShell.Utility.psm1");
+                                string productFile = Path.Combine(Utils.DefaultPowerShellAppBase, "Modules\\Microsoft.PowerShell.Utility\\Microsoft.PowerShell.Utility.psm1");
                                 if (signature.Status != SignatureStatus.Valid)
                                 {
                                     if (string.Equals(filename, productFile, StringComparison.OrdinalIgnoreCase))
