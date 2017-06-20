@@ -49,6 +49,11 @@ namespace Microsoft.PowerShell.Commands
 
 #if CORECLR
         /// <summary>
+        /// The C# programming language v7
+        /// </summary>
+        CSharpVersion7,
+
+        /// <summary>
         /// The C# programming language v6
         /// </summary>
         CSharpVersion6,
@@ -633,6 +638,7 @@ namespace Microsoft.PowerShell.Commands
                 case Language.CSharpVersion4:
                 case Language.CSharpVersion5:
                 case Language.CSharpVersion6:
+                case Language.CSharpVersion7:
 #endif
                     return true;
                 default:
@@ -1216,6 +1222,9 @@ namespace Microsoft.PowerShell.Commands
                         break;
                     case Language.CSharpVersion6:
                         parseOptions = new CSharpParseOptions(LanguageVersion.CSharp6);
+                        break;
+                    case Language.CSharpVersion7:
+                        parseOptions = new CSharpParseOptions(LanguageVersion.CSharp7);
                         break;
                     case Language.CSharp:
                         parseOptions = new CSharpParseOptions();
