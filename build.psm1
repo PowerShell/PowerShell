@@ -19,7 +19,8 @@ try {
     catch { }
 }
 
-$dotnetRequiredVersion = "2.0.0-preview1-005952"
+$dotnetCLIChannel = "preview"
+$dotnetCLIRequiredVersion = "2.0.0-preview1-005952"
 
 # On Unix paths is separated by colon
 # On Windows paths is separated by semicolon
@@ -191,8 +192,22 @@ function Start-PSBuild {
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
 
     $dotnetIntalledVersion = (dotnet --version)
-    If ( $dotnetIntalledVersion -ne $dotnetRequiredVersion ) {
-        Write-Warning ".Net Core version mismatch: installed version is $dotnetIntalledVersion, required version is $dotnetRequiredVersion.`nRun Start-PSBootstrap and Start-PSBuild -Clean -Restore.`nAlso see: https://dotnet.github.io/getting-started/"
+    If ( $dotnetIntalledVersion -ne $dotnetCLIRequiredVersion ) {
+        Write-Warning @"
+The currently installed .Net Core version is not the required version.
+
+Installed version: $dotnetIntalledVersion
+Required version: $dotnetCLIRequiredVersion
+
+Fix steps:
+
+1. Remove the installed version from:
+    - on windows '`$env:LOCALAPPDATA\Microsoft\dotnet'
+    - on osx and linux '`$env:HOME/.dotnet'
+2. Run Start-PSBootstrap or Install-Dotnet
+3. Start-PSBuild -Clean -Restore
+`n
+"@
         return
     }
 
@@ -995,8 +1010,8 @@ function Start-PSxUnit {
 function Install-Dotnet {
     [CmdletBinding()]
     param(
-        [string]$Channel = "preview",
-        [string]$Version = $dotnetRequiredVersion,
+        [string]$Channel = $dotnetCLIChannel,
+        [string]$Version = $dotnetCLIRequiredVersion,
         [switch]$NoSudo
     )
 
@@ -1055,10 +1070,10 @@ function Start-PSBootstrap {
         SupportsShouldProcess=$true,
         ConfirmImpact="High")]
     param(
-        [string]$Channel = "preview",
+        [string]$Channel = $dotnetCLIChannel,
         # we currently pin dotnet-cli version, and will
         # update it when more stable version comes out.
-        [string]$Version = $dotnetRequiredVersion,
+        [string]$Version = $dotnetCLIRequiredVersion,
         [switch]$Package,
         [switch]$NoSudo,
         [switch]$Force
