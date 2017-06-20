@@ -71,6 +71,22 @@ If you wish to use a specific installation of PowerShell with Visual Studio Code
 3. Replace the setting with the path to the desired PowerShell executable
 4. Save the settings file and restart Visual Studio Code
 
+#### Configuration settings for Visual Studio Code
+
+By using the steps in the previous paragraph you can add onfiguration settings in `settings.json`.
+
+We recommend the following  configuration settings for Visual Studio Code:
+
+```json
+{
+    "csharp.suppressDotnetRestoreNotification": true,
+    "editor.renderWhitespace": "all",
+    "editor.renderControlCharacters": true,
+    "omnisharp.projectLoadTimeout": 120,
+    "files.trimTrailingWhitespace": true
+}
+```
+
 Debugging with Visual Studio Code
 ----
 ### No-workspace debugging
