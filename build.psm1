@@ -412,25 +412,36 @@ function Start-PSBuild {
             if ($PSVersionTable.PSEdition -ne "Core")
             {
                 # if running under Windows PowerShell, we'll need to get the binaries from GitHub release
-                $latestReleases = "https://api.github.com/repos/powershell/powershell/releases/latest"
-                $pattern = $Runtime.Split("-")[0] + ".*\.zip"
-                $release = $latestReleases | Where-Object { $_.Name -match $pattern }
+                $latestReleaseUri = "https://api.github.com/repos/powershell/powershell/releases/latest"
+                $psOption = New-PSOptions -Runtime $runtime
+                $pattern = $psOption.Runtime.Split("-")[0] + ".*\.zip"
+                Write-Verbose "Getting latest release from $latestReleaseUri"
+                $latestReleases = Invoke-RestMethod -Uri $latestReleaseUri
+                $release = $latestReleases.assets | Where-Object { $_.Name -match $pattern }
+                if ($release.count -gt 1)
+                {
+                    throw "Found more than one release for $runtime, cannot continue"
+                }
                 $savedProgressPreference = $ProgressPreference
                 $ProgressPreference = "SilentlyContinue"
-                Invoke-WebRequest $release.browser_download_url -OutFile "${env:temp}\pscore.zip"
+                Write-Verbose "Downloading ${release.browser_download_url}"
+                $zipPath = Join-Path $env:temp "pscore.zip"
+                Invoke-WebRequest $release.browser_download_url -OutFile $zipPath
                 $pscoredir = Join-Path $env:temp "pscore"
-                Expand-Archive -Path "${env:temp}\pscore.zip" -DestinationPath $pscoredir
+                Write-Verbose "Expanding $zipPath"
+                Expand-Archive -Path $zipPath -DestinationPath $pscoredir -Force
+                Remove-Item $zipPath -Force
                 $ProgressPreference = $savedProgressPreference
                 $nativeBinaries = @(
-                    Join-Path $pscoredir 'pwrshplugin.dll',
-                    Join-Path $pscoredir 'pwrshplugin.pdb'
+                    (Join-Path $pscoredir 'pwrshplugin.dll'),
+                    (Join-Path $pscoredir 'pwrshplugin.pdb')
                 )
             }
             else 
             {
                 $nativeBinaries = @(
-                    Join-Path $PSHOME 'pwrshplugin.dll',
-                    Join-Path $PSHOME 'pwrshplugin.pdb'
+                    (Join-Path $PSHOME 'pwrshplugin.dll'),
+                    (Join-Path $PSHOME 'pwrshplugin.pdb')
                 )
             }
         }
