@@ -329,40 +329,28 @@ Describe "Type inference Tests" -tags "CI" {
     }
 
     It 'Infers typeof Foreach-Object -Member when using dependent scriptproperties' {
-        class XSP {
+        class InferScriptPropLevel1 {
             [string] $Value
-            X() {
+            InferScriptPropLevel1() {
                 $this.Value = "TheValue"
             }
         }
-        class YSP {
-            [XSP] $X
-            YSP() {$this.X = [XSP]::new()}
+        class InferScriptPropLevel2 {
+            [InferScriptPropLevel1] $X
+            InferScriptPropLevel2() {$this.X = [InferScriptPropLevel1]::new()}
         }
-        Update-TypeData -TypeName XSP -MemberName TheValue -MemberType ScriptProperty -Value { return $this.Value } -Force
-        Update-TypeData -TypeName YSP -MemberName XVal -MemberType ScriptProperty -Value {return $this.X } -Force
-
-        $ast = {[YSP]::new() | Foreach-Object -MemberName XVal | ForEach-Object -MemberName TheValue}.Ast
-        $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
-        $typeNames.Count | Should be 1
-        $typeNames[0] | Should be 'System.String'
-    }
-
-    # Not yet implementet
-    It 'Infers typeof Foreach-Object -Member when using dependent scriptproperties on pscustomobject' -Skip {
-        $x = [pscustomobject] @{
-            Value = "TheValue"
+        Update-TypeData -TypeName InferScriptPropLevel1 -MemberName TheValue -MemberType ScriptProperty -Value { return $this.Value } -Force
+        Update-TypeData -TypeName InferScriptPropLevel2 -MemberName XVal -MemberType ScriptProperty -Value {return $this.X } -Force
+        try {
+            $ast = {[InferScriptPropLevel2]::new() | Foreach-Object -MemberName XVal | ForEach-Object -MemberName TheValue}.Ast
+            $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+            $typeNames.Count | Should be 1
+            $typeNames[0] | Should be 'System.String'
         }
-        $y = [pscustomobject] @{
-            X = $x
+        finally {
+            Remove-TypeData -TypeName InferScriptPropLevel1
+            Remove-TypeData -TypeName InferScriptPropLevel2
         }
-        Add-Member -InputObject $x -NotePropertyName TheValue -NotePropertyValue { return $this.Value }
-        Add-Member -InputObject $y -NotePropertyName XVal -NotePropertyValue {return $this.X }
-
-        $ast = {$y | Foreach-Object -MemberName XVal | ForEach-Object -MemberName TheValue}.Ast
-        $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
-        $typeNames.Count | Should be 1
-        $typeNames[0] | Should be 'System.String'
     }
 
     It "Infers type from OutputTypeAttribute" {

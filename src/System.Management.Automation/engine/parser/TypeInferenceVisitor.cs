@@ -1028,7 +1028,6 @@ namespace System.Management.Automation
             {
                 if (type.Type == typeof(PSObject))
                 {
-                    
                     continue;
                 }
                 var members = _context.GetMembersByInferredType(type, isStatic, filter: null);
