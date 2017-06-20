@@ -191,12 +191,12 @@ function Start-PSBuild {
     # verify we have all tools in place to do the build
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
 
-    $dotnetIntalledVersion = (dotnet --version)
-    If ( $dotnetIntalledVersion -ne $dotnetCLIRequiredVersion ) {
+    $dotnetCLIIntalledVersion  = (dotnet --version)
+    If ( $dotnetCLIIntalledVersion  -ne $dotnetCLIRequiredVersion ) {
         Write-Warning @"
-The currently installed .Net Core version is not the required version.
+The currently installed .NET Command Line Tools is not the required version.
 
-Installed version: $dotnetIntalledVersion
+Installed version: $dotnetCLIIntalledVersion 
 Required version: $dotnetCLIRequiredVersion
 
 Fix steps:
@@ -205,7 +205,7 @@ Fix steps:
     - on windows '`$env:LOCALAPPDATA\Microsoft\dotnet'
     - on osx and linux '`$env:HOME/.dotnet'
 2. Run Start-PSBootstrap or Install-Dotnet
-3. Start-PSBuild -Clean -Restore
+3. Start-PSBuild -Clean
 `n
 "@
         return
