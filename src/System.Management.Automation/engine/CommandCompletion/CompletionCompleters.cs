@@ -129,11 +129,11 @@ namespace System.Management.Automation
                 {
                     // OrderBy is using stable sorting
                     var sortedCommandInfos = commandInfos.OrderBy(a => a, new CommandNameComparer());
-                    commandResults = MakeCommandsUnique(sortedCommandInfos, false, addAmpersandIfNecessary, quote);
+                    commandResults = MakeCommandsUnique(sortedCommandInfos, /* includeModulePrefix: */ false, addAmpersandIfNecessary, quote);
                 }
                 else
                 {
-                    commandResults = MakeCommandsUnique(commandInfos, false, addAmpersandIfNecessary, quote);
+                    commandResults = MakeCommandsUnique(commandInfos, /* includeModulePrefix: */ false, addAmpersandIfNecessary, quote);
                 }
 
                 if (lastAst != null)
@@ -185,11 +185,11 @@ namespace System.Management.Automation
                     if (commandInfos != null && commandInfos.Count > 1)
                     {
                         var sortedCommandInfos = commandInfos.OrderBy(a => a, new CommandNameComparer());
-                        commandResults = MakeCommandsUnique(sortedCommandInfos, true, addAmpersandIfNecessary, quote);
+                        commandResults = MakeCommandsUnique(sortedCommandInfos, /* includeModulePrefix: */ true, addAmpersandIfNecessary, quote);
                     }
                     else
                     {
-                        commandResults = MakeCommandsUnique(commandInfos, true, addAmpersandIfNecessary, quote);
+                        commandResults = MakeCommandsUnique(commandInfos, /* includeModulePrefix: */ true, addAmpersandIfNecessary, quote);
                     }
                 }
             }
@@ -595,7 +595,7 @@ namespace System.Management.Automation
             if (result.Count == 0)
             {
                 result = pseudoBinding.CommandName.Equals("Set-Location", StringComparison.OrdinalIgnoreCase)
-                             ? new List<CompletionResult>(CompleteFilename(context, true, null))
+                             ? new List<CompletionResult>(CompleteFilename(context, containerOnly: true, extension: null))
                              : new List<CompletionResult>(CompleteFilename(context));
             }
 
@@ -2809,7 +2809,7 @@ namespace System.Management.Automation
                     // ps1 files and directories. We only complete the files with .ps1 extension for Get-Command, because the -Syntax
                     // may only works on files with .ps1 extension
                     var ps1Extension = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { StringLiterals.PowerShellScriptFileExtension };
-                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, false, ps1Extension));
+                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, /* containerOnly: */ false, ps1Extension));
                     if (moduleFilesResults.Count > 0)
                         result.AddRange(moduleFilesResults);
                 }
@@ -2821,7 +2821,7 @@ namespace System.Management.Automation
                 RemoveLastNullCompletionResult(result);
 
                 var modules = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-                var moduleResults = CompleteModuleName(context, true);
+                var moduleResults = CompleteModuleName(context, loadedModulesOnly: true);
                 if (moduleResults != null)
                 {
                     foreach (CompletionResult moduleResult in moduleResults)
@@ -2834,7 +2834,7 @@ namespace System.Management.Automation
                     }
                 }
 
-                moduleResults = CompleteModuleName(context, false);
+                moduleResults = CompleteModuleName(context, loadedModulesOnly: false);
                 if (moduleResults != null)
                 {
                     foreach (CompletionResult moduleResult in moduleResults)
@@ -2862,13 +2862,13 @@ namespace System.Management.Automation
                 // The way to avoid that is to pass in a CompletionContext with RelatedAst = null
                 const CommandTypes commandTypes = CommandTypes.Cmdlet | CommandTypes.Function | CommandTypes.Alias | CommandTypes.ExternalScript | CommandTypes.Workflow | CommandTypes.Configuration;
                 var newContext = NewContextToCompleteCommandAsArgument(context);
-                var commandResults = CompleteCommand(newContext, null, commandTypes);
+                var commandResults = CompleteCommand(newContext, /* moduleName: */ null, commandTypes);
                 if (commandResults != null)
                     result.AddRange(commandResults);
 
                 // ps1 files and directories
                 var ps1Extension = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { StringLiterals.PowerShellScriptFileExtension };
-                var fileResults = new List<CompletionResult>(CompleteFilename(context, false, ps1Extension));
+                var fileResults = new List<CompletionResult>(CompleteFilename(context, /* containerOnly: */ false, ps1Extension));
                 if (fileResults.Count > 0)
                     result.AddRange(fileResults);
 
@@ -3117,7 +3117,7 @@ namespace System.Management.Automation
                                 StringLiterals.PowerShellCmdletizationFileExtension,
                                 StringLiterals.WorkflowFileExtension
                             };
-                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, false, moduleExtensions));
+                    var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, /* containerOnly: */ false, moduleExtensions));
                     if (moduleFilesResults.Count > 0)
                         result.AddRange(moduleFilesResults);
 
@@ -3140,7 +3140,7 @@ namespace System.Management.Automation
                 RemoveLastNullCompletionResult(result);
 
                 var moduleExtensions = new HashSet<string>(StringComparer.OrdinalIgnoreCase) { ".dll" };
-                var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, false, moduleExtensions));
+                var moduleFilesResults = new List<CompletionResult>(CompleteFilename(context, /* containerOnly: */ false, moduleExtensions));
                 if (moduleFilesResults.Count > 0)
                     result.AddRange(moduleFilesResults);
 
@@ -3518,7 +3518,7 @@ namespace System.Management.Automation
                 // The way to avoid that is to pass in a CompletionContext with RelatedAst = null
                 const CommandTypes commandTypes = CommandTypes.Cmdlet | CommandTypes.Function | CommandTypes.ExternalScript | CommandTypes.Workflow | CommandTypes.Configuration;
                 var newContext = NewContextToCompleteCommandAsArgument(context);
-                var commandResults = CompleteCommand(newContext, null, commandTypes);
+                var commandResults = CompleteCommand(newContext, /* moduleName: */ null, commandTypes);
                 if (commandResults != null && commandResults.Count > 0)
                     result.AddRange(commandResults);
 
@@ -3598,7 +3598,7 @@ namespace System.Management.Automation
 
             try
             {
-                var fileNameResults = CompleteFilename(context, true, null);
+                var fileNameResults = CompleteFilename(context, containerOnly: true, extension: null);
                 if (fileNameResults != null)
                     result.AddRange(fileNameResults);
             }
@@ -4067,7 +4067,7 @@ namespace System.Management.Automation
 
         internal static IEnumerable<CompletionResult> CompleteFilename(CompletionContext context)
         {
-            return CompleteFilename(context, false, null);
+            return CompleteFilename(context, containerOnly: false, extension: null);
         }
 
         [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly")]
