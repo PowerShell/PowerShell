@@ -19,6 +19,9 @@ try {
     catch { }
 }
 
+$dotnetCLIChannel = "preview"
+$dotnetCLIRequiredVersion = "2.0.0-preview1-005952"
+
 # On Unix paths is separated by colon
 # On Windows paths is separated by semicolon
 $TestModulePathSeparator = ':'
@@ -187,6 +190,26 @@ function Start-PSBuild {
 
     # verify we have all tools in place to do the build
     $precheck = precheck 'dotnet' "Build dependency 'dotnet' not found in PATH. Run Start-PSBootstrap. Also see: https://dotnet.github.io/getting-started/"
+
+    $dotnetCLIIntalledVersion  = (dotnet --version)
+    If ( $dotnetCLIIntalledVersion  -ne $dotnetCLIRequiredVersion ) {
+        Write-Warning @"
+The currently installed .NET Command Line Tools is not the required version.
+
+Installed version: $dotnetCLIIntalledVersion 
+Required version: $dotnetCLIRequiredVersion
+
+Fix steps:
+
+1. Remove the installed version from:
+    - on windows '`$env:LOCALAPPDATA\Microsoft\dotnet'
+    - on osx and linux '`$env:HOME/.dotnet'
+2. Run Start-PSBootstrap or Install-Dotnet
+3. Start-PSBuild -Clean
+`n
+"@
+        return
+    }
 
     if ($IsWindows) {
         # cmake is needed to build powershell.exe
@@ -987,8 +1010,8 @@ function Start-PSxUnit {
 function Install-Dotnet {
     [CmdletBinding()]
     param(
-        [string]$Channel = "preview",
-        [string]$Version = "2.0.0-preview1-005952",
+        [string]$Channel = $dotnetCLIChannel,
+        [string]$Version = $dotnetCLIRequiredVersion,
         [switch]$NoSudo
     )
 
@@ -1047,10 +1070,10 @@ function Start-PSBootstrap {
         SupportsShouldProcess=$true,
         ConfirmImpact="High")]
     param(
-        [string]$Channel = "preview",
+        [string]$Channel = $dotnetCLIChannel,
         # we currently pin dotnet-cli version, and will
         # update it when more stable version comes out.
-        [string]$Version = "2.0.0-preview1-005952",
+        [string]$Version = $dotnetCLIRequiredVersion,
         [switch]$Package,
         [switch]$NoSudo,
         [switch]$Force
