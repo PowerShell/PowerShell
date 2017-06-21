@@ -71,6 +71,7 @@ namespace Microsoft.PowerShell.Commands
         public bool Visit(string path)
         {
             var inodeData = (0UL, 0UL);
+
             if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out inodeData))
             {
                 _visitations[inodeData] = true;
@@ -8343,8 +8344,7 @@ namespace Microsoft.PowerShell.Commands
                     if (GetFileInformationByHandle(sf.DangerousGetHandle(), out info))
                     {
                         UInt64 tmp = info.FileIndexHigh;
-                        tmp <<= 32;
-                        tmp |= info.FileIndexLow;
+                        tmp = (tmp << 32) | info.FileIndexLow;
 
                         inodeData = (info.VolumeSerialNumber, tmp);
 
