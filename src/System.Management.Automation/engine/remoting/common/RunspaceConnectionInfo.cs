@@ -2288,7 +2288,12 @@ namespace System.Management.Automation.Runspaces
 
                 // At this point, we should have a suspended process.  Get the .Net Process object, resume the process, and return.
                 Process result = Process.GetProcessById(lpProcessInformation.dwProcessId);
-                PlatformInvokes.ResumeThread(lpProcessInformation.hThread);
+                uint returnValue = PlatformInvokes.ResumeThread(lpProcessInformation.hThread);
+
+                if (returnValue == 4294967295) // same as (DWORD)-1
+                {
+                    throw new Win32Exception(Marshal.GetLastWin32Error());
+                }
 
                 return result;
             }
