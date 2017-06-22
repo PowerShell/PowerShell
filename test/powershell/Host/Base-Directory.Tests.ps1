@@ -88,14 +88,14 @@ Describe "Configuration file locations" -tags "CI","Slow" {
         It @ItArgs "Profile should respect XDG_CONFIG_HOME" {
             $env:XDG_CONFIG_HOME = $TestDrive
             $expected = [IO.Path]::Combine($TestDrive, "powershell", $profileName)
-            & $powershell -noprofile `$PROFILE | Should Be $expected
+            & $powershell -noprofile -c `$PROFILE | Should Be $expected
         }
 
         It @ItArgs "PSModulePath should respect XDG_DATA_HOME" {
             $env:PSModulePath = ""
             $env:XDG_DATA_HOME = $TestDrive
             $expected = [IO.Path]::Combine($TestDrive, "powershell", "Modules")
-            $actual = & $powershell -noprofile `$env:PSModulePath
+            $actual = & $powershell -noprofile -c `$env:PSModulePath
             $actual | Should Match $expected
         }
 
