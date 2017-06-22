@@ -1098,6 +1098,194 @@ namespace System.Management.Automation
     }
 
     /// <summary>
+    /// Base class for postive number valididation attributes
+    /// </summary>
+    /// <remarks>
+    /// Base class used by postive and non negative attribute
+    /// <seealso cref="ValidatePositiveAttribute"/>,
+    /// <seealso cref="ValidateNonNegativeAttribute"/>
+    /// </remarks>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public class ValidatePositiveBaseAttribute : ValidateEnumeratedArgumentsAttribute
+    {
+        /// <summary>
+        /// Minimum allowed value for the attribute
+        /// </summary>
+        public int minValue;
+
+        /// <summary>
+        /// Validates that each parameter argument is greater than 
+        /// the minimum allowed value.
+        /// </summary>
+        /// <param name="element">
+        /// The arguments to verify.
+        /// </param>
+        /// <returns>
+        /// 
+        /// </returns>
+        /// <exception cref="ValidationMetadataException">
+        /// if element is null or a an elment is less than the minimum 
+        /// allowed value.
+        /// </exception>
+        protected override void ValidateElement(object element)
+        {
+            if (element == null)
+            {
+                throw new ValidationMetadataException(
+                    "ArgumentIsEmpty",
+                    null,
+                    Metadata.ValidateNotNullFailure);
+            }
+            
+            object resultValue;
+            if(LanguagePrimitives.TryConvertTo(element,typeof(int),out resultValue))
+            {
+                if((int)resultValue < minValue)
+                {
+                    throw new ValidationMetadataException(
+                        "ValidateRangeTooSmall",
+                        null, 
+                        Metadata.ValidateRangeSmallerThanMinRangeFailure,
+                        element.ToString(), 
+                        minValue.ToString());
+                }
+            }
+            else
+            {
+                throw new ValidationMetadataException("ValidationRangeElementType",
+                    null, Metadata.ValidateRangeElementType,
+                    element.GetType().Name, minValue.GetType().Name);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Validates that each parameter argument is positive
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class ValidatePositiveAttribute : ValidatePositiveBaseAttribute
+    {
+        /// <summary>
+        /// Initializes a new instance of the ValidatePositiveAttribute class
+        /// </summary>
+        /// <exception cref="ArgumentException">for invalid arguments</exception>
+        public ValidatePositiveAttribute()
+        {
+            minValue = 1;
+        }
+    }
+
+     /// <summary>
+    /// Validates that each parameter argument is not negative
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class ValidateNonNegativeAttribute : ValidatePositiveBaseAttribute
+    {
+        /// <summary>
+        /// Initializes a new instance of the ValidateNonNegativeAttribute class
+        /// </summary>
+        /// <exception cref="ArgumentException">for invalid arguments</exception>
+        public ValidateNonNegativeAttribute()
+        {
+            minValue = 0;
+        }
+    }
+
+    /// <summary>
+    /// Base class for negative number valididation attributes
+    /// </summary>
+    /// <remarks>
+    /// Base class used by negative and non positive attribute
+    /// <seealso cref="ValidateNegativeAttribute"/>,
+    /// <seealso cref="ValidateNonPositiveAttribute"/>
+    /// </remarks>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public class ValidateNegativeBaseAttribute : ValidateEnumeratedArgumentsAttribute
+    {
+        /// <summary>
+        /// Maximum allowed value for the attribute
+        /// </summary>
+        public int maxValue;
+
+        /// <summary>
+        /// Validates that each parameter argument is smaller than 
+        /// the max allowed value.
+        /// </summary>
+        /// <param name="element">
+        /// The arguments to verify.
+        /// </param>
+        /// <returns>
+        /// 
+        /// </returns>
+        /// <exception cref="ValidationMetadataException">
+        /// if element is null or a an elment is great than the max 
+        /// allowed value.
+        /// </exception>
+        protected override void ValidateElement(object element)
+        {
+            if (element == null)
+            {
+                throw new ValidationMetadataException(
+                    "ArgumentIsEmpty",
+                    null,
+                    Metadata.ValidateNotNullFailure);
+            }
+            
+            object resultValue;
+            if(LanguagePrimitives.TryConvertTo(element,typeof(int),out resultValue))
+            {
+                if((int)resultValue > maxValue)
+                {
+                    throw new ValidationMetadataException(
+                        "ValidateRangeTooBig",
+                        null, 
+                        Metadata.ValidateRangeGreaterThanMaxRangeFailure,
+                        element.ToString(), 
+                        maxValue.ToString());
+                }
+            }
+            else
+            {
+                throw new ValidationMetadataException("ValidationRangeElementType",
+                    null, Metadata.ValidateRangeElementType,
+                    element.GetType().Name, maxValue.GetType().Name);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Validates that each parameter argument is negative
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class ValidateNegativeAttribute : ValidateNegativeBaseAttribute
+    {
+        /// <summary>
+        /// Initializes a new instance of the ValidateNegativeAttribute class
+        /// </summary>
+        /// <exception cref="ArgumentException">for invalid arguments</exception>
+        public ValidateNegativeAttribute()
+        {
+            maxValue = -1;
+        }
+    }
+
+     /// <summary>
+    /// Validates that each parameter argument is not positive
+    /// </summary>
+    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
+    public sealed class ValidateNonPositiveAttribute : ValidateNegativeBaseAttribute
+    {
+        /// <summary>
+        /// Initializes a new instance of the ValidateNonNegativeAttribute class
+        /// </summary>
+        /// <exception cref="ArgumentException">for invalid arguments</exception>
+        public ValidateNonPositiveAttribute()
+        {
+            maxValue = 0;
+        }
+    }
+
+    /// <summary>
     /// Validates that each parameter argument matches the RegexPattern
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
