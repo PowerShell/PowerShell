@@ -369,9 +369,7 @@ namespace System.Management.Automation
                                 cert = new X509Certificate2(ppCertContext);
 
                                 // Get the time stamper certificate if available
-                                IntPtr pProvSigner = IntPtr.Zero;
-                                X509Certificate2 timestamperCert = null;
-                                TryGetProviderSigner(phStateData, ref pProvSigner, ref timestamperCert);
+                                TryGetProviderSigner(phStateData, out IntPtr pProvSigner, out X509Certificate2 timestamperCert);
                                 if (timestamperCert != null)
                                 {
                                     signature = new Signature(filename, error, cert, timestamperCert);
@@ -594,9 +592,7 @@ namespace System.Management.Automation
             s_tracer.WriteLine("GetSignatureFromWintrustData: error: {0}", error);
 
             Signature signature = null;
-            IntPtr pProvSigner = IntPtr.Zero;
-            X509Certificate2 timestamperCert = null;
-            if (TryGetProviderSigner(wtd.hWVTStateData, ref pProvSigner, ref timestamperCert))
+            if (TryGetProviderSigner(wtd.hWVTStateData, out IntPtr pProvSigner, out X509Certificate2 timestamperCert))
             {
                 //
                 // get cert of the signer
@@ -634,8 +630,11 @@ namespace System.Management.Automation
         }
 
         [ArchitectureSensitive]
-        private static bool TryGetProviderSigner(IntPtr wvtStateData, ref IntPtr pProvSigner, ref X509Certificate2 timestamperCert)
+        private static bool TryGetProviderSigner(IntPtr wvtStateData, out IntPtr pProvSigner, out X509Certificate2 timestamperCert)
         {
+            pProvSigner = IntPtr.Zero;
+            timestamperCert = null;
+
             // The GetLastWin32Error of this is checked, but PreSharp doesn't seem to be
             // able to see that.
 #pragma warning disable 56523
