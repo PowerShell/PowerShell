@@ -4,6 +4,81 @@
     [Parameter(Position = 2)] $azureLogDrive = "L:\"
 )
 
+# Read the XML and create a dictionary for FileUID -> file full path.
+function GetFileTable()
+{
+    $files = $script:covData | Select-Xml './/File'
+    foreach($file in $files)
+    {
+        $script:fileTable[$file.Node.uid] = $file.Node.fullPath
+    }
+}
+
+# Get sequence points for a particular file
+function GetSequencePointsForFile([string] $fileId)
+{
+    $lineCoverage = [System.Collections.Generic.Dictionary[string,int]]::new()
+
+    $sequencePoints = $script:covData | Select-Xml ".//SequencePoint[@fileid = '$fileId']"
+
+    if($sequencePoints.Count -gt 0)
+    {
+        foreach($sp in $sequencePoints)
+        {
+            $visitedCount = [int]::Parse($sp.Node.vc)
+            $lineNumber = [int]::Parse($sp.Node.sl)
+            $lineCoverage[$lineNumber] += [int]::Parse($visitedCount)
+        }
+
+        return $lineCoverage
+    }
+}
+
+#### Convert the OpenCover XML output for CodeCov.io JSON format as it is smaller.
+function ConvertTo-CodeCovJson
+{
+    param(
+        [string] $Path,
+        [string] $DestinationPath
+    )
+
+    $Script:fileTable = [ordered]@{}
+    $Script:covData = [xml] (Get-Content -ReadCount 0 -Raw -Path $Path)
+    $totalCoverage = [PSCustomObject]::new()
+    $totalCoverage | Add-Member -MemberType NoteProperty -Name "coverage" -Value ([PSCustomObject]::new())
+
+    ## Populate the dictionary with file uid and file names.
+    GetFileTable
+    $keys = $Script:fileTable.Keys
+    $progress=0
+    foreach($f in $keys)
+    {
+        Write-Progress -Id 1 -Activity "Converting to JSON" -Status 'Converting' -PercentComplete ($progress * 100 / $keys.Count) 
+        $fileCoverage = GetSequencePointsForFile -fileId $f
+        $fileName = $Script:fileTable[$f]
+        $previousFileCoverage = $totalCoverage.coverage.${fileName}
+
+        ##Update the values for the lines in the file.
+        if($previousFileCoverage -ne $null)
+        {
+            foreach($lineNumber in $fileCoverage.Keys)
+            {
+                $previousFileCoverage[$lineNumber] += [int]::Parse($fileCoverage[$lineNumber])
+            }
+        }
+        else ## the file is new, so add the values as a new NoteProperty.
+        {
+            $totalCoverage.coverage | Add-Member -MemberType NoteProperty -Value $fileCoverage -Name $fileName
+        }
+
+        $progress++
+    }
+
+    Write-Progress -Id 1 -Completed -Activity "Converting to JSON"
+
+    $totalCoverage | ConvertTo-Json -Depth 5 -Compress | out-file $DestinationPath -Encoding ascii
+}
+
 function Write-LogPassThru
 {
     Param(
@@ -28,19 +103,9 @@ function Push-CodeCovData
     $url="https://codecov.io"
 
     $query = "package=bash-${VERSION}&token=${token}&branch=${Branch}&commit=${CommitID}&build=&build_url=&tag=&slug=&yaml=&service=&flags=&pr=&job="
+    $uri = "$url/upload/v2?${query}"
+    $response = Invoke-WebRequest -Method Post -InFile $file -Uri $uri
 
-    $CodeCovHeader = @{ Accept = "text/plain" }
-    $uri = "$url/upload/v4?${query}"
-    $response = Invoke-WebRequest -Method POST -Uri $uri -Headers $CodeCovHeader
-    if ( $response.StatusCode -ne 200 )
-    {
-        Write-LogPassThru -Message "Could not get upload url for request $uri"
-        throw "Could not get upload url"
-    }
-    $uploaduri = $response.content.split("`n")[-1]
-
-    $UploadHeader  = @{ "Content-Type" = "text/plain"; "x-amz-acl" = "public-read"; "x-amz-storage-class" = "REDUCED_REDUNDANCY" }
-    $response = Invoke-WebRequest -Method Put -Uri $uploaduri -InFile $file -Headers $UploadHeader
     if ( $response.StatusCode -ne 200 )
     {
         Write-LogPassThru -Message "Upload failed for upload uri: $uploaduri"
@@ -65,15 +130,15 @@ $outputBaseFolder = "$env:Temp\CC"
 $null = New-Item -ItemType Directory -Path $outputBaseFolder -Force
 
 $openCoverPath = "$outputBaseFolder\OpenCover"
-$testPath = "$outputBaseFolder\tests"
+$testRootPath = "$outputBaseFolder\tests"
+$testPath = "$testRootPath\powershell"
 $psBinPath = "$outputBaseFolder\PSCodeCoverage"
 $openCoverTargetDirectory = "$outputBaseFolder\OpenCoverToolset"
 $outputLog = "$outputBaseFolder\CodeCoverageOutput.xml"
-$psCodeZip = "$outputBaseFolder\PSCode.zip"
-$psCodePath = "$outputBaseFolder\PSCode"
 $elevatedLogs = "$outputBaseFolder\TestResults_Elevated.xml"
 $unelevatedLogs = "$outputBaseFolder\TestResults_Unelevated.xml"
-$testToolsPath = "$testPath\tools"
+$testToolsPath = "$testRootPath\tools"
+$jsonFile = "$outputBaseFolder\CC.json"
 
 try
 {
@@ -86,7 +151,7 @@ try
     Write-LogPassThru -Message "Downloads complete. Starting expansion"
 
     Expand-Archive -path "$outputBaseFolder\PSCodeCoverage.zip" -destinationpath "$psBinPath" -Force
-    Expand-Archive -path "$outputBaseFolder\tests.zip" -destinationpath $testPath -Force
+    Expand-Archive -path "$outputBaseFolder\tests.zip" -destinationpath $testRootPath -Force
     Expand-Archive -path "$outputBaseFolder\OpenCover.zip" -destinationpath $openCoverPath -Force
 
     ## Download Coveralls.net uploader
@@ -165,7 +230,8 @@ try
     & $coverallsExe """$coverallsParams"""
 
     Write-LogPassThru -Message "Uploading to CodeCov"
-    Push-CodeCovData -file $outputLog -CommitID $commitId -token $codecovToken -Branch 'master'
+    ConvertTo-CodeCovJson -Path $outputLog -DestinationPath $jsonFile
+    Push-CodeCovData -file $jsonFile -CommitID $commitId -token $codecovToken -Branch 'master'
 
     Write-LogPassThru -Message "Upload complete."
 }
@@ -192,5 +258,9 @@ finally
 
     ## Disable the cleanup till we stabilize.
     #Remove-Item -recurse -force -path $outputBaseFolder
+
+    ## This is required so we do not keep on merging coverage reports.
+    Remove-Item $outputLog -Force -ErrorAction SilentlyContinue
+
     $ErrorActionPreference = $oldErrorActionPreference
 }

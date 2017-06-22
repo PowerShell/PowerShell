@@ -60,11 +60,11 @@ Describe "Get-ChildItem" -Tags "CI" {
             $files.Count | Should be 1
             $files[0].Name | Should Be $item_F
         }
-        It "Should give .sys file if the fullpath is specified with hidden and force parameter" -Skip:(!$IsWindows){
-            $file = Get-ChildItem -path "$env:SystemDrive\\pagefile.sys" -Hidden
-            $file | Should not be $null
+        It "Should find the hidden file if specified with hidden switch" {
+            $file = Get-ChildItem -Path (Join-Path $TestDrive $item_F) -Hidden
+            $file | Should Not BeNullOrEmpty
             $file.Count | Should be 1
-            $file.Name | Should be "pagefile.sys"
+            $file.Name | Should be $item_F
         }
         It "Should continue enumerating a directory when a contained item is deleted" {
             $Error.Clear()

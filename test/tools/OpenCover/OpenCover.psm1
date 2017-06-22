@@ -433,6 +433,16 @@ function Invoke-OpenCover
         [switch]$CIOnly
         )
 
+    # check for elevation
+    $identity  = [System.Security.Principal.WindowsIdentity]::GetCurrent()
+    $principal = New-Object System.Security.Principal.WindowsPrincipal($identity)
+    $isElevated = $principal.IsInRole([System.Security.Principal.WindowsBuiltInRole]::Administrator)
+
+    if(-not $isElevated)
+    {
+        throw 'Please run from an elevated PowerShell.'
+    }
+
     # check to be sure that OpenCover is present
 
     $OpenCoverBin = "$OpenCoverPath\opencover.console.exe"
@@ -455,7 +465,7 @@ function Invoke-OpenCover
 
     # create the arguments for OpenCover
 
-    $startupArgs =  '$env:PSModulePath = "${env:PSModulePath};$TestToolsPath";Set-ExecutionPolicy Bypass -Force -Scope Process;'
+    $startupArgs =  'Set-ExecutionPolicy Bypass -Force -Scope Process;'
     $targetArgs = "-c","${startupArgs}", "Invoke-Pester","${TestDirectory}"
 
     if ( $CIOnly )
@@ -486,10 +496,16 @@ function Invoke-OpenCover
             # check to be sure that the module path is present
             # this isn't done earlier because there's no need to change env:PSModulePath unless we're going to really run tests
             $saveModPath = $env:PSModulePath
-            $env:PSModulePath = "${PowerShellExeDirectory}\Modules"
-            if ( ! (test-path $env:PSModulePath) )
+            $env:PSModulePath = "${PowerShellExeDirectory}\Modules;$TestToolsModulesPath"
+
+            $modulePathParts = $env:PSModulePath -split ';'
+
+            foreach($part in $modulePathParts)
             {
-                throw "${env:PSModulePath} does not exist"
+                if ( ! (test-path $part) )
+                {
+                    throw "${part} does not exist"
+                }
             }
 
             # invoke OpenCover elevated
@@ -500,12 +516,12 @@ function Invoke-OpenCover
             runas.exe /trustlevel:0x20000 "powershell.exe -file $env:temp\unelevated.ps1"
             # wait for process to start
             Start-Sleep -Seconds 5
-            # poll for process exit every 30 seconds
-            # timeout of 3 hours
-            $timeOut = ([datetime]::Now).AddHours(3)
+            # poll for process exit every 60 seconds
+            # timeout of 6 hours
+            $timeOut = ([datetime]::Now).AddHours(6)
             while([datetime]::Now -lt $timeOut)
             {
-                Start-Sleep -Seconds 30
+                Start-Sleep -Seconds 60
                 $openCoverProcess = Get-Process "OpenCover.Console" -ErrorAction SilentlyContinue
 
                 if(-not $openCoverProcess)
