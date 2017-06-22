@@ -1,5 +1,61 @@
 # Changelog
 
+## v6.0.0-beta.3 - 2017-06-20
+
+### Breaking changes
+
+- Remove the `BuildVersion` property from `$PSVersionTable`.
+ This property was strongly tied to the Windows build version.
+ Instead, we recommend that you use `GitCommitId` to retrieve the exact build version of PowerShell Core.
+ (#3877) (Thanks to @iSazonov!)
+- Change positional parameter for `powershell.exe` from `-Command` to `-File`.
+ This fixes the usage of `#!` (aka as a shebang) in PowerShell scripts that are being executed from non-PowerShell shells on non-Windows platforms.
+ This also means that you can now do things like `powershell foo.ps1` or `powershell fooScript` without specifying `-File`.
+ However, this change now requires that you explicitly specify `-c` or `-Command` when trying to do things like `powershell.exe Get-Command`.
+ (#4019)
+- Remove `ClrVersion` property from `$PSVersionTable`.
+ (This property is largely irrelevant for .NET Core,
+ and was only preserved in .NET Core for specific legacy purposes that are inapplicable to PowerShell.)
+ (#4027)
+
+### Engine updates and fixes
+
+- Add support to probe and load assemblies from GAC on Windows platform.
+ This means that you can now load Windows PowerShell modules with assembly dependencies which reside in the GAC.
+ If you're interested in running your traditional Windows PowerShell scripts and cmdlets using the power of .NET Standard 2.0,
+ try adding your Windows PowerShell module directories to your PowerShell Core `$PSModulePath`.
+ (E.g. `$env:PSModulePath += ';C:\Program Files\WindowsPowerShell\Modules;C:\WINDOWS\system32\WindowsPowerShell\v1.0\Modules'`)
+ Even if the module isn't owned by the PowerShell Team, please tell us what works and what doesn't by leaving a comment in [issue #4062][issue-4062]! (#3981)
+- Enhance type inference in tab completion based on runtime variable values. (#2744) (Thanks to @powercode!)
+ This enables tab completion in situations like:
+ ```powershell
+ $p = Get-Process
+ $p | Foreach-Object Prio<tab>
+ ```
+- Add `GitCommitId` to PowerShell Core banner.
+ Now you don't have to run `$PSVersionTable` as soon as you start PowerShell to get the version! (#3916) (Thanks to @iSazonov!)
+- Fix a bug in tab completion to make `native.exe --<tab>` call into native completer. (#3633) (Thanks to @powercode!)
+- Fix PowerShell Core to allow use of long paths that are more than 260 characters. (#3960)
+- Fix ConsoleHost to honour `NoEcho` on Unix platforms. (#3801)
+- Fix transcription to not stop when a Runspace is closed during the transcription. (#3896)
+
+[issue-4062]: https://github.com/PowerShell/PowerShell/issues/4062
+
+### General cmdlet updates and fixes
+
+- Enable `Send-MailMessage` in PowerShell Core. (#3869)
+- Fix `Get-Help` to support case insensitive pattern matching on Unix platforms. (#3852)
+- Fix tab completion on `Get-Help` for `about_*` topics. (#4014)
+- Fix PSReadline to work in Windows Server Core container image. (#3937)
+- Fix `Import-Module` to honour `ScriptsToProcess` when `-Version` is specified. (#3897)
+- Strip authorization header on redirects with web cmdlets. (#3885)
+- `Start-Sleep`: add the alias `ms` to the parameter `-Milliseconds`. (#4039) (Thanks to @Tadas!)
+
+### Developer experience
+
+- Make hosting PowerShell Core in your own .NET applications much easier by refactoring PowerShell Core to use the default CoreCLR loader. (#3903)
+- Update `Add-Type` to support `CSharpVersion7`. (#3933) (Thanks to @iSazonov)
+
 ## v6.0.0-beta.2 - 2017-06-01
 
 ### Support backgrounding of pipelines with ampersand (`&`) (#3360)
