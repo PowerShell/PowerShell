@@ -62,7 +62,7 @@ namespace System.Management.Automation
         /// <returns></returns>
         public static IList<PSTypeName> InferTypeOf(Ast ast, PowerShell powerShell)
         {
-            return InferTypeOf(ast,  powerShell, TypeInferenceRuntimePermissions.None);
+            return InferTypeOf(ast, powerShell, TypeInferenceRuntimePermissions.None);
         }
 
         /// <summary>
@@ -91,12 +91,25 @@ namespace System.Management.Automation
             try
             {
                 context.RuntimePermissions = evalPersmissions;
-                return context.InferType(ast, new TypeInferenceVisitor(context)).ToList();
+                return context.InferType(ast, new TypeInferenceVisitor(context)).Distinct(new PSTypeNameComparer()).ToList();
             }
             finally
             {
                 context.RuntimePermissions = originalRuntimePermissions;
             }
+        }
+    }
+
+    class PSTypeNameComparer : IEqualityComparer<PSTypeName>
+    {
+        public bool Equals(PSTypeName x, PSTypeName y)
+        {
+            return x.Name.Equals(y.Name);
+        }
+
+        public int GetHashCode(PSTypeName obj)
+        {
+            return obj.Name.GetHashCode();
         }
     }
 
@@ -122,6 +135,9 @@ namespace System.Management.Automation
             Helper = new PowerShellExecutionHelper(powerShell);
         }
 
+        // used to infer types in script properties attached to an object,
+        // to be able to determine the type of $this in the scripts properties
+        public PSTypeName CurrentThisType { get; set; }
 
         public TypeDefinitionAst CurrentTypeDefinitionAst { get; set; }
 
@@ -868,7 +884,7 @@ namespace System.Management.Automation
             // foreach-object - yields the type of it's script block parameters
             if (cmdletInfo.ImplementingType == typeof(ForEachObjectCommand))
             {
-                foreach (var foreachType in InferTypesFromForeachCommand(pseudoBinding))
+                foreach (var foreachType in InferTypesFromForeachCommand(pseudoBinding, commandAst))
                 {
                     yield return foreachType;
                 }
@@ -895,9 +911,32 @@ namespace System.Management.Automation
             yield return new PSTypeName(typeof(CimInstance));
         }
 
-        private IEnumerable<PSTypeName> InferTypesFromForeachCommand(PseudoBindingInfo pseudoBinding)
+        private IEnumerable<PSTypeName> InferTypesFromForeachCommand(PseudoBindingInfo pseudoBinding, CommandAst commandAst)
         {
             AstParameterArgumentPair argument;
+            if (pseudoBinding.BoundArguments.TryGetValue("MemberName", out argument))
+            {
+                var previousPipelineElement = GetPreviousPipelineCommand(commandAst);
+                if (previousPipelineElement == null)
+                {
+                    yield break;
+                }
+                foreach (var t in InferTypes(previousPipelineElement))
+                {
+                    var memberName = (((AstPair)argument).Argument as StringConstantExpressionAst)?.Value;
+                    
+                    if (memberName != null)
+                    {
+                        var members = _context.GetMembersByInferredType(t, false, null);
+                        bool maybeWantDefaultCtor = false;
+                        foreach (var type in GetTypesOfMembers(t, memberName, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst: false))
+                        {
+                            yield return type;
+                        }
+                    }
+                }
+            }
+
             if (pseudoBinding.BoundArguments.TryGetValue("Begin", out argument))
             {
                 foreach (var type in GetInferredTypeFromScriptBlockParameter(argument))
@@ -968,173 +1007,212 @@ namespace System.Management.Automation
             // If the member name isn't simple, don't even try.
             var memberAsStringConst = memberCommandElement as StringConstantExpressionAst;
             if (memberAsStringConst == null)
-                yield break;
+                return Utils.EmptyArray<PSTypeName>();
 
-            var exprType = GetExpressionType(expression, isStatic);
+            var exprType = GetExpressionType(expression, isStatic);                
             if (exprType == null || exprType.Length == 0)
             {
-                yield break;
+                return Utils.EmptyArray<PSTypeName>();
             }
-
+            
+            var res = new List<PSTypeName>(10);
+            bool isInvokeMemberExpressionAst = memberExpressionAst is InvokeMemberExpressionAst;
             var maybeWantDefaultCtor = isStatic
-                && memberExpressionAst is InvokeMemberExpressionAst
-                && memberAsStringConst.Value.EqualsOrdinalIgnoreCase("new");
+                && isInvokeMemberExpressionAst
+                && memberAsStringConst.Value.EqualsOrdinalIgnoreCase("new");            
 
             // We use a list of member names because we might discover aliases properties
             // and if we do, we'll add to the list.
             var memberNameList = new List<string> { memberAsStringConst.Value };
             foreach (var type in exprType)
             {
+                if (type.Type == typeof(PSObject))
+                {
+                    continue;
+                }
                 var members = _context.GetMembersByInferredType(type, isStatic, filter: null);
 
-                for (int i = 0; i < memberNameList.Count; i++)
-                {
-                    string memberName = memberNameList[i];
-                    foreach (var member in members)
-                    {
-                        var isInvokeMemberAst = memberExpressionAst is InvokeMemberExpressionAst;
-                        switch (member)
-                        {
-                            case PropertyInfo propertyInfo: // .net property
-                            {
-                                if (propertyInfo.Name.EqualsOrdinalIgnoreCase(memberName) && !isInvokeMemberAst)
-                                {
-                                    yield return new PSTypeName(propertyInfo.PropertyType);
-                                    goto NextMember;
-                                }
-                                continue;
-                            }
-                            case FieldInfo fieldInfo:       // .net field
-                            {
-                                if (fieldInfo.Name.EqualsOrdinalIgnoreCase(memberName) && !isInvokeMemberAst)
-                                {
-                                    yield return new PSTypeName(fieldInfo.FieldType);
-                                }
-                                continue;
-                            }
-
-                            case DotNetAdapter.MethodCacheEntry methodCacheEntry: // .net method
-                            {
-                                if (methodCacheEntry[0].method.Name.EqualsOrdinalIgnoreCase(memberName))
-                                {
-                                    maybeWantDefaultCtor = false;
-                                    if (isInvokeMemberAst)
-                                    {
-                                        foreach (var method in methodCacheEntry.methodInformationStructures)
-                                        {
-                                            var methodInfo = method.method as MethodInfo;
-                                            if (methodInfo != null && !methodInfo.ReturnType.GetTypeInfo().ContainsGenericParameters)
-                                            {
-                                                yield return new PSTypeName(methodInfo.ReturnType);
-                                            }
-                                        }
-                                    }
-                                    else
-                                    {
-                                        // Accessing a method as a property, we'd return a wrapper over the method.
-                                        yield return new PSTypeName(typeof(PSMethod));
-                                    }
-                                }
-                                continue;
-                            }
-                            case MemberAst memberAst: // this is for members defined by PowerShell classes
-                            {
-                                if (memberAst.Name.EqualsOrdinalIgnoreCase(memberName))
-                                {
-                                    if (isInvokeMemberAst)
-                                    {
-                                        var functionMemberAst = memberAst as FunctionMemberAst;
-                                        if (functionMemberAst != null && !functionMemberAst.IsReturnTypeVoid())
-                                        {
-                                            yield return new PSTypeName(functionMemberAst.ReturnType.TypeName);
-                                        }
-                                    }
-                                    else
-                                    {
-                                        var propertyMemberAst = memberAst as PropertyMemberAst;
-                                        if (propertyMemberAst != null)
-                                        {
-                                            if (propertyMemberAst.PropertyType != null)
-                                            {
-                                                yield return new PSTypeName(propertyMemberAst.PropertyType.TypeName);
-                                            }
-                                            else
-                                            {
-                                                yield return new PSTypeName(typeof(object));
-                                            }
-                                        }
-                                        else
-                                        {
-                                            // Accessing a method as a property, we'd return a wrapper over the method.
-                                            yield return new PSTypeName(typeof(PSMethod));
-                                        }
-                                    }
-                                }
-                                continue;
-                            }
-                            case PSMemberInfo memberInfo:
-                            {
-                                if (!memberInfo.Name.EqualsOrdinalIgnoreCase(memberName))
-                                {
-                                    continue;
-                                }
-                                switch (member)
-                                {
-                                    case PSProperty p:
-                                    {
-                                        yield return new PSTypeName(p.Value.GetType());
-                                        goto NextMember;
-                                    }
-                                    case PSNoteProperty noteProperty:
-                                    {
-                                        yield return new PSTypeName(noteProperty.Value.GetType());
-                                        goto NextMember;
-                                    }
-                                    case PSAliasProperty aliasProperty:
-                                    {
-                                        memberNameList.Add(aliasProperty.ReferencedMemberName);
-                                        goto NextMember;
-                                    }
-                                    case PSCodeProperty codeProperty:
-                                    {
-                                        if (codeProperty.GetterCodeReference != null)
-                                        {
-                                            yield return new PSTypeName(codeProperty.GetterCodeReference.ReturnType);
-                                        }
-                                        goto NextMember;
-                                    }
-                                    case PSScriptProperty scriptProperty:
-                                    {
-                                        var scriptBlock = scriptProperty.GetterScript;
-                                        foreach (var t in scriptBlock.OutputType)
-                                        {
-                                            yield return t;
-                                        }
-                                        goto NextMember;
-                                    }
-                                    case PSScriptMethod scriptMethod:
-                                    {
-                                        var scriptBlock = scriptMethod.Script;
-                                        foreach (var t in scriptBlock.OutputType)
-                                        {
-                                            yield return t;
-                                        }
-                                        goto NextMember;
-                                    }
-                                }
-                                break;
-                            }
-                        }
-                    }
-                    NextMember: {}
-                }
+                AddTypesOfMembers(type, memberNameList, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, res);
 
                 // We didn't find any constructors but they used [T]::new() syntax
                 if (maybeWantDefaultCtor)
                 {
-                    yield return type;
+                    res.Add(type);
                 }
             }
+            return res;
+        }
+
+        private List<PSTypeName> GetTypesOfMembers(PSTypeName thisType, string memberName, IList<object> members, ref bool maybeWantDefaultCtor, bool isInvokeMemberExpressionAst)
+        {
+            var memberNamesToCheck = new List<string> { memberName };
+            var res = new List<PSTypeName>(10);
+
+            AddTypesOfMembers(thisType, memberNamesToCheck, members, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, res);
+            return res;
+        }
+
+        private void AddTypesOfMembers(PSTypeName currentType, List<string> memberNamesToCheck, IList<object> members, ref bool maybeWantDefaultCtor, bool isInvokeMemberExpressionAst, List<PSTypeName> result)
+        {
+            for (int i = 0; i < memberNamesToCheck.Count; i++)
+            {
+                string memberNameToCheck = memberNamesToCheck[i];
+                foreach (var member in members)
+                {
+                    if (TryGetTypeFromMember(currentType, member, memberNameToCheck, ref maybeWantDefaultCtor, isInvokeMemberExpressionAst, result, memberNamesToCheck))
+                    {
+                        break;
+                    }
+                }
+            }
+        }
+
+        private bool TryGetTypeFromMember(PSTypeName currentType, object member, string memberName, ref bool maybeWantDefaultCtor, bool isInvokeMemberExpressionAst, List<PSTypeName> result, List<string> memberNamesToCheck)
+        {
+            switch (member)
+            {
+                case PropertyInfo propertyInfo: // .net property
+                {
+                    if (propertyInfo.Name.EqualsOrdinalIgnoreCase(memberName) && !isInvokeMemberExpressionAst)
+                    {
+                        result.Add(new PSTypeName(propertyInfo.PropertyType));
+                        return true;
+                    }
+                    return false;
+                }
+                case FieldInfo fieldInfo:       // .net field
+                {
+                    if (fieldInfo.Name.EqualsOrdinalIgnoreCase(memberName) && !isInvokeMemberExpressionAst)
+                    {
+                        result.Add(new PSTypeName(fieldInfo.FieldType));
+                        return true;
+                    }
+                    return false;
+                }
+                case DotNetAdapter.MethodCacheEntry methodCacheEntry: // .net method
+                {
+                    if (methodCacheEntry[0].method.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        maybeWantDefaultCtor = false;
+                        if (isInvokeMemberExpressionAst)
+                        {
+                            var res = (from method in methodCacheEntry.methodInformationStructures
+                                select method.method as MethodInfo into methodInfo
+                                where methodInfo != null && !methodInfo.ReturnType.GetTypeInfo().ContainsGenericParameters
+                                select new PSTypeName(methodInfo.ReturnType));
+                            result.AddRange(res);
+                            return true;
+                        }
+                        else
+                        {
+                            // Accessing a method as a property, we'd return a wrapper over the method.
+                            result.Add(new PSTypeName(typeof(PSMethod)));
+                            return true;
+                        }
+                    }
+                    return false;
+                }
+                case MemberAst memberAst: // this is for members defined by PowerShell classes
+                {
+                    if (memberAst.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        if (isInvokeMemberExpressionAst)
+                        {
+                            if (memberAst is FunctionMemberAst functionMemberAst && !functionMemberAst.IsReturnTypeVoid())
+                            {
+                                result.Add(new PSTypeName(functionMemberAst.ReturnType.TypeName));
+                                return true;
+                            }
+                        }
+                        else
+                        {
+                            if (memberAst is PropertyMemberAst propertyMemberAst)
+                            {
+                                result.Add(propertyMemberAst.PropertyType != null
+                                    ? new PSTypeName(propertyMemberAst.PropertyType.TypeName)
+                                    : new PSTypeName(typeof(object)));
+                                return true;
+                            }
+                            else
+                            {
+                                // Accessing a method as a property, we'd return a wrapper over the method.
+                                result.Add(new PSTypeName(typeof(PSMethod)));
+                                return true;
+                            }
+                        }
+                    }
+                    return false;
+                }
+                case PSMemberInfo memberInfo:
+                {
+                    if (!memberInfo.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return false;
+                    }
+                    ScriptBlock scriptBlock = null;
+                    switch (memberInfo)
+                    {
+                        case PSProperty p:
+                        {
+                            result.Add(new PSTypeName(p.Value.GetType()));
+                            return true;
+                        }
+                        case PSNoteProperty noteProperty:
+                        {
+                            result.Add(new PSTypeName(noteProperty.Value.GetType()));
+                            return true;
+                        }
+                        case PSAliasProperty aliasProperty:
+                        {
+                            memberNamesToCheck.Add(aliasProperty.ReferencedMemberName);
+                            return true;
+                        }
+                        case PSCodeProperty codeProperty:
+                        {
+                            if (codeProperty.GetterCodeReference != null)
+                            {
+                                result.Add(new PSTypeName(codeProperty.GetterCodeReference.ReturnType));
+                            }
+                            return true;
+                        }
+                        case PSScriptProperty scriptProperty:
+                        {
+                            scriptBlock = scriptProperty.GetterScript;
+                            break;
+                        }
+                        case PSScriptMethod scriptMethod:
+                        {
+                            scriptBlock = scriptMethod.Script;
+                            break;
+                        }
+                    }
+                    if (scriptBlock != null)
+                    {
+                        var thisToRestore = _context.CurrentThisType;
+                        try
+                        {
+                            _context.CurrentThisType = currentType;
+                            var outputType = scriptBlock.OutputType;
+                            if (outputType != null && outputType.Count != 0)
+                            {
+                                result.AddRange(outputType);
+                                return true;
+                            }
+                            else
+                            {
+                                result.AddRange(InferTypes(scriptBlock.Ast).ToArray());
+                                return true;
+                            }
+                        }
+                        finally
+                        {
+                            _context.CurrentThisType = thisToRestore;
+                        }
+                    }
+                }
+                return false;
+            }
+            return false;
         }
 
         private PSTypeName[] GetExpressionType(ExpressionAst expression, bool isStatic)
@@ -1264,8 +1342,8 @@ namespace System.Management.Automation
             // For certain variables, we always know their type, well at least we can assume we know.
             if (astVariablePath.IsUnqualified)
             {
-                if (!astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.This) ||
-                    _context.CurrentTypeDefinitionAst == null)
+                var isThis = astVariablePath.UserPath.EqualsOrdinalIgnoreCase(SpecialVariables.This);
+                if (!isThis || (_context.CurrentTypeDefinitionAst == null && _context.CurrentThisType == null))
                 {
                     for (int i = 0; i < SpecialVariables.AutomaticVariables.Length; i++)
                     {
@@ -1279,10 +1357,18 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    yield return new PSTypeName(_context.CurrentTypeDefinitionAst);
+                    yield return _context.CurrentThisType != null
+                        ? _context.CurrentThisType
+                        : new PSTypeName(_context.CurrentTypeDefinitionAst);
                     yield break;
                 }
             }
+                else
+                {
+                    yield return new PSTypeName(_context.CurrentTypeDefinitionAst);
+                    yield break;
+                }
+
 
             // Look for our variable as a parameter or on the lhs of an assignment - hopefully we'll find either
             // a type constraint or at least we can use the rhs to infer the type.
@@ -1487,6 +1573,13 @@ namespace System.Management.Automation
         {
             // TODO: What is the right InferredType for the AST
             return dynamicKeywordAst.CommandElements[0].Accept(this);
+        }
+
+        private static CommandBaseAst GetPreviousPipelineCommand(CommandAst commandAst)
+        {
+            var pipe = (PipelineAst)commandAst.Parent;
+            var i = pipe.PipelineElements.IndexOf(commandAst);
+            return i != 0 ? pipe.PipelineElements[i - 1] : null;
         }
     }
 

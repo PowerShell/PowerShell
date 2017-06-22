@@ -32,7 +32,6 @@ Describe "Type inference Tests" -tags "CI" {
                 return $script:inferTypeOf4.Invoke($null, @($ast, $powerShell, $runtimePermissions))
             }
         }
-
     }
 
     It "Infers type from integer" {
@@ -302,6 +301,58 @@ Describe "Type inference Tests" -tags "CI" {
         }
     }
 
+    It "Infers type from foreach-object with membername" {
+        $res = [AstTypeInference]::InferTypeOf( { Get-ChildItem | ForEach-Object -MemberName Directory }.Ast)
+        $res.Count | Should Be 1
+        $res.Name | Should Be "System.IO.DirectoryInfo"
+    }
+
+    It 'Infers typeof Foreach-Object -Member when Member is Property' {
+        $ast = {Get-Process | Foreach-Object -Member FileVersion}.Ast
+        $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+        $typeNames.Count | Should be 1
+        $typeNames[0] | Should be 'System.String'
+    }
+
+    It 'Infers typeof Foreach-Object -Member when member is ScriptProperty' {
+        $ast = {Get-Process | Foreach-Object -Member Description}.Ast
+        $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+        $typeNames.Count | Should be 1
+        $typeNames[0] | Should be 'System.String'
+    }
+
+    It 'Infers typeof Foreach-Object -Member when Member is Alias' {
+        $ast = {Get-Process | Foreach-Object -Member Handles}.Ast
+        $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+        $typeNames.Count | Should be 1
+        $typeNames[0] | Should be 'System.Int32'
+    }
+
+    It 'Infers typeof Foreach-Object -Member when using dependent scriptproperties' {
+        class InferScriptPropLevel1 {
+            [string] $Value
+            InferScriptPropLevel1() {
+                $this.Value = "TheValue"
+            }
+        }
+        class InferScriptPropLevel2 {
+            [InferScriptPropLevel1] $X
+            InferScriptPropLevel2() {$this.X = [InferScriptPropLevel1]::new()}
+        }
+        Update-TypeData -TypeName InferScriptPropLevel1 -MemberName TheValue -MemberType ScriptProperty -Value { return $this.Value } -Force
+        Update-TypeData -TypeName InferScriptPropLevel2 -MemberName XVal -MemberType ScriptProperty -Value {return $this.X } -Force
+        try {
+            $ast = {[InferScriptPropLevel2]::new() | Foreach-Object -MemberName XVal | ForEach-Object -MemberName TheValue}.Ast
+            $typeNames = [AstTypeInference]::InferTypeof($ast, [TypeInferenceRuntimePermissions]::AllowSafeEval)
+            $typeNames.Count | Should be 1
+            $typeNames[0] | Should be 'System.String'
+        }
+        finally {
+            Remove-TypeData -TypeName InferScriptPropLevel1
+            Remove-TypeData -TypeName InferScriptPropLevel2
+        }
+    }
+
     It "Infers type from OutputTypeAttribute" {
         $res = [AstTypeInference]::InferTypeOf( { Get-Process -Id 2345 }.Ast)
         $gpsOutput = [Microsoft.PowerShell.Commands.GetProcessCommand].GetCustomAttributes([System.Management.Automation.OutputTypeAttribute], $false).Type
@@ -565,7 +616,8 @@ Describe "Type inference Tests" -tags "CI" {
                 [Y]::new().ScriptProp
             }.Ast)
 
-        $res.Count | Should be 0
+        $res.Count | Should be 1
+        $res.Name | Should be System.Int32
     }
 
     It 'Infers type of script property with outputtype' {
