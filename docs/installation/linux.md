@@ -431,7 +431,7 @@ powershell
 
 ```sh
 # Grab the latest App Image
-wget https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-x86_64.AppImag
+wget https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-x86_64.AppImage
 
 # Make executable
 chmod a+x PowerShell-6.0.0-alpha.18-x86_64.AppImag
