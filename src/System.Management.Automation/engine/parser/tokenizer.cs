@@ -1254,8 +1254,7 @@ namespace System.Management.Automation.Language
         private string ScanUnicodeEscapeSequence()
         {
             int escSeqStartIndex = _currentIndex - 2;
-            int maxNumberOfHexDigits = 6;
-            bool isTerminated = false;
+            const int maxNumberOfHexDigits = 6;
 
             char c = GetChar();
             if (c != '{')
@@ -1267,10 +1266,10 @@ namespace System.Management.Automation.Language
                 return s_unknownUnicodeChar;
             }
 
-            // Scan hex chars after the Unicode escape sequence start.
+            // Scan the rest of the Unicode escape sequence - one to six hex digits terminated plus the closing '}'.
             var sb = GetStringBuilder();
             int i;
-            for (i = 0; i < maxNumberOfHexDigits; i++)
+            for (i = 0; i < maxNumberOfHexDigits + 1; i++)
             {
                 c = GetChar();
 
@@ -1285,33 +1284,26 @@ namespace System.Management.Automation.Language
                         return s_unknownUnicodeChar;
                     }
 
-                    isTerminated = true;
                     break;
                 }
-
-                if (!c.IsHexDigit())
+                else if (!c.IsHexDigit())
                 {
                     UngetChar();
 
-                    ReportError(_currentIndex, () => ParserStrings.MissingUnicodeEscapeSequenceTerminator);
+                    ReportError(_currentIndex,
+                        i < maxNumberOfHexDigits
+                            ? (Expression<Func<string>>)(() => ParserStrings.InvalidUnicodeEscapeSequence)
+                            : () => ParserStrings.MissingUnicodeEscapeSequenceTerminator);
+                    return s_unknownUnicodeChar;
+                }
+                else if (i == maxNumberOfHexDigits) {
+                    UngetChar();
+
+                    ReportError(_currentIndex, () => ParserStrings.TooManyDigitsInUnicodeEscapeSequence);
                     return s_unknownUnicodeChar;
                 }
 
                 sb.Append(c);
-            }
-
-            if (!isTerminated)
-            {
-                c = GetChar();
-                if (c != '}')
-                {
-                    UngetChar();
-                    ReportError(_currentIndex,
-                        i == maxNumberOfHexDigits && c.IsHexDigit()
-                            ? (Expression<Func<string>>)(() => ParserStrings.TooManyDigitsInUnicodeEscapeSequence)
-                            : () => ParserStrings.MissingUnicodeEscapeSequenceTerminator);
-                    return s_unknownUnicodeChar;
-                }
             }
 
             string hexStr = GetStringAndRelease(sb);
