@@ -211,13 +211,13 @@ function ExecuteRequestWithCustomHeaders
             $result.Output = Invoke-WebRequest -Uri $Uri -TimeoutSec 5 -Headers $Headers -SkipHeaderValidation:$SkipHeaderValidation.IsPresent
             $result.Content = $result.Output.Content | ConvertFrom-Json
         }
-        else 
-        {            
+        else
+        {
             $result.Output = Invoke-RestMethod -Uri $Uri -TimeoutSec 5 -Headers $Headers -SkipHeaderValidation:$SkipHeaderValidation.IsPresent
             # NOTE: $result.Output should already be a PSObject (Invoke-RestMethod converts the returned json automatically)
             # so simply reference $result.Output
             $result.Content = $result.Output
-        }       
+        }
     }
     catch
     {
@@ -710,7 +710,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     It "Verifies Invoke-WebRequest default header handling with no errors" {
         $headers = @{"If-Match" = "*"}
         $response = ExecuteRequestWithCustomHeaders -Uri "http://localhost:8080/PowerShell?test=echo" -headers $headers
-        
+
         $response.Error | Should BeNullOrEmpty
         $response.Content.Headers -contains "If-Match" | Should Be $true
     }
@@ -730,9 +730,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
         $response.Error | Should BeNullOrEmpty
         $response.Content.Headers -contains "If-Match" | Should Be $true
-    }  
+    }
 
-    #endregion SkipHeaderVerification Tests    
+    #endregion SkipHeaderVerification Tests
 
     BeforeEach {
         if ($env:http_proxy) {
@@ -1201,7 +1201,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     It "Verifies Invoke-RestMethod default header handling with no errors" {
         $headers = @{"If-Match" = "*"}
         $response = ExecuteRequestWithCustomHeaders -Uri "http://localhost:8081/PowerShell?test=echo" -headers $headers -Cmdlet "Invoke-RestMethod"
-        
+
         $response.Error | Should BeNullOrEmpty
         $response.Content.Headers -contains "If-Match" | Should Be $true
     }
@@ -1223,7 +1223,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $response.Content.Headers -contains "If-Match" | Should Be $true
     }
 
-    #endregion SkipHeaderVerification tests 
+    #endregion SkipHeaderVerification tests
 
     BeforeEach {
         if ($env:http_proxy) {
