@@ -2290,7 +2290,7 @@ namespace System.Management.Automation.Runspaces
                 Process result = Process.GetProcessById(lpProcessInformation.dwProcessId);
                 uint returnValue = PlatformInvokes.ResumeThread(lpProcessInformation.hThread);
 
-                if (returnValue == 4294967295) // same as (DWORD)-1
+                if (returnValue == PlatformInvokes.RESUME_THREAD_FAILED)
                 {
                     throw new Win32Exception(Marshal.GetLastWin32Error());
                 }
