@@ -61,6 +61,10 @@ To run the spellchecker, follow the steps as follows:
 
 ## Contributing to Code
 
+### Code Editor
+
+You should use the multi-platform [Visual Studio Code (VS Code)][use-vscode-editor].
+
 ### Building and testing
 
 #### Building PowerShell
@@ -303,3 +307,4 @@ Once you sign a CLA, all your existing and future pull requests will be labeled 
 [up-for-grabs]: https://github.com/powershell/powershell/issues?q=is%3Aopen+is%3Aissue+label%3AUp-for-Grabs
 [semantic linefeeds]: http://rhodesmill.org/brandon/2012/one-sentence-per-line/
 [PowerShell-Docs]: https://github.com/powershell/powershell-docs/
+[use-vscode-editor]: ../docs/learning-powershell/using-vscode.md#editing-with-visual-studio-code
