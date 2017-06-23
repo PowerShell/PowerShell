@@ -304,14 +304,11 @@ Describe 'Hash Expression parsing' -Tags "CI" {
 }
 
 Describe 'Unicode escape sequence parsing' -Tag "CI" {
+    ShouldBeParseError '"`u{}"' InvalidUnicodeEscapeSequence 1
     ShouldBeParseError '"`u{110000}"' InvalidUnicodeEscapeSequenceValue 4 # error offset is "`u{>>1<<10000}"
     ShouldBeParseError '"`u{1234567}"' TooManyDigitsInUnicodeEscapeSequence 10 # error offset is "`u{123456>>7<<}"
-    ShouldBeParseError '"`u219z"' InvalidUnicodeEscapeSequence 1
-    ShouldBeParseError '"`u{219z"' MissingUnicodeEscapeSequenceTerminator 7 # error offset "`u{219>>z<<"
-    ShouldBeParseError '"`u{}"' EmptyUnicodeEscapeSequence 1
-    ShouldBeParseError '"`u' InvalidUnicodeEscapeSequence,TerminatorExpectedAtEndOfString 1,0
-    ShouldBeParseError '"`u123' InvalidUnicodeEscapeSequence,TerminatorExpectedAtEndOfString 1,0
-    ShouldBeParseError '"`u219z' InvalidUnicodeEscapeSequence,TerminatorExpectedAtEndOfString 1,0
+    ShouldBeParseError '"`u{219z}"' MissingUnicodeEscapeSequenceTerminator 7 # error offset "`u{219>>z<<}"
+    ShouldBeParseError '"`u2195}"' InvalidUnicodeEscapeSequence 1
     ShouldBeParseError '"`u{' MissingUnicodeEscapeSequenceTerminator,TerminatorExpectedAtEndOfString 4,0
     ShouldBeParseError '"`u{1' MissingUnicodeEscapeSequenceTerminator,TerminatorExpectedAtEndOfString 5,0
     ShouldBeParseError '"`u{123456' MissingUnicodeEscapeSequenceTerminator,TerminatorExpectedAtEndOfString 10,0

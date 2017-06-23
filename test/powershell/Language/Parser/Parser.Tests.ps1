@@ -273,16 +273,6 @@
     Context "Test Unicode escape sequences." {
         # These tests require the file to be saved with a BOM.  Unfortunately when this UTF8 file is read by
         # PowerShell without a BOM, the file is incorrectly interpreted as ASCII.
-        It 'Test that Unicode escape sequence `u2195 in string returns the ↕ character.' {
-            $result = ExecuteCommand '"foo`u2195abc"'
-            $result | should be "foo↕abc"
-        }
-
-        It 'Test that Unicode escape sequence `u2195 in here string returns the ↕ character.' {
-            $result = ExecuteCommand ("@`"`n`n" + 'foo`u2195abc' + "`n`n`"@")
-            $result | should be "`nfoo↕abc`n"
-        }
-
         It 'Test that the bracketed Unicode escape sequence `u{0} returns minimum char.' {
             $result = ExecuteCommand '"`u{0}"'
             [int]$result[0] | should be 0
@@ -299,38 +289,48 @@
             $result | should be '©'
         }
 
+        It 'Test that Unicode escape sequence `u{2195} in string returns the ↕ character.' {
+            $result = ExecuteCommand '"foo`u{2195}abc"'
+            $result | should be "foo↕abc"
+        }
+
         It 'Test that the bracketed Unicode escape sequence `u{1f44d} returns surrogate pair for emoji 👍 character.' {
             $result = ExecuteCommand '"`u{1f44d}"'
             $result | should be "👍"
         }
 
+        It 'Test that Unicode escape sequence `u{2195} in here string returns the ↕ character.' {
+            $result = ExecuteCommand ("@`"`n`n" + 'foo`u{2195}abc' + "`n`n`"@")
+            $result | should be "`nfoo↕abc`n"
+        }
+
         It 'Test that Unicode escape sequence in single quoted is not processed.' {
-            $result = ExecuteCommand '''foo`u2195abc'''
-            $result | should be 'foo`u2195abc'
+            $result = ExecuteCommand '''foo`u{2195}abc'''
+            $result | should be 'foo`u{2195}abc'
         }
 
         It 'Test that Unicode escape sequence in single quoted here string is not processed.' {
             $result = ExecuteCommand @"
 @'
 
-foo``u2195abc
+foo``u{2195}abc
 
 '@
 "@
-            $result | should be "`r`nfoo``u2195abc`r`n"
+            $result | should be "`r`nfoo``u{2195}abc`r`n"
         }
 
         It "Test that two consecutive Unicode escape sequences are tokenized correctly." {
-            $result = ExecuteCommand '"`u007b`u007d"'
+            $result = ExecuteCommand '"`u{007b}`u{007d}"'
             $result | should be '{}'
         }
 
         It "Test that a Unicode escape sequence can be used in a command name." {
-            function xyzzy`u2195($p) {$p}
-            $cmd = Get-Command xyzzy`u2195 -ErrorAction SilentlyContinue
+            function xyzzy`u{2195}($p) {$p}
+            $cmd = Get-Command xyzzy`u{2195} -ErrorAction SilentlyContinue
             $cmd | should not BeNullOrEmpty
             $cmd.Name | should be 'xyzzy↕'
-            xyzzy`u2195 42 | should be 42
+            xyzzy`u{2195} 42 | should be 42
         }
 
         It "Test that a Unicode escape sequence can be used in a variable name." {

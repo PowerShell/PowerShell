@@ -507,7 +507,7 @@ namespace System.Management.Automation.Language
         private static readonly Dictionary<string, TokenKind> s_operatorTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
 
-        // Unicode replacement char used to represent an unknown, unrecognized or unrepresentable character in a 
+        // Unicode replacement char used to represent an unknown, unrecognized or unrepresentable character in a
         // Unicode escape sequence.
         private static readonly string s_unknownUnicodeChar = ((char)0xffdd).ToString();
 
@@ -1254,17 +1254,18 @@ namespace System.Management.Automation.Language
         private string ScanUnicodeEscapeSequence()
         {
             int escSeqStartIndex = _currentIndex - 2;
-            bool isBracketedSequence = false;
+            int maxNumberOfHexDigits = 6;
             bool isTerminated = false;
 
-            char c = PeekChar();
-            if (c == '{')
+            char c = GetChar();
+            if (c != '{')
             {
-                SkipChar();
-                isBracketedSequence = true;
-            }
+                UngetChar();
 
-            int maxNumberOfHexDigits = (isBracketedSequence ? 6 : 4);
+                IScriptExtent errorExtent = NewScriptExtent(escSeqStartIndex, _currentIndex);
+                ReportError(errorExtent, () => ParserStrings.InvalidUnicodeEscapeSequence);
+                return s_unknownUnicodeChar;
+            }
 
             // Scan hex chars after the Unicode escape sequence start.
             var sb = GetStringBuilder();
@@ -1273,14 +1274,14 @@ namespace System.Management.Automation.Language
             {
                 c = GetChar();
 
-                // Bracketed sequence has been terminated.
-                if (isBracketedSequence && (c == '}'))
+                // Sequence has been terminated.
+                if (c == '}')
                 {
                     if (i == 0)
                     {
-                        // Variable sequence must have at least one hex char.
+                        // Sequence must have at least one hex char.
                         IScriptExtent errorExtent = NewScriptExtent(escSeqStartIndex, _currentIndex);
-                        ReportError(errorExtent, () => ParserStrings.EmptyUnicodeEscapeSequence);
+                        ReportError(errorExtent, () => ParserStrings.InvalidUnicodeEscapeSequence);
                         return s_unknownUnicodeChar;
                     }
 
@@ -1292,23 +1293,14 @@ namespace System.Management.Automation.Language
                 {
                     UngetChar();
 
-                    if (isBracketedSequence)
-                    {
-                        ReportError(_currentIndex, () => ParserStrings.MissingUnicodeEscapeSequenceTerminator);
-                    }
-                    else
-                    {
-                        IScriptExtent errorExtent = NewScriptExtent(escSeqStartIndex, _currentIndex);
-                        ReportError(errorExtent, () => ParserStrings.InvalidUnicodeEscapeSequence);
-                    }
-
+                    ReportError(_currentIndex, () => ParserStrings.MissingUnicodeEscapeSequenceTerminator);
                     return s_unknownUnicodeChar;
                 }
 
                 sb.Append(c);
             }
 
-            if (isBracketedSequence && !isTerminated)
+            if (!isTerminated)
             {
                 c = GetChar();
                 if (c != '}')
@@ -1342,14 +1334,14 @@ namespace System.Management.Automation.Language
             }
         }
 
-        private bool IsSurrogatePair(string str, ref char nonSurrogatePairChar, StringBuilder sb1 = null, StringBuilder sb2 = null) 
+        private bool IsSurrogatePair(string str, ref char nonSurrogatePairChar, StringBuilder sb1 = null, StringBuilder sb2 = null)
         {
             Diagnostics.Assert(!string.IsNullOrEmpty(str), "Caller never calls us with an empty string");
             Diagnostics.Assert((str.Length <= 2), "Caller never calls us with a string length greater than two");
-            Diagnostics.Assert((str.Length == 1) || Char.IsSurrogate(str, 0), 
-                "Caller never calls us with a string length of two and not be a surrogate pair");                
-            
-            if (str.Length == 1) 
+            Diagnostics.Assert((str.Length == 1) || Char.IsSurrogate(str, 0),
+                "Caller never calls us with a string length of two and not be a surrogate pair");
+
+            if (str.Length == 1)
             {
                 nonSurrogatePairChar = str[0];
                 return false;
@@ -2149,7 +2141,7 @@ namespace System.Management.Automation.Language
                         {
                             // The character has been processed and appended to the string builders
                             continue;
-                        } 
+                        }
                     }
                 }
                 if (c == '{' || c == '}')
@@ -2463,7 +2455,7 @@ namespace System.Management.Automation.Language
                             {
                                 // The character has been processed and appended to the string builders
                                 continue;
-                            } 
+                            }
                         }
                     }
                     if (c == '{' || c == '}')
@@ -2537,7 +2529,7 @@ namespace System.Management.Automation.Language
                                 {
                                     // The character has been processed and appended to the string builder
                                     continue;
-                                } 
+                                }
                                 break;
                             }
                         case '"':
@@ -3028,7 +3020,7 @@ namespace System.Management.Automation.Language
                         {
                             // The character has been processed and appended to the string builders
                             continue;
-                        } 
+                        }
                     }
                 }
                 else if (c.IsSingleQuote())
