@@ -896,6 +896,32 @@ namespace System.Management.Automation
         }
     }
 
+    /// <Summary>
+    /// predefined range kind to use with 
+    /// ValidateRangeAttribute
+    /// </Summary>
+    public enum ValidateRangeKind{
+        
+        /// <Summary>
+        /// Range is greater than 0
+        /// </Summary>
+        Positive,
+        
+        /// <Summary>
+        /// Range is greater than or equal to 0
+        /// </Summary>
+        NonNegative,
+        
+        /// <Summary>
+        /// Range is less than 0
+        /// </Summary>
+        Negative,
+
+        /// <Summary>
+        /// Range is less than or equal to 0
+        /// </Summary>        
+        NonPositive
+    }
     /// <summary>
     /// Validates that each parameter argument falls in the range
     /// specified by MinRange and MaxRange
@@ -923,6 +949,8 @@ namespace System.Management.Automation
         /// </summary>
         private Type _promotedType;
 
+        ValidateRangeKind? _rangeKind;
+
         /// <summary>
         /// Validates that each parameter argument falls in the range
         /// specified by MinRange and MaxRange
@@ -943,43 +971,98 @@ namespace System.Management.Automation
                         Metadata.ValidateNotNullFailure);
             }
 
-            var o = element as PSObject;
-            if (o != null)
+            if(_rangeKind.HasValue)
             {
-                element = o.BaseObject;
-            }
-
-            // minRange and maxRange have the same type, so we just need
-            // to compare to one of them
-            if (element.GetType() != _promotedType)
-            {
-                object resultValue;
-                if (LanguagePrimitives.TryConvertTo(element, _promotedType, out resultValue))
+                dynamic val = element;
+                switch (_rangeKind)
                 {
-                    element = resultValue;
+                    case ValidateRangeKind.Positive:
+                        if(val <= 0)
+                        {
+                            throw new ValidationMetadataException(
+                                "ValidateRangeTooSmall",
+                                null, 
+                                Metadata.ValidateRangeSmallerThanMinRangeFailure,
+                                element.ToString(), 
+                                "1");
+                        }
+                        break;
+                    case ValidateRangeKind.NonNegative:
+                        if(val < 0)
+                        {
+                            throw new ValidationMetadataException(
+                                "ValidateRangeTooSmall",
+                                null, 
+                                Metadata.ValidateRangeSmallerThanMinRangeFailure,
+                                element.ToString(), 
+                                '0');
+                        }
+                        break;
+                    case ValidateRangeKind.Negative:
+                        if(val >= 0)
+                        {
+                            throw new ValidationMetadataException(
+                                "ValidateRangeTooBig",
+                                null, 
+                                Metadata.ValidateRangeGreaterThanMaxRangeFailure,
+                                element.ToString(), 
+                                "-1");
+                        }
+                        break;
+                    case ValidateRangeKind.NonPositive:
+                        if(val > 0)
+                        {
+                            throw new ValidationMetadataException(
+                                "ValidateRangeTooBig",
+                                null, 
+                                Metadata.ValidateRangeGreaterThanMaxRangeFailure,
+                                element.ToString(), 
+                                "-1");
+                        }
+                        break;
                 }
-                else
+            }
+            else
+            {
+                var o = element as PSObject;
+                if (o != null)
                 {
-                    throw new ValidationMetadataException("ValidationRangeElementType",
-                        null, Metadata.ValidateRangeElementType,
-                        element.GetType().Name, MinRange.GetType().Name);
+                    element = o.BaseObject;
+                }
+
+                // minRange and maxRange have the same type, so we just need
+                // to compare to one of them
+                if (element.GetType() != _promotedType)
+                {
+                    object resultValue;
+                    if (LanguagePrimitives.TryConvertTo(element, _promotedType, out resultValue))
+                    {
+                        element = resultValue;
+                    }
+                    else
+                    {
+                        throw new ValidationMetadataException("ValidationRangeElementType",
+                            null, Metadata.ValidateRangeElementType,
+                            element.GetType().Name, MinRange.GetType().Name);
+                    }
+                }
+
+                // They are the same type and are all IComparable, so this should not throw
+                if (_minComparable.CompareTo(element) > 0)
+                {
+                    throw new ValidationMetadataException("ValidateRangeTooSmall",
+                        null, Metadata.ValidateRangeSmallerThanMinRangeFailure,
+                        element.ToString(), MinRange.ToString());
+                }
+
+                if (_maxComparable.CompareTo(element) < 0)
+                {
+                    throw new ValidationMetadataException("ValidateRangeTooBig",
+                        null, Metadata.ValidateRangeGreaterThanMaxRangeFailure,
+                        element.ToString(), MaxRange.ToString());
                 }
             }
-
-            // They are the same type and are all IComparable, so this should not throw
-            if (_minComparable.CompareTo(element) > 0)
-            {
-                throw new ValidationMetadataException("ValidateRangeTooSmall",
-                    null, Metadata.ValidateRangeSmallerThanMinRangeFailure,
-                    element.ToString(), MinRange.ToString());
-            }
-
-            if (_maxComparable.CompareTo(element) < 0)
-            {
-                throw new ValidationMetadataException("ValidateRangeTooBig",
-                    null, Metadata.ValidateRangeGreaterThanMaxRangeFailure,
-                    element.ToString(), MaxRange.ToString());
-            }
+            
         }
 
         /// <summary>
@@ -1055,6 +1138,15 @@ namespace System.Management.Automation
             MaxRange = maxRange;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the ValidateRangeAttribute class
+        /// this constructor uses a predefined ranged
+        /// </summary>
+        public ValidateRangeAttribute(ValidateRangeKind kind) : base()
+        {
+            _rangeKind = kind;
+        }
+
         private static Type GetCommonType(Type minType, Type maxType)
         {
             Type resultType = null;
@@ -1094,194 +1186,6 @@ namespace System.Management.Automation
             }
 
             return resultType;
-        }
-    }
-
-    /// <summary>
-    /// Base class for postive number valididation attributes
-    /// </summary>
-    /// <remarks>
-    /// Base class used by postive and non negative attribute
-    /// <seealso cref="ValidatePositiveAttribute"/>,
-    /// <seealso cref="ValidateNonNegativeAttribute"/>
-    /// </remarks>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public class ValidatePositiveBaseAttribute : ValidateEnumeratedArgumentsAttribute
-    {
-        /// <summary>
-        /// Minimum allowed value for the attribute
-        /// </summary>
-        public int minValue;
-
-        /// <summary>
-        /// Validates that each parameter argument is greater than 
-        /// the minimum allowed value.
-        /// </summary>
-        /// <param name="element">
-        /// The arguments to verify.
-        /// </param>
-        /// <returns>
-        /// 
-        /// </returns>
-        /// <exception cref="ValidationMetadataException">
-        /// if element is null or a an elment is less than the minimum 
-        /// allowed value.
-        /// </exception>
-        protected override void ValidateElement(object element)
-        {
-            if (element == null)
-            {
-                throw new ValidationMetadataException(
-                    "ArgumentIsEmpty",
-                    null,
-                    Metadata.ValidateNotNullFailure);
-            }
-            
-            object resultValue;
-            if(LanguagePrimitives.TryConvertTo(element,typeof(int),out resultValue))
-            {
-                if((int)resultValue < minValue)
-                {
-                    throw new ValidationMetadataException(
-                        "ValidateRangeTooSmall",
-                        null, 
-                        Metadata.ValidateRangeSmallerThanMinRangeFailure,
-                        element.ToString(), 
-                        minValue.ToString());
-                }
-            }
-            else
-            {
-                throw new ValidationMetadataException("ValidationRangeElementType",
-                    null, Metadata.ValidateRangeElementType,
-                    element.GetType().Name, minValue.GetType().Name);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Validates that each parameter argument is positive
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class ValidatePositiveAttribute : ValidatePositiveBaseAttribute
-    {
-        /// <summary>
-        /// Initializes a new instance of the ValidatePositiveAttribute class
-        /// </summary>
-        /// <exception cref="ArgumentException">for invalid arguments</exception>
-        public ValidatePositiveAttribute()
-        {
-            minValue = 1;
-        }
-    }
-
-     /// <summary>
-    /// Validates that each parameter argument is not negative
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class ValidateNonNegativeAttribute : ValidatePositiveBaseAttribute
-    {
-        /// <summary>
-        /// Initializes a new instance of the ValidateNonNegativeAttribute class
-        /// </summary>
-        /// <exception cref="ArgumentException">for invalid arguments</exception>
-        public ValidateNonNegativeAttribute()
-        {
-            minValue = 0;
-        }
-    }
-
-    /// <summary>
-    /// Base class for negative number valididation attributes
-    /// </summary>
-    /// <remarks>
-    /// Base class used by negative and non positive attribute
-    /// <seealso cref="ValidateNegativeAttribute"/>,
-    /// <seealso cref="ValidateNonPositiveAttribute"/>
-    /// </remarks>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public class ValidateNegativeBaseAttribute : ValidateEnumeratedArgumentsAttribute
-    {
-        /// <summary>
-        /// Maximum allowed value for the attribute
-        /// </summary>
-        public int maxValue;
-
-        /// <summary>
-        /// Validates that each parameter argument is smaller than 
-        /// the max allowed value.
-        /// </summary>
-        /// <param name="element">
-        /// The arguments to verify.
-        /// </param>
-        /// <returns>
-        /// 
-        /// </returns>
-        /// <exception cref="ValidationMetadataException">
-        /// if element is null or a an elment is great than the max 
-        /// allowed value.
-        /// </exception>
-        protected override void ValidateElement(object element)
-        {
-            if (element == null)
-            {
-                throw new ValidationMetadataException(
-                    "ArgumentIsEmpty",
-                    null,
-                    Metadata.ValidateNotNullFailure);
-            }
-            
-            object resultValue;
-            if(LanguagePrimitives.TryConvertTo(element,typeof(int),out resultValue))
-            {
-                if((int)resultValue > maxValue)
-                {
-                    throw new ValidationMetadataException(
-                        "ValidateRangeTooBig",
-                        null, 
-                        Metadata.ValidateRangeGreaterThanMaxRangeFailure,
-                        element.ToString(), 
-                        maxValue.ToString());
-                }
-            }
-            else
-            {
-                throw new ValidationMetadataException("ValidationRangeElementType",
-                    null, Metadata.ValidateRangeElementType,
-                    element.GetType().Name, maxValue.GetType().Name);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Validates that each parameter argument is negative
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class ValidateNegativeAttribute : ValidateNegativeBaseAttribute
-    {
-        /// <summary>
-        /// Initializes a new instance of the ValidateNegativeAttribute class
-        /// </summary>
-        /// <exception cref="ArgumentException">for invalid arguments</exception>
-        public ValidateNegativeAttribute()
-        {
-            maxValue = -1;
-        }
-    }
-
-     /// <summary>
-    /// Validates that each parameter argument is not positive
-    /// </summary>
-    [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property)]
-    public sealed class ValidateNonPositiveAttribute : ValidateNegativeBaseAttribute
-    {
-        /// <summary>
-        /// Initializes a new instance of the ValidateNonNegativeAttribute class
-        /// </summary>
-        /// <exception cref="ArgumentException">for invalid arguments</exception>
-        public ValidateNonPositiveAttribute()
-        {
-            maxValue = 0;
         }
     }
 
