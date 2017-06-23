@@ -510,6 +510,7 @@ namespace System.Management.Automation.Language
         // Unicode replacement char used to represent an unknown, unrecognized or unrepresentable character in a
         // Unicode escape sequence.
         private static readonly string s_unknownUnicodeChar = ((char)0xffdd).ToString();
+        private static readonly int s_maxNumberOfUnicodeHexDigits = 6;
 
         private readonly Parser _parser;
         private PositionHelper _positionHelper;
@@ -1254,7 +1255,6 @@ namespace System.Management.Automation.Language
         private string ScanUnicodeEscapeSequence()
         {
             int escSeqStartIndex = _currentIndex - 2;
-            const int maxNumberOfHexDigits = 6;
 
             char c = GetChar();
             if (c != '{')
@@ -1269,7 +1269,7 @@ namespace System.Management.Automation.Language
             // Scan the rest of the Unicode escape sequence - one to six hex digits terminated plus the closing '}'.
             var sb = GetStringBuilder();
             int i;
-            for (i = 0; i < maxNumberOfHexDigits + 1; i++)
+            for (i = 0; i < s_maxNumberOfUnicodeHexDigits + 1; i++)
             {
                 c = GetChar();
 
@@ -1291,12 +1291,12 @@ namespace System.Management.Automation.Language
                     UngetChar();
 
                     ReportError(_currentIndex,
-                        i < maxNumberOfHexDigits
+                        i < s_maxNumberOfUnicodeHexDigits
                             ? (Expression<Func<string>>)(() => ParserStrings.InvalidUnicodeEscapeSequence)
                             : () => ParserStrings.MissingUnicodeEscapeSequenceTerminator);
                     return s_unknownUnicodeChar;
                 }
-                else if (i == maxNumberOfHexDigits) {
+                else if (i == s_maxNumberOfUnicodeHexDigits) {
                     UngetChar();
 
                     ReportError(_currentIndex, () => ParserStrings.TooManyDigitsInUnicodeEscapeSequence);
