@@ -509,7 +509,7 @@ namespace System.Management.Automation.Language
 
         // Unicode replacement char used to represent an unknown, unrecognized or unrepresentable character in a
         // Unicode escape sequence.
-        private static readonly string s_unknownUnicodeChar = ((char)0xffdd).ToString();
+        private static readonly string s_unknownUnicodeChar = ((char)0xfffd).ToString();
         private static readonly int s_maxNumberOfUnicodeHexDigits = 6;
 
         private readonly Parser _parser;
