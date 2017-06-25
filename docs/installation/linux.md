@@ -427,6 +427,19 @@ dpkg -i powershell_6.0.0-beta.3-1ubuntu1.16.04.1_amd64.deb
 powershell
 ```
 
+### Run PowerShell in latest Kali (Kali GNU/Linux Rolling) without installing it
+
+```sh
+# Grab the latest App Image
+wget https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-x86_64.AppImage
+
+# Make executable
+chmod a+x PowerShell-6.0.0-alpha.18-x86_64.AppImage
+
+# Start PowerShell
+./PowerShell-6.0.0-alpha.18-x86_64.AppImage
+```
+
 ### Uninstallation - Kali
 
 ```sh
