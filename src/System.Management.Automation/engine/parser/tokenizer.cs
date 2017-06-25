@@ -507,9 +507,7 @@ namespace System.Management.Automation.Language
         private static readonly Dictionary<string, TokenKind> s_operatorTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
 
-        // Unicode replacement char used to represent an unknown, unrecognized or unrepresentable character in a
-        // Unicode escape sequence.
-        private static readonly string s_unknownUnicodeChar = ((char)0xfffd).ToString();
+        private static readonly char s_invalidChar = char.MaxValue;
         private static readonly int s_maxNumberOfUnicodeHexDigits = 6;
 
         private readonly Parser _parser;
@@ -1234,27 +1232,30 @@ namespace System.Management.Automation.Language
             return i;
         }
 
-        private string Backtick(char c)
+        private char Backtick(char c, out char surrogateCharacter)
         {
+            surrogateCharacter = s_invalidChar;
+
             switch (c)
             {
-                case '0': return "\0";
-                case 'a': return "\a";
-                case 'b': return "\b";
-                case 'e': return "\u001b";
-                case 'f': return "\f";
-                case 'n': return "\n";
-                case 'r': return "\r";
-                case 't': return "\t";
-                case 'u': return ScanUnicodeEscapeSequence();
-                case 'v': return "\v";
-                default: return c.ToString();
+                case '0': return '\0';
+                case 'a': return '\a';
+                case 'b': return '\b';
+                case 'e': return '\u001b';
+                case 'f': return '\f';
+                case 'n': return '\n';
+                case 'r': return '\r';
+                case 't': return '\t';
+                case 'u': return ScanUnicodeEscape(out surrogateCharacter);
+                case 'v': return '\v';
+                default: return c;
             }
         }
 
-        private string ScanUnicodeEscapeSequence()
+        private char ScanUnicodeEscape(out char surrogateCharacter)
         {
             int escSeqStartIndex = _currentIndex - 2;
+            surrogateCharacter = s_invalidChar;
 
             char c = GetChar();
             if (c != '{')
@@ -1263,7 +1264,7 @@ namespace System.Management.Automation.Language
 
                 IScriptExtent errorExtent = NewScriptExtent(escSeqStartIndex, _currentIndex);
                 ReportError(errorExtent, () => ParserStrings.InvalidUnicodeEscapeSequence);
-                return s_unknownUnicodeChar;
+                return s_invalidChar;
             }
 
             // Scan the rest of the Unicode escape sequence - one to six hex digits terminated plus the closing '}'.
@@ -1281,7 +1282,7 @@ namespace System.Management.Automation.Language
                         // Sequence must have at least one hex char.
                         IScriptExtent errorExtent = NewScriptExtent(escSeqStartIndex, _currentIndex);
                         ReportError(errorExtent, () => ParserStrings.InvalidUnicodeEscapeSequence);
-                        return s_unknownUnicodeChar;
+                        return s_invalidChar;
                     }
 
                     break;
@@ -1294,13 +1295,13 @@ namespace System.Management.Automation.Language
                         i < s_maxNumberOfUnicodeHexDigits
                             ? (Expression<Func<string>>)(() => ParserStrings.InvalidUnicodeEscapeSequence)
                             : () => ParserStrings.MissingUnicodeEscapeSequenceTerminator);
-                    return s_unknownUnicodeChar;
+                    return s_invalidChar;
                 }
                 else if (i == s_maxNumberOfUnicodeHexDigits) {
                     UngetChar();
 
                     ReportError(_currentIndex, () => ParserStrings.TooManyDigitsInUnicodeEscapeSequence);
-                    return s_unknownUnicodeChar;
+                    return s_invalidChar;
                 }
 
                 sb.Append(c);
@@ -1308,41 +1309,37 @@ namespace System.Management.Automation.Language
 
             string hexStr = GetStringAndRelease(sb);
 
-            int unicodeValue = int.Parse(hexStr, NumberStyles.AllowHexSpecifier, NumberFormatInfo.InvariantInfo);
+            uint unicodeValue = uint.Parse(hexStr, NumberStyles.AllowHexSpecifier, NumberFormatInfo.InvariantInfo);
             if (unicodeValue <= Char.MaxValue)
             {
-                return ((char)unicodeValue).ToString();
+                return ((char)unicodeValue);
             }
             else if (unicodeValue <= 0x10FFFF)
             {
-                return Char.ConvertFromUtf32(unicodeValue);
+                return GetCharsFromUtf32(unicodeValue, out surrogateCharacter);
             }
             else
             {
                 // Place the error indicator under only the hex digits in the esc sequence.
                 IScriptExtent errorExtent = NewScriptExtent(escSeqStartIndex + 3, _currentIndex - 1);
                 ReportError(errorExtent, () => ParserStrings.InvalidUnicodeEscapeSequenceValue);
-                return s_unknownUnicodeChar;
+                return s_invalidChar;
             }
         }
 
-        private bool IsSurrogatePair(string str, ref char nonSurrogatePairChar, StringBuilder sb1 = null, StringBuilder sb2 = null)
+        private static char GetCharsFromUtf32(uint codepoint, out char lowSurrogate)
         {
-            Diagnostics.Assert(!string.IsNullOrEmpty(str), "Caller never calls us with an empty string");
-            Diagnostics.Assert((str.Length <= 2), "Caller never calls us with a string length greater than two");
-            Diagnostics.Assert((str.Length == 1) || Char.IsSurrogate(str, 0),
-                "Caller never calls us with a string length of two and not be a surrogate pair");
-
-            if (str.Length == 1)
+            if (codepoint < (uint)0x00010000)
             {
-                nonSurrogatePairChar = str[0];
-                return false;
+                lowSurrogate = s_invalidChar;
+                return (char)codepoint;
             }
-
-            sb1?.Append(str);
-            sb2?.Append(str);
-
-            return true;
+            else
+            {
+                Diagnostics.Assert((codepoint > 0x0000FFFF) && (codepoint <= 0x0010FFFF), "Codepoint is out of range for a surrogate pair");
+                lowSurrogate = (char)((codepoint - 0x00010000) % 0x0400 + 0xDC00);
+                return (char)((codepoint - 0x00010000) / 0x0400 + 0xD800);
+            }
         }
 
         private void ScanToEndOfCommentLine(out bool sawBeginSig, out bool matchedRequires)
@@ -2128,10 +2125,11 @@ namespace System.Management.Automation.Language
                     if (c1 != 0)
                     {
                         SkipChar();
-                        string str = Backtick(c1);
-                        if (IsSurrogatePair(str, ref c, sb, formatSb))
+                        c = Backtick(c1, out char surrogateCharacter);
+                        if (surrogateCharacter != s_invalidChar)
                         {
-                            // The character has been processed and appended to the string builders
+                            sb.Append(c).Append(surrogateCharacter);
+                            formatSb.Append(c).Append(surrogateCharacter);
                             continue;
                         }
                     }
@@ -2442,10 +2440,11 @@ namespace System.Management.Automation.Language
                         if (c1 != 0)
                         {
                             SkipChar();
-                            string str = Backtick(c1);
-                            if (IsSurrogatePair(str, ref c, sb, formatSb))
+                            c = Backtick(c1, out char surrogateCharacter);
+                            if (surrogateCharacter != s_invalidChar)
                             {
-                                // The character has been processed and appended to the string builders
+                                sb.Append(c).Append(surrogateCharacter);
+                                formatSb.Append(c).Append(surrogateCharacter);
                                 continue;
                             }
                         }
@@ -2516,10 +2515,10 @@ namespace System.Management.Automation.Language
                                     UngetChar();
                                     goto end_braced_variable_scan;
                                 }
-                                string str = Backtick(c1);
-                                if (IsSurrogatePair(str, ref c, sb))
+                                c = Backtick(c1, out char surrogateCharacter);
+                                if (surrogateCharacter != s_invalidChar)
                                 {
-                                    // The character has been processed and appended to the string builder
+                                    sb.Append(c).Append(surrogateCharacter);
                                     continue;
                                 }
                                 break;
@@ -2959,10 +2958,14 @@ namespace System.Management.Automation.Language
             return ScanGenericToken(sb);
         }
 
-        private Token ScanGenericToken(string str)
+        private Token ScanGenericToken(char firstChar, char surrogateCharacter)
         {
             var sb = GetStringBuilder();
-            sb.Append(str);
+            sb.Append(firstChar);
+            if (surrogateCharacter != s_invalidChar)
+            {
+                sb.Append(surrogateCharacter);
+            }
             return ScanGenericToken(sb);
         }
 
@@ -2992,7 +2995,6 @@ namespace System.Management.Automation.Language
             // Make sure our token does not start with any of these characters.
             //Contract.Requires(Contract.ForAll("{}()@#;,|&\r\n\t ", c1 => sb[0] != c1));
 
-            string str;
             List<Token> nestedTokens = new List<Token>();
             var formatSb = GetStringBuilder();
             formatSb.Append(sb);
@@ -3007,10 +3009,11 @@ namespace System.Management.Automation.Language
                     if (c1 != 0)
                     {
                         SkipChar();
-                        str = Backtick(c1);
-                        if (IsSurrogatePair(str, ref c, sb, formatSb))
+                        c = Backtick(c1, out char surrogateCharacter);
+                        if (surrogateCharacter != s_invalidChar)
                         {
-                            // The character has been processed and appended to the string builders
+                            sb.Append(c).Append(surrogateCharacter);
+                            formatSb.Append(c).Append(surrogateCharacter);
                             continue;
                         }
                     }
@@ -3046,7 +3049,7 @@ namespace System.Management.Automation.Language
             }
             UngetChar();
 
-            str = GetStringAndRelease(sb);
+            var str = GetStringAndRelease(sb);
             if (nestedTokens.Count > 0)
             {
                 return NewGenericExpandableToken(str, GetStringAndRelease(formatSb), nestedTokens);
@@ -3928,7 +3931,8 @@ namespace System.Management.Automation.Language
                         goto again;
                     }
 
-                    return ScanGenericToken(Backtick(c1));
+                    c = Backtick(c1, out char surrogateCharacter);
+                    return ScanGenericToken(c, surrogateCharacter);
 
                 case '=':
                     return CheckOperatorInCommandMode(c, TokenKind.Equals);
