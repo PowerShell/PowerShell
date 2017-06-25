@@ -17,7 +17,7 @@ namespace ConsoleApplication
             {
                 // We are assuming resgen is run with 'dotnet run pathToResxFile.resx'.
                 fileFilter = Path.GetFileName(args[0]);
-                string moduleDirectory = Directory.GetParent(Path.GetDirectoryName(args[0])).FullName;
+                string moduleDirectory = Path.GetDirectoryName(Path.GetDirectoryName(args[0]));
                 dirs = new List<string>() { moduleDirectory };
             }
             else
