@@ -897,28 +897,27 @@ namespace System.Management.Automation
     }
 
     /// <Summary>
-    /// predefined range kind to use with 
-    /// ValidateRangeAttribute
+    /// Predefined range kind to use with ValidateRangeAttribute.
     /// </Summary>
-    public enum ValidateRangeKind{
+    public enum ValidateRangeKind {
         
         /// <Summary>
-        /// Range is greater than 0
+        /// Range is greater than 0.
         /// </Summary>
         Positive,
         
         /// <Summary>
-        /// Range is greater than or equal to 0
+        /// Range is greater than or equal to 0.
         /// </Summary>
         NonNegative,
         
         /// <Summary>
-        /// Range is less than 0
+        /// Range is less than 0.
         /// </Summary>
         Negative,
 
         /// <Summary>
-        /// Range is less than or equal to 0
+        /// Range is less than or equal to 0.
         /// </Summary>        
         NonPositive
     }
@@ -973,11 +972,13 @@ namespace System.Management.Automation
 
             if(_rangeKind.HasValue)
             {
+                // Using dynamic to handle different type of numbers such as
+                // int, double, decimal and float. 
                 dynamic val = element;
                 switch (_rangeKind)
                 {
                     case ValidateRangeKind.Positive:
-                        if(val <= 0)
+                        if(val.CompareTo(0) <= 0)
                         {
                             throw new ValidationMetadataException(
                                 "ValidateRangeTooSmall",
@@ -988,7 +989,7 @@ namespace System.Management.Automation
                         }
                         break;
                     case ValidateRangeKind.NonNegative:
-                        if(val < 0)
+                        if(val.CompareTo(0) < 0)
                         {
                             throw new ValidationMetadataException(
                                 "ValidateRangeTooSmall",
@@ -999,7 +1000,7 @@ namespace System.Management.Automation
                         }
                         break;
                     case ValidateRangeKind.Negative:
-                        if(val >= 0)
+                        if(val.CompareTo(0) >= 0)
                         {
                             throw new ValidationMetadataException(
                                 "ValidateRangeTooBig",
@@ -1010,7 +1011,7 @@ namespace System.Management.Automation
                         }
                         break;
                     case ValidateRangeKind.NonPositive:
-                        if(val > 0)
+                        if(val.CompareTo(0) > 0)
                         {
                             throw new ValidationMetadataException(
                                 "ValidateRangeTooBig",
