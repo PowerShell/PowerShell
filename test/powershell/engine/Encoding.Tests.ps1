@@ -110,7 +110,7 @@ Describe "Encoding classes and methods are available" -Tag CI {
         param ( $Name, $Bytes )
         $PSDefaultFileEncoding = $Name
         $testString | out-file -encoding ascii $testFile
-        Get-FileBytes $testFile | should be "116-63-115-116-10"
+        Get-FileBytes $testFile | should be ("116-63-115-116-" + (Get-NewLineBytes ASCII))
     }
 
     Context "Legacy Windows Behavior" {
@@ -149,7 +149,7 @@ Describe "Encoding classes and methods are available" -Tag CI {
             $newLineBytes = $legacyEncoding.GetBytes([Environment]::NewLine)
             $newLineByteString = $newLineBytes -join "-"
             $expected = "255-254-35-0-${newLineByteString}-35-0-32-0"
-            Get-FileBytes $TESTDRIVE/${testString}.psd1 -count 10 | should match $expected
+            Get-FileBytes $TESTDRIVE/${testString}.psd1 -count (8 + $newLineBytes.Count) | should match $expected
         }
 
         It "Out-File creates properly encoded files" {
