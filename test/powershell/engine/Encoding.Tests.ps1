@@ -67,7 +67,8 @@ Describe "Encoding classes and methods are available" -Tag CI {
             @{ Name = 'BigEndianUnicode'; Bytes = "254-255-0-116-0-233-0-115-0-116-" + (Get-NewLineBytes BigEndianUnicode) },
             @{ Name = 'Byte'; Bytes = "255-254-116-0-233-0-115-0-116-0-" + (Get-NewLineBytes Byte) },
             @{ Name = 'Default'; Bytes = "116-195-169-115-116-" + (Get-NewLineBytes Default) },
-            @{ Name = 'Oem'; Bytes = "116-195-169-115-116-" + (Get-NewLineBytes Oem) },
+            # Oem encoding can change depending on system, calculate the expected string
+            @{ Name = 'Oem'; Bytes = ([Microsoft.PowerShell.PowerShellEncoding]::GetEncoding("Oem").GetBytes($testString) -join "-") + "-" + (Get-NewLineBytes Oem) },
             @{ Name = 'String'; Bytes = "255-254-116-0-233-0-115-0-116-0-" + (Get-NewLineBytes String) },
             @{ Name = 'UTF32'; Bytes = "255-254-0-0-116-0-0-0-233-0-0-0-115-0-0-0-116-0-0-0-" + (Get-NewLineBytes UTF32) },
             @{ Name = 'UTF7'; Bytes = "116-43-65-79-107-45-115-116-" + (Get-NewLineBytes UTF7) },
@@ -94,24 +95,21 @@ Describe "Encoding classes and methods are available" -Tag CI {
 
     It "Encoding for '<Name>' should create file with proper encoding" -TestCase $contentTests {
         param ( $Name, $Bytes )
-        $str = "t" + [char]233 + "st"
-        $str | out-file -encoding $Name $testFile
+        $testString | out-file -encoding $Name $testFile
         Get-FileBytes $testFile | should be $Bytes
     }
 
     It "Setting PSDefaultFileEncoding to '<Name>' should create file with proper encoding" -TestCase $contentTests {
         param ( $Name, $Bytes )
-        $str = "t" + [char]233 + "st"
         $PSDefaultFileEncoding = $Name
-        $str | out-file $testFile
+        $testString | out-file $testFile
         Get-FileBytes $testFile | should be $Bytes
     }
 
     It "Explicit encoding is not overridden by setting PSDefaultFileEncoding to '<Name>'" -TestCase $contentTests {
         param ( $Name, $Bytes )
-        $str = "t" + [char]233 + "st"
         $PSDefaultFileEncoding = $Name
-        $str | out-file -encoding ascii $testFile
+        $testString | out-file -encoding ascii $testFile
         Get-FileBytes $testFile | should be "116-63-115-116-10"
     }
 
@@ -146,7 +144,12 @@ Describe "Encoding classes and methods are available" -Tag CI {
             finally {
                 $PSDefaultFileEncoding = "Unknown"
             }
-            Get-FileBytes $TESTDRIVE/${testString}.psd1 -count 10 | should match "255-254-35-0-10-0-35-0-32-0"
+            # we know what the encoding should be
+            $legacyEncoding = [System.Text.Encoding]::Unicode
+            $newLineBytes = $legacyEncoding.GetBytes([Environment]::NewLine)
+            $newLineByteString = $newLineBytes -join "-"
+            $expected = "255-254-35-0-${newLineByteString}-35-0-32-0"
+            Get-FileBytes $TESTDRIVE/${testString}.psd1 -count 10 | should match $expected
         }
 
         It "Out-File creates properly encoded files" {
