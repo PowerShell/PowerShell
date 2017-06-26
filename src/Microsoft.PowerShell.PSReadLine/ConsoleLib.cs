@@ -1075,11 +1075,11 @@ namespace Microsoft.PowerShell.Internal
                 // TODO: use escape sequences for better perf
                 var nextForegroundColor = buffer[i].ForegroundColor;
                 var nextBackgroundColor = buffer[i].BackgroundColor;
-                if (lastForegroundColor != nextForegroundColor)
+                if (nextForegroundColor != lastForegroundColor)
                 {
                     Console.ForegroundColor = lastForegroundColor = nextForegroundColor;
                 }
-                if (lastBackgroundColor != nextBackgroundColor)
+                if (nextBackgroundColor != lastBackgroundColor)
                 {
                     Console.BackgroundColor = lastBackgroundColor = nextBackgroundColor;
                 }
@@ -1087,13 +1087,13 @@ namespace Microsoft.PowerShell.Internal
                 Console.Write(buffer[i].UnicodeChar);
             }
 
-            if (backgroundColor != lastBackgroundColor)
-            {
-                Console.BackgroundColor = backgroundColor;
-            }
             if (foregroundColor != lastForegroundColor)
             {
                 Console.ForegroundColor = foregroundColor;
+            }
+            if (backgroundColor != lastBackgroundColor)
+            {
+                Console.BackgroundColor = backgroundColor;
             }
         }
 
