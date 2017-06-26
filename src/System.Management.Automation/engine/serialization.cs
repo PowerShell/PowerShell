@@ -4026,6 +4026,7 @@ namespace System.Management.Automation
             xrs.IgnoreProcessingInstructions = true;
             xrs.IgnoreWhitespace = false;
             xrs.MaxCharactersFromEntities = 1024;
+            xrs.XmlResolver = null;
             //xrs.DtdProcessing = DtdProcessing.Prohibit; //because system.management.automation needs to build as 2.0
             //xrs.ProhibitDtd = true;
 #if !CORECLR
@@ -4033,7 +4034,6 @@ namespace System.Management.Automation
             xrs.Schemas = null;
             xrs.ValidationFlags = System.Xml.Schema.XmlSchemaValidationFlags.None;
             xrs.ValidationType = ValidationType.None;
-            xrs.XmlResolver = null;
 #endif
             return xrs;
         }
@@ -4051,6 +4051,7 @@ namespace System.Management.Automation
             settings.IgnoreWhitespace = true;
             settings.MaxCharactersFromEntities = 1024;
             settings.MaxCharactersInDocument = 512 * 1024 * 1024; // 512M characters = 1GB
+            settings.XmlResolver = null;
 
 #if CORECLR // DtdProcessing.Parse Not In CoreCLR
             settings.DtdProcessing = DtdProcessing.Ignore;
@@ -4058,7 +4059,6 @@ namespace System.Management.Automation
             settings.DtdProcessing = DtdProcessing.Parse;   // Allowing DTD parsing with limits of MaxCharactersFromEntities/MaxCharactersInDocument
             settings.ValidationFlags = System.Xml.Schema.XmlSchemaValidationFlags.None;
             settings.ValidationType = ValidationType.None;
-            settings.XmlResolver = null;
 #endif
             return settings;
         }

@@ -89,9 +89,7 @@ namespace System.Management.Automation.Remoting
                 IgnoreComments = true,
                 IgnoreProcessingInstructions = true,
                 MaxCharactersInDocument = 10000,
-#if !CORECLR // No XmlReaderSettings.XmlResolver in CoreCLR
                 XmlResolver = null,
-#endif
                 ConformanceLevel = ConformanceLevel.Fragment
             };
 
