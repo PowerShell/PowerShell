@@ -100,8 +100,7 @@ namespace Microsoft.PowerShell
     {
 
         /// <summary>
-        /// Return the default PowerShell encoding
-        /// which is UTF8 without a BOM.
+        /// Return the default PowerShell encoding which is UTF8 without a BOM.
         /// There is no distinction between platforms
         /// </summary>
         public static Encoding GetDefaultEncoding()
@@ -226,27 +225,8 @@ namespace Microsoft.PowerShell
             return encodingPreference;
         }
 
-        /*
         /// <summary>
         /// Retrieve the encoding in a provider context
-        ///
-        /// </summary>
-        public static Encoding GetProviderEncoding(NavigationCmdletProvider provider, FileEncoding encoding)
-        {
-            Encoding resolvedEncoding = GetDefaultEncoding();
-            FileEncoding encodingPreference = GetEncodingPreference(provider.SessionState);
-
-            if ( encoding != FileEncoding.Unknown )
-            {
-                resolvedEncoding = GetEncoding(encoding);
-            }
-            return resolvedEncoding;
-        }
-        */
-
-        /// <summary>
-        /// Retrieve the encoding in a provider context
-        ///
         /// </summary>
         public static Encoding GetProviderEncoding(CmdletProvider provider, FileEncoding encoding)
         {
@@ -275,7 +255,6 @@ namespace Microsoft.PowerShell
             bool preferenceSetAndValid = false;
             string name = cmdlet.GetType().FullName.ToLower(CultureInfo.InvariantCulture);
 
-
             // An encoding has been specified as a parameter (or the explicit parameter value is "Unknown")
             if ( encoding != FileEncoding.Unknown )
             {
@@ -291,10 +270,10 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                // the parameter is not specifically set
-                // Check the preference variable
+                // the parameter is not specifically set, so check the preference variable
                 encodingPreference = GetEncodingPreference(cmdlet.Context.SessionState);
-                preferenceSetAndValid = encodingPreference != FileEncoding.Unknown; // If set to unknown, we accept that it is unset
+                // If set to unknown, we accept that it is unset
+                preferenceSetAndValid = encodingPreference != FileEncoding.Unknown; 
                 // If the encoding preference has been set to WindowsLegacy, we need to look up the actual encoding
                 if ( encodingPreference == FileEncoding.WindowsLegacy )
                 {
@@ -304,11 +283,10 @@ namespace Microsoft.PowerShell
                 {
                     resolvedEncoding = GetEncoding(encodingPreference);
                 }
-                // the final else would be set the encoding to GetDefaultEncoding()
-                // which was handled above
+                // the final else would be set the encoding to GetDefaultEncoding() which was handled above
             }
 
-            return resolvedEncoding; // GetEncoding(FileEncoding.UTF8NoBOM);
+            return resolvedEncoding;
         }
 
         // [System.Text.Encoding]::GetEncodings() | ? { $_.GetEncoding().GetPreamble() } |
@@ -330,8 +308,9 @@ namespace Microsoft.PowerShell
             (char) 21, (char) 22, (char) 23, (char) 24, (char) 25, (char) 26, (char) 28, (char) 29, (char) 30,
             (char) 31, (char) 127, (char) 129, (char) 141, (char) 143, (char) 144, (char) 157 };
 
+        internal static readonly UTF8Encoding utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+
         // take a look at the file contents and guess at the best encoding
-        //
         internal static FileEncoding GetEncoding(string path)
         {
             if (!File.Exists(path))

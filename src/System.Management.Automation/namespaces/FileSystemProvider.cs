@@ -7442,73 +7442,6 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    /// <summary>
-    /// Defines the values that can be supplied as the encoding parameter in the
-    /// FileSystemContentDynamicParametersBase class.
-    /// </summary>
-    public enum FileSystemCmdletProviderEncoding
-    {
-        /// <summary>
-        /// No encoding.
-        /// </summary>
-        Unknown,
-
-        /// <summary>
-        /// Unicode encoding.
-        /// </summary>
-        String,
-
-        /// <summary>
-        /// Unicode encoding.
-        /// </summary>
-        Unicode,
-
-        /// <summary>
-        /// Byte encoding.
-        /// </summary>
-        Byte,
-
-        /// <summary>
-        /// Big Endian Unicode encoding.
-        /// </summary>
-        BigEndianUnicode,
-
-        /// <summary>
-        /// UTF8 encoding.
-        /// </summary>
-        UTF8,
-
-        /// <summary>
-        /// UTF7 encoding.
-        /// </summary>
-        UTF7,
-
-        /// <summary>
-        /// UTF32 encoding.
-        /// </summary>
-        UTF32,
-
-        /// <summary>
-        /// ASCII encoding.
-        /// </summary>
-        Ascii,
-
-        /// <summary>
-        /// Default encoding.
-        /// </summary>
-        Default,
-
-        /// <summary>
-        /// OEM encoding.
-        /// </summary>
-        Oem,
-
-        /// <summary>
-        /// Big Endian UTF32 encoding.
-        /// </summary>
-        BigEndianUTF32,
-    } // FileSystemCmdletProviderEncoding
-
     #endregion
 
     #region Dynamic Parameters
@@ -7612,7 +7545,6 @@ namespace Microsoft.PowerShell.Commands
         /// reading data from the file.
         /// </summary>
         [Parameter]
-        // public FileSystemCmdletProviderEncoding Encoding { get; set; } = FileSystemCmdletProviderEncoding.String;
         public FileEncoding Encoding { get; set; } = FileEncoding.Unknown;
 
         /// <summary>

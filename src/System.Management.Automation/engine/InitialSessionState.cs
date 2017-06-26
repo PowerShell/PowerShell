@@ -15,6 +15,7 @@ using System.Management.Automation.Provider;
 using System.Management.Automation.Language;
 using System.Reflection;
 using System.Threading;
+using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
 using Debug = System.Management.Automation.Diagnostics;
 using System.Management.Automation.Host;
@@ -4828,7 +4829,7 @@ end
         internal const ActionPreference defaultVerbosePreference = ActionPreference.SilentlyContinue;
         internal const ActionPreference defaultWarningPreference = ActionPreference.Continue;
         internal const ActionPreference defaultInformationPreference = ActionPreference.SilentlyContinue;
-        internal const Microsoft.PowerShell.FileEncoding defaultFileEncodingPreference = Microsoft.PowerShell.FileEncoding.Unknown;
+        internal const Microsoft.PowerShell.FileEncoding defaultFileEncodingPreference = FileEncoding.Unknown;
         internal const bool defaultWhatIfPreference = false;
         internal const ConfirmImpact defaultConfirmPreference = ConfirmImpact.High;
 

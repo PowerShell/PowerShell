@@ -20,6 +20,7 @@ using System.Threading;
 using System.Security;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices.ComTypes;
+using Microsoft.PowerShell;
 
 namespace System.Management.Automation
 {
@@ -269,6 +270,7 @@ namespace System.Management.Automation
                                             FileAccess.Read, FileShare.Read);
 
                 // If we successfully get the zone data stream, try to read the ZoneId information
+                // use the method in this class not PowerShellEncoding.
                 using (StreamReader zoneDataReader = new StreamReader(zoneDataSteam, GetDefaultEncoding()))
                 {
                     string line = null;

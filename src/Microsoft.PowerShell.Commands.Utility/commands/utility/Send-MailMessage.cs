@@ -8,6 +8,7 @@ using System.Globalization;
 using System.Net.Mail;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
+using Microsoft.PowerShell;
 
 
 namespace Microsoft.PowerShell.Commands
@@ -492,31 +493,18 @@ namespace Microsoft.PowerShell.Commands
 
     /// <summary>
     /// To make it easier to specify -Encoding parameter, we add an ArgumentTransformationAttribute here.
-    /// When the input data is of type string and is valid to be converted to System.Text.Encoding, we do
-    /// the conversion and return the converted value. Otherwise, we just return the input data.
+    /// When the input data is of type string and is valid to be converted to System.Text.Encoding
+    /// via PowerShellEncoding.GetEncoding(), we do the conversion and return the converted value. 
+    /// Otherwise, we just return the input data.
     /// </summary>
     internal sealed class ArgumentToEncodingNameTransformationAttribute : ArgumentTransformationAttribute
     {
         public override object Transform(EngineIntrinsics engineIntrinsics, object inputData)
         {
-            string encodingName;
-            if (LanguagePrimitives.TryConvertTo<string>(inputData, out encodingName))
+            FileEncoding encoding;
+            if (LanguagePrimitives.TryConvertTo<FileEncoding>(inputData, out encoding))
             {
-                if (string.Equals(encodingName, EncodingConversion.Unknown, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.String, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.Unicode, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.BigEndianUnicode, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.Utf8, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.Utf7, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.Utf32, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.Ascii, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.Default, StringComparison.OrdinalIgnoreCase) ||
-                    string.Equals(encodingName, EncodingConversion.OEM, StringComparison.OrdinalIgnoreCase))
-                {
-                    // the encodingName is guaranteed to be valid, so it is safe to pass null to method
-                    // Convert(Cmdlet cmdlet, string encoding) as the value of 'cmdlet'.
-                    return EncodingConversion.Convert(null, encodingName);
-                }
+                return PowerShellEncoding.GetEncoding(encoding);
             }
             return inputData;
         }

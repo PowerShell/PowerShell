@@ -53,6 +53,7 @@ namespace System.Management.Automation
             MasterStreamOpen(cmdlet, filePath, resolvedEncoding, defaultEncoding, Append, Force, NoClobber, out fileStream, out streamWriter, out readOnlyFileInfo, isLiteralPath);
         }
 
+        /*
         /// <summary>
         /// THE method for opening a file for writing.
         /// Should be used by all cmdlets that write to a file.
@@ -86,6 +87,7 @@ namespace System.Management.Automation
 
             MasterStreamOpen(cmdlet, filePath, resolvedEncoding, defaultEncoding, Append, Force, NoClobber, out fileStream, out streamWriter, out readOnlyFileInfo, isLiteralPath);
         }
+        */
 
         /// <summary>
         /// THE method for opening a file for writing.
@@ -230,6 +232,7 @@ namespace System.Management.Automation
             return new StreamReader(fileStream, PowerShellEncoding.GetEncoding(command, encoding));
         }
 
+        /*
         internal static StreamReader OpenStreamReader(PSCmdlet command, string filePath, string encoding, bool isLiteralPath)
         {
             FileStream fileStream = OpenFileStream(filePath, command, isLiteralPath);
@@ -242,6 +245,7 @@ namespace System.Management.Automation
                 return new StreamReader(fileStream, EncodingConversion.Convert(command, encoding));
             }
         }
+        */
 
         internal static FileStream OpenFileStream(string filePath, PSCmdlet command, bool isLiteralPath)
         {
@@ -479,6 +483,7 @@ namespace System.Management.Automation
         }
     }
 
+    /*
     internal static class EncodingConversion
     {
         internal const string Unknown = "unknown";
@@ -558,4 +563,5 @@ namespace System.Management.Automation
             return null;
         }
     }
+    */
 }
