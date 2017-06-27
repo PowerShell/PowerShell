@@ -1514,7 +1514,7 @@ namespace System.Management.Automation.Remoting.Client
                     if (error == null)
                     {
                         // Stream is closed unexpectedly.
-                        throw new PSInvalidOperationException("SSH abruptly terminated.");
+                        throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHTerminated);
                     }
 
                     if (error.Length == 0)
