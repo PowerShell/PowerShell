@@ -941,7 +941,11 @@ namespace Microsoft.PowerShell.Commands
                 PathUtils.MasterStreamOpen(
                     this,
                     filePath,
-                    EncodingConversion.Unicode,
+#if UNIX
+                    new UTF8Encoding(false), // UTF-8, no BOM
+#else
+                    EncodingConversion.Unicode, // UTF-16 with BOM
+#endif
                     /* defaultEncoding */ false,
                     /* Append */ false,
                     /* Force */ false,
@@ -1167,5 +1171,5 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 
-    #endregion
+#endregion
 } // Microsoft.PowerShell.Commands
