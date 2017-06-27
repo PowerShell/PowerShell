@@ -1280,6 +1280,7 @@ namespace System.Management.Automation.Language
                     if (i == 0)
                     {
                         // Sequence must have at least one hex char.
+                        Release(sb);
                         IScriptExtent errorExtent = NewScriptExtent(escSeqStartIndex, _currentIndex);
                         ReportError(errorExtent, () => ParserStrings.InvalidUnicodeEscapeSequence);
                         return s_invalidChar;
@@ -1291,6 +1292,7 @@ namespace System.Management.Automation.Language
                 {
                     UngetChar();
 
+                    Release(sb);
                     ReportError(_currentIndex,
                         i < s_maxNumberOfUnicodeHexDigits
                             ? (Expression<Func<string>>)(() => ParserStrings.InvalidUnicodeEscapeSequence)
@@ -1300,6 +1302,7 @@ namespace System.Management.Automation.Language
                 else if (i == s_maxNumberOfUnicodeHexDigits) {
                     UngetChar();
 
+                    Release(sb);
                     ReportError(_currentIndex, () => ParserStrings.TooManyDigitsInUnicodeEscapeSequence);
                     return s_invalidChar;
                 }
