@@ -118,8 +118,8 @@ If you have any problems building, please consult the developer [FAQ][].
 [tv-nightly-image]: https://jimtru1979.blob.core.windows.net/badges/DailyBuildStatus.svg
 [av-nightly-image]: https://ci.appveyor.com/api/projects/status/46yd4jogtm2jodcq?svg=true
 [av-nightly-site]: https://ci.appveyor.com/project/PowerShell/powershell-f975h
-[cc-site]: https://coveralls.io/github/PowerShell/PowerShell?branch=master
-[cc-image]: https://coveralls.io/repos/github/PowerShell/PowerShell/badge.svg?branch=master
+[cc-site]: https://codecov.io/gh/PowerShell/PowerShell
+[cc-image]: https://codecov.io/gh/PowerShell/PowerShell/branch/master/graph/badge.svg
 
 ## Downloading the Source Code
 
