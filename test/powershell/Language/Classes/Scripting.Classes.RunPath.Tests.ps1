@@ -1,4 +1,4 @@
-Describe "Script with a class definition run path" {
+Describe "Script with a class definition run path" -Tags "CI" {
 
     $TestCases = @(
         @{ FileName =  'MyTest.ps1'; Name = 'path without a comma' }
