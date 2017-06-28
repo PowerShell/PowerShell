@@ -1,6 +1,6 @@
-Describe "Script with a class definition run path" {
+Describe "Script with a class definition run path" -Tags "CI" {
 
-    It "Script with a class definition can run from a path without a comma" -Tags "CI" {
+    It "Script with a class definition can run from a path without a comma" {
 
         $FilePath = '.\MyTest.ps1'
 
@@ -20,7 +20,7 @@ Describe "Script with a class definition run path" {
         $Success | Should Be $True
     }
 
-    It "Script with a class definition can run from a path with a comma" -Tags "CI" {
+    It "Script with a class definition can run from a path with a comma" {
 
         $FilePath = '.\My,Test.ps1'
 
