@@ -12,6 +12,7 @@ using System.Management.Automation.Internal;
 using System.Net;
 using System.Text;
 using Microsoft.PowerShell.Commands.Internal.Format;
+using System.Collections.Generic;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -228,6 +229,54 @@ namespace Microsoft.PowerShell.Commands
         private string[] _preContent;
 
         /// <summary>
+        /// Specifies the meta data to be included in
+        /// HTML Head tag
+        /// </summary>
+        // [Parameter(ParameterSetName = "Page")]
+        // public string[] Meta
+        // {
+        //     get
+        //     {
+        //         return _meta;
+        //     }
+        //     set
+        //     {
+        //         foreach(var i in value)
+        //         {
+
+        //         }
+        //         _metaName = ;
+        //         _metaProperty  = ;
+        //         _metaSpecified = true;
+        //     }
+        // }
+        // private string[] _meta;
+        // private bool _metaSpecified;
+
+        /// <summary>
+        /// Specifies the charset
+        /// Assumes HTML5
+        /// </summary>
+        [Parameter(ParameterSetName = "Page")]
+        public string Charset
+        {
+            get
+            {
+                return _charset;
+            }
+            set
+            {
+                _charset = value;
+                if(value != "None" || value != "none")
+                {
+                    _charsetSpecified = false;
+                }
+            }
+        }
+        private string _charset = "UTF-8";
+        private bool _charsetSpecified = true;
+
+        /// <summary>
         /// definitions for hash table keys
         /// </summary>
         internal static class ConvertHTMLParameterDefinitionKeys
@@ -378,6 +427,17 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteObject("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
                 WriteObject("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
+                if(_charsetSpecified)
+                {
+                    WriteObject("<meta charset= " + _charset + ">");
+                }
+                if(_metaSpecified)
+                {
+                    foreach(var i in _meta)
+                    {
+                        WriteObject("<meta ");
+                    }
+                }
                 WriteObject("<head>");
                 WriteObject(_head ?? new string[] { "<title>" + _title + "</title>" }, true);
                 if (_cssuriSpecified)
