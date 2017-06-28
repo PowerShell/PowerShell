@@ -42,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
         /// <summary>
         /// Construct a new InodeTracker
         /// </summary>
-        public InodeTracker()
+        internal InodeTracker()
         {
             _visitations = new Dictionary<(UInt64, UInt64), bool>();
         }
@@ -52,7 +52,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="path">Path to the file or directory to be checked.</param>
         /// <returns>True if the path has been visited, false otherwise</returns>
-        public bool Visited(string path)
+        internal bool IsPathVisited(string path)
         {
             var inodeData = (0UL, 0UL);
 
@@ -68,19 +68,13 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         /// <param name="path">Path to the file or directory to be marked as visited.</param>
         /// <returns>True if the path was successfully added to the visited list, false otherwise</returns>
-        public bool Visit(string path)
+        internal void VisitPath(string path)
         {
             var inodeData = (0UL, 0UL);
 
             if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out inodeData))
             {
                 _visitations[inodeData] = true;
-
-                return true;
-            }
-            else
-            {
-                return false;
             }
         }
     }
@@ -1597,9 +1591,13 @@ namespace Microsoft.PowerShell.Commands
                     DirectoryInfo directory = new DirectoryInfo(path);
                     InodeTracker tracker = null;
 
-                    if (recurse && Context.MyInvocation.BoundParameters.ContainsKey("FollowSymlink"))
+                    GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
+                    if (fspDynamicParam != null)
                     {
-                        tracker = new InodeTracker();
+                        if (fspDynamicParam.FollowSymlink)
+                        {
+                            tracker = new InodeTracker();
+                        }
                     }
 
                     // Enumerate the directory
@@ -1676,7 +1674,7 @@ namespace Microsoft.PowerShell.Commands
             ReturnContainers returnContainers)
         {
             if (tracker != null)
-                tracker.Visit(directory.FullName);
+                tracker.VisitPath(directory.FullName);
 
             List<IEnumerable<FileSystemInfo>> target = new List<IEnumerable<FileSystemInfo>>();
 
@@ -1868,7 +1866,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             else
                             {
-                                if (tracker.Visited(recursiveDirectory.FullName))
+                                if (tracker.IsPathVisited(recursiveDirectory.FullName))
                                 {
                                     WriteWarning(StringUtil.Format(FileSystemProviderStrings.AlreadyListedDirectory,
                                                                 recursiveDirectory.FullName));
@@ -7561,6 +7559,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public FlagsExpression<FileAttributes> Attributes { get; set; }
+
+        /// <summary>
+        /// Gets or sets the flag to follow symbolic links when recursing.
+        ///
+        [Parameter]
+        public SwitchParameter FollowSymlink { get; set; }
 
         /// <summary>
         /// Gets or sets the filter directory flag

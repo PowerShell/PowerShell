@@ -340,6 +340,6 @@
     <value>Cannot create symbolic link because the path {0} already exists.</value>
   </data>
   <data name="AlreadyListedDirectory" xml:space="preserve">
-    <value>Not listing already-visited directory {0}.</value>
+    <value>Skip already-visited directory {0}.</value>
   </data>
 </root>
