@@ -613,19 +613,18 @@ namespace Microsoft.PowerShell.Commands
             Guid? savedBaseGuid = BaseGuid;
 
             var importingModule = 0 != (manifestProcessingFlags & ManifestProcessingFlags.LoadElements);
-
+            string extension = Path.GetExtension(moduleSpecification.Name);
             // First check for fully-qualified paths - either absolute or relative
             string rootedPath = ResolveRootedFilePath(moduleSpecification.Name, this.Context);
             if (String.IsNullOrEmpty(rootedPath))
             {
-                rootedPath = Path.Combine(moduleBase, moduleSpecification.Name);
+                rootedPath = FixupFileName(moduleBase, moduleSpecification.Name, extension);
             }
             else
             {
                 wasRooted = true;
             }
 
-            string extension = Path.GetExtension(moduleSpecification.Name);
             try
             {
                 this.Context.Modules.IncrementModuleNestingDepth(this, rootedPath);
