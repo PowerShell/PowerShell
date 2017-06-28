@@ -1514,7 +1514,7 @@ namespace System.Management.Automation.Remoting.Client
                     if (error == null)
                     {
                         // Stream is closed unexpectedly.
-                        throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHTerminated);
+                        throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
                     }
 
                     if (error.Length == 0)
