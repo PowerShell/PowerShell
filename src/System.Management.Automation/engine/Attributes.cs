@@ -1118,7 +1118,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the custom error message pattern that is displayed to the user.
-        /// 
+        ///
         /// The text representation of the object being validated and the validating regex is passed as
         /// the first and second formatting parameters to the ErrorMessage formatting pattern.
         /// <example>
@@ -1180,10 +1180,10 @@ namespace System.Management.Automation
     {
         /// <summary>
         /// Gets or sets the custom error message that is displayed to the user.
-        /// 
+        ///
         /// The item being validated and the validating scriptblock is passed as the first and second
         /// formatting argument.
-        /// 
+        ///
         /// <example>
         /// [ValidateScript("$_ % 2", ErrorMessage = "The item '{0}' did not pass validation of script '{1}'")]
         /// </example>
@@ -1357,7 +1357,7 @@ namespace System.Management.Automation
     }
 
     /// <summary>
-    /// Base class for all valid values generators with cache support.
+    /// Optional base class for <see cref="IValidateSetValuesGenerator"/> implementations that want a default implementation to cache valid values.
     /// </summary>
     public abstract class CachedValidValuesGeneratorBase : IValidateSetValuesGenerator
     {
@@ -1368,18 +1368,19 @@ namespace System.Management.Automation
         /// Sets a time interval in seconds to reset the '_validValues' dynamic valid values cache.
         /// By default 'ValidValuesCacheExpiration = 0' and no valid values is cached (is re-evaluated every time it is used).
         /// </summary>
-        public int ValidValuesCacheExpiration { 
+        protected int ValidValuesCacheExpiration {
             get
             {
-                return _ValidValuesCacheExpiration / 1000;
+                return _validValuesCacheExpiration / 1000;
             }
             set
             {
-                _ValidValuesCacheExpiration = value * 1000;
+                _validValuesCacheExpiration = value * 1000;
             }
         }
 
-        private int _ValidValuesCacheExpiration;
+        private int _validValuesCacheExpiration;
+
         /// <summary>
         /// Abstract method to generate a valid values.
         /// </summary>
@@ -1403,14 +1404,14 @@ namespace System.Management.Automation
             if (validValuesNoCache == null)
             {
                 throw new ValidationMetadataException(
-                    "ValidateSetGeneratedValidValuesListIsEmpty",
+                    "ValidateSetGeneratedValidValuesListIsNull",
                     null,
-                    Metadata.ValidateSetGeneratedValidValuesListIsEmpty);
+                    Metadata.ValidateSetGeneratedValidValuesListIsNull);
             }
 
-            if (ValidValuesCacheExpiration > 0)
+            if (_validValuesCacheExpiration > 0)
             {
-                Task.Delay(ValidValuesCacheExpiration).ContinueWith((task) => _validValues = null);
+                Task.Delay(_validValuesCacheExpiration).ContinueWith((task) => _validValues = null);
                 _validValues = validValuesNoCache;
             }
 
@@ -1435,10 +1436,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Gets or sets the custom error message that is displayed to the user
-        /// 
+        ///
         /// The item being validated and a text representation of the validation set
         /// is passed as the first and second formatting argument to the ErrorMessage formatting pattern.
-        /// 
+        ///
         /// <example>
         /// [ValidateSet("A","B","C", ErrorMessage="The item '{0}' is not part of the set '{1}'.")
         /// </example>
@@ -1471,9 +1472,9 @@ namespace System.Management.Automation
                 if (validValuesLocal == null)
                 {
                     throw new ValidationMetadataException(
-                        "ValidateSetGeneratedValidValuesListIsEmpty",
+                        "ValidateSetGeneratedValidValuesListIsNull",
                         null,
-                        Metadata.ValidateSetGeneratedValidValuesListIsEmpty);
+                        Metadata.ValidateSetGeneratedValidValuesListIsNull);
                 }
 
                 return validValuesLocal;

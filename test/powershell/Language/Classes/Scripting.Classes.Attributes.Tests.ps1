@@ -307,7 +307,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
             $exc = {
                 Get-TestValidateSet5 -Param1 "TestString1" -ErrorAction Stop
             } | ShouldBeErrorId "ParameterArgumentValidationError,Test.Language.TestValidateSetCommand5"
-            $exc.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should BeExactly "ValidateSetGeneratedValidValuesListIsEmpty"
+            $exc.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should BeExactly "ValidateSetGeneratedValidValuesListIsNull"
         }
     }
 
@@ -395,7 +395,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
             $exc = {
                 Get-TestValidateSetPS5 -Param1 "TestString1" -ErrorAction Stop
             } | ShouldBeErrorId "ParameterArgumentValidationError,Get-TestValidateSetPS5"
-            $exc.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should BeExactly "ValidateSetGeneratedValidValuesListIsEmpty"
+            $exc.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should BeExactly "ValidateSetGeneratedValidValuesListIsNull"
         }
 
         It 'Unimplemented valid values generator type throws in PowerShell script' {
@@ -465,7 +465,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
             Get-TestValidateSetPS4 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
         }
 
-        It 'Can implement CachedValidValuesGeneratorBase in PowerShell' {
+        It 'Can implement CachedValidValuesGeneratorBase with cache expiration in PowerShell' {
             Get-TestValidateSetPS5 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
             Get-TestValidateSetPS5 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
             Start-Sleep 2
