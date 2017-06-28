@@ -93,4 +93,19 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $paths -contains $fakePSHomeModuleDir | Should Be $true
         $paths -contains $customeModules | Should Be $true
     }
+
+    It "Default PowerShell profile appends Windows PowerShell PSModulePath only on Windows" {
+
+        $psmodulepath = & $powershell -nologo -c '$env:PSModulePath'
+
+        if ($IsWindows)
+        {
+            $psmodulepath[0] | Should Match "Warning"  # for Windows, there is a warning that path being appended
+            $psmodulepath[1] | Should Match "WindowsPowerShell"
+        }
+        else
+        {
+            $psmodulepath[0] | Should Not Match "WindowsPowerShell"
+        }
+    }
 }
