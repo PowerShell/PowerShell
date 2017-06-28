@@ -1511,11 +1511,6 @@ namespace System.Management.Automation.Remoting.Client
                 while (true)
                 {
                     string error = ReadError(reader);
-                    if (error == null)
-                    {
-                        // Stream is closed unexpectedly.
-                        throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
-                    }
 
                     if (error.Length == 0)
                     {
@@ -1561,7 +1556,8 @@ namespace System.Management.Automation.Remoting.Client
 
             if (error == null)
             {
-                return error;
+                // Stream is closed unexpectedly.
+                throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
             }
 
             if ((error.Length == 0) ||
