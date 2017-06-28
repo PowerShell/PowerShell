@@ -129,6 +129,18 @@
   <data name="IncompleteString" xml:space="preserve">
     <value>Incomplete string token.</value>
   </data>
+  <data name="InvalidUnicodeEscapeSequence" xml:space="preserve">
+    <value>The Unicode escape sequence is not valid. A valid sequence is `u{ followed by one to six hex digits and a closing '}'.</value>
+  </data>
+  <data name="InvalidUnicodeEscapeSequenceValue" xml:space="preserve">
+    <value>The Unicode escape sequence value is out of range. The maximum value is 0x10FFFF.</value>
+  </data>
+  <data name="MissingUnicodeEscapeSequenceTerminator" xml:space="preserve">
+    <value>The Unicode escape sequence is missing the closing '}'.</value>
+  </data>
+  <data name="TooManyDigitsInUnicodeEscapeSequence" xml:space="preserve">
+    <value>The Unicode escape sequence contains more than the maximum of six hex digits between braces.</value>
+  </data>
   <data name="NumberBothLongAndFloatingPoint" xml:space="preserve">
     <value>A number cannot be both a long and floating point.</value>
   </data>
