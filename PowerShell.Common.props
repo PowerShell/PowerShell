@@ -19,4 +19,64 @@
     <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
   </PropertyGroup>
+
+  <Target Name="GetPS6VersionFromGit"
+      BeforeTargets="BeforeBuild">
+
+    <PropertyGroup>
+      <GitExe>git</GitExe>
+    </PropertyGroup>
+
+    <Exec Command='$(GitExe) rev-parse --show-cdup' ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="GitCDUP" />
+    </Exec>
+
+    <PropertyGroup>
+      <GitInfoBaseDir Condition="'$(GitInfoBaseDir)' == ''">$(MSBuildProjectDirectory)/$(GitCDUP)/.git</GitInfoBaseDir>
+    </PropertyGroup>
+
+    <Exec Command='$(GitExe) --git-dir="$(GitInfoBaseDir)" describe --abbrev=60 --long' ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="PowerShellVersion" />
+    </Exec>
+  
+  <PropertyGroup>
+    <RegexGitVersion>^v(.+)-(\d+)-g(.+)</RegexGitVersion>
+    <PS6BuildVersion>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[1].Value)</PS6BuildVersion>
+    <PS6AdditionalCommits>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[2].Value)</PS6AdditionalCommits>
+    <PS6CommitSHA>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[3].Value)</PS6CommitSHA>
+
+    <RegexSymVer>^(\d+).(\d+).(\d+)-(.+)</RegexSymVer>
+    <PS6MajorVersion>$([System.Text.RegularExpressions.Regex]::Match($(PS6BuildVersion), $(RegexSymVer)).Groups[1].Value)</PS6MajorVersion>
+    <PS6MinorVersion>$([System.Text.RegularExpressions.Regex]::Match($(PS6BuildVersion), $(RegexSymVer)).Groups[2].Value)</PS6MinorVersion>
+    <PS6PatchVersion>$([System.Text.RegularExpressions.Regex]::Match($(PS6BuildVersion), $(RegexSymVer)).Groups[3].Value)</PS6PatchVersion>
+    <PS6LabelVersion>$([System.Text.RegularExpressions.Regex]::Match($(PS6BuildVersion), $(RegexSymVer)).Groups[4].Value)</PS6LabelVersion>
+
+    <PS6FormattedVersion Condition="'$(PS6AdditionalCommits)' == ''">$(PS6BuildVersion) SHA: $(PS6CommitSHA)</PS6FormattedVersion>
+    <PS6FormattedVersion Condition="'$(PS6FormattedVersion)' == ''">$(PS6BuildVersion) Commits: $(PS6AdditionalCommits) SHA: $(PS6CommitSHA)</PS6FormattedVersion>
+
+    <ProductVersion>$(PS6BuildVersion)</ProductVersion>
+    <!-- PackageVersion>$(PS6BuildVersion)</PackageVersion -->
+    <InformationalVersion>$(PS6FormattedVersion)</InformationalVersion>
+
+  </PropertyGroup>
+
+   <!-- WriteLinesToFile File="debugtargetfile.txt"
+        Lines="PowerShellVersion=$(PowerShellVersion); 
+               PS6BuildVersion = $(PS6BuildVersion); 
+               PS6AdditionalCommits = $(PS6AdditionalCommits);
+               PS6CommitSHA = $(PS6CommitSHA); 
+               PS6MajorVersion = $(PS6MajorVersion);
+               PS6MinorVersion = $(PS6MinorVersion);
+               PS6PatchVersion = $(PS6PatchVersion);
+               PS6LabelVersion = $(PS6LabelVersion);
+               GitCDUP = $(GitCDUP);
+               RegexGitVersion = $(RegexGitVersion);
+               PS6FormattedVersion = $(PS6FormattedVersion);
+               ProductVersion = $(ProductVersion);
+               InformationalVersion = $(InformationalVersion);
+              "
+        Overwrite="true"/ -->
+
+  </Target>
+
 </Project>
