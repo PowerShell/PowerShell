@@ -1360,7 +1360,6 @@ namespace Microsoft.PowerShell.Commands
         protected void CreateHelpersForSpecifiedSSHHashComputerNames()
         {
             var sshConnections = ParseSSHConnectionHashTable();
-            var remoteRunspaces = new List<RemoteRunspace>();
             foreach (var sshConnection in sshConnections)
             {
                 var sshConnectionInfo = new SSHConnectionInfo(
