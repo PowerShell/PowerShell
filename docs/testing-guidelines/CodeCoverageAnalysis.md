@@ -72,7 +72,7 @@ The following table shows the status for the above commit, dated 06/18/2017
 
 #### CoreCLR
 
-- [ ] Lots of non-windows code can be ifdef'ed out.
+- [ ] Lots of non-windows code can be ifdef'ed out. Issue #[3565](https://github.com/PowerShell/PowerShell/issues/3565)
 
 #### CIMSupport
 
@@ -85,7 +85,7 @@ The following table shows the status for the above commit, dated 06/18/2017
 - [ ] Add tests for Import-Module / Get-Module over PSRP and CIMSession.
 - [ ] Add tests for debugging PS Jobs.
 - [ ] Add test for -is, -isnot, -contains, -notcontains and -like operators.
-- [ ] Remove Snapin code from CommandDiscovery
+- [ ] Remove Snapin code from CommandDiscovery. Issue #[4118](https://github.com/PowerShell/PowerShell/issues/4118)
 - [ ] Add tests SessionStateItem, SessionStateContainer error cases, dynamic parameters. Coverage possibly added by *-Item, *-ChildItem error case tests.
 - [ ] Add tests for Get-Command -ShowCommandInfo
 - [ ] Add tests for Proxy Commands
