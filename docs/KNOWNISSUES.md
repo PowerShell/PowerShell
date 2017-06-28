@@ -60,7 +60,7 @@ See [#954](https://github.com/PowerShell/PowerShell/issues/954) to give us feedb
 PowerShell on Linux/macOS uses .NET Core which is a subset of the full .NET Framework on Microsoft Windows.
 This is significant because PowerShell provides direct access to the underlying framework types, methods, etc.
 As a result, scripts that run on Windows may not run on non-Windows platforms because of the differences in the frameworks.
-For more information about .NET Core Framework, see <https://www.dotnetfoundation.org/netcore>
+For more information about .NET Core Framework, see <https://dotnetfoundation.org/net-core>
 
 With the advent of [.NET Standard 2.0](https://blogs.msdn.microsoft.com/dotnet/2016/09/26/introducing-net-standard/), .NET Core 2.0 will bring back many of the traditional types and methods present in the full .NET Framework.
 This means that PowerShell Core will be able to load many traditional Windows PowerShell modules without modification.
