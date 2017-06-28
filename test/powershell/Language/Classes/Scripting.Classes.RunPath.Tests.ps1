@@ -1,42 +1,21 @@
-Describe "Script with a class definition run path" -Tags "CI" {
+Describe "Script with a class definition run path" {
 
-    It "Script with a class definition can run from a path without a comma" {
+    $TestCases = @(
+        @{ FileName =  'MyTest.ps1'; Name = 'path without a comma' }
+        @{ FileName = 'My,Test.ps1'; Name = 'path with a comma'    }
+    )
 
-        $FilePath = '.\MyTest.ps1'
+    It "Script with a class definition can run from a <Name>" -TestCases $TestCases {
+        param( $FileName )
 
-        try {
-            'class MyClass { [string]$MyProperty }; $True' | Out-File -FilePath $FilePath
-            $Success = . $FilePath
-        }
+        $FilePath = Join-Path -Path $TestDrive -ChildPath $FileName
 
-        catch {
-            $Success = $False
-        }
+@'
+class MyClass { static [string]$MyProperty = 'Some value' }
+[MyClass]::MyProperty
+'@ | Out-File -FilePath $FilePath
 
-        finally {
-            Remove-Item -Path $FilePath
-        }
-
-        $Success | Should Be $True
-    }
-
-    It "Script with a class definition can run from a path with a comma" {
-
-        $FilePath = '.\My,Test.ps1'
-
-        try {
-            'class MyClass { [string]$MyProperty }; $True' | Out-File -FilePath $FilePath
-            $Success = . $FilePath
-        }
-
-        catch {
-            $Success = $False
-        }
-
-        finally {
-            Remove-Item -Path $FilePath
-        }
-
-        $Success | Should Be $True
+        { . $FilePath } | Should Not Throw
+        ( . $FilePath ) | Should Match 'Some value'
     }
 }
