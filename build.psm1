@@ -196,7 +196,7 @@ function Start-PSBuild {
         Write-Warning @"
 The currently installed .NET Command Line Tools is not the required version.
 
-Installed version: $dotnetCLIIntalledVersion 
+Installed version: $dotnetCLIIntalledVersion
 Required version: $dotnetCLIRequiredVersion
 
 Fix steps:
@@ -470,6 +470,12 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
         Copy-Item -Path $refAssemblies -Destination $refDestFolder -Force -ErrorAction Stop
     } finally {
         Pop-Location
+    }
+
+    # copy PowerShell host profile if Windows
+    if ($IsWindows)
+    {
+        Copy-Item -Path "$PSScriptRoot/src/powershell-win-core/Microsoft.PowerShell_profile.ps1" -Destination $publishPath
     }
 
     # download modules from powershell gallery.
