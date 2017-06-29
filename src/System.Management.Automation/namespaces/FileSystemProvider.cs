@@ -67,7 +67,6 @@ namespace Microsoft.PowerShell.Commands
         /// Mark a path as visited.
         /// </summary>
         /// <param name="path">Path to the file or directory to be marked as visited.</param>
-        /// <returns>True if the path was successfully added to the visited list, false otherwise</returns>
         internal void VisitPath(string path)
         {
             var inodeData = (0UL, 0UL);
@@ -1674,7 +1673,9 @@ namespace Microsoft.PowerShell.Commands
             ReturnContainers returnContainers)
         {
             if (tracker != null)
+            {
                 tracker.VisitPath(directory.FullName);
+            }
 
             List<IEnumerable<FileSystemInfo>> target = new List<IEnumerable<FileSystemInfo>>();
 
