@@ -401,7 +401,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
         It 'Unimplemented valid values generator type throws in PowerShell script' {
             {
                 Get-TestValidateSetPS6 -Param1 "AnyTestString" -ErrorAction Stop
-            } | ShouldBeErrorId "CustomValidValuesGeneratorTypeNotFound"
+            } | ShouldBeErrorId "TypeNotFound"
         }
     }
 
@@ -409,6 +409,9 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
 
         BeforeAll {
             class GenValuesForParam : System.Management.Automation.CachedValidValuesGeneratorBase {
+                GenValuesForParam() : base(300) {
+                }
+
                 [String[]] GenerateValidValues() {
 
                     return [string[]]("Test1","TestString1","Test2")
@@ -416,8 +419,7 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
             }
 
             class GenValuesWithExpiration : System.Management.Automation.CachedValidValuesGeneratorBase {
-                GenValuesWithExpiration() : base() {
-                    $this.ValidValuesCacheExpiration = 2
+                GenValuesWithExpiration() : base(2) {
                 }
 
                 Static [bool] $temp = $true;
