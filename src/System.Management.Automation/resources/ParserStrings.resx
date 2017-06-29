@@ -759,9 +759,6 @@ Possible matches are</value>
   <data name="CustomAttributeTypeNotFound" xml:space="preserve">
     <value>Cannot find the type for custom attribute '{0}'. Make sure that the assembly that contains this type is loaded.</value>
   </data>
-  <data name="CustomValidValuesGeneratorTypeNotFound" xml:space="preserve">
-    <value>Cannot find the valid values generator type with name '{0}'. Make sure that the type is defined and implement '{1}' interface.</value>
-  </data>
   <data name="CannotFindConstructorForCustomAttribute" xml:space="preserve">
     <value>Cannot find an appropriate constructor to instantiate the custom attribute object for type '{0}'.</value>
   </data>

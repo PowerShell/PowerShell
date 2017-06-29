@@ -1311,7 +1311,7 @@ namespace System.Management.Automation.Language
                 else
                 {
                     throw InterpreterError.NewInterpreterException(ast, typeof(RuntimeException), ast.Extent,
-                        "CustomValidValuesGeneratorTypeNotFound", ParserStrings.CustomValidValuesGeneratorTypeNotFound, generatorTypeAst.TypeName.FullName, typeof(System.Management.Automation.IValidateSetValuesGenerator).FullName);
+                        "TypeNotFound", ParserStrings.TypeNotFound, generatorTypeAst.TypeName.FullName, typeof(System.Management.Automation.IValidateSetValuesGenerator).FullName);
                 }
             }
             else
@@ -1377,7 +1377,7 @@ namespace System.Management.Automation.Language
             if (attributeType == null)
             {
                 throw InterpreterError.NewInterpreterException(attributeAst, typeof(RuntimeException), attributeAst.Extent,
-                    "CustomAttributeTypeNotFound", ParserStrings.CustomAttributeTypeNotFound, attributeAst.TypeName.FullName);
+                    "TypeNotFound", ParserStrings.TypeNotFound, attributeAst.TypeName.FullName);
             }
 
             Func<AttributeAst, Attribute> generator;
@@ -3018,7 +3018,7 @@ namespace System.Management.Automation.Language
             {
                 var pipeElements = pipelineAst.PipelineElements;
                 var firstCommandExpr = (pipeElements[0] as CommandExpressionAst);
-    
+
                 if (firstCommandExpr != null && pipeElements.Count == 1)
                 {
                     if (firstCommandExpr.Redirections.Count > 0)
@@ -3034,7 +3034,7 @@ namespace System.Management.Automation.Language
                 {
                     Expression input;
                     int i, commandsInPipe;
-    
+
                     if (firstCommandExpr != null)
                     {
                         if (firstCommandExpr.Redirections.Count > 0)
@@ -3055,7 +3055,7 @@ namespace System.Management.Automation.Language
                         // here so that we can tell the difference b/w $null and no input when
                         // starting the pipeline, in other words, PipelineOps.InvokePipe will
                         // not pass this value to the pipe.
-    
+
                         input = ExpressionCache.AutomationNullConstant;
                         i = 0;
                         commandsInPipe = pipeElements.Count;
@@ -3063,16 +3063,16 @@ namespace System.Management.Automation.Language
                     Expression[] pipelineExprs = new Expression[commandsInPipe];
                     CommandBaseAst[] pipeElementAsts = new CommandBaseAst[commandsInPipe];
                     var commandRedirections = new object[commandsInPipe];
-    
+
                     for (int j = 0; i < pipeElements.Count; ++i, ++j)
                     {
                         var pipeElement = pipeElements[i];
                         pipelineExprs[j] = Compile(pipeElement);
-    
+
                         commandRedirections[j] = GetCommandRedirections(pipeElement);
                         pipeElementAsts[j] = pipeElement;
                     }
-    
+
                     // The redirections are passed as a CommandRedirection[][] - one dimension for each command in the pipe,
                     // one dimension because each command may have multiple redirections.  Here we create the array for
                     // each command in the pipe, either a compile time constant or created at runtime if necessary.
@@ -3096,7 +3096,7 @@ namespace System.Management.Automation.Language
                         // No redirections.
                         redirectionExpr = ExpressionCache.NullCommandRedirections;
                     }
-    
+
                     if (firstCommandExpr != null)
                     {
                         var inputTemp = Expression.Variable(input.Type);
@@ -3104,7 +3104,7 @@ namespace System.Management.Automation.Language
                         exprs.Add(Expression.Assign(inputTemp, input));
                         input = inputTemp;
                     }
-    
+
                     Expression invokePipe = Expression.Call(
                         CachedReflectionInfo.PipelineOps_InvokePipeline,
                         input.Cast(typeof(object)),
