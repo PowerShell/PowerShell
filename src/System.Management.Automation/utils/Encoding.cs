@@ -105,7 +105,7 @@ namespace Microsoft.PowerShell
         /// </summary>
         public static Encoding GetDefaultEncoding()
         {
-            return new UTF8Encoding(false);
+            return utf8NoBom;
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Microsoft.PowerShell
 
                 case FileEncoding.UTF8:
                 case FileEncoding.UTF8NoBOM:
-                    result = new UTF8Encoding(false);
+                    result = utf8NoBom;
                     break;
 
                 case FileEncoding.UTF7:
