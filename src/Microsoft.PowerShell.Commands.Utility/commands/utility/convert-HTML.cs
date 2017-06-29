@@ -422,10 +422,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 WriteObject("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
                 WriteObject("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
-                if(_charsetSpecified)
-                {
-                    WriteObject("<meta charset=" + _charset + ">");
-                }
                 //if(_metaSpecified)
                 //{
                 //    foreach(var i in _meta)
@@ -434,6 +430,10 @@ namespace Microsoft.PowerShell.Commands
                 //    }
                 //}
                 WriteObject("<head>");
+                if(_charsetSpecified)
+                {
+                    WriteObject("<meta charset=\"" + _charset + "\">");
+                }
                 WriteObject(_head ?? new string[] { "<title>" + _title + "</title>" }, true);
                 if (_cssuriSpecified)
                 {
