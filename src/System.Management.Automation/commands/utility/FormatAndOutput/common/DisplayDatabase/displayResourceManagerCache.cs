@@ -77,7 +77,10 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 result = LoadingResult.AssemblyNotFound;
                 return null;
             }
-
+            else
+            {
+                resourceReference.assemblyLocation = loadResult.a.Location;
+            };
 
             // load now the resource from the resource manager cache
             try

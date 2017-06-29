@@ -1832,8 +1832,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 case DisplayResourceManagerCache.AssemblyBindingStatus.FoundInPath:
                     {
-                        assemblyDisplayName =
-                            System.IO.Path.Combine(resource.loadingInfo.fileDirectory, resource.assemblyName);
+                        assemblyDisplayName = resource.assemblyLocation;
                     }
                     break;
                 case DisplayResourceManagerCache.AssemblyBindingStatus.FoundInGac:
