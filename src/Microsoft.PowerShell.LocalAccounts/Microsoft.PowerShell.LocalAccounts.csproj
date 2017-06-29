@@ -5,7 +5,6 @@
   <PropertyGroup>
     <Description>PowerShell Core's Microsoft.PowerShell.LocalAccounts project</Description>
     <AssemblyName>Microsoft.PowerShell.LocalAccounts</AssemblyName>
-    <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
   </PropertyGroup>
 
   <ItemGroup>

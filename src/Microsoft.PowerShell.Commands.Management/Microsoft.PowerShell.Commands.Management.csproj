@@ -6,7 +6,6 @@
     <Description>PowerShell Core's Microsoft.PowerShell.Commands.Management project</Description>
     <NoWarn>$(NoWarn);CS1570</NoWarn>
     <AssemblyName>Microsoft.PowerShell.Commands.Management</AssemblyName>
-    <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
   </PropertyGroup>
 
   <ItemGroup>

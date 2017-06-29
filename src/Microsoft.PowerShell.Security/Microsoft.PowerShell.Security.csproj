@@ -5,9 +5,7 @@
   <PropertyGroup>
     <Description>PowerShell Core's Microsoft.PowerShell.Security project</Description>
     <NoWarn>$(NoWarn);CS1570</NoWarn>
-    <DelaySign>true</DelaySign>
     <AssemblyName>Microsoft.PowerShell.Security</AssemblyName>
-    <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
   </PropertyGroup>
 
   <ItemGroup>
