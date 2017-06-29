@@ -804,6 +804,7 @@ namespace System.Management.Automation
                     { typeof(XmlDocument),                                 new[] { "xml" } },
                     { typeof(CimSession),                                  new[] { "CimSession" } },
                     { typeof(MailAddress),                                 new[] { "mailaddress" } },
+                    { typeof(SemanticVersion),                             new[] { "semver" } },
 #if !CORECLR
                     // Following types not in CoreCLR
                     { typeof(DirectoryEntry),                              new[] { "adsi" } },
