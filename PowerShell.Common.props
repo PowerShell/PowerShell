@@ -6,6 +6,7 @@
 
     <FileVersion>6.0.0.0</FileVersion>
     <AssemblyVersion>6.0.0.0</AssemblyVersion>
+    <NeutralLanguage>en-US</NeutralLanguage>
 
     <ProductVersion>6.0.0-beta.3</ProductVersion>
     <InformationalVersion>6.0.0-beta.3</InformationalVersion>
