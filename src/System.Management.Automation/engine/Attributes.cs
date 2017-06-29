@@ -1428,6 +1428,14 @@ namespace System.Management.Automation
         private static ConcurrentDictionary<Type, IValidateSetValuesGenerator> s_ValidValuesGeneratorCache = new ConcurrentDictionary<Type, IValidateSetValuesGenerator>();
 
         /// <summary>
+        /// Clear the valid values generator cache.
+        /// </summary>
+        public static void ClearValidValuesGeneratorCache()
+        {
+             s_ValidValuesGeneratorCache.Clear();
+        }
+
+        /// <summary>
         /// Gets or sets the custom error message that is displayed to the user
         ///
         /// The item being validated and a text representation of the validation set
