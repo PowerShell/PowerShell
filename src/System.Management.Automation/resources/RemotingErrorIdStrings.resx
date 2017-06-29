@@ -1636,4 +1636,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   <data name="InvalidRoleCapabilityFileExtension" xml:space="preserve">
     <value>The provided role capability file {0} does not have the required .psrc extension.</value>
   </data>
+  <data name="SSHAbruptlyTerminated" >
+    <value>The SSH transport process has abruptly terminated causing this remote session to break.</value>
+  </data>
 </root>
