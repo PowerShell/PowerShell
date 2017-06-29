@@ -12,7 +12,6 @@ using System.Management.Automation.Internal;
 using System.Net;
 using System.Text;
 using Microsoft.PowerShell.Commands.Internal.Format;
-using System.Collections.Generic;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -228,10 +227,6 @@ namespace Microsoft.PowerShell.Commands
         }
         private string[] _preContent;
 
-        /// <summary>
-        /// Specifies the meta data to be included in
-        /// HTML Head tag
-        /// </summary>
         // [Parameter(ParameterSetName = "Page")]
         // public string[] Meta
         // {
@@ -267,7 +262,7 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _charset = value;
-                if(value != "None" || value != "none")
+                if(value == "None" || value == "none")
                 {
                     _charsetSpecified = false;
                 }
@@ -429,15 +424,15 @@ namespace Microsoft.PowerShell.Commands
                 WriteObject("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
                 if(_charsetSpecified)
                 {
-                    WriteObject("<meta charset= " + _charset + ">");
+                    WriteObject("<meta charset=" + _charset + ">");
                 }
-                if(_metaSpecified)
-                {
-                    foreach(var i in _meta)
-                    {
-                        WriteObject("<meta ");
-                    }
-                }
+                //if(_metaSpecified)
+                //{
+                //    foreach(var i in _meta)
+                //    {
+                //        WriteObject("<meta ");
+                //    }
+                //}
                 WriteObject("<head>");
                 WriteObject(_head ?? new string[] { "<title>" + _title + "</title>" }, true);
                 if (_cssuriSpecified)
