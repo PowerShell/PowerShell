@@ -134,13 +134,13 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                     sb                      = { function foo { param([ValidateRange("Positive")] [int] $bar) }; foo -1 }
                     RangeType               = "Positive"
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidateRangeTooSmall" 
+                    InnerErrorId            = "ValidateRangePositiveFailure" 
                 }
                 @{ 
                     sb                      = { function foo { param([ValidateRange("Positive")] [int] $bar) }; foo 0 }
                     RangeType               = "Positive"
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidateRangeTooSmall" 
+                    InnerErrorId            = "ValidateRangePositiveFailure" 
                 }
                 @{ 
                     sb                      = { function foo { param([ValidateRange("Positive")] $bar) }; foo "one" }
@@ -152,7 +152,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                     sb                      = { function foo { param([ValidateRange('NonNegative')] [int] $bar) }; foo -1 }
                     RangeType               = "NonNegative"
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidateRangeTooSmall" 
+                    InnerErrorId            = "ValidateRangeNonNegativeFailure" 
                 }
                 @{ 
                    sb                       = { function foo { param([ValidateRange('NonNegative')] $bar) }; foo "one" }
@@ -164,13 +164,13 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                     sb                      = { function foo { param([ValidateRange('Negative')] [int] $bar) }; foo 1 }
                     RangeType               = "Negative"
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidateRangeTooBig" 
+                    InnerErrorId            = "ValidateRangeNegativeFailure" 
                 }
                 @{ 
                     sb                      = { function foo { param([ValidateRange('Negative')] [int] $bar) }; foo 0 }
                     RangeType               = "Negative"
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidateRangeTooBig" 
+                    InnerErrorId            = "ValidateRangeNegativeFailure" 
                 }
                 @{ 
                     sb                      = { function foo { param([ValidateRange('Negative')] $bar) }; foo "one" }
@@ -182,7 +182,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                     sb                      = { function foo { param([ValidateRange('NonPositive')] $bar) }; foo 1 }
                     RangeType               = "NonPositive"
                     FullyQualifiedErrorId   = "ParameterArgumentValidationError,foo"
-                    InnerErrorId            = "ValidateRangeTooBig" 
+                    InnerErrorId            = "ValidateRangeNonPositiveFailure" 
                 }
                 @{
                     sb                      = { function foo { param([ValidateRange('NonPositive')] $bar) }; foo "one" }
@@ -199,7 +199,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                    TestValue    = 15
                 }
                 @{ 
-                   sb           = { function foo { param([ValidateRange("Positive")] $bar) }; foo ([double]::MaxValue) }; 
+                   sb           = { function foo { param([ValidateRange("Positive")] [double]$bar) }; foo ([double]::MaxValue) }; 
                    RangeType    = "Positive"
                    TestValue    = [double]::MaxValue
                 }
@@ -214,7 +214,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                    TestValue    = 15
                 }
                 @{ 
-                   sb           = { function foo { param([ValidateRange('NonNegative')] $bar) }; foo ([double]::MaxValue) }; 
+                   sb           = { function foo { param([ValidateRange('NonNegative')] [double]$bar) }; foo ([double]::MaxValue) }; 
                    RangeType    = "NonNegative"
                    TestValue    = [double]::MaxValue
                 }
@@ -224,7 +224,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                     TestValue   = -15
                 }
                 @{ 
-                    sb          = { function foo { param([ValidateRange('Negative')] $bar) }; foo ([double]::MinValue) }; 
+                    sb          = { function foo { param([ValidateRange('Negative')] [double]$bar) }; foo ([double]::MinValue) }; 
                     TestValue   = [double]::MinValue
                     RangeType   = "Negative"
                 }
@@ -239,7 +239,7 @@ Describe 'Validate Attributes Tests' -Tags 'CI' {
                     TestValue   = -15
                 }
                 @{ 
-                    sb          = { function foo { param([ValidateRange('NonPositive')] $bar) }; foo ([double]::MinValue) }
+                    sb          = { function foo { param([ValidateRange('NonPositive')] [double]$bar) }; foo ([double]::MinValue) }
                     RangeType   = "NonPositive"
                     TestValue   = [double]::MinValue
                 }

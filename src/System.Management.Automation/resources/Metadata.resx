@@ -123,6 +123,18 @@
   <data name="ValidateRangeElementType" xml:space="preserve">
     <value>The argument cannot be validated because its type "{0}" is not the same type ({1}) as the maximum and minimum limits of the parameter. Make sure the argument is of type {1} and then try the command again.</value>
   </data>
+  <data name="ValidateRangePositiveFailure" xml:space="preserve">
+    <value>The argument "{0}" cannot be validated because its value is not greater than zero.</value>
+  </data>
+  <data name="ValidateRangeNonNegativeFailure" xml:space="preserve">
+    <value>The argument "{0}" cannot be validated because its value is not greater than or equal to zero.</value>
+  </data>
+  <data name="ValidateRangeNegativeFailure" xml:space="preserve">
+    <value>The argument "{0}" cannot be validated because its value is not less than zero.</value>
+  </data>
+  <data name="ValidateRangeNonPositiveFailure" xml:space="preserve">
+    <value>The argument "{0}" cannot be validated because its value is not less than or equal to zero.</value>
+  </data>
   <data name="ValidateRangeMinRangeMaxRangeType" xml:space="preserve">
     <value>The specified minimum range ({0}) cannot be accepted because it is not the same type as the specified maximum range ({1}). Update the ValidateRange attribute for the parameter.</value>
   </data>
