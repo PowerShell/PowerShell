@@ -20,7 +20,7 @@ try {
 }
 
 $dotnetCLIChannel = "preview"
-$dotnetCLIRequiredVersion = "2.0.0-preview1-005952"
+$dotnetCLIRequiredVersion = "2.0.0-preview2-006502"
 
 # On Unix paths is separated by colon
 # On Windows paths is separated by semicolon
@@ -1049,7 +1049,15 @@ function Install-Dotnet {
         Remove-Item -ErrorAction SilentlyContinue -Recurse -Force ~\AppData\Local\Microsoft\dotnet
         $installScript = "dotnet-install.ps1"
         Invoke-WebRequest -Uri $obtainUrl/$installScript -OutFile $installScript
-        & ./$installScript -Channel $Channel -Version $Version
+
+        if (-not $IsCoreCLR) {
+            & ./$installScript -Channel $Channel -Version $Version
+        } else {
+            # dotnet-install.ps1 uses APIs that are not supported in .NET Core, so we run it with Windows PowerShell
+            $fullPSPath = Join-Path -Path $env:windir -ChildPath "System32\WindowsPowerShell\v1.0\powershell.exe"
+            $fullDotnetInstallPath = Join-Path -Path $pwd.Path -ChildPath $installScript
+            Start-NativeExecution { & $fullPSPath -NoLogo -NoProfile -File $fullDotnetInstallPath -Channel $Channel -Version $Version }
+        }
     }
 }
 
