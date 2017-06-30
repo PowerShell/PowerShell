@@ -4503,7 +4503,6 @@ namespace System.Management.Automation.Runspaces
                 this.Assemblies.Add(assemblyEntry);
             }
 
-
             if (cmdlets != null)
             {
                 foreach (SessionStateCmdletEntry cmdlet in cmdlets.Values)
