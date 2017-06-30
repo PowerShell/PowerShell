@@ -1405,8 +1405,8 @@ namespace System.Management.Automation
 
             if (_validValuesCacheExpiration > 0)
             {
-                Task.Delay(_validValuesCacheExpiration * 1000).ContinueWith((task) => _validValues = null);
                 _validValues = validValuesNoCache;
+                Task.Delay(_validValuesCacheExpiration * 1000).ContinueWith((task) => _validValues = null);
             }
 
             return validValuesNoCache;
@@ -1426,14 +1426,6 @@ namespace System.Management.Automation
 
         // The valid values generator cache works across 'ValidateSetAttribute' instances.
         private static ConcurrentDictionary<Type, IValidateSetValuesGenerator> s_ValidValuesGeneratorCache = new ConcurrentDictionary<Type, IValidateSetValuesGenerator>();
-
-        /// <summary>
-        /// Clear the valid values generator cache.
-        /// </summary>
-        public static void ClearValidValuesGeneratorCache()
-        {
-             s_ValidValuesGeneratorCache.Clear();
-        }
 
         /// <summary>
         /// Gets or sets the custom error message that is displayed to the user
