@@ -950,6 +950,9 @@ namespace System.Management.Automation
 
         ValidateRangeKind? _rangeKind;
 
+        private readonly static Type _zeroType = 0.GetType();
+        private readonly static string _zeroTypeName = 0.GetType().Name;
+
         /// <summary>
         /// Validates that each parameter argument falls in the range
         /// specified by MinRange and MaxRange
@@ -978,11 +981,11 @@ namespace System.Management.Automation
             
             if (_rangeKind.HasValue)
             {
-                ValidatePredefinedRange(element);
+                ValidateRange(element, _rangeKind);
             }
             else
             {
-                ValidateUserDefinedRange(element);
+                ValidateRange(element);
             }
         }
 
@@ -1068,9 +1071,9 @@ namespace System.Management.Automation
             _rangeKind = kind;
         }
 
-        private void ValidatePredefinedRange(object element)
+        private void ValidateRange(object element, ValidateRangeKind? rangeKind)
         {
-            Type commonType = GetCommonType((0).GetType(),element.GetType());
+            Type commonType = GetCommonType(_zeroType,element.GetType());
             if (commonType == null)
             {
                     throw new ValidationMetadataException(
@@ -1078,7 +1081,7 @@ namespace System.Management.Automation
                     null, 
                     Metadata.ValidateRangeElementType,
                     element.GetType().Name, 
-                    0.GetType().Name);
+                    _zeroTypeName);
             }
 
             dynamic elementValue = element;
@@ -1091,7 +1094,7 @@ namespace System.Management.Automation
             {
                 elementValue = resultValue as IComparable;
                 
-                if (LanguagePrimitives.TryConvertTo(0, commonType, out dynamicZero))
+                if (elementValue != null && LanguagePrimitives.TryConvertTo(0, commonType, out dynamicZero))
                 {
                     throwTypeError = false;
                 }                    
@@ -1104,10 +1107,10 @@ namespace System.Management.Automation
                     null, 
                     Metadata.ValidateRangeElementType,
                     element.GetType().Name, 
-                    0.GetType().Name);
+                    _zeroTypeName);
             }
 
-            switch (_rangeKind)
+            switch (rangeKind)
             {
                 case ValidateRangeKind.Positive:
                     if (elementValue.CompareTo(dynamicZero) <= 0)
@@ -1152,7 +1155,7 @@ namespace System.Management.Automation
                 }
         }
 
-        private void ValidateUserDefinedRange(object element)
+        private void ValidateRange(object element)
         {
             // MinRange and maxRange have the same type, so we just need
             // to compare to one of them.
