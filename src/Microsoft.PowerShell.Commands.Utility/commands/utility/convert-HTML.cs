@@ -262,14 +262,11 @@ namespace Microsoft.PowerShell.Commands
             set
             {
                 _charset = value;
-                if(value == "None" || value == "none")
-                {
-                    _charsetSpecified = false;
-                }
+                _charsetSpecified = true;
             }
         }
-        private string _charset = "UTF-8";
-        private bool _charsetSpecified = true;
+        private string _charset;
+        private bool _charsetSpecified = false;
 
         /// <summary>
         /// definitions for hash table keys
