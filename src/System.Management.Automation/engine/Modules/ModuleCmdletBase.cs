@@ -6843,6 +6843,15 @@ namespace Microsoft.PowerShell.Commands
 
                 assemblyVersion = GetAssemblyVersionNumber(assemblyToLoad);
                 assembly = assemblyToLoad;
+                // If this is an in-memory only assembly, add it directly to the assembly cache if
+                // it isn't already there.
+                if (string.IsNullOrEmpty(assembly.Location))
+                {
+                    if (! Context.AssemblyCache.ContainsKey(assembly.FullName))
+                    {
+                        Context.AssemblyCache.Add(assembly.FullName, assembly);
+                    }
+                }
             }
             else
             {
@@ -7196,7 +7205,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 AddModuleToModuleTables(this.Context, this.TargetSessionState.Internal, module);
             }
-
             return module;
         }
 

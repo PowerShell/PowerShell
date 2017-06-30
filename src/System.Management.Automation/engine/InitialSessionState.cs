@@ -4494,10 +4494,14 @@ namespace System.Management.Automation.Runspaces
             string throwAwayHelpFile = null;
             PSSnapInHelpers.AnalyzePSSnapInAssembly(assembly, assemblyPath, null, module, true, out cmdlets, out aliases, out providers, out throwAwayHelpFile);
 
-            SessionStateAssemblyEntry assemblyEntry =
-                new SessionStateAssemblyEntry(assembly.FullName, assemblyPath);
-
-            this.Assemblies.Add(assemblyEntry);
+            // If this is an in-memory assembly, don't added it to the list of AssemblyEntries
+            // since it can't be loaded by path or name
+            if (! string.IsNullOrEmpty(assembly.Location))
+            {
+                SessionStateAssemblyEntry assemblyEntry =
+                    new SessionStateAssemblyEntry(assembly.FullName, assemblyPath);
+                this.Assemblies.Add(assemblyEntry);
+            }
 
             if (cmdlets != null)
             {
