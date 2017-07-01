@@ -950,8 +950,8 @@ namespace System.Management.Automation
 
         ValidateRangeKind? _rangeKind;
 
-        private readonly static Type _zeroType = 0.GetType();
-        private readonly static string _zeroTypeName = 0.GetType().Name;
+        private readonly static Type s_zeroType = 0.GetType();
+        private readonly static string s_zeroTypeName = s_zeroType.Name;
 
         /// <summary>
         /// Validates that each parameter argument falls in the range
@@ -1073,7 +1073,7 @@ namespace System.Management.Automation
 
         private void ValidateRange(object element, ValidateRangeKind? rangeKind)
         {
-            Type commonType = GetCommonType(_zeroType,element.GetType());
+            Type commonType = GetCommonType(s_zeroType,element.GetType());
             if (commonType == null)
             {
                     throw new ValidationMetadataException(
@@ -1081,7 +1081,7 @@ namespace System.Management.Automation
                     null, 
                     Metadata.ValidateRangeElementType,
                     element.GetType().Name, 
-                    _zeroTypeName);
+                    s_zeroTypeName);
             }
 
             dynamic elementValue = element;
@@ -1107,7 +1107,7 @@ namespace System.Management.Automation
                     null, 
                     Metadata.ValidateRangeElementType,
                     element.GetType().Name, 
-                    _zeroTypeName);
+                    s_zeroTypeName);
             }
 
             switch (rangeKind)
