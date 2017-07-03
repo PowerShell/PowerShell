@@ -475,7 +475,7 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
     # copy PowerShell host profile if Windows
     if ($IsWindows)
     {
-        Copy-Item -Path "$PSScriptRoot/src/powershell-win-core/Microsoft.PowerShell_profile.ps1" -Destination $publishPath
+        Copy-Item -Path "$PSScriptRoot/src/powershell-win-core/Microsoft.PowerShell_profile.ps1" -Destination $publishPath -Force
     }
 
     # download modules from powershell gallery.

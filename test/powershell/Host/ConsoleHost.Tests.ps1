@@ -179,7 +179,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
         It "-File should be default parameter" {
             Set-Content -Path $testdrive/test -Value "'hello'"
-            $observed = & $powershell $testdrive/test
+            $observed = & $powershell -NoProfile $testdrive/test
             $observed | Should Be "hello"
         }
 
@@ -189,13 +189,13 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         ) {
             param($Filename)
             Set-Content -Path $testdrive/$Filename -Value "'hello'"
-            $observed = & $powershell -File $testdrive/$Filename
+            $observed = & $powershell -NoProfile -File $testdrive/$Filename
             $observed | Should Be "hello"
         }
 
         It "-File should pass additional arguments to script" {
             Set-Content -Path $testdrive/script.ps1 -Value 'foreach($arg in $args){$arg}'
-            $observed = & $powershell $testdrive/script.ps1 foo bar
+            $observed = & $powershell -NoProfile $testdrive/script.ps1 foo bar
             $observed.Count | Should Be 2
             $observed[0] | Should Be "foo"
             $observed[1] | Should Be "bar"

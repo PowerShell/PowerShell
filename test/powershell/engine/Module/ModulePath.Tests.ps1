@@ -96,7 +96,7 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
 
     It "Default PowerShell profile appends Windows PowerShell PSModulePath only on Windows" {
 
-        $psmodulepath = & $powershell -c '$env:PSModulePath'
+        $psmodulepath = & $powershell -nologo -c '$env:PSModulePath'
 
         if ($IsWindows)
         {
