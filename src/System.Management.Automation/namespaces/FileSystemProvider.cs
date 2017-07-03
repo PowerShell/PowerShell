@@ -40,41 +40,49 @@ namespace Microsoft.PowerShell.Commands
         private Dictionary<(UInt64, UInt64), bool>  _visitations;
 
         /// <summary>
-        /// Construct a new InodeTracker
+        /// Construct a new InodeTracker with an initial path
         /// </summary>
-        internal InodeTracker()
+        internal InodeTracker(string path)
         {
             _visitations = new Dictionary<(UInt64, UInt64), bool>();
-        }
-
-        /// <summary>
-        /// Determine if a path has been visited.
-        /// </summary>
-        /// <param name="path">Path to the file or directory to be checked.</param>
-        /// <returns>True if the path has been visited, false otherwise</returns>
-        internal bool IsPathVisited(string path)
-        {
-            var inodeData = (0UL, 0UL);
-
-            if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out inodeData))
-            {
-                return _visitations.ContainsKey(inodeData);
-            }
-            return false;
-        }
-
-        /// <summary>
-        /// Mark a path as visited.
-        /// </summary>
-        /// <param name="path">Path to the file or directory to be marked as visited.</param>
-        internal void VisitPath(string path)
-        {
             var inodeData = (0UL, 0UL);
 
             if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out inodeData))
             {
                 _visitations[inodeData] = true;
             }
+        }
+
+        /// <summary>
+        /// Try to mark a path as having been visited.
+        /// </summary>
+        /// <param name="path">Path to the file or directory to be marked as visited.</param>
+        /// <returns>
+        /// False if the path has already been visited.
+        /// True if the path has not yet been visited.
+        /// </returns>
+        /// <remarks>
+        /// If the path has not yet been visited then before this method returns it marks
+        /// the path as having been visited.
+        /// </remarks>
+        internal bool TryVisitPath(string path)
+        {
+            bool rv = true;
+            var inodeData = (0UL, 0UL);
+
+            if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out inodeData))
+            {
+                if (_visitations.ContainsKey(inodeData))
+                {
+                    rv = false;
+                }
+                else
+                {
+                    _visitations[inodeData] = true;
+                }
+            }
+
+            return rv;
         }
     }
 
@@ -1591,12 +1599,9 @@ namespace Microsoft.PowerShell.Commands
                     InodeTracker tracker = null;
 
                     GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
-                    if (fspDynamicParam != null)
+                    if (fspDynamicParam != null && fspDynamicParam.FollowSymlink)
                     {
-                        if (fspDynamicParam.FollowSymlink)
-                        {
-                            tracker = new InodeTracker();
-                        }
+                        tracker = new InodeTracker(directory.FullName);
                     }
 
                     // Enumerate the directory
@@ -1672,11 +1677,6 @@ namespace Microsoft.PowerShell.Commands
             bool nameOnly,
             ReturnContainers returnContainers)
         {
-            if (tracker != null)
-            {
-                tracker.VisitPath(directory.FullName);
-            }
-
             List<IEnumerable<FileSystemInfo>> target = new List<IEnumerable<FileSystemInfo>>();
 
             try
@@ -1854,27 +1854,6 @@ namespace Microsoft.PowerShell.Commands
                                 return;
                             }
 
-                            // We only want to recurse into symlinks if
-                            //  a) the user has asked to with the -FollowSymLinks switch parameter and
-                            //  b) the directory pointed to by the symlink has not already been visited,
-                            //     preventing symlink loops.
-                            if (tracker == null)
-                            {
-                                if (InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory))
-                                {
-                                    continue;
-                                }
-                            }
-                            else
-                            {
-                                if (tracker.IsPathVisited(recursiveDirectory.FullName))
-                                {
-                                    WriteWarning(StringUtil.Format(FileSystemProviderStrings.AlreadyListedDirectory,
-                                                                recursiveDirectory.FullName));
-                                    continue;
-                                }
-                            }
-
                             bool hidden = false;
                             if (!Force)
                             {
@@ -1885,6 +1864,27 @@ namespace Microsoft.PowerShell.Commands
                             // default hidden attribute filter.
                             if (Force || !hidden || isFilterHiddenSpecified || isSwitchFilterHiddenSpecified)
                             {
+                                // We only want to recurse into symlinks if
+                                //  a) the user has asked to with the -FollowSymLinks switch parameter and
+                                //  b) the directory pointed to by the symlink has not already been visited,
+                                //     preventing symlink loops.
+                                if (tracker == null)
+                                {
+                                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory))
+                                    {
+                                        continue;
+                                    }
+                                }
+                                else
+                                {
+                                    if (!tracker.TryVisitPath(recursiveDirectory.FullName))
+                                    {
+                                        WriteWarning(StringUtil.Format(FileSystemProviderStrings.AlreadyListedDirectory,
+                                                                    recursiveDirectory.FullName));
+                                        continue;
+                                    }
+                                }
+
                                 Dir(recursiveDirectory, recurse, depth - 1, tracker, nameOnly, returnContainers);
                             }
                         }//foreach
