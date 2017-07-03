@@ -47,9 +47,13 @@ Describe "ComparisonOperator" -tag "CI" {
 	 !0       | Should Be $true
     }
 
-	It "Should be $true for 'Hello','world' -contains 'Hello'" {
-	 $arr= 'Hello','world'
-	 $arr -contains 'Hello'       | Should Be $true
+	It "Should be <result> for 'Hello','world' <operator> <rhs>" -TestCases @(
+        @{result = $true; operator = "-contains"; rhs = "'Hello'"},
+        @{result = $false; operator = "-notcontains"; rhs = "'Hello'"}
+    ) {
+        param($result, $operator, $rhs)
+        $arr= "'Hello','world'"
+        Invoke-Expression "$arr $operator $rhs" | Should Be $result
     }
 	It "Should be $false for 'Hello','world' -ccontains 'hello' and $true for 'Hello','world' -ccontains 'Hello'" {
 	 $arr= 'Hello','world'
@@ -67,6 +71,39 @@ Describe "ComparisonOperator" -tag "CI" {
     }
 	It "Should be $false for 'Hello world' -notlike 'Hello*'" {
 	 "Hello world" -notlike "Hello*"       | Should Be $false
+    }
+
+    # -Is/-IsNot operator
+    It "Should return error if right hand is not a valid type: 'hello' <operator> <type>" -TestCases @(
+        @{operator = "-is"; type = "'foo'"},
+        @{operator = "-isnot"; type = "'foo'"},
+        @{operator = "-is"; type = "[foo]"},
+        @{operator = "-isnot"; type = "[foo]"}
+    ) {
+        param($operator, $type)
+        { Invoke-Expression "'Hello' $operator $type" | Should Be ErrorId "RuntimeException" }
+    }
+
+    It "Should succeed in comparing type: <lhs> <operator> <rhs>" -TestCases @(
+        @{lhs = '[pscustomobject]@{foo=1}'; operator = '-is'; rhs = '[pscustomobject]'},
+        @{lhs = '[pscustomobject]@{foo=1}'; operator = '-is'; rhs = '[psobject]'},
+        @{lhs = '"hello"'; operator = '-is'; rhs = "[string]"},
+        @{lhs = '"hello"'; operator = '-is'; rhs = "[system.string]"},
+        @{lhs = '100'; operator = '-is'; rhs = "[int]"},
+        @{lhs = '100'; operator = '-is'; rhs = "[system.int32]"},
+        @{lhs = '"hello"'; operator = '-isnot'; rhs = "[int]"}
+    ) {
+        param($lhs, $operator, $rhs)
+        Invoke-Expression "$lhs $operator $rhs" | Should Be $true
+    }
+
+    It "Should fail in comparing type: <lhs> <operator> <rhs>" -TestCases @(
+        @{lhs = '[pscustomobject]@{foo=1}'; operator = '-is'; rhs = '[string]'},
+        @{lhs = '"hello"'; operator = '-is'; rhs = "[psobject]"},
+        @{lhs = '"hello"'; operator = '-isnot'; rhs = "[string]"}
+    ) {
+        param($lhs, $operator, $rhs)
+        Invoke-Expression "$lhs $operator $rhs" | Should Be $false
     }
 }
 
