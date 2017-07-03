@@ -31,7 +31,7 @@ The free Community edition of Visual Studio 2015 can be downloaded [here](https:
 --------
 
 We use the [.NET Command Line Interface][dotnet-cli] (`dotnet`) to build PowerShell.
-The version we are currently using is `1.0.1`.
+The version we are currently using is `2.0.0-preview2-006502`.
 The `Start-PSBootstrap` function will automatically install it and add it to your path:
 
 ```powershell
@@ -42,14 +42,14 @@ Start-PSBootstrap
 The `Start-PSBootstrap` function calls `Install-Dotnet`:
 
 ```powershell
-Install-Dotnet -Channel rel-1.0.0 -Version 1.0.1
+Install-Dotnet -Channel preview -Version 2.0.0-preview2-006502
 ```
 
 It removes the previously installed version of .NET CLI from `$env:LOCALAPPDATA\Microsoft\dotnet` and then does exactly this:
 
 ```powershell
-Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/v1.0.1/scripts/obtain/dotnet-install.ps1 -OutFile dotnet-install.ps1
-./dotnet-install.ps1 -Channel rel-1.0.0 -Version 1.0.1
+Invoke-WebRequest -Uri https://raw.githubusercontent.com/dotnet/cli/master/scripts/obtain/dotnet-install.ps1 -OutFile dotnet-install.ps1
+./dotnet-install.ps1 -Channel preview -Version 2.0.0-preview2-006502
 ```
 
 If you have any problems installing `dotnet`, please see their [documentation][cli-docs].
@@ -67,11 +67,11 @@ Import-Module ./build.psm1
 Start-PSBuild
 ```
 
-Congratulations! If everything went right, PowerShell is now built and executable as `./src/powershell-win-core/bin/Debug/netcoreapp1.1/win10-x64/powershell`.
+Congratulations! If everything went right, PowerShell is now built and executable as `./src/powershell-win-core/bin/Debug/netcoreapp2.0/win10-x64/powershell`.
 
 This location is of the form `./[project]/bin/[configuration]/[framework]/[rid]/[binary name]`,
 and our project is `powershell`, configuration is `Debug` by default,
-framework is `netcoreapp1.1`, runtime identifier is **probably** `win10-x64`
+framework is `netcoreapp2.0`, runtime identifier is **probably** `win10-x64`
 (but will depend on your operating system;
 don't worry, `dotnet --info` will tell you what it was), and binary name is `powershell`.
 The function `Get-PSOutput` will return the path to the executable;
