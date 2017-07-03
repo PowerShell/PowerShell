@@ -72,14 +72,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out inodeData))
             {
-                if (_visitations.ContainsKey(inodeData))
-                {
-                    rv = false;
-                }
-                else
-                {
-                    _visitations[inodeData] = true;
-                }
+                rv = _visitations.TryAdd(inodeData, true);
             }
 
             return rv;
