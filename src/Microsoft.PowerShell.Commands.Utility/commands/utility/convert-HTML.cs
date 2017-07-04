@@ -227,32 +227,32 @@ namespace Microsoft.PowerShell.Commands
         }
         private string[] _preContent;
 
-        // [Parameter(ParameterSetName = "Page")]
-        // public string[] Meta
-        // {
-        //     get
-        //     {
-        //         return _meta;
-        //     }
-        //     set
-        //     {
-        //         foreach(var i in value)
-        //         {
-
-        //         }
-        //         _metaName = ;
-        //         _metaProperty  = ;
-        //         _metaSpecified = true;
-        //     }
-        // }
-        // private string[] _meta;
-        // private bool _metaSpecified;
+        /// <summary>
+        /// Sets and Gets the meta property of the HTML head
+        /// </summary>
+        /// <returns></returns>
+        [Parameter(ParameterSetName = "Page")]
+        [ValidateNotNullOrEmpty]
+        public Hashtable Meta
+        {
+            get
+            {
+                return _meta;
+            }
+            set
+            {
+                _meta = value;
+                _metaSpecified = true;
+            }
+        }
+        private Hashtable _meta;
+        private bool _metaSpecified = false;
 
         /// <summary>
-        /// Specifies the charset
-        /// Assumes HTML5
+        /// Specifies the charset encoding for the HTML document
         /// </summary>
         [Parameter(ParameterSetName = "Page")]
+        [ValidateNotNullOrEmpty]
         public string Charset
         {
             get
@@ -267,6 +267,26 @@ namespace Microsoft.PowerShell.Commands
         }
         private string _charset;
         private bool _charsetSpecified = false;
+
+        /// <summary>
+        /// When this switch statement is specified,
+        /// it will change the DOCTYPE to XHTML Transitional DTD
+        /// </summary>
+        /// <returns></returns>
+        [Parameter(ParameterSetName = "Page")]
+        [ValidateNotNullOrEmpty]
+        public SwitchParameter Transitional
+        {
+            get
+            {
+                return _transitional;
+            }
+            set
+            {
+                _transitional = value;
+            }
+        }
+        private SwitchParameter _transitional;
 
         /// <summary>
         /// definitions for hash table keys
@@ -417,15 +437,28 @@ namespace Microsoft.PowerShell.Commands
 
             if (!_fragment)
             {
-                WriteObject("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
+                if(!_transitional)
+                {
+                    WriteObject("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
+                }
+                else
+                {
+                    WriteObject("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
+                }
                 WriteObject("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
-                //if(_metaSpecified)
-                //{
-                //    foreach(var i in _meta)
-                //    {
-                //        WriteObject("<meta ");
-                //    }
-                //}
+                if(_metaSpecified)
+                {
+                    foreach(string s in _meta.Keys)
+                    {
+                        if(s != "content-type" && s != "default-style" && s !="refresh")
+                        {
+                            WriteObject("<meta name=\"" + s + "\" content=\"" + _meta[s] + "\">");
+                        }
+                        else {
+                            WriteObject("<meta http-equiv=\"" + s + "\" content=\"" + _meta[s] + "\">");
+                        }
+                    }
+                }
                 WriteObject("<head>");
                 if(_charsetSpecified)
                 {
