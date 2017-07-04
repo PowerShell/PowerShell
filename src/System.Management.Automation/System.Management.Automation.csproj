@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\PowerShell.Common.props"/>  
+  <Import Project="..\..\PowerShell.Common.props"/>
 
   <PropertyGroup>
     <Description>PowerShell Core's System.Management.Automation project</Description>
@@ -122,7 +122,7 @@
     <Compile Remove="utils\perfCounters\PSPerfCountersMgr.cs" />
     <Compile Remove="gen\CoreMshSnapinResources.cs" />
     <Compile Remove="gen\ErrorPackageRemoting.cs" />
-    
+
     <EmbeddedResource Remove="resources\CoreMshSnapinResources.resx" />
     <EmbeddedResource Remove="resources\ErrorPackageRemoting.resx" />
   </ItemGroup>
