@@ -1319,22 +1319,14 @@ function Start-PSBootstrap {
 function Publish-NuGetFeed
 {
     param(
-        [string]$OutputPath = "$PSScriptRoot/nuget-artifacts",
-        [Parameter(Mandatory=$true)]
-        [string]$VersionSuffix
+        [string]$OutputPath = "$PSScriptRoot/nuget-artifacts"
     )
 
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    if ($VersionSuffix) {
-        ## NuGet/Home #3953, #4337 -- dotnet pack - version suffix missing from ProjectReference
-        ## Workaround:
-        ##   dotnet restore /p:VersionSuffix=<suffix> # Bake the suffix into project.assets.json
-        ##   dotnet pack --version-suffix <suffix>
-        $TopProject = (New-PSOptions).Top
-        dotnet restore $TopProject "/p:VersionSuffix=$VersionSuffix"
-    }
+    # Update 'project.assets.json' files with new version tag value.
+    dotnet restore $TopProject
 
     try {
         Push-Location $PSScriptRoot

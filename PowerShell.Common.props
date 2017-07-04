@@ -1,10 +1,100 @@
 <Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <!--
+        We should ~explicitly~ assign versions properties in the target
+        because:
+          1. By default the version properties defined in global PropertyGroup (not target!) in 'Microsoft.NET.DefaultAssemblyInfo.targets'
+          2. Properties in global 'PropertyGroups' is assigned before any targets
+          3. and cannot be conditionally excecuted as targets (after this target).
+
+        To assign vertions properties we should excecute the target:
+          '_GenerateRestoreProjectSpec' - before 'Restore' target
+          'GenerateNuspec'              - before 'Pack' target
+          'BeforeBuild'                 - before 'Build' target
+  -->
+  <Target Name="GetPSCoreVersionFromGit"
+    BeforeTargets="_GenerateRestoreProjectSpec;GenerateNuspec;BeforeBuild"
+  >
+
+    <PropertyGroup>
+      <GitExe>git</GitExe>
+    </PropertyGroup>
+
+    <Exec Command='$(GitExe) rev-parse --show-cdup' ConsoleToMSBuild="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="GitCDUP" />
+    </Exec>
+
+    <PropertyGroup>
+      <GitInfoBaseDir Condition="'$(GitInfoBaseDir)' == ''">$(MSBuildProjectDirectory)/$(GitCDUP)/.git</GitInfoBaseDir>
+    </PropertyGroup>
+
+    <Exec Command='$(GitExe) --git-dir="$(GitInfoBaseDir)" describe --abbrev=60 --long' ConsoleToMSBuild="true" EchoOff="true">
+      <Output TaskParameter="ConsoleOutput" PropertyName="PowerShellVersion" />
+    </Exec>
+
+    <PropertyGroup>
+      <RegexGitVersion>^v(.+)-(\d+)-g(.+)</RegexGitVersion>
+      <PSCoreBuildVersion>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[1].Value)</PSCoreBuildVersion>
+      <PSCoreAdditionalCommits>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[2].Value)</PSCoreAdditionalCommits>
+      <PSCoreCommitSHA>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[3].Value)</PSCoreCommitSHA>
+
+      <RegexSymVer>^((\d+).(\d+).(\d+))(?:-(.+))?</RegexSymVer>
+      <PSCorePrefixVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[1].Value)</PSCorePrefixVersion>
+      <PSCoreMajorVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[2].Value)</PSCoreMajorVersion>
+      <PSCoreMinorVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[3].Value)</PSCoreMinorVersion>
+      <PSCorePatchVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[4].Value)</PSCorePatchVersion>
+      <PSCoreLabelVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[5].Value)</PSCoreLabelVersion>
+
+      <PSCoreFormattedVersion Condition = "'$(PSCoreAdditionalCommits)' == '0'">$(PSCoreBuildVersion) SHA: $(PSCoreCommitSHA)</PSCoreFormattedVersion>
+      <PSCoreFormattedVersion Condition = "'$(PSCoreFormattedVersion)' == ''">$(PSCoreBuildVersion) Commits: $(PSCoreAdditionalCommits) SHA: $(PSCoreCommitSHA)</PSCoreFormattedVersion>
+
+      <ProductVersion>$(PSCoreFormattedVersion)</ProductVersion>
+      <!--
+            Here we define explicitly 'Version' to set 'FileVersion' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
+            Here we define explicitly 'InformationalVersion' because by default it is defined as 'Version' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
+      -->
+      <Version>$(PSCoreBuildVersion)</Version>
+      <InformationalVersion>$(PSCoreFormattedVersion)</InformationalVersion>
+
+      <!--VersionPrefix>$(PSCorePrefixVersion)</VersionPrefix-->
+      <!--VersionSuffix>$(PSCoreLabelVersion)</VersionSuffix-->
+
+      <!--
+            We have explicitly assign 'PackageVersion'
+            because there is a bug: 'PackageVersion' is correctly assigned as 'Version' in 'NuGet.targets'
+            but then immediately redefined as '1.0.0'.
+      -->
+      <PackageVersion>$(PSCoreBuildVersion)</PackageVersion>
+
+    </PropertyGroup>
+
+   <!-- for debug output
+        WriteLinesToFile File="targetfile1.txt"
+        Lines="PowerShellVersion=$(PowerShellVersion);
+               PSCoreBuildVersion = $(PSCoreBuildVersion);
+               PSCoreAdditionalCommits = $(PSCoreAdditionalCommits);
+               PSCoreCommitSHA = $(PSCoreCommitSHA);
+               PSCoreMajorVersion = $(PSCoreMajorVersion);
+               PSCoreMinorVersion = $(PSCoreMinorVersion);
+               PSCorePatchVersion = $(PSCorePatchVersion);
+               PSCoreLabelVersion = $(PSCoreLabelVersion);
+               GitCDUP = $(GitCDUP);
+               RegexGitVersion = $(RegexGitVersion);
+               PSCoreFormattedVersion = $(PSCoreFormattedVersion);
+               ProductVersion = $(ProductVersion);
+               Version = $(Version);
+               ProjectVersion = '!$(ProjectVersion)!'
+               InformationalVersion = $(InformationalVersion);
+              "
+        Overwrite="true"/-->
+
+  </Target>
+
   <PropertyGroup>
     <Product>PowerShell Core</Product>
     <Company>Microsoft Corporation</Company>
     <Copyright>(c) Microsoft Corporation. All rights reserved.</Copyright>
 
-    <VersionPrefix>6.0.0</VersionPrefix>
     <TargetFramework>netcoreapp2.0</TargetFramework>
     <RuntimeFrameworkVersion>2.0.0</RuntimeFrameworkVersion>
 
@@ -16,5 +106,7 @@
     <DelaySign>true</DelaySign>
     <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
     <SignAssembly>true</SignAssembly>
+
   </PropertyGroup>
+
 </Project>
