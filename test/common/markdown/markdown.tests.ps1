@@ -102,15 +102,18 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
 
         $mdIssuesPath | should exist
 
+        [string] $markdownErrors = ""
         Get-Content -Path $mdIssuesPath | ForEach-Object -Process {
             if ([string]::IsNullOrEmpty($_) -eq $false -and $_ -ne '--EMPTY--')
             {
                 Write-Warning -Message $_
+                $markdownErrors += $_ + ", "
                 $mdErrors ++
             }
         }
 
         Remove-Item -Path $mdIssuesPath -Force -ErrorAction SilentlyContinue
+        $markdownErrors | Should BeExactly ""
 
         if($mdErrors -gt 0)
         {
