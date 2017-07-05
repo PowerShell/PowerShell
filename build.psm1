@@ -222,10 +222,19 @@ Fix steps:
             throw 'Win 10 SDK not found. Run Start-PSBootstrap or install Microsoft Windows 10 SDK from https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk'
         }
 
-        $vcVarsPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
+        # atlbase.h is included in at least one project
+        $vcPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
+        $atlMfcIncludePath = Join-Path -Path $vcPath -ChildPath 'atlmfc/include'
+        if ((Test-Path -Path $atlMfcIncludePath\atlbase.h) -eq $false) {
+            throw "Could not find Visual Studio include file atlbase.h at $atlMfcIncludePath. Please ensure the optional feature 'Microsoft Foundation Classes for C++' is installed."
+        }
+
+        # vcvarsall.bat is used to setup environment variables
+        $vcVarsPath = $vcPath
         if ((Test-Path -Path $vcVarsPath\vcvarsall.bat) -eq $false) {
             throw "Could not find Visual Studio vcvarsall.bat at $vcVarsPath. Please ensure the optional feature 'Common Tools for Visual C++' is installed."
         }
+
 
         # setup msbuild configuration
         if ($Configuration -eq 'Debug' -or $Configuration -eq 'Release') {
