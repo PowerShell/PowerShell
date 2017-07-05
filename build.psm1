@@ -486,6 +486,19 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$NativeHostArch" "&
         Copy-Item -Path "$PSScriptRoot/src/powershell-win-core/Microsoft.PowerShell_profile.ps1" -Destination $publishPath -Force
     }
 
+    if ($IsRedHatFamily) {
+        # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
+        # platform specific changes. This is the only set of platforms needed for this currently
+        # as Ubuntu has these specific library files in the platform and OSX builds for itself
+        # against the correct versions.
+        if ( ! (test-path "$publishPath/libssl.so.1.0.0")) {
+            $null = New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$publishPath/libssl.so.1.0.0" -ErrorAction Stop
+        }
+        if ( ! (test-path "$publishPath/libcrypto.so.1.0.0")) {
+            $null = New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$publishPath/libcrypto.so.1.0.0" -ErrorAction Stop
+        }
+    }
+
     # download modules from powershell gallery.
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
     if($PSModuleRestore)
