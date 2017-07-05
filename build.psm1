@@ -235,7 +235,6 @@ Fix steps:
             throw "Could not find Visual Studio vcvarsall.bat at $vcVarsPath. Please ensure the optional feature 'Common Tools for Visual C++' is installed."
         }
 
-
         # setup msbuild configuration
         if ($Configuration -eq 'Debug' -or $Configuration -eq 'Release') {
             $msbuildConfiguration = $Configuration
