@@ -168,13 +168,13 @@ function ExecuteRedirectRequest
             $result.Output = Invoke-WebRequest -Uri $uri -TimeoutSec 5 -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method
             $result.Content = $result.Output.Content | ConvertFrom-Json
         }
-        else 
-        {            
+        else
+        {
             $result.Output = Invoke-RestMethod -Uri $uri -TimeoutSec 5 -Headers $headers -PreserveAuthorizationOnRedirect:$PreserveAuthorizationOnRedirect.IsPresent -Method $Method
             # NOTE: $result.Output should already be a PSObject (Invoke-RestMethod converts the returned json automatically)
             # so simply reference $result.Output
             $result.Content = $result.Output
-        }       
+        }
     }
     catch
     {
@@ -187,7 +187,7 @@ function ExecuteRedirectRequest
 <#
     Defines the list of redirect codes to test as well as the
     expected Method when the redirection is handled.
-    See https://msdn.microsoft.com/en-us/library/windows/apps/system.net.httpstatuscode(v=vs.105).aspx 
+    See https://msdn.microsoft.com/en-us/library/windows/apps/system.net.httpstatuscode(v=vs.105).aspx
     for additonal details.
 #>
 $redirectTests = @(
@@ -287,7 +287,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $jsonContent.headers.Host | Should Match "httpbin.org"
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
-    
+
     It "Validate Invoke-WebRequest error for -MaximumRedirection" {
 
         $command = "Invoke-WebRequest -Uri 'http://httpbin.org/redirect/3' -MaximumRedirection 2 -TimeoutSec 5"
@@ -295,7 +295,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
-    
+
     It "Invoke-WebRequest supports request that returns page containing UTF-8 data." {
 
         $command = "Invoke-WebRequest -Uri http://httpbin.org/encoding/utf8 -TimeoutSec 5"
@@ -529,14 +529,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     It "Validate Invoke-WebRequest StandardMethod and CustomMethod parameter sets" {
-        
+
         #Validate that parameter sets are functioning correctly
         $errorId = "AmbiguousParameterSet,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         { Invoke-WebRequest -Uri 'http://http.lee.io/method' -Method GET -CustomMethod TEST } | ShouldBeErrorId $errorId
     }
 
     It "Validate Invoke-WebRequest CustomMethod method is used" {
-        
+
         $command = "Invoke-WebRequest -Uri 'http://http.lee.io/method' -CustomMethod TEST"
         $result = ExecuteWebCommand -command $command
         $result.Error | Should BeNullOrEmpty
@@ -544,19 +544,19 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     It "Validate Invoke-WebRequest default ContentType for CustomMethod POST" {
-        
+
         $command = "Invoke-WebRequest -Uri 'http://httpbin.org/post' -CustomMethod POST -Body 'testparam=testvalue'"
         $result = ExecuteWebCommand -command $command
         ($result.Output.Content | ConvertFrom-Json).form.testparam | Should Be "testvalue"
     }
 
     It "Validate Invoke-WebRequest body is converted to query params for CustomMethod GET" {
-        
+
         $command = "Invoke-WebRequest -Uri 'http://httpbin.org/get' -CustomMethod GET -Body @{'testparam'='testvalue'}"
         $result = ExecuteWebCommand -command $command
         ($result.Output.Content | ConvertFrom-Json).args.testparam | Should Be "testvalue"
     }
-    
+
     It "Validate Invoke-WebRequest returns HTTP errors in exception" {
 
         $command = "Invoke-WebRequest -Uri http://httpbin.org/status/418"
@@ -597,10 +597,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Output.RelationLink["last"] | Should BeExactly "http://localhost:8080/PowerShell?test=linkheader&maxlinks=5&linknumber=5"
     }
 
-    It "Validate Invoke-WebRequest quietly ignores invalid Link Headers in RelationLink property" -TestCases @(
+    It "Validate Invoke-WebRequest quietly ignores invalid Link Headers in RelationLink property: <type>" -TestCases @(
         @{ type = "noUrl" }
         @{ type = "malformed" }
-        @{ type = "noRel" } 
+        @{ type = "noRel" }
     ) {
         param($type)
         $command = "Invoke-WebRequest -Uri 'http://localhost:8080/PowerShell?test=linkheader&type=$type'"
@@ -611,18 +611,18 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     #region Redirect tests
 
-    It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect" -TestCases $redirectTests {
+    It "Validates Invoke-WebRequest with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
 
         $response = ExecuteRedirectRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=$redirectType" -PreserveAuthorizationOnRedirect
-        
+
         $response.Error | Should BeNullOrEmpty
         # ensure Authorization header has been preserved.
         $response.Content.Headers -contains "Authorization" | Should Be $true
     }
 
 
-    It "Validates Invoke-WebRequest preserves the authorization header on multiple redirects." -TestCases $redirectTests {
+    It "Validates Invoke-WebRequest preserves the authorization header on multiple redirects: <redirectType>" -TestCases $redirectTests {
         param($redirectType)
 
         $response = ExecuteRedirectRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=$redirectType&multiredirect=true" -PreserveAuthorizationOnRedirect
@@ -632,7 +632,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $response.Content.Headers -contains "Authorization" | Should Be $true
     }
 
-    It "Validates Invoke-WebRequest strips the authorization header on various redirects" -TestCases $redirectTests {
+    It "Validates Invoke-WebRequest strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
         param($redirectType)
 
         $response = ExecuteRedirectRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=$redirectType"
@@ -646,11 +646,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     # NOTE: Only testing redirection of POST -> GET for unique underlying values of HttpStatusCode.
     # Some names overlap in underlying value.
-    It "Validates Invoke-WebRequest strips the authorization header redirects and switches from POST to GET when it handles the redirect" -TestCases $redirectTests {
+    It "Validates Invoke-WebRequest strips the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
 
         $response = ExecuteRedirectRequest -Uri "http://localhost:8080/PowerShell?test=redirect&type=$redirectType" -Method 'POST'
-        
+
         $response.Error | Should BeNullOrEmpty
         # ensure user-agent is present (i.e., no false positives )
         $response.Content.Headers -contains "User-Agent" | Should Be $true
@@ -658,9 +658,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $response.Content.Headers -contains "Authorization" | Should Be $false
         # ensure POST was changed to GET for selected redirections and remains as POST for others.
         $response.Content.HttpMethod | Should Be $redirectedMethod
-    } 
+    }
 
-    #endregion Redirect tests       
+    #endregion Redirect tests
 
     BeforeEach {
         if ($env:http_proxy) {
@@ -981,7 +981,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     It "Validate CustomMethod method is used" {
-        
+
         $command = "Invoke-RestMethod -Uri 'http://http.lee.io/method' -CustomMethod TEST"
         $result = ExecuteWebCommand -command $command
         $result.Error | Should BeNullOrEmpty
@@ -989,14 +989,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     It "Validate Invoke-RestMethod default ContentType for CustomMethod POST" {
-        
+
         $command = "Invoke-RestMethod -Uri 'http://httpbin.org/post' -CustomMethod POST -Body 'testparam=testvalue'"
         $result = ExecuteWebCommand -command $command
         $result.Output.form.testparam | Should Be "testvalue"
     }
 
     It "Validate Invoke-RestMethod body is converted to query params for CustomMethod GET" {
-        
+
         $command = "Invoke-RestMethod -Uri 'http://httpbin.org/get' -CustomMethod GET -Body @{'testparam'='testvalue'}"
         $result = ExecuteWebCommand -command $command
         $result.Output.args.testparam | Should Be "testvalue"
@@ -1061,10 +1061,10 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         1..$maxLinksToFollow | ForEach-Object { $result.Output.output[$_ - 1] | Should BeExactly $_ }
     }
 
-    It "Validate Invoke-RestMethod quietly ignores invalid Link Headers if -FollowRelLink is specified" -TestCases @(
+    It "Validate Invoke-RestMethod quietly ignores invalid Link Headers if -FollowRelLink is specified: <type>" -TestCases @(
         @{ type = "noUrl" }
         @{ type = "malformed" }
-        @{ type = "noRel" } 
+        @{ type = "noRel" }
     ) {
         param($type)
         $command = "Invoke-RestMethod -Uri 'http://localhost:8081/PowerShell?test=linkheader&type=$type' -FollowRelLink"
@@ -1074,17 +1074,17 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     #region Redirect tests
 
-    It "Validates Invoke-RestMethod with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect" -TestCases $redirectTests {
+    It "Validates Invoke-RestMethod with -PreserveAuthorizationOnRedirect preserves the authorization header on redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
 
         $response = ExecuteRedirectRequest  -Cmdlet 'Invoke-RestMethod' -Uri "http://localhost:8081/PowerShell?test=redirect&type=$redirectType" -PreserveAuthorizationOnRedirect
-        
+
         $response.Error | Should BeNullOrEmpty
         # ensure Authorization header has been preserved.
         $response.Content.Headers -contains "Authorization" | Should Be $true
     }
 
-    It "Validates Invoke-RestMethod preserves the authorization header on multiple redirects." -TestCases $redirectTests {
+    It "Validates Invoke-RestMethod preserves the authorization header on multiple redirects: <redirectType>" -TestCases $redirectTests {
         param($redirectType)
 
         $response = ExecuteRedirectRequest  -Cmdlet 'Invoke-RestMethod' -Uri "http://localhost:8081/PowerShell?test=redirect&type=$redirectType&multiredirect=true" -PreserveAuthorizationOnRedirect
@@ -1094,7 +1094,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $response.Content.Headers -contains "Authorization" | Should Be $true
     }
 
-    It "Validates Invoke-RestMethod strips the authorization header on various redirects" -TestCases $redirectTests {
+    It "Validates Invoke-RestMethod strips the authorization header on various redirects: <redirectType>" -TestCases $redirectTests {
         param($redirectType)
 
         $response = ExecuteRedirectRequest  -Cmdlet 'Invoke-RestMethod' -Uri "http://localhost:8081/PowerShell?test=redirect&type=$redirectType"
@@ -1108,11 +1108,11 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     # NOTE: Only testing redirection of POST -> GET for unique underlying values of HttpStatusCode.
     # Some names overlap in underlying value.
-    It "Validates Invoke-RestMethod strips the authorization header redirects and switches from POST to GET when it handles the redirect" -TestCases $redirectTests {
+    It "Validates Invoke-RestMethod strips the authorization header redirects and switches from POST to GET when it handles the redirect: <redirectType> <redirectedMethod>" -TestCases $redirectTests {
         param($redirectType, $redirectedMethod)
 
         $response = ExecuteRedirectRequest  -Cmdlet 'Invoke-RestMethod' -Uri "http://localhost:8081/PowerShell?test=redirect&type=$redirectType" -Method 'POST'
-        
+
         $response.Error | Should BeNullOrEmpty
         # ensure user-agent is present (i.e., no false positives )
         $response.Content.Headers -contains "User-Agent" | Should Be $true
@@ -1120,9 +1120,9 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $response.Content.Headers -contains "Authorization" | Should Be $false
         # ensure POST was changed to GET for selected redirections and remains as POST for others.
         $response.Content.HttpMethod | Should Be $redirectedMethod
-    } 
+    }
 
-    #endregion Redirect tests       
+    #endregion Redirect tests
 
     BeforeEach {
         if ($env:http_proxy) {

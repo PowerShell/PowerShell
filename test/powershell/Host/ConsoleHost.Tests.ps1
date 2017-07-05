@@ -183,7 +183,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed | Should Be "hello"
         }
 
-        It "-File accepts scripts with and without .ps1 extension" -TestCases @(
+        It "-File accepts scripts with and without .ps1 extension: <Filename>" -TestCases @(
             @{Filename="test.ps1"},
             @{Filename="test"}
         ) {
@@ -201,7 +201,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed[1] | Should Be "bar"
         }
 
-        It "-File should return exit code from script"  -TestCases @(
+        It "-File should return exit code from script: <Filename>" -TestCases @(
             @{Filename = "test.ps1"},
             @{Filename = "test"}
         ) {
@@ -209,7 +209,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             Set-Content -Path $testdrive/$Filename -Value 'exit 123'
             & $powershell $testdrive/$Filename
             $LASTEXITCODE | Should Be 123
-        }        
+        }
     }
 
     Context "Pipe to/from powershell" {
@@ -301,7 +301,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         # All of the following tests replace the prompt (either via an initial command or interactively)
         # so that we can read StandardOutput and reliably know exactly what the prompt is.
 
-        It "Interactive redirected input" -TestCases @(
+        It "Interactive redirected input: <InteractiveSwitch>" -TestCases @(
             @{InteractiveSwitch = ""}
             @{InteractiveSwitch = " -IntERactive"}
             @{InteractiveSwitch = " -i"}
