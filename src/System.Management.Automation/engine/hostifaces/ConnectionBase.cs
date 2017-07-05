@@ -7,7 +7,9 @@ using System.Linq;
 using System.Threading;
 using System.Management.Automation.Host;
 using System.Management.Automation.Internal;
+#if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
+#endif
 using Dbg = System.Management.Automation.Diagnostics;
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
@@ -279,6 +281,7 @@ namespace System.Management.Automation.Runspaces
             OpenHelper(syncCall);
             if (etwEnabled) RunspaceEventSource.Log.OpenRunspaceStop();
 
+#if LEGACYTELEMETRY
             // We report startup telementry when opening the runspace - because this is the first time
             // we are really using PowerShell. This isn't the cleanest place though, because
             // sometimes there are many runspaces created - the callee ensures telemetry is only
@@ -288,6 +291,7 @@ namespace System.Management.Automation.Runspaces
             {
                 TelemetryAPI.ReportStartupTelemetry(null);
             }
+#endif
         }
 
 

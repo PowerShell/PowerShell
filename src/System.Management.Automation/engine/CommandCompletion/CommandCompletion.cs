@@ -12,7 +12,9 @@ using System.Globalization;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Text.RegularExpressions;
+#if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
+#endif
 
 namespace System.Management.Automation
 {
@@ -591,8 +593,10 @@ namespace System.Management.Automation
 
                     var completionResults = results ?? EmptyCompletionResult;
                     sw.Stop();
+#if LEGACYTELEMETRY
                     TelemetryAPI.ReportTabCompletionTelemetry(sw.ElapsedMilliseconds, completionResults.Count,
                         completionResults.Count > 0 ? completionResults[0].ResultType : CompletionResultType.Text);
+#endif
                     return new CommandCompletion(
                         new Collection<CompletionResult>(completionResults),
                         -1,

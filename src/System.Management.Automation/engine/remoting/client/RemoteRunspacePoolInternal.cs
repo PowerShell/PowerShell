@@ -12,7 +12,9 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Host;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Remoting.Client;
+#if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
+#endif
 
 namespace System.Management.Automation.Runspaces.Internal
 {
@@ -850,7 +852,9 @@ namespace System.Management.Automation.Runspaces.Internal
             PSEtwLog.LogOperationalVerbose(PSEventId.RunspacePoolOpen, PSOpcode.Open,
                             PSTask.CreateRunspace, PSKeyword.UseAlwaysOperational);
 
+#if LEGACYTELEMETRY
             TelemetryAPI.ReportRemoteSessionCreated(_connectionInfo);
+#endif
 
             lock (syncObject)
             {

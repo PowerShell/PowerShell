@@ -23,7 +23,9 @@ using System.Management.Automation.Language;
 using Parser = System.Management.Automation.Language.Parser;
 using ScriptBlock = System.Management.Automation.ScriptBlock;
 using Token = System.Management.Automation.Language.Token;
+#if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
+#endif
 
 #if CORECLR
 // Use stub for SecurityZone.
@@ -1720,7 +1722,9 @@ namespace Microsoft.PowerShell.Commands
                     {
                         SetModuleBaseForEngineModules(foundModule.Name, this.Context);
 
+#if LEGACYTELEMETRY
                         TelemetryAPI.ReportModuleLoad(foundModule);
+#endif
                     }
                 }
             }

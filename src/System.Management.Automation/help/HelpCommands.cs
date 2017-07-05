@@ -234,7 +234,9 @@ namespace Microsoft.PowerShell.Commands
 #endif
 
         private readonly Stopwatch _timer = new Stopwatch();
+#if LEGACYTELEMETRY
         private bool _updatedHelp;
+#endif
 
         #endregion
 
@@ -252,7 +254,9 @@ namespace Microsoft.PowerShell.Commands
                 if (ShouldContinue(HelpDisplayStrings.UpdateHelpPromptBody, HelpDisplayStrings.UpdateHelpPromptTitle))
                 {
                     System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace).AddCommand("Update-Help").Invoke();
+#if LEGACYTELEMETRY
                     _updatedHelp = true;
+#endif
                 }
 
                 UpdatableHelpSystem.SetDisablePromptToUpdateHelp();
@@ -332,9 +336,10 @@ namespace Microsoft.PowerShell.Commands
 
                 _timer.Stop();
 
+#if LEGACYTELEMETRY
                 if (!string.IsNullOrEmpty(Name))
                     Microsoft.PowerShell.Telemetry.Internal.TelemetryAPI.ReportGetHelpTelemetry(Name, countOfHelpInfos, _timer.ElapsedMilliseconds, _updatedHelp);
-
+#endif
                 // Write full help as there is only one help info object
                 if (1 == countOfHelpInfos)
                 {
