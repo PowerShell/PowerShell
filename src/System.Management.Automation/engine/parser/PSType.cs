@@ -1112,13 +1112,14 @@ namespace System.Management.Automation.Language
 
             var definedTypes = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-            // First character is a special mark that allows us to cheaply ignore dynamic generated assemblies in ClrFacede.GetAssemblies()
-            // Two replaces at the end are for not-allowed characters. They are replaced by similar-looking chars.
+            // First character is a special mark that allows us to cheaply ignore dynamic generated assemblies in ClrFacade.GetAssemblies()
+            // The replaces at the end are for not-allowed characters. They are replaced by similar-looking chars.
             string assemblyName = ClrFacade.FIRST_CHAR_PSASSEMBLY_MARK + (string.IsNullOrWhiteSpace(rootAst.Extent.File)
                                       ? "powershell"
                                       : rootAst.Extent.File
                                       .Replace('\\', (char)0x29f9)
                                       .Replace('/', (char)0x29f9)
+                                      .Replace(',', (char)0x201a)
                                       .Replace(':', (char)0x0589));
 
             var assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName),
