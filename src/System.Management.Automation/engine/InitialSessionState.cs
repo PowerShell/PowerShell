@@ -4822,6 +4822,171 @@ end
 ";
         }
 
+#if UNIX
+        internal static string GetSudoFunctionText()
+        {
+            return @"
+Set-StrictMode -Version Latest
+$script:allargs = [System.Collections.Generic.List[string]]::new()
+[string] $arg = $null
+foreach ($arg in $args)
+{
+    $script:allargs.Add($arg)
+}
+
+$script:AmbiguousOperators = @('>', '<', '|', '&')
+$script:WhiteSpaceTokens = @(
+    [System.Management.Automation.PSTokenType]::NewLine,
+    [System.Management.Automation.PSTokenType]::Comment,
+    [System.Management.Automation.PSTokenType]::LineContinuation
+)
+$script:IgnoredTokens = @(
+    [System.Management.Automation.PSTokenType]::CommandParameter,
+    [System.Management.Automation.PSTokenType]::CommandArgument,
+    [System.Management.Automation.PSTokenType]::NewLine,
+    [System.Management.Automation.PSTokenType]::Comment,
+    [System.Management.Automation.PSTokenType]::StatementSeparator,
+    [System.Management.Automation.PSTokenType]::LineContinuation
+    )
+
+function Get-SudoArgs
+{
+    param
+    (
+        [System.Collections.Generic.List[string]] $AllArgs
+    )
+    $sb = [System.Text.StringBuilder]::new()
+
+    [string] $arg = $AllArgs[0]
+    while ($arg.StartsWith('-'))
+    {
+        $AllArgs.RemoveAt(0)
+        $null = $sb.Append(' ')
+        $null = $sb.Append($arg)
+
+        if ($AllArgs.Count -gt 0)
+        {
+            $arg = $AllArgs[0]
+        }
+        else
+        {
+            break
+        }
+    }
+    return $sb.ToString()
+}
+
+function Get-ScriptBlock
+{
+    param
+    (
+        [Parameter(Mandatory)]
+        [System.Collections.Generic.List[string]] $AllArgs,
+
+        [Parameter(Mandatory)]
+        [ValidateNotNullOrEmpty()]
+        [string] $SudoCmd
+    )
+    [bool] $usePowerShell = $false
+
+    [string] $sudoArgs = Get-SudoArgs -AllArgs $AllArgs
+
+    $tokens = [System.Management.Automation.PSParser]::Tokenize($AllArgs.ToArray(), [ref] $null)
+    foreach ($token in $Tokens)
+    {
+        if ([string]::IsNullOrEmpty($token.Content) -or $script:IgnoredTokens.Contains($token.Type))
+        {
+            continue
+        }
+
+        if ($token.Type -eq 'Operator')
+        {
+            if ($AmbiguousOperators.Contains($token.Content))
+            {
+                continue
+            }
+            $usePowerShell = $true
+            break
+        }
+
+        if ($token.Type -eq 'Command')
+        {
+            $command = $token.Content
+            $currentCommand = Get-Command -Name $command -ErrorAction Ignore
+
+            if ($currentCommand -eq  $null)
+            {
+                break
+            }
+
+            if ($currentCommand.CommandType -eq 'Alias')
+            {
+                $aliasCommand = Get-Command -Name $currentCommand.Name -ErrorAction Ignore
+                if ($aliasCommand -ne $null)
+                {
+                    $currentCommand = Get-Command -Name $aliasCommand.ResolvedCommand -ErrorAction Ignore
+                }
+            }
+            if ($currentCommand.CommandType -ne 'Application')
+            {
+                $usePowerShell = $true
+                break
+            }
+            continue
+        }
+        $usePowerShell = $true
+        break
+    }
+
+    $sb = [System.Text.StringBuilder]::new()
+
+    [string] $commandArgs = $null
+    if ($AllArgs.Count -gt 0)
+    {
+        foreach ($arg in $AllArgs)
+        {
+            $null = $sb.Append(' ')
+            $null = $sb.Append($arg)
+        }
+        $commandArgs = $sb.ToString()
+        $null = $sb.Clear()
+    }
+
+    $null = $sb.Append($SudoCmd)
+    if (-not [string]::IsNullOrEmpty($sudoArgs))
+    {
+        $null = $sb.Append(' ')
+        $null = $sb.Append($sudoArgs.ToString())
+    }
+
+    if (-not [string]::IsNullOrEmpty($commandArgs))
+    {
+        if (-not $usePowerShell)
+        {
+            $null = $sb.Append($commandArgs)
+        }
+        else
+        {
+            $bytes = [System.Text.Encoding]::Unicode.GetBytes($commandArgs)
+            $arguments = [Convert]::ToBase64String($bytes)
+            $null = $sb.AppendFormat(' powershell -encodedCommand {0}', $arguments)
+        }
+    }
+    return  [ScriptBlock]::Create($sb.ToString())
+}
+
+$sudoCmd = Get-Command -Name 'sudo' -CommandType Application -ErrorAction Ignore
+if ($sudoCmd -eq $null)
+{
+    throw 'Could not resolve the sudo command'
+}
+
+[ScriptBlock] $scriptBlock = Get-ScriptBlock -AllArgs $allargs -SudoCmd $sudoCmd.Source
+& $scriptBlock
+";
+        }
+#endif
+
         internal const ActionPreference defaultDebugPreference = ActionPreference.SilentlyContinue;
         internal const ActionPreference defaultErrorActionPreference = ActionPreference.Continue;
         internal const ActionPreference defaultProgressPreference = ActionPreference.Continue;
@@ -5368,6 +5533,9 @@ if($paths) {
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("mkdir", GetMkdirFunctionText(), isProductCode: true),
 #endif
             SessionStateFunctionEntry.GetDelayParsedFunctionEntry("oss", GetOSTFunctionText(), isProductCode: true),
+#if UNIX
+            SessionStateFunctionEntry.GetDelayParsedFunctionEntry("sudo", GetSudoFunctionText(), isProductCode: true),
+#endif
 
             // Porting note: we remove the drive functions from Linux because they make no sense
 #if !UNIX
