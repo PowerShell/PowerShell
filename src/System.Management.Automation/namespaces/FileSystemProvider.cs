@@ -31,56 +31,6 @@ using Microsoft.PowerShell.CoreClr.Stubs;
 
 namespace Microsoft.PowerShell.Commands
 {
-    #region InodeTracker
-    /// <summary>
-    /// Tracks visited files/directories by caching their device IDs and inodes.
-    /// </summary>
-    internal class InodeTracker
-    {
-        private Dictionary<(UInt64, UInt64), bool>  _visitations;
-
-        /// <summary>
-        /// Construct a new InodeTracker with an initial path
-        /// </summary>
-        internal InodeTracker(string path)
-        {
-            _visitations = new Dictionary<(UInt64, UInt64), bool>();
-            var inodeData = (0UL, 0UL);
-
-            if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out inodeData))
-            {
-                _visitations[inodeData] = true;
-            }
-        }
-
-        /// <summary>
-        /// Try to mark a path as having been visited.
-        /// </summary>
-        /// <param name="path">Path to the file or directory to be marked as visited.</param>
-        /// <returns>
-        /// False if the path has already been visited.
-        /// True if the path has not yet been visited.
-        /// </returns>
-        /// <remarks>
-        /// If the path has not yet been visited then before this method returns it marks
-        /// the path as having been visited.
-        /// </remarks>
-        internal bool TryVisitPath(string path)
-        {
-            bool rv = true;
-            var inodeData = (0UL, 0UL);
-
-            if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out inodeData))
-            {
-                rv = _visitations.TryAdd(inodeData, true);
-            }
-
-            return rv;
-        }
-    }
-
-    #endregion
-
     #region FileSystemProvider
 
     /// <summary>
@@ -1591,14 +1541,17 @@ namespace Microsoft.PowerShell.Commands
                     DirectoryInfo directory = new DirectoryInfo(path);
                     InodeTracker tracker = null;
 
-                    GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
-                    if (fspDynamicParam != null && fspDynamicParam.FollowSymlink)
+                    if (recurse)
                     {
-                        tracker = new InodeTracker(directory.FullName);
+                        GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
+                        if (fspDynamicParam != null && fspDynamicParam.FollowSymlink)
+                        {
+                            tracker = new InodeTracker(directory.FullName);
+                        }
                     }
 
                     // Enumerate the directory
-                    Dir(directory, recurse, depth, tracker, nameOnly, returnContainers);
+                    Dir(directory, recurse, depth, nameOnly, returnContainers, tracker);
                 }
                 else
                 {
@@ -1666,9 +1619,9 @@ namespace Microsoft.PowerShell.Commands
             DirectoryInfo directory,
             bool recurse,
             uint depth,
-            InodeTracker tracker,   // This will be non-null only if the user invoked the -FollowSymLinks switch parameter.
             bool nameOnly,
-            ReturnContainers returnContainers)
+            ReturnContainers returnContainers,
+            InodeTracker tracker)   // tracker will be non-null only if the user invoked the -FollowSymLinks switch parameter.
         {
             List<IEnumerable<FileSystemInfo>> target = new List<IEnumerable<FileSystemInfo>>();
 
@@ -1868,17 +1821,14 @@ namespace Microsoft.PowerShell.Commands
                                         continue;
                                     }
                                 }
-                                else
+                                else if (tracker.IsPathVisited(recursiveDirectory.FullName, true))
                                 {
-                                    if (!tracker.TryVisitPath(recursiveDirectory.FullName))
-                                    {
-                                        WriteWarning(StringUtil.Format(FileSystemProviderStrings.AlreadyListedDirectory,
-                                                                    recursiveDirectory.FullName));
-                                        continue;
-                                    }
+                                    WriteWarning(StringUtil.Format(FileSystemProviderStrings.AlreadyListedDirectory,
+                                                                   recursiveDirectory.FullName));
+                                    continue;
                                 }
 
-                                Dir(recursiveDirectory, recurse, depth - 1, tracker, nameOnly, returnContainers);
+                                Dir(recursiveDirectory, recurse, depth - 1, nameOnly, returnContainers, tracker);
                             }
                         }//foreach
                     }//if
@@ -7392,6 +7342,69 @@ namespace Microsoft.PowerShell.Commands
             [MarshalAs(UnmanagedType.LPWStr)]
             public string Provider;
         }
+
+        #region InodeTracker
+        /// <summary>
+        /// Tracks visited files/directories by caching their device IDs and inodes.
+        /// </summary>
+        private class InodeTracker
+        {
+            private HashSet<(UInt64, UInt64)> _visitations;
+
+            /// <summary>
+            /// Construct a new InodeTracker with an initial path
+            /// </summary>
+            internal InodeTracker(string path)
+            {
+                _visitations = new HashSet<(UInt64, UInt64)>();
+
+                if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out (UInt64, UInt64) inodeData))
+                {
+                    _visitations.Add(inodeData);
+                }
+            }
+
+            /// <summary>
+            /// Determine if a path has been visited. Optionally mark the path as
+            /// having been visited if it has not already
+            /// </summary>
+            /// <param name="path">
+            /// Path to the file system item to be checked.
+            /// </param>
+            /// <param name="visitIfNotAlready">
+            /// Flag to indicate whether the path should be marked as visited if
+            /// it has not already been visited.
+            /// </param>
+            /// <returns>
+            /// True if the path had already been visited, false otherwise.
+            /// </returns>
+            /// <remarks>
+            /// If the visitIfNotAlready parameter is true and the path had not
+            /// already been visited, this method returns false but marks the
+            /// path as visited so that subsequent calls with a path to the same
+            /// file system item will return true.
+            /// </remarks>
+            internal bool IsPathVisited(string path, bool visitIfNotAlready)
+            {
+                bool isPathVisited = false;
+
+                if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out (UInt64, UInt64) inodeData))
+                {
+                    if (visitIfNotAlready)
+                    {
+                        isPathVisited = !_visitations.Add(inodeData);
+                    }
+                    else
+                    {
+                        isPathVisited = _visitations.Contains(inodeData);
+                    }
+                }
+
+                return isPathVisited;
+            }
+        }
+
+        #endregion
     } // class FileSystemProvider
 
     internal static class SafeInvokeCommand
@@ -7556,7 +7569,7 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Gets or sets the flag to follow symbolic links when recursing.
-        ///
+        /// </summary>
         [Parameter]
         public SwitchParameter FollowSymlink { get; set; }
 
