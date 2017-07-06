@@ -102,24 +102,14 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
 
         $mdIssuesPath | should exist
 
-        [string] $markdownErrors = ""
-        Get-Content -Path $mdIssuesPath | ForEach-Object -Process {
-            if ([string]::IsNullOrEmpty($_) -eq $false -and $_ -ne '--EMPTY--')
-            {
-                Write-Warning -Message $_
-                $markdownErrors += $_ + ", "
-                $mdErrors ++
-            }
-        }
-
+        [string] $markdownErrors = Get-Content -Path $mdIssuesPath
         Remove-Item -Path $mdIssuesPath -Force -ErrorAction SilentlyContinue
-        $markdownErrors | Should BeExactly ""
 
-        if($mdErrors -gt 0)
+        if ($markdownErrors -ne "--EMPTY--")
         {
-            Write-Warning 'See https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md for an explination of the error codes.'
+            $markdownErrors += ' (See https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md for an explanation of the error codes)'
         }
 
-        $mdErrors | Should Be 0
+        $markdownErrors | Should BeExactly "--EMPTY--"
     }
 }
