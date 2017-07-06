@@ -587,6 +587,16 @@ namespace System.Management.Automation
             return Unix.NativeMethods.IsSameFileSystemItem(pathOne, pathTwo);
         }
 
+        internal static bool NonWindowsGetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
+        {
+            UInt64 device = 0UL;
+            UInt64 inode = 0UL;
+            var result = Unix.NativeMethods.GetInodeData(path, out device, out inode);
+
+            inodeData = (device, inode);
+            return result == 0;
+        }
+
         internal static bool NonWindowsIsExecutable(string path)
         {
             return Unix.NativeMethods.IsExecutable(path);
@@ -797,6 +807,10 @@ namespace System.Management.Automation
                 [return: MarshalAs(UnmanagedType.I1)]
                 internal static extern bool IsSameFileSystemItem([MarshalAs(UnmanagedType.LPStr)]string filePathOne,
                                                                  [MarshalAs(UnmanagedType.LPStr)]string filePathTwo);
+
+                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                internal static extern int GetInodeData([MarshalAs(UnmanagedType.LPStr)]string path,
+                                                        out UInt64 device, out UInt64 inode);
             }
         }
     }

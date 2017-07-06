@@ -1539,8 +1539,19 @@ namespace Microsoft.PowerShell.Commands
                 if (isDirectory)
                 {
                     DirectoryInfo directory = new DirectoryInfo(path);
+                    InodeTracker tracker = null;
+
+                    if (recurse)
+                    {
+                        GetChildDynamicParameters fspDynamicParam = DynamicParameters as GetChildDynamicParameters;
+                        if (fspDynamicParam != null && fspDynamicParam.FollowSymlink)
+                        {
+                            tracker = new InodeTracker(directory.FullName);
+                        }
+                    }
+
                     // Enumerate the directory
-                    Dir(directory, recurse, depth, nameOnly, returnContainers);
+                    Dir(directory, recurse, depth, nameOnly, returnContainers, tracker);
                 }
                 else
                 {
@@ -1609,7 +1620,8 @@ namespace Microsoft.PowerShell.Commands
             bool recurse,
             uint depth,
             bool nameOnly,
-            ReturnContainers returnContainers)
+            ReturnContainers returnContainers,
+            InodeTracker tracker)   // tracker will be non-null only if the user invoked the -FollowSymLinks and -Recurse switch parameters.
         {
             List<IEnumerable<FileSystemInfo>> target = new List<IEnumerable<FileSystemInfo>>();
 
@@ -1788,25 +1800,35 @@ namespace Microsoft.PowerShell.Commands
                                 return;
                             }
 
-                            // Once the recursion process has begun by being in this function,
-                            // we do not want to further recurse into directory symbolic links
-                            // so as to prevent the possibility of an endless symlink loop.
-                            // This is the behavior of both the Unix 'ls' command and the Windows
-                            // 'DIR' command.
-                            if (!InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory))
+                            bool hidden = false;
+                            if (!Force)
                             {
-                                bool hidden = false;
-                                if (!Force)
+                                hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
+                            }
+
+                            // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
+                            // default hidden attribute filter.
+                            if (Force || !hidden || isFilterHiddenSpecified || isSwitchFilterHiddenSpecified)
+                            {
+                                // We only want to recurse into symlinks if
+                                //  a) the user has asked to with the -FollowSymLinks switch parameter and
+                                //  b) the directory pointed to by the symlink has not already been visited,
+                                //     preventing symlink loops.
+                                if (tracker == null)
                                 {
-                                    hidden = (recursiveDirectory.Attributes & FileAttributes.Hidden) != 0;
+                                    if (InternalSymbolicLinkLinkCodeMethods.IsReparsePoint(recursiveDirectory))
+                                    {
+                                        continue;
+                                    }
+                                }
+                                else if (!tracker.TryVisitPath(recursiveDirectory.FullName))
+                                {
+                                    WriteWarning(StringUtil.Format(FileSystemProviderStrings.AlreadyListedDirectory,
+                                                                   recursiveDirectory.FullName));
+                                    continue;
                                 }
 
-                                // if "Hidden" is explicitly specified anywhere in the attribute filter, then override
-                                // default hidden attribute filter.
-                                if (Force || !hidden || isFilterHiddenSpecified || isSwitchFilterHiddenSpecified)
-                                {
-                                    Dir(recursiveDirectory, recurse, depth - 1, nameOnly, returnContainers);
-                                }
+                                Dir(recursiveDirectory, recurse, depth - 1, nameOnly, returnContainers, tracker);
                             }
                         }//foreach
                     }//if
@@ -7320,6 +7342,52 @@ namespace Microsoft.PowerShell.Commands
             [MarshalAs(UnmanagedType.LPWStr)]
             public string Provider;
         }
+
+        #region InodeTracker
+        /// <summary>
+        /// Tracks visited files/directories by caching their device IDs and inodes.
+        /// </summary>
+        private class InodeTracker
+        {
+            private HashSet<(UInt64, UInt64)> _visitations;
+
+            /// <summary>
+            /// Construct a new InodeTracker with an initial path
+            /// </summary>
+            internal InodeTracker(string path)
+            {
+                _visitations = new HashSet<(UInt64, UInt64)>();
+
+                if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out (UInt64, UInt64) inodeData))
+                {
+                    _visitations.Add(inodeData);
+                }
+            }
+
+            /// <summary>
+            /// Attempt to mark a path as having been visited.
+            /// </summary>
+            /// <param name="path">
+            /// Path to the file system item to be visited.
+            /// </param>
+            /// <returns>
+            /// True if the path had not been previously visited and was
+            /// successfully marked as visited, false otherwise.
+            /// </returns>
+            internal bool TryVisitPath(string path)
+            {
+                bool returnValue = false;
+
+                if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out (UInt64, UInt64) inodeData))
+                {
+                    returnValue = _visitations.Add(inodeData);
+                }
+
+                return returnValue;
+            }
+        }
+
+        #endregion
     } // class FileSystemProvider
 
     internal static class SafeInvokeCommand
@@ -7481,6 +7549,12 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public FlagsExpression<FileAttributes> Attributes { get; set; }
+
+        /// <summary>
+        /// Gets or sets the flag to follow symbolic links when recursing.
+        /// </summary>
+        [Parameter]
+        public SwitchParameter FollowSymlink { get; set; }
 
         /// <summary>
         /// Gets or sets the filter directory flag
@@ -8235,6 +8309,45 @@ namespace Microsoft.PowerShell.Commands
                 }
             }
 
+            return false;
+        }
+
+        internal static bool GetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
+        {
+#if UNIX
+            bool rv = Platform.NonWindowsGetInodeData(path, out inodeData);
+#else
+            bool rv = WinGetInodeData(path, out inodeData);
+#endif
+            return rv;
+        }
+
+        internal static bool WinGetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
+        {
+            var access = FileAccess.Read;
+            var share = FileShare.Read;
+            var creation = FileMode.Open;
+            var attributes = FileAttributes.BackupSemantics | FileAttributes.PosixSemantics;
+
+            using (var sf = AlternateDataStreamUtilities.NativeMethods.CreateFile(path, access, share, IntPtr.Zero, creation, (int)attributes, IntPtr.Zero))
+            {
+                if (!sf.IsInvalid)
+                {
+                    BY_HANDLE_FILE_INFORMATION info;
+
+                    if (GetFileInformationByHandle(sf.DangerousGetHandle(), out info))
+                    {
+                        UInt64 tmp = info.FileIndexHigh;
+                        tmp = (tmp << 32) | info.FileIndexLow;
+
+                        inodeData = (info.VolumeSerialNumber, tmp);
+
+                        return true;
+                    }
+                }
+            }
+
+            inodeData = (0, 0);
             return false;
         }
 
