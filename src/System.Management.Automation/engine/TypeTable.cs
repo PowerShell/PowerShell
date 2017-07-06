@@ -4178,7 +4178,7 @@ namespace System.Management.Automation.Runspaces
             {
 #if CORECLR
                 // In OneCore powershell, XmlTextReader is not in CoreCLR, so we have to use XmlReader.Create method
-                XmlReader reader = XmlReader.Create(xmlStream, new XmlReaderSettings { IgnoreWhitespace = true });
+                XmlReader reader = XmlReader.Create(xmlStream, new XmlReaderSettings { IgnoreWhitespace = true, XmlResolver = null });
 #else
                 // In Full powershell, we create a XmlTextReader, so loadContext.reader is guaranteed to implement IXmlLineInfo
                 XmlReader reader = new XmlTextReader(xmlStream) { WhitespaceHandling = WhitespaceHandling.Significant };

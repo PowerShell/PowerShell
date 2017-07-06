@@ -2876,9 +2876,7 @@ namespace Microsoft.PowerShell.Commands
                     currentUICulture.ToString(),
                     this.ProviderInfo.HelpFile);
                 XmlReaderSettings settings = new XmlReaderSettings();
-#if !CORECLR
                 settings.XmlResolver = null;
-#endif
                 using (XmlReader reader = XmlReader.Create(fullHelpPath, settings))
                 {
                     document.Load(reader);

@@ -133,6 +133,7 @@ namespace Microsoft.PowerShell.Commands
             xrs.IgnoreProcessingInstructions = true;
             xrs.MaxCharactersFromEntities = 1024;
             xrs.DtdProcessing = DtdProcessing.Ignore;
+            xrs.XmlResolver = null;
 
             return xrs;
         }
