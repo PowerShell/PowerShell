@@ -1821,7 +1821,7 @@ namespace Microsoft.PowerShell.Commands
                                         continue;
                                     }
                                 }
-                                else if (tracker.IsPathVisited(recursiveDirectory.FullName, true))
+                                else if (!tracker.TryVisitPath(recursiveDirectory.FullName))
                                 {
                                     WriteWarning(StringUtil.Format(FileSystemProviderStrings.AlreadyListedDirectory,
                                                                    recursiveDirectory.FullName));
@@ -7365,42 +7365,25 @@ namespace Microsoft.PowerShell.Commands
             }
 
             /// <summary>
-            /// Determine if a path has been visited. Optionally mark the path as
-            /// having been visited if it has not already
+            /// Attempt to mark a path as having been visited.
             /// </summary>
             /// <param name="path">
-            /// Path to the file system item to be checked.
-            /// </param>
-            /// <param name="visitIfNotAlready">
-            /// Flag to indicate whether the path should be marked as visited if
-            /// it has not already been visited.
+            /// Path to the file system item to be visited.
             /// </param>
             /// <returns>
-            /// True if the path had already been visited, false otherwise.
+            /// True if the path had not been previously visited and was
+            /// successfully marked as visited, false otherwise.
             /// </returns>
-            /// <remarks>
-            /// If the visitIfNotAlready parameter is true and the path had not
-            /// already been visited, this method returns false but marks the
-            /// path as visited so that subsequent calls with a path to the same
-            /// file system item will return true.
-            /// </remarks>
-            internal bool IsPathVisited(string path, bool visitIfNotAlready)
+            internal bool TryVisitPath(string path)
             {
-                bool isPathVisited = false;
+                bool returnValue = false;
 
                 if (InternalSymbolicLinkLinkCodeMethods.GetInodeData(path, out (UInt64, UInt64) inodeData))
                 {
-                    if (visitIfNotAlready)
-                    {
-                        isPathVisited = !_visitations.Add(inodeData);
-                    }
-                    else
-                    {
-                        isPathVisited = _visitations.Contains(inodeData);
-                    }
+                    returnValue = _visitations.Add(inodeData);
                 }
 
-                return isPathVisited;
+                return returnValue;
             }
         }
 
