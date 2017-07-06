@@ -1589,11 +1589,6 @@ namespace System.Management.Automation.Internal
         // Simulate 'System.Diagnostics.Stopwatch.IsHighResolution is false' to test Get-Uptime throw
         internal static bool StopwatchIsNotHighResolution;
 
-        // Used in the FileSystemProvider to simulate deleting a file during enumeration in Get-ChildItem
-        internal static bool GciEnumerationActionDelete = false;
-        // Used in the FileSystemProvider to simulate renaming a file during enumeration in Get-ChildItem
-        internal static bool GciEnumerationActionRename = false;
-
         /// <summary>This member is used for internal test purposes.</summary>
         public static void SetTestHook(string property, bool value)
         {

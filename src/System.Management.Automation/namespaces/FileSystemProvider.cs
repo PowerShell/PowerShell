@@ -1689,24 +1689,6 @@ namespace Microsoft.PowerShell.Commands
                             return;
                         }
 
-                        // Internal test code, run only if one of the
-                        // 'GciEnumerationAction' test hooks are set.
-                        if (InternalTestHooks.GciEnumerationActionDelete)
-                        {
-                            if (string.Equals(filesystemInfo.Name, "c283d143-2116-4809-bf11-4f7d61613f92", StringComparison.InvariantCulture))
-                            {
-                                File.Delete(filesystemInfo.FullName);
-                            }
-                        }
-                        else if (InternalTestHooks.GciEnumerationActionRename)
-                        {
-                            if (string.Equals(filesystemInfo.Name, "B1B691A9-B7B1-4584-AED7-5259511BEEC4", StringComparison.InvariantCulture))
-                            {
-                                var newFullName = Path.Combine(directory.FullName, "77efd2bb-92aa-4ad3-979a-18936a4bd565");
-                                File.Move(filesystemInfo.FullName, newFullName);
-                            }
-                        }
-
                         try
                         {
                             bool attributeFilter = true;
