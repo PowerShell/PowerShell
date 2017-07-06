@@ -1621,7 +1621,7 @@ namespace Microsoft.PowerShell.Commands
             uint depth,
             bool nameOnly,
             ReturnContainers returnContainers,
-            InodeTracker tracker)   // tracker will be non-null only if the user invoked the -FollowSymLinks switch parameter.
+            InodeTracker tracker)   // tracker will be non-null only if the user invoked the -FollowSymLinks and -Recurse switch parameters.
         {
             List<IEnumerable<FileSystemInfo>> target = new List<IEnumerable<FileSystemInfo>>();
 
