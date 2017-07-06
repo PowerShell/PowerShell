@@ -240,12 +240,6 @@ namespace Microsoft.PowerShell.Commands
                 _fs.Dispose();
                 _fs = null;
             }
-            // reset the read-only attribute
-            if (null != _readOnlyFileInfo)
-            {
-                _readOnlyFileInfo.Attributes |= FileAttributes.ReadOnly;
-                _readOnlyFileInfo = null;
-            }
         }
 
         #endregion file
@@ -645,14 +639,8 @@ namespace Microsoft.PowerShell.Commands
 
         internal ImportXmlHelper(string fileName, PSCmdlet cmdlet, bool isLiteralPath)
         {
-            if (fileName == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("fileName");
-            }
-            if (cmdlet == null)
-            {
-                throw PSTraceSource.NewArgumentNullException("cmdlet");
-            }
+            Dbg.Assert(fileName != null, "filename is mandatory");
+            Dbg.Assert(cmdlet != null, "cmdlet is mandatory");
             _path = fileName;
             _cmdlet = cmdlet;
             _isLiteralPath = isLiteralPath;
@@ -749,17 +737,10 @@ namespace Microsoft.PowerShell.Commands
             // if paging is not specified then keep the old V2 behavior
             if (skip == 0 && first == ulong.MaxValue)
             {
-                ulong item = 0;
                 while (!_deserializer.Done())
                 {
                     object result = _deserializer.Deserialize();
-                    if (item++ < skip)
-                        continue;
-                    if (first == 0)
-                        break;
-
                     _cmdlet.WriteObject(result);
-                    first--;
                 }
             }
             // else try to flatten the output if possible
@@ -779,27 +760,30 @@ namespace Microsoft.PowerShell.Commands
                         continue;
                     }
 
-                    ICollection c = psObject.BaseObject as ICollection;
-                    if (c != null)
+                    if (psObject != null)
                     {
-                        foreach (object o in c)
+                        ICollection c = psObject.BaseObject as ICollection;
+                        if (c != null)
                         {
-                            if (count >= first)
-                                break;
+                            foreach (object o in c)
+                            {
+                                if (count >= first)
+                                    break;
 
+                                if (skipped++ >= skip)
+                                {
+                                    count++;
+                                    _cmdlet.WriteObject(o);
+                                }
+                            }
+                        }
+                        else
+                        {
                             if (skipped++ >= skip)
                             {
                                 count++;
-                                _cmdlet.WriteObject(o);
+                                _cmdlet.WriteObject(result);
                             }
-                        }
-                    }
-                    else
-                    {
-                        if (skipped++ >= skip)
-                        {
-                            count++;
-                            _cmdlet.WriteObject(result);
                         }
                     }
                 }
