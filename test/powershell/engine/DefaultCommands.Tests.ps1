@@ -528,4 +528,216 @@ Describe "Verify approved aliases list" -Tags "CI" {
     It "Should have 'more' as a function" {
         Test-Path Function:more | Should Be $true
     }
+
+    It "Should have 'sudo' as a function only on CoreUnix" {
+        Test-Path Function:sudo | Should Be $CoreUnix
+    }
+}
+
+[string] $userBinPath = Get-Item -Path '~/bin'
+[string] $sudoMockPath = Join-Path (Get-Item -Path '~/bin').FullName -ChildPath 'sudo'
+[string] $sudoText = 'mocksudo.txt'
+[string] $sudoOutputPath = Join-Path (Get-Item -Path '~/bin').FullName -ChildPath $sudotext
+[string] $sudoMock = @"
+#!/bin/sh
+echo `$@
+"@
+
+Describe "Verify sudo function on CoreUNIX" -Tags "CI"{
+
+    Context "Verify using MOCK sudo" {
+
+        BeforeAll {
+            $skipTest = !$CoreUnix
+            if ($skipTest) {return}
+            $sudoscript = $sudoMock.Replace("`r`n", "`n")
+            # place a mock sudo command in the user's bin folder
+            Set-Content -Path $sudoMockPath -Value $sudoscript
+            chmod 777 $sudoMockPath
+            $items = Get-Command -Name 'sudo' -CommandType Application
+            # Verify sudo resolves to the mock
+            if ($items -eq $null)
+            {
+                throw "Could not resolve $sudoMockPath command"
+            }
+            $cmd = $null
+            if ($items.GetType().IsArray)
+            {
+                $cmd = $items[0]
+            }
+            else
+            {
+                $cmd = $items
+            }
+            if ($cmd.Path -ne $sudoMockPath)
+            {
+                throw "Get-Command did not resolve to the mock sudo. Expected: $sudoMockPath  Actual: $($cmd.Path)"
+            }
+        }
+
+        AfterAll {
+            if ($skipTest) {return}
+
+            # clean up the mock files
+            if (Test-Path -Path $sudoMockPath)
+            {
+                Remove-Item -Path $sudoMockPath -ErrorAction Ignore
+            }
+        }
+
+        BeforeEach
+        {
+            if ($skipTest) {return}
+
+            if (Test-Path -Path $sudoOutputPath)
+            {
+                Remove-Item -Path $sudoOutputPath
+            }
+        }
+
+        <#
+        .SYNOPSIS
+            Invokes the sudo function with the native mock in place
+            the returns the command-line that should be passed by the function
+            to the native sudo.
+
+        .DESCRIPTION
+        Long description
+
+        .PARAMETER SudoArgs
+            The optional arguments to pass to sudo
+
+        .PARAMETER expression
+            The optional command expression to pass to sudo
+
+        .PARAMETER UsePowerShell
+            The expression should be use powershell
+
+        .EXAMPLE
+            InvokeSudo -expression 'Get-Item /etc' -usePowerShell
+
+        .NOTES
+        General notes
+        #>
+        #>
+        function InvokeSudo
+        {
+            param
+            (
+                [string] $SudoArgs = $null,
+                [string] $Expression = $null,
+                [switch] $UsePowerShell
+            )
+
+            $sb = [System.Text.StringBuilder]::new()
+            $null = $sb.Append('sudo')
+
+            if (-not [string]::IsNullOrEmpty($sudoArgs))
+            {
+                $null = $sb.Append(' ')
+                $null = $sb.Append($sudoArgs)
+            }
+
+            if (-not [string]::IsNullOrEmpty($Expression))
+            {
+                $null = $sb.Append(' ')
+                if ($UsePowerShell)
+                {
+                    # avoid expression evaluation
+                    $null = $sb.AppendLine('@"')
+                }
+                $null = $sb.Append($Expression)
+                if ($UsePowerShell)
+                {
+                    $null = $sb.AppendLine()
+                    $null = $sb.Append('"@')
+                }
+            }
+            $scriptBlock = [ScriptBlock]::Create($sb.ToString())
+
+            # build the command line arguments that the function should pass to sudo
+            $null = $sb.Clear()
+            if (-not [string]::IsNullOrEmpty($sudoArgs))
+            {
+                $null = $sb.Append($sudoArgs)
+            }
+
+            if (-not [string]::IsNullOrEmpty($Expression))
+            {
+                if ($sb.Length -gt 0)
+                {
+                    $null = $sb.Append(' ')
+                }
+                if ($UsePowerShell)
+                {
+                    $bytes = [System.Text.Encoding]::Unicode.GetBytes($Expression)
+                    $arguments = [Convert]::ToBase64String($bytes)
+                    $null = $sb.AppendFormat('powershell -encodedCommand {0}', $arguments)
+                }
+                else
+                {
+                    $null = $sb.Append($Expression)
+                }
+            }
+            # invoke the sudo function
+            $output = & $scriptBlock
+            # return the expected and actual arguments passed to sudo
+            return @{ExpectedArguments = $sb.ToString(); ActualArguments = $output}
+        }
+
+        It "Validates sudo parameters formatting using the mock" -Skip:$skipTest {
+            $result = InvokeSudo -SudoArgs '--verify'
+            $result.ActualArguments | Should Be $result.ExpectedArguments
+        }
+
+        It "Validates sudo parameters and expression formatting using the mock" -Skip:$skipTest {
+            $result = InvokeSudo -SudoArgs '--verify' -Expression 'ls /etc'
+            $result.ActualArguments | Should Be $result.ExpectedArguments
+        }
+
+        It "Validates native command formatting using the mock" -Skip:$skipTest {
+            $result = InvokeSudo -Expression 'ls /etc'
+            $result.ActualArguments | Should Be $result.ExpectedArguments
+        }
+
+        It "Validates powershell command formatting using the mock" -Skip:$skipTest {
+            $expression = 'get-item /etc | select-object -Property FullName'
+            $result = InvokeSudo -Expression $expression -UsePowerShell
+            $result.ActualArguments | Should Be $result.ExpectedArguments
+        }
+    }
+
+    It "Validates sudo -V is not interpreted as -Verbose" -Skip:$skipTest {
+        $expectedValues = @(
+            'Sudo version',
+            'Sudoers policy plugin version',
+            'Sudoers file grammar version',
+            'Sudoers I/O plugin version'
+            )
+        $result = (sudo -V)
+        $result.Count | Should Be $expectedValues.Count
+        for ($index = 0; $index -lt $expectedValues.Count; $index++)
+        {
+            $expected = $expectedValues[$index]
+            $actual = $result[$index]
+            $actual.StartsWith($expected) | Should Be $true
+        }
+    }
+
+    It "Validates native sudo is invoked" -Skip:$skipTest {
+        $expectedValues = @(
+            'Sudo version',
+            'Sudoers policy plugin version',
+            'Sudoers file grammar version',
+            'Sudoers I/O plugin version'
+            )
+        $result = (sudo --version)
+        $result.Count | Should Be $expectedValues.Count
+        for ($index = 0; $index -lt $expectedValues.Count; $index++)
+        {
+            $expected = $expectedValues[$index]
+            $actual = $result[$index]
+            $actual.StartsWith($expected) | Should Be $true
+        }
+    }
 }

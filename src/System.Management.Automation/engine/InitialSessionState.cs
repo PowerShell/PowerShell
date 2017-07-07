@@ -4827,19 +4827,8 @@ end
         {
             return @"
 Set-StrictMode -Version Latest
-$script:allargs = [System.Collections.Generic.List[string]]::new()
-[string] $arg = $null
-foreach ($arg in $args)
-{
-    $script:allargs.Add($arg)
-}
 
 $script:AmbiguousOperators = @('>', '<', '|', '&')
-$script:WhiteSpaceTokens = @(
-    [System.Management.Automation.PSTokenType]::NewLine,
-    [System.Management.Automation.PSTokenType]::Comment,
-    [System.Management.Automation.PSTokenType]::LineContinuation
-)
 $script:IgnoredTokens = @(
     [System.Management.Automation.PSTokenType]::CommandParameter,
     [System.Management.Automation.PSTokenType]::CommandArgument,
@@ -4891,6 +4880,7 @@ function Get-ScriptBlock
 
     [string] $sudoArgs = Get-SudoArgs -AllArgs $AllArgs
 
+    <# tokenize the remaining arguments to identify the type of expression; native or powershell #>
     $tokens = [System.Management.Automation.PSParser]::Tokenize($AllArgs.ToArray(), [ref] $null)
     foreach ($token in $Tokens)
     {
@@ -4945,7 +4935,10 @@ function Get-ScriptBlock
     {
         foreach ($arg in $AllArgs)
         {
-            $null = $sb.Append(' ')
+            if ($sb.Length -gt 0)
+            {
+                $null = $sb.Append(' ')
+            }
             $null = $sb.Append($arg)
         }
         $commandArgs = $sb.ToString()
@@ -4961,6 +4954,7 @@ function Get-ScriptBlock
 
     if (-not [string]::IsNullOrEmpty($commandArgs))
     {
+        $null = $sb.Append(' ')
         if (-not $usePowerShell)
         {
             $null = $sb.Append($commandArgs)
@@ -4969,19 +4963,37 @@ function Get-ScriptBlock
         {
             $bytes = [System.Text.Encoding]::Unicode.GetBytes($commandArgs)
             $arguments = [Convert]::ToBase64String($bytes)
-            $null = $sb.AppendFormat(' powershell -encodedCommand {0}', $arguments)
+            $null = $sb.AppendFormat([System.Globalization.CultureInfo]::InvariantCulture, 'powershell -encodedCommand {0}', $arguments)
         }
     }
     return  [ScriptBlock]::Create($sb.ToString())
 }
 
-$sudoCmd = Get-Command -Name 'sudo' -CommandType Application -ErrorAction Ignore
-if ($sudoCmd -eq $null)
+[string] $sudoCmd = $null
+$sudoCmds = Get-Command -Name 'sudo' -CommandType Application -ErrorAction Ignore
+if ($sudoCmds -eq $null)
 {
     throw 'Could not resolve the sudo command'
 }
 
-[ScriptBlock] $scriptBlock = Get-ScriptBlock -AllArgs $allargs -SudoCmd $sudoCmd.Source
+if ($sudoCmds.GetType().IsArray)
+{
+    $sudoCmd = $sudoCmds[0].Path
+}
+else
+{
+    $sudoCmd = $sudoCmds.Path
+}
+
+<# place all args into an updateable list #>
+$allargs = [System.Collections.Generic.List[string]]::new()
+[string] $arg = $null
+foreach ($arg in $args)
+{
+    $allargs.Add($arg)
+}
+
+[ScriptBlock] $scriptBlock = Get-ScriptBlock -AllArgs $allargs -SudoCmd $sudoCmd
 & $scriptBlock
 ";
         }
