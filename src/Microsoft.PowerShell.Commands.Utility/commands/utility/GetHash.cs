@@ -121,10 +121,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 byte[] bytehash = null;
                 String hash = null;
+                Stream openfilestream = null;
 
                 try
                 {
-                    Stream openfilestream = File.OpenRead(path);
+                    openfilestream = File.OpenRead(path);
                     bytehash = hasher.ComputeHash(openfilestream);
 
                     hash = BitConverter.ToString(bytehash).Replace("-","");
@@ -137,6 +138,10 @@ namespace Microsoft.PowerShell.Commands
                         ErrorCategory.ObjectNotFound,
                         path);
                     WriteError(errorRecord);
+                }
+                finally
+                {
+                    openfilestream?.Dispose();
                 }
             }
         }
