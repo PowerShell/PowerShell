@@ -22,7 +22,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         Test-ModuleManifest -Path $testModulePath -ErrorAction Stop | Should BeOfType System.Management.Automation.PSModuleInfo
     }
 
-    It "module manifest containing missing files returns error" -TestCases (
+    It "module manifest containing missing files returns error: <parameter>" -TestCases (
         @{parameter = "RequiredAssemblies"; error = "Modules_InvalidRequiredAssembliesInModuleManifest"},
         @{parameter = "NestedModules"; error = "Modules_InvalidNestedModuleinModuleManifest"},
         @{parameter = "RequiredModules"; error = "Modules_InvalidRequiredModulesinModuleManifest"},
@@ -48,7 +48,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId $errorId
     }
 
-    It "module manifest containing valid unprocessed rootmodule file type succeeds" -TestCases (
+    It "module manifest containing valid unprocessed rootmodule file type succeeds: <rootModuleValue>" -TestCases (
         @{rootModuleValue = "foo.psm1"},
         @{rootModuleValue = "foo.dll"}
     ) {
@@ -65,7 +65,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         $moduleManifest.RootModule | Should Be $rootModuleValue
     }
 
-    It "module manifest containing valid processed empty rootmodule file type fails" -TestCases (
+    It "module manifest containing valid processed empty rootmodule file type fails: <rootModuleValue>" -TestCases (
         @{rootModuleValue = "foo.cdxml"; error = "System.Xml.XmlException"},  # fails when cmdlet tries to read it as XML
         @{rootModuleValue = "foo.xaml"; error = "NotSupported"}   # not supported on PowerShell Core
     ) {
@@ -80,7 +80,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
     }
 
-    It "module manifest containing empty rootmodule succeeds" -TestCases (
+    It "module manifest containing empty rootmodule succeeds: <rootModuleValue>" -TestCases (
         @{rootModuleValue = $null},
         @{rootModuleValue = ""}
     ) {
@@ -96,7 +96,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         $moduleManifest.RootModule | Should BeNullOrEmpty
     }
 
-    It "module manifest containing invalid rootmodule returns error" -TestCases (
+    It "module manifest containing invalid rootmodule returns error: <rootModuleValue>" -TestCases (
         @{rootModuleValue = "foo.psd1"; error = "Modules_InvalidManifest"}
     ) {
 
@@ -110,7 +110,7 @@ Describe "Test-ModuleManifest tests" -tags "CI" {
         { Test-ModuleManifest -Path $testModulePath -ErrorAction Stop } | ShouldBeErrorId "$error,Microsoft.PowerShell.Commands.TestModuleManifestCommand"
     }
 
-    It "module manifest containing non-existing rootmodule returns error" -TestCases (
+    It "module manifest containing non-existing rootmodule returns error: <rootModuleValue>" -TestCases (
         @{rootModuleValue = "doesnotexist.psm1"; error = "Modules_InvalidRootModuleInModuleManifest"}
     ) {
 
@@ -180,7 +180,7 @@ Describe "Tests for circular references in required modules" -tags "CI" {
         $ModuleNames = 1..$moduleCount|%{"TestModule$_"}
 
         CreateTestModules $moduleRootPath $ModuleNames $AddVersion $AddGuid $AddCircularReference
-        
+
         $newpath = [system.io.path]::PathSeparator + "$moduleRootPath"
         $OriginalPSModulePathLength = $env:PSModulePath.Length
         $env:PSModulePath += $newpath

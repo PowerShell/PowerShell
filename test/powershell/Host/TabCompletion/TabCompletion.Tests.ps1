@@ -37,7 +37,7 @@ Describe "TabCompletion" -Tags CI {
     }
 
 
-    It 'Should complete format-* hashtable on GroupBy' -TestCases (
+    It 'Should complete format-* hashtable on GroupBy: <cmd>' -TestCases (
         @{cmd = 'Format-Table'},
         @{cmd = 'Format-List'},
         @{cmd = 'Format-Wide'},
