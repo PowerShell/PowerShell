@@ -8,6 +8,8 @@
     <AssemblyName>Microsoft.PowerShell.Commands.Management</AssemblyName>
   </PropertyGroup>
 
+  <Import Project="..\powershell-win-core\powershell-win-core.targets"/>  
+
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.PowerShell.Security\Microsoft.PowerShell.Security.csproj" />
   </ItemGroup>

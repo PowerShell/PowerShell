@@ -45,7 +45,7 @@ namespace System.Management.Automation
         private static Version s_psV4Version = new Version(4, 0);
         private static Version s_psV5Version = new Version(5, 0);
         private static Version s_psV51Version = new Version(5, 1, NTVerpVars.PRODUCTBUILD, NTVerpVars.PRODUCTBUILD_QFE);
-        private static SemanticVersion s_psV6Version = new SemanticVersion(6, 0, 0, "beta");
+        private static SemanticVersion s_psV6Version = GitCommitInfo.s_psV6Version;
 
         /// <summary>
         /// A constant to track current PowerShell Edition
@@ -63,7 +63,8 @@ namespace System.Management.Automation
 
             s_psVersionTable[PSVersionInfo.PSVersionName] = s_psV6Version;
             s_psVersionTable[PSVersionInfo.PSEditionName] = PSEditionValue;
-            s_psVersionTable[PSGitCommitIdName] = GetCommitInfo();
+            s_psVersionTable[PSBuildVersionName] = GetBuildVersion();
+            s_psVersionTable[PSGitCommitIdName] = GitCommitInfo.s_GitCommitInfo;
             s_psVersionTable[PSCompatibleVersionsName] = new Version[] { s_psV1Version, s_psV2Version, s_psV3Version, s_psV4Version, s_psV5Version, s_psV51Version, s_psV6Version };
             s_psVersionTable[PSVersionInfo.SerializationVersionName] = new Version(InternalSerializer.DefaultVersion);
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
@@ -89,18 +90,11 @@ namespace System.Management.Automation
             return result;
         }
 
-        // Get the commit id from the powershell.version file. If the powershell.version file doesn't exist, use the string "N/A"
-        internal static string GetCommitInfo()
+        internal static Version GetBuildVersion()
         {
-            try
-            {
-                string assemblyPath = IO.Path.GetDirectoryName(typeof(PSVersionInfo).GetTypeInfo().Assembly.Location);
-                return (IO.File.ReadAllLines(IO.Path.Combine(assemblyPath, "powershell.version"))[0]);
-            }
-            catch (Exception e)
-            {
-                return e.Message;
-            }
+            string assemblyPath = typeof(PSVersionInfo).GetTypeInfo().Assembly.Location;
+            string buildVersion = FileVersionInfo.GetVersionInfo(assemblyPath).FileVersion;
+            return new Version(buildVersion);
         }
 
         #region Private helper methods

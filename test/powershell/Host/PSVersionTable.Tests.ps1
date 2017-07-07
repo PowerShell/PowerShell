@@ -15,8 +15,16 @@ Describe "PSVersionTable" -Tags "CI" {
        $PSVersionTable.ContainsKey("OS")                        | Should Be True
 
     }
-    It "GitCommitId property should not contain an error" {
-       $PSVersionTable.GitCommitId | Should not match "powershell.version"
+
+    It "GitCommitId property" {
+       $PSVersionTable.GitCommitId | Should Not BeNullOrEmpty
+       $PSVersionTable.GitCommitId | Should BeOfType "System.String"
+       $PSVersionTable.GitCommitId | Should Match $PSVersionTable.PSVersion.ToString()
+    }
+
+    It "PSVersion property" {
+       $PSVersionTable.PSVersion | Should BeOfType "System.Management.Automation.SemanticVersion"
+       $PSVersionTable.PSVersion.Major | Should Be 6
     }
 
     It "Should have the correct platform info" {
