@@ -63,4 +63,4 @@ RUN curl -SLO ${LIBICU50_SOURCE}/${LIBICU50_PACKAGE} \
 ENV LD_LIBRARY_PATH /opt/microsoft/powershell/$POWERSHELL_VERSION/usr/lib64
 
 # Use array to avoid Docker prepending /bin/sh -c
-ENTRYPOINT [ "powershell" ]
+CMD [ "powershell" ]
