@@ -66,46 +66,6 @@ Describe "Get-ChildItem" -Tags "CI" {
             $file.Count | Should be 1
             $file.Name | Should be $item_F
         }
-        # Test is pending on Unix platforms because of a behavior change in the latest .NET Core.
-        # See https://github.com/dotnet/corefx/issues/20456 for more information.
-        It "Should continue enumerating a directory when a contained item is deleted" -Pending:(!$IsWindows) {
-            $Error.Clear()
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionDelete", $true)
-            $result = Get-ChildItem -Path $TestDrive -ErrorAction SilentlyContinue
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionDelete", $false)
-            if ($IsWindows)
-            {
-                $Error.Count | Should BeExactly 0
-                $result.Count | Should BeExactly 5
-            }
-            else
-            {
-                $Error.Count | Should BeExactly 1
-                $Error[0].FullyQualifiedErrorId | Should BeExactly "DirIOError,Microsoft.PowerShell.Commands.GetChildItemCommand"
-                $Error[0].Exception | Should BeOfType System.Io.FileNotFoundException
-                $result.Count | Should BeExactly 4
-            }
-        }
-        # Test is pending on Unix platforms because of a behavior change in the latest .NET Core.
-        # See https://github.com/dotnet/corefx/issues/20456 for more information.
-        It "Should continue enumerating a directory when a contained item is renamed" -Pending:(!$IsWindows) {
-            $Error.Clear()
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionRename", $true)
-            $result = Get-ChildItem -Path $TestDrive -ErrorAction SilentlyContinue
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionRename", $false)
-            if ($IsWindows)
-            {
-                $Error.Count | Should BeExactly 0
-                $result.Count | Should BeExactly 4
-            }
-            else
-            {
-                $Error.Count | Should BeExactly 1
-                $Error[0].FullyQualifiedErrorId | Should BeExactly "DirIOError,Microsoft.PowerShell.Commands.GetChildItemCommand"
-                $Error[0].Exception | Should BeOfType System.Io.FileNotFoundException
-                $result.Count | Should BeExactly 3
-            }
-        }
     }
 
     Context 'Env: Provider' {
