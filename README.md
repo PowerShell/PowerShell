@@ -1,12 +1,19 @@
 # ![logo][] PowerShell
 
 Welcome to the PowerShell GitHub Community!
-PowerShell is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework
-that works well with your existing tools and is optimized for dealing with structured data
-(e.g. JSON, CSV, XML, etc.), REST APIs, and object models.  It includes a command-line shell, an
-associated scripting language and a framework for processing cmdlets.
+PowerShell Core is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework that works well with your existing tools and is optimized
+for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models.
+It includes a command-line shell, an associated scripting language and a framework for processing cmdlets.
 
 [logo]: assets/Powershell_64.png
+
+## Windows PowerShell vs PowerShell Core
+
+Although this repo started as a fork of the Windows PowerShell code base, changes made in this repo do not make their way back to Windows PowerShell 5.1 automatically.
+This also means that issues tracked here are only for PowerShell Core 6.0.
+Windows PowerShell specific issues should be opened on [UserVoice][].
+
+[UserVoice]: https://windowsserver.uservoice.com/forums/301869-powershell
 
 ## New to PowerShell?
 

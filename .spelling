@@ -552,6 +552,7 @@ msi
 omnisharp-vscode
 opencode
 pkg
+UserVoice
  - src/libpsl-native/README.md
 Ansi
 C#'s
