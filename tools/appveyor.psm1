@@ -342,7 +342,7 @@ function Invoke-AppVeyorTest
         $testResultsNonAdminFile,
         $testResultsAdminFile
         <# $testResultsFileFullCLR # Disable FullCLR Build #>
-    ) | % {
+    ) | ForEach-Object {
         Test-PSPesterResults -TestResultsFile $_
     }
 
@@ -363,7 +363,7 @@ function Invoke-AppVeyorAfterTest
         $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
 
         Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
-        $codeCoverageArtifacts | % { Push-AppveyorArtifact $_ }
+        $codeCoverageArtifacts | ForEach-Object { Push-AppveyorArtifact $_ }
     }
 }
 

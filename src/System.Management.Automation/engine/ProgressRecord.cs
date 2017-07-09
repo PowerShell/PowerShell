@@ -450,7 +450,7 @@ namespace System.Management.Automation
              * b = T / 9
              *
              * Some sample values (for T=90):
-             * t   | %rem
+             * t   | ForEach-Objectrem
              * -----------
              * 0   | 100.0%
              * 5   |  66.6%

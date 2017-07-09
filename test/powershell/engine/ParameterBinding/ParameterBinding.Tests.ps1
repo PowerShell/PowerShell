@@ -233,7 +233,7 @@
 
             Process {
                 $result = ""
-                if($Parameter1 -ne $null)
+                if($null -ne $Parameter1)
                 {
                     $result += " P1"
                     foreach ($object in $Parameter1)
@@ -241,7 +241,7 @@
                         $result = $result + ":" + $object.GetType().Name + "," + $object
                     }
                 }
-                if($Parameter2 -ne $null)
+                if($null -ne $Parameter2)
                 {
                     $result += " P2"
                     foreach ($object in $Parameter2)

@@ -53,7 +53,7 @@ Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM ho
         # Get call stack from default runspace.
         $script = @'
             $rs = Get-Runspace -Id 1
-            if ($rs -eq $null) { throw 'Runspace not found' }
+            if ($null -eq $rs) { throw 'Runspace not found' }
             return $rs.Debugger.GetCallStack()
 '@
         [powershell]$psHost = [powershell]::Create()
@@ -74,9 +74,9 @@ Describe "Tests Debugger GetCallStack() on runspaces when attached to a WinRM ho
         # Clean up
         if ($host.IsRunspacePushed) { $host.PopRunspace() }
 
-        if ($psHost -ne $null) { $psHost.Dispose() }
-        if ($hostRS -ne $null) { $hostRS.Dispose() }
-        if ($ps -ne $null) { $ps.Dispose() }
-        if ($rs -ne $null) { $rs.Dispose() }
+        if ($null -ne $psHost) { $psHost.Dispose() }
+        if ($null -ne $hostRS) { $hostRS.Dispose() }
+        if ($null -ne $ps) { $ps.Dispose() }
+        if ($null -ne $rs) { $rs.Dispose() }
     }
 }

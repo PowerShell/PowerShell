@@ -2170,7 +2170,7 @@ namespace System.Management.Automation
         ///
         /// class C1 {}
         /// function foo { class C2 {} }
-        /// 1..10 | % { foo }
+        /// 1..10 | ForEach-Object { foo }
         ///
         /// DefinePowerShellTypes() would be called for two TypeDefinitionAsts at the same time and Types for C1 and C2 would be created at the same assembly.
         /// AddPowerShellTypesToTheScope() would be called for root script first and then for foo\C2, once we call function foo.

@@ -131,8 +131,8 @@ function Flatten-Ast
     param([System.Management.Automation.Language.Ast] $ast)
 
     $ast
-    $ast | gm -type property | ? { ($prop = $_.Name) -ne 'Parent' } | % {
-        $ast.$prop | ? { $_ -is [System.Management.Automation.Language.Ast] } | % { Flatten-Ast $_ }
+    $ast | gm -type property | Where-Object { ($prop = $_.Name) -ne 'Parent' } | ForEach-Object {
+        $ast.$prop | Where-Object { $_ -is [System.Management.Automation.Language.Ast] } | ForEach-Object { Flatten-Ast $_ }
     }
 }
 

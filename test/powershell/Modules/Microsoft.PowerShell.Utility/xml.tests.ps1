@@ -44,7 +44,7 @@
             Pop-Location
         }
 
-        $testcases | % {
+        $testcases | ForEach-Object {
 
             $params = $_.parameters
 

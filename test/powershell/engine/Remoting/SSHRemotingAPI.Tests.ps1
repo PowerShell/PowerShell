@@ -3,7 +3,7 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
     Context "SSHConnectionInfo Class Tests" {
 
         AfterEach {
-            if ($rs -ne $null) {
+            if ($null -ne $rs) {
                 $rs.Dispose()
             }
         }
@@ -55,7 +55,7 @@ Describe "SSH Remoting API Tests" -Tags "Feature" {
             catch
             {
                 $expectedArgumentException = $_.Exception
-                if ($_.Exception.InnerException -ne $null)
+                if ($null -ne $_.Exception.InnerException)
                 {
                     $expectedArgumentException = $_.Exception.InnerException
                 }

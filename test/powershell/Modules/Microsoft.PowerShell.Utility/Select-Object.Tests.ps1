@@ -18,7 +18,7 @@ Describe "Select-Object" -Tags "CI" {
     }
 
     It "Should be able to use the alias" {
-	{ $dirObject | select } | Should Not Throw
+	{ $dirObject | Select-Object} | Should Not Throw
     }
 
     It "Should have same result when using alias" {

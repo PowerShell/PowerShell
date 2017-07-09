@@ -117,9 +117,9 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             $operand -eq $operand | Should Be $true
             $operand -ne $operand | Should Be $false
             $null -eq $operand | Should Be $false
-            $operand -eq $null | Should Be $false
+            $null -eq $operand | Should Be $false
             $null -ne $operand | Should Be $true
-            $operand -ne $null | Should Be $true
+            $null -ne $operand | Should Be $true
         }
 
         It "comparisons with null" {
