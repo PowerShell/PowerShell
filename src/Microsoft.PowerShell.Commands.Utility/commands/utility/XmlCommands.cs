@@ -566,11 +566,11 @@ namespace Microsoft.PowerShell.Commands
 
             if (Depth == 0)
             {
-                _serializer = new CustomSerialization(_xw, _notypeinformation);
+                _serializer = new CustomSerialization(_xw, NoTypeInformation);
             }
             else
             {
-                _serializer = new CustomSerialization(_xw, _notypeinformation, Depth);
+                _serializer = new CustomSerialization(_xw, NoTypeInformation, Depth);
             }
         }
 

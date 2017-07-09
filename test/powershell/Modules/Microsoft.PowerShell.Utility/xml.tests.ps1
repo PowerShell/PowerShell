@@ -49,9 +49,8 @@
             $params = $_.parameters
 
             It $_.testName {
-                $result = Select-XML @params
-                $result.Count | Should Be 1
-                $result.Path | Should BeExactly $fileName.FullName
+                @(Select-XML @params).Count | Should Be 1
+                (Select-XML @params).Path | Should Be $fileName
             }
         }
 
@@ -59,10 +58,9 @@
             @{parameter="literalPath"},
             @{parameter="path"}
         ) {
-            param($parameter)
             $__data = "abcdefg"
             $params = @{$parameter="variable:__data"}
-            { Select-XML @params "Root" | ShouldBeErrorId 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand' }
+            { Select-XML @params "Root" | Should BeErrorId 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand' }
         }
 
         It "Invalid xml file" {
@@ -73,10 +71,10 @@
 
         It "-xml works with inputstream" {
             [xml]$xml = "<a xmlns='bar'><b xmlns:b='foo'>hello</b><c>world</c></a>"
-            $node = Select-Xml -Xml $xml -XPath "//c:b" -Namespace @{c='bar'}
+            $node = Select-Xml -Xml $xml -XPath "//b" -Namespace @{b='foo'}
             $node.Path | Should BeExactly "InputStream"
-            $node.Pattern = "//c:b"
-            $node.ToString() | Should BeExactly "hello"
+            $node.Pattern = "//b:b"
+            $node.ToString() | Should Be Exactly "hello"
         }
 
         It "Returns error for invalid xmlnamespace" {
@@ -94,7 +92,7 @@
         }
 
         It "ToString() works correctly with file" {
-            $testfile = "$testdrive" + [System.IO.Path]::DirectorySeparatorChar + "test.xml"
+            $testfile = "$testdrive/test.xml"
             Set-Content -Path $testfile -Value "<a><b>hello</b></a>"
             $node = Select-Xml -Path $testfile -XPath "//b"
             $node.ToString() | Should BeExactly "hello:$testfile"
