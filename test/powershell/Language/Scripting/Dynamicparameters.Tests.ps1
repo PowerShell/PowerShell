@@ -39,7 +39,7 @@
                 if(($null -ne $paramDictionary) -and ($paramDictionary -is [MyTestParameter]) ) {
                     $paramDictionary.name
                 }
-                elseif ($null -ne $paramDictionaryl) {
+                elseif ($null -ne $paramDictionary) {
                     if ($null -ne $paramDictionary.dp1.Value) {
                         $paramDictionary.dp1.Value
                     }

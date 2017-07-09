@@ -227,8 +227,8 @@
         function test-collectionbinding1 {
             [CmdletBinding()]
             param (
-            [array]$Parameter1 = "",
-            [int[]]$Parameter2 = ""
+            [array]$Parameter1,
+            [int[]]$Parameter2 
             )
 
             Process {
@@ -253,8 +253,8 @@
             }
         }
 
-        $result = test-collectionbinding1 -Parameter1 1
-        $result | Should Be "P1:Int32,1"
+        $result = test-collectionbinding1 -Parameter1 1 -Parameter2 2
+        $result | Should Be "P1:Int32,1 P2:Int32,2"
     }
 
     It "Verify that a dynamic parameter and an alias can't have the same name" {
