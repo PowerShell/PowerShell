@@ -2591,8 +2591,8 @@ function New-MSIPackage
     Remove-Item -ErrorAction SilentlyContinue $msiLocationPath -Force
 
     & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v | Write-Verbose
-    & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -arch x64 -v | Write-Verbose
-    & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -dWixUILicenseRtf="$LicenseFilePath" -v | Write-Verbose
+    & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch x64 -v | Write-Verbose
+    & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath" -v | Write-Verbose
 
     Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
 
