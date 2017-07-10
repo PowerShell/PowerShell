@@ -180,7 +180,7 @@ namespace System.Management.Automation.Internal
         {
             if (_isStatic)
             {
-                // WeakReference<T>'s instance methods are not thread-safe, so we need the lock to gurantee 
+                // WeakReference<T>'s instance methods are not thread-safe, so we need the lock to guarantee
                 // 'SetTarget' and 'TryGetTarget' are not called by multiple threads at the same time.
                 lock (_defaultSessionStateToUse)
                 {
@@ -193,7 +193,7 @@ namespace System.Management.Automation.Internal
         /// <summary>
         /// Set the SessionState of the script block appropriately.
         /// </summary>
-        private void PrepareScriptBlockToInvoke(object instance, object sessionStateInternal, object[] args)
+        private void PrepareScriptBlockToInvoke(object instance, object sessionStateInternal)
         {
             SessionStateInternal sessionStateToUse = null;
             if (instance != null)
@@ -228,7 +228,7 @@ namespace System.Management.Automation.Internal
         {
             try
             {
-                PrepareScriptBlockToInvoke(instance, sessionStateInternal, args);
+                PrepareScriptBlockToInvoke(instance, sessionStateInternal);
                 _boundScriptBlock.Value.InvokeAsMemberFunction(instance, args);
             }
             finally
@@ -252,7 +252,7 @@ namespace System.Management.Automation.Internal
         {
             try
             {
-                PrepareScriptBlockToInvoke(instance, sessionStateInternal, args);
+                PrepareScriptBlockToInvoke(instance, sessionStateInternal);
                 return _boundScriptBlock.Value.InvokeAsMemberFunctionT<T>(instance, args);
             }
             finally
