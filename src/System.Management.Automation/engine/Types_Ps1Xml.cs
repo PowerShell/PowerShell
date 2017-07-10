@@ -232,10 +232,10 @@ namespace System.Management.Automation.Runspaces
             var td24 = new TypeData(@"System.Management.ManagementObject#root\cimv2\Win32_PingStatus", true);
             td24.Members.Add("IPV4Address",
                 new ScriptPropertyData(@"IPV4Address", GetScriptBlock(@"$iphost = [System.Net.Dns]::GetHostEntry($this.address)
-          $iphost.AddressList | Where-Object{  $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork } | Select-Object -first 1"), null));
+          $iphost.AddressList | Where-Object { $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork } | Select-Object -first 1"), null));
             td24.Members.Add("IPV6Address",
                 new ScriptPropertyData(@"IPV6Address", GetScriptBlock(@"$iphost = [System.Net.Dns]::GetHostEntry($this.address)
-          $iphost.AddressList | Where-Object{  $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetworkV6 } | Select-Object -first 1"), null));
+          $iphost.AddressList | Where-Object { $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetworkV6 } | Select-Object -first 1"), null));
             yield return td24;
 
             var td25 = new TypeData(@"System.Management.ManagementObject#root\cimv2\Win32_Process", true);
@@ -1106,7 +1106,7 @@ namespace System.Management.Automation.Runspaces
           if ($null -eq $helpObject) { return $null }
           if ($null -eq $helpObject.psobject.properties['relatedLinks']) { return $null }
           if ($null -eq $helpObject.relatedLinks.psobject.properties['navigationLink']) { return $null }
-          $helpUri = [string]$( $helpObject.relatedLinks.navigationLink | ForEach-Object { if ($null -ne $_.psobject.properties['uri']) { $_.uri } } | Where-Object{  $_ } | Select-Object -first 1 )
+          $helpUri = [string]$( $helpObject.relatedLinks.navigationLink | ForEach-Object { if ($null -ne $_.psobject.properties['uri']) { $_.uri } } | Where-Object { $_ } | Select-Object -first 1 )
           return $helpUri
           }
           else
@@ -1376,10 +1376,10 @@ namespace System.Management.Automation.Runspaces
             var td167 = new TypeData(@"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PingStatus", true);
             td167.Members.Add("IPV4Address",
                 new ScriptPropertyData(@"IPV4Address", GetScriptBlock(@"$iphost = [System.Net.Dns]::GetHostEntry($this.address)
-          $iphost.AddressList | Where-Object{  $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork } | Select-Object -first 1"), null));
+          $iphost.AddressList | Where-Object { $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork } | Select-Object -first 1"), null));
             td167.Members.Add("IPV6Address",
                 new ScriptPropertyData(@"IPV6Address", GetScriptBlock(@"$iphost = [System.Net.Dns]::GetHostEntry($this.address)
-          $iphost.AddressList | Where-Object{  $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetworkV6 } | Select-Object -first 1"), null));
+          $iphost.AddressList | Where-Object { $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetworkV6 } | Select-Object -first 1"), null));
             yield return td167;
 
             var td168 = new TypeData(@"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process", true);

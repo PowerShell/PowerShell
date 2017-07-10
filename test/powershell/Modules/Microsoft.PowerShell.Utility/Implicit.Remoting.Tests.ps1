@@ -808,7 +808,7 @@ Describe "Import-PSSession functional tests" -tags "Feature" {
         }
 
         It "Temporary module should be automatically removed after runspace is closed" -Skip:$skipTest {
-             (Get-Module | Where-Object { $_.Path -eq $module.Path }) | Should BeNullOrEmpty
+            (Get-Module | Where-Object { $_.Path -eq $module.Path }) | Should BeNullOrEmpty
         }
 
         It "Temporary psm1 file should be automatically removed after runspace is closed" -Skip:$skipTest {

@@ -47,8 +47,8 @@ function Get-CodeCoverageChange($r1, $r2, [string[]]$ClassName)
 
     if ( $ClassName ) {
         foreach ( $Class in $ClassName ) {
-            $c1 = $r1.Assembly.ClassCoverage | Where-Object{ $_.ClassName -eq $Class }
-            $c2 = $r2.Assembly.ClassCoverage | Where-Object{ $_.ClassName -eq $Class }
+            $c1 = $r1.Assembly.ClassCoverage | Where-Object { $_.ClassName -eq $Class }
+            $c2 = $r2.Assembly.ClassCoverage | Where-Object { $_.ClassName -eq $Class }
             $ClassCoverageChange = [pscustomobject]@{
                 ClassName     = $Class
                 Branch        = $c2.Branch
@@ -136,7 +136,7 @@ function Get-CoverageData($xmlPath)
         Assembly = $assemblies
     }
     $CoverageData.PSTypeNames.Insert(0,"OpenCover.CoverageData")
-    Add-Member -InputObject $CoverageData -MemberType ScriptMethod -Name GetClassCoverage -Value { param ( $name ) $this.assembly.classcoverage | Where-Object{ $_.classname -match $name } }
+    Add-Member -InputObject $CoverageData -MemberType ScriptMethod -Name GetClassCoverage -Value { param ( $name ) $this.assembly.classcoverage | Where-Object { $_.classname -match $name } }
     $null = $CoverageXml
 
     ## Adding explicit garbage collection as the $CoverageXml object tends to be very large, in order of 1 GB.
