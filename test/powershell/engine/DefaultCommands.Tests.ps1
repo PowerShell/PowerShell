@@ -534,14 +534,17 @@ Describe "Verify approved aliases list" -Tags "CI" {
     }
 }
 
-[string] $userBinPath = Get-Item -Path '~/bin'
-[string] $sudoMockPath = Join-Path (Get-Item -Path '~/bin').FullName -ChildPath 'sudo'
-[string] $sudoText = 'mocksudo.txt'
-[string] $sudoOutputPath = Join-Path (Get-Item -Path '~/bin').FullName -ChildPath $sudotext
-[string] $sudoMock = @"
+if ($CoreUnix)
+{
+[string] $script:userBinPath = Get-Item -Path '~/bin'
+[string] $script:sudoMockPath = Join-Path (Get-Item -Path '~/bin').FullName -ChildPath 'sudo'
+[string] $script:sudoText = 'mocksudo.txt'
+[string] $script:sudoOutputPath = Join-Path (Get-Item -Path '~/bin').FullName -ChildPath $sudotext
+[string] $script:sudoMock = @"
 #!/bin/sh
 echo `$@
 "@
+}
 
 Describe "Verify sudo function on CoreUNIX" -Tags "CI"{
 
@@ -550,10 +553,10 @@ Describe "Verify sudo function on CoreUNIX" -Tags "CI"{
         BeforeAll {
             $skipTest = !$CoreUnix
             if ($skipTest) {return}
-            $sudoscript = $sudoMock.Replace("`r`n", "`n")
+            $sudoscript = $script:sudoMock.Replace("`r`n", "`n")
             # place a mock sudo command in the user's bin folder
-            Set-Content -Path $sudoMockPath -Value $sudoscript
-            chmod 777 $sudoMockPath
+            Set-Content -Path $script:sudoMockPath -Value $sudoscript
+            chmod 777 $script:sudoMockPath
             $items = Get-Command -Name 'sudo' -CommandType Application
             # Verify sudo resolves to the mock
             if ($items -eq $null)
@@ -579,9 +582,9 @@ Describe "Verify sudo function on CoreUNIX" -Tags "CI"{
             if ($skipTest) {return}
 
             # clean up the mock files
-            if (Test-Path -Path $sudoMockPath)
+            if (Test-Path -Path $script:sudoMockPath)
             {
-                Remove-Item -Path $sudoMockPath -ErrorAction Ignore
+                Remove-Item -Path $script:sudoMockPath -ErrorAction Ignore
             }
         }
 
