@@ -4500,7 +4500,7 @@ namespace System.Management.Automation
 
             try
             {
-                // IsNested is true for the icm | % { icm } scenario
+                // IsNested is true for the icm | ForEach-Object { icm } scenario
                 if (!IsNested || (pool != null && pool.IsRemote))
                 {
                     if (null != pool)

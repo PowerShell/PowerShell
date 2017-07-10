@@ -51,7 +51,7 @@ Removing the aliases exposes the native command experience to the PowerShell use
 
 Currently, PowerShell only does wildcard expansion (globbing) for built-in cmdlets on Windows, and for external commands or binaries as well as cmdlets on Linux.
 This means that a command like `ls *.txt` will fail because the asterisk will not be expanded to match file names.
-You can work around this by doing `ls (gci *.txt | % name)` or, more simply, `gci *.txt` using the PowerShell built-in equivalent to `ls`.
+You can work around this by doing `ls (gci *.txt | ForEach-Object name)` or, more simply, `gci *.txt` using the PowerShell built-in equivalent to `ls`.
 
 See [#954](https://github.com/PowerShell/PowerShell/issues/954) to give us feedback on how to improve the globbing experience on Linux/macOS.
 

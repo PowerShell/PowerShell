@@ -199,7 +199,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
                 // remove computername for remoteobjects..only if PSShowComputerName property exists
                 // otherwise the PSComputerName property does not belong to a remote object:
-                // Ex: icm $s { gps } | select pscomputername --> In this case we want to show
+                // Ex: icm $s { gps } | Select-Object pscomputername --> In this case we want to show
                 // PSComputerName
                 if ((null != so.Properties[RemotingConstants.ComputerNameNoteProperty]) &&
                     (!PSObjectHelper.ShouldShowComputerNameProperty(so)))

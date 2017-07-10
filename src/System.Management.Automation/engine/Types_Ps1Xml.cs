@@ -151,7 +151,7 @@ namespace System.Management.Automation.Runspaces
             td17.Members.Add("DisplayName",
                 new ScriptPropertyData(@"DisplayName", GetScriptBlock(@"if ($this.Name.IndexOf('-') -lt 0)
           {
-          if ($this.ResolvedCommand -ne $null)
+          if ($null -ne $this.ResolvedCommand)
           {
           $this.Name + "" -> "" + $this.ResolvedCommand.Name
           }
@@ -232,10 +232,10 @@ namespace System.Management.Automation.Runspaces
             var td24 = new TypeData(@"System.Management.ManagementObject#root\cimv2\Win32_PingStatus", true);
             td24.Members.Add("IPV4Address",
                 new ScriptPropertyData(@"IPV4Address", GetScriptBlock(@"$iphost = [System.Net.Dns]::GetHostEntry($this.address)
-          $iphost.AddressList | ?{ $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork } | select -first 1"), null));
+          $iphost.AddressList | Where-Object { $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork } | Select-Object -first 1"), null));
             td24.Members.Add("IPV6Address",
                 new ScriptPropertyData(@"IPV6Address", GetScriptBlock(@"$iphost = [System.Net.Dns]::GetHostEntry($this.address)
-          $iphost.AddressList | ?{ $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetworkV6 } | select -first 1"), null));
+          $iphost.AddressList | Where-Object { $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetworkV6 } | Select-Object -first 1"), null));
             yield return td24;
 
             var td25 = new TypeData(@"System.Management.ManagementObject#root\cimv2\Win32_Process", true);
@@ -1103,10 +1103,10 @@ namespace System.Management.Automation.Runspaces
           $helpObject = get-help -Name $commandName -Category ([string]($this.CommandType)) -ErrorAction SilentlyContinue
 
           # return first non-null uri (and try not to hit any strict mode things)
-          if ($helpObject -eq $null) { return $null }
-          if ($helpObject.psobject.properties['relatedLinks'] -eq $null) { return $null }
-          if ($helpObject.relatedLinks.psobject.properties['navigationLink'] -eq $null) { return $null }
-          $helpUri = [string]$( $helpObject.relatedLinks.navigationLink | %{ if ($_.psobject.properties['uri'] -ne $null) { $_.uri } } | ?{ $_ } | select -first 1 )
+          if ($null -eq $helpObject) { return $null }
+          if ($null -eq $helpObject.psobject.properties['relatedLinks']) { return $null }
+          if ($null -eq $helpObject.relatedLinks.psobject.properties['navigationLink']) { return $null }
+          $helpUri = [string]$( $helpObject.relatedLinks.navigationLink | ForEach-Object { if ($null -ne $_.psobject.properties['uri']) { $_.uri } } | Where-Object { $_ } | Select-Object -first 1 )
           return $helpUri
           }
           else
@@ -1296,9 +1296,9 @@ namespace System.Management.Automation.Runspaces
 
             var td165 = new TypeData(@"System.Management.Automation.CallStackFrame", true);
             td165.Members.Add("Command",
-                new ScriptPropertyData(@"Command", GetScriptBlock(@"if ($this.InvocationInfo -eq $null) { return $this.FunctionName }
+                new ScriptPropertyData(@"Command", GetScriptBlock(@"if ($null -eq $this.InvocationInfo) { return $this.FunctionName }
           $commandInfo = $this.InvocationInfo.MyCommand
-          if ($commandInfo -eq $null) { return $this.InvocationInfo.InvocationName }
+          if ($null -eq $commandInfo) { return $this.InvocationInfo.InvocationName }
           if ($commandInfo.Name -ne """") { return $commandInfo.Name }
           return $this.FunctionName"), null));
             td165.Members.Add("Location",
@@ -1356,7 +1356,7 @@ namespace System.Management.Automation.Runspaces
           trap { }
           $private:dacls = """";
           $private:first = $true
-          $private:sd.DiscretionaryAcl | % {
+          $private:sd.DiscretionaryAcl | ForEach-Object {
           trap { }
           if ($private:first)
           {
@@ -1376,10 +1376,10 @@ namespace System.Management.Automation.Runspaces
             var td167 = new TypeData(@"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_PingStatus", true);
             td167.Members.Add("IPV4Address",
                 new ScriptPropertyData(@"IPV4Address", GetScriptBlock(@"$iphost = [System.Net.Dns]::GetHostEntry($this.address)
-          $iphost.AddressList | ?{ $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork } | select -first 1"), null));
+          $iphost.AddressList | Where-Object { $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetwork } | Select-Object -first 1"), null));
             td167.Members.Add("IPV6Address",
                 new ScriptPropertyData(@"IPV6Address", GetScriptBlock(@"$iphost = [System.Net.Dns]::GetHostEntry($this.address)
-          $iphost.AddressList | ?{ $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetworkV6 } | select -first 1"), null));
+          $iphost.AddressList | Where-Object { $_.AddressFamily -eq [System.Net.Sockets.AddressFamily]::InterNetworkV6 } | Select-Object -first 1"), null));
             yield return td167;
 
             var td168 = new TypeData(@"Microsoft.Management.Infrastructure.CimInstance#root/cimv2/Win32_Process", true);

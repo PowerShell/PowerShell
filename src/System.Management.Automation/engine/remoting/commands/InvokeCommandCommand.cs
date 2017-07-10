@@ -49,7 +49,7 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// Execute a command in a set of remote machines by specifying the
     /// command and the list of machines
-    ///     $servers = 1..10 | %{"Server${_}"}
+    ///     $servers = 1..10 | ForEach-Object {"Server${_}"}
     ///     invoke-command -command {get-process} -computername $servers
     ///
     /// Create a new runspace and use it to execute a command on a remote machine
@@ -65,7 +65,7 @@ namespace Microsoft.PowerShell.Commands
     /// Create a collection of runspaces and use it to execute a command on a set
     /// of remote machines
     ///
-    ///     $serveruris = 1..8 | %{"http://Server${_}/"}
+    ///     $serveruris = 1..8 | ForEach-Object {"http://Server${_}/"}
     ///     $runspaces = New-PSSession -URI $serveruris
     ///     invoke-command -command {get-process} -Session $runspaces
     ///
@@ -948,7 +948,7 @@ namespace Microsoft.PowerShell.Commands
                         // Win8 Bug:898011 - We are restricting remote steppable pipeline because
                         // of this bug in Win8 where hangs can occur during data piping.
                         // We are reverting to Win7 behavior for {icm | icm} and {proxycommand | proxycommand}
-                        // cases. For ICM | % ICM case, we are using remote steppable pipeline.
+                        // cases. For ICM | ForEach-Object ICM case, we are using remote steppable pipeline.
                         if ((MyInvocation != null) && (MyInvocation.PipelinePosition == 1) && (MyInvocation.ExpectingInput == false))
                         {
                             PSPrimitiveDictionary table = (object)runspaceInfo.ApplicationPrivateData[PSVersionInfo.PSVersionTableName] as PSPrimitiveDictionary;
@@ -958,7 +958,7 @@ namespace Microsoft.PowerShell.Commands
 
                                 if (version != null)
                                 {
-                                    // In order to support foreach remoting properly ( icm | % { icm } ), the server must
+                                    // In order to support foreach remoting properly ( icm | ForEach-Object { icm } ), the server must
                                     // be using protocol version 2.2. Otherwise, we skip this and assume the old behavior.
                                     if (version >= RemotingConstants.ProtocolVersionWin8RTM)
                                     {

@@ -1428,7 +1428,7 @@ namespace System.Management.Automation
             return result;
         } // GetEncodingFromEnum
 
-        // [System.Text.Encoding]::GetEncodings() | ? { $_.GetEncoding().GetPreamble() } |
+        // [System.Text.Encoding]::GetEncodings() | Where-Object { $_.GetEncoding().GetPreamble() } |
         //     Add-Member ScriptProperty Preamble { $this.GetEncoding().GetPreamble() -join "-" } -PassThru |
         //     Format-Table -Auto
         internal static Dictionary<String, FileSystemCmdletProviderEncoding> encodingMap =
