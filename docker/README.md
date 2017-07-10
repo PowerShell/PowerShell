@@ -99,7 +99,7 @@ Successfully built ee667ad86a7b
 ### Run the docker image you built
 
 ```sh
-PS /powershell/docker/release/ubuntu16.04> docker run -it ps-ubuntu.16.04 '$psversiontable'
+PS /powershell/docker/release/ubuntu16.04> docker run -it ps-ubuntu.16.04 powershell -c '$psversiontable'
 
 Name                           Value
 ----                           -----
