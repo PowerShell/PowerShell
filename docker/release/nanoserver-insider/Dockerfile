@@ -2,9 +2,11 @@
 # Args used by from statements must be defined here:
 ARG NanoServerVersion=10.0.16237.1001
 ARG WindowsServerCoreVersion=10.0.16237.1001
+ARG WindowsServerCoreRepo=microsoft/windowsservercore-insider
+ARG NanoServerRepo=microsoft/nanoserver-insider
 
 # Use server core as an installer container to extract PowerShell
-FROM microsoft/windowsservercore-insider:$WindowsServerCoreVersion  AS installer-env
+FROM ${WindowsServerCoreRepo}:$WindowsServerCoreVersion  AS installer-env
 
 # Arguments for installing powershell, must be defined in the container they are used
 ARG PS_VERSION=6.0.0-beta.3
@@ -18,10 +20,11 @@ RUN if ((Get-FileHash powershell.zip -Algorithm sha256).Hash -ne $Env:PS_DOWNLOA
         Write-Host 'CHECKSUM VERIFICATION FAILED!'; `
         exit 1; `
     }
+
 RUN Expand-Archive powershell.zip -DestinationPath \PowerShell
 
 # Install PowerShell into NanoServer
-FROM microsoft/nanoserver-insider:$NanoServerVersion
+FROM ${NanoServerRepo}:$NanoServerVersion
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>"
 LABEL readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
 LABEL description="This Dockerfile will install the latest release of PS."
