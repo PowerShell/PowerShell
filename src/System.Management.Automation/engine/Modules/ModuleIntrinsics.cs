@@ -590,8 +590,16 @@ namespace System.Management.Automation
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.SHARED_MODULES);
 #else
-            string sharedModulePath = null;
+            string sharedModulePath = string.Empty;
             string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+
+            // If we could not get a path from the special folder call,
+            // fall back to the environment.
+            if(string.IsNullOrEmpty(programFilesPath))
+            {
+                programFilesPath = System.Environment.GetEnvironmentVariable("ProgramFiles");
+            }
+            
             if (!string.IsNullOrEmpty(programFilesPath))
             {
                 sharedModulePath = Path.Combine(programFilesPath, Utils.ModuleDirectory);
