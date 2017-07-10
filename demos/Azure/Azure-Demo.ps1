@@ -10,7 +10,7 @@
 ###
 ### Install-Package -Name AzureRM.NetCore.Preview -Source https://www.powershellgallery.com/api/v2 -ProviderName NuGet -ExcludeVersion -Destination <Folder you want this to be installed>
 ###
-### Ensure $env:PSMODULEPATH is updated with the location you used to install.
+### Ensure $env:PSModulePath is updated with the location you used to install.
 Import-Module AzureRM.NetCore.Preview
 
 ### Supply your Azure Credentials

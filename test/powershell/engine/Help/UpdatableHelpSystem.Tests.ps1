@@ -131,7 +131,7 @@ $testCases = @{
 
 # These are the inbox modules.
 $modulesInBox = @("Microsoft.PowerShell.Core"
-                  Get-Module -ListAvailable | ForEach-Object{$_.Name}
+                  Get-Module -ListAvailable | ForEach-Object {$_.Name}
 )
 
 function GetFiles

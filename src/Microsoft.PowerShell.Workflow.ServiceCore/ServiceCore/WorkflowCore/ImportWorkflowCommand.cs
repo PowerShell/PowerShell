@@ -1843,7 +1843,7 @@ namespace Microsoft.PowerShell.Commands
                     throw (New-Object System.Management.Automation.ErrorRecord $newException, StartWorkflow.InvalidArgument, InvalidArgument, $finalParameterCollection)
                 }}
 
-                if ($null -ne -not $AsJob -and $job)
+                if (-not $AsJob -and $null -ne $job)
                 {{
                     try
                     {{

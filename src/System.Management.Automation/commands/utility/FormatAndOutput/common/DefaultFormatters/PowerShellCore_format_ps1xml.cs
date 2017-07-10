@@ -15,7 +15,7 @@ namespace System.Management.Automation.Runspaces
                     .StartEntry()
                         .StartFrame(leftIndent: 4)
                             .AddText(FileSystemProviderStrings.DirectoryDisplayGrouping)
-                            .AddScriptBlockExpressionBinding(@"Split-Path -Parent $_.Path | ForEach-Object{ if([Version]::TryParse((Split-Path $_ -Leaf), [ref]$null)) { Split-Path -Parent $_} else {$_} } | Split-Path -Parent")
+                            .AddScriptBlockExpressionBinding(@"Split-Path -Parent $_.Path | ForEach-Object { if([Version]::TryParse((Split-Path $_ -Leaf), [ref]$null)) { Split-Path -Parent $_} else {$_} } | Split-Path -Parent")
                             .AddNewline()
                         .EndFrame()
                     .EndEntry()
@@ -1193,7 +1193,7 @@ namespace System.Management.Automation.Runspaces
         {
             yield return new FormatViewDefinition("Module",
                 TableControl.Create()
-                    .GroupByScriptBlock("Split-Path -Parent $_.Path | ForEach-Object{ if([Version]::TryParse((Split-Path $_ -Leaf), [ref]$null)) { Split-Path -Parent $_} else {$_} } | Split-Path -Parent", customControl: sharedControls[0])
+                    .GroupByScriptBlock("Split-Path -Parent $_.Path | ForEach-Object { if([Version]::TryParse((Split-Path $_ -Leaf), [ref]$null)) { Split-Path -Parent $_} else {$_} } | Split-Path -Parent", customControl: sharedControls[0])
                     .AddHeader(Alignment.Left, width: 10)
                     .AddHeader(Alignment.Left, width: 10)
                     .AddHeader(Alignment.Left, width: 35)

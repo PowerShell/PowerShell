@@ -1495,7 +1495,7 @@ function SaveCDXMLSingletonCmdlets
 	{
 		$xmlWriter = SaveCDXMLHeader $xmlWriter $Uri $singletonName $singletonName $CmdletAdapter
 
-        if ($null -eq $associatedEntityType.BaseTyp -and $null -ne $associatedEntityType.BaseTypeStr -and $associatedEntityType.BaseTypeStr -ne '')
+        if ($null -eq $associatedEntityType.BaseType -and $null -ne $associatedEntityType.BaseTypeStr -and $associatedEntityType.BaseTypeStr -ne '')
         {
             $associatedEntitybaseType = GetBaseTypeByName $associatedEntityType.BaseTypeStr $GlobalMetadata
 

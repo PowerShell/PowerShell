@@ -880,7 +880,7 @@ function Start-PSPester {
                     $count = ($lines | measure-object).Count
                     if ($count -eq 0)
                     {
-                        Start-Sleep 1
+                        Start-Sleep -Seconds 1
                     }
                     else
                     {

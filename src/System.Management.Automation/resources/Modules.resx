@@ -328,10 +328,10 @@
     <value>The '{0}' command in the {2}' module was imported, but because its name does not include an approved verb, it might be difficult to find. The suggested alternative verbs are "{1}".</value>
   </data>
   <data name="ImportingNonStandardNoun" xml:space="preserve">
-    <value>Some imported command names contain one or more of the following restricted characters: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ; : " ' &lt; &gt; | Where-Object @ ` * % + = ~</value>
+    <value>Some imported command names contain one or more of the following restricted characters: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ; : " ' &lt; &gt; | ? @ ` * % + = ~</value>
   </data>
   <data name="ImportingNonStandardNounVerbose" xml:space="preserve">
-    <value>The command name '{0}' from the module '{1}' contains one or more of the following restricted characters: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ; : " ' &lt; &gt; | Where-Object @ ` * % + = ~</value>
+    <value>The command name '{0}' from the module '{1}' contains one or more of the following restricted characters: # , ( ) {{ }} [ ] &amp; - / \ $ ^ ; : " ' &lt; &gt; | ? @ ` * % + = ~</value>
   </data>
   <data name="CreatingModuleManifestFile" xml:space="preserve">
     <value>Creating the "{0}" module manifest file.</value>

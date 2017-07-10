@@ -316,15 +316,15 @@ Describe "Tests Export-PSSession" -tags "Feature" {
     }
 
     It "Verifies Export-PSSession creates a psd1 file" -Skip:$skipTest {
-        ($results | Where-Object{ $_.Name -like "*$(Split-Path -Leaf $file).psd1" }) | Should Be $true
+        ($results | Where-Object { $_.Name -like "*$(Split-Path -Leaf $file).psd1" }) | Should Be $true
     }
 
     It "Verifies Export-PSSession creates a psm1 file" -Skip:$skipTest {
-        ($results | Where-Object{ $_.Name -like "*.psm1" }) | Should Be $true
+        ($results | Where-Object { $_.Name -like "*.psm1" }) | Should Be $true
     }
 
     It "Verifies Export-PSSession creates a ps1xml file" -Skip:$skipTest {
-        ($results | Where-Object{ $_.Name -like "*.ps1xml" }) | Should Be $true
+        ($results | Where-Object { $_.Name -like "*.ps1xml" }) | Should Be $true
     }
 
     It "Verifies that Export-PSSession fails when a module directory already exists" -Skip:$skipTest {
@@ -623,7 +623,7 @@ Describe "Import-PSSession with FormatAndTypes" -tags "Feature" {
         BeforeAll {
             if ($skipTest) { return }
 
-            $formattingScript = { new-object System.Management.Automation.Host.Size | ForEach-Object{ $_.Width = 123; $_.Height = 456; $_ } | Out-String }
+            $formattingScript = { new-object System.Management.Automation.Host.Size | ForEach-Object { $_.Width = 123; $_.Height = 456; $_ } | Out-String }
             $originalLocalFormatting = & $formattingScript
 
             # Original local and remote formatting should be equal (sanity check)
@@ -808,7 +808,7 @@ Describe "Import-PSSession functional tests" -tags "Feature" {
         }
 
         It "Temporary module should be automatically removed after runspace is closed" -Skip:$skipTest {
-            ($null -eq (Get-Module | Where-Object { $_.Path -eq $module.Path })) | Should Be $true
+             (Get-Module | Where-Object { $_.Path -eq $module.Path }) | Should BeNullOrEmpty
         }
 
         It "Temporary psm1 file should be automatically removed after runspace is closed" -Skip:$skipTest {
@@ -1779,13 +1779,13 @@ Describe "Implicit remoting tests" -tags "Feature" {
                 $getVariablePid | Should Be $remotePid
 
                 ## Get-Variable function should not be exported when importing a BadVerb-Variable function
-                ($null -eq (Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue)) | Should Be $true
+                Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should BeNullOrEmpty
 
                 ## BadVerb-Variable should be a function, not an alias (1)
-                ($null -ne (Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue)) | Should Be $true
+                Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should BeNullOrEmpty
 
                 ## BadVerb-Variable should be a function, not an alias (2)
-                ($null -eq (Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue)) | Should Be $true
+                Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should BeNullOrEmpty
 
                 (BadVerb-Variable -Name pid).Value | Should Be $remotePid
             } finally {
@@ -1819,13 +1819,13 @@ Describe "Implicit remoting tests" -tags "Feature" {
                 $getVariablePid | Should Be $remotePid
 
                 ## Get-Variable function should not be exported when importing a BadVerb-Variable function
-                ($null -eq (Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue)) | Should Be $true
+                Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should BeNullOrEmpty
 
                 ## BadVerb-Variable should be a function, not an alias (1)
-                ($null -ne (Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue)) | Should Be $true
+                Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should BeNullOrEmpty
 
                 ## BadVerb-Variable should be a function, not an alias (2)
-                ($null -eq (Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue)) | Should Be $true
+                Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should BeNullOrEmpty
 
                 (BadVerb-Variable -Name pid).Value | Should Be $remotePid
             } finally {
@@ -1870,10 +1870,10 @@ Describe "Implicit remoting tests" -tags "Feature" {
                 $getVariablePid | Should Be $remotePid
 
                 ## BadVerb-Variable should be an alias, not a function (1)
-                ($null -eq (Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue)) | Should Be $true
+                Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should BeNullOrEmpty
 
                 ## BadVerb-Variable should be an alias, not a function (2)
-                ($null -ne (Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue)) | Should Be $true
+                Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should BeNullOrEmpty
 
                 (BadVerb-Variable -Name pid).Value | Should Be $remotePid
             } finally {

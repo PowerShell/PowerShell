@@ -15,7 +15,7 @@ $script2 = @'
 Describe "Breakpoints when set should be hit" -tag "CI" {
     BeforeAll {
         $path = setup -pass -f TestScript_1.ps1 -content $script1
-        $bps = 1..6 | ForEach-Object{ set-psbreakpoint -script $path -line $_ -Action { continue } }
+        $bps = 1..6 | ForEach-Object { set-psbreakpoint -script $path -line $_ -Action { continue } }
     }
     AfterAll {
         $bps | Remove-PSBreakPoint
