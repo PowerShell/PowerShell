@@ -206,7 +206,9 @@ namespace System.Management.Automation.Internal
                 // For static method, it's a little complex.
                 // - Check if the current default runspace is registered with the SessionStateKeeper. If so, use the registered SessionState.
                 // - Otherwise, check if default SessionState is still alive. If so, use the default SessionState.
-                // - Otherwise, the 'SessionStateInternal' property will be set to null, and the current default runspace will be used.
+                // - Otherwise, the 'SessionStateInternal' property will be set to null, and thus the default runspace of the current thread will be used.
+                //              If the current thread doesn't have a default Runspace, then an InvalidOperationException will be thrown when invoking the
+                //              script block, which is expected.
                 sessionStateToUse = (SessionStateInternal)_sessionStateKeeper.GetSessionState();
                 if (sessionStateToUse == null)
                 {
