@@ -40,8 +40,8 @@ Describe "Basic Alias Provider Tests" -Tags "CI" {
 
         It "Verify 'Used' and 'Free' script properties" {
             $drive = Get-PSDrive -Name $psDriveName
-            $drive.Used -eq $null | Should Be $false
-            $drive.Free -eq $null | Should Be $false
+            $null -eq $drive.Used | Should Be $false
+            $null -eq $drive.Free | Should Be $false
         }
     }
 }

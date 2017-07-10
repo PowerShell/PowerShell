@@ -48,7 +48,7 @@ Describe "Basic Send-MailMessage tests" -Tags CI {
                         }
                         elseif ($line.StartsWith("To: "))
                         {
-                            if ($rv.To -eq $null)
+                            if ($null -eq $rv.To)
                             {
                                 $rv.To = @()
                             }
@@ -72,7 +72,7 @@ Describe "Basic Send-MailMessage tests" -Tags CI {
                             continue
                         }
 
-                        if ($rv.Body -eq $null)
+                        if ($null -eq $rv.Body)
                         {
                             $rv.Body = @()
                         }
@@ -116,7 +116,7 @@ Describe "Basic Send-MailMessage tests" -Tags CI {
         $mailStore = "/var/mail"
         $mailBox = Join-Path $mailStore $user
         $mailBoxFile = Get-Item $mailBox -ErrorAction SilentlyContinue
-        if ($mailBoxFile -ne $null -and $mailBoxFile.Length -gt 2)
+        if ($null -ne $mailBoxFile -and $mailBoxFile.Length -gt 2)
         {
             $PesterArgs["Pending"] = $true
             $PesterArgs["Name"] += " (pending: mailbox not empty)"

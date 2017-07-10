@@ -39,12 +39,12 @@ Describe "MSFT:3309783" -Tags "CI" {
     It "Run in another process" {
         # For a reliable test, we must run this in a new process because an earlier binding in this process
         # could mask the bug/fix.
-        & $powershellexe -noprofile -command "[psobject] | % FullName" | Should Be System.Management.Automation.PSObject
+        & $powershellexe -noprofile -command "[psobject] | ForEach-Object FullName" | Should Be System.Management.Automation.PSObject
     }
 
     It "Run in current process" {
         # For good measure, do the same thing in this process
-        [psobject] | % FullName | Should Be System.Management.Automation.PSObject
+        [psobject] | ForEach-Object FullName | Should Be System.Management.Automation.PSObject
     }
 
     It "Pipe objects derived from PSObject" {
@@ -59,7 +59,7 @@ Describe "MSFT:3309783" -Tags "CI" {
         }
 
         [MyPsObj]::new("abc").psobject.ToString() | Should Be "MyObj: abc"
-        [MyPsObj]::new("def") | Out-String | % Trim | Should Be "MyObj: def"
+        [MyPsObj]::new("def") | Out-String | ForEach-Object Trim | Should Be "MyObj: def"
     }
 }
 

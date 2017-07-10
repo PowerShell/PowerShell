@@ -1257,7 +1257,7 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
     }
 
     # If neither www.bing.com nor www.google.com are online, then skip the tests.
-    $skipTests = ($endPointToUse -eq $null)
+    $skipTests = ($null -eq $endPointToUse)
     $finalUri = $endPointToUse + "?q=how+many+feet+in+a+mile"
 
     It "Execute Invoke-WebRequest --> 'iwr -URI $finalUri'" -Skip:$skipTests {

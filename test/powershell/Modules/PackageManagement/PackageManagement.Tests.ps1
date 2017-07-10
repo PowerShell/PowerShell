@@ -32,9 +32,9 @@ Describe "PackageManagement Acceptance Test" -Tags "Feature" {
 
         $gpp = Get-PackageProvider
 
-        $gpp | ?{ $_.name -eq "NuGet" } | should not BeNullOrEmpty
+        $gpp | Where-Object { $_.name -eq "NuGet" } | should not BeNullOrEmpty
 
-        $gpp | ?{ $_.name -eq "PowerShellGet" } | should not BeNullOrEmpty
+        $gpp | Where-Object { $_.name -eq "PowerShellGet" } | should not BeNullOrEmpty
     }
 
 
