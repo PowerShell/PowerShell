@@ -5,7 +5,8 @@ ARG WindowsServerCoreVersion=10.0.16237.1001
 ARG WindowsServerCoreRepo=microsoft/windowsservercore-insider
 ARG NanoServerRepo=microsoft/nanoserver-insider
 
-# Use server core as an installer container to extract PowerShell
+# Use server core as an installer container to extract PowerShell,
+# As this is a multi-stage build, this stage will eventually be thrown away
 FROM ${WindowsServerCoreRepo}:$WindowsServerCoreVersion  AS installer-env
 
 # Arguments for installing powershell, must be defined in the container they are used
@@ -36,6 +37,7 @@ COPY --from=installer-env ["\\PowerShell\\", "$ProgramFiles\\PowerShell"]
 # Persist %PSCORE% ENV variable for user convenience
 ENV PSCORE="$ProgramFiles\PowerShell\PowerShell.exe"
 
+# setx /M fails on nanoserver-insider, setting the user path
 RUN setx PATH "%PATH%;%ProgramFiles%\PowerShell"
 
 CMD ["C:\\Program Files\\PowerShell\\PowerShell.exe"]
