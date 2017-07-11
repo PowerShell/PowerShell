@@ -182,7 +182,7 @@ Describe "Get-Alias" -Tags "CI" {
         $val1 | Should Not BeNullOrEmpty
         $val2 | Should Not BeNullOrEmpty
 
-        $val1 | ForEach-Object{ $i++};
+        $val1 | ForEach-Object { $i++};
         if($i -lt 2) {
             $val1 | Should BeOfType "System.Management.Automation.CommandInfo"
         }
@@ -191,7 +191,7 @@ Describe "Get-Alias" -Tags "CI" {
             ,$val1 | Should BeOfType "System.Array"
         }
 
-        $val2 | ForEach-Object{ $i++};
+        $val2 | ForEach-Object { $i++};
         if($i -lt 2) {
             $val2 | Should BeOfType "System.Management.Automation.CommandInfo"
         }

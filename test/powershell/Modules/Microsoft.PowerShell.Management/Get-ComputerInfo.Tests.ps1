@@ -15,7 +15,7 @@ function Get-ComputerInfoForTest
     }
     else
     {
-        if ( $forceRefresh -or $script:computerInfoAll -eq $null)
+        if ( $forceRefresh -or $null -eq $script:computerInfoAll)
         {
             $script:computerInfoAll = Get-ComputerInfo
         }
@@ -340,7 +340,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         $configHash = @{}
         foreach ($config in $configs)
         {
-            if ($config.Index -ne $null)
+            if ($null -ne $config.Index)
             {
                 $configHash.Add([string]$config.Index,$config)
             }
@@ -497,7 +497,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         $serverLevels = @{}
         try
         {
-            if ($regKey -ne $null)
+            if ($null -ne $regKey)
             {
                 $serverLevelNames = $regKey.GetValueNames()
 
@@ -513,10 +513,10 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         }
         finally
         {
-            if ($regKey -ne $null) { $regKey.Dispose()}
+            if ($null -ne $regKey) { $regKey.Dispose()}
         }
 
-        if ($serverLevels -eq $null -or $serverLevels.Count -eq 0)
+        if ($null -eq $serverLevels -or $serverLevels.Count -eq 0)
         {
             return $null
         }
@@ -579,7 +579,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         $virtualizationFirmwareEnabled  = $null
         $vMMonitorModeExtensions  = $null
 
-        if (($hypervisorPresent -ne $null) -and ($hypervisorPresent -ne $true))
+        if (($null -ne $hypervisorPresent) -and ($hypervisorPresent -ne $true))
         {
             $dataExecutionPrevention_Available = Get-CimClassPropVal Win32_OperatingSystem DataExecutionPrevention_Available
 
@@ -610,7 +610,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             try
             {
                 $layoutAsHex = [System.Convert]::ToUInt32($layout, 16)
-                if ($layoutAsHex -ne $null)
+                if ($null -ne $layoutAsHex)
                 {
                     $result = Convert-LocaleIdToLocaleName $layoutAsHex
                 }
@@ -660,11 +660,11 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
 
         $locale =  Get-CimClassPropVal Win32_OperatingSystem Locale
 
-        if ($locale -ne $null)
+        if ($null -ne $locale)
         {
             #$localeAsHex = $locale -as [hex]
             $localeAsHex = [System.Convert]::ToUInt32($locale, 16)
-            if ($localeAsHex -ne $null)
+            if ($null -ne $localeAsHex)
             {
 
                 try
@@ -679,7 +679,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
                 }
             }
 
-            if ($localeName -eq $null)
+            if ($null -eq $localeName)
             {
                 try
                 {
@@ -699,7 +699,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
     {
         $osPagingFiles = @()
         $pageFileUsage =  Get-CimClass Win32_PageFileUsage
-        if ($pageFileUsage -ne $null)
+        if ($null -ne $pageFileUsage)
         {
             foreach ($pageFileItem in $pageFileUsage)
             {
@@ -1308,7 +1308,7 @@ try {
                     {
                         $instance = Get-CimInstance Win32_DeviceGuard -Namespace 'root\Microsoft\Windows\DeviceGuard' -ErrorAction Stop
                         $ss = $instance.VirtualizationBasedSecurityStatus;
-                        if ($ss -ne $null)
+                        if ($null -ne $ss)
                         {
                             $returnValue.SmartStatus = $ss;
                         }

@@ -29,7 +29,7 @@
         foreach ($cmdlet in $cmdletList)
         {
             # If the cmdlet is not preset in CoreCLR, skip it.
-            $skipTest = (Get-Command $cmdlet.TopicTitle -ea SilentlyContinue) -eq $null
+            $skipTest = $null -eq (Get-Command $cmdlet.TopicTitle -ea SilentlyContinue)
 
             # TopicTitle - is the cmdlet name in the csv file
             # HelpURI - is the expected help URI in the csv file

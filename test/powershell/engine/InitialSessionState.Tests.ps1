@@ -83,8 +83,8 @@ Describe "TypeTable duplicate types in reused runspace InitialSessionState TypeT
 
         AfterAll {
 
-            if ($rs1 -ne $null) { $rs1.Dispose() }
-            if ($rs2 -ne $null) { $rs2.Dispose() }
+            if ($null -ne $rs1) { $rs1.Dispose() }
+            if ($null -ne $rs2) { $rs2.Dispose() }
         }
 
         It "Verifies that a reused InitialSessionState object created from a TypeTable object does not have duplicate types" {
@@ -107,7 +107,7 @@ Describe "TypeTable duplicate types in reused runspace InitialSessionState TypeT
 
         AfterAll {
 
-            if ($rs -ne $null) { $rs.Dispose() }
+            if ($null -ne $rs) { $rs.Dispose() }
         }
 
         It "Verifies that shared TypeTable is not allowed in ISS" {

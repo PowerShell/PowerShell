@@ -92,8 +92,8 @@ namespace Microsoft.PowerShell.Commands
         private static readonly string[] s_controlPanelItemFilterList = new string[] { "Folder Options", "Taskbar and Start Menu" };
         private const string TestHeadlessServerScript = @"
 $result = $false
-$serverManagerModule = Get-Module -ListAvailable | ? {$_.Name -eq 'ServerManager'}
-if ($serverManagerModule -ne $null)
+$serverManagerModule = Get-Module -ListAvailable | Where-Object {$_.Name -eq 'ServerManager'}
+if ($null -ne $serverManagerModule)
 {
     Import-Module ServerManager
     $Gui = (Get-WindowsFeature Server-Gui-Shell).Installed

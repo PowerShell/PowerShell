@@ -12,7 +12,7 @@ function Get-NonExistantProviderName
    param ( [int]$length = 8 )
    do {
        $providerName = get-randomstring -length $length
-   } until ( (get-psprovider -PSProvider $providername -erroraction silentlycontinue) -eq $null )
+   } until ( $null -eq (get-psprovider -PSProvider $providername -erroraction silentlycontinue) )
    $providerName
 }
 
@@ -22,7 +22,7 @@ function Get-NonExistantDriveName
     param ( [int]$length = 8 )
     do {
         $driveName = Get-RandomString -length $length
-    } until ( (get-psdrive $driveName -erroraction silentlycontinue) -eq $null )
+    } until ( $null -eq (get-psdrive $driveName -erroraction silentlycontinue) )
     $drivename
 }
 
