@@ -758,7 +758,7 @@ function GenerateGetProxyCmdlet
                 $xmlWriter.WriteStartElement('QueryableProperties')
                 $position = 0
 
-                $keys | ? { $_ -ne $null } | % {
+                $keys | ? { $_ -ne $null } | ForEach-Object {
                     $xmlWriter.WriteStartElement('Property')
                     $xmlWriter.WriteAttributeString('PropertyName', $_.Name)
 
@@ -787,12 +787,12 @@ function GenerateGetProxyCmdlet
                 # This behaviour is different for NetworkController specific cmdlets.
                 if ($CmdletAdapter -ne "NetworkControllerAdapter")
                 {
-                    $navigationProperties | ? { $_ -ne $null } | % {
+                    $navigationProperties | ? { $_ -ne $null } | ForEach-Object {
                     $associatedType = GetAssociatedType $metaData $_
                     $associatedEntitySet = GetEntitySetForEntityType $metaData $associatedType
                     $nvgProperty = $_
 
-                        (GetAllProperties $associatedType)  | ? { $_.IsKey } | % {
+                        (GetAllProperties $associatedType)  | ? { $_.IsKey } | ForEach-Object {
                             $xmlWriter.WriteStartElement('Property')
                             $xmlWriter.WriteAttributeString('PropertyName', $associatedEntitySet.Name + ':' + $_.Name + ':Key')
 
@@ -918,7 +918,7 @@ function GenerateNewProxyCmdlet
         # This behaviour is different for NetworkControllerCmdlets
         if ($CmdletAdapter -ne "NetworkControllerAdapter")
         {
-            $navigationProperties | ? { $_ -ne $null } | % {
+            $navigationProperties | ? { $_ -ne $null } | ForEach-Object {
                 $associatedType = GetAssociatedType $metaData $_
                 $associatedEntitySet = GetEntitySetForEntityType $metaData $associatedType
 
@@ -991,7 +991,7 @@ function GenerateRemoveProxyCmdlet
         # This behaviour is different for NetworkControllerCmdlets
         if ($CmdletAdapter -ne "NetworkControllerAdapter")
         {
-            $navigationProperties | ? { $_ -ne $null } | % {
+            $navigationProperties | ? { $_ -ne $null } | ForEach-Object {
 
                 $associatedType = GetAssociatedType $metaData $_
                 $associatedEntitySet = GetEntitySetForEntityType $metaData $associatedType
@@ -1048,7 +1048,7 @@ function GenerateActionProxyCmdlet
 
             $xmlWriter.WriteStartElement('Parameters')
 
-            $keys | ? { $_ -ne $null } | % {
+            $keys | ? { $_ -ne $null } | ForEach-Object {
                 $xmlWriter.WriteStartElement('Parameter')
                 $xmlWriter.WriteAttributeString('ParameterName', $_.Name + ':Key')
 
@@ -1314,7 +1314,7 @@ function ParseMetadataTypeDefinition
     }
 
     # properties defined on EntityType
-    $newEntityType.EntityProperties = $metadataEntityDefinition.Property | % {
+    $newEntityType.EntityProperties = $metadataEntityDefinition.Property | ForEach-Object {
         if ($_ -ne $null)
         {
             if ($_.Nullable -ne $null)
@@ -1335,7 +1335,7 @@ function ParseMetadataTypeDefinition
     }
 
     # navigation properties defined on EntityType
-    $newEntityType.NavigationProperties = $metadataEntityDefinition.NavigationProperty | % {
+    $newEntityType.NavigationProperties = $metadataEntityDefinition.NavigationProperty | ForEach-Object {
         if ($_ -ne $null)
         {
             ($AssociationNamespace, $AssociationName) = SplitNamespaceAndName $_.Relationship
@@ -1634,7 +1634,7 @@ function AddParametersCDXML
         [Hashtable] $complexTypeMapping
     )
 
-    $properties | ? { $_ -ne $null } | % {
+    $properties | ? { $_ -ne $null } | ForEach-Object {
         $xmlWriter.WriteStartElement('Parameter')
         $xmlWriter.WriteAttributeString('ParameterName', $_.Name + $suffix)
             $xmlWriter.WriteStartElement('Type')
@@ -1853,7 +1853,7 @@ function GetKeys
     $key = (GetAllProperties $entitySet.Type) | Where-Object { $_.IsKey }
 
     # Get the keys with delimiters
-    $keys = $customUri -split "/" | % {
+    $keys = $customUri -split "/" | ForEach-Object {
         if ($_ -match '{*}')
         {
             [ODataUtils.TypeProperty] @{
@@ -1924,7 +1924,7 @@ function GetNetworkControllerAdditionalProperties
 
     # Additional properties contains the types present as navigation properties
 
-    $additionalProperties = $navigationProperties | ? { $_ -ne $null } | %{
+    $additionalProperties = $navigationProperties | ? { $_ -ne $null } | ForEach-Object {
         $typeName = GetNavigationPropertyTypeName $_ $metaData
 
         if ($_.Name -eq "Properties") {

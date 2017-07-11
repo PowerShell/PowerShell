@@ -196,7 +196,7 @@ function Invoke-AppVeyorInstall
         # Password
         $randomObj = [System.Random]::new()
         $password = ""
-        1..(Get-Random -Minimum 15 -Maximum 126) | ForEach { $password = $password + [char]$randomObj.next(45,126) }
+        1..(Get-Random -Minimum 15 -Maximum 126) | ForEach-Object { $password = $password + [char]$randomObj.next(45,126) }
 
         # Account
         $userName = 'appVeyorRemote'
@@ -342,7 +342,7 @@ function Invoke-AppVeyorTest
         $testResultsNonAdminFile,
         $testResultsAdminFile
         <# $testResultsFileFullCLR # Disable FullCLR Build #>
-    ) | % {
+    ) | ForEach-Object {
         Test-PSPesterResults -TestResultsFile $_
     }
 
@@ -363,7 +363,7 @@ function Invoke-AppVeyorAfterTest
         $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
 
         Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
-        $codeCoverageArtifacts | % { Push-AppveyorArtifact $_ }
+        $codeCoverageArtifacts | ForEach-Object { Push-AppveyorArtifact $_ }
     }
 }
 

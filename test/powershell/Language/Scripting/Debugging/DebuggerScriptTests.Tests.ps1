@@ -182,7 +182,7 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
     {
         Set-Content $script @'
         1..3 |
-        % { $_ } | sort-object |
+        ForEach-Object { $_ } | sort-object |
         get-unique
 '@
 
@@ -219,7 +219,7 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
             $scriptPath1 = Join-Path $TestDrive SBPShortPathBug133807.DRT.tmp.ps1
             $scriptPath1 = setup -f SBPShortPathBug133807.DRT.tmp.ps1 -content '
             1..3 |
-            % { $_ } | sort-object |
+            ForEach-Object { $_ } | sort-object |
             get-unique'
             $a = New-Object -ComObject Scripting.FileSystemObject
             $f = $a.GetFile($scriptPath1)

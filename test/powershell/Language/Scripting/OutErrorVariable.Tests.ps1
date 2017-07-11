@@ -134,7 +134,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
             & $Command -ErrorVariable $ErrorVariable 2> $null
 
         }
-        $a = (Get-Variable -ValueOnly $ErrorVariable) | % {$_.ToString()}
+        $a = (Get-Variable -ValueOnly $ErrorVariable) | ForEach-Object {$_.ToString()}
         $a | should be $Expected
     }
 
@@ -145,7 +145,7 @@ Describe "Test ErrorVariable only" -Tags "CI" {
         get-foo2 -errorVariable +a 2> $null
 
         $a.count | Should Be 3
-        $a| % {$_.ToString()} | Should Be @('a', 'b', 'foo')
+        $a| ForEach-Object {$_.ToString()} | Should Be @('a', 'b', 'foo')
     }
 
     It 'Nested ErrorVariable' {

@@ -32,7 +32,7 @@
             $testCases += [TestData]::new("Non filesystem provider", 'env:\alias.ps1', "ReadWriteFileNotFileSystemProvider,Microsoft.PowerShell.Commands.ExportAliasCommand")
         }
 
-        $testCases | % {
+        $testCases | ForEach-Object {
 
             It "for $($_.testName)" {
 
@@ -119,7 +119,7 @@
             $testCases += [TestData]::new("Non filesystem provider", 'env:\alias.ps1', "NotSupported,Microsoft.PowerShell.Commands.ImportAliasCommand")
         }
 
-        $testCases | % {
+        $testCases | ForEach-Object {
 
             It "for $($_.testName)" {
                 $test = $_

@@ -18,7 +18,7 @@ Describe "Tests for -NoNewline parameter of Out-File, Add-Content and Set-Conten
     It "NoNewline parameter works on Add-Content" {
          $temp = "${TESTDRIVE}/test3.txt"
          $temp = New-TemporaryFile
-         1..9 | %{Add-Content -Path $temp -Value $_ -Encoding 'ASCII' -NoNewline}
+         1..9 | ForEach-Object {Add-Content -Path $temp -Value $_ -Encoding 'ASCII' -NoNewline}
          (Get-Content $temp -Encoding Byte).Count | Should Be 9
     }
 }

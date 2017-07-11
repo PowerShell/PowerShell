@@ -344,7 +344,7 @@ Describe "Tests Export-PSSession" -tags "Feature" {
         @($newResults).Count | Should Be 4
 
         # Verifies that Export-PSSession creates *new* files
-        $newResults | % { $_.LastWriteTime | Should BeGreaterThan $oldTimestamp }
+        $newResults | ForEach-Object { $_.LastWriteTime | Should BeGreaterThan $oldTimestamp }
     }
 
     Context "The module is usable when the original runspace is still around" {
@@ -623,7 +623,7 @@ Describe "Import-PSSession with FormatAndTypes" -tags "Feature" {
         BeforeAll {
             if ($skipTest) { return }
 
-            $formattingScript = { new-object System.Management.Automation.Host.Size | %{ $_.Width = 123; $_.Height = 456; $_ } | Out-String }
+            $formattingScript = { new-object System.Management.Automation.Host.Size | ForEach-Object { $_.Width = 123; $_.Height = 456; $_ } | Out-String }
             $originalLocalFormatting = & $formattingScript
 
             # Original local and remote formatting should be equal (sanity check)

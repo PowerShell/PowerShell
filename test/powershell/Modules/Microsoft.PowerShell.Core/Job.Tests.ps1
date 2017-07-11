@@ -154,7 +154,7 @@ Describe "Debug-job test" -tag "Feature" {
     # we check this via implication.
     # if we're debugging a job, then the debugger will have a callstack
     It "Debug-Job will break into debugger" -pending {
-        $ps.AddScript('$job = start-job { 1..300 | % { sleep 1 } }').Invoke()
+        $ps.AddScript('$job = start-job { 1..300 | ForEach-Object { sleep 1 } }').Invoke()
         $ps.Commands.Clear()
         $ps.Runspace.Debugger.GetCallStack() | Should BeNullOrEmpty
         Start-Sleep 3

@@ -14,7 +14,7 @@ Describe 'native commands with pipeline' -tags 'Feature' {
 
         $ps.AddScript("& $powershell -noprofile -command '100;
             Start-Sleep -Seconds 100' |
-            %{ if (`$_ -eq 100) { 'foo'; exit; }}").BeginInvoke()
+            ForEach-Object { if (`$_ -eq 100) { 'foo'; exit; }}").BeginInvoke()
 
         # waiting 30 seconds, because powershell startup time could be long on the slow machines,
         # such as CI

@@ -147,10 +147,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add a piece of script  to construct a command pipeline.
-        /// For example, to construct a command string "get-process | foreach { $_.Name }"
+        /// For example, to construct a command string "get-process | ForEach-Object { $_.Name }"
         ///     <code>
         ///         PSCommand command = new PSCommand("get-process").
-        ///                                     AddCommand("foreach { $_.Name }", true);
+        ///                                     AddCommand("ForEach-Object { $_.Name }", true);
         ///     </code>
         /// </summary>
         /// <param name="script">
@@ -188,10 +188,10 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add a piece of script  to construct a command pipeline.
-        /// For example, to construct a command string "get-process | foreach { $_.Name }"
+        /// For example, to construct a command string "get-process | ForEach-Object { $_.Name }"
         ///     <code>
         ///         PSCommand command = new PSCommand("get-process").
-        ///                                     AddCommand("foreach { $_.Name }", true);
+        ///                                     AddCommand("ForEach-Object { $_.Name }", true);
         ///     </code>
         /// </summary>
         /// <param name="script">

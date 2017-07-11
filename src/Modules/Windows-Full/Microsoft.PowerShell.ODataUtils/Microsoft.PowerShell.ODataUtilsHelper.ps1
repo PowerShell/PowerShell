@@ -722,7 +722,7 @@ function AddParametersCDXML
         [Hashtable] $complexTypeMapping
     )
 
-    $properties | ? { $_ -ne $null } | % {
+    $properties | ? { $_ -ne $null } | ForEach-Object {
         $xmlWriter.WriteStartElement('Parameter')
         $xmlWriter.WriteAttributeString('ParameterName', $_.Name + $suffix)
             $xmlWriter.WriteStartElement('Type')

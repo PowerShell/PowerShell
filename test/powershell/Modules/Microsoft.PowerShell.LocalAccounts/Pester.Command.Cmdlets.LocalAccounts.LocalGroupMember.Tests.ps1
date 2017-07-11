@@ -60,7 +60,7 @@ try {
     Describe "Verify Expected LocalGroupMember Cmdlets are present" -Tags "CI" {
 
         It "Test command presence" {
-            $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | % Name
+            $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | ForEach-Object Name
 
             $result -contains "Add-LocalGroupMember" | Should Be $true
             $result -contains "Get-LocalGroupMember" | Should Be $true

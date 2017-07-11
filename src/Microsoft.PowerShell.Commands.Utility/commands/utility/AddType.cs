@@ -2138,9 +2138,9 @@ namespace Microsoft.PowerShell.Commands
             // 10,000 iterations of this method takes ~800 ms for a string array, and ~ 200ms for the dictionary
             //
             // $dlls = ((dir c:\windows\Microsoft.NET\Framework\ -fi *.dll -rec) + (dir c:\windows\assembly -fi *.dll -rec)) + (dir C:\Windows\Microsoft.NET\assembly) |
-            //     % { [Reflection.Assembly]::LoadFrom($_.FullName) }
+            //     ForEach-Object { [Reflection.Assembly]::LoadFrom($_.FullName) }
             // "var strongNames = new ConcurrentDictionary<string, string>(4, $($dlls.Count), StringComparer.OrdinalIgnoreCase);" > c:\temp\strongnames.txt
-            // $dlls | Sort-Object -u { $_.GetName().Name} | % { 'strongNames["{0}"] = "{1}";' -f $_.FullName.Split(",", 2)[0], $_.FullName  >> c:\temp\strongnames.txt }
+            // $dlls | Sort-Object -u { $_.GetName().Name} | ForEach-Object { 'strongNames["{0}"] = "{1}";' -f $_.FullName.Split(",", 2)[0], $_.FullName  >> c:\temp\strongnames.txt }
 
             // The default concurrent level is 4. We use the default level.
             var strongNames = new ConcurrentDictionary<string, string>(4, 744, StringComparer.OrdinalIgnoreCase);

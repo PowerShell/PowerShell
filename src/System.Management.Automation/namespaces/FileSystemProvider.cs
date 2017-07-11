@@ -8928,8 +8928,8 @@ namespace System.Management.Automation.Internal
             {{
                 $maxUserSize = $resolvedPath.Drive.MaximumSize
                 $dirSize = 0
-                Microsoft.PowerShell.Management\Get-ChildItem -LiteralPath ($resolvedPath.Drive.Name + "":"") -Recurse | Foreach {{
-                    Microsoft.PowerShell.Management\Get-Item -LiteralPath $_.FullName -Stream * | % {{ $dirSize += $_.Length }}
+                Microsoft.PowerShell.Management\Get-ChildItem -LiteralPath ($resolvedPath.Drive.Name + "":"") -Recurse | ForEach-Object {{
+                    Microsoft.PowerShell.Management\Get-Item -LiteralPath $_.FullName -Stream * | ForEach-Object {{ $dirSize += $_.Length }}
                 }}
                 if (($dirSize + $fragmentLength) -gt $maxUserSize)
                 {{

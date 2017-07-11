@@ -1646,7 +1646,7 @@ namespace Microsoft.PowerShell.Commands
                     if (UseCulture == true)
                     {
                         // ListSeparator is apparently always a character even though the property returns a string, checked via:
-                        // [CultureInfo]::GetCultures("AllCultures") | % { ([CultureInfo]($_.Name)).TextInfo.ListSeparator } | ? Length -ne 1
+                        // [CultureInfo]::GetCultures("AllCultures") | ForEach-Object { ([CultureInfo]($_.Name)).TextInfo.ListSeparator } | ? Length -ne 1
                         Delimiter = CultureInfo.CurrentCulture.TextInfo.ListSeparator[0];
                     }
                     break;

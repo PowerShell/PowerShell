@@ -3582,7 +3582,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 # keep all but the top-most
     $stackedConfigs = $stackedConfigs[0..(@($stackedConfigs).Length - 2)]
 # and build the complex resource ID suffix.
-    $complexResourceQualifier = ( $stackedConfigs | foreach { '[' + $_.Command + ']' + $_.InvocationInfo.BoundParameters['InstanceName'] } ) -join '::'
+    $complexResourceQualifier = ( $stackedConfigs | ForEach-Object { '[' + $_.Command + ']' + $_.InvocationInfo.BoundParameters['InstanceName'] } ) -join '::'
 
 #
 # Utility function used to validate that the DependsOn arguments are well-formed.

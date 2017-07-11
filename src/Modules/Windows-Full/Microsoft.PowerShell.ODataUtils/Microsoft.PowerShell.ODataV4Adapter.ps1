@@ -1037,7 +1037,7 @@ function ParseMetadataTypeDefinitionHelper
     }
 
     # properties defined on EntityType
-    $newEntityType.EntityProperties += $metadataEntityDefinition.Property | % {
+    $newEntityType.EntityProperties += $metadataEntityDefinition.Property | ForEach-Object {
         if ($_ -ne $null)
         {
             if ($_.Nullable -ne $null)
@@ -1660,7 +1660,7 @@ function SaveCDXMLInstanceCmdlets
 
                 if ($isSingleton -eq $false)
                 {
-                    $keys | ? { $_ -ne $null } | % {
+                    $keys | ? { $_ -ne $null } | ForEach-Object {
                             $xmlWriter.WriteStartElement('Property')
                             $xmlWriter.WriteAttributeString('PropertyName', $_.Name)
 
@@ -1863,7 +1863,7 @@ function SaveCDXMLNewCmdlet
 
         $xmlWriter.WriteEndElement()
 
-        $navigationProperties | ? { $_ -ne $null } | % {
+        $navigationProperties | ? { $_ -ne $null } | ForEach-Object {
             $associatedType = GetAssociatedType $Metadata $GlobalMetadata $_
             $associatedEntitySet = GetEntitySetForEntityType $Metadata $associatedType
 
@@ -1940,7 +1940,7 @@ function SaveCDXMLRemoveCmdlet
 
         $xmlWriter.WriteEndElement()
 
-        $navigationProperties | ? { $_ -ne $null } | % {
+        $navigationProperties | ? { $_ -ne $null } | ForEach-Object {
 
             $associatedType = GetAssociatedType $Metadata $GlobalMetadata $_
             $associatedEntitySet = GetEntitySetForEntityType $Metadata $associatedType
@@ -2038,7 +2038,7 @@ function SaveCDXMLAction
 
             $xmlWriter.WriteStartElement('Parameters')
 
-            $keys | ? { $_ -ne $null } | % {
+            $keys | ? { $_ -ne $null } | ForEach-Object {
                 $xmlWriter.WriteStartElement('Parameter')
                 $xmlWriter.WriteAttributeString('ParameterName', $_.Name + ':Key')
 
@@ -2133,7 +2133,7 @@ function SaveCDXMLFunction
 
             $xmlWriter.WriteStartElement('Parameters')
 
-            $keys | ? { $_ -ne $null } | % {
+            $keys | ? { $_ -ne $null } | ForEach-Object {
                 $xmlWriter.WriteStartElement('Parameter')
                 $xmlWriter.WriteAttributeString('ParameterName', $_.Name + ':Key')
 

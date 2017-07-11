@@ -32,7 +32,7 @@ Describe 'Misc Test' -Tags "CI" {
         [string] Bar()
         {
             $ret = ""
-            $this.Wheels | foreach { $ret += "$_;" }
+            $this.Wheels | ForEach-Object { $ret += "$_;" }
             return $ret
         }
         }

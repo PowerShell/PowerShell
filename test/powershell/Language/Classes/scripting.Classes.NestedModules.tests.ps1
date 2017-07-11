@@ -18,7 +18,7 @@ Describe 'NestedModules' -Tags "CI" {
         }
 
         if ($NestedContents) {
-            $manifestParams['NestedModules'] = 1..$NestedContents.Count | % {
+            $manifestParams['NestedModules'] = 1..$NestedContents.Count | ForEach-Object {
                 $null = new-item -type directory TestDrive:\$Name\Nested$_
                 $null = Set-Content -Path "${TestDrive}\$Name\Nested$_\Nested$_.psm1" -Value $NestedContents[$_ - 1]
                 "Nested$_"

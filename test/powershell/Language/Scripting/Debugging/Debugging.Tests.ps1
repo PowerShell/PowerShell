@@ -1,7 +1,7 @@
 $script1 = @'
 'aaa'.ToString() > $null
 'aa' > $null
-"a" 2> $null | % { $_ }
+"a" 2> $null | ForEach-Object { $_ }
 'bb' > $null
 'bb'.ToSTring() > $null
 'bbb'
@@ -15,7 +15,7 @@ $script2 = @'
 Describe "Breakpoints when set should be hit" -tag "CI" {
     BeforeAll {
         $path = setup -pass -f TestScript_1.ps1 -content $script1
-        $bps = 1..6 | %{ set-psbreakpoint -script $path -line $_ -Action { continue } }
+        $bps = 1..6 | ForEach-Object { set-psbreakpoint -script $path -line $_ -Action { continue } }
     }
     AfterAll {
         $bps | Remove-PSBreakPoint

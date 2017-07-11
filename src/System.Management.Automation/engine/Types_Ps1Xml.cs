@@ -1106,7 +1106,7 @@ namespace System.Management.Automation.Runspaces
           if ($helpObject -eq $null) { return $null }
           if ($helpObject.psobject.properties['relatedLinks'] -eq $null) { return $null }
           if ($helpObject.relatedLinks.psobject.properties['navigationLink'] -eq $null) { return $null }
-          $helpUri = [string]$( $helpObject.relatedLinks.navigationLink | %{ if ($_.psobject.properties['uri'] -ne $null) { $_.uri } } | ?{ $_ } | select -first 1 )
+          $helpUri = [string]$( $helpObject.relatedLinks.navigationLink | ForEach-Object { if ($_.psobject.properties['uri'] -ne $null) { $_.uri } } | ?{ $_ } | select -first 1 )
           return $helpUri
           }
           else
@@ -1356,7 +1356,7 @@ namespace System.Management.Automation.Runspaces
           trap { }
           $private:dacls = """";
           $private:first = $true
-          $private:sd.DiscretionaryAcl | % {
+          $private:sd.DiscretionaryAcl | ForEach-Object {
           trap { }
           if ($private:first)
           {

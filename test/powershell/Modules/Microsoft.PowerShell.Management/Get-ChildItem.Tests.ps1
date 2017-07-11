@@ -15,7 +15,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             $null = New-Item -Path $TestDrive -Name $item_c -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_D -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_E -ItemType "Directory" -Force
-            $null = New-Item -Path $TestDrive -Name $item_F -ItemType "File" -Force | %{$_.Attributes = "hidden"}
+            $null = New-Item -Path $TestDrive -Name $item_F -ItemType "File" -Force | ForEach-Object {$_.Attributes = "hidden"}
         }
 
         It "Should list the contents of the current folder" {

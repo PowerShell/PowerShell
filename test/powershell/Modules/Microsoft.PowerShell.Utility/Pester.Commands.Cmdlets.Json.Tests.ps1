@@ -1392,7 +1392,7 @@ Describe "Json Bug fixes"  -Tags "Feature" {
                 Next = $null
             }
 
-            ($($testCase.NumberOfElements)-1)..$start | foreach {
+            ($($testCase.NumberOfElements)-1)..$start | ForEach-Object {
                 $current = @{
                     Depth = $_
                     Next = $previous
