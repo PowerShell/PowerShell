@@ -534,7 +534,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
     }
 }
 
-if ($CoreUnix)
+if ($isCoreCLR -and !$IsWindows)
 {
 [string] $script:userBinPath = Get-Item -Path '~/bin'
 [string] $script:sudoMockPath = Join-Path (Get-Item -Path '~/bin').FullName -ChildPath 'sudo'
@@ -551,7 +551,7 @@ Describe "Verify sudo function on CoreUNIX" -Tags "CI"{
     Context "Verify using MOCK sudo" {
 
         BeforeAll {
-            $skipTest = !$CoreUnix
+            $skipTest = ((-not $isCoreCLR) -or $IsWindows)
             if ($skipTest) {return}
             $sudoscript = $script:sudoMock.Replace("`r`n", "`n")
             # place a mock sudo command in the user's bin folder
