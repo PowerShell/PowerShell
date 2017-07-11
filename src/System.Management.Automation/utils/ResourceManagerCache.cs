@@ -201,7 +201,7 @@ namespace System.Management.Automation
                 }
                 else
                 {
-                    newBaseName = assembly.GetName().Name + resourcesSubstring + baseName; // e.g. "System.Management.Automation.resources.FileSystemProviderStrings"
+                    newBaseName = string.Concat(assembly.GetName().Name, resourcesSubstring, baseName); // e.g. "System.Management.Automation.resources.FileSystemProviderStrings"
                 }
 
                 resourceManager = GetResourceManager(assembly, newBaseName);

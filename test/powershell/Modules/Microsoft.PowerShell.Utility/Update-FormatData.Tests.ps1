@@ -62,8 +62,8 @@ Describe "Update-FormatData basic functionality" -Tags "CI" {
 Describe "Update-FormatData with resources in CustomControls" -Tags "CI" {
 
     BeforeAll {
-        $templatePath = Join-Path $PSScriptRoot 'FileInfo.format.ps1xml'
-        $formatFilePath = Join-Path $TestDrive 'FileInfo.format.ps1xml'
+        $templatePath = Join-Path $PSScriptRoot 'UpdateFormatDataTests.format.ps1xml'
+        $formatFilePath = Join-Path $TestDrive 'UpdateFormatDataTests.format.ps1xml'
         $ps = [powershell]::Create()
         $iss = [system.management.automation.runspaces.initialsessionstate]::CreateDefault2()
         $rs = [system.management.automation.runspaces.runspacefactory]::CreateRunspace($iss)
@@ -101,6 +101,7 @@ Describe "Update-FormatData with resources in CustomControls" -Tags "CI" {
 			$sma = [appdomain]::CurrentDomain.GetAssemblies() | ? { if ($_.Location) {$_.Location.EndsWith("System.Management.Automation.dll")}}
 			$smaLocation = $sma.Location
 			$ps.Streams.Error | %{ $_.Exception.Message.Contains($smaLocation) | Should be $true }
+			$ps.Streams.Error | %{ $_.FullyQualifiedErrorId | Should Match 'FormatXmlUpdateException' }
 	    }
     }
 }
