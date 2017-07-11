@@ -585,24 +585,16 @@ namespace System.Management.Automation
         /// It's known as "Program Files" module path in windows powershell.
         /// </summary>
         /// <returns></returns>
-        internal static string GetSharedModulePath()
+        private static string GetSharedModulePath()
         {
 #if UNIX
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.SHARED_MODULES);
 #else
-            string sharedModulePath = string.Empty;
-            string programFilesPath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-
-            // If we could not get a path from the special folder call,
-            // fall back to the environment.
-            if(string.IsNullOrEmpty(programFilesPath))
+            string sharedModulePath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+           
+            if (!string.IsNullOrEmpty(sharedModulePath))
             {
-                programFilesPath = System.Environment.GetEnvironmentVariable("ProgramFiles");
-            }
-            
-            if (!string.IsNullOrEmpty(programFilesPath))
-            {
-                sharedModulePath = Path.Combine(programFilesPath, Utils.ModuleDirectory);
+                sharedModulePath = Path.Combine(sharedModulePath, Utils.ModuleDirectory);
             }
             return sharedModulePath;
 #endif
@@ -735,8 +727,8 @@ namespace System.Management.Automation
 #if UNIX
             return false;
 #else
-            Dbg.Assert(!string.IsNullOrEmpty(personalModulePath), "caller makes sure it's not null or empty");
-            Dbg.Assert(!string.IsNullOrEmpty(sharedModulePath), "caller makes sure it's not null or empty");
+            Dbg.Assert(!string.IsNullOrEmpty(personalModulePath), "caller makes sure personalModulePath not null or empty");
+            Dbg.Assert(sharedModulePath != null, "caller makes sure sharedModulePath is not null");
 
             const string winSxSModuleDirectory = @"PowerShell\Modules";
             const string winLegacyModuleDirectory = @"WindowsPowerShell\Modules";
