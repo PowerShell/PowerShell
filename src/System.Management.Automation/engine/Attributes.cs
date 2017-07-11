@@ -1363,17 +1363,16 @@ namespace System.Management.Automation
     {
         // Cached valid values.
         private string[] _validValues;
+        private int _validValuesCacheExpiration;
 
         /// <summary>
         /// Initializes a new instance of the CachedValidValuesGeneratorBase class.
         /// </summary>
         /// <param name="cacheExpirationInSeconds">Sets a time interval in seconds to reset the '_validValues' dynamic valid values cache.</param>
-        public CachedValidValuesGeneratorBase(int cacheExpirationInSeconds)
+        protected CachedValidValuesGeneratorBase(int cacheExpirationInSeconds)
         {
             _validValuesCacheExpiration = cacheExpirationInSeconds;
         }
-
-        private int _validValuesCacheExpiration;
 
         /// <summary>
         /// Abstract method to generate a valid values.
@@ -1547,9 +1546,7 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("valuesGeneratorType");
             }
 
-            s_ValidValuesGeneratorCache.TryGetValue(valuesGeneratorType, out IValidateSetValuesGenerator ValidValuesGeneratorCacheEntry);
-
-            if (ValidValuesGeneratorCacheEntry == null)
+            if (!s_ValidValuesGeneratorCache.TryGetValue(valuesGeneratorType, out IValidateSetValuesGenerator ValidValuesGeneratorCacheEntry))
             {
                 // Add a valid values generator to the cache.
                 // We don't cache valid values.
