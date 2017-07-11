@@ -27,4 +27,4 @@ ENV LANG en_US.UTF-8
 ENV LC_ALL $LANG
 RUN localedef --charmap=UTF-8 --inputfile=en_US $LANG
 
-ENTRYPOINT [ "powershell" ]
+CMD [ "powershell" ]
