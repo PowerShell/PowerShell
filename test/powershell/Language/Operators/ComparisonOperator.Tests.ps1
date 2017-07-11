@@ -1,75 +1,86 @@
 Describe "ComparisonOperator" -tag "CI" {
-    It "Should be $true for 1 -lt 2" {
-	 1 -lt 2       | Should Be $true
-    }
-	It "Should be $false for 1 -gt 2" {
-	 1 -gt 2       | Should Be $false
-    }
-	It "Should be $true for 1 -le 2" {
-	 1 -le 2       | Should Be $true
-    }
-	It "Should be $true for 1 -le 1" {
-	 1 -le 1       | Should Be $true
-    }
-	It "Should be $false for 1 -ge 2" {
-	 1 -ge 2       | Should Be $false
-    }
-	It "Should be $true for 1 -ge 1" {
-	 1 -ge 1       | Should Be $true
-    }
-	It "Should be $true for 1 -eq 1" {
-	 1 -eq 1       | Should Be $true
-    }
-	It "Should be $true for 'abc' -ceq 'abc' and $false for 'abc' -ceq 'Abc'" {
-	 'abc' -ceq 'abc'       | Should Be $true
-	 'abc' -ceq 'Abc'       | Should Be $false
-    }
-	It "Should be $true for 1 -ne 2" {
-	 1 -ne 2       | Should Be $true
+
+    It "Should be <result> for <lhs> <operator> <rhs>" -TestCases @(
+        @{lhs = 1; operator = "-lt"; rhs = 2; result = $true},
+        @{lhs = 1; operator = "-gt"; rhs = 2; result = $false},
+        @{lhs = 1; operator = "-le"; rhs = 2; result = $true},
+        @{lhs = 1; operator = "-le"; rhs = 1; result = $true},
+        @{lhs = 1; operator = "-ge"; rhs = 2; result = $false},
+        @{lhs = 1; operator = "-ge"; rhs = 1; result = $true},
+        @{lhs = 1; operator = "-eq"; rhs = 1; result = $true},
+        @{lhs = 1; operator = "-ne"; rhs = 2; result = $true},
+        @{lhs = "'abc'"; operator = "-ceq"; rhs = "'abc'"; result = $true}
+        @{lhs = "'abc'"; operator = "-ceq"; rhs = "'Abc'"; result = $false}
+        @{lhs = 1; operator = "-and"; rhs = 1; result = $true},
+        @{lhs = 1; operator = "-and"; rhs = 0; result = $false},
+        @{lhs = 0; operator = "-and"; rhs = 0; result = $false},
+        @{lhs = 1; operator = "-or"; rhs = 1; result = $true},
+        @{lhs = 1; operator = "-or"; rhs = 0; result = $true},
+        @{lhs = 0; operator = "-or"; rhs = 0; result = $false}
+    ) {
+        param($lhs, $operator, $rhs, $result)
+	    Invoke-Expression "$lhs $operator $rhs" | Should Be $result
     }
 
-	It "Should be $true for 1 -and 1, $false for 1 -and 0, $false for 0 -and 0" {
-	 1 -and 1       | Should Be $true
-	 1 -and 0       | Should Be $false
-	 0 -and 0       | Should Be $false
-    }
-	It "Should be $true for 1 -or 1, $true for 1 -or 0, $false for 0 -or 0" {
-	 1 -or 1       | Should Be $true
-	 1 -or 0       | Should Be $true
-	 0 -or 0       | Should Be $false
-    }
-	It "Should be $false for -not 1, $true for -not 0" {
-	 -not 1       | Should Be $false
-	 -not 0       | Should Be $true
-    }
-	It "Should be $false for !1, $true for !0" {
-	 !1       | Should Be $false
-	 !0       | Should Be $true
+	It "Should be <result> for <operator> <rhs>" -TestCases @(
+        @{operator = "-not "; rhs = "1"; result = $false},
+        @{operator = "-not "; rhs = "0"; result = $true},
+        @{operator = "! "; rhs = "1"; result = $false},
+        @{operator = "! "; rhs = "0"; result = $true},
+        @{operator = "!"; rhs = "1"; result = $false},
+        @{operator = "!"; rhs = "0"; result = $true}
+    ) {
+        param($operator, $rhs, $result)
+        Invoke-Expression "$operator$rhs" | Should Be $result
     }
 
-	It "Should be $true for 'Hello','world' -contains 'Hello'" {
-	 $arr= 'Hello','world'
-	 $arr -contains 'Hello'       | Should Be $true
+	It "Should be <result> for <lhs> <operator> <rhs>" -TestCases @(
+        @{lhs = "'Hello'"; operator = "-contains"; rhs = "'Hello'"; result = $true},
+        @{lhs = "'Hello'"; operator = "-notcontains"; rhs = "'Hello'"; result = $false},
+        @{lhs = "'Hello','world'"; operator = "-ccontains"; rhs = "'hello'"; result = $false},
+        @{lhs = "'Hello','world'"; operator = "-ccontains"; rhs = "'Hello'"; result = $true}
+        @{lhs = "'Hello','world'"; operator = "-cnotcontains"; rhs = "'Hello'"; result = $false}
+        @{lhs = "'Hello world'"; operator = "-match"; rhs = "'Hello*'"; result = $true},
+        @{lhs = "'Hello world'"; operator = "-like"; rhs = "'Hello*'"; result = $true},
+        @{lhs = "'Hello world'"; operator = "-notmatch"; rhs = "'Hello*'"; result = $false},
+        @{lhs = "'Hello world'"; operator = "-notlike"; rhs = "'Hello*'"; result = $false}
+    ) {
+        param($lhs, $operator, $rhs, $result)
+        Invoke-Expression "$lhs $operator $rhs" | Should Be $result
     }
-	It "Should be $false for 'Hello','world' -ccontains 'hello' and $true for 'Hello','world' -ccontains 'Hello'" {
-	 $arr= 'Hello','world'
-	 $arr -ccontains 'hello'       | Should Be $false
-	 $arr -ccontains 'Hello'       | Should Be $true
+
+    It "Should return error if right hand is not a valid type: 'hello' <operator> <type>" -TestCases @(
+        @{operator = "-is"; type = "'foo'"},
+        @{operator = "-isnot"; type = "'foo'"},
+        @{operator = "-is"; type = "[foo]"},
+        @{operator = "-isnot"; type = "[foo]"}
+    ) {
+        param($operator, $type)
+        { Invoke-Expression "'Hello' $operator $type" | Should Be ErrorId "RuntimeException" }
     }
-	It "Should be $true for 'Hello world' -match 'Hello*'" {
-	 "Hello world" -match "Hello*"       | Should Be $true
+
+    It "Should succeed in comparing type: <lhs> <operator> <rhs>" -TestCases @(
+        @{lhs = '[pscustomobject]@{foo=1}'; operator = '-is'; rhs = '[pscustomobject]'},
+        @{lhs = '[pscustomobject]@{foo=1}'; operator = '-is'; rhs = '[psobject]'},
+        @{lhs = '"hello"'; operator = '-is'; rhs = "[string]"},
+        @{lhs = '"hello"'; operator = '-is'; rhs = "[system.string]"},
+        @{lhs = '100'; operator = '-is'; rhs = "[int]"},
+        @{lhs = '100'; operator = '-is'; rhs = "[system.int32]"},
+        @{lhs = '"hello"'; operator = '-isnot'; rhs = "[int]"}
+    ) {
+        param($lhs, $operator, $rhs)
+        Invoke-Expression "$lhs $operator $rhs" | Should Be $true
     }
-	It "Should be $true for 'Hello world' -like 'Hello*'" {
-	 "Hello world" -like "Hello*"       | Should Be $true
-    }
-	It "Should be $false for 'Hello world' -notmatch 'Hello*'" {
-	 "Hello world" -notmatch "Hello*"       | Should Be $false
-    }
-	It "Should be $false for 'Hello world' -notlike 'Hello*'" {
-	 "Hello world" -notlike "Hello*"       | Should Be $false
+
+    It "Should fail in comparing type: <lhs> <operator> <rhs>" -TestCases @(
+        @{lhs = '[pscustomobject]@{foo=1}'; operator = '-is'; rhs = '[string]'},
+        @{lhs = '"hello"'; operator = '-is'; rhs = "[psobject]"},
+        @{lhs = '"hello"'; operator = '-isnot'; rhs = "[string]"}
+    ) {
+        param($lhs, $operator, $rhs)
+        Invoke-Expression "$lhs $operator $rhs" | Should Be $false
     }
 }
-
 
 Describe "Bytewise Operator" -tag "CI" {
 
