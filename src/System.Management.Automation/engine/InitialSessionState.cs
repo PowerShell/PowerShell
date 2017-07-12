@@ -4881,8 +4881,7 @@ function Get-ScriptBlock
     [string] $sudoArgs = Get-SudoArgs -AllArgs $AllArgs
 
     <# tokenize the remaining arguments to identify the type of expression; native or powershell
-       if errors are encountered; assuming a native command and pass the expression through to sudo
-    #>
+       if errors are encountered; assuming a native command and pass the expression through to sudo #>
     $tokens = [System.Management.Automation.PSParser]::Tokenize($AllArgs.ToArray(), [ref] $null)
     foreach ($token in $Tokens)
     {
