@@ -124,7 +124,7 @@ as your Container host before trying to pull this image. Otherwise, pulling this
 
 Read more about the changes coming to Nano Server in future releases of Windows Server Insider [here](https://docs.microsoft.com/en-us/windows-server/get-started/nano-in-semi-annual-channel).
 
-### This is prerelease software
+### This is pre-release software
 
 Windows Server Insider Preview builds may be substantially modified before they are commercially released. Microsoft makes no warranties, express or implied, with respect to the information provided here.
 Some product features and functionality may require additional hardware or software. These builds are for testing purposes only. Microsoft is not obligated to provide any support services for this preview software.
