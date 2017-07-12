@@ -5,8 +5,8 @@ Describe "Type accelerators" -Tags "CI" {
         $TypeAcceleratorsType = [psobject].Assembly.GetType("System.Management.Automation.TypeAccelerators")
         
         $TypeAccelerators = $TypeAcceleratorsType::Get
-        $TypeAcceleratorsType::Add('msft_2174855', [int])
-        $TypeAcceleratorsType::Add('msft_2174855_rm', [int])
+        $TypeAcceleratorsType::Add('userDefinedAcceleratorType', [int])
+        $TypeAcceleratorsType::Add('userDefinedAcceleratorTypeToRemove', [int])
 
         $TypeAcceleratorTestCases = @(
             @{
@@ -401,7 +401,7 @@ Describe "Type accelerators" -Tags "CI" {
     }
 
     It "Basic type accelerator usage" {
-        [msft_2174855] | Should Be ([int])
+        [userDefinedAcceleratorType] | Should Be ([int])
     }
 
     It "Can query type accelerators" {
@@ -411,9 +411,9 @@ Describe "Type accelerators" -Tags "CI" {
     }
 
     It "Can remove type accelerator" {
-        $TypeAcceleratorsType::Get['msft_2174855_rm'] | Should Be ([int])
-        $TypeAcceleratorsType::Remove('msft_2174855_rm')
-        $TypeAcceleratorsType::Get['msft_2174855_rm'] | Should Be $null
+        $TypeAcceleratorsType::Get['userDefinedAcceleratorTypeToRemove'] | Should Be ([int])
+        $TypeAcceleratorsType::Remove('userDefinedAcceleratorTypeToRemove')
+        $TypeAcceleratorsType::Get['userDefinedAcceleratorTypeToRemove'] | Should Be $null
     }
 
     It 'Should have a type acclerator for: <Accelerator>' -TestCases $TypeAcceleratorTestCases {
