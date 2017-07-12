@@ -139,7 +139,7 @@ and [Build and run an application with or without .NET Core 2.0 or PowerShell Co
 Due to [#4211](https://github.com/PowerShell/PowerShell/issues/4211),
 PowerShell Get and PackageManagement are not working with [6.0.0-beta.3](https://github.com/PowerShell/PowerShell/releases/tag/v6.0.0-beta.3)
 and [nanoserver-insider-powershell](https://hub.docker.com/r/microsoft/nanoserver-insider-powershell/).
-There is no know workaround, but the issue should be fixed in beta 4.
+There is no known workaround, but the issue should be fixed in beta 4.
 
 #### Docker run requires full path
 
