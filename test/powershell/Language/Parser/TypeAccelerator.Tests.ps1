@@ -366,9 +366,15 @@ Describe "Type accelerators" -Tags "CI" {
                 Type        = [System.Management.Automation.PSVariableProperty]
             }
         )
-
-        if (!$IsCoreCLR)
+        
+        if ( $IsCoreCLR )
         {
+            $totalAccelerators = 80 
+        } 
+        else
+        {
+            $totalAccelerators = 82
+
             $nonCoreTypeAcceleratorTestCases = @(
                 @{
                     Accelerator = 'adsi'
@@ -399,14 +405,7 @@ Describe "Type accelerators" -Tags "CI" {
     }
 
     It "Can query type accelerators" {
-        if ( $IsCoreCLR )
-        {
-            $count = 80 
-        } else
-        {
-            $count = 82 
-        }
-        $TypeAccelerators.Count -gt $count | Should Be $true
+        $TypeAccelerators.Count -gt $totalAccelerators | Should Be $true
         $TypeAccelerators['xml'] | Should Be ([System.Xml.XmlDocument])
         $TypeAccelerators['AllowNull'] | Should Be ([System.Management.Automation.AllowNullAttribute])
     }
