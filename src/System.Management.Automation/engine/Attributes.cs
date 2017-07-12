@@ -1541,21 +1541,16 @@ namespace System.Management.Automation
         /// <exception cref="ArgumentException">for null arguments</exception>
         public ValidateSetAttribute(Type valuesGeneratorType)
         {
-            if (!typeof(IValidateSetValuesGenerator).IsAssignableFrom(valuesGeneratorType))
+            // We check 'IsNotPublic' because we don't want allow 'Activator.CreateInstance' create an instance of non-public type.
+            if (!typeof(IValidateSetValuesGenerator).IsAssignableFrom(valuesGeneratorType) || valuesGeneratorType.IsNotPublic)
             {
                 throw PSTraceSource.NewArgumentException("valuesGeneratorType");
             }
 
-            if (!s_ValidValuesGeneratorCache.TryGetValue(valuesGeneratorType, out IValidateSetValuesGenerator ValidValuesGeneratorCacheEntry))
-            {
-                // Add a valid values generator to the cache.
-                // We don't cache valid values.
-                // We expect that valid values can be cached in the valid values generator.
-                ValidValuesGeneratorCacheEntry = (IValidateSetValuesGenerator)Activator.CreateInstance(valuesGeneratorType);
-                s_ValidValuesGeneratorCache.TryAdd(valuesGeneratorType, ValidValuesGeneratorCacheEntry);
-            }
-
-            validValuesGenerator = ValidValuesGeneratorCacheEntry;
+            // Add a valid values generator to the cache.
+            // We don't cache valid values.
+            // We expect that valid values can be cached in the valid values generator.
+            validValuesGenerator = s_ValidValuesGeneratorCache.GetOrAdd(valuesGeneratorType, (key) => (IValidateSetValuesGenerator)Activator.CreateInstance(key));
         }
     }
 
