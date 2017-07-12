@@ -111,7 +111,14 @@ $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions))
 # without running those class parsing tests so as to avoid the hang.
 # NOTE: this change should be reverted once the 'CrossGen' issue is fixed by CoreCLR. The issue
 #       is tracked by https://github.com/dotnet/coreclr/issues/9745
-Start-PSBuild -CrossGen:$isFullBuild -PSModuleRestore
+$originalProgressPreference = $ProgressPreference
+$ProgressPreference = 'SilentlyContinue' 
+try {
+    Start-PSBuild -CrossGen:$isFullBuild -PSModuleRestore
+}
+finally{
+    $ProgressPreference = $originalProgressPreference    
+}
 
 $pesterParam = @{ 'binDir' = $output }
 

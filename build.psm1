@@ -1108,7 +1108,7 @@ function Start-PSBootstrap {
                 Push-Location $PSScriptRoot
                 $Submodule = "$PSScriptRoot/src/libpsl-native/test/googletest"
                 Remove-Item -Path $Submodule -Recurse -Force -ErrorAction SilentlyContinue
-                git submodule update --init -- $submodule
+                git submodule --quiet update --init -- $submodule
             } finally {
                 Pop-Location
             }
@@ -1130,7 +1130,7 @@ function Start-PSBootstrap {
 
             # Install dependencies
             Start-NativeExecution {
-                Invoke-Expression "$sudo apt-get update"
+                Invoke-Expression "$sudo apt-get update -qq"
                 Invoke-Expression "$sudo apt-get install -y -qq $Deps"
             }
         } elseif ($IsRedHatFamily) {
