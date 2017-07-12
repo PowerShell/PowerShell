@@ -536,10 +536,9 @@ Describe "Verify approved aliases list" -Tags "CI" {
 
 if ($isCoreCLR -and !$IsWindows)
 {
-[string] $script:userBinPath = Get-Item -Path '~/bin'
-[string] $script:sudoMockPath = Join-Path (Get-Item -Path '~/bin').FullName -ChildPath 'sudo'
-[string] $script:sudoText = 'mocksudo.txt'
-[string] $script:sudoOutputPath = Join-Path (Get-Item -Path '~/bin').FullName -ChildPath $sudotext
+[string] $script:sudoTestPath = $null
+[string] $script:sudoMockPath = $null
+[string] $script:sudoSaveEnv = $null
 [string] $script:sudoMock = @"
 #!/bin/sh
 echo `$@
@@ -553,15 +552,26 @@ Describe "Verify sudo function on CoreUNIX" -Tags "CI"{
         BeforeAll {
             $skipTest = ((-not $isCoreCLR) -or $IsWindows)
             if ($skipTest) {return}
+
+            # create a test directory for the mock sudo.
+            $item = new-item -Path $testdrive -Name 'sudobin' -ItemType Directory -ErrorAction Stop
+            $script:sudoTestPath = $item.FullName
+
+            # save the previous path and prepend the test directory
+            $script:sudoSaveEnv = $env:PATH
+            $env:PATH = $sudoTestPath + ':' + $env:PATH
+
+            # place a mock sudo command in the test directory
+            $script:sudoMockPath = Join-Path -Path $script:sudoTestPath -ChildPath 'sudo'
             $sudoscript = $script:sudoMock.Replace("`r`n", "`n")
-            # place a mock sudo command in the user's bin folder
             Set-Content -Path $script:sudoMockPath -Value $sudoscript
             chmod 777 $script:sudoMockPath
-            $items = Get-Command -Name 'sudo' -CommandType Application
+
             # Verify sudo resolves to the mock
+            $items = Get-Command -Name 'sudo' -CommandType Application
             if ($items -eq $null)
             {
-                throw "Could not resolve $sudoMockPath command"
+                throw "Could not resolve $($script:sudoMockPath) command"
             }
             $cmd = $null
             if ($items.GetType().IsArray)
@@ -572,29 +582,25 @@ Describe "Verify sudo function on CoreUNIX" -Tags "CI"{
             {
                 $cmd = $items
             }
-            if ($cmd.Path -ne $sudoMockPath)
+            if ($cmd.Path -ne $script:sudoMockPath)
             {
-                throw "Get-Command did not resolve to the mock sudo. Expected: $sudoMockPath  Actual: $($cmd.Path)"
+                throw "Get-Command did not resolve to the mock sudo. Expected: $($script:sudoMockPath)  Actual: $($cmd.Path)"
             }
         }
 
         AfterAll {
             if ($skipTest) {return}
 
-            # clean up the mock files
-            if (Test-Path -Path $script:sudoMockPath)
+            # restore the environment
+            if (-not [string]::IsNullOrEmpty($script:sudoSaveEnv))
             {
-                Remove-Item -Path $script:sudoMockPath -ErrorAction Ignore
+                $env:PATH = $script:sudoSaveEnv
             }
-        }
 
-        BeforeEach
-        {
-            if ($skipTest) {return}
-
-            if (Test-Path -Path $sudoOutputPath)
+            # clean up the mock files
+            if (Test-Path -Path $script:sudoTestPath)
             {
-                Remove-Item -Path $sudoOutputPath
+                Remove-Item -Path $script:sudoTestPath -Recurse -Force -ErrorAction Ignore
             }
         }
 
