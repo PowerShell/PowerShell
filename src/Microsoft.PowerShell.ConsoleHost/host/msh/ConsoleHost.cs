@@ -46,11 +46,11 @@ namespace Microsoft.PowerShell
         :
         PSHost,
         IDisposable,
+        IHostSupportsInteractiveSession
 #if LEGACYTELEMETRY
+        ,
         IHostSupportsInteractiveSession,
         IHostProvidesTelemetryData
-#else
-        IHostSupportsInteractiveSession
 #endif
     {
         #region static methods
