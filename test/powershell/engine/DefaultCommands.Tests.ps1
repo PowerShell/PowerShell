@@ -539,10 +539,10 @@ if ($isCoreCLR -and !$IsWindows)
 [string] $script:sudoTestPath = $null
 [string] $script:sudoMockPath = $null
 [string] $script:sudoSaveEnv = $null
-[string] $script:sudoMock = @"
+[string] $script:sudoMock = @'
 #!/bin/sh
-echo `$@
-"@
+echo $@
+'@
 }
 
 Describe "Verify sudo function on CoreUNIX" -Tags "CI"{
@@ -571,7 +571,7 @@ Describe "Verify sudo function on CoreUNIX" -Tags "CI"{
             $items = Get-Command -Name 'sudo' -CommandType Application
             if ($items -eq $null)
             {
-                throw "Could not resolve $($script:sudoMockPath) command"
+                throw "Could not resolve ${script:sudoMockPath} command"
             }
             $cmd = $null
             if ($items.GetType().IsArray)
@@ -584,7 +584,7 @@ Describe "Verify sudo function on CoreUNIX" -Tags "CI"{
             }
             if ($cmd.Path -ne $script:sudoMockPath)
             {
-                throw "Get-Command did not resolve to the mock sudo. Expected: $($script:sudoMockPath)  Actual: $($cmd.Path)"
+                throw "Get-Command did not resolve to the mock sudo. Expected: ${script:sudoMockPath}  Actual: $($cmd.Path)"
             }
         }
 
@@ -595,12 +595,6 @@ Describe "Verify sudo function on CoreUNIX" -Tags "CI"{
             if (-not [string]::IsNullOrEmpty($script:sudoSaveEnv))
             {
                 $env:PATH = $script:sudoSaveEnv
-            }
-
-            # clean up the mock files
-            if (Test-Path -Path $script:sudoTestPath)
-            {
-                Remove-Item -Path $script:sudoTestPath -Recurse -Force -ErrorAction Ignore
             }
         }
 
@@ -694,22 +688,33 @@ Describe "Verify sudo function on CoreUNIX" -Tags "CI"{
             return @{ExpectedArguments = $sb.ToString(); ActualArguments = $output}
         }
 
+        <#
+            The following tests verify the command-line passed to sudo.
+            This is done by inserting a mock sudo command that simply echos
+            the command-line arguments to stdout; no actual commands are executed.
+            The test verifies the echoed text.
+        #>
+
         It "Validates sudo parameters formatting using the mock" -Skip:$skipTest {
+            # Expecting: sudo to be invoked with --verify
             $result = InvokeSudo -SudoArgs '--verify'
             $result.ActualArguments | Should Be $result.ExpectedArguments
         }
 
         It "Validates sudo parameters and expression formatting using the mock" -Skip:$skipTest {
+            # Expecting: sudo to be invoked with --verify ls /etc
             $result = InvokeSudo -SudoArgs '--verify' -Expression 'ls /etc'
             $result.ActualArguments | Should Be $result.ExpectedArguments
         }
 
         It "Validates native command formatting using the mock" -Skip:$skipTest {
+            # Expecting: sudo to be invoked with  ls /etc
             $result = InvokeSudo -Expression 'ls /etc'
             $result.ActualArguments | Should Be $result.ExpectedArguments
         }
 
         It "Validates powershell command formatting using the mock" -Skip:$skipTest {
+            # Expecting: sudo to be invoked with  powershell -encodedCommand encodedcommand
             $expression = 'get-item /etc | select-object -Property FullName'
             $result = InvokeSudo -Expression $expression -UsePowerShell
             $result.ActualArguments | Should Be $result.ExpectedArguments
@@ -717,6 +722,9 @@ Describe "Verify sudo function on CoreUNIX" -Tags "CI"{
     }
 
     It "Validates sudo -V is not interpreted as -Verbose" -Skip:$skipTest {
+        # This test verifies when -V is passed to the sudo function, it is not
+        # interpreted as -Verbose (aka a common parameter) and is passed through
+        # unchanged.
         $expectedValues = @(
             'Sudo version',
             'Sudoers policy plugin version',
@@ -729,7 +737,7 @@ Describe "Verify sudo function on CoreUNIX" -Tags "CI"{
         {
             $expected = $expectedValues[$index]
             $actual = $result[$index]
-            $actual.StartsWith($expected) | Should Be $true
+            $actual | Should Match "^$expected"
         }
     }
 
@@ -746,7 +754,7 @@ Describe "Verify sudo function on CoreUNIX" -Tags "CI"{
         {
             $expected = $expectedValues[$index]
             $actual = $result[$index]
-            $actual.StartsWith($expected) | Should Be $true
+            $actual | Should Match "^$expected"
         }
     }
 }
