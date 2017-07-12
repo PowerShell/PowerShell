@@ -116,3 +116,42 @@ SerializationVersion           1.1.0.1
 WSManStackVersion              3.0
 
 ```
+
+## NanoServer-Insider Release Notes
+
+Please be sure to use a build from the Windows Insider program, either [Windows Server Insider](https://www.microsoft.com/en-us/software-download/windowsinsiderpreviewserver) or the [Windows 10 Insider](https://insider.windows.com/GettingStarted),
+as your Container host before trying to pull this image. Otherwise, pulling this image will **fail**.
+
+Read more about the changes coming to Nano Server in future releases of Windows Server Insider [here](https://docs.microsoft.com/en-us/windows-server/get-started/nano-in-semi-annual-channel).
+
+### This is pre-release software
+
+Windows Server Insider Preview builds may be substantially modified before they are commercially released. Microsoft makes no warranties, express or implied, with respect to the information provided here.
+Some product features and functionality may require additional hardware or software. These builds are for testing purposes only. Microsoft is not obligated to provide any support services for this preview software.
+
+For more information see [Using Insider Container Images](https://github.com/Microsoft/Virtualization-Documentation/blob/live/virtualization/windowscontainers/quick-start/Using-Insider-Container-Images.md)
+and [Build and run an application with or without .NET Core 2.0 or PowerShell Core 6](https://github.com/Microsoft/Virtualization-Documentation/blob/live/virtualization/windowscontainers/quick-start/Nano-RS3-.NET-Core-and-PS.md).
+
+### Known Issues
+
+#### PowerShell Get and PackageManagement not working
+
+Due to [#4211](https://github.com/PowerShell/PowerShell/issues/4211),
+PowerShell Get and PackageManagement are not working with [6.0.0-beta.3](https://github.com/PowerShell/PowerShell/releases/tag/v6.0.0-beta.3)
+and [nanoserver-insider-powershell](https://hub.docker.com/r/microsoft/nanoserver-insider-powershell/).
+There is no known workaround, but the issue should be fixed in beta 4.
+
+#### Docker run requires full path
+
+Due to [an issue with the container not picking up the path](https://github.com/Microsoft/Virtualization-Documentation/blob/live/virtualization/windowscontainers/quick-start/Insider-Known-Issues.md#build-16237), you must specify the path
+when running a command on the command line.  For example, you would expect to be able to run:
+
+```PowerShell
+PS > docker run -it microsoft/nanoserver-insider-powershell powershell -c '$psversiontable'
+```
+
+but, in `nanoserver-insider-powershell` you must run:
+
+```PowerShell
+PS > docker run -it microsoft/nanoserver-insider-powershell 'C:\program files\powershell\powershell' -c '$psversiontable'
+```

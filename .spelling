@@ -211,6 +211,8 @@ SystemD
 andschwa's
 hub.docker.com
 microsoft
+NanoServer-Insider
+nanoserver-insider-powershell
  - docs/building/internals.md
 Catalog
 src
