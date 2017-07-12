@@ -134,7 +134,7 @@ and [Build and run an application with or without .NET Core 2.0 or PowerShell Co
 
 ### Known Issues
 
-#### PowerShell Get and PackageMangement not working
+#### PowerShell Get and PackageManagement not working
 
 Due to [#4211](https://github.com/PowerShell/PowerShell/issues/4211),
 PowerShell Get and PackageManagement are not working with [6.0.0-beta.3](https://github.com/PowerShell/PowerShell/releases/tag/v6.0.0-beta.3)
