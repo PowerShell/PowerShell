@@ -50,7 +50,7 @@
 
             It $_.testName {
                 @(Select-XML @params).Count | Should Be 1
-                (Select-XML @params).Path | Should Be $fileName
+                (Select-XML @params).Path | Should Be $fileName.FullName
             }
         }
 
@@ -58,6 +58,7 @@
             @{parameter="literalPath"},
             @{parameter="path"}
         ) {
+            param($parameter)
             $__data = "abcdefg"
             $params = @{$parameter="variable:__data"}
             { Select-XML @params "Root" | Should BeErrorId 'ProcessingFile,Microsoft.PowerShell.Commands.SelectXmlCommand' }
@@ -71,10 +72,10 @@
 
         It "-xml works with inputstream" {
             [xml]$xml = "<a xmlns='bar'><b xmlns:b='foo'>hello</b><c>world</c></a>"
-            $node = Select-Xml -Xml $xml -XPath "//b" -Namespace @{b='foo'}
+            $node = Select-Xml -Xml $xml -XPath "//c:b" -Namespace @{c='bar'}
             $node.Path | Should BeExactly "InputStream"
-            $node.Pattern = "//b:b"
-            $node.ToString() | Should Be Exactly "hello"
+            $node.Pattern = "//c:b"
+            $node.ToString() | Should BeExactly "hello"
         }
 
         It "Returns error for invalid xmlnamespace" {
@@ -92,7 +93,7 @@
         }
 
         It "ToString() works correctly with file" {
-            $testfile = "$testdrive/test.xml"
+            $testfile = Join-Path "$testdrive" "test.xml"
             Set-Content -Path $testfile -Value "<a><b>hello</b></a>"
             $node = Select-Xml -Path $testfile -XPath "//b"
             $node.ToString() | Should BeExactly "hello:$testfile"

@@ -753,13 +753,6 @@ namespace Microsoft.PowerShell.Commands
                     object result = _deserializer.Deserialize();
                     PSObject psObject = result as PSObject;
 
-                    if (psObject == null && skipped++ >= skip)
-                    {
-                        count++;
-                        _cmdlet.WriteObject(result);
-                        continue;
-                    }
-
                     if (psObject != null)
                     {
                         ICollection c = psObject.BaseObject as ICollection;
@@ -785,6 +778,12 @@ namespace Microsoft.PowerShell.Commands
                                 _cmdlet.WriteObject(result);
                             }
                         }
+                    }
+                    else if (skipped++ >= skip)
+                    {
+                        count++;
+                        _cmdlet.WriteObject(result);
+                        continue;
                     }
                 }
             }
