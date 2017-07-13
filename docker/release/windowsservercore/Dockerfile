@@ -7,7 +7,7 @@ LABEL description="This Dockerfile will install the latest release of PS."
 
 ARG POWERSHELL_MSI=https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.3/PowerShell-6.0.0-beta.3-win10-win2016-x64.msi
 
-RUN setx /M PATH "%PATH%;%ProgramFiles%\PowerShell"
+RUN setx /M PATH "%ProgramFiles%\PowerShell\latest;%PATH%"
 # Setup PowerShell - Log-to > C:\Docker.log
 SHELL ["C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe", "-command"]
 ADD $POWERSHELL_MSI /PowerShell-win10-x64.msi
@@ -43,4 +43,4 @@ RUN Start-Transcript -path C:\Dockerfile.log -append -IncludeInvocationHeader ; 
 # Persist %PSCORE% ENV variable for user convenience
 ENV PSCORE='"C:\Program Files\PowerShell\latest\PowerShell.exe"'
 
-CMD ["C:\\Program Files\\PowerShell\\latest\\PowerShell.exe"]
+CMD ["PowerShell.exe"]
