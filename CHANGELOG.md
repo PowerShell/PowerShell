@@ -3,12 +3,12 @@
 ## v6.0.0-beta.4 - 2017-07-12
 
 - Add Windows PowerShell `PSModulePath` by default on Windows. (#4132)
-- Move powershell to `2.0.0-preview3-25426-01` and using the .NET CLI version `2.0.0-preview2-006502`. (#4144)
+- Move PowerShell to `2.0.0-preview3-25426-01` and using the .NET CLI version `2.0.0-preview2-006502`. (#4144)
 
 ### Engine updates and fixes
 
 - Performance improvement in PSReadline by minimizing writing ANSI escape sequences. (#4110)
-- Implement Unicode escape parsing so that Unicode characters can be used as arguments, strings or variable names. (#3958) (Thanks to @rkeithhill!)
+- Implement Unicode escape parsing so that users can use Unicode characters as arguments, strings or variable names. (#3958) (Thanks to @rkeithhill!)
 - Script names or full paths can have commas. (#4136) (Thanks to @TimCurwick!)
 - Added `semver` as a type accelerator for `System.Management.Automation.SemanticVersion`. (#4142) (Thanks to @oising!)
 - Close `eventLogSession` and `EventLogReader` to unlock an ETL log. (#4034) (Thanks to @iSazonov!)
@@ -20,7 +20,7 @@
 - Change `New-ModuleManifest` encoding to UTF8NoBOM on non-Windows platforms. (#3940)
 - `Get-AuthenticodeSignature` cmdlets can now get file signature timestamp. (#4061)
 - Add tab completion for `Export-Counter` `-FileFormat` parameter. (#3856)
-- Fixed `Import-Module` on non-Windows platforms so modules with `NestedModules` and `RootModules` can be imported. (#4010)
+- Fixed `Import-Module` on non-Windows platforms so that users can import modules with `NestedModules` and `RootModules`. (#4010)
 - Close `FileStream` opened by `Get-FileHash`. (#4175) (Thanks to @rkeithhill!)
 
 ### Remoting
