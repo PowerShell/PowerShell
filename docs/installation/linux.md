@@ -431,13 +431,13 @@ powershell
 
 ```sh
 # Grab the latest App Image
-wget https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-x86_64.AppImage
+wget https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-beta.4-x86_64.AppImage
 
 # Make executable
-chmod a+x PowerShell-6.0.0-alpha.18-x86_64.AppImage
+chmod a+x PowerShell-6.0.0-beta.4-x86_64.AppImage
 
 # Start PowerShell
-./PowerShell-6.0.0-alpha.18-x86_64.AppImage
+./PowerShell-6.0.0-beta.4-x86_64.AppImage
 ```
 
 ### Uninstallation - Kali
