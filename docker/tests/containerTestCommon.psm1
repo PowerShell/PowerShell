@@ -133,7 +133,9 @@ function Get-TestContext
     $logFileName = 'results.log'
     $containerTestDrive = '/test'
 
-    if($Type -eq 'Windows')
+    # Return a windows context if the Context in Windows *AND*
+    # the current system is windows, otherwise Join-path will fail.
+    if($Type -eq 'Windows' -and $IsWindows)
     {
         $ContainerTestDrive = 'C:\test'
     }
