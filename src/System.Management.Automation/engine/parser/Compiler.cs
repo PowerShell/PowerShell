@@ -1377,7 +1377,7 @@ namespace System.Management.Automation.Language
             if (attributeType == null)
             {
                 throw InterpreterError.NewInterpreterException(attributeAst, typeof(RuntimeException), attributeAst.Extent,
-                    "TypeNotFound", ParserStrings.TypeNotFound, attributeAst.TypeName.FullName);
+                    "CustomAttributeTypeNotFound", ParserStrings.CustomAttributeTypeNotFound, attributeAst.TypeName.FullName);
             }
 
             Func<AttributeAst, Attribute> generator;
