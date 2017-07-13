@@ -202,7 +202,7 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
         }
         else
         {
-            (Get-Process -Name 'win32calc','calculator' 2>$null) | Stop-Process -force -ErrorAction SilentlyContinue
+            (Get-Process -Name 'win32calc','calculator' 2>$null) | Stop-Process -Force -ErrorAction SilentlyContinue
         }
     }
 
@@ -214,7 +214,7 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
         }
         else
         {
-            (Get-Process -Name 'win32calc','calculator' 2>$null) | Stop-Process -force -ErrorAction SilentlyContinue
+            (Get-Process -Name 'win32calc','calculator' 2>$null) | Stop-Process -Force -ErrorAction SilentlyContinue
         }
     }
 
