@@ -59,7 +59,7 @@ function ConvertTo-CodeCovJson
         $previousFileCoverage = $totalCoverage.coverage.${fileName}
 
         ##Update the values for the lines in the file.
-        if($previousFileCoverage -ne $null)
+        if($null -ne $previousFileCoverage)
         {
             foreach($lineNumber in $fileCoverage.Keys)
             {

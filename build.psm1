@@ -728,7 +728,7 @@ function Publish-PSTestTools {
     $tools = @(
         @{Path="${PSScriptRoot}/test/tools/TestExe";Output="testexe"}
     )
-    if ($Options -eq $null)
+    if ($null -eq $Options)
     {
         $Options = New-PSOptions
     }
@@ -2351,7 +2351,7 @@ function script:logerror([string]$message) {
 function script:precheck([string]$command, [string]$missedMessage) {
     $c = Get-Command $command -ErrorAction SilentlyContinue
     if (-not $c) {
-        if ($missedMessage -ne $null)
+        if ($null -ne $missedMessage)
         {
             Write-Warning $missedMessage
         }

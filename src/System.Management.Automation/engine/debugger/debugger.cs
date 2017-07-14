@@ -5531,7 +5531,7 @@ namespace System.Management.Automation.Internal
             [CmdletBinding()]
             param()
 
-            if ($PSWorkflowDebugger -ne $null)
+            if ($null -ne $PSWorkflowDebugger)
             {
                 foreach ($frame in $PSWorkflowDebugger.GetCallStack())
                 {

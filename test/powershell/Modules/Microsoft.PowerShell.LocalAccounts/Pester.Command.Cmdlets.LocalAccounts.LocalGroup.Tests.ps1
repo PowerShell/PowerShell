@@ -328,7 +328,7 @@ try {
                 $result = @($outErr.Count, $outErr[0].ErrorRecord.CategoryInfo.Reason, $outOut.Name)
             }
 
-            if ($result -eq $null)
+            if ($null -eq $result)
             {
                 # Force failing the test because an unexpected outcome occurred
                 $false | Should Be $true

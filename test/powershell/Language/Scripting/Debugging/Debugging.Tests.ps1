@@ -58,8 +58,8 @@ Describe "It should be possible to reset runspace debugging" -tag "Feature" {
         $rs.ResetRunspaceState()
     }
     AfterAll {
-        if ( $ps -ne $null ) { $ps.Dispose() }
-        if ( $ss -ne $null ) { $rs.Dispose() }
+        if ( $null -ne $ps ) { $ps.Dispose() }
+        if ( $null -ne $ss ) { $rs.Dispose() }
     }
     It "2 breakpoints should have been set" {
         $breakpoints.Count | Should be 2

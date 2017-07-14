@@ -46,7 +46,7 @@
                     $exportAliasError = $_
                 }
 
-                if($test.expectedError -eq $null)
+                if($null -eq $test.expectedError)
                 {
                     Test-Path -LiteralPath $test.testFile | Should Be $true
                 }

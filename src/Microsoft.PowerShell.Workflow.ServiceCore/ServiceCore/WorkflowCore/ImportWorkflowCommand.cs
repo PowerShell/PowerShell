@@ -1303,7 +1303,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             if ($collection['" + Constants.ComputerName + @"'] -eq '*' )
                             {
-                                if ($PSParameterCollectionDefaultsMember -ne $null)
+                                if ($null -ne $PSParameterCollectionDefaultsMember)
                                 {
                                     $msg = [Microsoft.PowerShell.Commands.ImportWorkflowCommand]::ParameterErrorMessage;
                                     throw ( New-Object System.Management.Automation.ErrorRecord $msg, StartWorkflow.InvalidArgument, InvalidArgument, $PSParameterCollection)
@@ -1794,7 +1794,7 @@ namespace Microsoft.PowerShell.Commands
 
                 #  Create the final parameter collection...
                 $finalParameterCollection = $null
-                if ($PSParameterCollection -ne $null)
+                if ($null -ne $PSParameterCollection)
                 {{
                     $finalParameterCollection = $PSParameterCollection 
                 }}
@@ -1808,9 +1808,9 @@ namespace Microsoft.PowerShell.Commands
                     # Start the workflow and return the job object...
                     $debuggerActive = (@(Get-PSBreakpoint).Count -gt 0)
                     if (($debuggerActive -eq $false) -and
-                        ($host -ne $null) -and
-                        ($host.Runspace -ne $null) -and
-                        ($host.Runspace.Debugger -ne $null))
+                        ($null -ne $host) -and
+                        ($null -ne $host.Runspace) -and
+                        ($null -ne $host.Runspace.Debugger))
                     {{
                         $debuggerActive = $host.Runspace.Debugger.IsActive
                     }}
@@ -1843,7 +1843,7 @@ namespace Microsoft.PowerShell.Commands
                     throw (New-Object System.Management.Automation.ErrorRecord $newException, StartWorkflow.InvalidArgument, InvalidArgument, $finalParameterCollection)
                 }}
 
-                if (-not $AsJob -and $job -ne $null)
+                if (-not $AsJob -and $null -ne $job)
                 {{
                     try
                     {{

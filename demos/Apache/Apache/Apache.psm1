@@ -185,7 +185,7 @@ Function Get-ApacheVHost{
             }
         }
 
-        if ($ServerName -ne $null){
+        if ($null -ne $ServerName){
             $vHost = [ApacheVirtualHost]::New($ServerName, $ConfFile, $ListenAddress.Split(":")[0],$ListenAddress.Split(":")[1])
             $ExtProps = GetVHostProps $ConfFile $ServerName $ListenAddress
             $vHost.DocumentRoot = $ExtProps.DocumentRoot
@@ -206,7 +206,7 @@ Function Restart-ApacheHTTPServer{
    [switch]$Graceful
    )
 
-    if ($Graceful -eq $null){$Graceful = $false}
+    if ($null -eq $Graceful){$Graceful = $false}
     $cmd = GetApacheCmd
         if ($Graceful){
                 & $global:sudocmd $cmd  -k graceful
