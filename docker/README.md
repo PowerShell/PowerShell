@@ -134,12 +134,14 @@ and [Build and run an application with or without .NET Core 2.0 or PowerShell Co
 
 ### Known Issues
 
-#### PowerShell Get and PackageManagement not working
+#### PowerShell Get only works with CurrentUser Scope
 
-Due to [#4211](https://github.com/PowerShell/PowerShell/issues/4211),
-PowerShell Get and PackageManagement are not working with [6.0.0-beta.3](https://github.com/PowerShell/PowerShell/releases/tag/v6.0.0-beta.3)
-and [nanoserver-insider-powershell](https://hub.docker.com/r/microsoft/nanoserver-insider-powershell/).
-There is no known workaround, but the issue should be fixed in beta 4.
+Due to [known issues with the nano-server-insider](https://github.com/Microsoft/Virtualization-Documentation/blob/live/virtualization/windowscontainers/quick-start/Insider-Known-Issues.md#build-16237),
+you must specify `-Scope CurrentUser` when using `Install-Module`.  Example:
+
+```PowerShell
+Install-Module <ModuleName> -Scope CurrentUser
+```
 
 #### Docker run requires full path
 
