@@ -33,7 +33,7 @@
     <Property Id="ARPHELPLINK" Value="$(var.InfoURL)" />
 
 	<!-- Checkbox to allow starting PowerShell after the installation (in UI mode only) -->
-	<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open PowerShell" />
+	<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open $(env.ProductName)" />
 	<!-- Default value of Checkbox of starting PowerShell after installation -->  
 	<Property Id="WixShellExecTarget" Value="[$(var.ProductVersionWithName)]PowerShell.exe"/>
 	<CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
