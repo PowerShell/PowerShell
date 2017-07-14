@@ -1177,7 +1177,7 @@ namespace System.Management.Automation.Language
                         {
                             foreach (var tuple in helper._fieldsToInitForMemberFunctions)
                             {
-                                // If the wrapper is for a static method, we need the sessionStateKeeper to determine the rigth SessionState to run.
+                                // If the wrapper is for a static method, we need the sessionStateKeeper to determine the right SessionState to run.
                                 // If the wrapper is for an instance method, we use the SessionState that the instance is bound to, and thus don't need sessionStateKeeper.
                                 var methodWrapper = tuple.isStatic
                                     ? new ScriptBlockMemberMethodWrapper(tuple.bodyAst, sessionStateKeeper)
