@@ -39,7 +39,7 @@ namespace Microsoft.PowerShell.Commands
     ///
     /// Create a set of Runspaces using the Secure Socket Layer by specifying the URI form.
     /// This assumes that an shell by the name of E12 exists on the remote server.
-    ///     $serverURIs = 1..8 | %{ "SSL://server${_}:443/E12" }
+    ///     $serverURIs = 1..8 | ForEach-Object { "SSL://server${_}:443/E12" }
     ///     $rs = New-PSSession -URI $serverURIs
     ///
     /// Create a runspace by connecting to port 8081 on servers s1, s2 and s3

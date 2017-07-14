@@ -15,7 +15,7 @@ namespace System.Management.Automation.Runspaces
                     .StartEntry()
                         .StartFrame(leftIndent: 4)
                             .AddText(FileSystemProviderStrings.DirectoryDisplayGrouping)
-                            .AddScriptBlockExpressionBinding(@"Split-Path -Parent $_.Path | %{ if([Version]::TryParse((Split-Path $_ -Leaf), [ref]$null)) { Split-Path -Parent $_} else {$_} } | Split-Path -Parent")
+                            .AddScriptBlockExpressionBinding(@"Split-Path -Parent $_.Path | ForEach-Object { if([Version]::TryParse((Split-Path $_ -Leaf), [ref]$null)) { Split-Path -Parent $_} else {$_} } | Split-Path -Parent")
                             .AddNewline()
                         .EndFrame()
                     .EndEntry()
@@ -612,7 +612,7 @@ namespace System.Management.Automation.Runspaces
                         .AddScriptBlockColumn(@"if($_.Used -or $_.Free) { ""{0:###0.00}"" -f ($_.Used / 1GB) }", alignment: Alignment.Right)
                         .AddScriptBlockColumn(@"if($_.Used -or $_.Free) { ""{0:###0.00}"" -f ($_.Free / 1GB) }", alignment: Alignment.Right)
                         .AddScriptBlockColumn("$_.Provider.Name")
-                        .AddScriptBlockColumn("if($_.DisplayRoot -ne $null) { $_.DisplayRoot } else { $_.Root }")
+                        .AddScriptBlockColumn("if($null -ne $_.DisplayRoot) { $_.DisplayRoot } else { $_.Root }")
                         .AddPropertyColumn("CurrentLocation", alignment: Alignment.Right)
                     .EndRowDefinition()
                 .EndTable());
@@ -792,7 +792,7 @@ namespace System.Management.Automation.Runspaces
                                         $width = $host.UI.RawUI.BufferSize.Width - $indent - 2
 
                                         $errorCategoryMsg = & { Set-StrictMode -Version 1; $_.ErrorCategory_Message }
-                                        if ($errorCategoryMsg -ne $null)
+                                        if ($null -ne $errorCategoryMsg)
                                         {
                                             $indentString = ""+ CategoryInfo          : "" + $_.ErrorCategory_Message
                                         }
@@ -808,7 +808,7 @@ namespace System.Management.Automation.Runspaces
                                         foreach($line in @($indentString -split ""(.{$width})"")) { if($line) { $posmsg += ("" "" * $indent + $line) } }
 
                                         $originInfo = & { Set-StrictMode -Version 1; $_.OriginInfo }
-                                        if (($originInfo -ne $null) -and ($originInfo.PSComputerName -ne $null))
+                                        if (($null -ne $originInfo) -and ($null -ne $originInfo.PSComputerName))
                                         {
                                             $indentString = ""+ PSComputerName        : "" + $originInfo.PSComputerName
                                             $posmsg += ""`n""
@@ -964,7 +964,7 @@ namespace System.Management.Automation.Runspaces
                         .AddPropertyColumn("Id")
                         .AddPropertyColumn("Name")
                         .AddScriptBlockColumn(@"
-                    if ($_.ConnectionInfo -ne $null)
+                    if ($null -ne $_.ConnectionInfo)
                     {
                       $_.ConnectionInfo.ComputerName
                     }
@@ -985,7 +985,7 @@ namespace System.Management.Automation.Runspaces
                   ")
                         .AddScriptBlockColumn("$_.RunspaceStateInfo.State")
                         .AddScriptBlockColumn(@"
-                    if (($_.Debugger -ne $null) -and ($_.Debugger.InBreakpoint))
+                    if (($null -ne $_.Debugger) -and ($_.Debugger.InBreakpoint))
                     {
                         ""InBreakpoint""
                     }
@@ -1193,7 +1193,7 @@ namespace System.Management.Automation.Runspaces
         {
             yield return new FormatViewDefinition("Module",
                 TableControl.Create()
-                    .GroupByScriptBlock("Split-Path -Parent $_.Path | %{ if([Version]::TryParse((Split-Path $_ -Leaf), [ref]$null)) { Split-Path -Parent $_} else {$_} } | Split-Path -Parent", customControl: sharedControls[0])
+                    .GroupByScriptBlock("Split-Path -Parent $_.Path | ForEach-Object { if([Version]::TryParse((Split-Path $_ -Leaf), [ref]$null)) { Split-Path -Parent $_} else {$_} } | Split-Path -Parent", customControl: sharedControls[0])
                     .AddHeader(Alignment.Left, width: 10)
                     .AddHeader(Alignment.Left, width: 10)
                     .AddHeader(Alignment.Left, width: 35)
