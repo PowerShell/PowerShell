@@ -168,6 +168,9 @@
   <data name="ValidateSetFailure" xml:space="preserve">
     <value>The argument "{0}" does not belong to the set "{1}" specified by the ValidateSet attribute. Supply an argument that is in the set and then try the command again.</value>
   </data>
+  <data name="ValidateSetGeneratedValidValuesListIsNull" xml:space="preserve">
+    <value>Valid values generator return a null value.</value>
+  </data>
   <data name="ValidateFailureResult" xml:space="preserve">
     <value>"{0}" failed on property "{1}" {2}</value>
   </data>

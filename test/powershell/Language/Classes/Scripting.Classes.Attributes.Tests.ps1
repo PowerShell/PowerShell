@@ -216,3 +216,263 @@ Describe 'Type resolution with attributes' -Tag "CI" {
         }
     }
 }
+
+Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
+
+    Context 'C# tests' {
+
+        BeforeAll {
+            $a=@'
+        using System;
+        using System.Management.Automation;
+        using System.Collections.Generic;
+
+        namespace Test.Language {
+
+            [Cmdlet(VerbsCommon.Get, "TestValidateSet0")]
+            public class TestValidateSetCommand0 : PSCmdlet
+            {
+                [Parameter]
+                [ValidateSet(typeof(PSCmdlet))]
+                public string Param1;
+
+                protected override void EndProcessing()
+                {
+                    WriteObject(Param1);
+                }
+            }
+
+            [Cmdlet(VerbsCommon.Get, "TestValidateSet4")]
+            public class TestValidateSetCommand4 : PSCmdlet
+            {
+                [Parameter]
+                [ValidateSet(typeof(GenValuesForParam))]
+                public string Param1;
+
+                protected override void EndProcessing()
+                {
+                    WriteObject(Param1);
+                }
+            }
+
+            [Cmdlet(VerbsCommon.Get, "TestValidateSet5")]
+            public class TestValidateSetCommand5 : PSCmdlet
+            {
+                [Parameter]
+                [ValidateSet(typeof(GenValuesForParamNull))]
+                public string Param1;
+
+                protected override void EndProcessing()
+                {
+                    WriteObject(Param1);
+                }
+            }
+
+
+            /// Implement of test IValidateSetValuesGenerator
+            public class GenValuesForParamNull : IValidateSetValuesGenerator
+            {
+                public string[] GetValidValues()
+                {
+                    var testValues = new string[] {"Test1","TestString1","Test2"};
+                    return null;
+                }
+            }
+
+            public class GenValuesForParam : IValidateSetValuesGenerator
+            {
+                public string[] GetValidValues()
+                {
+                    var testValues = new string[] {"Test1","TestString1","Test2"};
+                    return testValues;
+                }
+            }
+        }
+'@
+
+            $testAssemply = "$TestDrive\tst-$(New-Guid).dll"
+            Add-Type -TypeDefinition $a -OutputAssembly $testAssemply
+            Import-Module $testAssemply
+        }
+
+        It 'Throw if IValidateSetValuesGenerator is not implemented' {
+            { Get-TestValidateSet0 -Param1 "TestString" -ErrorAction Stop } | ShouldBeErrorId "Argument"
+        }
+
+        It 'Dynamically generated set works in C# with default (immediate) cache expire' {
+            Get-TestValidateSet4 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
+        }
+
+        It 'Empty dynamically generated set throws in C#' {
+            $exc = {
+                Get-TestValidateSet5 -Param1 "TestString1" -ErrorAction Stop
+            } | ShouldBeErrorId "ParameterArgumentValidationError,Test.Language.TestValidateSetCommand5"
+            $exc.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should BeExactly "ValidateSetGeneratedValidValuesListIsNull"
+        }
+    }
+
+    Context 'Powershell tests' {
+
+        BeforeAll {
+            class GenValuesForParam : System.Management.Automation.IValidateSetValuesGenerator {
+                [String[]] GetValidValues() {
+
+                    return [string[]]("Test1","TestString1","Test2")
+                }
+            }
+
+            class GenValuesForParamNull : System.Management.Automation.IValidateSetValuesGenerator {
+                [String[]] GetValidValues() {
+
+                    return [string[]]$null
+                }
+            }
+
+            # Return '$testValues2' and after 2 seconds after first use return another array '$testValues1'.
+            class GenValuesForParamCache1 : System.Management.Automation.IValidateSetValuesGenerator {
+                [String[]] GetValidValues() {
+
+                    $testValues1 = "Test11","TestString11","Test22"
+                    $testValues2 = "Test11","TestString22","Test22"
+
+                    $currentTime = [DateTime]::Now
+                    if ([DateTime]::Compare([GenValuesForParamCache1]::cacheTime, $currentTime) -le 0)
+                    {
+                        $testValues = $testValues1;
+                    }
+                    else
+                    {
+                        $testValues = $testValues2;
+                    }
+                    return [string[]]$testValues
+                }
+
+                static [DateTime] $cacheTime = [DateTime]::Now.AddSeconds(2);
+            }
+
+            function Get-TestValidateSetPS4
+            {
+                [CmdletBinding()]
+                Param
+                (
+                    [ValidateSet([GenValuesForParam])]
+                    $Param1
+                )
+
+                $Param1
+            }
+
+            function Get-TestValidateSetPS5
+            {
+                [CmdletBinding()]
+                Param
+                (
+                    [ValidateSet([GenValuesForParamNull])]
+                    $Param1
+                )
+
+                $Param1
+            }
+
+            function Get-TestValidateSetPS6
+            {
+                [CmdletBinding()]
+                Param
+                (
+                    [ValidateSet([UnImplementedGeneratorOfValues])]
+                    $Param1
+                )
+
+                $Param1
+            }
+        }
+
+        It 'Dynamically generated set works in PowerShell script with default (immediate) cache expire' {
+            Get-TestValidateSetPS4 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
+        }
+
+        It 'Empty dynamically generated set throws in PowerShell script' {
+            $exc = {
+                Get-TestValidateSetPS5 -Param1 "TestString1" -ErrorAction Stop
+            } | ShouldBeErrorId "ParameterArgumentValidationError,Get-TestValidateSetPS5"
+            $exc.Exception.InnerException.ErrorRecord.FullyQualifiedErrorId | Should BeExactly "ValidateSetGeneratedValidValuesListIsNull"
+        }
+
+        It 'Unimplemented valid values generator type throws in PowerShell script' {
+            {
+                Get-TestValidateSetPS6 -Param1 "AnyTestString" -ErrorAction Stop
+            } | ShouldBeErrorId "TypeNotFound"
+        }
+    }
+
+    Context 'CachedValidValuesGeneratorBase class tests' {
+
+        BeforeAll {
+            class GenValuesForParam : System.Management.Automation.CachedValidValuesGeneratorBase {
+                GenValuesForParam() : base(300) {
+                }
+
+                [String[]] GenerateValidValues() {
+
+                    return [string[]]("Test1","TestString1","Test2")
+                }
+            }
+
+            class GenValuesWithExpiration : System.Management.Automation.CachedValidValuesGeneratorBase {
+                GenValuesWithExpiration() : base(2) {
+                }
+
+                Static [bool] $temp = $true;
+
+                [String[]] GenerateValidValues() {
+
+                    if ([GenValuesWithExpiration]::temp) {
+                        [GenValuesWithExpiration]::temp = $false
+                        return [string[]]("Test1","TestString1","Test2")
+                    } else {
+                        [GenValuesWithExpiration]::temp = $true
+                        return [string[]]("Test1","TestString2","Test2")
+                    }
+                    
+                }
+            }
+
+
+            function Get-TestValidateSetPS4
+            {
+                [CmdletBinding()]
+                Param
+                (
+                    [ValidateSet([GenValuesForParam])]
+                    $Param1
+                )
+
+                $Param1
+            }
+
+            function Get-TestValidateSetPS5
+            {
+                [CmdletBinding()]
+                Param
+                (
+                    [ValidateSet([GenValuesWithExpiration])]
+                    $Param1
+                )
+
+                $Param1
+            }
+        }
+
+        It 'Can implement CachedValidValuesGeneratorBase in PowerShell' {
+            Get-TestValidateSetPS4 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
+        }
+
+        It 'Can implement CachedValidValuesGeneratorBase with cache expiration in PowerShell' {
+            Get-TestValidateSetPS5 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
+            Get-TestValidateSetPS5 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
+            Start-Sleep 3
+            Get-TestValidateSetPS5 -Param1 "TestString2" -ErrorAction SilentlyContinue | Should BeExactly "TestString2"
+        }
+
+    }
+}
