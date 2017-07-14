@@ -2076,3 +2076,42 @@ Describe "GetCommand locally and remotely" -tags "Feature" {
         $localCommandCount | Should Be $remoteCommandCount
     }
 }
+
+Describe "Import-PSSession on Restricted Session" -tags "Feature","RequireAdminOnWindows","Slow" {
+
+    BeforeAll {
+
+        # Skip tests for non Windows
+        if (! $IsWindows)
+        {
+            $originalDefaultParameters = $PSDefaultParameterValues.Clone()
+            $global:PSDefaultParameterValues["it:skip"] = $true
+        }
+        else
+        {
+            New-PSSessionConfigurationFile -Path $TestDrive\restricted.pssc -SessionType RestrictedRemoteServer
+            Register-PSSessionConfiguration -Path $TestDrive\restricted.pssc -Name restricted -Force
+            $session = New-PSSession -ComputerName localhost -ConfigurationName restricted
+        }
+    }
+
+    AfterAll {
+
+        if ($originalDefaultParameters -ne $null)
+        {
+            $global:PSDefaultParameterValues = $originalDefaultParameters
+        }
+        else
+        {
+            if ($session -ne $null) { Remove-PSSession -Session $session -ErrorAction SilentlyContinue }
+            Unregister-PSSessionConfiguration -Name restricted -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Verifies that Import-PSSession works on a restricted session" {
+
+        $errorVariable = $null
+        Import-PSSession -Session $session -AllowClobber -ErrorVariable $errorVariable
+        $errorVariable | Should BeNullOrEmpty
+    }
+}
