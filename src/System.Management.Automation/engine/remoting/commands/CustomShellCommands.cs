@@ -2466,7 +2466,7 @@ function Unregister-PSSessionConfiguration
     process
     {{
         $shellsFound = 0
-        Get-ChildItem 'WSMan:\localhost\Plugin\' -Force:$force | ? {{ $_.Name -like ""$filter"" }} | ForEach-Object {{
+        Get-ChildItem 'WSMan:\localhost\Plugin\' -Force:$force | Where-Object {{ $_.Name -like ""$filter"" }} | ForEach-Object {{
             $pluginFileNamePath = join-path ""$($_.pspath)"" 'FileName'
             if (!(test-path ""$pluginFileNamePath""))
             {{
@@ -2484,7 +2484,7 @@ function Unregister-PSSessionConfiguration
            $shouldProcessTargetString = $targetTemplate -f $_.Name
 
            $DISCConfigFilePath = [System.IO.Path]::Combine($_.PSPath, ""InitializationParameters"")
-           $DISCConfigFile = get-childitem -literalpath ""$DISCConfigFilePath"" | ? {{$_.Name -like ""configFilePath""}}
+           $DISCConfigFile = get-childitem -literalpath ""$DISCConfigFilePath"" | Where-Object {{$_.Name -like ""configFilePath""}}
 
            if($DISCConfigFile -ne $null)
            {{
@@ -2770,7 +2770,7 @@ $force = $args[2]
 $args[0] | ForEach-Object {{
   $shellsFound = 0;
   $filter = $_
-  Get-ChildItem 'WSMan:\localhost\Plugin\' -Force:$force | ? {{ $_.name -like ""$filter"" }} | ForEach-Object {{
+  Get-ChildItem 'WSMan:\localhost\Plugin\' -Force:$force | Where-Object {{ $_.name -like ""$filter"" }} | ForEach-Object {{
      $customPluginObject = new-object object
      $customPluginObject.pstypenames.Insert(0, '{0}')
      ExtractPluginProperties ""$($_.PSPath)"" $customPluginObject

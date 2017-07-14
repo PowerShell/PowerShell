@@ -316,15 +316,15 @@ Describe "Tests Export-PSSession" -tags "Feature" {
     }
 
     It "Verifies Export-PSSession creates a psd1 file" -Skip:$skipTest {
-        ($results | ?{ $_.Name -like "*$(Split-Path -Leaf $file).psd1" }) | Should Be $true
+        ($results | Where-Object { $_.Name -like "*$(Split-Path -Leaf $file).psd1" }) | Should Be $true
     }
 
     It "Verifies Export-PSSession creates a psm1 file" -Skip:$skipTest {
-        ($results | ?{ $_.Name -like "*.psm1" }) | Should Be $true
+        ($results | Where-Object { $_.Name -like "*.psm1" }) | Should Be $true
     }
 
     It "Verifies Export-PSSession creates a ps1xml file" -Skip:$skipTest {
-        ($results | ?{ $_.Name -like "*.ps1xml" }) | Should Be $true
+        ($results | Where-Object { $_.Name -like "*.ps1xml" }) | Should Be $true
     }
 
     It "Verifies that Export-PSSession fails when a module directory already exists" -Skip:$skipTest {
@@ -800,7 +800,7 @@ Describe "Import-PSSession functional tests" -tags "Feature" {
             # The loop below works around the fact that PSEventManager uses threadpool worker to queue event handler actions to process later.
             # Usage of threadpool means that it is impossible to predict when the event handler will run (this is Windows 8 Bugs: #882977).
             $i = 0
-            while ( ($i -lt 20) -and ($null -ne (Get-Module | ? { $_.Path -eq $module.Path })) )
+            while ( ($i -lt 20) -and ($null -ne (Get-Module | Where-Object { $_.Path -eq $module.Path })) )
             {
                 $i++
                 Start-Sleep -Milliseconds 50
@@ -808,7 +808,7 @@ Describe "Import-PSSession functional tests" -tags "Feature" {
         }
 
         It "Temporary module should be automatically removed after runspace is closed" -Skip:$skipTest {
-            ((Get-Module | ? { $_.Path -eq $module.Path }) -eq $null) | Should Be $true
+            ((Get-Module | Where-Object { $_.Path -eq $module.Path }) -eq $null) | Should Be $true
         }
 
         It "Temporary psm1 file should be automatically removed after runspace is closed" -Skip:$skipTest {

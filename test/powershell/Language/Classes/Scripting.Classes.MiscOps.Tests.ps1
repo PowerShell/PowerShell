@@ -9,7 +9,7 @@ Describe 'Misc Test' -Tags "CI" {
 
         [string] Bar()
         {
-             return (1..10 | Where  { $PSItem -in $this.Wheels; }) -join ';'
+             return (1..10 | Where-Object  { $PSItem -in $this.Wheels; }) -join ';'
         }
         }
         It 'Invoke Where' {

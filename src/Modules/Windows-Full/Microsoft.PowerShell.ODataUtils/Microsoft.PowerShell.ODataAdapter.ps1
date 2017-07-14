@@ -645,9 +645,9 @@ function GenerateCRUDProxyCmdlet
 
     GenerateGetProxyCmdlet $xmlWriter $metaData $keys $navigationProperties $cmdletAdapter $complexTypeMapping
 
-    $nonKeyProperties = (GetAllProperties $entitySet.Type) | ? { -not $_.isKey }
-    $nullableProperties = $nonKeyProperties | ? { $_.isNullable }
-    $nonNullableProperties = $nonKeyProperties | ? { -not $_.isNullable }
+    $nonKeyProperties = (GetAllProperties $entitySet.Type) | Where-Object { -not $_.isKey }
+    $nullableProperties = $nonKeyProperties | Where-Object { $_.isNullable }
+    $nonNullableProperties = $nonKeyProperties | Where-Object { -not $_.isNullable }
 
     $xmlWriter.WriteStartElement('StaticCmdlets')
 
@@ -758,7 +758,7 @@ function GenerateGetProxyCmdlet
                 $xmlWriter.WriteStartElement('QueryableProperties')
                 $position = 0
 
-                $keys | ? { $_ -ne $null } | ForEach-Object {
+                $keys | Where-Object { $_ -ne $null } | ForEach-Object {
                     $xmlWriter.WriteStartElement('Property')
                     $xmlWriter.WriteAttributeString('PropertyName', $_.Name)
 
@@ -787,12 +787,12 @@ function GenerateGetProxyCmdlet
                 # This behaviour is different for NetworkController specific cmdlets.
                 if ($CmdletAdapter -ne "NetworkControllerAdapter")
                 {
-                    $navigationProperties | ? { $_ -ne $null } | ForEach-Object {
+                    $navigationProperties | Where-Object { $_ -ne $null } | ForEach-Object {
                     $associatedType = GetAssociatedType $metaData $_
                     $associatedEntitySet = GetEntitySetForEntityType $metaData $associatedType
                     $nvgProperty = $_
 
-                        (GetAllProperties $associatedType)  | ? { $_.IsKey } | ForEach-Object {
+                        (GetAllProperties $associatedType)  | Where-Object { $_.IsKey } | ForEach-Object {
                             $xmlWriter.WriteStartElement('Property')
                             $xmlWriter.WriteAttributeString('PropertyName', $associatedEntitySet.Name + ':' + $_.Name + ':Key')
 
@@ -918,7 +918,7 @@ function GenerateNewProxyCmdlet
         # This behaviour is different for NetworkControllerCmdlets
         if ($CmdletAdapter -ne "NetworkControllerAdapter")
         {
-            $navigationProperties | ? { $_ -ne $null } | ForEach-Object {
+            $navigationProperties | Where-Object { $_ -ne $null } | ForEach-Object {
                 $associatedType = GetAssociatedType $metaData $_
                 $associatedEntitySet = GetEntitySetForEntityType $metaData $associatedType
 
@@ -926,7 +926,7 @@ function GenerateNewProxyCmdlet
                 $xmlWriter.WriteAttributeString('MethodName', "Association:Create:$($associatedEntitySet.Name)")
                 $xmlWriter.WriteAttributeString('CmdletParameterSet', $_.Name)
 
-                $associatedKeys = ((GetAllProperties $associatedType) | ? { $_.isKey })
+                $associatedKeys = ((GetAllProperties $associatedType) | Where-Object { $_.isKey })
 
                 AddParametersNode $xmlWriter $associatedKeys $keyProperties $null "Associated$($_.Name)" $true $true $complexTypeMapping
                 $xmlWriter.WriteEndElement()
@@ -991,7 +991,7 @@ function GenerateRemoveProxyCmdlet
         # This behaviour is different for NetworkControllerCmdlets
         if ($CmdletAdapter -ne "NetworkControllerAdapter")
         {
-            $navigationProperties | ? { $_ -ne $null } | ForEach-Object {
+            $navigationProperties | Where-Object { $_ -ne $null } | ForEach-Object {
 
                 $associatedType = GetAssociatedType $metaData $_
                 $associatedEntitySet = GetEntitySetForEntityType $metaData $associatedType
@@ -1001,7 +1001,7 @@ function GenerateRemoveProxyCmdlet
                 $xmlWriter.WriteAttributeString('CmdletParameterSet', $_.Name)
 
                     $associatedType = GetAssociatedType $metaData $_
-                    $associatedKeys = ((GetAllProperties $associatedType) | ? { $_.isKey })
+                    $associatedKeys = ((GetAllProperties $associatedType) | Where-Object { $_.isKey })
 
                 AddParametersNode $xmlWriter $associatedKeys $keyProperties $null "Associated$($_.Name)" $true $true $complexTypeMapping
                 $xmlWriter.WriteEndElement()
@@ -1048,7 +1048,7 @@ function GenerateActionProxyCmdlet
 
             $xmlWriter.WriteStartElement('Parameters')
 
-            $keys | ? { $_ -ne $null } | ForEach-Object {
+            $keys | Where-Object { $_ -ne $null } | ForEach-Object {
                 $xmlWriter.WriteStartElement('Parameter')
                 $xmlWriter.WriteAttributeString('ParameterName', $_.Name + ':Key')
 
@@ -1231,10 +1231,10 @@ function GetBaseType
     $metaData -ne $null -and
     $metadataEntityDefinition.BaseType -ne $null)
     {
-        $baseType = $metaData.EntityTypes | Where {$_.Namespace+"."+$_.Name -eq $metadataEntityDefinition.BaseType}
+        $baseType = $metaData.EntityTypes | Where-Object {$_.Namespace+"."+$_.Name -eq $metadataEntityDefinition.BaseType}
         if ($baseType -eq $null)
         {
-            $baseType = $metaData.ComplexTypes | Where {$_.Namespace+"."+$_.Name -eq $metadataEntityDefinition.BaseType}
+            $baseType = $metaData.ComplexTypes | Where-Object {$_.Namespace+"."+$_.Name -eq $metadataEntityDefinition.BaseType}
         }
     }
 
@@ -1449,7 +1449,7 @@ function GetEntitySetForEntityType
     # $metaData is already validated at the cmdlet layer.
     if($entityType -eq $null) { throw ($LocalizedData.ArguementNullError -f "EntityType", "GetEntitySetForEntityType") }
 
-    $result = $metaData.EntitySets | ? { ($_.Type.Namespace -eq $entityType.Namespace) -and ($_.Type.Name -eq $entityType.Name) }
+    $result = $metaData.EntitySets | Where-Object { ($_.Type.Namespace -eq $entityType.Namespace) -and ($_.Type.Name -eq $entityType.Name) }
 
     if (($result.Count -eq 0) -and ($entityType.BaseType -ne $null))
     {
@@ -1514,7 +1514,7 @@ function GetAssociatedType
     if($navProperty -eq $null) { throw ($LocalizedData.ArguementNullError -f "NavigationProperty", "GetAssociatedType") }
 
     $associationName = $navProperty.AssociationName
-    $association = $Metadata.Associations | ? { $_.Name -eq $associationName }
+    $association = $Metadata.Associations | Where-Object { $_.Name -eq $associationName }
     $associationType = $association.Type
 
     if ($associationType.Count -lt 1)
@@ -1634,7 +1634,7 @@ function AddParametersCDXML
         [Hashtable] $complexTypeMapping
     )
 
-    $properties | ? { $_ -ne $null } | ForEach-Object {
+    $properties | Where-Object { $_ -ne $null } | ForEach-Object {
         $xmlWriter.WriteStartElement('Parameter')
         $xmlWriter.WriteAttributeString('ParameterName', $_.Name + $suffix)
             $xmlWriter.WriteStartElement('Type')
@@ -1924,7 +1924,7 @@ function GetNetworkControllerAdditionalProperties
 
     # Additional properties contains the types present as navigation properties
 
-    $additionalProperties = $navigationProperties | ? { $_ -ne $null } | ForEach-Object {
+    $additionalProperties = $navigationProperties | Where-Object { $_ -ne $null } | ForEach-Object {
         $typeName = GetNavigationPropertyTypeName $_ $metaData
 
         if ($_.Name -eq "Properties") {
@@ -1984,10 +1984,10 @@ function UpdateNetworkControllerSpecificProperties
     )
 
     if ($isNullable) {
-        $additionalProperties = $additionalProperties | ? { $_.isNullable }
+        $additionalProperties = $additionalProperties | Where-Object { $_.isNullable }
     }
     else {
-        $additionalProperties = $additionalProperties | ? { -not $_.isNullable }
+        $additionalProperties = $additionalProperties | Where-Object { -not $_.isNullable }
     }
 
     if ($nullableProperties -eq $null)

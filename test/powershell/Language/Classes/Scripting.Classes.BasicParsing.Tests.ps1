@@ -566,7 +566,7 @@ Describe 'Check PS Class Assembly Test' -Tags "CI" {
         class C1 {}
         $assem = [C1].Assembly
         $attrs = @($assem.GetCustomAttributes($true))
-        $expectedAttr = @($attrs | ? { $_  -is [System.Management.Automation.DynamicClassImplementationAssemblyAttribute] })
+        $expectedAttr = @($attrs | Where-Object { $_  -is [System.Management.Automation.DynamicClassImplementationAssemblyAttribute] })
         It "Expected a DynamicClassImplementationAssembly attribute" { $expectedAttr.Length | should be 1}
 }
 

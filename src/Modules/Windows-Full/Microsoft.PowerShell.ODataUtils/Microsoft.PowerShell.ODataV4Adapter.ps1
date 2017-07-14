@@ -903,10 +903,10 @@ function GetBaseType
         $metaData -ne $null -and
         $MetadataEntityDefinition.BaseType -ne $null)
     {
-        $baseType = $Metadata.EntityTypes | Where { $_.Namespace + "." + $_.Name -eq $MetadataEntityDefinition.BaseType -or $_.Alias + "." + $_.Name -eq $MetadataEntityDefinition.BaseType }
+        $baseType = $Metadata.EntityTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $MetadataEntityDefinition.BaseType -or $_.Alias + "." + $_.Name -eq $MetadataEntityDefinition.BaseType }
         if ($baseType -eq $null)
         {
-            $baseType = $Metadata.ComplexTypes | Where { $_.Namespace + "." + $_.Name -eq $MetadataEntityDefinition.BaseType -or $_.Alias + "." + $_.Name -eq $MetadataEntityDefinition.BaseType }
+            $baseType = $Metadata.ComplexTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $MetadataEntityDefinition.BaseType -or $_.Alias + "." + $_.Name -eq $MetadataEntityDefinition.BaseType }
         }
 
         if ($baseType -eq $null)
@@ -914,8 +914,8 @@ function GetBaseType
             # Look in other metadatas, since the class can be defined in referenced metadata
             foreach ($referencedMetadata in $GlobalMetadata)
             {
-                if (($baseType = $referencedMetadata.EntityTypes | Where { $_.Namespace + "." + $_.Name -eq $MetadataEntityDefinition.BaseType -or $_.Alias + "." + $_.Name -eq $MetadataEntityDefinition.BaseType }) -ne $null -or
-                    ($baseType = $referencedMetadata.ComplexTypes | Where { $_.Namespace + "." + $_.Name -eq $MetadataEntityDefinition.BaseType -or $_.Alias + "." + $_.Name -eq $MetadataEntityDefinition.BaseType }) -ne $null)
+                if (($baseType = $referencedMetadata.EntityTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $MetadataEntityDefinition.BaseType -or $_.Alias + "." + $_.Name -eq $MetadataEntityDefinition.BaseType }) -ne $null -or
+                    ($baseType = $referencedMetadata.ComplexTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $MetadataEntityDefinition.BaseType -or $_.Alias + "." + $_.Name -eq $MetadataEntityDefinition.BaseType }) -ne $null)
                 {
                     # Found base class
                     break
@@ -948,8 +948,8 @@ function GetBaseTypeByName
         # Look for base class definition in all referenced metadatas (including entry point)
         foreach ($referencedMetadata in $GlobalMetadata)
         {
-            if (($baseType = $referencedMetadata.EntityTypes | Where { $_.Namespace + "." + $_.Name -eq $BaseTypeStr -or $_.Alias + "." + $_.Name -eq $BaseTypeStr }) -ne $null -or
-                ($baseType = $referencedMetadata.ComplexTypes | Where { $_.Namespace + "." + $_.Name -eq $BaseTypeStr -or $_.Alias + "." + $_.Name -eq $BaseTypeStr }) -ne $null)
+            if (($baseType = $referencedMetadata.EntityTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $BaseTypeStr -or $_.Alias + "." + $_.Name -eq $BaseTypeStr }) -ne $null -or
+                ($baseType = $referencedMetadata.ComplexTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $BaseTypeStr -or $_.Alias + "." + $_.Name -eq $BaseTypeStr }) -ne $null)
             {
                 # Found base class
                 break
@@ -1337,9 +1337,9 @@ function SaveCDXML
 
     SaveCDXMLInstanceCmdlets $xmlWriter $Metadata $GlobalMetadata $EntitySet.Type $keys $navigationProperties $CmdletAdapter $complexTypeMapping $false
 
-    $nonKeyProperties = $EntitySet.Type.EntityProperties | ? { -not $_.isKey }
-    $nullableProperties = $nonKeyProperties | ? { $_.isNullable }
-    $nonNullableProperties = $nonKeyProperties | ? { -not $_.isNullable }
+    $nonKeyProperties = $EntitySet.Type.EntityProperties | Where-Object { -not $_.isKey }
+    $nullableProperties = $nonKeyProperties | Where-Object { $_.isNullable }
+    $nonNullableProperties = $nonKeyProperties | Where-Object { -not $_.isNullable }
 
     $xmlWriter.WriteStartElement('StaticCmdlets')
 
@@ -1483,7 +1483,7 @@ function SaveCDXMLSingletonCmdlets
         # Look in other metadatas, since the class can be defined in referenced metadata
         foreach ($referencedMetadata in $GlobalMetadata)
         {
-            if (($associatedEntityType = $referencedMetadata.EntityTypes | Where { $_.Namespace + "." + $_.Name -eq $singletonType -or $_.Alias + "." + $_.Name -eq $singletonType }) -ne $null)
+            if (($associatedEntityType = $referencedMetadata.EntityTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $singletonType -or $_.Alias + "." + $_.Name -eq $singletonType }) -ne $null)
             {
                 # Found associated class
                 break
@@ -1510,9 +1510,9 @@ function SaveCDXMLSingletonCmdlets
 
 		SaveCDXMLInstanceCmdlets $xmlWriter $Metadata $GlobalMetadata $associatedEntityType $keys $navigationProperties $CmdletAdapter $complexTypeMapping $true
 
-		$nonKeyProperties = $associatedEntityType.EntityProperties | ? { -not $_.isKey }
-		$nullableProperties = $nonKeyProperties | ? { $_.isNullable }
-		$nonNullableProperties = $nonKeyProperties | ? { -not $_.isNullable }
+		$nonKeyProperties = $associatedEntityType.EntityProperties | Where-Object { -not $_.isKey }
+		$nullableProperties = $nonKeyProperties | Where-Object { $_.isNullable }
+		$nonNullableProperties = $nonKeyProperties | Where-Object { -not $_.isNullable }
 
 		$xmlWriter.WriteStartElement('StaticCmdlets')
 
@@ -1630,7 +1630,7 @@ function SaveCDXMLInstanceCmdlets
                         if ($navProperty -ne $null)
                         {
                             $associatedType = GetAssociatedType $Metadata $GlobalMetadata $navProperty
-                            $associatedTypeKeyProperties = $associatedType.EntityProperties | ? { $_.IsKey }
+                            $associatedTypeKeyProperties = $associatedType.EntityProperties | Where-Object { $_.IsKey }
 
                             # Make sure associated parameter (based on navigation property) has EntitySet or Singleton, which makes it accessible from the service root
                             # Otherwise the Uri for associated navigation property won't be valid
@@ -1660,7 +1660,7 @@ function SaveCDXMLInstanceCmdlets
 
                 if ($isSingleton -eq $false)
                 {
-                    $keys | ? { $_ -ne $null } | ForEach-Object {
+                    $keys | Where-Object { $_ -ne $null } | ForEach-Object {
                             $xmlWriter.WriteStartElement('Property')
                             $xmlWriter.WriteAttributeString('PropertyName', $_.Name)
 
@@ -1786,7 +1786,7 @@ function ShouldBeAssociatedParameter
     )
 
     # Check if associated type has navigation property, which links back to current type
-    $associatedTypeNavProperties = $AssociatedType.NavigationProperties | ? {
+    $associatedTypeNavProperties = $AssociatedType.NavigationProperties | Where-Object {
         $_.Type -eq ($EntityType.Namespace + "." + $EntityType.Name) -or
         $_.Type -eq ($EntityType.Alias + "." + $EntityType.Name) -or
         $_.Type -eq ("Collection(" + $EntityType.Namespace + "." + $EntityType.Name + ")") -or
@@ -1863,7 +1863,7 @@ function SaveCDXMLNewCmdlet
 
         $xmlWriter.WriteEndElement()
 
-        $navigationProperties | ? { $_ -ne $null } | ForEach-Object {
+        $navigationProperties | Where-Object { $_ -ne $null } | ForEach-Object {
             $associatedType = GetAssociatedType $Metadata $GlobalMetadata $_
             $associatedEntitySet = GetEntitySetForEntityType $Metadata $associatedType
 
@@ -1871,7 +1871,7 @@ function SaveCDXMLNewCmdlet
             $xmlWriter.WriteAttributeString('MethodName', "Association:Create:$($associatedEntitySet.Name)")
             $xmlWriter.WriteAttributeString('CmdletParameterSet', $_.Name)
 
-            $associatedKeys = ($associatedType.EntityProperties | ? { $_.isKey })
+            $associatedKeys = ($associatedType.EntityProperties | Where-Object { $_.isKey })
 
             AddParametersNode $xmlWriter $associatedKeys $keyProperties $null "Associated$($_.Name)" $true $true $complexTypeMapping
 
@@ -1892,7 +1892,7 @@ function GetEntitySetForEntityType {
 
     if($entityType -eq $null) { throw ($LocalizedData.ArguementNullError -f "EntityType", "GetEntitySetForEntityType") }
 
-    $result = $Metadata.EntitySets | ? { ($_.Type.Namespace -eq $entityType.Namespace) -and ($_.Type.Name -eq $entityType.Name) }
+    $result = $Metadata.EntitySets | Where-Object { ($_.Type.Namespace -eq $entityType.Namespace) -and ($_.Type.Name -eq $entityType.Name) }
 
     if (($result.Count -eq 0) -and ($entityType.BaseType -ne $null))
     {
@@ -1940,7 +1940,7 @@ function SaveCDXMLRemoveCmdlet
 
         $xmlWriter.WriteEndElement()
 
-        $navigationProperties | ? { $_ -ne $null } | ForEach-Object {
+        $navigationProperties | Where-Object { $_ -ne $null } | ForEach-Object {
 
             $associatedType = GetAssociatedType $Metadata $GlobalMetadata $_
             $associatedEntitySet = GetEntitySetForEntityType $Metadata $associatedType
@@ -1950,7 +1950,7 @@ function SaveCDXMLRemoveCmdlet
             $xmlWriter.WriteAttributeString('CmdletParameterSet', $_.Name)
 
                 $associatedType = GetAssociatedType $Metadata $GlobalMetadata $_
-                $associatedKeys = ($associatedType.EntityProperties | ? { $_.isKey })
+                $associatedKeys = ($associatedType.EntityProperties | Where-Object { $_.isKey })
 
             AddParametersNode $xmlWriter $associatedKeys $keyProperties $null "Associated$($_.Name)" $true $true $complexTypeMapping
 
@@ -1975,7 +1975,7 @@ function GetAssociatedType {
     $associationType = $associationType.Replace("Collection(", "")
     $associationType = $associationType.Replace(")", "")
 
-    $associatedType = $Metadata.EntityTypes | ? { $_.Name -eq $associationType }
+    $associatedType = $Metadata.EntityTypes | Where-Object { $_.Name -eq $associationType }
 
     if (!$associatedType -and $GlobalMetadata -ne $null)
     {
@@ -1983,9 +1983,9 @@ function GetAssociatedType {
 
         foreach ($referencedMetadata in $GlobalMetadata)
         {
-            if (($associatedType = $referencedMetadata.EntityTypes | Where { $_.Namespace + "." + $_.Name -eq $associationFullTypeName -or $_.Alias + "." + $_.Name -eq $associationFullTypeName }) -ne $null -or
-                ($associatedType = $referencedMetadata.ComplexTypes | Where { $_.Namespace + "." + $_.Name -eq $associationFullTypeName -or $_.Alias + "." + $_.Name -eq $associationFullTypeName }) -ne $null -or
-                ($associatedType = $referencedMetadata.EnumTypes | Where { $_.Namespace + "." + $_.Name -eq $associationFullTypeName -or $_.Alias + "." + $_.Name -eq $associationFullTypeName }) -ne $null)
+            if (($associatedType = $referencedMetadata.EntityTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $associationFullTypeName -or $_.Alias + "." + $_.Name -eq $associationFullTypeName }) -ne $null -or
+                ($associatedType = $referencedMetadata.ComplexTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $associationFullTypeName -or $_.Alias + "." + $_.Name -eq $associationFullTypeName }) -ne $null -or
+                ($associatedType = $referencedMetadata.EnumTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $associationFullTypeName -or $_.Alias + "." + $_.Name -eq $associationFullTypeName }) -ne $null)
             {
                 # Found associated class
                 break
@@ -2038,7 +2038,7 @@ function SaveCDXMLAction
 
             $xmlWriter.WriteStartElement('Parameters')
 
-            $keys | ? { $_ -ne $null } | ForEach-Object {
+            $keys | Where-Object { $_ -ne $null } | ForEach-Object {
                 $xmlWriter.WriteStartElement('Parameter')
                 $xmlWriter.WriteAttributeString('ParameterName', $_.Name + ':Key')
 
@@ -2133,7 +2133,7 @@ function SaveCDXMLFunction
 
             $xmlWriter.WriteStartElement('Parameters')
 
-            $keys | ? { $_ -ne $null } | ForEach-Object {
+            $keys | Where-Object { $_ -ne $null } | ForEach-Object {
                 $xmlWriter.WriteStartElement('Parameter')
                 $xmlWriter.WriteAttributeString('ParameterName', $_.Name + ':Key')
 
@@ -2585,8 +2585,8 @@ namespace $($dotNetNamespace)
                         # We'll make another attempt.
                         foreach ($referencedMetadata in $GlobalMetadata)
                         {
-                            if (($baseType = $referencedMetadata.EntityTypes | Where { $_.Namespace + "." + $_.Name -eq $entityType.BaseTypeStr -or $_.Alias + "." + $_.Name -eq $entityType.BaseTypeStr }) -ne $null -or
-                                ($baseType = $referencedMetadata.ComplexTypes | Where { $_.Namespace + "." + $_.Name -eq $entityType.BaseTypeStr -or $_.Alias + "." + $_.Name -eq $entityType.BaseTypeStr }) -ne $null)
+                            if (($baseType = $referencedMetadata.EntityTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $entityType.BaseTypeStr -or $_.Alias + "." + $_.Name -eq $entityType.BaseTypeStr }) -ne $null -or
+                                ($baseType = $referencedMetadata.ComplexTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $entityType.BaseTypeStr -or $_.Alias + "." + $_.Name -eq $entityType.BaseTypeStr }) -ne $null)
                             {
                                 # Found base class
                                 $entityType.BaseType = $baseType

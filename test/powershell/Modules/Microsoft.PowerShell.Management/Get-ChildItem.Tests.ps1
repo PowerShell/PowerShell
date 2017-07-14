@@ -76,13 +76,13 @@ Describe "Get-ChildItem" -Tags "CI" {
                 $env:__FOOBAR = 'foo'
                 $env:__foobar = 'bar'
 
-                $foobar = Get-Childitem env: | ? {$_.Name -eq '__foobar'}
+                $foobar = Get-Childitem env: | Where-Object {$_.Name -eq '__foobar'}
                 $count = if ($IsWindows) { 1 } else { 2 }
                 ($foobar | measure).Count | Should Be $count
             }
             catch
             {
-                Get-ChildItem env: | ? {$_.Name -eq '__foobar'} | Remove-Item -ErrorAction SilentlyContinue
+                Get-ChildItem env: | Where-Object {$_.Name -eq '__foobar'} | Remove-Item -ErrorAction SilentlyContinue
             }
         }
     }
