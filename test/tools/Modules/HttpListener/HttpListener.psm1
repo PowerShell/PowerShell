@@ -134,6 +134,13 @@ Function Start-HTTPListener {
                             $contentType = $queryItems["contenttype"]
                             $output = $queryItems["output"]
                         }
+
+                        # Echo the request as the output.
+                        "echo"
+                        {
+                            Write-Verbose -Message "Echo request"
+                            $output = $request | ConvertTo-Json -Depth 6
+                        }
                         
                         <# 
                             This test provides support for multiple redirection types as well as a custom

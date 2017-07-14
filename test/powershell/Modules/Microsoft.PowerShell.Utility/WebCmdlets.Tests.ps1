@@ -184,6 +184,49 @@ function ExecuteRedirectRequest
     return $result
 }
 
+# This function calls either Invoke-WebRequest or Invoke-RestMethod with the given uri
+# using the custum headers and the  optional SkipHeaderValidation switch.
+function ExecuteRequestWithCustomHeaders
+{
+    param (
+        [Parameter(Mandatory)]
+        [string]
+        $Uri,
+
+        [ValidateSet('Invoke-WebRequest', 'Invoke-RestMethod')]
+        [string] $Cmdlet = 'Invoke-WebRequest',
+
+        [Parameter(Mandatory)]
+        [ValidateNotNull()]
+        [Hashtable] $Headers,
+
+        [switch] $SkipHeaderValidation
+    )
+    $result = [PSObject]@{Output = $null; Error = $null; Content = $null}
+
+    try
+    {
+        if ($Cmdlet -eq 'Invoke-WebRequest')
+        {
+            $result.Output = Invoke-WebRequest -Uri $Uri -TimeoutSec 5 -Headers $Headers -SkipHeaderValidation:$SkipHeaderValidation.IsPresent
+            $result.Content = $result.Output.Content | ConvertFrom-Json
+        }
+        else
+        {
+            $result.Output = Invoke-RestMethod -Uri $Uri -TimeoutSec 5 -Headers $Headers -SkipHeaderValidation:$SkipHeaderValidation.IsPresent
+            # NOTE: $result.Output should already be a PSObject (Invoke-RestMethod converts the returned json automatically)
+            # so simply reference $result.Output
+            $result.Content = $result.Output
+        }
+    }
+    catch
+    {
+        $result.Error = $_
+    }
+
+    return $result
+}
+
 <#
     Defines the list of redirect codes to test as well as the
     expected Method when the redirection is handled.
@@ -662,6 +705,35 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     #endregion Redirect tests
 
+    #region SkipHeaderVerification Tests
+
+    It "Verifies Invoke-WebRequest default header handling with no errors" {
+        $headers = @{"If-Match" = "*"}
+        $response = ExecuteRequestWithCustomHeaders -Uri "http://localhost:8080/PowerShell?test=echo" -headers $headers
+
+        $response.Error | Should BeNullOrEmpty
+        $response.Content.Headers -contains "If-Match" | Should Be $true
+    }
+
+    It "Verifies Invoke-WebRequest default header handling reports an error is returned for an invalid If-Match header value" {
+        $headers = @{"If-Match" = "12345"}
+        $response = ExecuteRequestWithCustomHeaders -Uri "http://localhost:8080/PowerShell?test=echo" -headers $headers
+
+        $response.Error | Should Not BeNullOrEmpty
+        $response.Error.FullyQualifiedErrorId | Should Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        $response.Error.Exception.Message | Should Be "The format of value '12345' is invalid."
+    }
+
+    It "Verifies Invoke-WebRequest header handling does not report an error when using -SkipHeaderValidation" {
+        $headers = @{"If-Match" = "12345"}
+        $response = ExecuteRequestWithCustomHeaders -Uri "http://localhost:8080/PowerShell?test=echo" -headers $headers -SkipHeaderValidation
+
+        $response.Error | Should BeNullOrEmpty
+        $response.Content.Headers -contains "If-Match" | Should Be $true
+    }
+
+    #endregion SkipHeaderVerification Tests
+
     BeforeEach {
         if ($env:http_proxy) {
             $savedHttpProxy = $env:http_proxy
@@ -1123,6 +1195,35 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     #endregion Redirect tests
+
+    #region SkipHeaderVerification tests
+
+    It "Verifies Invoke-RestMethod default header handling with no errors" {
+        $headers = @{"If-Match" = "*"}
+        $response = ExecuteRequestWithCustomHeaders -Uri "http://localhost:8081/PowerShell?test=echo" -headers $headers -Cmdlet "Invoke-RestMethod"
+
+        $response.Error | Should BeNullOrEmpty
+        $response.Content.Headers -contains "If-Match" | Should Be $true
+    }
+
+    It "Verifies Invoke-RestMethod default header handling reports an error is returned for an invalid If-Match header value" {
+        $headers = @{"If-Match" = "12345"}
+        $response = ExecuteRequestWithCustomHeaders -Uri "http://localhost:8081/PowerShell?test=echo" -headers $headers -Cmdlet "Invoke-RestMethod"
+
+        $response.Error | Should Not BeNullOrEmpty
+        $response.Error.FullyQualifiedErrorId | Should Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $response.Error.Exception.Message | Should Be "The format of value '12345' is invalid."
+    }
+
+    It "Verifies Invoke-RestMethod header handling does not report an error when using -SkipHeaderValidation" {
+        $headers = @{"If-Match" = "12345"}
+        $response = ExecuteRequestWithCustomHeaders -Uri "http://localhost:8081/PowerShell?test=echo" -headers $headers -SkipHeaderValidation -Cmdlet "Invoke-RestMethod"
+
+        $response.Error | Should BeNullOrEmpty
+        $response.Content.Headers -contains "If-Match" | Should Be $true
+    }
+
+    #endregion SkipHeaderVerification tests
 
     BeforeEach {
         if ($env:http_proxy) {
