@@ -9,7 +9,7 @@ trap '
 
 get_url() {
     fork=$2
-    release=v6.0.0-beta.3
+    release=v6.0.0-beta.4
     echo "https://github.com/$fork/PowerShell/releases/download/$release/$1"
 }
 
@@ -26,7 +26,7 @@ case "$OSTYPE" in
                     sudo yum install -y curl
                 fi
 
-                package=powershell-6.0.0_beta.3-1.el7.x86_64.rpm
+                package=powershell-6.0.0_beta.4-1.el7.x86_64.rpm
                 ;;
             ubuntu)
                 if ! hash curl 2>/dev/null; then
@@ -36,10 +36,10 @@ case "$OSTYPE" in
 
                 case "$VERSION_ID" in
                     14.04)
-                        package=powershell_6.0.0-beta.3-1ubuntu1.14.04.1_amd64.deb
+                        package=powershell_6.0.0-beta.4-1ubuntu1.14.04.1_amd64.deb
                         ;;
                     16.04)
-                        package=powershell_6.0.0-beta.3-1ubuntu1.16.04.1_amd64.deb
+                        package=powershell_6.0.0-beta.4-1ubuntu1.16.04.1_amd64.deb
                         ;;
                     *)
                         echo "Ubuntu $VERSION_ID is not supported!" >&2
@@ -55,7 +55,7 @@ case "$OSTYPE" in
                 
                 case "$VERSION_ID" in
                     42.1)
-                        package=powershell-6.0.0_beta.3-1.suse.42.1.x86_64.rpm
+                        package=powershell-6.0.0_beta.4-1.suse.42.1.x86_64.rpm
                         ;;
                     *)
                         echo "OpenSUSE $VERSION_ID is not supported!" >&2
@@ -69,7 +69,7 @@ case "$OSTYPE" in
         ;;
     darwin*)
         # We don't check for curl as macOS should have a system version
-        package=powershell-6.0.0-beta.3-osx.10.12-x64.pkg
+        package=powershell-6.0.0-beta.4-osx.10.12-x64.pkg
         ;;
     *)
         echo "$OSTYPE is not supported!" >&2
