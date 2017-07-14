@@ -290,13 +290,8 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
         }
 '@
 
-            $testAssemply = "$TestDrive\tst-$(New-Guid).dll"
-            Add-Type -TypeDefinition $a -OutputAssembly $testAssemply
-            $testModule = Import-Module $testAssemply -PassThru
-        }
-
-        AfterAll {
-            Remove-Module -ModuleInfo $testModule
+            $cls = Add-Type -TypeDefinition $a -PassThru | select -first 1
+			$testModule = Import-Module $cls.Assembly -PassThru
         }
 
         It 'Throw if IValidateSetValuesGenerator is not implemented' {
