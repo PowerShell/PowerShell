@@ -35,7 +35,7 @@ New-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName -Templa
 Get-AzureRmResourceGroupDeployment -ResourceGroupName $resourceGroupName
 
 ### Discover the resources we created by the previous deployment
-Find-AzureRmResource -ResourceGroupName $resourceGroupName | select Name,ResourceType,Location
+Find-AzureRmResource -ResourceGroupName $resourceGroupName | Select-Object Name,ResourceType,Location
 
 ### Get the state of the VM we created
 ### Notice: The VM is in running state
@@ -43,7 +43,7 @@ Get-AzureRmResource -ResourceName MyUbuntuVM -ResourceType Microsoft.Compute/vir
 
 ### Discover the operations we can perform on the compute resource
 ### Notice: Operations like "Power Off Virtual Machine", "Start Virtual Machine", "Create Snapshot", "Delete Snapshot", "Delete Virtual Machine"
-Get-AzureRmProviderOperation -OperationSearchString Microsoft.Compute/* | select OperationName,Operation
+Get-AzureRmProviderOperation -OperationSearchString Microsoft.Compute/* | Select-Object OperationName,Operation
 
 ### Power Off the Virtual Machine we created
 Invoke-AzureRmResourceAction -ResourceGroupName $resourceGroupName -ResourceType Microsoft.Compute/virtualMachines -ResourceName MyUbuntuVM -Action poweroff
@@ -59,7 +59,7 @@ Invoke-AzureRmResourceAction -ResourceGroupName $resourceGroupName -ResourceType
 Remove-AzureRmResource -ResourceName MyUbuntuVM -ResourceType Microsoft.Compute/virtualMachines -ResourceGroupName $resourceGroupName
 
 ### Look at the resources that still exists
-Find-AzureRmResource -ResourceGroupName $resourceGroupName | select Name,ResourceType,Location
+Find-AzureRmResource -ResourceGroupName $resourceGroupName | Select-Object Name,ResourceType,Location
 
 ### Remove the resource group and its resources
 Remove-AzureRmResourceGroup -Name $resourceGroupName

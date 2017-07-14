@@ -21,7 +21,7 @@
       {$result=Get-EventLog -List -ea stop}        | Should Not Throw
       $result | Should Not BeNullOrEmpty
       ,$result                                     | Should BeOfType "System.Array"
-      {$logs=$result|Select -ExpandProperty Log}   | Should Not Throw
+      {$logs=$result | Select-Object -ExpandProperty Log}   | Should Not Throw
       $logs -eq "System"                           | Should Be "System"
       $logs.Count -ge 3                            | Should Be $true
     }

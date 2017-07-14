@@ -3006,7 +3006,7 @@ namespace System.Management.Automation
                     dataObject.Properties.Add(new PSNoteProperty(RemotingConstants.ComputerNameNoteProperty, reader.ComputerName));
                     dataObject.Properties.Add(new PSNoteProperty(RemotingConstants.RunspaceIdNoteProperty, reader.RunspaceId));
                     // PSShowComputerName is present for all the objects (from remoting)..this is to allow PSComputerName to be selected.
-                    // Ex: Invoke-Command localhost,blah { gps } | select PSComputerName should work.
+                    // Ex: Invoke-Command localhost,blah { gps } | Select-Object PSComputerName should work.
                     if (dataObject.Properties[RemotingConstants.ShowComputerNameNoteProperty] == null)
                     {
                         PSNoteProperty showComputerNameNP = new PSNoteProperty(RemotingConstants.ShowComputerNameNoteProperty, !_hideComputerName);

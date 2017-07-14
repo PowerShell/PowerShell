@@ -430,11 +430,11 @@ Describe "Compare-Object DRT basic functionality" -Tags "CI" {
 		$a = [version]"1.2.3.4"
 		$b = [version]"5.6.7.8"
 		$result = Compare-Object $a $b -IncludeEqual -Property {$_.Major},{$_.Minor}
-		$result[0]|Select -ExpandProperty "*Major" | Should Be 5
-		$result[0]|Select -ExpandProperty "*Minor" | Should Be 6
+		$result[0] | Select-Object -ExpandProperty "*Major" | Should Be 5
+		$result[0] | Select-Object -ExpandProperty "*Minor" | Should Be 6
 		$result[0].SideIndicator | Should Be "=>"
-		$result[1]|Select -ExpandProperty "*Major" | Should Be 1
-		$result[1]|Select -ExpandProperty "*Minor" | Should Be 2
+		$result[1] | Select-Object -ExpandProperty "*Major" | Should Be 1
+		$result[1] | Select-Object -ExpandProperty "*Minor" | Should Be 2
 		$result[1].SideIndicator | Should Be "<="
 	}
 

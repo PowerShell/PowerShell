@@ -302,7 +302,7 @@ Describe "Tests Export-PSSession" -tags "Feature" {
 
         $file = [IO.Path]::Combine([IO.Path]::GetTempPath(), [Guid]::NewGuid().ToString())
         $results = Export-PSSession -Session $session -CommandName Get-Variable -AllowClobber -ModuleName $file
-        $oldTimestamp = $($results | Select -First 1).LastWriteTime
+        $oldTimestamp = $($results | Select-Object -First 1).LastWriteTime
     }
 
     AfterAll {
@@ -1617,7 +1617,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
         }
 
         It "'Completed' progress record should be present" -Skip:$skipTest {
-            ($powerShell.Streams.Progress | select -last 1).RecordType.ToString() | Should Be "Completed"
+            ($powerShell.Streams.Progress | Select-Object -last 1).RecordType.ToString() | Should Be "Completed"
         }
     }
 
@@ -2009,7 +2009,7 @@ Describe "Select-Object with implicit remoting" -tags "Feature" {
     }
 
     It "Select -First should work with implicit remoting" -Skip:$skipTest {
-        $bar = foo | select -First 2
+        $bar = foo | Select-Object -First 2
         $bar | Should Not Be NullOrEmpty
         $bar.Count | Should Be 2
         $bar[0] | Should Be "a"
