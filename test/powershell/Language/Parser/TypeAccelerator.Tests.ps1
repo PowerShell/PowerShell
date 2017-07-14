@@ -1,25 +1,438 @@
 
 Describe "Type accelerators" -Tags "CI" {
-    $TypeAcceleratorsType = [psobject].Assembly.GetType("System.Management.Automation.TypeAccelerators")
-
-    $TypeAccelerators = $TypeAcceleratorsType::Get
-    $TypeAcceleratorsType::Add('msft_2174855', [int])
-    $TypeAcceleratorsType::Add('msft_2174855_rm', [int])
-
-    It "Basic type accelerator usage" {
-        [msft_2174855] | Should Be ([int])
+    BeforeAll {
+        $TypeAcceleratorsType = [psobject].Assembly.GetType("System.Management.Automation.TypeAccelerators")
+        $TypeAccelerators = $TypeAcceleratorsType::Get
     }
+    Context 'BuiltIn Accelerators' {
+        BeforeAll {
 
-    It "Can query type accelerators" {
-        if ( $IsCoreCLR ) { $count = 80 } else { $count = 82 }
-        $TypeAccelerators.Count -gt $count | Should Be $true
-        $TypeAccelerators['xml'] | Should Be ([System.Xml.XmlDocument])
-        $TypeAccelerators['AllowNull'] | Should Be ([System.Management.Automation.AllowNullAttribute])
+            $TypeAcceleratorTestCases = @(
+                @{
+                    Accelerator = 'Alias'
+                    Type        = [System.Management.Automation.AliasAttribute]
+                }
+                @{
+                    Accelerator = 'AllowEmptyCollection'
+                    Type        = [System.Management.Automation.AllowEmptyCollectionAttribute]
+                }
+                @{
+                    Accelerator = 'AllowEmptyString'
+                    Type        = [System.Management.Automation.AllowEmptyStringAttribute]
+                }
+                @{
+                    Accelerator = 'AllowNull'
+                    Type        = [System.Management.Automation.AllowNullAttribute]
+                }
+                @{
+                    Accelerator = 'ArgumentCompleter'
+                    Type        = [System.Management.Automation.ArgumentCompleterAttribute]
+                }
+                @{
+                    Accelerator = 'array'
+                    Type        = [System.Array]
+                }
+                @{
+                    Accelerator = 'bool'
+                    Type        = [System.Boolean]
+                }
+                @{
+                    Accelerator = 'byte'
+                    Type        = [System.Byte]
+                }
+                @{
+                    Accelerator = 'char'
+                    Type        = [System.Char]
+                }
+                @{
+                    Accelerator = 'CmdletBinding'
+                    Type        = [System.Management.Automation.CmdletBindingAttribute]
+                }
+                @{
+                    Accelerator = 'datetime'
+                    Type        = [System.DateTime]
+                }
+                @{
+                    Accelerator = 'decimal'
+                    Type        = [System.Decimal]
+                }
+                @{
+                    Accelerator = 'double'
+                    Type        = [System.Double]
+                }
+                @{
+                    Accelerator = 'DscResource'
+                    Type        = [System.Management.Automation.DscResourceAttribute]
+                }
+                @{
+                    Accelerator = 'float'
+                    Type        = [System.Single]
+                }
+                @{
+                    Accelerator = 'single'
+                    Type        = [System.Single]
+                }
+                @{
+                    Accelerator = 'guid'
+                    Type        = [System.Guid]
+                }
+                @{
+                    Accelerator = 'hashtable'
+                    Type        = [System.Collections.Hashtable]
+                }
+                @{
+                    Accelerator = 'int'
+                    Type        = [System.Int32]
+                }
+                @{
+                    Accelerator = 'int32'
+                    Type        = [System.Int32]
+                }
+                @{
+                    Accelerator = 'int16'
+                    Type        = [System.Int16]
+                }
+                @{
+                    Accelerator = 'long'
+                    Type        = [System.Int64]
+                }
+                @{
+                    Accelerator = 'int64'
+                    Type        = [System.Int64]
+                }
+                @{
+                    Accelerator = 'ciminstance'
+                    Type        = [Microsoft.Management.Infrastructure.CimInstance]
+                }
+                @{
+                    Accelerator = 'cimclass'
+                    Type        = [Microsoft.Management.Infrastructure.CimClass]
+                }
+                @{
+                    Accelerator = 'cimtype'
+                    Type        = [Microsoft.Management.Infrastructure.CimType]
+                }           
+                @{
+                    Accelerator = 'cimconverter'
+                    Type        = [Microsoft.Management.Infrastructure.CimConverter]
+                }
+                @{
+                    Accelerator = 'IPEndpoint'
+                    Type        = [System.Net.IPEndPoint]
+                }
+                @{
+                    Accelerator = 'NullString'
+                    Type        = [System.Management.Automation.Language.NullString]
+                }
+                @{
+                    Accelerator = 'OutputType'
+                    Type        = [System.Management.Automation.OutputTypeAttribute]
+                }
+                @{
+                    Accelerator = 'ObjectSecurity'
+                    Type        = [System.Security.AccessControl.ObjectSecurity]
+                }
+                @{
+                    Accelerator = 'Parameter'
+                    Type        = [System.Management.Automation.ParameterAttribute]
+                }
+                @{
+                    Accelerator = 'PhysicalAddress'
+                    Type        = [System.Net.NetworkInformation.PhysicalAddress]
+                }
+                @{
+                    Accelerator = 'pscredential'
+                    Type        = [System.Management.Automation.PSCredential]
+                }
+                @{
+                    Accelerator = 'PSDefaultValue'
+                    Type        = [System.Management.Automation.PSDefaultValueAttribute]
+                }
+                @{
+                    Accelerator = 'pslistmodifier'
+                    Type        = [System.Management.Automation.PSListModifier]
+                }
+                @{
+                    Accelerator = 'psobject'
+                    Type        = [System.Management.Automation.PSObject]
+                }
+                @{
+                    Accelerator = 'pscustomobject'
+                    Type        = [System.Management.Automation.PSObject]
+                }
+                @{
+                    Accelerator = 'psprimitivedictionary'
+                    Type        = [System.Management.Automation.PSPrimitiveDictionary]
+                }
+                @{
+                    Accelerator = 'ref'
+                    Type        = [System.Management.Automation.PSReference]
+                }
+                @{
+                    Accelerator = 'PSTypeNameAttribute'
+                    Type        = [System.Management.Automation.PSTypeNameAttribute]
+                }
+                @{
+                    Accelerator = 'regex'
+                    Type        = [System.Text.RegularExpressions.Regex]
+                }
+                @{
+                    Accelerator = 'DscProperty'
+                    Type        = [System.Management.Automation.DscPropertyAttribute]
+                }
+                @{
+                    Accelerator = 'sbyte'
+                    Type        = [System.SByte]
+                }
+                @{
+                    Accelerator = 'string'
+                    Type        = [System.String]
+                }
+                @{
+                    Accelerator = 'SupportsWildcards'
+                    Type        = [System.Management.Automation.SupportsWildcardsAttribute]
+                }           
+                @{
+                    Accelerator = 'switch'
+                    Type        = [System.Management.Automation.SwitchParameter]
+                }
+                @{
+                    Accelerator = 'cultureinfo'
+                    Type        = [System.Globalization.CultureInfo]
+                }
+                @{
+                    Accelerator = 'bigint'
+                    Type        = [System.Numerics.BigInteger]
+                }
+                @{
+                    Accelerator = 'securestring'
+                    Type        = [System.Security.SecureString]
+                }
+                @{
+                    Accelerator = 'timespan'
+                    Type        = [System.TimeSpan]
+                }
+                @{
+                    Accelerator = 'uint16'
+                    Type        = [System.UInt16]
+                }
+                @{
+                    Accelerator = 'uint32'
+                    Type        = [System.UInt32]
+                }
+                @{
+                    Accelerator = 'uint64'
+                    Type        = [System.UInt64]
+                }
+                @{
+                    Accelerator = 'uri'
+                    Type        = [System.Uri]
+                }
+                @{
+                    Accelerator = 'ValidateCount'
+                    Type        = [System.Management.Automation.ValidateCountAttribute]
+                }
+                @{
+                    Accelerator = 'ValidateDrive'
+                    Type        = [System.Management.Automation.ValidateDriveAttribute]
+                }
+                @{
+                    Accelerator = 'ValidateLength'
+                    Type        = [System.Management.Automation.ValidateLengthAttribute]
+                }
+                @{
+                    Accelerator = 'ValidateNotNull'
+                    Type        = [System.Management.Automation.ValidateNotNullAttribute]
+                }
+                @{
+                    Accelerator = 'ValidateNotNullOrEmpty'
+                    Type        = [System.Management.Automation.ValidateNotNullOrEmptyAttribute]
+                }
+                @{
+                    Accelerator = 'ValidatePattern'
+                    Type        = [System.Management.Automation.ValidatePatternAttribute]
+                }
+                @{
+                    Accelerator = 'ValidateRange'
+                    Type        = [System.Management.Automation.ValidateRangeAttribute]
+                }
+                @{
+                    Accelerator = 'ValidateScript'
+                    Type        = [System.Management.Automation.ValidateScriptAttribute]
+                }
+                @{
+                    Accelerator = 'ValidateSet'
+                    Type        = [System.Management.Automation.ValidateSetAttribute]
+                }
+                @{
+                    Accelerator = 'ValidateUserDrive'
+                    Type        = [System.Management.Automation.ValidateUserDriveAttribute]
+                }
+                @{
+                    Accelerator = 'version'
+                    Type        = [System.Version]
+                }
+                @{
+                    Accelerator = 'void'
+                    Type        = [System.Void]
+                }
+                @{
+                    Accelerator = 'ipaddress'
+                    Type        = [System.Net.IPAddress]
+                }
+                @{
+                    Accelerator = 'DscLocalConfigurationManager'
+                    Type        = [System.Management.Automation.DscLocalConfigurationManagerAttribute]
+                }
+                @{
+                    Accelerator = 'WildcardPattern'
+                    Type        = [System.Management.Automation.WildcardPattern]
+                }
+                @{
+                    Accelerator = 'X509Certificate'
+                    Type        = [System.Security.Cryptography.X509Certificates.X509Certificate]
+                }
+                @{
+                    Accelerator = 'X500DistinguishedName'
+                    Type        = [System.Security.Cryptography.X509Certificates.X500DistinguishedName]
+                }
+                @{
+                    Accelerator = 'xml'
+                    Type        = [System.Xml.XmlDocument]
+                }
+                @{
+                    Accelerator = 'CimSession'
+                    Type        = [Microsoft.Management.Infrastructure.CimSession]
+                }
+                @{
+                    Accelerator = 'mailaddress'
+                    Type        = [System.Net.Mail.MailAddress]
+                }
+                @{
+                    Accelerator = 'semver'
+                    Type        = [System.Management.Automation.SemanticVersion]
+                }
+                @{
+                    Accelerator = 'scriptblock'
+                    Type        = [System.Management.Automation.ScriptBlock]
+                }
+                @{
+                    Accelerator = 'psvariable'
+                    Type        = [System.Management.Automation.PSVariable]
+                }
+                @{
+                    Accelerator = 'type'
+                    Type        = [System.Type]
+                }
+                @{
+                    Accelerator = 'psmoduleinfo'
+                    Type        = [System.Management.Automation.PSModuleInfo]
+                }
+                @{
+                    Accelerator = 'powershell'
+                    Type        = [System.Management.Automation.Powershell]
+                }
+                @{
+                    Accelerator = 'runspacefactory'
+                    Type        = [System.Management.Automation.Runspaces.RunspaceFactory]
+                }
+                @{
+                    Accelerator = 'runspace'
+                    Type        = [System.Management.Automation.Runspaces.Runspace]
+                }
+                @{
+                    Accelerator = 'initialsessionstate'
+                    Type        = [System.Management.Automation.Runspaces.InitialSessionState]
+                }
+                @{
+                    Accelerator = 'psscriptmethod'
+                    Type        = [System.Management.Automation.PSScriptMethod]
+                }  
+                @{
+                    Accelerator = 'psscriptproperty'
+                    Type        = [System.Management.Automation.PSScriptProperty]
+                }
+                @{
+                    Accelerator = 'psnoteproperty'
+                    Type        = [System.Management.Automation.PSNoteProperty]
+                }
+                @{
+                    Accelerator = 'psaliasproperty'
+                    Type        = [System.Management.Automation.PSAliasProperty]
+                }
+                @{
+                    Accelerator = 'psvariableproperty'
+                    Type        = [System.Management.Automation.PSVariableProperty]
+                }
+            )
+        
+            if ( $IsCoreCLR )
+            {
+                $totalAccelerators = 89 
+            }
+            else
+            {
+                $totalAccelerators = 94
+
+                $extraFullPSAcceleratorTestCases = @(
+                    @{
+                        Accelerator = 'adsi'
+                        Type        = [System.DirectoryServices.DirectoryEntry]
+                    }
+                    @{
+                        Accelerator = 'adsisearcher'
+                        Type        = [System.DirectoryServices.DirectorySearcher]
+                    }
+                    @{
+                        Accelerator = 'wmiclass'
+                        Type        = [System.Management.ManagementClass]
+                    }
+                    @{
+                        Accelerator = 'wmi'
+                        Type        = [System.Management.ManagementObject]
+                    }
+                    @{
+                        Accelerator = 'wmisearcher'
+                        Type        = [System.Management.ManagementObjectSearcher]
+                    }
+                )
+            }
+        }
+
+        It 'Should have all the type accelerators' {
+            $TypeAccelerators.Count | Should be $totalAccelerators
+        }
+
+        It 'Should have a type accelerator for: <Accelerator>' -TestCases $TypeAcceleratorTestCases {
+            param($Accelerator, $Type)
+            $TypeAcceleratorsType::Get[$Accelerator] | Should be ($Type)
+        }
+    
+        It 'Should have a type accelerator for non-dotnet-core type: <Accelerator>' -Skip:$IsCoreCLR -TestCases $extraFullPSAcceleratorTestCases {
+            param($Accelerator, $Type)
+            $TypeAcceleratorsType::Get[$Accelerator] | Should be ($Type)
+        }
     }
+    
+    Context 'User Defined Accelerators' {
+        BeforeAll {
+            $TypeAcceleratorsType::Add('userDefinedAcceleratorType', [int])
+            $TypeAcceleratorsType::Add('userDefinedAcceleratorTypeToRemove', [int])
+        }
 
-    It "Can remove type accelerator" {
-        $TypeAcceleratorsType::Get['msft_2174855_rm'] | Should Be ([int])
-        $TypeAcceleratorsType::Remove('msft_2174855_rm')
-        $TypeAcceleratorsType::Get['msft_2174855_rm'] | Should Be $null
+        AfterAll {
+            $TypeAcceleratorsType::Remove('userDefinedAcceleratorType')
+            $TypeAcceleratorsType::Remove('userDefinedAcceleratorTypeToRemove')
+        }
+
+        It "Basic type accelerator usage" {
+            [userDefinedAcceleratorType] | Should Be ([int])
+        }
+
+        It "Can remove type accelerator" {
+            $TypeAcceleratorsType::Get['userDefinedAcceleratorTypeToRemove'] | Should Be ([int])
+            $TypeAcceleratorsType::Remove('userDefinedAcceleratorTypeToRemove')
+            $TypeAcceleratorsType::Get['userDefinedAcceleratorTypeToRemove'] | Should Be $null
+        }
     }
 }
