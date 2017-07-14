@@ -140,7 +140,7 @@ Due to [known issues with the nano-server-insider](https://github.com/Microsoft/
 you must specify `-Scope CurrentUser` when using `Install-Module`.  Example:
 
 ```PowerShell
-install-module <ModuleName> -Scope CurrentUser
+Install-Module <ModuleName> -Scope CurrentUser
 ```
 
 #### Docker run requires full path
