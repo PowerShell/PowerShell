@@ -293,6 +293,10 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
             $cls = Add-Type -TypeDefinition $a -PassThru | select -First 1
             $testModule = Import-Module $cls.Assembly -PassThru
         }
+		
+		AfterAll {
+			Remove-Module -ModuleInfo $testModule
+		}
 
         AfterAll {
             Remove-Module -ModuleInfo $testModule
