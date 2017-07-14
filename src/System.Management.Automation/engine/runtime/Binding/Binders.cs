@@ -554,7 +554,6 @@ namespace System.Management.Automation.Language
                 return (errorSuggestion ?? NullResult(target)).WriteToDebugLog(this);
             }
 
-#if !CORECLR
             // In CORECLR System.Data.DataTable does not have the DataRowCollection IEnumerable, so disabling code.
             if (targetValue is DataTable)
             {
@@ -582,7 +581,6 @@ namespace System.Management.Automation.Language
                         target),
                     GetRestrictions(target))).WriteToDebugLog(this);
             }
-#endif
 
             if (IsComObject(targetValue))
             {
