@@ -294,6 +294,10 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
             $testModule = Import-Module $cls.Assembly -PassThru
         }
 
+        AfterAll {
+            Remove-Module -ModuleInfo $testModule
+        }
+
         It 'Throw if IValidateSetValuesGenerator is not implemented' {
             { Get-TestValidateSet0 -Param1 "TestString" -ErrorAction Stop } | ShouldBeErrorId "Argument"
         }
