@@ -2,7 +2,7 @@
 
 ## Windows and Linux containers
 
-The tests must be run seperately on the Windows and Linux dockre daemons. You can use the Linux docker daemon on Windows, but that will only test Linux containers not Windows Containers.
+The tests must be run separately on the Windows and Linux docker daemons. You can use the Linux docker daemon on Windows, but that will only test Linux containers not Windows Containers.
 
 ## To building and basic behavior of the containers
 
