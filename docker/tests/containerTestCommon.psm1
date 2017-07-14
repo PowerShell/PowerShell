@@ -1,3 +1,4 @@
+$script:forcePull = $true
 # Get docker Engine OS
 function Get-DockerEngineOs
 {
@@ -109,6 +110,7 @@ function Set-RepoName
     param([string]$RepoName)
 
     $script:repoName = $RepoName
+    $script:forcePull = $false
 }
 
 function Test-SkipWindows
@@ -149,6 +151,7 @@ function Get-TestContext
         ContainerXmlPath = Join-Path $containerTestDrive -ChildPath $resultFileName
         ContainerLogPath = Join-Path $containerTestDrive -ChildPath $logFileName
         Type = $Type
+        ForcePull = $script:forcePull
     }
 }
 
@@ -159,6 +162,13 @@ function Get-ContainerPowerShellVersion
         [string] $RepoName,
         [string] $Name
     )
+    
+    $imageTag = "${script:repoName}:${Name}"
+
+    if($TestContext.ForcePull)
+    {
+        $null=Invoke-Docker -Command 'image', 'pull' -Params $imageTag -SupressHostOutput
+    }
 
     $runParams = @()
     $localVolumeName = $($testContext.resolvedTestDrive)
@@ -177,7 +187,7 @@ function Get-ContainerPowerShellVersion
         $runParams += "${localVolumeName}:$($testContext.containerTestDrive)"
     }
 
-    $runParams += "${script:repoName}:${Name}"
+    $runParams += $imageTag
     $runParams += 'powershell'
     $runParams += '-c'
     $runParams += ('$PSVersionTable.PSVersion.ToString() | out-string | out-file -encoding ascii -FilePath '+$testContext.containerLogPath)
