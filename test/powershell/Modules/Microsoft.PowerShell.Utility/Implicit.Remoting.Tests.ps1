@@ -2085,7 +2085,7 @@ Describe "Import-PSSession on Restricted Session" -tags "Feature","RequireAdminO
         if (! $IsWindows)
         {
             $originalDefaultParameters = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
+            $global:PSDefaultParameterValues["it:skip"] = $true
         }
         else
         {
@@ -2099,7 +2099,7 @@ Describe "Import-PSSession on Restricted Session" -tags "Feature","RequireAdminO
 
         if ($originalDefaultParameters -ne $null)
         {
-            $PSDefaultParameterValues = $originalDefaultParameters
+            $global:PSDefaultParameterValues = $originalDefaultParameters
         }
         else
         {
