@@ -369,11 +369,12 @@ Describe "Type accelerators" -Tags "CI" {
             if ( $IsCoreCLR )
             {
                 $totalAccelerators = 89 
-            } else
+            }
+            else
             {
                 $totalAccelerators = 94
 
-                $nonCoreTypeAcceleratorTestCases = @(
+                $extraFullPSAcceleratorTestCases = @(
                     @{
                         Accelerator = 'adsi'
                         Type        = [System.DirectoryServices.DirectoryEntry]
@@ -407,7 +408,7 @@ Describe "Type accelerators" -Tags "CI" {
             $TypeAcceleratorsType::Get[$Accelerator] | Should be ($Type)
         }
     
-        It 'Should have a type accelerator for non core type: <Accelerator>' -Skip:$IsCoreCLR -TestCases $nonCoreTypeAcceleratorTestCases {
+        It 'Should have a type accelerator for non-dotnet-core type: <Accelerator>' -Skip:$IsCoreCLR -TestCases $extraFullPSAcceleratorTestCases {
             param($Accelerator, $Type)
             $TypeAcceleratorsType::Get[$Accelerator] | Should be ($Type)
         }
