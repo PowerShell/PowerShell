@@ -1350,9 +1350,10 @@ namespace Microsoft.PowerShell.Commands
                     invokeProcess.Start();
                 }
 #elif CORECLR
-                catch (Win32Exception ex) when (ex.NativeErrorCode == 193)
+                catch (Win32Exception ex) when (ex.NativeErrorCode == 193 || ex.NativeErrorCode == 5)
                 {
                     // Error code 193 -- BAD_EXE_FORMAT (not a valid Win32 application).
+                    // Error code 5 -- ACCESS_DENIED (a folder is not an app)
                     // If it's headless SKUs, rethrow.
                     if (Platform.IsNanoServer || Platform.IsIoT) { throw; }
                     // If it's full Windows, then try ShellExecute.

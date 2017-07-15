@@ -59,6 +59,11 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
         }
         Get-Content $redirectFile -Raw | Should Match "usage: ping"
     }
+
+    It "Should invoke a folder without error" {
+        # can't validate that it actually opened, but no error should be returned
+        Invoke-Item -Path $PSHOME
+    }
 }
 
 Describe "Invoke-Item tests on Windows" -Tags "CI","RequireAdminOnWindows" {
