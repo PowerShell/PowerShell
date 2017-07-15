@@ -68,8 +68,11 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
 
             $before = $windows.Count
             Invoke-Item -Path $PSHOME
-            # give it time to open
-            Start-Sleep -Milliseconds 500
+            $startTime = Get-Date
+            while (((Get-Date) - $startTime).TotalSeconds -lt 5 -and ($windows.Count -eq $before))
+            {
+                Start-Sleep -Milliseconds 100
+            }
             $after = $windows.Count
 
             $before + 1 | Should Be $after
