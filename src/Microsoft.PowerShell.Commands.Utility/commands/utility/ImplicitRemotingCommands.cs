@@ -2143,7 +2143,7 @@ function Set-PSImplicitRemotingSession
     {{
         $script:PSSession = $PSSession
 
-        if ($null -ne $createdByModule -and ($script:PSSession))
+        if ($createdByModule -and ($null -ne $script:PSSession))
         {{
             $moduleName = Get-PSImplicitRemotingModuleName
             $script:PSSession.Name = '{0}' -f $moduleName

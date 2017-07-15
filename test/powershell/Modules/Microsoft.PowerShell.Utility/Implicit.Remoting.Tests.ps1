@@ -417,7 +417,7 @@ Describe "Proxy module is usable when the original runspace is no longer around"
 
         It "Verifies Remove-Module removed the runspace that was automatically created" -Pending {
             Remove-Module $module -Force
-            ($null -eq (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue)) | Should Be $true
+            (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should BeNullOrEmpty
         }
 
         It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Pending {
@@ -452,7 +452,7 @@ Describe "Proxy module is usable when the original runspace is no longer around"
         # removing the module should remove the implicitly/magically created runspace
         It "Verifies Remove-Module removes automatically created runspace" -Pending {
             Remove-Module $module -Force
-            ($null -eq (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue)) | Should Be $true
+            (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should BeNullOrEmpty
         }
         It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Pending {
             ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should Be "Closed"
@@ -767,7 +767,7 @@ Describe "Import-PSSession functional tests" -tags "Feature" {
     }
 
     It "Helper functions should not be imported" -Skip:$skipTest {
-        ($null -eq (Get-Item function:*PSImplicitRemoting* -ErrorAction SilentlyContinue)) | Should Be $true
+        (Get-Item function:*PSImplicitRemoting* -ErrorAction SilentlyContinue) | Should BeNullOrEmpty
     }
 
     It "Calls implicit remoting proxies 'MyFunction'" -Skip:$skipTest {
@@ -808,11 +808,11 @@ Describe "Import-PSSession functional tests" -tags "Feature" {
         }
 
         It "Temporary module should be automatically removed after runspace is closed" -Skip:$skipTest {
-            ($null -eq (Get-Module | Where-Object { $_.Path -eq $module.Path })) | Should Be $true
+            (Get-Module | Where-Object { $_.Path -eq $module.Path }) | Should BeNullOrEmpty
         }
 
         It "Temporary psm1 file should be automatically removed after runspace is closed" -Skip:$skipTest {
-            ($null -eq (Get-Item $module.Path -ErrorAction SilentlyContinue)) | Should Be $true
+            (Get-Item $module.Path -ErrorAction SilentlyContinue) | Should BeNullOrEmpty
         }
 
         It "Event should be unregistered when the runspace is closed" -Skip:$skipTest {
@@ -1740,7 +1740,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
             if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
-        ($null -eq (Get-Item function:Get-MyVariable -ErrorAction SilentlyContinue)) | Should Be $true
+        (Get-Item function:Get-MyVariable -ErrorAction SilentlyContinue) | Should BeNullOrEmpty
     }
 
     Context "BadVerbs of functions should trigger a warning" {
