@@ -31,6 +31,13 @@
 
     <!-- Set properties for add/remove programs -->
     <Property Id="ARPHELPLINK" Value="$(var.InfoURL)" />
+
+	<!-- Checkbox to allow starting PowerShell after the installation (in UI mode only) -->
+	<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open $(env.ProductName)" />
+	<!-- Default value of Checkbox of starting PowerShell after installation -->  
+	<Property Id="WixShellExecTarget" Value="[$(var.ProductVersionWithName)]PowerShell.exe"/>
+	<CustomAction Id="LaunchApplication" BinaryKey="WixCA" DllEntry="WixShellExec" Impersonate="yes" />
+	<UI><Publish Dialog="ExitDialog" Control="Finish" Event="DoAction" Value="LaunchApplication">WIXUI_EXITDIALOGOPTIONALCHECKBOX = 1 and NOT Installed</Publish></UI>
     
     <!-- Prerequisites -->
     <Condition Message="Supported only on Win8 and above"><![CDATA[ Installed OR $(var.MinOSVersionSupported) ]]></Condition>
