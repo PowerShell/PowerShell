@@ -61,8 +61,28 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
     }
 
     It "Should invoke a folder without error" {
-        # can't validate that it actually opened, but no error should be returned
-        Invoke-Item -Path $PSHOME
+        if ($IsWindows)
+        {
+            $shell = New-Object -ComObject "Shell.Application"
+            $windows = $shell.Windows()
+
+            $before = $windows.Count
+            Invoke-Item -Path $PSHOME
+            # give it time to open
+            Start-Sleep -Milliseconds 500
+            $after = $windows.Count
+
+            $before + 1 | Should Be $after
+            $item = $windows.Item($after - 1)
+            $item.LocationURL | Should Match ($PSHOME -replace '\\', '/')
+            ## close the windows explorer
+            $item.Quit()
+        }
+        else
+        {
+            # can't validate that it actually opened, but no error should be returned
+            Invoke-Item -Path $PSHOME
+        }
     }
 }
 
