@@ -1312,6 +1312,12 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         protected override void InvokeDefaultAction(string path)
         {
+#if UNIX
+            const int PERMISSION_DENIED_NOT_EXECUTABLE = 13;
+#else
+            const int PERMISSION_DENIED_NOT_EXECUTABLE = 193;
+#endif
+
             if (String.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
@@ -1323,10 +1329,10 @@ namespace Microsoft.PowerShell.Commands
 
             string resource = StringUtil.Format(FileSystemProviderStrings.InvokeItemResourceFileTemplate, path);
 
-#if UNIX
-            void StartProcessWithOpen(string filename)
+            void StartProcessUsingHandler(string filename)
             {
                 System.Diagnostics.Process process = new System.Diagnostics.Process();
+#if UNIX
                 // The file is possibly not an executable, so we try invoking the default program that handles this file.
                 const string quoteFormat = "\"{0}\"";
                 process.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
@@ -1338,54 +1344,38 @@ namespace Microsoft.PowerShell.Commands
                 // xdg-open on Ubuntu outputs debug info to stderr, suppress it
                 process.StartInfo.RedirectStandardError = true;
                 process.Start();
-            }
+#else
+                if (Platform.IsNanoServer || Platform.IsIoT) { throw new NotSupportedException(); }
+                process.StartInfo.FileName = filename;
+                ShellExecuteHelper.Start(process.StartInfo);
 #endif
+            }
 
             if (ShouldProcess(resource, action))
             {
-                System.Diagnostics.Process invokeProcess = new System.Diagnostics.Process();
 
                 try
                 {
                     // special case directories on UNIX so that we can open them in the window-manager
                     // corefx doesn't return error if you try to start a directory
-#if UNIX
                     if (Directory.Exists(path))
                     {
-                        StartProcessWithOpen(path);
+                        StartProcessUsingHandler(path);
                     }
-#endif
-                    // Try Process.Start first.
-                    //  - In FullCLR, this is all we need to do.
-                    //  - In CoreCLR, this works for executables on Win/Unix platforms
-                    invokeProcess.StartInfo.FileName = path;
-                    invokeProcess.Start();
+                    else
+                    {
+                        System.Diagnostics.Process invokeProcess = new System.Diagnostics.Process();
+                        // Try Process.Start first.
+                        //  - In FullCLR, this is all we need to do
+                        //  - In CoreCLR, this works for executables on Win/Unix platforms
+                        invokeProcess.StartInfo.FileName = path;
+                        invokeProcess.Start();
+                    }
                 }
-#if UNIX
-                catch (Win32Exception ex) when (ex.NativeErrorCode == 13)
+                catch (Win32Exception ex) when (ex.NativeErrorCode == PERMISSION_DENIED_NOT_EXECUTABLE)
                 {
-                    // Error code 13 -- Permission denied.
-                    StartProcessWithOpen(path);
+                    StartProcessUsingHandler(path);
                 }
-#elif CORECLR
-                catch (Win32Exception ex) when (ex.NativeErrorCode == 193 || ex.NativeErrorCode == 5)
-                {
-                    // Error code 193 -- BAD_EXE_FORMAT (not a valid Win32 application).
-                    // Error code 5 -- ACCESS_DENIED (a folder is not an app)
-                    // If it's headless SKUs, rethrow.
-                    if (Platform.IsNanoServer || Platform.IsIoT) { throw; }
-                    // If it's full Windows, then try ShellExecute.
-                    ShellExecuteHelper.Start(invokeProcess.StartInfo);
-                }
-#else
-                finally
-                {
-                    // Nothing to do in FullCLR.
-                    // This empty 'finally' block is just to match the 'try' block above so that the code can be organized
-                    // in a clean way without too many if/def's.
-                    // Empty finally block will be ignored in release build, so there is no performance concern.
-                }
-#endif
             }
         } // InvokeDefaultAction
 
