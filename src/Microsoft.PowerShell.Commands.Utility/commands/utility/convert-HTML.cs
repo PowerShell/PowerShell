@@ -229,24 +229,10 @@ namespace Microsoft.PowerShell.Commands
 
         /// <summary>
         /// Sets and Gets the meta property of the HTML head
-        /// Assumes HTML5 and ignores scheme
         /// </summary>
         /// <returns></returns>
         [Parameter(ParameterSetName = "Page")]
         [ValidateNotNullOrEmpty]
-        [ValidateScript({var set = value.GetEnumerator();
-            var a = ['content','http-equiv','name'];
-            foreach(var i in set){
-                if(Array.contains(a, i.keys[0])){
-
-                }
-                else{
-                    ArgumentException ex = new ArgumentException(StringUtil.Format(UtilityCommonStrings.InvalidArgument, "Meta"));
-                    ErrorRecord er = new ErrorRecord(ex, "ArgumentException", ErrorCategory.InvalidArgument, "Meta");
-                    ThrowTerminatingError(er);
-                }
-            }
-        })]
         public Hashtable Meta
         {
             get
