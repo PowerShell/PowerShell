@@ -253,7 +253,7 @@ namespace System.Management.Automation.Language
             internal readonly TypeBuilder _staticHelpersTypeBuilder;
             private readonly Dictionary<string, PropertyMemberAst> _definedProperties;
             private readonly Dictionary<string, List<Tuple<FunctionMemberAst, Type[]>>> _definedMethods;
-            internal readonly List<Tuple<string, object>> _fieldsToInitForMemberFunctions;
+            internal readonly List<(string fieldName, IParameterMetadataProvider bodyAst, bool isStatic)> _fieldsToInitForMemberFunctions;
             private bool _baseClassHasDefaultCtor;
 
             /// <summary>
@@ -276,7 +276,7 @@ namespace System.Management.Automation.Language
                 DefineCustomAttributes(_typeBuilder, typeDefinitionAst.Attributes, _parser, AttributeTargets.Class);
                 _typeDefinitionAst.Type = _typeBuilder;
 
-                _fieldsToInitForMemberFunctions = new List<Tuple<string, object>>();
+                _fieldsToInitForMemberFunctions = new List<(string, IParameterMetadataProvider, bool)>();
                 _definedMethods = new Dictionary<string, List<Tuple<FunctionMemberAst, Type[]>>>(StringComparer.OrdinalIgnoreCase);
                 _definedProperties = new Dictionary<string, PropertyMemberAst>(StringComparer.OrdinalIgnoreCase);
 
@@ -884,8 +884,7 @@ namespace System.Management.Automation.Language
                 ilGenerator.EmitCall(OpCodes.Call, invokeHelper, null);
                 ilGenerator.Emit(OpCodes.Ret);
 
-                var methodWrapper = new ScriptBlockMemberMethodWrapper(ipmp);
-                _fieldsToInitForMemberFunctions.Add(Tuple.Create(wrapperFieldName, (object)methodWrapper));
+                _fieldsToInitForMemberFunctions.Add((wrapperFieldName, ipmp, isStatic));
             }
         }
 
@@ -1171,16 +1170,22 @@ namespace System.Management.Automation.Language
                         runtimeTypeAssigned = true;
                         var helperType = helper._staticHelpersTypeBuilder.CreateType();
 
+                        SessionStateKeeper sessionStateKeeper = new SessionStateKeeper();
+                        helperType.GetField(s_sessionStateKeeperFieldName, BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, sessionStateKeeper);
+                        
                         if (helper._fieldsToInitForMemberFunctions != null)
                         {
                             foreach (var tuple in helper._fieldsToInitForMemberFunctions)
                             {
-                                helperType.GetField(tuple.Item1, BindingFlags.NonPublic | BindingFlags.Static)
-                                    .SetValue(null, tuple.Item2);
+                                // If the wrapper is for a static method, we need the sessionStateKeeper to determine the right SessionState to run.
+                                // If the wrapper is for an instance method, we use the SessionState that the instance is bound to, and thus don't need sessionStateKeeper.
+                                var methodWrapper = tuple.isStatic
+                                    ? new ScriptBlockMemberMethodWrapper(tuple.bodyAst, sessionStateKeeper)
+                                    : new ScriptBlockMemberMethodWrapper(tuple.bodyAst);
+                                helperType.GetField(tuple.fieldName, BindingFlags.NonPublic | BindingFlags.Static)
+                                    .SetValue(null, methodWrapper);
                             }
                         }
-
-                        helperType.GetField(s_sessionStateKeeperFieldName, BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, new SessionStateKeeper());
                     }
                     catch (TypeLoadException e)
                     {
