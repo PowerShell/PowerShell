@@ -2,11 +2,24 @@
 
 ## v6.0.0-beta.4 - 2017-07-12
 
-- Add Windows PowerShell `PSModulePath` by default on Windows. (#4132)
-- Move PowerShell to `2.0.0-preview3-25426-01` and using the .NET CLI version `2.0.0-preview2-006502`. (#4144)
+## Windows PowerShell backwards compatibility
+
+In the `beta.4` release, we've introduced a change to add the Windows PowerShell `PSModulePath` to the default `PSModulePath` in PowerShell Core on Windows. (#4132)
+
+Along with the introduction of .NET Standard 2.0 in `6.0.0-beta.1` and a GAC probing fix in `6.0.0-beta.3`,
+**this change will enable a large number of your existing Windows PowerShell modules/scripts to "just work" inside of PowerShell Core on Windows**.
+(Note: We have also fixed the CDXML modules on Windows that were regressed in `6.0.0-beta.2` as part of #4144).
+
+So that we can further enable this backwards compatibility,
+we ask that you tell us more about what modules or scripts do and don't work in Issue #4062.
+This feedback will also help us determine if `PSModulePath` should include the Windows PowerShell values by default in the long run.
+
+For more information on this, we invite you to read [this blog post explaining PowerShell Core and .NET Standard in more detail](https://blogs.msdn.microsoft.com/powershell/?p=13355).
 
 ### Engine updates and fixes
 
+- Add Windows PowerShell `PSModulePath` by default on Windows. (#4132)
+- Move PowerShell to `2.0.0-preview3-25426-01` and using the .NET CLI version `2.0.0-preview2-006502`. (#4144)
 - Performance improvement in PSReadline by minimizing writing ANSI escape sequences. (#4110)
 - Implement Unicode escape parsing so that users can use Unicode characters as arguments, strings or variable names. (#3958) (Thanks to @rkeithhill!)
 - Script names or full paths can have commas. (#4136) (Thanks to @TimCurwick!)
