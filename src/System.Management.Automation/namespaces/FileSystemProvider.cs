@@ -1323,12 +1323,38 @@ namespace Microsoft.PowerShell.Commands
 
             string resource = StringUtil.Format(FileSystemProviderStrings.InvokeItemResourceFileTemplate, path);
 
+#if UNIX
+            void StartProcessWithOpen(string filename)
+            {
+                System.Diagnostics.Process process = new System.Diagnostics.Process();
+                // The file is possibly not an executable, so we try invoking the default program that handles this file.
+                const string quoteFormat = "\"{0}\"";
+                process.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
+                if (NativeCommandParameterBinder.NeedQuotes(filename))
+                {
+                    path = string.Format(CultureInfo.InvariantCulture, quoteFormat, filename);
+                }
+                process.StartInfo.Arguments = filename;
+                // xdg-open on Ubuntu outputs debug info to stderr, suppress it
+                process.StartInfo.RedirectStandardError = true;
+                process.Start();
+            }
+#endif
+
             if (ShouldProcess(resource, action))
             {
                 System.Diagnostics.Process invokeProcess = new System.Diagnostics.Process();
 
                 try
                 {
+                    // special case directories on UNIX so that we can open them in the window-manager
+                    // corefx doesn't return error if you try to start a directory
+#if UNIX
+                    if (Directory.Exists(path))
+                    {
+                        StartProcessWithOpen(path);
+                    }
+#endif
                     // Try Process.Start first.
                     //  - In FullCLR, this is all we need to do.
                     //  - In CoreCLR, this works for executables on Win/Unix platforms
@@ -1339,15 +1365,7 @@ namespace Microsoft.PowerShell.Commands
                 catch (Win32Exception ex) when (ex.NativeErrorCode == 13)
                 {
                     // Error code 13 -- Permission denied.
-                    // The file is possibly not an executable, so we try invoking the default program that handles this file.
-                    const string quoteFormat = "\"{0}\"";
-                    invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
-                    if (NativeCommandParameterBinder.NeedQuotes(path))
-                    {
-                        path = string.Format(CultureInfo.InvariantCulture, quoteFormat, path);
-                    }
-                    invokeProcess.StartInfo.Arguments = path;
-                    invokeProcess.Start();
+                    StartProcessWithOpen(path);
                 }
 #elif CORECLR
                 catch (Win32Exception ex) when (ex.NativeErrorCode == 193 || ex.NativeErrorCode == 5)
