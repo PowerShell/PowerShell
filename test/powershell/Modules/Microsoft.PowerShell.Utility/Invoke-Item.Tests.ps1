@@ -60,31 +60,76 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
         Get-Content $redirectFile -Raw | Should Match "usage: ping"
     }
 
-    It "Should invoke a folder without error" {
-        if ($IsWindows)
-        {
-            $shell = New-Object -ComObject "Shell.Application"
-            $windows = $shell.Windows()
-
-            $before = $windows.Count
-            Invoke-Item -Path $PSHOME
-            $startTime = Get-Date
-            while (((Get-Date) - $startTime).TotalSeconds -lt 5 -and ($windows.Count -eq $before))
+    Context "Invoke a folder" {
+        BeforeAll {
+            if ($IsLinux)
             {
-                Start-Sleep -Milliseconds 100
+                $mimeDefault = xdg-mime query default inode/directory
+                Remove-Item $HOME/InvokeItemTest.Success -Force -ErrorAction SilentlyContinue
+                Set-Content -Path $HOME/.local/share/applications/InvokeItemTest.desktop -Force -Value @"
+[Desktop Entry]
+Version=1.0
+Name=InvokeItemTest
+Comment=Validate Invoke-Item for directory
+Exec=/bin/sh -c 'echo %u > ~/InvokeItemTest.Success'
+Icon=utilities-terminal
+Terminal=true
+Type=Application
+Categories=Application;
+"@
+                xdg-mime default InvokeItemTest.desktop inode/directory
             }
-            $after = $windows.Count
-
-            $before + 1 | Should Be $after
-            $item = $windows.Item($after - 1)
-            $item.LocationURL | Should Match ($PSHOME -replace '\\', '/')
-            ## close the windows explorer
-            $item.Quit()
         }
-        else
-        {
-            # can't validate that it actually opened, but no error should be returned
-            Invoke-Item -Path $PSHOME
+
+        AfterAll {
+            if ($IsLinux)
+            {
+                xdg-mime default $mimeDefault inode/directory
+                Remove-Item $HOME/.local/share/applications/InvokeItemTest.desktop -Force -ErrorAction SilentlyContinue
+                Remove-Item $HOME/InvokeItemTest.Success -Force -ErrorAction SilentlyContinue
+            }
+        }
+
+        It "Should invoke a folder without error" {
+            if ($IsWindows)
+            {
+                $shell = New-Object -ComObject "Shell.Application"
+                $windows = $shell.Windows()
+
+                $before = $windows.Count
+                Invoke-Item -Path $PSHOME
+                $startTime = Get-Date
+                # may take time for explorer to open window
+                while (((Get-Date) - $startTime).TotalSeconds -lt 5 -and ($windows.Count -eq $before))
+                {
+                    Start-Sleep -Milliseconds 100
+                }
+                $after = $windows.Count
+
+                $before + 1 | Should Be $after
+                $item = $windows.Item($after - 1)
+                $item.LocationURL | Should Match ($PSHOME -replace '\\', '/')
+                ## close the windows explorer
+                $item.Quit()
+            }
+            elseif ($IsLinux)
+            {
+                # validate on Unix by reassociating default app for directories
+                Invoke-Item -Path $PSHOME
+                $startTime = Get-Date
+                # may take time for handler to start
+                while (((Get-Date) - $startTime).TotalSeconds -lt 5 -and (-not (Test-Path "$HOME/InvokeItemTest.Success")))
+                {
+                    Start-Sleep -Milliseconds 100
+                }
+
+                Get-Content $HOME/InvokeItemTest.Success | Should Be $PSHOME
+            }
+            else
+            {
+                # can't validate on MacOS, so just make sure no error
+                Invoke-Item -Path $PSHOME
+            }
         }
     }
 }
