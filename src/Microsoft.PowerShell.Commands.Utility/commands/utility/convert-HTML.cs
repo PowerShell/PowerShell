@@ -241,15 +241,8 @@ namespace Microsoft.PowerShell.Commands
             }
             set
             {
-                /*if(_invocationInfo.BoundParameters.ContainsKey("application-name") ||
-                _invocationInfo.BoundParameters.ContainsKey("author") ||
-                _invocationInfo.BoundParameters.ContainsKey("description") ||
-                _invocationInfo.BoundParameters.ContainsKey("generator") ||
-                _invocationInfo.BoundParameters.ContainsKey("keywords") ||
-                _invocationInfo.BoundParameters.ContainsKey("viewport") ||){*/
-                    _meta = value;
-                    _metaSpecified = true;
-                //}
+                _meta = value;
+                _metaSpecified = true;
             }
         }
         private Hashtable _meta;
