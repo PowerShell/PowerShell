@@ -447,23 +447,23 @@ namespace Microsoft.PowerShell.Commands
                     WriteObject("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\"  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">");
                 }
                 WriteObject("<html xmlns=\"http://www.w3.org/1999/xhtml\">");
-                if(_metaSpecified)
-                {
-                    foreach(string s in _meta.Keys)
-                    {
-                        if(s != "content-type" && s != "default-style" && s !="refresh")
-                        {
-                            WriteObject("<meta name=\"" + s + "\" content=\"" + _meta[s] + "\">");
-                        }
-                        else {
-                            WriteObject("<meta http-equiv=\"" + s + "\" content=\"" + _meta[s] + "\">");
-                        }
-                    }
-                }
                 WriteObject("<head>");
                 if(_charsetSpecified)
                 {
                     WriteObject("<meta charset=\"" + _charset + "\">");
+                }
+                if(_metaSpecified)
+                {
+                    foreach(string s in _meta.Keys)
+                    {
+                        if(s == "content-type" && s == "default-style" && s =="refresh")
+                        {
+                            WriteObject("<meta http-equiv=\"" + s + "\" content=\"" + _meta[s] + "\">");
+                        }
+                        else if (s == "application-name" || s == "author" || s == "description" || s == "generator" || s == "keywords" || s == "viewport") {
+                            WriteObject("<meta name=\"" + s + "\" content=\"" + _meta[s] + "\">");
+                        }
+                    }
                 }
                 WriteObject(_head ?? new string[] { "<title>" + _title + "</title>" }, true);
                 if (_cssuriSpecified)
