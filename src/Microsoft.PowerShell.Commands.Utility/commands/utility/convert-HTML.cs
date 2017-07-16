@@ -241,8 +241,15 @@ namespace Microsoft.PowerShell.Commands
             }
             set
             {
-                _meta = value;
-                _metaSpecified = true;
+                /*if(_invocationInfo.BoundParameters.ContainsKey("application-name") ||
+                _invocationInfo.BoundParameters.ContainsKey("author") ||
+                _invocationInfo.BoundParameters.ContainsKey("description") ||
+                _invocationInfo.BoundParameters.ContainsKey("generator") ||
+                _invocationInfo.BoundParameters.ContainsKey("keywords") ||
+                _invocationInfo.BoundParameters.ContainsKey("viewport") ||){*/
+                    _meta = value;
+                    _metaSpecified = true;
+                //}
             }
         }
         private Hashtable _meta;
@@ -253,7 +260,6 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "Page")]
         [ValidateNotNullOrEmpty]
-        [ValidateSet("UTF-8", "ISO-8859-1","ASCII","ANSI",IgnoreCase=true)]
         public string Charset
         {
             get
@@ -456,7 +462,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach(string s in _meta.Keys)
                     {
-                        if(s == "content-type" && s == "default-style" && s =="refresh")
+                        if(s == "content-type" || s == "default-style" || s =="refresh")
                         {
                             WriteObject("<meta http-equiv=\"" + s + "\" content=\"" + _meta[s] + "\">");
                         }
