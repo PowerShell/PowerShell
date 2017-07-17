@@ -12,7 +12,7 @@ $powershellCoreModules = @(
     "Microsoft.PowerShell.Core"
     "Microsoft.PowerShell.Diagnostics"
     "Microsoft.PowerShell.Management"
-    "Microsoft.PowerShell.LocalAccounts"
+    # "Microsoft.PowerShell.LocalAccounts" removed due to #4274
     "Microsoft.PowerShell.Security"
     "Microsoft.PowerShell.Utility"
     "Microsoft.WsMan.Management"
