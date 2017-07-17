@@ -1,8 +1,8 @@
 Describe "Script with a class definition run path" -Tags "CI" {
 
     $TestCases = @(
-        @{ FileName =  'MyTest.ps1'; Name = 'path without a comma' }
-        @{ FileName = 'My,Test.ps1'; Name = 'path with a comma'    }
+        @{ FileName =     'MyTest.ps1'; Name = 'typical path' }
+        @{ FileName = "My,'=~Test.ps1"; Name = 'path with unhandled assemblyname characters' }
     )
 
     It "Script with a class definition can run from a <Name>" -TestCases $TestCases {
