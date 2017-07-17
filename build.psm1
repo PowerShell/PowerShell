@@ -2961,7 +2961,6 @@ function Start-CrossGen {
         $psCoreAssemblyList += @(
             "Microsoft.WSMan.Management.dll",
             "Microsoft.WSMan.Runtime.dll",
-            "Microsoft.PowerShell.LocalAccounts.dll",
             "Microsoft.PowerShell.Commands.Diagnostics.dll",
             "Microsoft.Management.Infrastructure.CimCmdlets.dll"
         )
