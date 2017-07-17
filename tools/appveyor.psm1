@@ -91,6 +91,13 @@ Function Test-DailyBuild
     {
         return $true
     }
+    
+    # if [Feature] is in the commit message,
+    # Run Daily tests
+    if($env:APPVEYOR_REPO_COMMIT_MESSAGE -match '(\[(?i)feature\]){1}')
+    {
+        return $true
+    }
 
     return $false
 }
