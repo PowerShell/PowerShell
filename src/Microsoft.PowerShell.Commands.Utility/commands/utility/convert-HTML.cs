@@ -283,23 +283,11 @@ namespace Microsoft.PowerShell.Commands
                 string width = p.GetEntry(ConvertHTMLParameterDefinitionKeys.WidthEntryKey) as string;
                 MshExpression ex = p.GetEntry(FormatParameterDefinitionKeys.ExpressionEntryKey) as MshExpression;
                 List<MshExpression> resolvedNames = ex.ResolveNames(_inputObject);
-                if (resolvedNames.Count == 1)
+                foreach (MshExpression resolvedName in resolvedNames)
                 {
                     Hashtable ht = CreateAuxPropertyHT(label, alignment, width);
-                    if (ex.Script != null)
-                        ht.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, ex.Script);
-                    else
-                        ht.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, ex.ToString());
+                    ht.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, resolvedName.ToString());
                     resolvedNameProperty.Add(ht);
-                }
-                else
-                {
-                    foreach (MshExpression resolvedName in resolvedNames)
-                    {
-                        Hashtable ht = CreateAuxPropertyHT(label, alignment, width);
-                        ht.Add(FormatParameterDefinitionKeys.ExpressionEntryKey, resolvedName.ToString());
-                        resolvedNameProperty.Add(ht);
-                    }
                 }
             }
             _resolvedNameMshParameters = ProcessParameter(resolvedNameProperty.ToArray());
