@@ -43,7 +43,7 @@
     <Condition Message="Supported only on Win8 and above"><![CDATA[ Installed OR $(var.MinOSVersionSupported) ]]></Condition>
 
     <!-- Information About When Older Versions Are Trying To Be Installed-->
-    <MajorUpgrade DowngradeErrorMessage="A newer version of PowerShell is already installed." />
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of $(env.ProductName) is already installed." />
     
     <!-- Embed Cabinet Files in Product-->
     <MediaTemplate EmbedCab="yes" />
