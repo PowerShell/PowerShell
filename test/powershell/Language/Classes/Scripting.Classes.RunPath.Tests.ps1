@@ -1,8 +1,17 @@
 Describe "Script with a class definition run path" -Tags "CI" {
 
+    if ( $IsLinux -or $IsOSX )
+    {
+        $UnhandledName = "My,'`"=~Test.ps1"
+    }
+    else
+    {
+        $UnhandledName = "My,'=~Test.ps1"
+    }
+
     $TestCases = @(
-        @{ FileName =     'MyTest.ps1'; Name = 'typical path' }
-        @{ FileName = "My,'=~Test.ps1"; Name = 'path with unhandled assemblyname characters' }
+        @{ FileName = 'MyTest.ps1'  ; Name = 'typical path' }
+        @{ FileName = $UnhandledName; Name = 'path with unhandled assemblyname characters' }
     )
 
     It "Script with a class definition can run from a <Name>" -TestCases $TestCases {
