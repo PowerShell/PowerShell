@@ -2108,7 +2108,10 @@ Describe "Import-PSSession on Restricted Session" -tags "Feature","RequireAdminO
         }
     }
 
-    It "Verifies that Import-PSSession works on a restricted session" {
+    # Blocked by https://github.com/PowerShell/PowerShell/issues/4275
+    # Need a way to created restricted endpoint based on a different endpoint other than microsoft.powershell which points
+    # to Windows PowerShell 5.1
+    It "Verifies that Import-PSSession works on a restricted session" -Pending {
 
         $errorVariable = $null
         Import-PSSession -Session $session -AllowClobber -ErrorVariable $errorVariable
