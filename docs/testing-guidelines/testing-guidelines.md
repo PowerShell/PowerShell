@@ -83,7 +83,7 @@ we will ensure that we will also run the tests tagged with `Feature`.  When you 
 
 - You have added or changed a `Feature` test.
 - A maintainer asks you to run the `Feature` tests.
-- Based on pasted experience, you are confident that a maintainer will ask you to run the `Feature` tests.
+- Based on experience, you are confident that a maintainer will ask you to run the `Feature` tests.
 
 ### xUnit
 

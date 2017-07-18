@@ -98,7 +98,7 @@ function Set-DailyBuildBadge
 $isPR = $env:TRAVIS_EVENT_TYPE -eq 'pull_request'
 
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
-$isFullBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api' -or $env:TRAVIS_COMMIT_MESSAGE -match '(\[(?i)feature\]){1}'
+$isFullBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api' -or $env:TRAVIS_COMMIT_MESSAGE -match '\[feature\]'
 
 if($Bootstrap.IsPresent)
 {
