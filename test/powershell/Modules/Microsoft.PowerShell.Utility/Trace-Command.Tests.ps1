@@ -80,4 +80,51 @@ Describe "Trace-Command" -tags "CI" {
             $results | ForEach-Object { $_ | Should Be $pid }
         }
     }
+
+	Context "Trace-Command tests for code coverage" {
+
+        BeforeEach {
+            $filePath = join-path $TestDrive 'testtracefile.txt'
+        }
+
+        AfterEach {
+            #copy $filePath 'C:\Temp' -Force -ErrorAction SilentlyContinue
+            Remove-Item $filePath -Force -ErrorAction SilentlyContinue
+        }
+
+        It "Get non-existing trace source" {
+            { 'abc' | get-tracesource -ErrorAction Stop} | ShouldBeErrorID 'TraceSourceNotFound,Microsoft.PowerShell.Commands.GetTraceSourceCommand'
+        }
+
+        It "Set-TraceSource to file" {
+            Set-TraceSource -Name "ParameterBinding" -Option ExecutionFlow -FilePath $filePath -Force -ListenerOption "ProcessId,TimeStamp" -PassThru
+            Set-TraceSource -Name "ParameterBinding" -RemoveFileListener *
+            Get-Content $filePath -Raw | Should Match 'ParameterBinding Information'
+        }
+        
+        It "Basic Trace-Command -Expression" {
+            $a = Trace-Command -Name metadata,parameterbinding,cmdlet -Expression {Get-Process} -PSHost
+            $a.count -gt 0 | Should Be $true
+        }
+
+        It "Trace-Command -Command with error" {
+            { Trace-Command -Name ParameterBinding -Command 'Get-PSDrive' -ArgumentList 'NonExistingDrive' -Option ExecutionFlow -FilePath $filePath -Force -ListenerOption "ProcessId,TimeStamp" -ErrorAction Stop } | ShouldBeErrorID 'GetLocationNoMatchingDrive,Microsoft.PowerShell.Commands.TraceCommandCommand'
+        }
+
+        It "Trace-Command fails for non-filesystem paths" {
+            { Trace-Command -Name ParameterBinding -Expression {$null} -FilePath "Env:\Test" -ErrorAction Stop } | ShouldBeErrorID 'FileListenerPathResolutionFailed,Microsoft.PowerShell.Commands.TraceCommandCommand'
+        }
+                
+        It "Trace-Command to readonly file" {
+            New-Item $filePath -Force
+            Set-ItemProperty $filePath -name IsReadOnly -value $true
+            Trace-Command -Name ParameterBinding -Command 'Get-PSDrive' -FilePath $filePath -Force
+            Get-Content $filePath -Raw | Should Match 'ParameterBinding Information'
+        }
+
+        It "Trace-Command contains wildcard characters" {
+            $a = Trace-Command -Name ParameterB* -Command 'get-alias' -Debugger
+            $a.count -gt 0 | Should Be $true
+        }
+    }
 }
