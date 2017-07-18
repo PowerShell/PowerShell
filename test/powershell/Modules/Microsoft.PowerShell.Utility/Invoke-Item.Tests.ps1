@@ -64,9 +64,17 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
         BeforeAll {
             if ($IsLinux)
             {
-                $mimeDefault = xdg-mime query default inode/directory
-                Remove-Item $HOME/InvokeItemTest.Success -Force -ErrorAction SilentlyContinue
-                Set-Content -Path $HOME/.local/share/applications/InvokeItemTest.desktop -Force -Value @"
+                $appFolder = "$HOME/.local/share/applications"
+                $NoDesktop = $false
+                if ($null -ne (gcm xdg-mime -ErrorAction SilentlyContinue))
+                {
+                    $mimeDefault = xdg-mime query default inode/directory
+                    Remove-Item $HOME/InvokeItemTest.Success -Force -ErrorAction SilentlyContinue
+                    if (!(Test-Path $appFolder))
+                    {
+                        New-Item -Path $appFolder -Force
+                    }
+                    Set-Content -Path "$appFolder/InvokeItemTest.desktop" -Verbose -Force -Value @"
 [Desktop Entry]
 Version=1.0
 Name=InvokeItemTest
@@ -77,20 +85,25 @@ Terminal=true
 Type=Application
 Categories=Application;
 "@
-                xdg-mime default InvokeItemTest.desktop inode/directory
+                    xdg-mime default InvokeItemTest.desktop inode/directory
+                }
+                else
+                {
+                    $NoDesktop = $true
+                }
             }
         }
 
         AfterAll {
-            if ($IsLinux)
+            if ($IsLinux -and !$NoDesktop)
             {
                 xdg-mime default $mimeDefault inode/directory
-                Remove-Item $HOME/.local/share/applications/InvokeItemTest.desktop -Force -ErrorAction SilentlyContinue
+                Remove-Item $appFolder/InvokeItemTest.desktop -Force -ErrorAction SilentlyContinue
                 Remove-Item $HOME/InvokeItemTest.Success -Force -ErrorAction SilentlyContinue
             }
         }
 
-        It "Should invoke a folder without error" {
+        It "Should invoke a folder without error" -Skip:($NoDesktop) {
             if ($IsWindows)
             {
                 $shell = New-Object -ComObject "Shell.Application"

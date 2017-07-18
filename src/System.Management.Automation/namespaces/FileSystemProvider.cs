@@ -1313,9 +1313,11 @@ namespace Microsoft.PowerShell.Commands
         protected override void InvokeDefaultAction(string path)
         {
 #if UNIX
-            const int PERMISSION_DENIED_NOT_EXECUTABLE = 13;
+            // Error code 13 -- Permission denied
+            const int NOT_EXECUTABLE = 13;
 #else
-            const int PERMISSION_DENIED_NOT_EXECUTABLE = 193;
+            // Error code 193 -- BAD_EXE_FORMAT (not a valid Win32 application)
+            const int NOT_EXECUTABLE = 193;
 #endif
 
             if (String.IsNullOrEmpty(path))
@@ -1329,52 +1331,47 @@ namespace Microsoft.PowerShell.Commands
 
             string resource = StringUtil.Format(FileSystemProviderStrings.InvokeItemResourceFileTemplate, path);
 
-            void StartProcessUsingHandler(string filename)
-            {
-                System.Diagnostics.Process process = new System.Diagnostics.Process();
-#if UNIX
-                // The file is possibly not an executable, so we try invoking the default program that handles this file.
-                const string quoteFormat = "\"{0}\"";
-                process.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
-                if (NativeCommandParameterBinder.NeedQuotes(filename))
-                {
-                    path = string.Format(CultureInfo.InvariantCulture, quoteFormat, filename);
-                }
-                process.StartInfo.Arguments = filename;
-                // xdg-open on Ubuntu outputs debug info to stderr, suppress it
-                process.StartInfo.RedirectStandardError = true;
-                process.Start();
-#else
-                if (Platform.IsNanoServer || Platform.IsIoT) { throw new NotSupportedException(); }
-                process.StartInfo.FileName = filename;
-                ShellExecuteHelper.Start(process.StartInfo);
-#endif
-            }
-
             if (ShouldProcess(resource, action))
             {
+                var invokeProcess = new System.Diagnostics.Process();
+                invokeProcess.StartInfo.FileName = path;
+                bool invokeDefaultProgram = false;
 
-                try
+                if (Directory.Exists(path) && !Platform.IsNanoServer && !Platform.IsIoT)
                 {
-                    // special case directories on UNIX so that we can open them in the window-manager
-                    // corefx doesn't return error if you try to start a directory
-                    if (Directory.Exists(path))
+                    // Path points to a directory and it's not NanoServer or IoT, so we can opne the file explorer
+                    invokeDefaultProgram = true;
+                }
+                else
+                {
+                    try
                     {
-                        StartProcessUsingHandler(path);
-                    }
-                    else
-                    {
-                        System.Diagnostics.Process invokeProcess = new System.Diagnostics.Process();
-                        // Try Process.Start first.
-                        //  - In FullCLR, this is all we need to do
-                        //  - In CoreCLR, this works for executables on Win/Unix platforms
-                        invokeProcess.StartInfo.FileName = path;
+                        // Try Process.Start first. This works for executables on Win/Unix platforms
                         invokeProcess.Start();
                     }
+                    catch (Win32Exception ex) when (ex.NativeErrorCode == NOT_EXECUTABLE)
+                    {
+                        // The file is possibly not an executable. If it's headless SKUs, rethrow.
+                        if (Platform.IsNanoServer || Platform.IsIoT) { throw; }
+                        // Otherwise, try invoking the default program that handles this file.
+                        invokeDefaultProgram = true;
+                    }
                 }
-                catch (Win32Exception ex) when (ex.NativeErrorCode == PERMISSION_DENIED_NOT_EXECUTABLE)
+
+                if (invokeDefaultProgram)
                 {
-                    StartProcessUsingHandler(path);
+#if UNIX
+                    const string quoteFormat = "\"{0}\"";
+                    invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
+                    if (NativeCommandParameterBinder.NeedQuotes(path))
+                    {
+                        path = string.Format(CultureInfo.InvariantCulture, quoteFormat, path);
+                    }
+                    invokeProcess.StartInfo.Arguments = path;
+                    invokeProcess.Start();
+#else
+                    ShellExecuteHelper.Start(invokeProcess.StartInfo);
+#endif
                 }
             }
         } // InvokeDefaultAction
