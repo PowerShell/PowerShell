@@ -78,7 +78,7 @@ Additionally, the tag:
 
 #### Requesting additional tests for a PR
 
-In our CI systems, normally only tests tagged with `CI`.  If in the first line of the last (most recent) commit description you add `[Feature]`,
+In our CI systems, we normally run only run tests tagged with `CI`.  If in the first line of the last (most recent) commit description you add `[Feature]`,
 we will ensure that we will also run the tests tagged with `Feature`.  When you would want to do this:
 
 - You have added or changed a `Feature` test.
