@@ -1335,43 +1335,23 @@ Describe "Validate Invoke-WebRequest and Invoke-RestMethod -InFile" -Tags "Featu
 
 Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
 
-    function SearchEngineIsOnline
-    {
-        param (
-            [ValidateNotNullOrEmpty()]
-            $webAddress
-        )
-        $ping = new-object System.Net.NetworkInformation.Ping
-        $sendPing = $ping.SendPingAsync($webAddress)
-        return ($sendPing.Result.Status -eq "Success")
+    BeforeAll {
+        $response = Start-HttpListener -Port 8082
     }
 
-    # Make sure either www.bing.com or www.google.com are online to send a request.
-    $endPointToUse = $null
-    foreach ($uri in @("www.bing.com", "www.google.com"))
-    {
-        if (SearchEngineIsOnline $uri)
-        {
-            $endPointToUse = $uri
-            break
-        }
+    AfterAll {
+        $null = Stop-HttpListener -Port 8082
+        $response.PowerShell.Dispose()
     }
 
-    # If neither www.bing.com nor www.google.com are online, then skip the tests.
-    $skipTests = ($endPointToUse -eq $null)
-    $finalUri = $endPointToUse + "?q=how+many+feet+in+a+mile"
-
-    It "Execute Invoke-WebRequest --> 'iwr -URI $finalUri'" -Skip:$skipTests {
-        $result = iwr -URI $finalUri -TimeoutSec 5
+    It "Execute Invoke-WebRequest" {
+        $result = iwr "http://localhost:8082/PowerShell?test=response&output=hello" -TimeoutSec 5
         $result.StatusCode | Should Be "200"
-        $result.Links | Should Not Be $null
+        $result.Content | Should Be "hello"
     }
 
-    It "Execute Invoke-RestMethod --> 'irm -URI $finalUri'" -Skip:$skipTests {
-        $result = irm -URI $finalUri -TimeoutSec 5
-        foreach ($word in @("200", "how", "many", "feet", "in", "mile"))
-        {
-            $result | Should Match $word
-        }
+    It "Execute Invoke-RestMethod" {
+        $result = irm "http://localhost:8082/PowerShell?test=response&output={%22hello%22:%22world%22}&contenttype=application/json" -TimeoutSec 5
+        $result.Hello | Should Be "world"
     }
 }
