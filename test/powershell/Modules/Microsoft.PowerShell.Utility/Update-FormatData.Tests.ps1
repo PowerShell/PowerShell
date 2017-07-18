@@ -14,16 +14,16 @@ Describe "Update-FormatData" -Tags "CI" {
     }
     Context "Validate Update-FormatData update correctly" {
 
-	    It "Should not throw upon reloading previous formatting file" {
-	        { Update-FormatData } | Should Not throw
-	    }
+        It "Should not throw upon reloading previous formatting file" {
+            { Update-FormatData } | Should Not throw
+        }
 
-	    It "Should validly load formatting data" {
-	        Get-FormatData -typename System.Diagnostics.Process | Export-FormatData -Path $path
+        It "Should validly load formatting data" {
+            Get-FormatData -typename System.Diagnostics.Process | Export-FormatData -Path $path
             $null = $ps.AddScript("Update-FormatData -prependPath $path")
             $ps.Invoke()
             $ps.HadErrors | Should be $false
-	    }
+        }
     }
 }
 
@@ -32,7 +32,7 @@ Describe "Update-FormatData basic functionality" -Tags "CI" {
         $testfilename = "testfile.ps1xml"
         $testfile = Join-Path -Path $TestDrive -ChildPath $testfilename
 
-		$xmlContent=@"
+        $xmlContent=@"
                 <Types>
                     <Type>
                         <Name>AnyName</Name>
@@ -48,14 +48,14 @@ Describe "Update-FormatData basic functionality" -Tags "CI" {
                     </Type>
                 </Types>
 "@
-		$xmlContent > $testfile
+        $xmlContent > $testfile
     }
 
-	It "Update-FormatData with WhatIf should work"{
+    It "Update-FormatData with WhatIf should work"{
 
         { Update-FormatData -Append $testfile -WhatIf } | Should Not Throw
         { Update-FormatData -Prepend $testfile -WhatIf } | Should Not Throw
-	}
+    }
 }
 
 
@@ -75,33 +75,33 @@ Describe "Update-FormatData with resources in CustomControls" -Tags "CI" {
         $ps.Dispose()
     }
     Context "Validate Update-FormatData" {
-	    It "Resources in WindowsPS syntax should be loaded successfully" {
-			$format = Get-Content -Path $templatePath -Raw
-			$format.Replace("%BaseName%","FileSystemProviderStrings") | Set-Content -Path $formatFilePath -Force
-			$null = $ps.AddScript("Update-FormatData -PrependPath $formatFilePath")
-			$ps.Streams.Error.Clear()
+        It "Resources in WindowsPS syntax should be loaded successfully" {
+            $format = Get-Content -Path $templatePath -Raw
+            $format.Replace("%BaseName%","FileSystemProviderStrings") | Set-Content -Path $formatFilePath -Force
+            $null = $ps.AddScript("Update-FormatData -PrependPath $formatFilePath")
+            $ps.Streams.Error.Clear()
             $ps.Invoke()
             $ps.HadErrors | Should be $false
 
-	    }
-		It "Resources in CorePS syntax should be loaded successfully" {
-			$format = Get-Content -Path $templatePath -Raw
-			$format.Replace("%BaseName%","System.Management.Automation.resources.FileSystemProviderStrings") | Set-Content -Path $formatFilePath -Force
-			$null = $ps.AddScript("Update-FormatData -PrependPath $formatFilePath")
-			$ps.Streams.Error.Clear()
+        }
+        It "Resources in CorePS syntax should be loaded successfully" {
+            $format = Get-Content -Path $templatePath -Raw
+            $format.Replace("%BaseName%","System.Management.Automation.resources.FileSystemProviderStrings") | Set-Content -Path $formatFilePath -Force
+            $null = $ps.AddScript("Update-FormatData -PrependPath $formatFilePath")
+            $ps.Streams.Error.Clear()
             $ps.Invoke()
             $ps.HadErrors | Should be $false
-	    }
-		It "Verify assembly path in error message when resource is Not found" {
-			$format = Get-Content -Path $templatePath -Raw
-			$format.Replace("%BaseName%","NonExistingResource") | Set-Content -Path $formatFilePath -Force
-			$null = $ps.AddScript("Update-FormatData -PrependPath $formatFilePath")
-			$ps.Streams.Error.Clear()
+        }
+        It "Verify assembly path in error message when resource is Not found" {
+            $format = Get-Content -Path $templatePath -Raw
+            $format.Replace("%BaseName%","NonExistingResource") | Set-Content -Path $formatFilePath -Force
+            $null = $ps.AddScript("Update-FormatData -PrependPath $formatFilePath")
+            $ps.Streams.Error.Clear()
             $ps.Invoke()
-			$sma = [appdomain]::CurrentDomain.GetAssemblies() | ? { if ($_.Location) {$_.Location.EndsWith("System.Management.Automation.dll")}}
-			$smaLocation = $sma.Location
-			$ps.Streams.Error | %{ $_.Exception.Message.Contains($smaLocation) | Should be $true }
-			$ps.Streams.Error | %{ $_.FullyQualifiedErrorId | Should Match 'FormatXmlUpdateException' }
-	    }
+            $sma = [appdomain]::CurrentDomain.GetAssemblies() | ? { if ($_.Location) {$_.Location.EndsWith("System.Management.Automation.dll")}}
+            $smaLocation = $sma.Location
+            $ps.Streams.Error | %{ $_.Exception.Message.Contains($smaLocation) | Should be $true }
+            $ps.Streams.Error | %{ $_.FullyQualifiedErrorId | Should Match 'FormatXmlUpdateException' }
+        }
     }
 }
