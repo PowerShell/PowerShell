@@ -22,16 +22,16 @@ function Invoke-Docker
         [switch]
         $PassThru,
         [switch]
-        $SupressHostOutput
+        $SuppressHostOutput
     )
 
     $ErrorActionPreference = 'Continue'
 
     # Log how we are running docker for troubleshooting issues
     Write-Verbose "Running docker $command $params" -Verbose
-    if($SupressHostOutput.IsPresent)
+    if($SuppressHostOutput.IsPresent)
     {
-        $result = &'docker' $command $params 2>&1
+        $result = docker $command $params 2>&1
     }
     else 
     {
@@ -51,7 +51,7 @@ function Invoke-Docker
     }
     elseif($dockerExitCode -ne 0 -and $FailureAction -eq 'warning')
     {
-        Write-Warning"docker $command failed with: $result"
+        Write-Warning "docker $command failed with: $result"
         return $false
     }
     elseif($dockerExitCode -ne 0)
@@ -62,40 +62,29 @@ function Invoke-Docker
     return $true
 }
 
-function Get-LinuxContainers 
+# Return a list of Linux Container Test Cases
+function Get-LinuxContainer
 {
-    return @(
-        @{
-            Name = 'centos7'
-            path = "$psscriptroot/../release/centos7"
+    foreach($os in 'centos7','opensuse42.1','ubuntu14.04','ubuntu16.04')
+    {
+        Write-Output @{
+            Name = $os
+            Path = "$psscriptroot/../release/$os"
         }
-        @{
-            Name = 'opensuse42.1'
-            path = "$psscriptroot/../release/opensuse42.1"
-        }
-        @{
-            Name = 'ubuntu14.04'
-            path = "$psscriptroot/../release/ubuntu14.04"
-        }
-        @{
-            Name = 'ubuntu16.04'
-            path = "$psscriptroot/../release/ubuntu16.04"
-        }
-    )
+    }
+    
 }
 
-function Get-WindowsContainers
+# Return a list of Windows Container Test Cases
+function Get-WindowsContainer
 {
-    return @(
-        @{
-            Name = 'windowsservercore'
-            path = "$psscriptroot/../release/windowsservercore"
+    foreach($os in 'windowsservercore','nanoserver')
+    {
+        Write-Output @{
+            Name = $os
+            Path = "$psscriptroot/../release/$os"
         }
-        @{
-            Name = 'nanoserver'
-            path = "$psscriptroot/../release/nanoserver"
-        }
-    )
+    }
 }
 
 
@@ -167,18 +156,19 @@ function Get-ContainerPowerShellVersion
 
     if($TestContext.ForcePull)
     {
-        $null=Invoke-Docker -Command 'image', 'pull' -Params $imageTag -SupressHostOutput
+        $null=Invoke-Docker -Command 'image', 'pull' -Params $imageTag -SuppressHostOutput
     }
 
     $runParams = @()
-    $localVolumeName = $($testContext.resolvedTestDrive)
+    $localVolumeName = $testContext.resolvedTestDrive
     $runParams += '--rm'
     if($TestContext.Type -ne 'Windows' -and $isWindows)
     {
         # use a container volume on windows because host volumes are not automatic
         $volumeName = "test-volume-" + (Get-Random -Minimum 100 -Maximum 999)
+
         # using alpine because it's tiny
-        $null=Invoke-Docker -Command create -Params '-v', '/test', '--name', $volumeName, 'alpine' -SupressHostOutput
+        $null=Invoke-Docker -Command create -Params '-v', '/test', '--name', $volumeName, 'alpine' -SuppressHostOutput
         $runParams += '--volumes-from'
         $runParams += $volumeName
     }
@@ -192,11 +182,11 @@ function Get-ContainerPowerShellVersion
     $runParams += '-c'
     $runParams += ('$PSVersionTable.PSVersion.ToString() | out-string | out-file -encoding ascii -FilePath '+$testContext.containerLogPath)
 
-    $null = Invoke-Docker -Command run -Params $runParams -SupressHostOutput
+    $null = Invoke-Docker -Command run -Params $runParams -SuppressHostOutput
     if($TestContext.Type -ne 'Windows' -and $isWindows)
     {
         $null = Invoke-Docker -Command cp -Params "${volumeName}:$($testContext.containerLogPath)", $TestContext.ResolvedLogPath
-        $null = Invoke-Docker -Command container, rm -Params $volumeName, '--force' -SupressHostOutput
+        $null = Invoke-Docker -Command container, rm -Params $volumeName, '--force' -SuppressHostOutput
     }
     return (Get-Content -Encoding Ascii $testContext.resolvedLogPath)[0]
 }
