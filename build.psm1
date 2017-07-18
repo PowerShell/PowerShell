@@ -1192,8 +1192,30 @@ function Start-PSBootstrap {
             }
         }
 
-        $DotnetArguments = @{ Channel=$Channel; Version=$Version; NoSudo=$NoSudo }
-        Install-Dotnet @DotnetArguments
+        $dotNetExists = precheck 'dotnet' $null
+        $dotNetVersion = [string]::Empty
+        if($dotNetExists) {
+            $dotNetVersion = (dotnet --version)
+        }
+
+        if(!$dotNetExists -or $dotNetVersion -ne $dotnetCLIRequiredVersion -or $Force.IsPresent) {
+            if($Force.IsPresent) {
+                log "Installing dotnet due to -Force."
+            }
+            elseif(!$dotNetExistis) {
+                log "dotnet not present.  Installing dotnet."
+            }
+            else {
+                log "dotnet out of date ($dotNetVersion).  Updating dotnet."
+            }
+
+            $DotnetArguments = @{ Channel=$Channel; Version=$Version; NoSudo=$NoSudo }
+            Install-Dotnet @DotnetArguments
+        }
+        else
+        {
+            log "dotnet is already installed.  Skipping installation."
+        }
 
         # Install for Windows
         if ($IsWindows) {

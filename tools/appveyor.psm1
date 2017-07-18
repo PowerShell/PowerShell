@@ -3,6 +3,12 @@ $repoRoot = Join-Path $PSScriptRoot '..'
 $script:administratorsGroupSID = "S-1-5-32-544"
 $script:usersGroupSID = "S-1-5-32-545"
 
+$dotNetPath = "$env:USERPROFILE\Appdata\Local\Microsoft\dotnet"
+if(Test-Path $dotNetPath)
+{
+    $env:PATH = $dotNetPath + ';' + $env:PATH
+}
+
 Import-Module (Join-Path $repoRoot 'build.psm1')
 
 function New-LocalUser
@@ -225,7 +231,7 @@ function Invoke-AppVeyorInstall
     }
 
     Set-BuildVariable -Name TestPassed -Value False
-    Start-PSBootstrap -Force
+    Start-PSBootstrap -Confirm:$false
 }
 
 # A wrapper to ensure that we upload test results
