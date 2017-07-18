@@ -320,6 +320,21 @@ Function Start-HTTPListener {
             $null = $ps.AddScript($script)
             $null = $ps.AddParameter("port",$port)
             $AsyncResponse = $ps.BeginInvoke()
+            # check that it's up and running
+            $out = $null
+            while ($out.StatusCode -ne 200)
+            {
+                try
+                {
+                    $out = Invoke-WebRequest "http://localhost:${Port}/PowerShell?test=response"
+                }
+                catch 
+                { 
+                    # ignore if listener is not ready 
+                }
+                Start-Sleep -milliseconds 100
+            }
+
             # include the AsyncResponse in the return object
             # it can be used to determine whether execution
             # is still underway, and may be useful in debugging
