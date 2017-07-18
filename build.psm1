@@ -1194,24 +1194,18 @@ function Start-PSBootstrap {
 
         $dotNetExists = precheck 'dotnet' $null
         $dotNetVersion = [string]::Empty
-        if($dotNetExists)
-        {
+        if($dotNetExists) {
             $dotNetVersion = (dotnet --version)
         }
 
-        if(!$dotNetExists -or $dotNetVersion -ne '2.0.0-preview2-006502' -or $Force.IsPresent)
-        {
-            if($Force.IsPresent)
-            {
+        if(!$dotNetExists -or $dotNetVersion -ne $dotnetCLIRequiredVersion -or $Force.IsPresent) {
+            if($Force.IsPresent) {
                 log "Installing dotnet due to -Force."
-
             }
-            elseif(!$dotNetExistis)
-            {
+            elseif(!$dotNetExistis) {
                 log "dotnet not present.  Installing dotnet."
             }
-            else
-            {
+            else {
                 log "dotnet out of date ($dotNetVersion).  Updating dotnet."
             }
 

@@ -231,7 +231,7 @@ function Invoke-AppVeyorInstall
     }
 
     Set-BuildVariable -Name TestPassed -Value False
-    Start-PSBootstrap
+    Start-PSBootstrap -Confirm:$false
 }
 
 # A wrapper to ensure that we upload test results
