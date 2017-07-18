@@ -34,10 +34,10 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
     }
 
  	It "Import with CliXml directive should work" {
-		Get-Process | Select-Object -First 5 | Export-Clixml $testfile
+        Get-Command export* -Type Cmdlet | Select-Object -First 3 | Export-Clixml -Path $testfile
 		$results = Import-Clixml $testfile
-		$results.Count | Should BeExactly 5
-		$results[0].ToString() | Should Match "System.Diagnostics.Process"
+		$results.Count | Should BeExactly 3
+        $results[0].PSTypeNames[0] | Should Be "Deserialized.System.Management.Automation.CmdletInfo"
     }
 
 	It "Import with Rehydration should work" {
@@ -51,13 +51,17 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
     }
 
 	It "Export-Clixml StopProcessing should succeed" {
-		$ps = [PowerShell]::Create()
-		$ps.AddCommand("Get-Process")
-		$ps.AddCommand("Export-CliXml")
-		$ps.AddParameter("Path", $testfile)
-		$ps.BeginInvoke()
-		$ps.Stop()
-		$ps.InvocationStateInfo.State | Should Be "Stopped"
+        $ps = [PowerShell]::Create()
+        $null = $ps.AddScript("1..10")
+        $null = $ps.AddCommand("foreach-object")
+        $null = $ps.AddParameter("Process", { $_; start-sleep 1 })
+        $null = $ps.AddCommand("Export-CliXml")
+        $null = $ps.AddParameter("Path", $testfile)
+        $null = $ps.BeginInvoke()
+        Start-Sleep 1
+        $null = $ps.Stop()
+        $ps.InvocationStateInfo.State | should be "Stopped"
+        $ps.Dispose()
 	}
 
 	It "Import-Clixml StopProcessing should succeed" {
@@ -80,16 +84,21 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		class Two
 		{
 			[Three] $three = [Three]::New();
+			[int] $value = 2;
 		}
 
 		class One
 		{
 			[Two] $two = [Two]::New();
+			[int] $value = 1;
 		}
 
 		$one = [One]::New()
 		$one | Export-Clixml -Depth 2 -Path $testfile
 		$deserialized_one = Import-Clixml -Path $testfile
+		$deserialized_one.Value | Should Be 1
+		$deserialized_one.two.Value | Should Be 2
+		$deserialized_one.two.Three | Should Not BeNullOrEmpty
 		$deserialized_one.two.three.num | Should BeNullOrEmpty
 	}
 
@@ -123,16 +132,8 @@ Describe "XmlCommand DRT basic functionality Tests" -Tags "CI" {
 		$out1 = Import-Clixml -Path $testfile	# this results in a hashtable
 		$out2 = Import-Clixml -Path $testfile -First 2 -Skip 1	# this results in a dictionary entry
 		$out2.Count | Should Be 2
-		$array = @()
-		foreach ($obj in $out1.GetEnumerator())
-		{
-			$array += $obj
-		}
-		for($i = 0; $i -lt 2; $i++)
-		{
-			$out2.Item($i).Name | Should Be $array[$i+1].Name
-			$out2.Item($i).Value | Should Be $array[$i+1].Value
-		}
+        ($out2.Name) -join ":" | should be (@($out1.Keys)[1, 2] -join ":")
+        ($out2.Value) -join ":" | should be (@($out1.Values)[1, 2] -join ":")
 	}
 
 	# these tests just cover aspects that aren't normally exercised being used as a cmdlet
