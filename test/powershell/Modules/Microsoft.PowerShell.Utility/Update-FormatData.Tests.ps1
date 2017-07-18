@@ -62,7 +62,7 @@ Describe "Update-FormatData basic functionality" -Tags "CI" {
 Describe "Update-FormatData with resources in CustomControls" -Tags "CI" {
 
     BeforeAll {
-        $templatePath = Join-Path $PSScriptRoot 'UpdateFormatDataTests.format.ps1xml'
+        $templatePath = Join-Path $PSScriptRoot (Join-Path 'assets' 'UpdateFormatDataTests.format.ps1xml')
         $formatFilePath = Join-Path $TestDrive 'UpdateFormatDataTests.format.ps1xml'
         $ps = [powershell]::Create()
         $iss = [system.management.automation.runspaces.initialsessionstate]::CreateDefault2()

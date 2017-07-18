@@ -180,18 +180,19 @@ namespace System.Management.Automation
             ResourceManager resourceManager = null;
             string text = string.Empty;
 
-            // FYI: for a non-existing resource defined by {assembly,baseName,resourceId}
-            // MissingManifestResourceException is thrown only at the time when resource retrieval method such as ResourceManager.GetString or ResourceManager.GetObject is called,
-            // Not when you instantiate a ResourceManager object.
+            // For a non-existing resource defined by {assembly,baseName,resourceId}
+            // MissingManifestResourceException is thrown only at the time when resource retrieval method
+            // such as ResourceManager.GetString or ResourceManager.GetObject is called,
+            // not when you instantiate a ResourceManager object.
             try
             {
-                // try with original baseName
+                // try with original baseName first
+                // if it fails then try with alternative resource path format
                 resourceManager = GetResourceManager(assembly, baseName);
                 text = resourceManager.GetString(resourceId);
             }
             catch (MissingManifestResourceException)
             {
-                // original baseName failed;  lets try with alternative resource path format
                 const string resourcesSubstring = ".resources.";
                 int resourcesSubstringIndex = baseName.IndexOf(resourcesSubstring);
                 string newBaseName = string.Empty;
