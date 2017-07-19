@@ -1,4 +1,4 @@
-Describe "ArrayExpression Tests" {
+Describe "ArrayExpression Tests" -Tags "CI" {
     It "@([object[]](1,2,3)) should return an array of object[]" {
         $result = @([object[]](1,2,3))
         $result.GetType().FullName | Should Be "System.Object[]"
