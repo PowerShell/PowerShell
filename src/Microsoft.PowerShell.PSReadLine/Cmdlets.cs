@@ -697,7 +697,8 @@ namespace Microsoft.PowerShell
                 if (ParameterSetName.Equals(FunctionParameterSet))
                 {
                     var function = (string)_dynamicParameters.Value[FunctionParameter].Value;
-                    MethodInfo mi = typeof (PSConsoleReadLine).GetMethod(function);
+                    MethodInfo mi = typeof (PSConsoleReadLine).GetMethod(function,
+                        BindingFlags.Public | BindingFlags.Instance | BindingFlags.IgnoreCase);
                     var keyHandler = (Action<ConsoleKeyInfo?, object>)
                         mi.CreateDelegate(typeof (Action<ConsoleKeyInfo?, object>));
                     BriefDescription = function;
