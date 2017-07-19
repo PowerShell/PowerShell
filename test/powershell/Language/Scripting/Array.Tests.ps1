@@ -1,4 +1,10 @@
 Describe "ArrayExpression Tests" {
+    It "@([object[]](1,2,3)) should return an array of object[]" {
+        $result = @([object[]](1,2,3))
+        $result.GetType().FullName | Should Be "System.Object[]"
+        $result.Count | Should Be 3
+    }
+
     It "@([int[]](1,2,3)) should return an array of object[]" {
         $result = @([int[]](1,2,3))
         $result.GetType().FullName | Should Be "System.Object[]"
