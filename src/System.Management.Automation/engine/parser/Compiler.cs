@@ -37,6 +37,8 @@ namespace System.Management.Automation.Language
             typeof(List<object>).GetConstructor(PSTypeExtensions.EmptyTypes);
         internal static readonly MethodInfo ObjectList_ToArray =
             typeof(List<object>).GetMethod(nameof(List<object>.ToArray), PSTypeExtensions.EmptyTypes);
+        internal static readonly MethodInfo ObjectArray_Clone =
+            typeof(object[]).GetMethod(nameof(Array.Clone), PSTypeExtensions.EmptyTypes);
 
         internal static readonly MethodInfo ArrayOps_GetMDArrayValue =
             typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValue), staticFlags);
@@ -5500,16 +5502,28 @@ namespace System.Management.Automation.Language
             }
             values = values ?? CaptureAstResults(subExpr, CaptureAstContext.Enumerable);
 
-            if (values.Type.IsArray)
+            if (values.Type == typeof(object[]) || values.Type == typeof(List<object>))
             {
-                // If the result is already an array, don't wrap the array.
-                return values;
+                Expression toArrayExpr = null;
+                if (values.Type == typeof(object[]))
+                {
+                    toArrayExpr = Expression.Call(values, CachedReflectionInfo.ObjectArray_Clone).Cast(typeof(object[]));
+                }
+                else
+                {
+                    toArrayExpr = Expression.Call(values, CachedReflectionInfo.ObjectList_ToArray);
+                }
+
+                var temp = Expression.Variable(typeof(object[]));
+                var expr = Expression.Block(
+                    new[] { temp },
+                    Expression.IfThenElse(
+                        Expression.Equal(values, ExpressionCache.NullConstant),
+                        Expression.Assign(temp, Expression.NewArrayInit(typeof(object), ExpressionCache.NullConstant)),
+                        Expression.Assign(temp, toArrayExpr)),
+                    temp);
             }
-            if (values.Type == typeof(List<object>))
-            {
-                return Expression.Call(values, CachedReflectionInfo.ObjectList_ToArray);
-            }
-            if (values.Type.GetTypeInfo().IsPrimitive || values.Type == typeof(string))
+            if (values.Type.IsPrimitive || values.Type == typeof(string))
             {
                 // Slight optimization - no need for a dynamic site.  We could special case other
                 // types as well, but it's probably not worth it.
