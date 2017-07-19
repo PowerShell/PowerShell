@@ -194,9 +194,18 @@ function Invoke-AppVeyorInstall
         {
             $buildName += $env:APPVEYOR_PULL_REQUEST_TITLE
         }
-        elseif($env:APPVEYOR_REPO_COMMIT_MESSAGE  -notmatch '^\[Daily\].*$'  )
+        elseif($env:APPVEYOR_PULL_REQUEST_TITLE)
         {
+            $buildName = $env:APPVEYOR_PULL_REQUEST_TITLE
+        }
+        elseif($env:APPVEYOR_REPO_COMMIT_MESSAGE -notmatch '^\[Daily\].*$')
+        {
+            
             $buildName += $env:APPVEYOR_REPO_COMMIT_MESSAGE
+        }
+        else
+        {
+            $buildName = $env:APPVEYOR_REPO_COMMIT_MESSAGE
         }
 
         Update-AppveyorBuild -message $buildName
