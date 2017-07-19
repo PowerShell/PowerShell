@@ -33,50 +33,58 @@ Describe "Encoding classes and methods are available" -Tag CI {
             $encoder = [Microsoft.PowerShell.PowerShellEncoding]::GetEncoding($encoding)
             $encoder.GetBytes([Environment]::NewLine) -Join "-"
         }
-        function Test-GetEncoding
-        {
-            [CmdletBinding()]
-            param (
-                [Microsoft.PowerShell.FileEncoding]$Encoding
-            )
-            END {
-                [Microsoft.PowerShell.PowerShellEncoding]::GetCmdletEncoding($pscmdlet, $encoding)
-            }
-        }
 
         $preambleTests =
-            @{ Name = 'Ascii'; Preamble = '' },
-            @{ Name = 'BigEndianUTF32'; Preamble = '254-255' },
-            @{ Name = 'BigEndianUnicode'; Preamble = '254-255' },
-            @{ Name = 'Byte'; Preamble = '255-254' },
-            @{ Name = 'Default'; Preamble = '' },
-            @{ Name = 'Oem'; Preamble = '' },
-            @{ Name = 'String'; Preamble = '255-254' },
-            @{ Name = 'UTF32'; Preamble = '255-254-0-0' },
-            @{ Name = 'UTF7'; Preamble = '' },
-            @{ Name = 'UTF8'; Preamble = '' },
-            @{ Name = 'UTF8BOM'; Preamble = '239-187-191' },
-            @{ Name = 'UTF8NoBOM'; Preamble = '' },
-            @{ Name = 'Unicode'; Preamble = '255-254' },
-            @{ Name = 'Unknown'; Preamble = '' },
-            @{ Name = 'WindowsLegacy'; Preamble = '' }
+            @{ Encoding = 'Ascii'; Preamble = '' },
+            @{ Encoding = 'BigEndianUTF32'; Preamble = '254-255' },
+            @{ Encoding = 'BigEndianUnicode'; Preamble = '254-255' },
+            @{ Encoding = 'Byte'; Preamble = '255-254' },
+            @{ Encoding = 'Default'; Preamble = '' },
+            @{ Encoding = 'Oem'; Preamble = '' },
+            @{ Encoding = 'String'; Preamble = '255-254' },
+            @{ Encoding = 'UTF32'; Preamble = '255-254-0-0' },
+            @{ Encoding = 'UTF7'; Preamble = '' },
+            @{ Encoding = 'UTF8'; Preamble = '' },
+            @{ Encoding = 'UTF8BOM'; Preamble = '239-187-191' },
+            @{ Encoding = 'UTF8NoBOM'; Preamble = '' },
+            @{ Encoding = 'Unicode'; Preamble = '255-254' },
+            @{ Encoding = 'Unknown'; Preamble = '' },
+            @{ Encoding = 'WindowsLegacy'; Preamble = '' }
+
+        $testStringEncodedBytes = @{
+            Ascii = "116-63-115-116-" + (Get-NewLineBytes Ascii)
+            BigEndianUTF32 = "254-255-0-116-0-233-0-115-0-116-" + (Get-NewLineBytes BigEndianUTF32)
+            BigEndianUnicode = "254-255-0-116-0-233-0-115-0-116-" + (Get-NewLineBytes BigEndianUnicode)
+            Byte = "255-254-116-0-233-0-115-0-116-0-" + (Get-NewLineBytes Byte)
+            Default = "116-195-169-115-116-" + (Get-NewLineBytes Default)
+            # Oem encoding can change depending on system, calculate the expected string
+            Oem = ([Microsoft.PowerShell.PowerShellEncoding]::GetEncoding("Oem").GetBytes($testString) -join "-") + "-" + (Get-NewLineBytes Oem)
+            String = "255-254-116-0-233-0-115-0-116-0-" + (Get-NewLineBytes String)
+            UTF32 = "255-254-0-0-116-0-0-0-233-0-0-0-115-0-0-0-116-0-0-0-" + (Get-NewLineBytes UTF32)
+            UTF7 = "116-43-65-79-107-45-115-116-" + (Get-NewLineBytes UTF7)
+            UTF8 = "116-195-169-115-116-" + (Get-NewLineBytes UTF8 )
+            UTF8BOM = "239-187-191-116-195-169-115-116-" + (Get-NewLineBytes UTF8BOM)
+            UTF8NoBOM = "116-195-169-115-116-" + (Get-NewLineBytes UTF8NoBOM)
+            Unicode = "255-254-116-0-233-0-115-0-116-0-" + (Get-NewLineBytes Unicode)
+            Unknown = "116-195-169-115-116-" + (Get-NewLineBytes Unknown)
+            }
 
         $contentTests =
-            @{ Name = 'Ascii'; Bytes = "116-63-115-116-" + (Get-NewLineBytes Ascii) },
-            @{ Name = 'BigEndianUTF32'; Bytes = "254-255-0-116-0-233-0-115-0-116-" + (Get-NewLineBytes BigEndianUTF32) },
-            @{ Name = 'BigEndianUnicode'; Bytes = "254-255-0-116-0-233-0-115-0-116-" + (Get-NewLineBytes BigEndianUnicode) },
-            @{ Name = 'Byte'; Bytes = "255-254-116-0-233-0-115-0-116-0-" + (Get-NewLineBytes Byte) },
-            @{ Name = 'Default'; Bytes = "116-195-169-115-116-" + (Get-NewLineBytes Default) },
+            @{ Encoding = 'Ascii'; Bytes = $testStringEncodedBytes['Ascii'] },
+            @{ Encoding = 'BigEndianUTF32'; Bytes = $testStringEncodedBytes['BigEndianUTF32'] },
+            @{ Encoding = 'BigEndianUnicode'; Bytes = $testStringEncodedBytes['BigEndianUnicode'] },
+            @{ Encoding = 'Byte'; Bytes = $testStringEncodedBytes['Byte'] },
+            @{ Encoding = 'Default'; Bytes = $testStringEncodedBytes['Default'] },
             # Oem encoding can change depending on system, calculate the expected string
-            @{ Name = 'Oem'; Bytes = ([Microsoft.PowerShell.PowerShellEncoding]::GetEncoding("Oem").GetBytes($testString) -join "-") + "-" + (Get-NewLineBytes Oem) },
-            @{ Name = 'String'; Bytes = "255-254-116-0-233-0-115-0-116-0-" + (Get-NewLineBytes String) },
-            @{ Name = 'UTF32'; Bytes = "255-254-0-0-116-0-0-0-233-0-0-0-115-0-0-0-116-0-0-0-" + (Get-NewLineBytes UTF32) },
-            @{ Name = 'UTF7'; Bytes = "116-43-65-79-107-45-115-116-" + (Get-NewLineBytes UTF7) },
-            @{ Name = 'UTF8'; Bytes = "116-195-169-115-116-" + (Get-NewLineBytes UTF8 ) },
-            @{ Name = 'UTF8BOM'; Bytes = "239-187-191-116-195-169-115-116-" + (Get-NewLineBytes UTF8BOM) },
-            @{ Name = 'UTF8NoBOM'; Bytes = "116-195-169-115-116-" + (Get-NewLineBytes UTF8NoBOM) },
-            @{ Name = 'Unicode'; Bytes = "255-254-116-0-233-0-115-0-116-0-" + (Get-NewLineBytes Unicode) },
-            @{ Name = 'Unknown'; Bytes = "116-195-169-115-116-" + (Get-NewLineBytes Unknown) }
+            @{ Encoding = 'Oem'; Bytes = $testStringEncodedBytes['Oem'] },
+            @{ Encoding = 'String'; Bytes = $testStringEncodedBytes['String'] },
+            @{ Encoding = 'UTF32'; Bytes = $testStringEncodedBytes['UTF32'] },
+            @{ Encoding = 'UTF7'; Bytes = $testStringEncodedBytes['UTF7'] },
+            @{ Encoding = 'UTF8'; Bytes = $testStringEncodedBytes['UTF8'] },
+            @{ Encoding = 'UTF8BOM'; Bytes = $testStringEncodedBytes['UTF8BOM'] },
+            @{ Encoding = 'UTF8NoBOM'; Bytes = $testStringEncodedBytes['UTF8NoBOM'] },
+            @{ Encoding = 'Unicode'; Bytes = $testStringEncodedBytes['Unicode'] },
+            @{ Encoding = 'Unknown'; Bytes = $testStringEncodedBytes['Unknown'] }
 
     }
 
@@ -88,52 +96,57 @@ Describe "Encoding classes and methods are available" -Tag CI {
         $PSDefaultFileEncoding = "Unknown"
     }
 
-    It "Encoding for '<Name>' should have correct preamble '<preamble>'" -TestCase $preambleTests {
-        param ( $Name, $Preamble )
-        [Microsoft.PowerShell.PowerShellEncoding]::GetEncoding($Name).GetPreamble() -Join "-" | Should be $Preamble
+    It "Encoding for '<Encoding>' should have correct preamble '<preamble>'" -TestCase $preambleTests {
+        param ( $Encoding, $Preamble )
+        [Microsoft.PowerShell.PowerShellEncoding]::GetEncoding($Encoding).GetPreamble() -Join "-" | Should be $Preamble
     }
 
-    It "Encoding for '<Name>' should create file with proper encoding" -TestCase $contentTests {
-        param ( $Name, $Bytes )
-        $testString | out-file -encoding $Name $testFile
+    It "Encoding for '<Encoding>' should create file with proper encoding" -TestCase $contentTests {
+        param ( $Encoding, $Bytes )
+        $testString | out-file -encoding $Encoding $testFile
         Get-FileBytes $testFile | should be $Bytes
     }
 
-    It "Setting PSDefaultFileEncoding to '<Name>' should create file with proper encoding" -TestCase $contentTests {
-        param ( $Name, $Bytes )
-        $PSDefaultFileEncoding = $Name
+    It "Setting PSDefaultFileEncoding to '<Encoding>' should create file with proper encoding" -TestCase $contentTests {
+        param ( $Encoding, $Bytes )
+        $PSDefaultFileEncoding = $Encoding
         $testString | out-file $testFile
         Get-FileBytes $testFile | should be $Bytes
     }
 
-    It "Explicit encoding is not overridden by setting PSDefaultFileEncoding to '<Name>'" -TestCase $contentTests {
-        param ( $Name, $Bytes )
-        $PSDefaultFileEncoding = $Name
+    It "Explicit encoding is not overridden by setting PSDefaultFileEncoding to '<Encoding>'" -TestCase $contentTests {
+        param ( $Encoding, $Bytes )
+        $PSDefaultFileEncoding = $Encoding
         $testString | out-file -encoding ascii $testFile
-        Get-FileBytes $testFile | should be ("116-63-115-116-" + (Get-NewLineBytes ASCII))
+        Get-FileBytes $testFile | should be $testStringEncodedBytes['Ascii']
     }
 
     Context "Legacy Windows Behavior" {
 
-        It "Add-Content creates ascii encoded files" {
+        It "Add-Content creates utf8 encoded files" {
             $testString | add-content -encoding WindowsLegacy $TESTDRIVE/file.txt
-            Get-FileBytes $TESTDRIVE/file.txt | should be ("116-195-169-115-116-" + (Get-NewLineBytes ASCII))
+            Get-FileBytes $TESTDRIVE/file.txt | should be $testStringEncodedBytes['UTF8']
         }
 
-        It "Set-Content creates ascii encoded files" {
+        It "Set-Content creates utf8 encoded files" {
             $testString | set-content -encoding WindowsLegacy $TESTDRIVE/file.txt
-            Get-FileBytes $TESTDRIVE/file.txt | should be ("116-195-169-115-116-" + (Get-NewLineBytes ASCII))
+            Get-FileBytes $TESTDRIVE/file.txt | should be $testStringEncodedBytes['UTF8']
         }
 
         It "Export-CliXml creates unicode encoded files" {
             [pscustomobject]@{ text = $testString } | export-clixml -encoding WindowsLegacy $TESTDRIVE/file.clixml
+            # these are the characters
+            # <BOM><Obj
+            # which is what Export-CliXml creates
             Get-FileBytes $TESTDRIVE/file.clixml -count 10 | should be "255-254-60-0-79-0-98-0-106-0"
         }
 
         It "Export-Csv creates ascii encoded files" {
             # we'll be looking for the bytes 116-63-115-116 which is what $testString looks like when encoded as ascii
-            [pscustomobject]@{ text = $testString } | export-csv -encoding WindowsLegacy $TESTDRIVE/file.clixml
-            Get-FileBytes $TESTDRIVE/file.clixml | should match "116-63-115-116"
+            [pscustomobject]@{ text = $testString } | export-csv -encoding WindowsLegacy $TESTDRIVE/file.csv
+            # Get-FileBytes for this file returns the entire contents, we should be looking only for the string which is
+            # interesting to us which is "t?st" (bytes 116, 63, 115, 116
+            Get-FileBytes $TESTDRIVE/file.csv | should match "116-63-115-116"
         }
 
         It "New-ModuleManifest creates unicode encoded files" {
@@ -154,6 +167,8 @@ Describe "Encoding classes and methods are available" -Tag CI {
 
         It "Out-File creates properly encoded files" {
             $testString | Out-File -encoding WindowsLegacy -FilePath $TESTDRIVE/file.txt
+            # we are using the first 10 bytes to convince us that we created the proper encoding
+            # this doesn't include the new line
             Get-FileBytes $TESTDRIVE/file.txt -count 10 | should match "255-254-116-0-233-0-115-0-116-0"
         }
 
@@ -165,6 +180,8 @@ Describe "Encoding classes and methods are available" -Tag CI {
             finally {
                 $PSDefaultFileEncoding = "Unknown"
             }
+            # we are using the first 10 bytes to convince us that we created the proper encoding
+            # this doesn't include the new line
             Get-FileBytes $TESTDRIVE/file.txt -count 10 | should match "255-254-116-0-233-0-115-0-116-0"
         }
     }
