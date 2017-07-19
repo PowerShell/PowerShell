@@ -91,6 +91,13 @@ Function Test-DailyBuild
     {
         return $true
     }
+    
+    # if [Feature] is in the commit message,
+    # Run Daily tests
+    if($env:APPVEYOR_REPO_COMMIT_MESSAGE -match '\[feature\]')
+    {
+        return $true
+    }
 
     return $false
 }
@@ -180,11 +187,14 @@ function Invoke-AppVeyorInstall
 {
     if(Test-DailyBuild){
         $buildName = "[Daily]"
-        if($env:APPVEYOR_PULL_REQUEST_TITLE)
+
+        # Add daily to title if it's not already there
+        # It can be there already for rerun requests
+        if($env:APPVEYOR_PULL_REQUEST_TITLE -and $env:APPVEYOR_PULL_REQUEST_TITLE  -notmatch '^\[Daily\]')
         {
             $buildName += $env:APPVEYOR_PULL_REQUEST_TITLE
         }
-        else
+        elseif($env:APPVEYOR_REPO_COMMIT_MESSAGE  -notmatch '^\[Daily\].*$'  )
         {
             $buildName += $env:APPVEYOR_REPO_COMMIT_MESSAGE
         }
