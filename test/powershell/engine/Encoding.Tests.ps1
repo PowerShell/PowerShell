@@ -36,7 +36,7 @@ Describe "Encoding classes and methods are available" -Tag CI {
 
         $preambleTests =
             @{ Encoding = 'Ascii'; Preamble = '' },
-            @{ Encoding = 'BigEndianUTF32'; Preamble = '254-255' },
+            @{ Encoding = 'BigEndianUTF32'; Preamble = '0-0-254-255' },
             @{ Encoding = 'BigEndianUnicode'; Preamble = '254-255' },
             @{ Encoding = 'Byte'; Preamble = '255-254' },
             @{ Encoding = 'Default'; Preamble = '' },
@@ -53,7 +53,7 @@ Describe "Encoding classes and methods are available" -Tag CI {
 
         $testStringEncodedBytes = @{
             Ascii = "116-63-115-116-" + (Get-NewLineBytes Ascii)
-            BigEndianUTF32 = "254-255-0-116-0-233-0-115-0-116-" + (Get-NewLineBytes BigEndianUTF32)
+            BigEndianUTF32 = "0-0-254-255-0-0-0-116-0-0-0-233-0-0-0-115-0-0-0-116-" + (Get-NewLineBytes BigEndianUTF32)
             BigEndianUnicode = "254-255-0-116-0-233-0-115-0-116-" + (Get-NewLineBytes BigEndianUnicode)
             Byte = "255-254-116-0-233-0-115-0-116-0-" + (Get-NewLineBytes Byte)
             Default = "116-195-169-115-116-" + (Get-NewLineBytes Default)
@@ -119,6 +119,41 @@ Describe "Encoding classes and methods are available" -Tag CI {
         $PSDefaultFileEncoding = $Encoding
         $testString | out-file -encoding ascii $testFile
         Get-FileBytes $testFile | should be $testStringEncodedBytes['Ascii']
+    }
+
+    It "Explicit encoding set to unknown and preference variable set to unicode creates unicode file" {
+        $PSDefaultFileEncoding = "Unicode"
+        $testString | set-content -encoding unknown $testfile
+        Get-FileBytes $testFile | should be $testStringEncodedBytes['Unicode']
+    }
+
+    It "getting the encoding for an unknown cmdlet should return utf-8" {
+        $method = [microsoft.powershell.powershellencoding].getmember("GetWindowsLegacyEncoding","NonPublic,Static")
+        $method.Invoke($null, "badcmdlet").BodyName | should be "utf-8"
+    }
+
+    It "When session state is null, GetEncodingPreference returns unknown" {
+        [Microsoft.PowerShell.PowerShellEncoding]::GetEncodingPreference($null) | should be "unknown"
+    }
+
+    Context "GetFileEncodingFromFile tests" {
+        BeforeAll {
+            $TestCases = @{ Encoding = "Unicode"; Text = $testString; FilePath = $testFile },
+                @{ Encoding = "UTF8NoBOM"; Text = $testString; FilePath = $testFile },
+                @{ Encoding = "UTF32"; Text = $testString; FilePath = $testFile },
+                @{ Encoding = "BigEndianUTF32"; Text = $testString; FilePath = $testFile },
+                @{ Encoding = "UTF8Bom"; Text = $testString; FilePath = $testFile },
+                @{ Encoding = "Byte"; Text = [byte[]](20..40); FilePath = $testFile },
+                @{ Encoding = "UTF8NoBom"; Text = ""; FilePath = $testFile },
+                @{ Encoding = "Default"; Text = ""; FilePath = "$TESTDRIVE/ThisFileCouldNotPossiblyExist" }
+        }
+
+        It "GetFileEncodingFromFile can discover a <Encoding> encoded file" -TestCase $TestCases {
+            param ( $Encoding, $Text, $FilePath )
+            # I need a way to not open the right file to test the missing file scenario
+            $Text | set-content -encoding $Encoding $testFile
+            [Microsoft.PowerShell.PowerShellEncoding]::GetFileEncodingFromFile($FilePath) | should be $encoding
+        }
     }
 
     Context "Legacy Windows Behavior" {
