@@ -47,8 +47,8 @@ function Get-CodeCoverageChange($r1, $r2, [string[]]$ClassName)
 
     if ( $ClassName ) {
         foreach ( $Class in $ClassName ) {
-            $c1 = $r1.Assembly.ClassCoverage | ?{$_.ClassName -eq $Class }
-            $c2 = $r2.Assembly.ClassCoverage | ?{$_.ClassName -eq $Class }
+            $c1 = $r1.Assembly.ClassCoverage | Where-Object {$_.ClassName -eq $Class }
+            $c2 = $r2.Assembly.ClassCoverage | Where-Object {$_.ClassName -eq $Class }
             $ClassCoverageChange = [pscustomobject]@{
                 ClassName     = $Class
                 Branch        = $c2.Branch
@@ -136,7 +136,7 @@ function Get-CoverageData($xmlPath)
         Assembly = $assemblies
     }
     $CoverageData.PSTypeNames.Insert(0,"OpenCover.CoverageData")
-    Add-Member -InputObject $CoverageData -MemberType ScriptMethod -Name GetClassCoverage -Value { param ( $name ) $this.assembly.classcoverage | ?{$_.classname -match $name } }
+    Add-Member -InputObject $CoverageData -MemberType ScriptMethod -Name GetClassCoverage -Value { param ( $name ) $this.assembly.classcoverage | Where-Object {$_.classname -match $name } }
     $null = $CoverageXml
 
     ## Adding explicit garbage collection as the $CoverageXml object tends to be very large, in order of 1 GB.
@@ -462,8 +462,10 @@ function Invoke-OpenCover
 
     # create the arguments for OpenCover
 
-    $startupArgs =  'Set-ExecutionPolicy Bypass -Force -Scope Process;'
-    $targetArgs = "-c","${startupArgs}", "Invoke-Pester","${TestDirectory}"
+    $updatedEnvPath = "${PowerShellExeDirectory}\Modules;$TestToolsModulesPath"
+
+    $startupArgs =  "Set-ExecutionPolicy Bypass -Force -Scope Process; `$env:PSModulePath = '${updatedEnvPath}';"
+    $targetArgs = "${startupArgs}", "Invoke-Pester","${TestDirectory}"
 
     if ( $CIOnly )
     {
@@ -481,30 +483,22 @@ function Invoke-OpenCover
 
     $targetArgStringElevated = $targetArgsElevated -join " "
     $targetArgStringUnelevated  = $targetArgsUnelevated -join " "
+
+    $bytes = [System.Text.Encoding]::Unicode.GetBytes($targetArgStringElevated)
+    $base64targetArgsElevated = [convert]::ToBase64String($bytes)
+
+    $bytes = [System.Text.Encoding]::Unicode.GetBytes($targetArgStringUnelevated)
+    $base64targetArgsUnelevated = [convert]::ToBase64String($bytes)
+
     # the order seems to be important. Always keep -targetargs as the last parameter.
-    $openCoverArgsElevated = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all","-mergeoutput", "-filter:`"+[*]* -[Microsoft.PowerShell.PSReadLine]*`"", "-targetargs:`"$targetArgStringElevated`""
-    $openCoverArgsUnelevated = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all", "-mergeoutput", "-filter:`"+[*]* -[Microsoft.PowerShell.PSReadLine]*`"", "-targetargs:`"$targetArgStringUnelevated`""
+    $openCoverArgsElevated = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all","-mergeoutput", "-filter:`"+[*]* -[Microsoft.PowerShell.PSReadLine]*`"", "-targetargs:`"-EncodedCommand $base64targetArgsElevated`""
+    $openCoverArgsUnelevated = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all", "-mergeoutput", "-filter:`"+[*]* -[Microsoft.PowerShell.PSReadLine]*`"", "-targetargs:`"-EncodedCommand $base64targetArgsUnelevated`""
     $openCoverArgsUnelevatedString = $openCoverArgsUnelevated -join " "
 
     if ( $PSCmdlet.ShouldProcess("$OpenCoverBin $openCoverArgsUnelevated")  )
     {
         try
         {
-            # check to be sure that the module path is present
-            # this isn't done earlier because there's no need to change env:PSModulePath unless we're going to really run tests
-            $saveModPath = $env:PSModulePath
-            $env:PSModulePath = "${PowerShellExeDirectory}\Modules;$TestToolsModulesPath"
-
-            $modulePathParts = $env:PSModulePath -split ';'
-
-            foreach($part in $modulePathParts)
-            {
-                if ( ! (test-path $part) )
-                {
-                    throw "${part} does not exist"
-                }
-            }
-
             # invoke OpenCover elevated
             & $OpenCoverBin $openCoverArgsElevated
 
@@ -516,6 +510,9 @@ function Invoke-OpenCover
             # poll for process exit every 60 seconds
             # timeout of 6 hours
             $timeOut = ([datetime]::Now).AddHours(6)
+
+            $openCoverExited = $false
+
             while([datetime]::Now -lt $timeOut)
             {
                 Start-Sleep -Seconds 60
@@ -524,14 +521,18 @@ function Invoke-OpenCover
                 if(-not $openCoverProcess)
                 {
                     #run must have completed.
+                    $openCoverExited = $true
                     break
                 }
+            }
+
+            if(-not $openCoverExited)
+            {
+                throw "Opencover has not exited in 6 hours"
             }
         }
         finally
         {
-            # set it back
-            $env:PSModulePath = $saveModPath
             Remove-Item "$env:temp\unelevated.ps1" -force -ErrorAction SilentlyContinue
         }
     }
