@@ -44,8 +44,10 @@ Describe "PSReadLine" -tags "CI" {
 
     It "Should ignore case when using Function binding" {
         Set-PSReadlineOption -EditMode Windows
-        Set-PSReadlineKeyHandler "Ctrl+k" -Function yank # NOTE: lower case function name
-        (Get-PSReadlineKeyHandler | Where { $_.Key -ceq "Ctrl+k"}).Function | Should Be Yank
+        $lowerCaseFunctionName = "yank";
+        $pascalCaseFunctionName = "Yank"
+        Set-PSReadlineKeyHandler "Ctrl+k" -Function $lowerCaseFunctionName
+        (Get-PSReadlineKeyHandler | Where { $_.Key -ceq "Ctrl+k"}).Function | Should Be $pascalCaseFunctionName
     }
 
     AfterAll {
