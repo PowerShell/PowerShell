@@ -100,7 +100,7 @@ In these cases:
 
 Repository Maintainers currently consist mostly of Microsoft employees.
 It is expected that over time, regular trusted contributors to the PowerShell repository will be made Repository Maintainers.
-Eligibility is heavily dependent on the level of contribution and expertise: individuals who contribute in meaningful ways consistently to the project will be recognized accordingly.
+Eligibility is heavily dependent on the level of contribution and expertise: individuals who contribute consistently in meaningful ways to the project will be recognized accordingly.
 
 At any point in time, the existing Repository Maintainers can nominate a strong community member to become a Repository Maintainer.
 Nominations are brought to the PowerShell Committee to understand the reasons and justification.
