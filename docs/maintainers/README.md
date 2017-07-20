@@ -104,7 +104,7 @@ Eligibility is heavily dependent on the level of contribution and expertise: ind
 
 At any point in time, the existing Repository Maintainers can nominate a strong community member to become a Repository Maintainer.
 Nominations are brought to the PowerShell Committee to understand the reasons and justification.
-Once a nominee has been approved, a PR will be submitted by a current Maintainer to update this document to add the nominee's name to the (Current Repository Maintainers)[#Current-Repository-Maintainers] with justification as the description of the PR to serve as the public announcement.
+Once a nominee has been approved, a PR will be submitted by a current Maintainer to update this document to add the nominee's name to the [Current Repository Maintainers](#Current-Repository-Maintainers) with justification as the description of the PR to serve as the public announcement.
 
 [RFC-repo]: https://github.com/PowerShell/PowerShell-RFC
 [ci-system]: ../testing-guidelines/testing-guidelines.md#ci-system
