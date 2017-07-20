@@ -10,6 +10,7 @@ if(Test-Path $dotNetPath)
 }
 
 Import-Module (Join-Path $repoRoot 'build.psm1')
+Import-Module (Join-Path $repoRoot 'tools\packaging')
 
 function New-LocalUser
 {
