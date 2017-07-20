@@ -97,17 +97,30 @@ function Set-DailyBuildBadge
 # One of push, pull_request, api, cron.
 $isPR = $env:TRAVIS_EVENT_TYPE -eq 'pull_request'
 
+# For PRs, Travis-ci strips out [ and ] so read the message directly from git
+if($env:TRAVIS_EVENT_TYPE -eq 'pull_request')
+{
+    # Get the second log entry body
+    # The first log is a merge for a PR
+    $commitMessage = git log --format=%B -n 1 --skip=1
+}
+else
+{
+    $commitMessage = $env:TRAVIS_COMMIT_MESSAGE
+}
+
+
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
-$isFullBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api' -or $env:TRAVIS_COMMIT_MESSAGE -match '\[feature\]'
+$isFullBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api' -or $commitMessage -match '\[feature\]'
 
 if($Bootstrap.IsPresent)
 {
-    Write-Host -Foreground Green "Executing travis.ps1 -BootStrap `$isPR='$isPr'"
+    Write-Host -Foreground Green "Executing travis.ps1 -BootStrap `$isPR='$isPr' - $commitMessage"
     Start-PSBootstrap -Package:(-not $isPr)
 }
 else 
 {
-    Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild'"
+    Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
     $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions))
 
     # CrossGen'ed assemblies cause a hang to happen intermittently when running powershell class
