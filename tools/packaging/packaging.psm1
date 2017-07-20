@@ -88,6 +88,7 @@ function Start-PSPackage {
         }
         Write-Warning "-Type was not specified, continuing with $Type!"
     }
+    Write-Verbose "Packaging Type: $Type" -Verbose
 
     # Build the name suffix for win-plat packages
     if ($Environment.IsWindows) {
@@ -147,7 +148,7 @@ function Start-PSPackage {
         }
         "AppImage" {
             if ($Environment.IsUbuntu14) {
-                Start-NativeExecution { bash -iex "$PSScriptRoot/../appimage.sh" }
+                $null = Start-NativeExecution { bash -iex "$PSScriptRoot/../appimage.sh" }
                 $appImage = Get-Item PowerShell-*.AppImage
                 if ($appImage.Count -gt 1) {
                     throw "Found more than one AppImage package, remove all *.AppImage files and try to create the package again"
