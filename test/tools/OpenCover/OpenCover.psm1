@@ -427,7 +427,8 @@ function Invoke-OpenCover
         [parameter()]$PesterLogUnelevated = "$pwd/TestResultsUnelevated.xml",
         [parameter()]$PesterLogFormat = "NUnitXml",
         [parameter()]$TestToolsModulesPath = "${script:psRepoPath}/test/tools/Modules",
-        [switch]$CIOnly
+        [switch]$CIOnly,
+        [switch]$Quiet = $true
         )
 
     # check for elevation
@@ -478,8 +479,14 @@ function Invoke-OpenCover
         $targetArgsUnelevated = $targetArgs + @("-excludeTag @('RequireAdminOnWindows')")
     }
 
-    $targetArgsElevated += @("-OutputFile $PesterLogElevated", "-OutputFormat $PesterLogFormat", "-Quiet")
-    $targetArgsUnelevated += @("-OutputFile $PesterLogUnelevated", "-OutputFormat $PesterLogFormat", "-Quiet")
+    $targetArgsElevated += @("-OutputFile $PesterLogElevated", "-OutputFormat $PesterLogFormat")
+    $targetArgsUnelevated += @("-OutputFile $PesterLogUnelevated", "-OutputFormat $PesterLogFormat")
+
+    if($Quiet)
+    {
+        $targetArgsElevated += @("-Quiet")
+        $targetArgsUnelevated += @("-Quiet")
+    }
 
     $targetArgStringElevated = $targetArgsElevated -join " "
     $targetArgStringUnelevated  = $targetArgsUnelevated -join " "

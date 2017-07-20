@@ -1,7 +1,8 @@
 ﻿param(
     [Parameter(Mandatory = $true, Position = 0)] $coverallsToken,
     [Parameter(Mandatory = $true, Position = 1)] $codecovToken,
-    [Parameter(Position = 2)] $azureLogDrive = "L:\"
+    [Parameter(Position = 2)] $azureLogDrive = "L:\",
+    [Parameter] [switch] $Quiet = $true
 )
 
 # Read the XML and create a dictionary for FileUID -> file full path.
@@ -182,6 +183,11 @@ try
         PesterLogElevated = $elevatedLogs;
         PesterLogUnelevated = $unelevatedLogs;
         TestToolsModulesPath = "$testToolsPath\Modules";
+    }
+
+    if($Quiet)
+    {
+        $openCoverParams.Add('Quiet', $true)
     }
 
     $openCoverParams | Out-String | Write-LogPassThru
