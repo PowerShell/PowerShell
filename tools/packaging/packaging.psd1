@@ -7,5 +7,5 @@ ModuleVersion="1.0.0"
 PowerShellVersion="5.0"
 CmdletsToExport="Start-PSPackage"
 RootModule="packaging.psm1"
-RequiredModules = @(”build”)
+RequiredModules = @("build")
 }
