@@ -669,6 +669,11 @@ function New-PSOptions {
               CrossGen = $CrossGen }
 }
 
+# Get the Options of the last build
+function Get-PSOptions {
+    return $script:Options
+}
+
 
 function Get-PSOutput {
     [CmdletBinding()]param(
@@ -2678,8 +2683,4 @@ $script:RESX_TEMPLATE = @'
 </root>
 '@
 
-# Import packaging module into global scope as some of the CmdLets used to be part of the module
-# The seperation provides the ability to modify the packaging code and not have to rebuild to
-# rerun packaging.
-# You can also just import the packaging psm1
-Import-Module "$PSScriptRoot\tools\packaging.psm1" -scope:global
+Write-Verbose "`Start-PSPackage` has been moved to the module tools/packaging" -Verbose
