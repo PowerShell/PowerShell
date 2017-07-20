@@ -1,3 +1,4 @@
+$Environment = Get-EnvironmentInformation
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
     param(
@@ -20,7 +21,7 @@ function Start-PSPackage {
 
         # Generate windows downlevel package
         [ValidateSet("win81-x64", "win7-x86", "win7-x64")]
-        [ValidateScript({$IsWindows})]
+        [ValidateScript({$Environment.IsWindows})]
         [string]$WindowsDownLevel
     )
 
@@ -72,24 +73,24 @@ function Start-PSPackage {
 
     # Decide package output type
     if (-not $Type) {
-        $Type = if ($IsLinux) {
-            if ($LinuxInfo.ID -match "ubuntu") {
+        $Type = if ($Environment.IsLinux) {
+            if ($Environment.LinuxInfo.ID -match "ubuntu") {
                 "deb"
-            } elseif ($IsRedHatFamily) {
+            } elseif ($Environment.IsRedHatFamily) {
                 "rpm"
             } else {
-                throw "Building packages for $($LinuxInfo.PRETTY_NAME) is unsupported!"
+                throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
             }
-        } elseif ($IsOSX) {
+        } elseif ($Environment.IsOSX) {
             "osxpkg"
-        } elseif ($IsWindows) {
+        } elseif ($Environment.IsWindows) {
             "msi", "appx"
         }
         Write-Warning "-Type was not specified, continuing with $Type!"
     }
 
     # Build the name suffix for win-plat packages
-    if ($IsWindows) {
+    if ($Environment.IsWindows) {
         # Add the server name to the $RunTime. $runtime produced by dotnet is same for client or server
         switch ($Runtime) {
             'win81-x64' {$NameSuffix = 'win81-win2012r2-x64'}
@@ -145,7 +146,7 @@ function Start-PSPackage {
             New-AppxPackage @Arguments
         }
         "AppImage" {
-            if ($IsUbuntu14) {
+            if ($Environment.IsUbuntu14) {
                 Start-NativeExecution { bash -iex "$PSScriptRoot/../appimage.sh" }
                 $appImage = Get-Item PowerShell-*.AppImage
                 if ($appImage.Count -gt 1) {
@@ -200,21 +201,21 @@ function New-UnixPackage {
     switch ($Type) {
         "deb" {
             $WarningMessage = "Building for Ubuntu {0}.04!"
-            if (!$IsUbuntu) {
+            if (!$Environment.IsUbuntu) {
                     throw ($ErrorMessage -f "Ubuntu")
-                } elseif ($IsUbuntu14) {
+                } elseif ($Environment.IsUbuntu14) {
                     Write-Warning ($WarningMessage -f "14")
-                } elseif ($IsUbuntu16) {
+                } elseif ($Environment.IsUbuntu16) {
                     Write-Warning ($WarningMessage -f "16")
                 }
         }
         "rpm" {
-            if (!$IsRedHatFamily) {
+            if (!$Environment.IsRedHatFamily) {
                 throw ($ErrorMessage -f "Redhat Family")
             }
         }
         "osxpkg" {
-            if (!$IsOSX) {
+            if (!$Environment.IsOSX) {
                 throw ($ErrorMessage -f "OS X")
             }
         }
@@ -279,16 +280,16 @@ It consists of a cross-platform command-line shell and associated scripting lang
     }
 
     # Follow the Filesystem Hierarchy Standard for Linux and OS X
-    $Destination = if ($IsLinux) {
+    $Destination = if ($Environment.IsLinux) {
         "/opt/microsoft/powershell/$Suffix"
-    } elseif ($IsOSX) {
+    } elseif ($Environment.IsOSX) {
         "/usr/local/microsoft/powershell/$Suffix"
     }
 
     # Destination for symlink to powershell executable
-    $Link = if ($IsLinux) {
+    $Link = if ($Environment.IsLinux) {
         "/usr/bin"
-    } elseif ($IsOSX) {
+    } elseif ($Environment.IsOSX) {
         "/usr/local/bin"
     }
 
@@ -296,7 +297,7 @@ It consists of a cross-platform command-line shell and associated scripting lang
     {
         New-Item -Force -ItemType SymbolicLink -Path "/tmp/$Name" -Target "$Destination/$Name" >$null
 
-        if ($IsRedHatFamily) {
+        if ($Environment.IsRedHatFamily) {
             # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
             # platform specific changes. This is the only set of platforms needed for this currently
             # as Ubuntu has these specific library files in the platform and OSX builds for itself
@@ -326,7 +327,7 @@ if [ "$1" = 0 ] ; then
 fi
 '@ -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
         }
-        elseif ($IsUbuntu) {
+        elseif ($Environment.IsUbuntu) {
             $AfterInstallScript = [io.path]::GetTempFileName()
             $AfterRemoveScript = [io.path]::GetTempFileName()
             @'
@@ -364,7 +365,7 @@ esac
         # so we move it to make symlink broken
         $symlink_dest = "$Destination/$Name"
         $hack_dest = "./_fpm_symlink_hack_powershell"
-        if ($IsOSX) {
+        if ($Environment.IsOSX) {
             if (Test-Path $symlink_dest) {
                 Write-Warning "Move $symlink_dest to $hack_dest (fpm utime bug)"
                 Move-Item $symlink_dest $hack_dest
@@ -403,7 +404,7 @@ esac
     # Setup package dependencies
     # These should match those in the Dockerfiles, but exclude tools like Git, which, and curl
     $Dependencies = @()
-    if ($IsUbuntu) {
+    if ($Environment.IsUbuntu) {
         $Dependencies = @(
             "libc6",
             "libcurl3",
@@ -416,12 +417,12 @@ esac
             "zlib1g"
         )
         # Please note the different libicu package dependency!
-        if ($IsUbuntu14) {
+        if ($Environment.IsUbuntu14) {
             $Dependencies += "libicu52"
-        } elseif ($IsUbuntu16) {
+        } elseif ($Environment.IsUbuntu16) {
             $Dependencies += "libicu55"
         }
-    } elseif ($IsRedHatFamily) {
+    } elseif ($Environment.IsRedHatFamily) {
         $Dependencies = @(
             "glibc",
             "libicu",
@@ -431,7 +432,7 @@ esac
             "zlib"
         )
 
-        if($IsFedora -or $IsCentOS)
+        if($Environment.IsFedora -or $Environment.IsCentOS)
         {
             $Dependencies += "libcurl"
             $Dependencies += "libgcc"
@@ -439,7 +440,7 @@ esac
             $Dependencies += "ncurses-base"
         }
 
-        if($IsOpenSUSE)
+        if($Environment.IsOpenSUSE)
         {
             $Dependencies += "libgcc_s1"
             $Dependencies += "libstdc++6"
@@ -448,9 +449,9 @@ esac
 
     # iteration is "debian_revision"
     # usage of this to differentiate distributions is allowed by non-standard
-    if ($IsUbuntu14) {
+    if ($Environment.IsUbuntu14) {
         $Iteration += "ubuntu1.14.04.1"
-    } elseif ($IsUbuntu16) {
+    } elseif ($Environment.IsUbuntu16) {
         $Iteration += "ubuntu1.16.04.1"
     }
 
@@ -459,13 +460,13 @@ esac
     # Fedora 24+
     # OpenSUSE 42.1 (13.2 might build but is EOL)
     # Also SEE: https://fedoraproject.org/wiki/Packaging:DistTag
-    if ($IsCentOS) {
+    if ($Environment.IsCentOS) {
         $rpm_dist = "el7"
-    } elseif ($IsFedora) {
-        $version_id = $LinuxInfo.VERSION_ID
+    } elseif ($Environment.IsFedora) {
+        $version_id = $Environment.LinuxInfo.VERSION_ID
         $rpm_dist = "fedora.$version_id"
-    } elseif ($IsOpenSUSE) {
-        $version_id = $LinuxInfo.VERSION_ID
+    } elseif ($Environment.IsOpenSUSE) {
+        $version_id = $Environment.LinuxInfo.VERSION_ID
         $rpm_dist = "suse.$version_id"
     }
 
@@ -484,7 +485,7 @@ esac
         "-t", $Type,
         "-s", "dir"
     )
-    if ($IsRedHatFamily) {
+    if ($Environment.IsRedHatFamily) {
         $Arguments += @("--rpm-dist", $rpm_dist)
         $Arguments += @("--rpm-os", "linux")
     }
@@ -509,7 +510,7 @@ esac
             $Output = Start-NativeExecution { fpm $Arguments }
         }
     } finally {
-        if ($IsOSX) {
+        if ($Environment.IsOSX) {
             # this is continuation of a fpm hack for a weird bug
             if (Test-Path $hack_dest) {
                 Write-Warning "Move $hack_dest to $symlink_dest (fpm utime bug)"
@@ -527,7 +528,7 @@ esac
     # Magic to get path output
     $createdPackage = Get-Item (Join-Path $PWD (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
-    if ($IsOSX) {
+    if ($Environment.IsOSX) {
         if($pscmdlet.ShouldProcess("Fix package name"))
         {
             # Add the OS information to the OSX package file name.
