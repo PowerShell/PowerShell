@@ -1,6 +1,5 @@
-
 function Start-PSPackage {
-    [CmdletBinding(DefaultParameterSetName='Version')]
+    [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
     param(
         # PowerShell packages use Semantic Versioning http://semver.org/
         [Parameter(ParameterSetName = "Version")]
@@ -33,6 +32,8 @@ function Start-PSPackage {
     }
     Write-Verbose "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'" -Verbose
 
+    $Script:Options = Get-PSOptions
+    
     # Make sure the most recent build satisfies the package requirement
     if (-not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
         -not $Script:Options.CrossGen -or                       ## Last build didn't specify -CrossGen
@@ -63,7 +64,7 @@ function Start-PSPackage {
 
     # Use Git tag if not given a version
     if (-not $Version) {
-        $Version = (git --git-dir="$PSScriptRoot/.git" describe) -Replace '^v'
+        $Version = (git --git-dir="$PSScriptRoot/../../.git" describe) -Replace '^v'
     }
 
     $Source = Split-Path -Path $Script:Options.Output -Parent
@@ -105,7 +106,11 @@ function Start-PSPackage {
                 PackageSourcePath = $Source
                 PackageVersion = $Version
             }
-            New-ZipPackage @Arguments
+
+            if($pscmdlet.ShouldProcess("Create Zip Package"))
+            {
+                New-ZipPackage @Arguments
+            }
         }
         "msi" {
             $TargetArchitecture = "x64"
@@ -118,26 +123,30 @@ function Start-PSPackage {
                 ProductNameSuffix = $NameSuffix
                 ProductSourcePath = $Source
                 ProductVersion = $Version
-                AssetsPath = "$PSScriptRoot\assets"
-                LicenseFilePath = "$PSScriptRoot\assets\license.rtf"
+                AssetsPath = "$PSScriptRoot\..\..\assets"
+                LicenseFilePath = "$PSScriptRoot\..\..\assets\license.rtf"
                 # Product Guid needs to be unique for every PowerShell version to allow SxS install
                 ProductGuid = [Guid]::NewGuid();
                 ProductTargetArchitecture = $TargetArchitecture;
             }
-            New-MSIPackage @Arguments
+
+            if($pscmdlet.ShouldProcess("Create MSI Package"))
+            {
+                New-MSIPackage @Arguments
+            }
         }
         "appx" {
             $Arguments = @{
                 PackageNameSuffix = $NameSuffix
                 PackageSourcePath = $Source
                 PackageVersion = $Version
-                AssetsPath = "$PSScriptRoot\assets"
+                AssetsPath = "$PSScriptRoot\..\..\assets"
             }
             New-AppxPackage @Arguments
         }
         "AppImage" {
             if ($IsUbuntu14) {
-                Start-NativeExecution { bash -iex "$PSScriptRoot/tools/appimage.sh" }
+                Start-NativeExecution { bash -iex "$PSScriptRoot/../appimage.sh" }
                 $appImage = Get-Item PowerShell-*.AppImage
                 if ($appImage.Count -gt 1) {
                     throw "Found more than one AppImage package, remove all *.AppImage files and try to create the package again"
@@ -154,13 +163,17 @@ function Start-PSPackage {
                 Name = $Name
                 Version = $Version
             }
-            New-UnixPackage @Arguments
+
+            if($pscmdlet.ShouldProcess("Create $_ Package"))
+            {
+                New-UnixPackage @Arguments
+            }
         }
     }
 }
 
 function New-UnixPackage {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param(
         [Parameter(Mandatory)]
         [ValidateSet("deb", "osxpkg", "rpm")]
@@ -244,21 +257,24 @@ It consists of a cross-platform command-line shell and associated scripting lang
 
     # Setup staging directory so we don't change the original source directory
     $Staging = "$PSScriptRoot/staging"
-    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $Staging
-    Copy-Item -Recurse $PackageSourcePath $Staging
+    if($pscmdlet.ShouldProcess("Create staging folder"))
+    {
+        Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $Staging
+        Copy-Item -Recurse $PackageSourcePath $Staging
 
-    # Rename files to given name if not "powershell"
-    if ($Name -ne "powershell") {
-        $Files = @("powershell",
-                   "powershell.dll",
-                   "powershell.deps.json",
-                   "powershell.pdb",
-                   "powershell.runtimeconfig.json",
-                   "powershell.xml")
+        # Rename files to given name if not "powershell"
+        if ($Name -ne "powershell") {
+            $Files = @("powershell",
+                    "powershell.dll",
+                    "powershell.deps.json",
+                    "powershell.pdb",
+                    "powershell.runtimeconfig.json",
+                    "powershell.xml")
 
-        foreach ($File in $Files) {
-            $NewName = $File -replace "^powershell", $Name
-            Move-Item "$Staging/$File" "$Staging/$NewName"
+            foreach ($File in $Files) {
+                $NewName = $File -replace "^powershell", $Name
+                Move-Item "$Staging/$File" "$Staging/$NewName"
+            }
         }
     }
 
@@ -276,19 +292,21 @@ It consists of a cross-platform command-line shell and associated scripting lang
         "/usr/local/bin"
     }
 
-    New-Item -Force -ItemType SymbolicLink -Path "/tmp/$Name" -Target "$Destination/$Name" >$null
+    if($pscmdlet.ShouldProcess("Create package file system"))
+    {
+        New-Item -Force -ItemType SymbolicLink -Path "/tmp/$Name" -Target "$Destination/$Name" >$null
 
-    if ($IsRedHatFamily) {
-        # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
-        # platform specific changes. This is the only set of platforms needed for this currently
-        # as Ubuntu has these specific library files in the platform and OSX builds for itself
-        # against the correct versions.
-        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" >$null
-        New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" >$null
+        if ($IsRedHatFamily) {
+            # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
+            # platform specific changes. This is the only set of platforms needed for this currently
+            # as Ubuntu has these specific library files in the platform and OSX builds for itself
+            # against the correct versions.
+            New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$Staging/libssl.so.1.0.0" >$null
+            New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$Staging/libcrypto.so.1.0.0" >$null
 
-        $AfterInstallScript = [io.path]::GetTempFileName()
-        $AfterRemoveScript = [io.path]::GetTempFileName()
-        @'
+            $AfterInstallScript = [io.path]::GetTempFileName()
+            $AfterRemoveScript = [io.path]::GetTempFileName()
+            @'
 #!/bin/sh
 if [ ! -f /etc/shells ] ; then
     echo "{0}" > /etc/shells
@@ -307,11 +325,11 @@ if [ "$1" = 0 ] ; then
     fi
 fi
 '@ -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
-    }
-    elseif ($IsUbuntu) {
-        $AfterInstallScript = [io.path]::GetTempFileName()
-        $AfterRemoveScript = [io.path]::GetTempFileName()
-        @'
+        }
+        elseif ($IsUbuntu) {
+            $AfterInstallScript = [io.path]::GetTempFileName()
+            $AfterRemoveScript = [io.path]::GetTempFileName()
+            @'
 #!/bin/sh
 set -e
 case "$1" in
@@ -337,48 +355,49 @@ case "$1" in
         ;;
 esac
 '@ -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
-    }
-
-
-    # there is a weird bug in fpm
-    # if the target of the powershell symlink exists, `fpm` aborts
-    # with a `utime` error on OS X.
-    # so we move it to make symlink broken
-    $symlink_dest = "$Destination/$Name"
-    $hack_dest = "./_fpm_symlink_hack_powershell"
-    if ($IsOSX) {
-        if (Test-Path $symlink_dest) {
-            Write-Warning "Move $symlink_dest to $hack_dest (fpm utime bug)"
-            Move-Item $symlink_dest $hack_dest
         }
-    }
 
-    # run ronn to convert man page to roff
-    $RonnFile = Join-Path $PSScriptRoot "/assets/powershell.1.ronn"
-    $RoffFile = $RonnFile -replace "\.ronn$"
 
-    # Run ronn on assets file
-    # Run does not play well with files named powershell6.0.1, so we generate and then rename
-    Start-NativeExecution { ronn --roff $RonnFile }
+        # there is a weird bug in fpm
+        # if the target of the powershell symlink exists, `fpm` aborts
+        # with a `utime` error on OS X.
+        # so we move it to make symlink broken
+        $symlink_dest = "$Destination/$Name"
+        $hack_dest = "./_fpm_symlink_hack_powershell"
+        if ($IsOSX) {
+            if (Test-Path $symlink_dest) {
+                Write-Warning "Move $symlink_dest to $hack_dest (fpm utime bug)"
+                Move-Item $symlink_dest $hack_dest
+            }
+        }
 
-    # Setup for side-by-side man pages (noop if primary package)
-    $FixedRoffFile = $RoffFile -replace "powershell.1$", "$Name.1"
-    if ($Name -ne "powershell") {
-        Move-Item $RoffFile $FixedRoffFile
-    }
+        # run ronn to convert man page to roff
+        $RonnFile = Join-Path $PSScriptRoot "/../../assets/powershell.1.ronn"
+        $RoffFile = $RonnFile -replace "\.ronn$"
 
-    # gzip in assets directory
-    $GzipFile = "$FixedRoffFile.gz"
-    Start-NativeExecution { gzip -f $FixedRoffFile }
+        # Run ronn on assets file
+        # Run does not play well with files named powershell6.0.1, so we generate and then rename
+        Start-NativeExecution { ronn --roff $RonnFile }
 
-    $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
+        # Setup for side-by-side man pages (noop if primary package)
+        $FixedRoffFile = $RoffFile -replace "powershell.1$", "$Name.1"
+        if ($Name -ne "powershell") {
+            Move-Item $RoffFile $FixedRoffFile
+        }
 
-    # Change permissions for packaging
-    Start-NativeExecution {
-        find $Staging -type d | xargs chmod 755
-        find $Staging -type f | xargs chmod 644
-        chmod 644 $GzipFile
-        chmod 755 "$Staging/$Name" # only the executable should be executable
+        # gzip in assets directory
+        $GzipFile = "$FixedRoffFile.gz"
+        Start-NativeExecution { gzip -f $FixedRoffFile }
+
+        $ManFile = Join-Path "/usr/local/share/man/man1" (Split-Path -Leaf $GzipFile)
+
+        # Change permissions for packaging
+        Start-NativeExecution {
+            find $Staging -type d | xargs chmod 755
+            find $Staging -type f | xargs chmod 644
+            chmod 644 $GzipFile
+            chmod 755 "$Staging/$Name" # only the executable should be executable
+        }
     }
 
     # Setup package dependencies
@@ -485,7 +504,10 @@ esac
     )
     # Build package
     try {
-        $Output = Start-NativeExecution { fpm $Arguments }
+        if($pscmdlet.ShouldProcess("Create $type package"))
+        {
+            $Output = Start-NativeExecution { fpm $Arguments }
+        }
     } finally {
         if ($IsOSX) {
             # this is continuation of a fpm hack for a weird bug
@@ -503,16 +525,19 @@ esac
     }
 
     # Magic to get path output
-    $createdPackage = Get-Item (Join-Path $PSScriptRoot (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
+    $createdPackage = Get-Item (Join-Path $PWD (($Output[-1] -split ":path=>")[-1] -replace '["{}]'))
 
     if ($IsOSX) {
-        # Add the OS information to the OSX package file name.
-        $packageExt = [System.IO.Path]::GetExtension($createdPackage.Name)
-        $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($createdPackage.Name)
+        if($pscmdlet.ShouldProcess("Fix package name"))
+        {
+            # Add the OS information to the OSX package file name.
+            $packageExt = [System.IO.Path]::GetExtension($createdPackage.Name)
+            $packageNameWithoutExt = [System.IO.Path]::GetFileNameWithoutExtension($createdPackage.Name)
 
-        $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
-        $newPackagePath = Join-Path $createdPackage.DirectoryName $newPackageName
-        $createdPackage = Rename-Item $createdPackage.FullName $newPackagePath -PassThru
+            $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
+            $newPackagePath = Join-Path $createdPackage.DirectoryName $newPackageName
+            $createdPackage = Rename-Item $createdPackage.FullName $newPackagePath -PassThru
+        }
     }
 
     return $createdPackage
@@ -521,7 +546,7 @@ esac
 # Function to create a zip file for Nano Server and xcopy deployment
 function New-ZipPackage
 {
-    [CmdletBinding()]
+    [CmdletBinding(SupportsShouldProcess=$true)]
     param (
 
         # Name of the Product
@@ -555,13 +580,16 @@ function New-ZipPackage
 
     If(Get-Command Compress-Archive -ErrorAction Ignore)
     {
-        Compress-Archive -Path $PackageSourcePath\* -DestinationPath $zipLocationPath
+        if($pscmdlet.ShouldProcess("Create zip package"))
+        {
+            Compress-Archive -Path $PackageSourcePath\* -DestinationPath $zipLocationPath
+        }
 
         Write-Verbose "You can find the Zip @ $zipLocationPath" -Verbose
         $zipLocationPath
 
     }
-    #TODO: Use .NET Api to do compresss-archive equivalent if the cmdlet is not present
+    #TODO: Use .NET Api to do compresss-archive equivalent if the pscmdlet is not present
     else
     {
         Write-Error -Message "Compress-Archive cmdlet is missing in this PowerShell version"
