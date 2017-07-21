@@ -669,6 +669,11 @@ function New-PSOptions {
               CrossGen = $CrossGen }
 }
 
+# Get the Options of the last build
+function Get-PSOptions {
+    return $script:Options
+}
+
 
 function Get-PSOutput {
     [CmdletBinding()]param(
