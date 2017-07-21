@@ -102,8 +102,9 @@ Repository Maintainers currently consist mostly of Microsoft employees.
 It is expected that over time, regular trusted contributors to the PowerShell repository will be made Repository Maintainers.
 Eligibility is heavily dependent on the level of contribution and expertise: individuals who contribute consistently in meaningful ways to the project will be recognized accordingly.
 
-At any point in time, the existing Repository Maintainers can nominate a strong community member to become a Repository Maintainer.
+At any point in time, the existing Repository Maintainers can unanimously nominate a strong community member to become a Repository Maintainer.
 Nominations are brought to the PowerShell Committee to understand the reasons and justification.
+A simple majority of the PowerShell Committee is required to veto the nomination.
 Once a nominee has been approved, a PR will be submitted by a current Maintainer to update this document to add the nominee's name to the [Current Repository Maintainers](#Current-Repository-Maintainers) with justification as the description of the PR to serve as the public announcement.
 
 [RFC-repo]: https://github.com/PowerShell/PowerShell-RFC
