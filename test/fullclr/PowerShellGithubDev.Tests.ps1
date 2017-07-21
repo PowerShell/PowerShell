@@ -48,6 +48,8 @@ try
     # this Describe makes sure we binplace all the files, like psd1, psm1, ps1xml and load usable modules from them
     Describe 'Modules for the package' {
         Context '$env:DEVPATH Modules loading' {
+            <#
+            removed due to #4272
             It 'loads Microsoft.PowerShell.LocalAccounts' {
                 try
                 {
@@ -59,6 +61,7 @@ try
                     Remove-Module -ErrorAction SilentlyContinue Microsoft.PowerShell.LocalAccounts
                 }
             }
+            #>
 
             It 'loads Microsoft.PowerShell.Archive' {
                 try

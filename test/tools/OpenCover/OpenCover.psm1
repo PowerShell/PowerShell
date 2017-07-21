@@ -232,7 +232,6 @@ function Expand-ZipArchive([string] $Path, [string] $DestinationPath)
    Microsoft.PowerShell.PackageManagement              59.77  62.04    Branch:59.77 Sequence:62.04
    Microsoft.PackageManagement                         41.73  44.47    Branch:41.73 Sequence:44.47
    Microsoft.Management.Infrastructure.CimCmdlets      13.20  17.01    Branch:13.20 Sequence:17.01
-   Microsoft.PowerShell.LocalAccounts                  73.15  84.32    Branch:73.15 Sequence:84.32
    Microsoft.PackageManagement.MetaProvider.PowerShell 54.79  57.90    Branch:54.79 Sequence:57.90
    Microsoft.PackageManagement.NuGetProvider           62.36  65.37    Branch:62.36 Sequence:65.37
    Microsoft.PackageManagement.CoreProviders           7.08   7.96     Branch:7.08 Sequence:7.96
@@ -285,7 +284,6 @@ function Get-CodeCoverage
    Microsoft.PowerShell.ConsoleHost                    36.53            0 38.40                0
    Microsoft.PowerShell.CoreCLR.AssemblyLoadContext    53.66            0 95.31                0
    Microsoft.PowerShell.CoreCLR.Eventing               28.70            0 36.23                0
-   Microsoft.PowerShell.LocalAccounts                  73.15            0 84.32                0
    Microsoft.PowerShell.PackageManagement              59.77            0 62.04                0
    Microsoft.PowerShell.PSReadLine                     7.12             0 9.94                 0
    Microsoft.PowerShell.Security                       15.17            0 18.16                0
@@ -312,7 +310,6 @@ function Get-CodeCoverage
    Microsoft.PowerShell.ConsoleHost                    36.53            0 38.40                0
    Microsoft.PowerShell.CoreCLR.AssemblyLoadContext    53.66            0 95.31                0
    Microsoft.PowerShell.CoreCLR.Eventing               28.70            0 36.23                0
-   Microsoft.PowerShell.LocalAccounts                  73.15            0 84.32                0
    Microsoft.PowerShell.PackageManagement              59.77            0 62.04                0
    Microsoft.PowerShell.PSReadLine                     7.12             0 9.94                 0
    Microsoft.PowerShell.Security                       15.17            0 18.16                0

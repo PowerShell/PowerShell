@@ -222,9 +222,17 @@ Fix steps:
             throw 'Win 10 SDK not found. Run Start-PSBootstrap or install Microsoft Windows 10 SDK from https://developer.microsoft.com/en-US/windows/downloads/windows-10-sdk'
         }
 
-        $vcVarsPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
-        if ((Test-Path -Path $vcVarsPath\vcvarsall.bat) -eq $false) {
-            throw "Could not find Visual Studio vcvarsall.bat at $vcVarsPath. Please ensure the optional feature 'Common Tools for Visual C++' is installed."
+        $vcPath = (Get-Item(Join-Path -Path "$env:VS140COMNTOOLS" -ChildPath '../../vc')).FullName
+        $atlMfcIncludePath = Join-Path -Path $vcPath -ChildPath 'atlmfc/include'
+
+        # atlbase.h is included in the pwrshplugin project
+        if ((Test-Path -Path $atlMfcIncludePath\atlbase.h) -eq $false) {
+            throw "Could not find Visual Studio include file atlbase.h at $atlMfcIncludePath. Please ensure the optional feature 'Microsoft Foundation Classes for C++' is installed."
+        }
+
+        # vcvarsall.bat is used to setup environment variables
+        if ((Test-Path -Path $vcPath\vcvarsall.bat) -eq $false) {
+            throw "Could not find Visual Studio vcvarsall.bat at $vcPath. Please ensure the optional feature 'Common Tools for Visual C++' is installed."
         }
 
         # setup msbuild configuration
@@ -358,7 +366,7 @@ Fix steps:
                 $nativeResourcesFolder = $_
                 Get-ChildItem $nativeResourcesFolder -Filter "*.mc" | ForEach-Object {
                     $command = @"
-cmd.exe /C cd /d "$currentLocation" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" mc.exe -o -d -c -U "$($_.FullName)" -h "$nativeResourcesFolder" -r "$nativeResourcesFolder"
+cmd.exe /C cd /d "$currentLocation" "&" "$($vcPath)\vcvarsall.bat" "$NativeHostArch" "&" mc.exe -o -d -c -U "$($_.FullName)" -h "$nativeResourcesFolder" -r "$nativeResourcesFolder"
 "@
                     log "  Executing mc.exe Command: $command"
                     Start-NativeExecution { Invoke-Expression -Command:$command 2>&1 }
@@ -381,7 +389,7 @@ cmd.exe /C cd /d "$currentLocation" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeH
                 $location = Get-Location
 
                 $command = @"
-cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=$OneCoreValue -DBUILD_TARGET_ARCH=$NativeHostArch -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$msbuildConfiguration"
+cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$NativeHostArch" "&" cmake "$overrideFlags" -DBUILD_ONECORE=$OneCoreValue -DBUILD_TARGET_ARCH=$NativeHostArch -G "$cmakeGenerator" . "&" msbuild ALL_BUILD.vcxproj "/p:Configuration=$msbuildConfiguration"
 "@
                 log "  Executing Build Command: $command"
                 Start-NativeExecution { Invoke-Expression -Command:$command }
@@ -476,6 +484,19 @@ cmd.exe /C cd /d "$location" "&" "$($vcVarsPath)\vcvarsall.bat" "$NativeHostArch
     if ($IsWindows)
     {
         Copy-Item -Path "$PSScriptRoot/src/powershell-win-core/Microsoft.PowerShell_profile.ps1" -Destination $publishPath -Force
+    }
+
+    if ($IsRedHatFamily) {
+        # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
+        # platform specific changes. This is the only set of platforms needed for this currently
+        # as Ubuntu has these specific library files in the platform and OSX builds for itself
+        # against the correct versions.
+        if ( ! (test-path "$publishPath/libssl.so.1.0.0")) {
+            $null = New-Item -Force -ItemType SymbolicLink -Target "/lib64/libssl.so.10" -Path "$publishPath/libssl.so.1.0.0" -ErrorAction Stop
+        }
+        if ( ! (test-path "$publishPath/libcrypto.so.1.0.0")) {
+            $null = New-Item -Force -ItemType SymbolicLink -Target "/lib64/libcrypto.so.10" -Path "$publishPath/libcrypto.so.1.0.0" -ErrorAction Stop
+        }
     }
 
     # download modules from powershell gallery.
@@ -762,7 +783,7 @@ function Start-PSPester {
         [string]$OutputFormat = "NUnitXml",
         [string]$OutputFile = "pester-tests.xml",
         [string[]]$ExcludeTag = 'Slow',
-        [string[]]$Tag = "CI",
+        [string[]]$Tag = @("CI","Feature"),
         [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
         [switch]$ThrowOnFailure,
         [switch]$FullCLR,
@@ -1108,7 +1129,7 @@ function Start-PSBootstrap {
                 Push-Location $PSScriptRoot
                 $Submodule = "$PSScriptRoot/src/libpsl-native/test/googletest"
                 Remove-Item -Path $Submodule -Recurse -Force -ErrorAction SilentlyContinue
-                git submodule update --init -- $submodule
+                git submodule --quiet update --init -- $submodule
             } finally {
                 Pop-Location
             }
@@ -1130,7 +1151,7 @@ function Start-PSBootstrap {
 
             # Install dependencies
             Start-NativeExecution {
-                Invoke-Expression "$sudo apt-get update"
+                Invoke-Expression "$sudo apt-get update -qq"
                 Invoke-Expression "$sudo apt-get install -y -qq $Deps"
             }
         } elseif ($IsRedHatFamily) {
@@ -1184,8 +1205,30 @@ function Start-PSBootstrap {
             }
         }
 
-        $DotnetArguments = @{ Channel=$Channel; Version=$Version; NoSudo=$NoSudo }
-        Install-Dotnet @DotnetArguments
+        $dotNetExists = precheck 'dotnet' $null
+        $dotNetVersion = [string]::Empty
+        if($dotNetExists) {
+            $dotNetVersion = (dotnet --version)
+        }
+
+        if(!$dotNetExists -or $dotNetVersion -ne $dotnetCLIRequiredVersion -or $Force.IsPresent) {
+            if($Force.IsPresent) {
+                log "Installing dotnet due to -Force."
+            }
+            elseif(!$dotNetExistis) {
+                log "dotnet not present.  Installing dotnet."
+            }
+            else {
+                log "dotnet out of date ($dotNetVersion).  Updating dotnet."
+            }
+
+            $DotnetArguments = @{ Channel=$Channel; Version=$Version; NoSudo=$NoSudo }
+            Install-Dotnet @DotnetArguments
+        }
+        else
+        {
+            log "dotnet is already installed.  Skipping installation."
+        }
 
         # Install for Windows
         if ($IsWindows) {
@@ -2591,8 +2634,8 @@ function New-MSIPackage
     Remove-Item -ErrorAction SilentlyContinue $msiLocationPath -Force
 
     & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v | Write-Verbose
-    & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -arch x64 -v | Write-Verbose
-    & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -dWixUILicenseRtf="$LicenseFilePath" -v | Write-Verbose
+    & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch x64 -v | Write-Verbose
+    & $wixLightExePath -out $msiLocationPath $wixObjProductPath $wixObjFragmentPath -ext WixUIExtension -ext WixUtilExtension -dWixUILicenseRtf="$LicenseFilePath" -v | Write-Verbose
 
     Remove-Item -ErrorAction SilentlyContinue *.wixpdb -Force
 
@@ -2931,7 +2974,6 @@ function Start-CrossGen {
         $psCoreAssemblyList += @(
             "Microsoft.WSMan.Management.dll",
             "Microsoft.WSMan.Runtime.dll",
-            "Microsoft.PowerShell.LocalAccounts.dll",
             "Microsoft.PowerShell.Commands.Diagnostics.dll",
             "Microsoft.Management.Infrastructure.CimCmdlets.dll"
         )

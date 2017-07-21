@@ -1,3 +1,4 @@
+#if LEGACYTELEMETRY
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -519,3 +520,4 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         int InteractiveCommandCount { get; }
     }
 }
+#endif

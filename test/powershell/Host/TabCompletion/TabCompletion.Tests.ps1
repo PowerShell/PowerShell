@@ -194,7 +194,7 @@ Describe "TabCompletion" -Tags CI {
         }
     }
 
-    It 'Should complete "Export-Counter -FileFormat" with available output formats'-Skip:(!$IsWindows) {
+    It 'Should complete "Export-Counter -FileFormat" with available output formats' -Pending {
         $res = TabExpansion2 -inputScript 'Export-Counter -FileFormat ' -cursorColumn 'Export-Counter -FileFormat '.Length
         $res.CompletionMatches.Count | Should Be 3
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object

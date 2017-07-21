@@ -964,7 +964,13 @@ else
                     }
                 }
 
-                string destPath = System.IO.Path.Combine(Utils.DefaultPowerShellAppBase, "SessionConfig",
+                string destFolder = System.IO.Path.Combine(Utils.DefaultPowerShellAppBase, "SessionConfig");
+                if (!Directory.Exists(destFolder))
+                {
+                    Directory.CreateDirectory(destFolder);
+                }
+
+                string destPath = System.IO.Path.Combine(destFolder,
                     shellName + "_" + sessionGuid.ToString() + StringLiterals.PowerShellDISCFileExtension);
                 if (string.Equals(ProcessorArchitecture, "x86", StringComparison.OrdinalIgnoreCase))
                 {

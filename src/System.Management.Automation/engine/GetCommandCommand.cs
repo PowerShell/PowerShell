@@ -531,6 +531,7 @@ namespace Microsoft.PowerShell.Commands
 
             _timer.Stop();
 
+#if LEGACYTELEMETRY
             // We want telementry on commands people look for but don't exist - this should give us an idea
             // what sort of commands people expect but either don't exist, or maybe should be installed by default.
             // The StartsWith is to avoid logging telemetry when suggestion mode checks the
@@ -539,6 +540,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 Telemetry.Internal.TelemetryAPI.ReportGetCommandFailed(Name, _timer.ElapsedMilliseconds);
             }
+#endif
+
         }
 
         /// <summary>

@@ -75,6 +75,7 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 './*.md'
                 './docs/*.md'
                 './docs/installation/*.md'
+                './docs/maintainers/README.md'
                 './demos/SSHRemoting/*.md'
                 './docker/*.md'
             )

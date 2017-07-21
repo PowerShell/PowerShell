@@ -3,6 +3,10 @@
  # Provides Pester tests for the Import-Counter cmdlet.
  ############################################################################################>
 
+ # Counter CmdLets are removed see issue #4272
+ # Tests are disabled
+ return
+ 
 $cmdletName = "Import-Counter"
 
 . "$PSScriptRoot/CounterTestHelperFunctions.ps1"

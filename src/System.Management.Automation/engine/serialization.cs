@@ -2979,6 +2979,35 @@ namespace System.Management.Automation
 
         #endregion constructor
 
+        #region Known CIMTypes
+
+        private static Lazy<HashSet<Type>> s_knownCimArrayTypes = new Lazy<HashSet<Type>>(
+            () =>
+                new HashSet<Type>
+                {
+                    typeof(Boolean),
+                    typeof(byte),
+                    typeof(char),
+                    typeof(DateTime),
+                    typeof(Decimal),
+                    typeof(Double),
+                    typeof(Int16),
+                    typeof(Int32),
+                    typeof(Int64),
+                    typeof(SByte),
+                    typeof(Single),
+                    typeof(String),
+                    typeof(TimeSpan),
+                    typeof(UInt16),
+                    typeof(UInt32),
+                    typeof(UInt64),
+                    typeof(object),
+                    typeof(CimInstance)
+                }
+            );
+
+        #endregion
+
         #region deserialization
         /// <summary>
         /// Used by Remoting infrastructure. This TypeTable instance
@@ -3186,7 +3215,7 @@ namespace System.Management.Automation
                     {
                         return false;
                     }
-                    if (!originalArrayType.IsArray)
+                    if (!originalArrayType.IsArray || !s_knownCimArrayTypes.Value.Contains(originalArrayType.GetElementType()))
                     {
                         return false;
                     }

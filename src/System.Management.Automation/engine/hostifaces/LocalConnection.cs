@@ -16,7 +16,9 @@ using System.Diagnostics.CodeAnalysis; // for fxcop
 using Dbg = System.Management.Automation.Diagnostics;
 using System.Diagnostics;
 using System.Linq;
+#if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
+#endif
 
 #pragma warning disable 1634, 1691 // Stops compiler from warning about unknown warnings
 
@@ -737,7 +739,9 @@ namespace System.Management.Automation.Runspaces
                 }
             }
 
+#if LEGACYTELEMETRY
             TelemetryAPI.ReportLocalSessionCreated(InitialSessionState, TranscriptionData);
+#endif
         }
 
         /// <summary>
@@ -936,6 +940,8 @@ namespace System.Management.Automation.Runspaces
             RaiseRunspaceStateEvents();
 
             // Report telemetry if we have no more open runspaces.
+
+#if LEGACYTELEMETRY
             bool allRunspacesClosed = true;
             bool hostProvidesExitTelemetry = false;
             foreach (var r in Runspace.RunspaceList)
@@ -956,6 +962,7 @@ namespace System.Management.Automation.Runspaces
             {
                 TelemetryAPI.ReportExitTelemetry(null);
             }
+#endif
         }
 
         /// <summary>

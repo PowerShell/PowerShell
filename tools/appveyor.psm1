@@ -3,6 +3,12 @@ $repoRoot = Join-Path $PSScriptRoot '..'
 $script:administratorsGroupSID = "S-1-5-32-544"
 $script:usersGroupSID = "S-1-5-32-545"
 
+$dotNetPath = "$env:USERPROFILE\Appdata\Local\Microsoft\dotnet"
+if(Test-Path $dotNetPath)
+{
+    $env:PATH = $dotNetPath + ';' + $env:PATH
+}
+
 Import-Module (Join-Path $repoRoot 'build.psm1')
 
 function New-LocalUser
@@ -82,6 +88,13 @@ function Add-UserToGroup
 Function Test-DailyBuild
 {
     if(($env:PS_DAILY_BUILD -eq 'True') -or ($env:APPVEYOR_SCHEDULED_BUILD -eq 'True') -or ($env:APPVEYOR_REPO_TAG_NAME))
+    {
+        return $true
+    }
+    
+    # if [Feature] is in the commit message,
+    # Run Daily tests
+    if($env:APPVEYOR_REPO_COMMIT_MESSAGE -match '\[feature\]')
     {
         return $true
     }
@@ -174,13 +187,25 @@ function Invoke-AppVeyorInstall
 {
     if(Test-DailyBuild){
         $buildName = "[Daily]"
-        if($env:APPVEYOR_PULL_REQUEST_TITLE)
+
+        # Add daily to title if it's not already there
+        # It can be there already for rerun requests
+        if($env:APPVEYOR_PULL_REQUEST_TITLE -and $env:APPVEYOR_PULL_REQUEST_TITLE  -notmatch '^\[Daily\]')
         {
             $buildName += $env:APPVEYOR_PULL_REQUEST_TITLE
         }
+        elseif($env:APPVEYOR_PULL_REQUEST_TITLE)
+        {
+            $buildName = $env:APPVEYOR_PULL_REQUEST_TITLE
+        }
+        elseif($env:APPVEYOR_REPO_COMMIT_MESSAGE -notmatch '^\[Daily\].*$')
+        {
+            
+            $buildName += $env:APPVEYOR_REPO_COMMIT_MESSAGE
+        }
         else
         {
-            $buildName += $env:APPVEYOR_REPO_COMMIT_MESSAGE
+            $buildName = $env:APPVEYOR_REPO_COMMIT_MESSAGE
         }
 
         Update-AppveyorBuild -message $buildName
@@ -225,7 +250,7 @@ function Invoke-AppVeyorInstall
     }
 
     Set-BuildVariable -Name TestPassed -Value False
-    Start-PSBootstrap -Force
+    Start-PSBootstrap -Confirm:$false
 }
 
 # A wrapper to ensure that we upload test results

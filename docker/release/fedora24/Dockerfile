@@ -6,9 +6,9 @@ LABEL description="This Dockerfile will install the latest release of PS."
 # TODO: Until a release of PowerShell for Fedora 24 is available,
 # this Dockerfile installs the CentOS 7 version for compatibility.
 
-ARG POWERSHELL_VERSION=6.0.0-beta.3
-ARG POWERSHELL_RELEASE=v6.0.0-beta.3
-ARG POWERSHELL_PACKAGE=powershell-6.0.0_beta.3-1.el7.x86_64.rpm
+ARG POWERSHELL_VERSION=6.0.0-beta.4
+ARG POWERSHELL_RELEASE=v6.0.0-beta.4
+ARG POWERSHELL_PACKAGE=powershell-6.0.0_beta.4-1.el7.x86_64.rpm
 
 # The CentOS 7 release relies on an older version of libicu, so we'll be downloading it
 # from the University of Kent (GB) mirror service.

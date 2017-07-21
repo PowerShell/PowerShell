@@ -28,7 +28,9 @@ using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 using NakedWin32Handle = System.IntPtr;
 using System.Management.Automation.Tracing;
+#if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
+#endif
 using Debugger = System.Management.Automation.Debugger;
 
 namespace Microsoft.PowerShell
@@ -44,8 +46,10 @@ namespace Microsoft.PowerShell
         :
         PSHost,
         IDisposable,
-        IHostSupportsInteractiveSession,
-        IHostProvidesTelemetryData
+#if LEGACYTELEMETRY
+        IHostProvidesTelemetryData,
+#endif
+        IHostSupportsInteractiveSession
     {
         #region static methods
 
@@ -271,7 +275,9 @@ namespace Microsoft.PowerShell
             {
                 if (s_theConsoleHost != null)
                 {
+#if LEGACYTELEMETRY
                     TelemetryAPI.ReportExitTelemetry(s_theConsoleHost);
+#endif
                     s_theConsoleHost.Dispose();
                 }
             }
@@ -1038,6 +1044,7 @@ namespace Microsoft.PowerShell
             }
         }
 
+#if LEGACYTELEMETRY
         bool IHostProvidesTelemetryData.HostIsInteractive
         {
             get
@@ -1049,6 +1056,7 @@ namespace Microsoft.PowerShell
         double IHostProvidesTelemetryData.ProfileLoadTimeInMS { get { return _profileLoadTimeInMS; } }
         double IHostProvidesTelemetryData.ReadyForInputTimeInMS { get { return _readyForInputTimeInMS; } }
         int IHostProvidesTelemetryData.InteractiveCommandCount { get { return _interactiveCommandCount; } }
+#endif
 
         private double _profileLoadTimeInMS;
         private double _readyForInputTimeInMS;
@@ -1807,10 +1815,11 @@ namespace Microsoft.PowerShell
                     s_tracer.WriteLine("-noprofile option specified: skipping profiles");
                 }
             }
-
+#if LEGACYTELEMETRY
             // Startup is reported after possibly running the profile, but before running the initial command (or file)
             // if one is specified.
             TelemetryAPI.ReportStartupTelemetry(this);
+#endif
 
             // If a file was specified as the argument to run, then run it...
             if (s_cpp != null && s_cpp.File != null)
