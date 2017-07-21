@@ -127,6 +127,11 @@ namespace System.Management.Automation
         /// </summary>
         internal static Encoding GetOEMEncoding()
         {
+            // The OEM code pages are sometimes used by Win32 console applications, and
+            // on non-Windows platforms they still may have uses (if installed) and
+            // could be used if desired.
+            // On non-windows platforms, they have more limited uses, and probably won't
+            // be installed.
             if (s_oemEncoding == null)
             {
 #if UNIX        // PowerShell Core on Unix

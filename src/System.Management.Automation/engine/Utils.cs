@@ -8,7 +8,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Internal;
 using System.Management.Automation.Security;
 using System.Reflection;
-using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
 using Microsoft.Win32;
 using System.Globalization;

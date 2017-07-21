@@ -1071,7 +1071,7 @@ namespace System.Management.Automation.Host
                 _path = value;
 
                 Encoding = Encoding.UTF8;
-                FileEncoding fileEncoding = PowerShellEncoding.GetEncoding(value);
+                FileEncoding fileEncoding = PowerShellEncoding.GetFileEncodingFromFile(value);
 
                 if (fileEncoding != FileEncoding.Default)
                 {

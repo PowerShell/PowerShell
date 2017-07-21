@@ -53,49 +53,13 @@ namespace System.Management.Automation
             MasterStreamOpen(cmdlet, filePath, resolvedEncoding, defaultEncoding, Append, Force, NoClobber, out fileStream, out streamWriter, out readOnlyFileInfo, isLiteralPath);
         }
 
-        /*
         /// <summary>
         /// THE method for opening a file for writing.
         /// Should be used by all cmdlets that write to a file.
         /// </summary>
         /// <param name="cmdlet">cmdlet that is opening the file (used mainly for error reporting)</param>
         /// <param name="filePath">path to the file (as specified on the command line - this method will resolve the path)</param>
-        /// <param name="encoding">encoding (this method will convert the command line string to an Encoding instance)</param>
-        /// <param name="defaultEncoding">if <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter</param>
-        /// <param name="Append"></param>
-        /// <param name="Force"></param>
-        /// <param name="NoClobber"></param>
-        /// <param name="fileStream">Result1: <see cref="FileStream"/> opened for writing</param>
-        /// <param name="streamWriter">Result2: <see cref="StreamWriter"/> (inherits from <see cref="TextWriter"/>) opened for writing</param>
-        /// <param name="readOnlyFileInfo">Result3: file info that should be used to restore file attributes after done with the file (<c>null</c> is this is not needed)</param>
-        /// <param name="isLiteralPath">True if wildcard expansion should be bypassed.</param>
-        internal static void MasterStreamOpen(
-            PSCmdlet cmdlet,
-            string filePath,
-            string encoding,
-            bool defaultEncoding,
-            bool Append,
-            bool Force,
-            bool NoClobber,
-            out FileStream fileStream,
-            out StreamWriter streamWriter,
-            out FileInfo readOnlyFileInfo,
-            bool isLiteralPath
-            )
-        {
-            Encoding resolvedEncoding = EncodingConversion.Convert(cmdlet, encoding);
-
-            MasterStreamOpen(cmdlet, filePath, resolvedEncoding, defaultEncoding, Append, Force, NoClobber, out fileStream, out streamWriter, out readOnlyFileInfo, isLiteralPath);
-        }
-        */
-
-        /// <summary>
-        /// THE method for opening a file for writing.
-        /// Should be used by all cmdlets that write to a file.
-        /// </summary>
-        /// <param name="cmdlet">cmdlet that is opening the file (used mainly for error reporting)</param>
-        /// <param name="filePath">path to the file (as specified on the command line - this method will resolve the path)</param>
-        /// <param name="resolvedEncoding">encoding (this method will convert the command line string to an Encoding instance)</param>
+        /// <param name="resolvedEncoding">the encoding (this method will convert the FileEncoding value to an Encoding instance)</param>
         /// <param name="defaultEncoding">if <c>true</c>, then we will use default .NET encoding instead of the encoding specified in <paramref name="encoding"/> parameter</param>
         /// <param name="Append"></param>
         /// <param name="Force"></param>
@@ -468,85 +432,4 @@ namespace System.Management.Automation
         }
     }
 
-    /*
-    internal static class EncodingConversion
-    {
-        internal const string Unknown = "unknown";
-        internal const string String = "string";
-        internal const string Unicode = "unicode";
-        internal const string BigEndianUnicode = "bigendianunicode";
-        internal const string Ascii = "ascii";
-        internal const string Utf8 = "utf8";
-        internal const string Utf7 = "utf7";
-        internal const string Utf32 = "utf32";
-        internal const string Default = "default";
-        internal const string OEM = "oem";
-
-        /// <summary>
-        /// retrieve the encoding parameter from the command line
-        /// it throws if the encoding does not match the known ones
-        /// </summary>
-        /// <returns>a System.Text.Encoding object (null if no encoding specified)</returns>
-        internal static Encoding Convert(Cmdlet cmdlet, string encoding)
-        {
-            if (string.IsNullOrEmpty(encoding))
-            {
-                // no parameter passed, default to Unicode (OS preferred)
-                return System.Text.Encoding.Unicode;
-            }
-
-            // Default to unicode (this matches Get-Content)
-            if (string.Equals(encoding, Unknown, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.Unicode;
-
-            if (string.Equals(encoding, String, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.Unicode;
-
-            // these are the encodings the CLR supports
-            if (string.Equals(encoding, Unicode, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.Unicode;
-
-            if (string.Equals(encoding, BigEndianUnicode, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.BigEndianUnicode;
-
-            if (string.Equals(encoding, Utf8, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.UTF8;
-
-            if (string.Equals(encoding, Ascii, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.ASCII;
-
-            if (string.Equals(encoding, Utf7, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.UTF7;
-
-            if (string.Equals(encoding, Utf32, StringComparison.OrdinalIgnoreCase))
-                return System.Text.Encoding.UTF32;
-
-            if (string.Equals(encoding, Default, StringComparison.OrdinalIgnoreCase))
-                return PowerShellEncoding.GetDefaultEncoding();
-
-            if (string.Equals(encoding, OEM, StringComparison.OrdinalIgnoreCase))
-            {
-                return ClrFacade.GetOEMEncoding();
-            }
-
-            // error condition: unknown encoding value
-            string validEncodingValues = string.Join(
-                ", ",
-                new string[] { Unknown, String, Unicode, BigEndianUnicode, Ascii, Utf8, Utf7, Utf32, Default, OEM });
-            string msg = StringUtil.Format(PathUtilsStrings.OutFile_WriteToFileEncodingUnknown,
-                encoding, validEncodingValues);
-
-            ErrorRecord errorRecord = new ErrorRecord(
-                PSTraceSource.NewArgumentException("Encoding"),
-                "WriteToFileEncodingUnknown",
-                ErrorCategory.InvalidArgument,
-                null);
-
-            errorRecord.ErrorDetails = new ErrorDetails(msg);
-            cmdlet.ThrowTerminatingError(errorRecord);
-
-            return null;
-        }
-    }
-    */
 }

@@ -83,7 +83,7 @@ namespace Microsoft.PowerShell
         Oem,
 
         /// <summary>
-        /// Big Endian UTF32 encoding.
+        /// Big Endian UTF32 encoding
         /// </summary>
         BigEndianUTF32,
 
@@ -111,6 +111,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// translate a FileEncoding to an actual System.Text.Encoding
         /// <param name="TextEncoding">The enum value</param>
+        /// <returns>System.Text.Encoding</returns>
         /// </summary>
         public static Encoding GetEncoding(FileEncoding TextEncoding)
         {
@@ -151,7 +152,9 @@ namespace Microsoft.PowerShell
                     break;
 
                 case FileEncoding.BigEndianUTF32:
-                    result = Encoding.BigEndianUnicode;
+                    // This can possibly throw, but if so, we can't provide
+                    // the encoding which the user requested, so we should fail
+                    result = Encoding.GetEncoding("utf-32BE");
                     break;
 
                 case FileEncoding.Ascii:
@@ -173,80 +176,11 @@ namespace Microsoft.PowerShell
             return result;
         }
 
-        // the way the encoding is implemented in PowerShell 5 and earlier
-        // if the user sets the default encoding to WindowsLegacy, we will
-        // be able to encode for that
-        internal static Dictionary<String, Encoding> legacyEncodingMap =
-            new Dictionary<string, Encoding>(StringComparer.OrdinalIgnoreCase)
-            {
-                { "microsoft.powershell.commands.addcontentcommand", Encoding.ASCII },
-                { "microsoft.powershell.commands.exportclixmlcommand", Encoding.Unicode },
-                { "microsoft.powershell.commands.exportcsvcommand", Encoding.ASCII },
-                { "microsoft.powershell.commands.exportpssessioncommand", Encoding.UTF8 }, // with BOM
-                { "microsoft.powershell.commands.formathex", Encoding.ASCII },
-                { "microsoft.powershell.commands.newmodulemanifestcommand", Encoding.Unicode },
-                { "microsoft.powershell.commands.getcontentcommand", Encoding.ASCII },
-                { "microsoft.powershell.commands.importcsvcommand", Encoding.ASCII },
-                { "microsoft.powershell.commands.outfilecommand", Encoding.Unicode }, // This includes redirection
-                { "microsoft.powershell.commands.setcontentcommand", Encoding.ASCII },
-                // Providers are handled here
-                { "microsoft.powershell.commands.filesystemprovider", Encoding.ASCII },
-
-            };
-
-        internal static Encoding GetWindowsLegacyEncoding(string name)
-        {
-            if ( legacyEncodingMap.ContainsKey(name))
-            {
-                return legacyEncodingMap[name];
-            }
-            else 
-            {
-                return Encoding.Default;
-            }
-        }
-
-        /// <summary>
-        /// Retrieve the PSDefaultFileEncoding preference value if set
-        /// <summary>
-        public static FileEncoding GetEncodingPreference(SessionState sessionState)
-        {
-            FileEncoding encodingPreference = FileEncoding.Unknown;
-            try
-            {
-                // It doesn't matter if this fails or throws, we will return unknown in that case
-                object tmp = sessionState.PSVariable.GetValue("PSDefaultFileEncoding");
-                LanguagePrimitives.TryConvertTo<FileEncoding>(tmp, out encodingPreference);
-            }
-            catch
-            {
-                ;
-            }
-            return encodingPreference;
-        }
-
-        /// <summary>
-        /// Retrieve the encoding in a provider context
-        /// </summary>
-        public static Encoding GetProviderEncoding(CmdletProvider provider, FileEncoding encoding)
-        {
-            Encoding resolvedEncoding = GetDefaultEncoding();
-            FileEncoding encodingPreference = GetEncodingPreference(provider.SessionState);
-            if ( encoding == FileEncoding.Unknown && encodingPreference != FileEncoding.Unknown )
-            {
-                resolvedEncoding = GetEncoding(encodingPreference);
-            }
-            else if ( encoding != FileEncoding.Unknown )
-            {
-                resolvedEncoding = GetEncoding(encoding);
-            }
-            return resolvedEncoding;
-        }
-
         /// <summary>
         /// Retrieve the encoding based on the Cmdlet and the Encoding
         /// <param name="cmdlet">The cmdlet of interest</param>
         /// <param name="encoding">The Encoding parameter value</param>
+        /// <returns>System.Text.Encoding</returns>
         /// </summary>
         public static Encoding GetEncoding(Cmdlet cmdlet, FileEncoding encoding)
         {
@@ -273,7 +207,7 @@ namespace Microsoft.PowerShell
                 // the parameter is not specifically set, so check the preference variable
                 encodingPreference = GetEncodingPreference(cmdlet.Context.SessionState);
                 // If set to unknown, we accept that it is unset
-                preferenceSetAndValid = encodingPreference != FileEncoding.Unknown; 
+                preferenceSetAndValid = encodingPreference != FileEncoding.Unknown;
                 // If the encoding preference has been set to WindowsLegacy, we need to look up the actual encoding
                 if ( encodingPreference == FileEncoding.WindowsLegacy )
                 {
@@ -289,29 +223,12 @@ namespace Microsoft.PowerShell
             return resolvedEncoding;
         }
 
-        // [System.Text.Encoding]::GetEncodings() | ? { $_.GetEncoding().GetPreamble() } |
-        //     Add-Member ScriptProperty Preamble { $this.GetEncoding().GetPreamble() -join "-" } -PassThru |
-        //     Format-Table -Auto
-        internal static Dictionary<String, FileEncoding> encodingMap =
-            new Dictionary<string, FileEncoding>()
-            {
-                { "255-254", FileEncoding.Unicode },
-                { "254-255", FileEncoding.BigEndianUnicode },
-                { "255-254-0-0", FileEncoding.UTF32 },
-                { "0-0-254-255", FileEncoding.BigEndianUTF32 },
-                { "239-187-191", FileEncoding.UTF8 },
-            };
-
-        internal static char[] nonPrintableCharacters = {
-            (char) 0, (char) 1, (char) 2, (char) 3, (char) 4, (char) 5, (char) 6, (char) 7, (char) 8,
-            (char) 11, (char) 12, (char) 14, (char) 15, (char) 16, (char) 17, (char) 18, (char) 19, (char) 20,
-            (char) 21, (char) 22, (char) 23, (char) 24, (char) 25, (char) 26, (char) 28, (char) 29, (char) 30,
-            (char) 31, (char) 127, (char) 129, (char) 141, (char) 143, (char) 144, (char) 157 };
-
-        internal static readonly UTF8Encoding utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
-
-        // take a look at the file contents and guess at the best encoding
-        internal static FileEncoding GetEncoding(string path)
+        /// <summary>
+        /// Given a path to a file, attempt to retrieve the encoding
+        /// <param name="path">The path to a file to inspect for an encoding</param>
+        /// <returns>System.Text.Encoding</returns>
+        /// </summary>
+        public static FileEncoding GetFileEncodingFromFile(string path)
         {
             if (!File.Exists(path))
             {
@@ -327,7 +244,7 @@ namespace Microsoft.PowerShell
                 {
                     using (BinaryReader reader = new BinaryReader(stream))
                     {
-                        bytesRead = reader.Read(initialBytes, 0, 100);
+                        bytesRead = reader.Read(initialBytes, 0, initialBytes.Length);
                     }
                 }
             }
@@ -381,6 +298,101 @@ namespace Microsoft.PowerShell
             // return UTF8 without a BOM which should be good for both Windows and Non-Windows
             return FileEncoding.UTF8NoBOM;
         }
+
+        /// <summary>
+        /// Retrieve the PSDefaultFileEncoding preference value if set
+        /// <summary>
+        public static FileEncoding GetEncodingPreference(SessionState sessionState)
+        {
+            FileEncoding encodingPreference = FileEncoding.Unknown;
+            try
+            {
+                // It doesn't matter if this fails or throws, we will return unknown in that case
+                object tmp = sessionState.PSVariable.GetValue("PSDefaultFileEncoding");
+                LanguagePrimitives.TryConvertTo<FileEncoding>(tmp, out encodingPreference);
+            }
+            catch
+            {
+                ;
+            }
+            return encodingPreference;
+        }
+
+        /// <summary>
+        /// Retrieve the encoding in a provider context
+        /// </summary>
+        public static Encoding GetProviderEncoding(CmdletProvider provider, FileEncoding encoding)
+        {
+            Encoding resolvedEncoding = GetDefaultEncoding();
+            FileEncoding encodingPreference = GetEncodingPreference(provider.SessionState);
+            // If the encoding isn't set, but is available as $PSDefaultFileEncoding, use that
+            // It the encoding is set use that, otherwise return the default encoding
+            if ( encoding == FileEncoding.Unknown && encodingPreference != FileEncoding.Unknown )
+            {
+                resolvedEncoding = GetEncoding(encodingPreference);
+            }
+            else if ( encoding != FileEncoding.Unknown )
+            {
+                resolvedEncoding = GetEncoding(encoding);
+            }
+            return resolvedEncoding;
+        }
+
+        // This is the way the encoding is implemented in PowerShell 5 and earlier.
+        // If the user sets the default encoding to WindowsLegacy, we will
+        // be able to encode for that
+        internal static Dictionary<String, Encoding> legacyEncodingMap =
+            new Dictionary<string, Encoding>(StringComparer.OrdinalIgnoreCase)
+            {
+                { "microsoft.powershell.commands.addcontentcommand", Encoding.ASCII },
+                { "microsoft.powershell.commands.exportclixmlcommand", Encoding.Unicode },
+                { "microsoft.powershell.commands.exportcsvcommand", Encoding.ASCII },
+                { "microsoft.powershell.commands.exportpssessioncommand", Encoding.UTF8 }, // with BOM
+                { "microsoft.powershell.commands.formathex", Encoding.ASCII },
+                { "microsoft.powershell.commands.newmodulemanifestcommand", Encoding.Unicode },
+                { "microsoft.powershell.commands.getcontentcommand", Encoding.ASCII },
+                { "microsoft.powershell.commands.importcsvcommand", Encoding.ASCII },
+                { "microsoft.powershell.commands.outfilecommand", Encoding.Unicode }, // This includes redirection
+                { "microsoft.powershell.commands.setcontentcommand", Encoding.ASCII },
+                // Providers are handled here
+                { "microsoft.powershell.commands.filesystemprovider", Encoding.ASCII },
+            };
+
+        /// Get the Windows legacy encoding from our encoding map
+        internal static Encoding GetWindowsLegacyEncoding(string name)
+        {
+            if ( legacyEncodingMap.ContainsKey(name))
+            {
+                return legacyEncodingMap[name];
+            }
+            else
+            {
+                return Encoding.Default;
+            }
+        }
+
+
+        // [System.Text.Encoding]::GetEncodings() | ? { $_.GetEncoding().GetPreamble() } |
+        //     Add-Member ScriptProperty Preamble { $this.GetEncoding().GetPreamble() -join "-" } -PassThru |
+        //     Format-Table -Auto
+        internal static Dictionary<String, FileEncoding> encodingMap =
+            new Dictionary<string, FileEncoding>()
+            {
+                { "255-254", FileEncoding.Unicode },
+                { "254-255", FileEncoding.BigEndianUnicode },
+                { "255-254-0-0", FileEncoding.UTF32 },
+                { "0-0-254-255", FileEncoding.BigEndianUTF32 },
+                { "239-187-191", FileEncoding.UTF8BOM },
+            };
+
+        internal static char[] nonPrintableCharacters = {
+            (char) 0, (char) 1, (char) 2, (char) 3, (char) 4, (char) 5, (char) 6, (char) 7, (char) 8,
+            (char) 11, (char) 12, (char) 14, (char) 15, (char) 16, (char) 17, (char) 18, (char) 19, (char) 20,
+            (char) 21, (char) 22, (char) 23, (char) 24, (char) 25, (char) 26, (char) 28, (char) 29, (char) 30,
+            (char) 31, (char) 127, (char) 129, (char) 141, (char) 143, (char) 144, (char) 157 };
+
+        internal static readonly UTF8Encoding utf8NoBom = new UTF8Encoding(encoderShouldEmitUTF8Identifier: false);
+
     }
 
 }
