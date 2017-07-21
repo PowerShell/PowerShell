@@ -187,7 +187,7 @@ try
 
     if($SuppressQuiet)
     {
-        $openCoverParams.Add('$SuppressQuiet', $true)
+        $openCoverParams.Add('SuppressQuiet', $true)
     }
 
     $openCoverParams | Out-String | Write-LogPassThru

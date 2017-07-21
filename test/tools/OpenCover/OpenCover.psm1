@@ -501,8 +501,6 @@ function Invoke-OpenCover
             # invoke OpenCover unelevated and poll for completion
             "$openCoverBin $cmdlineUnelevated" | Out-File -FilePath "$env:temp\unelevated.ps1" -Force
             runas.exe /trustlevel:0x20000 "powershell.exe -file $env:temp\unelevated.ps1"
-            # wait for process to start
-            Start-Sleep -Seconds 5
             # poll for process exit every 60 seconds
             # timeout of 6 hours
             # Runs currently take about 2.5 - 3 hours, we picked 6 hours to be substantially larger.
@@ -543,7 +541,18 @@ function CreateOpenCoverCmdline($target, $outputLog, $targetArgs)
     $base64targetArgs = [convert]::ToBase64String($bytes)
 
     # the order seems to be important. Always keep -targetargs as the last parameter.
-    $cmdline = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all","-mergeoutput", "-filter:`"+[*]* -[Microsoft.PowerShell.PSReadLine]*`"", "-targetargs:`"-EncodedCommand $base64targetArgs`""
-    return $cmdline
+    $cmdline = "-target:$target",
+        "-register:user",
+        "-output:${outputLog}",
+        "-nodefaultfilters",
+        "-oldstyle",
+        "-hideskipped:all",
+        "-mergeoutput",
+        "-filter:`"+[*]* -[Microsoft.PowerShell.PSReadLine]*`"",
+        "-targetargs:`"-EncodedCommand $base64targetArgs`""
+
+    $cmdlineAsString = $cmdline -join " "
+
+    return $cmdlineAsString
 
 }
