@@ -413,14 +413,14 @@ function Install-OpenCover
 .Description
    Invoke-OpenCover runs tests under OpenCover by executing tests on PowerShell.exe located at $PowerShellExeDirectory.
 .EXAMPLE
-   Invoke-OpenCover -TestDirectory $pwd/test/powershell -PowerShellExeDirectory $pwd/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win10-x64
+   Invoke-OpenCover -TestPath $pwd/test/powershell -PowerShellExeDirectory $pwd/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win10-x64
 #>
 function Invoke-OpenCover
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param (
         [parameter()]$OutputLog = "$home/Documents/OpenCover.xml",
-        [parameter()]$TestDirectory = "${script:psRepoPath}/test/powershell",
+        [parameter()]$TestPath = "${script:psRepoPath}/test/powershell",
         [parameter()]$OpenCoverPath = "$home/OpenCover",
         [parameter()]$PowerShellExeDirectory = "${script:psRepoPath}/src/powershell-win-core/bin/CodeCoverage/netcoreapp2.0/win10-x64/publish",
         [parameter()]$PesterLogElevated = "$pwd/TestResultsElevated.xml",
@@ -466,7 +466,7 @@ function Invoke-OpenCover
     $updatedEnvPath = "${PowerShellExeDirectory}\Modules;$TestToolsModulesPath"
 
     $startupArgs =  "Set-ExecutionPolicy Bypass -Force -Scope Process; `$env:PSModulePath = '${updatedEnvPath}';"
-    $targetArgs = "${startupArgs}", "Invoke-Pester","${TestDirectory}"
+    $targetArgs = "${startupArgs}", "Invoke-Pester","${TestPath}","-OutputFormat $PesterLogFormat"
 
     if ( $CIOnly )
     {
@@ -479,8 +479,8 @@ function Invoke-OpenCover
         $targetArgsUnelevated = $targetArgs + @("-excludeTag @('RequireAdminOnWindows')")
     }
 
-    $targetArgsElevated += @("-OutputFile $PesterLogElevated", "-OutputFormat $PesterLogFormat")
-    $targetArgsUnelevated += @("-OutputFile $PesterLogUnelevated", "-OutputFormat $PesterLogFormat")
+    $targetArgsElevated += @("-OutputFile $PesterLogElevated")
+    $targetArgsUnelevated += @("-OutputFile $PesterLogUnelevated")
 
     if($Quiet)
     {
@@ -488,34 +488,24 @@ function Invoke-OpenCover
         $targetArgsUnelevated += @("-Quiet")
     }
 
-    $targetArgStringElevated = $targetArgsElevated -join " "
-    $targetArgStringUnelevated  = $targetArgsUnelevated -join " "
+    $cmdlineElevated = CreateOpenCoverCmdline -target $target -outputLog $OutputLog -targetArgs $targetArgsElevated
+    $cmdlineUnelevated = CreateOpenCoverCmdline -target $target -outputLog $OutputLog -targetArgs $targetArgsUnelevated
 
-    $bytes = [System.Text.Encoding]::Unicode.GetBytes($targetArgStringElevated)
-    $base64targetArgsElevated = [convert]::ToBase64String($bytes)
-
-    $bytes = [System.Text.Encoding]::Unicode.GetBytes($targetArgStringUnelevated)
-    $base64targetArgsUnelevated = [convert]::ToBase64String($bytes)
-
-    # the order seems to be important. Always keep -targetargs as the last parameter.
-    $openCoverArgsElevated = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all","-mergeoutput", "-filter:`"+[*]* -[Microsoft.PowerShell.PSReadLine]*`"", "-targetargs:`"-EncodedCommand $base64targetArgsElevated`""
-    $openCoverArgsUnelevated = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all", "-mergeoutput", "-filter:`"+[*]* -[Microsoft.PowerShell.PSReadLine]*`"", "-targetargs:`"-EncodedCommand $base64targetArgsUnelevated`""
-    $openCoverArgsUnelevatedString = $openCoverArgsUnelevated -join " "
-
-    if ( $PSCmdlet.ShouldProcess("$OpenCoverBin $openCoverArgsUnelevated")  )
+    if ( $PSCmdlet.ShouldProcess("$OpenCoverBin $cmdlineUnelevated") )
     {
         try
         {
             # invoke OpenCover elevated
-            & $OpenCoverBin $openCoverArgsElevated
+            & $OpenCoverBin $cmdlineElevated
 
             # invoke OpenCover unelevated and poll for completion
-            "$openCoverBin $openCoverArgsUnelevatedString" | Out-File -FilePath "$env:temp\unelevated.ps1" -Force
+            "$openCoverBin $cmdlineUnelevated" | Out-File -FilePath "$env:temp\unelevated.ps1" -Force
             runas.exe /trustlevel:0x20000 "powershell.exe -file $env:temp\unelevated.ps1"
             # wait for process to start
             Start-Sleep -Seconds 5
             # poll for process exit every 60 seconds
             # timeout of 6 hours
+            # Runs currently take about 2.5 - 3 hours, we picked 6 hours to be substantially larger.
             $timeOut = ([datetime]::Now).AddHours(6)
 
             $openCoverExited = $false
@@ -543,4 +533,17 @@ function Invoke-OpenCover
             Remove-Item "$env:temp\unelevated.ps1" -force -ErrorAction SilentlyContinue
         }
     }
+}
+
+function CreateOpenCoverCmdline($target, $outputLog, $targetArgs)
+{
+    $targetArgString = $targetArgs -join " "
+
+    $bytes = [System.Text.Encoding]::Unicode.GetBytes($targetArgString)
+    $base64targetArgs = [convert]::ToBase64String($bytes)
+
+    # the order seems to be important. Always keep -targetargs as the last parameter.
+    $cmdline = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all","-mergeoutput", "-filter:`"+[*]* -[Microsoft.PowerShell.PSReadLine]*`"", "-targetargs:`"-EncodedCommand $base64targetArgs`""
+    return $cmdline
+
 }
