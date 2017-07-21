@@ -428,7 +428,7 @@ function Invoke-OpenCover
         [parameter()]$PesterLogFormat = "NUnitXml",
         [parameter()]$TestToolsModulesPath = "${script:psRepoPath}/test/tools/Modules",
         [switch]$CIOnly,
-        [switch]$Quiet = $true
+        [switch]$SuppressQuiet
         )
 
     # check for elevation
@@ -482,7 +482,7 @@ function Invoke-OpenCover
     $targetArgsElevated += @("-OutputFile $PesterLogElevated")
     $targetArgsUnelevated += @("-OutputFile $PesterLogUnelevated")
 
-    if($Quiet)
+    if(-not $SuppressQuiet)
     {
         $targetArgsElevated += @("-Quiet")
         $targetArgsUnelevated += @("-Quiet")

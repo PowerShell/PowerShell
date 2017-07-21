@@ -2,7 +2,7 @@
     [Parameter(Mandatory = $true, Position = 0)] $coverallsToken,
     [Parameter(Mandatory = $true, Position = 1)] $codecovToken,
     [Parameter(Position = 2)] $azureLogDrive = "L:\",
-    [Parameter] [switch] $Quiet = $true
+    [Parameter] [switch] $SuppressQuiet
 )
 
 # Read the XML and create a dictionary for FileUID -> file full path.
@@ -185,9 +185,9 @@ try
         TestToolsModulesPath = "$testToolsPath\Modules";
     }
 
-    if($Quiet)
+    if($SuppressQuiet)
     {
-        $openCoverParams.Add('Quiet', $true)
+        $openCoverParams.Add('$SuppressQuiet', $true)
     }
 
     $openCoverParams | Out-String | Write-LogPassThru
