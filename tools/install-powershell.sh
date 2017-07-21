@@ -23,7 +23,6 @@
 
 VERSION="1.1.0"
 gitreposubpath="PowerShell/PowerShell/master"
-gitreposubpath="darwinjs/PowerShell/feature/install-powershell.sh"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 gitscriptname="install-powershell.psh"
 
@@ -52,10 +51,14 @@ MACH=`uname -m`
 if [ "${OS}" == "windowsnt" ]; then
     OS=windows
     DistroBasedOn=windows
+    SCRIPTFOLDER=$(dirname $(readlink -f $0))
 elif [ "${OS}" == "darwin" ]; then
     OS=osx
     DistroBasedOn=osx
+    # readlink doesn't work the same on macOS
+    SCRIPTFOLDER=$(dirname $0)
 else
+    SCRIPTFOLDER=$(dirname $(readlink -f $0))
     OS=`uname`
     if [ "${OS}" == "SunOS" ] ; then
         OS=solaris
@@ -110,7 +113,7 @@ echo "  REV: $REV"
 echo "  KERNEL: $KERNEL"
 echo "  MACH: $MACH"
 
-SCRIPTFOLDER=$(dirname $(readlink -f $0))
+
 
 if [[ "'$*'" =~ appimage ]] ; then
     if [ -f $SCRIPTFOLDER/appimage.sh ]; then
@@ -136,4 +139,3 @@ elif [ "$DistroBasedOn" == "redhat" ] || [ "$DistroBasedOn" == "debian" ] || [ "
 else
     echo "Sorry, your operating system is based on $DistroBasedOn and is not supported by PowerShell Core or this installer at this time."
 fi
-

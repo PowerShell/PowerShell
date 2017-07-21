@@ -20,11 +20,10 @@
 
 VERSION="1.1.2"
 gitreposubpath="PowerShell/PowerShell/master"
-gitreposubpath="darwinjs/PowerShell/feature/install-powershell.sh"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=osx
 repobased=true
-gitscriptname="installpsh-osx.psh"
+gitscriptname="installpsh-osx.sh"
 
 echo "\n*** PowerShell Core Development Environment Installer $VERSION for $thisinstallerdistro"
 echo "***    Current PowerShell Core Version: $currentpshversion"
@@ -42,6 +41,9 @@ trap '
 lowercase(){
     echo "$1" | tr [A-Z] [a-z]
 }
+
+OS=`lowercase \`uname\``
+
 if [ "${OS}" == "windowsnt" ]; then
     OS=windows
     DistroBasedOn=windows
@@ -114,55 +116,46 @@ echo "\n*** Installing PowerShell Core for $DistroBasedOn..."
 
 if ! hash brew 2>/dev/null; then
     echo "Homebrew is not found, installing..."
-    $SUDO ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null ; brew install caskroom/cask/brew-cask 2> /dev/null
+    ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)" < /dev/null 2> /dev/null
+else
+    echo "Howebrew is already installed, skipping..."
 fi
 
-if hash brew 2>/dev/null; then
+if ! hash brew 2>/dev/null; then
     echo "ERROR: brew did not install correctly, exiting..." >&2
     exit 3
 fi
 
-if [[ ! -d $(brew --prefix openssl) ]]; then
-    echo "Installing OpenSSL..."
-    if ! $SUDO brew install openssl; then
-        echo "ERROR: OpenSSL failed to install! Crypto functions will not work..." >&2
-    fi
-else
-  $SUDO brew upgrade openssl
-fi
-
-if [[ ! -d $(brew --prefix curl) ]]; then
-    if ! $SUDO brew install curl --with-openssl; then
-        echo "ERROR: curl failed to build against OpenSSL; SSL functions will not work..." >&2
-    fi
-else
-    if ! $SUDO brew reinstall curl --with-openssl; then
-        echo "ERROR: curl failed to build against OpenSSL; SSL functions will not work..." >&2
+# Suppress output, it's very noisy on travis-ci
+if [[ ! -d $(brew --prefix cask) ]]; then
+    echo "Installing cask..."
+    if ! brew tap caskroom/cask >/dev/null; then
+        echo "ERROR: Cask failed to install! Cannot install powershell..." >&2
     fi
 fi
 
-if [[ ! -d $(brew --prefix powershell) ]]; then
-    if ! $SUDO brew install powershell; then
-        echo "ERROR: powershell failed to install..." >&2
-        exit 1
+if ! hash powershell 2>/dev/null; then
+    echo "Installing PowerShell..."
+    if ! brew cask install powershell; then
+        echo "ERROR: PowerShell failed to install! Cannot install powershell..." >&2
     fi
 else
-  $SUDO brew upgrade powershell
+    echo "PowerShell is already installed, skipping..."
 fi
 
 if [[ "'$*'" =~ includeide ]] ; then
     echo "\n*** Installing VS Code PowerShell IDE..."
     if [[ ! -d $(brew --prefix visual-studio-code) ]]; then
-        if ! $SUDO brew install visual-studio-code; then
+        if ! brew install visual-studio-code; then
             echo "ERROR: Visual Studio Code failed to install..." >&2
             exit 1
         fi
     else
-        $SUDO brew upgrade visual-studio-code
+        brew upgrade visual-studio-code
     fi
 
     echo "\n*** Installing VS Code PowerShell Extension"
-    $SUDO code --install-extension ms-vscode.PowerShell
+    code --install-extension ms-vscode.PowerShell
 fi
 
 powershell -noprofile -c '"Congratulations! PowerShell is installed at $PSHOME"'

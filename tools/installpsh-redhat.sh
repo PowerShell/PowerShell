@@ -20,7 +20,6 @@
 
 VERSION="1.1.2"
 gitreposubpath="PowerShell/PowerShell/master"
-gitreposubpath="darwinjs/PowerShell/feature/install-powershell.sh"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 thisinstallerdistro=redhat
 repobased=true

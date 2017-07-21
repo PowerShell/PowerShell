@@ -37,25 +37,25 @@ bash install-powershell.sh <ARGUMENTS>
 
 ## Examples
 
-### Only Install PowerShell Core:
+### Only Install PowerShell Core
 
 ```bash
 bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh)
 ```
 
-### Install PowerShell Core with IDE:
+### Install PowerShell Core with IDE
 
 ```bash
 bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh) -includeide
 ```
 
-### Install PowerShell Core with IDE and do tests that require a human to interact with the install process:
+### Install PowerShell Core with IDE and do tests that require a human to interact with the installation process
 
 ```bash
 bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh) -includeide -interactivetesting
 ```
 
-### Install AppImage:
+### Install AppImage
 
 ```bash
 bash <(wget -O - https://raw.githubusercontent.com/PowerShell/PowerShell/master/tools/install-powershell.sh) -appimage
