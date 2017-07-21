@@ -49,5 +49,24 @@
         $expectedValue = '<?xml version="1.0" encoding="utf-8"?><Objects><Object><Property Name="prop1">val1</Property><Property Name="prop2">val2</Property></Object></Objects>'
         $returnObject.OuterXml | Should Be $expectedValue
     }
+
+    It "StopProcessing should work" {
+		$ps = [PowerShell]::Create()
+		$ps.AddCommand("Get-Process")
+		$ps.AddCommand("ConvertTo-Xml")
+		$ps.AddParameter("Depth", 2)
+		$ps.BeginInvoke()
+		$ps.Stop()
+		$ps.InvocationStateInfo.State | Should Be "Stopped"
+    }
+
+    # these tests just cover aspects that aren't normally exercised being used as a cmdlet
+	It "Can read back switch and parameter values using api" {
+        Add-Type -AssemblyName "${pshome}/Microsoft.PowerShell.Commands.Utility.dll"
+
+		$cmd = [Microsoft.PowerShell.Commands.ConvertToXmlCommand]::new()
+		$cmd.NoTypeInformation = $true
+		$cmd.NoTypeInformation | Should Be $true
+	}
 }
 
