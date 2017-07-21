@@ -899,7 +899,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// This allows all success output to be set to a variable, where the variable is reset for each item returned by
-        /// the cmdlet. Semantically this is equivalent to :  cmd | ForEach-Object { $pipelineVariable = $_; (...) }
+        /// the cmdlet. Semantically this is equivalent to :  cmd | % { $pipelineVariable = $_; (...) }
         /// </summary>
         internal string PipelineVariable { get; set; }
         private PSVariable _pipelineVarReference = null;

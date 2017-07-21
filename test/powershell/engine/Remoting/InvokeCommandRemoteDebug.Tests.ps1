@@ -158,7 +158,7 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
         else
         {
             if ($null -ne $testDebugger) { $testDebugger.Release() }
-            if ($null -ne $psl) { $ps.Dispose() }
+            if ($null -ne $ps) { $ps.Dispose() }
             if ($null -ne $ps2) { $ps2.Dispose() }
             if ($null -ne $rs) { $rs.Dispose() }
             if ($null -ne $rs2) { $rs2.Dispose() }

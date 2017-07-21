@@ -994,7 +994,7 @@ namespace System.Management.Automation
         /// For example, to construct a command string "get-process | ForEach-Object { $_.Name }"
         ///     <code>
         ///         PowerShell shell = PowerShell.Create("get-process").
-        ///                                     AddCommand("ForEach-Object { $_.Name }", true);
+        ///                                     AddCommand("foreach { $_.Name }", true);
         ///     </code>
         /// </summary>
         /// <param name="script">
@@ -1033,7 +1033,7 @@ namespace System.Management.Automation
         /// For example, to construct a command string "get-process | ForEach-Object { $_.Name }"
         ///     <code>
         ///         PowerShell shell = PowerShell.Create("get-process").
-        ///                                     AddCommand("ForEach-Object { $_.Name }", true);
+        ///                                     AddCommand("foreach { $_.Name }", true);
         ///     </code>
         /// </summary>
         /// <param name="script">
@@ -4500,7 +4500,7 @@ namespace System.Management.Automation
 
             try
             {
-                // IsNested is true for the icm | ForEach-Object { icm } scenario
+                // IsNested is true for the icm | % { icm } scenario
                 if (!IsNested || (pool != null && pool.IsRemote))
                 {
                     if (null != pool)

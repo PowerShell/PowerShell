@@ -4794,7 +4794,7 @@ namespace System.Management.Automation
             public override AstVisitAction VisitCommand(CommandAst commandAst)
             {
                 // MSFT: 784739 Stack overflow during tab completion of pipeline variable
-                // $null | ForEach-Object -pv p { $p<TAB> -> In this case $p is pipelinevariable
+                // $null | % -pv p { $p<TAB> -> In this case $p is pipelinevariable
                 // and is used in the same command. PipelineVariables are not available
                 // in the command they are assigned in. Hence the following code ignores
                 // if the variable being completed is in the command extent.

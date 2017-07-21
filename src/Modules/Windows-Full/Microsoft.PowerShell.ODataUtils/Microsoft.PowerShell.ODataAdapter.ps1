@@ -1634,7 +1634,7 @@ function AddParametersCDXML
         [Hashtable] $complexTypeMapping
     )
 
-    $properties | Where-Object { $_ -ne $null } | ForEach-Object {
+    $properties | Where-Object { $null -ne $_ } | ForEach-Object {
         $xmlWriter.WriteStartElement('Parameter')
         $xmlWriter.WriteAttributeString('ParameterName', $_.Name + $suffix)
             $xmlWriter.WriteStartElement('Type')
@@ -1924,7 +1924,7 @@ function GetNetworkControllerAdditionalProperties
 
     # Additional properties contains the types present as navigation properties
 
-    $additionalProperties = $navigationProperties | Where-Object { $_ -ne $null } | ForEach-Object {
+    $additionalProperties = $navigationProperties | Where-Object { $null -ne $_ } | ForEach-Object {
         $typeName = GetNavigationPropertyTypeName $_ $metaData
 
         if ($_.Name -eq "Properties") {

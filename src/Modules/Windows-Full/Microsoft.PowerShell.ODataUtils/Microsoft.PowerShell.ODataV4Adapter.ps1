@@ -1894,7 +1894,7 @@ function GetEntitySetForEntityType {
 
     $result = $Metadata.EntitySets | Where-Object { ($_.Type.Namespace -eq $entityType.Namespace) -and ($_.Type.Name -eq $entityType.Name) }
 
-    if (($result.Count -eq 0) -and ($null -eq $entityType.BaseType))
+    if (($result.Count -eq 0) -and ($null -ne $entityType.BaseType))
     {
         GetEntitySetForEntityType $Metadata $entityType.BaseType
     }

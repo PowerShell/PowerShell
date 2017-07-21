@@ -241,7 +241,7 @@ namespace System.Management.Automation
                         # This doesn't handle strings however.
                         $_command = [regex]::Split($line, '[|;=]')[-1]
 
-                        #  Extract the trailing unclosed block e.g. ls | ForEach-Object { cp
+                        #  Extract the trailing unclosed block e.g. ls | foreach { cp
                         if ($_command -match '\{([^\{\}]*)$')
                         {
                             $_command = $matches[1]

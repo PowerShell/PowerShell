@@ -191,7 +191,7 @@ namespace System.Management.Automation
         /// For example, to construct a command string "get-process | ForEach-Object { $_.Name }"
         ///     <code>
         ///         PSCommand command = new PSCommand("get-process").
-        ///                                     AddCommand("ForEach-Object { $_.Name }", true);
+        ///                                     AddCommand("% { $_.Name }", true);
         ///     </code>
         /// </summary>
         /// <param name="script">

@@ -5242,7 +5242,7 @@ namespace System.Management.Automation.Language
     }
 
     /// <summary>
-    /// The ast that represents a PowerShell pipeline, e.g. <c>gci -re . *.cs | select-string Foo</c> or <c> 65..90 | ForEach-Object { [char]$_ }</c>.
+    /// The ast that represents a PowerShell pipeline, e.g. <c>gci -re . *.cs | select-string Foo</c> or <c> 65..90 | % { [char]$_ }</c>.
     /// A pipeline must have at least 1 command.  The first command may be an expression or a command invocation.
     /// </summary>
     public class PipelineAst : PipelineBaseAst

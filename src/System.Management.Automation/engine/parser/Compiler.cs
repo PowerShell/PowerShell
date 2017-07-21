@@ -3308,7 +3308,7 @@ namespace System.Management.Automation.Language
                 //    {
                 //       [cmdletbinding()]
                 //       param()
-                //       $(gcm NoExist) > test.txt | ForEach-Object { $_ }  ## file redirect with new temp pipe
+                //       $(gcm NoExist) > test.txt | % { $_ }  ## file redirect with new temp pipe
                 //       "hello"
                 //    }
                 // before this change, running 'foo' will not write out 'hello'.

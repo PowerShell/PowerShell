@@ -417,7 +417,7 @@ Describe "Proxy module is usable when the original runspace is no longer around"
 
         It "Verifies Remove-Module removed the runspace that was automatically created" -Pending {
             Remove-Module $module -Force
-            (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should BeNullOrEmpty
+            (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should Be $null
         }
 
         It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Pending {
@@ -452,7 +452,7 @@ Describe "Proxy module is usable when the original runspace is no longer around"
         # removing the module should remove the implicitly/magically created runspace
         It "Verifies Remove-Module removes automatically created runspace" -Pending {
             Remove-Module $module -Force
-            (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should BeNullOrEmpty
+            (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should Be $null
         }
         It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Pending {
             ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should Be "Closed"
@@ -668,7 +668,7 @@ Describe "Import-PSSession with FormatAndTypes" -tags "Feature" {
         # Should get 2 deserialized S.M.A.H.Coordinates objects
         $results.Count | Should Be 2
         # First object shouldn't have the additional ETS note property
-        $null -eq $results[0].MyTestLabel | Should Be $true
+        $results[0].MyTestLabel | Should Be $null
         # Second object should have the additional ETS note property
         $results[1].MyTestLabel | Should Be 123
     }
@@ -767,7 +767,7 @@ Describe "Import-PSSession functional tests" -tags "Feature" {
     }
 
     It "Helper functions should not be imported" -Skip:$skipTest {
-        (Get-Item function:*PSImplicitRemoting* -ErrorAction SilentlyContinue) | Should BeNullOrEmpty
+        (Get-Item function:*PSImplicitRemoting* -ErrorAction SilentlyContinue) | Should Be $null
     }
 
     It "Calls implicit remoting proxies 'MyFunction'" -Skip:$skipTest {
@@ -808,11 +808,11 @@ Describe "Import-PSSession functional tests" -tags "Feature" {
         }
 
         It "Temporary module should be automatically removed after runspace is closed" -Skip:$skipTest {
-            (Get-Module | Where-Object { $_.Path -eq $module.Path }) | Should BeNullOrEmpty
+            (Get-Module | Where-Object { $_.Path -eq $module.Path }) | Should Be $null
         }
 
         It "Temporary psm1 file should be automatically removed after runspace is closed" -Skip:$skipTest {
-            (Get-Item $module.Path -ErrorAction SilentlyContinue) | Should BeNullOrEmpty
+            (Get-Item $module.Path -ErrorAction SilentlyContinue) | Should Be $null
         }
 
         It "Event should be unregistered when the runspace is closed" -Skip:$skipTest {
@@ -1740,7 +1740,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
             if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
-        (Get-Item function:Get-MyVariable -ErrorAction SilentlyContinue) | Should BeNullOrEmpty
+        (Get-Item function:Get-MyVariable -ErrorAction SilentlyContinue) | Should Be $null
     }
 
     Context "BadVerbs of functions should trigger a warning" {
@@ -1779,13 +1779,13 @@ Describe "Implicit remoting tests" -tags "Feature" {
                 $getVariablePid | Should Be $remotePid
 
                 ## Get-Variable function should not be exported when importing a BadVerb-Variable function
-                Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should BeNullOrEmpty
+                Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 ## BadVerb-Variable should be a function, not an alias (1)
-                Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should BeNullOrEmpty
+                Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 ## BadVerb-Variable should be a function, not an alias (2)
-                Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should BeNullOrEmpty
+                Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 (BadVerb-Variable -Name pid).Value | Should Be $remotePid
             } finally {
@@ -1819,13 +1819,13 @@ Describe "Implicit remoting tests" -tags "Feature" {
                 $getVariablePid | Should Be $remotePid
 
                 ## Get-Variable function should not be exported when importing a BadVerb-Variable function
-                Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should BeNullOrEmpty
+                Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 ## BadVerb-Variable should be a function, not an alias (1)
-                Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should BeNullOrEmpty
+                Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 ## BadVerb-Variable should be a function, not an alias (2)
-                Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should BeNullOrEmpty
+                Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 (BadVerb-Variable -Name pid).Value | Should Be $remotePid
             } finally {
@@ -1870,10 +1870,10 @@ Describe "Implicit remoting tests" -tags "Feature" {
                 $getVariablePid | Should Be $remotePid
 
                 ## BadVerb-Variable should be an alias, not a function (1)
-                Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should BeNullOrEmpty
+                Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 ## BadVerb-Variable should be an alias, not a function (2)
-                Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should BeNullOrEmpty
+                Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 (BadVerb-Variable -Name pid).Value | Should Be $remotePid
             } finally {
