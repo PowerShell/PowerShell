@@ -87,7 +87,8 @@ function Add-UserToGroup
 # or is a pushed tag
 Function Test-DailyBuild
 {
-    if(($env:PS_DAILY_BUILD -eq 'True') -or ($env:APPVEYOR_SCHEDULED_BUILD -eq 'True') -or ($env:APPVEYOR_REPO_TAG_NAME))
+    $trueString = 'True'
+    if(($env:PS_DAILY_BUILD -eq $trueString) -or ($env:APPVEYOR_SCHEDULED_BUILD -eq $trueString) -or ($env:APPVEYOR_REPO_TAG_NAME))
     {
         return $true
     }
@@ -96,6 +97,7 @@ Function Test-DailyBuild
     # Run Daily tests
     if($env:APPVEYOR_REPO_COMMIT_MESSAGE -match '\[feature\]')
     {
+        Set-AppveyorBuildVariable -Name PS_DAILY_BUILD -Value $trueString
         return $true
     }
 
