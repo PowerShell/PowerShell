@@ -265,11 +265,11 @@ function ValidateSaveHelp
         [string]$path
     )
 
-    $compressedFile = GetFiles -fileType "*$extension" -path $path | foreach {Split-Path $_ -Leaf}
+    $compressedFile = GetFiles -fileType "*$extension" -path $path | ForEach-Object {Split-Path $_ -Leaf}
     $expectedCompressedFile = $testCases[$moduleName].CompressedFiles
     $expectedCompressedFile | Should Be $compressedFile
 
-    $helpInfoFile = GetFiles -fileType "*HelpInfo.xml" -path $path | foreach {Split-Path $_ -Leaf}
+    $helpInfoFile = GetFiles -fileType "*HelpInfo.xml" -path $path | ForEach-Object {Split-Path $_ -Leaf}
     $expectedHelpInfoFile = $testCases[$moduleName].HelpInfoFiles
     $expectedHelpInfoFile | Should Be $helpInfoFile
 }

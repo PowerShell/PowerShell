@@ -26,7 +26,7 @@
 
         # Skip the tests if we couldn't find a code sign certificate
         # This will happen in NanoServer and IoT
-        if ($cert -eq $null)
+        if ($null -eq $cert)
         {
             $skipTest = $true
             return
@@ -58,9 +58,9 @@
     AfterAll {
         if ($skipTest) { return }
 
-        if ($tempName -ne $null) { Remove-Item -Path $tempName -Force -ErrorAction SilentlyContinue }
-        if ($oldExecutionPolicy -ne $null) { Set-ExecutionPolicy $oldExecutionPolicy -Scope Process }
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        if ($null -ne $tempName) { Remove-Item -Path $tempName -Force -ErrorAction SilentlyContinue }
+        if ($null -ne $oldExecutionPolicy) { Set-ExecutionPolicy $oldExecutionPolicy -Scope Process }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
     }
 
     #
@@ -117,7 +117,7 @@ Describe "Tests Import-PSSession cmdlet works with types unavailable on the clie
 
     AfterAll {
         if ($skipTest) { return }
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
     }
 
     It "Verifies client-side unavailable enum is correctly handled" -Skip:$skipTest {
@@ -129,7 +129,7 @@ Describe "Tests Import-PSSession cmdlet works with types unavailable on the clie
             # The enum is to-string-ed appropriately
             (foo -x "Value2").ToString() | Should Be "Value2"
         } finally {
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
     }
 }
@@ -147,7 +147,7 @@ Describe "Cmdlet help from remote session" -tags "Feature" {
 
     AfterAll {
         if ($skipTest) { return }
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
     }
 
     It "Verifies that get-help name for remote proxied commands matches the get-command name" -Skip:$skipTest {
@@ -158,7 +158,7 @@ Describe "Cmdlet help from remote session" -tags "Feature" {
 
             $gcmOutPut | Should Be $getHelpOutPut
         } finally {
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 	}
 }
@@ -176,7 +176,7 @@ Describe "Import-PSSession Cmdlet error handling" -tags "Feature" {
 
     AfterAll {
         if ($skipTest) { return }
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
     }
 
 
@@ -188,7 +188,7 @@ Describe "Import-PSSession Cmdlet error handling" -tags "Feature" {
             $expectedError | Should Not Be NullOrEmpty
             $expectedError[0].ToString().Contains("BrokenAlias") | Should Be $true
         } finally {
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             Invoke-Command $session { Remove-Item alias:BrokenAlias }
         }
     }
@@ -202,7 +202,7 @@ Describe "Import-PSSession Cmdlet error handling" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Test non-terminating error" -Skip:$skipTest {
@@ -245,7 +245,7 @@ Describe "Import-PSSession Cmdlet error handling" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Verifies proxied output = proxied output 2" -Skip:$skipTest {
@@ -277,7 +277,7 @@ Describe "Import-PSSession Cmdlet error handling" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Verifies WarningVariable" -Skip:$skipTest {
@@ -302,13 +302,13 @@ Describe "Tests Export-PSSession" -tags "Feature" {
 
         $file = [IO.Path]::Combine([IO.Path]::GetTempPath(), [Guid]::NewGuid().ToString())
         $results = Export-PSSession -Session $session -CommandName Get-Variable -AllowClobber -ModuleName $file
-        $oldTimestamp = $($results | Select -First 1).LastWriteTime
+        $oldTimestamp = $($results | Select-Object -First 1).LastWriteTime
     }
 
     AfterAll {
         if ($skipTest) { return }
-        if ($file -ne $null) { Remove-Item $file -Force -Recurse -ErrorAction SilentlyContinue }
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        if ($null -ne $file) { Remove-Item $file -Force -Recurse -ErrorAction SilentlyContinue }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
     }
 
     It "Verifies Export-PSSession creates a file/directory" -Skip:$skipTest {
@@ -316,15 +316,15 @@ Describe "Tests Export-PSSession" -tags "Feature" {
     }
 
     It "Verifies Export-PSSession creates a psd1 file" -Skip:$skipTest {
-        ($results | ?{ $_.Name -like "*$(Split-Path -Leaf $file).psd1" }) | Should Be $true
+        ($results | Where-Object { $_.Name -like "*$(Split-Path -Leaf $file).psd1" }) | Should Be $true
     }
 
     It "Verifies Export-PSSession creates a psm1 file" -Skip:$skipTest {
-        ($results | ?{ $_.Name -like "*.psm1" }) | Should Be $true
+        ($results | Where-Object { $_.Name -like "*.psm1" }) | Should Be $true
     }
 
     It "Verifies Export-PSSession creates a ps1xml file" -Skip:$skipTest {
-        ($results | ?{ $_.Name -like "*.ps1xml" }) | Should Be $true
+        ($results | Where-Object { $_.Name -like "*.ps1xml" }) | Should Be $true
     }
 
     It "Verifies that Export-PSSession fails when a module directory already exists" -Skip:$skipTest {
@@ -344,7 +344,7 @@ Describe "Tests Export-PSSession" -tags "Feature" {
         @($newResults).Count | Should Be 4
 
         # Verifies that Export-PSSession creates *new* files
-        $newResults | % { $_.LastWriteTime | Should BeGreaterThan $oldTimestamp }
+        $newResults | ForEach-Object { $_.LastWriteTime | Should BeGreaterThan $oldTimestamp }
     }
 
     Context "The module is usable when the original runspace is still around" {
@@ -356,7 +356,7 @@ Describe "Tests Export-PSSession" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Verifies that proxy returns remote pid" -Skip:$skipTest {
@@ -384,13 +384,13 @@ Describe "Proxy module is usable when the original runspace is no longer around"
         $null = Export-PSSession -Session $session -CommandName Get-Variable -AllowClobber -ModuleName $file
 
         # Close the session to test the behavior of proxy module
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue; $session = $null }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue; $session = $null }
     }
 
     AfterAll {
         if ($skipTest) { return }
-        if ($file -ne $null) { Remove-Item $file -Force -Recurse -ErrorAction SilentlyContinue }
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        if ($null -ne $file) { Remove-Item $file -Force -Recurse -ErrorAction SilentlyContinue }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
     }
 
     ## It requires 'New-PSSession' to work with implicit credential to allow proxied command to create new session.
@@ -404,7 +404,7 @@ Describe "Proxy module is usable when the original runspace is no longer around"
         }
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Verifies proxy should return remote pid" -Pending {
@@ -417,7 +417,7 @@ Describe "Proxy module is usable when the original runspace is no longer around"
 
         It "Verifies Remove-Module removed the runspace that was automatically created" -Pending {
             Remove-Module $module -Force
-            ((Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) -eq $null) | Should Be $true
+            (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should Be $null
         }
 
         It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Pending {
@@ -434,7 +434,7 @@ Describe "Proxy module is usable when the original runspace is no longer around"
         }
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Verifies proxy should return remote pid" -Pending {
@@ -452,7 +452,7 @@ Describe "Proxy module is usable when the original runspace is no longer around"
         # removing the module should remove the implicitly/magically created runspace
         It "Verifies Remove-Module removes automatically created runspace" -Pending {
             Remove-Module $module -Force
-            ((Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) -eq $null) | Should Be $true
+            (Get-PSSession -InstanceId $internalSession.InstanceId -ErrorAction SilentlyContinue) | Should Be $null
         }
         It "Verifies Runspace is closed after removing module from Export-PSSession that got initialized with an internal r-space" -Pending {
             ($internalSession.Runspace.RunspaceStateInfo.ToString()) | Should Be "Closed"
@@ -469,8 +469,8 @@ Describe "Proxy module is usable when the original runspace is no longer around"
         }
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
-            if ($newSession -ne $null) { Remove-PSSession $newSession -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $newSession) { Remove-PSSession $newSession -ErrorAction SilentlyContinue }
         }
 
         It "Verifies proxy returns remote pid" -Pending {
@@ -614,16 +614,16 @@ Describe "Import-PSSession with FormatAndTypes" -tags "Feature" {
 
     AfterAll {
         if ($skipTest) { return }
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue }
-        if ($formatFile -ne $null) { Remove-Item $formatFile -Force -ErrorAction SilentlyContinue }
-        if ($typeFile -ne $null) { Remove-Item $typeFile -Force -ErrorAction SilentlyContinue }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        if ($null -ne $formatFile) { Remove-Item $formatFile -Force -ErrorAction SilentlyContinue }
+        if ($null -ne $typeFile) { Remove-Item $typeFile -Force -ErrorAction SilentlyContinue }
     }
 
     Context "Importing format file works" {
         BeforeAll {
             if ($skipTest) { return }
 
-            $formattingScript = { new-object System.Management.Automation.Host.Size | %{ $_.Width = 123; $_.Height = 456; $_ } | Out-String }
+            $formattingScript = { new-object System.Management.Automation.Host.Size | ForEach-Object { $_.Width = 123; $_.Height = 456; $_ } | Out-String }
             $originalLocalFormatting = & $formattingScript
 
             # Original local and remote formatting should be equal (sanity check)
@@ -641,7 +641,7 @@ Describe "Import-PSSession with FormatAndTypes" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "modified remote and imported local should be equal" -Skip:$skipTest {
@@ -668,7 +668,7 @@ Describe "Import-PSSession with FormatAndTypes" -tags "Feature" {
         # Should get 2 deserialized S.M.A.H.Coordinates objects
         $results.Count | Should Be 2
         # First object shouldn't have the additional ETS note property
-        $results[0].MyTestLabel -eq $null | Should Be $true
+        $results[0].MyTestLabel | Should Be $null
         # Second object should have the additional ETS note property
         $results[1].MyTestLabel | Should Be 123
     }
@@ -707,7 +707,7 @@ Describe "Import-PSSession with FormatAndTypes" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Serialization works for top-level properties" -Skip:$skipTest {
@@ -754,8 +754,8 @@ Describe "Import-PSSession functional tests" -tags "Feature" {
 
     AfterAll {
         if ($skipTest) { return }
-        if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
     }
 
     It "Import-PSSession should return a PSModuleInfo object" -Skip:$skipTest {
@@ -767,7 +767,7 @@ Describe "Import-PSSession functional tests" -tags "Feature" {
     }
 
     It "Helper functions should not be imported" -Skip:$skipTest {
-        ((Get-Item function:*PSImplicitRemoting* -ErrorAction SilentlyContinue) -eq $null) | Should Be $true
+        (Get-Item function:*PSImplicitRemoting* -ErrorAction SilentlyContinue) | Should Be $null
     }
 
     It "Calls implicit remoting proxies 'MyFunction'" -Skip:$skipTest {
@@ -800,7 +800,7 @@ Describe "Import-PSSession functional tests" -tags "Feature" {
             # The loop below works around the fact that PSEventManager uses threadpool worker to queue event handler actions to process later.
             # Usage of threadpool means that it is impossible to predict when the event handler will run (this is Windows 8 Bugs: #882977).
             $i = 0
-            while ( ($i -lt 20) -and ($null -ne (Get-Module | ? { $_.Path -eq $module.Path })) )
+            while ( ($i -lt 20) -and ($null -ne (Get-Module | Where-Object { $_.Path -eq $module.Path })) )
             {
                 $i++
                 Start-Sleep -Milliseconds 50
@@ -808,11 +808,11 @@ Describe "Import-PSSession functional tests" -tags "Feature" {
         }
 
         It "Temporary module should be automatically removed after runspace is closed" -Skip:$skipTest {
-            ((Get-Module | ? { $_.Path -eq $module.Path }) -eq $null) | Should Be $true
+            (Get-Module | Where-Object { $_.Path -eq $module.Path }) | Should Be $null
         }
 
         It "Temporary psm1 file should be automatically removed after runspace is closed" -Skip:$skipTest {
-            ((Get-Item $module.Path -ErrorAction SilentlyContinue) -eq $null) | Should Be $true
+            (Get-Item $module.Path -ErrorAction SilentlyContinue) | Should Be $null
         }
 
         It "Event should be unregistered when the runspace is closed" -Skip:$skipTest {
@@ -843,7 +843,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
 
     AfterAll {
         if ($skipTest) { return }
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
     }
 
     It "Binding of ValueFromPipeline should work" -Skip:$skipTest {
@@ -886,7 +886,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Pipeline binding works even if it relies on type constraints" -Skip:$skipTest {
@@ -927,7 +927,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Pipeline binding works even if it relies on type constraints and parameter set is ambiguous" -Skip:$skipTest {
@@ -970,7 +970,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Pipeline binding works even when also binding by name" -Skip:$skipTest {
@@ -1020,7 +1020,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Pipeline binding works by property name" -Skip:$skipTest {
@@ -1065,7 +1065,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Positional binding works" -Skip:$skipTest {
@@ -1109,7 +1109,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Positional binding works when binding an array value" -Skip:$skipTest {
@@ -1167,7 +1167,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Value from remaining arguments works" -Skip:$skipTest {
@@ -1232,7 +1232,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Non cmdlet-based binding works." -Skip:$skipTest {
@@ -1299,7 +1299,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Initializer run on the remote server" -Skip:$skipTest {
@@ -1320,7 +1320,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Importing by name/type should work" -Skip:$skipTest {
@@ -1359,7 +1359,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Test warnings present with '-WarningAction Continue'" -Skip:$skipTest {
@@ -1399,7 +1399,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Implicit remoting: OutVariable is not intercepted for non-cmdlet-bound functions" -Skip:$skipTest {
@@ -1416,7 +1416,7 @@ Describe "Implicit remoting parameter binding" -tags "Feature" {
 
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Switch parameters work fine" -Skip:$skipTest {
@@ -1504,9 +1504,9 @@ Describe "Implicit remoting on restricted ISS" -tags "Feature" {
 
     AfterAll {
         if ($skipTest) { return }
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue }
-        if ($myConfiguration -ne $null) { Unregister-PSSessionConfiguration -Name ($myConfiguration.Name) -Force -ErrorAction SilentlyContinue }
-        if ($sessionConfigurationDll -ne $null) { Remove-Item $sessionConfigurationDll -Force -ErrorAction SilentlyContinue }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        if ($null -ne $myConfiguration) { Unregister-PSSessionConfiguration -Name ($myConfiguration.Name) -Force -ErrorAction SilentlyContinue }
+        if ($null -ne $sessionConfigurationDll) { Remove-Item $sessionConfigurationDll -Force -ErrorAction SilentlyContinue }
     }
 
     Context "restrictions works" {
@@ -1525,7 +1525,7 @@ Describe "Implicit remoting on restricted ISS" -tags "Feature" {
         }
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "Import-PSSession works against the ISS-restricted runspace (Out-String)" -Skip:$skipTest {
@@ -1564,7 +1564,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
 
     AfterAll {
         if ($skipTest) { return }
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
     }
 
     Context "Get-Command <Imported-Module> and <Imported-Module.Name> work (Windows 7: #334112)" {
@@ -1574,7 +1574,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
         }
         AfterAll {
             if ($skipTest) { return }
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
         It "PSModuleInfo.Name shouldn't contain a psd1 extension" -Skip:$skipTest {
@@ -1613,11 +1613,11 @@ Describe "Implicit remoting tests" -tags "Feature" {
         AfterAll {
             if ($skipTest) { return }
             $powerShell.Dispose()
-            if ($file -ne $null) { Remove-Item $file -Recurse -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $file) { Remove-Item $file -Recurse -Force -ErrorAction SilentlyContinue }
         }
 
         It "'Completed' progress record should be present" -Skip:$skipTest {
-            ($powerShell.Streams.Progress | select -last 1).RecordType.ToString() | Should Be "Completed"
+            ($powerShell.Streams.Progress | Select-Object -last 1).RecordType.ToString() | Should Be "Completed"
         }
     }
 
@@ -1644,7 +1644,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
             $result = Write-Output 123 | Write-Output
             $result | Should Be 123
         } finally {
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
     }
 
@@ -1654,7 +1654,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
             $module = Import-PSSession -Session $session -CommandName attack -ErrorAction SilentlyContinue -ErrorVariable expectedError -AllowClobber
             $expectedError | Should Not Be NullOrEmpty
         } finally {
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
     }
 
@@ -1669,7 +1669,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
             $msg = [string]($expectedError[0])
             $msg.Contains("blah") | Should Be $true
         } finally {
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             Invoke-Command $session { ${function:Get-Command} = $oldGetCommand }
         }
     }
@@ -1685,7 +1685,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
             $msg = [string]($expectedError[0])
             $msg.Contains("notRequested") | Should Be $true
         } finally {
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             Invoke-Command $session { ${function:Get-Command} = $oldGetCommand }
         }
     }
@@ -1701,7 +1701,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
             $msg = [string]($_)
             $msg.Contains("Get-Command") | Should Be $true
         } finally {
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             Invoke-Command $session { ${function:Get-Command} = $oldGetCommand }
         }
     }
@@ -1726,7 +1726,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
 
             $expectedResult | Should Be $actualResult
         } finally {
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             Invoke-Command $session { param($x) $env:PATH = $x; Remove-Item Alias:\myOrder, Function:\myOrder, Function:\helper -Force -ErrorAction SilentlyContinue } -ArgumentList $oldPath
             Remove-Item $tempDir -Force -Recurse -ErrorAction SilentlyContinue
         }
@@ -1737,10 +1737,10 @@ Describe "Implicit remoting tests" -tags "Feature" {
             $module = Import-PSSession -Session $session -Name Get-Variable -Type cmdlet -Prefix My -AllowClobber
             (Get-MyVariable -Name pid).Value | Should Not Be $PID
         } finally {
-            if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+            if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
         }
 
-        ((Get-Item function:Get-MyVariable -ErrorAction SilentlyContinue) -eq $null) | Should Be $true
+        (Get-Item function:Get-MyVariable -ErrorAction SilentlyContinue) | Should Be $null
     }
 
     Context "BadVerbs of functions should trigger a warning" {
@@ -1761,7 +1761,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
                 $ps.Streams.Error.Count | Should Be 0
                 $ps.Streams.Warning.Count | Should Not Be 0
             } finally {
-                if ($module -ne $null) {
+                if ($null -ne $module) {
                     $ps.Commands.Clear()
                     $ps.AddCommand("Remove-Module").AddParameter("ModuleInfo", $module).AddParameter("Force", $true) > $null
                     $ps.Invoke() > $null
@@ -1779,17 +1779,17 @@ Describe "Implicit remoting tests" -tags "Feature" {
                 $getVariablePid | Should Be $remotePid
 
                 ## Get-Variable function should not be exported when importing a BadVerb-Variable function
-                ((Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue) -eq $null) | Should Be $true
+                Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 ## BadVerb-Variable should be a function, not an alias (1)
-                ((Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue) -ne $null) | Should Be $true
+                Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 ## BadVerb-Variable should be a function, not an alias (2)
-                ((Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue) -eq $null) | Should Be $true
+                Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 (BadVerb-Variable -Name pid).Value | Should Be $remotePid
             } finally {
-                if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+                if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
         }
 
@@ -1801,7 +1801,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
                 $ps.Streams.Error.Count | Should Be 0
                 $ps.Streams.Warning.Count | Should Be 0
             } finally {
-                if ($module -ne $null) {
+                if ($null -ne $module) {
                     $ps.Commands.Clear()
                     $ps.AddCommand("Remove-Module").AddParameter("ModuleInfo", $module).AddParameter("Force", $true) > $null
                     $ps.Invoke() > $null
@@ -1819,17 +1819,17 @@ Describe "Implicit remoting tests" -tags "Feature" {
                 $getVariablePid | Should Be $remotePid
 
                 ## Get-Variable function should not be exported when importing a BadVerb-Variable function
-                ((Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue) -eq $null) | Should Be $true
+                Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 ## BadVerb-Variable should be a function, not an alias (1)
-                ((Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue) -ne $null) | Should Be $true
+                Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 ## BadVerb-Variable should be a function, not an alias (2)
-                ((Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue) -eq $null) | Should Be $true
+                Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 (BadVerb-Variable -Name pid).Value | Should Be $remotePid
             } finally {
-                if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+                if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
         }
     }
@@ -1852,7 +1852,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
                 $ps.Streams.Error.Count | Should Be 0
                 $ps.Streams.Warning.Count | Should Be 0
             } finally {
-                if ($module -ne $null) {
+                if ($null -ne $module) {
                     $ps.Commands.Clear()
                     $ps.AddCommand("Remove-Module").AddParameter("ModuleInfo", $module).AddParameter("Force", $true) > $null
                     $ps.Invoke() > $null
@@ -1870,14 +1870,14 @@ Describe "Implicit remoting tests" -tags "Feature" {
                 $getVariablePid | Should Be $remotePid
 
                 ## BadVerb-Variable should be an alias, not a function (1)
-                ((Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue) -eq $null) | Should Be $true
+                Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 ## BadVerb-Variable should be an alias, not a function (2)
-                ((Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue) -ne $null) | Should Be $true
+                Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 (BadVerb-Variable -Name pid).Value | Should Be $remotePid
             } finally {
-                if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+                if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
             }
         }
     }
@@ -1918,8 +1918,8 @@ Describe "Export-PSSession function" -tags "Feature" {
 
     AfterAll {
         if ($skipTest) { return }
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue }
-        if ($tempdir -ne $null) { Remove-Item $tempdir -Force -Recurse -ErrorAction SilentlyContinue }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        if ($null -ne $tempdir) { Remove-Item $tempdir -Force -Recurse -ErrorAction SilentlyContinue }
     }
 
     It "Test the module created by Export-PSSession" -Skip:$skipTest {
@@ -1932,11 +1932,11 @@ Describe "Export-PSSession function" -tags "Feature" {
             $result = $ps.AddScript(" & $tempdir\TestBug450687.ps1").Invoke()
 
             ## The module created by Export-PSSession is imported successfully
-            ($result -ne $null -and $result.Count -eq 1 -and $result[0].Name -eq "Diag") | Should Be $true
+            ($null -ne $result -and $result.Count -eq 1 -and $result[0].Name -eq "Diag") | Should Be $true
 
             ## The command Add-BitsFile is imported successfully
             $c = $result[0].ExportedCommands["New-Guid"]
-            ($c -ne $null -and $c.CommandType -eq "Function") | Should Be $true
+            ($null -ne $c -and $c.CommandType -eq "Function") | Should Be $true
         } finally {
             $ps.Dispose()
         }
@@ -1957,8 +1957,8 @@ Describe "Implicit remoting with disconnected session" -tags "Feature" {
 
     AfterAll {
         if ($skipTest) { return }
-        if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
     }
 
     It "Remote session PID should be different" -Skip:$skipTest {
@@ -2004,12 +2004,12 @@ Describe "Select-Object with implicit remoting" -tags "Feature" {
 
     AfterAll {
         if ($skipTest) { return }
-        if ($module -ne $null) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        if ($null -ne $module) { Remove-Module $module -Force -ErrorAction SilentlyContinue }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
     }
 
     It "Select -First should work with implicit remoting" -Skip:$skipTest {
-        $bar = foo | select -First 2
+        $bar = foo | Select-Object -First 2
         $bar | Should Not Be NullOrEmpty
         $bar.Count | Should Be 2
         $bar[0] | Should Be "a"
@@ -2038,7 +2038,7 @@ Describe "Get-FormatData used in Export-PSSession should work on DL targets" -ta
 
     AfterAll {
         if ($skipTest) { return }
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
         Unregister-PSSessionConfiguration -Name $configName -Force -ErrorAction SilentlyContinue
     }
 
@@ -2067,7 +2067,7 @@ Describe "GetCommand locally and remotely" -tags "Feature" {
 
     AfterAll {
         if ($skipTest) { return }
-        if ($session -ne $null) { Remove-PSSession $session -ErrorAction SilentlyContinue }
+        if ($null -ne $session) { Remove-PSSession $session -ErrorAction SilentlyContinue }
     }
 
     It "Verifies that the number of local cmdlet command count is the same as remote cmdlet command count." -Skip:$skipTest {

@@ -1,7 +1,7 @@
 ﻿#region privateFunctions
 
 $script:psRepoPath = [string]::Empty
-if ((Get-Command -Name 'git' -ErrorAction Ignore) -ne $Null) {
+if ($null -ne (Get-Command -Name 'git' -ErrorAction Ignore)) {
     $script:psRepoPath = git rev-parse --show-toplevel
 }
 
@@ -47,8 +47,8 @@ function Get-CodeCoverageChange($r1, $r2, [string[]]$ClassName)
 
     if ( $ClassName ) {
         foreach ( $Class in $ClassName ) {
-            $c1 = $r1.Assembly.ClassCoverage | ?{$_.ClassName -eq $Class }
-            $c2 = $r2.Assembly.ClassCoverage | ?{$_.ClassName -eq $Class }
+            $c1 = $r1.Assembly.ClassCoverage | Where-Object {$_.ClassName -eq $Class }
+            $c2 = $r2.Assembly.ClassCoverage | Where-Object {$_.ClassName -eq $Class }
             $ClassCoverageChange = [pscustomobject]@{
                 ClassName     = $Class
                 Branch        = $c2.Branch
@@ -97,11 +97,11 @@ function Get-CodeCoverageChange($r1, $r2, [string[]]$ClassName)
 
 function Get-AssemblyCoverageChange($r1, $r2)
 {
-    if($r1 -eq $null -and $r2 -ne $null)
+    if($null -eq $r1 -and $null -ne $r2)
     {
         $r1 = @{ AssemblyName = $r2.AssemblyName ; Branch = 0 ; Sequence = 0 }
     }
-    elseif($r2 -eq $null -and $r1 -ne $null)
+    elseif($null -eq $r2 -and $null -ne $r1)
     {
         $r2 = @{ AssemblyName = $r1.AssemblyName ; Branch = 0 ; Sequence = 0 }
     }
@@ -122,7 +122,7 @@ function Get-AssemblyCoverageChange($r1, $r2)
 function Get-CoverageData($xmlPath)
 {
     [xml]$CoverageXml = get-content -readcount 0 $xmlPath
-    if ( $CoverageXml.CoverageSession -eq $null ) { throw "CoverageSession data not found" }
+    if ( $null -eq $CoverageXml.CoverageSession ) { throw "CoverageSession data not found" }
 
     $assemblies = New-Object System.Collections.ArrayList
 
@@ -136,7 +136,7 @@ function Get-CoverageData($xmlPath)
         Assembly = $assemblies
     }
     $CoverageData.PSTypeNames.Insert(0,"OpenCover.CoverageData")
-    Add-Member -InputObject $CoverageData -MemberType ScriptMethod -Name GetClassCoverage -Value { param ( $name ) $this.assembly.classcoverage | ?{$_.classname -match $name } }
+    Add-Member -InputObject $CoverageData -MemberType ScriptMethod -Name GetClassCoverage -Value { param ( $name ) $this.assembly.classcoverage | Where-Object {$_.classname -match $name } }
     $null = $CoverageXml
 
     ## Adding explicit garbage collection as the $CoverageXml object tends to be very large, in order of 1 GB.
@@ -399,7 +399,7 @@ function Install-OpenCover
     ## We add ErrorAction as we do not have this module on PS v4 and below. Calling import-module will throw an error otherwise.
     import-module Microsoft.PowerShell.Archive -ErrorAction SilentlyContinue
 
-    if ((Get-Command Expand-Archive -ErrorAction Ignore) -ne $null) {
+    if ($null -ne (Get-Command Expand-Archive -ErrorAction Ignore)) {
         Expand-Archive -Path $tempPath -DestinationPath "$TargetDirectory/OpenCover"
     } else {
         Expand-ZipArchive -Path $tempPath -DestinationPath "$TargetDirectory/OpenCover"
@@ -448,7 +448,7 @@ function Invoke-OpenCover
     {
         # see if it's somewhere else in the path
         $openCoverBin = (Get-Command -Name 'opencover.console' -ErrorAction Ignore).Source
-        if ($openCoverBin -eq $null) {
+        if ($null -eq $openCoverBin) {
             throw "$OpenCoverBin does not exist, use Install-OpenCover"
         }
     }

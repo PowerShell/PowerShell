@@ -137,7 +137,7 @@
                         break
                     }
                 }
-                if($foundParam -ne $null)
+                if($null -ne $foundParam)
                 {
                     break
                 }

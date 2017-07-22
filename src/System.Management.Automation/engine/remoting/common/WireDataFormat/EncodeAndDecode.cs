@@ -297,12 +297,12 @@ namespace System.Management.Automation
                         $_pattern = $matches[1]
                         if ($_pattern -match '^[0-9]+$')
                         {
-                            Get-History -ea SilentlyContinue -Id $_pattern | Foreach { $_.CommandLine }
+                            Get-History -ea SilentlyContinue -Id $_pattern | ForEach-Object { $_.CommandLine }
                         }
                         else
                         {
                             $_pattern = '*' + $_pattern + '*'
-                            Get-History -Count 32767 | Sort-Object -Descending Id| Foreach { $_.CommandLine } | where { $_ -like $_pattern }
+                            Get-History -Count 32767 | Sort-Object -Descending Id| ForEach-Object { $_.CommandLine } | where { $_ -like $_pattern }
                         }
                         break;
                     }

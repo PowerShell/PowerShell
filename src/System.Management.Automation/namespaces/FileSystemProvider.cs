@@ -8924,12 +8924,12 @@ namespace System.Management.Automation.Internal
                 [int] $fragmentLength
             )
 
-            if (($resolvedPath.Drive -ne $null) -and ($resolvedPath.Drive.MaximumSize -ne $null))
+            if (($null -ne $resolvedPath.Drive) -and ($null -ne $resolvedPath.Drive.MaximumSize))
             {{
                 $maxUserSize = $resolvedPath.Drive.MaximumSize
                 $dirSize = 0
-                Microsoft.PowerShell.Management\Get-ChildItem -LiteralPath ($resolvedPath.Drive.Name + "":"") -Recurse | Foreach {{
-                    Microsoft.PowerShell.Management\Get-Item -LiteralPath $_.FullName -Stream * | % {{ $dirSize += $_.Length }}
+                Microsoft.PowerShell.Management\Get-ChildItem -LiteralPath ($resolvedPath.Drive.Name + "":"") -Recurse | ForEach-Object {{
+                    Microsoft.PowerShell.Management\Get-Item -LiteralPath $_.FullName -Stream * | ForEach-Object {{ $dirSize += $_.Length }}
                 }}
                 if (($dirSize + $fragmentLength) -gt $maxUserSize)
                 {{
@@ -9008,7 +9008,7 @@ namespace System.Management.Automation.Internal
             }}
             finally
             {{
-                if ($wstream -ne $null)
+                if ($null -ne $wstream)
                 {{
                     $wstream.Dispose()
                 }}
@@ -9439,7 +9439,7 @@ namespace System.Management.Automation.Internal
                 }}
                 finally
                 {{
-                    if ($rstream -ne $null)
+                    if ($null -ne $rstream)
                     {{
                         $rstream.Dispose()
                     }}
@@ -9929,7 +9929,7 @@ namespace System.Management.Automation.Internal
 
         # Get the root path using Get-Item
         $item = Microsoft.PowerShell.Management\Get-Item $pathToValidate -ea SilentlyContinue
-        if (($item -ne $null) -and ($item[0].PSProvider.Name -eq 'FileSystem'))
+        if (($null -ne $item) -and ($item[0].PSProvider.Name -eq 'FileSystem'))
         {
             $result['Root'] = SafeGetDriveRoot $item[0].PSDrive
             return $result

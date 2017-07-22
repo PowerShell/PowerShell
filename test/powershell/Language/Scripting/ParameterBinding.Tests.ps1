@@ -506,7 +506,7 @@
                         }
                     }
                 }
-'@ | % {$_.assembly} | Import-module
+'@ | ForEach-Object {$_.assembly} | Import-module
             }
 
         Get-TestCmdlet -MyParameter @{ a = 42 } | Should Be 'hashtable'

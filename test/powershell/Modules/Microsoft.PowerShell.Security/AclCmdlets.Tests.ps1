@@ -12,7 +12,7 @@ Describe "Acl cmdlets are available and operate properly" -Tag CI {
         { $acl | Set-Acl $directory } | should not throw
 
         $newacl = get-acl $directory
-        $newrule = $newacl.Access | ?{ $accessrule.FileSystemRights -eq $_.FileSystemRights -and $accessrule.AccessControlType -eq $_.AccessControlType -and $accessrule.IdentityReference -eq $_.IdentityReference }
+        $newrule = $newacl.Access | Where-Object { $accessrule.FileSystemRights -eq $_.FileSystemRights -and $accessrule.AccessControlType -eq $_.AccessControlType -and $accessrule.IdentityReference -eq $_.IdentityReference }
         $newrule |Should not benullorempty
     }
 }

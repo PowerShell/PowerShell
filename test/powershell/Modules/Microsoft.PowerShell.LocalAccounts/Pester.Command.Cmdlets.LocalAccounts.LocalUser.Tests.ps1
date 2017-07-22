@@ -52,7 +52,7 @@ try {
     Describe "Verify Expected LocalUser Cmdlets are present" -Tags 'CI' {
 
         It "Test command presence" {
-            $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | % Name
+            $result = Get-Command -Module Microsoft.PowerShell.LocalAccounts | ForEach-Object Name
 
             $result -contains "New-LocalUser" | Should Be $true
             $result -contains "Set-LocalUser" | Should Be $true
@@ -67,7 +67,7 @@ try {
     Describe "Verify Expected LocalUser Aliases are present" -Tags @('CI', 'RequireAdminOnWindows') {
 
         It "Test command presence" {
-            $result = get-alias | % { if ($_.Source -eq "Microsoft.PowerShell.LocalAccounts") {$_}}
+            $result = get-alias | ForEach-Object { if ($_.Source -eq "Microsoft.PowerShell.LocalAccounts") {$_}}
 
             $result.Name -contains "algm" | Should Be $true
             $result.Name -contains "dlu" | Should Be $true
@@ -541,7 +541,7 @@ try {
             $localUserName = 'TestUserGetNameThatDoesntExist'
             $result = Get-LocalGroup $localUserName*
 
-            $result -eq $null | Should Be $true
+            $result | Should Be $null
         }
 
         It "Returns the correct property values of a user" {

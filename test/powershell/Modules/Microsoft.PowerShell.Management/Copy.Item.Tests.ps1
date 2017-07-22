@@ -696,7 +696,7 @@ Describe "Validate Copy-Item error for target sessions not in FullLanguageMode."
 
         $testSessions.Values | Remove-PSSession -ea SilentlyContinue
 
-        $sessionToUnregister | foreach {
+        $sessionToUnregister | ForEach-Object {
             Unregister-PSSessionConfiguration -Name $_ -Force -ea SilentlyContinue
         }
     }

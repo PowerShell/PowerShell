@@ -85,7 +85,7 @@ function Register-PSSessionConfiguration
                     # See if it has 'Disable Network Access'
                     $sd = new-object system.security.accesscontrol.commonsecuritydescriptor $false,$false,$sddl
                     $disableNetworkExists = $false
-                    $sd.DiscretionaryAcl | % {{
+                    $sd.DiscretionaryAcl | ForEach-Object {{
                         if (($_.acequalifier -eq ""accessdenied"") -and ($_.securityidentifier -match $networkSID) -and ($_.AccessMask -eq 268435456))
                         {{
                             $disableNetworkExists = $true
@@ -170,7 +170,7 @@ function Register-PSSessionConfiguration
                $sd = new-object system.security.accesscontrol.commonsecuritydescriptor $false,$false,$curSDDL
                $haveDisableACE = $false
                $securityIdentifierToPurge = $null
-               $sd.DiscretionaryAcl | % {{
+               $sd.DiscretionaryAcl | ForEach-Object {{
                     if (($_.acequalifier -eq ""accessdenied"") -and ($_.securityidentifier -match $networkSID) -and ($_.AccessMask -eq 268435456))
                     {{
                         $haveDisableACE = $true
@@ -256,7 +256,7 @@ function Register-PSSessionConfiguration
     }}
 }}
 
-if ($args[14] -eq $null)
+if ($null -eq $args[14])
 {{
     Register-PSSessionConfiguration -filepath $args[0] -pluginName $args[1] -shouldShowUI $args[2] -force $args[3] -whatif:$args[4] -confirm:$args[5] -restartWSManTarget $args[6] -restartWSManAction $args[7] -restartWSManRequired $args[8] -runAsUserName $args[9] -runAsPassword $args[10] -accessMode $args[11] -isSddlSpecified $args[12] -configTableSddl $args[13]
 }}
@@ -2472,7 +2472,7 @@ function Unregister-PSSessionConfiguration
     process
     {{
         $shellsFound = 0
-        Get-ChildItem 'WSMan:\localhost\Plugin\' -Force:$force | ? {{ $_.Name -like ""$filter"" }} | % {{
+        Get-ChildItem 'WSMan:\localhost\Plugin\' -Force:$force | Where-Object {{ $_.Name -like ""$filter"" }} | ForEach-Object {{
             $pluginFileNamePath = join-path ""$($_.pspath)"" 'FileName'
             if (!(test-path ""$pluginFileNamePath""))
             {{
@@ -2490,9 +2490,9 @@ function Unregister-PSSessionConfiguration
            $shouldProcessTargetString = $targetTemplate -f $_.Name
 
            $DISCConfigFilePath = [System.IO.Path]::Combine($_.PSPath, ""InitializationParameters"")
-           $DISCConfigFile = get-childitem -literalpath ""$DISCConfigFilePath"" | ? {{$_.Name -like ""configFilePath""}}
+           $DISCConfigFile = get-childitem -literalpath ""$DISCConfigFilePath"" | Where-Object {{$_.Name -like ""configFilePath""}}
 
-           if($DISCConfigFile -ne $null)
+           if($null -ne $DISCConfigFile)
            {{
                if(test-path -LiteralPath ""$($DISCConfigFile.Value)"") {{
                        remove-item -literalpath ""$($DISCConfigFile.Value)"" -recurse -force -confirm:$false
@@ -2513,7 +2513,7 @@ function Unregister-PSSessionConfiguration
     }} # end of Process block
 }}
 
-if ($args[7] -eq $null)
+if ($null -eq $args[7])
 {{
     Unregister-PSSessionConfiguration -filter $args[0] -whatif:$args[1] -confirm:$args[2] -action $args[3] -targetTemplate $args[4] -shellNotErrMsgFormat $args[5] -force $args[6]
 }}
@@ -2713,12 +2713,12 @@ function ExtractPluginProperties([string]$pluginDir, $objectToWriteTo)
 
         $serviceCore = [Reflection.Assembly]::Load(""Microsoft.Powershell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"")
 
-        if ($serviceCore -ne $null) {{
+        if ($null -ne $serviceCore) {{
 
             $ci = new-Object system.management.automation.cmdletinfo ""New-PSWorkflowExecutionOptions"", ([Microsoft.PowerShell.Commands.NewPSWorkflowExecutionOptionCommand])
             $wf = [powershell]::Create(""currentrunspace"").AddCommand($ci).Invoke()
 
-            if($wf -ne $null -and $wf.Count -ne 0) {{
+            if($null -ne $wf -and $wf.Count -ne 0) {{
                 $wf = $wf[0]
 
                 foreach ($o in $wf.GetType().GetProperties()) {{
@@ -2773,10 +2773,10 @@ function ExtractPluginProperties([string]$pluginDir, $objectToWriteTo)
 
 $shellNotErrMsgFormat = $args[1]
 $force = $args[2]
-$args[0] | foreach {{
+$args[0] | ForEach-Object {{
   $shellsFound = 0;
   $filter = $_
-  Get-ChildItem 'WSMan:\localhost\Plugin\' -Force:$force | ? {{ $_.name -like ""$filter"" }} | foreach {{
+  Get-ChildItem 'WSMan:\localhost\Plugin\' -Force:$force | Where-Object {{ $_.name -like ""$filter"" }} | ForEach-Object {{
      $customPluginObject = new-object object
      $customPluginObject.pstypenames.Insert(0, '{0}')
      ExtractPluginProperties ""$($_.PSPath)"" $customPluginObject
@@ -3062,11 +3062,11 @@ function Set-PSSessionConfiguration([PSObject]$customShellObject,
    if ($isSddlSpecified)
    {{
        $resourcesPath = Join-Path ""$pluginDir"" 'Resources'
-       Get-ChildItem -literalpath ""$resourcesPath"" | % {{
+       Get-ChildItem -literalpath ""$resourcesPath"" | ForEach-Object {{
             $securityPath = Join-Path ""$($_.pspath)"" 'Security'
             if ((@(Get-ChildItem -literalpath ""$securityPath"")).count -gt 0)
             {{
-                Get-ChildItem -literalpath ""$securityPath"" | % {{
+                Get-ChildItem -literalpath ""$securityPath"" | ForEach-Object {{
                     $securityIDPath = ""$($_.pspath)""
                     remove-item -path ""$securityIDPath"" -recurse -force
                 }} #end of securityPath
@@ -3102,11 +3102,11 @@ function Set-PSSessionConfiguration([PSObject]$customShellObject,
    $networkSID = new-object system.security.principal.securityidentifier $evst,$null
 
    $resPath = Join-Path ""$pluginDir"" 'Resources'
-   Get-ChildItem -literalpath ""$resPath"" | % {{
+   Get-ChildItem -literalpath ""$resPath"" | ForEach-Object {{
         $securityPath = Join-Path ""$($_.pspath)"" 'Security'
         if ((@(Get-ChildItem -literalpath ""$securityPath"")).count -gt 0)
         {{
-            Get-ChildItem -literalpath ""$securityPath"" | % {{
+            Get-ChildItem -literalpath ""$securityPath"" | ForEach-Object {{
                 $sddlPath = Join-Path ""$($_.pspath)"" 'Sddl'
                 $curSDDL = (get-item -path $sddlPath).value
                 $sd = new-object system.security.accesscontrol.commonsecuritydescriptor $false,$false,$curSDDL
@@ -3114,7 +3114,7 @@ function Set-PSSessionConfiguration([PSObject]$customShellObject,
 
                 $disableNetworkExists = $false
                 $securityIdentifierToPurge = $null
-                $sd.DiscretionaryAcl | % {{
+                $sd.DiscretionaryAcl | ForEach-Object {{
                     if (($_.acequalifier -eq ""accessdenied"") -and ($_.securityidentifier -match $networkSID) -and ($_.AccessMask -eq 268435456))
                     {{
                         $disableNetworkExists = $true
@@ -4069,7 +4069,7 @@ function Test-WinRMQuickConfigNeeded
     }}
 
     # check if a winrm listener is present
-    elseif (!(Test-Path WSMan:\localhost\Listener) -or ((Get-ChildItem WSMan:\localhost\Listener) -eq $null)){{
+    elseif (!(Test-Path WSMan:\localhost\Listener) -or ($null -eq (Get-ChildItem WSMan:\localhost\Listener))){{
         $winrmQuickConfigNeeded = $true
     }}
 
@@ -4172,7 +4172,7 @@ param(
 
     process
     {{
-       Get-PSSessionConfiguration $name -Force:$Force | % {{
+       Get-PSSessionConfiguration $name -Force:$Force | ForEach-Object {{
 
           if ($_.Enabled -eq $false -and ($force -or $pscmdlet.ShouldProcess($setEnabledTarget, $setEnabledAction)))
           {{
@@ -4196,7 +4196,7 @@ param(
                 $everyOneSID = new-object system.security.principal.securityidentifier $evst,$null
 
                 $sd = new-object system.security.accesscontrol.commonsecuritydescriptor $false,$false,$sddlTemp
-                $sd.DiscretionaryAcl | % {{
+                $sd.DiscretionaryAcl | ForEach-Object {{
                     if (($_.acequalifier -eq ""accessdenied"") -and ($_.securityidentifier -match $everyOneSID))
                     {{
                        $securityIdentifierToPurge = $_.securityidentifier
@@ -4516,7 +4516,7 @@ param(
 
     process
     {{
-       Get-PSSessionConfiguration $name -Force:$Force | % {{
+       Get-PSSessionConfiguration $name -Force:$Force | ForEach-Object {{
 
            if ($_.Enabled -and ($force -or $pscmdlet.ShouldProcess($setEnabledTarget, $setEnabledAction)))
            {{
@@ -4814,7 +4814,7 @@ param(
             }}
 
             # remove the 'network deny all' tag
-            Get-PSSessionConfiguration -Force:$Force | % {{
+            Get-PSSessionConfiguration -Force:$Force | ForEach-Object {{
                 $sddl = $null
                 if ($_.psobject.members[""SecurityDescriptorSddl""])
                 {{
@@ -4829,7 +4829,7 @@ param(
 
                     $securityIdentifierToPurge = $null
                     $sd = new-object system.security.accesscontrol.commonsecuritydescriptor $false,$false,$sddl
-                    $sd.DiscretionaryAcl | % {{
+                    $sd.DiscretionaryAcl | ForEach-Object {{
                         if (($_.acequalifier -eq ""accessdenied"") -and ($_.securityidentifier -match $networkSID) -and ($_.AccessMask -eq 268435456))
                         {{
                             $securityIdentifierToPurge = $_.securityidentifier
@@ -5093,7 +5093,7 @@ param(
     end
     {{
         # Disable the network for all Session Configurations
-        Get-PSSessionConfiguration -Force:$force | % {{
+        Get-PSSessionConfiguration -Force:$force | ForEach-Object {{
 
             if ($_.Enabled)
             {{
@@ -5117,7 +5117,7 @@ param(
                     # Add disable network to the existing sddl
                     $sd = new-object system.security.accesscontrol.commonsecuritydescriptor $false,$false,$sddl
                     $disableNetworkExists = $false
-                    $sd.DiscretionaryAcl | % {{
+                    $sd.DiscretionaryAcl | ForEach-Object {{
                         if (($_.acequalifier -eq ""accessdenied"") -and ($_.securityidentifier -match $networkSID) -and ($_.AccessMask -eq 268435456))
                         {{
                             $disableNetworkExists = $true

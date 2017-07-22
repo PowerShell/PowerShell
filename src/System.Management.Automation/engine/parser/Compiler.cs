@@ -2194,7 +2194,7 @@ namespace System.Management.Automation.Language
             // We don't postpone load assemblies, import modules from 'using' to the moment, when enclosed scriptblock is executed.
             // We do loading, when root of the script is compiled.
             // This allow us to avoid creating 10 different classes in this situation:
-            // 1..10 | % { class C {} }
+            // 1..10 | ForEach-Object { class C {} }
             // But it's possible that we are loading something from the codepaths that we never execute.
 
             // If Parent of rootForDefiningTypesAndUsings is not null, then we already defined all types, when Visit a parent ScriptBlock

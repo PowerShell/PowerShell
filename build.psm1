@@ -291,7 +291,7 @@ Fix steps:
         log "Run dotnet restore"
 
         $srcProjectDirs = @($Options.Top, "$PSScriptRoot/src/TypeCatalogGen", "$PSScriptRoot/src/ResGen")
-        $testProjectDirs = Get-ChildItem "$PSScriptRoot/test/*.csproj" -Recurse | % { [System.IO.Path]::GetDirectoryName($_) }
+        $testProjectDirs = Get-ChildItem "$PSScriptRoot/test/*.csproj" -Recurse | ForEach-Object { [System.IO.Path]::GetDirectoryName($_) }
 
         $RestoreArguments = @("--verbosity")
         if ($PSCmdlet.MyInvocation.BoundParameters["Verbose"].IsPresent) {
@@ -300,7 +300,7 @@ Fix steps:
             $RestoreArguments += "quiet"
         }
 
-        ($srcProjectDirs + $testProjectDirs) | % { Start-NativeExecution { dotnet restore $_ $RestoreArguments } }
+        ($srcProjectDirs + $testProjectDirs) | ForEach-Object { Start-NativeExecution { dotnet restore $_ $RestoreArguments } }
     }
 
     # handle ResGen
@@ -362,9 +362,9 @@ Fix steps:
 
             # Compile native resources
             $currentLocation = Get-Location
-            @("nativemsh/pwrshplugin") | % {
+            @("nativemsh/pwrshplugin") | ForEach-Object {
                 $nativeResourcesFolder = $_
-                Get-ChildItem $nativeResourcesFolder -Filter "*.mc" | % {
+                Get-ChildItem $nativeResourcesFolder -Filter "*.mc" | ForEach-Object {
                     $command = @"
 cmd.exe /C cd /d "$currentLocation" "&" "$($vcPath)\vcvarsall.bat" "$NativeHostArch" "&" mc.exe -o -d -c -U "$($_.FullName)" -h "$nativeResourcesFolder" -r "$nativeResourcesFolder"
 "@
@@ -402,7 +402,7 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$NativeHostArch" "&
 
                 # Copy the binaries from the local build directory to the packaging directory
                 $dstPath = ($script:Options).Top
-                $FilesToCopy | % {
+                $FilesToCopy | ForEach-Object {
                     $srcPath = Join-Path (Join-Path (Join-Path (Get-Location) "bin") $msbuildConfiguration) "$clrTarget/$_"
                     log "  Copying $srcPath to $dstPath"
                     Copy-Item $srcPath $dstPath
@@ -468,7 +468,7 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$NativeHostArch" "&
     # publish netcoreapp2.0 reference assemblies
     try {
         Push-Location "$PSScriptRoot/src/TypeCatalogGen"
-        $refAssemblies = Get-Content -Path "powershell.inc" | ? { $_ -like "*microsoft.netcore.app*" } | % { $_.TrimEnd(';') }
+        $refAssemblies = Get-Content -Path "powershell.inc" | Where-Object { $_ -like "*microsoft.netcore.app*" } | ForEach-Object { $_.TrimEnd(';') }
         $refDestFolder = Join-Path -Path $publishPath -ChildPath "ref"
 
         if (Test-Path $refDestFolder -PathType Container) {
@@ -632,7 +632,7 @@ function New-PSOptions {
     }
 
     if (-not $Runtime) {
-        $Runtime = dotnet --info | % {
+        $Runtime = dotnet --info | ForEach-Object {
             if ($_ -match "RID") {
                 $_ -split "\s+" | Select-Object -Last 1
             }
@@ -689,7 +689,7 @@ function Get-PesterTag {
     $alltags = @{}
     $warnings = @()
 
-    get-childitem -Recurse $testbase -File |?{$_.name -match "tests.ps1"}| %{
+    get-childitem -Recurse $testbase -File | Where-Object {$_.name -match "tests.ps1"}| ForEach-Object {
         $fullname = $_.fullname
         $tok = $err = $null
         $ast = [System.Management.Automation.Language.Parser]::ParseFile($FullName, [ref]$tok,[ref]$err)
@@ -705,7 +705,7 @@ function Get-PesterTag {
                         $warnings += "TAGS must be static strings, error in ${fullname}, line $lineno"
                     }
                     $values = $vAst.FindAll({$args[0] -is "System.Management.Automation.Language.StringConstantExpressionAst"},$true).Value
-                    $values | % {
+                    $values | ForEach-Object {
                         if (@('REQUIREADMINONWINDOWS', 'SLOW') -contains $_) {
                             # These are valid tags also, but they are not the priority tags
                         }
@@ -749,7 +749,7 @@ function Publish-PSTestTools {
     $tools = @(
         @{Path="${PSScriptRoot}/test/tools/TestExe";Output="testexe"}
     )
-    if ($Options -eq $null)
+    if ($null -eq $Options)
     {
         $Options = New-PSOptions
     }
@@ -894,7 +894,7 @@ function Start-PSPester {
                 {
                     $lines = Get-Content $outputBufferFilePath | Select-Object -Skip $currentLines
                     $lines | Write-Host
-                    if ($lines | ? { $_ -eq '__UNELEVATED_TESTS_THE_END__'})
+                    if ($lines | Where-Object { $_ -eq '__UNELEVATED_TESTS_THE_END__'})
                     {
                         break
                     }
@@ -1859,7 +1859,7 @@ function Publish-NuGetFeed
 'Microsoft.WSMan.Management',
 'Microsoft.WSMan.Runtime',
 'Microsoft.PowerShell.SDK'
-        ) | % {
+        ) | ForEach-Object {
             if ($VersionSuffix) {
                 dotnet pack "src/$_" --output $OutputPath --version-suffix $VersionSuffix /p:IncludeSymbols=true
             } else {
@@ -1990,7 +1990,7 @@ function Copy-MappedFiles {
         # Do some intelligence to prevent shooting us in the foot with CL management
 
         # finding base-line CL
-        $cl = git --git-dir="$PSScriptRoot/.git" tag | % {if ($_ -match 'SD.(\d+)$') {[int]$Matches[1]} } | Sort-Object -Descending | Select-Object -First 1
+        $cl = git --git-dir="$PSScriptRoot/.git" tag | ForEach-Object {if ($_ -match 'SD.(\d+)$') {[int]$Matches[1]} } | Sort-Object -Descending | Select-Object -First 1
         if ($cl) {
             log "Current base-line CL is SD:$cl (based on tags)"
         } else {
@@ -2022,7 +2022,7 @@ function Copy-MappedFiles {
     }
 
     end {
-        $map.GetEnumerator() | % {
+        $map.GetEnumerator() | ForEach-Object {
             New-Item -ItemType Directory (Split-Path $_.Value) -ErrorAction SilentlyContinue > $null
             Copy-Item $_.Key $_.Value -Verbose:([bool]$PSBoundParameters['Verbose']) -WhatIf:$WhatIf
         }
@@ -2063,7 +2063,7 @@ function Get-Mappings
 
     end {
         $map = @{}
-        $mapFiles | % {
+        $mapFiles | ForEach-Object {
             $file = $_
             try {
                 $rawHashtable = $_ | Get-Content -Raw | ConvertFrom-Json | Convert-PSObjectToHashtable
@@ -2079,7 +2079,7 @@ function Get-Mappings
                 $mapRoot = $mapRoot.Replace('\', '/')
             }
 
-            $rawHashtable.GetEnumerator() | % {
+            $rawHashtable.GetEnumerator() | ForEach-Object {
                 $newKey = if ($Root) { Join-Path $Root $_.Key } else { $_.Key }
                 $newValue = if ($KeepRelativePaths) { ($mapRoot + '/' + $_.Value) } else { Join-Path $mapRoot $_.Value }
                 $map[$newKey] = $newValue
@@ -2110,7 +2110,7 @@ function Send-GitDiffToSd {
     $patchPath = (ls (Join-Path (get-command git).Source '..\..') -Recurse -Filter 'patch.exe').FullName
     $m = Get-Mappings -KeepRelativePaths -Root $AdminRoot
     $affectedFiles = git diff --name-only $diffArg1 $diffArg2
-    $affectedFiles | % {
+    $affectedFiles | ForEach-Object {
         log "Changes in file $_"
     }
 
@@ -2227,12 +2227,12 @@ function Convert-TxtResourceToXml
     )
 
     process {
-        $Path | % {
-            Get-ChildItem $_ -Filter "*.txt" | % {
+        $Path | ForEach-Object {
+            Get-ChildItem $_ -Filter "*.txt" | ForEach-Object {
                 $txtFile = $_.FullName
                 $resxFile = Join-Path (Split-Path $txtFile) "$($_.BaseName).resx"
                 $resourceHashtable = ConvertFrom-StringData (Get-Content -Raw $txtFile)
-                $resxContent = $resourceHashtable.GetEnumerator() | % {
+                $resxContent = $resourceHashtable.GetEnumerator() | ForEach-Object {
 @'
   <data name="{0}" xml:space="preserve">
     <value>{1}</value>
@@ -2256,7 +2256,7 @@ function Start-XamlGen
     )
 
     Use-MSBuild
-    Get-ChildItem -Path "$PSScriptRoot/src" -Directory | % {
+    Get-ChildItem -Path "$PSScriptRoot/src" -Directory | ForEach-Object {
         $XamlDir = Join-Path -Path $_.FullName -ChildPath Xamls
         if ((Test-Path -Path $XamlDir -PathType Container) -and
             (@(Get-ChildItem -Path "$XamlDir\*.xaml").Count -gt 0)) {
@@ -2274,7 +2274,7 @@ function Start-XamlGen
                 throw "No .cs or .g.resources files are generated for $XamlDir, something went wrong. Run 'Start-XamlGen -Verbose' for details."
             }
 
-            $filesToCopy | % {
+            $filesToCopy | ForEach-Object {
                 $sourcePath = $_.FullName
                 Write-Verbose "Copy generated xaml artifact: $sourcePath -> $DestinationDir"
                 Copy-Item -Path $sourcePath -Destination $DestinationDir
@@ -2336,7 +2336,7 @@ function script:ConvertFrom-Xaml {
     log "ConvertFrom-Xaml for $XamlDir"
 
     $Pages = ""
-    Get-ChildItem -Path "$XamlDir\*.xaml" | % {
+    Get-ChildItem -Path "$XamlDir\*.xaml" | ForEach-Object {
         $Page = $Script:XamlProjPage -f $_.FullName
         $Pages += $Page
     }
@@ -2394,7 +2394,7 @@ function script:logerror([string]$message) {
 function script:precheck([string]$command, [string]$missedMessage) {
     $c = Get-Command $command -ErrorAction SilentlyContinue
     if (-not $c) {
-        if ($missedMessage -ne $null)
+        if ($null -ne $missedMessage)
         {
             Write-Warning $missedMessage
         }

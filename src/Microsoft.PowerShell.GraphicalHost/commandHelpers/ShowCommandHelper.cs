@@ -183,7 +183,7 @@ Function PSGetSerializedShowCommandInfo
                 $validateSetAttributes = $parameter.Attributes | Where {
                     [ValidateSet].IsAssignableFrom($_.GetType())
                 }
-                if (($validateSetAttributes -ne $null) -and ($validateSetAttributes.Count -gt 0))
+                if (($null -ne $validateSetAttributes) -and ($validateSetAttributes.Count -gt 0))
                 {
                     $hasParameterSet = $true
                     $validValues = $validateSetAttributes[0].ValidValues
@@ -213,7 +213,7 @@ Function PSGetSerializedShowCommandInfo
         catch [System.Management.Automation.PSNotSupportedException] { }
         catch [System.Management.Automation.PSNotImplementedException] { }
 
-        if (($parameterSets -eq $null) -or ($parameterSets.Count -eq 0))
+        if (($null -eq $parameterSets) -or ($parameterSets.Count -eq 0))
         {
             return (,@())
         }
@@ -239,7 +239,7 @@ Function PSGetSerializedShowCommandInfo
             [System.Management.Automation.CommandInfo] $cmdInfo
         )
 
-        if ($cmdInfo.ModuleName -ne $null)
+        if ($null -ne $cmdInfo.ModuleName)
         {
             $moduleName = $cmdInfo.ModuleName
         }

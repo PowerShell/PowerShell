@@ -1085,14 +1085,14 @@ namespace System.Management.Automation
                 {
                     powershell.AddScript(String.Format(
                         CultureInfo.InvariantCulture,
-                        "& {{ trap {{ continue }} ; resolve-path {0} -Relative -WarningAction SilentlyContinue | %{{,($_,(get-item $_ -WarningAction SilentlyContinue),(convert-path $_ -WarningAction SilentlyContinue))}} }}",
+                        "& {{ trap {{ continue }} ; resolve-path {0} -Relative -WarningAction SilentlyContinue | ForEach-Object {{,($_,(get-item $_ -WarningAction SilentlyContinue),(convert-path $_ -WarningAction SilentlyContinue))}} }}",
                         path));
                 }
                 else
                 {
                     powershell.AddScript(String.Format(
                         CultureInfo.InvariantCulture,
-                        "& {{ trap {{ continue }} ; resolve-path {0} -WarningAction SilentlyContinue | %{{,($_,(get-item $_ -WarningAction SilentlyContinue),(convert-path $_ -WarningAction SilentlyContinue))}} }}",
+                        "& {{ trap {{ continue }} ; resolve-path {0} -WarningAction SilentlyContinue | ForEach-Object {{,($_,(get-item $_ -WarningAction SilentlyContinue),(convert-path $_ -WarningAction SilentlyContinue))}} }}",
                         path));
                 }
 

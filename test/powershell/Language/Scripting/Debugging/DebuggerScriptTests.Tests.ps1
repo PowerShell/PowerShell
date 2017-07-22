@@ -47,9 +47,9 @@ Describe "Breakpoints set on custom FileSystem provider files should work" -Tags
     {
         popd
 
-        if ($breakpoint -ne $null) { $breakpoint | remove-psbreakpoint }
+        if ($null -ne $breakpoint) { $breakpoint | remove-psbreakpoint }
         if (Test-Path $scriptFullName) { Remove-Item $scriptFullName -Force }
-        if ((Get-PSDrive -Name tmpTestA1 2>$null) -ne $null) { Remove-PSDrive -Name tmpTestA1 -Force }
+        if ($null -ne (Get-PSDrive -Name tmpTestA1 2>$null)) { Remove-PSDrive -Name tmpTestA1 -Force }
     }
 }
 
@@ -103,7 +103,7 @@ Describe "Tests line breakpoints on dot-sourced files" -Tags "CI" {
     }
     finally
     {
-        if ($breakpoint -ne $null) { $breakpoint | remove-psbreakpoint }
+        if ($null -ne $breakpoint) { $breakpoint | remove-psbreakpoint }
         if (Test-Path $scriptFile) { Remove-Item -Path $scriptFile -Force }
     }
 }
@@ -157,8 +157,8 @@ Describe "Function calls clear debugger cache too early" -Tags "CI" {
     }
     finally
     {
-        if ($breakpoint1 -ne $null) { $breakpoint1 | remove-psbreakpoint }
-        if ($breakpoint2 -ne $null) { $breakpoint2 | remove-psbreakpoint }
+        if ($null -ne $breakpoint1) { $breakpoint1 | remove-psbreakpoint }
+        if ($null -ne $breakpoint2) { $breakpoint2 | remove-psbreakpoint }
         if (Test-Path $scriptFile) { Remove-Item $scriptFile -Force }
     }
 }
@@ -182,7 +182,7 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
     {
         Set-Content $script @'
         1..3 |
-        % { $_ } | sort-object |
+        ForEach-Object { $_ } | sort-object |
         get-unique
 '@
 
@@ -204,7 +204,7 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
     }
     finally
     {
-        if ($breakpoints -ne $null) { $breakpoints | remove-psbreakpoint }
+        if ($null -ne $breakpoints) { $breakpoints | remove-psbreakpoint }
         if (Test-Path $script)
         {
             del $script -Force
@@ -219,7 +219,7 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
             $scriptPath1 = Join-Path $TestDrive SBPShortPathBug133807.DRT.tmp.ps1
             $scriptPath1 = setup -f SBPShortPathBug133807.DRT.tmp.ps1 -content '
             1..3 |
-            % { $_ } | sort-object |
+            ForEach-Object { $_ } | sort-object |
             get-unique'
             $a = New-Object -ComObject Scripting.FileSystemObject
             $f = $a.GetFile($scriptPath1)
@@ -231,7 +231,7 @@ Describe "Line breakpoints on commands in multi-line pipelines" -Tags "CI" {
 
         AfterAll {
             if ( $IsCoreCLR ) { return }
-            if ($breakpoints -ne $null) { $breakpoints | Remove-PSBreakpoint }
+            if ($null -ne $breakpoints) { $breakpoints | Remove-PSBreakpoint }
         }
 
         It "Short path Breakpoint on line 1 hit count" -skip:$IsCoreCLR {
@@ -257,7 +257,7 @@ Describe "Unit tests for various script breakpoints" -Tags "CI" {
     #  </Test>
     param($path = $null)
 
-    if ($path -eq $null)
+    if ($null -eq $path)
     {
         $path = split-path $MyInvocation.InvocationName
     }
@@ -397,14 +397,14 @@ Describe "Unit tests for various script breakpoints" -Tags "CI" {
     }
     finally
     {
-        if ($line1 -ne $null) { $line1 | Remove-PSBreakpoint }
-        if ($line2 -ne $null) { $line2 | Remove-PSBreakpoint }
-        if ($cmd1 -ne $null) { $cmd1 | Remove-PSBreakpoint }
-        if ($cmd2 -ne $null) { $cmd2 | Remove-PSBreakpoint }
-        if ($cmd3 -ne $null) { $cmd3 | Remove-PSBreakpoint }
-        if ($var1 -ne $null) { $var1 | Remove-PSBreakpoint }
-        if ($var2 -ne $null) { $var2 | Remove-PSBreakpoint }
-        if ($var3 -ne $null) { $var3 | Remove-PSBreakpoint }
+        if ($null -ne $line1) { $line1 | Remove-PSBreakpoint }
+        if ($null -ne $line2) { $line2 | Remove-PSBreakpoint }
+        if ($null -ne $cmd1) { $cmd1 | Remove-PSBreakpoint }
+        if ($null -ne $cmd2) { $cmd2 | Remove-PSBreakpoint }
+        if ($null -ne $cmd3) { $cmd3 | Remove-PSBreakpoint }
+        if ($null -ne $var1) { $var1 | Remove-PSBreakpoint }
+        if ($null -ne $var2) { $var2 | Remove-PSBreakpoint }
+        if ($null -ne $var3) { $var3 | Remove-PSBreakpoint }
 
         if (Test-Path $scriptFile1) { Remove-Item $scriptFile1 -Force }
         if (Test-Path $scriptFile2) { Remove-Item $scriptFile2 -Force }
@@ -421,7 +421,7 @@ Describe "Unit tests for line breakpoints on dot-sourced files" -Tags "CI" {
     #
     param($path = $null)
 
-    if ($path -eq $null)
+    if ($null -eq $path)
     {
         $path = split-path $MyInvocation.InvocationName
     }
@@ -492,9 +492,9 @@ Describe "Unit tests for line breakpoints on dot-sourced files" -Tags "CI" {
     }
     finally
     {
-        if ($breakpoint1 -ne $null) { $breakpoint1 | Remove-PSBreakpoint }
-        if ($breakpoint2 -ne $null) { $breakpoint2 | Remove-PSBreakpoint }
-        if ($breakpoint3 -ne $null) { $breakpoint3 | Remove-PSBreakpoint }
+        if ($null -ne $breakpoint1) { $breakpoint1 | Remove-PSBreakpoint }
+        if ($null -ne $breakpoint2) { $breakpoint2 | Remove-PSBreakpoint }
+        if ($null -ne $breakpoint3) { $breakpoint3 | Remove-PSBreakpoint }
         if (Test-Path $scriptFile) { Remove-Item $scriptFile -Force }
     }
 }
@@ -595,10 +595,10 @@ Describe "Unit tests for line breakpoints on modules" -Tags "CI" {
     finally
     {
         $env:PSModulePath = $oldModulePath
-        if ($breakpoint1 -ne $null) { Remove-PSBreakpoint $breakpoint1 }
-        if ($breakpoint2 -ne $null) { Remove-PSBreakpoint $breakpoint2 }
-        if ($breakpoint3 -ne $null) { Remove-PSBreakpoint $breakpoint3 }
-        if ($breakpoint4 -ne $null) { Remove-PSBreakpoint $breakpoint4 }
+        if ($null -ne $breakpoint1) { Remove-PSBreakpoint $breakpoint1 }
+        if ($null -ne $breakpoint2) { Remove-PSBreakpoint $breakpoint2 }
+        if ($null -ne $breakpoint3) { Remove-PSBreakpoint $breakpoint3 }
+        if ($null -ne $breakpoint4) { Remove-PSBreakpoint $breakpoint4 }
         get-module $moduleName | remove-module
         if (Test-Path $moduleDirectory) { Remove-Item $moduleDirectory -r -force -ea silentlycontinue }
     }
@@ -657,8 +657,8 @@ Describe "Sometimes line breakpoints are ignored" -Tags "CI" {
     }
     finally
     {
-        if ($bp1 -ne $null) { Remove-PSBreakpoint $bp1 }
-        if ($bp2 -ne $null) { Remove-PSBreakpoint $bp2 }
+        if ($null -ne $bp1) { Remove-PSBreakpoint $bp1 }
+        if ($null -ne $bp2) { Remove-PSBreakpoint $bp2 }
 
         if (Test-Path -Path $tempFileName1) { Remove-Item $tempFileName1 -force }
         if (Test-Path -Path $tempFileName2) { Remove-Item $tempFileName2 -force }
