@@ -1,29 +1,21 @@
+# On Unix paths is separated by colon
+# On Windows paths is separated by semicolon
+$script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
+
 $dotnetCLIChannel = "preview"
 $dotnetCLIRequiredVersion = "2.0.0-preview2-006502"
 
 function Get-EnvironmentInformation
 {
     $environment = @{}
-    # Use the .NET Core APIs to determine the current platform; if a runtime
-    # exception is thrown, we are on FullCLR, not .NET Core.
-    try {
-        $Runtime = [System.Runtime.InteropServices.RuntimeInformation]
-        $OSPlatform = [System.Runtime.InteropServices.OSPlatform]
+    # Use the .NET Core APIs to determine the current platform
+    $Runtime = [System.Runtime.InteropServices.RuntimeInformation]
+    $OSPlatform = [System.Runtime.InteropServices.OSPlatform]
 
-        $environment += @{'IsCoreCLR' = $true}
-        $environment += @{'IsLinux' = $Runtime::IsOSPlatform($OSPlatform::Linux)}
-        $environment += @{'IsOSX' = $Runtime::IsOSPlatform($OSPlatform::OSX)}
-        $environment += @{'IsWindows' = $Runtime::IsOSPlatform($OSPlatform::Windows)}
-    } catch {
-        # If these are already set, then they're read-only and we're done
-        try {
-            $environment += @{'IsCoreCLR' = $false}
-            $environment += @{'IsLinux' = $false}
-            $environment += @{'IsOSX' = $false}
-            $environment += @{'IsWindows' = $true}
-        }
-        catch { }
-    }
+    $environment += @{'IsCoreCLR' = $true}
+    $environment += @{'IsLinux' = $Runtime::IsOSPlatform($OSPlatform::Linux)}
+    $environment += @{'IsOSX' = $Runtime::IsOSPlatform($OSPlatform::OSX)}
+    $environment += @{'IsWindows' = $Runtime::IsOSPlatform($OSPlatform::Windows)}
 
     if ($Environment.IsWindows)
     {
@@ -62,14 +54,6 @@ function Get-EnvironmentInformation
 }
 
 $Environment = Get-EnvironmentInformation
-
-# On Unix paths is separated by colon
-# On Windows paths is separated by semicolon
-$script:TestModulePathSeparator = ':'
-if ($Environment.IsWindows)
-{
-    $script:TestModulePathSeparator = ';'
-}
 
 # Autoload (in current session) temporary modules used in our tests
 $TestModulePath = Join-Path $PSScriptRoot "test/tools/Modules"
