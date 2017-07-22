@@ -276,17 +276,6 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(ParameterSetName = "Page")]
         [ValidateNotNullOrEmpty]
         public SwitchParameter Transitional;
-        /*{
-            get
-            {
-                return _transitional;
-            }
-            set
-            {
-                _transitional = value;
-            }
-        }
-        private SwitchParameter _transitional;*/
 
         /// <summary>
         /// definitions for hash table keys
