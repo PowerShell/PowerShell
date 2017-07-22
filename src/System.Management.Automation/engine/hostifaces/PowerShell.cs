@@ -991,7 +991,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add a piece of script to construct a command pipeline.
-        /// For example, to construct a command string "get-process | ForEach-Object { $_.Name }"
+        /// For example, to construct a command string "get-process | foreach { $_.Name }"
         ///     <code>
         ///         PowerShell shell = PowerShell.Create("get-process").
         ///                                     AddCommand("foreach { $_.Name }", true);
@@ -1030,7 +1030,7 @@ namespace System.Management.Automation
 
         /// <summary>
         /// Add a piece of script to construct a command pipeline.
-        /// For example, to construct a command string "get-process | ForEach-Object { $_.Name }"
+        /// For example, to construct a command string "get-process | foreach { $_.Name }"
         ///     <code>
         ///         PowerShell shell = PowerShell.Create("get-process").
         ///                                     AddCommand("foreach { $_.Name }", true);
