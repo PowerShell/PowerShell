@@ -261,7 +261,7 @@ namespace Microsoft.PowerShell.Commands
             }
             set
             {
-                _charset = value.ToUpper();
+                _charset = value;
                 _charsetSpecified = true;
             }
         }
@@ -275,8 +275,8 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         [Parameter(ParameterSetName = "Page")]
         [ValidateNotNullOrEmpty]
-        public SwitchParameter Transitional
-        {
+        public SwitchParameter Transitional;
+        /*{
             get
             {
                 return _transitional;
@@ -286,7 +286,7 @@ namespace Microsoft.PowerShell.Commands
                 _transitional = value;
             }
         }
-        private SwitchParameter _transitional;
+        private SwitchParameter _transitional;*/
 
         /// <summary>
         /// definitions for hash table keys
@@ -437,7 +437,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!_fragment)
             {
-                if(!_transitional)
+                if(!Transitional)
                 {
                     WriteObject("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
                 }
