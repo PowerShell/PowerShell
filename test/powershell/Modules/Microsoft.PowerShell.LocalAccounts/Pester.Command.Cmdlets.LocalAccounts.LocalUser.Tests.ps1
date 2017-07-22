@@ -541,7 +541,7 @@ try {
             $localUserName = 'TestUserGetNameThatDoesntExist'
             $result = Get-LocalGroup $localUserName*
 
-            $result | Should BeNullOrEmpty
+            $result | Should Be $null
         }
 
         It "Returns the correct property values of a user" {
