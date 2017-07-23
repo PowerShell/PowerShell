@@ -9,13 +9,28 @@ function Get-EnvironmentInformation
 {
     $environment = @{}
     # Use the .NET Core APIs to determine the current platform
-    $Runtime = [System.Runtime.InteropServices.RuntimeInformation]
-    $OSPlatform = [System.Runtime.InteropServices.OSPlatform]
+    # if a runtime exception is thrown, we are on FullCLR, not .NET Core.
+    # because System.Runtime.InteropServices.RuntimeInformation
+    # and System.Runtime.InteropServices.OSPlatform
+    # do not exist in FullCLR
+    try {
+        $Runtime = [System.Runtime.InteropServices.RuntimeInformation]
+        $OSPlatform = [System.Runtime.InteropServices.OSPlatform]
 
-    $environment += @{'IsCoreCLR' = $true}
-    $environment += @{'IsLinux' = $Runtime::IsOSPlatform($OSPlatform::Linux)}
-    $environment += @{'IsOSX' = $Runtime::IsOSPlatform($OSPlatform::OSX)}
-    $environment += @{'IsWindows' = $Runtime::IsOSPlatform($OSPlatform::Windows)}
+        $environment += @{'IsCoreCLR' = $true}
+        $environment += @{'IsLinux' = $Runtime::IsOSPlatform($OSPlatform::Linux)}
+        $environment += @{'IsOSX' = $Runtime::IsOSPlatform($OSPlatform::OSX)}
+        $environment += @{'IsWindows' = $Runtime::IsOSPlatform($OSPlatform::Windows)}
+    } catch {
+        # If these are already set, then they're read-only and we're done
+        try {
+            $environment += @{'IsCoreCLR' = $false}
+            $environment += @{'IsLinux' = $false}
+            $environment += @{'IsOSX' = $false}
+            $environment += @{'IsWindows' = $true}
+        }
+        catch { }
+    }
 
     if ($Environment.IsWindows)
     {
