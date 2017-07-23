@@ -1,4 +1,4 @@
-Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" -Tags "CI" {
+﻿Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" -Tags "CI" {
     BeforeAll {
 		$functionDefinitionFile = Join-Path -Path $TestDrive -ChildPath "functionDefinition.ps1"
 		$functionDefinition = @'
@@ -268,6 +268,82 @@ Describe "ParserTests (admin\monad\tests\monad\src\engine\core\ParserTests.cs)" 
     It "Test that escaping the character 'e' returns the ESC character (0x1b)." {
         $result = ExecuteCommand '"`e"'
         $result | should be ([char]0x1b)
+    }
+
+    Context "Test Unicode escape sequences." {
+        # These tests require the file to be saved with a BOM.  Unfortunately when this UTF8 file is read by
+        # PowerShell without a BOM, the file is incorrectly interpreted as ASCII.
+        It 'Test that the bracketed Unicode escape sequence `u{0} returns minimum char.' {
+            $result = ExecuteCommand '"`u{0}"'
+            [int]$result[0] | should be 0
+        }
+
+        It 'Test that the bracketed Unicode escape sequence `u{10FFFF} returns maximum surrogate char pair.' {
+            $result = ExecuteCommand '"`u{10FFFF}"'
+            [int]$result[0] | should be 0xDBFF # max value for high surrogate of surrogate pair
+            [int]$result[1] | should be 0xDFFF # max value for low surrogate of surrogate pair
+        }
+
+        It 'Test that the bracketed Unicode escape sequence `u{a9} returns the © character.' {
+            $result = ExecuteCommand '"`u{a9}"'
+            $result | should be '©'
+        }
+
+        It 'Test that Unicode escape sequence `u{2195} in string returns the ↕ character.' {
+            $result = ExecuteCommand '"foo`u{2195}abc"'
+            $result | should be "foo↕abc"
+        }
+
+        It 'Test that the bracketed Unicode escape sequence `u{1f44d} returns surrogate pair for emoji 👍 character.' {
+            $result = ExecuteCommand '"`u{1f44d}"'
+            $result | should be "👍"
+        }
+
+        It 'Test that Unicode escape sequence `u{2195} in here string returns the ↕ character.' {
+            $result = ExecuteCommand ("@`"`n`n" + 'foo`u{2195}abc' + "`n`n`"@")
+            $result | should be "`nfoo↕abc`n"
+        }
+
+        It 'Test that Unicode escape sequence in single quoted is not processed.' {
+            $result = ExecuteCommand '''foo`u{2195}abc'''
+            $result | should be 'foo`u{2195}abc'
+        }
+
+        It 'Test that Unicode escape sequence in single quoted here string is not processed.' {
+            $result = ExecuteCommand @"
+@'
+
+foo``u{2195}abc
+
+'@
+"@
+            $result | should be "`r`nfoo``u{2195}abc`r`n"
+        }
+
+        It "Test that two consecutive Unicode escape sequences are tokenized correctly." {
+            $result = ExecuteCommand '"`u{007b}`u{007d}"'
+            $result | should be '{}'
+        }
+
+        It "Test that a Unicode escape sequence can be used in a command name." {
+            function xyzzy`u{2195}($p) {$p}
+            $cmd = Get-Command xyzzy`u{2195} -ErrorAction SilentlyContinue
+            $cmd | should not BeNullOrEmpty
+            $cmd.Name | should be 'xyzzy↕'
+            xyzzy`u{2195} 42 | should be 42
+        }
+
+        It "Test that a Unicode escape sequence can be used in a variable name." {
+            ${fooxyzzy`u{2195}} = 42
+            $var = Get-Variable -Name fooxyzzy* -ErrorAction SilentlyContinue
+            $var | should not BeNullOrEmpty
+            $var.Name | should be "fooxyzzy↕"
+            $var.Value | should be 42
+        }
+
+        It "Test that a Unicode escape sequence can be used in an argument." {
+            Write-Output `u{a9}` Acme` Inc | should be "© Acme Inc"
+        }
     }
 
 	It "Test that escaping any character with no special meaning just returns that char. (line 602)" {

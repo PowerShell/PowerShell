@@ -1511,8 +1511,10 @@ namespace System.Management.Automation.Remoting.Client
                 while (true)
                 {
                     string error = ReadError(reader);
-                    if (string.IsNullOrEmpty(error))
+
+                    if (error.Length == 0)
                     {
+                        // Ignore
                         continue;
                     }
 
@@ -1523,6 +1525,10 @@ namespace System.Management.Automation.Remoting.Client
                         StringUtil.Format(RemotingErrorIdStrings.SSHClientEndWithErrorMessage, error));
                     HandleSSHError(psrte);
                 }
+            }
+            catch (ObjectDisposedException)
+            {
+                // Normal reader thread end.
             }
             catch (Exception e)
             {
@@ -1548,7 +1554,13 @@ namespace System.Management.Automation.Remoting.Client
             // Blocking read from StdError stream
             string error = reader.ReadLine();
 
-            if (string.IsNullOrEmpty(error) ||
+            if (error == null)
+            {
+                // Stream is closed unexpectedly.
+                throw new PSInvalidOperationException(RemotingErrorIdStrings.SSHAbruptlyTerminated);
+            }
+
+            if ((error.Length == 0) ||
                 error.IndexOf("WARNING:", StringComparison.OrdinalIgnoreCase) > -1)
             {
                 // Handle as interactive warning message

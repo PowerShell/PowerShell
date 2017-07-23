@@ -613,19 +613,18 @@ namespace Microsoft.PowerShell.Commands
             Guid? savedBaseGuid = BaseGuid;
 
             var importingModule = 0 != (manifestProcessingFlags & ManifestProcessingFlags.LoadElements);
-
+            string extension = Path.GetExtension(moduleSpecification.Name);
             // First check for fully-qualified paths - either absolute or relative
             string rootedPath = ResolveRootedFilePath(moduleSpecification.Name, this.Context);
             if (String.IsNullOrEmpty(rootedPath))
             {
-                rootedPath = Path.Combine(moduleBase, moduleSpecification.Name);
+                rootedPath = FixupFileName(moduleBase, moduleSpecification.Name, extension);
             }
             else
             {
                 wasRooted = true;
             }
 
-            string extension = Path.GetExtension(moduleSpecification.Name);
             try
             {
                 this.Context.Modules.IncrementModuleNestingDepth(this, rootedPath);
@@ -6844,6 +6843,15 @@ namespace Microsoft.PowerShell.Commands
 
                 assemblyVersion = GetAssemblyVersionNumber(assemblyToLoad);
                 assembly = assemblyToLoad;
+                // If this is an in-memory only assembly, add it directly to the assembly cache if
+                // it isn't already there.
+                if (string.IsNullOrEmpty(assembly.Location))
+                {
+                    if (! Context.AssemblyCache.ContainsKey(assembly.FullName))
+                    {
+                        Context.AssemblyCache.Add(assembly.FullName, assembly);
+                    }
+                }
             }
             else
             {
@@ -7197,7 +7205,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 AddModuleToModuleTables(this.Context, this.TargetSessionState.Internal, module);
             }
-
             return module;
         }
 

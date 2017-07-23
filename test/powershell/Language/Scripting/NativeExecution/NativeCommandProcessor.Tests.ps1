@@ -24,9 +24,7 @@ Describe 'native commands with pipeline' -tags 'Feature' {
         $rs.ResetRunspaceState()
     }
 
-    # Make this test pending because of too many regressions in the latest .NET Core
-    # and thus we have to get back to an older .NET Core.
-    It "native | native | native should work fine" -Pending {
+    It "native | native | native should work fine" {
 
         if ($IsWindows) {
             $result = @(ping.exe | findstr.exe count | findstr.exe ping)

@@ -47,7 +47,7 @@ Describe 'Argument transformation attribute on optional argument with explicit $
 '@
     $mod = Add-Type -PassThru -TypeDefinition $tdefinition
 
-    Import-Module $mod[0].Assembly
+    Import-Module $mod[0].Assembly -ErrorVariable ErrorImportingModule
 
     function Invoke-ScriptFunctionTakesObject
     {
@@ -67,6 +67,10 @@ Describe 'Argument transformation attribute on optional argument with explicit $
         return $Address
     }
 
+
+    It "There was no error importing the in-memory module" {
+        $ErrorImportingModule | Should Be $null
+    }
 
     It "Script function takes object" {
         Invoke-ScriptFunctionTakesObject | Should Be 42

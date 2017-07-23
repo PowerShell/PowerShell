@@ -1,30 +1,22 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\PowerShell.Common.props"/>  
+
   <PropertyGroup>
-    <VersionPrefix>6.0.0</VersionPrefix>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <Description>PowerShell Core's System.Management.Automation project</Description>
     <NoWarn>$(NoWarn);CS1570;CS1734</NoWarn>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DelaySign>true</DelaySign>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>System.Management.Automation</AssemblyName>
-    <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
-    <GenerateNeutralResourcesLanguageAttribute>false</GenerateNeutralResourcesLanguageAttribute>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.AssemblyLoadContext\Microsoft.PowerShell.CoreCLR.AssemblyLoadContext.csproj" />
     <ProjectReference Include="..\Microsoft.PowerShell.CoreCLR.Eventing\Microsoft.PowerShell.CoreCLR.Eventing.csproj" />
-    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.4.0-preview1-25302-01" />
+    <PackageReference Include="Microsoft.Win32.Registry.AccessControl" Version="4.4.0-preview3-25423-02" />
     <PackageReference Include="Newtonsoft.Json" Version="10.0.1" />
-    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.4.0-preview1-25302-01" />
-    <PackageReference Include="System.Security.AccessControl" Version="4.4.0-preview1-25302-01" />
-    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.4.0-preview1-25302-01" />
-    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.4.0-preview1-25302-01" />
+    <PackageReference Include="System.IO.FileSystem.AccessControl" Version="4.4.0-preview3-25423-02" />
+    <PackageReference Include="System.Security.AccessControl" Version="4.4.0-preview3-25423-02" />
+    <PackageReference Include="System.Security.Cryptography.Pkcs" Version="4.4.0-preview3-25423-02" />
+    <PackageReference Include="System.Text.Encoding.CodePages" Version="4.4.0-preview3-25423-02" />
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0-alpha*" />
   </ItemGroup>
 
