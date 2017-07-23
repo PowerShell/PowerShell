@@ -9,7 +9,9 @@ if(Test-Path $dotNetPath)
     $env:PATH = $dotNetPath + ';' + $env:PATH
 }
 
-Import-Module (Join-Path $repoRoot 'build.psm1')
+#import build into the global scope so it can be used by packaging
+Import-Module (Join-Path $repoRoot 'build.psm1') -Scope Global
+Import-Module (Join-Path $repoRoot 'tools\packaging')
 
 function New-LocalUser
 {

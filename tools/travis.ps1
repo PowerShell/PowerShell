@@ -3,6 +3,7 @@ param(
 )
 
 Import-Module $PSScriptRoot/../build.psm1 -Force
+Import-Module $PSScriptRoot/packaging -Force
 
 # This function retrieves the appropriate svg to be used when presenting
 # the daily test run badge
