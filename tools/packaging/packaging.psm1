@@ -1,6 +1,22 @@
 $Environment = Get-EnvironmentInformation
 
-$packagingStrings = Import-LocalizedData -BaseDirectory $PSScriptRoot -FileName 'packaging.strings.psd1'
+# Import a psd1 and return it.
+function Import-Data
+{
+    param(
+        [string]$Path
+    )
+
+    $ErrorActionPreference = 'Stop'
+
+    $psd1 = Get-Content -Raw -Path $Path
+    [ScriptBlock]$scriptBlock = [ScriptBlock]::Create($psd1)
+    [string[]] $allowedCommands = 'ConvertFrom-StringData'
+    $scriptBlock.CheckRestrictedLanguage($allowedCommands,$null,$false)
+    return $scriptBlock.InvokeReturnAsIs()
+}
+
+$packagingStrings = Import-Data "$PSScriptRoot\packaging.strings.psd1"
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
