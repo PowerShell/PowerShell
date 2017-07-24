@@ -98,7 +98,10 @@ function Start-BuildNativeWindowsBinaries {
         [string]$Arch = 'x64'
     )
 
-    if (-not $Environment.IsWindows) { return }
+    if (-not $Environment.IsWindows) {
+        Write-Warning -Message "'Start-BuildNativeWindowsBinaries' is only supported on Windows platforms"
+        return
+    }
 
     # cmake is needed to build powershell.exe
     if (-not (precheck 'cmake' $null)) {
