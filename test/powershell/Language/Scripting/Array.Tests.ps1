@@ -51,4 +51,20 @@ Describe "ArrayExpression Tests" -Tags "CI" {
         $result.GetType().FullName | Should Be "System.Object[]"
         $result.Length | Should Be 0
     }
+
+    It "@([object[]]`$a) should return a new array" {
+        $a = 1,2,3
+        $result = @([object[]]$a)
+        $result.GetType().FullName | Should Be "System.Object[]"
+        $result.Length | Should Be 3
+        [object]::ReferenceEquals($a, $result) | Should Be $false
+    }
+
+    It "@([int[]]`$a) should return a new array" {
+        $a = 1,2,3
+        $result = @([int[]]$a)
+        $result.GetType().FullName | Should Be "System.Object[]"
+        $result.Length | Should Be 3
+        [object]::ReferenceEquals($a, $result) | Should Be $false
+    }
 }
