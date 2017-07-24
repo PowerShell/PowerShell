@@ -80,7 +80,6 @@ namespace Microsoft.WSMan.Management
         //string for operation
         internal string WSManOp = null;
 
-        private ResourceManager _resourceMgr = null;
         private PSCmdlet cmdletname;
         private NavigationCmdletProvider _provider;
 
@@ -172,7 +171,7 @@ namespace Microsoft.WSMan.Management
         internal string FormatResourceMsgFromResourcetext(string resourceName,
             params object[] args)
         {
-            return FormatResourceMsgFromResourcetextS(this._resourceMgr, resourceName, args);
+            return FormatResourceMsgFromResourcetextS(g_resourceMgr, resourceName, args);
         }
 
         static private string FormatResourceMsgFromResourcetextS(
@@ -394,7 +393,7 @@ namespace Microsoft.WSMan.Management
             {
                 if (!File.Exists(filepath))
                 {
-                    throw new FileNotFoundException(_resourceMgr.GetString("InvalidFileName"));
+                    throw new FileNotFoundException(g_resourceMgr.GetString("InvalidFileName"));
                 }
                 resultString = ReadFile(filepath);
                 return resultString;
@@ -446,11 +445,11 @@ namespace Microsoft.WSMan.Management
                             XmlNodeList nodes = xmlfile.SelectNodes(xpathString);
                             if (nodes.Count == 0)
                             {
-                                throw new ArgumentException(_resourceMgr.GetString("NoResourceMatch"));
+                                throw new ArgumentException(g_resourceMgr.GetString("NoResourceMatch"));
                             }
                             else if (nodes.Count > 1)
                             {
-                                throw new ArgumentException(_resourceMgr.GetString("MultipleResourceMatch"));
+                                throw new ArgumentException(g_resourceMgr.GetString("MultipleResourceMatch"));
                             }
                             else
                             {
@@ -459,14 +458,14 @@ namespace Microsoft.WSMan.Management
                                 {
                                     if (node.ChildNodes.Count > 1)
                                     {
-                                        throw new ArgumentException(_resourceMgr.GetString("NOAttributeMatch"));
+                                        throw new ArgumentException(g_resourceMgr.GetString("NOAttributeMatch"));
                                     }
                                     else
                                     {
                                         XmlNode tmpNode = node.ChildNodes[0];//.Item[0];
                                         if (!tmpNode.NodeType.ToString().Equals("text", StringComparison.OrdinalIgnoreCase))
                                         {
-                                            throw new ArgumentException(_resourceMgr.GetString("NOAttributeMatch"));
+                                            throw new ArgumentException(g_resourceMgr.GetString("NOAttributeMatch"));
                                         }
                                     }
                                 }
@@ -962,7 +961,7 @@ namespace Microsoft.WSMan.Management
             }
             catch (IndexOutOfRangeException)
             {
-                AssertError(_resourceMgr.GetString("NotProperURI"), false, connectionuri);
+                AssertError(g_resourceMgr.GetString("NotProperURI"), false, connectionuri);
             }
             catch (Exception ex)
             {
