@@ -37,8 +37,6 @@ namespace System.Management.Automation.Language
             typeof(List<object>).GetConstructor(PSTypeExtensions.EmptyTypes);
         internal static readonly MethodInfo ObjectList_ToArray =
             typeof(List<object>).GetMethod(nameof(List<object>.ToArray), PSTypeExtensions.EmptyTypes);
-        internal static readonly MethodInfo ObjectArray_Clone =
-            typeof(object[]).GetMethod(nameof(Array.Clone), PSTypeExtensions.EmptyTypes);
 
         internal static readonly MethodInfo ArrayOps_GetMDArrayValue =
             typeof(ArrayOps).GetMethod(nameof(ArrayOps.GetMDArrayValue), staticFlags);
@@ -5479,6 +5477,8 @@ namespace System.Management.Automation.Language
         public object VisitArrayExpression(ArrayExpressionAst arrayExpressionAst)
         {
             Expression values = null;
+            ExpressionAst pureExprAst = null;
+
             var subExpr = arrayExpressionAst.SubExpression;
             if (subExpr.Traps == null)
             {
@@ -5487,10 +5487,10 @@ namespace System.Management.Automation.Language
                     var pipelineBase = subExpr.Statements[0] as PipelineBaseAst;
                     if (pipelineBase != null)
                     {
-                        var exprAst = pipelineBase.GetPureExpression();
-                        if (exprAst != null)
+                        pureExprAst = pipelineBase.GetPureExpression();
+                        if (pureExprAst != null)
                         {
-                            values = Compile(exprAst);
+                            values = Compile(pureExprAst);
                         }
                     }
                 }
@@ -5502,26 +5502,10 @@ namespace System.Management.Automation.Language
             }
             values = values ?? CaptureAstResults(subExpr, CaptureAstContext.Enumerable);
 
-            if (values.Type == typeof(object[]) || values.Type == typeof(List<object>))
+            if (pureExprAst is ArrayLiteralAst)
             {
-                Expression toArrayExpr = null;
-                if (values.Type == typeof(object[]))
-                {
-                    toArrayExpr = Expression.Call(values, CachedReflectionInfo.ObjectArray_Clone).Cast(typeof(object[]));
-                }
-                else
-                {
-                    toArrayExpr = Expression.Call(values, CachedReflectionInfo.ObjectList_ToArray);
-                }
-
-                var temp = Expression.Variable(typeof(object[]));
-                var expr = Expression.Block(
-                    new[] { temp },
-                    Expression.IfThenElse(
-                        Expression.Equal(values, ExpressionCache.NullConstant),
-                        Expression.Assign(temp, Expression.NewArrayInit(typeof(object), ExpressionCache.NullConstant)),
-                        Expression.Assign(temp, toArrayExpr)),
-                    temp);
+                // If the pure expression is ArrayLiteralAst, just return the result.
+                return values;
             }
             if (values.Type.IsPrimitive || values.Type == typeof(string))
             {
