@@ -1,8 +1,6 @@
 $Environment = Get-EnvironmentInformation
 
-# Always import 'en-us' strings as they should never be localized
-# the UICulture string is treated literally, so other values will not work.
-$packagingStrings = Import-LocalizedData -BaseDirectory $PSScriptRoot -FileName 'packaging.strings.psd1' -UICulture 'en-us'
+$packagingStrings = Import-LocalizedData -BaseDirectory $PSScriptRoot -FileName 'packaging.strings.psd1'
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
