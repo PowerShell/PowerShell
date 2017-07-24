@@ -1,9 +1,7 @@
-Import-Module $PSScriptRoot\..\..\Common\Test.Helpers.psm1
 Describe "Get-Hash tests for files" -Tags "CI" {
 
     BeforeAll {
         $testDocument = Join-Path -Path $PSScriptRoot -ChildPath assets testablescript.ps1
-        Write-Host $testDocument
     }
 
     Context "Default result tests" {
@@ -55,12 +53,19 @@ Describe "Get-Hash tests for files" -Tags "CI" {
             $testBytes = Get-Content $testDocument -Raw -Encoding Byte
             $testString = [System.Text.Encoding]::UTF8.GetString($testBytes)
             $algorithmResult = Get-Hash -InputString $testString -Algorithm $algorithm -Encoding UTF8
+            $algorithmResultFromPipe = $testString | Get-Hash -Algorithm $algorithm -Encoding UTF8
 
             $algorithmResult | Should BeOfType 'Microsoft.PowerShell.Commands.StringHashInfo'
             $algorithmResult.Algorithm | Should Be $algorithm
             $algorithmResult.Hash | Should Be $hash
             $algorithmResult.Encoding | Should Be 'UTF8'
             $algorithmResult.HashedString | Should Be $testString
+
+            $algorithmResultFromPipe | Should BeOfType 'Microsoft.PowerShell.Commands.StringHashInfo'
+            $algorithmResultFromPipe.Algorithm | Should Be $algorithm
+            $algorithmResultFromPipe.Hash | Should Be $hash
+            $algorithmResultFromPipe.Encoding | Should Be 'UTF8'
+            $algorithmResultFromPipe.HashedString | Should Be $testString
         }
 
         It "Should be able to get the correct hash for 'null' String" {
@@ -74,7 +79,7 @@ Describe "Get-Hash tests for files" -Tags "CI" {
         }
 
         It "Should be throw for wrong algorithm name" {
-            { Get-Hash Get-Hash $testDocument -Algorithm wrongAlgorithm } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetFileHashCommand"
+            { Get-Hash $testDocument -Algorithm wrongAlgorithm } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetFileHashCommand"
         }
     }
 
@@ -89,11 +94,19 @@ Describe "Get-Hash tests for files" -Tags "CI" {
 
         It "With '-Path': file exist" {
             $result = Get-Hash -Path $testDocument
+
+            $result | Should BeOfType 'Microsoft.PowerShell.Commands.FileHashInfo'
+            $result.Algorithm | Should Be "SHA256"
+            $result.Hash | Should Be "4A6DA9F1C0827143BB19FC4B0F2A8057BC1DF55F6D1F62FA3B917BA458E8F570"
             $result.Path | Should Be $testDocument
         }
 
         It "With '-LiteralPath': file exist" {
             $result = Get-Hash -LiteralPath $testDocument
+
+            $result | Should BeOfType 'Microsoft.PowerShell.Commands.FileHashInfo'
+            $result.Algorithm | Should Be "SHA256"
+            $result.Hash | Should Be "4A6DA9F1C0827143BB19FC4B0F2A8057BC1DF55F6D1F62FA3B917BA458E8F570"
             $result.Path | Should Be $testDocument
         }
     }
