@@ -1782,7 +1782,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
                 Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 ## BadVerb-Variable should be a function, not an alias (1)
-                Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
+                Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Not Be $null
 
                 ## BadVerb-Variable should be a function, not an alias (2)
                 Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
@@ -1822,7 +1822,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
                 Get-Item Function:\Get-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 ## BadVerb-Variable should be a function, not an alias (1)
-                Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
+                Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Not Be $null
 
                 ## BadVerb-Variable should be a function, not an alias (2)
                 Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
@@ -1873,7 +1873,7 @@ Describe "Implicit remoting tests" -tags "Feature" {
                 Get-Item Function:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
 
                 ## BadVerb-Variable should be an alias, not a function (2)
-                Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Be $null
+                Get-Item Alias:\BadVerb-Variable -ErrorAction SilentlyContinue | Should Not Be $null
 
                 (BadVerb-Variable -Name pid).Value | Should Be $remotePid
             } finally {
