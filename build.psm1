@@ -22,14 +22,10 @@ function Get-EnvironmentInformation
         $environment += @{'IsOSX' = $Runtime::IsOSPlatform($OSPlatform::OSX)}
         $environment += @{'IsWindows' = $Runtime::IsOSPlatform($OSPlatform::Windows)}
     } catch {
-        # If these are already set, then they're read-only and we're done
-        try {
-            $environment += @{'IsCoreCLR' = $false}
-            $environment += @{'IsLinux' = $false}
-            $environment += @{'IsOSX' = $false}
-            $environment += @{'IsWindows' = $true}
-        }
-        catch { }
+        $environment += @{'IsCoreCLR' = $false}
+        $environment += @{'IsLinux' = $false}
+        $environment += @{'IsOSX' = $false}
+        $environment += @{'IsWindows' = $true}
     }
 
     if ($Environment.IsWindows)
