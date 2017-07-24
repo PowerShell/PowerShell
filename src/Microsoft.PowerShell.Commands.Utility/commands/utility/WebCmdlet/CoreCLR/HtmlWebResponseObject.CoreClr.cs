@@ -49,7 +49,40 @@ namespace Microsoft.PowerShell.Commands
 
         #endregion Constructors
 
+       #region Properties
+
+        /// <summary>
+        /// Gets the Encoding that was used to decode the Content
+        /// </summary>
+        /// <value>
+        /// The Encoding used to decode the Content; otherwise, a null reference if the content is not text.
+        /// </value>
+        public Encoding Encoding { get; private set; }
+
+        #endregion Properties
+
         #region Methods
+
+        // NOTE: Currently this code path is not enabled.
+        // See FillRequestStream in WebRequestPSCmdlet.CoreClr.cs and
+        // GetResponseObject in WebResponseObjectFactory.CoreClr.cs for details.
+        private void InitializeContent()
+        {
+            string contentType = ContentHelper.GetContentType(BaseResponse);
+            string content = null;
+            if (ContentHelper.IsText(contentType))
+            {
+                Encoding encoding = null;
+                // fill the Content buffer
+                string characterSet = WebResponseHelper.GetCharacterSet(BaseResponse);
+                this.Content = StreamHelper.DecodeStream(RawContentStream, characterSet, out encoding);
+                this.Encoding = encoding;
+            }
+            else
+            {
+                this.Content = string.Empty;
+            }
+        }
 
         private void InitializeRawContent(HttpResponseMessage baseResponse)
         {

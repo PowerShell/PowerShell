@@ -51,7 +51,7 @@ namespace Microsoft.PowerShell.Commands
                         object obj = null;
                         Exception ex = null;
 
-                        string str = StreamHelper.DecodeStream(responseStream, encoding);
+                        string str = StreamHelper.DecodeStream(responseStream, ref encoding);
                         bool convertSuccess = false;
 
                         // On CoreCLR, we need to explicitly load Json.NET
