@@ -65,6 +65,24 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $existsAfter | Should Be $false
         }
 
+        It "Verify Rename-Item for file" {
+            Rename-Item -Path $testFile -NewName $newTestFile
+            $testFile | Should Not Exist
+            $newTestFile | Should Exist
+        }
+
+        It "Verify Rename-Item for directory" {
+            Rename-Item -Path $testDir -NewName $newTestDir
+            $testDir | Should Not Exist
+            $newTestDir | Should Exist
+        }
+
+        It "Verify Rename-Item will not rename to an existing name" {
+            { Rename-Item -Path $testFile -NewName $testDir -ErrorAction Stop } | ShouldBeErrorId "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"
+            $Error[0].Exception | Should BeOfType System.IO.IOException
+            $testFile | Should Exist
+        }
+
         It "Verify Copy-Item" {
             $newFile = Copy-Item -Path $testFile -Destination $newTestFile -PassThru
             $fileExists = Test-Path $newTestFile
@@ -72,7 +90,29 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $newFile.Name | Should Be $newTestFile
         }
 
-        It "Verify Move-Item" {
+        It "Verify Move-Item for file" {
+            Move-Item -Path $testFile -Destination $testDir
+            $testFile | Should Not Exist
+            "$testDir/$testFile" | Should Exist
+        }
+
+        It "Verify Move-Item for directory" {
+            $destDir = "DestinationDirectory"
+            New-Item -Path $destDir -ItemType Directory >$null
+            Move-Item -Path $testFile -Destination $testDir
+            Move-Item -Path $testDir -Destination $destDir
+            $testDir | Should Not Exist
+            "$destDir/$testDir" | Should Exist
+            "$destDir/$testDir/$testFile" | Should Exist
+        }
+
+        It "Verity Move-Item will not move to an existing file" {
+            { Move-Item -Path $testDir -Destination $testFile -ErrorAction Stop } | ShouldBeErrorId "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"
+            $Error[0].Exception | Should BeOfType System.IO.IOException
+            $testDir | Should Exist
+        }
+
+        It "Verify Move-Item as substitue for Rename-Item" {
             $newFile = Move-Item -Path $testFile -Destination $newTestFile -PassThru
             $fileExists = Test-Path $newTestFile
             $fileExists | Should Be $true
