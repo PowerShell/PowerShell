@@ -1850,7 +1850,7 @@ function script:logerror([string]$message) {
 function script:precheck([string]$command, [string]$missedMessage) {
     $c = Get-Command $command -ErrorAction SilentlyContinue
     if (-not $c) {
-        if ($null -ne $missedMessage)
+        if (-not [string]::IsNullOrEmpty($missedMessage))
         {
             Write-Warning $missedMessage
         }
