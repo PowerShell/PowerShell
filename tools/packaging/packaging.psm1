@@ -1,6 +1,8 @@
 $Environment = Get-EnvironmentInformation
 
 # Import a psd1 and return it.
+# Used instead of Import-LocalizedData to prevent localization lookups.
+# Filed #4337 to add similar functionality to Import-LocalizedData
 function Import-Data
 {
     param(
