@@ -93,9 +93,9 @@ namespace System.Management.Automation
         }
 
         /// <summary/>
-        public static CustomControlBuilder Create(bool outOfBand = false)
+        public static CustomControlBuilder Create(bool outOfBand = false, int? width = null)
         {
-            var customControl = new CustomControl { OutOfBand = outOfBand };
+            var customControl = new CustomControl { OutOfBand = outOfBand, Width = width };
             return new CustomControlBuilder(customControl);
         }
 

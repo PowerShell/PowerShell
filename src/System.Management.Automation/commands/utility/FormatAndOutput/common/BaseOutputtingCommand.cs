@@ -540,6 +540,8 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
 
         private void ProcessOutOfBandPayload(FormatEntryData fed)
         {
+            var screenColumnWidth = fed.width ?? _lo.ColumnNumber;
+
             // try if it is raw text
             RawTextFormatEntry rte = fed.formatEntryInfo as RawTextFormatEntry;
             if (rte != null)
@@ -548,7 +550,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 {
                     ComplexWriter complexWriter = new ComplexWriter();
 
-                    complexWriter.Initialize(_lo, _lo.ColumnNumber);
+                    complexWriter.Initialize(_lo, screenColumnWidth);
                     complexWriter.WriteString(rte.text);
                 }
                 else
@@ -565,7 +567,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 ComplexWriter complexWriter = new ComplexWriter();
 
-                complexWriter.Initialize(_lo, _lo.ColumnNumber);
+                complexWriter.Initialize(_lo, screenColumnWidth);
                 complexWriter.WriteObject(cve.formatValueList);
 
                 return;
@@ -579,7 +581,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
                 _lo.WriteLine("");
 
                 string[] properties = ListOutputContext.GetProperties(lve);
-                listWriter.Initialize(properties, _lo.ColumnNumber, _lo.DisplayCells);
+                listWriter.Initialize(properties, screenColumnWidth, _lo.DisplayCells);
                 string[] values = ListOutputContext.GetValues(lve);
                 listWriter.WriteProperties(values, _lo);
 

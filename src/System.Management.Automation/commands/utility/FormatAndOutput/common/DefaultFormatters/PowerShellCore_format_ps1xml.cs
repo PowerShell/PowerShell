@@ -717,7 +717,7 @@ namespace System.Management.Automation.Runspaces
         private static IEnumerable<FormatViewDefinition> ViewsOf_System_Management_Automation_ErrorRecord()
         {
             yield return new FormatViewDefinition("ErrorInstance",
-                CustomControl.Create(outOfBand: true)
+                CustomControl.Create(outOfBand: true, width: Int32.MaxValue)
                     .StartEntry()
                         .AddScriptBlockExpressionBinding(@"
                                     if (($_.FullyQualifiedErrorId -ne ""NativeCommandErrorMessage"" -and $_.FullyQualifiedErrorId -ne ""NativeCommandError"") -and $ErrorView -ne ""CategoryView"")

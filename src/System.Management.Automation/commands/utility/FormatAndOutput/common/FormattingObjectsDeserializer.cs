@@ -561,6 +561,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             base.Deserialize(so, deserializer);
             this.formatEntryInfo = (FormatEntryInfo)deserializer.DeserializeMandatoryMemberObject(so, "formatEntryInfo");
             this.outOfBand = deserializer.DeserializeBoolMemberVariable(so, "outOfBand");
+            this.width = deserializer.DeserializeIntMemberVariable(so, "width");
             this.writeStream = deserializer.DeserializeWriteStreamTypeMemberVariable(so);
             this.isHelpObject = so.IsHelpObject;
         }

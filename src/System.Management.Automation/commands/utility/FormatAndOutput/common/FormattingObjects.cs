@@ -149,6 +149,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
         public FormatEntryInfo formatEntryInfo = null;
 
         public bool outOfBand = false;
+        public int? width = null;
         public WriteStreamType writeStream = WriteStreamType.None;
         internal bool isHelpObject = false;
 

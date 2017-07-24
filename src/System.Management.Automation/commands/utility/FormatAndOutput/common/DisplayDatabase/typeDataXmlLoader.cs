@@ -465,6 +465,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             ViewDefinition view = new ViewDefinition();
             view.appliesTo = appliesTo;
             view.name = formatView.Name;
+            view.width = formatView.Control.Width;
 
             var firstTypeName = typeNames[0];
             PSControl control = formatView.Control;
