@@ -858,6 +858,19 @@ namespace Microsoft.PowerShell
             // of the script to evaluate. If -file comes before -command, it will
             // treat -command as an argument to the script...
 
+            bool? GetBoolValue(string arg)
+            {
+                if (arg.Equals("$true", StringComparison.OrdinalIgnoreCase) || arg.Equals("true", StringComparison.OrdinalIgnoreCase))
+                {
+                    return true;
+                }
+                else if (arg.Equals("$false", StringComparison.OrdinalIgnoreCase) || arg.Equals("false", StringComparison.OrdinalIgnoreCase))
+                {
+                    return false;
+                }
+                return null;
+            }
+
             ++i;
             if (i >= args.Length)
             {
@@ -922,7 +935,6 @@ namespace Microsoft.PowerShell
 
                 i++;
 
-                Regex argPattern = new Regex(@"^.\w+\:", RegexOptions.CultureInvariant);
                 string pendingParameter = null;
 
                 // Accumulate the arguments to this script...
@@ -939,17 +951,25 @@ namespace Microsoft.PowerShell
                     }
                     else if (!string.IsNullOrEmpty(arg) && SpecialCharacters.IsDash(arg[0]))
                     {
-                        Match m = argPattern.Match(arg);
-                        if (m.Success)
+                        int offset = arg.IndexOf(':');
+                        if (offset >= 0)
                         {
-                            int offset = arg.IndexOf(':');
                             if (offset == arg.Length - 1)
                             {
                                 pendingParameter = arg.TrimEnd(':');
                             }
                             else
                             {
-                                _collectedArgs.Add(new CommandParameter(arg.Substring(0, offset), arg.Substring(offset + 1)));
+                                string argValue = arg.Substring(offset + 1);
+                                bool? boolValue = GetBoolValue(argValue);
+                                if (boolValue != null)
+                                {
+                                        _collectedArgs.Add(new CommandParameter(arg.Substring(0, offset), boolValue));
+                                }
+                                else
+                                {
+                                        _collectedArgs.Add(new CommandParameter(arg.Substring(0, offset), argValue));
+                                }
                             }
                         }
                         else
@@ -959,7 +979,15 @@ namespace Microsoft.PowerShell
                     }
                     else
                     {
-                        _collectedArgs.Add(new CommandParameter(null, arg));
+                        bool? boolValue = GetBoolValue(arg);
+                        if (boolValue != null)
+                        {
+                            _collectedArgs.Add(new CommandParameter(null, boolValue));
+                        }
+                        else
+                        {
+                            _collectedArgs.Add(new CommandParameter(null, arg));
+                        }
                     }
                     ++i;
                 }

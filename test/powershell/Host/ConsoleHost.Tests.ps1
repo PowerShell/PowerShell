@@ -201,7 +201,39 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed[1] | Should Be "bar"
         }
 
-        It "-File should return exit code from script: <Filename>" -TestCases @(
+        It "-File should be able to pass bool values as strings to parameters: <BoolString>" -TestCases @(
+            @{BoolString = '$truE';BoolValue = 'True'},
+            @{BoolString = '$falsE';BoolValue = 'False'},
+            @{BoolString = 'truE';BoolValue = 'True'},
+            @{BoolString = 'falsE';BoolValue = 'False'}
+         ) {
+            param([string]$BoolString, [string]$BoolValue)
+            Set-Content -Path $testdrive/test.ps1 -Value 'param([bool]$bool) $bool'
+            $observed = & $powershell -NoProfile -Nologo -File $testdrive/test.ps1 -Bool $BoolString
+            $observed | Should Be $BoolValue
+        }
+
+        It "-File should be able to pass bool values as strings to positional parameters: <BoolString>" -TestCases @(
+            @{BoolString = '$true'; BoolValue = 'True'},
+            @{BoolString = '$false'; BoolValue = 'False'}
+        ) {
+            param([string]$BoolString, [string]$BoolValue)
+            Set-Content -Path $testdrive/test.ps1 -Value 'param([bool]$bool) $bool'
+            $observed = & $powershell -NoProfile -Nologo -File $testdrive/test.ps1 $BoolString
+            $observed | Should Be $BoolValue
+        }
+
+        It "-File should be able to pass bool values as strings to switches: <BoolString>" -TestCases @(
+            @{BoolString = '$true'; BoolValue = 'True'},
+            @{BoolString = '$false'; BoolValue = 'False'}
+        ) {
+            param([string]$BoolString, [string]$BoolValue)
+            Set-Content -Path $testdrive/test.ps1 -Value 'param([switch]$switch) $switch.IsPresent'
+            $observed = & $powershell -NoProfile -Nologo -File $testdrive/test.ps1 -switch:$BoolString
+            $observed | Should Be $BoolValue
+        }
+
+        It "-File should return exit code from script"  -TestCases @(
             @{Filename = "test.ps1"},
             @{Filename = "test"}
         ) {
