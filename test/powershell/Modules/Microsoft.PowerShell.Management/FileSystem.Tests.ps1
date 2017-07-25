@@ -86,7 +86,8 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
 
         It "Verity Get-ChildItem can get the name of a specified item." {
             $fileName = Get-ChildItem $testFile -Name
-            $fileName | Should BeExactly $fileName
+            $fileInfo = Get-ChildItem $testFile
+            $fileName | Should BeExactly $fileInfo.Name
         }
 
         It "Set-Content to a file" {
