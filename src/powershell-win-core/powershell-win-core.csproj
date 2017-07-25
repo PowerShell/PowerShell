@@ -24,9 +24,6 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
     </Content>
-    <Content Include="pwrshplugin.dll;pwrshplugin.pdb;Install-PowerShellRemoting.ps1">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
   </ItemGroup>
 
   <ItemGroup>
@@ -40,6 +37,7 @@
   <ItemGroup>
     <PackageReference Include="PSDesiredStateConfiguration" Version="1.0.0-alpha01" />
     <PackageReference Include="PowerShellHelpFiles" Version="1.0.0-alpha01" />
+    <PackageReference Include="psrp.windows" Version="6.0.0-beta.1" />
   </ItemGroup>
 
   <PropertyGroup>
