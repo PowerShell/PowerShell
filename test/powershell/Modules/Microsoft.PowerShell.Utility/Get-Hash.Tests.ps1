@@ -109,5 +109,14 @@ Describe "Get-Hash tests for files" -Tags "CI" {
             $result.Hash | Should Be "4A6DA9F1C0827143BB19FC4B0F2A8057BC1DF55F6D1F62FA3B917BA458E8F570"
             $result.Path | Should Be $testDocument
         }
+
+        It "With '-Path': using a pipe" {
+            $result = Get-ChildItem $testDocument | Get-Hash
+
+            $result | Should BeOfType 'Microsoft.PowerShell.Commands.FileHashInfo'
+            $result.Algorithm | Should Be "SHA256"
+            $result.Hash | Should Be "4A6DA9F1C0827143BB19FC4B0F2A8057BC1DF55F6D1F62FA3B917BA458E8F570"
+            $result.Path | Should Be $testDocument
+        }
     }
 }
