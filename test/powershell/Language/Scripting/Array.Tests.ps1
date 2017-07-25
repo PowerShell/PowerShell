@@ -65,4 +65,11 @@ Describe "ArrayExpression Tests" -Tags "CI" {
         $result.GetType().FullName | Should Be "System.Object[]"
         $result.Length | Should Be 3
     }
+
+    It "@([System.Collections.Generic.List[object]]`$null) should return a 1-element(`$null) array of object[]" {
+        $result = @([System.Collections.Generic.List[object]]$null)
+        $result.GetType().FullName | Should Be "System.Object[]"
+        $result.Length | Should Be 1
+        $result[0] | Should Be $null
+    }
 }
