@@ -17,7 +17,7 @@ Describe "Encoding classes and methods are available" -Tag CI {
             UTF8BOM = '239-187-191'
             UTF8NoBOM = ''
             Unicode = '255-254'
-            Unknown = ''
+            Unspecified = ''
             WindowsLegacy = ''
         }
 
@@ -48,7 +48,7 @@ Describe "Encoding classes and methods are available" -Tag CI {
             @{ Encoding = 'UTF8BOM'; Preamble = '239-187-191' },
             @{ Encoding = 'UTF8NoBOM'; Preamble = '' },
             @{ Encoding = 'Unicode'; Preamble = '255-254' },
-            @{ Encoding = 'Unknown'; Preamble = '' },
+            @{ Encoding = 'Unspecified'; Preamble = '' },
             @{ Encoding = 'WindowsLegacy'; Preamble = '' }
 
         $testStringEncodedBytes = @{
@@ -66,7 +66,7 @@ Describe "Encoding classes and methods are available" -Tag CI {
             UTF8BOM = "239-187-191-116-195-169-115-116-" + (Get-NewLineBytes UTF8BOM)
             UTF8NoBOM = "116-195-169-115-116-" + (Get-NewLineBytes UTF8NoBOM)
             Unicode = "255-254-116-0-233-0-115-0-116-0-" + (Get-NewLineBytes Unicode)
-            Unknown = "116-195-169-115-116-" + (Get-NewLineBytes Unknown)
+            Unspecified = "116-195-169-115-116-" + (Get-NewLineBytes Unspecified)
             }
 
         $contentTests =
@@ -84,7 +84,7 @@ Describe "Encoding classes and methods are available" -Tag CI {
             @{ Encoding = 'UTF8BOM'; Bytes = $testStringEncodedBytes['UTF8BOM'] },
             @{ Encoding = 'UTF8NoBOM'; Bytes = $testStringEncodedBytes['UTF8NoBOM'] },
             @{ Encoding = 'Unicode'; Bytes = $testStringEncodedBytes['Unicode'] },
-            @{ Encoding = 'Unknown'; Bytes = $testStringEncodedBytes['Unknown'] }
+            @{ Encoding = 'Unspecified'; Bytes = $testStringEncodedBytes['Unspecified'] }
 
     }
 
@@ -93,7 +93,7 @@ Describe "Encoding classes and methods are available" -Tag CI {
         {
             remove-item $testFile
         }
-        $PSDefaultFileEncoding = "Unknown"
+        $PSDefaultFileEncoding = "Unspecified"
     }
 
     It "Encoding for '<Encoding>' should have correct preamble '<preamble>'" -TestCase $preambleTests {
@@ -123,17 +123,12 @@ Describe "Encoding classes and methods are available" -Tag CI {
 
     It "Explicit encoding set to unknown and preference variable set to unicode creates unicode file" {
         $PSDefaultFileEncoding = "Unicode"
-        $testString | set-content -encoding unknown $testfile
+        $testString | set-content -encoding unspecified $testfile
         Get-FileBytes $testFile | should be $testStringEncodedBytes['Unicode']
     }
 
-    It "getting the encoding for an unknown cmdlet should return utf-8" {
-        $method = [microsoft.powershell.powershellencoding].getmember("GetWindowsLegacyEncoding","NonPublic,Static")
-        $method.Invoke($null, "badcmdlet").BodyName | should be "utf-8"
-    }
-
-    It "When session state is null, GetEncodingPreference returns unknown" {
-        [Microsoft.PowerShell.PowerShellEncoding]::GetEncodingPreference($null) | should be "unknown"
+    It "When session state is null, GetEncodingPreference returns unspecified" {
+        [Microsoft.PowerShell.PowerShellEncoding]::GetEncodingPreference($null) | should be "unspecified"
     }
 
     Context "GetFileEncodingFromFile tests" {
@@ -190,7 +185,7 @@ Describe "Encoding classes and methods are available" -Tag CI {
                 New-ModuleManifest -path "$TESTDRIVE/${testString}.psd1"
             }
             finally {
-                $PSDefaultFileEncoding = "Unknown"
+                $PSDefaultFileEncoding = "Unspecified"
             }
             # we know what the encoding should be
             $legacyEncoding = [System.Text.Encoding]::Unicode
@@ -213,7 +208,7 @@ Describe "Encoding classes and methods are available" -Tag CI {
                 $testString > $TESTDRIVE/file.txt
             }
             finally {
-                $PSDefaultFileEncoding = "Unknown"
+                $PSDefaultFileEncoding = "Unspecified"
             }
             # we are using the first 10 bytes to convince us that we created the proper encoding
             # this doesn't include the new line

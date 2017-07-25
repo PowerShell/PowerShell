@@ -109,7 +109,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         ///
         [Parameter]
-        public FileEncoding Encoding { get; set; } = FileEncoding.Unknown;
+        public FileEncoding Encoding { get; set; } = FileEncoding.Unspecified;
 
         #endregion Command Line Parameters
 

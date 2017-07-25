@@ -942,7 +942,7 @@ namespace Microsoft.PowerShell.Commands
                 PathUtils.MasterStreamOpen(
                     this,
                     filePath,
-                    FileEncoding.Unknown,
+                    FileEncoding.Unspecified,
                     /* defaultEncoding */ false,
                     /* Append */ false,
                     /* Force */ false,

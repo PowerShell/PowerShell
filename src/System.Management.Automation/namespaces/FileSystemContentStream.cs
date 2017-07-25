@@ -1161,8 +1161,6 @@ namespace Microsoft.PowerShell.Commands
                 _currentPosition = _stream.Position;
 
                 // Get the oem encoding and system current ANSI code page
-                // _oemEncoding = EncodingConversion.Convert(null, EncodingConversion.OEM);
-                // _defaultAnsiEncoding = EncodingConversion.Convert(null, EncodingConversion.Default);
                 _oemEncoding = PowerShellEncoding.GetEncoding(FileEncoding.Oem);
                 _defaultAnsiEncoding = PowerShellEncoding.GetEncoding(FileEncoding.Default);
             }

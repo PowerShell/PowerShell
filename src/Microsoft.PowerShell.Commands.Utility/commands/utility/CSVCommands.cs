@@ -207,7 +207,7 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag
         /// </summary>
         [Parameter()]
-        public FileEncoding Encoding { get; set; } = FileEncoding.Unknown;
+        public FileEncoding Encoding { get; set; } = FileEncoding.Unspecified;
 
         /// <summary>
         /// Property that sets append parameter.
@@ -571,7 +571,7 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag
         /// </summary>
         [Parameter()]
-        public FileEncoding Encoding { get; set; } = FileEncoding.Unknown;
+        public FileEncoding Encoding { get; set; } = FileEncoding.Unspecified;
 
         /// <summary>
         /// Avoid writing out duplicate warning messages when there are

@@ -1200,7 +1200,7 @@ namespace Microsoft.PowerShell.Commands
         /// The text encoding to process each file as.
         /// </summary>
         [Parameter]
-        public FileEncoding Encoding { get; set; } = FileEncoding.Unknown;
+        public FileEncoding Encoding { get; set; } = FileEncoding.Unspecified;
 
         private System.Text.Encoding _textEncoding;
 
@@ -1272,7 +1272,7 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // Process encoding switch.
-            if (Encoding != FileEncoding.Unknown )
+            if (Encoding != FileEncoding.Unspecified )
             {
                 _textEncoding = PowerShellEncoding.GetEncoding(this, Encoding);
             }

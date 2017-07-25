@@ -1,4 +1,4 @@
-/********************************************************************++
+/*********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
 
@@ -4829,7 +4829,7 @@ end
         internal const ActionPreference defaultVerbosePreference = ActionPreference.SilentlyContinue;
         internal const ActionPreference defaultWarningPreference = ActionPreference.Continue;
         internal const ActionPreference defaultInformationPreference = ActionPreference.SilentlyContinue;
-        internal const Microsoft.PowerShell.FileEncoding defaultFileEncodingPreference = FileEncoding.Unknown;
+        internal const Microsoft.PowerShell.FileEncoding defaultFileEncodingPreference = FileEncoding.Unspecified;
         internal const bool defaultWhatIfPreference = false;
         internal const ConfirmImpact defaultConfirmPreference = ConfirmImpact.High;
 

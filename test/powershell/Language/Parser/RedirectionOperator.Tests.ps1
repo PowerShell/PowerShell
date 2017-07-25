@@ -39,9 +39,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         $CR  = $encoder.GetBytes($asciiCR)
         $expectedBytes = .{ $BOM; $TXT; $CR }
         $bytes.Count | should be $expectedBytes.count
-        for($i = 0; $i -lt $bytes.count; $i++) {
-            $bytes[$i] | Should be $expectedBytes[$i]
-        }
+        $bytes -join "-" | should be ($expectedBytes -join "-")
     }
 
     # WindowsLegacy encoding tests will be done elsewhere

@@ -20,7 +20,7 @@ namespace Microsoft.PowerShell
         /// <summary>
         /// No encoding, or unset.
         /// </summary>
-        Unknown,
+        Unspecified,
 
         /// <summary>
         /// Unicode encoding.
@@ -110,13 +110,13 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// translate a FileEncoding to an actual System.Text.Encoding
-        /// <param name="TextEncoding">The enum value</param>
+        /// <param name="textEncoding">The enum value</param>
         /// <returns>System.Text.Encoding</returns>
         /// </summary>
-        public static Encoding GetEncoding(FileEncoding TextEncoding)
+        public static Encoding GetEncoding(FileEncoding textEncoding)
         {
-            System.Text.Encoding result = GetDefaultEncoding();
-            switch ( TextEncoding )
+            System.Text.Encoding result;
+            switch ( textEncoding )
             {
                 case FileEncoding.String:
                     result = Encoding.Unicode;
@@ -170,7 +170,8 @@ namespace Microsoft.PowerShell
                     break;
 
                 default:
-                    break;
+                     result = GetDefaultEncoding();
+                     break;
             }
 
             return result;
@@ -185,17 +186,16 @@ namespace Microsoft.PowerShell
         public static Encoding GetEncoding(Cmdlet cmdlet, FileEncoding encoding)
         {
             Encoding resolvedEncoding = GetDefaultEncoding();
-            FileEncoding encodingPreference = FileEncoding.Unknown;
+            FileEncoding encodingPreference = FileEncoding.Unspecified;
             bool preferenceSetAndValid = false;
-            string name = cmdlet.GetType().FullName.ToLower(CultureInfo.InvariantCulture);
 
             // An encoding has been specified as a parameter (or the explicit parameter value is "Unknown")
-            if ( encoding != FileEncoding.Unknown )
+            if ( encoding != FileEncoding.Unspecified )
             {
                 // If the encoding has been set to WindowsLegacy, we need to look up the actual encoding
                 if ( encoding == FileEncoding.WindowsLegacy )
                 {
-                    resolvedEncoding = GetWindowsLegacyEncoding(name);
+                    resolvedEncoding = GetWindowsLegacyEncoding(cmdlet);
                 }
                 else
                 {
@@ -204,16 +204,20 @@ namespace Microsoft.PowerShell
             }
             else
             {
-                // the parameter is not specifically set, so check the preference variable
-                encodingPreference = GetEncodingPreference(cmdlet.Context.SessionState);
+                // if we have a cmdlet and the parameter is not specifically set,
+                // so check the preference variable
+                if ( cmdlet != null )
+                {
+                    encodingPreference = GetEncodingPreference(cmdlet.Context.SessionState);
+                }
                 // If set to unknown, we accept that it is unset
-                preferenceSetAndValid = encodingPreference != FileEncoding.Unknown;
+                preferenceSetAndValid = encodingPreference != FileEncoding.Unspecified;
                 // If the encoding preference has been set to WindowsLegacy, we need to look up the actual encoding
                 if ( encodingPreference == FileEncoding.WindowsLegacy )
                 {
-                    resolvedEncoding = GetWindowsLegacyEncoding(name);
+                    resolvedEncoding = GetWindowsLegacyEncoding(cmdlet);
                 }
-                else if ( encodingPreference != FileEncoding.Unknown )
+                else if ( encodingPreference != FileEncoding.Unspecified )
                 {
                     resolvedEncoding = GetEncoding(encodingPreference);
                 }
@@ -255,7 +259,7 @@ namespace Microsoft.PowerShell
 
             // Test for four-byte preambles
             string preamble = null;
-            FileEncoding foundEncoding = FileEncoding.Default;
+            FileEncoding foundEncoding;
 
             if (bytesRead > 3)
             {
@@ -301,10 +305,11 @@ namespace Microsoft.PowerShell
 
         /// <summary>
         /// Retrieve the PSDefaultFileEncoding preference value if set
+        /// <param name="sessionState">SessionState to use to retrieve the preference variable if set</param>
         /// <summary>
         public static FileEncoding GetEncodingPreference(SessionState sessionState)
         {
-            FileEncoding encodingPreference = FileEncoding.Unknown;
+            FileEncoding encodingPreference = FileEncoding.Unspecified;
             try
             {
                 // It doesn't matter if this fails or throws, we will return unknown in that case
@@ -327,11 +332,11 @@ namespace Microsoft.PowerShell
             FileEncoding encodingPreference = GetEncodingPreference(provider.SessionState);
             // If the encoding isn't set, but is available as $PSDefaultFileEncoding, use that
             // It the encoding is set use that, otherwise return the default encoding
-            if ( encoding == FileEncoding.Unknown && encodingPreference != FileEncoding.Unknown )
+            if ( encoding == FileEncoding.Unspecified && encodingPreference != FileEncoding.Unspecified )
             {
                 resolvedEncoding = GetEncoding(encodingPreference);
             }
-            else if ( encoding != FileEncoding.Unknown )
+            else if ( encoding != FileEncoding.Unspecified )
             {
                 resolvedEncoding = GetEncoding(encoding);
             }
@@ -359,16 +364,14 @@ namespace Microsoft.PowerShell
             };
 
         /// Get the Windows legacy encoding from our encoding map
-        internal static Encoding GetWindowsLegacyEncoding(string name)
+        internal static Encoding GetWindowsLegacyEncoding(Cmdlet cmdlet)
         {
-            if ( legacyEncodingMap.ContainsKey(name))
+            Encoding encoding = Encoding.Default;
+            if ( cmdlet != null )
             {
-                return legacyEncodingMap[name];
+                legacyEncodingMap.TryGetValue(cmdlet.GetType().FullName, out encoding);
             }
-            else
-            {
-                return Encoding.Default;
-            }
+            return encoding;
         }
 
 

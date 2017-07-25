@@ -6722,7 +6722,7 @@ namespace Microsoft.PowerShell.Commands
             bool usingByteEncoding = false;
             bool streamTypeSpecified = false;
             // we need to discover the encoding
-            Encoding encoding = PowerShellEncoding.GetProviderEncoding(this, FileEncoding.Unknown);
+            Encoding encoding = PowerShellEncoding.GetProviderEncoding(this, FileEncoding.Unspecified);
             FileMode filemode = FileMode.OpenOrCreate;
             string streamName = null;
             bool suppressNewline = false;
@@ -7545,7 +7545,7 @@ namespace Microsoft.PowerShell.Commands
         /// reading data from the file.
         /// </summary>
         [Parameter]
-        public FileEncoding Encoding { get; set; } = FileEncoding.Unknown;
+        public FileEncoding Encoding { get; set; } = FileEncoding.Unspecified;
 
         /// <summary>
         /// A parameter to return a stream of an item.

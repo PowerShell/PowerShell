@@ -77,7 +77,7 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag
         /// </summary>
         [Parameter]
-        public FileEncoding Encoding { get; set; } = FileEncoding.Unknown;
+        public FileEncoding Encoding { get; set; } = FileEncoding.Unspecified;
 
         #endregion Parameters
 
