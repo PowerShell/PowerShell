@@ -101,6 +101,27 @@ namespace Microsoft.PowerShell.Utility.Activities
         [DefaultValue(null)]
         public InArgument<System.String[]> PreContent { get; set; }
 
+        /// <summary>
+        /// Provides access to the Meta parameter.
+        /// </summary>
+        [ParameterSpecificCategory]
+        [DefaultValue(null)]
+        public InArgument<System.Collections.Hashtable> Meta { get; set; }
+
+        /// <summary>
+        /// Provides access to the Charset parameter.
+        /// </summary>
+        [ParameterSpecificCategory]
+        [DefaultValue(null)]
+        public InArgument<System.String> Charset { get; set; }
+
+        /// <summary>
+        /// Provides access to the Meta parameter.
+        /// </summary>
+        [ParameterSpecificCategory]
+        [DefaultValue(null)]
+        public InArgument<System.Management.Automation.SwitchParameter> Transitional { get; set; }
+
 
         // Module defining this command
 
@@ -169,6 +190,21 @@ namespace Microsoft.PowerShell.Utility.Activities
             if(PreContent.Expression != null)
             {
                 targetCommand.AddParameter("PreContent", PreContent.Get(context));
+            }
+
+            if(Meta.Expression != null)
+            {
+                targetCommand.AddParameter("Meta", Meta.Get(context));
+            }
+
+            if(Charset.Expression != null)
+            {
+                targetCommand.AddParameter("Charset", Charset.Get(context));
+            }
+
+            if(Transitional.Expression != null)
+            {
+                targetCommand.AddParameter("Transitional", Transitional.Get(context));
             }
 
 

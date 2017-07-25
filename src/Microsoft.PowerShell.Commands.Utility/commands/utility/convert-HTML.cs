@@ -253,6 +253,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter(ParameterSetName = "Page")]
         [ValidateNotNullOrEmpty]
+        [ValidatePattern("^[A-Za-z0-9]\\w+\\S+[A-Za-z0-9]$")]
         public string Charset
         {
             get
