@@ -66,13 +66,13 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         }
 
         It "Verify Rename-Item for file" {
-            Rename-Item -Path $testFile -NewName $newTestFile
+            Rename-Item -Path $testFile -NewName $newTestFile -ErrorAction Stop
             $testFile | Should Not Exist
             $newTestFile | Should Exist
         }
 
         It "Verify Rename-Item for directory" {
-            Rename-Item -Path $testDir -NewName $newTestDir
+            Rename-Item -Path $testDir -NewName $newTestDir -ErrorAction Stop
             $testDir | Should Not Exist
             $newTestDir | Should Exist
         }
@@ -91,14 +91,14 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         }
 
         It "Verify Move-Item for file" {
-            Move-Item -Path $testFile -Destination $testDir
+            Move-Item -Path $testFile -Destination $testDir -ErrorAction Stop
             $testFile | Should Not Exist
             "$testDir/$testFile" | Should Exist
         }
 
         It "Verify Move-Item for directory" {
             $destDir = "DestinationDirectory"
-            New-Item -Path $destDir -ItemType Directory >$null
+            New-Item -Path $destDir -ItemType Directory -ErrorAction Stop >$null
             Move-Item -Path $testFile -Destination $testDir
             Move-Item -Path $testDir -Destination $destDir
             $testDir | Should Not Exist
