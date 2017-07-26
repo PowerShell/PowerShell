@@ -13,6 +13,8 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
             $testKey2 = "TestKey2"
             $testPropertyName = "TestEntry"
             $testPropertyValue = 1
+            $defaultPropertyName = "(Default)"
+            $defaultPropertyValue = "something"
         }
     }
 
@@ -44,6 +46,25 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
     }
 
     Context "Validate basic registry provider Cmdlets" {
+        It "Verify Get-Item" {
+            $item = Get-Item $testKey
+            $item.PSChildName | Should BeExactly $testKey
+        }
+
+        It "Verify Get-ChildItem" {
+            $items = Get-ChildItem
+            $items.Count | Should BeExactly 2
+            $Items.PSChildName -contains $testKey | Should Be $true
+            $Items.PSChildName -contains $testKey2 | Should Be $true
+        }
+
+        It "Verify Get-ChildItem can get subkey names" {
+            $items = Get-ChildItem -Name
+            $items.Count | Should BeExactly 2
+            $items -contains $testKey | Should Be $true
+            $items -contains $testKey2 | Should Be $true
+        }
+
         It "Verify New-Item" {
             $newKey = New-Item -Path "NewItemTest"
             Test-Path "NewItemTest" | Should Be $true
@@ -87,6 +108,12 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
             $property."$testPropertyName" | Should Be 2
         }
 
+        It "Verify Set-Item" {
+            Set-Item -Path $testKey -Value $defaultPropertyValue
+            $property = Get-ItemProperty -Path $testKey -Name $defaultPropertyName
+            $property."$defaultPropertyName" | Should BeExactly $defaultPropertyValue
+        }
+
         It "Verify Get-ItemPropertyValue" {
             $propertyValue = Get-ItemPropertyValue -Path $testKey -Name $testPropertyName
             $propertyValue | Should Be $testPropertyValue
@@ -123,6 +150,16 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
             Clear-ItemProperty -Path $testKey -Name $testPropertyName
             $property = Get-ItemProperty -Path $testKey -Name $testPropertyName
             $property."$testPropertyName" | Should Be 0
+        }
+
+        It "Verity Clear-Item" {
+            Set-ItemProperty -Path $testKey -Name $testPropertyName -Value $testPropertyValue
+            Set-Item -Path $testKey -Value $defaultPropertyValue
+            $key = Get-Item -Path $testKey
+            $key.Property.Length | Should BeExactly 2
+            Clear-Item -Path $testKey
+            $key = Get-Item -Path $testKey
+            $key.Property.Length | Should BeExactly 0
         }
 
         It "Verify Remove-ItemProperty" {
