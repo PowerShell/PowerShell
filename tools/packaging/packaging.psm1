@@ -1,24 +1,6 @@
 $Environment = Get-EnvironmentInformation
 
-# Import a psd1 and return it.
-# Used instead of Import-LocalizedData to prevent localization lookups.
-# Filed #4337 to add similar functionality to Import-LocalizedData
-function Import-Data
-{
-    param(
-        [string]$Path
-    )
-
-    $ErrorActionPreference = 'Stop'
-
-    $psd1 = Get-Content -Raw -Path $Path
-    [ScriptBlock]$scriptBlock = [ScriptBlock]::Create($psd1)
-    [string[]] $allowedCommands = 'ConvertFrom-StringData'
-    $scriptBlock.CheckRestrictedLanguage($allowedCommands,$null,$false)
-    return $scriptBlock.InvokeReturnAsIs()
-}
-
-$packagingStrings = Import-Data "$PSScriptRoot\packaging.strings.psd1"
+$packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
 
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
