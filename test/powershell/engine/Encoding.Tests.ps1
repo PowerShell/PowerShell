@@ -30,7 +30,7 @@ Describe "Encoding classes and methods are available" -Tag CI {
         function Get-NewLineBytes
         {
             param ( [Microsoft.PowerShell.FileEncoding]$encoding )
-            $encoder = [Microsoft.PowerShell.PowerShellEncoding]::GetEncoding($encoding)
+            $encoder = [Microsoft.PowerShell.EncodingUtils]::GetEncoding($encoding)
             $encoder.GetBytes([Environment]::NewLine) -Join "-"
         }
 
@@ -58,7 +58,7 @@ Describe "Encoding classes and methods are available" -Tag CI {
             Byte = "255-254-116-0-233-0-115-0-116-0-" + (Get-NewLineBytes Byte)
             Default = "116-195-169-115-116-" + (Get-NewLineBytes Default)
             # Oem encoding can change depending on system, calculate the expected string
-            Oem = ([Microsoft.PowerShell.PowerShellEncoding]::GetEncoding("Oem").GetBytes($testString) -join "-") + "-" + (Get-NewLineBytes Oem)
+            Oem = ([Microsoft.PowerShell.EncodingUtils]::GetEncoding("Oem").GetBytes($testString) -join "-") + "-" + (Get-NewLineBytes Oem)
             String = "255-254-116-0-233-0-115-0-116-0-" + (Get-NewLineBytes String)
             UTF32 = "255-254-0-0-116-0-0-0-233-0-0-0-115-0-0-0-116-0-0-0-" + (Get-NewLineBytes UTF32)
             UTF7 = "116-43-65-79-107-45-115-116-" + (Get-NewLineBytes UTF7)
@@ -98,7 +98,7 @@ Describe "Encoding classes and methods are available" -Tag CI {
 
     It "Encoding for '<Encoding>' should have correct preamble '<preamble>'" -TestCase $preambleTests {
         param ( $Encoding, $Preamble )
-        [Microsoft.PowerShell.PowerShellEncoding]::GetEncoding($Encoding).GetPreamble() -Join "-" | Should be $Preamble
+        [Microsoft.PowerShell.EncodingUtils]::GetEncoding($Encoding).GetPreamble() -Join "-" | Should be $Preamble
     }
 
     It "Encoding for '<Encoding>' should create file with proper encoding" -TestCase $contentTests {
@@ -128,7 +128,7 @@ Describe "Encoding classes and methods are available" -Tag CI {
     }
 
     It "When session state is null, GetEncodingPreference returns unspecified" {
-        [Microsoft.PowerShell.PowerShellEncoding]::GetEncodingPreference($null) | should be "unspecified"
+        [Microsoft.PowerShell.EncodingUtils]::GetEncodingPreference($null) | should be "unspecified"
     }
 
     Context "GetFileEncodingFromFile tests" {
@@ -138,7 +138,6 @@ Describe "Encoding classes and methods are available" -Tag CI {
                 @{ Encoding = "UTF32"; Text = $testString; FilePath = $testFile },
                 @{ Encoding = "BigEndianUTF32"; Text = $testString; FilePath = $testFile },
                 @{ Encoding = "UTF8Bom"; Text = $testString; FilePath = $testFile },
-                @{ Encoding = "Byte"; Text = [byte[]](20..40); FilePath = $testFile },
                 @{ Encoding = "UTF8NoBom"; Text = ""; FilePath = $testFile },
                 @{ Encoding = "Default"; Text = ""; FilePath = "$TESTDRIVE/ThisFileCouldNotPossiblyExist" }
         }
@@ -147,7 +146,7 @@ Describe "Encoding classes and methods are available" -Tag CI {
             param ( $Encoding, $Text, $FilePath )
             # I need a way to not open the right file to test the missing file scenario
             $Text | set-content -encoding $Encoding $testFile
-            [Microsoft.PowerShell.PowerShellEncoding]::GetFileEncodingFromFile($FilePath) | should be $encoding
+            get-content $testFile | should be $Text
         }
     }
 
