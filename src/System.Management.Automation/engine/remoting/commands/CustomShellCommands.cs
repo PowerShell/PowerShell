@@ -113,8 +113,17 @@ function Register-PSSessionConfiguration
             }}
         }}
 
-        new-item -path WSMan:\localhost\Plugin -file ""$filepath"" -name ""$pluginName""
-        # $? is to make sure the last operation is succeeded
+        try
+        {{
+            new-item -path WSMan:\localhost\Plugin -file ""$filepath"" -name ""$pluginName""
+        }}
+        catch [System.InvalidOperationException] # WS2012/R2 WinRM w/o WMF has limitation where MaxConcurrentUsers can't be greater than 100
+        {{
+            $xml = [xml](get-content ""$filepath"")
+            $xml.PlugInConfiguration.Quotas.MaxConcurrentUsers = 100
+            Set-Content -path ""$filepath"" -Value $xml.OuterXml
+            new-item -path WSMan:\localhost\Plugin -file ""$filepath"" -name ""$pluginName""
+        }}
 
         if ($? -and $runAsUserName)
         {{
