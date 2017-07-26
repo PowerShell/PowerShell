@@ -48,7 +48,7 @@ namespace System.Management.Automation
             bool isLiteralPath
             )
         {
-            Encoding resolvedEncoding = PowerShellEncoding.GetEncoding(cmdlet, encoding);
+            Encoding resolvedEncoding = EncodingUtils.GetEncoding(cmdlet, encoding);
 
             MasterStreamOpen(cmdlet, filePath, resolvedEncoding, defaultEncoding, Append, Force, NoClobber, out fileStream, out streamWriter, out readOnlyFileInfo, isLiteralPath);
         }
@@ -193,7 +193,7 @@ namespace System.Management.Automation
         internal static StreamReader OpenStreamReader(PSCmdlet command, string filePath, FileEncoding encoding, bool isLiteralPath)
         {
             FileStream fileStream = OpenFileStream(filePath, command, isLiteralPath);
-            return new StreamReader(fileStream, PowerShellEncoding.GetEncoding(command, encoding));
+            return new StreamReader(fileStream, EncodingUtils.GetEncoding(command, encoding));
         }
 
         internal static FileStream OpenFileStream(string filePath, PSCmdlet command, bool isLiteralPath)

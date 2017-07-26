@@ -797,7 +797,7 @@ namespace Microsoft.PowerShell.Commands
                 // the changes
                 if (waitChanges)
                 {
-                    WaitForChanges(_path, _mode, _access, _share, PowerShellEncoding.GetDefaultEncoding());
+                    WaitForChanges(_path, _mode, _access, _share, EncodingUtils.GetDefaultEncoding());
                     byteRead = _stream.ReadByte();
                 }
             }
@@ -1161,8 +1161,8 @@ namespace Microsoft.PowerShell.Commands
                 _currentPosition = _stream.Position;
 
                 // Get the oem encoding and system current ANSI code page
-                _oemEncoding = PowerShellEncoding.GetEncoding(FileEncoding.Oem);
-                _defaultAnsiEncoding = PowerShellEncoding.GetEncoding(FileEncoding.Default);
+                _oemEncoding = EncodingUtils.GetEncoding(FileEncoding.Oem);
+                _defaultAnsiEncoding = EncodingUtils.GetEncoding(FileEncoding.Default);
             }
         }
 

@@ -2180,20 +2180,20 @@ namespace System.Management.Automation.Runspaces
             {
                 Debug.Assert(stdinFd >= 0, "Invalid Fd");
                 standardInput = new StreamWriter(OpenStream(stdinFd, FileAccess.Write),
-                    PowerShellEncoding.utf8NoBom, StreamBufferSize)
+                    EncodingUtils.utf8NoBom, StreamBufferSize)
                 { AutoFlush = true };
             }
             if (startInfo.RedirectStandardOutput)
             {
                 Debug.Assert(stdoutFd >= 0, "Invalid Fd");
                 standardOutput = new StreamReader(OpenStream(stdoutFd, FileAccess.Read),
-                    startInfo.StandardOutputEncoding ?? PowerShellEncoding.utf8NoBom, true, StreamBufferSize);
+                    startInfo.StandardOutputEncoding ?? EncodingUtils.utf8NoBom, true, StreamBufferSize);
             }
             if (startInfo.RedirectStandardError)
             {
                 Debug.Assert(stderrFd >= 0, "Invalid Fd");
                 standardError = new StreamReader(OpenStream(stderrFd, FileAccess.Read),
-                    startInfo.StandardErrorEncoding ?? PowerShellEncoding.utf8NoBom, true, StreamBufferSize);
+                    startInfo.StandardErrorEncoding ?? EncodingUtils.utf8NoBom, true, StreamBufferSize);
             }
 
             return childPid;

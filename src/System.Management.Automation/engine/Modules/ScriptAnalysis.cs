@@ -96,7 +96,7 @@ namespace System.Management.Automation
         {
             using (FileStream readerStream = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
-                Encoding defaultEncoding = PowerShellEncoding.GetDefaultEncoding();
+                Encoding defaultEncoding = EncodingUtils.GetDefaultEncoding();
                 Microsoft.Win32.SafeHandles.SafeFileHandle safeFileHandle = readerStream.SafeFileHandle;
 
                 using (StreamReader scriptReader = new StreamReader(readerStream, defaultEncoding))

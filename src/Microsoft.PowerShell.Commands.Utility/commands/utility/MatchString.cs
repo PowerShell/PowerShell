@@ -1274,7 +1274,7 @@ namespace Microsoft.PowerShell.Commands
             // Process encoding switch.
             if (Encoding != FileEncoding.Unspecified )
             {
-                _textEncoding = PowerShellEncoding.GetEncoding(this, Encoding);
+                _textEncoding = EncodingUtils.GetEncoding(this, Encoding);
             }
             else
             {

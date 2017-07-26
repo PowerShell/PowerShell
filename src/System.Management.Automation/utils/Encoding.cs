@@ -96,7 +96,7 @@ namespace Microsoft.PowerShell
     /// <summary>
     /// the helper class for determining encodings for PowerShell
     /// </summary>
-    public static class PowerShellEncoding
+    public static class EncodingUtils
     {
 
         /// <summary>
@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell
         /// <param name="path">The path to a file to inspect for an encoding</param>
         /// <returns>System.Text.Encoding</returns>
         /// </summary>
-        public static FileEncoding GetFileEncodingFromFile(string path)
+        internal static FileEncoding GetFileEncodingFromFile(string path)
         {
             if (!File.Exists(path))
             {

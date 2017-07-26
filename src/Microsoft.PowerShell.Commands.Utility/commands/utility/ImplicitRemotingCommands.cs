@@ -132,7 +132,7 @@ namespace Microsoft.PowerShell.Commands
             List<string> generatedFiles = GenerateProxyModule(
                 tempDirectory,
                 Path.GetFileName(directory.FullName),
-                PowerShellEncoding.GetEncoding(this, Encoding),
+                EncodingUtils.GetEncoding(this, Encoding),
                 _force,
                 listOfCommandMetadata,
                 alias2resolvedCommandName,

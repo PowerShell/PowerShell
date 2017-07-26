@@ -494,7 +494,7 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// To make it easier to specify -Encoding parameter, we add an ArgumentTransformationAttribute here.
     /// When the input data is of type string and is valid to be converted to System.Text.Encoding
-    /// via PowerShellEncoding.GetEncoding(), we do the conversion and return the converted value. 
+    /// via EncodingUtils.GetEncoding(), we do the conversion and return the converted value. 
     /// Otherwise, we just return the input data.
     /// </summary>
     internal sealed class ArgumentToEncodingNameTransformationAttribute : ArgumentTransformationAttribute
@@ -504,7 +504,7 @@ namespace Microsoft.PowerShell.Commands
             FileEncoding encoding;
             if (LanguagePrimitives.TryConvertTo<FileEncoding>(inputData, out encoding))
             {
-                return PowerShellEncoding.GetEncoding(encoding);
+                return EncodingUtils.GetEncoding(encoding);
             }
             return inputData;
         }

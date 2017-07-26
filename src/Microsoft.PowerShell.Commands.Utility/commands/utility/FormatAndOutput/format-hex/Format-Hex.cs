@@ -232,7 +232,7 @@ namespace Microsoft.PowerShell.Commands
             else if (obj is string)
             {
                 string inputString = obj.ToString();
-                Encoding resolvedEncoding = PowerShellEncoding.GetEncoding(this, Encoding);
+                Encoding resolvedEncoding = EncodingUtils.GetEncoding(this, Encoding);
                 inputBytes = resolvedEncoding.GetBytes(inputString);
             }
             

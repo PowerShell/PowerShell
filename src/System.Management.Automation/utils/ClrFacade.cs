@@ -114,7 +114,7 @@ namespace System.Management.Automation
                 EncodingRegisterProvider();
 
                 uint currentAnsiCp = NativeMethods.GetACP();
-                s_defaultEncoding = Encoding.GetEncoding((int)currentAnsiCp);
+                s_defaultEncoding = EncodingUtils.GetDefaultEncoding();
 #endif
             }
             return s_defaultEncoding;
@@ -136,11 +136,11 @@ namespace System.Management.Automation
             {
 #if UNIX        // PowerShell Core on Unix
                 s_oemEncoding = GetDefaultEncoding();
-#else           // PowerShell Core on Windows
+#else           // PowerShell Core on Windows, which needs provider registration
                 EncodingRegisterProvider();
 
                 uint oemCp = NativeMethods.GetOEMCP();
-                s_oemEncoding = Encoding.GetEncoding((int)oemCp);
+                s_oemEncoding = EncodingUtils.GetDefaultEncoding();
 #endif
             }
             return s_oemEncoding;
@@ -275,7 +275,7 @@ namespace System.Management.Automation
                                             FileAccess.Read, FileShare.Read);
 
                 // If we successfully get the zone data stream, try to read the ZoneId information
-                // use the method in this class not PowerShellEncoding.
+                // use the method in this class not EncodingUtils.
                 using (StreamReader zoneDataReader = new StreamReader(zoneDataSteam, GetDefaultEncoding()))
                 {
                     string line = null;

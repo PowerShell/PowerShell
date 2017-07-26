@@ -6558,7 +6558,7 @@ namespace Microsoft.PowerShell.Commands
 
             // Defaults for the file read operation
             string delimiter = "\n";
-            Encoding encoding = PowerShellEncoding.GetDefaultEncoding();
+            Encoding encoding = EncodingUtils.GetDefaultEncoding();
             bool waitForChanges = false;
 
             bool streamTypeSpecified = false;
@@ -6593,7 +6593,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (streamTypeSpecified)
                     {
-                        encoding = PowerShellEncoding.GetProviderEncoding(this, dynParams.Encoding);
+                        encoding = EncodingUtils.GetProviderEncoding(this, dynParams.Encoding);
                     }
 
                     // Get the wait value
@@ -6722,7 +6722,7 @@ namespace Microsoft.PowerShell.Commands
             bool usingByteEncoding = false;
             bool streamTypeSpecified = false;
             // we need to discover the encoding
-            Encoding encoding = PowerShellEncoding.GetProviderEncoding(this, FileEncoding.Unspecified);
+            Encoding encoding = EncodingUtils.GetProviderEncoding(this, FileEncoding.Unspecified);
             FileMode filemode = FileMode.OpenOrCreate;
             string streamName = null;
             bool suppressNewline = false;
@@ -6741,7 +6741,7 @@ namespace Microsoft.PowerShell.Commands
 
                     if (streamTypeSpecified)
                     {
-                        encoding = PowerShellEncoding.GetProviderEncoding(this, dynParams.Encoding);
+                        encoding = EncodingUtils.GetProviderEncoding(this, dynParams.Encoding);
                     }
 
                     streamName = dynParams.Stream;

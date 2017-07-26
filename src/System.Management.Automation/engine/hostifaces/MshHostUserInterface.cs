@@ -1071,11 +1071,11 @@ namespace System.Management.Automation.Host
                 _path = value;
 
                 Encoding = Encoding.UTF8;
-                FileEncoding fileEncoding = PowerShellEncoding.GetFileEncodingFromFile(value);
+                FileEncoding fileEncoding = EncodingUtils.GetFileEncodingFromFile(value);
 
                 if (fileEncoding != FileEncoding.Default)
                 {
-                    Encoding = PowerShellEncoding.GetEncoding(fileEncoding);
+                    Encoding = EncodingUtils.GetEncoding(fileEncoding);
                 }
             }
         }
