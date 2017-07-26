@@ -1,38 +1,31 @@
 
-try {
-    #skip all tests on non-windows platform
+try 
+{
+    # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
     $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-    $IsNotSkipped = $IsWindows
+    $IsNotSkipped = ($IsWindows -and $IsCoreCLR -and (Test-IsElevated))
     $PSDefaultParameterValues["it:skip"] = !$IsNotSkipped
 
     #
+    # TODO: Enable-PSRemoting should be performed at a higher set up for all tests.
     # Tests whether PowerShell remoting is enabled for this instance of PowerShell.
     # If remoting is not enabled, it will enable it and then clean up after all the tests
     # have executed.
     #
     if ($IsNotSkipped)
     {
-        Import-Module (join-path $psscriptroot "../../Common/Test.Helpers.psm1")
+        $endpointName = "PowerShell.$($psversiontable.GitCommitId)"
 
-        $endpointCreated = $false
-        $endpointName = "microsoft.powershell"
+        $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
 
-        if (($IsCoreCLR) -AND (Test-IsElevated))
+        if ($matchedEndpoint -eq $null)
         {
-            $endpointName = "PowerShell.$($psversiontable.GitCommitId)"
-
-            # Throws a "No session configuration matches criteria $endpointName" WriteErrorException if no endpoint is found
-            $matchedEndpoint = Get-PSSessionConfiguration $endpointName -ErrorAction SilentlyContinue
-
-            if ($matchedEndpoint -eq $null)
-            {
-                # An endpoint for this instance of PowerShell does not exist.
-                #
-                # -SkipNetworkProfileCheck is used in case Docker or another application
-                # has created a publich virtual network profile on the system
-                Enable-PSRemoting -SkipNetworkProfileCheck
-                $endpointCreated = $true
-            }
+            # An endpoint for this instance of PowerShell does not exist.
+            #
+            # -SkipNetworkProfileCheck is used in case Docker or another application
+            # has created a publich virtual network profile on the system
+            Enable-PSRemoting -SkipNetworkProfileCheck
+            $endpointCreated = $true
         }
     }
 
@@ -144,11 +137,7 @@ try {
 
                 It "Get-PSSessionConfiguration -Name with wildcard character" {
 
-                    $endpointWildcard = "microsoft*"
-                    if ($IsCoreCLR)
-                    {
-                        $endpointWildcard = "powershell.*"
-                    }
+                    $endpointWildcard = "powershell.*" 
 
                     $Result = Get-PSSessionConfiguration -Name $endpointWildcard
 
@@ -478,7 +467,7 @@ namespace PowershellTestConfigNamespace
                 }
                 
                 AfterEach {
-                    #Unregister-PSSessionConfiguration -Name $TestSessionConfigName -Force -NoServiceRestart -ErrorAction SilentlyContinue
+                    Unregister-PSSessionConfiguration -Name $TestSessionConfigName -Force -NoServiceRestart -ErrorAction SilentlyContinue
                 }
                 
                 It "Validate Register-PSSessionConfiguration -name -path" {
@@ -868,7 +857,8 @@ namespace PowershellTestConfigNamespace
         }
     }
 }
-finally {
+finally
+{
     $global:PSDefaultParameterValues = $originalDefaultParameterValues
 }
 
