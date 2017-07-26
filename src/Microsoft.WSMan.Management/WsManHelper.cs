@@ -86,7 +86,7 @@ namespace Microsoft.WSMan.Management
         private FileStream _fs;
         private StreamReader _sr;
 
-        private static ResourceManager g_resourceMgr = new ResourceManager("Microsoft.WSMan.Management.resources.WsManResources", typeof(WSManHelper).GetTypeInfo().Assembly);
+        private static ResourceManager _resourceMgr = new ResourceManager("Microsoft.WSMan.Management.resources.WsManResources", typeof(WSManHelper).GetTypeInfo().Assembly);
 
 
         //
@@ -152,26 +152,26 @@ namespace Microsoft.WSMan.Management
             System.Security.Principal.WindowsPrincipal principal = new System.Security.Principal.WindowsPrincipal(currentIdentity);
             if (!principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator))
             {
-                string message = g_resourceMgr.GetString("ErrorElevationNeeded");
+                string message = _resourceMgr.GetString("ErrorElevationNeeded");
                 throw new InvalidOperationException(message);
             }
         }
 
         internal string GetResourceMsgFromResourcetext(string rscname)
         {
-            return g_resourceMgr.GetString(rscname);
+            return _resourceMgr.GetString(rscname);
         }
 
         static internal string FormatResourceMsgFromResourcetextS(string rscname,
             params object[] args)
         {
-            return FormatResourceMsgFromResourcetextS(g_resourceMgr, rscname, args);
+            return FormatResourceMsgFromResourcetextS(_resourceMgr, rscname, args);
         }
 
         internal string FormatResourceMsgFromResourcetext(string resourceName,
             params object[] args)
         {
-            return FormatResourceMsgFromResourcetextS(g_resourceMgr, resourceName, args);
+            return FormatResourceMsgFromResourcetextS(_resourceMgr, resourceName, args);
         }
 
         static private string FormatResourceMsgFromResourcetextS(
@@ -393,7 +393,7 @@ namespace Microsoft.WSMan.Management
             {
                 if (!File.Exists(filepath))
                 {
-                    throw new FileNotFoundException(g_resourceMgr.GetString("InvalidFileName"));
+                    throw new FileNotFoundException(_resourceMgr.GetString("InvalidFileName"));
                 }
                 resultString = ReadFile(filepath);
                 return resultString;
@@ -445,11 +445,11 @@ namespace Microsoft.WSMan.Management
                             XmlNodeList nodes = xmlfile.SelectNodes(xpathString);
                             if (nodes.Count == 0)
                             {
-                                throw new ArgumentException(g_resourceMgr.GetString("NoResourceMatch"));
+                                throw new ArgumentException(_resourceMgr.GetString("NoResourceMatch"));
                             }
                             else if (nodes.Count > 1)
                             {
-                                throw new ArgumentException(g_resourceMgr.GetString("MultipleResourceMatch"));
+                                throw new ArgumentException(_resourceMgr.GetString("MultipleResourceMatch"));
                             }
                             else
                             {
@@ -458,14 +458,14 @@ namespace Microsoft.WSMan.Management
                                 {
                                     if (node.ChildNodes.Count > 1)
                                     {
-                                        throw new ArgumentException(g_resourceMgr.GetString("NOAttributeMatch"));
+                                        throw new ArgumentException(_resourceMgr.GetString("NOAttributeMatch"));
                                     }
                                     else
                                     {
                                         XmlNode tmpNode = node.ChildNodes[0];//.Item[0];
                                         if (!tmpNode.NodeType.ToString().Equals("text", StringComparison.OrdinalIgnoreCase))
                                         {
-                                            throw new ArgumentException(g_resourceMgr.GetString("NOAttributeMatch"));
+                                            throw new ArgumentException(_resourceMgr.GetString("NOAttributeMatch"));
                                         }
                                     }
                                 }
@@ -961,7 +961,7 @@ namespace Microsoft.WSMan.Management
             }
             catch (IndexOutOfRangeException)
             {
-                AssertError(g_resourceMgr.GetString("NotProperURI"), false, connectionuri);
+                AssertError(_resourceMgr.GetString("NotProperURI"), false, connectionuri);
             }
             catch (Exception ex)
             {
