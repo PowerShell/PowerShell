@@ -686,7 +686,7 @@ namespace System.Management.Automation
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw PSTraceSource.NewArgumentException("value");
+                    throw PSTraceSource.NewArgumentException("HelpMessage");
                 }
                 _helpMessage = value;
             }
@@ -707,7 +707,7 @@ namespace System.Management.Automation
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw PSTraceSource.NewArgumentException("value");
+                    throw PSTraceSource.NewArgumentException("HelpMessageBaseName");
                 }
                 _helpMessageBaseName = value;
             }
@@ -728,7 +728,7 @@ namespace System.Management.Automation
             {
                 if (string.IsNullOrEmpty(value))
                 {
-                    throw PSTraceSource.NewArgumentException("value");
+                    throw PSTraceSource.NewArgumentException("HelpMessageResourceId");
                 }
                 _helpMessageResourceId = value;
             }
