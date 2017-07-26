@@ -1,4 +1,3 @@
-
 try 
 {
     # Skip all tests on non-windows and non-PowerShellCore and non-elevated platforms.
@@ -101,7 +100,7 @@ try
                     # Create new Config File
                     function CreateTestConfigFile {
                     
-                        $TestConfigFileLoc = join-path $env:SystemDrive "MultiMachineTestData\Remoting\cmdlets"
+                        $TestConfigFileLoc = join-path $TestDrive "Remoting"
                         if(-not (Test-path $TestConfigFileLoc))
                         {
                             $null = New-Item -Path $TestConfigFileLoc -ItemType Directory -Force -ErrorAction Stop
@@ -435,7 +434,7 @@ namespace PowershellTestConfigNamespace
                         return $TestAssemblyName
                     }
 
-                    $global:TestDir = join-path $env:SystemDrive "MultiMachineTestData\Remoting\cmdlets"
+                    $global:TestDir = join-path $TestDrive "Remoting"
                     if(-not (Test-Path $global:TestDir))
                     {
                         $null = New-Item -path $global:TestDir -ItemType Directory
@@ -606,7 +605,7 @@ namespace PowershellTestConfigNamespace
 
         It "Validate New-PSSessionConfigurationFile can successfully create a valid PSSessionConfigurationFile" {
 
-            $configFilePath = join-path $env:SystemDrive "SamplePSSessionConfigurationFile.pssc"
+            $configFilePath = join-path $TestDrive "SamplePSSessionConfigurationFile.pssc"
             try
             {
                 New-PSSessionConfigurationFile $configFilePath
@@ -756,31 +755,16 @@ namespace PowershellTestConfigNamespace
 
         It "Validate FullyQualifiedErrorId from Test-PSSessionConfigurationFile when an invalid pssc file is provided as input and -Verbose parameter is specified" {
 
-            $configFilePath = join-path $env:SystemDrive "SamplePSSessionConfigurationFile.pssc"
+            $configFilePath = join-path $TestDrive "SamplePSSessionConfigurationFile.pssc"
             "InvalidData" | Out-File $configFilePath
 
-            try
-            {
-                Test-PSSessionConfigurationFile $configFilePath -Verbose -ErrorAction Stop
-                throw "No Exception!"
-            }
-            catch
-            {
-                $_.FullyQualifiedErrorId | Should Be "PSSessionConfigurationFileNotFound,Microsoft.PowerShell.Commands.TestPSSessionConfigurationFileCommand"
-            }
-            finally
-            {
-                if(Test-Path $configFilePath)
-                { 
-                    Remove-Item $configFilePath -Force 
-                }
-            }
+            Test-PSSessionConfigurationFile $configFilePath -Verbose -ErrorAction Stop | Should Be $false
         }
 
         It "Test case verifies that the generated config file passes validation" {
 
             # Path the config file
-            $configFilePath = join-path $env:SystemDrive "SamplePSSessionConfigurationFile.pssc"
+            $configFilePath = join-path $TestDrive "SamplePSSessionConfigurationFile.pssc"
 
             $updatedFunctionDefn = @()
             foreach($currentDefination in $parmMap.FunctionDefinitions)

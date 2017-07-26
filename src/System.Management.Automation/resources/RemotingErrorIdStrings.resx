@@ -1644,6 +1644,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   </data>
   <data name="SSHAbruptlyTerminated" xml:space="preserve">
     <value>The SSH transport process has abruptly terminated causing this remote session to break.</value>
+  </data>
   <data name="InvalidProcessorArchitecture" xml:space="preserve">
     <value>PowerShell Core does not support WOW64. The binary must match the architecture of the processor.</value>
   </data>
