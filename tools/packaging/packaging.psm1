@@ -1,4 +1,7 @@
 $Environment = Get-EnvironmentInformation
+
+$packagingStrings = Import-PowerShellDataFile "$PSScriptRoot\packaging.strings.psd1"
+
 function Start-PSPackage {
     [CmdletBinding(DefaultParameterSetName='Version',SupportsShouldProcess=$true)]
     param(
@@ -245,10 +248,7 @@ function New-UnixPackage {
         }
     }
 
-    $Description = @"
-PowerShell is an automation and configuration management platform.
-It consists of a cross-platform command-line shell and associated scripting language.
-"@
+    $Description = $packagingStrings.Description
 
     # Suffix is used for side-by-side package installation
     $Suffix = $Name -replace "^powershell"
@@ -308,55 +308,14 @@ It consists of a cross-platform command-line shell and associated scripting lang
 
             $AfterInstallScript = [io.path]::GetTempFileName()
             $AfterRemoveScript = [io.path]::GetTempFileName()
-            @'
-#!/bin/sh
-if [ ! -f /etc/shells ] ; then
-    echo "{0}" > /etc/shells
-else
-    grep -q "^{0}$" /etc/shells || echo "{0}" >> /etc/shells
-fi
-'@ -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-
-        @'
-if [ "$1" = 0 ] ; then
-    if [ -f /etc/shells ] ; then
-        TmpFile=`/bin/mktemp /tmp/.powershellmXXXXXX`
-        grep -v '^{0}$' /etc/shells > $TmpFile
-        cp -f $TmpFile /etc/shells
-        rm -f $TmpFile
-    fi
-fi
-'@ -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+            $packagingStrings.RedHatAfterInstallScript -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+            $packagingStrings.RedHatAfterRemoveScript -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
         }
         elseif ($Environment.IsUbuntu) {
             $AfterInstallScript = [io.path]::GetTempFileName()
             $AfterRemoveScript = [io.path]::GetTempFileName()
-            @'
-#!/bin/sh
-set -e
-case "$1" in
-    (configure)
-        add-shell "{0}"
-    ;;
-    (abort-upgrade|abort-remove|abort-deconfigure)
-        exit 0
-    ;;
-    (*)
-        echo "postinst called with unknown argument '$1'" >&2
-        exit 0
-    ;;
-esac
-'@ -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
-
-        @'
-#!/bin/sh
-set -e
-case "$1" in
-        (remove)
-        remove-shell "{0}"
-        ;;
-esac
-'@ -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
+            $packagingStrings.UbuntuAfterInstallScript -f "$Link/$Name" | Out-File -FilePath $AfterInstallScript -Encoding ascii
+            $packagingStrings.UbuntuAfterRemoveScript -f "$Link/$Name" | Out-File -FilePath $AfterRemoveScript -Encoding ascii
         }
 
 
