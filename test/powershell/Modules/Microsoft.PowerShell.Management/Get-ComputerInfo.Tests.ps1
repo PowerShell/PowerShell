@@ -23,6 +23,23 @@ function Get-ComputerInfoForTest
     }
 }
 
+function Get-StringValuesFromValueMap
+{
+    param([string[]] $values, [hashtable] $valuemap)
+
+    [string] $stringValues = [string]::Empty
+
+    foreach ($value in $values)
+    {
+        if ($stringValues -ne [string]::Empty)
+        {
+            $stringValues += ","
+        }
+        $stringValues += $valuemap[$value]
+    }
+    $stringValues
+}
+
 function Get-PropertyNamesForComputerInfoTest
 {
     $propertyNames = @()
@@ -1346,11 +1363,30 @@ try {
             else
             {
                 $deviceGuard = Get-DeviceGuard
-                $observed.DeviceGuardSmartStatus | Should Be $deviceGuard.SmartStatus
-                $observed.DeviceGuardRequiredSecurityProperties | Should Be $deviceGuard.RequiredSecurityProperties
+                # can't get amended qualifiers using cim cmdlets so we define them here
+                $requiredSecurityPropertiesValues = @{
+                    "1" = "BaseVirtualizationSupport"
+                    "2" = "SecureBoot"
+                    "3" = "DMAProtection"
+                    "4" = "SecureMemoryOverwrite"
+                    "5" = "UEFICodeReadonly"
+                    "6" = "SMMSecurityMitigations1.0"
+                }
+                $smartStatusValues = @{
+                    "0" = "Off"
+                    "1" = "Enabled"
+                    "2" = "Running"
+                }
+                $securityServicesRunningValues = @{
+                    "0" = "0"
+                    "1" = "CredentialGuard"
+                    "2" = "HypervisorEnforcedCodeIntegrity"
+                }
+                $observed.DeviceGuardSmartStatus | Should Be (Get-StringValuesFromValueMap -valuemap $smartStatusValues -values $deviceGuard.SmartStatus)
+                [string]::Join(",", $observed.DeviceGuardRequiredSecurityProperties) | Should Be (Get-StringValuesFromValueMap -valuemap $requiredSecurityPropertiesValues -values $deviceGuard.RequiredSecurityProperties)
                 $observed.DeviceGuardAvailableSecurityProperties | Should Be $deviceGuard.AvailableSecurityProperties
                 $observed.DeviceGuardSecurityServicesConfigured | Should Be $deviceGuard.SecurityServicesConfigured
-                $observed.DeviceGuardSecurityServicesRunning | Should Be $deviceGuard.SecurityServicesRunning
+                [string]::Join(",", $observed.DeviceGuardSecurityServicesRunning) | Should Be (Get-StringValuesFromValueMap -valuemap $securityServicesRunningValues -values $deviceGuard.SecurityServicesRunning)
                 $observed.DeviceGuardCodeIntegrityPolicyEnforcementStatus | Should Be $deviceGuard.CodeIntegrityPolicyEnforcementStatus
                 $observed.DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus | Should Be $deviceGuard.UserModeCodeIntegrityPolicyEnforcementStatus
             }
