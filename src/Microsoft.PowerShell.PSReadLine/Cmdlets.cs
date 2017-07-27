@@ -699,10 +699,16 @@ namespace Microsoft.PowerShell
                     var function = (string)_dynamicParameters.Value[FunctionParameter].Value;
                     MethodInfo mi = typeof (PSConsoleReadLine).GetMethod(function,
                         BindingFlags.Public | BindingFlags.Static | BindingFlags.IgnoreCase);
+
+                    string functionName = mi.Name;
+
                     var keyHandler = (Action<ConsoleKeyInfo?, object>)
                         mi.CreateDelegate(typeof (Action<ConsoleKeyInfo?, object>));
-                    BriefDescription = function;
-                    PSConsoleReadLine.SetKeyHandler(Chord, keyHandler, BriefDescription, Description);
+
+                    string longDescription = PSReadLineResources.ResourceManager.GetString(
+                        functionName + "Description");
+
+                    PSConsoleReadLine.SetKeyHandler(Chord, keyHandler, functionName, longDescription);
                 }
                 else
                 {
