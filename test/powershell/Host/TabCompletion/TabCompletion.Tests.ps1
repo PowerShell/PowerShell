@@ -249,7 +249,7 @@ Describe "TabCompletion" -Tags CI {
             Remove-Item -Path $tempDir -Recurse -Force
         }
 
-        It "Input <inputStr> should successfully completes" -TestCases $testCases {
+        It "Input '<inputStr>' should successfully completes" -TestCases $testCases {
             param ($inputStr, $localExpected)
 
             try {
@@ -262,7 +262,7 @@ Describe "TabCompletion" -Tags CI {
             }
         }
 
-        It "Input <inputStr> should successfully completes with relative path '..\'" -TestCases $testCases {
+        It "Input '<inputStr>' should successfully completes with relative path '..\'" -TestCases $testCases {
             param ($inputStr, $oneSubExpected)
 
             try {
@@ -276,7 +276,7 @@ Describe "TabCompletion" -Tags CI {
             }
         }
 
-        It "Input <inputStr> should successfully completes with relative path '..\..\'" -TestCases $testCases {
+        It "Input '<inputStr>' should successfully completes with relative path '..\..\'" -TestCases $testCases {
             param ($inputStr, $twoSubExpected)
 
             try {
@@ -290,7 +290,7 @@ Describe "TabCompletion" -Tags CI {
             }
         }
 
-        It "Input <inputStr> should successfully completes with relative path '..\..\..\ba*\'" -TestCases $testCases {
+        It "Input '<inputStr>' should successfully completes with relative path '..\..\..\ba*\'" -TestCases $testCases {
             param ($inputStr, $twoSubExpected)
 
             try {
@@ -340,7 +340,7 @@ Describe "TabCompletion" -Tags CI {
             )
         }
 
-        It "Input <inputStr> should successfully completes" -TestCases $testCases {
+        It "Input '<inputStr>' should successfully completes" -TestCases $testCases {
             param($inputStr, $expected)
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
@@ -406,7 +406,7 @@ Describe "TabCompletion" -Tags CI {
             )
         }
 
-        It "Input <inputStr> should successfully completes" -TestCases $testCases {
+        It "Input '<inputStr>' should successfully completes" -TestCases $testCases {
             param($inputStr, $expected, $setup)
 
             if ($null -ne $setup) { . $setup }
@@ -508,49 +508,28 @@ Describe "TabCompletion" -Tags CI {
             $res.CompletionMatches[0].CompletionText | Should Be 'Cmdlet'
             $res.CompletionMatches[1].CompletionText | Should Be 'Configuration'
         }
+    }
 
-        It "Tab completion for CIM method" -Skip:(!$IsWindows) {
-            $inputStr = "Get-CimInstance -ClassName Win32_Process | Invoke-CimMethod -MethodName AttachDeb"
-            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeExactly 1
-            $res.CompletionMatches[0].CompletionText | Should Be 'AttachDebugger'
-
-            $inputStr = "Invoke-CimMethod -ClassName Win32_Process -MethodName Crea"
-            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeExactly 1
-            $res.CompletionMatches[0].CompletionText | Should Be 'Create'
+    Context "CIM cmdlet completion tests" {
+        BeforeAll {
+            $testCases = @(
+                @{ inputStr = "Invoke-CimMethod -ClassName Win32_Process -MethodName Crea"; expected = "Create" }
+                @{ inputStr = "Get-CimInstance -ClassName Win32_Process | Invoke-CimMethod -MethodName AttachDeb"; expected = "AttachDebugger" }
+                @{ inputStr = 'Get-CimInstance Win32_Process | ?{ $_.ProcessId -eq $Pid } | Get-CimAssociatedInstance -ResultClassName Win32_Co*uterSyst'; expected = "Win32_ComputerSystem" }
+                @{ inputStr = "Get-CimInstance -ClassName Win32_Environm"; expected = "Win32_Environment" }
+                @{ inputStr = "New-CimInstance -ClassName Win32_Environm"; expected = "Win32_Environment" }
+                @{ inputStr = 'New-CimInstance -ClassName Win32_Process | %{ $_.Captio'; expected = "Caption" }
+                @{ inputStr = "Invoke-CimMethod -ClassName Win32_Environm"; expected = 'Win32_Environment' }
+                @{ inputStr = "Get-CimClass -ClassName Win32_Environm"; expected = 'Win32_Environment' }
+            )
         }
 
-        It "Tab completion for CIM cmdlet argument" -Skip:(!$IsWindows) {
-            $inputStr = "Get-CimInstance Win32_Process | ?{ $_.ProcessId -eq $Pid } | Get-CimAssociatedInstance -ResultClassName Win32_Co*uterSyst"
-            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeExactly 1
-            $res.CompletionMatches[0].CompletionText | Should Be 'Win32_ComputerSystem'
+        It "CIM cmdlet input '<inputStr>' should successfully completes" -TestCases $testCases -Skip:(!$IsWindows) {
+            param($inputStr, $expected)
 
-            $inputStr = "Get-CimInstance -ClassName Win32_Environm"
-            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 1
-            $res.CompletionMatches[0].CompletionText | Should Be 'Win32_Environment'
-
-            $inputStr = "New-CimInstance -ClassName Win32_Environm"
-            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 1
-            $res.CompletionMatches[0].CompletionText | Should Be 'Win32_Environment'
-
-            $inputStr = 'New-CimInstance -ClassName Win32_Process | %{ $_.Captio'
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should BeGreaterThan 0
-            $res.CompletionMatches[0].CompletionText | Should Be 'Caption'
-
-            $inputStr = "Invoke-CimMethod -ClassName Win32_Environm"
-            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 1
-            $res.CompletionMatches[0].CompletionText | Should Be 'Win32_Environment'
-
-            $inputStr = "Get-CimClass -ClassName Win32_Environm"
-            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 1
-            $res.CompletionMatches[0].CompletionText | Should Be 'Win32_Environment'
+            $res.CompletionMatches[0].CompletionText | Should Be $expected
         }
     }
 }
