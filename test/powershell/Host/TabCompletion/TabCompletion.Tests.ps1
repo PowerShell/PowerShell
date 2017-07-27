@@ -423,7 +423,6 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = 'gcm -Module PackageManagement Find-Pac'; expected = 'Find-Package'; setup = $null }
                 @{ inputStr = 'ipmo PackageM'; expected = 'PackageManagement'; setup = $null }
                 @{ inputStr = 'Get-Process powersh'; expected = 'powershell'; setup = $null }
-                @{ inputStr = "Get-Help '.\My `[Path`]'\"; expected = "'.\My `[Path`]\test.ps1'"; setup = { New-Item -LiteralPath "My [Path]" -ItemType Directory > $null; New-Item -LiteralPath "My [Path]\test.ps1" -ItemType File > $null } }
                 @{ inputStr = "function bar { [OutputType('System.IO.FileInfo')][OutputType('System.Diagnostics.Process')]param() }; bar | ? { `$_.ProcessN"; expected = 'ProcessName'; setup = $null }
                 @{ inputStr = "function bar { [OutputType('System.IO.FileInfo')][OutputType('System.Diagnostics.Process')]param() }; bar | ? { `$_.LastAc"; expected = 'LastAccessTime'; setup = $null }
                 @{ inputStr = "& 'get-comm"; expected = "'Get-Command'"; setup = $null }
@@ -435,22 +434,21 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = '@{$(exit)=1}.Ke'; expected = 'Keys'; setup = $null }
                 ## tab completion variable names
                 @{ inputStr = '@PSVer'; expected = '@PSVersionTable'; setup = $null }
-                @{ inputStr = '$global:max'; expected = 'MaximumHistoryCount'; setup = $null }
+                @{ inputStr = '$global:max'; expected = '$global:MaximumHistoryCount'; setup = $null }
                 @{ inputStr = '$PSMod'; expected = '$PSModuleAutoLoadingPreference'; setup = $null }
                 ## tab completion for variable in path
                 @{ inputStr = 'cd $pshome\Modu'; expected = Join-Path $PSHOME "Modules"; setup = $null }
                 ## tab completion AST-based tests
                 @{ inputStr = 'get-date | ForEach-Object { $PSItem.h'; expected = 'Hour'; setup = $null }
-                @{ inputStr = 'function foo {hostname}; foo -asj'; expected = '-AsJob'; setup = $null }
-                @{ inputStr = '$a=gps;$a[0].h'; expected = 'Handles'; setup = $null }
+                @{ inputStr = '$a=gps;$a[0].h'; expected = 'Handle'; setup = $null }
                 @{ inputStr = "`$(1,'a',@{})[-1].k"; expected = 'Keys'; setup = $null }
                 @{ inputStr = "`$(1,'a',@{})[1].tri"; expected = 'Trim('; setup = $null }
                 ## tab completion for type names
-                @{ inputStr = '[ScriptBlockAst'; expected = '[System.Management.Automation.Language.ScriptBlockAst'; setup = $null }
-                @{ inputStr = 'New-Object dict'; expected = 'New-Object System.Collections.Generic.Dictionary'; setup = $null }
-                @{ inputStr = 'New-Object System.Collections.Generic.List[datet'; expected = "New-Object 'System.Collections.Generic.List[datetime]'"; setup = $null }
-                @{ inputStr = '[System.Management.Automation.Runspaces.runspacef'; expected = '[System.Management.Automation.Runspaces.RunspaceFactory'; setup = $null }
-                @{ inputStr = '[specialfol'; expected = '[System.Environment+SpecialFolder'; setup = $null }
+                @{ inputStr = '[ScriptBlockAst'; expected = 'System.Management.Automation.Language.ScriptBlockAst'; setup = $null }
+                @{ inputStr = 'New-Object dict'; expected = 'System.Collections.Generic.Dictionary'; setup = $null }
+                @{ inputStr = 'New-Object System.Collections.Generic.List[datet'; expected = "'System.Collections.Generic.List[datetime]'"; setup = $null }
+                @{ inputStr = '[System.Management.Automation.Runspaces.runspacef'; expected = 'System.Management.Automation.Runspaces.RunspaceFactory'; setup = $null }
+                @{ inputStr = '[specialfol'; expected = 'System.Environment+SpecialFolder'; setup = $null }
             )
         }
 
@@ -461,6 +459,23 @@ Describe "TabCompletion" -Tags CI {
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $expected
+        }
+
+        It "Tab completion special relative path" {
+            New-Item -Path "$TestDrive\My [Path]" -ItemType Directory > $null
+            New-Item -Path "$TestDrive\My [Path]\test.ps1" -ItemType File > $null
+            $separator = [System.IO.Path]::DirectorySeparatorChar
+
+            try {
+                Push-Location -Path $TestDrive
+                $inputStr = "Get-Help '`.\My ``[Path``]'\"
+                $expected = "'.${separator}My ``[Path``]${separator}test.ps1'"
+                $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+                $res.CompletionMatches.Count | Should BeGreaterThan 0
+                $res.CompletionMatches[0].CompletionText | Should Be $expected
+            } finally {
+                Pop-Location
+            }
         }
 
         It "Tab completion UNC path" -Skip:(!$IsWindows) {
@@ -489,8 +504,8 @@ Describe "TabCompletion" -Tags CI {
         }
 
         It "Tab completion for filesystem provider qualified path" -Skip:(!$IsWindows) {
-            $beforeTab = 'filesystem::{0}\\Wind' -f $env:SystemDrive
-            $afterTab = 'filesystem::{0}\\Windows' -f $env:SystemDrive
+            $beforeTab = 'filesystem::{0}\Wind' -f $env:SystemDrive
+            $afterTab = 'filesystem::{0}\Windows' -f $env:SystemDrive
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $afterTab
