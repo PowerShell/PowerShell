@@ -36,7 +36,7 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
             Invoke-Item -Path $TestFile
             $startTime = Get-Date
             $title = [String]::Empty
-            while (((Get-Date) - $startTime).TotalSeconds -lt 5 -and ($title -ne $expectedTitle))
+            while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and ($title -ne $expectedTitle))
             {
                 Start-Sleep -Milliseconds 100
                 $title = 'tell application "TextEdit" to get name of front window' | osascript
@@ -111,7 +111,7 @@ Categories=Application;
                 Invoke-Item -Path $PSHOME
                 $startTime = Get-Date
                 # may take time for explorer to open window
-                while (((Get-Date) - $startTime).TotalSeconds -lt 5 -and ($windows.Count -eq $before))
+                while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and ($windows.Count -eq $before))
                 {
                     Start-Sleep -Milliseconds 100
                 }
@@ -129,7 +129,7 @@ Categories=Application;
                 Invoke-Item -Path $PSHOME
                 $startTime = Get-Date
                 # may take time for handler to start
-                while (((Get-Date) - $startTime).TotalSeconds -lt 5 -and (-not (Test-Path "$HOME/InvokeItemTest.Success")))
+                while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and (-not (Test-Path "$HOME/InvokeItemTest.Success")))
                 {
                     Start-Sleep -Milliseconds 100
                 }
@@ -143,7 +143,7 @@ Categories=Application;
                 $startTime = Get-Date
                 $expectedTitle = Split-Path $PSHOME -Leaf
                 $title = [String]::Empty
-                while (((Get-Date) - $startTime).TotalSeconds -lt 5 -and ($title -ne $expectedTitle))
+                while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and ($title -ne $expectedTitle))
                 {
                     Start-Sleep -Milliseconds 100
                     $title = 'tell application "Finder" to get name of front window' | osascript
