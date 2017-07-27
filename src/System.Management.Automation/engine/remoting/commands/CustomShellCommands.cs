@@ -488,19 +488,14 @@ else
                 }
             }
 
-#if CORECLR
-            if (Platform.IsPowerShellCore)
+            string pluginPath = PSSessionConfigurationCommandUtilities.GetWinrmPluginDllPath();
+            pluginPath = Environment.ExpandEnvironmentVariables(pluginPath);
+            if (!System.IO.File.Exists(pluginPath))
             {
-                string pluginPath = PSSessionConfigurationCommandUtilities.GetWinrmPluginDllPath();
-                pluginPath = Environment.ExpandEnvironmentVariables(pluginPath);
-                if (!System.IO.File.Exists(pluginPath))
-                {
-                    PSInvalidOperationException ioe = new PSInvalidOperationException(
-                            StringUtil.Format(RemotingErrorIdStrings.PluginDllMissing, RemotingConstants.PSPluginDLLName));
-                        ThrowTerminatingError(ioe.ErrorRecord);
-                }
+                PSInvalidOperationException ioe = new PSInvalidOperationException(
+                        StringUtil.Format(RemotingErrorIdStrings.PluginDllMissing, RemotingConstants.PSPluginDLLName));
+                    ThrowTerminatingError(ioe.ErrorRecord);
             }
-#endif
         }
 
         /// <summary>
@@ -1024,12 +1019,11 @@ else
 
                 // Copy File.
                 string destConfigFileDirectory = System.IO.Path.GetDirectoryName(destConfigFilePath);
-                if (Platform.IsPowerShellCore)
-                {
-                    // The directory is not auto-created for PowerShell Core.
-                    // The call will create it or return its path if it already exists
-                    System.IO.Directory.CreateDirectory(destConfigFileDirectory);
-                }
+
+                // The directory is not auto-created for PowerShell Core.
+                // The call will create it or return its path if it already exists
+                System.IO.Directory.CreateDirectory(destConfigFileDirectory);
+
                 File.Copy(srcConfigFilePath, destConfigFilePath, true);
 
                 initParameters.Append(string.Format(CultureInfo.InvariantCulture,
@@ -1566,18 +1560,11 @@ else
         /// <returns></returns>
         internal static string GetWinrmPluginShellName()
         {
-#if CORECLR
-            if (Platform.IsPowerShellCore)
-            {
-                // PowerShell Core uses a versioned directory to hold the plugin
-                Hashtable versionTable = PSVersionInfo.GetPSVersionTable();
-                // TODO: This should be PSVersionInfo.PSVersionName once we get
-                // closer to release. Right now it doesn't support alpha versions.
-                return System.String.Concat("PowerShell.", (string)versionTable["GitCommitId"]);
-            }
-            // else it is WindowsPowerShell for CoreCLR and uses the DefaultShellName
-#endif
-            return RemotingConstants.DefaultShellName;
+            // PowerShell Core uses a versioned directory to hold the plugin
+            Hashtable versionTable = PSVersionInfo.GetPSVersionTable();
+            // TODO: This should be PSVersionInfo.PSVersionName once we get
+            // closer to release. Right now it doesn't support alpha versions.
+            return System.String.Concat("PowerShell.", (string)versionTable["GitCommitId"]);
         }
 
         /// <summary>
@@ -1586,18 +1573,11 @@ else
         /// <returns></returns>
         internal static string GetWinrmPluginDllPath()
         {
-            string pluginDllDirectory = "%windir%\\system32";
-#if CORECLR
-            if (Platform.IsPowerShellCore)
-            {
-                // PowerShell Core uses its versioned directory instead of system32
-                Hashtable versionTable = PSVersionInfo.GetPSVersionTable();
-                // TODO: This should be PSVersionInfo.PSVersionName once we get
-                // closer to release. Right now it doesn't support alpha versions.
-                pluginDllDirectory = System.IO.Path.Combine("%windir%\\system32\\PowerShell", (string)versionTable["GitCommitId"]);
-            }
-#endif
-            return System.IO.Path.Combine(pluginDllDirectory, RemotingConstants.PSPluginDLLName);
+            // PowerShell Core uses its versioned directory instead of system32
+            Hashtable versionTable = PSVersionInfo.GetPSVersionTable();
+            // TODO: This should be PSVersionInfo.PSVersionName once we get
+            // closer to release. Right now it doesn't support alpha versions.
+            pluginDllDirectory = System.IO.Path.Combine("%windir%\\system32\\PowerShell", (string)versionTable["GitCommitId"]);
         }
 
         #endregion
@@ -2568,21 +2548,10 @@ function Unregister-PSSessionConfiguration
            else
            {{
                 if (($pluginFileName.Value -match 'system32\\{0}') -OR
-                    ($pluginFileName.Value -match 'syswow64\\{0}')) 
+                    ($pluginFileName.Value -match 'syswow64\\{0}'))
                 {{
-                    # Filter out WindowsPowerShell endpoints when running as PowerShell Core            
-                    if ([System.Management.Automation.Platform]::IsPowerShellCore)
-                    {{
-                        return
-                    }}
-                }}
-                else
-                {{
-                    # Filter out PowerShell Core endpoints when running as WindowsPowerShell
-                    if (![System.Management.Automation.Platform]::IsPowerShellCore)
-                    {{
-                        return
-                    }}
+                    # Filter out WindowsPowerShell endpoints when running as PowerShell Core
+                    return
                 }}
            }}
            
@@ -2884,29 +2853,18 @@ $args[0] | ForEach-Object {{
         $customPluginObject = new-object object
         $customPluginObject.pstypenames.Insert(0, '{0}')
         ExtractPluginProperties ""$($_.PSPath)"" $customPluginObject
-        # this is powershell based custom shell only if its plugin dll is pwrshplugin.dll
+        # This is powershell based custom shell only if its plugin dll is pwrshplugin.dll
         if (($customPluginObject.FileName) -and ($customPluginObject.FileName -match '{1}'))
         {{
-            # Filter the endpoints based on the typeof PowerShell that is 
-            # executing the cmdlet. 
-            if (($customPluginObject.FileName -match 'system32\\{1}') -OR # WindowsPowerShell
-                ($customPluginObject.FileName -match 'syswow64\\{1}'))    # WOW64 WindowsPowerShell
+            # Filter the endpoints based on the typeof PowerShell that is
+            # executing the cmdlet. {1} in another location indicates that it
+            # is a PowerShell Core endpoint
+            if (!($customPluginObject.FileName -match 'system32\\{1}') -AND # WindowsPowerShell
+                !($customPluginObject.FileName -match 'syswow64\\{1}'))     # WOW64 WindowsPowerShell
             {{
-                 # Add WindowsPowerShell endpoints when running as WindowsPowerShell
-                if (![System.Management.Automation.Platform]::IsPowerShellCore)
-                {{
-                    $shellsFound++
-                    $customPluginObject
-                }}
-            }}
-            else # {1} in another location indicates that it is a PowerShell Core endpoint
-            {{
-                # Add the PowerShell Core endpoint when running as PowerShell Core             
-                if ([System.Management.Automation.Platform]::IsPowerShellCore)
-                {{
-                    $shellsFound++
-                    $customPluginObject
-                }}
+                # Add the PowerShell Core endpoint when running as PowerShell Core
+                $shellsFound++
+                $customPluginObject
             }}
         }}
     }} # end of foreach
@@ -3163,24 +3121,12 @@ function Set-PSSessionConfiguration([PSObject]$customShellObject,
    }}
    else
    {{
+        # Filter out WindowsPowerShell endpoints when running as PowerShell Core
         if (($pluginFileName.Value -match 'system32\\{0}') -OR
             ($pluginFileName.Value -match 'syswow64\\{0}')) 
         {{
-            # Filter out WindowsPowerShell endpoints when running as PowerShell Core            
-            if ([System.Management.Automation.Platform]::IsPowerShellCore)
-            {{
-                Write-Error $pluginForWindowsPowerShellMsg
-                return
-            }}
-        }}
-        else
-        {{
-            # Filter out PowerShell Core endpoints when running as WindowsPowerShell
-            if (![System.Management.Automation.Platform]::IsPowerShellCore)
-            {{
-                Write-Error $pluginForPowerShellCoreMsg
-                return
-            }}
+            Write-Error $pluginForWindowsPowerShellMsg
+            return
         }}
    }}
 
@@ -4922,49 +4868,42 @@ param(
             if ((!$endpoint) -and
                 ($force  -or $pscmdlet.ShouldProcess($qMessage, $captionForRegisterDefault)))
             {{
-                # Create the default endpoint for the appropriate environment
-                if ([System.Management.Automation.Platform]::IsPowerShellCore)
+                $resolvedPluginInstallPath = """"
+                #
+                # Section 1:
+                # Move pwrshplugin.dll from $PSHOME to the endpoint directory
+                #
+                $pluginInstallPath = Join-Path ""$env:WINDIR\System32\PowerShell"" $psversiontable.GitCommitId
+                if (!(Test-Path $pluginInstallPath))
                 {{
-                    $resolvedPluginInstallPath = """"
-                    #
-                    # Section 1:
-                    # Move pwrshplugin.dll from $PSHOME to the endpoint directory
-                    #
-                    $pluginInstallPath = Join-Path ""$env:WINDIR\System32\PowerShell"" $psversiontable.GitCommitId
-                    if (!(Test-Path $pluginInstallPath))
-                    {{
-                        $resolvedPluginInstallPath = New-Item -Type Directory -Path $pluginInstallPath
-                    }}
-                    else
-                    {{
-                        $resolvedPluginInstallPath = Resolve-Path $pluginInstallPath
-                    }}
-                    if (!(Test-Path $resolvedPluginInstallPath\{5}))
-                    {{
-                        Copy-Item $PSHOME\{5} $resolvedPluginInstallPath -Force
-                        if (!(Test-Path $resolvedPluginInstallPath\{5}))
-                        {{
-                            Write-Error ($errorMsgUnableToInstallPlugin -f ""{5}"", $resolvedPluginInstallPath)
-                            return
-                        }}
-                    }}
-
-                    #
-                    # Section 2:
-                    # Generate the Plugin Configuration File
-                    #
-                    Generate-PluginConfigFile $resolvedPluginInstallPath
-
-                    #
-                    # Section 3:
-                    # Register the endpoint
-                    # 
-                    $null = Register-PSSessionConfiguration -Name {0} -force
+                    $resolvedPluginInstallPath = New-Item -Type Directory -Path $pluginInstallPath
                 }}
                 else
                 {{
-                    $null = Register-PSSessionConfiguration {0} -force
+                    $resolvedPluginInstallPath = Resolve-Path $pluginInstallPath
                 }}
+                if (!(Test-Path $resolvedPluginInstallPath\{5}))
+                {{
+                    Copy-Item $PSHOME\{5} $resolvedPluginInstallPath -Force
+                    if (!(Test-Path $resolvedPluginInstallPath\{5}))
+                    {{
+                        Write-Error ($errorMsgUnableToInstallPlugin -f ""{5}"", $resolvedPluginInstallPath)
+                        return
+                    }}
+                }}
+
+                #
+                # Section 2:
+                # Generate the Plugin Configuration File
+                #
+                Generate-PluginConfigFile $resolvedPluginInstallPath
+
+                #
+                # Section 3:
+                # Register the endpoint
+                # 
+                $null = Register-PSSessionConfiguration -Name {0} -force
+
                 set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\{0}\Quotas\MaxShellsPerUser -value ""25"" -confirm:$false
                 set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\{0}\Quotas\MaxIdleTimeoutms -value {4} -confirm:$false
                 restart-service winrm -confirm:$false

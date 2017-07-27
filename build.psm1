@@ -256,16 +256,6 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$
 
             log "  Copying $srcPath to $dstPath"
             Copy-Item $srcPath $dstPath
-            
-            if ($_ -match "pwrshplugin.")
-            {
-                # Copy the plugin dll to the output directory so that the remoting tests can run out of the default build directory
-                $tempOptions = New-PSOptions -Configuration ($script:Options).Configuration -Framework ($script:Options).Framework -Runtime ($script:Options).Runtime
-                $pluginDst = [IO.Path]::GetDirectoryName($tempOptions.Output) # skip the powershell.exe that gets added on the end
-                New-Item -Type Directory $pluginDst -Force
-                log "  Copying $srcPath to $pluginDst"
-                Copy-Item $srcPath $pluginDst
-            }            
         }
 
         # Place the remoting configuration script in the same directory
