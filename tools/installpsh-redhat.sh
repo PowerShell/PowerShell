@@ -64,6 +64,7 @@ else
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
             DistroBasedOn='redhat'
+        elif [ -f /etc/system-release ] ; then
             DistroBasedOn='redhat'
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
