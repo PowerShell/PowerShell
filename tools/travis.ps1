@@ -167,9 +167,19 @@ else
         # Run 'CrossGen' for push commit, so that we can generate package.
         # It won't rebuild powershell, but only CrossGen the already built assemblies.
         if (-not $isFullBuild) { Start-PSBuild -CrossGen }
+        
         # Only build packages for branches, not pull requests
-        Start-PSPackage
-        Start-PSPackage -Type AppImage
+        $packages = @(Start-PSPackage)
+        $packages += Start-PSPackage -Type AppImage
+        foreach($package in $packages)
+        {
+            if($env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
+            {
+                log "pushing $package to $env:NUGET_URL"
+                Start-NativeExecution -sb {dotnet nuget push $package --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
+            }            
+        }
+
         try {
             # this throws if there was an error
             Test-PSPesterResults
