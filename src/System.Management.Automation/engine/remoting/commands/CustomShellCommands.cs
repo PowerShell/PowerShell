@@ -125,7 +125,7 @@ function Register-PSSessionConfiguration
             new-item -path WSMan:\localhost\Plugin -file ""$filepath"" -name ""$pluginName""
         }}
 
-        if ($? -and $runAsUserName) 
+        if ($? -and $runAsUserName)
         {{
             try {{
                 $runAsCredential = new-object system.management.automation.PSCredential($runAsUserName, $runAsPassword)
@@ -3124,7 +3124,7 @@ function Set-PSSessionConfiguration([PSObject]$customShellObject,
    {{
         # Filter out WindowsPowerShell endpoints when running as PowerShell Core
         if (($pluginFileName.Value -match 'system32\\{0}') -OR
-            ($pluginFileName.Value -match 'syswow64\\{0}')) 
+            ($pluginFileName.Value -match 'syswow64\\{0}'))
         {{
             Write-Error $pluginForWindowsPowerShellMsg
             return
@@ -4847,7 +4847,7 @@ param(
 
             #
             # This cmdlet will make sure default powershell end points exist upon successful completion.
-            # 
+            #
             # Windows PowerShell:
             #   Microsoft.PowerShell
             #   Microsoft.PowerShell32 (wow64)
@@ -4902,7 +4902,7 @@ param(
                 #
                 # Section 3:
                 # Register the endpoint
-                # 
+                #
                 $null = Register-PSSessionConfiguration -Name {0} -force
 
                 set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\{0}\Quotas\MaxShellsPerUser -value ""25"" -confirm:$false
@@ -4957,7 +4957,7 @@ param(
                     }}
 
                     $qMessage = $queryForRegisterDefault -f ""{0}32"",""Register-PSSessionConfiguration {0}32 -processorarchitecture x86 -force""
-                    if ((!$endpoint) -and 
+                    if ((!$endpoint) -and
                         ($force  -or $pscmdlet.ShouldProcess($qMessage, $captionForRegisterDefault)))
                     {{
                         $null = Register-PSSessionConfiguration {0}32 -processorarchitecture x86 -force
