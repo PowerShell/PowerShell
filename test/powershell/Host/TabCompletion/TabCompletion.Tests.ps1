@@ -19,6 +19,11 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches[0].CompletionText | Should be 'Foreach('
     }
 
+    It "Should complete Magic where" {
+        $res = TabExpansion2 -inputScript '(1..10).wh' -cursorColumn '(1..10).wh'.Length
+        $res.CompletionMatches[0].CompletionText | Should be 'Where('
+    }
+
     It 'Should complete types' {
         $res = TabExpansion2 -inputScript '[pscu' -cursorColumn '[pscu'.Length
         $res.CompletionMatches[0].CompletionText | Should be 'pscustomobject'
@@ -199,5 +204,349 @@ Describe "TabCompletion" -Tags CI {
         $res.CompletionMatches.Count | Should Be 3
         $completionText = $res.CompletionMatches.CompletionText | Sort-Object
         $completionText -join ' '| Should Be 'blg csv tsv'
+    }
+
+    Context "File name completion" {
+        BeforeAll {
+            $tempDir = Join-Path -Path $TestDrive -ChildPath "baseDir"
+            $oneSubDir = Join-Path -Path $tempDir -ChildPath "oneSubDir"
+            $oneSubDirPrime = Join-Path -Path $tempDir -ChildPath "prime"
+            $twoSubDir = Join-Path -Path $oneSubDir -ChildPath "twoSubDir"
+            $separator = [System.IO.Path]::DirectorySeparatorChar
+
+            New-Item -Path $tempDir -ItemType Directory -Force > $null
+            New-Item -Path $oneSubDir -ItemType Directory -Force > $null
+            New-Item -Path $oneSubDirPrime -ItemType Directory -Force > $null
+            New-Item -Path $twoSubDir -ItemType Directory -Force > $null
+
+            $testCases = @(
+                @{ inputStr = "ab"; name = "abc"; localExpected = ".${separator}abc"; oneSubExpected = "..${separator}abc"; twoSubExpected = "..${separator}..${separator}abc" }
+                @{ inputStr = "asaasas"; name = "asaasas!popee"; localExpected = ".${separator}asaasas!popee"; oneSubExpected = "..${separator}asaasas!popee"; twoSubExpected = "..${separator}..${separator}asaasas!popee" }
+                @{ inputStr = "asaasa"; name = "asaasas!popee"; localExpected = ".${separator}asaasas!popee"; oneSubExpected = "..${separator}asaasas!popee"; twoSubExpected = "..${separator}..${separator}asaasas!popee" }
+                @{ inputStr = "bbbbbbbbbb"; name = 'bbbbbbbbbb`'; localExpected = "& '.${separator}bbbbbbbbbb``'"; oneSubExpected = "& '..${separator}bbbbbbbbbb``'"; twoSubExpected = "& '..${separator}..${separator}bbbbbbbbbb``'" }
+                @{ inputStr = "bbbbbbbbb"; name = "bbbbbbbbb#"; localExpected = ".${separator}bbbbbbbbb#"; oneSubExpected = "..${separator}bbbbbbbbb#"; twoSubExpected = "..${separator}..${separator}bbbbbbbbb#" }
+                @{ inputStr = "bbbbbbbb"; name = "bbbbbbbb{"; localExpected = "& '.${separator}bbbbbbbb{'"; oneSubExpected = "& '..${separator}bbbbbbbb{'"; twoSubExpected = "& '..${separator}..${separator}bbbbbbbb{'" }
+                @{ inputStr = "bbbbbbb"; name = "bbbbbbb}"; localExpected = "& '.${separator}bbbbbbb}'"; oneSubExpected = "& '..${separator}bbbbbbb}'"; twoSubExpected = "& '..${separator}..${separator}bbbbbbb}'" }
+                @{ inputStr = "bbbbbb"; name = "bbbbbb("; localExpected = "& '.${separator}bbbbbb('"; oneSubExpected = "& '..${separator}bbbbbb('"; twoSubExpected = "& '..${separator}..${separator}bbbbbb('" }
+                @{ inputStr = "bbbbb"; name = "bbbbb)"; localExpected = "& '.${separator}bbbbb)'"; oneSubExpected = "& '..${separator}bbbbb)'"; twoSubExpected = "& '..${separator}..${separator}bbbbb)'" }
+                @{ inputStr = "bbbb"; name = "bbbb$"; localExpected = "& '.${separator}bbbb$'"; oneSubExpected = "& '..${separator}bbbb$'"; twoSubExpected = "& '..${separator}..${separator}bbbb$'" }
+                @{ inputStr = "bbb"; name = "bbb'"; localExpected = "& '.${separator}bbb'''"; oneSubExpected = "& '..${separator}bbb'''"; twoSubExpected = "& '..${separator}..${separator}bbb'''" }
+                @{ inputStr = "bb"; name = "bb,"; localExpected = "& '.${separator}bb,'"; oneSubExpected = "& '..${separator}bb,'"; twoSubExpected = "& '..${separator}..${separator}bb,'" }
+                @{ inputStr = "b"; name = "b;"; localExpected = "& '.${separator}b;'"; oneSubExpected = "& '..${separator}b;'"; twoSubExpected = "& '..${separator}..${separator}b;'" }
+            )
+
+            try {
+                Push-Location -Path $tempDir
+                foreach ($entry in $testCases) {
+                    New-Item -Path $tempDir -Name $entry.name -ItemType File -ErrorAction SilentlyContinue > $null
+                }
+            } finally {
+                Pop-Location
+            }
+        }
+
+        AfterAll {
+            Remove-Item -Path $tempDir -Recurse -Force
+        }
+
+        It "Input <inputStr> should successfully completes" -TestCases $testCases {
+            param ($inputStr, $localExpected)
+
+            try {
+                Push-Location -Path $tempDir
+                $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+                $res.CompletionMatches.Count | Should BeGreaterThan 0
+                $res.CompletionMatches[0].CompletionText | Should Be $localExpected
+            } finally {
+                Pop-Location
+            }
+        }
+
+        It "Input <inputStr> should successfully completes with relative path '..\'" -TestCases $testCases {
+            param ($inputStr, $oneSubExpected)
+
+            try {
+                Push-Location -Path $oneSubDir
+                $inputStr = "..${separator}${inputStr}"
+                $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+                $res.CompletionMatches.Count | Should BeGreaterThan 0
+                $res.CompletionMatches[0].CompletionText | Should Be $oneSubExpected
+            } finally {
+                Pop-Location
+            }
+        }
+
+        It "Input <inputStr> should successfully completes with relative path '..\..\'" -TestCases $testCases {
+            param ($inputStr, $twoSubExpected)
+
+            try {
+                Push-Location -Path $twoSubDir
+                $inputStr = "..${separator}..${separator}${inputStr}"
+                $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+                $res.CompletionMatches.Count | Should BeGreaterThan 0
+                $res.CompletionMatches[0].CompletionText | Should Be $twoSubExpected
+            } finally {
+                Pop-Location
+            }
+        }
+
+        It "Input <inputStr> should successfully completes with relative path '..\..\..\ba*\'" -TestCases $testCases {
+            param ($inputStr, $twoSubExpected)
+
+            try {
+                Push-Location -Path $twoSubDir
+                $inputStr = "..${separator}..${separator}..${separator}ba*${separator}${inputStr}"
+                $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+                $res.CompletionMatches.Count | Should BeGreaterThan 0
+                $res.CompletionMatches[0].CompletionText | Should Be $twoSubExpected
+            } finally {
+                Pop-Location
+            }
+        }
+
+        It "Test relative path" {
+            try {
+                Push-Location -Path $oneSubDir
+                $beforeTab = "twoSubDir${separator}..${separator}..${separator}pri"
+                $afterTab = "..${separator}prime"
+                $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+                $res.CompletionMatches.Count | Should Be 1
+                $res.CompletionMatches[0].CompletionText | Should Be $afterTab
+            } finally {
+                Pop-Location
+            }
+        }
+    }
+
+    Context "Cmdlet name completion" {
+        BeforeAll {
+            $testCases = @(
+                @{ inputStr = "get-c*item"; expected = "get-childitem" }
+                @{ inputStr = "set-alia?"; expected = "set-alias" }
+                @{ inputStr = "s*-alias"; expected = "set-alias" }
+                @{ inputStr = "se*-alias"; expected = "set-alias" }
+                @{ inputStr = "set-al"; expected = "set-alias" }
+                @{ inputStr = "set-a?i"; expected = "set-alias" }
+                @{ inputStr = "set-?lias"; expected = "set-alias" }
+                @{ inputStr = "get-*ditem"; expected = "get-childitem" }
+                @{ inputStr = "Microsoft.PowerShell.Management\get-c*item"; expected = "Microsoft.PowerShell.Management\get-childitem" }
+                @{ inputStr = "Microsoft.PowerShell.Utility\set-alia?"; expected = "Microsoft.PowerShell.Utility\set-alias" }
+                @{ inputStr = "Microsoft.PowerShell.Utility\s*-alias"; expected = "Microsoft.PowerShell.Utility\set-alias" }
+                @{ inputStr = "Microsoft.PowerShell.Utility\se*-alias"; expected = "Microsoft.PowerShell.Utility\set-alias" }
+                @{ inputStr = "Microsoft.PowerShell.Utility\set-al"; expected = "Microsoft.PowerShell.Utility\set-alias" }
+                @{ inputStr = "Microsoft.PowerShell.Utility\set-a?i"; expected = "Microsoft.PowerShell.Utility\set-alias" }
+                @{ inputStr = "Microsoft.PowerShell.Utility\set-?lias"; expected = "Microsoft.PowerShell.Utility\set-alias" }
+                @{ inputStr = "Microsoft.PowerShell.Management\get-*ditem"; expected = "Microsoft.PowerShell.Management\get-childitem" }
+            )
+        }
+
+        It "Input <inputStr> should successfully completes" -TestCases $testCases {
+            param($inputStr, $expected)
+
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches[0].CompletionText | Should Be $expected
+        }
+    }
+
+    Context "Miscellaneous completion tests" {
+        BeforeAll {
+            $testCases = @(
+                @{ inputStr = "get-childitem -"; expected = "-Path"; setup = $null }
+                @{ inputStr = "get-childitem -Fil"; expected = "-Filter"; setup = $null }
+                @{ inputStr = '$arg'; expected = '$args'; setup = $null }
+                @{ inputStr = '$args.'; expected = 'Count'; setup = $null }
+                @{ inputStr = '$host.UI.Ra'; expected = 'RawUI'; setup = $null }
+                @{ inputStr = '$host.UI.WriteD'; expected = 'WriteDebugLine('; setup = $null }
+                @{ inputStr = '$MaximumHistoryCount.'; expected = 'CompareTo('; setup = $null }
+                @{ inputStr = '$A=[datetime]::now;$A.'; expected = 'Date'; setup = $null }
+                @{ inputStr = '$x= gps powershell;$x.*pm'; expected = 'NPM'; setup = $null }
+                @{ inputStr = 'function write-output {param($abcd) $abcd};Write-Output -a'; expected = '-abcd'; setup = $null }
+                @{ inputStr = 'function write-output {param($abcd) $abcd};Microsoft.PowerShell.Utility\Write-Output -'; expected = '-InputObject'; setup = $null }
+                @{ inputStr = '[math]::Co'; expected = 'Cos('; setup = $null }
+                @{ inputStr = '[math]::PI.GetT'; expected = 'GetType('; setup = $null }
+                @{ inputStr = '[math]'; expected = '::E'; setup = $null }
+                @{ inputStr = '[math].'; expected = 'Assembly'; setup = $null }
+                @{ inputStr = '[math].G'; expected = 'GenericParameterAttributes'; setup = $null }
+                @{ inputStr = '[Environment+specialfolder]::App'; expected = 'ApplicationData'; setup = $null }
+                @{ inputStr = 'icm {get-pro'; expected = 'Get-Process'; setup = $null }
+                @{ inputStr = 'write-ouput (get-pro'; expected = 'Get-Process'; setup = $null }
+                @{ inputStr = 'iex "get-pro'; expected = '"Get-Process"'; setup = $null }
+                @{ inputStr = '$variab'; expected = '$variableA'; setup = { $variableB = 2; $variableA = 1 } }
+                @{ inputStr = 'a -'; expected = '-keys'; setup = { function a {param($keys) $a} } }
+                @{ inputStr = 'Get-Content -Li'; expected = '-LiteralPath'; setup = $null }
+                @{ inputStr = 'New-Item -W'; expected = '-WhatIf'; setup = $null }
+                @{ inputStr = 'Get-Alias gs'; expected = 'gsn'; setup = $null }
+                @{ inputStr = 'Get-Alias -Definition cd'; expected = 'cd..'; setup = $null }
+                @{ inputStr = 'remove-psdrive fun'; expected = 'Function'; setup = $null }
+                @{ inputStr = 'new-psdrive -PSProvider fi'; expected = 'FileSystem'; setup = $null }
+                @{ inputStr = 'get-psprovider ali'; expected = 'Alias'; setup = $null }
+                @{ inputStr = 'Get-Command Get-Chil'; expected = 'Get-ChildItem'; setup = $null }
+                @{ inputStr = 'Get-Variable psver'; expected = 'PSVersionTable'; setup = $null }
+                @{ inputStr = 'Get-Help *child'; expected = 'Get-ChildItem'; setup = $null }
+                @{ inputStr = 'Trace-Command e'; expected = 'ETS'; setup = $null }
+                @{ inputStr = 'Get-TraceSource e'; expected = 'ETS'; setup = $null }
+                @{ inputStr = '[int]:: max'; expected = 'MaxValue'; setup = $null }
+                @{ inputStr = '"string". l*'; expected = 'Length'; setup = $null }
+                @{ inputStr = '("a" * 5).e'; expected = 'EndsWith('; setup = $null }
+                @{ inputStr = '([string][int]1).e'; expected = 'EndsWith('; setup = $null }
+                @{ inputStr = '(++$i).c'; expected = 'CompareTo('; setup = $null }
+                @{ inputStr = '"a".Length.c'; expected = 'CompareTo('; setup = $null }
+                @{ inputStr = '@(1, "a").c'; expected = 'Count'; setup = $null }
+                @{ inputStr = '{1}.is'; expected = 'IsConfiguration'; setup = $null }
+                @{ inputStr = '@{ }.'; expected = 'Count'; setup = $null }
+                @{ inputStr = '@{abc=1}.a'; expected = 'Add('; setup = $null }
+                @{ inputStr = '$a.f'; expected = "'fo-o'"; setup = { $a = @{'fo-o'='bar'} } }
+                @{ inputStr = 'dir | % { $_.Full'; expected = 'FullName'; setup = $null }
+                @{ inputStr = 'New-CimInstance -ClassName Win32_Process | %{ $_.Captio'; expected = 'Caption'; setup = $null }
+                @{ inputStr = '@{a=$(exit)}.Ke'; expected = 'Keys'; setup = $null }
+                @{ inputStr = '@{$(exit)=1}.Va'; expected = 'Values'; setup = $null }
+                @{ inputStr = 'switch -'; expected = '-CaseSensitive'; setup = $null }
+                @{ inputStr = 'gm -t'; expected = '-Type'; setup = $null }
+                @{ inputStr = 'foo -aa -aa'; expected = '-aaa'; setup = { function foo {param($a, $aa, $aaa)} } }
+                @{ inputStr = 'switch ( gps -'; expected = '-Name'; setup = $null }
+            )
+        }
+
+        It "Input <inputStr> should successfully completes" -TestCases $testCases {
+            param($inputStr, $expected, $setup)
+
+            if ($null -ne $setup) { . $setup }
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be $expected
+        }
+
+        It "Tab completion UNC path" -Skip:(!$IsWindows) {
+            $homeDrive = $env:HOMEDRIVE.Replace(":", "$")
+            $beforeTab = "\\localhost\$homeDrive\wind"
+            $afterTab = "& '\\localhost\$homeDrive\Windows'"
+            $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+            $res.CompletionMatches[0].CompletionText | Should Be $afterTab
+        }
+
+        It "Tab completion dynamic parameter of a custom function" {
+            function Test-DynamicParam {
+                [CmdletBinding()]
+                PARAM( $DeFirst )
+
+                DYNAMICPARAM {
+                    $paramDictionary = [System.Management.Automation.RuntimeDefinedParameterDictionary]::new()
+                    $attributeCollection = [System.Collections.ObjectModel.Collection[Attribute]]::new()
+                    $attributeCollection.Add([Parameter]::new())
+                    $deSecond = [System.Management.Automation.RuntimeDefinedParameter]::new('DeSecond', [System.Array], $attributeCollection)
+                    $deThird = [System.Management.Automation.RuntimeDefinedParameter]::new('DeThird', [System.Array], $attributeCollection)
+                    $null = $paramDictionary.Add('DeSecond', $deSecond)
+                    $null = $paramDictionary.Add('DeThird', $deThird)
+                    return $paramDictionary
+                }
+
+                PROCESS {
+                    Write-Host 'Hello'
+                    Write-Host $PSBoundParameters
+                }
+            }
+
+            $inputStr = "Test-DynamicParam -D"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 3
+            $res.CompletionMatches[0].CompletionText | Should Be '-DeFirst'
+            $res.CompletionMatches[1].CompletionText | Should Be '-DeSecond'
+            $res.CompletionMatches[2].CompletionText | Should Be '-DeThird'
+        }
+
+        It "Tab completion dynamic parameter '-CodeSigningCert'" -Skip:(!$IsWindows) {
+            try {
+                Push-Location cert:\
+                $inputStr = "gci -co"
+                $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+                $res.CompletionMatches[0].CompletionText | Should be '-CodeSigningCert'
+            } finally {
+                Pop-Location
+            }
+        }
+
+        It "Tab completion for functions takes precedence over file system" {
+            $myf = Join-Path -Path $TestDrive -ChildPath myf
+            try {
+                New-Item -Path $myf -ItemType File -Force
+                function MyFunction { "Hi there" }
+
+                $inputStr = "myf"
+                $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+                $res.CompletionMatches[0].CompletionText | Should be 'MyFunction'
+            } finally {
+                Remove-Item -Path $myf -Force
+            }
+        }
+
+        It "Tab completion for validateSet attribute" {
+            function foo { param([ValidateSet('cat','dog')]$p) }
+            $inputStr = "foo "
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeExactly 2
+            $res.CompletionMatches[0].CompletionText | Should be 'cat'
+            $res.CompletionMatches[1].CompletionText | Should be 'dog'
+        }
+
+        It "Tab completion for enum type parameter" {
+            function baz ([consolecolor]$name, [ValidateSet('cat','dog')]$p){}
+            $inputStr = "baz -name "
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeExactly 16
+            $res.CompletionMatches[0].CompletionText | Should Be 'Black'
+
+            $inputStr = "baz Black "
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeExactly 2
+            $res.CompletionMatches[0].CompletionText | Should be 'cat'
+            $res.CompletionMatches[1].CompletionText | Should be 'dog'
+        }
+
+        It "Tab completion for enum members after comma" {
+            $inputStr = "Get-Command -Type Alias,c"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeExactly 2
+            $res.CompletionMatches[0].CompletionText | Should Be 'Cmdlet'
+            $res.CompletionMatches[1].CompletionText | Should Be 'Configuration'
+        }
+
+        It "Tab completion for CIM method" -Skip:(!$IsWindows) {
+            $inputStr = "Get-CimInstance -ClassName Win32_Process | Invoke-CimMethod -MethodName AttachDeb"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeExactly 1
+            $res.CompletionMatches[0].CompletionText | Should Be 'AttachDebugger'
+
+            $inputStr = "Invoke-CimMethod -ClassName Win32_Process -MethodName Crea"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeExactly 1
+            $res.CompletionMatches[0].CompletionText | Should Be 'Create'
+        }
+
+        It "Tab completion for CIM cmdlet argument" -Skip:(!$IsWindows) {
+            $inputStr = "Get-CimInstance Win32_Process | ?{ $_.ProcessId -eq $Pid } | Get-CimAssociatedInstance -ResultClassName Win32_Co*uterSyst"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeExactly 1
+            $res.CompletionMatches[0].CompletionText | Should Be 'Win32_ComputerSystem'
+
+            $inputStr = "Get-CimInstance -ClassName Win32_Environm"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 1
+            $res.CompletionMatches[0].CompletionText | Should Be 'Win32_Environment'
+
+            $inputStr = "New-CimInstance -ClassName Win32_Environm"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 1
+            $res.CompletionMatches[0].CompletionText | Should Be 'Win32_Environment'
+
+            $inputStr = "Invoke-CimMethod -ClassName Win32_Environm"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 1
+            $res.CompletionMatches[0].CompletionText | Should Be 'Win32_Environment'
+
+            $inputStr = "Get-CimClass -ClassName Win32_Environm"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 1
+            $res.CompletionMatches[0].CompletionText | Should Be 'Win32_Environment'
+        }
     }
 }
