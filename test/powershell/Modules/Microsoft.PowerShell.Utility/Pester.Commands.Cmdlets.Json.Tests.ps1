@@ -69,7 +69,7 @@ Describe "Json Tests" -Tags "Feature" {
         It "Convertto-Json should handle Enum based on Int64" {
 
             # Test follow-up for bug Win8: 378368 Convertto-Json problems with Enum based on Int64.
-            if ( ("JsonEnumTest" -as "Type") -eq $null ) {
+            if ( $null -eq ("JsonEnumTest" -as "Type")) {
                 $enum1 = "TestEnum" + (get-random)
                 $enum2 = "TestEnum" + (get-random)
                 $enum3 = "TestEnum" + (get-random)
@@ -1392,7 +1392,7 @@ Describe "Json Bug fixes"  -Tags "Feature" {
                 Next = $null
             }
 
-            ($($testCase.NumberOfElements)-1)..$start | foreach {
+            ($($testCase.NumberOfElements)-1)..$start | ForEach-Object {
                 $current = @{
                     Depth = $_
                     Next = $previous

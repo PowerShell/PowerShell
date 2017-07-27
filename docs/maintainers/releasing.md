@@ -57,8 +57,8 @@ not `/home/username/src/PowerShell/...`.
 
 ### Packaging Overview
 
-The `build.psm1` module contains a `Start-PSPackage` function to build packages.
-It **requires** that PowerShell Core has been built via `Start-PSBuild`.
+The `tools/packaging` module contains a `Start-PSPackage` function to build packages.
+It **requires** that PowerShell Core has been built via `Start-PSBuild` from the `build.psm1` module.
 
 #### Windows
 

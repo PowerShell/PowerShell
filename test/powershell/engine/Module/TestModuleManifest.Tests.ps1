@@ -177,7 +177,7 @@ Describe "Tests for circular references in required modules" -tags "CI" {
         Push-Location $moduleRootPath
 
         $moduleCount = 6 # this depth was enough to find a bug in cyclic reference detection product code; greater depth will slow tests down
-        $ModuleNames = 1..$moduleCount|%{"TestModule$_"}
+        $ModuleNames = 1..$moduleCount | ForEach-Object {"TestModule$_"}
 
         CreateTestModules $moduleRootPath $ModuleNames $AddVersion $AddGuid $AddCircularReference
 

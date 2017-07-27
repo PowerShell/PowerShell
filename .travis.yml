@@ -21,7 +21,7 @@ addons:
 
 install:
   - pushd tools
-  - ./download.sh
+  - ./install-powershell.sh
   - popd
   # Default 2.0.0 Ruby is buggy
   # Default bundler version is buggy

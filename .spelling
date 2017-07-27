@@ -889,6 +889,10 @@ WebRequest
 win7-x86
 WindowsVersion
 XPath
+alpha.18
+behavioral
+MiaRomero
+TheFlyingCorpse
 Youtube
  - test/tools/CodeCoverageAutomation/README.md
 CodeCoverage.zip
@@ -914,3 +918,6 @@ post-6
 - CODE_OF_CONDUCT.md
 opencode
 microsoft.com
+ - ./tools/install-powershell.readme.md
+includeide
+sed

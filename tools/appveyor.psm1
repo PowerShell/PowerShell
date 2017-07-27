@@ -9,7 +9,9 @@ if(Test-Path $dotNetPath)
     $env:PATH = $dotNetPath + ';' + $env:PATH
 }
 
-Import-Module (Join-Path $repoRoot 'build.psm1')
+#import build into the global scope so it can be used by packaging
+Import-Module (Join-Path $repoRoot 'build.psm1') -Scope Global
+Import-Module (Join-Path $repoRoot 'tools\packaging')
 
 function New-LocalUser
 {
@@ -87,7 +89,8 @@ function Add-UserToGroup
 # or is a pushed tag
 Function Test-DailyBuild
 {
-    if(($env:PS_DAILY_BUILD -eq 'True') -or ($env:APPVEYOR_SCHEDULED_BUILD -eq 'True') -or ($env:APPVEYOR_REPO_TAG_NAME))
+    $trueString = 'True'
+    if(($env:PS_DAILY_BUILD -eq $trueString) -or ($env:APPVEYOR_SCHEDULED_BUILD -eq $trueString) -or ($env:APPVEYOR_REPO_TAG_NAME))
     {
         return $true
     }
@@ -96,6 +99,7 @@ Function Test-DailyBuild
     # Run Daily tests
     if($env:APPVEYOR_REPO_COMMIT_MESSAGE -match '\[feature\]')
     {
+        Set-AppveyorBuildVariable -Name PS_DAILY_BUILD -Value $trueString
         return $true
     }
 
@@ -194,9 +198,18 @@ function Invoke-AppVeyorInstall
         {
             $buildName += $env:APPVEYOR_PULL_REQUEST_TITLE
         }
-        elseif($env:APPVEYOR_REPO_COMMIT_MESSAGE  -notmatch '^\[Daily\].*$'  )
+        elseif($env:APPVEYOR_PULL_REQUEST_TITLE)
         {
+            $buildName = $env:APPVEYOR_PULL_REQUEST_TITLE
+        }
+        elseif($env:APPVEYOR_REPO_COMMIT_MESSAGE -notmatch '^\[Daily\].*$')
+        {
+            
             $buildName += $env:APPVEYOR_REPO_COMMIT_MESSAGE
+        }
+        else
+        {
+            $buildName = $env:APPVEYOR_REPO_COMMIT_MESSAGE
         }
 
         Update-AppveyorBuild -message $buildName
@@ -212,7 +225,7 @@ function Invoke-AppVeyorInstall
         # Password
         $randomObj = [System.Random]::new()
         $password = ""
-        1..(Get-Random -Minimum 15 -Maximum 126) | ForEach { $password = $password + [char]$randomObj.next(45,126) }
+        1..(Get-Random -Minimum 15 -Maximum 126) | ForEach-Object { $password = $password + [char]$randomObj.next(45,126) }
 
         # Account
         $userName = 'appVeyorRemote'
@@ -358,7 +371,7 @@ function Invoke-AppVeyorTest
         $testResultsNonAdminFile,
         $testResultsAdminFile
         <# $testResultsFileFullCLR # Disable FullCLR Build #>
-    ) | % {
+    ) | ForEach-Object {
         Test-PSPesterResults -TestResultsFile $_
     }
 
@@ -379,7 +392,7 @@ function Invoke-AppVeyorAfterTest
         $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
 
         Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
-        $codeCoverageArtifacts | % { Push-AppveyorArtifact $_ }
+        $codeCoverageArtifacts | ForEach-Object { Push-AppveyorArtifact $_ }
     }
 }
 

@@ -2,7 +2,7 @@ Import-Module $PSScriptRoot/Apache/Apache.psm1
 
 #list Apache Modules
 Write-Host -Foreground Blue "Get installed Apache Modules like *proxy* and Sort by name"
-Get-ApacheModule |Where {$_.ModuleName -like "*proxy*"}|Sort-Object ModuleName | Out-Host
+Get-ApacheModule | Where-Object {$_.ModuleName -like "*proxy*"} | Sort-Object ModuleName | Out-Host
 
 #Graceful restart of Apache
 Write-host -Foreground Blue "Restart Apache Server gracefully"

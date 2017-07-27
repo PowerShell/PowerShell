@@ -2,7 +2,12 @@
  # File: Get-Counter.Tests.ps1
  # Provides Pester tests for the Get-Counter cmdlet.
  ############################################################################################>
-$cmdletName = "Get-Counter"
+
+# Counter CmdLets are removed see issue #4272
+# Tests are disabled
+ return
+
+ $cmdletName = "Get-Counter"
 
 . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
 

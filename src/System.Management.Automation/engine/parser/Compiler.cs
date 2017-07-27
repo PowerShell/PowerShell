@@ -2194,7 +2194,7 @@ namespace System.Management.Automation.Language
             // We don't postpone load assemblies, import modules from 'using' to the moment, when enclosed scriptblock is executed.
             // We do loading, when root of the script is compiled.
             // This allow us to avoid creating 10 different classes in this situation:
-            // 1..10 | % { class C {} }
+            // 1..10 | ForEach-Object { class C {} }
             // But it's possible that we are loading something from the codepaths that we never execute.
 
             // If Parent of rootForDefiningTypesAndUsings is not null, then we already defined all types, when Visit a parent ScriptBlock
@@ -5477,6 +5477,8 @@ namespace System.Management.Automation.Language
         public object VisitArrayExpression(ArrayExpressionAst arrayExpressionAst)
         {
             Expression values = null;
+            ExpressionAst pureExprAst = null;
+
             var subExpr = arrayExpressionAst.SubExpression;
             if (subExpr.Traps == null)
             {
@@ -5485,10 +5487,10 @@ namespace System.Management.Automation.Language
                     var pipelineBase = subExpr.Statements[0] as PipelineBaseAst;
                     if (pipelineBase != null)
                     {
-                        var exprAst = pipelineBase.GetPureExpression();
-                        if (exprAst != null)
+                        pureExprAst = pipelineBase.GetPureExpression();
+                        if (pureExprAst != null)
                         {
-                            values = Compile(exprAst);
+                            values = Compile(pureExprAst);
                         }
                     }
                 }
@@ -5500,16 +5502,12 @@ namespace System.Management.Automation.Language
             }
             values = values ?? CaptureAstResults(subExpr, CaptureAstContext.Enumerable);
 
-            if (values.Type.IsArray)
+            if (pureExprAst is ArrayLiteralAst)
             {
-                // If the result is already an array, don't wrap the array.
+                // If the pure expression is ArrayLiteralAst, just return the result.
                 return values;
             }
-            if (values.Type == typeof(List<object>))
-            {
-                return Expression.Call(values, CachedReflectionInfo.ObjectList_ToArray);
-            }
-            if (values.Type.GetTypeInfo().IsPrimitive || values.Type == typeof(string))
+            if (values.Type.IsPrimitive || values.Type == typeof(string))
             {
                 // Slight optimization - no need for a dynamic site.  We could special case other
                 // types as well, but it's probably not worth it.

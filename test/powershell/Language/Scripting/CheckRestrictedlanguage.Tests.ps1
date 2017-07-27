@@ -4,7 +4,7 @@
             function list {
 
             $l = [System.Collections.Generic.List[String]]::new()
-            $args | foreach {$l.Add($_)}
+            $args | ForEach-Object {$l.Add($_)}
             , $l
             }
         }

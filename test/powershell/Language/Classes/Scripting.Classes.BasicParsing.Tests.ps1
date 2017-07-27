@@ -566,7 +566,7 @@ Describe 'Check PS Class Assembly Test' -Tags "CI" {
         class C1 {}
         $assem = [C1].Assembly
         $attrs = @($assem.GetCustomAttributes($true))
-        $expectedAttr = @($attrs | ? { $_  -is [System.Management.Automation.DynamicClassImplementationAssemblyAttribute] })
+        $expectedAttr = @($attrs | Where-Object { $_  -is [System.Management.Automation.DynamicClassImplementationAssemblyAttribute] })
         It "Expected a DynamicClassImplementationAssembly attribute" { $expectedAttr.Length | should be 1}
 }
 
@@ -671,7 +671,7 @@ function test-it([EE]$ee){$ee}
 Describe 'Type building' -Tags "CI" {
     It 'should build the type only once for scriptblock' {
         $a = $null
-        1..10 | % {
+        1..10 | ForEach-Object {
             class C {}
             if ($a) {
                 $a -eq [C] | Should Be $true
@@ -682,7 +682,7 @@ Describe 'Type building' -Tags "CI" {
 
     It 'should create a new type every time scriptblock executed?' -Pending {
         $sb = [scriptblock]::Create('class A {static [int] $a }; [A]::new()')
-        1..2 | % {
+        1..2 | ForEach-Object {
         $a = $sb.Invoke()[0]
             ++$a::a | Should Be 1
             ++$a::a | Should Be 2

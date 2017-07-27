@@ -61,7 +61,7 @@ Function Start-HTTPListener {
                 Write-Verbose "Parsing: $url"
                 $uri = [uri]$url
                 $queryItems = @{}
-                if ($uri.Query -ne $null)
+                if ($null -ne $uri.Query)
                 {
                     foreach ($segment in $uri.Query.Split("&"))
                     {
@@ -69,7 +69,7 @@ Function Start-HTTPListener {
                         {
                             $name = $matches["name"]
                             $value = $matches["value"]
-                            if ($value -ne $null)
+                            if ($null -ne $value)
                             {
                                 $value = [System.Web.HttpUtility]::UrlDecode($value)
                             }
@@ -165,7 +165,7 @@ Function Start-HTTPListener {
                             $redirectType = $queryItems["type"]
                             $multiredirect = $queryItems["multiredirect"]
 
-                            if ($redirectType -eq $null)
+                            if ($null -eq $redirectType)
                             {
                                 # End of redirection
                                 $redirectType = 'Ok'
@@ -185,7 +185,7 @@ Function Start-HTTPListener {
                                 Write-Verbose -Message "No redirection"
                                 $output = $request | ConvertTo-Json -Depth 6
                             }
-                            elseif ($multiredirect -eq $null)
+                            elseif ($null -eq $multiredirect)
                             {
                                 Write-Verbose -Message "Standard redirection"
                                 $redirectedUrl = "${Url}?test=redirect&type=Ok"
@@ -214,7 +214,7 @@ Function Start-HTTPListener {
                         "linkheader"
                         {
                             $maxLinks = $queryItems["maxlinks"]
-                            if ($maxlinks -eq $null)
+                            if ($null -eq $maxlinks)
                             {
                                 $maxLinks = 3
                             }
@@ -277,7 +277,7 @@ Function Start-HTTPListener {
                         Write-Verbose -Message "Setting ContentType to $contentType"
                     }
 
-                    if ($statusCode -ne $null)
+                    if ($null -ne $statusCode)
                     {
                         $response.StatusCode = $statusCode
                     }
@@ -287,7 +287,7 @@ Function Start-HTTPListener {
                         $response.Headers.Add($header, $outputHeader[$header])
                     }
 
-                    if ($output -ne $null)
+                    if ($null -ne $output)
                     {
                         $buffer = [System.Text.Encoding]::UTF8.GetBytes($output)
                         $response.ContentLength64 = $buffer.Length

@@ -15,7 +15,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             $null = New-Item -Path $TestDrive -Name $item_c -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_D -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_E -ItemType "Directory" -Force
-            $null = New-Item -Path $TestDrive -Name $item_F -ItemType "File" -Force | %{$_.Attributes = "hidden"}
+            $null = New-Item -Path $TestDrive -Name $item_F -ItemType "File" -Force | ForEach-Object {$_.Attributes = "hidden"}
         }
 
         It "Should list the contents of the current folder" {
@@ -76,13 +76,13 @@ Describe "Get-ChildItem" -Tags "CI" {
                 $env:__FOOBAR = 'foo'
                 $env:__foobar = 'bar'
 
-                $foobar = Get-Childitem env: | ? {$_.Name -eq '__foobar'}
+                $foobar = Get-Childitem env: | Where-Object {$_.Name -eq '__foobar'}
                 $count = if ($IsWindows) { 1 } else { 2 }
                 ($foobar | measure).Count | Should Be $count
             }
             catch
             {
-                Get-ChildItem env: | ? {$_.Name -eq '__foobar'} | Remove-Item -ErrorAction SilentlyContinue
+                Get-ChildItem env: | Where-Object {$_.Name -eq '__foobar'} | Remove-Item -ErrorAction SilentlyContinue
             }
         }
     }

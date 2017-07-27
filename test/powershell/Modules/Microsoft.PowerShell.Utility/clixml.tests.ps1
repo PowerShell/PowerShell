@@ -51,7 +51,7 @@
             Remove-Item $filePath -Force -ErrorAction SilentlyContinue
         }
 
-        $testData | % {
+        $testData | ForEach-Object {
 
             It "$($_.testName)" {
                 $test = $_
@@ -135,7 +135,7 @@
             $testData += [TestData]::new("with path as non filesystem provider", "env:\", $null, "ReadWriteFileNotFileSystemProvider,Microsoft.PowerShell.Commands.ImportClixmlCommand")
         }
 
-        $testData | % {
+        $testData | ForEach-Object {
 
             It "$($_.testName)" {
                 $test = $_

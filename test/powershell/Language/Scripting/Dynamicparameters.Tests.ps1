@@ -36,11 +36,11 @@
             }
 
             begin {
-                if(($paramDictionary -ne $null) -and ($paramDictionary -is [MyTestParameter]) ) {
+                if(($null -ne $paramDictionary) -and ($paramDictionary -is [MyTestParameter]) ) {
                     $paramDictionary.name
                 }
-                elseif ($paramDictionary -ne $null) {
-                    if ($paramDictionary.dp1.Value -ne $null) {
+                elseif ($null -ne $paramDictionary) {
+                    if ($null -ne $paramDictionary.dp1.Value) {
                         $paramDictionary.dp1.Value
                     }
                     else {

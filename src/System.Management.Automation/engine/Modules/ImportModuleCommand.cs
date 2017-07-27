@@ -1022,7 +1022,7 @@ namespace Microsoft.PowerShell.Commands
                         -Recurse `
                         -ErrorAction SilentlyContinue
 
-                    if ($previousOnRemoveScript -ne $null)
+                    if ($null -ne $previousOnRemoveScript)
                     {
                         & $previousOnRemoveScript $args
                     }
@@ -1512,7 +1512,7 @@ namespace Microsoft.PowerShell.Commands
                             -Recurse `
                             -ErrorAction SilentlyContinue
 
-                        if ($previousOnRemoveScript -ne $null)
+                        if ($null -ne $previousOnRemoveScript)
                         {
                             & $previousOnRemoveScript $args
                         }

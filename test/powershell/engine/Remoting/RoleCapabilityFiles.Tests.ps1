@@ -49,7 +49,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
         catch
         {
             $psioe = [System.Management.Automation.PSInvalidOperationException] ($_.Exception).InnerException
-            if ($psioe -ne $null)
+            if ($null -ne $psioe)
             {
                 $fullyQualifiedErrorId = $psioe.ErrorRecord.FullyQualifiedErrorId
             }
@@ -72,7 +72,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
         catch
         {
             $psioe = [System.Management.Automation.PSInvalidOperationException] ($_.Exception).InnerException
-            if ($psioe -ne $null)
+            if ($null -ne $psioe)
             {
                 $fullyQualifiedErrorId = $psioe.ErrorRecord.FullyQualifiedErrorId
             }
@@ -99,7 +99,7 @@ Describe "Remote session configuration RoleDefintion RoleCapabilityFiles key tes
         }
         catch
         {
-            if ($_.Exception.InnerException -ne $null)
+            if ($null -ne $_.Exception.InnerException)
             {
                 $exceptionTypeName = $_.Exception.InnerException.GetType().FullName
             }

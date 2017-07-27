@@ -484,7 +484,7 @@ Describe 'get-help other tests' -Tags "CI" {
         }
 
         $x = get-help helpFunc11 -det
-        $x.Parameters.parameter | % {
+        $x.Parameters.parameter | ForEach-Object {
         It '$_.description' { $_.description[0].text | Should match "^$($_.Name)\s+help" }
         }
     }

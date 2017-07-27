@@ -103,8 +103,8 @@ function Install-TestCertificates
             $env:PSModulePath = $null
 
             $command = @"
-Import-PfxCertificate $script:certLocation -CertStoreLocation cert:\CurrentUser\My | % PSPath
-Import-Certificate $script:badCertLocation -CertStoreLocation Cert:\CurrentUser\My | % PSPath
+Import-PfxCertificate $script:certLocation -CertStoreLocation cert:\CurrentUser\My | ForEach-Object PSPath
+Import-Certificate $script:badCertLocation -CertStoreLocation Cert:\CurrentUser\My | ForEach-Object PSPath
 "@
             $certPaths = & $fullPowerShell -NoProfile -NonInteractive -Command $command
             $certPaths.Count | Should Be 2 | Out-Null

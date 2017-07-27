@@ -3578,11 +3578,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
 # walk the call stack to get at all of the enclosing configuration resource IDs
     $stackedConfigs = @(Get-PSCallStack |
-        where { ($_.InvocationInfo.MyCommand -ne $null) -and ($_.InvocationInfo.MyCommand.CommandType -eq 'Configuration') })
+        where { ($null -ne $_.InvocationInfo.MyCommand) -and ($_.InvocationInfo.MyCommand.CommandType -eq 'Configuration') })
 # keep all but the top-most
     $stackedConfigs = $stackedConfigs[0..(@($stackedConfigs).Length - 2)]
 # and build the complex resource ID suffix.
-    $complexResourceQualifier = ( $stackedConfigs | foreach { '[' + $_.Command + ']' + $_.InvocationInfo.BoundParameters['InstanceName'] } ) -join '::'
+    $complexResourceQualifier = ( $stackedConfigs | ForEach-Object { '[' + $_.Command + ']' + $_.InvocationInfo.BoundParameters['InstanceName'] } ) -join '::'
 
 #
 # Utility function used to validate that the DependsOn arguments are well-formed.
@@ -3614,7 +3614,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
         }
         $value['DependsOn']= $updatedDependsOn
 
-        if($DependsOn -ne $null)
+        if($null -ne $DependsOn)
         {
 #
 # Combine DependsOn with dependson from outer composite resource
@@ -3683,11 +3683,11 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             Test-DependsOn
 
 # Check if PsDscRunCredential is being specified as Arguments to Configuration
-        if($PsDscRunAsCredential -ne $null)
+        if($null -ne $PsDscRunAsCredential)
         {
 # Check if resource is also trying to set the value for RunAsCred
 # In that case we will generate error during compilation, this is merge error
-        if($value['PsDscRunAsCredential'] -ne $null)
+        if($null -ne $value['PsDscRunAsCredential'])
         {
             Update-ConfigurationErrorCount
             Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::PsDscRunAsCredentialMergeErrorForCompositeResources($resourceId))
@@ -3719,19 +3719,19 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
                         Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::DisabledRefreshModeNotValidForPartialConfig($resourceId))
                     }
 
-                    if($value['ConfigurationSource'] -ne $null)
+                    if($null -ne $value['ConfigurationSource'])
                     {
                         Set-NodeManager $resourceId $value['ConfigurationSource']
                     }
 
-                    if($value['ResourceModuleSource'] -ne $null)
+                    if($null -ne $value['ResourceModuleSource'])
                     {
                         Set-NodeResourceSource $resourceId $value['ResourceModuleSource']
                     }
                 }
 
 
-                if($value['ExclusiveResources'] -ne $null)
+                if($null -ne $value['ExclusiveResources'])
                 {
 # make sure the references are well-formed
                     foreach ($ExclusiveResource in $value['ExclusiveResources']) {
@@ -3774,7 +3774,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 # If there is and user-provided value is not in that list, write an error.
             if ($allowedValues)
             {
-                if(($value[$key] -eq $null) -and ($allowedValues -notcontains $value[$key]))
+                if(($null -eq $value[$key]) -and ($allowedValues -notcontains $value[$key]))
                 {
                     Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::InvalidValueForPropertyErrorRecord($key, ""$($value[$key])"", $keywordData.Keyword, ($allowedValues -join ', ')))
                     Update-ConfigurationErrorCount
@@ -3804,7 +3804,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
             if($allowedRange)
             {
                 $castedValue = $value[$key] -as [int]
-                if((($castedValue -is [int]) -and (($castedValue -lt  $keywordData.Properties[$key].Range.Item1) -or ($castedValue -gt $keywordData.Properties[$key].Range.Item2))) -or ($castedValue -eq $null))
+                if((($castedValue -is [int]) -and (($castedValue -lt  $keywordData.Properties[$key].Range.Item1) -or ($castedValue -gt $keywordData.Properties[$key].Range.Item2))) -or ($null -eq $castedValue))
                 {
                     Write-Error -ErrorRecord ([Microsoft.PowerShell.DesiredStateConfiguration.Internal.DscClassCache]::ValueNotInRangeErrorRecord($key, $keywordName, $value[$key],  $keywordData.Properties[$key].Range.Item1,  $keywordData.Properties[$key].Range.Item2))
                     Update-ConfigurationErrorCount
@@ -3815,7 +3815,7 @@ namespace Microsoft.PowerShell.DesiredStateConfiguration.Internal
 
             if ($keywordData.Properties[$key].IsKey)
             {
-                if($value[$key] -eq $null)
+                if($null -eq $value[$key])
                 {
                     $keyValues += ""::__NULL__""
                 }

@@ -38,7 +38,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
                     }
                 }
             } finally {
-                if ($ps -ne $null) {
+                if ($null -ne $ps) {
                     $ps.Dispose()
                 }
             }
@@ -116,7 +116,7 @@ Describe "Start-Transcript, Stop-Transcript tests" -tags "CI" {
             $ps.addscript('Write-Host "After Dispose"').Invoke()
             $ps.addscript("Stop-Transcript").Invoke()
             } finally {
-                if ($ps -ne $null) {
+                if ($null -ne $ps) {
                     $ps.Dispose()
                 }
             }
