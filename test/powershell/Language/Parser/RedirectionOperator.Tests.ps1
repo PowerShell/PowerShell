@@ -31,7 +31,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
 
     It "If encoding is unset, redirection should be platform appropriate" {
         $asciiString > TESTDRIVE:\file.txt
-        $encoder = [Microsoft.PowerShell.PowerShellEncoding]::GetEncoding("utf8nobom")
+        $encoder = [Microsoft.PowerShell.EncodingUtils]::GetEncoding("utf8nobom")
         $bytes = get-content -encoding byte TESTDRIVE:\file.txt
         # create the expected
         $BOM = $encoder.GetPreamble()
@@ -59,7 +59,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         # and out-file has its own translation, so we'll
         # not do that logic here, but simply ignore those encodings
         # as they eventually are translated to "real" encoding
-        $enc = [Microsoft.PowerShell.PowerShellEncoding]::GetEncoding($encoding)
+        $enc = [Microsoft.PowerShell.EncodingUtils]::GetEncoding($encoding)
         if ( $enc )
         {
             $msg = "Overriding encoding for out-file is respected for $encoding"
