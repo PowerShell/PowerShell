@@ -379,7 +379,10 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = 'Get-Alias -Definition cd'; expected = 'cd..'; setup = $null }
                 @{ inputStr = 'remove-psdrive fun'; expected = 'Function'; setup = $null }
                 @{ inputStr = 'new-psdrive -PSProvider fi'; expected = 'FileSystem'; setup = $null }
+                @{ inputStr = 'Get-PSDrive -PSProvider En'; expected = 'Environment'; setup = $null }
+                @{ inputStr = 'remove-psdrive fun'; expected = 'Function'; setup = $null }
                 @{ inputStr = 'get-psprovider ali'; expected = 'Alias'; setup = $null }
+                @{ inputStr = 'Get-PSDrive -PSProvider Variable '; expected = 'Variable'; setup = $null }
                 @{ inputStr = 'Get-Command Get-Chil'; expected = 'Get-ChildItem'; setup = $null }
                 @{ inputStr = 'Get-Variable psver'; expected = 'PSVersionTable'; setup = $null }
                 @{ inputStr = 'Get-Help *child'; expected = 'Get-ChildItem'; setup = $null }
@@ -403,6 +406,51 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = 'gm -t'; expected = '-Type'; setup = $null }
                 @{ inputStr = 'foo -aa -aa'; expected = '-aaa'; setup = { function foo {param($a, $aa, $aaa)} } }
                 @{ inputStr = 'switch ( gps -'; expected = '-Name'; setup = $null }
+                @{ inputStr = 'set-executionpolicy '; expected = 'AllSigned'; setup = $null }
+                @{ inputStr = 'Set-ExecutionPolicy -exe: b'; expected = 'Bypass'; setup = $null }
+                @{ inputStr = 'Set-ExecutionPolicy -exe:b'; expected = 'Bypass'; setup = $null }
+                @{ inputStr = 'Set-ExecutionPolicy -ExecutionPolicy:'; expected = 'AllSigned'; setup = $null }
+                @{ inputStr = 'Set-ExecutionPolicy by -for:'; expected = '$true'; setup = $null }
+                @{ inputStr = 'Import-Csv -Encoding '; expected = 'ASCII'; setup = $null }
+                @{ inputStr = 'Get-Process | % ModuleM'; expected = 'ModuleMemorySize'; setup = $null }
+                @{ inputStr = 'Get-Process | % {$_.MainModule} | % Com'; expected = 'Company'; setup = $null }
+                @{ inputStr = 'Get-Process | % MainModule | % Com'; expected = 'Company'; setup = $null }
+                @{ inputStr = '$p = Get-Process; $p | % ModuleM'; expected = 'ModuleMemorySize'; setup = $null }
+                @{ inputStr = 'gmo Microsoft.PowerShell.U'; expected = 'Microsoft.PowerShell.Utility'; setup = $null }
+                @{ inputStr = 'rmo Microsoft.PowerShell.U'; expected = 'Microsoft.PowerShell.Utility'; setup = $null }
+                @{ inputStr = 'gcm -Module Microsoft.PowerShell.U'; expected = 'Microsoft.PowerShell.Utility'; setup = $null }
+                @{ inputStr = 'gmo -list PackageM'; expected = 'PackageManagement'; setup = $null }
+                @{ inputStr = 'gcm -Module PackageManagement Find-Pac'; expected = 'Find-Package'; setup = $null }
+                @{ inputStr = 'ipmo PackageM'; expected = 'PackageManagement'; setup = $null }
+                @{ inputStr = 'Get-Process powersh'; expected = 'powershell'; setup = $null }
+                @{ inputStr = "Get-Help '.\My `[Path`]'\"; expected = "'.\My `[Path`]\test.ps1'"; setup = { New-Item -LiteralPath "My [Path]" -ItemType Directory > $null; New-Item -LiteralPath "My [Path]\test.ps1" -ItemType File > $null } }
+                @{ inputStr = "function bar { [OutputType('System.IO.FileInfo')][OutputType('System.Diagnostics.Process')]param() }; bar | ? { `$_.ProcessN"; expected = 'ProcessName'; setup = $null }
+                @{ inputStr = "function bar { [OutputType('System.IO.FileInfo')][OutputType('System.Diagnostics.Process')]param() }; bar | ? { `$_.LastAc"; expected = 'LastAccessTime'; setup = $null }
+                @{ inputStr = "& 'get-comm"; expected = "'Get-Command'"; setup = $null }
+                @{ inputStr = 'alias:dir'; expected = Join-Path 'Alias:' 'dir'; setup = $null }
+                @{ inputStr = 'gc alias::ipm'; expected = 'Alias::ipmo'; setup = $null }
+                @{ inputStr = 'gc enVironment::psmod'; expected = 'enVironment::PSModulePath'; setup = $null }
+                ## tab completion safe expression evaluator tests
+                @{ inputStr = '@{a=$(exit)}.Ke'; expected = 'Keys'; setup = $null }
+                @{ inputStr = '@{$(exit)=1}.Ke'; expected = 'Keys'; setup = $null }
+                ## tab completion variable names
+                @{ inputStr = '@PSVer'; expected = '@PSVersionTable'; setup = $null }
+                @{ inputStr = '$global:max'; expected = 'MaximumHistoryCount'; setup = $null }
+                @{ inputStr = '$PSMod'; expected = '$PSModuleAutoLoadingPreference'; setup = $null }
+                ## tab completion for variable in path
+                @{ inputStr = 'cd $pshome\Modu'; expected = Join-Path $PSHOME "Modules"; setup = $null }
+                ## tab completion AST-based tests
+                @{ inputStr = 'get-date | ForEach-Object { $PSItem.h'; expected = 'Hour'; setup = $null }
+                @{ inputStr = 'function foo {hostname}; foo -asj'; expected = '-AsJob'; setup = $null }
+                @{ inputStr = '$a=gps;$a[0].h'; expected = 'Handles'; setup = $null }
+                @{ inputStr = "`$(1,'a',@{})[-1].k"; expected = 'Keys'; setup = $null }
+                @{ inputStr = "`$(1,'a',@{})[1].tri"; expected = 'Trim('; setup = $null }
+                ## tab completion for type names
+                @{ inputStr = '[ScriptBlockAst'; expected = '[System.Management.Automation.Language.ScriptBlockAst'; setup = $null }
+                @{ inputStr = 'New-Object dict'; expected = 'New-Object System.Collections.Generic.Dictionary'; setup = $null }
+                @{ inputStr = 'New-Object System.Collections.Generic.List[datet'; expected = "New-Object 'System.Collections.Generic.List[datetime]'"; setup = $null }
+                @{ inputStr = '[System.Management.Automation.Runspaces.runspacef'; expected = '[System.Management.Automation.Runspaces.RunspaceFactory'; setup = $null }
+                @{ inputStr = '[specialfol'; expected = '[System.Environment+SpecialFolder'; setup = $null }
             )
         }
 
@@ -420,6 +468,31 @@ Describe "TabCompletion" -Tags CI {
             $beforeTab = "\\localhost\$homeDrive\wind"
             $afterTab = "& '\\localhost\$homeDrive\Windows'"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be $afterTab
+        }
+
+        It "Tab completion for registry" -Skip:(!$IsWindows) {
+            $beforeTab = 'registry::HKEY_l'
+            $afterTab = 'registry::HKEY_LOCAL_MACHINE'
+            $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be $afterTab
+        }
+
+        It "Tab completion for wsman provider" -Skip:(!$IsWindows) {
+            $beforeTab = 'wsman::localh'
+            $afterTab = 'wsman::localhost'
+            $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be $afterTab
+        }
+
+        It "Tab completion for filesystem provider qualified path" -Skip:(!$IsWindows) {
+            $beforeTab = 'filesystem::{0}\\Wind' -f $env:SystemDrive
+            $afterTab = 'filesystem::{0}\\Windows' -f $env:SystemDrive
+            $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $afterTab
         }
 
@@ -487,7 +560,7 @@ Describe "TabCompletion" -Tags CI {
             $res.CompletionMatches[1].CompletionText | Should be 'dog'
         }
 
-        It "Tab completion for enum type parameter" {
+        It "Tab completion for enum type parameter of a custom function" {
             function baz ([consolecolor]$name, [ValidateSet('cat','dog')]$p){}
             $inputStr = "baz -name "
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
@@ -510,6 +583,46 @@ Describe "TabCompletion" -Tags CI {
         }
     }
 
+    Context "No tab completion tests" {
+        BeforeAll {
+            $testCases = @(
+                @{ inputStr = 'function new-' }
+                @{ inputStr = 'filter new-' }
+                @{ inputStr = '@pid.' }
+            )
+        }
+
+        It "Input '<inputStr>' should not complete to anything" -TestCases $testCases {
+            param($inputStr)
+
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeExactly 0
+        }
+    }
+
+    Context "DSC tab completion tests" {
+        BeforeAll {
+            $testCases = @(
+                @{ inputStr = 'Configura'; expected = 'Configuration' }
+                @{ inputStr = '$extension = New-Object [System.Collections.Generic.List[string]]; $extension.wh'; expected = "Where(" }
+                @{ inputStr = '$extension = New-Object [System.Collections.Generic.List[string]]; $extension.fo'; expected = 'ForEach(' }
+                @{ inputStr = 'Configuration foo { node $SelectedNodes.'; expected = 'Where(' }
+                @{ inputStr = 'Configuration foo { node $SelectedNodes.fo'; expected = 'ForEach(' }
+                @{ inputStr = 'Configuration foo { node $AllNodes.'; expected = 'Where(' }
+                @{ inputStr = 'Configuration foo { node $ConfigurationData.AllNodes.'; expected = 'Where(' }
+                @{ inputStr = 'Configuration foo { node $ConfigurationData.AllNodes.fo'; expected = 'ForEach(' }
+            )
+        }
+
+        It "Input '<inputStr>' should successfully completes" -TestCases $testCases -Skip:(!$IsWindows) {
+            param($inputStr, $expected)
+
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be $expected
+        }
+    }
+
     Context "CIM cmdlet completion tests" {
         BeforeAll {
             $testCases = @(
@@ -521,6 +634,23 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = 'New-CimInstance -ClassName Win32_Process | %{ $_.Captio'; expected = "Caption" }
                 @{ inputStr = "Invoke-CimMethod -ClassName Win32_Environm"; expected = 'Win32_Environment' }
                 @{ inputStr = "Get-CimClass -ClassName Win32_Environm"; expected = 'Win32_Environment' }
+                @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | Invoke-CimMethod -MethodName SetPriorit'; expected = 'SetPriority' }
+                @{ inputStr = 'Invoke-CimMethod -Namespace root/StandardCimv2 -ClassName MSFT_NetIPAddress -MethodName Crea'; expected = 'Create' }
+                @{ inputStr = '$win32_process = Get-CimInstance -ClassName Win32_Process; $win32_process | Invoke-CimMethod -MethodName AttachDe'; expected = 'AttachDebugger' }
+                @{ inputStr = '$win32_process = Get-CimInstance -ClassName Win32_Process; Invoke-CimMethod -InputObject $win32_process -MethodName AttachDe'; expected = 'AttachDebugger' }
+                @{ inputStr = 'Get-CimInstance Win32_Process | ?{ $_.ProcessId -eq $Pid } | Get-CimAssociatedInstance -ResultClassName Win32_ComputerS'; expected = 'Win32_ComputerSystem' }
+                @{ inputStr = 'Get-CimInstance -Namespace root/Interop -ClassName Win32_PowerSupplyP'; expected = 'Win32_PowerSupplyProfile' }
+                @{ inputStr = 'Get-CimInstance __NAMESP'; expected = '__NAMESPACE' }
+                @{ inputStr = 'Get-CimInstance -Namespace root/Int'; expected = 'root/Interop' }
+                @{ inputStr = 'Get-CimInstance -Namespace root/Int*ro'; expected = 'root/Interop' }
+                @{ inputStr = 'Get-CimInstance -Namespace root/Interop/'; expected = 'root/Interop/ms_409' }
+                @{ inputStr = 'New-CimInstance -Namespace root/Int'; expected = 'root/Interop' }
+                @{ inputStr = 'Invoke-CimMethod -Namespace root/Int'; expected = 'root/Interop' }
+                @{ inputStr = 'Get-CimClass -Namespace root/Int'; expected = 'root/Interop' }
+                @{ inputStr = 'Register-CimIndicationEvent -Namespace root/Int'; expected = 'root/Interop' }
+                @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassNam'; expected = 'CimClassName' }
+                @{ inputStr = '[Microsoft.Management.Infrastructure.CimClass]$c = $null; $c.CimClassName.Substrin'; expected = 'Substring(' }
+                @{ inputStr = 'Get-CimInstance -ClassName Win32_Process | %{ $_.ExecutableP'; expected = 'ExecutablePath' }
             )
         }
 
