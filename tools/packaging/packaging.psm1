@@ -653,9 +653,9 @@ function New-NugetPackage
     
     # Setup staging directory so we don't change the original source directory
     $stagingRoot = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetStaging' -Clean
-    $toolsFolder = Join-Path -path $stagingRoot -ChildPath 'tools'
+    $contentFolder = Join-Path -path $stagingRoot -ChildPath 'content'
     if ($pscmdlet.ShouldProcess("Create staging folder")) {
-        New-StagingFolder -StagingPath $toolsFolder -Name $Name
+        New-StagingFolder -StagingPath $contentFolder -Name $Name
     }
 
     $projectFolder = Join-Path $PSScriptRoot -ChildPath 'project'
