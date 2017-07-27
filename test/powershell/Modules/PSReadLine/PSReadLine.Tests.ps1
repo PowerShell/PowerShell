@@ -43,7 +43,7 @@ Describe "PSReadLine" -tags "CI" {
     }
 
     It "Should ignore case when using Function binding" {
-        $lowerCaseFunctionName = "yank";
+        $lowerCaseFunctionName = "yank"
         Set-PSReadlineKeyHandler "Ctrl+F24" -Function $lowerCaseFunctionName
         (Get-PSReadlineKeyHandler | Where { $_.Key -eq "Ctrl+F24"}).Function | Should Be "Yank"
     }
