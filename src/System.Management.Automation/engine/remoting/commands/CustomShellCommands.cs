@@ -1577,7 +1577,8 @@ else
             Hashtable versionTable = PSVersionInfo.GetPSVersionTable();
             // TODO: This should be PSVersionInfo.PSVersionName once we get
             // closer to release. Right now it doesn't support alpha versions.
-            pluginDllDirectory = System.IO.Path.Combine("%windir%\\system32\\PowerShell", (string)versionTable["GitCommitId"]);
+            string pluginDllDirectory =  System.IO.Path.Combine("%windir%\\system32\\PowerShell", (string)versionTable["GitCommitId"]);
+            return System.IO.Path.Combine(pluginDllDirectory, RemotingConstants.PSPluginDLLName);
         }
 
         #endregion
