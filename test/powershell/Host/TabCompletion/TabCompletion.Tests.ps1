@@ -397,7 +397,6 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = '@{abc=1}.a'; expected = 'Add('; setup = $null }
                 @{ inputStr = '$a.f'; expected = "'fo-o'"; setup = { $a = @{'fo-o'='bar'} } }
                 @{ inputStr = 'dir | % { $_.Full'; expected = 'FullName'; setup = $null }
-                @{ inputStr = 'New-CimInstance -ClassName Win32_Process | %{ $_.Captio'; expected = 'Caption'; setup = $null }
                 @{ inputStr = '@{a=$(exit)}.Ke'; expected = 'Keys'; setup = $null }
                 @{ inputStr = '@{$(exit)=1}.Va'; expected = 'Values'; setup = $null }
                 @{ inputStr = 'switch -'; expected = '-CaseSensitive'; setup = $null }
@@ -537,6 +536,11 @@ Describe "TabCompletion" -Tags CI {
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should BeGreaterThan 1
             $res.CompletionMatches[0].CompletionText | Should Be 'Win32_Environment'
+
+            $inputStr = 'New-CimInstance -ClassName Win32_Process | %{ $_.Captio'
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be 'Caption'
 
             $inputStr = "Invoke-CimMethod -ClassName Win32_Environm"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
