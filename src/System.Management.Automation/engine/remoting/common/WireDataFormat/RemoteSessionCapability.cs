@@ -62,12 +62,6 @@ namespace System.Management.Automation.Remoting
         }
 
         /// <summary>
-        /// Added to enable ClrFacade.GetUninitializedObject to instantiate an uninitialized version of this class.
-        /// </summary>
-        internal RemoteSessionCapability()
-        { }
-
-        /// <summary>
         /// Create client capability.
         /// </summary>
         internal static RemoteSessionCapability CreateClientCapability()
@@ -405,12 +399,6 @@ namespace System.Management.Automation.Remoting
                 _hostDefaultData = HostDefaultData.Create(host.UI.RawUI);
             }
         }
-
-        /// <summary>
-        /// Added to enable ClrFacade.GetUninitializedObject to instantiate an uninitialized version of this class.
-        /// </summary>
-        internal HostInfo()
-        { }
 
         /// <summary>
         /// Check host chain.

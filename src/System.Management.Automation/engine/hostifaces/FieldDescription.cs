@@ -61,13 +61,6 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Added to enable ClrFacade.GetUninitializedObject to instantiate an uninitialized version of this class.
-        /// </summary>
-        internal
-        FieldDescription()
-        { }
-
-        /// <summary>
         /// Gets the name of the field.
         /// </summary>
         public string Name { get; } = null;
