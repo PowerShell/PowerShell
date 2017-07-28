@@ -47,7 +47,7 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
     }
 
     Context "Validate basic registry provider Cmdlets" {
-        It "Verity Test-Path" {
+        It "Verify Test-Path" {
             Test-Path -IsValid Registry::HKCU/Software | Should Be $true
             Test-Path -IsValid Registry::foo/Softare | Should Be $false
         }
@@ -169,7 +169,7 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
             $property."$testPropertyName" | Should Be 0
         }
 
-        It "Verity Clear-Item" {
+        It "Verify Clear-Item" {
             Set-ItemProperty -Path $testKey -Name $testPropertyName -Value $testPropertyValue
             Set-Item -Path $testKey -Value $defaultPropertyValue
             Clear-Item -Path $testKey
@@ -177,7 +177,7 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
             $key.Property.Length | Should BeExactly 0
         }
 
-        It "Verity Clear-Item with -WhatIf" {
+        It "Verify Clear-Item with -WhatIf" {
             Set-ItemProperty -Path $testKey -Name $testPropertyName -Value $testPropertyValue
             Set-Item -Path $testKey -Value $defaultPropertyValue
             Clear-Item -Path $testKey -WhatIf
