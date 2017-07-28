@@ -5,6 +5,40 @@ $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 $dotnetCLIChannel = "preview"
 $dotnetCLIRequiredVersion = "2.0.0-preview2-006502"
 
+function Get-PSTags
+{
+    param(
+        [Switch]
+        $AddRemoteIfMissing
+    )
+
+    $PowerShellRemoteUrl = "https://github.com/powershell/powershell.git"
+    $upstreamRemoteDefaultName = 'upstream'
+    $remotes = git remote
+    $upstreamRemote = $null
+    foreach($remote in $remotes)
+    {
+        $url = git remote get-url $remote
+        if($url -eq $PowerShellRemoteUrl)
+        {
+            $upstreamRemote = $remote
+            break
+        }
+    }
+
+    if(!$upstreamRemote -and $AddRemoteIfMissing.IsPresent -and $remotes -notcontains $upstreamRemoteDefaultName)
+    {
+        $null = git remote add $upstreamRemoteDefaultName $PowerShellRemoteUrl
+        $upstreamRemote = $upstreamRemoteDefaultName
+    }
+    elseif(!$upstreamRemote)
+    {
+        Write-Error "Please add a remote to PowerShell\PowerShell.  Example:  git remote add $upstreamRemoteDefaultName $PowerShellRemoteUrl" -ErrorAction Stop
+    }
+
+    git fetch --tags $upstreamRemote
+}
+
 function Get-EnvironmentInformation
 {
     $environment = @{}

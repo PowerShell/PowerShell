@@ -117,6 +117,8 @@ $isFullBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 
 if($Bootstrap.IsPresent)
 {
     Write-Host -Foreground Green "Executing travis.ps1 -BootStrap `$isPR='$isPr' - $commitMessage"
+    # Make sure we have all the tags
+    Get-PSTags -AddRemoteIfMissing
     Start-PSBootstrap -Package:(-not $isPr)
 }
 else 

@@ -189,6 +189,9 @@ function Invoke-AppVeyorBuild
 # Implements the AppVeyor 'install' step
 function Invoke-AppVeyorInstall
 {
+    # Make sure we have all the tags
+    Get-PSTags -AddRemoteIfMissing
+
     if(Test-DailyBuild){
         $buildName = "[Daily]"
 
@@ -439,7 +442,7 @@ function Invoke-AppveyorFinish
         {
             $packageParams += @{Version=$env:APPVEYOR_BUILD_VERSION}
         }
-        
+
         # Build packages
         $packages = Start-PSPackage @packageParams
 
