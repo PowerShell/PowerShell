@@ -4,7 +4,7 @@ $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 
 $dotnetCLIChannel = "preview"
 $dotnetCLIRequiredVersion = "2.0.0-preview2-006502"
-
+$tagsUpToDate = $false
 function Get-PSTags
 {
     param(
@@ -37,6 +37,50 @@ function Get-PSTags
     }
 
     git fetch --tags $upstreamRemote
+    $script:tagsUpToDate=$true
+}
+
+function Get-PSLatestTag
+{
+    if(!$tagsUpToDate)
+    {
+        Write-Warning "Run Get-PSTags to update tags"
+    }
+
+    $lastestTagCommitId = git rev-list --tags --max-count=1
+    return (git --git-dir="$PSScriptRoot/.git" describe $lastestTagCommitId)
+}
+
+function Get-PSVersion
+{
+    param(
+        [switch]
+        $OmitCommitId
+    )
+    if($OmitCommitId.IsPresent)
+    {
+        return (Get-PSLatestTag) -replace '^v'
+    }
+    else
+    {
+        return (Get-PSCommitId) -replace '^v'
+    }
+}
+
+function Get-PSCommitId
+{
+    # Not using git describe because it doesn't always get the latest tag
+    $latestTag = Get-PSLatestTag
+    # Get the last commit id in the current branch
+    $commitId = git log --pretty="%H" -n1   
+    # check in the branch is dirty
+    $isDirty = (git describe --dirty) -match '-dirty$'  
+    if($isDirty)
+    {
+        $commitId+='-dirty'
+    }
+
+    return "$latestTag-x-g$commitId"
 }
 
 function Get-EnvironmentInformation
@@ -302,7 +346,7 @@ function Start-PSBuild {
     $gitCommitId = $ReleaseTag
     if (-not $gitCommitId) {
         # if ReleaseTag is not specified, use 'git describe' to get the commit id
-        $gitCommitId = git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60
+        $gitCommitId = Get-PSCommitId
     }
     $gitCommitId > "$psscriptroot/powershell.version"
 
