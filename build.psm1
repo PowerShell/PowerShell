@@ -41,6 +41,7 @@ function Sync-PSTags
     $script:tagsUpToDate=$true
 }
 
+# Gets the latest tag for the current branch
 function Get-PSLatestTag
 {
     if(!$tagsUpToDate)
@@ -48,8 +49,7 @@ function Get-PSLatestTag
         Write-Warning "Run Sync-PSTags to update tags"
     }
 
-    $lastestTagCommitId = git --git-dir="$PSScriptRoot/.git"  rev-list --tags --max-count=1
-    return (git --git-dir="$PSScriptRoot/.git" describe $lastestTagCommitId)
+    return (git --git-dir="$PSScriptRoot/.git" describe --abbrev=0)
 }
 
 function Get-PSVersion
