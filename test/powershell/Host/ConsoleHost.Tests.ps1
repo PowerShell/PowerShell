@@ -201,31 +201,37 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             $observed[1] | Should Be "bar"
         }
 
-        It "-File should be able to pass bool values as strings to parameters: <BoolString>" -TestCases @(
-            @{BoolString = '$truE';BoolValue = 'True'},
-            @{BoolString = '$falsE';BoolValue = 'False'},
-            @{BoolString = 'truE';BoolValue = 'True'},
-            @{BoolString = 'falsE';BoolValue = 'False'}
-         ) {
-            param([string]$BoolString, [string]$BoolValue)
-            Set-Content -Path $testdrive/test.ps1 -Value 'param([bool]$bool) $bool'
-            $observed = & $powershell -NoProfile -Nologo -File $testdrive/test.ps1 -Bool $BoolString
-            $observed | Should Be $BoolValue
-        }
-
-        It "-File should be able to pass bool values as strings to positional parameters: <BoolString>" -TestCases @(
-            @{BoolString = '$true'; BoolValue = 'True'},
-            @{BoolString = '$false'; BoolValue = 'False'}
+        It "-File should be able to pass bool string values as string to parameters: <BoolString>" -TestCases @(
+            # validates case is preserved
+            @{BoolString = '$truE'},
+            @{BoolString = '$falSe'},
+            @{BoolString = 'trUe'},
+            @{BoolString = 'faLse'}
         ) {
-            param([string]$BoolString, [string]$BoolValue)
-            Set-Content -Path $testdrive/test.ps1 -Value 'param([bool]$bool) $bool'
-            $observed = & $powershell -NoProfile -Nologo -File $testdrive/test.ps1 $BoolString
-            $observed | Should Be $BoolValue
+            param([string]$BoolString)
+            Set-Content -Path $testdrive/test.ps1 -Value 'param([string]$bool) $bool'
+            $observed = & $powershell -NoProfile -Nologo -File $testdrive/test.ps1 -Bool $BoolString
+            $observed | Should Be $BoolString
         }
 
-        It "-File should be able to pass bool values as strings to switches: <BoolString>" -TestCases @(
-            @{BoolString = '$true'; BoolValue = 'True'},
-            @{BoolString = '$false'; BoolValue = 'False'}
+        It "-File should be able to pass bool string values as string to positional parameters: <BoolString>" -TestCases @(
+            # validates case is preserved
+            @{BoolString = '$tRue'},
+            @{BoolString = '$falSe'},
+            @{BoolString = 'tRUe'},
+            @{BoolString = 'fALse'}
+        ) {
+            param([string]$BoolString)
+            Set-Content -Path $testdrive/test.ps1 -Value 'param([string]$bool) $bool'
+            $observed = & $powershell -NoProfile -Nologo -File $testdrive/test.ps1 $BoolString
+            $observed | Should BeExactly $BoolString
+        }
+
+        It "-File should be able to pass bool string values as bool to switches: <BoolString>" -TestCases @(
+            @{BoolString = '$tRue'; BoolValue = 'True'},
+            @{BoolString = '$faLse'; BoolValue = 'False'},
+            @{BoolString = 'tRue'; BoolValue = 'True'},
+            @{BoolString = 'fAlse'; BoolValue = 'False'}
         ) {
             param([string]$BoolString, [string]$BoolValue)
             Set-Content -Path $testdrive/test.ps1 -Value 'param([switch]$switch) $switch.IsPresent'

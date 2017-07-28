@@ -858,17 +858,20 @@ namespace Microsoft.PowerShell
             // of the script to evaluate. If -file comes before -command, it will
             // treat -command as an argument to the script...
 
-            bool? GetBoolValue(string arg)
+            bool TryGetBoolValue(string arg, out bool boolValue)
             {
                 if (arg.Equals("$true", StringComparison.OrdinalIgnoreCase) || arg.Equals("true", StringComparison.OrdinalIgnoreCase))
                 {
+                    boolValue = true;
                     return true;
                 }
                 else if (arg.Equals("$false", StringComparison.OrdinalIgnoreCase) || arg.Equals("false", StringComparison.OrdinalIgnoreCase))
                 {
-                    return false;
+                    boolValue = false;
+                    return true;
                 }
-                return null;
+                boolValue = false;
+                return false;
             }
 
             ++i;
@@ -961,14 +964,14 @@ namespace Microsoft.PowerShell
                             else
                             {
                                 string argValue = arg.Substring(offset + 1);
-                                bool? boolValue = GetBoolValue(argValue);
-                                if (boolValue != null)
+                                string argName = arg.Substring(0, offset);
+                                if (TryGetBoolValue(argValue, out bool boolValue))
                                 {
-                                        _collectedArgs.Add(new CommandParameter(arg.Substring(0, offset), boolValue));
+                                        _collectedArgs.Add(new CommandParameter(argName, boolValue));
                                 }
                                 else
                                 {
-                                        _collectedArgs.Add(new CommandParameter(arg.Substring(0, offset), argValue));
+                                        _collectedArgs.Add(new CommandParameter(argName, argValue));
                                 }
                             }
                         }
@@ -979,15 +982,7 @@ namespace Microsoft.PowerShell
                     }
                     else
                     {
-                        bool? boolValue = GetBoolValue(arg);
-                        if (boolValue != null)
-                        {
-                            _collectedArgs.Add(new CommandParameter(null, boolValue));
-                        }
-                        else
-                        {
-                            _collectedArgs.Add(new CommandParameter(null, arg));
-                        }
+                        _collectedArgs.Add(new CommandParameter(null, arg));
                     }
                     ++i;
                 }
