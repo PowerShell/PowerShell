@@ -63,11 +63,7 @@ namespace System.Management.Automation
         /// <returns>SafeHandle</returns>
         internal static SafeHandle GetSafeProcessHandle(Process process)
         {
-#if CORECLR
             return process.SafeHandle;
-#else
-            return new SafeProcessHandle(process.Handle);
-#endif
         }
 
         #endregion Process
@@ -79,12 +75,8 @@ namespace System.Management.Automation
         /// </summary>
         internal static int SizeOf<T>()
         {
-#if CORECLR
             // Marshal.SizeOf(Type) is obsolete in CoreCLR
             return Marshal.SizeOf<T>();
-#else
-            return Marshal.SizeOf(typeof(T));
-#endif
         }
 
         /// <summary>
@@ -92,12 +84,8 @@ namespace System.Management.Automation
         /// </summary>
         internal static void DestroyStructure<T>(IntPtr ptr)
         {
-#if CORECLR
             // Marshal.DestroyStructure(IntPtr, Type) is obsolete in CoreCLR
             Marshal.DestroyStructure<T>(ptr);
-#else
-            Marshal.DestroyStructure(ptr, typeof(T));
-#endif
         }
 
         /// <summary>
@@ -105,12 +93,8 @@ namespace System.Management.Automation
         /// </summary>
         internal static T PtrToStructure<T>(IntPtr ptr)
         {
-#if CORECLR
             // Marshal.PtrToStructure(IntPtr, Type) is obsolete in CoreCLR
             return Marshal.PtrToStructure<T>(ptr);
-#else
-            return (T)Marshal.PtrToStructure(ptr, typeof(T));
-#endif
         }
 
         /// <summary>
@@ -121,11 +105,7 @@ namespace System.Management.Automation
             IntPtr ptr,
             bool deleteOld)
         {
-#if CORECLR
             Marshal.StructureToPtr<T>(structure, ptr, deleteOld);
-#else
-            Marshal.StructureToPtr(structure, ptr, deleteOld);
-#endif
         }
 
         #endregion Marshal
@@ -187,13 +167,11 @@ namespace System.Management.Automation
             {
 #if UNIX        // PowerShell Core on Unix
                 s_defaultEncoding = new UTF8Encoding(false);
-#elif CORECLR   // PowerShell Core on Windows
+#else           // PowerShell Core on Windows
                 EncodingRegisterProvider();
 
                 uint currentAnsiCp = NativeMethods.GetACP();
                 s_defaultEncoding = Encoding.GetEncoding((int)currentAnsiCp);
-#else           // Windows PowerShell
-                s_defaultEncoding = Encoding.Default;
 #endif
             }
             return s_defaultEncoding;
@@ -210,13 +188,9 @@ namespace System.Management.Automation
             {
 #if UNIX        // PowerShell Core on Unix
                 s_oemEncoding = GetDefaultEncoding();
-#elif CORECLR   // PowerShell Core on Windows
+#else           // PowerShell Core on Windows
                 EncodingRegisterProvider();
 
-                uint oemCp = NativeMethods.GetOEMCP();
-                s_oemEncoding = Encoding.GetEncoding((int)oemCp);
-
-#else           // Windows PowerShell
                 uint oemCp = NativeMethods.GetOEMCP();
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
 #endif
@@ -226,7 +200,6 @@ namespace System.Management.Automation
 
         private static volatile Encoding s_oemEncoding;
 
-#if CORECLR
         private static void EncodingRegisterProvider()
         {
             if (s_defaultEncoding == null && s_oemEncoding == null)
@@ -234,7 +207,6 @@ namespace System.Management.Automation
                 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             }
         }
-#endif
 
         #endregion Encoding
 
