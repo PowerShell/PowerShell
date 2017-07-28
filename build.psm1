@@ -5,7 +5,8 @@ $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 $dotnetCLIChannel = "preview"
 $dotnetCLIRequiredVersion = "2.0.0-preview2-006502"
 $tagsUpToDate = $false
-function Get-PSTags
+
+function Sync-PSTags
 {
     param(
         [Switch]
@@ -14,11 +15,11 @@ function Get-PSTags
 
     $PowerShellRemoteUrl = "https://github.com/powershell/powershell.git"
     $upstreamRemoteDefaultName = 'upstream'
-    $remotes = git remote
+    $remotes = git --git-dir="$PSScriptRoot/.git" remote
     $upstreamRemote = $null
     foreach($remote in $remotes)
     {
-        $url = git remote get-url $remote
+        $url = git --git-dir="$PSScriptRoot/.git" remote get-url $remote
         if($url -eq $PowerShellRemoteUrl)
         {
             $upstreamRemote = $remote
@@ -28,7 +29,7 @@ function Get-PSTags
 
     if(!$upstreamRemote -and $AddRemoteIfMissing.IsPresent -and $remotes -notcontains $upstreamRemoteDefaultName)
     {
-        $null = git remote add $upstreamRemoteDefaultName $PowerShellRemoteUrl
+        $null = git --git-dir="$PSScriptRoot/.git" remote add $upstreamRemoteDefaultName $PowerShellRemoteUrl
         $upstreamRemote = $upstreamRemoteDefaultName
     }
     elseif(!$upstreamRemote)
@@ -36,7 +37,7 @@ function Get-PSTags
         Write-Error "Please add a remote to PowerShell\PowerShell.  Example:  git remote add $upstreamRemoteDefaultName $PowerShellRemoteUrl" -ErrorAction Stop
     }
 
-    git fetch --tags $upstreamRemote
+    git --git-dir="$PSScriptRoot/.git" fetch --tags $upstreamRemote
     $script:tagsUpToDate=$true
 }
 
@@ -44,10 +45,10 @@ function Get-PSLatestTag
 {
     if(!$tagsUpToDate)
     {
-        Write-Warning "Run Get-PSTags to update tags"
+        Write-Warning "Run Sync-PSTags to update tags"
     }
 
-    $lastestTagCommitId = git rev-list --tags --max-count=1
+    $lastestTagCommitId = git --git-dir="$PSScriptRoot/.git"  rev-list --tags --max-count=1
     return (git --git-dir="$PSScriptRoot/.git" describe $lastestTagCommitId)
 }
 
@@ -69,18 +70,12 @@ function Get-PSVersion
 
 function Get-PSCommitId
 {
-    # Not using git describe because it doesn't always get the latest tag
-    $latestTag = Get-PSLatestTag
-    # Get the last commit id in the current branch
-    $commitId = git log --pretty="%H" -n1   
-    # check in the branch is dirty
-    $isDirty = (git describe --dirty) -match '-dirty$'  
-    if($isDirty)
+    if(!$tagsUpToDate)
     {
-        $commitId+='-dirty'
+        Write-Warning "Run Sync-PSTags to update tags"
     }
 
-    return "$latestTag-x-g$commitId"
+    return (git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60)
 }
 
 function Get-EnvironmentInformation
@@ -2087,8 +2082,7 @@ function New-MSIPackage
         [string] $ProductTargetArchitecture,
 
         # Force overwrite of package
-        [Switch]
-        $Force
+        [Switch] $Force
     )
 
     ## AppVeyor base image might update the version for Wix. Hence, we should

@@ -117,7 +117,7 @@ if($Bootstrap.IsPresent)
 {
     Write-Host -Foreground Green "Executing travis.ps1 -BootStrap `$isPR='$isPr' - $commitMessage"
     # Make sure we have all the tags
-    Get-PSTags -AddRemoteIfMissing
+    Sync-PSTags -AddRemoteIfMissing
     Start-PSBootstrap -Package:(-not $isPr)
 }
 else 

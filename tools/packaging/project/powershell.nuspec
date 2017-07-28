@@ -3,9 +3,9 @@
   <metadata>
     <id>powershell-$runtime$</id>
     <version>$version$</version>
-    <title>PowerShell CLI for $runtime$</title>
-    <authors>Microsoft PowerShell</authors>
-    <owners>Microsoft PowerShell</owners>
+    <title>PowerShell Core for $runtime$</title>
+    <authors>PowerShell</authors>
+    <owners>PowerShell</owners>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <licenseUrl>https://github.com/PowerShell/PowerShell/blob/master/LICENSE.txt</licenseUrl>
     <projectUrl>https://github.com/powershell/powershell</projectUrl>

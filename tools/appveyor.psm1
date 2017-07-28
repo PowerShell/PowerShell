@@ -190,7 +190,7 @@ function Invoke-AppVeyorBuild
 function Invoke-AppVeyorInstall
 {
     # Make sure we have all the tags
-    Get-PSTags -AddRemoteIfMissing
+    Sync-PSTags -AddRemoteIfMissing
 
     if(Test-DailyBuild){
         $buildName = "[Daily]"

@@ -6,7 +6,7 @@
   -->
   <PropertyGroup>
     <AssemblyName>NotUsed</AssemblyName>
-    <Description>PowerShell top-level project with .NET CLI host</Description>
+    <Description>PowerShell Core nuget packag with .NET CLI host including everything needed to run it.</Description>
     <NuspecFile>powershell.nuspec</NuspecFile>
     <NuspecProperties>runtime=$(RID);version=$(SemVer)</NuspecProperties>
     <NuspecBasePath>$(StagingPath)</NuspecBasePath>

@@ -27,8 +27,7 @@ function Start-PSPackage {
         [ValidateScript({$Environment.IsWindows})]
         [string]$WindowsDownLevel,
 
-        [Switch]
-        $Force
+        [Switch] $Force
     )
 
     # Runtime and Configuration settings required by the package
@@ -40,7 +39,7 @@ function Start-PSPackage {
     log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
 
     $Script:Options = Get-PSOptions
-    
+
     # Make sure the most recent build satisfies the package requirement
     if (-not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
         -not $Script:Options.CrossGen -or                       ## Last build didn't specify -CrossGen
@@ -180,7 +179,7 @@ function Start-PSPackage {
             if($pscmdlet.ShouldProcess("Create NuPkg Package"))
             {
                 New-NugetPackage @Arguments
-            }            
+            }
         }
         default {
             $Arguments = @{
@@ -650,7 +649,7 @@ function New-NugetPackage
 
     $nugetFolder = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetOutput' -Clean
 
-    
+
     # Setup staging directory so we don't change the original source directory
     $stagingRoot = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetStaging' -Clean
     $contentFolder = Join-Path -path $stagingRoot -ChildPath 'content'
@@ -668,7 +667,7 @@ function New-NugetPackage
     $arguments += "/p:RID=$PackageRuntime"
     $arguments += "/p:SemVer=$nugetSemanticVersion"
     $arguments += $projectFolder
-    
+
     log "Running dotnet $arguments"
     log "Use -verbose to see output..."
     Start-NativeExecution -sb {dotnet $arguments} | Foreach-Object {Write-Verbose $_}
@@ -763,7 +762,7 @@ function Get-NugetSemanticVersion
         elseif($inIdentifier) {
             $tokenParts = @($token)
         }
-        
+
         # If we don't have token parts, then it's a versionPart
         if(!$tokenParts) {
             $versionPartTokens += $token
@@ -777,7 +776,7 @@ function Get-NugetSemanticVersion
                     $inIdentifier = $true
                 }
                 else {
-                    $identifierPortionTokens += $idToken                        
+                    $identifierPortionTokens += $idToken
                 }
             }
         }
