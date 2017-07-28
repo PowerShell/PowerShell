@@ -104,3 +104,52 @@ Describe "Group-Object" -Tags "CI" {
         { $testObject | Group-Object -AsHashTable -AsString } | Should Not Throw
     }
 }
+
+Describe "Check 'Culture' parameter in order object cmdlets (Group-Object, Sort-Object, Compare-Object)" -Tags "CI" {
+
+    BeforeAll {
+
+        $testObject = Get-ChildItem
+
+    }
+
+    It "Should accept a culture by name" {
+
+        if ( (Get-Culture).Name -eq "ru-Ru" ) {
+            $testCulture = "ru-UA"
+        }
+        else
+        {
+            $testCulture = "ru-RU"
+        }
+
+        {$testObject | Group-Object -Culture $testCulture } | Should Not Throw
+    }
+
+    It "Should accept a culture by hex string LCID" {
+
+        if ( (Get-Culture).LCID -eq 1049 ) {
+            $testCulture = "0x1000"
+        }
+        else
+        {
+            $testCulture = "0x419"
+        }
+
+        {$testObject | Group-Object -Culture $testCulture } | Should Not Throw
+    }
+
+    It "Should accept a culture by int string LCID" {
+
+        if ( (Get-Culture).LCID -eq 1049 ) {
+            $testCulture = "4096"
+        }
+        else
+        {
+            $testCulture = "1049"
+        }
+
+        {$testObject | Group-Object -Culture $testCulture } | Should Not Throw
+    }
+}
+
