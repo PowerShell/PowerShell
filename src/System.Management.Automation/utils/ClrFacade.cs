@@ -70,15 +70,6 @@ namespace System.Management.Automation
         #region Marshal
 
         /// <summary>
-        /// Facade for Marshal.SizeOf
-        /// </summary>
-        internal static int SizeOf<T>()
-        {
-            // Marshal.SizeOf(Type) is obsolete in CoreCLR
-            return Marshal.SizeOf<T>();
-        }
-
-        /// <summary>
         /// Facade for Marshal.DestroyStructure
         /// </summary>
         internal static void DestroyStructure<T>(IntPtr ptr)
