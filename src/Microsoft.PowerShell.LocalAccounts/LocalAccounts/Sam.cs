@@ -1053,7 +1053,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                 lsaHandle = IntPtr.Zero;
 
-                domainInfo = ClrFacade.PtrToStructure<POLICY_PRIMARY_DOMAIN_INFO>(pInfo);
+                domainInfo = Marshal.PtrToStructure<POLICY_PRIMARY_DOMAIN_INFO>(pInfo);
 
                 status = SamApi.SamConnect(ref systemName, out samHandle, SamApi.SAM_SERVER_LOOKUP_DOMAIN, ref oa);
                 ThrowOnFailure(status);
@@ -1173,7 +1173,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     {
                         SAM_RID_ENUMERATION sre;
 
-                        sre = ClrFacade.PtrToStructure<SAM_RID_ENUMERATION>(buffer);
+                        sre = Marshal.PtrToStructure<SAM_RID_ENUMERATION>(buffer);
 
                         SamApi.SamFreeMemory(buffer);
                         buffer = IntPtr.Zero;
@@ -1605,7 +1605,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                         USER_INFORMATION_CLASS.UserAllInformation,
                                                         out buffer);
                 ThrowOnFailure(status);
-                allInfo = ClrFacade.PtrToStructure<USER_ALL_INFORMATION>(buffer);
+                allInfo = Marshal.PtrToStructure<USER_ALL_INFORMATION>(buffer);
 
                 var userSid = RidToSid(sre.domainHandle, sre.RelativeId);
                 LocalUser user = new LocalUser()
@@ -1676,7 +1676,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                         USER_INFORMATION_CLASS.UserAllInformation,
                                                         out buffer);
                 ThrowOnFailure(status);
-                info = ClrFacade.PtrToStructure<USER_ALL_INFORMATION>(buffer);
+                info = Marshal.PtrToStructure<USER_ALL_INFORMATION>(buffer);
                 status = SamApi.SamFreeMemory(buffer);
                 buffer = IntPtr.Zero;
 
@@ -1836,7 +1836,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     {
                         SAM_RID_ENUMERATION sre;
 
-                        sre = ClrFacade.PtrToStructure<SAM_RID_ENUMERATION>(buffer);
+                        sre = Marshal.PtrToStructure<SAM_RID_ENUMERATION>(buffer);
 
                         SamApi.SamFreeMemory(buffer);
                         buffer = IntPtr.Zero;
@@ -2061,7 +2061,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                          ALIAS_INFORMATION_CLASS.AliasGeneralInformation,
                                                          out buffer);
                 ThrowOnFailure(status);
-                generalInfo = ClrFacade.PtrToStructure<ALIAS_GENERAL_INFORMATION>(buffer);
+                generalInfo = Marshal.PtrToStructure<ALIAS_GENERAL_INFORMATION>(buffer);
 
                 LocalGroup group = new LocalGroup()
                                     {
@@ -2296,7 +2296,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                         USER_INFORMATION_CLASS.UserLogonInformation,
                                                         out buffer);
                 ThrowOnFailure(status);
-                info = ClrFacade.PtrToStructure<USER_LOGON_INFORMATION>(buffer);
+                info = Marshal.PtrToStructure<USER_LOGON_INFORMATION>(buffer);
                 status = SamApi.SamFreeMemory(buffer);
                 buffer = IntPtr.Zero;
 
@@ -2330,7 +2330,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 status = SamApi.SamQuerySecurityObject(objectHandle, Win32.DACL_SECURITY_INFORMATION, out securityObject);
                 ThrowOnFailure(status);
 
-                SECURITY_DESCRIPTOR sd = ClrFacade.PtrToStructure<SECURITY_DESCRIPTOR>(securityObject);
+                SECURITY_DESCRIPTOR sd = Marshal.PtrToStructure<SECURITY_DESCRIPTOR>(securityObject);
 
                 bool daclPresent;
                 bool daclDefaulted;
@@ -2348,7 +2348,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                 if (daclPresent)
                 {
-                    ACL acl = ClrFacade.PtrToStructure<ACL>(dacl);
+                    ACL acl = Marshal.PtrToStructure<ACL>(dacl);
 
                     if (acl.AclSize != 0)
                     {
@@ -2544,7 +2544,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                             USER_INFORMATION_CLASS.UserAllInformation,
                                                             out buffer);
                 ThrowOnFailure(status);
-                info = ClrFacade.PtrToStructure<USER_ALL_INFORMATION>(buffer);
+                info = Marshal.PtrToStructure<USER_ALL_INFORMATION>(buffer);
                 status = SamApi.SamFreeMemory(buffer);
                 buffer = IntPtr.Zero;
 

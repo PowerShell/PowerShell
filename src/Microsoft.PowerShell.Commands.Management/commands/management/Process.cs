@@ -821,7 +821,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    var tokenUser = ClrFacade.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
+                    var tokenUser = Marshal.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
 
                     // Set the default length to be 256, so it will be sufficient for most cases
                     int userNameLength = 256, domainNameLength = 256;

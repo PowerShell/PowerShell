@@ -73,7 +73,7 @@ namespace System.Management.Automation
                 }
 #pragma warning restore 56515
 
-                ElementDescription = ClrFacade.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
+                ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
                 string paramstring = GetStringFromTypeDesc(typeinfo, ElementDescription.tdesc);
 
@@ -149,13 +149,13 @@ namespace System.Management.Automation
         {
             if ((VarEnum)typedesc.vt == VarEnum.VT_PTR)
             {
-                COM.TYPEDESC refdesc = ClrFacade.PtrToStructure<COM.TYPEDESC>(typedesc.lpValue);
+                COM.TYPEDESC refdesc = Marshal.PtrToStructure<COM.TYPEDESC>(typedesc.lpValue);
                 return GetStringFromTypeDesc(typeinfo, refdesc);
             }
 
             if ((VarEnum)typedesc.vt == VarEnum.VT_SAFEARRAY)
             {
-                COM.TYPEDESC refdesc = ClrFacade.PtrToStructure<COM.TYPEDESC>(typedesc.lpValue);
+                COM.TYPEDESC refdesc = Marshal.PtrToStructure<COM.TYPEDESC>(typedesc.lpValue);
                 return "SAFEARRAY(" + GetStringFromTypeDesc(typeinfo, refdesc) + ")";
             }
 
@@ -314,7 +314,7 @@ namespace System.Management.Automation
 
 #pragma warning enable 56515
 
-                ElementDescription = ClrFacade.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
+                ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
                 //get the type of parameter
                 Type type = ComUtil.GetTypeFromTypeDesc(ElementDescription.tdesc);
@@ -348,7 +348,7 @@ namespace System.Management.Automation
             {
                 IntPtr pFuncDesc;
                 typeInfo.GetFuncDesc(index, out pFuncDesc);
-                COM.FUNCDESC funcdesc = ClrFacade.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
+                COM.FUNCDESC funcdesc = Marshal.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
                 returnValue[count++] = ComUtil.GetMethodInformation(funcdesc, skipLastParameters);
                 typeInfo.ReleaseFuncDesc(pFuncDesc);
             }

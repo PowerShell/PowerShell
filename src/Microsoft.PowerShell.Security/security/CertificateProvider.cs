@@ -1609,7 +1609,7 @@ namespace Microsoft.PowerShell.Commands
         {
             IntPtr hProv = IntPtr.Zero;
             Security.NativeMethods.CRYPT_KEY_PROV_INFO keyProvInfo =
-                ClrFacade.PtrToStructure<Security.NativeMethods.CRYPT_KEY_PROV_INFO>(pProvInfo);
+                Marshal.PtrToStructure<Security.NativeMethods.CRYPT_KEY_PROV_INFO>(pProvInfo);
 
             IntPtr hWnd = DetectUIHelper.GetOwnerWindow(Host);
 
@@ -1896,7 +1896,7 @@ namespace Microsoft.PowerShell.Commands
                 if (sourcePath.Contains("UserDS"))
                 {
                     Security.NativeMethods.CERT_CONTEXT context =
-                        ClrFacade.PtrToStructure<Security.NativeMethods.CERT_CONTEXT>(cert.Handle);
+                        Marshal.PtrToStructure<Security.NativeMethods.CERT_CONTEXT>(cert.Handle);
 
                     CommitUserDS(context.hCertStore);
                 }
@@ -1990,7 +1990,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (sourcePath.Contains("UserDS"))
             {
-                Security.NativeMethods.CERT_CONTEXT context = ClrFacade.PtrToStructure<Security.NativeMethods.CERT_CONTEXT>(cert.Handle);
+                Security.NativeMethods.CERT_CONTEXT context = Marshal.PtrToStructure<Security.NativeMethods.CERT_CONTEXT>(cert.Handle);
 
                 CommitUserDS(context.hCertStore);
             }

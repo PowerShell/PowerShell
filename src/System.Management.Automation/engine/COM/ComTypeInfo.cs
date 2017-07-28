@@ -199,7 +199,7 @@ namespace System.Management.Automation
         {
             IntPtr pTypeAttr;
             typeinfo.GetTypeAttr(out pTypeAttr);
-            COM.TYPEATTR typeattr = ClrFacade.PtrToStructure<COM.TYPEATTR>(pTypeAttr);
+            COM.TYPEATTR typeattr = Marshal.PtrToStructure<COM.TYPEATTR>(pTypeAttr);
             typeinfo.ReleaseTypeAttr(pTypeAttr);
             return typeattr;
         }
@@ -215,7 +215,7 @@ namespace System.Management.Automation
         {
             IntPtr pFuncDesc;
             typeinfo.GetFuncDesc(index, out pFuncDesc);
-            COM.FUNCDESC funcdesc = ClrFacade.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
+            COM.FUNCDESC funcdesc = Marshal.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
             typeinfo.ReleaseFuncDesc(pFuncDesc);
             return funcdesc;
         }

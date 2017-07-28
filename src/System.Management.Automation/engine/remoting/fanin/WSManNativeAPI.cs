@@ -863,7 +863,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (IntPtr.Zero != unmanagedData)
                 {
-                    WSManDataStruct resultInternal = ClrFacade.PtrToStructure<WSManDataStruct>(unmanagedData);
+                    WSManDataStruct resultInternal = Marshal.PtrToStructure<WSManDataStruct>(unmanagedData);
                     result = WSManData_UnToMan.UnMarshal(resultInternal);
                 }
 
@@ -1012,7 +1012,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (IntPtr.Zero != unmanagedData)
                 {
-                    WSManStreamIDSetStruct resultInternal = ClrFacade.PtrToStructure<WSManStreamIDSetStruct>(unmanagedData);
+                    WSManStreamIDSetStruct resultInternal = Marshal.PtrToStructure<WSManStreamIDSetStruct>(unmanagedData);
 
                     result = new WSManStreamIDSet_UnToMan();
                     string[] idsArray = null;
@@ -1170,7 +1170,7 @@ namespace System.Management.Automation.Remoting.Client
                 }
                 else
                 {
-                    WSManOptionSetStruct resultInternal = ClrFacade.PtrToStructure<WSManOptionSetStruct>(unmanagedData);
+                    WSManOptionSetStruct resultInternal = Marshal.PtrToStructure<WSManOptionSetStruct>(unmanagedData);
                     return UnMarshal(resultInternal);
                 }
             }
@@ -1193,7 +1193,7 @@ namespace System.Management.Automation.Remoting.Client
                     for (int i = 0; i < resultInternal.optionsCount; i++)
                     {
                         IntPtr p = IntPtr.Add(perElementPtr, (i * sizeInBytes));
-                        tempOptions[i] = ClrFacade.PtrToStructure<WSManOption>(p);
+                        tempOptions[i] = Marshal.PtrToStructure<WSManOption>(p);
                     }
                 }
 
@@ -1293,7 +1293,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (IntPtr.Zero != unmanagedData)
                 {
-                    WSManCommandArgSetInternal resultInternal = ClrFacade.PtrToStructure<WSManCommandArgSetInternal>(unmanagedData);
+                    WSManCommandArgSetInternal resultInternal = Marshal.PtrToStructure<WSManCommandArgSetInternal>(unmanagedData);
 
                     string[] tempArgs = null;
                     if (resultInternal.argsCount > 0)
@@ -1476,7 +1476,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (IntPtr.Zero != unmanagedData)
                 {
-                    WSManShellStartupInfoStruct resultInternal = ClrFacade.PtrToStructure<WSManShellStartupInfoStruct>(unmanagedData);
+                    WSManShellStartupInfoStruct resultInternal = Marshal.PtrToStructure<WSManShellStartupInfoStruct>(unmanagedData);
 
                     result = new WSManShellStartupInfo_UnToMan();
                     result.inputStreamSet = WSManStreamIDSet_UnToMan.UnMarshal(resultInternal.inputStreamSet);
@@ -1511,7 +1511,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (IntPtr.Zero != unmanagedData)
                 {
-                    WSManEnvironmentVariableSetInternal resultInternal = ClrFacade.PtrToStructure<WSManEnvironmentVariableSetInternal>(unmanagedData);
+                    WSManEnvironmentVariableSetInternal resultInternal = Marshal.PtrToStructure<WSManEnvironmentVariableSetInternal>(unmanagedData);
 
                     result = new WSManEnvironmentVariableSet();
                     WSManEnvironmentVariableInternal[] varsArray = null;
@@ -1524,7 +1524,7 @@ namespace System.Management.Automation.Remoting.Client
                         for (int i = 0; i < resultInternal.varsCount; i++)
                         {
                             IntPtr p = IntPtr.Add(perElementPtr, (i * sizeInBytes));
-                            varsArray[i] = ClrFacade.PtrToStructure<WSManEnvironmentVariableInternal>(p);
+                            varsArray[i] = Marshal.PtrToStructure<WSManEnvironmentVariableInternal>(p);
                         }
                     }
 
@@ -1806,7 +1806,7 @@ namespace System.Management.Automation.Remoting.Client
             /// </returns>
             internal static WSManError UnMarshal(IntPtr unmanagedData)
             {
-                return ClrFacade.PtrToStructure<WSManError>(unmanagedData);
+                return Marshal.PtrToStructure<WSManError>(unmanagedData);
             }
         }
 
@@ -1826,7 +1826,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (IntPtr.Zero != unmanagedData)
                 {
-                    WSManCreateShellDataResultInternal resultInternal = ClrFacade.PtrToStructure<WSManCreateShellDataResultInternal>(unmanagedData);
+                    WSManCreateShellDataResultInternal resultInternal = Marshal.PtrToStructure<WSManCreateShellDataResultInternal>(unmanagedData);
 
                     string connectData = null;
                     if (resultInternal.data.textData.textLength > 0)
@@ -1868,7 +1868,7 @@ namespace System.Management.Automation.Remoting.Client
 
             internal static WSManConnectDataResult UnMarshal(IntPtr unmanagedData)
             {
-                WSManConnectDataResultInternal resultInternal = ClrFacade.PtrToStructure<WSManConnectDataResultInternal>(unmanagedData);
+                WSManConnectDataResultInternal resultInternal = Marshal.PtrToStructure<WSManConnectDataResultInternal>(unmanagedData);
 
                 string connectData = null;
                 if (resultInternal.data.textData.textLength > 0)
@@ -1926,7 +1926,7 @@ namespace System.Management.Automation.Remoting.Client
             internal static WSManReceiveDataResult UnMarshal(IntPtr unmanagedData)
             {
                 WSManReceiveDataResultInternal result1 =
-                    ClrFacade.PtrToStructure<WSManReceiveDataResultInternal>(unmanagedData);
+                    Marshal.PtrToStructure<WSManReceiveDataResultInternal>(unmanagedData);
 
                 //copy data from unmanaged heap to managed heap.
                 byte[] dataRecvd = null;
@@ -2036,7 +2036,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (IntPtr.Zero != unmanagedData)
                 {
-                    WSManPluginRequestInternal resultInternal = ClrFacade.PtrToStructure<WSManPluginRequestInternal>(unmanagedData);
+                    WSManPluginRequestInternal resultInternal = Marshal.PtrToStructure<WSManPluginRequestInternal>(unmanagedData);
 
                     result = new WSManPluginRequest();
                     result.senderDetails = WSManSenderDetails.UnMarshal(resultInternal.senderDetails);
@@ -2091,7 +2091,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (IntPtr.Zero != unmanagedData)
                 {
-                    WSManSenderDetailsInternal resultInternal = ClrFacade.PtrToStructure<WSManSenderDetailsInternal>(unmanagedData);
+                    WSManSenderDetailsInternal resultInternal = Marshal.PtrToStructure<WSManSenderDetailsInternal>(unmanagedData);
 
                     result = new WSManSenderDetails();
                     result.senderName = resultInternal.senderName;
@@ -2141,7 +2141,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (IntPtr.Zero != unmanagedData)
                 {
-                    WSManCertificateDetailsInternal resultInternal = ClrFacade.PtrToStructure<WSManCertificateDetailsInternal>(unmanagedData);
+                    WSManCertificateDetailsInternal resultInternal = Marshal.PtrToStructure<WSManCertificateDetailsInternal>(unmanagedData);
 
                     result = new WSManCertificateDetails();
                     result.subject = resultInternal.subject;
@@ -2186,7 +2186,7 @@ namespace System.Management.Automation.Remoting.Client
 
                 if (IntPtr.Zero != unmanagedData)
                 {
-                    WSManOperationInfoInternal resultInternal = ClrFacade.PtrToStructure<WSManOperationInfoInternal>(unmanagedData);
+                    WSManOperationInfoInternal resultInternal = Marshal.PtrToStructure<WSManOperationInfoInternal>(unmanagedData);
 
                     result = new WSManOperationInfo();
                     result.fragment = resultInternal.fragment;
@@ -2257,7 +2257,7 @@ namespace System.Management.Automation.Remoting.Client
                     for (int i = 0; i < resultInternal.numberKeys; i++)
                     {
                         IntPtr p = IntPtr.Add(perElementPtr, (i * sizeInBytes));
-                        tempKeys[i] = ClrFacade.PtrToStructure<WSManKeyStruct>(p);
+                        tempKeys[i] = Marshal.PtrToStructure<WSManKeyStruct>(p);
                     }
                 }
 

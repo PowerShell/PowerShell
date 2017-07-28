@@ -8174,7 +8174,7 @@ namespace Microsoft.PowerShell.Commands
                             throw new Win32Exception(lastError);
                     }
 
-                    REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = ClrFacade.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
+                    REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
 
                     if (reparseDataBuffer.ReparseTag == IO_REPARSE_TAG_SYMLINK)
                         linkType = "SymbolicLink";
@@ -8405,7 +8405,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 //Unmarshal to symbolic link to look for tags.
-                REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = ClrFacade.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
+                REPARSE_DATA_BUFFER_SYMBOLICLINK reparseDataBuffer = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_SYMBOLICLINK>(outBuffer);
 
                 if (reparseDataBuffer.ReparseTag != IO_REPARSE_TAG_SYMLINK && reparseDataBuffer.ReparseTag != IO_REPARSE_TAG_MOUNT_POINT)
                     return null;
@@ -8420,7 +8420,7 @@ namespace Microsoft.PowerShell.Commands
                 if (reparseDataBuffer.ReparseTag == IO_REPARSE_TAG_MOUNT_POINT)
                 {
                     //Since this is a junction we need to unmarshal to the correct structure.
-                    REPARSE_DATA_BUFFER_MOUNTPOINT reparseDataBufferMountPoint = ClrFacade.PtrToStructure<REPARSE_DATA_BUFFER_MOUNTPOINT>(outBuffer);
+                    REPARSE_DATA_BUFFER_MOUNTPOINT reparseDataBufferMountPoint = Marshal.PtrToStructure<REPARSE_DATA_BUFFER_MOUNTPOINT>(outBuffer);
 
                     targetDir = Encoding.Unicode.GetString(reparseDataBufferMountPoint.PathBuffer, reparseDataBufferMountPoint.SubstituteNameOffset, reparseDataBufferMountPoint.SubstituteNameLength);
                 }
@@ -8571,7 +8571,7 @@ namespace Microsoft.PowerShell.Commands
                             throw new Win32Exception(lastError);
                         }
 
-                        junctionData = ClrFacade.PtrToStructure<REPARSE_GUID_DATA_BUFFER>(outBuffer);
+                        junctionData = Marshal.PtrToStructure<REPARSE_GUID_DATA_BUFFER>(outBuffer);
                         junctionData.ReparseDataLength = 0;
                         junctionData.DataBuffer = new char[MAX_REPARSE_SIZE];
 

@@ -71,7 +71,7 @@ namespace System.Management.Automation
                 IntPtr pFuncDesc;
 
                 _typeInfo.GetFuncDesc(index, out pFuncDesc);
-                COM.FUNCDESC funcdesc = ClrFacade.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
+                COM.FUNCDESC funcdesc = Marshal.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
 
                 string signature = ComUtil.GetMethodSignatureFromFuncDesc(_typeInfo, funcdesc, false);
                 result.Add(signature);

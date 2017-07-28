@@ -88,15 +88,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Facade for Marshal.PtrToStructure
-        /// </summary>
-        internal static T PtrToStructure<T>(IntPtr ptr)
-        {
-            // Marshal.PtrToStructure(IntPtr, Type) is obsolete in CoreCLR
-            return Marshal.PtrToStructure<T>(ptr);
-        }
-
-        /// <summary>
         /// Wraps Marshal.StructureToPtr to hide differences between the CLRs.
         /// </summary>
         internal static void StructureToPtr<T>(

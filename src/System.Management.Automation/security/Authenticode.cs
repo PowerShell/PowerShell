@@ -159,7 +159,7 @@ namespace System.Management.Automation
                 else
                 {
                     NativeMethods.CRYPT_OID_INFO oidInfo =
-                        ClrFacade.PtrToStructure<NativeMethods.CRYPT_OID_INFO>(oidPtr);
+                        Marshal.PtrToStructure<NativeMethods.CRYPT_OID_INFO>(oidPtr);
 
                     hashOid = oidInfo.pszOID;
                 }
@@ -548,7 +548,7 @@ namespace System.Management.Automation
                     wtdBuffer);
 #pragma warning enable 56523
 
-                wtData = ClrFacade.PtrToStructure<NativeMethods.WINTRUST_DATA>(wtdBuffer);
+                wtData = Marshal.PtrToStructure<NativeMethods.WINTRUST_DATA>(wtdBuffer);
             }
             finally
             {
@@ -576,7 +576,7 @@ namespace System.Management.Automation
             {
                 NativeMethods.CRYPT_PROVIDER_CERT provCert =
                     (NativeMethods.CRYPT_PROVIDER_CERT)
-                    ClrFacade.PtrToStructure<NativeMethods.CRYPT_PROVIDER_CERT>(pCert);
+                    Marshal.PtrToStructure<NativeMethods.CRYPT_PROVIDER_CERT>(pCert);
                 signerCert = new X509Certificate2(provCert.pCert);
             }
 
@@ -651,7 +651,7 @@ namespace System.Management.Automation
                 {
                     NativeMethods.CRYPT_PROVIDER_SGNR provSigner =
                         (NativeMethods.CRYPT_PROVIDER_SGNR)
-                        ClrFacade.PtrToStructure<NativeMethods.CRYPT_PROVIDER_SGNR>(pProvSigner);
+                        Marshal.PtrToStructure<NativeMethods.CRYPT_PROVIDER_SGNR>(pProvSigner);
                     if (provSigner.csCounterSigners == 1)
                     {
                         //
