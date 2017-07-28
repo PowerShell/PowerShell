@@ -434,8 +434,14 @@ function Get-PackageName
 function Invoke-AppveyorFinish
 {
     try {
+        $packageParams = @{}
+        if($env:APPVEYOR_BUILD_VERSION)
+        {
+            $packageParams += @{Version=$env:APPVEYOR_BUILD_VERSION}
+        }
+        
         # Build packages
-        $packages = Start-PSPackage
+        $packages = Start-PSPackage @packageParams
 
         $name = Get-PackageName
 
