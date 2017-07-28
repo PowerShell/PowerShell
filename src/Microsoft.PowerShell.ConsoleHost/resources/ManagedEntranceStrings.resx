@@ -117,10 +117,6 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="ShellBanner" xml:space="preserve">
-    <value>Windows PowerShell {0}
-Copyright (C) Microsoft Corporation. All rights reserved.</value>
-  </data>
   <data name="ShellBannerNonWindowsPowerShell" xml:space="preserve">
     <value>PowerShell {0}
 Copyright (C) Microsoft Corporation. All rights reserved.</value>
