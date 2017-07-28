@@ -28,21 +28,23 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
 
         ## Run this test only on OSX because redirecting stderr of 'xdg-open' results in weird behavior in our Linux CI,
         ## causing this test to fail or the build to hang.
-        It "Should invoke text file '<TestFile>' without error" -Skip:(!$IsOSX) -TestCases $textFileTestCases {
+        It "Should invoke text file '<TestFile>' without error on Mac" -Skip:(!$IsOSX) -TestCases $textFileTestCases {
             param($TestFile)
 
-            ## Redirect stderr to a file. So if 'open' failed to open the text file, an error
-            ## message from 'open' would be written to the redirection file.
-            $proc = Start-Process -FilePath $powershell -ArgumentList "-noprofile -c Invoke-Item '$TestFile'" `
-                                  -RedirectStandardError $redirectErr `
-                                  -PassThru
-            $proc.WaitForExit(3000) > $null
-            if (!$proc.HasExited) {
-                try { $proc.Kill() } catch { }
+            $expectedTitle = Split-Path $TestFile -Leaf
+            $beforeCount = [int]('tell application "TextEdit" to count of windows' | osascript)
+            Invoke-Item -Path $TestFile
+            $startTime = Get-Date
+            $title = [String]::Empty
+            while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and ($title -ne $expectedTitle))
+            {
+                Start-Sleep -Milliseconds 100
+                $title = 'tell application "TextEdit" to get name of front window' | osascript
             }
-            ## If the text file was successfully opened, the redirection file should be empty since no error
-            ## message was written to it.
-            Get-Content $redirectErr -Raw | Should BeNullOrEmpty
+            $afterCount = [int]('tell application "TextEdit" to count of windows' | osascript)
+            $afterCount | Should Be ($beforeCount + 1)
+            $title | Should Be $expectedTitle
+            "tell application ""TextEdit"" to close window ""$expectedTitle""" | osascript
         }
     }
 
@@ -58,6 +60,100 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
             & $powershell -noprofile -c "Invoke-Item '$executable'" 2> $redirectFile
         }
         Get-Content $redirectFile -Raw | Should Match "usage: ping"
+    }
+
+    Context "Invoke a folder" {
+        BeforeAll {
+            $supportedEnvironment = $true
+            if ($IsLinux)
+            {
+                $appFolder = "$HOME/.local/share/applications"
+                if (Test-Path $appFolder)
+                {
+                    $mimeDefault = xdg-mime query default inode/directory
+                    Remove-Item $HOME/InvokeItemTest.Success -Force -ErrorAction SilentlyContinue
+                    Set-Content -Path "$appFolder/InvokeItemTest.desktop" -Force -Value @"
+[Desktop Entry]
+Version=1.0
+Name=InvokeItemTest
+Comment=Validate Invoke-Item for directory
+Exec=/bin/sh -c 'echo %u > ~/InvokeItemTest.Success'
+Icon=utilities-terminal
+Terminal=true
+Type=Application
+Categories=Application;
+"@
+                    xdg-mime default InvokeItemTest.desktop inode/directory
+                }
+                else
+                {
+                    $supportedEnvironment = $false
+                }
+            }
+        }
+
+        AfterAll {
+            if ($IsLinux -and $supportedEnvironment)
+            {
+                xdg-mime default $mimeDefault inode/directory
+                Remove-Item $appFolder/InvokeItemTest.desktop -Force -ErrorAction SilentlyContinue
+                Remove-Item $HOME/InvokeItemTest.Success -Force -ErrorAction SilentlyContinue
+            }
+        }
+
+        It "Should invoke a folder without error" -Skip:(!$supportedEnvironment) {
+            if ($IsWindows)
+            {
+                $shell = New-Object -ComObject "Shell.Application"
+                $windows = $shell.Windows()
+
+                $before = $windows.Count
+                Invoke-Item -Path $PSHOME
+                $startTime = Get-Date
+                # may take time for explorer to open window
+                while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and ($windows.Count -eq $before))
+                {
+                    Start-Sleep -Milliseconds 100
+                }
+                $after = $windows.Count
+
+                $before + 1 | Should Be $after
+                $item = $windows.Item($after - 1)
+                $item.LocationURL | Should Match ($PSHOME -replace '\\', '/')
+                ## close the windows explorer
+                $item.Quit()
+            }
+            elseif ($IsLinux)
+            {
+                # validate on Unix by reassociating default app for directories
+                Invoke-Item -Path $PSHOME
+                $startTime = Get-Date
+                # may take time for handler to start
+                while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and (-not (Test-Path "$HOME/InvokeItemTest.Success")))
+                {
+                    Start-Sleep -Milliseconds 100
+                }
+                Get-Content $HOME/InvokeItemTest.Success | Should Be $PSHOME
+            }
+            else
+            {
+                # validate on MacOS by using AppleScript
+                $beforeCount = [int]('tell application "Finder" to count of windows' | osascript)
+                Invoke-Item -Path $PSHOME
+                $startTime = Get-Date
+                $expectedTitle = Split-Path $PSHOME -Leaf
+                $title = [String]::Empty
+                while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and ($title -ne $expectedTitle))
+                {
+                    Start-Sleep -Milliseconds 100
+                    $title = 'tell application "Finder" to get name of front window' | osascript
+                }
+                $afterCount = [int]('tell application "Finder" to count of windows' | osascript)
+                $afterCount | Should Be ($beforeCount + 1)
+                $title | Should Be $expectedTitle
+                'tell application "Finder" to close front window' | osascript
+            }
+        }
     }
 }
 

@@ -1312,6 +1312,14 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         protected override void InvokeDefaultAction(string path)
         {
+#if UNIX
+            // Error code 13 -- Permission denied
+            const int NOT_EXECUTABLE = 13;
+#else
+            // Error code 193 -- BAD_EXE_FORMAT (not a valid Win32 application)
+            const int NOT_EXECUTABLE = 193;
+#endif
+
             if (String.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
@@ -1325,21 +1333,34 @@ namespace Microsoft.PowerShell.Commands
 
             if (ShouldProcess(resource, action))
             {
-                System.Diagnostics.Process invokeProcess = new System.Diagnostics.Process();
+                var invokeProcess = new System.Diagnostics.Process();
+                invokeProcess.StartInfo.FileName = path;
+                bool invokeDefaultProgram = false;
 
-                try
+                if (Directory.Exists(path) && !Platform.IsNanoServer && !Platform.IsIoT)
                 {
-                    // Try Process.Start first.
-                    //  - In FullCLR, this is all we need to do.
-                    //  - In CoreCLR, this works for executables on Win/Unix platforms
-                    invokeProcess.StartInfo.FileName = path;
-                    invokeProcess.Start();
+                    // Path points to a directory and it's not NanoServer or IoT, so we can opne the file explorer
+                    invokeDefaultProgram = true;
                 }
-#if UNIX
-                catch (Win32Exception ex) when (ex.NativeErrorCode == 13)
+                else
                 {
-                    // Error code 13 -- Permission denied.
-                    // The file is possibly not an executable, so we try invoking the default program that handles this file.
+                    try
+                    {
+                        // Try Process.Start first. This works for executables on Win/Unix platforms
+                        invokeProcess.Start();
+                    }
+                    catch (Win32Exception ex) when (ex.NativeErrorCode == NOT_EXECUTABLE)
+                    {
+                        // The file is possibly not an executable. If it's headless SKUs, rethrow.
+                        if (Platform.IsNanoServer || Platform.IsIoT) { throw; }
+                        // Otherwise, try invoking the default program that handles this file.
+                        invokeDefaultProgram = true;
+                    }
+                }
+
+                if (invokeDefaultProgram)
+                {
+#if UNIX
                     const string quoteFormat = "\"{0}\"";
                     invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
                     if (NativeCommandParameterBinder.NeedQuotes(path))
@@ -1348,25 +1369,10 @@ namespace Microsoft.PowerShell.Commands
                     }
                     invokeProcess.StartInfo.Arguments = path;
                     invokeProcess.Start();
-                }
-#elif CORECLR
-                catch (Win32Exception ex) when (ex.NativeErrorCode == 193)
-                {
-                    // Error code 193 -- BAD_EXE_FORMAT (not a valid Win32 application).
-                    // If it's headless SKUs, rethrow.
-                    if (Platform.IsNanoServer || Platform.IsIoT) { throw; }
-                    // If it's full Windows, then try ShellExecute.
-                    ShellExecuteHelper.Start(invokeProcess.StartInfo);
-                }
 #else
-                finally
-                {
-                    // Nothing to do in FullCLR.
-                    // This empty 'finally' block is just to match the 'try' block above so that the code can be organized
-                    // in a clean way without too many if/def's.
-                    // Empty finally block will be ignored in release build, so there is no performance concern.
-                }
+                    ShellExecuteHelper.Start(invokeProcess.StartInfo);
 #endif
+                }
             }
         } // InvokeDefaultAction
 
