@@ -12,7 +12,6 @@ using System.Collections.ObjectModel;
 using System.Management.Automation.Host;
 using System.Management.Automation.Language;
 using System.Security;
-using System.Security.Permissions;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Microsoft.PowerShell

@@ -15,7 +15,6 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Security;
-using System.Security.Permissions;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices.ComTypes;
 

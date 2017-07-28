@@ -16,7 +16,6 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Provider;
 using System.Security;
 using System.Security.AccessControl;
-using System.Security.Permissions;
 using System.Text;
 using System.Xml;
 using System.Xml.XPath;

@@ -14,7 +14,6 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Diagnostics.CodeAnalysis;
 using System.Security;
-using System.Security.Permissions;
 using System.Threading;
 using Microsoft.Management.Infrastructure;
 using Microsoft.PowerShell.Cmdletization;
