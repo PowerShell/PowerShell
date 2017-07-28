@@ -1389,6 +1389,7 @@ try {
                 }
                 else
                 {
+                    $observed.DeviceGuardRequiredSecurityProperties | Should Not BeNullOrEmpty
                     [string]::Join(",", $observed.DeviceGuardRequiredSecurityProperties) | Should Be (Get-StringValuesFromValueMap -valuemap $requiredSecurityPropertiesValues -values $deviceGuard.RequiredSecurityProperties)
                 }
                 $observed.DeviceGuardAvailableSecurityProperties | Should Be $deviceGuard.AvailableSecurityProperties
@@ -1399,6 +1400,7 @@ try {
                 }
                 else
                 {
+                    $observed.DeviceGuardSecurityServicesRunning | Should Not BeNullOrEmpty
                     [string]::Join(",", $observed.DeviceGuardSecurityServicesRunning) | Should Be (Get-StringValuesFromValueMap -valuemap $securityServicesRunningValues -values $deviceGuard.SecurityServicesRunning)
                 }
                 $observed.DeviceGuardCodeIntegrityPolicyEnforcementStatus | Should Be $deviceGuard.CodeIntegrityPolicyEnforcementStatus
