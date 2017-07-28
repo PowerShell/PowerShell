@@ -7,6 +7,12 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
         if ( ! $IsWindows ) {
             $PSDefaultParameterValues["it:skip"] = $true
         }
+
+        $notEnglish = $false
+        if ([System.Globalization.CultureInfo]::CurrentCulture.Name -ne "en-US")
+        {
+            $notEnglish = $true
+        }
     }
     
     AfterAll {
@@ -28,7 +34,7 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
         { Enable-WSManCredSSP @params } | ShouldBeErrorId "System.InvalidOperationException,Microsoft.WSMan.Management.EnableWSManCredSSPCommand"
     }
 
-    It "Enable-WSManCredSSP works: <description>" -TestCases @(
+    It "Enable-WSManCredSSP works: <description>" -Skip:($NotEnglish) -TestCases @(
         @{params=@{Role="Client";DelegateComputer="*"};description="client"},
         @{params=@{Role="Server"};description="server"}
     ) {
@@ -47,7 +53,7 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
         }
     }
 
-    It "Disable-WSManCredSSP works: <role>" -TestCases @(
+    It "Disable-WSManCredSSP works: <role>" -Skip:($NotEnglish) -TestCases @(
         @{Role="Client"},
         @{Role="Server"}
     ) {
