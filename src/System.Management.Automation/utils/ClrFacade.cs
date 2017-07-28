@@ -79,15 +79,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Facade for Marshal.DestroyStructure
-        /// </summary>
-        internal static void DestroyStructure<T>(IntPtr ptr)
-        {
-            // Marshal.DestroyStructure(IntPtr, Type) is obsolete in CoreCLR
-            Marshal.DestroyStructure<T>(ptr);
-        }
-
-        /// <summary>
         /// Facade for Marshal.PtrToStructure
         /// </summary>
         internal static T PtrToStructure<T>(IntPtr ptr)

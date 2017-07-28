@@ -1037,9 +1037,9 @@ namespace System.Management.Automation.Security
             }
             finally
             {
-                ClrFacade.DestroyStructure<WINTRUST_DATA>(wtdBuffer);
+                Marshal.DestroyStructure<WINTRUST_DATA>(wtdBuffer);
                 Marshal.FreeCoTaskMem(wtdBuffer);
-                ClrFacade.DestroyStructure<Guid>(WINTRUST_ACTION_GENERIC_VERIFY_V2);
+                Marshal.DestroyStructure<Guid>(WINTRUST_ACTION_GENERIC_VERIFY_V2);
                 Marshal.FreeCoTaskMem(WINTRUST_ACTION_GENERIC_VERIFY_V2);
             }
 
@@ -1051,12 +1051,12 @@ namespace System.Management.Automation.Security
                     (WINTRUST_BLOB_INFO)ClrFacade.PtrToStructure<WINTRUST_BLOB_INFO>(wtd.Choice.pBlob);
                 Marshal.FreeCoTaskMem(originalBlob.pbMemObject);
 
-                ClrFacade.DestroyStructure<WINTRUST_BLOB_INFO>(wtd.Choice.pBlob);
+                Marshal.DestroyStructure<WINTRUST_BLOB_INFO>(wtd.Choice.pBlob);
                 Marshal.FreeCoTaskMem(wtd.Choice.pBlob);
             }
             else
             {
-                ClrFacade.DestroyStructure<WINTRUST_FILE_INFO>(wtd.Choice.pFile);
+                Marshal.DestroyStructure<WINTRUST_FILE_INFO>(wtd.Choice.pFile);
                 Marshal.FreeCoTaskMem(wtd.Choice.pFile);
             }
 
@@ -1170,9 +1170,9 @@ namespace System.Management.Automation.Security
             }
             finally
             {
-                ClrFacade.DestroyStructure<WINTRUST_DATA>(wtdBuffer);
+                Marshal.DestroyStructure<WINTRUST_DATA>(wtdBuffer);
                 Marshal.FreeCoTaskMem(wtdBuffer);
-                ClrFacade.DestroyStructure<Guid>(WINTRUST_ACTION_GENERIC_VERIFY_V2);
+                Marshal.DestroyStructure<Guid>(WINTRUST_ACTION_GENERIC_VERIFY_V2);
                 Marshal.FreeCoTaskMem(WINTRUST_ACTION_GENERIC_VERIFY_V2);
             }
         }

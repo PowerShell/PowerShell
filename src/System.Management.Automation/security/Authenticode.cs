@@ -216,7 +216,7 @@ namespace System.Management.Automation
 
                 if (si.pSignExtInfo != null)
                 {
-                    ClrFacade.DestroyStructure<NativeMethods.CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO>(si.pSignExtInfo);
+                    Marshal.DestroyStructure<NativeMethods.CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO>(si.pSignExtInfo);
                     Marshal.FreeCoTaskMem(si.pSignExtInfo);
                 }
 
@@ -268,7 +268,7 @@ namespace System.Management.Automation
             }
             finally
             {
-                ClrFacade.DestroyStructure<NativeMethods.CRYPTUI_WIZ_DIGITAL_SIGN_INFO>(pSignInfo);
+                Marshal.DestroyStructure<NativeMethods.CRYPTUI_WIZ_DIGITAL_SIGN_INFO>(pSignInfo);
                 Marshal.FreeCoTaskMem(pSignInfo);
             }
 
@@ -552,9 +552,9 @@ namespace System.Management.Automation
             }
             finally
             {
-                ClrFacade.DestroyStructure<Guid>(WINTRUST_ACTION_GENERIC_VERIFY_V2);
+                Marshal.DestroyStructure<Guid>(WINTRUST_ACTION_GENERIC_VERIFY_V2);
                 Marshal.FreeCoTaskMem(WINTRUST_ACTION_GENERIC_VERIFY_V2);
-                ClrFacade.DestroyStructure<NativeMethods.WINTRUST_DATA>(wtdBuffer);
+                Marshal.DestroyStructure<NativeMethods.WINTRUST_DATA>(wtdBuffer);
                 Marshal.FreeCoTaskMem(wtdBuffer);
             }
             return dwResult;
