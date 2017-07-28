@@ -1501,6 +1501,9 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal class ShellExecuteHelper
     {
+        private static bool _succeeded;
+        private static int _errorCode;
+
         /// <summary>
         /// Start a process using ShellExecuteEx with default settings about WindowStyle and Verb.
         /// </summary>
@@ -1546,10 +1549,30 @@ namespace System.Management.Automation.Internal
                     shellExecuteInfo.lpDirectory = Marshal.StringToHGlobalUni(startInfo.WorkingDirectory);
 
                 shellExecuteInfo.fMask |= NativeMethods.SEE_MASK_FLAG_DDEWAIT;
-                Thread thread = new Thread(InvokeShellExecuteEx);
-                thread.SetApartmentState(System.Threading.ApartmentState.STA);
-                thread.Start(shellExecuteInfo);
-                thread.Join();
+                if (Thread.CurrentThread.GetApartmentState() == System.Threading.ApartmentState.STA)
+                {
+                    InvokeShellExecuteEx(shellExecuteInfo);
+                }
+                else
+                {
+                    ParameterizedThreadStart threadStart = new ParameterizedThreadStart(InvokeShellExecuteEx);
+                    Thread thread = new Thread(threadStart);
+                    thread.SetApartmentState(System.Threading.ApartmentState.STA);
+                    thread.Start(shellExecuteInfo);
+                    thread.Join();
+                }
+
+                if (!_succeeded)
+                {
+                    if(_errorCode == NativeMethods.ERROR_BAD_EXE_FORMAT || _errorCode == NativeMethods.ERROR_EXE_MACHINE_TYPE_MISMATCH)
+                    {
+                        throw new Win32Exception(_errorCode, "InvalidApplication");
+                    }
+                    else
+                    {
+                        throw new Win32Exception(_errorCode);
+                    }
+                }
             }
             finally
             {                
@@ -1577,33 +1600,28 @@ namespace System.Management.Automation.Internal
         private static void InvokeShellExecuteEx(object param)
         {
             NativeMethods.ShellExecuteInfo shellExecuteInfo = (NativeMethods.ShellExecuteInfo)param;
+            _succeeded = true;
             if (!NativeMethods.ShellExecuteEx(shellExecuteInfo))
             {
-                int errorCode = Marshal.GetLastWin32Error();
-                if (errorCode == 0)
+                _errorCode = Marshal.GetLastWin32Error();
+                if (_errorCode == 0)
                 {
                     switch ((long)shellExecuteInfo.hInstApp)
                     {
-                        case NativeMethods.SE_ERR_FNF: errorCode = NativeMethods.ERROR_FILE_NOT_FOUND; break;
-                        case NativeMethods.SE_ERR_PNF: errorCode = NativeMethods.ERROR_PATH_NOT_FOUND; break;
-                        case NativeMethods.SE_ERR_ACCESSDENIED: errorCode = NativeMethods.ERROR_ACCESS_DENIED; break;
-                        case NativeMethods.SE_ERR_OOM: errorCode = NativeMethods.ERROR_NOT_ENOUGH_MEMORY; break;
+                        case NativeMethods.SE_ERR_FNF: _errorCode = NativeMethods.ERROR_FILE_NOT_FOUND; break;
+                        case NativeMethods.SE_ERR_PNF: _errorCode = NativeMethods.ERROR_PATH_NOT_FOUND; break;
+                        case NativeMethods.SE_ERR_ACCESSDENIED: _errorCode = NativeMethods.ERROR_ACCESS_DENIED; break;
+                        case NativeMethods.SE_ERR_OOM: _errorCode = NativeMethods.ERROR_NOT_ENOUGH_MEMORY; break;
                         case NativeMethods.SE_ERR_DDEFAIL:
                         case NativeMethods.SE_ERR_DDEBUSY:
-                        case NativeMethods.SE_ERR_DDETIMEOUT: errorCode = NativeMethods.ERROR_DDE_FAIL; break;
-                        case NativeMethods.SE_ERR_SHARE: errorCode = NativeMethods.ERROR_SHARING_VIOLATION; break;
-                        case NativeMethods.SE_ERR_NOASSOC: errorCode = NativeMethods.ERROR_NO_ASSOCIATION; break;
-                        case NativeMethods.SE_ERR_DLLNOTFOUND: errorCode = NativeMethods.ERROR_DLL_NOT_FOUND; break;
-                        default: errorCode = (int)shellExecuteInfo.hInstApp; break;
+                        case NativeMethods.SE_ERR_DDETIMEOUT: _errorCode = NativeMethods.ERROR_DDE_FAIL; break;
+                        case NativeMethods.SE_ERR_SHARE: _errorCode = NativeMethods.ERROR_SHARING_VIOLATION; break;
+                        case NativeMethods.SE_ERR_NOASSOC: _errorCode = NativeMethods.ERROR_NO_ASSOCIATION; break;
+                        case NativeMethods.SE_ERR_DLLNOTFOUND: _errorCode = NativeMethods.ERROR_DLL_NOT_FOUND; break;
+                        default: _errorCode = (int)shellExecuteInfo.hInstApp; break;
                     }
                 }
-
-                if(errorCode == NativeMethods.ERROR_BAD_EXE_FORMAT || errorCode == NativeMethods.ERROR_EXE_MACHINE_TYPE_MISMATCH)
-                {
-                    throw new Win32Exception(errorCode, "InvalidApplication");
-                }
-
-                throw new Win32Exception(errorCode);
+                _succeeded = false;
             }
         }
 
