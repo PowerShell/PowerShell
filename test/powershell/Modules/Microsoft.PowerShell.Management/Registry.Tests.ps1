@@ -15,6 +15,7 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
             $testPropertyValue = 1
             $defaultPropertyName = "(Default)"
             $defaultPropertyValue = "something"
+            $otherPropertyValue = "other"
         }
     }
 
@@ -46,6 +47,11 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
     }
 
     Context "Validate basic registry provider Cmdlets" {
+        It "Verity Test-Path" {
+            Test-Path -IsValid Registry::HKCU/Software | Should Be $true
+            Test-Path -IsValid Registry::foo/Softare | Should Be $false
+        }
+
         It "Verify Get-Item" {
             $item = Get-Item $testKey
             $item.PSChildName | Should BeExactly $testKey
@@ -114,6 +120,13 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
             $property."$defaultPropertyName" | Should BeExactly $defaultPropertyValue
         }
 
+        It "Verify Set-Item with -WhatIf" {
+            Set-Item -Path $testKey -Value $defaultPropertyValue
+            Set-Item -Path $testKey -Value $otherPropertyValue -WhatIf
+            $property = Get-ItemProperty -Path $testKey -Name $defaultPropertyName
+            $property."$defaultPropertyName" | Should BeExactly $defaultPropertyValue
+        }
+
         It "Verify Get-ItemPropertyValue" {
             $propertyValue = Get-ItemPropertyValue -Path $testKey -Name $testPropertyName
             $propertyValue | Should Be $testPropertyValue
@@ -155,11 +168,17 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
         It "Verity Clear-Item" {
             Set-ItemProperty -Path $testKey -Name $testPropertyName -Value $testPropertyValue
             Set-Item -Path $testKey -Value $defaultPropertyValue
-            $key = Get-Item -Path $testKey
-            $key.Property.Length | Should BeExactly 2
             Clear-Item -Path $testKey
             $key = Get-Item -Path $testKey
             $key.Property.Length | Should BeExactly 0
+        }
+
+        It "Verity Clear-Item with -WhatIf" {
+            Set-ItemProperty -Path $testKey -Name $testPropertyName -Value $testPropertyValue
+            Set-Item -Path $testKey -Value $defaultPropertyValue
+            Clear-Item -Path $testKey -WhatIf
+            $key = Get-Item -Path $testKey
+            $key.Property.Length | Should BeExactly 2
         }
 
         It "Verify Remove-ItemProperty" {
