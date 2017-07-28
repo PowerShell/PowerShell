@@ -15,13 +15,13 @@ using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
 using System.Security;
+using System.Security.Permissions;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices.ComTypes;
 
 #if CORECLR
 using System.Runtime.Loader; /* used in facade APIs related to assembly operations */
 using System.Management.Automation.Host;          /* used in facade API 'GetUninitializedObject' */
-using Microsoft.PowerShell.CoreClr.Stubs;         /* used in facade API 'GetFileSecurityZone' */
 using System.Management.Automation.Internal;
 using System.Text.RegularExpressions;
 #else

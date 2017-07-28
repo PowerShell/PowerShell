@@ -14,6 +14,7 @@ using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Diagnostics.CodeAnalysis;
 using System.Security;
+using System.Security.Permissions;
 using System.Threading;
 using Microsoft.Management.Infrastructure;
 using Microsoft.PowerShell.Cmdletization;
@@ -25,11 +26,6 @@ using ScriptBlock = System.Management.Automation.ScriptBlock;
 using Token = System.Management.Automation.Language.Token;
 #if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
-#endif
-
-#if CORECLR
-// Use stub for SecurityZone.
-using Microsoft.PowerShell.CoreClr.Stubs;
 #endif
 
 //

@@ -16,6 +16,7 @@ using System.Management.Automation.Internal;
 using System.Management.Automation.Provider;
 using System.Security;
 using System.Security.AccessControl;
+using System.Security.Permissions;
 using System.Text;
 using System.Xml;
 using System.Xml.XPath;
@@ -23,11 +24,6 @@ using Microsoft.Win32.SafeHandles;
 using Dbg = System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Management.Automation.Runspaces;
-
-#if CORECLR
-// Use stubs for SecurityZone
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
 
 namespace Microsoft.PowerShell.Commands
 {
