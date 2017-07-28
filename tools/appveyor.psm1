@@ -191,6 +191,10 @@ function Invoke-AppVeyorInstall
 {
     # Make sure we have all the tags
     Sync-PSTags -AddRemoteIfMissing
+    if($env:APPVEYOR_BUILD_NUMBER)
+    {
+        Update-AppveyorBuild -Version "$(Get-PSVersion -OmitCommitId)-$env:APPVEYOR_BUILD_NUMBER"
+    }
 
     if(Test-DailyBuild){
         $buildName = "[Daily]"
