@@ -1,7 +1,6 @@
 param(
     [switch]$Bootstrap
 )
-$BaseVersion = '6.0.0-beta.4-'
 Import-Module $PSScriptRoot/../build.psm1 -Force
 Import-Module $PSScriptRoot/packaging -Force
 
@@ -123,6 +122,7 @@ if($Bootstrap.IsPresent)
 }
 else 
 {
+    $BaseVersion = (Get-PSVersion -OmitCommitId) + '-'
     Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
     $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions))
 
