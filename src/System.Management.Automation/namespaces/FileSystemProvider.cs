@@ -24,11 +24,6 @@ using Dbg = System.Management.Automation;
 using System.Runtime.InteropServices;
 using System.Management.Automation.Runspaces;
 
-#if CORECLR
-// Use stubs for SecurityZone
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace Microsoft.PowerShell.Commands
 {
     #region FileSystemProvider

@@ -27,11 +27,6 @@ using Token = System.Management.Automation.Language.Token;
 using Microsoft.PowerShell.Telemetry.Internal;
 #endif
 
-#if CORECLR
-// Use stub for SecurityZone.
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 //
 // Now define the set of commands for manipulating modules.
 //
