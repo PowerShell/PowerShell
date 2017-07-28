@@ -118,8 +118,7 @@ Describe "Check 'Culture' parameter in order object cmdlets (Group-Object, Sort-
         if ( (Get-Culture).Name -eq "ru-Ru" ) {
             $testCulture = "ru-UA"
         }
-        else
-        {
+        else {
             $testCulture = "ru-RU"
         }
 
@@ -131,8 +130,7 @@ Describe "Check 'Culture' parameter in order object cmdlets (Group-Object, Sort-
         if ( (Get-Culture).LCID -eq 1049 ) {
             $testCulture = "0x1000"
         }
-        else
-        {
+        else {
             $testCulture = "0x419"
         }
 
@@ -144,12 +142,10 @@ Describe "Check 'Culture' parameter in order object cmdlets (Group-Object, Sort-
         if ( (Get-Culture).LCID -eq 1049 ) {
             $testCulture = "4096"
         }
-        else
-        {
+        else {
             $testCulture = "1049"
         }
 
         {$testObject | Group-Object -Culture $testCulture } | Should Not Throw
     }
 }
-
