@@ -1383,10 +1383,24 @@ try {
                     "2" = "HypervisorEnforcedCodeIntegrity"
                 }
                 $observed.DeviceGuardSmartStatus | Should Be (Get-StringValuesFromValueMap -valuemap $smartStatusValues -values $deviceGuard.SmartStatus)
-                [string]::Join(",", $observed.DeviceGuardRequiredSecurityProperties) | Should Be (Get-StringValuesFromValueMap -valuemap $requiredSecurityPropertiesValues -values $deviceGuard.RequiredSecurityProperties)
+                if ($deviceGuard.RequiredSecurityProperties -eq $null)
+                {
+                    $observed.DeviceGuardRequiredSecurityProperties | Should BeNullOrEmpty
+                }
+                else
+                {
+                    [string]::Join(",", $observed.DeviceGuardRequiredSecurityProperties) | Should Be (Get-StringValuesFromValueMap -valuemap $requiredSecurityPropertiesValues -values $deviceGuard.RequiredSecurityProperties)
+                }
                 $observed.DeviceGuardAvailableSecurityProperties | Should Be $deviceGuard.AvailableSecurityProperties
                 $observed.DeviceGuardSecurityServicesConfigured | Should Be $deviceGuard.SecurityServicesConfigured
-                [string]::Join(",", $observed.DeviceGuardSecurityServicesRunning) | Should Be (Get-StringValuesFromValueMap -valuemap $securityServicesRunningValues -values $deviceGuard.SecurityServicesRunning)
+                if ($deviceGuard.SecurityServicesRunning -eq $null)
+                {
+                    $observed.DeviceGuardSecurityServicesRunning | Should BeNullOrEmpty
+                }
+                else
+                {
+                    [string]::Join(",", $observed.DeviceGuardSecurityServicesRunning) | Should Be (Get-StringValuesFromValueMap -valuemap $securityServicesRunningValues -values $deviceGuard.SecurityServicesRunning)
+                }
                 $observed.DeviceGuardCodeIntegrityPolicyEnforcementStatus | Should Be $deviceGuard.CodeIntegrityPolicyEnforcementStatus
                 $observed.DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus | Should Be $deviceGuard.UserModeCodeIntegrityPolicyEnforcementStatus
             }
