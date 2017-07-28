@@ -249,7 +249,7 @@ Describe "TabCompletion" -Tags CI {
             Remove-Item -Path $tempDir -Recurse -Force
         }
 
-        It "Input '<inputStr>' should successfully completes" -TestCases $testCases {
+        It "Input '<inputStr>' should successfully complete" -TestCases $testCases {
             param ($inputStr, $localExpected)
 
             try {
@@ -262,7 +262,7 @@ Describe "TabCompletion" -Tags CI {
             }
         }
 
-        It "Input '<inputStr>' should successfully completes with relative path '..\'" -TestCases $testCases {
+        It "Input '<inputStr>' should successfully complete with relative path '..\'" -TestCases $testCases {
             param ($inputStr, $oneSubExpected)
 
             try {
@@ -276,7 +276,7 @@ Describe "TabCompletion" -Tags CI {
             }
         }
 
-        It "Input '<inputStr>' should successfully completes with relative path '..\..\'" -TestCases $testCases {
+        It "Input '<inputStr>' should successfully complete with relative path '..\..\'" -TestCases $testCases {
             param ($inputStr, $twoSubExpected)
 
             try {
@@ -290,7 +290,7 @@ Describe "TabCompletion" -Tags CI {
             }
         }
 
-        It "Input '<inputStr>' should successfully completes with relative path '..\..\..\ba*\'" -TestCases $testCases {
+        It "Input '<inputStr>' should successfully complete with relative path '..\..\..\ba*\'" -TestCases $testCases {
             param ($inputStr, $twoSubExpected)
 
             try {
@@ -340,7 +340,7 @@ Describe "TabCompletion" -Tags CI {
             )
         }
 
-        It "Input '<inputStr>' should successfully completes" -TestCases $testCases {
+        It "Input '<inputStr>' should successfully complete" -TestCases $testCases {
             param($inputStr, $expected)
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
@@ -452,30 +452,13 @@ Describe "TabCompletion" -Tags CI {
             )
         }
 
-        It "Input '<inputStr>' should successfully completes" -TestCases $testCases {
+        It "Input '<inputStr>' should successfully complete" -TestCases $testCases {
             param($inputStr, $expected, $setup)
 
             if ($null -ne $setup) { . $setup }
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $expected
-        }
-
-        It "Tab completion special relative path" {
-            New-Item -Path "$TestDrive\My [Path]" -ItemType Directory > $null
-            New-Item -Path "$TestDrive\My [Path]\test.ps1" -ItemType File > $null
-            $separator = [System.IO.Path]::DirectorySeparatorChar
-
-            try {
-                Push-Location -Path $TestDrive
-                $inputStr = "Get-Help '`.\My ``[Path``]'\"
-                $expected = "'.${separator}My ``[Path``]${separator}test.ps1'"
-                $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-                $res.CompletionMatches.Count | Should BeGreaterThan 0
-                $res.CompletionMatches[0].CompletionText | Should Be $expected
-            } finally {
-                Pop-Location
-            }
         }
 
         It "Tab completion UNC path" -Skip:(!$IsWindows) {
@@ -596,6 +579,95 @@ Describe "TabCompletion" -Tags CI {
             $res.CompletionMatches[0].CompletionText | Should Be 'Cmdlet'
             $res.CompletionMatches[1].CompletionText | Should Be 'Configuration'
         }
+
+        It "Test [CommandCompletion]::GetNextResult" {
+            $inputStr = "Get-Command -Type Alias,c"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeExactly 2
+            $res.GetNextResult($false).CompletionText | Should Be 'Configuration'
+            $res.GetNextResult($true).CompletionText | Should Be 'Cmdlet'
+            $res.GetNextResult($true).CompletionText | Should Be 'Configuration'
+        }
+    }
+
+    Context "Folder/File path tab completion with special characters" {
+        BeforeAll {
+            $separator = [System.IO.Path]::DirectorySeparatorChar
+            $testCases = @(
+                @{ inputStr = "cd My"; expected = "'.${separator}My ``[Path``]'" }
+                @{ inputStr = "Get-Help '.\My ``[Path``]'\"; expected = "'.${separator}My ``[Path``]${separator}test.ps1'" }
+                @{ inputStr = "Get-Process >My"; expected = "'.${separator}My ``[Path``]'" }
+                @{ inputStr = "Get-Process >'.\My ``[Path``]\'"; expected = "'.${separator}My ``[Path``]${separator}test.ps1'" }
+                @{ inputStr = "Get-Process >${TestDrive}\My"; expected = "'${TestDrive}${separator}My ``[Path``]'" }
+                @{ inputStr = "Get-Process > '${TestDrive}\My ``[Path``]\'"; expected = "'${TestDrive}${separator}My ``[Path``]${separator}test.ps1'" }
+            )
+
+            New-Item -Path "$TestDrive\My [Path]" -ItemType Directory > $null
+            New-Item -Path "$TestDrive\My [Path]\test.ps1" -ItemType File > $null
+        }
+
+        It "Complete special relative path '<inputStr>'" -TestCases $testCases {
+            param($inputStr, $expected)
+
+            try {
+                Push-Location -Path $TestDrive
+                $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+                $res.CompletionMatches.Count | Should BeGreaterThan 0
+                $res.CompletionMatches[0].CompletionText | Should Be $expected
+            } finally {
+                Pop-Location
+            }
+        }
+    }
+
+    Context "Local tab completion with AST" {
+        BeforeAll {
+            $testCases = @(
+                @{ inputStr = '$p = Get-Process; $p | % ProcessN '; bareWord = 'ProcessN'; expected = 'ProcessName' }
+                @{ inputStr = 'function bar { Get-Ali* }'; bareWord = 'Get-Ali*'; expected = 'Get-Alias' }
+                @{ inputStr = 'function baz ([string]$version, [consolecolor]$name){} baz version bl'; bareWord = 'bl'; expected = 'Black' }
+            )
+        }
+
+        It "Input '<inputStr>' should successfully complete via AST" -TestCases $testCases {
+            param($inputStr, $bareWord, $expected)
+
+            $tokens = $null
+            $ast = [System.Management.Automation.Language.Parser]::ParseInput($inputStr, [ref] $tokens, [ref]$null)
+            $elementAst = $ast.Find(
+                { $args[0] -is [System.Management.Automation.Language.StringConstantExpressionAst] -and $args[0].Value -eq $bareWord },
+                $true
+            )
+
+            $res = TabExpansion2 -ast $ast -tokens $tokens -positionOfCursor $elementAst.Extent.EndScriptPosition
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be $expected
+        }
+    }
+
+    Context "User-overridden TabExpansion implementations" {
+        It "Override TabExpansion with function" {
+            function TabExpansion ($line, $lastword) {
+                "Overridden-TabExpansion-Function"
+            }
+
+            $inputStr = '$pid.'
+            $res = [System.Management.Automation.CommandCompletion]::CompleteInput($inputStr, $inputst.Length, $null)
+            $res.CompletionMatches.Count | Should BeExactly 1
+            $res.CompletionMatches[0].CompletionText | Should Be 'Overridden-TabExpansion-Function'
+        }
+
+        It "Override TabExpansion with alias" {
+            function OverrideTabExpansion ($line, $lastword) {
+                "Overridden-TabExpansion-Alias"
+            }
+            Set-Alias -Name TabExpansion -Value OverrideTabExpansion
+
+            $inputStr = '$pid.'
+            $res = [System.Management.Automation.CommandCompletion]::CompleteInput($inputStr, $inputst.Length, $null)
+            $res.CompletionMatches.Count | Should BeExactly 1
+            $res.CompletionMatches[0].CompletionText | Should Be "Overridden-TabExpansion-Alias"
+        }
     }
 
     Context "No tab completion tests" {
@@ -615,6 +687,30 @@ Describe "TabCompletion" -Tags CI {
         }
     }
 
+    context "Tab completion error tests" {
+        BeforeAll {
+            $ast = {}.Ast;
+            $tokens = [System.Management.Automation.Language.Token[]]@()
+            $testCases = @(
+                @{ inputStr = {[System.Management.Automation.CommandCompletion]::MapStringInputToParsedInput('$pid.', 7)}; expected = "PSArgumentException" }
+                @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput($null, $null, $null, $null)}; expected = "PSArgumentNullException" }
+                @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput($ast, $null, $null, $null)}; expected = "PSArgumentNullException" }
+                @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput($ast, $tokens, $null, $null)}; expected = "PSArgumentNullException" }
+                @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput('$pid.', 7, $null, $null)}; expected = "PSArgumentException" }
+                @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput('$pid.', 5, $null, $null)}; expected = "PSArgumentNullException" }
+                @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput($null, $null, $null, $null, $null)}; expected = "PSArgumentNullException" }
+                @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput($ast, $null, $null, $null, $null)}; expected = "PSArgumentNullException" }
+                @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput($ast, $tokens, $null, $null, $null)}; expected = "PSArgumentNullException" }
+                @{ inputStr = {[System.Management.Automation.CommandCompletion]::CompleteInput($ast, $tokens, $ast.Extent.EndScriptPosition, $null, $null)}; expected = "PSArgumentNullException" }
+            )
+        }
+
+        It "Input '<inputStr>' should throw in tab completion" -TestCases $testCases {
+            param($inputStr, $expected)
+            $inputStr | ShouldBeErrorId $expected
+        }
+    }
+
     Context "DSC tab completion tests" {
         BeforeAll {
             $testCases = @(
@@ -626,10 +722,12 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = 'Configuration foo { node $AllNodes.'; expected = 'Where(' }
                 @{ inputStr = 'Configuration foo { node $ConfigurationData.AllNodes.'; expected = 'Where(' }
                 @{ inputStr = 'Configuration foo { node $ConfigurationData.AllNodes.fo'; expected = 'ForEach(' }
+                @{ inputStr = 'Configuration bar { File foo { Destinat'; expected = 'DestinationPath = ' }
+                @{ inputStr = 'Configuration bar { File foo { Content'; expected = 'Contents = ' }
             )
         }
 
-        It "Input '<inputStr>' should successfully completes" -TestCases $testCases -Skip:(!$IsWindows) {
+        It "Input '<inputStr>' should successfully complete" -TestCases $testCases -Skip:(!$IsWindows) {
             param($inputStr, $expected)
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
@@ -669,12 +767,67 @@ Describe "TabCompletion" -Tags CI {
             )
         }
 
-        It "CIM cmdlet input '<inputStr>' should successfully completes" -TestCases $testCases -Skip:(!$IsWindows) {
+        It "CIM cmdlet input '<inputStr>' should successfully complete" -TestCases $testCases -Skip:(!$IsWindows) {
             param($inputStr, $expected)
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $expected
         }
+    }
+}
+
+Describe "Tab completion tests with remote Runspace" -Tags Feature {
+    BeforeAll {
+        if ($IsWindows) {
+            $session = New-RemoteSession
+            $powershell = [powershell]::Create()
+            $powershell.Runspace = $session.Runspace
+
+            $testCases = @(
+                @{ inputStr = 'Get-Proc'; expected = 'Get-Process' }
+                @{ inputStr = 'Get-Process | % ProcessN'; expected = 'ProcessName' }
+                @{ inputStr = 'Get-ChildItem alias: | % { $_.Defini'; expected = 'Definition' }
+            )
+
+            $testCasesWithAst = @(
+                @{ inputStr = '$p = Get-Process; $p | % ProcessN '; bareWord = 'ProcessN'; expected = 'ProcessName' }
+                @{ inputStr = 'function bar { Get-Ali* }'; bareWord = 'Get-Ali*'; expected = 'Get-Alias' }
+                @{ inputStr = 'function baz ([string]$version, [consolecolor]$name){} baz version bl'; bareWord = 'bl'; expected = 'Black' }
+            )
+        } else {
+            $defaultParameterValues = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["It:Skip"] = $true
+        }
+    }
+    AfterAll {
+        if ($IsWindows) {
+            Remove-PSSession $session
+            $powershell.Dispose()
+        } else {
+            $Global:PSDefaultParameterValues = $defaultParameterValues
+        }
+    }
+
+    It "Input '<inputStr>' should successfully complete in remote runspace" -TestCases $testCases {
+        param($inputStr, $expected)
+        $res = [System.Management.Automation.CommandCompletion]::CompleteInput($inputStr, $inputStr.Length, $null, $powershell)
+        $res.CompletionMatches.Count | Should BeGreaterThan 0
+        $res.CompletionMatches[0].CompletionText | Should Be $expected
+    }
+
+    It "Input '<inputStr>' should successfully complete via AST in remote runspace" -TestCases $testCasesWithAst {
+        param($inputStr, $bareWord, $expected)
+
+        $tokens = $null
+        $ast = [System.Management.Automation.Language.Parser]::ParseInput($inputStr, [ref] $tokens, [ref]$null)
+        $elementAst = $ast.Find(
+            { $args[0] -is [System.Management.Automation.Language.StringConstantExpressionAst] -and $args[0].Value -eq $bareWord },
+            $true
+        )
+
+        $res = [System.Management.Automation.CommandCompletion]::CompleteInput($ast, $tokens, $elementAst.Extent.EndScriptPosition, $null, $powershell)
+        $res.CompletionMatches.Count | Should BeGreaterThan 0
+        $res.CompletionMatches[0].CompletionText | Should Be $expected
     }
 }
