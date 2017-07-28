@@ -57,6 +57,10 @@ Describe "Basic Registry Provider Tests" -Tags @("CI", "RequireAdminOnWindows") 
             $item.PSChildName | Should BeExactly $testKey
         }
 
+        It "Verify Get-Item on inaccessible path" {
+            { Get-Item HKLM:\SAM\SAM -ErrorAction Stop } | ShouldBeErrorId "System.Security.SecurityException,Microsoft.PowerShell.Commands.GetItemCommand"
+        }
+
         It "Verify Get-ChildItem" {
             $items = Get-ChildItem
             $items.Count | Should BeExactly 2
