@@ -276,13 +276,11 @@ namespace Microsoft.PowerShell.Commands
                         ThrowWin32Error();
                     }
 
-#if !CORECLR
                     // broadcast a WM_SETTINGCHANGE notification message to all top-level windows so that they
                     // know to update their notion of the current system time (and time zone) if applicable
                     int result = 0;
                     NativeMethods.SendMessageTimeout((IntPtr)NativeMethods.HWND_BROADCAST, NativeMethods.WM_SETTINGCHANGE,
                         (IntPtr)0, "intl", NativeMethods.SMTO_ABORTIFHUNG, 5000, ref result);
-#endif
 
                     // clear the time zone data or this PowerShell session
                     // will not recognize the new time zone settings
@@ -438,7 +436,6 @@ namespace Microsoft.PowerShell.Commands
 
 #region Native DLL locations
 
-#if CORECLR
             private const string SetDynamicTimeZoneApiDllName = "api-ms-win-core-timezone-l1-1-0.dll";
             private const string GetTimeZoneInformationForYearApiDllName = "api-ms-win-core-timezone-l1-1-0.dll";
             private const string GetCurrentProcessApiDllName = "api-ms-win-downlevel-kernel32-l1-1-0.dll";
@@ -448,9 +445,6 @@ namespace Microsoft.PowerShell.Commands
             private const string AdjustTokenPrivilegesApiDllName = "api-ms-win-downlevel-advapi32-l1-1-1.dll";
             private const string CloseHandleApiDllName = "api-ms-win-downlevel-kernel32-l1-1-0.dll";
             private const string SendMessageTimeoutApiDllName = "ext-ms-win-rtcore-ntuser-window-ext-l1-1-0.dll";
-#else
-            private const string SendMessageTimeoutApiDllName = "user32.dll";
-#endif
 
 #endregion Native DLL locations
 
