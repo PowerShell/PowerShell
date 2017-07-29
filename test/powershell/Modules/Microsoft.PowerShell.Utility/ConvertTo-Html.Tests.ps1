@@ -136,22 +136,8 @@ After the object
         $returnString | Should Be $expectedValue
     }
 
-    It "Test ConvertTo-HTML meta with invalid properties"{
-        $returnString = ($customObject | ConvertTo-HTML -Meta @{"authors"="John Doe";"keyword"="PowerShell,PSv6"}) -join $newLine
-        $expectedValue = normalizeLineEnds @"
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>HTML TABLE</title>
-</head><body>
-<table>
-<colgroup><col/><col/><col/></colgroup>
-<tr><th>Name</th><th>Age</th><th>Friends</th></tr>
-<tr><td>John Doe</td><td>42</td><td>System.Object[]</td></tr>
-</table>
-</body></html>
-"@
-        $returnString | Should Be $expectedValue
+    It "Test ConvertTo-HTML meta with invalid properties should throw"{
+        { ($customObject | ConvertTo-HTML -Meta @{"authors"="John Doe";"keyword"="PowerShell,PSv6"}) -join $newLine } | Should Throw
     }
 
     It "Test ConvertTo-HTML charset"{
