@@ -15,11 +15,11 @@ function Sync-PSTags
 
     $PowerShellRemoteUrl = "https://github.com/powershell/powershell.git"
     $upstreamRemoteDefaultName = 'upstream'
-    $remotes = git --git-dir="$PSScriptRoot/.git" remote
+    $remotes = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" remote}
     $upstreamRemote = $null
     foreach($remote in $remotes)
     {
-        $url = git --git-dir="$PSScriptRoot/.git" remote get-url $remote
+        $url = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" remote get-url $remote}
         if($url -eq $PowerShellRemoteUrl)
         {
             $upstreamRemote = $remote
@@ -29,7 +29,7 @@ function Sync-PSTags
 
     if(!$upstreamRemote -and $AddRemoteIfMissing.IsPresent -and $remotes -notcontains $upstreamRemoteDefaultName)
     {
-        $null = git --git-dir="$PSScriptRoot/.git" remote add $upstreamRemoteDefaultName $PowerShellRemoteUrl
+        $null = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" remote add $upstreamRemoteDefaultName $PowerShellRemoteUrl}
         $upstreamRemote = $upstreamRemoteDefaultName
     }
     elseif(!$upstreamRemote)
@@ -37,7 +37,7 @@ function Sync-PSTags
         Write-Error "Please add a remote to PowerShell\PowerShell.  Example:  git remote add $upstreamRemoteDefaultName $PowerShellRemoteUrl" -ErrorAction Stop
     }
 
-    git --git-dir="$PSScriptRoot/.git" fetch --tags $upstreamRemote
+    $null = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" fetch --tags --quiet $upstreamRemote}
     $script:tagsUpToDate=$true
 }
 
@@ -49,7 +49,7 @@ function Get-PSLatestTag
         Write-Warning "Run Sync-PSTags to update tags"
     }
 
-    return (git --git-dir="$PSScriptRoot/.git" describe --abbrev=0)
+    return (Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" describe --abbrev=0})
 }
 
 function Get-PSVersion
@@ -75,7 +75,7 @@ function Get-PSCommitId
         Write-Warning "Run Sync-PSTags to update tags"
     }
 
-    return (git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60)
+    return (Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60})
 }
 
 function Get-EnvironmentInformation
