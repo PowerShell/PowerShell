@@ -1070,7 +1070,7 @@ namespace System.Management.Automation
 
         private void ValidateRange(object element, ValidateRangeKind? rangeKind)
         {
-            Type commonType = GetCommonType(0.GetType(),element.GetType());
+            Type commonType = GetCommonType(typeof(int),element.GetType());
             if (commonType == null)
             {
                     throw new ValidationMetadataException(
@@ -1078,7 +1078,7 @@ namespace System.Management.Automation
                     null, 
                     Metadata.ValidateRangeElementType,
                     element.GetType().Name, 
-                    0.GetType().Name);
+                    typeof(int).Name);
             }
 
             bool throwTypeError = true;
@@ -1103,7 +1103,7 @@ namespace System.Management.Automation
                     null, 
                     Metadata.ValidateRangeElementType,
                     element.GetType().Name, 
-                    0.GetType().Name);
+                    typeof(int).Name);
             }
 
             switch (rangeKind)
