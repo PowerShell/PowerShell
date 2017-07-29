@@ -950,9 +950,6 @@ namespace System.Management.Automation
 
         ValidateRangeKind? _rangeKind;
 
-        private readonly static Type s_zeroType = 0.GetType();
-        private readonly static string s_zeroTypeName = s_zeroType.Name;
-
         /// <summary>
         /// Validates that each parameter argument falls in the range
         /// specified by MinRange and MaxRange
@@ -1073,7 +1070,7 @@ namespace System.Management.Automation
 
         private void ValidateRange(object element, ValidateRangeKind? rangeKind)
         {
-            Type commonType = GetCommonType(s_zeroType,element.GetType());
+            Type commonType = GetCommonType(0.GetType(),element.GetType());
             if (commonType == null)
             {
                     throw new ValidationMetadataException(
@@ -1081,21 +1078,20 @@ namespace System.Management.Automation
                     null, 
                     Metadata.ValidateRangeElementType,
                     element.GetType().Name, 
-                    s_zeroTypeName);
+                    0.GetType().Name);
             }
 
-            dynamic elementValue = element;
-
             bool throwTypeError = true;
-            object dynamicZero = 0;
             object resultValue;
+            IComparable dynamicZero = 0;
 
             if (LanguagePrimitives.TryConvertTo(element, commonType, out resultValue))
             {
-                elementValue = resultValue as IComparable;
+                element = (IComparable)resultValue;
                 
-                if (elementValue != null && LanguagePrimitives.TryConvertTo(0, commonType, out dynamicZero))
+                if (LanguagePrimitives.TryConvertTo(0, commonType, out resultValue))
                 {
+                    dynamicZero = (IComparable)resultValue;
                     throwTypeError = false;
                 }                    
             }
@@ -1107,13 +1103,13 @@ namespace System.Management.Automation
                     null, 
                     Metadata.ValidateRangeElementType,
                     element.GetType().Name, 
-                    s_zeroTypeName);
+                    0.GetType().Name);
             }
 
             switch (rangeKind)
             {
                 case ValidateRangeKind.Positive:
-                    if (elementValue.CompareTo(dynamicZero) <= 0)
+                    if (dynamicZero.CompareTo(element) >= 0)
                     {
                         throw new ValidationMetadataException(
                             "ValidateRangePositiveFailure",
@@ -1123,7 +1119,7 @@ namespace System.Management.Automation
                     }
                     break;
                 case ValidateRangeKind.NonNegative:
-                    if (elementValue.CompareTo(dynamicZero) < 0)
+                    if (dynamicZero.CompareTo(element) > 0)
                     {
                         throw new ValidationMetadataException(
                             "ValidateRangeNonNegativeFailure",
@@ -1133,7 +1129,7 @@ namespace System.Management.Automation
                     }
                     break;
                 case ValidateRangeKind.Negative:
-                    if (elementValue.CompareTo(dynamicZero) >= 0)
+                    if (dynamicZero.CompareTo(element) <= 0)
                     {
                         throw new ValidationMetadataException(
                             "ValidateRangeNegativeFailure",
@@ -1143,7 +1139,7 @@ namespace System.Management.Automation
                     }
                     break;
                 case ValidateRangeKind.NonPositive:
-                    if (elementValue.CompareTo(dynamicZero) > 0)
+                    if (dynamicZero.CompareTo(element) < 0)
                     {
                         throw new ValidationMetadataException(
                             "ValidateRangeNonPositiveFailure",
