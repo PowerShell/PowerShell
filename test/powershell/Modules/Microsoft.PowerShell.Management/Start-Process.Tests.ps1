@@ -1,4 +1,4 @@
-Describe "Start-Process" -Tags @("CI","SLOW") {
+Describe "Start-Process" -Tags @("Feature") {
 
     BeforeAll {
         $isNanoServer = [System.Management.Automation.Platform]::IsNanoServer
@@ -10,7 +10,7 @@ Describe "Start-Process" -Tags @("CI","SLOW") {
         $tempFile = Join-Path -Path $TestDrive -ChildPath PSTest
         $assetsFile = Join-Path -Path (Join-Path -Path $PSScriptRoot -ChildPath assets) -ChildPath SortTest.txt
         if ($IsWindows) {
-	        $pingParam = "-n 2 localhost"
+            $pingParam = "-n 2 localhost"
         }
         elseif ($IsLinux -Or $IsOSX) {
 	        $pingParam = "-c 2 localhost"
@@ -104,15 +104,31 @@ Describe "Start-Process" -Tags @("CI","SLOW") {
         $process.Name | Should Be "notepad"
         $process | Stop-Process
     }
+}
 
-    It "Should open the application that associates with extension '.txt'" -Skip:(!$isFullWin) {
-        $txtFile = Join-Path $TestDrive "TxtTest.txt"
-        New-Item $txtFile -ItemType File -Force
-        $process = Start-Process $txtFile -PassThru -WindowStyle Normal
-        $process.Name | Should Not BeNullOrEmpty
-        $process.Id | Should BeGreaterThan 1
-        $process | Stop-Process
+Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWindows" {
+
+    BeforeEach {
+        cmd /c assoc .foo=foofile
+        cmd /c ftype foofile=cmd /c echo %1^> $testdrive\foo.txt
+        Remove-Item $testdrive\foo.txt -Force -ErrorAction SilentlyContinue
     }
 
-    Remove-Item -Path $tempFile -Force
+    AfterEach {
+        cmd /c assoc .foo=
+        cmd /c ftype foofile=
+    }
+
+    It "Should open the application that is associated a file" -Skip:(!$isFullWin) {
+        $fooFile = Join-Path $TestDrive "FooTest.foo"
+        New-Item $fooFile -ItemType File -Force
+        Start-Process $fooFile
+        $startTime = Get-Date
+        while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and (!(Test-Path $testdrive\foo.txt)))
+        {
+            Start-Sleep -Milliseconds 100
+        }
+        "$testdrive\foo.txt" | Should Exist
+        Get-Content $testdrive\foo.txt | Should BeExactly $fooFile
+    }
 }

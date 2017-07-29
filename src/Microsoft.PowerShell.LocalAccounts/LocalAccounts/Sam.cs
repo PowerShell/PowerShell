@@ -2248,7 +2248,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                         info.UserAccountControl = uac;
 
                     buffer = Marshal.AllocHGlobal(ClrFacade.SizeOf<USER_ALL_INFORMATION>());
-                    ClrFacade.StructureToPtr<USER_ALL_INFORMATION>(info, buffer, false);
+                    Marshal.StructureToPtr<USER_ALL_INFORMATION>(info, buffer, false);
 
                     status = SamApi.SamSetInformationUser(userHandle,
                                                           USER_INFORMATION_CLASS.UserAllInformation,
@@ -2393,7 +2393,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                 if (rawAcl != null && rawAcl.BinaryLength > 0)
                 {
-                    ClrFacade.StructureToPtr<SECURITY_DESCRIPTOR>(sd, ipsd, false);
+                    Marshal.StructureToPtr<SECURITY_DESCRIPTOR>(sd, ipsd, false);
 
                     // put the DACL into unmanaged memory
                     var length = rawAcl.BinaryLength;
@@ -2601,7 +2601,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     info.PasswordExpired = setPwExpire;
 
                     buffer = Marshal.AllocHGlobal(Marshal.SizeOf(info));
-                    ClrFacade.StructureToPtr<USER_SET_PASSWORD_INFORMATION>(info, buffer, false);
+                    Marshal.StructureToPtr<USER_SET_PASSWORD_INFORMATION>(info, buffer, false);
 
                     var status = SamApi.SamSetInformationUser(userHandle,
                                                               USER_INFORMATION_CLASS.UserSetPasswordInformation,

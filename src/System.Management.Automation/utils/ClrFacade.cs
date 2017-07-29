@@ -87,17 +87,6 @@ namespace System.Management.Automation
             Marshal.DestroyStructure<T>(ptr);
         }
 
-        /// <summary>
-        /// Wraps Marshal.StructureToPtr to hide differences between the CLRs.
-        /// </summary>
-        internal static void StructureToPtr<T>(
-            T structure,
-            IntPtr ptr,
-            bool deleteOld)
-        {
-            Marshal.StructureToPtr<T>(structure, ptr, deleteOld);
-        }
-
         #endregion Marshal
 
         #region Assembly
