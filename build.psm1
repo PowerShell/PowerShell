@@ -2142,9 +2142,9 @@ function New-MSIPackage
     }
     $msiLocationPath = Join-Path $pwd "$packageName.msi"
 
-    if($Force.IsPresent)
+    if(!$Force.IsPresent -and (Test-Path -Path $msiLocationPath))
     {
-        Remove-Item -ErrorAction SilentlyContinue $msiLocationPath -Force
+        Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
     }
 
     & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v | Write-Verbose
