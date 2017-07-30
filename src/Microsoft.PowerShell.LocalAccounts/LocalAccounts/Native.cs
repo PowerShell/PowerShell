@@ -155,7 +155,7 @@ namespace System.Management.Automation.SecurityAccountsManager.Native
         {
             if (objectName != IntPtr.Zero)
             {
-                ClrFacade.DestroyStructure<UNICODE_STRING>(objectName);
+                Marshal.DestroyStructure<UNICODE_STRING>(objectName);
                 Marshal.FreeHGlobal(objectName);
                 objectName = IntPtr.Zero;
             }
