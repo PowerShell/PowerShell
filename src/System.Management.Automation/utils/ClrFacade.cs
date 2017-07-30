@@ -70,32 +70,12 @@ namespace System.Management.Automation
         #region Marshal
 
         /// <summary>
-        /// Facade for Marshal.DestroyStructure
-        /// </summary>
-        internal static void DestroyStructure<T>(IntPtr ptr)
-        {
-            // Marshal.DestroyStructure(IntPtr, Type) is obsolete in CoreCLR
-            Marshal.DestroyStructure<T>(ptr);
-        }
-
-        /// <summary>
         /// Facade for Marshal.PtrToStructure
         /// </summary>
         internal static T PtrToStructure<T>(IntPtr ptr)
         {
             // Marshal.PtrToStructure(IntPtr, Type) is obsolete in CoreCLR
             return Marshal.PtrToStructure<T>(ptr);
-        }
-
-        /// <summary>
-        /// Wraps Marshal.StructureToPtr to hide differences between the CLRs.
-        /// </summary>
-        internal static void StructureToPtr<T>(
-            T structure,
-            IntPtr ptr,
-            bool deleteOld)
-        {
-            Marshal.StructureToPtr<T>(structure, ptr, deleteOld);
         }
 
         #endregion Marshal

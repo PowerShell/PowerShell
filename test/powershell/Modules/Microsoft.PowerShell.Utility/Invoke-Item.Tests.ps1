@@ -1,6 +1,6 @@
 using namespace System.Diagnostics
 
-Describe "Invoke-Item basic tests" -Tags "CI" {
+Describe "Invoke-Item basic tests" -Tags "Feature" {
     BeforeAll {
         $powershell = Join-Path $PSHOME -ChildPath powershell
 
@@ -36,7 +36,7 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
             Invoke-Item -Path $TestFile
             $startTime = Get-Date
             $title = [String]::Empty
-            while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and ($title -ne $expectedTitle))
+            while (((Get-Date) - $startTime).TotalSeconds -lt 30 -and ($title -ne $expectedTitle))
             {
                 Start-Sleep -Milliseconds 100
                 $title = 'tell application "TextEdit" to get name of front window' | osascript
