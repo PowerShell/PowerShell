@@ -1065,7 +1065,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 // Open the "BuiltIn" domain
                 SecurityIdentifier sid = new SecurityIdentifier("S-1-5-32");
                 byte[] bSid = new byte[sid.BinaryLength];
-                int size = ClrFacade.SizeOf<byte>() * bSid.Length;
+                int size = Marshal.SizeOf<byte>() * bSid.Length;
 
                 pSid = Marshal.AllocHGlobal(size);
 
@@ -1252,7 +1252,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     out userHandle,
                     out grantedAccess,
                     out relativeId);
-                ClrFacade.DestroyStructure<UNICODE_STRING>(buffer);
+                Marshal.DestroyStructure<UNICODE_STRING>(buffer);
                 Marshal.FreeHGlobal(buffer);
                 buffer = IntPtr.Zero;
                 ThrowOnFailure(status);
@@ -1371,7 +1371,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             {
                 if (buffer != IntPtr.Zero)
                 {
-                    ClrFacade.DestroyStructure<ALIAS_NAME_INFORMATION>(buffer);
+                    Marshal.DestroyStructure<ALIAS_NAME_INFORMATION>(buffer);
                     Marshal.FreeHGlobal(buffer);
                 }
                 if (aliasHandle != IntPtr.Zero)
@@ -1700,7 +1700,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     status = SamApi.SamSetInformationUser(userHandle,
                                                           USER_INFORMATION_CLASS.UserAllInformation,
                                                           buffer);
-                    ClrFacade.DestroyStructure<USER_ALL_INFORMATION>(buffer);
+                    Marshal.DestroyStructure<USER_ALL_INFORMATION>(buffer);
                     Marshal.FreeHGlobal(buffer);
                     buffer = IntPtr.Zero;
                     ThrowOnFailure(status);
@@ -1760,7 +1760,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             {
                 if (buffer != IntPtr.Zero)
                 {
-                    ClrFacade.DestroyStructure<USER_ACCOUNT_NAME_INFORMATION>(buffer);
+                    Marshal.DestroyStructure<USER_ACCOUNT_NAME_INFORMATION>(buffer);
                     Marshal.FreeHGlobal(buffer);
                 }
                 if (userHandle != IntPtr.Zero)
@@ -1903,7 +1903,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                        Win32.MAXIMUM_ALLOWED,
                                                        out aliasHandle,
                                                        out relativeId);
-                ClrFacade.DestroyStructure<UNICODE_STRING>(buffer);
+                Marshal.DestroyStructure<UNICODE_STRING>(buffer);
                 Marshal.FreeHGlobal(buffer);
                 buffer = IntPtr.Zero;
                 ThrowOnFailure(status);
@@ -1920,7 +1920,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                                                            ALIAS_INFORMATION_CLASS.AliasAdminCommentInformation,
                                                            buffer);
 
-                    ClrFacade.DestroyStructure<ALIAS_ADM_COMMENT_INFORMATION>(buffer);
+                    Marshal.DestroyStructure<ALIAS_ADM_COMMENT_INFORMATION>(buffer);
                     Marshal.FreeHGlobal(buffer);
                     buffer = IntPtr.Zero;
                     ThrowOnFailure(status);
@@ -1995,7 +1995,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             {
                 if (buffer != IntPtr.Zero)
                 {
-                    ClrFacade.DestroyStructure<ALIAS_ADM_COMMENT_INFORMATION>(buffer);
+                    Marshal.DestroyStructure<ALIAS_ADM_COMMENT_INFORMATION>(buffer);
                     Marshal.FreeHGlobal(buffer);
                 }
                 if (aliasHandle != IntPtr.Zero)
@@ -2247,7 +2247,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                     if ((which & SamApi.USER_ALL_USERACCOUNTCONTROL) != 0)
                         info.UserAccountControl = uac;
 
-                    buffer = Marshal.AllocHGlobal(ClrFacade.SizeOf<USER_ALL_INFORMATION>());
+                    buffer = Marshal.AllocHGlobal(Marshal.SizeOf<USER_ALL_INFORMATION>());
                     Marshal.StructureToPtr<USER_ALL_INFORMATION>(info, buffer, false);
 
                     status = SamApi.SamSetInformationUser(userHandle,
@@ -2268,7 +2268,7 @@ namespace System.Management.Automation.SecurityAccountsManager
             {
                 if (buffer != IntPtr.Zero)
                 {
-                    ClrFacade.DestroyStructure<USER_ALL_INFORMATION>(buffer);
+                    Marshal.DestroyStructure<USER_ALL_INFORMATION>(buffer);
                     Marshal.FreeHGlobal(buffer);
                 }
             }
@@ -2389,7 +2389,7 @@ namespace System.Management.Automation.SecurityAccountsManager
 
                 // create a new security descriptor
                 var sd = new SECURITY_DESCRIPTOR() { Revision = 1 };
-                ipsd = Marshal.AllocHGlobal(ClrFacade.SizeOf<SECURITY_DESCRIPTOR>());
+                ipsd = Marshal.AllocHGlobal(Marshal.SizeOf<SECURITY_DESCRIPTOR>());
 
                 if (rawAcl != null && rawAcl.BinaryLength > 0)
                 {
@@ -2612,7 +2612,7 @@ namespace System.Management.Automation.SecurityAccountsManager
                 {
                     if (buffer != IntPtr.Zero)
                     {
-                        ClrFacade.DestroyStructure<USER_SET_PASSWORD_INFORMATION>(buffer);
+                        Marshal.DestroyStructure<USER_SET_PASSWORD_INFORMATION>(buffer);
                         Marshal.FreeHGlobal(buffer);
                     }
                 }

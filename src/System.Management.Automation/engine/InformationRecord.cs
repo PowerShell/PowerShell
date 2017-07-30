@@ -40,10 +40,7 @@ namespace System.Management.Automation
             this.ManagedThreadId = (uint)System.Threading.Thread.CurrentThread.ManagedThreadId;
         }
 
-        /// <summary>
-        /// Added to enable ClrFacade.GetUninitializedObject to instantiate an uninitialized version of this class.
-        /// </summary>
-        internal InformationRecord() { }
+        private InformationRecord() { }
 
         /// <summary>
         /// Copy constructor

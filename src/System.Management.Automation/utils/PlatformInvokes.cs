@@ -337,7 +337,7 @@ namespace System.Management.Automation
                             // The specified privilege is not enabled yet. Enable it.
                             newPrivilegeState.PrivilegeCount = 1;
                             newPrivilegeState.Privilege.Attributes = SE_PRIVILEGE_ENABLED;
-                            int bufferSize = ClrFacade.SizeOf<TOKEN_PRIVILEGE>();
+                            int bufferSize = Marshal.SizeOf<TOKEN_PRIVILEGE>();
                             int returnSize = 0;
 
                             // enable the specified privilege
@@ -406,7 +406,7 @@ namespace System.Management.Automation
                     IntPtr tokenHandler = IntPtr.Zero;
                     if (OpenProcessToken(processHandler, TOKEN_ADJUST_PRIVILEGES | TOKEN_QUERY, out tokenHandler))
                     {
-                        int bufferSize = ClrFacade.SizeOf<TOKEN_PRIVILEGE>();
+                        int bufferSize = Marshal.SizeOf<TOKEN_PRIVILEGE>();
                         int returnSize = 0;
 
                         // restore the privilege state back to the previous privilege state
