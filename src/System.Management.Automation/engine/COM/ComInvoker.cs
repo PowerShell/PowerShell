@@ -24,7 +24,7 @@ namespace System.Management.Automation
         // Alias of GUID_NULL. It's a GUID set to all zero
         private static readonly Guid s_IID_NULL = new Guid();
         // Size of the Variant struct
-        private static readonly int s_variantSize = ClrFacade.SizeOf<Variant>();
+        private static readonly int s_variantSize = Marshal.SizeOf<Variant>();
 
         /// <summary>
         /// Make a by-Ref VARIANT value based on the passed-in VARIANT argument

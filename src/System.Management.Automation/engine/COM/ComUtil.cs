@@ -49,7 +49,7 @@ namespace System.Management.Automation
             builder.Append(" (");
 
             IntPtr ElementDescriptionArrayPtr = funcdesc.lprgelemdescParam;
-            int ElementDescriptionSize = ClrFacade.SizeOf<COM.ELEMDESC>();
+            int ElementDescriptionSize = Marshal.SizeOf<COM.ELEMDESC>();
 
             for (int i = 0; i < funcdesc.cParams; i++)
             {
@@ -288,7 +288,7 @@ namespace System.Management.Automation
             ParameterInformation[] parameters = new ParameterInformation[cParams];
 
             IntPtr ElementDescriptionArrayPtr = funcdesc.lprgelemdescParam;
-            int ElementDescriptionSize = ClrFacade.SizeOf<COM.ELEMDESC>();
+            int ElementDescriptionSize = Marshal.SizeOf<COM.ELEMDESC>();
 
             for (int i = 0; i < cParams; i++)
             {

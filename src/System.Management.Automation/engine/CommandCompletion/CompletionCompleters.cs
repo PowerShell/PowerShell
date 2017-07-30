@@ -4468,7 +4468,7 @@ namespace System.Management.Automation
             {
                 for (int i = 0; i < numEntries; ++i)
                 {
-                    IntPtr curInfoPtr = (IntPtr)((long)shBuf + (ClrFacade.SizeOf<SHARE_INFO_1>() * i));
+                    IntPtr curInfoPtr = (IntPtr)((long)shBuf + (Marshal.SizeOf<SHARE_INFO_1>() * i));
                     SHARE_INFO_1 shareInfo = ClrFacade.PtrToStructure<SHARE_INFO_1>(curInfoPtr);
 
 
