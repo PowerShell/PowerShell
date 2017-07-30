@@ -431,7 +431,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach(string s in _meta.Keys)
                     {
-                        if(s != "content-type" && s != "default-style" && s != "refresh" && s != "application-name" && s != "author" && s != "description" && s != "generator" && s != "keywords" && s != "viewport") {
+                        if(s != "content-type" && s != "default-style" && s != "application-name" && s != "author" && s != "description" && s != "generator" && s != "keywords" && s != "viewport") {
                             Exception exc = new NotSupportedException(StringUtil.Format(ConvertHTMLStrings.MetaPropertyNotFound, s));
                             ThrowTerminatingError (new ErrorRecord(exc, "MetaPropertyNotFound", ErrorCategory.ParserError, null));
                         }
@@ -455,7 +455,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach(string s in _meta.Keys)
                     {
-                        if(s == "content-type" || s == "default-style" || s =="refresh")
+                        if(s == "content-type" || s == "default-style")
                         {
                             WriteObject("<meta http-equiv=\"" + s + "\" content=\"" + _meta[s] + "\">");
                         }
