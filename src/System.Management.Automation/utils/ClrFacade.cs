@@ -8,24 +8,18 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Loader;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Security;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices.ComTypes;
-
-#if CORECLR
-using System.Runtime.Loader; /* used in facade APIs related to assembly operations */
-using System.Management.Automation.Host;          /* used in facade API 'GetUninitializedObject' */
-using System.Management.Automation.Internal;
-using System.Text.RegularExpressions;
-#else
-using System.Runtime.Serialization;           /* used in facade API 'GetUninitializedObject' */
-#endif
 
 namespace System.Management.Automation
 {
@@ -93,12 +87,8 @@ namespace System.Management.Automation
 
         internal static IEnumerable<Assembly> GetAssemblies(TypeResolutionState typeResolutionState, TypeName typeName)
         {
-#if CORECLR
             string typeNameToSearch = typeResolutionState.GetAlternateTypeName(typeName.Name) ?? typeName.Name;
             return GetAssemblies(typeNameToSearch);
-#else
-            return GetAssemblies();
-#endif
         }
 
         /// <summary>
@@ -110,14 +100,10 @@ namespace System.Management.Automation
         /// </param>
         internal static IEnumerable<Assembly> GetAssemblies(string namespaceQualifiedTypeName = null)
         {
-            return
-#if CORECLR
-            PSAssemblyLoadContext.GetAssembly(namespaceQualifiedTypeName) ??
-#endif
+            return PSAssemblyLoadContext.GetAssembly(namespaceQualifiedTypeName) ??
             AppDomain.CurrentDomain.GetAssemblies().Where(a => !(a.FullName.Length > 0 && a.FullName[0] == FIRST_CHAR_PSASSEMBLY_MARK));
         }
 
-#if CORECLR
         /// <summary>
         /// Get the namespace-qualified type names of all available .NET Core types shipped with PowerShell Core.
         /// This is used for type name auto-completion in PS engine.
@@ -131,7 +117,6 @@ namespace System.Management.Automation
         internal static HashSet<string> AvailableDotNetAssemblyNames => PSAssemblyLoadContext.AvailableDotNetAssemblyNames;
 
         private static PowerShellAssemblyLoadContext PSAssemblyLoadContext => PowerShellAssemblyLoadContext.Instance;
-#endif
 
         #endregion Assembly
 
@@ -477,55 +462,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Facade for FormatterServices.GetUninitializedObject.
-        ///
-        /// In CORECLR, there are two peculiarities with its implementation that affect our own:
-        /// 1. Structures cannot be instantiated using GetConstructor, so they must be filtered out.
-        /// 2. Classes must have a default constructor implemented for GetConstructor to work.
-        ///
-        /// See RemoteHostEncoder.IsEncodingAllowedForClassOrStruct for a list of the required types.
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        internal static object GetUninitializedObject(Type type)
-        {
-#if CORECLR
-            switch (type.Name)
-            {
-                case "KeyInfo"://typeof(KeyInfo).Name:
-                    return new KeyInfo(0, ' ', ControlKeyStates.RightAltPressed, false);
-                case "Coordinates"://typeof(Coordinates).Name:
-                    return new Coordinates(0, 0);
-                case "Size"://typeof(Size).Name:
-                    return new Size(0, 0);
-                case "BufferCell"://typeof(BufferCell).Name:
-                    return new BufferCell(' ', ConsoleColor.Black, ConsoleColor.Black, BufferCellType.Complete);
-                case "Rectangle"://typeof(Rectangle).Name:
-                    return new Rectangle(0, 0, 0, 0);
-                default:
-                    ConstructorInfo constructorInfoObj = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[] { }, null);
-                    if (constructorInfoObj != null)
-                    {
-                        return constructorInfoObj.Invoke(new object[] { });
-                    }
-                    return new object();
-            }
-#else
-            return FormatterServices.GetUninitializedObject(type);
-#endif
-        }
-
-        /// <summary>
         /// Facade for ProfileOptimization.SetProfileRoot
         /// </summary>
         /// <param name="directoryPath">The full path to the folder where profile files are stored for the current application domain.</param>
         internal static void SetProfileOptimizationRoot(string directoryPath)
         {
-#if CORECLR
             PSAssemblyLoadContext.SetProfileOptimizationRootImpl(directoryPath);
-#else
-            System.Runtime.ProfileOptimization.SetProfileRoot(directoryPath);
-#endif
         }
 
         /// <summary>
@@ -534,11 +476,7 @@ namespace System.Management.Automation
         /// <param name="profile">The file name of the profile to use.</param>
         internal static void StartProfileOptimization(string profile)
         {
-#if CORECLR
             PSAssemblyLoadContext.StartProfileOptimizationImpl(profile);
-#else
-            System.Runtime.ProfileOptimization.StartProfile(profile);
-#endif
         }
 
         #endregion Misc

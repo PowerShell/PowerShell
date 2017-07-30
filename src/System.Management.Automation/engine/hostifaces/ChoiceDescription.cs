@@ -97,13 +97,6 @@ namespace System.Management.Automation.Host
         }
 
         /// <summary>
-        /// Added to enable ClrFacade.GetUninitializedObject to instantiate an uninitialized version of this class.
-        /// </summary>
-        internal
-        ChoiceDescription()
-        { }
-
-        /// <summary>
         ///
         /// Gets a short, human-presentable message to describe and identify the choice.  Think Button label.
         ///
