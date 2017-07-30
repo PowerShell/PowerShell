@@ -1081,7 +1081,6 @@ namespace System.Management.Automation
                     typeof(int).Name);
             }
 
-            bool throwTypeError = true;
             object resultValue;
             IComparable dynamicZero = 0;
 
@@ -1092,11 +1091,9 @@ namespace System.Management.Automation
                 if (LanguagePrimitives.TryConvertTo(0, commonType, out resultValue))
                 {
                     dynamicZero = (IComparable)resultValue;
-                    throwTypeError = false;
                 }                    
             }
-
-            if (throwTypeError)
+            else
             {
                 throw new ValidationMetadataException(
                     "ValidationRangeElementType",
