@@ -1033,7 +1033,7 @@ namespace System.Management.Automation.Security
                     wtdBuffer);
 #pragma warning enable 56523
 
-                wtd = ClrFacade.PtrToStructure<WINTRUST_DATA>(wtdBuffer);
+                wtd = Marshal.PtrToStructure<WINTRUST_DATA>(wtdBuffer);
             }
             finally
             {
@@ -1048,7 +1048,7 @@ namespace System.Management.Automation.Security
             if (wtd.dwUnionChoice == (DWORD)WintrustUnionChoice.WTD_CHOICE_BLOB)
             {
                 WINTRUST_BLOB_INFO originalBlob =
-                    (WINTRUST_BLOB_INFO)ClrFacade.PtrToStructure<WINTRUST_BLOB_INFO>(wtd.Choice.pBlob);
+                    (WINTRUST_BLOB_INFO)Marshal.PtrToStructure<WINTRUST_BLOB_INFO>(wtd.Choice.pBlob);
                 Marshal.FreeCoTaskMem(originalBlob.pbMemObject);
 
                 Marshal.DestroyStructure<WINTRUST_BLOB_INFO>(wtd.Choice.pBlob);

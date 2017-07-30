@@ -61,19 +61,6 @@ namespace System.Management.Automation
 
         #endregion Process
 
-        #region Marshal
-
-        /// <summary>
-        /// Facade for Marshal.PtrToStructure
-        /// </summary>
-        internal static T PtrToStructure<T>(IntPtr ptr)
-        {
-            // Marshal.PtrToStructure(IntPtr, Type) is obsolete in CoreCLR
-            return Marshal.PtrToStructure<T>(ptr);
-        }
-
-        #endregion Marshal
-
         #region Assembly
 
         internal static IEnumerable<Assembly> GetAssemblies(TypeResolutionState typeResolutionState, TypeName typeName)

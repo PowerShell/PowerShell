@@ -59,7 +59,7 @@ namespace System.Management.Automation
                     try
                     {
                         _typeInfo.GetFuncDesc(GetFuncDescIndex(), out pFuncDesc);
-                        COM.FUNCDESC funcdesc = ClrFacade.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
+                        COM.FUNCDESC funcdesc = Marshal.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
 
                         if (IsGettable)
                         {
@@ -347,7 +347,7 @@ namespace System.Management.Automation
             try
             {
                 _typeInfo.GetFuncDesc(GetFuncDescIndex(), out pFuncDesc);
-                COM.FUNCDESC funcdesc = ClrFacade.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
+                COM.FUNCDESC funcdesc = Marshal.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
 
                 return ComUtil.GetMethodSignatureFromFuncDesc(_typeInfo, funcdesc, !IsGettable);
             }

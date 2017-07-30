@@ -4469,8 +4469,7 @@ namespace System.Management.Automation
                 for (int i = 0; i < numEntries; ++i)
                 {
                     IntPtr curInfoPtr = (IntPtr)((long)shBuf + (Marshal.SizeOf<SHARE_INFO_1>() * i));
-                    SHARE_INFO_1 shareInfo = ClrFacade.PtrToStructure<SHARE_INFO_1>(curInfoPtr);
-
+                    SHARE_INFO_1 shareInfo = Marshal.PtrToStructure<SHARE_INFO_1>(curInfoPtr);
 
                     if ((shareInfo.type & STYPE_MASK) != STYPE_DISKTREE)
                         continue;
