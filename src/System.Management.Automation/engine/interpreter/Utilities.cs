@@ -836,6 +836,9 @@ namespace System.Management.Automation.Interpreter
         /// </summary>
         private StorageInfo CreateStorageInfo()
         {
+            // we do our own locking, tell hosts this is a bad time to interrupt us.
+            Thread.BeginCriticalRegion();
+
             StorageInfo[] curStorage = s_updating;
             try
             {
@@ -882,6 +885,8 @@ namespace System.Management.Automation.Interpreter
                     // let others access the storage again
                     Interlocked.Exchange(ref _stores, curStorage);
                 }
+
+                Thread.EndCriticalRegion();
             }
         }
 
