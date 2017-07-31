@@ -1,4 +1,3 @@
-#if CORECLR
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -1113,5 +1112,3 @@ namespace Microsoft.PowerShell
 #endregion TEMPORARY
 
 #pragma warning restore 1591, 1572, 1571, 1573, 1587, 1570, 0067
-
-#endif
