@@ -427,7 +427,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!_fragment)
             {
-                if(_metaSpecified)
+                /*if(_metaSpecified)
                 {
                     foreach(string s in _meta.Keys)
                     {
@@ -436,7 +436,7 @@ namespace Microsoft.PowerShell.Commands
                             ThrowTerminatingError (new ErrorRecord(exc, "MetaPropertyNotFound", ErrorCategory.ParserError, null));
                         }
                     }
-                }
+                }*/
                 if(!Transitional)
                 {
                     WriteObject("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
@@ -455,13 +455,31 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach(string s in _meta.Keys)
                     {
-                        if(s == "content-type" || s == "default-style")
+                        switch(s){
+                            case "content-type":
+                            case "default-style":
+                                WriteObject("<meta http-equiv=\"" + s + "\" content=\"" + _meta[s] + "\">");
+                                break;
+                            case "application-name":
+                            case "author":
+                            case "description":
+                            case "generator":
+                            case "keywords":
+                            case "viewport":
+                                WriteObject("<meta name=\"" + s + "\" content=\"" + _meta[s] + "\">");
+                                break;
+                            default:
+                                Exception exc = new NotSupportedException(StringUtil.Format(ConvertHTMLStrings.MetaPropertyNotFound, s));
+                                ThrowTerminatingError (new ErrorRecord(exc, "MetaPropertyNotFound", ErrorCategory.ParserError, null));
+                                break;
+                        }
+                        /*if(s == "content-type" || s == "default-style")
                         {
                             WriteObject("<meta http-equiv=\"" + s + "\" content=\"" + _meta[s] + "\">");
                         }
                         else if (s == "application-name" || s == "author" || s == "description" || s == "generator" || s == "keywords" || s == "viewport") {
                             WriteObject("<meta name=\"" + s + "\" content=\"" + _meta[s] + "\">");
-                        }
+                        }*/
                     }
                 }
                 WriteObject(_head ?? new string[] { "<title>" + _title + "</title>" }, true);

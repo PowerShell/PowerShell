@@ -118,6 +118,6 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="MetaPropertyNotFound" xml:space="preserve">
-    <value>{0} is not a supported meta property. Accepted meta properties are content-type, default-style, refresh, application-name, author, description, generator, keywords, and viewport.</value>
+    <value>{0} is not a supported meta property. Accepted meta properties are content-type, default-style, application-name, author, description, generator, keywords, and viewport.</value>
   </data>
 </root>
