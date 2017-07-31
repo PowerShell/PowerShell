@@ -1645,13 +1645,11 @@ namespace System.Management.Automation
                         errorOccurred = true;
                         error = targetInvocationException;
                     }
-#if !CORECLR // MethodAccessException not in CoreCLR
                     catch (MethodAccessException methodAccessException)
                     {
                         errorOccurred = true;
                         error = methodAccessException;
                     }
-#endif
                     catch (MemberAccessException memberAccessException)
                     {
                         errorOccurred = true;
