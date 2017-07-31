@@ -566,11 +566,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (s_certPathRegex == null)
                     {
-                        RegexOptions options = RegexOptions.IgnoreCase;
-
-#if !CORECLR
-                        options |= RegexOptions.Compiled;
-#endif
+                        RegexOptions options = RegexOptions.IgnoreCase | RegexOptions.Compiled;
                         s_certPathRegex = new Regex(certPathPattern, options);
                     }
                 }
@@ -2516,13 +2512,7 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-#if CORECLR
-                        //TODO:CORECLR See if there is a need to create a copy of cert like its done on Full PS
-                        X509Certificate2 cert2 = cert;
-#else
-                        X509Certificate2 cert2 = new X509Certificate2(cert);
-#endif
-                        PSObject myPsObj = new PSObject(cert2);
+                        PSObject myPsObj = new PSObject(cert);
                         thingToReturn = (object)myPsObj;
                     }
                     WriteItemObject(thingToReturn, certPath, false);
@@ -3327,7 +3317,7 @@ namespace Microsoft.PowerShell.Commands
             // extract DNS name from subject distinguish name
             // if it exists and does not contain a comma
             // a comma, indicates it is not a DNS name
-            if(cert.Subject.StartsWith(distinguishedNamePrefix, System.StringComparison.InvariantCultureIgnoreCase) && 
+            if(cert.Subject.StartsWith(distinguishedNamePrefix, System.StringComparison.InvariantCultureIgnoreCase) &&
                 cert.Subject.IndexOf(",",System.StringComparison.InvariantCulture)==-1)
             {
                 name = cert.Subject.Substring(distinguishedNamePrefix.Length);
