@@ -53,4 +53,19 @@ Describe "Unblock-File" -Tags "CI" {
         Unblock-File -LiteralPath $testfilepath
         Test-UnblockFile | Should Be $true
     }
+
+    It "Throw if a file is read only" {
+        $TestFile = Join-Path $TestDrive "testfileunlock.ps1"
+        Set-Content -Path $TestFile -value 'test'
+        $ZoneIdentifier = {
+            [ZoneTransfer]
+            ZoneId=3
+        }
+        Set-Content -Path $TestFile -Value $ZoneIdentifier -Stream 'Zone.Identifier'
+        Set-ItemProperty -Path $TestFile -Name IsReadOnly -Value $True
+
+        $TestFileCreated = Get-ChildItem $TestFile
+        $TestFileCreated.IsReadOnly | Should Be $true
+        { Unblock-File -LiteralPath $TestFile -ErrorAction Stop } | ShouldBeErrorId "System.ComponentModel.Win32Exception,Microsoft.PowerShell.Commands.UnblockFileCommand"
+    }
 }
