@@ -1501,8 +1501,14 @@ namespace System.Management.Automation.Internal
     /// </summary>
     internal class ShellExecuteHelper
     {
-        private static bool _succeeded;
-        private static int _errorCode;
+        private NativeMethods.ShellExecuteInfo _executeInfo;
+        private int _errorCode;
+        private bool _succeeded;
+
+        /// <summary>
+        /// Constructor for ShellExecuteHelper
+        /// </summary>
+        private ShellExecuteHelper(NativeMethods.ShellExecuteInfo executeInfo) { _executeInfo = executeInfo; }
 
         /// <summary>
         /// Start a process using ShellExecuteEx with default settings about WindowStyle and Verb.
@@ -1549,28 +1555,16 @@ namespace System.Management.Automation.Internal
                     shellExecuteInfo.lpDirectory = Marshal.StringToHGlobalUni(startInfo.WorkingDirectory);
 
                 shellExecuteInfo.fMask |= NativeMethods.SEE_MASK_FLAG_DDEWAIT;
-                if (Thread.CurrentThread.GetApartmentState() == System.Threading.ApartmentState.STA)
+                ShellExecuteHelper helper = new ShellExecuteHelper(shellExecuteInfo);
+                if (!helper.ExecuteOnSTAThread())
                 {
-                    InvokeShellExecuteEx(shellExecuteInfo);
-                }
-                else
-                {
-                    ParameterizedThreadStart threadStart = new ParameterizedThreadStart(InvokeShellExecuteEx);
-                    Thread thread = new Thread(threadStart);
-                    thread.SetApartmentState(System.Threading.ApartmentState.STA);
-                    thread.Start(shellExecuteInfo);
-                    thread.Join();
-                }
-
-                if (!_succeeded)
-                {
-                    if(_errorCode == NativeMethods.ERROR_BAD_EXE_FORMAT || _errorCode == NativeMethods.ERROR_EXE_MACHINE_TYPE_MISMATCH)
+                    if(helper.ErrorCode == NativeMethods.ERROR_BAD_EXE_FORMAT || helper.ErrorCode == NativeMethods.ERROR_EXE_MACHINE_TYPE_MISMATCH)
                     {
-                        throw new Win32Exception(_errorCode, "InvalidApplication");
+                        throw new Win32Exception(helper.ErrorCode, "InvalidApplication");
                     }
                     else
                     {
-                        throw new Win32Exception(_errorCode);
+                        throw new Win32Exception(helper.ErrorCode);
                     }
                 }
             }
@@ -1597,16 +1591,13 @@ namespace System.Management.Automation.Internal
             return processToReturn;
         }
 
-        private static void InvokeShellExecuteEx(object param)
-        {
-            NativeMethods.ShellExecuteInfo shellExecuteInfo = (NativeMethods.ShellExecuteInfo)param;
-            _succeeded = true;
-            if (!NativeMethods.ShellExecuteEx(shellExecuteInfo))
+        private void ShellExecuteFunction() {
+            if (!NativeMethods.ShellExecuteEx(_executeInfo))
             {
                 _errorCode = Marshal.GetLastWin32Error();
                 if (_errorCode == 0)
                 {
-                    switch ((long)shellExecuteInfo.hInstApp)
+                    switch ((long)_executeInfo.hInstApp)
                     {
                         case NativeMethods.SE_ERR_FNF: _errorCode = NativeMethods.ERROR_FILE_NOT_FOUND; break;
                         case NativeMethods.SE_ERR_PNF: _errorCode = NativeMethods.ERROR_PATH_NOT_FOUND; break;
@@ -1618,10 +1609,35 @@ namespace System.Management.Automation.Internal
                         case NativeMethods.SE_ERR_SHARE: _errorCode = NativeMethods.ERROR_SHARING_VIOLATION; break;
                         case NativeMethods.SE_ERR_NOASSOC: _errorCode = NativeMethods.ERROR_NO_ASSOCIATION; break;
                         case NativeMethods.SE_ERR_DLLNOTFOUND: _errorCode = NativeMethods.ERROR_DLL_NOT_FOUND; break;
-                        default: _errorCode = (int)shellExecuteInfo.hInstApp; break;
+                        default: _errorCode = (int)_executeInfo.hInstApp; break;
                     }
                 }
                 _succeeded = false;
+            }
+        }
+
+        private bool ExecuteOnSTAThread()
+        {
+            if (Thread.CurrentThread.GetApartmentState() != System.Threading.ApartmentState.STA)
+            {
+                ThreadStart threadStart = new ThreadStart(this.ShellExecuteFunction);
+                Thread thread = new Thread(threadStart);
+                thread.SetApartmentState(System.Threading.ApartmentState.STA);
+                thread.Start();
+                thread.Join();
+            }
+            else
+            {
+                ShellExecuteFunction();
+            }
+            return _succeeded;
+        }
+
+        private int ErrorCode 
+        {
+            get 
+            {
+                return _errorCode;
             }
         }
 
