@@ -11,10 +11,9 @@ using System.Threading;
 using System.Management.Automation;
 using Microsoft.Win32;
 
-#if CORECLR
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-#endif
+
 
 namespace System.Management.Automation
 {
@@ -31,13 +30,9 @@ namespace System.Management.Automation
         /// </summary>
         static ConfigPropertyAccessor()
         {
-#if CORECLR
             Instance = Platform.IsInbox
                             ? (ConfigPropertyAccessor) new RegistryAccessor()
                             : new JsonConfigFileAccessor();
-#else
-            Instance = new RegistryAccessor();
-#endif
         }
         /// <summary>
         /// The instance of the ConfigPropertyAccessor to use to interact with properties.
@@ -111,7 +106,6 @@ namespace System.Management.Automation
         #endregion // Interface Methods
     }
 
-#if CORECLR
     /// <summary>
     /// JSON configuration file accessor
     ///
@@ -491,7 +485,6 @@ namespace System.Management.Automation
         }
     }
 
-#endif // CORECLR
 
     internal class RegistryAccessor : ConfigPropertyAccessor
     {
