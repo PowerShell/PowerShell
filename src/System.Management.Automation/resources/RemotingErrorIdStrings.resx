@@ -1636,7 +1636,10 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   <data name="InvalidRoleCapabilityFileExtension" xml:space="preserve">
     <value>The provided role capability file {0} does not have the required .psrc extension.</value>
   </data>
-  <data name="SSHAbruptlyTerminated" >
+  <data name="SSHAbruptlyTerminated" xml:space="preserve">
     <value>The SSH transport process has abruptly terminated causing this remote session to break.</value>
+  </data>
+  <data name="WSManClientDllNotAvailable" xml:space="preserve">
+    <value>This parameter set requires WSMan, and no supported WSMan client library was found. WSMan is either not installed or unavailable for this system.</value>
   </data>
 </root>
