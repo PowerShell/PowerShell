@@ -591,7 +591,7 @@ namespace System.Management.Automation
             return Platform.SelectProductNameForDirectory(Platform.XDG_Type.SHARED_MODULES);
 #else
             string sharedModulePath = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-           
+
             if (!string.IsNullOrEmpty(sharedModulePath))
             {
                 sharedModulePath = Path.Combine(sharedModulePath, Utils.ModuleDirectory);
@@ -819,12 +819,8 @@ namespace System.Management.Automation
             string personalModulePath = GetPersonalModulePath();
             string sharedModulePath = GetSharedModulePath(); // aka <Program Files> location
             string psHomeModulePath = GetPSHomeModulePath(); // $PSHome\Modules location
-
-#if CORECLR
             bool runningSxS = Platform.IsInbox ? false : true;
-#else
-            bool runningSxS = false;
-#endif
+
             if (!string.IsNullOrEmpty(currentProcessModulePath) &&
                 NeedToClearProcessModulePath(currentProcessModulePath, personalModulePath, sharedModulePath, runningSxS))
             {
@@ -887,14 +883,6 @@ namespace System.Management.Automation
                             int psHomePosition = PathContainsSubstring(currentProcessModulePath, psHomeModulePath); // index of $PSHome\Modules in currentProcessModulePath
                             if (psHomePosition >= 0) // if $PSHome\Modules IS found - insert <Program Files> location before $PSHome\Modules
                             {
-#if !CORECLR
-                                // for bug 6678623, if we are running wow64 process (x86 32-bit process on 64-bit (amd64) OS), then ensure that <SpecialFolder.MyDocuments> exists in currentProcessModulePath / return value
-                                if (Environment.Is64BitOperatingSystem && !Environment.Is64BitProcess)
-                                {
-                                    currentProcessModulePath = AddToPath(currentProcessModulePath, personalModulePath, psHomePosition);
-                                    psHomePosition = PathContainsSubstring(currentProcessModulePath, psHomeModulePath);
-                                }
-#endif
                                 return AddToPath(currentProcessModulePath, sharedModulePath, psHomePosition);
                             } // if $PSHome\Modules NOT found = <scenario 4> = 'PSModulePath has been constrained by a user to create a sand boxed environment without including System Modules'
 
