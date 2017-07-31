@@ -1640,6 +1640,6 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>The SSH transport process has abruptly terminated causing this remote session to break.</value>
   </data>
   <data name="WSManClientDllNotAvailable" xml:space="preserve">
-    <value>WSMan client library is not installed</value>
+    <value>This parameter set requires WSMan, and no supported WSMan client library was found. WSMan is either not installed or unavailable for this system.</value>
   </data>
 </root>

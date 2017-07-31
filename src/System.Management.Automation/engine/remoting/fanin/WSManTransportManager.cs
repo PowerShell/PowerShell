@@ -2604,8 +2604,7 @@ namespace System.Management.Automation.Remoting.Client
                 }
                 catch (DllNotFoundException)
                 {
-                    throw new PSRemotingTransportException(
-                        StringUtil.Format(RemotingErrorIdStrings.WSManClientDllNotAvailable));
+                    throw new PSRemotingTransportException(RemotingErrorIdStrings.WSManClientDllNotAvailable);
                 }
 
                 // input / output streams common to all connections
