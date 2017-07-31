@@ -19,6 +19,7 @@
     <PackageReference Include="System.Security.Permissions" Version="4.4.0-preview3-25423-02" />
     <PackageReference Include="System.Text.Encoding.CodePages" Version="4.4.0-preview3-25423-02" />
     <PackageReference Include="Microsoft.Management.Infrastructure" Version="1.0.0-alpha*" />
+    <PackageReference Include="Microsoft.NETCore.Windows.ApiSets" Version="1.0.1" />
   </ItemGroup>
 
   <PropertyGroup>
