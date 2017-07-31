@@ -370,13 +370,7 @@ namespace System.Management.Automation
             get { return _supportsTransactions; }
             set
             {
-#if !CORECLR
                 _supportsTransactions = value;
-#else
-                // Disable 'SupportsTransactions' in CoreCLR
-                // No transaction supported on CSS due to the lack of System.Transactions namespace
-                _supportsTransactions = false;
-#endif
             }
         }
         private bool _supportsTransactions = false;
