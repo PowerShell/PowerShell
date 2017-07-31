@@ -36,11 +36,9 @@ namespace Microsoft.PowerShell.Cim
             {
                 _string = new string('\0', numberOfCharacters);
 
-#if !CORECLR    // String.IsInterned Not In CoreCLR
                 Debug.Assert(
                     string.IsInterned(_string) == null,
                     "We will overwrite string contents - we can't / shouldn't do this for interned strings.");
-#endif
 
                 /* The string is pinned (while still being filled with insignificant data)
                  * to prevent copying of sensitive data by garbage collection.
