@@ -50,11 +50,7 @@ namespace System.Management.Automation
         /// <summary>
         /// A constant to track current PowerShell Edition
         /// </summary>
-#if !CORECLR
-        internal const string PSEditionValue = "Desktop";
-#else
         internal const string PSEditionValue = "Core";
-#endif
 
         // Static Constructor.
         static PSVersionInfo()
@@ -69,11 +65,7 @@ namespace System.Management.Automation
             s_psVersionTable[PSVersionInfo.PSRemotingProtocolVersionName] = RemotingConstants.ProtocolVersion;
             s_psVersionTable[PSVersionInfo.WSManStackVersionName] = GetWSManStackVersion();
             s_psVersionTable[PSPlatformName] = Environment.OSVersion.Platform.ToString();
-#if CORECLR
             s_psVersionTable[PSOSName] = Runtime.InteropServices.RuntimeInformation.OSDescription.ToString();
-#else
-            s_psVersionTable[PSOSName] = Environment.OSVersion.ToString();
-#endif
         }
 
         internal static PSVersionHashTable GetPSVersionTable()
