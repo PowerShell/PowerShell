@@ -32,6 +32,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
             param($TestFile)
 
             $expectedTitle = Split-Path $TestFile -Leaf
+            open -F -a TextEdit
             $beforeCount = [int]('tell application "TextEdit" to count of windows' | osascript)
             Invoke-Item -Path $TestFile
             $startTime = Get-Date
@@ -45,6 +46,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
             $afterCount | Should Be ($beforeCount + 1)
             $title | Should Be $expectedTitle
             "tell application ""TextEdit"" to close window ""$expectedTitle""" | osascript
+            'tell application "TextEdit" to quit' | osascript
         }
     }
 
