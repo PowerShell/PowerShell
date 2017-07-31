@@ -15,19 +15,10 @@
 
 
 using System.Collections.Concurrent;
-#if !CLR2
 using BigInt = System.Numerics.BigInteger;
-#endif
-
-#if CORECLR
-// Used for 'GetField' which is not available under 'Type' in CoreClR but provided as an extension method in 'System.Reflection.TypeExtensions'
-using System.Reflection;
-#endif
-
 using System.Runtime.CompilerServices;
 using System.Threading;
 
-//using Microsoft.Scripting.Math;
 
 namespace System.Management.Automation.Interpreter
 {
