@@ -258,9 +258,7 @@ namespace Microsoft.Management.Infrastructure.CimCmdlets
         /// If set EnableRaisingEvents to false, which will be ignored
         /// </para>
         /// </summary>
-#if !CORECLR
         [BrowsableAttribute(false)]
-#endif
         public bool EnableRaisingEvents
         {
             get
