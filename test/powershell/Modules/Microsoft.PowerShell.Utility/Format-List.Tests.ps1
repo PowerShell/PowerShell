@@ -149,5 +149,12 @@ Describe "Format-List DRT basic functionality" -Tags "CI" {
 		$result | Should Match "Length : 2"
 		$result | Should Match "Name   : name3"
 		$result | Should Match "Length : 3"
-	}
+    }
+
+    It "Format-List with FileInfo should work" {
+        $null = New-Item $testdrive\test.txt -ItemType File -Value "hello" -Force
+        $result = Get-ChildItem -File $testdrive\test.txt | Format-List | Out-String
+        $result | Should Match "Name\s*:\s*test.txt"
+        $result | Should Match "Length\s*:\s*5"
+    }
 }
