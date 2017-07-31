@@ -28,6 +28,7 @@
     <PackageReference Include="System.Text.Encodings.Web" Version="4.4.0-preview3-25423-02" />
     <PackageReference Include="System.Threading.AccessControl" Version="4.4.0-preview3-25423-02" />
     <PackageReference Include="System.Private.ServiceModel" Version="4.4.0-preview3-25423-01" />
+    <PackageReference Include="Microsoft.NETCore.Windows.ApiSets" Version="1.0.1" />
   </ItemGroup>
 
 </Project>
