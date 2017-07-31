@@ -8,9 +8,6 @@ using System.Text;
 using System.ComponentModel;
 using Microsoft.PowerShell;
 
-#if CORECLR
-using System.Reflection;
-#endif
 
 namespace System.Management.Automation
 {
