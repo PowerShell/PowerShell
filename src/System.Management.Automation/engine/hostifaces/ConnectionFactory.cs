@@ -82,8 +82,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="ArgumentNullException">
         /// Thrown when runspaceConfiguration is null
         /// </exception>
-        internal
-        static Runspace CreateRunspace(RunspaceConfiguration runspaceConfiguration)
+        internal static Runspace CreateRunspace(RunspaceConfiguration runspaceConfiguration)
         {
             if (runspaceConfiguration == null)
             {
@@ -113,8 +112,7 @@ namespace System.Management.Automation.Runspaces
         /// <exception cref="ArgumentNullException">
         /// Thrown when runspaceConfiguration is null
         /// </exception>
-        internal
-        static Runspace CreateRunspace(PSHost host, RunspaceConfiguration runspaceConfiguration)
+        internal static Runspace CreateRunspace(PSHost host, RunspaceConfiguration runspaceConfiguration)
         {
             if (host == null)
             {
