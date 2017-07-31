@@ -249,72 +249,56 @@ Describe "TabCompletion" -Tags CI {
             Remove-Item -Path $tempDir -Recurse -Force
         }
 
+        AfterEach {
+            Pop-Location
+        }
+
         It "Input '<inputStr>' should successfully complete" -TestCases $testCases {
             param ($inputStr, $localExpected)
 
-            try {
-                Push-Location -Path $tempDir
-                $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-                $res.CompletionMatches.Count | Should BeGreaterThan 0
-                $res.CompletionMatches[0].CompletionText | Should Be $localExpected
-            } finally {
-                Pop-Location
-            }
+            Push-Location -Path $tempDir
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be $localExpected
         }
 
         It "Input '<inputStr>' should successfully complete with relative path '..\'" -TestCases $testCases {
             param ($inputStr, $oneSubExpected)
 
-            try {
-                Push-Location -Path $oneSubDir
-                $inputStr = "..${separator}${inputStr}"
-                $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-                $res.CompletionMatches.Count | Should BeGreaterThan 0
-                $res.CompletionMatches[0].CompletionText | Should Be $oneSubExpected
-            } finally {
-                Pop-Location
-            }
+            Push-Location -Path $oneSubDir
+            $inputStr = "..${separator}${inputStr}"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be $oneSubExpected
         }
 
         It "Input '<inputStr>' should successfully complete with relative path '..\..\'" -TestCases $testCases {
             param ($inputStr, $twoSubExpected)
 
-            try {
-                Push-Location -Path $twoSubDir
-                $inputStr = "..${separator}..${separator}${inputStr}"
-                $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-                $res.CompletionMatches.Count | Should BeGreaterThan 0
-                $res.CompletionMatches[0].CompletionText | Should Be $twoSubExpected
-            } finally {
-                Pop-Location
-            }
+            Push-Location -Path $twoSubDir
+            $inputStr = "..${separator}..${separator}${inputStr}"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be $twoSubExpected
         }
 
         It "Input '<inputStr>' should successfully complete with relative path '..\..\..\ba*\'" -TestCases $testCases {
             param ($inputStr, $twoSubExpected)
 
-            try {
-                Push-Location -Path $twoSubDir
-                $inputStr = "..${separator}..${separator}..${separator}ba*${separator}${inputStr}"
-                $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-                $res.CompletionMatches.Count | Should BeGreaterThan 0
-                $res.CompletionMatches[0].CompletionText | Should Be $twoSubExpected
-            } finally {
-                Pop-Location
-            }
+            Push-Location -Path $twoSubDir
+            $inputStr = "..${separator}..${separator}..${separator}ba*${separator}${inputStr}"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be $twoSubExpected
         }
 
         It "Test relative path" {
-            try {
-                Push-Location -Path $oneSubDir
-                $beforeTab = "twoSubDir${separator}..${separator}..${separator}pri"
-                $afterTab = "..${separator}prime"
-                $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-                $res.CompletionMatches.Count | Should Be 1
-                $res.CompletionMatches[0].CompletionText | Should Be $afterTab
-            } finally {
-                Pop-Location
-            }
+            Push-Location -Path $oneSubDir
+            $beforeTab = "twoSubDir${separator}..${separator}..${separator}pri"
+            $afterTab = "..${separator}prime"
+            $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
+            $res.CompletionMatches.Count | Should Be 1
+            $res.CompletionMatches[0].CompletionText | Should Be $afterTab
         }
     }
 
@@ -604,19 +588,20 @@ Describe "TabCompletion" -Tags CI {
 
             New-Item -Path "$TestDrive\My [Path]" -ItemType Directory > $null
             New-Item -Path "$TestDrive\My [Path]\test.ps1" -ItemType File > $null
+
+            Push-Location -Path $TestDrive
+        }
+
+        AfterAll {
+            Pop-Location
         }
 
         It "Complete special relative path '<inputStr>'" -TestCases $testCases {
             param($inputStr, $expected)
 
-            try {
-                Push-Location -Path $TestDrive
-                $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-                $res.CompletionMatches.Count | Should BeGreaterThan 0
-                $res.CompletionMatches[0].CompletionText | Should Be $expected
-            } finally {
-                Pop-Location
-            }
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be $expected
         }
     }
 
