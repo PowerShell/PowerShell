@@ -478,12 +478,6 @@ namespace Microsoft.PowerShell.Commands
                     {
                         rv = obj.ToString();
                     }
-#if !CORECLR
-                    else if (EnumsAsStrings)
-                    {
-                        rv = obj.ToString();
-                    }
-#endif
                     else
                     {
                         rv = obj;
