@@ -1,4 +1,4 @@
-version: 6.0.0-beta.4-{build}
+# version is set in tools\appveyor.psm1 - Invoke-AppVeyorInstall
 
 image: Visual Studio 2017
 

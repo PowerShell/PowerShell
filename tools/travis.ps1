@@ -1,7 +1,6 @@
 param(
     [switch]$Bootstrap
 )
-
 Import-Module $PSScriptRoot/../build.psm1 -Force
 Import-Module $PSScriptRoot/packaging -Force
 
@@ -117,10 +116,13 @@ $isFullBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 
 if($Bootstrap.IsPresent)
 {
     Write-Host -Foreground Green "Executing travis.ps1 -BootStrap `$isPR='$isPr' - $commitMessage"
+    # Make sure we have all the tags
+    Sync-PSTags -AddRemoteIfMissing
     Start-PSBootstrap -Package:(-not $isPr)
 }
 else 
 {
+    $BaseVersion = (Get-PSVersion -OmitCommitId) + '-'
     Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
     $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions))
 
@@ -167,9 +169,25 @@ else
         # Run 'CrossGen' for push commit, so that we can generate package.
         # It won't rebuild powershell, but only CrossGen the already built assemblies.
         if (-not $isFullBuild) { Start-PSBuild -CrossGen }
+        
+        $packageParams = @{}
+        if($env:TRAVIS_BUILD_NUMBER)
+        {
+            $version = $BaseVersion + $env:TRAVIS_BUILD_NUMBER
+            $packageParams += @{Version=$version}
+        }
         # Only build packages for branches, not pull requests
-        Start-PSPackage
-        Start-PSPackage -Type AppImage
+        $packages = @(Start-PSPackage @packageParams)
+        $packages += Start-PSPackage  @packageParams -Type AppImage
+        foreach($package in $packages)
+        {
+            if($env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
+            {
+                log "pushing $package to $env:NUGET_URL"
+                Start-NativeExecution -sb {dotnet nuget push $package --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
+            }            
+        }
+
         try {
             # this throws if there was an error
             Test-PSPesterResults

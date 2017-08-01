@@ -189,6 +189,13 @@ function Invoke-AppVeyorBuild
 # Implements the AppVeyor 'install' step
 function Invoke-AppVeyorInstall
 {
+    # Make sure we have all the tags
+    Sync-PSTags -AddRemoteIfMissing
+    if($env:APPVEYOR_BUILD_NUMBER)
+    {
+        Update-AppveyorBuild -Version "$(Get-PSVersion -OmitCommitId)-$env:APPVEYOR_BUILD_NUMBER"
+    }
+
     if(Test-DailyBuild){
         $buildName = "[Daily]"
 
@@ -434,8 +441,14 @@ function Get-PackageName
 function Invoke-AppveyorFinish
 {
     try {
+        $packageParams = @{}
+        if($env:APPVEYOR_BUILD_VERSION)
+        {
+            $packageParams += @{Version=$env:APPVEYOR_BUILD_VERSION}
+        }
+
         # Build packages
-        $packages = Start-PSPackage
+        $packages = Start-PSPackage @packageParams
 
         $name = Get-PackageName
 
@@ -503,6 +516,12 @@ function Invoke-AppveyorFinish
                 $pushedAllArtifacts = $false
                 Write-Warning "Artifact $_ does not exist."
             }
+
+            if($env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($_) -ieq '.nupkg')
+            {
+                log "pushing $_ to $env:NUGET_URL"
+                Start-NativeExecution -sb {dotnet nuget push $_ --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
+            }            
         }
         if(!$pushedAllArtifacts)
         {

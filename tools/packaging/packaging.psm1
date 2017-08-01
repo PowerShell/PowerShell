@@ -19,13 +19,15 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, OS X, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "appx", "zip", "AppImage")]
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "appx", "zip", "AppImage", "nupkg")]
         [string[]]$Type,
 
         # Generate windows downlevel package
         [ValidateSet("win81-x64", "win7-x86", "win7-x64")]
         [ValidateScript({$Environment.IsWindows})]
-        [string]$WindowsDownLevel
+        [string]$WindowsDownLevel,
+
+        [Switch] $Force
     )
 
     # Runtime and Configuration settings required by the package
@@ -34,10 +36,10 @@ function Start-PSPackage {
     } else {
         New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
     }
-    Write-Verbose "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'" -Verbose
+    log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
 
     $Script:Options = Get-PSOptions
-    
+
     # Make sure the most recent build satisfies the package requirement
     if (-not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
         -not $Script:Options.CrossGen -or                       ## Last build didn't specify -CrossGen
@@ -72,26 +74,26 @@ function Start-PSPackage {
     }
 
     $Source = Split-Path -Path $Script:Options.Output -Parent
-    Write-Verbose "Packaging Source: '$Source'" -Verbose
+    log "Packaging Source: '$Source'"
 
     # Decide package output type
     if (-not $Type) {
         $Type = if ($Environment.IsLinux) {
             if ($Environment.LinuxInfo.ID -match "ubuntu") {
-                "deb"
+                "deb", "nupkg"
             } elseif ($Environment.IsRedHatFamily) {
-                "rpm"
+                "rpm", "nupkg"
             } else {
                 throw "Building packages for $($Environment.LinuxInfo.PRETTY_NAME) is unsupported!"
             }
         } elseif ($Environment.IsOSX) {
-            "osxpkg"
+            "osxpkg", "nupkg"
         } elseif ($Environment.IsWindows) {
-            "msi", "appx"
+            "msi", "nupkg"
         }
         Write-Warning "-Type was not specified, continuing with $Type!"
     }
-    Write-Verbose "Packaging Type: $Type" -Verbose
+    log "Packaging Type: $Type"
 
     # Build the name suffix for win-plat packages
     if ($Environment.IsWindows) {
@@ -110,6 +112,7 @@ function Start-PSPackage {
                 PackageNameSuffix = $NameSuffix
                 PackageSourcePath = $Source
                 PackageVersion = $Version
+                Force = $Force
             }
 
             if($pscmdlet.ShouldProcess("Create Zip Package"))
@@ -132,7 +135,8 @@ function Start-PSPackage {
                 LicenseFilePath = "$PSScriptRoot\..\..\assets\license.rtf"
                 # Product Guid needs to be unique for every PowerShell version to allow SxS install
                 ProductGuid = New-Guid
-                ProductTargetArchitecture = $TargetArchitecture;
+                ProductTargetArchitecture = $TargetArchitecture
+                Force = $Force
             }
 
             if($pscmdlet.ShouldProcess("Create MSI Package"))
@@ -146,6 +150,7 @@ function Start-PSPackage {
                 PackageSourcePath = $Source
                 PackageVersion = $Version
                 AssetsPath = "$PSScriptRoot\..\..\assets"
+                Force = $Force
             }
             New-AppxPackage @Arguments
         }
@@ -161,12 +166,28 @@ function Start-PSPackage {
                 Write-Warning "Ignoring AppImage type for non Ubuntu Trusty platform"
             }
         }
+        'nupkg' {
+            $Arguments = @{
+                PackageNameSuffix = $NameSuffix
+                PackageSourcePath = $Source
+                PackageVersion = $Version
+                PackageRuntime = $Runtime
+                PackageConfiguration = $Configuration
+                Force = $Force
+            }
+
+            if($pscmdlet.ShouldProcess("Create NuPkg Package"))
+            {
+                New-NugetPackage @Arguments
+            }
+        }
         default {
             $Arguments = @{
                 Type = $_
                 PackageSourcePath = $Source
                 Name = $Name
                 Version = $Version
+                Force = $Force
             }
 
             if($pscmdlet.ShouldProcess("Create $_ Package"))
@@ -197,7 +218,10 @@ function New-UnixPackage {
 
         # Package iteration version (rarely changed)
         # This is a string because strings are appended to it
-        [string]$Iteration = "1"
+        [string]$Iteration = "1",
+
+        [Switch]
+        $Force
     )
 
     # Validate platform
@@ -259,25 +283,8 @@ function New-UnixPackage {
 
     # Setup staging directory so we don't change the original source directory
     $Staging = "$PSScriptRoot/staging"
-    if($pscmdlet.ShouldProcess("Create staging folder"))
-    {
-        Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $Staging
-        Copy-Item -Recurse $PackageSourcePath $Staging
-
-        # Rename files to given name if not "powershell"
-        if ($Name -ne "powershell") {
-            $Files = @("powershell",
-                    "powershell.dll",
-                    "powershell.deps.json",
-                    "powershell.pdb",
-                    "powershell.runtimeconfig.json",
-                    "powershell.xml")
-
-            foreach ($File in $Files) {
-                $NewName = $File -replace "^powershell", $Name
-                Move-Item "$Staging/$File" "$Staging/$NewName"
-            }
-        }
+    if ($pscmdlet.ShouldProcess("Create staging folder")) {
+        New-StagingFolder -StagingPath $Staging -Name $Name
     }
 
     # Follow the Filesystem Hierarchy Standard for Linux and OS X
@@ -497,11 +504,44 @@ function New-UnixPackage {
 
             $newPackageName = "{0}-{1}{2}" -f $packageNameWithoutExt, $script:Options.Runtime, $packageExt
             $newPackagePath = Join-Path $createdPackage.DirectoryName $newPackageName
-            $createdPackage = Rename-Item $createdPackage.FullName $newPackagePath -PassThru
+            $createdPackage = Rename-Item $createdPackage.FullName $newPackagePath -PassThru -Force:$Force
         }
     }
 
     return $createdPackage
+}
+
+function New-StagingFolder
+{
+    param(
+        [Parameter(Mandatory)]
+        [string]
+        $StagingPath,
+
+        # Must start with 'powershell' but may have any suffix
+        [Parameter(Mandatory)]
+        [ValidatePattern("^powershell")]
+        [string]
+        $Name
+    )
+
+    Remove-Item -Recurse -Force -ErrorAction SilentlyContinue $StagingPath
+    Copy-Item -Recurse $PackageSourcePath $StagingPath
+
+    # Rename files to given name if not "powershell"
+    if ($Name -ne "powershell") {
+        $Files = @("powershell",
+                "powershell.dll",
+                "powershell.deps.json",
+                "powershell.pdb",
+                "powershell.runtimeconfig.json",
+                "powershell.xml")
+
+        foreach ($File in $Files) {
+            $NewName = $File -replace "^powershell", $Name
+            Move-Item "$StagingPath/$File" "$StagingPath/$NewName"
+        }
+    }
 }
 
 # Function to create a zip file for Nano Server and xcopy deployment
@@ -539,6 +579,14 @@ function New-ZipPackage
 
     $zipLocationPath = Join-Path $PWD "$zipPackageName.zip"
 
+    if($Force.IsPresent)
+    {
+        if(Test-Path $zipLocationPath)
+        {
+            Remove-Item $zipLocationPath
+        }
+    }
+
     If(Get-Command Compress-Archive -ErrorAction Ignore)
     {
         if($pscmdlet.ShouldProcess("Create zip package"))
@@ -546,7 +594,7 @@ function New-ZipPackage
             Compress-Archive -Path $PackageSourcePath\* -DestinationPath $zipLocationPath
         }
 
-        Write-Verbose "You can find the Zip @ $zipLocationPath" -Verbose
+        log "You can find the Zip @ $zipLocationPath"
         $zipLocationPath
 
     }
@@ -555,4 +603,193 @@ function New-ZipPackage
     {
         Write-Error -Message "Compress-Archive cmdlet is missing in this PowerShell version"
     }
+}
+
+
+function New-NugetPackage
+{
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    param (
+
+        # Name of the Product
+        [ValidateNotNullOrEmpty()]
+        [string] $PackageName = 'PowerShell',
+
+        # Suffix of the Name
+        [string] $PackageNameSuffix,
+
+        # Version of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $PackageVersion,
+
+        # Runtime of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $PackageRuntime,
+
+        # Configuration of the Product
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $PackageConfiguration,
+
+
+        # Source Path to the Product Files - required to package the contents into an Zip
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $PackageSourcePath,
+
+        [Switch]
+        $Force
+    )
+
+    log "PackageVersion: $PackageVersion"
+    $nugetSemanticVersion = Get-NugetSemanticVersion -Version $PackageVersion
+    log "nugetSemanticVersion: $nugetSemanticVersion"
+
+    $nugetFolder = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetOutput' -Clean
+
+
+    # Setup staging directory so we don't change the original source directory
+    $stagingRoot = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetStaging' -Clean
+    $contentFolder = Join-Path -path $stagingRoot -ChildPath 'content'
+    if ($pscmdlet.ShouldProcess("Create staging folder")) {
+        New-StagingFolder -StagingPath $contentFolder -Name $Name
+    }
+
+    $projectFolder = Join-Path $PSScriptRoot -ChildPath 'project'
+
+    $arguments = @('pack')
+    $arguments += @('--output',$nugetFolder)
+    $arguments += @('--configuration',$PackageConfiguration)
+    $arguments += @('--runtime',$PackageRuntime)
+    $arguments += "/p:StagingPath=$stagingRoot"
+    $arguments += "/p:RID=$PackageRuntime"
+    $arguments += "/p:SemVer=$nugetSemanticVersion"
+    $arguments += $projectFolder
+
+    log "Running dotnet $arguments"
+    log "Use -verbose to see output..."
+    Start-NativeExecution -sb {dotnet $arguments} | Foreach-Object {Write-Verbose $_}
+
+    Get-ChildItem $nugetFolder\* | Select-Object -ExpandProperty FullName
+}
+
+function New-SubFolder
+{
+    [CmdletBinding(SupportsShouldProcess=$true)]
+    param(
+        [string]
+        $Path,
+
+        [String]
+        $ChildPath,
+
+        [switch]
+        $Clean
+    )
+
+    $subFolderPath = Join-Path -Path $Path -ChildPath $ChildPath
+    if($Clean.IsPresent -and (Test-Path $subFolderPath))
+    {
+        Remove-Item -Path $subFolderPath -Recurse -Force -ErrorAction SilentlyContinue
+    }
+
+    if(!(Test-Path $subFolderPath))
+    {
+        $null = New-Item -Path $subFolderPath -ItemType Directory
+    }
+    return $subFolderPath
+}
+
+# Builds coming out of this project can have version number as 'a.b.c-stringf.d-e-f' OR 'a.b.c.d-e-f'
+# This function converts the above version into semantic version major.minor[.build-quality[.revision]] format
+function Get-PackageSemanticVersion
+{
+    [CmdletBinding()]
+    param (
+        # Version of the Package
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $Version,
+        [switch] $NuGet
+        )
+
+    Write-Verbose "Extract the semantic version in the form of major.minor[.build-quality[.revision]] for $Version"
+    $packageVersionTokens = $Version.Split('.')
+
+    if (3 -eq $packageVersionTokens.Count) {
+        # In case the input is of the form a.b.c, add a '0' at the end for revision field
+        $packageSemanticVersion = $Version,'0' -join '.'
+    } elseif (3 -lt $packageVersionTokens.Count) {
+        # We have all the four fields
+        $packageRevisionTokens = ($packageVersionTokens[3].Split('-'))[0]
+        if($NuGet.IsPresent)
+        {
+            $packageRevisionTokens = $packageRevisionTokens.Replace('.','-')
+        }
+        $packageSemanticVersion = $packageVersionTokens[0],$packageVersionTokens[1],$packageVersionTokens[2],$packageRevisionTokens -join '.'
+    } else {
+        throw "Cannot create Semantic Version from the string $Version containing 4 or more tokens"
+    }
+
+    $packageSemanticVersion
+}
+
+# Builds coming out of this project can have version number as 'a.b.c-stringf.d-e-f' OR 'a.b.c.d-e-f'
+# This function converts the above version into semantic version major.minor[.build-quality[-revision]] format needed for nuget
+function Get-NugetSemanticVersion
+{
+    [CmdletBinding()]
+    param (
+        # Version of the Package
+        [Parameter(Mandatory = $true)]
+        [ValidateNotNullOrEmpty()]
+        [string] $Version
+        )
+
+    $packageVersionTokens = $Version.Split('.')
+
+    Write-Verbose "Extract the semantic version in the form of major.minor[.build-quality[-revision]] for $Version"
+    $versionPartTokens = @()
+    $identifierPortionTokens = @()
+    $inIdentifier = $false
+    foreach($token in $packageVersionTokens) {
+        $tokenParts = $null
+        if($token -match '-') {
+            $tokenParts = $token.Split('-')
+        }
+        elseif($inIdentifier) {
+            $tokenParts = @($token)
+        }
+
+        # If we don't have token parts, then it's a versionPart
+        if(!$tokenParts) {
+            $versionPartTokens += $token
+        }
+        else {
+            foreach($idToken in $tokenParts) {
+                # The first token after we detect the id Part is still
+                # a version part
+                if(!$inIdentifier) {
+                    $versionPartTokens += $idToken
+                    $inIdentifier = $true
+                }
+                else {
+                    $identifierPortionTokens += $idToken
+                }
+            }
+        }
+    }
+
+    if($versionPartTokens.Count -gt 3) {
+        throw "Cannot create Semantic Version from the string $Version containing 4 or more version tokens"
+    }
+
+    $packageSemanticVersion = ($versionPartTokens -join '.')
+    if($identifierPortionTokens.Count -gt 0) {
+        $packageSemanticVersion += '-' + ($identifierPortionTokens -join '-')
+    }
+
+    $packageSemanticVersion
 }
