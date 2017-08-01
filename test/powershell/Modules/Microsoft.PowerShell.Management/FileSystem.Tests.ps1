@@ -197,17 +197,15 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
 
     Context "Validate behavior when access is denied" {
         BeforeAll {
-            $powershell = "powershell.exe"
-            #$protectedPath = "C:\Windows\Temp"
-            $protectedPath = Join-Path ([environment]::GetFolderPath("windows")) "appcompat" "Programs"
-            $protectedPath2 = Join-Path $protectedPath "Install"
-            $newItemPath = Join-Path $protectedPath "foo"
+            if ($IsWindows)
+            {
+                $powershell = "powershell.exe"
+                $protectedPath = Join-Path ([environment]::GetFolderPath("windows")) "appcompat" "Programs"
+                $protectedPath2 = Join-Path $protectedPath "Install"
+                $newItemPath = Join-Path $protectedPath "foo"
+            }
             $errFile = "error.txt"
             $doneFile = "done.txt"
-        }
-
-        BeforeEach {
-
         }
 
         AfterEach {
