@@ -84,7 +84,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $dirContents.Count | Should Be 2
         }
 
-        It "Verity Get-ChildItem can get the name of a specified item." {
+        It "Verify Get-ChildItem can get the name of a specified item." {
             $fileName = Get-ChildItem $testFile -Name
             $fileInfo = Get-ChildItem $testFile
             $fileName | Should BeExactly $fileInfo.Name
