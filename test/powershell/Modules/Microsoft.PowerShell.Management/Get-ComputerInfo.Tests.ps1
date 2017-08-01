@@ -1349,7 +1349,7 @@ try {
             }
         }
 
-        It "Test for DeviceGuard properties" {
+        It "Test for DeviceGuard properties" -Pending {
             if (-not (HasDeviceGuardLicense))
             {
                 $observed.DeviceGuardSmartStatus | Should Be 0
