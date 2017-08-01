@@ -7,6 +7,10 @@ Describe 'New-WinEvent' -Tags "CI" {
             if ( ! $IsWindows ) {
                 $PSDefaultParameterValues["it:skip"] = $true
             }
+
+            $ProviderName = 'Microsoft-Windows-PowerShell'
+            $SimpleEventId = 40962
+            $ComplexEventId = 32868
         }
         
         AfterAll {
@@ -14,8 +18,8 @@ Describe 'New-WinEvent' -Tags "CI" {
         }
 
         It 'Simple New-WinEvent' {
-            New-WinEvent -ProviderName Microsoft-Windows-PowerShell -Id 40962 -Version 1 # simple event without any payload
-            $filter = @{ ProviderName = 'Microsoft-Windows-PowerShell'; Id = 40962}
+            New-WinEvent -ProviderName $ProviderName -Id $SimpleEventId -Version 1 # simple event without any payload
+            $filter = @{ ProviderName = $ProviderName; Id = $SimpleEventId}
             (Get-WinEvent -filterHashtable $filter).Count | Should BeGreaterThan 0
         }
         
@@ -28,17 +32,17 @@ Describe 'New-WinEvent' -Tags "CI" {
         }
 
         It 'IncorrectEventId error' {
-            { New-WinEvent Microsoft-Windows-PowerShell -Id 999999 } | ShouldBeErrorId 'Microsoft.PowerShell.Commands.EventWriteException,Microsoft.PowerShell.Commands.NewWinEventCommand'
+            { New-WinEvent $ProviderName -Id 999999 } | ShouldBeErrorId 'Microsoft.PowerShell.Commands.EventWriteException,Microsoft.PowerShell.Commands.NewWinEventCommand'
         }
 
         It 'IncorrectEventVersion error' {
-            { New-WinEvent -ProviderName Microsoft-Windows-PowerShell -Id 40962 -Version 99 } | ShouldBeErrorId 'Microsoft.PowerShell.Commands.EventWriteException,Microsoft.PowerShell.Commands.NewWinEventCommand'
+            { New-WinEvent -ProviderName $ProviderName -Id $SimpleEventId -Version 99 } | ShouldBeErrorId 'Microsoft.PowerShell.Commands.EventWriteException,Microsoft.PowerShell.Commands.NewWinEventCommand'
         }
         
         It 'PayloadMismatch error' {
             $logPath = join-path $TestDrive 'testlog1.txt'
             # this will print the warning with expected event template to the file
-            New-WinEvent -ProviderName Microsoft-Windows-PowerShell -Id 32868 *> $logPath
+            New-WinEvent -ProviderName $ProviderName -Id $ComplexEventId *> $logPath
             Get-Content $logPath -Raw | Should Match 'data name="FragmentPayload"'
         }
     }
