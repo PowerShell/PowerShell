@@ -364,10 +364,10 @@ try
                     # Create Test Startup Script
                     function CreateStartupScript {
                         $ScriptContent = @"
-`$global:testvariable = "testValue"
+`$script:testvariable = "testValue"
 "@
                         
-                        $TestScript = join-path $global:TestDir "StartupTestScript.ps1"
+                        $TestScript = join-path $script:TestDir "StartupTestScript.ps1"
                         $null = Set-Content -path $TestScript -Value $ScriptContent
                     
                         return $TestScript
@@ -376,7 +376,7 @@ try
                     # Create new Config File
                     function CreateTestConfigFile {
                     
-                        $TestConfigFile = join-path $global:TestDir "TestConfigFile.pssc"
+                        $TestConfigFile = join-path $script:TestDir "TestConfigFile.pssc"
                         $null = New-PSSessionConfigurationFile -Path $TestConfigFile -SessionType Default
                         return $TestConfigFile
                     }
@@ -388,7 +388,7 @@ return `$true
 }
 Export-ModuleMember IsTestModuleImported
 "@
-                        $TestModuleFileLoc = $global:TestDir
+                        $TestModuleFileLoc = $script:TestDir
 
                         if(-not (Test-path $TestModuleFileLoc))
                         {
@@ -425,26 +425,32 @@ namespace PowershellTestConfigNamespace
     }
 }
 "@
-                        $global:Sma = [reflection.assembly]::load('System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL').location
-                        $global:SourceFile = join-path $global:TestDir "PowershellTestConfig.cs"
-                        $PscConfigDef | out-file $global:SourceFile -Encoding ascii -Force
+                        $script:Sma = [reflection.assembly]::load('System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL').location
+                        $script:SourceFile = join-path $script:TestAssemblyDir "PowershellTestConfig.cs"
+                        $PscConfigDef | out-file $script:SourceFile -Encoding ascii -Force
                         $TestAssemblyName = "TestAssembly.dll"
-                        $TestAssemblyPath = join-path $global:TestDir $TestAssemblyName
-                        Add-Type -path $global:SourceFile -ReferencedAssemblies $global:Sma -OutputAssembly $TestAssemblyPath
+                        $TestAssemblyPath = join-path $script:TestAssemblyDir $TestAssemblyName
+                        Add-Type -path $script:SourceFile -OutputAssembly $TestAssemblyPath
                         return $TestAssemblyName
                     }
 
-                    $global:TestDir = join-path $TestDrive "Remoting"
-                    if(-not (Test-Path $global:TestDir))
+                    $script:TestDir = join-path $TestDrive "Remoting"
+                    if(-not (Test-Path $script:TestDir))
                     {
-                        $null = New-Item -path $global:TestDir -ItemType Directory
+                        $null = New-Item -path $script:TestDir -ItemType Directory
+                    }
+
+                    $script:TestAssemblyDir = [System.IO.Path]::GetTempPath()
+                    if(-not (Test-Path $script:TestAssemblyDir))
+                    {
+                        $null = New-Item -path $script:TestAssemblyDir -ItemType Directory
                     }
 
                     $LocalConfigFilePath = CreateTestConfigFile
                     $LocalStartupScriptPath = CreateStartupScript
                     $LocalTestModulePath = CreateTestModule
                     $LocalTestAssemblyName = CreateTestAssembly
-                    $LocalTestDir = $global:TestDir
+                    $LocalTestDir = $script:TestDir
                 }
             }
 
@@ -494,7 +500,7 @@ namespace PowershellTestConfigNamespace
 
                     $null = Register-PSSessionConfiguration -Name $TestSessionConfigName -path $LocalConfigFilePath -StartupScript $LocalStartupScriptPath -Force
 
-                    ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute "return `$global:testvariable" -ExpectedOutput "testValue" -ExpectedError $null
+                    ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute "return `$script:testvariable" -ExpectedOutput "testValue" -ExpectedError $null
                 }
                 
                 
@@ -513,10 +519,10 @@ namespace PowershellTestConfigNamespace
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute "return IsTestModuleImported" -ExpectedOutput $true -ExpectedError $null
                 }
 
-                It "Validate Register-PSSessionConfiguration with ApplicationBase , AssemblyName and ConfigurationTypeName parameter" {
+                It "Validate Register-PSSessionConfiguration with ApplicationBase, AssemblyName and ConfigurationTypeName parameter" {
 
                     $TestAssemblyPath = join-path $LocalTestDir $LocalTestAssemblyName
-                    add-type -path $global:SourceFile -ReferencedAssemblies $global:Sma -OutputAssembly $TestAssemblyPath
+                    add-type -path $script:SourceFile -OutputAssembly $TestAssemblyPath
                     $null = Register-PSSessionConfiguration -Name $TestSessionConfigName -ApplicationBase $LocalTestDir -AssemblyName $LocalTestAssemblyName -ConfigurationTypeName "PowershellTestConfigNamespace.PowershellTestConfig" -force
                     
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute $null -ExpectedOutput $true -ExpectedError $null
@@ -565,7 +571,7 @@ namespace PowershellTestConfigNamespace
 
                     $null = Set-PSSessionConfiguration -Name $TestSessionConfigName -StartupScript $LocalStartupScriptPath
 
-                    ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute "return `$global:testvariable" -ExpectedOutput "testValue" -ExpectedError $null
+                    ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute "return `$script:testvariable" -ExpectedOutput "testValue" -ExpectedError $null
                 }
             
                 It "Validate Set-PSSessionConfiguration -AccessMode parameter" {
@@ -582,13 +588,13 @@ namespace PowershellTestConfigNamespace
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute "return IsTestModuleImported" -ExpectedOutput $true -ExpectedError $null
                 }
 
-                It "Validate Set-PSSessionConfiguration with ApplicationBase , AssemblyName and ConfigurationTypeName parameter" {
+                It "Validate Set-PSSessionConfiguration with ApplicationBase, AssemblyName and ConfigurationTypeName parameter" {
 
                     $TestAssemblyPath = join-path $LocalTestDir $LocalTestAssemblyName
-                    Add-type -path $global:SourceFile -ReferencedAssemblies $global:Sma -OutputAssembly $TestAssemblyPath
-                    $null = Register-PSSessionConfiguration -Name $TestSessionConfigName -ApplicationBase $LocalTestDir -AssemblyName $LocalTestAssemblyName -ConfigurationTypeName "PowershellTestConfigNamespace.PowershellTestConfig" -force
+                    Add-type -path $script:SourceFile -OutputAssembly $TestAssemblyPath
+                    $null = Set-PSSessionConfiguration -Name $TestSessionConfigName -ApplicationBase $LocalTestDir -AssemblyName $LocalTestAssemblyName -ConfigurationTypeName "PowershellTestConfigNamespace.PowershellTestConfig" -force
                     
-                   ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute $null -ExpectedOutput $true -ExpectedError $null
+                    ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute $null -ExpectedOutput $true -ExpectedError $null
                 }
             }
         }
@@ -843,6 +849,6 @@ namespace PowershellTestConfigNamespace
 }
 finally
 {
-    $global:PSDefaultParameterValues = $originalDefaultParameterValues
+    $script:PSDefaultParameterValues = $originalDefaultParameterValues
 }
 
