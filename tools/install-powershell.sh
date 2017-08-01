@@ -74,6 +74,11 @@ else
             DIST=`cat /etc/redhat-release |sed s/\ release.*//`
             PSUEDONAME=`cat /etc/redhat-release | sed s/.*\(// | sed s/\)//`
             REV=`cat /etc/redhat-release | sed s/.*release\ // | sed s/\ .*//`
+        elif [ -f /etc/system-release ] ; then
+            DistroBasedOn='redhat'
+            DIST=`cat /etc/system-release |sed s/\ release.*//`
+            PSUEDONAME=`cat /etc/system-release | sed s/.*\(// | sed s/\)//`
+            REV=`cat /etc/system-release | sed s/.*release\ // | sed s/\ .*//`
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
             PSUEDONAME=`cat /etc/SuSE-release | tr "\n" ' '| sed s/VERSION.*//`

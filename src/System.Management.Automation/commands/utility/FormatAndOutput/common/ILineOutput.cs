@@ -469,12 +469,6 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             _writeCall(s);
         }
 
-#if CORECLR // TextWriter.Write(char value) is abstract method in CORE CLR
-        public override void Write(char c)
-        {
-            _writeCall(char.ToString(c));
-        }
-#endif
         #endregion
 
         /// <summary>

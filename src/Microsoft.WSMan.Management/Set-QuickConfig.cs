@@ -13,9 +13,6 @@ using System.Xml;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
-#if CORECLR
-using System.Xml.XPath;
-#endif
 
 
 namespace Microsoft.WSMan.Management

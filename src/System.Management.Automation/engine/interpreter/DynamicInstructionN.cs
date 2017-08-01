@@ -15,9 +15,6 @@
 
 using System.Runtime.CompilerServices;
 
-#if CORECLR
-using System.Reflection;
-#endif
 
 namespace System.Management.Automation.Interpreter
 {

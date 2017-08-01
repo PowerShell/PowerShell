@@ -5,6 +5,90 @@ $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 $dotnetCLIChannel = "preview"
 $dotnetCLIRequiredVersion = "2.0.0-preview2-006502"
 
+# Track if tags have been sync'ed
+$tagsUpToDate = $false
+
+# Sync Tags
+# When not using a branch in PowerShell/PowerShell, tags will not be fetched automatically
+# Since code that uses Get-PSCommitID and Get-PSLatestTag assume that tags are fetched,
+# This function can ensure that tags have been fetched.
+# This function is used during the setup phase in tools/appveyor.psm1 and tools/travis.ps1
+function Sync-PSTags
+{
+    param(
+        [Switch]
+        $AddRemoteIfMissing
+    )
+
+    $PowerShellRemoteUrl = "https://github.com/powershell/powershell.git"
+    $upstreamRemoteDefaultName = 'upstream'
+    $remotes = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" remote}
+    $upstreamRemote = $null
+    foreach($remote in $remotes)
+    {
+        $url = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" remote get-url $remote}
+        if($url -eq $PowerShellRemoteUrl)
+        {
+            $upstreamRemote = $remote
+            break
+        }
+    }
+
+    if(!$upstreamRemote -and $AddRemoteIfMissing.IsPresent -and $remotes -notcontains $upstreamRemoteDefaultName)
+    {
+        $null = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" remote add $upstreamRemoteDefaultName $PowerShellRemoteUrl}
+        $upstreamRemote = $upstreamRemoteDefaultName
+    }
+    elseif(!$upstreamRemote)
+    {
+        Write-Error "Please add a remote to PowerShell\PowerShell.  Example:  git remote add $upstreamRemoteDefaultName $PowerShellRemoteUrl" -ErrorAction Stop
+    }
+
+    $null = Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" fetch --tags --quiet $upstreamRemote}
+    $script:tagsUpToDate=$true
+}
+
+# Gets the latest tag for the current branch
+function Get-PSLatestTag
+{
+    # This function won't always return the correct value unless tags have been sync'ed
+    # So, Write a warning to run Sync-PSTags
+    if(!$tagsUpToDate)
+    {
+        Write-Warning "Run Sync-PSTags to update tags"
+    }
+
+    return (Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" describe --abbrev=0})
+}
+
+function Get-PSVersion
+{
+    param(
+        [switch]
+        $OmitCommitId
+    )
+    if($OmitCommitId.IsPresent)
+    {
+        return (Get-PSLatestTag) -replace '^v'
+    }
+    else
+    {
+        return (Get-PSCommitId) -replace '^v'
+    }
+}
+
+function Get-PSCommitId
+{
+    # This function won't always return the correct value unless tags have been sync'ed
+    # So, Write a warning to run Sync-PSTags
+    if(!$tagsUpToDate)
+    {
+        Write-Warning "Run Sync-PSTags to update tags"
+    }
+
+    return (Start-NativeExecution {git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60})
+}
+
 function Get-EnvironmentInformation
 {
     $environment = @{}
@@ -268,7 +352,7 @@ function Start-PSBuild {
     $gitCommitId = $ReleaseTag
     if (-not $gitCommitId) {
         # if ReleaseTag is not specified, use 'git describe' to get the commit id
-        $gitCommitId = git --git-dir="$PSScriptRoot/.git" describe --dirty --abbrev=60
+        $gitCommitId = Get-PSCommitId
     }
     $gitCommitId > "$psscriptroot/powershell.version"
 
@@ -1934,35 +2018,6 @@ function script:Start-NativeExecution([scriptblock]$sb, [switch]$IgnoreExitcode)
     }
 }
 
-# Builds coming out of this project can have version number as 'a.b.c-stringf.d-e-f' OR 'a.b.c.d-e-f'
-# This function converts the above version into semantic version major.minor[.build-quality[.revision]] format
-function Get-PackageSemanticVersion
-{
-    [CmdletBinding()]
-    param (
-        # Version of the Package
-        [Parameter(Mandatory = $true)]
-        [ValidateNotNullOrEmpty()]
-        [string] $Version
-        )
-
-    Write-Verbose "Extract the semantic version in the form of major.minor[.build-quality[.revision]] for $Version"
-    $packageVersionTokens = $Version.Split('.')
-
-    if (3 -eq $packageVersionTokens.Count) {
-        # In case the input is of the form a.b.c, add a '0' at the end for revision field
-        $packageSemanticVersion = $Version,'0' -join '.'
-    } elseif (3 -lt $packageVersionTokens.Count) {
-        # We have all the four fields
-        $packageRevisionTokens = ($packageVersionTokens[3].Split('-'))[0]
-        $packageSemanticVersion = $packageVersionTokens[0],$packageVersionTokens[1],$packageVersionTokens[2],$packageRevisionTokens -join '.'
-    } else {
-        throw "Cannot create Semantic Version from the string $Version containing 4 or more tokens"
-    }
-
-    $packageSemanticVersion
-}
-
 # Builds coming out of this project can have version number as 'a.b.c' OR 'a.b.c-d-f'
 # This function converts the above version into major.minor[.build[.revision]] format
 function Get-PackageVersionAsMajorMinorBuildRevision
@@ -2035,8 +2090,10 @@ function New-MSIPackage
         [Parameter(Mandatory = $true)]
         [ValidateSet("x86", "x64")]
         [ValidateNotNullOrEmpty()]
-        [string] $ProductTargetArchitecture
+        [string] $ProductTargetArchitecture,
 
+        # Force overwrite of package
+        [Switch] $Force
     )
 
     ## AppVeyor base image might update the version for Wix. Hence, we should
@@ -2095,7 +2152,11 @@ function New-MSIPackage
         $packageName += "-$ProductNameSuffix"
     }
     $msiLocationPath = Join-Path $pwd "$packageName.msi"
-    Remove-Item -ErrorAction SilentlyContinue $msiLocationPath -Force
+
+    if(!$Force.IsPresent -and (Test-Path -Path $msiLocationPath))
+    {
+        Write-Error -Message "Package already exists, use -Force to overwrite, path:  $msiLocationPath" -ErrorAction Stop
+    }
 
     & $wixHeatExePath dir  $ProductSourcePath -dr  $productVersionWithName -cg $productVersionWithName -gg -sfrag -srd -scom -sreg -out $wixFragmentPath -var env.ProductSourcePath -v | Write-Verbose
     & $wixCandleExePath  "$ProductWxsPath"  "$wixFragmentPath" -out (Join-Path "$env:Temp" "\\") -ext WixUIExtension -ext WixUtilExtension -arch x64 -v | Write-Verbose

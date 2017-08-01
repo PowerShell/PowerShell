@@ -6,9 +6,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
-#if CORECLR
-using Microsoft.PowerShell.Internal;
-#endif
 
 namespace Microsoft.PowerShell
 {

@@ -1,6 +1,6 @@
 using namespace System.Diagnostics
 
-Describe "Invoke-Item basic tests" -Tags "CI" {
+Describe "Invoke-Item basic tests" -Tags "Feature" {
     BeforeAll {
         $powershell = Join-Path $PSHOME -ChildPath powershell
 
@@ -32,11 +32,12 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
             param($TestFile)
 
             $expectedTitle = Split-Path $TestFile -Leaf
+            open -F -a TextEdit
             $beforeCount = [int]('tell application "TextEdit" to count of windows' | osascript)
             Invoke-Item -Path $TestFile
             $startTime = Get-Date
             $title = [String]::Empty
-            while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and ($title -ne $expectedTitle))
+            while (((Get-Date) - $startTime).TotalSeconds -lt 30 -and ($title -ne $expectedTitle))
             {
                 Start-Sleep -Milliseconds 100
                 $title = 'tell application "TextEdit" to get name of front window' | osascript
@@ -45,6 +46,7 @@ Describe "Invoke-Item basic tests" -Tags "CI" {
             $afterCount | Should Be ($beforeCount + 1)
             $title | Should Be $expectedTitle
             "tell application ""TextEdit"" to close window ""$expectedTitle""" | osascript
+            'tell application "TextEdit" to quit' | osascript
         }
     }
 

@@ -2597,7 +2597,15 @@ namespace System.Management.Automation.Remoting.Client
 #endif
 
                 _handle = IntPtr.Zero;
-                ErrorCode = WSManNativeApi.WSManInitialize(WSManNativeApi.WSMAN_FLAG_REQUESTED_API_VERSION_1_1, ref _handle);
+
+                try
+                {
+                    ErrorCode = WSManNativeApi.WSManInitialize(WSManNativeApi.WSMAN_FLAG_REQUESTED_API_VERSION_1_1, ref _handle);
+                }
+                catch (DllNotFoundException)
+                {
+                    throw new PSRemotingTransportException(RemotingErrorIdStrings.WSManClientDllNotAvailable);
+                }
 
                 // input / output streams common to all connections
                 _inputStreamSet = new WSManNativeApi.WSManStreamIDSet_ManToUn(

@@ -26,6 +26,7 @@ They have [write access](https://help.github.com/articles/repository-permission-
 * Travis Plunk ([TravisEz13](https://github.com/TravisEz13))
 * Mike Richmond ([mirichmo](https://github.com/mirichmo))
 * Andy Schwartzmeyer ([andschwa](https://github.com/andschwa))
+* Aditya Patwardhan ([adityapatwardhan](https://github.com/adityapatwardhan))
 
 ## Repository Maintainer Responsibilities
 

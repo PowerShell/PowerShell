@@ -760,7 +760,7 @@ namespace System.Management.Automation.Internal
                         {
                             Security.NativeMethods.CERT_ENHKEY_USAGE ekuStruct =
                                 (Security.NativeMethods.CERT_ENHKEY_USAGE)
-                                ClrFacade.PtrToStructure<Security.NativeMethods.CERT_ENHKEY_USAGE>(ekuBuffer);
+                                Marshal.PtrToStructure<Security.NativeMethods.CERT_ENHKEY_USAGE>(ekuBuffer);
                             IntPtr ep = ekuStruct.rgpszUsageIdentifier;
                             IntPtr ekuptr;
 

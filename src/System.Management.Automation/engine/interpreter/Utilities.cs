@@ -837,9 +837,8 @@ namespace System.Management.Automation.Interpreter
         private StorageInfo CreateStorageInfo()
         {
             // we do our own locking, tell hosts this is a bad time to interrupt us.
-#if !SILVERLIGHT && !CORECLR
             Thread.BeginCriticalRegion();
-#endif
+
             StorageInfo[] curStorage = s_updating;
             try
             {
@@ -886,9 +885,8 @@ namespace System.Management.Automation.Interpreter
                     // let others access the storage again
                     Interlocked.Exchange(ref _stores, curStorage);
                 }
-#if !SILVERLIGHT && !CORECLR
+
                 Thread.EndCriticalRegion();
-#endif
             }
         }
 

@@ -10,10 +10,6 @@ using System.Management.Automation;
 using System.Management.Automation.Language;
 using System.Reflection;
 using System.Linq;
-#if CORECLR
-using System.Runtime.InteropServices;
-using Microsoft.PowerShell.Internal;
-#endif
 
 namespace Microsoft.PowerShell
 {

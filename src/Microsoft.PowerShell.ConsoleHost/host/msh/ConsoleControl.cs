@@ -3327,7 +3327,7 @@ namespace Microsoft.PowerShell
         internal static void MimicKeyPress(INPUT[] inputs)
         {
             Dbg.Assert(inputs != null && inputs.Length > 0, "inputs should not be null or empty");
-            var numberOfSuccessfulEvents = NativeMethods.SendInput((uint)inputs.Length, inputs, ClrFacade.SizeOf<INPUT>());
+            var numberOfSuccessfulEvents = NativeMethods.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf<INPUT>());
 
             if (numberOfSuccessfulEvents == 0)
             {
