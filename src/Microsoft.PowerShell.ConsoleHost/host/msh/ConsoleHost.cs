@@ -304,11 +304,19 @@ namespace Microsoft.PowerShell
             switch (args.SpecialKey)
             {
                 case ConsoleSpecialKey.ControlC:
-                    SpinUpBreakHandlerThread(false);
+                    SpinUpBreakHandlerThread(shouldEndSession: false);
                     return;
                 case ConsoleSpecialKey.ControlBreak:
-                    // Break into script debugger.
-                    BreakIntoDebugger();
+                    if (s_cpp.NonInteractive)
+                    {
+                        //ControlBreak mimics ControlC in Noninteractive shells
+                        SpinUpBreakHandlerThread(shouldEndSession: true);
+                    }
+                    else
+                    {
+                        // Break into script debugger.
+                        BreakIntoDebugger();
+                    }
                     return;
             }
         }
@@ -325,13 +333,21 @@ namespace Microsoft.PowerShell
             switch (signal)
             {
                 case ConsoleControl.ConsoleBreakSignal.CtrlBreak:
-                    // Break into script debugger.
-                    BreakIntoDebugger();
+                    if (s_cpp.NonInteractive)
+                    {
+                        //ControlBreak mimics ControlC in Noninteractive shells
+                        SpinUpBreakHandlerThread(shouldEndSession: true);
+                    }
+                    else
+                    {
+                        // Break into script debugger.
+                        BreakIntoDebugger();
+                    }
                     return true;
 
                 // Run the break handler...
                 case ConsoleControl.ConsoleBreakSignal.CtrlC:
-                    SpinUpBreakHandlerThread(false);
+                    SpinUpBreakHandlerThread(shouldEndSession: false);
                     return true;
 
                 case ConsoleControl.ConsoleBreakSignal.Logoff:
@@ -343,12 +359,12 @@ namespace Microsoft.PowerShell
 
                 case ConsoleControl.ConsoleBreakSignal.Close:
                 case ConsoleControl.ConsoleBreakSignal.Shutdown:
-                    SpinUpBreakHandlerThread(true);
+                    SpinUpBreakHandlerThread(shouldEndSession: true);
                     return false;
 
                 default:
                     // Log as much sqm data as possible before we exit.
-                    SpinUpBreakHandlerThread(true);
+                    SpinUpBreakHandlerThread(shouldEndSession: true);
                     return false;
             }
         }
