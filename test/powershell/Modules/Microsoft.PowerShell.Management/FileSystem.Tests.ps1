@@ -195,6 +195,49 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
          }
     }
 
+    Context "Validate behavior when access is denied" {
+        BeforeAll {
+            $powershell = "powershell.exe"
+            #$protectedPath = "C:\Windows\Temp"
+            $protectedPath = Join-Path ([environment]::GetFolderPath("windows")) "appcompat" "Programs"
+            $protectedPath2 = Join-Path $protectedPath "Install"
+            $newItemPath = Join-Path $protectedPath "foo"
+            $errFile = "error.txt"
+            $doneFile = "done.txt"
+        }
+
+        BeforeEach {
+
+        }
+
+        AfterEach {
+            Remove-Item -Force $errFile -ErrorAction SilentlyContinue
+            Remove-Item -Force $doneFile -ErrorAction SilentlyContinue
+        }
+
+        It "Access-denied test for '<cmdline>" -TestCases @(
+            @{cmdline = "Get-Item $protectedPath2"; expectedError = "ItemExistsUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetItemCommand"}
+            @{cmdline = "Get-ChildItem $protectedPath"; expectedError = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"}
+            @{cmdline = "New-Item -Type File -Path $newItemPath"; expectedError = "NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand"}
+            @{cmdline = "Rename-Item -Path $protectedPath -NewName bar"; expectedError = "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"},
+            @{cmdline = "Move-Item -Path $protectedPath -Destination bar"; expectedError = "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"},
+            @{cmdline = "Remove-Item -Path $protectedPath"; expectedError = "RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.RemoveItemCommand"}
+        ) {
+            param ($cmdline, $expectedError)
+
+            runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline -ErrorAction Stop } catch { `$_.FullyQualifiedErrorId | Out-File $errFile }; New-Item -Type File -Path $doneFile"
+            $startTime = Get-Date
+            while (((Get-Date) - $startTime).TotalSeconds -lt 5 -and -not (Test-Path $doneFile))
+            {
+                Start-Sleep -Milliseconds 100
+            }
+
+            $errFile | Should Exist
+            $err = Get-Content $errFile
+            $err | Should Be $expectedError
+        }
+    }
+
     Context "Validate basic host navigation functionality" {
         BeforeAll {
             #build semi-complex directory structure to test navigation within
