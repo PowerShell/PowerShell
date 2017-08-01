@@ -381,13 +381,13 @@ namespace System.Management.Automation
                                                           new Microsoft.PowerShell.Cim.CimInstanceAdapter()),
                                     PSObject.dotNetInstanceAdapter);
 
-#if !CORECLR // WMIv1/ADSI/DataRow/DataRowView Adapters Not Supported On CSS
+#if !CORECLR // WMIv1/ADSI Adapters Not Supported in PowerShell Core
         private static readonly AdapterSet managementObjectAdapter = new AdapterSet(new ManagementObjectAdapter(), dotNetInstanceAdapter);
         private static readonly AdapterSet managementClassAdapter = new AdapterSet(new ManagementClassApdapter(), dotNetInstanceAdapter);
         private static readonly AdapterSet directoryEntryAdapter = new AdapterSet(new DirectoryEntryAdapter(), dotNetInstanceAdapter);
+#endif
         private static readonly AdapterSet dataRowViewAdapter = new AdapterSet(new DataRowViewAdapter(), s_baseAdapterForAdaptedObjects);
         private static readonly AdapterSet dataRowAdapter = new AdapterSet(new DataRowAdapter(), s_baseAdapterForAdaptedObjects);
-#endif
         private static readonly AdapterSet s_xmlNodeAdapter = new AdapterSet(new XmlNodeAdapter(), s_baseAdapterForAdaptedObjects);
 
         #region Adapter Mappings
@@ -412,13 +412,13 @@ namespace System.Management.Automation
             if (obj is PSObject) { return PSObject.s_mshObjectAdapter; }
             if (obj is CimInstance) { return PSObject.s_cimInstanceAdapter; }
 
-#if !CORECLR // WMIv1/ADSI/DataRow/DataRowView Adapters Not Supported On CSS
+#if !CORECLR // WMIv1/ADSI Adapters Not Supported in PowerShell Core
             if (obj is ManagementClass) { return PSObject.managementClassAdapter; }
             if (obj is ManagementBaseObject) { return PSObject.managementObjectAdapter; }
             if (obj is DirectoryEntry) { return PSObject.directoryEntryAdapter; }
+#endif
             if (obj is DataRowView) { return PSObject.dataRowViewAdapter; }
             if (obj is DataRow) { return PSObject.dataRowAdapter; }
-#endif
             if (obj is XmlNode) { return PSObject.s_xmlNodeAdapter; }
             return null;
         }

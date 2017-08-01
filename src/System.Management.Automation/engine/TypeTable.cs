@@ -3440,8 +3440,7 @@ namespace System.Management.Automation.Runspaces
             string typesFilePath = string.Empty;
             string typesV3FilePath = string.Empty;
 
-            string shellId = Utils.DefaultPowerShellShellID;
-            var psHome = Utils.GetApplicationBase(shellId);
+            var psHome = Utils.DefaultPowerShellAppBase;
             if (!string.IsNullOrEmpty(psHome))
             {
                 typesFilePath = Path.Combine(psHome, "types.ps1xml");
@@ -4179,7 +4178,7 @@ namespace System.Management.Automation.Runspaces
             {
 #if CORECLR
                 // In OneCore powershell, XmlTextReader is not in CoreCLR, so we have to use XmlReader.Create method
-                XmlReader reader = XmlReader.Create(xmlStream, new XmlReaderSettings { IgnoreWhitespace = true });
+                XmlReader reader = XmlReader.Create(xmlStream, new XmlReaderSettings { IgnoreWhitespace = true, XmlResolver = null });
 #else
                 // In Full powershell, we create a XmlTextReader, so loadContext.reader is guaranteed to implement IXmlLineInfo
                 XmlReader reader = new XmlTextReader(xmlStream) { WhitespaceHandling = WhitespaceHandling.Significant };
@@ -4404,7 +4403,7 @@ namespace System.Management.Automation.Runspaces
             var result = false;
             var errorCount = errors.Count;
 
-            var psHome = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
+            var psHome = Utils.DefaultPowerShellAppBase;
             if (string.Equals(Path.Combine(psHome, "types.ps1xml"), filePath, StringComparison.OrdinalIgnoreCase))
             {
                 ProcessTypeData(filePath, errors, Types_Ps1Xml.Get());

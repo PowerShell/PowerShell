@@ -135,7 +135,7 @@ namespace Microsoft.PowerShell.Workflow
                 {
                     project.AddItem("XamlAppDef", file);
 
-                    XamlXmlReader reader = new XamlXmlReader(XmlReader.Create(file), new XamlSchemaContext());
+                    XamlXmlReader reader = new XamlXmlReader(XmlReader.Create(file, new XmlReaderSettings { XmlResolver = null }), new XamlSchemaContext());
                     using (reader)
                     {
                         while (reader.Read())

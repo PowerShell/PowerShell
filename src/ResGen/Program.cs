@@ -10,12 +10,30 @@ namespace ConsoleApplication
     {
         public static void Main(string[] args)
         {
-            // we are assuming resgen is run with 'dotnet run'
-            // so we can use relative paths
-            foreach (string folder in Directory.EnumerateDirectories(".."))
+            IEnumerable<string> dirs;
+            string fileFilter;
+
+            if (args.Length == 1)
+            {
+                // We are assuming resgen is run with 'dotnet run pathToResxFile.resx'.
+                fileFilter = Path.GetFileName(args[0]);
+                string moduleDirectory = Path.GetDirectoryName(Path.GetDirectoryName(args[0]));
+                dirs = new List<string>() { moduleDirectory };
+            }
+            else
+            {
+                // We are assuming resgen is run with 'dotnet run'
+                // so we can use relative path to get a parent directory
+                // to process all *.resx files in all project subdirectories.
+                fileFilter = "*.resx";
+                dirs = Directory.EnumerateDirectories("..");
+            }
+
+            foreach (string folder in dirs)
             {
                 string moduleName = Path.GetFileName(folder);
                 string resourcePath = Path.Combine(folder, "resources");
+
                 if (Directory.Exists(resourcePath))
                 {
                     string genFolder = Path.Combine(folder, "gen");
@@ -24,7 +42,7 @@ namespace ConsoleApplication
                         Directory.CreateDirectory(genFolder);
                     }
 
-                    foreach (string resxPath in Directory.EnumerateFiles(resourcePath, "*.resx"))
+                    foreach (string resxPath in Directory.EnumerateFiles(resourcePath, fileFilter))
                     {
                         string className = Path.GetFileNameWithoutExtension(resxPath);
                         string sourceCode = GetStronglyTypeCsFileForResx(resxPath, moduleName, className);

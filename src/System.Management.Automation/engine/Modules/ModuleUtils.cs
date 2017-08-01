@@ -410,7 +410,7 @@ namespace System.Management.Automation.Internal
                     tempModuleInfo = new PSModuleInfo(moduleShortName, modulePath, null, null);
                     if (InitialSessionState.IsEngineModule(moduleShortName))
                     {
-                        tempModuleInfo.SetModuleBase(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID));
+                        tempModuleInfo.SetModuleBase(Utils.DefaultPowerShellAppBase);
                     }
 
                     //moduleVersionRequired is bypassed by FullyQualifiedModule from calling method. This is the only place where guid will be involved.

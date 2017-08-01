@@ -130,15 +130,7 @@ namespace Microsoft.PowerShell.Commands
         {
             get
             {
-#if CORECLR
                 return System.Runtime.InteropServices.RuntimeInformation.OSDescription;
-#else
-                OperatingSystem os = Environment.OSVersion;
-                string platform = GetOSName(os.Platform);
-                string formattedOS = string.Format(CultureInfo.InvariantCulture,
-                    "{0} {1}.{2}", platform, os.Version.Major, os.Version.Minor);
-                return (formattedOS);
-#endif
             }
         }
 
@@ -149,32 +141,5 @@ namespace Microsoft.PowerShell.Commands
                 return (CultureInfo.CurrentCulture.Name);
             }
         }
-
-#if !CORECLR
-        private static string GetOSName(PlatformID platformId)
-        {
-            string platform;
-            switch (platformId)
-            {
-                case PlatformID.Win32NT: // is this really the only valid option?
-                    platform = "Windows NT";
-                    break;
-                case PlatformID.Win32Windows:
-                    platform = "Windows";
-                    break;
-                case PlatformID.Win32S:
-                case PlatformID.WinCE:
-                case PlatformID.Xbox:
-                case PlatformID.MacOSX:
-                case PlatformID.Unix:
-                default:
-                    // TODO: should we be doing something more robust here?
-                    platform = platformId.ToString();
-                    break;
-            }
-
-            return (platform);
-        }
-#endif
     }
 }

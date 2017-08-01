@@ -7,6 +7,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
+using System.Reflection;
 using System.Runtime.ExceptionServices;
 using Microsoft.PowerShell.Commands;
 
@@ -227,7 +228,7 @@ namespace System.Management.Automation
                             else if (Module.Path.EndsWith(StringLiterals.DependentWorkflowAssemblyExtension, StringComparison.OrdinalIgnoreCase))
                             {
                                 // Binary module (.dll)
-                                Module.SetVersion(ClrFacade.GetAssemblyName(Module.Path).Version);
+                                Module.SetVersion(AssemblyName.GetAssemblyName(Module.Path).Version);
                             }
                         }
 

@@ -114,7 +114,7 @@
             $suspendErrors = $null
             $num=0
 
-            $params | % {
+            $params | ForEach-Object {
                         $input=@{'InputObject' = 'Test';$_='Suspend'}
 
                         try {

@@ -7,7 +7,7 @@ set powershell [lindex $argv 0]
 
 set timeout 60
 
-spawn $powershell -nologo -noprofile Read-Host prompt
+spawn $powershell -nologo -noprofile -command Read-Host prompt
 
 expect  {
     "prompt: $" { send "input\r" ; exp_continue }

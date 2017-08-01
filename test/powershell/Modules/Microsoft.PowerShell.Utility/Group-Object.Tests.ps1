@@ -18,20 +18,19 @@ Describe "Group-Object" -Tags "CI" {
     }
 
     It "Should be called using an object as piped without error with no switches" {
-	{$testObject | Group-Object } | Should Not Throw
+        {$testObject | Group-Object } | Should Not Throw
     }
 
     It "Should be called using the InputObject without error with no other switches" {
-	{ Group-Object -InputObject $testObject } | Should Not Throw
+        { Group-Object -InputObject $testObject } | Should Not Throw
     }
 
     It "Should return three columns- count, name, and group" {
-	$actual = Group-Object -InputObject $testObject
+        $actual = Group-Object -InputObject $testObject
 
-	$actual.Count       | Should BeGreaterThan 0
-	$actual.Name.Count  | Should BeGreaterThan 0
-	$actual.Group.Count | Should BeGreaterThan 0
-
+        $actual.Count       | Should BeGreaterThan 0
+        $actual.Name.Count  | Should BeGreaterThan 0
+        $actual.Group.Count | Should BeGreaterThan 0
     }
 
     It "Should use the group alias" {
@@ -63,25 +62,25 @@ Describe "Group-Object" -Tags "CI" {
     }
 
     It "Should be able to use the property switch without error" {
-	{ $testObject | Group-Object -Property Attributes } | Should Not Throw
+        { $testObject | Group-Object -Property Attributes } | Should Not Throw
 
-	$actual = $testObject | Group-Object -Property Attributes
+        $actual = $testObject | Group-Object -Property Attributes
 
-	$actual.Group.Count | Should BeGreaterThan 0
+        $actual.Group.Count | Should BeGreaterThan 0
     }
 
     It "Should be able to use the property switch on multiple properties without error" {
-	{ $testObject | Group-Object -Property Attributes, Length }
+        { $testObject | Group-Object -Property Attributes, Length }
 
-	$actual = $testObject | Group-Object -Property Attributes, Length
+        $actual = $testObject | Group-Object -Property Attributes, Length
 
-	$actual.Group.Count | Should BeGreaterThan 0
+        $actual.Group.Count | Should BeGreaterThan 0
     }
 
     It "Should be able to omit members of a group using the NoElement switch without error" {
-	{ $testObject | Group-Object -NoElement } | Should Not Throw
+        { $testObject | Group-Object -NoElement } | Should Not Throw
 
-	($testObject | Group-Object -NoElement).Group | Should BeNullOrEmpty
+        ($testObject | Group-Object -NoElement).Group | Should BeNullOrEmpty
     }
 
     It "Should be able to output a hashtable datatype" {
@@ -92,16 +91,61 @@ Describe "Group-Object" -Tags "CI" {
     }
 
     It "Should be able to access when output as hash table" {
-	$actual = $testObject | Group-Object -AsHashTable
+        $actual = $testObject | Group-Object -AsHashTable
 
-	$actual.Keys | Should Not BeNullOrEmpty
+        $actual.Keys | Should Not BeNullOrEmpty
     }
 
     It "Should throw when attempting to use AsString without AsHashTable" {
-	{ $testObject | Group-Object -AsString } | Should Throw
+        { $testObject | Group-Object -AsString } | Should Throw
     }
 
     It "Should not throw error when using AsString when the AsHashTable was added" {
-	{ $testObject | Group-Object -AsHashTable -AsString } | Should Not Throw
+        { $testObject | Group-Object -AsHashTable -AsString } | Should Not Throw
+    }
+}
+
+Describe "Check 'Culture' parameter in order object cmdlets (Group-Object, Sort-Object, Compare-Object)" -Tags "CI" {
+
+    BeforeAll {
+
+        $testObject = Get-ChildItem
+
+    }
+
+    It "Should accept a culture by name" {
+
+        if ( (Get-Culture).Name -eq "ru-Ru" ) {
+            $testCulture = "ru-UA"
+        }
+        else {
+            $testCulture = "ru-RU"
+        }
+
+        {$testObject | Group-Object -Culture $testCulture } | Should Not Throw
+    }
+
+    It "Should accept a culture by hex string LCID" {
+
+        if ( (Get-Culture).LCID -eq 1049 ) {
+            $testCulture = "0x1000"
+        }
+        else {
+            $testCulture = "0x419"
+        }
+
+        {$testObject | Group-Object -Culture $testCulture } | Should Not Throw
+    }
+
+    It "Should accept a culture by int string LCID" {
+
+        if ( (Get-Culture).LCID -eq 1049 ) {
+            $testCulture = "4096"
+        }
+        else {
+            $testCulture = "1049"
+        }
+
+        {$testObject | Group-Object -Culture $testCulture } | Should Not Throw
     }
 }

@@ -923,7 +923,7 @@ namespace System.Management.Automation
 
             foreach ($file in $FileName)
             {
-                dir $file -File | foreach {
+                Get-ChildItem $file -File | ForEach-Object {
                     $filePathName = $_.FullName
 
                     # Get file contents

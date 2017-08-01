@@ -11,9 +11,6 @@ using System.Management.Automation.Internal;
 using Microsoft.PowerShell.Commands;
 using Dbg = System.Management.Automation.Diagnostics;
 
-#if CORECLR
-using System.Reflection;
-#endif
 
 namespace System.Management.Automation
 {

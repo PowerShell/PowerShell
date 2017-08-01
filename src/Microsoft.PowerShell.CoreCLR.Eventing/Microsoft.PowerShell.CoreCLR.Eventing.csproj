@@ -1,18 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
+  <Import Project="..\..\PowerShell.Common.props"/>  
+
   <PropertyGroup>
-    <VersionPrefix>6.0.0</VersionPrefix>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <Description>PowerShell Core's Microsoft.PowerShell.CoreCLR.Eventing project</Description>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <DelaySign>true</DelaySign>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <AssemblyName>Microsoft.PowerShell.CoreCLR.Eventing</AssemblyName>
-    <AssemblyOriginatorKeyFile>../signing/visualstudiopublic.snk</AssemblyOriginatorKeyFile>
-    <SignAssembly>true</SignAssembly>
-    <GenerateAssemblyFileVersionAttribute>false</GenerateAssemblyFileVersionAttribute>
-    <GenerateAssemblyVersionAttribute>false</GenerateAssemblyVersionAttribute>
   </PropertyGroup>
 
   <PropertyGroup>
@@ -32,7 +25,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.4.0-preview1-25302-01" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="4.4.0-preview3-25423-02" />
   </ItemGroup>
 
 </Project>

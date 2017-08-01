@@ -507,6 +507,9 @@ namespace System.Management.Automation.Language
         private static readonly Dictionary<string, TokenKind> s_operatorTable
             = new Dictionary<string, TokenKind>(StringComparer.OrdinalIgnoreCase);
 
+        private static readonly char s_invalidChar = char.MaxValue;
+        private static readonly int s_maxNumberOfUnicodeHexDigits = 6;
+
         private readonly Parser _parser;
         private PositionHelper _positionHelper;
         private int _nestedTokensAdjustment;
@@ -1229,8 +1232,10 @@ namespace System.Management.Automation.Language
             return i;
         }
 
-        private static char Backtick(char c)
+        private char Backtick(char c, out char surrogateCharacter)
         {
+            surrogateCharacter = s_invalidChar;
+
             switch (c)
             {
                 case '0': return '\0';
@@ -1241,8 +1246,102 @@ namespace System.Management.Automation.Language
                 case 'n': return '\n';
                 case 'r': return '\r';
                 case 't': return '\t';
+                case 'u': return ScanUnicodeEscape(out surrogateCharacter);
                 case 'v': return '\v';
                 default: return c;
+            }
+        }
+
+        private char ScanUnicodeEscape(out char surrogateCharacter)
+        {
+            int escSeqStartIndex = _currentIndex - 2;
+            surrogateCharacter = s_invalidChar;
+
+            char c = GetChar();
+            if (c != '{')
+            {
+                UngetChar();
+
+                IScriptExtent errorExtent = NewScriptExtent(escSeqStartIndex, _currentIndex);
+                ReportError(errorExtent, () => ParserStrings.InvalidUnicodeEscapeSequence);
+                return s_invalidChar;
+            }
+
+            // Scan the rest of the Unicode escape sequence - one to six hex digits terminated plus the closing '}'.
+            var sb = GetStringBuilder();
+            int i;
+            for (i = 0; i < s_maxNumberOfUnicodeHexDigits + 1; i++)
+            {
+                c = GetChar();
+
+                // Sequence has been terminated.
+                if (c == '}')
+                {
+                    if (i == 0)
+                    {
+                        // Sequence must have at least one hex char.
+                        Release(sb);
+                        IScriptExtent errorExtent = NewScriptExtent(escSeqStartIndex, _currentIndex);
+                        ReportError(errorExtent, () => ParserStrings.InvalidUnicodeEscapeSequence);
+                        return s_invalidChar;
+                    }
+
+                    break;
+                }
+                else if (!c.IsHexDigit())
+                {
+                    UngetChar();
+
+                    Release(sb);
+                    ReportError(_currentIndex,
+                        i < s_maxNumberOfUnicodeHexDigits
+                            ? (Expression<Func<string>>)(() => ParserStrings.InvalidUnicodeEscapeSequence)
+                            : () => ParserStrings.MissingUnicodeEscapeSequenceTerminator);
+                    return s_invalidChar;
+                }
+                else if (i == s_maxNumberOfUnicodeHexDigits) {
+                    UngetChar();
+
+                    Release(sb);
+                    ReportError(_currentIndex, () => ParserStrings.TooManyDigitsInUnicodeEscapeSequence);
+                    return s_invalidChar;
+                }
+
+                sb.Append(c);
+            }
+
+            string hexStr = GetStringAndRelease(sb);
+
+            uint unicodeValue = uint.Parse(hexStr, NumberStyles.AllowHexSpecifier, NumberFormatInfo.InvariantInfo);
+            if (unicodeValue <= Char.MaxValue)
+            {
+                return ((char)unicodeValue);
+            }
+            else if (unicodeValue <= 0x10FFFF)
+            {
+                return GetCharsFromUtf32(unicodeValue, out surrogateCharacter);
+            }
+            else
+            {
+                // Place the error indicator under only the hex digits in the esc sequence.
+                IScriptExtent errorExtent = NewScriptExtent(escSeqStartIndex + 3, _currentIndex - 1);
+                ReportError(errorExtent, () => ParserStrings.InvalidUnicodeEscapeSequenceValue);
+                return s_invalidChar;
+            }
+        }
+
+        private static char GetCharsFromUtf32(uint codepoint, out char lowSurrogate)
+        {
+            if (codepoint < (uint)0x00010000)
+            {
+                lowSurrogate = s_invalidChar;
+                return (char)codepoint;
+            }
+            else
+            {
+                Diagnostics.Assert((codepoint > 0x0000FFFF) && (codepoint <= 0x0010FFFF), "Codepoint is out of range for a surrogate pair");
+                lowSurrogate = (char)((codepoint - 0x00010000) % 0x0400 + 0xDC00);
+                return (char)((codepoint - 0x00010000) / 0x0400 + 0xD800);
             }
         }
 
@@ -2029,7 +2128,13 @@ namespace System.Management.Automation.Language
                     if (c1 != 0)
                     {
                         SkipChar();
-                        c = Backtick(c1);
+                        c = Backtick(c1, out char surrogateCharacter);
+                        if (surrogateCharacter != s_invalidChar)
+                        {
+                            sb.Append(c).Append(surrogateCharacter);
+                            formatSb.Append(c).Append(surrogateCharacter);
+                            continue;
+                        }
                     }
                 }
                 if (c == '{' || c == '}')
@@ -2338,7 +2443,13 @@ namespace System.Management.Automation.Language
                         if (c1 != 0)
                         {
                             SkipChar();
-                            c = Backtick(c1);
+                            c = Backtick(c1, out char surrogateCharacter);
+                            if (surrogateCharacter != s_invalidChar)
+                            {
+                                sb.Append(c).Append(surrogateCharacter);
+                                formatSb.Append(c).Append(surrogateCharacter);
+                                continue;
+                            }
                         }
                     }
                     if (c == '{' || c == '}')
@@ -2407,7 +2518,12 @@ namespace System.Management.Automation.Language
                                     UngetChar();
                                     goto end_braced_variable_scan;
                                 }
-                                c = Backtick(c1);
+                                c = Backtick(c1, out char surrogateCharacter);
+                                if (surrogateCharacter != s_invalidChar)
+                                {
+                                    sb.Append(c).Append(surrogateCharacter);
+                                    continue;
+                                }
                                 break;
                             }
                         case '"':
@@ -2845,6 +2961,17 @@ namespace System.Management.Automation.Language
             return ScanGenericToken(sb);
         }
 
+        private Token ScanGenericToken(char firstChar, char surrogateCharacter)
+        {
+            var sb = GetStringBuilder();
+            sb.Append(firstChar);
+            if (surrogateCharacter != s_invalidChar)
+            {
+                sb.Append(surrogateCharacter);
+            }
+            return ScanGenericToken(sb);
+        }
+
         private Token ScanGenericToken(StringBuilder sb)
         {
             // On entry, we've already scanned an unknown number of characters
@@ -2885,7 +3012,13 @@ namespace System.Management.Automation.Language
                     if (c1 != 0)
                     {
                         SkipChar();
-                        c = Backtick(c1);
+                        c = Backtick(c1, out char surrogateCharacter);
+                        if (surrogateCharacter != s_invalidChar)
+                        {
+                            sb.Append(c).Append(surrogateCharacter);
+                            formatSb.Append(c).Append(surrogateCharacter);
+                            continue;
+                        }
                     }
                 }
                 else if (c.IsSingleQuote())
@@ -3801,7 +3934,8 @@ namespace System.Management.Automation.Language
                         goto again;
                     }
 
-                    return ScanGenericToken(Backtick(c1));
+                    c = Backtick(c1, out char surrogateCharacter);
+                    return ScanGenericToken(c, surrogateCharacter);
 
                 case '=':
                     return CheckOperatorInCommandMode(c, TokenKind.Equals);

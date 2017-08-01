@@ -613,19 +613,18 @@ namespace Microsoft.PowerShell.Commands
             Guid? savedBaseGuid = BaseGuid;
 
             var importingModule = 0 != (manifestProcessingFlags & ManifestProcessingFlags.LoadElements);
-
+            string extension = Path.GetExtension(moduleSpecification.Name);
             // First check for fully-qualified paths - either absolute or relative
             string rootedPath = ResolveRootedFilePath(moduleSpecification.Name, this.Context);
             if (String.IsNullOrEmpty(rootedPath))
             {
-                rootedPath = Path.Combine(moduleBase, moduleSpecification.Name);
+                rootedPath = FixupFileName(moduleBase, moduleSpecification.Name, extension);
             }
             else
             {
                 wasRooted = true;
             }
 
-            string extension = Path.GetExtension(moduleSpecification.Name);
             try
             {
                 this.Context.Modules.IncrementModuleNestingDepth(this, rootedPath);
@@ -2769,37 +2768,57 @@ namespace Microsoft.PowerShell.Commands
 
             if (scriptsToProcess != null)
             {
-                foreach (string scriptFile in scriptsToProcess)
+                Version savedBaseMinimumVersion = BaseMinimumVersion;
+                Version savedBaseMaximumVersion = BaseMaximumVersion;
+                Version savedBaseRequiredVersion = BaseRequiredVersion;
+                Guid? savedBaseGuid = BaseGuid;
+
+                try
                 {
-                    bool found = false;
-                    PSModuleInfo module = LoadModule(scriptFile,
-                        moduleBase,
-                        string.Empty, // prefix (-Prefix shouldn't be applied to dot sourced scripts)
-                        null,
-                        ref options,
-                        manifestProcessingFlags,
-                        out found);
+                    BaseMinimumVersion = null;
+                    BaseMaximumVersion = null;
+                    BaseRequiredVersion = null;
+                    BaseGuid = null;
 
-                    // If we're in analysis, add the detected exports to this module's
-                    // exports
-                    if (found && (ss == null))
+                    foreach (string scriptFile in scriptsToProcess)
                     {
-                        foreach (string detectedCmdlet in module.ExportedCmdlets.Keys)
-                        {
-                            manifestInfo.AddDetectedCmdletExport(detectedCmdlet);
-                        }
+                        bool found = false;
+                        PSModuleInfo module = LoadModule(scriptFile,
+                            moduleBase,
+                            string.Empty, // prefix (-Prefix shouldn't be applied to dot sourced scripts)
+                            null,
+                            ref options,
+                            manifestProcessingFlags,
+                            out found);
 
-                        foreach (string detectedFunction in module.ExportedFunctions.Keys)
+                        // If we're in analysis, add the detected exports to this module's
+                        // exports
+                        if (found && (ss == null))
                         {
-                            manifestInfo.AddDetectedFunctionExport(detectedFunction);
-                        }
+                            foreach (string detectedCmdlet in module.ExportedCmdlets.Keys)
+                            {
+                                manifestInfo.AddDetectedCmdletExport(detectedCmdlet);
+                            }
 
-                        foreach (string detectedAlias in module.ExportedAliases.Keys)
-                        {
-                            manifestInfo.AddDetectedAliasExport(detectedAlias,
-                                module.ExportedAliases[detectedAlias].Definition);
+                            foreach (string detectedFunction in module.ExportedFunctions.Keys)
+                            {
+                                manifestInfo.AddDetectedFunctionExport(detectedFunction);
+                            }
+
+                            foreach (string detectedAlias in module.ExportedAliases.Keys)
+                            {
+                                manifestInfo.AddDetectedAliasExport(detectedAlias,
+                                    module.ExportedAliases[detectedAlias].Definition);
+                            }
                         }
                     }
+                }
+                finally
+                {
+                    BaseMinimumVersion = savedBaseMinimumVersion;
+                    BaseMaximumVersion = savedBaseMaximumVersion;
+                    BaseRequiredVersion = savedBaseRequiredVersion;
+                    BaseGuid = savedBaseGuid;
                 }
             }
 
@@ -4660,7 +4679,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (listOfStrings != null)
             {
-                var psHome = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
+                var psHome = Utils.DefaultPowerShellAppBase;
                 string alternateDirToCheck = null;
                 if (moduleBase.StartsWith(psHome, StringComparison.OrdinalIgnoreCase))
                 {
@@ -6824,6 +6843,15 @@ namespace Microsoft.PowerShell.Commands
 
                 assemblyVersion = GetAssemblyVersionNumber(assemblyToLoad);
                 assembly = assemblyToLoad;
+                // If this is an in-memory only assembly, add it directly to the assembly cache if
+                // it isn't already there.
+                if (string.IsNullOrEmpty(assembly.Location))
+                {
+                    if (! Context.AssemblyCache.ContainsKey(assembly.FullName))
+                    {
+                        Context.AssemblyCache.Add(assembly.FullName, assembly);
+                    }
+                }
             }
             else
             {
@@ -7177,7 +7205,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 AddModuleToModuleTables(this.Context, this.TargetSessionState.Internal, module);
             }
-
             return module;
         }
 

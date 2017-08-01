@@ -51,7 +51,7 @@
             Remove-Item $filePath -Force -ErrorAction SilentlyContinue
         }
 
-        $testData | % {
+        $testData | ForEach-Object {
 
             It "$($_.testName)" {
                 $test = $_
@@ -135,7 +135,7 @@
             $testData += [TestData]::new("with path as non filesystem provider", "env:\", $null, "ReadWriteFileNotFileSystemProvider,Microsoft.PowerShell.Commands.ImportClixmlCommand")
         }
 
-        $testData | % {
+        $testData | ForEach-Object {
 
             It "$($_.testName)" {
                 $test = $_
@@ -183,5 +183,54 @@
             Export-Clixml -Path $testPath -InputObject "string" -WhatIf
             $testPath | Should Not Exist
         }
+    }
+}
+
+##
+## CIM deserialization security vulnerability
+##
+Describe "Deserializing corrupted Cim classes should not instantiate non-Cim types" -Tags "Feature","Slow" {
+
+    BeforeAll {
+
+        # Only run on Windows platform.
+        # Ensure calc.exe is avaiable for test.
+        if ( !$IsWindows -or ((Get-Command calc.exe 2>$null) -eq $null) )
+        {
+            $orginalDefaultParameters = $PSDefaultParameterValues.Clone()
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+        else
+        {
+            (Get-Process -Name 'win32calc','calculator' 2>$null) | Stop-Process -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    AfterAll {
+
+        if ($orginalDefaultParameters -ne $null)
+        {
+            $PSDefaultParameterValues = $orginalDefaultParameters
+        }
+        else
+        {
+            (Get-Process -Name 'win32calc','calculator' 2>$null) | Stop-Process -Force -ErrorAction SilentlyContinue
+        }
+    }
+
+    It "Verifies that importing the corrupted Cim class does not launch calc.exe" {
+
+        Import-Clixml -Path (Join-Path $PSScriptRoot "assets\CorruptedCim.clixml")
+        
+        # Wait up to 10 seconds for calc.exe to run
+        $calcProc = $null
+        $count = 0
+        while (!$calcProc -and ($count++ -lt 20))
+        {
+            $calcProc = Get-Process -Name 'win32calc','calculator' 2>$null
+            Start-Sleep -Milliseconds 500
+        }
+
+        $calcProc | Should BeNullOrEmpty
     }
 }

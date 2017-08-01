@@ -176,6 +176,78 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             # no extraneous output
             $observed | should be $currentVersion
         }
+
+        It "-File should be default parameter" {
+            Set-Content -Path $testdrive/test -Value "'hello'"
+            $observed = & $powershell -NoProfile $testdrive/test
+            $observed | Should Be "hello"
+        }
+
+        It "-File accepts scripts with and without .ps1 extension: <Filename>" -TestCases @(
+            @{Filename="test.ps1"},
+            @{Filename="test"}
+        ) {
+            param($Filename)
+            Set-Content -Path $testdrive/$Filename -Value "'hello'"
+            $observed = & $powershell -NoProfile -File $testdrive/$Filename
+            $observed | Should Be "hello"
+        }
+
+        It "-File should pass additional arguments to script" {
+            Set-Content -Path $testdrive/script.ps1 -Value 'foreach($arg in $args){$arg}'
+            $observed = & $powershell -NoProfile $testdrive/script.ps1 foo bar
+            $observed.Count | Should Be 2
+            $observed[0] | Should Be "foo"
+            $observed[1] | Should Be "bar"
+        }
+
+        It "-File should be able to pass bool string values as string to parameters: <BoolString>" -TestCases @(
+            # validates case is preserved
+            @{BoolString = '$truE'},
+            @{BoolString = '$falSe'},
+            @{BoolString = 'trUe'},
+            @{BoolString = 'faLse'}
+        ) {
+            param([string]$BoolString)
+            Set-Content -Path $testdrive/test.ps1 -Value 'param([string]$bool) $bool'
+            $observed = & $powershell -NoProfile -Nologo -File $testdrive/test.ps1 -Bool $BoolString
+            $observed | Should Be $BoolString
+        }
+
+        It "-File should be able to pass bool string values as string to positional parameters: <BoolString>" -TestCases @(
+            # validates case is preserved
+            @{BoolString = '$tRue'},
+            @{BoolString = '$falSe'},
+            @{BoolString = 'tRUe'},
+            @{BoolString = 'fALse'}
+        ) {
+            param([string]$BoolString)
+            Set-Content -Path $testdrive/test.ps1 -Value 'param([string]$bool) $bool'
+            $observed = & $powershell -NoProfile -Nologo -File $testdrive/test.ps1 $BoolString
+            $observed | Should BeExactly $BoolString
+        }
+
+        It "-File should be able to pass bool string values as bool to switches: <BoolString>" -TestCases @(
+            @{BoolString = '$tRue'; BoolValue = 'True'},
+            @{BoolString = '$faLse'; BoolValue = 'False'},
+            @{BoolString = 'tRue'; BoolValue = 'True'},
+            @{BoolString = 'fAlse'; BoolValue = 'False'}
+        ) {
+            param([string]$BoolString, [string]$BoolValue)
+            Set-Content -Path $testdrive/test.ps1 -Value 'param([switch]$switch) $switch.IsPresent'
+            $observed = & $powershell -NoProfile -Nologo -File $testdrive/test.ps1 -switch:$BoolString
+            $observed | Should Be $BoolValue
+        }
+
+        It "-File should return exit code from script"  -TestCases @(
+            @{Filename = "test.ps1"},
+            @{Filename = "test"}
+        ) {
+            param($Filename)
+            Set-Content -Path $testdrive/$Filename -Value 'exit 123'
+            & $powershell $testdrive/$Filename
+            $LASTEXITCODE | Should Be 123
+        }
     }
 
     Context "Pipe to/from powershell" {
@@ -204,7 +276,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
     Context "Redirected standard output" {
         It "Simple redirected output" {
-            $si = NewProcessStartInfo "-noprofile 1+1"
+            $si = NewProcessStartInfo "-noprofile -c 1+1"
             $process = RunPowerShell $si
             $process.StandardOutput.ReadToEnd() | Should Be 2
             EnsureChildHasExited $process
@@ -217,14 +289,14 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         # So none of these tests should close StandardInput
 
         It "Redirected input w/ implicit -Command w/ -NonInteractive" {
-            $si = NewProcessStartInfo "-NonInteractive -noprofile 1+1" -RedirectStdIn
+            $si = NewProcessStartInfo "-NonInteractive -noprofile -c 1+1" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardOutput.ReadToEnd() | Should Be 2
             EnsureChildHasExited $process
         }
 
         It "Redirected input w/ implicit -Command w/o -NonInteractive" {
-            $si = NewProcessStartInfo "-noprofile 1+1" -RedirectStdIn
+            $si = NewProcessStartInfo "-noprofile -c 1+1" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardOutput.ReadToEnd() | Should Be 2
             EnsureChildHasExited $process
@@ -267,7 +339,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         # All of the following tests replace the prompt (either via an initial command or interactively)
         # so that we can read StandardOutput and reliably know exactly what the prompt is.
 
-        It "Interactive redirected input" -TestCases @(
+        It "Interactive redirected input: <InteractiveSwitch>" -TestCases @(
             @{InteractiveSwitch = ""}
             @{InteractiveSwitch = " -IntERactive"}
             @{InteractiveSwitch = " -i"}
@@ -295,7 +367,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
 
         It "Interactive redirected input w/ initial command" {
-            $si = NewProcessStartInfo "-noprofile -noexit ""`$function:prompt = { 'PS> ' }""" -RedirectStdIn
+            $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS> ' }""" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("1+1`n")
             $process.StandardOutput.ReadLine() | Should Be "PS> 1+1"
@@ -309,7 +381,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
 
         It "Redirected input explicit prompting (-File -)" {
-            $si = NewProcessStartInfo "-noprofile -File -" -RedirectStdIn
+            $si = NewProcessStartInfo "-noprofile -" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$function:prompt = { 'PS> ' }`n")
             $null = $process.StandardOutput.ReadLine()
@@ -322,7 +394,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         }
 
         It "Redirected input no prompting (-Command -)" {
-            $si = NewProcessStartInfo "-noprofile -" -RedirectStdIn
+            $si = NewProcessStartInfo "-noprofile -Command -" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("1+1`n")
             $process.StandardOutput.ReadLine() | Should Be "2"
@@ -355,7 +427,7 @@ foo
         }
 
         It "Redirected input w/ nested prompt" {
-            $si = NewProcessStartInfo "-noprofile -noexit ""`$function:prompt = { 'PS' + ('>'*(`$nestedPromptLevel+1)) + ' ' }""" -RedirectStdIn
+            $si = NewProcessStartInfo "-noprofile -noexit -c ""`$function:prompt = { 'PS' + ('>'*(`$nestedPromptLevel+1)) + ' ' }""" -RedirectStdIn
             $process = RunPowerShell $si
             $process.StandardInput.Write("`$host.EnterNestedPrompt()`n")
             $process.StandardOutput.ReadLine() | Should Be "PS> `$host.EnterNestedPrompt()"
@@ -397,7 +469,7 @@ foo
         AfterEach {
             $env:XDG_CACHE_HOME = $XDG_CACHE_HOME
             $env:XDG_DATA_HOME = $XDG_DATA_HOME
-            $env:XDG_CONFIG_HOME = $XDG_CONFIG_HOME            
+            $env:XDG_CONFIG_HOME = $XDG_CONFIG_HOME
         }
 
         It "Should start if Data, Config, and Cache location is not accessible" -skip:($IsWindows) {

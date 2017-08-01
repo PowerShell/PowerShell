@@ -246,7 +246,7 @@ namespace System.Management.Automation.Runspaces
             if (assembly == null)
                 throw PSTraceSource.NewArgumentNullException("assembly");
 
-            object[] attributes = ClrFacade.GetCustomAttributes<RunspaceConfigurationTypeAttribute>(assembly);
+            object[] attributes = assembly.GetCustomAttributes(typeof(RunspaceConfigurationTypeAttribute), false);
 
             if (attributes == null || attributes.Length == 0)
             {

@@ -25,11 +25,7 @@ namespace System.Management.Automation
         {
             get
             {
-#if CORECLR
                 return RuntimeInformation.IsOSPlatform(OSPlatform.Linux);
-#else
-                return false;
-#endif
             }
         }
 
@@ -40,11 +36,7 @@ namespace System.Management.Automation
         {
             get
             {
-#if CORECLR
                 return RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
-#else
-                return false;
-#endif
             }
         }
 
@@ -55,11 +47,7 @@ namespace System.Management.Automation
         {
             get
             {
-#if CORECLR
                 return RuntimeInformation.IsOSPlatform(OSPlatform.Windows);
-#else
-                return true;
-#endif
             }
         }
 
@@ -70,11 +58,7 @@ namespace System.Management.Automation
         {
             get
             {
-#if CORECLR
                 return true;
-#else
-                return false;
-#endif
             }
         }
 
@@ -85,9 +69,7 @@ namespace System.Management.Automation
         {
             get
             {
-#if !CORECLR
-                return false;
-#elif UNIX
+#if UNIX
                 return false;
 #else
                 if (_isNanoServer.HasValue) { return _isNanoServer.Value; }
@@ -117,9 +99,7 @@ namespace System.Management.Automation
         {
             get
             {
-#if !CORECLR
-                return false;
-#elif UNIX
+#if UNIX
                 return false;
 #else
                 if (_isIoT.HasValue) { return _isIoT.Value; }
@@ -142,7 +122,6 @@ namespace System.Management.Automation
             }
         }
 
-#if CORECLR
         /// <summary>
         /// True if it is the inbox powershell for NanoServer or IoT.
         /// </summary>
@@ -159,7 +138,7 @@ namespace System.Management.Automation
                 if (IsNanoServer || IsIoT)
                 {
                     _isInbox = string.Equals(
-                        Utils.GetApplicationBase(Utils.DefaultPowerShellShellID),
+                        Utils.DefaultPowerShellAppBase,
                         Utils.GetApplicationBaseFromRegistry(Utils.DefaultPowerShellShellID),
                         StringComparison.OrdinalIgnoreCase);
                 }
@@ -173,8 +152,6 @@ namespace System.Management.Automation
         private static bool? _isNanoServer = null;
         private static bool? _isIoT = null;
         private static bool? _isInbox = null;
-#endif
-
 #endif
 
         // format files
@@ -380,7 +357,7 @@ namespace System.Management.Automation
                             {
                                 //service accounts won't have permission to create user folder
                                 return GetTemporaryDirectory();
-                            }                                
+                            }
                         }
 
                         return Path.Combine(xdgcachehome, "powershell");
@@ -451,15 +428,15 @@ namespace System.Management.Automation
                     if (!System.IO.Directory.Exists(folderPath)) { folderPath = null; }
                     break;
                 case System.Environment.SpecialFolder.Personal:
-                    folderPath = envHome; 
+                    folderPath = envHome;
                     break;
                 case System.Environment.SpecialFolder.LocalApplicationData:
                     folderPath = System.IO.Path.Combine(envHome, ".config");
-                    if (!System.IO.Directory.Exists(folderPath)) 
+                    if (!System.IO.Directory.Exists(folderPath))
                     {
                         try
                         {
-                            System.IO.Directory.CreateDirectory(folderPath); 
+                            System.IO.Directory.CreateDirectory(folderPath);
                         }
                         catch (UnauthorizedAccessException)
                         {
@@ -587,6 +564,16 @@ namespace System.Management.Automation
             return Unix.NativeMethods.IsSameFileSystemItem(pathOne, pathTwo);
         }
 
+        internal static bool NonWindowsGetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
+        {
+            UInt64 device = 0UL;
+            UInt64 inode = 0UL;
+            var result = Unix.NativeMethods.GetInodeData(path, out device, out inode);
+
+            inodeData = (device, inode);
+            return result == 0;
+        }
+
         internal static bool NonWindowsIsExecutable(string path)
         {
             return Unix.NativeMethods.IsExecutable(path);
@@ -601,8 +588,6 @@ namespace System.Management.Automation
         {
             return IsOSX ? Unix.NativeMethods.GetPPid(pid) : Unix.GetProcFSParentPid(pid);
         }
-
-
 
         // Unix specific implementations of required functionality
         //
@@ -799,6 +784,10 @@ namespace System.Management.Automation
                 [return: MarshalAs(UnmanagedType.I1)]
                 internal static extern bool IsSameFileSystemItem([MarshalAs(UnmanagedType.LPStr)]string filePathOne,
                                                                  [MarshalAs(UnmanagedType.LPStr)]string filePathTwo);
+
+                [DllImport(psLib, CharSet = CharSet.Ansi, SetLastError = true)]
+                internal static extern int GetInodeData([MarshalAs(UnmanagedType.LPStr)]string path,
+                                                        out UInt64 device, out UInt64 inode);
             }
         }
     }

@@ -61,7 +61,7 @@ Describe "Trace-Command" -tags "CI" {
             $log = Get-Content $logfile | Where-Object {$_ -like "*ThreadID=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
 
-            $results | % { $_ | Should Be ([threading.thread]::CurrentThread.ManagedThreadId) }
+            $results | ForEach-Object { $_ | Should Be ([threading.thread]::CurrentThread.ManagedThreadId) }
         }
 
         It "Timestamp creates logs in ascending order" {

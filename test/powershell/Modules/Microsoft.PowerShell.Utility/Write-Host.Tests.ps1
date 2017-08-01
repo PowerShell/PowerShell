@@ -13,7 +13,7 @@
     It "write-Host works with '<Name>' switch" -TestCases:$testData -Pending:$IsOSX {
         param($Command, $returnCount, $returnValue)
 
-        [array]$result = & $powershell -noprofile $Command
+        [array]$result = & $powershell -noprofile -c $Command
 
         $result.Count | Should Be $returnCount
         foreach ($i in 0..($returnCount - 1))

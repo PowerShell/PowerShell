@@ -85,7 +85,7 @@ namespace Microsoft.PowerShell
 
             if (s.Length > 0)
             {
-                IntPtr ptr = ClrFacade.SecureStringToCoTaskMemUnicode(s);
+                IntPtr ptr = Marshal.SecureStringToCoTaskMemUnicode(s);
 
                 try
                 {

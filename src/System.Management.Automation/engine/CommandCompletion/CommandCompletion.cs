@@ -12,7 +12,9 @@ using System.Globalization;
 using System.Management.Automation.Language;
 using System.Management.Automation.Runspaces;
 using System.Text.RegularExpressions;
+#if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
+#endif
 
 namespace System.Management.Automation
 {
@@ -591,8 +593,10 @@ namespace System.Management.Automation
 
                     var completionResults = results ?? EmptyCompletionResult;
                     sw.Stop();
+#if LEGACYTELEMETRY
                     TelemetryAPI.ReportTabCompletionTelemetry(sw.ElapsedMilliseconds, completionResults.Count,
                         completionResults.Count > 0 ? completionResults[0].ResultType : CompletionResultType.Text);
+#endif
                     return new CommandCompletion(
                         new Collection<CompletionResult>(completionResults),
                         -1,
@@ -641,7 +645,7 @@ namespace System.Management.Automation
             char quote;
             var lastword = LastWordFinder.FindLastWord(legacyInput, out replacementIndex, out quote);
             replacementLength = legacyInput.Length - replacementIndex;
-            var helper = new CompletionExecutionHelper(powershell);
+            var helper = new PowerShellExecutionHelper(powershell);
 
             powershell.AddCommand("TabExpansion").AddArgument(legacyInput).AddArgument(lastword);
 
@@ -749,7 +753,7 @@ namespace System.Management.Automation
             /// <param name="quote"></param>
             /// <param name="completingAtStartOfLine"></param>
             /// <returns></returns>
-            internal static List<CompletionResult> PSv2GenerateMatchSetOfCmdlets(CompletionExecutionHelper helper, string lastWord, string quote, bool completingAtStartOfLine)
+            internal static List<CompletionResult> PSv2GenerateMatchSetOfCmdlets(PowerShellExecutionHelper helper, string lastWord, string quote, bool completingAtStartOfLine)
             {
                 var results = new List<CompletionResult>();
                 bool isSnapinSpecified;
@@ -864,7 +868,7 @@ namespace System.Management.Automation
 
             #region "Handle File Names"
 
-            internal static List<CompletionResult> PSv2GenerateMatchSetOfFiles(CompletionExecutionHelper helper, string lastWord, bool completingAtStartOfLine, string quote)
+            internal static List<CompletionResult> PSv2GenerateMatchSetOfFiles(PowerShellExecutionHelper helper, string lastWord, bool completingAtStartOfLine, string quote)
             {
                 var results = new List<CompletionResult>();
 
@@ -926,7 +930,7 @@ namespace System.Management.Automation
 
                         bool? isContainer = SafeGetProperty<bool?>(combinedMatch.Item, "PSIsContainer");
                         string childName = SafeGetProperty<string>(combinedMatch.Item, "PSChildName");
-                        string toolTip = CompletionExecutionHelper.SafeToString(combinedMatch.ConvertedPath);
+                        string toolTip = PowerShellExecutionHelper.SafeToString(combinedMatch.ConvertedPath);
 
                         if (isContainer != null && childName != null && toolTip != null)
                         {
@@ -1034,7 +1038,7 @@ namespace System.Management.Automation
                 return default(T);
             }
 
-            private static bool PSv2ShouldFullyQualifyPathsPath(CompletionExecutionHelper helper, string lastWord)
+            private static bool PSv2ShouldFullyQualifyPathsPath(PowerShellExecutionHelper helper, string lastWord)
             {
                 // These are special cases, as they represent cases where the user expects to
                 // see the full path.
@@ -1068,7 +1072,7 @@ namespace System.Management.Automation
                 }
             }
 
-            private static List<PathItemAndConvertedPath> PSv2FindMatches(CompletionExecutionHelper helper, string path, bool shouldFullyQualifyPaths)
+            private static List<PathItemAndConvertedPath> PSv2FindMatches(PowerShellExecutionHelper helper, string path, bool shouldFullyQualifyPaths)
             {
                 Diagnostics.Assert(!String.IsNullOrEmpty(path), "path should have a value");
                 var result = new List<PathItemAndConvertedPath>();
@@ -1081,14 +1085,14 @@ namespace System.Management.Automation
                 {
                     powershell.AddScript(String.Format(
                         CultureInfo.InvariantCulture,
-                        "& {{ trap {{ continue }} ; resolve-path {0} -Relative -WarningAction SilentlyContinue | %{{,($_,(get-item $_ -WarningAction SilentlyContinue),(convert-path $_ -WarningAction SilentlyContinue))}} }}",
+                        "& {{ trap {{ continue }} ; resolve-path {0} -Relative -WarningAction SilentlyContinue | ForEach-Object {{,($_,(get-item $_ -WarningAction SilentlyContinue),(convert-path $_ -WarningAction SilentlyContinue))}} }}",
                         path));
                 }
                 else
                 {
                     powershell.AddScript(String.Format(
                         CultureInfo.InvariantCulture,
-                        "& {{ trap {{ continue }} ; resolve-path {0} -WarningAction SilentlyContinue | %{{,($_,(get-item $_ -WarningAction SilentlyContinue),(convert-path $_ -WarningAction SilentlyContinue))}} }}",
+                        "& {{ trap {{ continue }} ; resolve-path {0} -WarningAction SilentlyContinue | ForEach-Object {{,($_,(get-item $_ -WarningAction SilentlyContinue),(convert-path $_ -WarningAction SilentlyContinue))}} }}",
                         path));
                 }
 
@@ -1113,9 +1117,9 @@ namespace System.Management.Automation
                         }
 
                         result.Add(new PathItemAndConvertedPath(
-                                            CompletionExecutionHelper.SafeToString(objectPath),
+                                            PowerShellExecutionHelper.SafeToString(objectPath),
                                             item,
-                                            CompletionExecutionHelper.SafeToString(convertedPath)));
+                                            PowerShellExecutionHelper.SafeToString(convertedPath)));
                     }
                 }
 

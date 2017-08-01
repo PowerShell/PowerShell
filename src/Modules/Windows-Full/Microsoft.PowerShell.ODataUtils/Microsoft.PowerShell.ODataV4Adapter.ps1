@@ -84,7 +84,7 @@ function GetTypeInfo
         [Hashtable] $Headers
     )
 
-    if($callerPSCmdlet -eq $null) { throw ($LocalizedData.ArguementNullError -f "callerPSCmdlet", "GetTypeInfo") }
+    if($null -eq $callerPSCmdlet) { throw ($LocalizedData.ArguementNullError -f "callerPSCmdlet", "GetTypeInfo") }
 
     $metadataSet = New-Object System.Collections.ArrayList
     $metadataXML = GetMetaData $MetadataUri $callerPSCmdlet $ODataEndpointProxyParameters.Credential $Headers $ODataEndpointProxyParameters.AllowUnsecureConnection
@@ -116,7 +116,7 @@ function AddMetadataToMetadataSet
         $NewMetadata
     )
 
-    if($NewMetadata -eq $null) { throw ($LocalizedData.ArguementNullError -f "NewMetadata", "AddMetadataToMetadataSet") }
+    if($null -eq $NewMetadata) { throw ($LocalizedData.ArguementNullError -f "NewMetadata", "AddMetadataToMetadataSet") }
 
     if ($NewMetadata.GetType().Name -eq 'MetadataV4')
     {
@@ -298,17 +298,17 @@ function ParseEntityTypes
         [string] $Alias
     )
 
-    if($SchemaXML -eq $null) { throw ($LocalizedData.ArguementNullError -f "SchemaXML", "ParseEntityTypes") }
+    if($null -eq $SchemaXML) { throw ($LocalizedData.ArguementNullError -f "SchemaXML", "ParseEntityTypes") }
 
     foreach ($entityType in $SchemaXML.EntityType)
     {
         $baseType = $null
 
-        if ($entityType.BaseType -ne $null)
+        if ($null -ne $entityType.BaseType)
         {
             # add it to the processing queue
             $baseType = GetBaseType $entityType $Metadata $SchemaXML.Namespace $GlobalMetadata
-            if ($baseType -eq $null)
+            if ($null -eq $baseType)
             {
                 $EntityAndComplexTypesQueue[$entityType.BaseType] += @(@{type='EntityType'; value=$entityType})
             }
@@ -340,17 +340,17 @@ function ParseComplexTypes
         [string] $Alias
     )
 
-    if($SchemaXML -eq $null) { throw ($LocalizedData.ArguementNullError -f "SchemaXML", "ParseComplexTypes") }
+    if($null -eq $SchemaXMLl) { throw ($LocalizedData.ArguementNullError -f "SchemaXML", "ParseComplexTypes") }
 
     foreach ($complexType in $SchemaXML.ComplexType)
     {
         $baseType = $null
 
-        if ($complexType.BaseType -ne $null)
+        if ($null -ne $complexType.BaseType)
         {
             # add it to the processing queue
             $baseType = GetBaseType $complexType $metadata $SchemaXML.Namespace $GlobalMetadata
-            if ($baseType -eq $null -and $entityAndComplexTypesQueue -ne $null -and $entityAndComplexTypesQueue.ContainsKey($complexType.BaseType))
+            if ($null -eq $baseType -and $null -ne $entityAndComplexTypesQueue -and $entityAndComplexTypesQueue.ContainsKey($complexType.BaseType))
             {
                 $entityAndComplexTypesQueue[$complexType.BaseType] += @(@{type='ComplexType'; value=$complexType})
                 continue
@@ -382,7 +382,7 @@ function ParseTypeDefinitions
         [string] $Alias
     )
 
-    if($SchemaXML -eq $null) { throw ($LocalizedData.ArguementNullError -f "SchemaXML", "ParseTypeDefinitions") }
+    if($null -eq $SchemaXML) { throw ($LocalizedData.ArguementNullError -f "SchemaXML", "ParseTypeDefinitions") }
 
 
     foreach ($typeDefinition in $SchemaXML.TypeDefinition)
@@ -409,7 +409,7 @@ function ParseEnumTypes
         [ODataUtils.MetadataV4] $Metadata
     )
 
-    if($SchemaXML -eq $null) { throw ($LocalizedData.ArguementNullError -f "SchemaXML", "ParseEnumTypes") }
+    if($null -eq $SchemaXML) { throw ($LocalizedData.ArguementNullError -f "SchemaXML", "ParseEnumTypes") }
 
     foreach ($enum in $SchemaXML.EnumType)
     {
@@ -428,7 +428,7 @@ function ParseEnumTypes
             $newEnumType.UnderlyingType = "Edm.Int32"
         }
 
-        if ($newEnumType.IsFlags -eq $null)
+        if ($null -eq $newEnumType.IsFlags)
         {
             # If no value is specified for IsFlags, its value defaults to false.
             $newEnumType.IsFlags = $false
@@ -450,7 +450,7 @@ function ParseEnumTypes
                 $errorRecord = CreateErrorRecordHelper "InValidMetadata" $null ([System.Management.Automation.ErrorCategory]::InvalidData) $detailedErrorMessage nu
                 $PSCmdlet.ThrowTerminatingError($errorRecord)
             }
-            elseif (($element.Value -eq $null) -or ($element.Value.GetType().Name -eq "Int32" -and $element.Value -eq ""))
+            elseif (($null -eq $element.Value) -or ($element.Value.GetType().Name -eq "Int32" -and $element.Value -eq ""))
             {
                 # If no values are specified, the members are assigned consecutive integer values in the order of their appearance,
                 # starting with zero for the first member.
@@ -486,7 +486,7 @@ function ParseSingletonTypes
         [ODataUtils.MetadataV4] $Metadata
     )
 
-    if($SchemaEntityContainerXML -eq $null) { throw ($LocalizedData.ArguementNullError -f "SchemaEntityContainerXML", "ParseSingletonTypes") }
+    if($null -eq $SchemaEntityContainerXML) { throw ($LocalizedData.ArguementNullError -f "SchemaEntityContainerXML", "ParseSingletonTypes") }
 
     foreach ($singleton in $SchemaEntityContainerXML.Singleton)
     {
@@ -529,7 +529,7 @@ function ParseEntitySets
         [string] $Alias
     )
 
-    if($SchemaEntityContainerXML -eq $null) { throw ($LocalizedData.ArguementNullError -f "SchemaEntityContainerXML", "ParseEntitySets") }
+    if($null -eq $SchemaEntityContainerXML) { throw ($LocalizedData.ArguementNullError -f "SchemaEntityContainerXML", "ParseEntitySets") }
 
     $entityTypeToEntitySetMapping = @{};
     foreach ($entitySet in $SchemaEntityContainerXML.EntitySet)
@@ -570,12 +570,12 @@ function ParseActions
         [ODataUtils.MetadataV4] $Metadata
     )
 
-    if($SchemaActionsXML -eq $null) { throw ($LocalizedData.ArguementNullError -f "SchemaActionsXML", "ParseActions") }
+    if($null -eq $SchemaActionsXML) { throw ($LocalizedData.ArguementNullError -f "SchemaActionsXML", "ParseActions") }
 
     foreach ($action in $SchemaActionsXML)
     {
         # HttpMethod is only used for legacy Service Operations
-        if ($action.HttpMethod -eq $null)
+        if ($null -eq $action.HttpMethod)
         {
             $newAction = [ODataUtils.ActionV4] @{
                 "Namespace" = $Metadata.Namespace;
@@ -587,7 +587,7 @@ function ParseActions
             # Actions are always SideEffecting, otherwise it's an OData function
             foreach ($parameter in $action.Parameter)
             {
-                if ($parameter.Nullable -ne $null)
+                if ($null -ne $parameter.Nullable)
                 {
                     $parameterIsNullable = [System.Convert]::ToBoolean($parameter.Nullable);
                 }
@@ -605,7 +605,7 @@ function ParseActions
                 $newAction.Parameters += $newParameter
             }
 
-            if ($action.EntitySet -ne $null)
+            if ($null -ne $action.EntitySet)
             {
                 $newAction.EntitySet = $metadata.EntitySets | Where-Object { $_.Name -eq $action.EntitySet }
             }
@@ -627,12 +627,12 @@ function ParseFunctions
         [ODataUtils.MetadataV4] $Metadata
     )
 
-    if($SchemaFunctionsXML -eq $null) { throw ($LocalizedData.ArguementNullError -f "SchemaFunctionsXML", "ParseFunctions") }
+    if($null -eq $SchemaFunctionsXML) { throw ($LocalizedData.ArguementNullError -f "SchemaFunctionsXML", "ParseFunctions") }
 
     foreach ($function in $SchemaFunctionsXML)
     {
         # HttpMethod is only used for legacy Service Operations
-        if ($function.HttpMethod -eq $null)
+        if ($null -eq $function.HttpMethod)
         {
             $newFunction = [ODataUtils.FunctionV4] @{
                 "Namespace" = $Metadata.Namespace;
@@ -665,7 +665,7 @@ function ParseFunctions
             # Actions are always SideEffecting, otherwise it's an OData function
             foreach ($parameter in $function.Parameter)
             {
-                if ($parameter.Nullable -ne $null)
+                if ($null -ne $parameter.Nullable)
                 {
                     $parameterIsNullable = [System.Convert]::ToBoolean($parameter.Nullable);
                 }
@@ -699,7 +699,7 @@ function ParseMetadata
         [System.Collections.ArrayList] $MetadataSet
     )
 
-    if($MetadataXML -eq $null) { throw ($LocalizedData.ArguementNullError -f "MetadataXML", "ParseMetadata") }
+    if($null -eq $MetadataXML) { throw ($LocalizedData.ArguementNullError -f "MetadataXML", "ParseMetadata") }
 
     # This is a processing queue for those types that require base types that haven't been defined yet
     $entityAndComplexTypesQueue = @{}
@@ -707,7 +707,7 @@ function ParseMetadata
 
     foreach ($schema in $MetadataXML.Edmx.DataServices.Schema)
     {
-        if ($schema -eq $null)
+        if ($null -eq $schema)
         {
             Write-Error $LocalizedData.EmptySchema
             continue
@@ -770,8 +770,8 @@ function VerifyMetadata
         [string] $progressBarStatus
     )
 
-    if($callerPSCmdlet -eq $null) { throw ($LocalizedData.ArguementNullError -f "PSCmdlet", "VerifyMetaData") }
-    if($progressBarStatus -eq $null) { throw ($LocalizedData.ArguementNullError -f "ProgressBarStatus", "VerifyMetaData") }
+    if($null -eq $callerPSCmdlet) { throw ($LocalizedData.ArguementNullError -f "PSCmdlet", "VerifyMetaData") }
+    if($null -eq $progressBarStatus) { throw ($LocalizedData.ArguementNullError -f "ProgressBarStatus", "VerifyMetaData") }
 
     Write-Verbose $LocalizedData.VerboseVerifyingMetadata
 
@@ -784,7 +784,7 @@ function VerifyMetadata
     {
         foreach ($entitySet in $metadata.EntitySets)
         {
-            if ($entitySet.Type -eq $null)
+            if ($null -eq $entitySet.Type)
             {
                 $errorMessage = ($LocalizedData.EntitySetUndefinedType -f $metadata.MetadataUri, $entitySet.Name)
                 $exception = [System.InvalidOperationException]::new($errorMessage)
@@ -899,23 +899,23 @@ function GetBaseType
         [System.Collections.ArrayList] $GlobalMetadata
     )
 
-    if ($metadataEntityDefinition -ne $null -and
-        $metaData -ne $null -and
-        $MetadataEntityDefinition.BaseType -ne $null)
+    if ($null -ne $metadataEntityDefinition -and
+        $null -ne $metaData -and
+        $null -ne $MetadataEntityDefinition.BaseType)
     {
-        $baseType = $Metadata.EntityTypes | Where { $_.Namespace + "." + $_.Name -eq $MetadataEntityDefinition.BaseType -or $_.Alias + "." + $_.Name -eq $MetadataEntityDefinition.BaseType }
-        if ($baseType -eq $null)
+        $baseType = $Metadata.EntityTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $MetadataEntityDefinition.BaseType -or $_.Alias + "." + $_.Name -eq $MetadataEntityDefinition.BaseType }
+        if ($null -eq $baseType)
         {
-            $baseType = $Metadata.ComplexTypes | Where { $_.Namespace + "." + $_.Name -eq $MetadataEntityDefinition.BaseType -or $_.Alias + "." + $_.Name -eq $MetadataEntityDefinition.BaseType }
+            $baseType = $Metadata.ComplexTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $MetadataEntityDefinition.BaseType -or $_.Alias + "." + $_.Name -eq $MetadataEntityDefinition.BaseType }
         }
 
-        if ($baseType -eq $null)
+        if ($null -eq $baseType)
         {
             # Look in other metadatas, since the class can be defined in referenced metadata
             foreach ($referencedMetadata in $GlobalMetadata)
             {
-                if (($baseType = $referencedMetadata.EntityTypes | Where { $_.Namespace + "." + $_.Name -eq $MetadataEntityDefinition.BaseType -or $_.Alias + "." + $_.Name -eq $MetadataEntityDefinition.BaseType }) -ne $null -or
-                    ($baseType = $referencedMetadata.ComplexTypes | Where { $_.Namespace + "." + $_.Name -eq $MetadataEntityDefinition.BaseType -or $_.Alias + "." + $_.Name -eq $MetadataEntityDefinition.BaseType }) -ne $null)
+                if ($null -ne ($baseType = $referencedMetadata.EntityTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $MetadataEntityDefinition.BaseType -or $_.Alias + "." + $_.Name -eq $MetadataEntityDefinition.BaseType }) -or
+                    $null -ne ($baseType = $referencedMetadata.ComplexTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $MetadataEntityDefinition.BaseType -or $_.Alias + "." + $_.Name -eq $MetadataEntityDefinition.BaseType }))
                 {
                     # Found base class
                     break
@@ -924,7 +924,7 @@ function GetBaseType
         }
     }
 
-    if ($baseType -ne $null)
+    if ($null -ne $baseType)
     {
         $baseType[0]
     }
@@ -942,14 +942,14 @@ function GetBaseTypeByName
         [System.Collections.ArrayList] $GlobalMetadata
     )
 
-    if ($BaseTypeStr -ne $null)
+    if ($null -ne $BaseTypeStr)
     {
 
         # Look for base class definition in all referenced metadatas (including entry point)
         foreach ($referencedMetadata in $GlobalMetadata)
         {
-            if (($baseType = $referencedMetadata.EntityTypes | Where { $_.Namespace + "." + $_.Name -eq $BaseTypeStr -or $_.Alias + "." + $_.Name -eq $BaseTypeStr }) -ne $null -or
-                ($baseType = $referencedMetadata.ComplexTypes | Where { $_.Namespace + "." + $_.Name -eq $BaseTypeStr -or $_.Alias + "." + $_.Name -eq $BaseTypeStr }) -ne $null)
+            if ($null -ne ($baseType = $referencedMetadata.EntityTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $BaseTypeStr -or $_.Alias + "." + $_.Name -eq $BaseTypeStr }) -or
+                $null -ne ($baseType = $referencedMetadata.ComplexTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $BaseTypeStr -or $_.Alias + "." + $_.Name -eq $BaseTypeStr }))
             {
                 # Found base class
                 break
@@ -957,7 +957,7 @@ function GetBaseTypeByName
         }
     }
 
-    if ($baseType -ne $null)
+    if ($null -ne $baseType)
     {
         $baseType[0]
     }
@@ -979,9 +979,9 @@ function AddDerivedTypes {
     [string] $namespace
     )
 
-    if($baseType -eq $null) { throw ($LocalizedData.ArguementNullError -f "BaseType", "AddDerivedTypes") }
-    if($entityAndComplexTypesQueue -eq $null) { throw ($LocalizedData.ArguementNullError -f "EntityAndComplexTypesQueue", "AddDerivedTypes") }
-    if($namespace -eq $null) { throw ($LocalizedData.ArguementNullError -f "Namespace", "AddDerivedTypes") }
+    if($null -eq $baseType) { throw ($LocalizedData.ArguementNullError -f "BaseType", "AddDerivedTypes") }
+    if($null -eq $entityAndComplexTypesQueue) { throw ($LocalizedData.ArguementNullError -f "EntityAndComplexTypesQueue", "AddDerivedTypes") }
+    if($null -eq $namespace) { throw ($LocalizedData.ArguementNullError -f "Namespace", "AddDerivedTypes") }
 
     $baseTypeFullName = $baseType.Namespace + '.' + $baseType.Name
     $baseTypeShortName = $baseType.Alias + '.' + $baseType.Name
@@ -1025,22 +1025,22 @@ function ParseMetadataTypeDefinitionHelper
         [bool] $isEntity
     )
 
-    if($metadataEntityDefinition -eq $null) { throw ($LocalizedData.ArguementNullError -f "MetadataEntityDefinition", "ParseMetadataTypeDefinition") }
-    if($namespace -eq $null) { throw ($LocalizedData.ArguementNullError -f "Namespace", "ParseMetadataTypeDefinition") }
+    if($null -eq $metadataEntityDefinition) { throw ($LocalizedData.ArguementNullError -f "MetadataEntityDefinition", "ParseMetadataTypeDefinition") }
+    if($null -eq $namespace) { throw ($LocalizedData.ArguementNullError -f "Namespace", "ParseMetadataTypeDefinition") }
 
     [ODataUtils.EntityTypeV4] $newEntityType = CreateNewEntityType -metadataEntityDefinition $metadataEntityDefinition -baseType $baseType -baseTypeStr $baseTypeStr -namespace $namespace -alias $alias -isEntity $isEntity
 
-    if ($baseType -ne $null)
+    if ($null -ne $baseType)
     {
         # Add properties inherited from BaseType
         ParseMetadataBaseTypeDefinitionHelper $newEntityType $baseType
     }
 
     # properties defined on EntityType
-    $newEntityType.EntityProperties += $metadataEntityDefinition.Property | % {
-        if ($_ -ne $null)
+    $newEntityType.EntityProperties += $metadataEntityDefinition.Property | ForEach-Object {
+        if ($null -ne $_)
         {
-            if ($_.Nullable -ne $null)
+            if ($null -ne $_.Nullable)
             {
                 $newPropertyIsNullable = [System.Convert]::ToBoolean($_.Nullable)
             }
@@ -1059,7 +1059,7 @@ function ParseMetadataTypeDefinitionHelper
 
     # odataId property will be inherited from base type, if it exists.
     # Otherwise, it should be added to current type
-    if ($baseType -eq $null)
+    if ($null -eq $baseType)
     {
         # @odata.Id property (renamed to odataId) is required for dynamic Uri creation
         # This property is only available when user executes auto-generated cmdlet with -AllowAdditionalData,
@@ -1082,7 +1082,7 @@ function ParseMetadataTypeDefinitionHelper
         }
     }
 
-    if ($metadataEntityDefinition -ne $null -and $metadataEntityDefinition.Key -ne $null)
+    if ($null -ne $metadataEntityDefinition -and $null -ne $metadataEntityDefinition.Key)
     {
         foreach ($entityTypeKey in $metadataEntityDefinition.Key.PropertyRef)
         {
@@ -1104,7 +1104,7 @@ function ParseMetadataBaseTypeDefinitionHelper
         [ODataUtils.EntityTypeV4] $BaseType
     )
 
-    if ($EntityType -ne $null -and $BaseType -ne $null)
+    if ($null -ne $EntityType -and $null -ne $BaseType)
     {
         # Add properties inherited from BaseType
         $EntityType.EntityProperties += $BaseType.EntityProperties
@@ -1195,8 +1195,8 @@ function ParseMetadataTypeDefinition
         [string] $baseTypeStr
     )
 
-    if($metadataEntityDefinition -eq $null) { throw ($LocalizedData.ArguementNullError -f "MetadataEntityDefinition", "ParseMetadataTypeDefinition") }
-    if($namespace -eq $null) { throw ($LocalizedData.ArguementNullError -f "Namespace", "ParseMetadataTypeDefinition") }
+    if($null -eq $metadataEntityDefinition) { throw ($LocalizedData.ArguementNullError -f "MetadataEntityDefinition", "ParseMetadataTypeDefinition") }
+    if($null -eq $namespace) { throw ($LocalizedData.ArguementNullError -f "Namespace", "ParseMetadataTypeDefinition") }
 
     [ODataUtils.EntityTypeV4] $newEntityType = ParseMetadataTypeDefinitionHelper -metadataEntityDefinition $metadataEntityDefinition -baseType $baseType -baseTypeStr $baseTypeStr -metadata $metadata -namespace $namespace -alias $alias -isEntity $isEntity
     ParseMetadataTypeDefinitionNavigationProperties -metadataEntityDefinition $metadataEntityDefinition -entityType $newEntityType
@@ -1225,7 +1225,7 @@ function GenerateClientSideProxyModule
         $NormalizedNamespaces
     )
 
-    if($progressBarStatus -eq $null) { throw ($LocalizedData.ArguementNullError -f "ProgressBarStatus", "GenerateClientSideProxyModule") }
+    if($null -eq $progressBarStatus) { throw ($LocalizedData.ArguementNullError -f "ProgressBarStatus", "GenerateClientSideProxyModule") }
 
     Write-Verbose ($LocalizedData.VerboseSavingModule -f $OutputModule)
 
@@ -1258,8 +1258,8 @@ function GenerateClientSideProxyModule
             ProgressBarHelper "Export-ODataEndpointProxy" $progressBarStatus 40 20 $Metadata.Singletons.Count $currentEntryCount
         }
 
-        $actions += $Metadata.Actions | Where-Object { $_.EntitySet -eq '' -or $_.EntitySet -eq $null }
-        $functions += $Metadata.Functions | Where-Object { $_.EntitySet -eq '' -or $_.EntitySet -eq $null }
+        $actions += $Metadata.Actions | Where-Object { $_.EntitySet -eq '' -or $null -eq $_.EntitySet }
+        $functions += $Metadata.Functions | Where-Object { $_.EntitySet -eq '' -or $null -eq $_.EntitySet}
     }
 
     if ($actions.Count -gt 0 -or $functions.Count -gt 0)
@@ -1305,8 +1305,8 @@ function SaveCDXML
         $normalizedNamespaces
     )
 
-    if($EntitySet -eq $null) { throw ($LocalizedData.ArguementNullError -f "EntitySet", "GenerateClientSideProxyModule") }
-    if($Metadata -eq $null) { throw ($LocalizedData.ArguementNullError -f "metadata", "GenerateClientSideProxyModule") }
+    if($null -eq $EntitySet) { throw ($LocalizedData.ArguementNullError -f "EntitySet", "GenerateClientSideProxyModule") }
+    if($null -eq $Metadata) { throw ($LocalizedData.ArguementNullError -f "metadata", "GenerateClientSideProxyModule") }
 
     $entitySetName = $EntitySet.Name
     if(($null -ne $resourceNameMappings) -and
@@ -1323,7 +1323,7 @@ function SaveCDXML
 
     $xmlWriter = New-Object System.XMl.XmlTextWriter($Path,$Null)
 
-    if ($xmlWriter -eq $null)
+    if ($null -eq $xmlWriter)
     {
         throw ($LocalizedData.XmlWriterInitializationError -f $EntitySet.Name)
     }
@@ -1337,9 +1337,9 @@ function SaveCDXML
 
     SaveCDXMLInstanceCmdlets $xmlWriter $Metadata $GlobalMetadata $EntitySet.Type $keys $navigationProperties $CmdletAdapter $complexTypeMapping $false
 
-    $nonKeyProperties = $EntitySet.Type.EntityProperties | ? { -not $_.isKey }
-    $nullableProperties = $nonKeyProperties | ? { $_.isNullable }
-    $nonNullableProperties = $nonKeyProperties | ? { -not $_.isNullable }
+    $nonKeyProperties = $EntitySet.Type.EntityProperties | Where-Object { -not $_.isKey }
+    $nullableProperties = $nonKeyProperties | Where-Object { $_.isNullable }
+    $nonNullableProperties = $nonKeyProperties | Where-Object { -not $_.isNullable }
 
     $xmlWriter.WriteStartElement('StaticCmdlets')
 
@@ -1400,7 +1400,7 @@ function SaveCDXML
         $xmlWriter.WriteEndElement()
 
         # Add URI resource path format (webservice.svc/ResourceName/ResourceId vs webservice.svc/ResourceName(QueryKeyName=ResourceId))
-        if  ($UriResourcePathKeyFormat -ne $null -and $UriResourcePathKeyFormat -ne '')
+        if  ($null -ne $UriResourcePathKeyFormat -and $UriResourcePathKeyFormat -ne [string]::Empty)
         {
             $xmlWriter.WriteStartElement('Data')
             $xmlWriter.WriteAttributeString('Name', 'UriResourcePathKeyFormat')
@@ -1460,8 +1460,8 @@ function SaveCDXMLSingletonCmdlets
         $normalizedNamespaces
     )
 
-    if($Singleton -eq $null) { throw ($LocalizedData.ArguementNullError -f "Singleton", "SaveCDXMLSingletonCmdlets") }
-    if($Metadata -eq $null) { throw ($LocalizedData.ArguementNullError -f "Metadata", "SaveCDXMLSingletonCmdlets") }
+    if($null -eq $Singleton) { throw ($LocalizedData.ArguementNullError -f "Singleton", "SaveCDXMLSingletonCmdlets") }
+    if($null -eq $Metadata) { throw ($LocalizedData.ArguementNullError -f "Metadata", "SaveCDXMLSingletonCmdlets") }
 
     $singletonName = $singleton.Name
     $singletonType = $singleton.Type
@@ -1470,7 +1470,7 @@ function SaveCDXMLSingletonCmdlets
 
     $xmlWriter = New-Object System.XMl.XmlTextWriter($Path,$Null)
 
-    if ($xmlWriter -eq $null)
+    if ($null -eq $xmlWriter)
     {
         throw ($LocalizedData.XmlWriterInitializationError -f $singletonName)
     }
@@ -1478,12 +1478,12 @@ function SaveCDXMLSingletonCmdlets
 	# Get associated EntityType
 	$associatedEntityType = $Metadata.EntityTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $singletonType -or $_.Alias + "." + $_.Name -eq $singletonType}
 
-    if ($associatedEntityType -eq $null)
+    if ($null -eq $associatedEntityType)
     {
         # Look in other metadatas, since the class can be defined in referenced metadata
         foreach ($referencedMetadata in $GlobalMetadata)
         {
-            if (($associatedEntityType = $referencedMetadata.EntityTypes | Where { $_.Namespace + "." + $_.Name -eq $singletonType -or $_.Alias + "." + $_.Name -eq $singletonType }) -ne $null)
+            if ($null -ne ($associatedEntityType = $referencedMetadata.EntityTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $singletonType -or $_.Alias + "." + $_.Name -eq $singletonType }))
             {
                 # Found associated class
                 break
@@ -1491,11 +1491,11 @@ function SaveCDXMLSingletonCmdlets
         }
     }
 
-    if ($associatedEntityType -ne $null)
+    if ($null -ne $associatedEntityType)
 	{
 		$xmlWriter = SaveCDXMLHeader $xmlWriter $Uri $singletonName $singletonName $CmdletAdapter
 
-        if ($associatedEntityType.BaseType -eq $null -and $associatedEntityType.BaseTypeStr -ne $null -and $associatedEntityType.BaseTypeStr -ne '')
+        if ($null -eq $associatedEntityType.BaseType -and $null -ne $associatedEntityType.BaseTypeStr -and $associatedEntityType.BaseTypeStr -ne '')
         {
             $associatedEntitybaseType = GetBaseTypeByName $associatedEntityType.BaseTypeStr $GlobalMetadata
 
@@ -1510,9 +1510,9 @@ function SaveCDXMLSingletonCmdlets
 
 		SaveCDXMLInstanceCmdlets $xmlWriter $Metadata $GlobalMetadata $associatedEntityType $keys $navigationProperties $CmdletAdapter $complexTypeMapping $true
 
-		$nonKeyProperties = $associatedEntityType.EntityProperties | ? { -not $_.isKey }
-		$nullableProperties = $nonKeyProperties | ? { $_.isNullable }
-		$nonNullableProperties = $nonKeyProperties | ? { -not $_.isNullable }
+		$nonKeyProperties = $associatedEntityType.EntityProperties | Where-Object { -not $_.isKey }
+		$nullableProperties = $nonKeyProperties | Where-Object { $_.isNullable }
+		$nonNullableProperties = $nonKeyProperties | Where-Object { -not $_.isNullable }
 
 		$xmlWriter.WriteStartElement('StaticCmdlets')
 
@@ -1612,8 +1612,8 @@ function SaveCDXMLInstanceCmdlets
         [bool] $isSingleton
     )
 
-    if($xmlWriter -eq $null) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "SaveCDXMLInstanceCmdlets") }
-    if($Metadata -eq $null) { throw ($LocalizedData.ArguementNullError -f "Metadata", "SaveCDXMLInstanceCmdlets") }
+    if($null -eq $xmlWriter) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "SaveCDXMLInstanceCmdlets") }
+    if($null -eq $Metadata) { throw ($LocalizedData.ArguementNullError -f "Metadata", "SaveCDXMLInstanceCmdlets") }
 
     $xmlWriter.WriteStartElement('InstanceCmdlets')
         $xmlWriter.WriteStartElement('GetCmdletParameters')
@@ -1627,10 +1627,10 @@ function SaveCDXMLInstanceCmdlets
                 {
                     foreach ($navProperty in $navigationProperties)
                     {
-                        if ($navProperty -ne $null)
+                        if ($null -ne $navProperty)
                         {
                             $associatedType = GetAssociatedType $Metadata $GlobalMetadata $navProperty
-                            $associatedTypeKeyProperties = $associatedType.EntityProperties | ? { $_.IsKey }
+                            $associatedTypeKeyProperties = $associatedType.EntityProperties | Where-Object { $_.IsKey }
 
                             # Make sure associated parameter (based on navigation property) has EntitySet or Singleton, which makes it accessible from the service root
                             # Otherwise the Uri for associated navigation property won't be valid
@@ -1660,7 +1660,7 @@ function SaveCDXMLInstanceCmdlets
 
                 if ($isSingleton -eq $false)
                 {
-                    $keys | ? { $_ -ne $null } | % {
+                    $keys | Where-Object { $null -ne $_ } | ForEach-Object {
                             $xmlWriter.WriteStartElement('Property')
                             $xmlWriter.WriteAttributeString('PropertyName', $_.Name)
 
@@ -1786,7 +1786,7 @@ function ShouldBeAssociatedParameter
     )
 
     # Check if associated type has navigation property, which links back to current type
-    $associatedTypeNavProperties = $AssociatedType.NavigationProperties | ? {
+    $associatedTypeNavProperties = $AssociatedType.NavigationProperties | Where-Object {
         $_.Type -eq ($EntityType.Namespace + "." + $EntityType.Name) -or
         $_.Type -eq ($EntityType.Alias + "." + $EntityType.Name) -or
         $_.Type -eq ("Collection(" + $EntityType.Namespace + "." + $EntityType.Name + ")") -or
@@ -1845,8 +1845,8 @@ function SaveCDXMLNewCmdlet
         $complexTypeMapping
     )
 
-    if($xmlWriter -eq $null) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "SaveCDXMLNewCmdlet") }
-    if($Metadata -eq $null) { throw ($LocalizedData.ArguementNullError -f "Metadata", "SaveCDXMLNewCmdlet") }
+    if($null -eq $xmlWriter) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "SaveCDXMLNewCmdlet") }
+    if($null -eq $Metadata) { throw ($LocalizedData.ArguementNullError -f "Metadata", "SaveCDXMLNewCmdlet") }
 
     $xmlWriter.WriteStartElement('Cmdlet')
         $xmlWriter.WriteStartElement('CmdletMetadata')
@@ -1863,7 +1863,7 @@ function SaveCDXMLNewCmdlet
 
         $xmlWriter.WriteEndElement()
 
-        $navigationProperties | ? { $_ -ne $null } | % {
+        $navigationProperties | Where-Object { $null -ne $_ } | ForEach-Object {
             $associatedType = GetAssociatedType $Metadata $GlobalMetadata $_
             $associatedEntitySet = GetEntitySetForEntityType $Metadata $associatedType
 
@@ -1871,7 +1871,7 @@ function SaveCDXMLNewCmdlet
             $xmlWriter.WriteAttributeString('MethodName', "Association:Create:$($associatedEntitySet.Name)")
             $xmlWriter.WriteAttributeString('CmdletParameterSet', $_.Name)
 
-            $associatedKeys = ($associatedType.EntityProperties | ? { $_.isKey })
+            $associatedKeys = ($associatedType.EntityProperties | Where-Object { $_.isKey })
 
             AddParametersNode $xmlWriter $associatedKeys $keyProperties $null "Associated$($_.Name)" $true $true $complexTypeMapping
 
@@ -1890,11 +1890,11 @@ function GetEntitySetForEntityType {
     [ODataUtils.EntityTypeV4] $entityType
     )
 
-    if($entityType -eq $null) { throw ($LocalizedData.ArguementNullError -f "EntityType", "GetEntitySetForEntityType") }
+    if($null -eq $entityType) { throw ($LocalizedData.ArguementNullError -f "EntityType", "GetEntitySetForEntityType") }
 
-    $result = $Metadata.EntitySets | ? { ($_.Type.Namespace -eq $entityType.Namespace) -and ($_.Type.Name -eq $entityType.Name) }
+    $result = $Metadata.EntitySets | Where-Object { ($_.Type.Namespace -eq $entityType.Namespace) -and ($_.Type.Name -eq $entityType.Name) }
 
-    if (($result.Count -eq 0) -and ($entityType.BaseType -ne $null))
+    if (($result.Count -eq 0) -and ($null -ne $entityType.BaseType))
     {
         GetEntitySetForEntityType $Metadata $entityType.BaseType
     }
@@ -1922,8 +1922,8 @@ function SaveCDXMLRemoveCmdlet
         $complexTypeMapping
     )
 
-    if($xmlWriter -eq $null) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "SaveCDXMLRemoveCmdlet") }
-    if($Metadata -eq $null) { throw ($LocalizedData.ArguementNullError -f "Metadata", "SaveCDXMLRemoveCmdlet") }
+    if($null -eq $xmlWriter) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "SaveCDXMLRemoveCmdlet") }
+    if($null -eq $Metadata) { throw ($LocalizedData.ArguementNullError -f "Metadata", "SaveCDXMLRemoveCmdlet") }
 
     $xmlWriter.WriteStartElement('Cmdlet')
         $xmlWriter.WriteStartElement('CmdletMetadata')
@@ -1940,7 +1940,7 @@ function SaveCDXMLRemoveCmdlet
 
         $xmlWriter.WriteEndElement()
 
-        $navigationProperties | ? { $_ -ne $null } | % {
+        $navigationProperties | Where-Object { $null -ne $_ } | ForEach-Object {
 
             $associatedType = GetAssociatedType $Metadata $GlobalMetadata $_
             $associatedEntitySet = GetEntitySetForEntityType $Metadata $associatedType
@@ -1950,7 +1950,7 @@ function SaveCDXMLRemoveCmdlet
             $xmlWriter.WriteAttributeString('CmdletParameterSet', $_.Name)
 
                 $associatedType = GetAssociatedType $Metadata $GlobalMetadata $_
-                $associatedKeys = ($associatedType.EntityProperties | ? { $_.isKey })
+                $associatedKeys = ($associatedType.EntityProperties | Where-Object { $_.isKey })
 
             AddParametersNode $xmlWriter $associatedKeys $keyProperties $null "Associated$($_.Name)" $true $true $complexTypeMapping
 
@@ -1975,17 +1975,17 @@ function GetAssociatedType {
     $associationType = $associationType.Replace("Collection(", "")
     $associationType = $associationType.Replace(")", "")
 
-    $associatedType = $Metadata.EntityTypes | ? { $_.Name -eq $associationType }
+    $associatedType = $Metadata.EntityTypes | Where-Object { $_.Name -eq $associationType }
 
-    if (!$associatedType -and $GlobalMetadata -ne $null)
+    if (!$associatedType -and $null -ne $GlobalMetadata)
     {
         $associationFullTypeName = $navProperty.Type.Replace("Collection(", "").Replace(")", "")
 
         foreach ($referencedMetadata in $GlobalMetadata)
         {
-            if (($associatedType = $referencedMetadata.EntityTypes | Where { $_.Namespace + "." + $_.Name -eq $associationFullTypeName -or $_.Alias + "." + $_.Name -eq $associationFullTypeName }) -ne $null -or
-                ($associatedType = $referencedMetadata.ComplexTypes | Where { $_.Namespace + "." + $_.Name -eq $associationFullTypeName -or $_.Alias + "." + $_.Name -eq $associationFullTypeName }) -ne $null -or
-                ($associatedType = $referencedMetadata.EnumTypes | Where { $_.Namespace + "." + $_.Name -eq $associationFullTypeName -or $_.Alias + "." + $_.Name -eq $associationFullTypeName }) -ne $null)
+            if ($null -ne ($associatedType = $referencedMetadata.EntityTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $associationFullTypeName -or $_.Alias + "." + $_.Name -eq $associationFullTypeName }) -or
+                $null -ne ($associatedType = $referencedMetadata.ComplexTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $associationFullTypeName -or $_.Alias + "." + $_.Name -eq $associationFullTypeName }) -or
+                $null -ne ($associatedType = $referencedMetadata.EnumTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $associationFullTypeName -or $_.Alias + "." + $_.Name -eq $associationFullTypeName }))
             {
                 # Found associated class
                 break
@@ -2022,8 +2022,8 @@ function SaveCDXMLAction
         [Hashtable] $complexTypeMapping
     )
 
-    if($xmlWriter -eq $null) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "SaveCDXMLAction") }
-    if($action -eq $null) { throw ($LocalizedData.ArguementNullError -f "action", "SaveCDXMLAction") }
+    if($null -eq $xmlWriter) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "SaveCDXMLAction") }
+    if($null -eq $action) { throw ($LocalizedData.ArguementNullError -f "action", "SaveCDXMLAction") }
 
     $xmlWriter.WriteStartElement('Cmdlet')
 
@@ -2038,7 +2038,7 @@ function SaveCDXMLAction
 
             $xmlWriter.WriteStartElement('Parameters')
 
-            $keys | ? { $_ -ne $null } | % {
+            $keys | Where-Object { $null -ne $_ } | ForEach-Object {
                 $xmlWriter.WriteStartElement('Parameter')
                 $xmlWriter.WriteAttributeString('ParameterName', $_.Name + ':Key')
 
@@ -2110,8 +2110,8 @@ function SaveCDXMLFunction
         [Hashtable] $complexTypeMapping
     )
 
-    if($xmlWriter -eq $null) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "SaveCDXMLFunction") }
-    if($function -eq $null) { throw ($LocalizedData.ArguementNullError -f "function", "SaveCDXMLFunction") }
+    if($null -eq $xmlWriter) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "SaveCDXMLFunction") }
+    if($null -eq $function) { throw ($LocalizedData.ArguementNullError -f "function", "SaveCDXMLFunction") }
 
     $xmlWriter.WriteStartElement('Cmdlet')
 
@@ -2133,7 +2133,7 @@ function SaveCDXMLFunction
 
             $xmlWriter.WriteStartElement('Parameters')
 
-            $keys | ? { $_ -ne $null } | % {
+            $keys | Where-Object { $null -ne $_ } | ForEach-Object {
                 $xmlWriter.WriteStartElement('Parameter')
                 $xmlWriter.WriteAttributeString('ParameterName', $_.Name + ':Key')
 
@@ -2206,7 +2206,7 @@ function SaveServiceActionsCDXML
 
     $xmlWriter = New-Object System.XMl.XmlTextWriter($Path,$Null)
 
-    if ($xmlWriter -eq $null)
+    if ($null -eq $xmlWriter)
     {
         throw $LocalizedData.XmlWriterInitializationError -f "ServiceActions"
     }
@@ -2218,8 +2218,8 @@ function SaveServiceActionsCDXML
 
     foreach ($Metadata in $GlobalMetadata)
     {
-        $actions += $Metadata.Actions | Where-Object { $_.EntitySet -eq '' -or $_.EntitySet -eq $null }
-        $functions += $Metadata.Functions | Where-Object { $_.EntitySet -eq '' -or $_.EntitySet -eq $null }
+        $actions += $Metadata.Actions | Where-Object { $_.EntitySet -eq [string]::Empty -or $null -eq $_.EntitySet }
+        $functions += $Metadata.Functions | Where-Object { $_.EntitySet -eq [string]::Empty -or $null -eq $_.EntitySet}
     }
 
     if ($actions.Length -gt 0 -or $functions.Length -gt 0)
@@ -2232,7 +2232,7 @@ function SaveServiceActionsCDXML
     {
         foreach ($action in $actions)
         {
-            if ($action -ne $null)
+            if ($null -ne $action)
             {
                 $xmlWriter = SaveCDXMLAction $xmlWriter $action '' $false $null $complexTypeMapping
             }
@@ -2244,7 +2244,7 @@ function SaveServiceActionsCDXML
     {
         foreach ($function in $functions)
         {
-            if ($function -ne $null)
+            if ($null -ne $function)
             {
                 $xmlWriter = SaveCDXMLFunction $xmlWriter $function '' $false $null $complexTypeMapping
             }
@@ -2312,7 +2312,7 @@ function GenerateModuleManifest
         [string] $progressBarStatus
     )
 
-    if($progressBarStatus -eq $null) { throw ($LocalizedData.ArguementNullError -f "progressBarStatus", "GenerateModuleManifest") }
+    if($null -eq $progressBarStatus) { throw ($LocalizedData.ArguementNullError -f "progressBarStatus", "GenerateModuleManifest") }
 
     $NestedModules = @()
 
@@ -2389,7 +2389,7 @@ using System.ComponentModel;
 
         foreach ($entityType in $typesToBeGenerated)
         {
-            if ($entityType -ne $null)
+            if ($null -ne $entityType)
             {
                 $entityTypeFullName = $entityType.Namespace + '.' + $entityType.Name
                 if(!$complexTypeMapping.ContainsKey($entityTypeFullName))
@@ -2399,7 +2399,7 @@ using System.ComponentModel;
 
                 # In short name we use Alias instead of Namespace
                 # We will add short name to $complexTypeMapping to enable Alias based search
-                if ($entityType.Alias -ne $null -and $entityType.Alias -ne "")
+                if ($null -ne $entityType.Alias -and $entityType.Alias -ne "")
                 {
                     $entityTypeShortName = $entityType.Alias + '.' + $entityType.Name
                     if(!$complexTypeMapping.ContainsKey($entityTypeShortName))
@@ -2412,7 +2412,7 @@ using System.ComponentModel;
 
         foreach ($enumType in $enumTypesToBeGenerated)
         {
-            if ($enumType -ne $null)
+            if ($null -ne $enumType)
             {
                 $enumTypeFullName = $enumType.Namespace + '.' + $enumType.Name
                 if(!$complexTypeMapping.ContainsKey($enumTypeFullName))
@@ -2420,9 +2420,9 @@ using System.ComponentModel;
                     $complexTypeMapping.Add($enumTypeFullName, $enumType.Name)
                 }
 
-                if (($enumType.Alias -ne $null -and $enumType.Alias -ne "") -or ($metadata.Alias -ne $null -and $metadata.Alias -ne ""))
+                if (($null -ne $enumType.Alias -and $enumType.Alias -ne "") -or ($null -ne $metadata.Alias -and $metadata.Alias -ne [string]::Empty))
                 {
-                    if ($enumType.Alias -ne $null -and $enumType.Alias -ne "")
+                    if ($null -ne $enumType.Alias -and $enumType.Alias -ne "")
                     {
                         $alias = $enumType.Alias
                     }
@@ -2442,7 +2442,7 @@ using System.ComponentModel;
 
         foreach ($typeDefinition in $typeDefinitionsToBeGenerated)
         {
-            if ($typeDefinition -ne $null)
+            if ($null -ne $typeDefinition)
             {
                 $typeDefinitionFullName = $typeDefinition.Namespace + '.' + $typeDefinition.Name
                 if(!$complexTypeMapping.ContainsKey($typeDefinitionFullName))
@@ -2473,7 +2473,7 @@ using System.ComponentModel;
 
         if($typesToBeGenerated.Count -gt 0 -or $enumTypesToBeGenerated.Count -gt 0)
         {
-            if ($metadata.Alias -ne $null -and $metadata.Alias -ne "")
+            if ($null -ne $metadata.Alias -and $metadata.Alias -ne [string]::Empty)
             {
                 # Check if this namespace has to be normalized in the .Net namespace/class definitions file.
                 $dotNetAlias = GetNamespace $metadata.Alias $normalizedNamespaces
@@ -2498,7 +2498,7 @@ namespace $($dotNetNamespace)
 
             foreach ($typeDefinition in $typeDefinitionsToBeGenerated)
             {
-                if ($typeDefinition -ne $null)
+                if ($null -ne $typeDefinition)
                 {
                     Write-Verbose ($LocalizedData.VerboseAddingTypeDefinationToGeneratedModule -f $typeDefinitionFullName, "$OutputModule\$typeDefinationFileName")
 
@@ -2516,7 +2516,7 @@ namespace $($dotNetNamespace)
 
             foreach ($enumType in $enumTypesToBeGenerated)
             {
-                if ($enumType -ne $null)
+                if ($null -ne $enumType)
                 {
                     $enumTypeFullName = $enumType.Namespace + '.' + $enumType.Name
 
@@ -2573,20 +2573,20 @@ namespace $($dotNetNamespace)
 
             foreach ($entityType in $typesToBeGenerated)
             {
-                if ($entityType -ne $null)
+                if ($null -ne $entityType)
                 {
                     $entityTypeFullName = $entityType.Namespace + '.' + $entityType.Name
 
                     Write-Verbose ($LocalizedData.VerboseAddingTypeDefinationToGeneratedModule -f $entityTypeFullName, "$OutputModule\$typeDefinationFileName")
 
-                    if ($entityType.BaseTypeStr -ne $null -and $entityType.BaseTypeStr -ne '' -and $entityType.BaseType -eq $null)
+                    if ($null -ne $entityType.BaseTypeStr -and $entityType.BaseTypeStr -ne '' -and $null -eq $entityType.BaseType)
                     {
                         # This class inherits from another class, but we were not able to find base class during Parsing.
                         # We'll make another attempt.
                         foreach ($referencedMetadata in $GlobalMetadata)
                         {
-                            if (($baseType = $referencedMetadata.EntityTypes | Where { $_.Namespace + "." + $_.Name -eq $entityType.BaseTypeStr -or $_.Alias + "." + $_.Name -eq $entityType.BaseTypeStr }) -ne $null -or
-                                ($baseType = $referencedMetadata.ComplexTypes | Where { $_.Namespace + "." + $_.Name -eq $entityType.BaseTypeStr -or $_.Alias + "." + $_.Name -eq $entityType.BaseTypeStr }) -ne $null)
+                            if ($null -ne ($baseType = $referencedMetadata.EntityTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $entityType.BaseTypeStr -or $_.Alias + "." + $_.Name -eq $entityType.BaseTypeStr }) -or
+                                $null -ne ($baseType = $referencedMetadata.ComplexTypes | Where-Object { $_.Namespace + "." + $_.Name -eq $entityType.BaseTypeStr -or $_.Alias + "." + $_.Name -eq $entityType.BaseTypeStr }))
                             {
                                 # Found base class
                                 $entityType.BaseType = $baseType

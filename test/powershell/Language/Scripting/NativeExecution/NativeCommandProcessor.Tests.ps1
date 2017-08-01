@@ -1,4 +1,4 @@
-Describe 'native commands lifecycle' -tags 'Feature' {
+Describe 'native commands with pipeline' -tags 'Feature' {
 
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
@@ -14,7 +14,7 @@ Describe 'native commands lifecycle' -tags 'Feature' {
 
         $ps.AddScript("& $powershell -noprofile -command '100;
             Start-Sleep -Seconds 100' |
-            %{ if (`$_ -eq 100) { 'foo'; exit; }}").BeginInvoke()
+            ForEach-Object { if (`$_ -eq 100) { 'foo'; exit; }}").BeginInvoke()
 
         # waiting 30 seconds, because powershell startup time could be long on the slow machines,
         # such as CI
@@ -23,39 +23,40 @@ Describe 'native commands lifecycle' -tags 'Feature' {
         $ps.Stop()
         $rs.ResetRunspaceState()
     }
+
+    It "native | native | native should work fine" {
+
+        if ($IsWindows) {
+            $result = @(ping.exe | findstr.exe count | findstr.exe ping)
+            $result[0] | Should Match "Usage: ping"
+        } else {
+            $result = @(ps aux | grep powershell | grep -v grep)
+            $result[0] | Should Match "powershell"
+        }
+    }
 }
 
 Describe "Native Command Processor" -tags "Feature" {
 
-    BeforeAll {
-        # Find where test/powershell is so we can find the createchildprocess command relative to it
-        $powershellTestDir = $PSScriptRoot
-        while ($powershellTestDir -notmatch 'test[\\/]powershell$') {
-            $powershellTestDir = Split-Path $powershellTestDir
-        }
-        $createchildprocess = Join-Path (Split-Path $powershellTestDir) tools/CreateChildProcess/bin/createchildprocess
-    }
-
     # If powershell receives a StopProcessing, it should kill the native process and all child processes
-
     # this test should pass and no longer Pending when #2561 is fixed
     It "Should kill native process tree" -Pending {
 
         # make sure no test processes are running
-        # on Linux, the Process class truncates the name so filter using Where-Object
-        Get-Process | Where-Object {$_.Name -like 'createchildproc*'} | Stop-Process
+        Get-Process testexe -ErrorAction SilentlyContinue | Stop-Process
 
         [int] $numToCreate = 2
 
-        $ps = [PowerShell]::Create().AddCommand($createchildprocess)
-        $ps.AddParameter($numToCreate)
+        $ps = [PowerShell]::Create().AddCommand("testexe")
+        $ps.AddArgument("-createchildprocess")
+        $ps.AddArgument($numToCreate)
         $async = $ps.BeginInvoke()
         $ps.InvocationStateInfo.State | Should Be "Running"
 
         [bool] $childrenCreated = $false
         while (-not $childrenCreated)
         {
-            $childprocesses = Get-Process | Where-Object {$_.Name -like 'createchildproc*'}
+            $childprocesses = Get-Process testexe -ErrorAction SilentlyContinue
             if ($childprocesses.count -eq $numToCreate+1)
             {
                 $childrenCreated = $true
@@ -72,7 +73,7 @@ Describe "Native Command Processor" -tags "Feature" {
                 break
             }
         }
-        $childprocesses = Get-Process | Where-Object {$_.Name -like 'createchildproc*'}
+        $childprocesses = Get-Process testexe
         $count = $childprocesses.count
         $childprocesses | Stop-Process
         $count | Should Be 0

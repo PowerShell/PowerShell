@@ -46,7 +46,7 @@ namespace System.Management.Automation.Runspaces
             {
                 // Building the catalog is expensive, so force that to happen early on a background thread, and do so
                 // on a file we are very likely to read anyway.
-                var pshome = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
+                var pshome = Utils.DefaultPowerShellAppBase;
                 var unused = SecuritySupport.IsProductBinary(Path.Combine(pshome, "Modules", "Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Utility.psm1"));
             });
 
@@ -1597,7 +1597,7 @@ namespace System.Management.Automation.Runspaces
 
         private static void IncludePowerShellCoreFormats(InitialSessionState iss)
         {
-            string psHome = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
+            string psHome = Utils.DefaultPowerShellAppBase;
             if (string.IsNullOrEmpty(psHome))
             {
                 return;
@@ -4207,7 +4207,7 @@ namespace System.Management.Automation.Runspaces
 
             // We skip checking if the file exists when it's in $PSHOME because of magic
             // where we have the former contents of those files built into the engine directly.
-            var psHome = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
+            var psHome = Utils.DefaultPowerShellAppBase;
 
             foreach (string file in psSnapInInfo.Types)
             {
@@ -4467,7 +4467,7 @@ namespace System.Management.Automation.Runspaces
         {
             s_PSSnapInTracer.WriteLine("Loading assembly for psSnapIn {0}", fileName);
 
-            Assembly assembly = ClrFacade.LoadFrom(fileName);
+            Assembly assembly = Assembly.LoadFrom(fileName);
             if (assembly == null)
             {
                 s_PSSnapInTracer.TraceError("Loading assembly for psSnapIn {0} failed", fileName);
@@ -4494,10 +4494,14 @@ namespace System.Management.Automation.Runspaces
             string throwAwayHelpFile = null;
             PSSnapInHelpers.AnalyzePSSnapInAssembly(assembly, assemblyPath, null, module, true, out cmdlets, out aliases, out providers, out throwAwayHelpFile);
 
-            SessionStateAssemblyEntry assemblyEntry =
-                new SessionStateAssemblyEntry(assembly.FullName, assemblyPath);
-
-            this.Assemblies.Add(assemblyEntry);
+            // If this is an in-memory assembly, don't added it to the list of AssemblyEntries
+            // since it can't be loaded by path or name
+            if (! string.IsNullOrEmpty(assembly.Location))
+            {
+                SessionStateAssemblyEntry assemblyEntry =
+                    new SessionStateAssemblyEntry(assembly.FullName, assemblyPath);
+                this.Assemblies.Add(assemblyEntry);
+            }
 
             if (cmdlets != null)
             {
@@ -5543,7 +5547,7 @@ if($paths) {
 
             try
             {
-                AssemblyName assemblyName = ClrFacade.GetAssemblyName(psSnapInInfo.AbsoluteModulePath);
+                AssemblyName assemblyName = AssemblyName.GetAssemblyName(psSnapInInfo.AbsoluteModulePath);
 
                 if (!string.Equals(assemblyName.FullName, psSnapInInfo.AssemblyName, StringComparison.OrdinalIgnoreCase))
                 {
@@ -5552,7 +5556,7 @@ if($paths) {
                     throw new PSSnapInException(psSnapInInfo.Name, message);
                 }
 
-                assembly = ClrFacade.LoadFrom(psSnapInInfo.AbsoluteModulePath);
+                assembly = Assembly.LoadFrom(psSnapInInfo.AbsoluteModulePath);
             }
             catch (FileLoadException e)
             {

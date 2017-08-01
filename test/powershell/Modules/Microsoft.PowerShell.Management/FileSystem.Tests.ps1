@@ -84,6 +84,12 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $dirContents.Count | Should Be 2
         }
 
+        It "Verify Get-ChildItem can get the name of a specified item." {
+            $fileName = Get-ChildItem $testFile -Name
+            $fileInfo = Get-ChildItem $testFile
+            $fileName | Should BeExactly $fileInfo.Name
+        }
+
         It "Set-Content to a file" {
             $content =  Set-Content -Value $testContent -Path $testFile -PassThru
             $content | Should BeExactly $testContent
@@ -376,11 +382,18 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $alphaLink = Join-Path $TestDrive "link-alpha"
             $alphaFile1 = Join-Path $alphaDir "AlphaFile1.txt"
             $alphaFile2 = Join-Path $alphaDir "AlphaFile2.txt"
+            $omegaDir = Join-Path $TestDrive "sub-omega"
+            $omegaFile1 = Join-Path $omegaDir "OmegaFile1"
+            $omegaFile2 = Join-Path $omegaDir "OmegaFile2"
             $betaDir = Join-Path $alphaDir "sub-beta"
             $betaLink = Join-Path $alphaDir "link-beta"
             $betaFile1 = Join-Path $betaDir "BetaFile1.txt"
             $betaFile2 = Join-Path $betaDir "BetaFile2.txt"
             $betaFile3 = Join-Path $betaDir "BetaFile3.txt"
+            $gammaDir = Join-Path $betaDir "sub-gamma"
+            $uponeLink = Join-Path $gammaDir "upone-link"
+            $uptwoLink = Join-Path $gammaDir "uptwo-link"
+            $omegaLink = Join-Path $gammaDir "omegaLink"
 
             New-Item -ItemType Directory -Path $alphaDir
             New-Item -ItemType File -Path $alphaFile1
@@ -389,6 +402,9 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             New-Item -ItemType File -Path $betaFile1
             New-Item -ItemType File -Path $betaFile2
             New-Item -ItemType File -Path $betaFile3
+            New-Item -ItemType Directory $omegaDir
+            New-Item -ItemType File -Path $omegaFile1
+            New-Item -ItemType File -Path $omegaFile2
         }
         AfterAll {
             Remove-Item -Path $alphaLink -Force -ErrorAction SilentlyContinue
@@ -407,6 +423,15 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             New-Item -ItemType SymbolicLink -Path $betaLink -Value $betaDir
             $ci = Get-ChildItem $alphaLink -Recurse
             $ci.Count | Should BeExactly 7
+        }
+        It "Get-ChildItem will recurse into symlinks given -FollowSymlink, avoiding link loops" {
+            New-Item -ItemType Directory -Path $gammaDir
+            New-Item -ItemType SymbolicLink -Path $uponeLink -Value $betaDir
+            New-Item -ItemType SymbolicLink -Path $uptwoLink -Value $alphaDir
+            New-Item -ItemType SymbolicLink -Path $omegaLink -Value $omegaDir
+            $ci = Get-ChildItem -Path $alphaDir -FollowSymlink -Recurse -WarningVariable w -WarningAction SilentlyContinue
+            $ci.Count | Should BeExactly 13
+            $w.Count | Should BeExactly 3
         }
     }
 
@@ -660,6 +685,47 @@ Describe "Copy-Item can avoid copying an item onto itself" -Tags "CI", "RequireA
 
             TestSelfCopy $Source $Destination
         }
+    }
+}
+
+Describe "Handling long paths" -Tags "CI" {
+    BeforeAll {
+        $longDir = 'a' * 250
+        $longSubDir = 'b' * 250
+        $fileName = "file1.txt"
+        $topPath = Join-Path $TestDrive $longDir
+        $longDirPath = Join-Path $topPath $longSubDir
+        $longFilePath = Join-Path $longDirPath $fileName
+        $cwd = Get-Location
+    }
+    BeforeEach {
+        New-Item -ItemType File -Path $longFilePath -Force | Out-Null
+    }
+    AfterEach {
+        Remove-Item -Path $topPath -Force -Recurse -ErrorAction SilentlyContinue
+        Set-Location $cwd
+    }
+
+    It "Can remove a file via a long path" {
+        Remove-Item -Path $longFilePath -ErrorVariable e -ErrorAction SilentlyContinue
+        $e | Should BeNullOrEmpty
+        $longFilePath | Should Not Exist
+    }
+    It "Can rename a file via a long path" {
+        $newFileName = "new-file.txt"
+        $newPath = Join-Path $longDirPath $newFileName
+        Rename-Item -Path $longFilePath -NewName $newFileName
+        $longFilePath | Should Not Exist
+        $newPath | Should Exist
+    }
+    It "Can change into a directory via a long path" {
+        Set-Location -Path $longDirPath -ErrorVariable e -ErrorAction SilentlyContinue
+        $e | Should BeNullOrEmpty
+        $c = Get-Location
+        $fileName | Should Exist
+    }
+    It "Can use Test-Path to check for a file via a long path" {
+        Test-Path $longFilePath | Should Be $true
     }
 }
 

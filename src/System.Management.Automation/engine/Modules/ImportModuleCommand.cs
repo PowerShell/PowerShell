@@ -23,11 +23,8 @@ using System.Management.Automation.Language;
 using Parser = System.Management.Automation.Language.Parser;
 using ScriptBlock = System.Management.Automation.ScriptBlock;
 using Token = System.Management.Automation.Language.Token;
+#if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
-
-#if CORECLR
-// Use stub for SecurityZone.
-using Microsoft.PowerShell.CoreClr.Stubs;
 #endif
 
 //
@@ -1020,7 +1017,7 @@ namespace Microsoft.PowerShell.Commands
                         -Recurse `
                         -ErrorAction SilentlyContinue
 
-                    if ($previousOnRemoveScript -ne $null)
+                    if ($null -ne $previousOnRemoveScript)
                     {
                         & $previousOnRemoveScript $args
                     }
@@ -1510,7 +1507,7 @@ namespace Microsoft.PowerShell.Commands
                             -Recurse `
                             -ErrorAction SilentlyContinue
 
-                        if ($previousOnRemoveScript -ne $null)
+                        if ($null -ne $previousOnRemoveScript)
                         {
                             & $previousOnRemoveScript $args
                         }
@@ -1720,7 +1717,9 @@ namespace Microsoft.PowerShell.Commands
                     {
                         SetModuleBaseForEngineModules(foundModule.Name, this.Context);
 
+#if LEGACYTELEMETRY
                         TelemetryAPI.ReportModuleLoad(foundModule);
+#endif
                     }
                 }
             }
@@ -1768,11 +1767,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (m.Name.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
                     {
-                        m.SetModuleBase(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID));
+                        m.SetModuleBase(Utils.DefaultPowerShellAppBase);
                         // Also set  ModuleBase for nested modules of Engine modules
                         foreach (var nestedModule in m.NestedModules)
                         {
-                            nestedModule.SetModuleBase(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID));
+                            nestedModule.SetModuleBase(Utils.DefaultPowerShellAppBase);
                         }
                     }
                 }
@@ -1781,11 +1780,11 @@ namespace Microsoft.PowerShell.Commands
                 {
                     if (m.Name.Equals(moduleName, StringComparison.OrdinalIgnoreCase))
                     {
-                        m.SetModuleBase(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID));
+                        m.SetModuleBase(Utils.DefaultPowerShellAppBase);
                         // Also set  ModuleBase for nested modules of Engine modules
                         foreach (var nestedModule in m.NestedModules)
                         {
-                            nestedModule.SetModuleBase(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID));
+                            nestedModule.SetModuleBase(Utils.DefaultPowerShellAppBase);
                         }
                     }
                 }

@@ -1,3 +1,4 @@
+#if LEGACYTELEMETRY
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -168,7 +169,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             var companyName = foundModule.CompanyName;
             bool couldBeMicrosoftModule =
                 (modulePath != null &&
-                 (modulePath.StartsWith(Utils.GetApplicationBase(Utils.DefaultPowerShellShellID), StringComparison.OrdinalIgnoreCase) ||
+                 (modulePath.StartsWith(Utils.DefaultPowerShellAppBase, StringComparison.OrdinalIgnoreCase) ||
                   // The following covers both 64 and 32 bit Program Files by assuming 32bit is just ...\Program Files + " (x86)"
                   modulePath.StartsWith(Platform.GetFolderPath(Environment.SpecialFolder.ProgramFiles), StringComparison.OrdinalIgnoreCase))) ||
                 (companyName != null &&
@@ -519,3 +520,4 @@ namespace Microsoft.PowerShell.Telemetry.Internal
         int InteractiveCommandCount { get; }
     }
 }
+#endif

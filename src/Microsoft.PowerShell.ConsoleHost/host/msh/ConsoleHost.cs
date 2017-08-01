@@ -28,7 +28,9 @@ using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 using NakedWin32Handle = System.IntPtr;
 using System.Management.Automation.Tracing;
+#if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
+#endif
 using Debugger = System.Management.Automation.Debugger;
 
 namespace Microsoft.PowerShell
@@ -44,8 +46,10 @@ namespace Microsoft.PowerShell
         :
         PSHost,
         IDisposable,
-        IHostSupportsInteractiveSession,
-        IHostProvidesTelemetryData
+#if LEGACYTELEMETRY
+        IHostProvidesTelemetryData,
+#endif
+        IHostSupportsInteractiveSession
     {
         #region static methods
 
@@ -271,7 +275,9 @@ namespace Microsoft.PowerShell
             {
                 if (s_theConsoleHost != null)
                 {
+#if LEGACYTELEMETRY
                     TelemetryAPI.ReportExitTelemetry(s_theConsoleHost);
+#endif
                     s_theConsoleHost.Dispose();
                 }
             }
@@ -298,11 +304,19 @@ namespace Microsoft.PowerShell
             switch (args.SpecialKey)
             {
                 case ConsoleSpecialKey.ControlC:
-                    SpinUpBreakHandlerThread(false);
+                    SpinUpBreakHandlerThread(shouldEndSession: false);
                     return;
                 case ConsoleSpecialKey.ControlBreak:
-                    // Break into script debugger.
-                    BreakIntoDebugger();
+                    if (s_cpp.NonInteractive)
+                    {
+                        //ControlBreak mimics ControlC in Noninteractive shells
+                        SpinUpBreakHandlerThread(shouldEndSession: true);
+                    }
+                    else
+                    {
+                        // Break into script debugger.
+                        BreakIntoDebugger();
+                    }
                     return;
             }
         }
@@ -319,13 +333,21 @@ namespace Microsoft.PowerShell
             switch (signal)
             {
                 case ConsoleControl.ConsoleBreakSignal.CtrlBreak:
-                    // Break into script debugger.
-                    BreakIntoDebugger();
+                    if (s_cpp.NonInteractive)
+                    {
+                        //ControlBreak mimics ControlC in Noninteractive shells
+                        SpinUpBreakHandlerThread(shouldEndSession: true);
+                    }
+                    else
+                    {
+                        // Break into script debugger.
+                        BreakIntoDebugger();
+                    }
                     return true;
 
                 // Run the break handler...
                 case ConsoleControl.ConsoleBreakSignal.CtrlC:
-                    SpinUpBreakHandlerThread(false);
+                    SpinUpBreakHandlerThread(shouldEndSession: false);
                     return true;
 
                 case ConsoleControl.ConsoleBreakSignal.Logoff:
@@ -337,12 +359,12 @@ namespace Microsoft.PowerShell
 
                 case ConsoleControl.ConsoleBreakSignal.Close:
                 case ConsoleControl.ConsoleBreakSignal.Shutdown:
-                    SpinUpBreakHandlerThread(true);
+                    SpinUpBreakHandlerThread(shouldEndSession: true);
                     return false;
 
                 default:
                     // Log as much sqm data as possible before we exit.
-                    SpinUpBreakHandlerThread(true);
+                    SpinUpBreakHandlerThread(shouldEndSession: true);
                     return false;
             }
         }
@@ -1038,6 +1060,7 @@ namespace Microsoft.PowerShell
             }
         }
 
+#if LEGACYTELEMETRY
         bool IHostProvidesTelemetryData.HostIsInteractive
         {
             get
@@ -1049,6 +1072,7 @@ namespace Microsoft.PowerShell
         double IHostProvidesTelemetryData.ProfileLoadTimeInMS { get { return _profileLoadTimeInMS; } }
         double IHostProvidesTelemetryData.ReadyForInputTimeInMS { get { return _readyForInputTimeInMS; } }
         int IHostProvidesTelemetryData.InteractiveCommandCount { get { return _interactiveCommandCount; } }
+#endif
 
         private double _profileLoadTimeInMS;
         private double _readyForInputTimeInMS;
@@ -1079,8 +1103,8 @@ namespace Microsoft.PowerShell
             }
 #endif
 
-            ClrFacade.SetCurrentThreadUiCulture(this.CurrentUICulture);
-            ClrFacade.SetCurrentThreadCulture(this.CurrentCulture);
+            Thread.CurrentThread.CurrentUICulture = this.CurrentUICulture;
+            Thread.CurrentThread.CurrentCulture = this.CurrentCulture;
             // BUG: 610329. Tell PowerShell engine to apply console
             // related properties while launching Pipeline Execution
             // Thread.
@@ -1807,10 +1831,11 @@ namespace Microsoft.PowerShell
                     s_tracer.WriteLine("-noprofile option specified: skipping profiles");
                 }
             }
-
+#if LEGACYTELEMETRY
             // Startup is reported after possibly running the profile, but before running the initial command (or file)
             // if one is specified.
             TelemetryAPI.ReportStartupTelemetry(this);
+#endif
 
             // If a file was specified as the argument to run, then run it...
             if (s_cpp != null && s_cpp.File != null)
@@ -1820,7 +1845,17 @@ namespace Microsoft.PowerShell
                 s_tracer.WriteLine("running -file '{0}'", filePath);
 
                 Pipeline tempPipeline = exec.CreatePipeline();
-                Command c = new Command(filePath, false, false);
+                Command c;
+                // if file doesn't have .ps1 extension, we read the contents and treat it as a script to support shebang with no .ps1 extension usage
+                if (!Path.GetExtension(filePath).Equals(".ps1", StringComparison.OrdinalIgnoreCase))
+                {
+                    string script = File.ReadAllText(filePath);
+                    c = new Command(script, isScript: true, useLocalScope: false);
+                }
+                else
+                {
+                    c = new Command(filePath, false, false);
+                }
                 tempPipeline.Commands.Add(c);
 
                 if (initialCommandArgs != null)

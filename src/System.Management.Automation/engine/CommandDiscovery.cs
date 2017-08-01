@@ -775,16 +775,6 @@ namespace System.Management.Automation
                             new CommandNotFoundException(reqSyntaxException.Message, reqSyntaxException);
                         throw e;
                     }
-                    catch (PSArgumentException argException)
-                    {
-                        CommandNotFoundException e =
-                            new CommandNotFoundException(
-                                commandInfo.Name,
-                                argException,
-                                "ScriptRequiresInvalidFormat",
-                                DiscoveryExceptions.ScriptRequiresInvalidFormat);
-                        throw e;
-                    }
                     break;
                 case CommandTypes.Filter:
                 case CommandTypes.Function:

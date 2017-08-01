@@ -175,7 +175,7 @@ namespace System.Management.Automation.Language
                         // slot in the tuple.  This only matters for value types where we allow
                         // comparisons with $null and don't try to convert the $null value to the
                         // valuetype because the parameter has no value yet.  For example:
-                        //     & { param([System.Reflection.MemberTypes]$m) ($m -eq $null) }
+                        //     & { param([System.Reflection.MemberTypes]$m) ($null -eq $m) }
                         object unused;
                         if (!Compiler.TryGetDefaultParameterValue(analysisDetails.Type, out unused))
                         {
@@ -456,12 +456,6 @@ namespace System.Management.Automation.Language
             {
                 Diagnostics.Assert(false, "This code is unreachable.");
                 return AstVisitAction.Continue;
-            }
-
-            internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-            {
-                Diagnostics.Assert(false, "This code is unreachable.");
-                return Ast.EmptyPSTypeNameArray;
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿Describe 'PSModuleInfo.GetExportedTypeDefinitions()' -Tags "CI" {
     It "doesn't throw for any module" {
-        $discard = Get-Module -ListAvailable | % { $_.GetExportedTypeDefinitions() }
+        $discard = Get-Module -ListAvailable | ForEach-Object { $_.GetExportedTypeDefinitions() }
         $true | Should Be $true # we only verify that we didn't throw. This line contains a dummy Should to make pester happy.
     }
 }
@@ -44,14 +44,14 @@ class RandomWrapper
 '@
 
         It 'use different sessionStates for different modules' {
-            $ps = 1..2 | % { $p = [powershell]::Create().AddScript(@'
+            $ps = 1..2 | ForEach-Object { $p = [powershell]::Create().AddScript(@'
 Import-Module Random
 '@)
                 $p.Invoke() > $null
                 $p
             }
-            $res = 1..2 | % {
-                0..1 | % {
+            $res = 1..2 | ForEach-Object {
+                0..1 | ForEach-Object {
                     $ps[$_].Commands.Clear()
                     # The idea: instance created inside the context, in one runspace.
                     # Method is called on instance in the different runspace, but it should know about the origin.

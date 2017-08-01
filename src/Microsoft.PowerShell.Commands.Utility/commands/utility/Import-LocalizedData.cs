@@ -285,7 +285,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 try
                 {
-                    culture = ClrFacade.GetCultureInfo(_uiculture);
+                    culture = CultureInfo.GetCultureInfo(_uiculture);
                 }
                 catch (ArgumentException)
                 {

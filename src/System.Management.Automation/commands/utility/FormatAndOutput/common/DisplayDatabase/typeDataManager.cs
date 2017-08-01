@@ -490,7 +490,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
             {
                 var builtInGenerators = new Dictionary<string, Tuple<bool, TypeGenerator>>(StringComparer.OrdinalIgnoreCase);
 
-                var psHome = Utils.GetApplicationBase(Utils.DefaultPowerShellShellID);
+                var psHome = Utils.DefaultPowerShellAppBase;
 
                 builtInGenerators.Add(Path.Combine(psHome, "Certificate.format.ps1xml"), GetBuiltin(false, Certificate_Format_Ps1Xml.GetFormatData));
                 builtInGenerators.Add(Path.Combine(psHome, "Diagnostics.Format.ps1xml"), GetBuiltin(false, Diagnostics_Format_Ps1Xml.GetFormatData));

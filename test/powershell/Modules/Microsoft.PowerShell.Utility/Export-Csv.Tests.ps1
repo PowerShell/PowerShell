@@ -96,7 +96,7 @@ Describe "Export-Csv DRT Unit Tests" -Tags "CI" {
         $results = Import-Csv $filePath
 
         $results.P2 | Should be "second"
-        $property = $results | Get-Member | ? { $_.MemberType -eq "NoteProperty" } | % { $_.Name }
+        $property = $results | Get-Member | Where-Object { $_.MemberType -eq "NoteProperty" } | ForEach-Object { $_.Name }
         $property | should not be P1
     }
 

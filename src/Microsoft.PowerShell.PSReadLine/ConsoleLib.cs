@@ -1068,17 +1068,33 @@ namespace Microsoft.PowerShell.Internal
 
             Console.SetCursorPosition(0, (top>=0) ? top : 0);
 
+            var lastForegroundColor = (ConsoleColor)(-1);
+            var lastBackgroundColor = (ConsoleColor)(-1);
             for (int i = 0; i < buffer.Length; ++i)
             {
                 // TODO: use escape sequences for better perf
-                Console.ForegroundColor =  buffer[i].ForegroundColor;
-                Console.BackgroundColor =  buffer[i].BackgroundColor;
+                var nextForegroundColor = buffer[i].ForegroundColor;
+                var nextBackgroundColor = buffer[i].BackgroundColor;
+                if (nextForegroundColor != lastForegroundColor)
+                {
+                    Console.ForegroundColor = lastForegroundColor = nextForegroundColor;
+                }
+                if (nextBackgroundColor != lastBackgroundColor)
+                {
+                    Console.BackgroundColor = lastBackgroundColor = nextBackgroundColor;
+                }
 
                 Console.Write(buffer[i].UnicodeChar);
             }
 
-            Console.BackgroundColor = backgroundColor;
-            Console.ForegroundColor = foregroundColor;
+            if (foregroundColor != lastForegroundColor)
+            {
+                Console.ForegroundColor = foregroundColor;
+            }
+            if (backgroundColor != lastBackgroundColor)
+            {
+                Console.BackgroundColor = backgroundColor;
+            }
         }
 
         public void ScrollBuffer(int lines)

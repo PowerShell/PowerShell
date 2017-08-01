@@ -108,3 +108,61 @@ Describe "Adapter XML Tests" -tags "CI" {
         }
     }
 }
+
+Describe "DataRow and DataRowView Adapter tests" -tags "CI" {
+
+    BeforeAll {
+        ## Define the DataTable schema
+        $dataTable = [System.Data.DataTable]::new("inputs")
+        $dataTable.Locale = [cultureinfo]::InvariantCulture
+        $dataTable.Columns.Add("Id", [int]) > $null
+        $dataTable.Columns.Add("FirstName", [string]) > $null
+        $dataTable.Columns.Add("LastName", [string]) > $null
+        $dataTable.Columns.Add("YearsInMS", [int]) > $null
+
+        ## Add data entries
+        $dataTable.Rows.Add(@(1, "joseph", "smith", 15)) > $null
+        $dataTable.Rows.Add(@(2, "paul", "smith", 15)) > $null
+        $dataTable.Rows.Add(@(3, "mary jo", "soe", 5)) > $null
+        $dataTable.Rows.Add(@(4, "edmund`todd `n", "bush", 9)) > $null
+    }
+
+    Context "DataRow Adapter tests" {
+
+        It "Should be able to access data columns" {
+            $row = $dataTable.Rows[0]
+            $row.Id | Should Be 1
+            $row.FirstName | Should Be "joseph"
+            $row.LastName | Should Be "smith"
+            $row.YearsInMS | Should Be 15
+        }
+
+        It "DataTable should be enumerable in PowerShell" {
+            ## Get the third entry in the data table
+            $row = $dataTable | Select-Object -Skip 2 -First 1
+            $row.Id | Should Be 3
+            $row.FirstName | Should Be "mary jo"
+            $row.LastName | Should Be "soe"
+            $row.YearsInMS | Should Be 5
+        }
+    }
+
+    Context "DataRowView Adapter tests" {
+
+        It "Should be able to access data columns" {
+            $rowView = $dataTable.DefaultView[1]
+            $rowView.Id | Should Be 2
+            $rowView.FirstName | Should Be "paul"
+            $rowView.LastName | Should Be "smith"
+            $rowView.YearsInMS | Should Be 15
+        }
+
+        It "DataView should be enumerable" {
+            $rowView = $dataTable.DefaultView | Select-Object -Last 1
+            $rowView.Id | Should Be 4
+            $rowView.FirstName | Should Be "edmund`todd `n"
+            $rowView.LastName | Should Be "bush"
+            $rowView.YearsInMS | Should Be 9
+        }
+    }
+}

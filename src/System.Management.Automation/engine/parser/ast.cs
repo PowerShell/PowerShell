@@ -281,8 +281,6 @@ namespace System.Management.Automation.Language
         internal abstract object Accept(ICustomAstVisitor visitor);
         internal abstract AstVisitAction InternalVisit(AstVisitor visitor);
 
-        internal abstract IEnumerable<PSTypeName> GetInferredType(CompletionContext context);
-
         internal static PSTypeName[] EmptyPSTypeNameArray = Utils.EmptyArray<PSTypeName>();
 
         internal bool IsInWorkflow()
@@ -421,12 +419,6 @@ namespace System.Management.Automation.Language
         {
             Diagnostics.Assert(false, "code should be unreachable");
             return visitor.CheckForPostAction(this, AstVisitAction.Continue);
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            Diagnostics.Assert(false, "code should be unreachable");
-            return Ast.EmptyPSTypeNameArray;
         }
     }
 
@@ -567,11 +559,6 @@ namespace System.Management.Automation.Language
             }
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return Conditions.Concat(Bodies).Concat(NestedAst).SelectMany(nestedAst => nestedAst.GetInferredType(context));
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -660,11 +647,6 @@ namespace System.Management.Automation.Language
         {
             var newNestedAst = CopyElements(this.NestedAst);
             return new ErrorExpressionAst(this.Extent, newNestedAst);
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return NestedAst.SelectMany(nestedAst => nestedAst.GetInferredType(context));
         }
 
         #region Visitors
@@ -1300,32 +1282,6 @@ namespace System.Management.Automation.Language
             Diagnostics.Assert(PostParseChecksPerformed, "Post parse checks not set during semantic checks");
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            // The following is used when we don't find OutputType, which is checked elsewhere.
-            if (BeginBlock != null)
-            {
-                foreach (var typename in BeginBlock.GetInferredType(context))
-                {
-                    yield return typename;
-                }
-            }
-            if (ProcessBlock != null)
-            {
-                foreach (var typename in ProcessBlock.GetInferredType(context))
-                {
-                    yield return typename;
-                }
-            }
-            if (EndBlock != null)
-            {
-                foreach (var typename in EndBlock.GetInferredType(context))
-                {
-                    yield return typename;
-                }
-            }
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -1626,11 +1582,6 @@ namespace System.Management.Automation.Language
             return new ParamBlockAst(this.Extent, newAttributes, newParameters);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return EmptyPSTypeNameArray;
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -1819,11 +1770,6 @@ namespace System.Management.Automation.Language
         internal IScriptExtent OpenCurlyExtent { get; private set; }
         internal IScriptExtent CloseCurlyExtent { get; private set; }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return Statements.SelectMany(ast => ast.GetInferredType(context));
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -1911,11 +1857,6 @@ namespace System.Management.Automation.Language
             return new NamedAttributeArgumentAst(this.Extent, this.ArgumentName, newArgument, this.ExpressionOmitted);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return EmptyPSTypeNameArray;
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -1967,11 +1908,6 @@ namespace System.Management.Automation.Language
         public ITypeName TypeName { get; private set; }
 
         internal abstract Attribute GetAttribute();
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return EmptyPSTypeNameArray;
-        }
     }
 
     /// <summary>
@@ -2234,28 +2170,6 @@ namespace System.Management.Automation.Language
             return new ParameterAst(this.Extent, newName, newAttributes, newDefaultValue);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            var typeConstraint = Attributes.OfType<TypeConstraintAst>().FirstOrDefault();
-            if (typeConstraint != null)
-            {
-                yield return new PSTypeName(typeConstraint.TypeName);
-            }
-            foreach (var attributeAst in Attributes.OfType<AttributeAst>())
-            {
-                PSTypeNameAttribute attribute = null;
-                try
-                {
-                    attribute = attributeAst.GetAttribute() as PSTypeNameAttribute;
-                }
-                catch (RuntimeException) { }
-                if (attribute != null)
-                {
-                    yield return new PSTypeName(attribute.PSTypeName);
-                }
-            }
-        }
-
         internal string GetTooltip()
         {
             var typeConstraint = Attributes.OfType<TypeConstraintAst>().FirstOrDefault();
@@ -2416,11 +2330,6 @@ namespace System.Management.Automation.Language
             var newTraps = CopyElements(this.Traps);
 
             return new StatementBlockAst(this.Extent, newStatements, newTraps);
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return Statements.SelectMany(nestedAst => nestedAst.GetInferredType(context));
         }
 
         #region Visitors
@@ -2704,11 +2613,6 @@ namespace System.Management.Automation.Language
             return visitor.CheckForPostAction(this, action);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return EmptyPSTypeNameArray;
-        }
-
         #endregion Visitors
     }
 
@@ -2931,11 +2835,6 @@ namespace System.Management.Automation.Language
         }
 
         #endregion
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            throw new NotImplementedException();
-        }
 
         /// <summary>
         /// Define imported module and all type definitions imported by this using statement.
@@ -3163,11 +3062,6 @@ namespace System.Management.Automation.Language
             return visitor.CheckForPostAction(this, action);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion Visitors
     }
 
@@ -3383,11 +3277,6 @@ namespace System.Management.Automation.Language
             return visitor.CheckForPostAction(this, action);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            throw new NotImplementedException();
-        }
-
         #endregion Visitors
 
         #region IParameterMetadataProvider implementation
@@ -3508,12 +3397,6 @@ namespace System.Management.Automation.Language
         {
             Diagnostics.Assert(false, "code should be unreachable");
             return AstVisitAction.Continue;
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            Diagnostics.Assert(false, "code should be unreachable");
-            return Ast.EmptyPSTypeNameArray;
         }
 
         public bool HasAnyScriptBlockAttributes()
@@ -3714,11 +3597,6 @@ namespace System.Management.Automation.Language
             var newBody = CopyElement(this.Body);
 
             return new FunctionDefinitionAst(this.Extent, this.IsFilter, this.IsWorkflow, this.Name, newParameters, newBody) { NameExtent = this.NameExtent };
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return EmptyPSTypeNameArray;
         }
 
         internal string GetParamTextFromParameterList(Tuple<List<VariableExpressionAst>, string> usingVariablesTuple = null)
@@ -3935,22 +3813,6 @@ namespace System.Management.Automation.Language
             return new IfStatementAst(this.Extent, newClauses, newElseClause);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            foreach (var typename in Clauses.SelectMany(clause => clause.Item2.GetInferredType(context)))
-            {
-                yield return typename;
-            }
-
-            if (ElseClause != null)
-            {
-                foreach (var typename in ElseClause.GetInferredType(context))
-                {
-                    yield return typename;
-                }
-            }
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -4057,11 +3919,6 @@ namespace System.Management.Automation.Language
             return new DataStatementAst(this.Extent, this.Variable, newCommandsAllowed, newBody);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return Body.GetInferredType(context);
-        }
-
         internal bool HasNonConstantAllowedCommand { get; private set; }
 
         #region Visitors
@@ -4166,11 +4023,6 @@ namespace System.Management.Automation.Language
         /// The body of a loop statement.  This property is never null.
         /// </summary>
         public StatementBlockAst Body { get; private set; }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return Body.GetInferredType(context);
-        }
     }
 
     /// <summary>
@@ -4714,22 +4566,6 @@ namespace System.Management.Automation.Language
             return new SwitchStatementAst(this.Extent, this.Label, newCondition, this.Flags, newClauses, newDefault);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            foreach (var typename in Clauses.SelectMany(clause => clause.Item2.GetInferredType(context)))
-            {
-                yield return typename;
-            }
-
-            if (Default != null)
-            {
-                foreach (var typename in Default.GetInferredType(context))
-                {
-                    yield return typename;
-                }
-            }
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -4831,11 +4667,6 @@ namespace System.Management.Automation.Language
             var newCatchTypes = CopyElements(this.CatchTypes);
             var newBody = CopyElement(this.Body);
             return new CatchClauseAst(this.Extent, newCatchTypes, newBody);
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return Body.GetInferredType(context);
         }
 
         #region Visitors
@@ -4952,27 +4783,6 @@ namespace System.Management.Automation.Language
             return new TryStatementAst(this.Extent, newBody, newCatchClauses, newFinally);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            foreach (var typename in Body.GetInferredType(context))
-            {
-                yield return typename;
-            }
-
-            foreach (var typename in CatchClauses.SelectMany(clause => clause.Body.GetInferredType(context)))
-            {
-                yield return typename;
-            }
-
-            if (Finally != null)
-            {
-                foreach (var typename in Finally.GetInferredType(context))
-                {
-                    yield return typename;
-                }
-            }
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -5057,11 +4867,6 @@ namespace System.Management.Automation.Language
             return new TrapStatementAst(this.Extent, newTrapType, newBody);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return Body.GetInferredType(context);
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -5125,11 +4930,6 @@ namespace System.Management.Automation.Language
             return new BreakStatementAst(this.Extent, newLabel);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return EmptyPSTypeNameArray;
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -5185,11 +4985,6 @@ namespace System.Management.Automation.Language
         {
             var newLabel = CopyElement(this.Label);
             return new ContinueStatementAst(this.Extent, newLabel);
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return EmptyPSTypeNameArray;
         }
 
         #region Visitors
@@ -5249,11 +5044,6 @@ namespace System.Management.Automation.Language
             return new ReturnStatementAst(this.Extent, newPipeline);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return EmptyPSTypeNameArray;
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -5309,11 +5099,6 @@ namespace System.Management.Automation.Language
         {
             var newPipeline = CopyElement(this.Pipeline);
             return new ExitStatementAst(this.Extent, newPipeline);
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return EmptyPSTypeNameArray;
         }
 
         #region Visitors
@@ -5403,11 +5188,6 @@ namespace System.Management.Automation.Language
         {
             var newPipeline = CopyElement(this.Pipeline);
             return new ThrowStatementAst(this.Extent, newPipeline);
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return EmptyPSTypeNameArray;
         }
 
         #region Visitors
@@ -5581,11 +5361,6 @@ namespace System.Management.Automation.Language
             return new PipelineAst(this.Extent, newPipelineElements, this.Background);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return PipelineElements.Last().GetInferredType(context);
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -5706,11 +5481,6 @@ namespace System.Management.Automation.Language
         {
             var newArgument = CopyElement(this.Argument);
             return new CommandParameterAst(this.Extent, this.ParameterName, newArgument, this.ErrorPosition);
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return EmptyPSTypeNameArray;
         }
 
         #region Visitors
@@ -5864,154 +5634,6 @@ namespace System.Management.Automation.Language
             };
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            PseudoBindingInfo pseudoBinding = new PseudoParameterBinder()
-                                    .DoPseudoParameterBinding(this, null, null, PseudoParameterBinder.BindingType.ParameterCompletion);
-            if (pseudoBinding == null || pseudoBinding.CommandInfo == null)
-            {
-                yield break;
-            }
-
-            AstParameterArgumentPair pathArgument;
-            string pathParameterName = "Path";
-            if (!pseudoBinding.BoundArguments.TryGetValue(pathParameterName, out pathArgument))
-            {
-                pathParameterName = "LiteralPath";
-                pseudoBinding.BoundArguments.TryGetValue(pathParameterName, out pathArgument);
-            }
-
-            var commandInfo = pseudoBinding.CommandInfo;
-            var pathArgumentPair = pathArgument as AstPair;
-            if (pathArgumentPair != null && pathArgumentPair.Argument is StringConstantExpressionAst)
-            {
-                var pathValue = ((StringConstantExpressionAst)pathArgumentPair.Argument).Value;
-                try
-                {
-                    commandInfo = commandInfo.CreateGetCommandCopy(new[] { "-" + pathParameterName, pathValue });
-                }
-                catch (InvalidOperationException) { }
-            }
-
-            var cmdletInfo = commandInfo as CmdletInfo;
-            if (cmdletInfo != null)
-            {
-                // Special cases
-
-                // new-object - yields an instance of whatever -Type is bound to
-                if (cmdletInfo.ImplementingType.FullName.Equals("Microsoft.PowerShell.Commands.NewObjectCommand", StringComparison.Ordinal))
-                {
-                    AstParameterArgumentPair typeArgument;
-                    if (pseudoBinding.BoundArguments.TryGetValue("TypeName", out typeArgument))
-                    {
-                        var typeArgumentPair = typeArgument as AstPair;
-                        if (typeArgumentPair != null && typeArgumentPair.Argument is StringConstantExpressionAst)
-                        {
-                            yield return new PSTypeName(((StringConstantExpressionAst)typeArgumentPair.Argument).Value);
-                        }
-                    }
-                    yield break;
-                }
-
-                // Get-CimInstance/New-CimInstance - yields a CimInstance with ETS type based on its arguments for -Namespace and -ClassName parameters
-                if (cmdletInfo.ImplementingType.FullName.Equals("Microsoft.Management.Infrastructure.CimCmdlets.GetCimInstanceCommand", StringComparison.Ordinal) ||
-                    cmdletInfo.ImplementingType.FullName.Equals("Microsoft.Management.Infrastructure.CimCmdlets.NewCimInstanceCommand", StringComparison.Ordinal))
-                {
-                    string pseudoboundNamespace = CompletionCompleters.NativeCommandArgumentCompletion_ExtractSecondaryArgument(pseudoBinding.BoundArguments, "Namespace").FirstOrDefault();
-                    string pseudoboundClassName = CompletionCompleters.NativeCommandArgumentCompletion_ExtractSecondaryArgument(pseudoBinding.BoundArguments, "ClassName").FirstOrDefault();
-                    if (!string.IsNullOrWhiteSpace(pseudoboundClassName))
-                    {
-                        yield return new PSTypeName(string.Format(
-                            CultureInfo.InvariantCulture,
-                            "{0}#{1}/{2}",
-                            typeof(Microsoft.Management.Infrastructure.CimInstance).FullName,
-                            pseudoboundNamespace ?? "root/cimv2",
-                            pseudoboundClassName));
-                    }
-                    yield return new PSTypeName(typeof(Microsoft.Management.Infrastructure.CimInstance));
-                    yield break;
-                }
-
-                // where-object - yields whatever we saw before where-object in the pipeline.
-                // same for sort-object
-                if (cmdletInfo.ImplementingType == typeof(WhereObjectCommand)
-                    || cmdletInfo.ImplementingType.FullName.Equals("Microsoft.PowerShell.Commands.SortObjectCommand", StringComparison.Ordinal))
-                {
-                    var parentPipeline = this.Parent as PipelineAst;
-                    if (parentPipeline != null)
-                    {
-                        int i;
-                        for (i = 0; i < parentPipeline.PipelineElements.Count; i++)
-                        {
-                            if (parentPipeline.PipelineElements[i] == this)
-                                break;
-                        }
-                        if (i > 0)
-                        {
-                            foreach (var typename in parentPipeline.PipelineElements[i - 1].GetInferredType(context))
-                            {
-                                yield return typename;
-                            }
-                        }
-                    }
-
-                    // We could also check -InputObject, but that is rarely used.  But don't bother continuing.
-                    yield break;
-                }
-
-                // foreach-object - yields the type of it's script block parameters
-                if (cmdletInfo.ImplementingType == typeof(ForEachObjectCommand))
-                {
-                    AstParameterArgumentPair argument;
-                    if (pseudoBinding.BoundArguments.TryGetValue("Begin", out argument))
-                    {
-                        foreach (var type in GetInferredTypeFromScriptBlockParameter(argument, context))
-                        {
-                            yield return type;
-                        }
-                    }
-
-                    if (pseudoBinding.BoundArguments.TryGetValue("Process", out argument))
-                    {
-                        foreach (var type in GetInferredTypeFromScriptBlockParameter(argument, context))
-                        {
-                            yield return type;
-                        }
-                    }
-
-                    if (pseudoBinding.BoundArguments.TryGetValue("End", out argument))
-                    {
-                        foreach (var type in GetInferredTypeFromScriptBlockParameter(argument, context))
-                        {
-                            yield return type;
-                        }
-                    }
-                }
-            }
-
-            // The OutputType property ignores the parameter set specified in the OutputTypeAttribute.
-            // With psuedo-binding, we actually know the candidate parameter sets, so we could take
-            // advantage of it here, but I opted for the simpler code because so few cmdlets use
-            // ParameterSetName in OutputType and of the ones I know about, it isn't that useful.
-            foreach (var result in commandInfo.OutputType)
-            {
-                yield return result;
-            }
-        }
-
-        private IEnumerable<PSTypeName> GetInferredTypeFromScriptBlockParameter(AstParameterArgumentPair argument, CompletionContext context)
-        {
-            var argumentPair = argument as AstPair;
-            if (argumentPair != null && argumentPair.Argument is ScriptBlockExpressionAst)
-            {
-                var scriptBlockExpressionAst = (ScriptBlockExpressionAst)argumentPair.Argument;
-                foreach (var type in scriptBlockExpressionAst.ScriptBlock.GetInferredType(context))
-                {
-                    yield return type;
-                }
-            }
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -6093,11 +5715,6 @@ namespace System.Management.Automation.Language
             return new CommandExpressionAst(this.Extent, newExpression, newRedirections);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return Expression.GetInferredType(context);
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -6149,11 +5766,6 @@ namespace System.Management.Automation.Language
         /// The stream to read objects from.  Objects are either merged with another stream, or written to a file.
         /// </summary>
         public RedirectionStream FromStream { get; private set; }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return EmptyPSTypeNameArray;
-        }
     }
 
     /// <summary>
@@ -6407,11 +6019,6 @@ namespace System.Management.Automation.Language
             return new AssignmentStatementAst(this.Extent, newLeft, this.Operator, newRight, this.ErrorPosition);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return Left.GetInferredType(context);
-        }
-
         /// <summary>
         /// Return all of the expressions assigned by the assignment statement.  Typically
         /// it's just a variable expression, but if <see cref="Left"/> is an <see cref="ArrayLiteralAst"/>,
@@ -6544,17 +6151,6 @@ namespace System.Management.Automation.Language
                 ConfigurationToken = this.ConfigurationToken,
                 CustomAttributes = this.CustomAttributes == null ? null : this.CustomAttributes.Select(e => (AttributeAst)e.Copy())
             };
-        }
-
-
-        /// <summary>
-        /// Gets inferred type
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return Body.GetInferredType(context);
         }
 
         #region Visitors
@@ -7045,17 +6641,6 @@ namespace System.Management.Automation.Language
 
         #endregion Visitors
 
-        /// <summary>
-        /// Get inferred type of DynamicKeywordStatementAst
-        /// </summary>
-        /// <param name="context"></param>
-        /// <returns></returns>
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            // TODO: What is the right InferredType for the AST
-            return CommandElements[0].GetInferredType(context);
-        }
-
         #region Internal Properties/Methods
 
         internal DynamicKeyword Keyword
@@ -7456,20 +7041,6 @@ namespace System.Management.Automation.Language
         }
 
         internal static readonly PSTypeName[] BoolTypeNameArray = new PSTypeName[] { new PSTypeName(typeof(bool)) };
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            switch (Operator)
-            {
-                case TokenKind.Xor:
-                case TokenKind.And:
-                case TokenKind.Or:
-                case TokenKind.Is:
-                    return BoolTypeNameArray;
-            }
-
-            // This may not be right, but we're guessing anyway, and it's not a bad guess.
-            return Left.GetInferredType(context);
-        }
 
         #region Visitors
 
@@ -7560,13 +7131,6 @@ namespace System.Management.Automation.Language
             }
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return (TokenKind == TokenKind.Not || TokenKind == TokenKind.Exclaim)
-                ? BinaryExpressionAst.BoolTypeNameArray
-                : Child.GetInferredType(context);
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -7634,11 +7198,6 @@ namespace System.Management.Automation.Language
         {
             var newBody = CopyElement(this.Body);
             return new BlockStatementAst(this.Extent, this.Kind, newBody);
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return Body.GetInferredType(context);
         }
 
         #region Visitors
@@ -7710,11 +7269,6 @@ namespace System.Management.Automation.Language
             var newAttribute = CopyElement(this.Attribute);
             var newChild = CopyElement(this.Child);
             return new AttributedExpressionAst(this.Extent, newAttribute, newChild);
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return Child.GetInferredType(context);
         }
 
         #region Visitors
@@ -7840,19 +7394,6 @@ namespace System.Management.Automation.Language
             get { return this.Type.TypeName.GetReflectionType() ?? typeof(object); }
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            var type = this.Type.TypeName.GetReflectionType();
-            if (type != null)
-            {
-                yield return new PSTypeName(type);
-            }
-            else
-            {
-                yield return new PSTypeName(this.Type.TypeName.FullName);
-            }
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -7956,208 +7497,6 @@ namespace System.Management.Automation.Language
             var newExpression = CopyElement(this.Expression);
             var newMember = CopyElement(this.Member);
             return new MemberExpressionAst(this.Extent, newExpression, newMember, this.Static);
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            // If the member name isn't simple, don't even try.
-            var memberAsStringConst = Member as StringConstantExpressionAst;
-            if (memberAsStringConst == null)
-                yield break;
-
-            PSTypeName[] exprType;
-            if (this.Static)
-            {
-                var exprAsType = Expression as TypeExpressionAst;
-                if (exprAsType == null)
-                    yield break;
-                var type = exprAsType.TypeName.GetReflectionType();
-                if (type == null)
-                {
-                    var typeName = exprAsType.TypeName as TypeName;
-                    if (typeName == null || typeName._typeDefinitionAst == null)
-                        yield break;
-
-                    exprType = new[] { new PSTypeName(typeName._typeDefinitionAst) };
-                }
-                else
-                {
-                    exprType = new[] { new PSTypeName(type) };
-                }
-            }
-            else
-            {
-                exprType = Expression.GetInferredType(context).ToArray();
-                if (exprType.Length == 0)
-                    yield break;
-            }
-
-            var maybeWantDefaultCtor = this.Static
-                && this is InvokeMemberExpressionAst
-                && memberAsStringConst.Value.Equals("new", StringComparison.OrdinalIgnoreCase);
-
-            // We use a list of member names because we might discover aliases properties
-            // and if we do, we'll add to the list.
-            var memberNameList = new List<string> { memberAsStringConst.Value };
-            foreach (var type in exprType)
-            {
-                var members = CompletionCompleters.GetMembersByInferredType(type, context, this.Static, filter: null);
-
-                for (int i = 0; i < memberNameList.Count; i++)
-                {
-                    string memberName = memberNameList[i];
-                    foreach (var member in members)
-                    {
-                        var propertyInfo = member as PropertyInfo;
-                        if (propertyInfo != null)
-                        {
-                            if (propertyInfo.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase) &&
-                                !(this is InvokeMemberExpressionAst))
-                            {
-                                yield return new PSTypeName(propertyInfo.PropertyType);
-                                break;
-                            }
-                            continue;
-                        }
-
-                        var fieldInfo = member as FieldInfo;
-                        if (fieldInfo != null)
-                        {
-                            if (fieldInfo.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase) &&
-                                !(this is InvokeMemberExpressionAst))
-                            {
-                                yield return new PSTypeName(fieldInfo.FieldType);
-                                break;
-                            }
-                            continue;
-                        }
-
-                        var methodCacheEntry = member as DotNetAdapter.MethodCacheEntry;
-                        if (methodCacheEntry != null)
-                        {
-                            if (methodCacheEntry[0].method.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
-                            {
-                                maybeWantDefaultCtor = false;
-                                if (this is InvokeMemberExpressionAst)
-                                {
-                                    foreach (var method in methodCacheEntry.methodInformationStructures)
-                                    {
-                                        var methodInfo = method.method as MethodInfo;
-                                        if (methodInfo != null && !methodInfo.ReturnType.GetTypeInfo().ContainsGenericParameters)
-                                        {
-                                            yield return new PSTypeName(methodInfo.ReturnType);
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    // Accessing a method as a property, we'd return a wrapper over the method.
-                                    yield return new PSTypeName(typeof(PSMethod));
-                                }
-                                break;
-                            }
-                            continue;
-                        }
-
-                        var memberAst = member as MemberAst;
-                        if (memberAst != null)
-                        {
-                            if (memberAst.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
-                            {
-                                if (this is InvokeMemberExpressionAst)
-                                {
-                                    var functionMemberAst = memberAst as FunctionMemberAst;
-                                    if (functionMemberAst != null && !functionMemberAst.IsReturnTypeVoid())
-                                    {
-                                        yield return new PSTypeName(functionMemberAst.ReturnType.TypeName);
-                                    }
-                                }
-                                else
-                                {
-                                    var propertyMemberAst = memberAst as PropertyMemberAst;
-                                    if (propertyMemberAst != null)
-                                    {
-                                        if (propertyMemberAst.PropertyType != null)
-                                        {
-                                            yield return new PSTypeName(propertyMemberAst.PropertyType.TypeName);
-                                        }
-                                        else
-                                        {
-                                            yield return new PSTypeName(typeof(object));
-                                        }
-                                    }
-                                    else
-                                    {
-                                        // Accessing a method as a property, we'd return a wrapper over the method.
-                                        yield return new PSTypeName(typeof(PSMethod));
-                                    }
-                                }
-                            }
-                            continue;
-                        }
-
-                        var memberInfo = member as PSMemberInfo;
-                        if (memberInfo == null ||
-                            !memberInfo.Name.Equals(memberName, StringComparison.OrdinalIgnoreCase))
-                        {
-                            continue;
-                        }
-
-                        var noteProperty = member as PSNoteProperty;
-                        if (noteProperty != null)
-                        {
-                            yield return new PSTypeName(noteProperty.Value.GetType());
-                            break;
-                        }
-
-                        var aliasProperty = member as PSAliasProperty;
-                        if (aliasProperty != null)
-                        {
-                            memberNameList.Add(aliasProperty.ReferencedMemberName);
-                            break;
-                        }
-
-                        var codeProperty = member as PSCodeProperty;
-                        if (codeProperty != null)
-                        {
-                            if (codeProperty.GetterCodeReference != null)
-                            {
-                                yield return new PSTypeName(codeProperty.GetterCodeReference.ReturnType);
-                            }
-                            break;
-                        }
-
-                        ScriptBlock scriptBlock = null;
-                        var scriptProperty = member as PSScriptProperty;
-                        if (scriptProperty != null)
-                        {
-                            scriptBlock = scriptProperty.GetterScript;
-                        }
-
-                        var scriptMethod = member as PSScriptMethod;
-                        if (scriptMethod != null)
-                        {
-                            scriptBlock = scriptMethod.Script;
-                        }
-
-                        if (scriptBlock != null)
-                        {
-                            foreach (var t in scriptBlock.OutputType)
-                            {
-                                yield return t;
-                            }
-                        }
-
-                        break;
-                    }
-                }
-
-                // We didn't find any constructors but they used [T]::new() syntax
-                if (maybeWantDefaultCtor)
-                {
-                    yield return type;
-                }
-            }
         }
 
         #region Visitors
@@ -9278,11 +8617,6 @@ namespace System.Management.Automation.Language
         /// </summary>
         public override Type StaticType { get { return typeof(Type); } }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            yield return new PSTypeName(StaticType);
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -9397,205 +8731,6 @@ namespace System.Management.Automation.Language
             return new VariableExpressionAst(this.Extent, this.VariablePath, this.Splatted);
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            // We don't need to handle drive qualified variables, we can usually get those values
-            // without needing to "guess" at the type.
-            if (!VariablePath.IsVariable)
-            {
-                // Not a variable - the caller should have already tried going to session state
-                // to get the item and hence it's type, but that must have failed.  Don't try again.
-                yield break;
-            }
-
-            Ast parent = this.Parent;
-            if (VariablePath.IsUnqualified &&
-                (SpecialVariables.IsUnderbar(VariablePath.UserPath)
-                || VariablePath.UserPath.Equals(SpecialVariables.PSItem, StringComparison.OrdinalIgnoreCase)))
-            {
-                // $_ is special, see if we're used in a script block in some pipeline.
-                while (parent != null)
-                {
-                    if (parent is ScriptBlockExpressionAst)
-                        break;
-                    parent = parent.Parent;
-                }
-
-                if (parent != null)
-                {
-                    if (parent.Parent is CommandExpressionAst && parent.Parent.Parent is PipelineAst)
-                    {
-                        // Script block in a hash table, could be something like:
-                        //     dir | ft @{ Expression = { $_ } }
-                        if (parent.Parent.Parent.Parent is HashtableAst)
-                        {
-                            parent = parent.Parent.Parent.Parent;
-                        }
-                        else if (parent.Parent.Parent.Parent is ArrayLiteralAst && parent.Parent.Parent.Parent.Parent is HashtableAst)
-                        {
-                            parent = parent.Parent.Parent.Parent.Parent;
-                        }
-                    }
-                    if (parent.Parent is CommandParameterAst)
-                    {
-                        parent = parent.Parent;
-                    }
-
-                    var commandAst = parent.Parent as CommandAst;
-                    if (commandAst != null)
-                    {
-                        // We found a command, see if there is a previous command in the pipeline.
-                        PipelineAst pipelineAst = (PipelineAst)commandAst.Parent;
-                        var previousCommandIndex = pipelineAst.PipelineElements.IndexOf(commandAst) - 1;
-                        if (previousCommandIndex >= 0)
-                        {
-                            foreach (var result in pipelineAst.PipelineElements[0].GetInferredType(context))
-                            {
-                                if (result.Type != null)
-                                {
-                                    // Assume (because we're looking at $_ and we're inside a script block that is an
-                                    // argument to some command) that the type we're getting is actually unrolled.
-                                    // This might not be right in all cases, but with our simple analysis, it's
-                                    // right more often than it's wrong.
-                                    if (result.Type.IsArray)
-                                    {
-                                        yield return new PSTypeName(result.Type.GetElementType());
-                                        continue;
-                                    }
-
-                                    if (typeof(IEnumerable).IsAssignableFrom(result.Type))
-                                    {
-                                        // We can't deduce much from IEnumerable, but we can if it's generic.
-                                        var enumerableInterfaces = result.Type.GetInterfaces().Where(
-                                            t =>
-                                            t.GetTypeInfo().IsGenericType &&
-                                            t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
-                                        foreach (var i in enumerableInterfaces)
-                                        {
-                                            yield return new PSTypeName(i.GetGenericArguments()[0]);
-                                        }
-                                        continue;
-                                    }
-                                }
-                                yield return result;
-                            }
-                        }
-                        yield break;
-                    }
-                }
-            }
-
-            // For certain variables, we always know their type, well at least we can assume we know.
-            if (VariablePath.IsUnqualified)
-            {
-                if (VariablePath.UserPath.Equals(SpecialVariables.This, StringComparison.OrdinalIgnoreCase) &&
-                    context.CurrentTypeDefinitionAst != null)
-                {
-                    yield return new PSTypeName(context.CurrentTypeDefinitionAst);
-                    yield break;
-                }
-
-                for (int i = 0; i < SpecialVariables.AutomaticVariables.Length; i++)
-                {
-                    if (VariablePath.UserPath.Equals(SpecialVariables.AutomaticVariables[i], StringComparison.OrdinalIgnoreCase))
-                    {
-                        var type = SpecialVariables.AutomaticVariableTypes[i];
-                        if (!(type == typeof(object)))
-                            yield return new PSTypeName(type);
-                        break;
-                    }
-                }
-            }
-
-            // Look for our variable as a parameter or on the lhs of an assignment - hopefully we'll find either
-            // a type constraint or at least we can use the rhs to infer the type.
-
-            while (parent.Parent != null)
-            {
-                parent = parent.Parent;
-            }
-
-            if (parent.Parent is FunctionDefinitionAst)
-            {
-                parent = parent.Parent;
-            }
-
-            int startOffset = this.Extent.StartOffset;
-            var targetAsts = AstSearcher.FindAll(parent,
-                ast => (ast is ParameterAst || ast is AssignmentStatementAst || ast is ForEachStatementAst || ast is CommandAst)
-                    && AstAssignsToSameVariable(ast)
-                    && ast.Extent.EndOffset < startOffset,
-                searchNestedScriptBlocks: true);
-
-            var parameterAst = targetAsts.OfType<ParameterAst>().FirstOrDefault();
-            if (parameterAst != null)
-            {
-                var parameterTypes = parameterAst.GetInferredType(context).ToArray();
-                if (parameterTypes.Length > 0)
-                {
-                    foreach (var parameterType in parameterTypes)
-                    {
-                        yield return parameterType;
-                    }
-                    yield break;
-                }
-            }
-
-            var assignAsts = targetAsts.OfType<AssignmentStatementAst>().ToArray();
-
-            // If any of the assignments lhs use a type constraint, then we use that.
-            // Otherwise, we use the rhs of the "nearest" assignment
-            foreach (var assignAst in assignAsts)
-            {
-                var lhsConvert = assignAst.Left as ConvertExpressionAst;
-                if (lhsConvert != null)
-                {
-                    yield return new PSTypeName(lhsConvert.Type.TypeName);
-                    yield break;
-                }
-            }
-
-            var foreachAst = targetAsts.OfType<ForEachStatementAst>().FirstOrDefault();
-            if (foreachAst != null)
-            {
-                foreach (var typeName in foreachAst.Condition.GetInferredType(context))
-                {
-                    yield return typeName;
-                }
-                yield break;
-            }
-
-            var commandCompletionAst = targetAsts.OfType<CommandAst>().FirstOrDefault();
-            if (commandCompletionAst != null)
-            {
-                foreach (var typeName in commandCompletionAst.GetInferredType(context))
-                {
-                    yield return typeName;
-                }
-                yield break;
-            }
-
-            int smallestDiff = int.MaxValue;
-            AssignmentStatementAst closestAssignment = null;
-            foreach (var assignAst in assignAsts)
-            {
-                var endOffset = assignAst.Extent.EndOffset;
-                if ((startOffset - endOffset) < smallestDiff)
-                {
-                    smallestDiff = startOffset - endOffset;
-                    closestAssignment = assignAst;
-                }
-            }
-
-            if (closestAssignment != null)
-            {
-                foreach (var type in closestAssignment.Right.GetInferredType(context))
-                {
-                    yield return type;
-                }
-            }
-        }
-
         internal bool IsSafeVariableReference(HashSet<string> validVariables, ref bool usesParameter)
         {
             bool ok = false;
@@ -9617,71 +8752,6 @@ namespace System.Management.Automation.Language
             }
 
             return ok;
-        }
-
-        private bool AstAssignsToSameVariable(Ast ast)
-        {
-            var parameterAst = ast as ParameterAst;
-            if (parameterAst != null)
-            {
-                return VariablePath.IsUnscopedVariable &&
-                    parameterAst.Name.VariablePath.UnqualifiedPath.Equals(VariablePath.UnqualifiedPath, StringComparison.OrdinalIgnoreCase);
-            }
-
-            var foreachAst = ast as ForEachStatementAst;
-            if (foreachAst != null)
-            {
-                return VariablePath.IsUnscopedVariable &&
-                    foreachAst.Variable.VariablePath.UnqualifiedPath.Equals(VariablePath.UnqualifiedPath, StringComparison.OrdinalIgnoreCase);
-            }
-
-            var commandAst = ast as CommandAst;
-            if (commandAst != null)
-            {
-                string[] variableParameters = new string[] { "PV", "PipelineVariable", "OV", "OutVariable" };
-                StaticBindingResult bindingResult = StaticParameterBinder.BindCommand(commandAst, false, variableParameters);
-
-                if (bindingResult != null)
-                {
-                    ParameterBindingResult parameterBindingResult;
-
-                    foreach (string commandVariableParameter in variableParameters)
-                    {
-                        if (bindingResult.BoundParameters.TryGetValue(commandVariableParameter, out parameterBindingResult))
-                        {
-                            if (String.Equals(VariablePath.UnqualifiedPath, (string)parameterBindingResult.ConstantValue, StringComparison.OrdinalIgnoreCase))
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-
-                return false;
-            }
-
-            var assignmentAst = (AssignmentStatementAst)ast;
-            var lhs = assignmentAst.Left;
-            var convertExpr = lhs as ConvertExpressionAst;
-            if (convertExpr != null)
-            {
-                lhs = convertExpr.Child;
-            }
-
-            var varExpr = lhs as VariableExpressionAst;
-            if (varExpr == null)
-                return false;
-
-            var candidateVarPath = varExpr.VariablePath;
-            if (candidateVarPath.UserPath.Equals(VariablePath.UserPath, StringComparison.OrdinalIgnoreCase))
-                return true;
-
-            // The following condition is making an assumption that at script scope, we didn't use $script:, but in the local scope, we did
-            // If we are searching anything other than script scope, this is wrong.
-            if (VariablePath.IsScript && VariablePath.UnqualifiedPath.Equals(candidateVarPath.UnqualifiedPath, StringComparison.OrdinalIgnoreCase))
-                return true;
-
-            return false;
         }
 
         #region Visitors
@@ -9831,14 +8901,6 @@ namespace System.Management.Automation.Language
         public override Type StaticType
         {
             get { return Value != null ? Value.GetType() : typeof(object); }
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            if (Value != null)
-            {
-                yield return new PSTypeName(Value.GetType());
-            }
         }
 
         #region Visitors
@@ -10114,11 +9176,6 @@ namespace System.Management.Automation.Language
         /// </summary>
         internal string FormatExpression { get; private set; }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            yield return new PSTypeName(typeof(string));
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -10193,11 +9250,6 @@ namespace System.Management.Automation.Language
             get { return typeof(ScriptBlock); }
         }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            yield return new PSTypeName(typeof(ScriptBlock));
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -10266,11 +9318,6 @@ namespace System.Management.Automation.Language
         /// The result of an <see cref="ArrayLiteralAst"/> is always <c>typeof(object[])</c>.
         /// </summary>
         public override Type StaticType { get { return typeof(object[]); } }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            yield return new PSTypeName(typeof(object[]));
-        }
 
         #region Visitors
 
@@ -10366,11 +9413,6 @@ namespace System.Management.Automation.Language
         /// </summary>
         public override Type StaticType { get { return typeof(Hashtable); } }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            yield return new PSTypeName(typeof(Hashtable));
-        }
-
         // Indicates that this ast was constructed as part of a schematized object instead of just a plain hash literal.
         internal bool IsSchemaElement { get; set; }
 
@@ -10450,11 +9492,6 @@ namespace System.Management.Automation.Language
         /// </summary>
         public override Type StaticType { get { return typeof(object[]); } }
 
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            yield return new PSTypeName(typeof(object[]));
-        }
-
         #region Visitors
 
         internal override object Accept(ICustomAstVisitor visitor)
@@ -10514,11 +9551,6 @@ namespace System.Management.Automation.Language
         {
             var newPipeline = CopyElement(this.Pipeline);
             return new ParenExpressionAst(this.Extent, newPipeline);
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return Pipeline.GetInferredType(context);
         }
 
         #region Visitors
@@ -10585,11 +9617,6 @@ namespace System.Management.Automation.Language
         {
             var newStatementBlock = CopyElement(this.SubExpression);
             return new SubExpressionAst(this.Extent, newStatementBlock);
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return SubExpression.GetInferredType(context);
         }
 
         #region Visitors
@@ -10660,11 +9687,6 @@ namespace System.Management.Automation.Language
             var newUsingExpression = new UsingExpressionAst(this.Extent, newExpression);
             newUsingExpression.RuntimeUsingIndex = this.RuntimeUsingIndex;
             return newUsingExpression;
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            return SubExpression.GetInferredType(context);
         }
 
         #region UsingExpression Utilities
@@ -10808,53 +9830,6 @@ namespace System.Management.Automation.Language
             var newTarget = CopyElement(this.Target);
             var newIndex = CopyElement(this.Index);
             return new IndexExpressionAst(this.Extent, newTarget, newIndex);
-        }
-
-        internal override IEnumerable<PSTypeName> GetInferredType(CompletionContext context)
-        {
-            var targetTypes = Target.GetInferredType(context);
-            foreach (var psType in targetTypes)
-            {
-                var type = psType.Type;
-                if (type != null)
-                {
-                    if (type.IsArray)
-                    {
-                        yield return new PSTypeName(type.GetElementType());
-                        continue;
-                    }
-
-                    foreach (var i in type.GetInterfaces())
-                    {
-                        if (i.GetTypeInfo().IsGenericType && i.GetGenericTypeDefinition() == typeof(IDictionary<,>))
-                        {
-                            var valueType = i.GetGenericArguments()[1];
-                            if (!valueType.GetTypeInfo().ContainsGenericParameters)
-                            {
-                                yield return new PSTypeName(valueType);
-                            }
-                        }
-                    }
-
-                    var defaultMember = type.GetCustomAttributes<DefaultMemberAttribute>(true).FirstOrDefault();
-                    if (defaultMember != null)
-                    {
-                        var indexers =
-                            type.GetMethods(BindingFlags.Public | BindingFlags.Instance).Where(
-                                m => m.Name.Equals("get_" + defaultMember.MemberName));
-                        foreach (var indexer in indexers)
-                        {
-                            yield return new PSTypeName(indexer.ReturnType);
-                        }
-                    }
-                }
-
-                // Inferred type of target wasn't indexable.  Assume (perhaps incorrectly)
-                // that it came from OutputType and that more than one object was returned
-                // and that we're indexing because of that, in which case, OutputType really
-                // is the inferred type.
-                yield return psType;
-            }
         }
 
         #region Visitors

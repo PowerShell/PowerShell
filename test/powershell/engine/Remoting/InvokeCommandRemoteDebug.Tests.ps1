@@ -157,12 +157,12 @@ Describe "Invoke-Command remote debugging tests" -Tags 'Feature' {
         }
         else
         {
-            if ($testDebugger -ne $null) { $testDebugger.Release() }
-            if ($ps -ne $null) { $ps.Dispose() }
-            if ($ps2 -ne $null) { $ps2.Dispose() }
-            if ($rs -ne $null) { $rs.Dispose() }
-            if ($rs2 -ne $null) { $rs2.Dispose() }
-            if ($remoteSession -ne $null) { Remove-PSSession $remoteSession -ErrorAction SilentlyContinue }
+            if ($null -ne $testDebugger) { $testDebugger.Release() }
+            if ($null -ne $ps) { $ps.Dispose() }
+            if ($null -ne $ps2) { $ps2.Dispose() }
+            if ($null -ne $rs) { $rs.Dispose() }
+            if ($null -ne $rs2) { $rs2.Dispose() }
+            if ($null -ne $remoteSession) { Remove-PSSession $remoteSession -ErrorAction SilentlyContinue }
         }
     }
 

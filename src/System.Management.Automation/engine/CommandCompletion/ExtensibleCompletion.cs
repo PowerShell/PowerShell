@@ -9,9 +9,6 @@ using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Management.Automation.Language;
 
-#if CORECLR
-using System.Reflection;
-#endif
 
 namespace System.Management.Automation
 {

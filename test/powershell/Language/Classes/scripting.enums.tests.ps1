@@ -74,11 +74,6 @@ Describe 'enums' -Tags "CI" {
 }
 
 Describe 'Basic enum errors' -Tags "CI" {
-
-    AfterAll {
-        Remove-Module LanguageTestSupport
-    }
-
     ShouldBeParseError 'enum' MissingNameAfterKeyword 4
     ShouldBeParseError 'enum foo' MissingTypeBody 8
     ShouldBeParseError 'enum foo {' MissingEndCurlyBrace 10

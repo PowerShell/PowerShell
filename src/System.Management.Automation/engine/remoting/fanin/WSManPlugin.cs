@@ -383,7 +383,7 @@ namespace System.Management.Automation.Remoting
                 if (Platform.IsWindows)
                 {
                     SafeWaitHandle safeWaitHandle = new SafeWaitHandle(requestDetails.shutdownNotificationHandle, false); // Owned by WinRM
-                    ClrFacade.SetSafeWaitHandle(eventWaitHandle, safeWaitHandle);
+                    eventWaitHandle.SafeWaitHandle = safeWaitHandle;
                 }
                 else
                 {
@@ -1496,7 +1496,7 @@ namespace System.Management.Automation.Remoting
                 if (retrievingLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == localeData.Type))
                 {
                     CultureInfo uiCultureToUse = new CultureInfo(localeData.Text);
-                    ClrFacade.SetCurrentThreadUiCulture(uiCultureToUse);
+                    Thread.CurrentThread.CurrentUICulture = uiCultureToUse;
                 }
             }
             // ignore if there is any exception constructing the culture..
@@ -1510,7 +1510,7 @@ namespace System.Management.Automation.Remoting
                 if (retrievingDataLocaleSucceeded && ((uint)WSManNativeApi.WSManDataType.WSMAN_DATA_TYPE_TEXT == dataLocaleData.Type))
                 {
                     CultureInfo cultureToUse = new CultureInfo(dataLocaleData.Text);
-                    ClrFacade.SetCurrentThreadCulture(cultureToUse);
+                    Thread.CurrentThread.CurrentCulture = cultureToUse;
                 }
             }
             // ignore if there is any exception constructing the culture..

@@ -276,7 +276,7 @@ function GetMetaData
     )
 
     # $metaDataUri is already validated at the cmdlet layer.
-    if($callerPSCmdlet -eq $null) { throw ($LocalizedData.ArguementNullError -f "PSCmdlet", "GetMetaData") }
+    if($null -eq $callerPSCmdletl) { throw ($LocalizedData.ArguementNullError -f "PSCmdlet", "GetMetaData") }
     Write-Verbose ($LocalizedData.VerboseReadingMetadata -f $metaDataUri)
 
     try
@@ -305,7 +305,7 @@ function GetMetaData
 
     if($uri.IsFile)
     {
-        if ($credential -ne $null)
+        if ($null -ne $credential)
         {
             $fileExists = Test-Path -Path $metaDataUri -PathType Leaf -Credential $credential -ErrorAction Stop
         }
@@ -331,12 +331,12 @@ function GetMetaData
         {
             $cmdParams = @{'Uri'= $metaDataUri ; 'UseBasicParsing'=$true; 'ErrorAction'= 'Stop'}
 
-            if ($credential -ne $null)
+            if ($null -ne $credential)
             {
                 $cmdParams.Add('Credential', $credential)
             }
 
-            if ($headers -ne $null)
+            if ($null -ne $headers)
             {
                 $cmdParams.Add('Headers', $headers)
             }
@@ -351,13 +351,13 @@ function GetMetaData
             $callerPSCmdlet.ThrowTerminatingError($errorRecord)
         }
 
-        if($webResponse -ne $null)
+        if($null -ne $webResponse)
         {
             if ($webResponse.StatusCode -eq 200)
             {
                 $metaData = $webResponse.Content
 
-                if ($metadata -eq $null)
+                if ($null -eq $metadata)
                 {
                     $errorMessage = ($LocalizedData.EmptyMetadata -f $MetadataUri)
                     $errorRecord = CreateErrorRecordHelper "ODataEndpointProxyMetadataIsEmpty" $errorMessage ([System.Management.Automation.ErrorCategory]::InvalidArgument) $null $MetadataUri
@@ -373,7 +373,7 @@ function GetMetaData
         }
     }
 
-    if($metaData -ne $null)
+    if($null -ne $metaData)
     {
         try
         {
@@ -409,8 +409,8 @@ function VerifyMetadataHelper
         [System.Management.Automation.PSCmdlet] $callerPSCmdlet
     )
 
-    if($localizedDataErrorString -eq $null) { throw ($LocalizedData.ArguementNullError -f "localizedDataErrorString", "VerifyMetadataHelper") }
-    if($localizedDataWarningString -eq $null) { throw ($LocalizedData.ArguementNullError -f "localizedDataWarningString", "VerifyMetadataHelper") }
+    if($null -eq $localizedDataErrorString) { throw ($LocalizedData.ArguementNullError -f "localizedDataErrorString", "VerifyMetadataHelper") }
+    if($null -eq $localizedDataWarningString) { throw ($LocalizedData.ArguementNullError -f "localizedDataWarningString", "VerifyMetadataHelper") }
 
     if(!$allowClobber)
     {
@@ -442,7 +442,7 @@ function CreateErrorRecordHelper
         [object] $targetObject
     )
 
-    if($exception -eq $null)
+    if($null -eq $exception)
     {
         $exception = New-Object System.IO.IOException $errorMessage
     }
@@ -467,8 +467,8 @@ function ProgressBarHelper
         [int]    $currentEntryCount
     )
 
-    if($cmdletName -eq $null) { throw ($LocalizedData.ArguementNullError -f "CmdletName", "ProgressBarHelper") }
-    if($status -eq $null) { throw ($LocalizedData.ArguementNullError -f "Status", "ProgressBarHelper") }
+    if($null -eq $cmdletName) { throw ($LocalizedData.ArguementNullError -f "CmdletName", "ProgressBarHelper") }
+    if($null -eq $status) { throw ($LocalizedData.ArguementNullError -f "Status", "ProgressBarHelper") }
 
     if($currentEntryCount -gt 0 -and
        $totalNumberofEntries -gt 0 -and
@@ -493,7 +493,7 @@ function Convert-ODataTypeToCLRType
         [Hashtable] $complexTypeMapping
     )
 
-    if($typeName -eq $null) { throw ($LocalizedData.ArguementNullError -f "TypeName", "Convert-ODataTypeToCLRType ") }
+    if($null -eq $typeName) { throw ($LocalizedData.ArguementNullError -f "TypeName", "Convert-ODataTypeToCLRType ") }
 
     switch ($typeName)
     {
@@ -515,7 +515,7 @@ function Convert-ODataTypeToCLRType
         "Edm.DateTimeOffset" {"DateTimeOffset"}
         default
         {
-            if($complexTypeMapping -ne $null -and
+            if($null -ne $complexTypeMapping -and
                $complexTypeMapping.Count -gt 0 -and
                $complexTypeMapping.ContainsKey($typeName))
             {
@@ -555,8 +555,8 @@ function SaveCDXMLHeader
     )
 
     # $uri & $cmdletAdapter are already validated at the cmdlet layer.
-    if($xmlWriter -eq $null) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "SaveCDXMLHeader") }
-    if($defaultNoun -eq $null) { throw ($LocalizedData.ArguementNullError -f "DefaultNoun", "SaveCDXMLHeader") }
+    if($null -eq $xmlWriter) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "SaveCDXMLHeader") }
+    if($null -eq $defaultNoun) { throw ($LocalizedData.ArguementNullError -f "DefaultNoun", "SaveCDXMLHeader") }
 
     if ($className -eq 'ServiceActions' -Or $cmdletAdapter -eq "NetworkControllerAdapter")
     {
@@ -621,7 +621,7 @@ function SaveCDXMLFooter
         [System.Xml.XmlWriter] $xmlWriter
     )
 
-    if($xmlWriter -eq $null) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "SaveCDXMLFooter") }
+    if($null -eq $xmlWriter) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "SaveCDXMLFooter") }
 
     $xmlWriter.WriteEndElement()
     $xmlWriter.WriteEndElement()
@@ -653,7 +653,7 @@ function AddParametersNode
         [Hashtable] $complexTypeMapping
     )
 
-    if($xmlWriter -eq $null) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "AddParametersNode") }
+    if($null -eq $xmlWriter) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "AddParametersNode") }
 
     if(($keyProperties.Length -gt 0) -or
        ($mandatoryProperties.Length -gt 0) -or
@@ -667,17 +667,17 @@ function AddParametersNode
 
         $pos = 0
 
-        if ($keyProperties -ne $null)
+        if ($null -ne $keyProperties)
         {
             $pos = AddParametersCDXML $xmlWriter $keyProperties $pos $true $prefixForKeys ":Key" $complexTypeMapping
         }
 
-        if ($mandatoryProperties -ne $null)
+        if ($null -ne $mandatoryProperties)
         {
             $pos = AddParametersCDXML $xmlWriter $mandatoryProperties $pos $true $null $null $complexTypeMapping
         }
 
-        if ($otherProperties -ne $null)
+        if ($null -ne $otherProperties)
         {
             $pos = AddParametersCDXML $xmlWriter $otherProperties $pos $false $null $null $complexTypeMapping
         }
@@ -722,7 +722,7 @@ function AddParametersCDXML
         [Hashtable] $complexTypeMapping
     )
 
-    $properties | ? { $_ -ne $null } | % {
+    $properties | Where-Object { $null -ne $_ } | ForEach-Object {
         $xmlWriter.WriteStartElement('Parameter')
         $xmlWriter.WriteAttributeString('ParameterName', $_.Name + $suffix)
             $xmlWriter.WriteStartElement('Type')
@@ -763,7 +763,7 @@ function GenerateSetProxyCmdlet
     )
 
     # $cmdletAdapter is already validated at the cmdlet layer.
-    if($xmlWriter -eq $null) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "GenerateSetProxyCmdlet") }
+    if($null -eq $xmlWriter) { throw ($LocalizedData.ArguementNullError -f "xmlWriter", "GenerateSetProxyCmdlet") }
 
     $xmlWriter.WriteStartElement('Cmdlet')
         $xmlWriter.WriteStartElement('CmdletMetadata')

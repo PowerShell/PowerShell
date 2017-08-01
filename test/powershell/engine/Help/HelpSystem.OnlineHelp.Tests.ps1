@@ -29,7 +29,7 @@
         foreach ($cmdlet in $cmdletList)
         {
             # If the cmdlet is not preset in CoreCLR, skip it.
-            $skipTest = (Get-Command $cmdlet.TopicTitle -ea SilentlyContinue) -eq $null
+            $skipTest = $null -eq (Get-Command $cmdlet.TopicTitle -ea SilentlyContinue)
 
             # TopicTitle - is the cmdlet name in the csv file
             # HelpURI - is the expected help URI in the csv file
@@ -59,7 +59,7 @@ Describe 'Get-Help -Online opens the default web browser and navigates to the cm
             $progId = (Get-ItemProperty $regKey).ProgId
             if($progId)
             {
-                if ((Get-PSDrive -Name HKCR) -eq $Null)
+                if (-not (Test-Path 'HKCR:\'))
                 {
                     New-PSDrive -PSProvider registry -Root HKEY_CLASSES_ROOT -Name HKCR | Should NotBeNullOrEmpty
                 }

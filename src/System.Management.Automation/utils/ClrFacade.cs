@@ -8,26 +8,18 @@ using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Management.Automation.Internal;
 using System.Management.Automation.Language;
 using System.Reflection;
-using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Loader;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Security;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices.ComTypes;
-
-#if CORECLR
-using System.Runtime.Loader; /* used in facade APIs related to assembly operations */
-using System.Management.Automation.Host;          /* used in facade API 'GetUninitializedObject' */
-using Microsoft.PowerShell.CoreClr.Stubs;         /* used in facade API 'GetFileSecurityZone' */
-using System.Management.Automation.Internal;
-using System.Text.RegularExpressions;
-#else
-using System.Runtime.Serialization;           /* used in facade API 'GetUninitializedObject' */
-#endif
 
 namespace System.Management.Automation
 {
@@ -38,6 +30,18 @@ namespace System.Management.Automation
     internal static class ClrFacade
     {
         /// <summary>
+        /// Initialize powershell AssemblyLoadContext and register the 'Resolving' event, if it's not done already.
+        /// If powershell is hosted by a native host such as DSC, then PS ALC might be initialized via 'SetPowerShellAssemblyLoadContext' before loading S.M.A.
+        /// </summary>
+        static ClrFacade()
+        {
+            if (PowerShellAssemblyLoadContext.Instance == null)
+            {
+                PowerShellAssemblyLoadContext.InitializeSingleton(string.Empty);
+            }
+        }
+
+        /// <summary>
         /// We need it to avoid calling lookups inside dynamic assemblies with PS Types, so we exclude it from GetAssemblies().
         /// We use this convention for names to archive it.
         /// </summary>
@@ -46,166 +50,23 @@ namespace System.Management.Automation
         #region Process
 
         /// <summary>
-        /// Facade for ProcessModule FileVersionInfo
-        /// </summary>
-        /// <param name="processModule"></param>
-        /// <returns>FileVersionInfo</returns>
-        internal static FileVersionInfo GetProcessModuleFileVersionInfo(ProcessModule processModule)
-        {
-#if CORECLR
-            return FileVersionInfo.GetVersionInfo(processModule.FileName);
-#else
-            return processModule.FileVersionInfo;
-#endif
-        }
-
-        /// <summary>
         /// Facade for Process.Handle to get SafeHandle
         /// </summary>
         /// <param name="process"></param>
         /// <returns>SafeHandle</returns>
         internal static SafeHandle GetSafeProcessHandle(Process process)
         {
-#if CORECLR
             return process.SafeHandle;
-#else
-            return new SafeProcessHandle(process.Handle);
-#endif
         }
-
-        /// <summary>
-        /// Facade for Process.Handle to get raw handle
-        /// </summary>
-        internal static IntPtr GetRawProcessHandle(Process process)
-        {
-#if CORECLR
-            try
-            {
-                return process.SafeHandle.DangerousGetHandle();
-            }
-            catch (InvalidOperationException)
-            {
-                // It's possible that the process has already exited when we try to get its handle.
-                // In that case, InvalidOperationException will be thrown from Process.SafeHandle,
-                // and we return the invalid zero pointer.
-                return IntPtr.Zero;
-            }
-#else
-            return process.Handle;
-#endif
-        }
-
-#if CORECLR
-        /// <summary>
-        /// Facade for ProcessStartInfo.Environment
-        /// </summary>
-        internal static IDictionary<string, string> GetProcessEnvironment(ProcessStartInfo startInfo)
-        {
-            return startInfo.Environment;
-        }
-#else
-        /// <summary>
-        /// Facade for ProcessStartInfo.EnvironmentVariables
-        /// </summary>
-        internal static System.Collections.Specialized.StringDictionary GetProcessEnvironment(ProcessStartInfo startInfo)
-        {
-            return startInfo.EnvironmentVariables;
-        }
-#endif
 
         #endregion Process
 
-        #region Marshal
-
-        /// <summary>
-        /// Facade for Marshal.SizeOf
-        /// </summary>
-        internal static int SizeOf<T>()
-        {
-#if CORECLR
-            // Marshal.SizeOf(Type) is obsolete in CoreCLR
-            return Marshal.SizeOf<T>();
-#else
-            return Marshal.SizeOf(typeof(T));
-#endif
-        }
-
-        /// <summary>
-        /// Facade for Marshal.DestroyStructure
-        /// </summary>
-        internal static void DestroyStructure<T>(IntPtr ptr)
-        {
-#if CORECLR
-            // Marshal.DestroyStructure(IntPtr, Type) is obsolete in CoreCLR
-            Marshal.DestroyStructure<T>(ptr);
-#else
-            Marshal.DestroyStructure(ptr, typeof(T));
-#endif
-        }
-
-        /// <summary>
-        /// Facade for Marshal.PtrToStructure
-        /// </summary>
-        internal static T PtrToStructure<T>(IntPtr ptr)
-        {
-#if CORECLR
-            // Marshal.PtrToStructure(IntPtr, Type) is obsolete in CoreCLR
-            return Marshal.PtrToStructure<T>(ptr);
-#else
-            return (T)Marshal.PtrToStructure(ptr, typeof(T));
-#endif
-        }
-
-        /// <summary>
-        /// Wraps Marshal.StructureToPtr to hide differences between the CLRs.
-        /// </summary>
-        internal static void StructureToPtr<T>(
-            T structure,
-            IntPtr ptr,
-            bool deleteOld)
-        {
-#if CORECLR
-            Marshal.StructureToPtr<T>(structure, ptr, deleteOld);
-#else
-            Marshal.StructureToPtr(structure, ptr, deleteOld);
-#endif
-        }
-
-        /// <summary>
-        /// Facade for SecureStringToCoTaskMemUnicode
-        /// </summary>
-        internal static IntPtr SecureStringToCoTaskMemUnicode(SecureString s)
-        {
-#if CORECLR
-            return SecureStringMarshal.SecureStringToCoTaskMemUnicode(s);
-#else
-            return Marshal.SecureStringToCoTaskMemUnicode(s);
-#endif
-        }
-
-        #endregion Marshal
-
         #region Assembly
-        /// <summary>
-        /// Facade for AssemblyName.GetAssemblyName(string)
-        /// </summary>
-        internal static AssemblyName GetAssemblyName(string assemblyPath)
-        {
-#if CORECLR // AssemblyName.GetAssemblyName(assemblyPath) is not in CoreCLR
-            return AssemblyLoadContext.GetAssemblyName(assemblyPath);
-#else
-            return AssemblyName.GetAssemblyName(assemblyPath);
-#endif
-        }
 
         internal static IEnumerable<Assembly> GetAssemblies(TypeResolutionState typeResolutionState, TypeName typeName)
         {
-#if CORECLR
             string typeNameToSearch = typeResolutionState.GetAlternateTypeName(typeName.Name) ?? typeName.Name;
             return GetAssemblies(typeNameToSearch);
-#else
-            return GetAssemblies();
-#endif
         }
 
         /// <summary>
@@ -217,111 +78,23 @@ namespace System.Management.Automation
         /// </param>
         internal static IEnumerable<Assembly> GetAssemblies(string namespaceQualifiedTypeName = null)
         {
-#if CORECLR
-            return PSAssemblyLoadContext.GetAssemblies(namespaceQualifiedTypeName);
-#else
-            return AppDomain.CurrentDomain.GetAssemblies().Where(a => !(a.FullName.Length > 0 && a.FullName[0] == FIRST_CHAR_PSASSEMBLY_MARK));
-#endif
+            return PSAssemblyLoadContext.GetAssembly(namespaceQualifiedTypeName) ??
+            AppDomain.CurrentDomain.GetAssemblies().Where(a => !(a.FullName.Length > 0 && a.FullName[0] == FIRST_CHAR_PSASSEMBLY_MARK));
         }
 
         /// <summary>
-        /// Facade for Assembly.LoadFrom
-        /// </summary>
-        [SuppressMessage("Microsoft.Reliability", "CA2001:AvoidCallingProblematicMethods", MessageId = "System.Reflection.Assembly.LoadFrom")]
-        internal static Assembly LoadFrom(string assemblyPath)
-        {
-#if CORECLR
-            return PSAssemblyLoadContext.LoadFrom(assemblyPath);
-#else
-            return Assembly.LoadFrom(assemblyPath);
-#endif
-        }
-
-        /// <summary>
-        /// Facade for EnumBuilder.CreateTypeInfo
-        /// </summary>
-        /// <remarks>
-        /// In Core PowerShell, we need to track the dynamic assemblies that powershell generates.
-        /// </remarks>
-        internal static void CreateEnumType(EnumBuilder enumBuilder)
-        {
-#if CORECLR
-            // Create the enum type and add the dynamic assembly to assembly cache.
-            TypeInfo enumTypeinfo = enumBuilder.CreateTypeInfo();
-            PSAssemblyLoadContext.TryAddAssemblyToCache(enumTypeinfo.Assembly);
-#else
-            enumBuilder.CreateTypeInfo();
-#endif
-        }
-
-#if CORECLR
-        /// <summary>
-        /// Probe (look for) the assembly file with the specified short name.
-        /// </summary>
-        /// <remarks>
-        /// In Core PowerShell, we need to analyze the metadata of assembly files for binary modules. Sometimes we
-        /// need to find an assembly file that is referenced by the assembly file that is being processed. To find
-        /// the reference assembly file, we need to probe the PSBase and the additional searching path if it's specified.
-        /// </remarks>
-        internal static string ProbeAssemblyPath(string assemblyShortName, string additionalSearchPath = null)
-        {
-            if (string.IsNullOrWhiteSpace(assemblyShortName))
-            {
-                throw new ArgumentNullException("assemblyShortName");
-            }
-
-            return PSAssemblyLoadContext.ProbeAssemblyFileForMetadataAnalysis(assemblyShortName, additionalSearchPath);
-        }
-
-        /// <summary>
-        /// Get the namespace-qualified type names of all available CoreCLR .NET types.
+        /// Get the namespace-qualified type names of all available .NET Core types shipped with PowerShell Core.
         /// This is used for type name auto-completion in PS engine.
         /// </summary>
-        internal static IEnumerable<string> GetAvailableCoreClrDotNetTypes()
-        {
-            return PSAssemblyLoadContext.GetAvailableDotNetTypes();
-        }
+        internal static IEnumerable<string> AvailableDotNetTypeNames => PSAssemblyLoadContext.AvailableDotNetTypeNames;
 
         /// <summary>
-        /// Load assembly from byte stream.
+        /// Get the assembly names of all available .NET Core assemblies shipped with PowerShell Core.
+        /// This is used for type name auto-completion in PS engine.
         /// </summary>
-        internal static Assembly LoadFrom(Stream assembly)
-        {
-            return PSAssemblyLoadContext.LoadFrom(assembly);
-        }
+        internal static HashSet<string> AvailableDotNetAssemblyNames => PSAssemblyLoadContext.AvailableDotNetAssemblyNames;
 
-        /// <summary>
-        /// Add the AssemblyLoad handler
-        /// </summary>
-        internal static void AddAssemblyLoadHandler(Action<Assembly> handler)
-        {
-            PSAssemblyLoadContext.AssemblyLoad += handler;
-        }
-
-        private static PowerShellAssemblyLoadContext PSAssemblyLoadContext
-        {
-            get
-            {
-                if (PowerShellAssemblyLoadContext.Instance == null)
-                {
-                    throw new InvalidOperationException(ParserStrings.LoadContextNotInitialized);
-                }
-                return PowerShellAssemblyLoadContext.Instance;
-            }
-        }
-#endif
-
-        /// <summary>
-        /// Facade for Assembly.GetCustomAttributes
-        /// </summary>
-        internal static object[] GetCustomAttributes<T>(Assembly assembly)
-        {
-#if CORECLR // Assembly.GetCustomAttributes(Type, Boolean) is not in CORE CLR
-            return assembly.GetCustomAttributes(typeof(T)).ToArray();
-#else
-            return assembly.GetCustomAttributes(typeof(T), false);
-#endif
-        }
+        private static PowerShellAssemblyLoadContext PSAssemblyLoadContext => PowerShellAssemblyLoadContext.Instance;
 
         #endregion Assembly
 
@@ -336,13 +109,11 @@ namespace System.Management.Automation
             {
 #if UNIX        // PowerShell Core on Unix
                 s_defaultEncoding = new UTF8Encoding(false);
-#elif CORECLR   // PowerShell Core on Windows
+#else           // PowerShell Core on Windows
                 EncodingRegisterProvider();
 
                 uint currentAnsiCp = NativeMethods.GetACP();
                 s_defaultEncoding = Encoding.GetEncoding((int)currentAnsiCp);
-#else           // Windows PowerShell
-                s_defaultEncoding = Encoding.Default;
 #endif
             }
             return s_defaultEncoding;
@@ -359,13 +130,9 @@ namespace System.Management.Automation
             {
 #if UNIX        // PowerShell Core on Unix
                 s_oemEncoding = GetDefaultEncoding();
-#elif CORECLR   // PowerShell Core on Windows
+#else           // PowerShell Core on Windows
                 EncodingRegisterProvider();
 
-                uint oemCp = NativeMethods.GetOEMCP();
-                s_oemEncoding = Encoding.GetEncoding((int)oemCp);
-
-#else           // Windows PowerShell
                 uint oemCp = NativeMethods.GetOEMCP();
                 s_oemEncoding = Encoding.GetEncoding((int)oemCp);
 #endif
@@ -375,7 +142,6 @@ namespace System.Management.Automation
 
         private static volatile Encoding s_oemEncoding;
 
-#if CORECLR
         private static void EncodingRegisterProvider()
         {
             if (s_defaultEncoding == null && s_oemEncoding == null)
@@ -383,7 +149,6 @@ namespace System.Management.Automation
                 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
             }
         }
-#endif
 
         #endregion Encoding
 
@@ -592,48 +357,6 @@ namespace System.Management.Automation
 
         #endregion Security
 
-        #region Culture
-
-        /// <summary>
-        /// Facade for CultureInfo.GetCultureInfo(string).
-        /// </summary>
-        internal static CultureInfo GetCultureInfo(string cultureName)
-        {
-#if CORECLR
-            return new CultureInfo(cultureName);
-#else
-            return CultureInfo.GetCultureInfo(cultureName);
-#endif
-        }
-
-        /// <summary>
-        /// Facade for setting CurrentCulture for the CurrentThread
-        /// </summary>
-        internal static void SetCurrentThreadCulture(CultureInfo cultureInfo)
-        {
-#if CORECLR
-            CultureInfo.CurrentCulture = cultureInfo;
-#else
-            // Setters for 'CultureInfo.CurrentCulture' is introduced in .NET 4.6
-            Thread.CurrentThread.CurrentCulture = cultureInfo;
-#endif
-        }
-
-        /// <summary>
-        /// Facade for setting CurrentUICulture for the CurrentThread
-        /// </summary>
-        internal static void SetCurrentThreadUiCulture(CultureInfo uiCultureInfo)
-        {
-#if CORECLR
-            CultureInfo.CurrentUICulture = uiCultureInfo;
-#else
-            // Setters for 'CultureInfo.CurrentUICulture' is introduced in .NET 4.6
-            Thread.CurrentThread.CurrentUICulture = uiCultureInfo;
-#endif
-        }
-
-        #endregion Culture
-
         #region Misc
 
         /// <summary>
@@ -717,82 +440,12 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Manual implementation of the is 64bit processor check
-        /// </summary>
-        /// <returns></returns>
-        internal static bool Is64BitOperatingSystem()
-        {
-#if CORECLR
-            return (8 == IntPtr.Size); // Pointers are 8 bytes on 64-bit machines
-#else
-            return Environment.Is64BitOperatingSystem;
-#endif
-        }
-
-        /// <summary>
-        /// Facade for FormatterServices.GetUninitializedObject.
-        ///
-        /// In CORECLR, there are two peculiarities with its implementation that affect our own:
-        /// 1. Structures cannot be instantiated using GetConstructor, so they must be filtered out.
-        /// 2. Classes must have a default constructor implemented for GetConstructor to work.
-        ///
-        /// See RemoteHostEncoder.IsEncodingAllowedForClassOrStruct for a list of the required types.
-        /// </summary>
-        /// <param name="type"></param>
-        /// <returns></returns>
-        internal static object GetUninitializedObject(Type type)
-        {
-#if CORECLR
-            switch (type.Name)
-            {
-                case "KeyInfo"://typeof(KeyInfo).Name:
-                    return new KeyInfo(0, ' ', ControlKeyStates.RightAltPressed, false);
-                case "Coordinates"://typeof(Coordinates).Name:
-                    return new Coordinates(0, 0);
-                case "Size"://typeof(Size).Name:
-                    return new Size(0, 0);
-                case "BufferCell"://typeof(BufferCell).Name:
-                    return new BufferCell(' ', ConsoleColor.Black, ConsoleColor.Black, BufferCellType.Complete);
-                case "Rectangle"://typeof(Rectangle).Name:
-                    return new Rectangle(0, 0, 0, 0);
-                default:
-                    ConstructorInfo constructorInfoObj = type.GetConstructor(BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic, null, new Type[] { }, null);
-                    if (constructorInfoObj != null)
-                    {
-                        return constructorInfoObj.Invoke(new object[] { });
-                    }
-                    return new object();
-            }
-#else
-            return FormatterServices.GetUninitializedObject(type);
-#endif
-        }
-
-        /// <summary>
-        /// Facade for setting WaitHandle.SafeWaitHandle.
-        /// </summary>
-        /// <param name="waitHandle"></param>
-        /// <param name="value"></param>
-        internal static void SetSafeWaitHandle(WaitHandle waitHandle, SafeWaitHandle value)
-        {
-#if CORECLR
-            waitHandle.SetSafeWaitHandle(value);
-#else
-            waitHandle.SafeWaitHandle = value;
-#endif
-        }
-
-        /// <summary>
         /// Facade for ProfileOptimization.SetProfileRoot
         /// </summary>
         /// <param name="directoryPath">The full path to the folder where profile files are stored for the current application domain.</param>
         internal static void SetProfileOptimizationRoot(string directoryPath)
         {
-#if CORECLR
             PSAssemblyLoadContext.SetProfileOptimizationRootImpl(directoryPath);
-#else
-            System.Runtime.ProfileOptimization.SetProfileRoot(directoryPath);
-#endif
         }
 
         /// <summary>
@@ -801,11 +454,7 @@ namespace System.Management.Automation
         /// <param name="profile">The file name of the profile to use.</param>
         internal static void StartProfileOptimization(string profile)
         {
-#if CORECLR
             PSAssemblyLoadContext.StartProfileOptimizationImpl(profile);
-#else
-            System.Runtime.ProfileOptimization.StartProfile(profile);
-#endif
         }
 
         #endregion Misc

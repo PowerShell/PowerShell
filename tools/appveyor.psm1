@@ -3,7 +3,15 @@ $repoRoot = Join-Path $PSScriptRoot '..'
 $script:administratorsGroupSID = "S-1-5-32-544"
 $script:usersGroupSID = "S-1-5-32-545"
 
-Import-Module (Join-Path $repoRoot 'build.psm1')
+$dotNetPath = "$env:USERPROFILE\Appdata\Local\Microsoft\dotnet"
+if(Test-Path $dotNetPath)
+{
+    $env:PATH = $dotNetPath + ';' + $env:PATH
+}
+
+#import build into the global scope so it can be used by packaging
+Import-Module (Join-Path $repoRoot 'build.psm1') -Scope Global
+Import-Module (Join-Path $repoRoot 'tools\packaging')
 
 function New-LocalUser
 {
@@ -81,8 +89,17 @@ function Add-UserToGroup
 # or is a pushed tag
 Function Test-DailyBuild
 {
-    if(($env:PS_DAILY_BUILD -eq 'True') -or ($env:APPVEYOR_SCHEDULED_BUILD -eq 'True') -or ($env:APPVEYOR_REPO_TAG_NAME))
+    $trueString = 'True'
+    if(($env:PS_DAILY_BUILD -eq $trueString) -or ($env:APPVEYOR_SCHEDULED_BUILD -eq $trueString) -or ($env:APPVEYOR_REPO_TAG_NAME))
     {
+        return $true
+    }
+    
+    # if [Feature] is in the commit message,
+    # Run Daily tests
+    if($env:APPVEYOR_REPO_COMMIT_MESSAGE -match '\[feature\]')
+    {
+        Set-AppveyorBuildVariable -Name PS_DAILY_BUILD -Value $trueString
         return $true
     }
 
@@ -172,15 +189,34 @@ function Invoke-AppVeyorBuild
 # Implements the AppVeyor 'install' step
 function Invoke-AppVeyorInstall
 {
+    # Make sure we have all the tags
+    Sync-PSTags -AddRemoteIfMissing
+    if($env:APPVEYOR_BUILD_NUMBER)
+    {
+        Update-AppveyorBuild -Version "$(Get-PSVersion -OmitCommitId)-$env:APPVEYOR_BUILD_NUMBER"
+    }
+
     if(Test-DailyBuild){
         $buildName = "[Daily]"
-        if($env:APPVEYOR_PULL_REQUEST_TITLE)
+
+        # Add daily to title if it's not already there
+        # It can be there already for rerun requests
+        if($env:APPVEYOR_PULL_REQUEST_TITLE -and $env:APPVEYOR_PULL_REQUEST_TITLE  -notmatch '^\[Daily\]')
         {
             $buildName += $env:APPVEYOR_PULL_REQUEST_TITLE
         }
+        elseif($env:APPVEYOR_PULL_REQUEST_TITLE)
+        {
+            $buildName = $env:APPVEYOR_PULL_REQUEST_TITLE
+        }
+        elseif($env:APPVEYOR_REPO_COMMIT_MESSAGE -notmatch '^\[Daily\].*$')
+        {
+            
+            $buildName += $env:APPVEYOR_REPO_COMMIT_MESSAGE
+        }
         else
         {
-            $buildName += $env:APPVEYOR_REPO_COMMIT_MESSAGE
+            $buildName = $env:APPVEYOR_REPO_COMMIT_MESSAGE
         }
 
         Update-AppveyorBuild -message $buildName
@@ -196,7 +232,7 @@ function Invoke-AppVeyorInstall
         # Password
         $randomObj = [System.Random]::new()
         $password = ""
-        1..(Get-Random -Minimum 15 -Maximum 126) | ForEach { $password = $password + [char]$randomObj.next(45,126) }
+        1..(Get-Random -Minimum 15 -Maximum 126) | ForEach-Object { $password = $password + [char]$randomObj.next(45,126) }
 
         # Account
         $userName = 'appVeyorRemote'
@@ -225,7 +261,7 @@ function Invoke-AppVeyorInstall
     }
 
     Set-BuildVariable -Name TestPassed -Value False
-    Start-PSBootstrap -Force
+    Start-PSBootstrap -Confirm:$false
 }
 
 # A wrapper to ensure that we upload test results
@@ -342,7 +378,7 @@ function Invoke-AppVeyorTest
         $testResultsNonAdminFile,
         $testResultsAdminFile
         <# $testResultsFileFullCLR # Disable FullCLR Build #>
-    ) | % {
+    ) | ForEach-Object {
         Test-PSPesterResults -TestResultsFile $_
     }
 
@@ -363,7 +399,7 @@ function Invoke-AppVeyorAfterTest
         $codeCoverageArtifacts = Compress-CoverageArtifacts -CodeCoverageOutput $codeCoverageOutput
 
         Write-Host -ForegroundColor Green 'Upload CodeCoverage artifacts'
-        $codeCoverageArtifacts | % { Push-AppveyorArtifact $_ }
+        $codeCoverageArtifacts | ForEach-Object { Push-AppveyorArtifact $_ }
     }
 }
 
@@ -405,8 +441,14 @@ function Get-PackageName
 function Invoke-AppveyorFinish
 {
     try {
+        $packageParams = @{}
+        if($env:APPVEYOR_BUILD_VERSION)
+        {
+            $packageParams += @{Version=$env:APPVEYOR_BUILD_VERSION}
+        }
+
         # Build packages
-        $packages = Start-PSPackage
+        $packages = Start-PSPackage @packageParams
 
         $name = Get-PackageName
 
@@ -474,6 +516,12 @@ function Invoke-AppveyorFinish
                 $pushedAllArtifacts = $false
                 Write-Warning "Artifact $_ does not exist."
             }
+
+            if($env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($_) -ieq '.nupkg')
+            {
+                log "pushing $_ to $env:NUGET_URL"
+                Start-NativeExecution -sb {dotnet nuget push $_ --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
+            }            
         }
         if(!$pushedAllArtifacts)
         {

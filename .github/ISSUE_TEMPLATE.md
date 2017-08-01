@@ -14,14 +14,23 @@ If it's not a bug, please remove the template and elaborate the issue in your ow
 Steps to reproduce
 ------------------
 
+```powershell
+
+```
 
 Expected behavior
 -----------------
 
+```none
+
+```
 
 Actual behavior
 ---------------
 
+```none
+
+```
 
 Environment data
 ----------------

@@ -1,4 +1,8 @@
+param(
+    [switch]$Bootstrap
+)
 Import-Module $PSScriptRoot/../build.psm1 -Force
+Import-Module $PSScriptRoot/packaging -Force
 
 # This function retrieves the appropriate svg to be used when presenting
 # the daily test run badge
@@ -92,81 +96,128 @@ function Set-DailyBuildBadge
 # TRAVIS_EVENT_TYPE: Indicates how the build was triggered.
 # One of push, pull_request, api, cron.
 $isPR = $env:TRAVIS_EVENT_TYPE -eq 'pull_request'
-$isFullBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
 
-Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild'"
-
-Start-PSBootstrap -Package:(-not $isPr)
-$output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions))
-
-# CrossGen'ed assemblies cause a hang to happen intermittently when running powershell class
-# basic parsing tests in Linux/OSX. The hang seems to happen when generating dynamic assemblies.
-# This issue has been reported to CoreCLR team. We need to work around it for now because
-# the Travis CI build failures caused by this is draining our builder resource and severely
-# affect our daily work. The workaround is:
-#  1. For pull request and push commit, build without '-CrossGen' and run the parsing tests
-#  2. For nightly build, build with '-CrossGen' but don't run the parsing tests
-# With this workaround, CI builds triggered by pull request and push commit will exercise
-# the parsing tests with IL assemblies, while nightly builds will exercise CrossGen'ed assemblies
-# without running those class parsing tests so as to avoid the hang.
-# NOTE: this change should be reverted once the 'CrossGen' issue is fixed by CoreCLR. The issue
-#       is tracked by https://github.com/dotnet/coreclr/issues/9745
-Start-PSBuild -CrossGen:$isFullBuild -PSModuleRestore
-
-$pesterParam = @{ 'binDir' = $output }
-
-if ($isFullBuild) {
-    $pesterParam['Tag'] = @('CI','Feature','Scenario')
-    $pesterParam['ExcludeTag'] = @()
-} else {
-    $pesterParam['Tag'] = @('CI')
-    $pesterParam['ThrowOnFailure'] = $true
+# For PRs, Travis-ci strips out [ and ] so read the message directly from git
+if($env:TRAVIS_EVENT_TYPE -eq 'pull_request')
+{
+    # Get the second log entry body
+    # The first log is a merge for a PR
+    $commitMessage = git log --format=%B -n 1 --skip=1
+}
+else
+{
+    $commitMessage = $env:TRAVIS_COMMIT_MESSAGE
 }
 
-# Remove telemetry semaphore file in CI
-$telemetrySemaphoreFilepath = Join-Path $output DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY
-if ( Test-Path "${telemetrySemaphoreFilepath}" ) {
-    Remove-Item -force ${telemetrySemaphoreFilepath}
+
+# Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
+$isFullBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api' -or $commitMessage -match '\[feature\]'
+
+if($Bootstrap.IsPresent)
+{
+    Write-Host -Foreground Green "Executing travis.ps1 -BootStrap `$isPR='$isPr' - $commitMessage"
+    # Make sure we have all the tags
+    Sync-PSTags -AddRemoteIfMissing
+    Start-PSBootstrap -Package:(-not $isPr)
 }
+else 
+{
+    $BaseVersion = (Get-PSVersion -OmitCommitId) + '-'
+    Write-Host -Foreground Green "Executing travis.ps1 `$isPR='$isPr' `$isFullBuild='$isFullBuild' - $commitMessage"
+    $output = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions))
 
-Start-PSPester @pesterParam
-
-if (-not $isPr) {
-    # Run 'CrossGen' for push commit, so that we can generate package.
-    # It won't rebuild powershell, but only CrossGen the already built assemblies.
-    if (-not $isFullBuild) { Start-PSBuild -CrossGen }
-    # Only build packages for branches, not pull requests
-    Start-PSPackage
-    Start-PSPackage -Type AppImage
+    # CrossGen'ed assemblies cause a hang to happen intermittently when running powershell class
+    # basic parsing tests in Linux/OSX. The hang seems to happen when generating dynamic assemblies.
+    # This issue has been reported to CoreCLR team. We need to work around it for now because
+    # the Travis CI build failures caused by this is draining our builder resource and severely
+    # affect our daily work. The workaround is:
+    #  1. For pull request and push commit, build without '-CrossGen' and run the parsing tests
+    #  2. For nightly build, build with '-CrossGen' but don't run the parsing tests
+    # With this workaround, CI builds triggered by pull request and push commit will exercise
+    # the parsing tests with IL assemblies, while nightly builds will exercise CrossGen'ed assemblies
+    # without running those class parsing tests so as to avoid the hang.
+    # NOTE: this change should be reverted once the 'CrossGen' issue is fixed by CoreCLR. The issue
+    #       is tracked by https://github.com/dotnet/coreclr/issues/9745
+    $originalProgressPreference = $ProgressPreference
+    $ProgressPreference = 'SilentlyContinue' 
     try {
-        # this throws if there was an error
-        Test-PSPesterResults
-        $result = "PASS"
+        Start-PSBuild -CrossGen:$isFullBuild -PSModuleRestore
     }
-    catch {
-        $resultError = $_
-        $result = "FAIL"
+    finally{
+        $ProgressPreference = $originalProgressPreference    
     }
-    if ( $isFullBuild ) {
-        # now update the badge if you've done a full build, these are not fatal issues
+
+    $pesterParam = @{ 'binDir' = $output }
+
+    if ($isFullBuild) {
+        $pesterParam['Tag'] = @('CI','Feature','Scenario')
+        $pesterParam['ExcludeTag'] = @()
+    } else {
+        $pesterParam['Tag'] = @('CI')
+        $pesterParam['ThrowOnFailure'] = $true
+    }
+
+    # Remove telemetry semaphore file in CI
+    $telemetrySemaphoreFilepath = Join-Path $output DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY
+    if ( Test-Path "${telemetrySemaphoreFilepath}" ) {
+        Remove-Item -force ${telemetrySemaphoreFilepath}
+    }
+
+    Start-PSPester @pesterParam
+
+    if (-not $isPr) {
+        # Run 'CrossGen' for push commit, so that we can generate package.
+        # It won't rebuild powershell, but only CrossGen the already built assemblies.
+        if (-not $isFullBuild) { Start-PSBuild -CrossGen }
+        
+        $packageParams = @{}
+        if($env:TRAVIS_BUILD_NUMBER)
+        {
+            $version = $BaseVersion + $env:TRAVIS_BUILD_NUMBER
+            $packageParams += @{Version=$version}
+        }
+        # Only build packages for branches, not pull requests
+        $packages = @(Start-PSPackage @packageParams)
+        $packages += Start-PSPackage  @packageParams -Type AppImage
+        foreach($package in $packages)
+        {
+            if($env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
+            {
+                log "pushing $package to $env:NUGET_URL"
+                Start-NativeExecution -sb {dotnet nuget push $package --api-key $env:NUGET_KEY --source "$env:NUGET_URL/api/v2/package"} -IgnoreExitcode
+            }            
+        }
+
         try {
-            $svgData = Get-DailyBadge -result $result
-            if ( ! $svgData ) {
-                write-warning "Could not retrieve $result badge"
-            }
-            else {
-                Write-Verbose -verbose "Setting status badge to '$result'"
-                Set-DailyBuildBadge -content $svgData
-            }
+            # this throws if there was an error
+            Test-PSPesterResults
+            $result = "PASS"
         }
         catch {
-            Write-Warning "Could not update status badge: $_"
+            $resultError = $_
+            $result = "FAIL"
+        }
+        if ( $isFullBuild ) {
+            # now update the badge if you've done a full build, these are not fatal issues
+            try {
+                $svgData = Get-DailyBadge -result $result
+                if ( ! $svgData ) {
+                    write-warning "Could not retrieve $result badge"
+                }
+                else {
+                    Write-Verbose -verbose "Setting status badge to '$result'"
+                    Set-DailyBuildBadge -content $svgData
+                }
+            }
+            catch {
+                Write-Warning "Could not update status badge: $_"
+            }
+        }
+        # if the tests did not pass, throw the reason why
+        if ( $result -eq "FAIL" ) {
+            Throw $resultError
         }
     }
-    # if the tests did not pass, throw the reason why
-    if ( $result -eq "FAIL" ) {
-        Throw $resultError
-    }
-}
 
-Start-PSxUnit
+    Start-PSxUnit
+}

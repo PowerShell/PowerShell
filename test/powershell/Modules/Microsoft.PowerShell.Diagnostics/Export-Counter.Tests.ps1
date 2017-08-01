@@ -2,6 +2,11 @@
  # File: Export-Counter.Tests.ps1
  # Provides Pester tests for the Export-Counter cmdlet.
  ############################################################################################>
+ 
+ # Counter CmdLets are removed see issue #4272
+ # Tests are disabled
+ return
+ 
 $cmdletName = "Export-Counter"
 
 . "$PSScriptRoot/CounterTestHelperFunctions.ps1"
@@ -176,11 +181,6 @@ Describe "Feature tests for Export-Counter cmdlet" -Tags "Feature" {
                 Name = "Fails when -MaxSize < zero"
                 Parameters = "-MaxSize -2"
                 ExpectedErrorId = "CannotConvertArgumentNoMessage,Microsoft.PowerShell.Commands.ExportCounterCommand"
-            }
-            @{
-                Name = "Fails when given invalid file format"
-                FileFormat = "dat"
-                ExpectedErrorId = "CounterInvalidFormat,Microsoft.PowerShell.Commands.ExportCounterCommand"
             }
         )
 

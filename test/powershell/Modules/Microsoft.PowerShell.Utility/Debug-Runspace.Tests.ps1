@@ -9,7 +9,7 @@ Describe "Debug-Runspace" -tag "CI" {
     }
     AfterAll {
         if ( $rs1 ) { $rs1.Dispose() }
-        if ( $rs2 ) { $rs1.Dispose() }
+        if ( $rs2 ) { $rs2.Dispose() }
     }
 
     It "Debugging a runspace should fail if the name is ambiguous" {

@@ -3494,7 +3494,7 @@ namespace System.Management.Automation
             using (PowerShell ps = PowerShell.Create())
             {
                 ps.Commands.Clear();
-                ps.AddScript(@"Get-Job | ? {$_.PSJobTypeName -eq 'PSWorkflowJob'}");
+                ps.AddScript(@"Get-Job | Where-Object {$_.PSJobTypeName -eq 'PSWorkflowJob'}");
                 jobs = ps.Invoke<Job>();
             }
 
@@ -5531,7 +5531,7 @@ namespace System.Management.Automation.Internal
             [CmdletBinding()]
             param()
 
-            if ($PSWorkflowDebugger -ne $null)
+            if ($null -ne $PSWorkflowDebugger)
             {
                 foreach ($frame in $PSWorkflowDebugger.GetCallStack())
                 {

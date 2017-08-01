@@ -640,7 +640,7 @@ namespace System.Management.Automation.Runspaces
 
             try
             {
-                AssemblyName assemblyName = ClrFacade.GetAssemblyName(mshsnapinInfo.AbsoluteModulePath);
+                AssemblyName assemblyName = AssemblyName.GetAssemblyName(mshsnapinInfo.AbsoluteModulePath);
                 if (string.Compare(assemblyName.FullName, mshsnapinInfo.AssemblyName, StringComparison.OrdinalIgnoreCase) != 0)
                 {
                     string message = StringUtil.Format(ConsoleInfoErrorStrings.PSSnapInAssemblyNameMismatch, mshsnapinInfo.AbsoluteModulePath, mshsnapinInfo.AssemblyName);
@@ -648,7 +648,7 @@ namespace System.Management.Automation.Runspaces
                     throw new PSSnapInException(mshsnapinInfo.Name, message);
                 }
 
-                assembly = ClrFacade.LoadFrom(mshsnapinInfo.AbsoluteModulePath);
+                assembly = Assembly.LoadFrom(mshsnapinInfo.AbsoluteModulePath);
             }
             catch (FileLoadException e)
             {

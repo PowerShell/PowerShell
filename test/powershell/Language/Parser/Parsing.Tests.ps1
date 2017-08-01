@@ -302,3 +302,16 @@ Describe 'expressions parsing' -Tags "CI" {
 Describe 'Hash Expression parsing' -Tags "CI" {
     ShouldBeParseError '@{ a=1;b=2;c=3;' MissingEndCurlyBrace 2
 }
+
+Describe 'Unicode escape sequence parsing' -Tag "CI" {
+    ShouldBeParseError '"`u{}"' InvalidUnicodeEscapeSequence 1                 # error span is >>`u{}<<
+    ShouldBeParseError '"`u{219z}"' InvalidUnicodeEscapeSequence 7             # error offset is "`u{219>>z<<}"
+    ShouldBeParseError '"`u{12345z}"' InvalidUnicodeEscapeSequence 9           # error offset is "`u{12345>>z<<}"
+    ShouldBeParseError '"`u{1234567}"' TooManyDigitsInUnicodeEscapeSequence 10 # error offset is "`u{123456>>7<<}"
+    ShouldBeParseError '"`u{110000}"' InvalidUnicodeEscapeSequenceValue 4      # error offset is "`u{>>1<<10000}"
+    ShouldBeParseError '"`u2195}"' InvalidUnicodeEscapeSequence 1
+    ShouldBeParseError '"`u{' InvalidUnicodeEscapeSequence,TerminatorExpectedAtEndOfString 4,0
+    ShouldBeParseError '"`u{1' InvalidUnicodeEscapeSequence,TerminatorExpectedAtEndOfString 5,0
+    ShouldBeParseError '"`u{123456' MissingUnicodeEscapeSequenceTerminator,TerminatorExpectedAtEndOfString 10,0
+    ShouldBeParseError '"`u{1234567' TooManyDigitsInUnicodeEscapeSequence,TerminatorExpectedAtEndOfString 10,0
+}

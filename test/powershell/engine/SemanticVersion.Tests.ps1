@@ -83,24 +83,24 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             @{ lhs = $v2_1_0; rhs = "3.0"}
             @{ lhs = "1.5"; rhs = $v2_1_0}
         )
-        It "less than" -TestCases $testCases {
+        It "<lhs> less than <rhs>" -TestCases $testCases {
             param($lhs, $rhs)
             $lhs -lt $rhs | Should Be $true
             $rhs -lt $lhs | Should Be $false
         }
-        It "less than or equal" -TestCases $testCases {
+        It "<lhs> less than or equal <rhs>" -TestCases $testCases {
             param($lhs, $rhs)
             $lhs -le $rhs | Should Be $true
             $rhs -le $lhs | Should Be $false
             $lhs -le $lhs | Should Be $true
             $rhs -le $rhs | Should Be $true
         }
-        It "greater than" -TestCases $testCases {
+        It "<lhs> greater than <rhs>" -TestCases $testCases {
             param($lhs, $rhs)
             $lhs -gt $rhs | Should Be $false
             $rhs -gt $lhs | Should Be $true
         }
-        It "greater than or equal" -TestCases $testCases {
+        It "<lhs> greater than or equal <rhs>" -TestCases $testCases {
             param($lhs, $rhs)
             $lhs -ge $rhs | Should Be $false
             $rhs -ge $lhs | Should Be $true
@@ -112,7 +112,7 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             @{ operand = $v1_0_0 }
             @{ operand = $v1_0_0_alpha }
         )
-        It "Equality" -TestCases $testCases {
+        It "Equality <operand>" -TestCases $testCases {
             param($operand)
             $operand -eq $operand | Should Be $true
             $operand -ne $operand | Should Be $false
@@ -169,7 +169,7 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             @{ expectedResult = $false; version = "1.0.-1"  }
         )
 
-        It "range check of versions" -TestCases $testCases {
+        It "range check of versions: <version>" -TestCases $testCases {
             param($version, $expectedResult)
             { [SemanticVersion]::new($version) } | Should Throw # PSArgumentException
             { [SemanticVersion]::Parse($version) } | Should Throw # PSArgumentException
@@ -184,7 +184,7 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             @{ expectedResult = $false; version = "1.0.cc"  }
         )
 
-        It "format errors" -TestCases $testCases {
+        It "format errors: <version>" -TestCases $testCases {
             param($version, $expectedResult)
             { [SemanticVersion]::new($version) } | Should Throw # PSArgumentException
             { [SemanticVersion]::Parse($version) } | Should Throw # PSArgumentException
@@ -213,7 +213,7 @@ Describe "SemanticVersion api tests" -Tags 'CI' {
             @{ expectedResult = "1.0.0-alpha"; semver = [SemanticVersion]::new(1, 0, 0, "alpha") }
             @{ expectedResult = "1.0.0-beta"; semver = [SemanticVersion]::new(1, 0, 0, "beta") }
         )
-        It "Can round trip" -TestCases $testCases {
+        It "Can round trip: <semver>" -TestCases $testCases {
             param($semver, $expectedResult)
 
             $ser = [PSSerializer]::Serialize($semver)
