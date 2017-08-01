@@ -1591,7 +1591,8 @@ namespace System.Management.Automation.Internal
             return processToReturn;
         }
 
-        private void ShellExecuteFunction() {
+        private void ShellExecuteFunction()
+        {
             if (!(_succeeded = NativeMethods.ShellExecuteEx(_executeInfo)))
             {
                 _errorCode = Marshal.GetLastWin32Error();
@@ -1612,7 +1613,6 @@ namespace System.Management.Automation.Internal
                         default: _errorCode = (int)_executeInfo.hInstApp; break;
                     }
                 }
-                _succeeded = false;
             }
         }
 
