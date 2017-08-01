@@ -4,8 +4,15 @@ $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 
 $dotnetCLIChannel = "preview"
 $dotnetCLIRequiredVersion = "2.0.0-preview2-006502"
+
+# Track if tags have been sync'ed
 $tagsUpToDate = $false
 
+# Sync Tags
+# When not using a branch in PowerShell/PowerShell, tags will not be fetched automatically
+# Since code that uses Get-PSCommitID and Get-PSLatestTag assume that tags are fetched,
+# This function can ensure that tags have been fetched.
+# This function is used during the setup phase in tools/appveyor.psm1 and tools/travis.ps1
 function Sync-PSTags
 {
     param(
@@ -44,6 +51,8 @@ function Sync-PSTags
 # Gets the latest tag for the current branch
 function Get-PSLatestTag
 {
+    # This function won't always return the correct value unless tags have been sync'ed
+    # So, Write a warning to run Sync-PSTags
     if(!$tagsUpToDate)
     {
         Write-Warning "Run Sync-PSTags to update tags"
@@ -70,6 +79,8 @@ function Get-PSVersion
 
 function Get-PSCommitId
 {
+    # This function won't always return the correct value unless tags have been sync'ed
+    # So, Write a warning to run Sync-PSTags
     if(!$tagsUpToDate)
     {
         Write-Warning "Run Sync-PSTags to update tags"
