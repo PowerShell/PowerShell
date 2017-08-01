@@ -215,7 +215,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             Remove-Item -Force $doneFile -ErrorAction SilentlyContinue
         }
 
-        It "Access-denied test for '<cmdline>" -TestCases @(
+        It "Access-denied test for '<cmdline>" -Skip:(-not $IsWindows) -TestCases @(
             @{cmdline = "Get-Item $protectedPath2"; expectedError = "ItemExistsUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetItemCommand"}
             @{cmdline = "Get-ChildItem $protectedPath"; expectedError = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"}
             @{cmdline = "New-Item -Type File -Path $newItemPath"; expectedError = "NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand"}
