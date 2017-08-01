@@ -425,7 +425,6 @@ namespace PowershellTestConfigNamespace
     }
 }
 "@
-                        $script:Sma = [reflection.assembly]::load('System.Management.Automation, Version=1.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL').location
                         $script:SourceFile = join-path $script:TestAssemblyDir "PowershellTestConfig.cs"
                         $PscConfigDef | out-file $script:SourceFile -Encoding ascii -Force
                         $TestAssemblyName = "TestAssembly.dll"
@@ -845,6 +844,6 @@ namespace PowershellTestConfigNamespace
 }
 finally
 {
-    $script:PSDefaultParameterValues = $originalDefaultParameterValues
+    $global:PSDefaultParameterValues = $originalDefaultParameterValues
 }
 
