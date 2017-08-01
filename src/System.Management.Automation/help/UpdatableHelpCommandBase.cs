@@ -514,7 +514,6 @@ namespace Microsoft.PowerShell.Commands
                     ProcessException(module.ModuleName, culture, new UpdatableHelpSystemException("AccessIsDenied",
                         e.Message, ErrorCategory.PermissionDenied, null, e));
                 }
-#if !CORECLR
                 catch (WebException e)
                 {
                     if (e.InnerException != null && e.InnerException is UnauthorizedAccessException)
@@ -527,7 +526,6 @@ namespace Microsoft.PowerShell.Commands
                         ProcessException(module.ModuleName, culture, e);
                     }
                 }
-#endif
                 catch (UpdatableHelpSystemException e)
                 {
                     if (e.FullyQualifiedErrorId == "HelpCultureNotSupported")
@@ -830,13 +828,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 except = (UpdatableHelpSystemException)e;
             }
-#if !CORECLR
             else if (e is WebException)
             {
                 except = new UpdatableHelpSystemException("UnableToConnect",
                     StringUtil.Format(HelpDisplayStrings.UnableToConnect), ErrorCategory.InvalidOperation, null, e);
             }
-#endif
             else if (e is PSArgumentException)
             {
                 except = new UpdatableHelpSystemException("InvalidArgument",
