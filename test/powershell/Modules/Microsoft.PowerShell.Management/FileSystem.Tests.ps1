@@ -106,13 +106,13 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             "$destDir/$testDir/$testFile" | Should Exist
         }
 
-        It "Verity Move-Item will not move to an existing file" {
+        It "Verify Move-Item will not move to an existing file" {
             { Move-Item -Path $testDir -Destination $testFile -ErrorAction Stop } | ShouldBeErrorId "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"
             $Error[0].Exception | Should BeOfType System.IO.IOException
             $testDir | Should Exist
         }
 
-        It "Verify Move-Item as substitue for Rename-Item" {
+        It "Verify Move-Item as substitute for Rename-Item" {
             $newFile = Move-Item -Path $testFile -Destination $newTestFile -PassThru
             $fileExists = Test-Path $newTestFile
             $fileExists | Should Be $true
