@@ -1592,7 +1592,7 @@ namespace System.Management.Automation.Internal
         }
 
         private void ShellExecuteFunction() {
-            if (!NativeMethods.ShellExecuteEx(_executeInfo))
+            if (!(_succeeded = NativeMethods.ShellExecuteEx(_executeInfo)))
             {
                 _errorCode = Marshal.GetLastWin32Error();
                 if (_errorCode == 0)
