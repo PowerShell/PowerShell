@@ -19,7 +19,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, OS X, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "appx", "zip", "AppImage")]
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -87,7 +87,7 @@ function Start-PSPackage {
         } elseif ($Environment.IsOSX) {
             "osxpkg"
         } elseif ($Environment.IsWindows) {
-            "msi", "appx"
+            "msi"
         }
         Write-Warning "-Type was not specified, continuing with $Type!"
     }
@@ -140,15 +140,7 @@ function Start-PSPackage {
                 New-MSIPackage @Arguments
             }
         }
-        "appx" {
-            $Arguments = @{
-                PackageNameSuffix = $NameSuffix
-                PackageSourcePath = $Source
-                PackageVersion = $Version
-                AssetsPath = "$PSScriptRoot\..\..\assets"
-            }
-            New-AppxPackage @Arguments
-        }
+
         "AppImage" {
             if ($Environment.IsUbuntu14) {
                 $null = Start-NativeExecution { bash -iex "$PSScriptRoot/../appimage.sh" }
