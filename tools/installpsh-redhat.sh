@@ -64,6 +64,8 @@ else
     elif [ "${OS}" == "Linux" ] ; then
         if [ -f /etc/redhat-release ] ; then
             DistroBasedOn='redhat'
+        elif [ -f /etc/system-release ] ; then
+            DistroBasedOn='redhat'
         elif [ -f /etc/SuSE-release ] ; then
             DistroBasedOn='suse'
         elif [ -f /etc/mandrake-release ] ; then
@@ -94,7 +96,7 @@ if (( $EUID != 0 )); then
 fi
 
 #Check that sudo is available
-if [[ "$SUDO" -eq "sudo" ]]; then
+if [[ "$SUDO" -ne "" ]]; then
 
     $SUDO -v
     if [ $? -ne 0 ]; then
