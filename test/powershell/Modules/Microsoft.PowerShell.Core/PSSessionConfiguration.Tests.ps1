@@ -521,9 +521,7 @@ namespace PowershellTestConfigNamespace
 
                 It "Validate Register-PSSessionConfiguration with ApplicationBase, AssemblyName and ConfigurationTypeName parameter" {
 
-                    $TestAssemblyPath = join-path $LocalTestDir $LocalTestAssemblyName
-                    add-type -path $script:SourceFile -OutputAssembly $TestAssemblyPath
-                    $null = Register-PSSessionConfiguration -Name $TestSessionConfigName -ApplicationBase $LocalTestDir -AssemblyName $LocalTestAssemblyName -ConfigurationTypeName "PowershellTestConfigNamespace.PowershellTestConfig" -force
+                    $null = Register-PSSessionConfiguration -Name $TestSessionConfigName -ApplicationBase $script:TestAssemblyDir -AssemblyName $LocalTestAssemblyName -ConfigurationTypeName "PowershellTestConfigNamespace.PowershellTestConfig" -force
                     
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute $null -ExpectedOutput $true -ExpectedError $null
                 }
@@ -590,9 +588,7 @@ namespace PowershellTestConfigNamespace
 
                 It "Validate Set-PSSessionConfiguration with ApplicationBase, AssemblyName and ConfigurationTypeName parameter" {
 
-                    $TestAssemblyPath = join-path $LocalTestDir $LocalTestAssemblyName
-                    Add-type -path $script:SourceFile -OutputAssembly $TestAssemblyPath
-                    $null = Set-PSSessionConfiguration -Name $TestSessionConfigName -ApplicationBase $LocalTestDir -AssemblyName $LocalTestAssemblyName -ConfigurationTypeName "PowershellTestConfigNamespace.PowershellTestConfig" -force
+                    $null = Set-PSSessionConfiguration -Name $TestSessionConfigName -ApplicationBase $script:TestAssemblyDir -AssemblyName $LocalTestAssemblyName -ConfigurationTypeName "PowershellTestConfigNamespace.PowershellTestConfig" -force
                     
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute $null -ExpectedOutput $true -ExpectedError $null
                 }
