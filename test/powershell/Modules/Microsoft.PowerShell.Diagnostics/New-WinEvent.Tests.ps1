@@ -18,7 +18,8 @@ Describe 'New-WinEvent' -Tags "CI" {
         }
 
         It 'Simple New-WinEvent' {
-            New-WinEvent -ProviderName $ProviderName -Id $SimpleEventId -Version 1 # simple event without any payload
+            # simple event without any payload
+            New-WinEvent -ProviderName $ProviderName -Id $SimpleEventId -Version 1
             $filter = @{ ProviderName = $ProviderName; Id = $SimpleEventId}
             (Get-WinEvent -filterHashtable $filter).Count | Should BeGreaterThan 0
         }
