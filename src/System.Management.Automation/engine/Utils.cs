@@ -28,7 +28,6 @@ using System.Diagnostics;
 using Microsoft.Win32.SafeHandles;
 #else
 using System.Security.Principal;
-using PSUtils = System.Management.Automation.PsUtils;
 #endif
 
 namespace System.Management.Automation
@@ -242,43 +241,9 @@ namespace System.Management.Automation
 
         internal static string GetApplicationBase(string shellId)
         {
-#if CORECLR
             // Use the location of SMA.dll as the application base.
             Assembly assembly = typeof(PSObject).GetTypeInfo().Assembly;
             return Path.GetDirectoryName(assembly.Location);
-#else
-            // This code path applies to Windows FullCLR inbox deployments. All CoreCLR
-            // implementations should use the location of SMA.dll since it must reside in PSHOME.
-            //
-            // try to get the path from the registry first
-            string result = GetApplicationBaseFromRegistry(shellId);
-            if (result != null)
-            {
-                return result;
-            }
-
-            // The default keys aren't installed, so try and use the entry assembly to
-            // get the application base. This works for managed apps like minishells...
-            Assembly assem = Assembly.GetEntryAssembly();
-            if (assem != null)
-            {
-                // For minishells, we just return the executable path.
-                return Path.GetDirectoryName(assem.Location);
-            }
-
-            // For unmanaged host apps, look for the SMA dll, if it's not GAC'ed then
-            // use it's location as the application base...
-            assem = typeof(PSObject).GetTypeInfo().Assembly;
-            string gacRootPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "Microsoft.Net\\assembly");
-            if (!assem.Location.StartsWith(gacRootPath, StringComparison.OrdinalIgnoreCase))
-            {
-                // For other hosts.
-                return Path.GetDirectoryName(assem.Location);
-            }
-
-            // otherwise, just give up...
-            return "";
-#endif
         }
 
         private static string[] s_productFolderDirectories;
@@ -522,64 +487,6 @@ namespace System.Management.Automation
             return AllowedEditionValues.Contains(editionValue, StringComparer.OrdinalIgnoreCase);
         }
 
-#if !CORECLR
-        /// <summary>
-        /// Checks whether current monad session supports NetFrameworkVersion specified
-        /// by checkVersion. The specified version is treated as the the minimum required
-        /// version of .NET framework.
-        /// </summary>
-        /// <param name="checkVersion">Version to check</param>
-        /// <param name="higherThanKnownHighestVersion">true if version to check is higher than the known highest version</param>
-        /// <returns>true if supported, false otherwise</returns>
-        internal static bool IsNetFrameworkVersionSupported(Version checkVersion, out bool higherThanKnownHighestVersion)
-        {
-            higherThanKnownHighestVersion = false;
-            bool isSupported = false;
-
-            if (checkVersion == null)
-            {
-                return false;
-            }
-
-            // Construct a temporary version number with build number and revision number set to 0.
-            // This is done so as to re-use the version specifications in PSUtils.FrameworkRegistryInstallation
-            Version tempVersion = new Version(checkVersion.Major, checkVersion.Minor, 0, 0);
-
-            // Win8: 840038 - For any version above the highest known .NET version (4.5 for Windows 8), we can't make a call as to
-            // whether the requirement is satisfied or not because we can't detect that version of .NET.
-            // We end up erring on the side of app compat by letting it through.
-            // We will write a message in the Verbose output saying that we cannot detect the specified version of the .NET Framework.
-            if (checkVersion > PsUtils.FrameworkRegistryInstallation.KnownHighestNetFrameworkVersion)
-            {
-                isSupported = true;
-                higherThanKnownHighestVersion = true;
-            }
-            // For a script to have a valid .NET version, the specified version or atleast one of its compatible versions must be installed on the machine.
-            else if (PSUtils.FrameworkRegistryInstallation.CompatibleNetFrameworkVersions.ContainsKey(tempVersion))
-            {
-                if (PSUtils.FrameworkRegistryInstallation.IsFrameworkInstalled(tempVersion.Major, tempVersion.Minor, 0))
-                {
-                    // If the specified version is installed on the machine, then we return true.
-                    isSupported = true;
-                }
-                else
-                {
-                    // If any of the compatible versions are installed on the machine, then we return true.
-                    HashSet<Version> compatibleVersions = PSUtils.FrameworkRegistryInstallation.CompatibleNetFrameworkVersions[tempVersion];
-                    foreach (Version compatibleVersion in compatibleVersions)
-                    {
-                        if (PSUtils.FrameworkRegistryInstallation.IsFrameworkInstalled(compatibleVersion.Major, compatibleVersion.Minor, 0))
-                        {
-                            isSupported = true;
-                            break;
-                        }
-                    }
-                }
-            }
-
-            return isSupported;
-        }
-#endif
         #endregion
 
         /// <summary>
@@ -590,11 +497,7 @@ namespace System.Management.Automation
         /// <summary>
         /// This is used to construct the profile path.
         /// </summary>
-#if CORECLR
         internal static string ProductNameForDirectory = Platform.IsInbox ? "WindowsPowerShell" : "PowerShell";
-#else
-        internal const string ProductNameForDirectory = "WindowsPowerShell";
-#endif
 
         /// <summary>
         /// The subdirectory of module paths
@@ -1600,7 +1503,7 @@ namespace System.Management.Automation.Internal
         }
     }
 
-#if CORECLR && !UNIX
+#if !UNIX
     /// <summary>
     /// Helper to start process using ShellExecuteEx. This is used only in PowerShell Core on Full Windows.
     /// </summary>
@@ -1619,7 +1522,7 @@ namespace System.Management.Automation.Internal
         /// </summary>
         /// <remarks>
         /// Quoted from MSDN:
-        /// "Because ShellExecuteEx can delegate execution to Shell extensions (data sources, context menu handlers, verb implementations) 
+        /// "Because ShellExecuteEx can delegate execution to Shell extensions (data sources, context menu handlers, verb implementations)
         ///  that are activated using Component Object Model (COM), COM should be initialized before ShellExecuteEx is called. Some Shell
         ///  extensions require the COM single-threaded apartment (STA) type. In that case, COM should be initialized as shown here:
         ///     CoInitializeEx(NULL, COINIT_APARTMENTTHREADED | COINIT_DISABLE_OLE1DDE)
@@ -1637,7 +1540,7 @@ namespace System.Management.Automation.Internal
             var shellExecuteInfo = new NativeMethods.ShellExecuteInfo();
             shellExecuteInfo.fMask = NativeMethods.SEE_MASK_NOCLOSEPROCESS;
             shellExecuteInfo.fMask |= NativeMethods.SEE_MASK_FLAG_NO_UI;
- 
+
             switch (windowStyle)
             {
                 case ProcessWindowStyle.Hidden:
@@ -1657,7 +1560,7 @@ namespace System.Management.Automation.Internal
             try
             {
                 if (startInfo.FileName.Length != 0)
-                    shellExecuteInfo.lpFile = Marshal.StringToHGlobalUni(startInfo.FileName);             
+                    shellExecuteInfo.lpFile = Marshal.StringToHGlobalUni(startInfo.FileName);
                 if (!string.IsNullOrEmpty(verb))
                     shellExecuteInfo.lpVerb = Marshal.StringToHGlobalUni(verb);
                 if (startInfo.Arguments.Length != 0)
@@ -1670,7 +1573,7 @@ namespace System.Management.Automation.Internal
                 if (!NativeMethods.ShellExecuteEx(shellExecuteInfo))
                 {
                     int errorCode = Marshal.GetLastWin32Error();
-                    if (errorCode == 0) 
+                    if (errorCode == 0)
                     {
                         switch ((long)shellExecuteInfo.hInstApp)
                         {
@@ -1692,12 +1595,12 @@ namespace System.Management.Automation.Internal
                     {
                         throw new Win32Exception(errorCode, "InvalidApplication");
                     }
-                    
+
                     throw new Win32Exception(errorCode);
                 }
             }
             finally
-            {                
+            {
                 if (shellExecuteInfo.lpFile != (IntPtr)0) Marshal.FreeHGlobal(shellExecuteInfo.lpFile);
                 if (shellExecuteInfo.lpVerb != (IntPtr)0) Marshal.FreeHGlobal(shellExecuteInfo.lpVerb);
                 if (shellExecuteInfo.lpParameters != (IntPtr)0) Marshal.FreeHGlobal(shellExecuteInfo.lpParameters);
@@ -1768,7 +1671,7 @@ namespace System.Management.Automation.Internal
             public const int NtQueryProcessBasicInfo = 0;
 
             [StructLayout(LayoutKind.Sequential)]
-            internal class ShellExecuteInfo 
+            internal class ShellExecuteInfo
             {
                 public int cbSize = 0;
                 public int fMask = 0;
@@ -1786,7 +1689,7 @@ namespace System.Management.Automation.Internal
                 public IntPtr hIcon = (IntPtr)0;
                 public IntPtr hProcess = (IntPtr)0;
 
-                public ShellExecuteInfo() 
+                public ShellExecuteInfo()
                 {
                     cbSize = Marshal.SizeOf(this);
                 }
