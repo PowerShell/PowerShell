@@ -1265,7 +1265,8 @@ function Start-PSBootstrap {
             if ($Package) {
                 try {
                     # We cannot guess if the user wants to run gem install as root
-                    Start-NativeExecution { gem install fpm ronn }
+                    Start-NativeExecution { gem install fpm -v 1.8.1 }
+                    Start-NativeExecution { gem install ronn }
                 } catch {
                     Write-Warning "Installation of fpm and ronn gems failed! Must resolve manually."
                 }
