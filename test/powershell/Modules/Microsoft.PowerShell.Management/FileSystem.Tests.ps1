@@ -65,6 +65,24 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $existsAfter | Should Be $false
         }
 
+        It "Verify Rename-Item for file" {
+            Rename-Item -Path $testFile -NewName $newTestFile -ErrorAction Stop
+            $testFile | Should Not Exist
+            $newTestFile | Should Exist
+        }
+
+        It "Verify Rename-Item for directory" {
+            Rename-Item -Path $testDir -NewName $newTestDir -ErrorAction Stop
+            $testDir | Should Not Exist
+            $newTestDir | Should Exist
+        }
+
+        It "Verify Rename-Item will not rename to an existing name" {
+            { Rename-Item -Path $testFile -NewName $testDir -ErrorAction Stop } | ShouldBeErrorId "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"
+            $Error[0].Exception | Should BeOfType System.IO.IOException
+            $testFile | Should Exist
+        }
+
         It "Verify Copy-Item" {
             $newFile = Copy-Item -Path $testFile -Destination $newTestFile -PassThru
             $fileExists = Test-Path $newTestFile
@@ -72,7 +90,29 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $newFile.Name | Should Be $newTestFile
         }
 
-        It "Verify Move-Item" {
+        It "Verify Move-Item for file" {
+            Move-Item -Path $testFile -Destination $testDir -ErrorAction Stop
+            $testFile | Should Not Exist
+            "$testDir/$testFile" | Should Exist
+        }
+
+        It "Verify Move-Item for directory" {
+            $destDir = "DestinationDirectory"
+            New-Item -Path $destDir -ItemType Directory -ErrorAction Stop >$null
+            Move-Item -Path $testFile -Destination $testDir
+            Move-Item -Path $testDir -Destination $destDir
+            $testDir | Should Not Exist
+            "$destDir/$testDir" | Should Exist
+            "$destDir/$testDir/$testFile" | Should Exist
+        }
+
+        It "Verify Move-Item will not move to an existing file" {
+            { Move-Item -Path $testDir -Destination $testFile -ErrorAction Stop } | ShouldBeErrorId "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"
+            $Error[0].Exception | Should BeOfType System.IO.IOException
+            $testDir | Should Exist
+        }
+
+        It "Verify Move-Item as substitute for Rename-Item" {
             $newFile = Move-Item -Path $testFile -Destination $newTestFile -PassThru
             $fileExists = Test-Path $newTestFile
             $fileExists | Should Be $true
@@ -159,6 +199,47 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
              }
          }
+    }
+
+    Context "Validate behavior when access is denied" {
+        BeforeAll {
+            if ($IsWindows)
+            {
+                $powershell = "powershell.exe"
+                $protectedPath = Join-Path ([environment]::GetFolderPath("windows")) "appcompat" "Programs"
+                $protectedPath2 = Join-Path $protectedPath "Install"
+                $newItemPath = Join-Path $protectedPath "foo"
+            }
+            $errFile = "error.txt"
+            $doneFile = "done.txt"
+        }
+
+        AfterEach {
+            Remove-Item -Force $errFile -ErrorAction SilentlyContinue
+            Remove-Item -Force $doneFile -ErrorAction SilentlyContinue
+        }
+
+        It "Access-denied test for '<cmdline>" -Skip:(-not $IsWindows) -TestCases @(
+            @{cmdline = "Get-Item $protectedPath2"; expectedError = "ItemExistsUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetItemCommand"}
+            @{cmdline = "Get-ChildItem $protectedPath"; expectedError = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"}
+            @{cmdline = "New-Item -Type File -Path $newItemPath"; expectedError = "NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand"}
+            @{cmdline = "Rename-Item -Path $protectedPath -NewName bar"; expectedError = "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"},
+            @{cmdline = "Move-Item -Path $protectedPath -Destination bar"; expectedError = "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"},
+            @{cmdline = "Remove-Item -Path $protectedPath"; expectedError = "RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.RemoveItemCommand"}
+        ) {
+            param ($cmdline, $expectedError)
+
+            runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline -ErrorAction Stop } catch { `$_.FullyQualifiedErrorId | Out-File $errFile }; New-Item -Type File -Path $doneFile"
+            $startTime = Get-Date
+            while (((Get-Date) - $startTime).TotalSeconds -lt 5 -and -not (Test-Path $doneFile))
+            {
+                Start-Sleep -Milliseconds 100
+            }
+
+            $errFile | Should Exist
+            $err = Get-Content $errFile
+            $err | Should Be $expectedError
+        }
     }
 
     Context "Validate basic host navigation functionality" {
