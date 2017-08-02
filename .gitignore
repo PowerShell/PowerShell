@@ -38,6 +38,7 @@ dotnet-uninstall-debian-packages.sh
 *.zip
 *.rpm
 *.pkg
+*.nupkg
 
 # ignore the version file as it is generated at build time
 powershell.version
