@@ -978,7 +978,7 @@ namespace System.Management.Automation
             
             if (_rangeKind.HasValue)
             {
-                ValidateRange(element, _rangeKind);
+                ValidateRange(element, (ValidateRangeKind)_rangeKind);
             }
             else
             {
@@ -1068,7 +1068,7 @@ namespace System.Management.Automation
             _rangeKind = kind;
         }
 
-        private void ValidateRange(object element, ValidateRangeKind? rangeKind)
+        private void ValidateRange(object element, ValidateRangeKind rangeKind)
         {
             Type commonType = GetCommonType(typeof(int),element.GetType());
             if (commonType == null)
@@ -1086,7 +1086,7 @@ namespace System.Management.Automation
 
             if (LanguagePrimitives.TryConvertTo(element, commonType, out resultValue))
             {
-                element = (IComparable)resultValue;
+                element = resultValue;
                 
                 if (LanguagePrimitives.TryConvertTo(0, commonType, out resultValue))
                 {
@@ -1100,7 +1100,7 @@ namespace System.Management.Automation
                     null, 
                     Metadata.ValidateRangeElementType,
                     element.GetType().Name, 
-                    typeof(int).Name);
+                    commonType.Name);
             }
 
             switch (rangeKind)

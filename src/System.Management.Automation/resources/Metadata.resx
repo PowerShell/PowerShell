@@ -124,25 +124,25 @@
     <value>The argument cannot be validated because its type "{0}" is not the same type ({1}) as the maximum and minimum limits of the parameter. Make sure the argument is of type {1} and then try the command again.</value>
   </data>
   <data name="ValidateRangePositiveFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be accepted because its value is not greater than zero.</value>
+    <value>The argument "{0}" cannot be validated because its value is not greater than zero.</value>
   </data>
   <data name="ValidateRangeNonNegativeFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be accepted because its value is not greater than or equal to zero.</value>
+    <value>The argument "{0}" cannot be validated because its value is not greater than or equal to zero.</value>
   </data>
   <data name="ValidateRangeNegativeFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be accepted because its value is not less than zero.</value>
+    <value>The argument "{0}" cannot be validated because its value is not less than zero.</value>
   </data>
   <data name="ValidateRangeNonPositiveFailure" xml:space="preserve">
-    <value>The argument "{0}" cannot be accepted because its value is not less than or equal to zero.</value>
+    <value>The argument "{0}" cannot be validated because its value is not less than or equal to zero.</value>
   </data>
   <data name="ValidateRangeMinRangeMaxRangeType" xml:space="preserve">
-    <value>The specified minimum range ({0}) cannot be accepted because it is not the same type as the specified maximum range ({1}). Update the ValidateRange attribute for the parameter.</value>
+    <value>The specified minimum range ({0}) cannot be validated because it is not the same type as the specified maximum range ({1}). Update the ValidateRange attribute for the parameter.</value>
   </data>
   <data name="ValidateRangeNotIComparable" xml:space="preserve">
     <value>Cannot accept the MaxRange and MinRange parameter types. Both parameters must be objects that implement an IComparable interface.</value>
   </data>
   <data name="ValidateRangeMaxRangeSmallerThanMinRange" xml:space="preserve">
-    <value>The specified maximum range cannot be accepted because it is less than the specified minimum range. Update the ValidateRange attribute for the parameter.</value>
+    <value>The specified maximum range cannot be validated because it is less than the specified minimum range. Update the ValidateRange attribute for the parameter.</value>
   </data>
   <data name="ValidateRangeGreaterThanMaxRangeFailure" xml:space="preserve">
     <value>The {0} argument is greater than the maximum allowed range of {1}. Supply an argument that is less than or equal to {1} and then try the command again.</value>
