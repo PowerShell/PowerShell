@@ -2,7 +2,7 @@
     [Parameter(Mandatory = $true, Position = 0)] $coverallsToken,
     [Parameter(Mandatory = $true, Position = 1)] $codecovToken,
     [Parameter(Position = 2)] $azureLogDrive = "L:\",
-    [Parameter] [switch] $SuppressQuiet
+    [switch] $SuppressQuiet
 )
 
 # Read the XML and create a dictionary for FileUID -> file full path.
