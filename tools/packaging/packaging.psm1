@@ -19,7 +19,7 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, OS X, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "appx", "zip", "AppImage", "nupkg")]
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg")]
         [string[]]$Type,
 
         # Generate windows downlevel package
@@ -143,16 +143,6 @@ function Start-PSPackage {
             {
                 New-MSIPackage @Arguments
             }
-        }
-        "appx" {
-            $Arguments = @{
-                PackageNameSuffix = $NameSuffix
-                PackageSourcePath = $Source
-                PackageVersion = $Version
-                AssetsPath = "$PSScriptRoot\..\..\assets"
-                Force = $Force
-            }
-            New-AppxPackage @Arguments
         }
         "AppImage" {
             if ($Environment.IsUbuntu14) {
