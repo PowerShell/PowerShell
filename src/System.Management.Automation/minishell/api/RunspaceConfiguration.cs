@@ -104,43 +104,9 @@ namespace System.Management.Automation.Runspaces
     ///     6. ETS will use type information.
     ///     7. Format and output will use format information.
     /// -->
-#if CORECLR
-    internal
-#else
-    public
-#endif
-    abstract class RunspaceConfiguration
+    internal abstract class RunspaceConfiguration
     {
         #region RunspaceConfiguration Factory
-
-#if V2
-
-        /// <summary>
-        /// Create an instance of default RunspaceConfiguration implementation.
-        /// </summary>
-        /// <return>RunspaceConfiguration instance created</return>
-        /// <exception cref="System.Management.Automation.PSInvalidOperationException">
-        /// Exception thrown when implementation class for RunspaceConfiguration is not found.
-        /// </exception>
-        /// <!--
-        /// This is a RunspaceConfiguration factory function which will create an instance
-        /// of default RunspaceConfiguration-derived type, whose name is decided by an
-        /// assembly attribute in mini-shell.
-        /// -->
-        internal static RunspaceConfiguration Create()
-        {
-            Assembly assembly = Assembly.GetEntryAssembly();
-
-            // If monad engine is hosted by an native application, Assembly.GetEntryAssembly()
-            // will actually return null. In this case, we should throw an exception back.
-            if (assembly == null)
-            {
-                throw tracer.NewInvalidOperationException("MiniShellErrors", "InvalidEntryAssembly");
-            }
-
-            return Create(assembly);
-        }
-#endif
 
         /// <summary>
         /// Create an instance of RunspaceConfiguration type implemented from an assembly.
