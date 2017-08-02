@@ -30,15 +30,6 @@ namespace System.Management.Automation
 
     internal static class EnumerableExtensions
     {
-        // CORECLR has an implementation of Append built-in.
-#if !CORECLR
-        internal static IEnumerable<T> Append<T>(this IEnumerable<T> collection, T element)
-        {
-            foreach (T t in collection)
-                yield return t;
-            yield return element;
-        }
-#endif
         internal static IEnumerable<T> Prepend<T>(this IEnumerable<T> collection, T element)
         {
             yield return element;
