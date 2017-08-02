@@ -276,7 +276,7 @@ Describe "TabCompletion" -Tags CI {
             param ($inputStr, $twoSubExpected)
 
             Push-Location -Path $twoSubDir
-            $inputStr = "../../${inputStr}"
+            $inputStr = "../..\${inputStr}"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $twoSubExpected
@@ -286,7 +286,7 @@ Describe "TabCompletion" -Tags CI {
             param ($inputStr, $twoSubExpected)
 
             Push-Location -Path $twoSubDir
-            $inputStr = "..\..\..\ba*\${inputStr}"
+            $inputStr = "..\../..\ba*\${inputStr}"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $twoSubExpected
@@ -294,7 +294,7 @@ Describe "TabCompletion" -Tags CI {
 
         It "Test relative path" {
             Push-Location -Path $oneSubDir
-            $beforeTab = "twoSubDir/../../pri"
+            $beforeTab = "twoSubDir/../..\pri"
             $afterTab = "..${separator}prime"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches.Count | Should Be 1
