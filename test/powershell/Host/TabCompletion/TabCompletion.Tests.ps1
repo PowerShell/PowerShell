@@ -266,7 +266,7 @@ Describe "TabCompletion" -Tags CI {
             param ($inputStr, $oneSubExpected)
 
             Push-Location -Path $oneSubDir
-            $inputStr = "..${separator}${inputStr}"
+            $inputStr = "..\${inputStr}"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $oneSubExpected
@@ -276,7 +276,7 @@ Describe "TabCompletion" -Tags CI {
             param ($inputStr, $twoSubExpected)
 
             Push-Location -Path $twoSubDir
-            $inputStr = "..${separator}..${separator}${inputStr}"
+            $inputStr = "../../${inputStr}"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $twoSubExpected
@@ -286,7 +286,7 @@ Describe "TabCompletion" -Tags CI {
             param ($inputStr, $twoSubExpected)
 
             Push-Location -Path $twoSubDir
-            $inputStr = "..${separator}..${separator}..${separator}ba*${separator}${inputStr}"
+            $inputStr = "..\..\..\ba*\${inputStr}"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $twoSubExpected
@@ -294,7 +294,7 @@ Describe "TabCompletion" -Tags CI {
 
         It "Test relative path" {
             Push-Location -Path $oneSubDir
-            $beforeTab = "twoSubDir${separator}..${separator}..${separator}pri"
+            $beforeTab = "twoSubDir/../../pri"
             $afterTab = "..${separator}prime"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
             $res.CompletionMatches.Count | Should Be 1
@@ -450,7 +450,7 @@ Describe "TabCompletion" -Tags CI {
             $beforeTab = "\\localhost\$homeDrive\wind"
             $afterTab = "& '\\localhost\$homeDrive\Windows'"
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches.Count | Should BeExactly 1
             $res.CompletionMatches[0].CompletionText | Should Be $afterTab
         }
 
@@ -458,7 +458,7 @@ Describe "TabCompletion" -Tags CI {
             $beforeTab = 'registry::HKEY_l'
             $afterTab = 'registry::HKEY_LOCAL_MACHINE'
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches.Count | Should BeExactly 1
             $res.CompletionMatches[0].CompletionText | Should Be $afterTab
         }
 
@@ -466,15 +466,20 @@ Describe "TabCompletion" -Tags CI {
             $beforeTab = 'wsman::localh'
             $afterTab = 'wsman::localhost'
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches.Count | Should BeExactly 1
             $res.CompletionMatches[0].CompletionText | Should Be $afterTab
         }
 
-        It "Tab completion for filesystem provider qualified path" -Skip:(!$IsWindows) {
-            $beforeTab = 'filesystem::{0}\Wind' -f $env:SystemDrive
-            $afterTab = 'filesystem::{0}\Windows' -f $env:SystemDrive
+        It "Tab completion for filesystem provider qualified path" {
+            if ($IsWindows) {
+                $beforeTab = 'filesystem::{0}\Wind' -f $env:SystemDrive
+                $afterTab = 'filesystem::{0}\Windows' -f $env:SystemDrive
+            } else {
+                $beforeTab = 'filesystem::/us' -f $env:SystemDrive
+                $afterTab = 'filesystem::/usr' -f $env:SystemDrive
+            }
             $res = TabExpansion2 -inputScript $beforeTab -cursorColumn $beforeTab.Length
-            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches.Count | Should BeExactly 1
             $res.CompletionMatches[0].CompletionText | Should Be $afterTab
         }
 
@@ -513,23 +518,26 @@ Describe "TabCompletion" -Tags CI {
                 Push-Location cert:\
                 $inputStr = "gci -co"
                 $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-                $res.CompletionMatches[0].CompletionText | Should be '-CodeSigningCert'
+                $res.CompletionMatches[0].CompletionText | Should Be '-CodeSigningCert'
             } finally {
                 Pop-Location
             }
         }
 
-        It "Tab completion for functions takes precedence over file system" {
-            $myf = Join-Path -Path $TestDrive -ChildPath myf
+        It "Tab completion for file system takes precedence over functions" {
             try {
-                New-Item -Path $myf -ItemType File -Force
+                Push-Location $TestDrive
+                New-Item -Name myf -ItemType File -Force
                 function MyFunction { "Hi there" }
 
                 $inputStr = "myf"
                 $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-                $res.CompletionMatches[0].CompletionText | Should be 'MyFunction'
+                $res.CompletionMatches.Count | Should BeExactly 2
+                $res.CompletionMatches[0].CompletionText | Should Be (Resolve-Path myf -Relative)
+                $res.CompletionMatches[1].CompletionText | Should Be "MyFunction"
             } finally {
-                Remove-Item -Path $myf -Force
+                Remove-Item -Path myf -Force
+                Pop-Location
             }
         }
 
@@ -709,6 +717,13 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = 'Configuration foo { node $ConfigurationData.AllNodes.fo'; expected = 'ForEach(' }
                 @{ inputStr = 'Configuration bar { File foo { Destinat'; expected = 'DestinationPath = ' }
                 @{ inputStr = 'Configuration bar { File foo { Content'; expected = 'Contents = ' }
+                @{ inputStr = 'Configuration bar { Fil'; expected = 'File' }
+                @{ inputStr = 'Configuration bar { Import-Dsc'; expected = 'Import-DscResource' }
+                @{ inputStr = 'Configuration bar { Import-DscResource -Modu'; expected = '-ModuleName' }
+                @{ inputStr = 'Configuration bar { Import-DscResource -ModuleName blah -Modu'; expected = '-ModuleVersion' }
+                @{ inputStr = 'Configuration bar { Scri'; expected = 'Script' }
+                @{ inputStr = 'configuration foo { Script ab {Get'; expected = 'GetScript = ' }
+                @{ inputStr = 'configuration foo { Script ab { '; expected = 'DependsOn = ' }
             )
         }
 
