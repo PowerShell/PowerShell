@@ -54,12 +54,7 @@ namespace Microsoft.PowerShell.Telemetry.Internal
             if (Interlocked.CompareExchange(ref s_anyPowerShellSessionOpen, 1, 0) == 1)
                 return;
 
-            bool is32Bit;
-#if CORECLR
-            is32Bit = IntPtr.Size == 4;
-#else
-            is32Bit = !Environment.Is64BitProcess;
-#endif
+            bool is32Bit = !Environment.Is64BitProcess;
             var psversion = PSVersionInfo.PSVersion.ToString();
             var hostName = Process.GetCurrentProcess().ProcessName;
             if (ihptd != null)
