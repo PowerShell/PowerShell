@@ -555,7 +555,9 @@ function New-ZipPackage
         # Source Path to the Product Files - required to package the contents into an Zip
         [Parameter(Mandatory = $true)]
         [ValidateNotNullOrEmpty()]
-        [string] $PackageSourcePath
+        [string] $PackageSourcePath,
+
+        [switch] $Force
     )
 
     $ProductSemanticVersion = Get-PackageSemanticVersion -Version $PackageVersion
