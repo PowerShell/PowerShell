@@ -899,6 +899,31 @@ namespace System.Management.Automation
         }
     }
 
+    /// <Summary>
+    /// Predefined range kind to use with ValidateRangeAttribute.
+    /// </Summary>
+    public enum ValidateRangeKind 
+    {
+        /// <Summary>
+        /// Range is greater than 0.
+        /// </Summary>
+        Positive,
+        
+        /// <Summary>
+        /// Range is greater than or equal to 0.
+        /// </Summary>
+        NonNegative,
+        
+        /// <Summary>
+        /// Range is less than 0.
+        /// </Summary>
+        Negative,
+
+        /// <Summary>
+        /// Range is less than or equal to 0.
+        /// </Summary>        
+        NonPositive
+    }
     /// <summary>
     /// Validates that each parameter argument falls in the range
     /// specified by MinRange and MaxRange
@@ -926,6 +951,8 @@ namespace System.Management.Automation
         /// </summary>
         private Type _promotedType;
 
+        ValidateRangeKind? _rangeKind;
+
         /// <summary>
         /// Validates that each parameter argument falls in the range
         /// specified by MinRange and MaxRange
@@ -951,37 +978,14 @@ namespace System.Management.Automation
             {
                 element = o.BaseObject;
             }
-
-            // minRange and maxRange have the same type, so we just need
-            // to compare to one of them
-            if (element.GetType() != _promotedType)
+            
+            if (_rangeKind.HasValue)
             {
-                object resultValue;
-                if (LanguagePrimitives.TryConvertTo(element, _promotedType, out resultValue))
-                {
-                    element = resultValue;
-                }
-                else
-                {
-                    throw new ValidationMetadataException("ValidationRangeElementType",
-                        null, Metadata.ValidateRangeElementType,
-                        element.GetType().Name, MinRange.GetType().Name);
-                }
+                ValidateRange(element, (ValidateRangeKind)_rangeKind);
             }
-
-            // They are the same type and are all IComparable, so this should not throw
-            if (_minComparable.CompareTo(element) > 0)
+            else
             {
-                throw new ValidationMetadataException("ValidateRangeTooSmall",
-                    null, Metadata.ValidateRangeSmallerThanMinRangeFailure,
-                    element.ToString(), MinRange.ToString());
-            }
-
-            if (_maxComparable.CompareTo(element) < 0)
-            {
-                throw new ValidationMetadataException("ValidateRangeTooBig",
-                    null, Metadata.ValidateRangeGreaterThanMaxRangeFailure,
-                    element.ToString(), MaxRange.ToString());
+                ValidateRange(element);
             }
         }
 
@@ -1056,6 +1060,139 @@ namespace System.Management.Automation
             }
             MinRange = minRange;
             MaxRange = maxRange;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the ValidateRangeAttribute class
+        /// this constructor uses a predefined ranged
+        /// </summary>
+        public ValidateRangeAttribute(ValidateRangeKind kind) : base()
+        {
+            _rangeKind = kind;
+        }
+
+        private void ValidateRange(object element, ValidateRangeKind rangeKind)
+        {
+            Type commonType = GetCommonType(typeof(int),element.GetType());
+            if (commonType == null)
+            {
+                    throw new ValidationMetadataException(
+                    "ValidationRangeElementType",
+                    null, 
+                    Metadata.ValidateRangeElementType,
+                    element.GetType().Name, 
+                    typeof(int).Name);
+            }
+
+            object resultValue;
+            IComparable dynamicZero = 0;
+
+            if (LanguagePrimitives.TryConvertTo(element, commonType, out resultValue))
+            {
+                element = resultValue;
+                
+                if (LanguagePrimitives.TryConvertTo(0, commonType, out resultValue))
+                {
+                    dynamicZero = (IComparable)resultValue;
+                }                    
+            }
+            else
+            {
+                throw new ValidationMetadataException(
+                    "ValidationRangeElementType",
+                    null, 
+                    Metadata.ValidateRangeElementType,
+                    element.GetType().Name, 
+                    commonType.Name);
+            }
+
+            switch (rangeKind)
+            {
+                case ValidateRangeKind.Positive:
+                    if (dynamicZero.CompareTo(element) >= 0)
+                    {
+                        throw new ValidationMetadataException(
+                            "ValidateRangePositiveFailure",
+                            null, 
+                            Metadata.ValidateRangePositiveFailure,
+                            element.ToString());
+                    }
+                    break;
+                case ValidateRangeKind.NonNegative:
+                    if (dynamicZero.CompareTo(element) > 0)
+                    {
+                        throw new ValidationMetadataException(
+                            "ValidateRangeNonNegativeFailure",
+                            null, 
+                            Metadata.ValidateRangeNonNegativeFailure,
+                            element.ToString());
+                    }
+                    break;
+                case ValidateRangeKind.Negative:
+                    if (dynamicZero.CompareTo(element) <= 0)
+                    {
+                        throw new ValidationMetadataException(
+                            "ValidateRangeNegativeFailure",
+                            null, 
+                            Metadata.ValidateRangeNegativeFailure,
+                            element.ToString());
+                    }
+                    break;
+                case ValidateRangeKind.NonPositive:
+                    if (dynamicZero.CompareTo(element) < 0)
+                    {
+                        throw new ValidationMetadataException(
+                            "ValidateRangeNonPositiveFailure",
+                            null, 
+                            Metadata.ValidateRangeNonPositiveFailure,
+                            element.ToString());
+                    }
+                    break;
+                }
+        }
+
+        private void ValidateRange(object element)
+        {
+            // MinRange and maxRange have the same type, so we just need
+            // to compare to one of them.
+            if (element.GetType() != _promotedType)
+            {
+                object resultValue;
+                if (LanguagePrimitives.TryConvertTo(element, _promotedType, out resultValue))
+                {
+                    element = resultValue;
+                }
+                else
+                {
+                    throw new ValidationMetadataException(
+                        "ValidationRangeElementType",
+                        null, 
+                        Metadata.ValidateRangeElementType,
+                        element.GetType().Name, 
+                        MinRange.GetType().Name);
+                }
+            }
+
+            // They are the same type and are all IComparable, so this should not throw
+            if (_minComparable.CompareTo(element) > 0)
+            {
+                throw new ValidationMetadataException(
+                    "ValidateRangeTooSmall",
+                    null, 
+                    Metadata.ValidateRangeSmallerThanMinRangeFailure,
+                    element.ToString(), 
+                    MinRange.ToString());
+            }
+
+            if (_maxComparable.CompareTo(element) < 0)
+            {
+                throw new ValidationMetadataException(
+                    "ValidateRangeTooBig",
+                    null,
+                    Metadata.ValidateRangeGreaterThanMaxRangeFailure,
+                    element.ToString(),
+                    MaxRange.ToString());
+            }
         }
 
         private static Type GetCommonType(Type minType, Type maxType)
