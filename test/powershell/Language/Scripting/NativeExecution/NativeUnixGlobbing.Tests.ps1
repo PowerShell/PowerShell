@@ -38,6 +38,12 @@ Describe 'Native UNIX globbing tests' -tags "CI" {
     It 'Should return the original pattern if there are no matches' {
         /bin/echo $TESTDRIVE/*.nosuchfile | Should Match "\*\.nosuchfile$"
     }
+    It 'Should not expand double-quoted strings' {
+        /bin/echo "*" | Should BeExactly "*"
+    }
+    It 'Should not expand single-quoted strings' {
+        /bin/echo '*' | Should BeExactly "*"
+    }
     # Test the behavior in non-filesystem drives
     It 'Should not expand patterns on non-filesystem drives' {
         /bin/echo env:ps* | Should BeExactly "env:ps*"
