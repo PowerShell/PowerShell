@@ -58,7 +58,7 @@
 
                 try
                 {
-                    Export-Clixml -LiteralPath $test.testFile -InputObject $test.inputObject -Force
+                    Export-Clixml -Depth 1 -LiteralPath $test.testFile -InputObject $test.inputObject -Force
                 }
                 catch
                 {
@@ -72,7 +72,7 @@
         It "can be created with literal path" {
 
             $filePath = Join-Path $subFilePath 'gps.xml'
-            Export-Clixml -LiteralPath $filePath -InputObject ($gpsList | Select-Object -First 1)
+            Export-Clixml -Depth 1 -LiteralPath $filePath -InputObject ($gpsList | Select-Object -First 1)
 
             $filePath | Should Exist
 
@@ -99,7 +99,7 @@
 
 
             $filePath = Join-Path $subFilePath 'gps.xml'
-            ($gpsList | Select-Object -First 1) | Export-Clixml -LiteralPath $filePath
+            ($gpsList | Select-Object -First 1) | Export-Clixml -Depth 1 -LiteralPath $filePath
 
             $filePath | Should Exist
 
@@ -154,7 +154,7 @@
         }
 
         It "can import from a literal path" {
-            Export-Clixml -LiteralPath $filePath -InputObject $gps
+            Export-Clixml -Depth 1 -LiteralPath $filePath -InputObject $gps
             $filePath | Should Exist
 
             $fileContent = Get-Content $filePath
@@ -166,7 +166,7 @@
         }
 
         It "can import from a literal path using pipeline" {
-            $gps | Export-Clixml -LiteralPath $filePath
+            $gps | Export-Clixml -Depth 1 -LiteralPath $filePath
             $filePath | Should Exist
 
             $fileContent = Get-Content $filePath
@@ -195,30 +195,22 @@ Describe "Deserializing corrupted Cim classes should not instantiate non-Cim typ
 
         # Only run on Windows platform.
         # Ensure calc.exe is avaiable for test.
-        if ( !$IsWindows -or ((Get-Command calc.exe 2>$null) -eq $null) )
-        {
-            $orginalDefaultParameters = $PSDefaultParameterValues.Clone()
-            $PSDefaultParameterValues["it:skip"] = $true
-        }
-        else
+        $shouldRunTest = $IsWindows -and ((Get-Command calc.exe -ea SilentlyContinue) -ne $null)
+        $skipNotWindows = ! $shouldRunTest
+        if ( $shouldRunTest )
         {
             (Get-Process -Name 'win32calc','calculator' 2>$null) | Stop-Process -Force -ErrorAction SilentlyContinue
         }
     }
 
     AfterAll {
-
-        if ($orginalDefaultParameters -ne $null)
-        {
-            $PSDefaultParameterValues = $orginalDefaultParameters
-        }
-        else
+        if ( $shouldRunTest )
         {
             (Get-Process -Name 'win32calc','calculator' 2>$null) | Stop-Process -Force -ErrorAction SilentlyContinue
         }
     }
 
-    It "Verifies that importing the corrupted Cim class does not launch calc.exe" {
+    It "Verifies that importing the corrupted Cim class does not launch calc.exe" -skip:$skipNotWindows {
 
         Import-Clixml -Path (Join-Path $PSScriptRoot "assets\CorruptedCim.clixml")
         
