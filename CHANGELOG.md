@@ -1,5 +1,63 @@
 # Changelog
 
+## v6.0.0-beta.5 - 2017-08-02
+
+### Breaking changes
+
+* Remove the `*-Counter` cmdlets in `Microsoft.PowerShell.Diagnostics` due to the use of unsupported APIs until a better solution is found. (#4303)
+* Remove the `Microsoft.PowerShell.LocalAccounts` due to the use of unsupported APIs until a better solution is found. (#4302)
+
+### Engine updates and fixes
+
+* Fix the issue where PowerShell Core wasn't working on Windows 7 or Windows Server 2008 R2/2012 (non-R2). (#4463)
+* `ValidateSetAttribute` enhancement: support set values to be dynamically generated from a custom `ValidateSetValueGenerator`. (#3784) (Thanks to @iSazonov!)
+* Disable breaking into debugger on Ctrl+Break when running non-interactively. (#4283) (Thanks to @mwrock!)
+* Give error instead of crashing if WSMan client library is not available. (#4387)
+* Allow passing `$true`/`$false` as a parameter to scripts using `powershell.exe -File`. (#4178)
+* Enable `DataRow`/`DataRowView` adapters in PowerShell Core to fix an issue with `DataTable` usage. (#4258)
+* Fix an issue where PowerShell class static methods were being shared across `Runspace`s/`SessionState`s. (#4209)
+* Fix array expression to not return null or throw error. (#4296)
+* Fixes a CIM deserialization bug where corrupted CIM classes were instantiating non-CIM types. (#4234)
+* Improve error message when `HelpMessage` property of `ParameterAttribute` is set to empty string. (#4334)
+* Make `ShellExecuteEx` run in a STA thread. (#4362)
+
+### General cmdlet updates and fixes
+
+* Add `-SkipHeaderValidation` switch to `Invoke-WebRequest` and `Invoke-RestMethod` to support adding headers without validating the header value. (#4085)
+* Add support for `Invoke-Item -Path <folder>`. (#4262)
+* Fix `ConvertTo-Html` output when using a single column header. (#4276)
+* Fix output of `Length` for `FileInfo` when using `Format-List`. (#4437)
+* Fix an issue in implicit remoting where restricted sessions couldn't use `Get-FormatData –PowerShellVersion`. (#4222)
+* Fix an issue where `Register-PSSessionConfiguration` fails if `SessionConfig` folder doesn't exist. (#4271)
+
+### Installer updates
+
+* Create script to install latest PowerShell from Microsoft package repositories (or Homebrew) on non-Windows platforms. (#3608) (Thanks to @DarwinJS!)
+* Enable MSI upgrades rather than a side-by-side install. (#4259)
+* Add a checkbox to open PowerShell after the Windows MSI installer has finished. (#4203) (Thanks to @bergmeister!)
+* Add Amazon Linux compatibility to `install-powershell.sh`. (#4360) (Thanks to @DarwinJS!)
+* Add ability to package PowerShell Core as a NuGet package. (#4363)
+
+### Build/test and code cleanup
+
+* Add build check for MFC for Visual C++ during Windows builds.
+  This fixes a long-standing (and very frustrating!) issue with missing build dependencies! (#4185) (Thanks to @KirkMunro!)
+* Move building Windows PSRP binary out of `Start-PSBuild`.
+  Now `Start-PSBuild` doesn't build PSRP binary on windows. Instead, we consume the PSRP binary from a NuGet package. (#4335)
+* Add tests for built-in type accelerators. (#4230) (Thanks to @dchristian3188!)
+* Increase code coverage of `Get-ChildItem` on file system. (#4342) (Thanks to @jeffbi!)
+* Increase test coverage for `Rename-Item` and `Move-Item`. (#4329) (Thanks to @jeffbi!)
+* Add test coverage for Registry provider. (#4354) (Thanks to @jeffbi!)
+* Fix warnings and errors thrown by PSScriptAnalyzer. (#4261) (Thanks to @bergmeister!)
+* Fix regressions that cause implicit remoting tests to fail. (#4326)
+* Disable legacy UTC and SQM Windows telemetry by enclosing the code in '#if LEGACYTELEMETRY'. (#4190)
+
+### Cleanup `#if CORECLR` code
+
+PowerShell 6.0 will be exclusively built on top of CoreCLR,
+so we are removing a large amount of code that's built only for FullCLR.
+To read more about this, check out [this blog post](https://blogs.msdn.microsoft.com/powershell/2017/07/14/powershell-6-0-roadmap-coreclr-backwards-compatibility-and-more/).
+
 ## v6.0.0-beta.4 - 2017-07-12
 
 ## Windows PowerShell backwards compatibility
