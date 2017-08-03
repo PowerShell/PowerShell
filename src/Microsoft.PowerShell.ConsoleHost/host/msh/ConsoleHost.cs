@@ -134,6 +134,18 @@ namespace Microsoft.PowerShell
             }
 #endif
 
+            // put PSHOME in front of PATH so that calling `powershell` within `powershell` always starts the same running version
+            StringBuilder path = new StringBuilder(Environment.GetEnvironmentVariable("PATH"));
+            string pathSeparator = ";";
+            if (!Platform.IsWindows)
+            {
+                pathSeparator = ":";
+            }
+            string pshome = Utils.DefaultPowerShellAppBase;
+            path.Replace(pathSeparator + pshome, "");
+            path.Insert(0, pshome + pathSeparator);
+            Environment.SetEnvironmentVariable("PATH", path.ToString());
+
             try
             {
                 string profileDir;

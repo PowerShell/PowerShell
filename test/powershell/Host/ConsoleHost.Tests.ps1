@@ -486,6 +486,12 @@ foo
             bash -c "unset HOME;$powershell -c '1+1'" | Should BeExactly 2
         }
     }
+
+    Context "PATH environment variable" {
+        It "`$PSHOME should be in front so that powershell.exe starts current running PowerShell" {
+            powershell -v | Should Match $psversiontable.GitCommitId
+        }
+    }
 }
 
 Describe "Console host api tests" -Tag CI {
