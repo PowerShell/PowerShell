@@ -43,16 +43,16 @@ You can download and install a PowerShell package for any of the following platf
 | Docker                             |                        | [Instructions][in-docker]     |
 | Kali Linux                         | [.deb][rl-ubuntu16]    | [Instructions][in-kali]
 
-[rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.4/PowerShell-6.0.0-beta.4-win10-win2016-x64.msi
-[rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.4/PowerShell-6.0.0-beta.4-win81-win2012r2-x64.msi
-[rl-windows7-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win7-win2008r2-x64.msi
-[rl-windows7-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win7-x86.msi
-[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.4/powershell_6.0.0-beta.4-1ubuntu1.16.04.1_amd64.deb
-[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.4/powershell_6.0.0-beta.4-1ubuntu1.14.04.1_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.4/powershell-6.0.0_beta.4-1.el7.x86_64.rpm
-[rl-ai]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.4/PowerShell-6.0.0-beta.4-x86_64.AppImage
-[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.4/powershell-6.0.0-beta.4-osx.10.12-x64.pkg
-[rl-opensuse421]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.4/powershell-6.0.0_beta.4-1.suse.42.1.x86_64.rpm
+[rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.5/PowerShell-6.0.0-beta.5-win10-win2016-x64.msi
+[rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.5/PowerShell-6.0.0-beta.5-win81-win2012r2-x64.msi
+[rl-windows7-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.5/PowerShell-6.0.0-beta.5-win7-win2008r2-x64.msi
+[rl-windows7-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.5/PowerShell-6.0.0-beta.5-win7-x86.msi
+[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.5/powershell_6.0.0-beta.5-1ubuntu1.16.04.1_amd64.deb
+[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.5/powershell_6.0.0-beta.5-1ubuntu1.14.04.1_amd64.deb
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.5/powershell-6.0.0_beta.5-1.el7.x86_64.rpm
+[rl-ai]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.5/PowerShell-6.0.0-beta.5-x86_64.AppImage
+[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.5/powershell-6.0.0-beta.5-osx.10.12-x64.pkg
+[rl-opensuse421]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.5/powershell-6.0.0_beta.5-1.suse.42.1.x86_64.rpm
 
 [installation]: docs/installation
 [in-windows]: docs/installation/windows.md#msi
