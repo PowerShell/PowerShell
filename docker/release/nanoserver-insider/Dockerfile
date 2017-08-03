@@ -10,7 +10,7 @@ ARG NanoServerRepo=microsoft/nanoserver-insider
 FROM ${WindowsServerCoreRepo}:$WindowsServerCoreVersion  AS installer-env
 
 # Arguments for installing powershell, must be defined in the container they are used
-ARG PS_VERSION=6.0.0-beta.4
+ARG PS_VERSION=6.0.0-beta.5
 ARG PS_DOWNLOAD_SHA=DAB8CC377D1BADD91688AEC9277D7696CC8DB2C25CECBCC934BD91AA7C724901
 
 ENV PS_DOWNLOAD_URL https://github.com/PowerShell/PowerShell/releases/download/v$PS_VERSION/PowerShell-$PS_VERSION-win10-win2016-x64.zip
