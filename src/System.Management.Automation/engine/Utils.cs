@@ -1526,7 +1526,7 @@ namespace System.Management.Automation.Internal
             var shellExecuteInfo = new NativeMethods.ShellExecuteInfo();
             shellExecuteInfo.fMask = NativeMethods.SEE_MASK_NOCLOSEPROCESS;
             shellExecuteInfo.fMask |= NativeMethods.SEE_MASK_FLAG_NO_UI;
- 
+
             switch (windowStyle)
             {
                 case ProcessWindowStyle.Hidden:
@@ -1546,7 +1546,7 @@ namespace System.Management.Automation.Internal
             try
             {
                 if (startInfo.FileName.Length != 0)
-                    shellExecuteInfo.lpFile = Marshal.StringToHGlobalUni(startInfo.FileName);             
+                    shellExecuteInfo.lpFile = Marshal.StringToHGlobalUni(startInfo.FileName);
                 if (!string.IsNullOrEmpty(verb))
                     shellExecuteInfo.lpVerb = Marshal.StringToHGlobalUni(verb);
                 if (startInfo.Arguments.Length != 0)
@@ -1569,7 +1569,7 @@ namespace System.Management.Automation.Internal
                 }
             }
             finally
-            {                
+            {
                 if (shellExecuteInfo.lpFile != (IntPtr)0) Marshal.FreeHGlobal(shellExecuteInfo.lpFile);
                 if (shellExecuteInfo.lpVerb != (IntPtr)0) Marshal.FreeHGlobal(shellExecuteInfo.lpVerb);
                 if (shellExecuteInfo.lpParameters != (IntPtr)0) Marshal.FreeHGlobal(shellExecuteInfo.lpParameters);
@@ -1690,7 +1690,7 @@ namespace System.Management.Automation.Internal
             public const int NtQueryProcessBasicInfo = 0;
 
             [StructLayout(LayoutKind.Sequential)]
-            internal class ShellExecuteInfo 
+            internal class ShellExecuteInfo
             {
                 public int cbSize = 0;
                 public int fMask = 0;
@@ -1708,7 +1708,7 @@ namespace System.Management.Automation.Internal
                 public IntPtr hIcon = (IntPtr)0;
                 public IntPtr hProcess = (IntPtr)0;
 
-                public ShellExecuteInfo() 
+                public ShellExecuteInfo()
                 {
                     cbSize = Marshal.SizeOf(this);
                 }
