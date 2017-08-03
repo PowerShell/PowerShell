@@ -62,7 +62,17 @@ namespace Microsoft.PowerShell.Commands
         [SecurityPermission(SecurityAction.LinkDemand)]
         protected override void Dispose(bool disposing)
         {
-            base.Dispose(disposing);
+            try
+            {
+                if (disposing)
+                {
+                    this.Close();
+                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
+            }
         }
 
         #endregion TraceListener constructors and disposer
