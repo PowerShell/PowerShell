@@ -496,11 +496,16 @@ function Invoke-OpenCover
         try
         {
             # invoke OpenCover elevated
-            & $OpenCoverBin $cmdlineElevated
+            # Write the command line to a file and then invoke file.
+            # '&' invoke caused issues with cmdline parameters for opencover.console.exe
+            $elevatedFile = "$env:temp\elevated.ps1"
+            "$OpenCoverBin $cmdlineElevated" | Out-File -FilePath $elevatedFile -force
+            powershell.exe -file $elevatedFile
 
             # invoke OpenCover unelevated and poll for completion
-            "$openCoverBin $cmdlineUnelevated" | Out-File -FilePath "$env:temp\unelevated.ps1" -Force
-            runas.exe /trustlevel:0x20000 "powershell.exe -file $env:temp\unelevated.ps1"
+            $unelevatedFile = "$env:temp\unelevated.ps1"
+            "$openCoverBin $cmdlineUnelevated" | Out-File -FilePath $unelevatedFile -Force
+            runas.exe /trustlevel:0x20000 "powershell.exe -file $unelevatedFile"
             # poll for process exit every 60 seconds
             # timeout of 6 hours
             # Runs currently take about 2.5 - 3 hours, we picked 6 hours to be substantially larger.
@@ -528,7 +533,8 @@ function Invoke-OpenCover
         }
         finally
         {
-            Remove-Item "$env:temp\unelevated.ps1" -force -ErrorAction SilentlyContinue
+            Remove-Item $elevatedFile -force -ErrorAction SilentlyContinue
+            Remove-Item $unelevatedFile -force -ErrorAction SilentlyContinue
         }
     }
 }
