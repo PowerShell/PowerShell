@@ -182,14 +182,7 @@ namespace System.Management.Automation
         internal static bool IsRunningOnProcessorArchitectureARM()
         {
             Architecture arch = RuntimeInformation.OSArchitecture;
-            if (arch == Architecture.Arm || arch == Architecture.Arm64)
-            {
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            return arch == Architecture.Arm || arch == Architecture.Arm64;
         }
 
         /// <summary>
