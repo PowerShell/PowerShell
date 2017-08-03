@@ -19,7 +19,7 @@
 * Fix array expression to not return null or throw error. (#4296)
 * Fixes a CIM deserialization bug where corrupted CIM classes were instantiating non-CIM types. (#4234)
 * Improve error message when `HelpMessage` property of `ParameterAttribute` is set to empty string. (#4334)
-* Make `ShellExecuteEx` use STA. (#4362)
+* Make `ShellExecuteEx` run in a STA thread. (#4362)
 
 ### General cmdlet updates and fixes
 
