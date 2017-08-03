@@ -2,6 +2,11 @@
 
 ## v6.0.0-beta.5 - 2017-08-02
 
+### Breaking changes
+
+* Remove the `*-Counter` cmdlets in `Microsoft.PowerShell.Diagnostics` due to the use of unsupported APIs until a better solution is found. (#4303)
+* Remove the `Microsoft.PowerShell.LocalAccounts` due to the use of unsupported APIs until a better solution is found. (#4302)
+
 ### Engine updates and fixes
 
 * Fix the issue where PowerShell Core wasn't working on Windows 7 or Windows Server 2008 R2/2012 (non-R2). (#4463)
@@ -24,8 +29,6 @@
 * Fix output of `Length` for `FileInfo` when using `Format-List`. (#4437)
 * Fix an issue in implicit remoting where restricted sessions couldn't use `Get-FormatData –PowerShellVersion`. (#4222)
 * Fix an issue where `Register-PSSessionConfiguration` fails if `SessionConfig` folder doesn't exist. (#4271)
-* Remove the `*-Counter` cmdlets in `Microsoft.PowerShell.Diagnostics` due to the use of unsupported APIs until a better solution is found. (#4303)
-* Remove the `Microsoft.PowerShell.LocalAccounts` due to the use of unsupported APIs until a better solution is found. (#4302)
 
 ### Installer updates
 
@@ -33,72 +36,27 @@
 * Enable MSI upgrades rather than a side-by-side install. (#4259)
 * Add a checkbox to open PowerShell after the Windows MSI installer has finished. (#4203) (Thanks to @bergmeister!)
 * Add Amazon Linux compatibility to `install-powershell.sh`. (#4360) (Thanks to @DarwinJS!)
-* Add ability to package all of PowerShell Core as a NuGet package. (#4363)
+* Add ability to package PowerShell Core as a NuGet package. (#4363)
 
 ### Build/test and code cleanup
 
 * Add build check for MFC for Visual C++ during Windows builds.
   This fixes a long-standing (and very frustrating!) issue with missing build dependencies! (#4185) (Thanks to @KirkMunro!)
+* Move building Windows PSRP binary out of `Start-PSBuild`.
+  Now `Start-PSBuild` doesn't build PSRP binary on windows. Instead, we consume the PSRP binary from a NuGet package. (#4335)
 * Add tests for built-in type accelerators. (#4230) (Thanks to @dchristian3188!)
 * Increase code coverage of `Get-ChildItem` on file system. (#4342) (Thanks to @jeffbi!)
 * Increase test coverage for `Rename-Item` and `Move-Item`. (#4329) (Thanks to @jeffbi!)
 * Add test coverage for Registry provider. (#4354) (Thanks to @jeffbi!)
-* Fix C# tests for `ValidateSetValuesGenerator`. (#4253) (Thanks to @iSazonov!)
 * Fix warnings and errors thrown by PSScriptAnalyzer. (#4261) (Thanks to @bergmeister!)
 * Fix regressions that cause implicit remoting tests to fail. (#4326)
 * Disable legacy UTC and SQM Windows telemetry by enclosing the code in '#if LEGACYTELEMETRY'. (#4190)
 
-#### Cleanup `#if CORE` code
+### Cleanup `#if CORECLR` code
 
 PowerShell 6.0 will be exclusively built on top of CoreCLR,
 so we are removing a large amount of code that's built only for FullCLR.
 To read more about this, check out [this blog post](https://blogs.msdn.microsoft.com/powershell/2017/07/14/powershell-6-0-roadmap-coreclr-backwards-compatibility-and-more/).
-
-* Cleanup `#if CORE` in `ManagedEntrance.cs` (#4373) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` - use `TimeZoneInfo` and `TimeZoneNotFoundException` from CoreFX (#4369) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `OrderObjectBase.cs` (#4371) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` - use `SecurityZone` from CoreFX (#4368) (Thanks to @iSazonov!)
-* Cleanup `ClrFacade.cs` - remove `ClrFacade.StructureToPtr` (#4380)
-* Cleanup `ClrFacade.cs` - remove `ClrFacade.DestroyStructure` (#4378)
-* Remove `ClrFacade.GetUninitializedObject` and 'if CORECLR' cleanup (#4375)
-* Cleanup `ClrFacade.cs` - remove `ClrFacade.SizeOf<T>()` (#4377)
-* Cleanup `ClrFacade.cs` - remove `ClrFacade.PtrToStructure` (#4379)
-* Cleanup `#if CORE` `in remoterunspace.cs` (#4431) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `PSVersionInfo.cs` (#4430) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` `ParameterBinderBase.cs` (#4427) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `ModuleIntrinsics.cs` (#4426) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `Utilities.cs` (#4425) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `InstructionFactory.cs` (#4424) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `DynamicInstructionN.cs` (#4423) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `ConnectionFactory.cs` (#4422) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `CommandProcessor.cs` (#4421) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `ExtensibleCompletion.cs` (#4420) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `CompletionCompleters.cs` (#4419) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `ComAdapter.cs` (#4418) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `CorePsStub.cs` (#4416) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `CurrentConfigurations.cs` (#4409) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `CorePsPlatform.cs` (#4415) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `CorePsExtensions.cs` (#4414) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `MshParameter.cs` (#4413) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `ILineOutput.cs` (#4412) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `cmdlets-over-objects.objectModel.autogen.cs` (#4411) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `Set-QuickConfig.cs` (#4410) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `CertificateProvider.cs` (#4408) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `HistoryQueue.cs` (#4407) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `Cmdlets.cs` (#4406) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `PInvokeDllNames.cs` (#4405) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `Native.cs` (#4404) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `PSUserAgent.cs` (#4403) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `GetComputerInfoCommand.cs` (#4401) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `cimConverter.cs` (#4400) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `PdhSafeHandle.cs` (#4399) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `CimIndicationWatcher.cs` (#4398) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `Utils.cs` (#4397) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `PInvokeDllNames.cs` (#4456) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `PSTelemetryMethods.cs` (#4452) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `ExtensionMethods.cs` (#4451) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `SessionStateExceptions.cs` (#4454) (Thanks to @iSazonov!)
-* Cleanup `#if CORE` in `EtwActivity.cs` (#4455) (Thanks to @iSazonov!)
 
 ## v6.0.0-beta.4 - 2017-07-12
 
