@@ -1321,9 +1321,6 @@ namespace System.Management.Automation
             List<CompletionResult> results = null;
             matched = false;
 
-#if CORECLR // Microsoft.PowerShell.DesiredStateConfiguration is not in CORE CLR
-            results = new List<CompletionResult>();
-#else
             IEnumerable<DynamicKeyword> keywords = configureAst.DefinedKeywords.Where(
                 k => // Node is special case, legal in both Resource and Meta configuration
                     String.Compare(k.Keyword, @"Node", StringComparison.OrdinalIgnoreCase) == 0 ||
@@ -1369,7 +1366,6 @@ namespace System.Management.Automation
                         usageString));
                 }
             }
-#endif
 
             return results;
         }
