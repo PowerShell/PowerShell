@@ -1786,7 +1786,7 @@ namespace System.Management.Automation.Security
             uint nAclLength,
             uint dwAclRevision);
 
-        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
+        [DllImport("api-ms-win-security-base-l1-2-0.dll", CharSet = CharSet.Unicode)]
         internal static extern uint AddScopedPolicyIDAce(
             IntPtr Acl,
             uint AceRevision,
