@@ -32,6 +32,8 @@
     <!-- Set properties for add/remove programs -->
     <Property Id="ARPHELPLINK" Value="$(var.InfoURL)" />
 
+  <!-- Allow using %USERPROFILE% -->
+  <SetProperty Id="UserFolder" Value="[%USERPROFILE]" Before="AppSearch"/>
 	<!-- Checkbox to allow starting PowerShell after the installation (in UI mode only) -->
 	<Property Id="WIXUI_EXITDIALOGOPTIONALCHECKBOXTEXT" Value="Open $(env.ProductName)" />
 	<!-- Default value of Checkbox of starting PowerShell after installation -->  
@@ -78,7 +80,7 @@
               Name="$(var.ProductSemanticVersionWithName)"
               Description="$(var.ProductSemanticVersionWithName)"
               Target="[$(var.ProductVersionWithName)]PowerShell.exe"
-              WorkingDirectory="$(var.ProductVersionWithName)"
+              WorkingDirectory="UserFolder"
               Icon = "PowerShellExe.ico" />
 
             <RemoveFolder Id="ApplicationProgramsFolder" On="uninstall"/>
