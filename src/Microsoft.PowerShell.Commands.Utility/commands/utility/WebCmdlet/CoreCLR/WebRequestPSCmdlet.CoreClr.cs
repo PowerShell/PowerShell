@@ -283,7 +283,15 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                request.Headers.Add(HttpKnownHeaderNames.UserAgent, WebSession.UserAgent);
+                if (SkipHeaderValidation)
+                {
+                    request.Headers.TryAddWithoutValidation(HttpKnownHeaderNames.UserAgent, WebSession.UserAgent);
+                }
+                else
+                {
+                    request.Headers.Add(HttpKnownHeaderNames.UserAgent, WebSession.UserAgent);    
+                }
+                
             }
 
             // Set 'Keep-Alive' to false. This means set the Connection to 'Close'.

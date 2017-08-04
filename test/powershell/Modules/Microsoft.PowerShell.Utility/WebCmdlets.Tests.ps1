@@ -227,6 +227,50 @@ function ExecuteRequestWithCustomHeaders
     return $result
 }
 
+# This function calls either Invoke-WebRequest or Invoke-RestMethod with the given uri
+# using the custom UserAgent and the  optional SkipHeaderValidation switch.
+function ExecuteRequestWithCustomUserAgent {
+    param (
+        [Parameter(Mandatory)]
+        [string]
+        $Uri,
+
+        [ValidateSet('Invoke-WebRequest', 'Invoke-RestMethod')]
+        [string] $Cmdlet = 'Invoke-WebRequest',
+
+        [Parameter(Mandatory)]
+        [ValidateNotNull()]
+        [string] $UserAgent,
+
+        [switch] $SkipHeaderValidation
+    )
+    $result = [PSObject]@{Output = $null; Error = $null; Content = $null}
+
+    try {
+        $Params = @{
+            Uri                  = $Uri 
+            TimeoutSec           = 5 
+            UserAgent            = $UserAgent 
+            SkipHeaderValidation = $SkipHeaderValidation.IsPresent
+        }
+        if ($Cmdlet -eq 'Invoke-WebRequest') {
+            $result.Output = Invoke-WebRequest @Params
+            $result.Content = $result.Output.Content | ConvertFrom-Json
+        }
+        else {
+            $result.Output = Invoke-RestMethod @Params
+            # NOTE: $result.Output should already be a PSObject (Invoke-RestMethod converts the returned json automatically)
+            # so simply reference $result.Output
+            $result.Content = $result.Output
+        }
+    }
+    catch {
+        $result.Error = $_
+    }
+
+    return $result
+}
+
 <#
     Defines the list of redirect codes to test as well as the
     expected Method when the redirection is handled.
@@ -732,6 +776,31 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $response.Content.Headers -contains "If-Match" | Should Be $true
     }
 
+    It "Verifies Invoke-WebRequest default UserAgent handling with no errors" {
+        $UserAgent = [Microsoft.PowerShell.Commands.PSUserAgent]::InternetExplorer
+        $response = ExecuteRequestWithCustomUserAgent -Uri "http://localhost:8081/PowerShell?test=echo" -UserAgent $UserAgent -Cmdlet "Invoke-WebRequest"
+
+        $response.Error | Should BeNullOrEmpty
+        $response.Content.Headers.'User-Agent' | Should Match $UserAgent
+    }
+
+    It "Verifies Invoke-WebRequest default UserAgent handling reports an error is returned for an invalid UserAgent value" {
+        $UserAgent = 'Invalid:Agent'
+        $response = ExecuteRequestWithCustomUserAgent -Uri "http://localhost:8081/PowerShell?test=echo" -UserAgent $UserAgent  -Cmdlet "Invoke-WebRequest"
+
+        $response.Error | Should Not BeNullOrEmpty
+        $response.Error.FullyQualifiedErrorId | Should Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $response.Error.Exception.Message | Should Be "The format of value 'Invalid:Agent' is invalid."
+    }
+
+    It "Verifies Invoke-WebRequest UserAgent handling does not report an error when using -SkipHeaderValidation" {
+        $UserAgent = 'Invalid:Agent'
+        $response = ExecuteRequestWithCustomUserAgent -Uri "http://localhost:8081/PowerShell?test=echo" -UserAgent $UserAgent  -SkipHeaderValidation -Cmdlet "Invoke-WebRequest"
+
+        $response.Error | Should BeNullOrEmpty
+        $response.Content.Headers.'User-Agent' | Should Match $UserAgent
+    }
+
     #endregion SkipHeaderVerification Tests
 
     BeforeEach {
@@ -1221,6 +1290,31 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
         $response.Error | Should BeNullOrEmpty
         $response.Content.Headers -contains "If-Match" | Should Be $true
+    }
+
+    It "Verifies Invoke-RestMethod default UserAgent handling with no errors" {
+        $UserAgent = [Microsoft.PowerShell.Commands.PSUserAgent]::InternetExplorer
+        $response = ExecuteRequestWithCustomUserAgent -Uri "http://localhost:8081/PowerShell?test=echo" -UserAgent $UserAgent -Cmdlet "Invoke-RestMethod"
+
+        $response.Error | Should BeNullOrEmpty
+        $response.Content.Headers.'User-Agent' | Should Match $UserAgent
+    }
+
+    It "Verifies Invoke-RestMethod default UserAgent handling reports an error is returned for an invalid UserAgent value" {
+        $UserAgent = 'Invalid:Agent'
+        $response = ExecuteRequestWithCustomUserAgent -Uri "http://localhost:8081/PowerShell?test=echo" -UserAgent $UserAgent  -Cmdlet "Invoke-RestMethod"
+
+        $response.Error | Should Not BeNullOrEmpty
+        $response.Error.FullyQualifiedErrorId | Should Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $response.Error.Exception.Message | Should Be "The format of value 'Invalid:Agent' is invalid."
+    }
+
+    It "Verifies Invoke-RestMethod UserAgent handling does not report an error when using -SkipHeaderValidation" {
+        $UserAgent = 'Invalid:Agent'
+        $response = ExecuteRequestWithCustomUserAgent -Uri "http://localhost:8081/PowerShell?test=echo" -UserAgent $UserAgent  -SkipHeaderValidation -Cmdlet "Invoke-RestMethod"
+
+        $response.Error | Should BeNullOrEmpty
+        $response.Content.Headers.'User-Agent' | Should Match $UserAgent
     }
 
     #endregion SkipHeaderVerification tests
