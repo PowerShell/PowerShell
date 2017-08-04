@@ -67,6 +67,43 @@
 		$cmd = [Microsoft.PowerShell.Commands.ConvertToXmlCommand]::new()
 		$cmd.NoTypeInformation = $true
 		$cmd.NoTypeInformation | Should Be $true
-	}
+    }
+
+    It "Serialize primitive type" {
+        [int] $i = 1
+        $x = $i | ConvertTo-Xml
+        $x.Objects.Object.Type | Should BeExactly $i.GetType().ToString()
+        $x.Objects.Object."#text" | Should BeExactly $i
+    }
+
+    It "Serialize dictionary type" {
+        $a = @{foo="bar"}
+        $x = $a | ConvertTo-Xml
+        $x.Objects.Object.Type | Should BeExactly $a.GetType().ToString()
+        $x.Objects.Object.Property[0].Name | Should BeExactly "Key"
+        $x.Objects.Object.Property[0]."#text" | Should BeExactly "foo"
+        $x.Objects.Object.Property[1].Name | Should BeExactly "Value"
+        $x.Objects.Object.Property[1]."#text" | Should BeExactly "bar"
+    }
+
+    It "Serialize enumerable type" {
+        class fruit
+        {
+            [string] $name;
+        }
+
+        $fruit1 = [fruit]::new()
+        $fruit1.name = "apple"
+        $fruit2 = [fruit]::new()
+        $fruit2.name = "banana"
+        $x = $fruit1,$fruit2 | ConvertTo-Xml
+        $x.Objects.Object.Count | Should BeExactly 2
+        $x.Objects.Object[0].Type = "fruit"
+        $x.Objects.Object[0].Property.Name = "name"
+        $x.Objects.Object[0].Property."#text" = "apple"
+        $x.Objects.Object[1].Type = "fruit"
+        $x.Objects.Object[1].Property.Name = "name"
+        $x.Objects.Object[1].Property."#text" = "banana"
+    }
 }
 
