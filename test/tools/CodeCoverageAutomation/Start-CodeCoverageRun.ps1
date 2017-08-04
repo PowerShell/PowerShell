@@ -1,7 +1,8 @@
 ﻿param(
     [Parameter(Mandatory = $true, Position = 0)] $coverallsToken,
     [Parameter(Mandatory = $true, Position = 1)] $codecovToken,
-    [Parameter(Position = 2)] $azureLogDrive = "L:\"
+    [Parameter(Position = 2)] $azureLogDrive = "L:\",
+    [switch] $SuppressQuiet
 )
 
 # Read the XML and create a dictionary for FileUID -> file full path.
@@ -168,7 +169,7 @@ try
     Install-OpenCover -TargetDirectory $openCoverTargetDirectory -force
     Write-LogPassThru -Message "OpenCover installed."
 
-    Write-LogPassThru -Message "TestDirectory : $testPath"
+    Write-LogPassThru -Message "TestPath : $testPath"
     Write-LogPassThru -Message "openCoverPath : $openCoverTargetDirectory\OpenCover"
     Write-LogPassThru -Message "psbinpath : $psBinPath"
     Write-LogPassThru -Message "elevatedLog : $elevatedLogs"
@@ -176,12 +177,17 @@ try
     Write-LogPassThru -Message "TestToolsPath : $testToolsPath"
 
     $openCoverParams = @{outputlog = $outputLog;
-        TestDirectory = $testPath;
+        TestPath = $testPath;
         OpenCoverPath = "$openCoverTargetDirectory\OpenCover";
         PowerShellExeDirectory = "$psBinPath";
         PesterLogElevated = $elevatedLogs;
         PesterLogUnelevated = $unelevatedLogs;
         TestToolsModulesPath = "$testToolsPath\Modules";
+    }
+
+    if($SuppressQuiet)
+    {
+        $openCoverParams.Add('SuppressQuiet', $true)
     }
 
     $openCoverParams | Out-String | Write-LogPassThru

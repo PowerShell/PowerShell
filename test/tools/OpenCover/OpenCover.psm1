@@ -413,21 +413,22 @@ function Install-OpenCover
 .Description
    Invoke-OpenCover runs tests under OpenCover by executing tests on PowerShell.exe located at $PowerShellExeDirectory.
 .EXAMPLE
-   Invoke-OpenCover -TestDirectory $pwd/test/powershell -PowerShellExeDirectory $pwd/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win10-x64
+   Invoke-OpenCover -TestPath $pwd/test/powershell -PowerShellExeDirectory $pwd/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win10-x64
 #>
 function Invoke-OpenCover
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param (
         [parameter()]$OutputLog = "$home/Documents/OpenCover.xml",
-        [parameter()]$TestDirectory = "${script:psRepoPath}/test/powershell",
+        [parameter()]$TestPath = "${script:psRepoPath}/test/powershell",
         [parameter()]$OpenCoverPath = "$home/OpenCover",
         [parameter()]$PowerShellExeDirectory = "${script:psRepoPath}/src/powershell-win-core/bin/CodeCoverage/netcoreapp2.0/win10-x64/publish",
         [parameter()]$PesterLogElevated = "$pwd/TestResultsElevated.xml",
         [parameter()]$PesterLogUnelevated = "$pwd/TestResultsUnelevated.xml",
         [parameter()]$PesterLogFormat = "NUnitXml",
         [parameter()]$TestToolsModulesPath = "${script:psRepoPath}/test/tools/Modules",
-        [switch]$CIOnly
+        [switch]$CIOnly,
+        [switch]$SuppressQuiet
         )
 
     # check for elevation
@@ -462,8 +463,10 @@ function Invoke-OpenCover
 
     # create the arguments for OpenCover
 
-    $startupArgs =  'Set-ExecutionPolicy Bypass -Force -Scope Process;'
-    $targetArgs = "-c","${startupArgs}", "Invoke-Pester","${TestDirectory}"
+    $updatedEnvPath = "${PowerShellExeDirectory}\Modules;$TestToolsModulesPath"
+
+    $startupArgs =  "Set-ExecutionPolicy Bypass -Force -Scope Process; `$env:PSModulePath = '${updatedEnvPath}';"
+    $targetArgs = "${startupArgs}", "Invoke-Pester","${TestPath}","-OutputFormat $PesterLogFormat"
 
     if ( $CIOnly )
     {
@@ -476,46 +479,40 @@ function Invoke-OpenCover
         $targetArgsUnelevated = $targetArgs + @("-excludeTag @('RequireAdminOnWindows')")
     }
 
-    $targetArgsElevated += @("-OutputFile $PesterLogElevated", "-OutputFormat $PesterLogFormat", "-Quiet")
-    $targetArgsUnelevated += @("-OutputFile $PesterLogUnelevated", "-OutputFormat $PesterLogFormat", "-Quiet")
+    $targetArgsElevated += @("-OutputFile $PesterLogElevated")
+    $targetArgsUnelevated += @("-OutputFile $PesterLogUnelevated")
 
-    $targetArgStringElevated = $targetArgsElevated -join " "
-    $targetArgStringUnelevated  = $targetArgsUnelevated -join " "
-    # the order seems to be important. Always keep -targetargs as the last parameter.
-    $openCoverArgsElevated = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all","-mergeoutput", "-filter:`"+[*]* -[Microsoft.PowerShell.PSReadLine]*`"", "-targetargs:`"$targetArgStringElevated`""
-    $openCoverArgsUnelevated = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all", "-mergeoutput", "-filter:`"+[*]* -[Microsoft.PowerShell.PSReadLine]*`"", "-targetargs:`"$targetArgStringUnelevated`""
-    $openCoverArgsUnelevatedString = $openCoverArgsUnelevated -join " "
+    if(-not $SuppressQuiet)
+    {
+        $targetArgsElevated += @("-Quiet")
+        $targetArgsUnelevated += @("-Quiet")
+    }
 
-    if ( $PSCmdlet.ShouldProcess("$OpenCoverBin $openCoverArgsUnelevated")  )
+    $cmdlineElevated = CreateOpenCoverCmdline -target $target -outputLog $OutputLog -targetArgs $targetArgsElevated
+    $cmdlineUnelevated = CreateOpenCoverCmdline -target $target -outputLog $OutputLog -targetArgs $targetArgsUnelevated
+
+    if ( $PSCmdlet.ShouldProcess("$OpenCoverBin $cmdlineUnelevated") )
     {
         try
         {
-            # check to be sure that the module path is present
-            # this isn't done earlier because there's no need to change env:PSModulePath unless we're going to really run tests
-            $saveModPath = $env:PSModulePath
-            $env:PSModulePath = "${PowerShellExeDirectory}\Modules;$TestToolsModulesPath"
-
-            $modulePathParts = $env:PSModulePath -split ';'
-
-            foreach($part in $modulePathParts)
-            {
-                if ( ! (test-path $part) )
-                {
-                    throw "${part} does not exist"
-                }
-            }
-
             # invoke OpenCover elevated
-            & $OpenCoverBin $openCoverArgsElevated
+            # Write the command line to a file and then invoke file.
+            # '&' invoke caused issues with cmdline parameters for opencover.console.exe
+            $elevatedFile = "$env:temp\elevated.ps1"
+            "$OpenCoverBin $cmdlineElevated" | Out-File -FilePath $elevatedFile -force
+            powershell.exe -file $elevatedFile
 
             # invoke OpenCover unelevated and poll for completion
-            "$openCoverBin $openCoverArgsUnelevatedString" | Out-File -FilePath "$env:temp\unelevated.ps1" -Force
-            runas.exe /trustlevel:0x20000 "powershell.exe -file $env:temp\unelevated.ps1"
-            # wait for process to start
-            Start-Sleep -Seconds 5
+            $unelevatedFile = "$env:temp\unelevated.ps1"
+            "$openCoverBin $cmdlineUnelevated" | Out-File -FilePath $unelevatedFile -Force
+            runas.exe /trustlevel:0x20000 "powershell.exe -file $unelevatedFile"
             # poll for process exit every 60 seconds
             # timeout of 6 hours
+            # Runs currently take about 2.5 - 3 hours, we picked 6 hours to be substantially larger.
             $timeOut = ([datetime]::Now).AddHours(6)
+
+            $openCoverExited = $false
+
             while([datetime]::Now -lt $timeOut)
             {
                 Start-Sleep -Seconds 60
@@ -524,15 +521,44 @@ function Invoke-OpenCover
                 if(-not $openCoverProcess)
                 {
                     #run must have completed.
+                    $openCoverExited = $true
                     break
                 }
+            }
+
+            if(-not $openCoverExited)
+            {
+                throw "Opencover has not exited in 6 hours"
             }
         }
         finally
         {
-            # set it back
-            $env:PSModulePath = $saveModPath
-            Remove-Item "$env:temp\unelevated.ps1" -force -ErrorAction SilentlyContinue
+            Remove-Item $elevatedFile -force -ErrorAction SilentlyContinue
+            Remove-Item $unelevatedFile -force -ErrorAction SilentlyContinue
         }
     }
+}
+
+function CreateOpenCoverCmdline($target, $outputLog, $targetArgs)
+{
+    $targetArgString = $targetArgs -join " "
+
+    $bytes = [System.Text.Encoding]::Unicode.GetBytes($targetArgString)
+    $base64targetArgs = [convert]::ToBase64String($bytes)
+
+    # the order seems to be important. Always keep -targetargs as the last parameter.
+    $cmdline = "-target:$target",
+        "-register:user",
+        "-output:${outputLog}",
+        "-nodefaultfilters",
+        "-oldstyle",
+        "-hideskipped:all",
+        "-mergeoutput",
+        "-filter:`"+[*]* -[Microsoft.PowerShell.PSReadLine]*`"",
+        "-targetargs:`"-EncodedCommand $base64targetArgs`""
+
+    $cmdlineAsString = $cmdline -join " "
+
+    return $cmdlineAsString
+
 }
