@@ -1,0 +1,47 @@
+<PowerShellMetadata xmlns="http://schemas.microsoft.com/cmdlets-over-objects/2009/11">
+  <Class ClassName="ROOT/default/PSCore_CimTest">
+    <Version>1.0.0.0</Version>
+    <DefaultNoun>CimTest</DefaultNoun>
+    <InstanceCmdlets>
+      <!--
+
+      //
+      // Get-CimTest
+      //
+
+      -->
+      <GetCmdletParameters DefaultCmdletParameterSet="Id">
+        <QueryableProperties>
+          <Property PropertyName="Id">
+            <Type PSType="System.String" />
+            <RegularQuery>
+              <CmdletParameterMetadata ValueFromPipelineByPropertyName="true" CmdletParameterSets="Id" />
+            </RegularQuery>
+          </Property>
+        </QueryableProperties>
+      </GetCmdletParameters>
+
+      <Cmdlet>
+        <CmdletMetadata Verb="Remove" ConfirmImpact="High" />
+        <Method MethodName="cim:DeleteInstance">
+          <Parameters>
+            <Parameter ParameterName="cim:operationOption:SourceCaller" DefaultValue="Microsoft.PowerShell">
+              <Type PSType="System.String" />
+            </Parameter>
+          </Parameters>
+        </Method>
+        <GetCmdletParameters DefaultCmdletParameterSet="Id">
+          <QueryableProperties>
+            <Property PropertyName="Id">
+              <Type PSType="System.String" />
+              <RegularQuery>
+                <CmdletParameterMetadata Position="0" IsMandatory="true" ValueFromPipelineByPropertyName="true" CmdletParameterSets="Id" />
+              </RegularQuery>
+            </Property>
+          </QueryableProperties>
+        </GetCmdletParameters>
+      </Cmdlet>
+
+    </InstanceCmdlets>
+  </Class>
+</PowerShellMetadata>

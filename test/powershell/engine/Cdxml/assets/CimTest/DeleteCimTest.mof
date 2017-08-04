@@ -1,0 +1,2 @@
+#pragma namespace ("\\\\.\\root\\default")
+#pragma deleteclass("PSCore_CimTest", NOFAIL)

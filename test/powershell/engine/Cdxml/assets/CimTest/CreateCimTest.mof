@@ -1,0 +1,33 @@
+class PSCore_CimTest 
+{
+    [key] string id;
+    string field1;
+    sint32 field2;
+};
+
+instance of PSCore_CimTest
+{
+    id = "1";
+    field1 = "instance 1";
+    field2 = -1;
+};
+
+instance of PSCore_CimTest
+{
+    id = "2";
+    field1 = "instance 2";
+    field2 = -2;
+};
+
+instance of PSCore_CimTest
+{
+    id = "3";
+    field1 = "instance 3";
+    field2 = -3;
+};
+instance of PSCore_CimTest
+{
+    id = "4";
+    field1 = "instance 4";
+    field2 = -4;
+};
