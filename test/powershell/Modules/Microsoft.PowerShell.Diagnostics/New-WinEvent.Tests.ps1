@@ -17,8 +17,7 @@ Describe 'New-WinEvent' -Tags "CI" {
             $global:PSDefaultParameterValues = $originalDefaultParameterValues
         }
 
-        It 'Simple New-WinEvent' {
-            # simple event without any payload
+        It 'Simple New-WinEvent without any payload' {
             New-WinEvent -ProviderName $ProviderName -Id $SimpleEventId -Version 1
             $filter = @{ ProviderName = $ProviderName; Id = $SimpleEventId}
             (Get-WinEvent -filterHashtable $filter).Count | Should BeGreaterThan 0
