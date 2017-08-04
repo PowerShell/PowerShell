@@ -83,7 +83,7 @@ namespace System.Management.Automation.Remoting
                 ConnectionString = senderInfo.ConnectionString;
                 _applicationArguments = senderInfo._applicationArguments;
 
-                this.clientTimeZone = senderInfo.ClientTimeZone;
+                ClientTimeZone = senderInfo.ClientTimeZone;
             }
             catch (Exception)
             {
@@ -130,10 +130,9 @@ namespace System.Management.Automation.Remoting
         /// </summary>
         public TimeZoneInfo ClientTimeZone
         {
-            get { return clientTimeZone; }
-            internal set { clientTimeZone = value; }
+            get;
+            internal set;
         }
-        private TimeZoneInfo clientTimeZone;
 
         /// <summary>
         /// Connection string used by the client to connect to the server. This is
