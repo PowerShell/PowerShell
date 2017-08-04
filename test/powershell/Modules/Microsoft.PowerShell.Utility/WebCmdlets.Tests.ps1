@@ -247,12 +247,18 @@ function ExecuteRequestWithCustomUserAgent {
     $result = [PSObject]@{Output = $null; Error = $null; Content = $null}
 
     try {
+        $Params = @{
+            Uri                  = $Uri 
+            TimeoutSec           = 5 
+            UserAgent            = $UserAgent 
+            SkipHeaderValidation = $SkipHeaderValidation.IsPresent
+        }
         if ($Cmdlet -eq 'Invoke-WebRequest') {
-            $result.Output = Invoke-WebRequest -Uri $Uri -TimeoutSec 5 -UserAgent $UserAgent -SkipHeaderValidation:$SkipHeaderValidation.IsPresent
+            $result.Output = Invoke-WebRequest @Params
             $result.Content = $result.Output.Content | ConvertFrom-Json
         }
         else {
-            $result.Output = Invoke-RestMethod -Uri $Uri -TimeoutSec 5 -UserAgent $UserAgent -SkipHeaderValidation:$SkipHeaderValidation.IsPresent
+            $result.Output = Invoke-RestMethod @Params
             # NOTE: $result.Output should already be a PSObject (Invoke-RestMethod converts the returned json automatically)
             # so simply reference $result.Output
             $result.Content = $result.Output
