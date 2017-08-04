@@ -1194,7 +1194,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 
                 // Add CAPID to the SACL.
-                rs = NativeMethods.RtlAddScopedPolicyIDAce(
+                rs = NativeMethods.AddScopedPolicyIDAce(
                     pSacl,
                     NativeMethods.ACL_REVISION,
                     NativeMethods.SUB_CONTAINERS_AND_OBJECTS_INHERIT,
