@@ -177,8 +177,38 @@ namespace System.Management.Automation
                 throw PSTraceSource.NewArgumentException("resourceId");
             }
 
-            ResourceManager resourceManager = GetResourceManager(assembly, baseName);
-            string text = resourceManager.GetString(resourceId);
+            ResourceManager resourceManager = null;
+            string text = string.Empty;
+
+            // For a non-existing resource defined by {assembly,baseName,resourceId}
+            // MissingManifestResourceException is thrown only at the time when resource retrieval method
+            // such as ResourceManager.GetString or ResourceManager.GetObject is called,
+            // not when you instantiate a ResourceManager object.
+            try
+            {
+                // try with original baseName first
+                // if it fails then try with alternative resource path format
+                resourceManager = GetResourceManager(assembly, baseName);
+                text = resourceManager.GetString(resourceId);
+            }
+            catch (MissingManifestResourceException)
+            {
+                const string resourcesSubstring = ".resources.";
+                int resourcesSubstringIndex = baseName.IndexOf(resourcesSubstring);
+                string newBaseName = string.Empty;
+                if (resourcesSubstringIndex != -1)
+                {
+                    newBaseName = baseName.Substring(resourcesSubstringIndex + resourcesSubstring.Length); // e.g.  "FileSystemProviderStrings"
+                }
+                else
+                {
+                    newBaseName = string.Concat(assembly.GetName().Name, resourcesSubstring, baseName); // e.g. "System.Management.Automation.resources.FileSystemProviderStrings"
+                }
+
+                resourceManager = GetResourceManager(assembly, newBaseName);
+                text = resourceManager.GetString(resourceId);
+            }
+
             if (String.IsNullOrEmpty(text) && s_DFT_monitorFailingResourceLookup)
             {
                 Diagnostics.Assert(false,
