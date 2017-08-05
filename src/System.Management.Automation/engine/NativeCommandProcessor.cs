@@ -443,6 +443,7 @@ namespace System.Management.Automation
                         string executable = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
                         startInfo.Arguments = "\"" + startInfo.FileName + "\" " + startInfo.Arguments;
                         startInfo.FileName = executable;
+                        startInfo.UseShellExecute = false;
                     }
 
                     try
