@@ -81,7 +81,9 @@ namespace Microsoft.PowerShell
                 {
                     // the keyChar is this token, if not a special key like "Fxx" etc.
                     if (token.Length == 1)
+                    {
                         keyChar = token[0];
+                    }
 
                     // Enum.TryParse accepts arbitrary integers.  We shouldn't,
                     // but single digits need to map to the correct key, e.g.
