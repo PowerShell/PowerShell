@@ -148,6 +148,18 @@ namespace System.Management.Automation
             }
         }
 
+        internal static bool IsWindowsDesktop
+        {
+            get
+            {
+#if UNIX
+                return false;
+#else
+                return IsWindows && !IsNanoServer && !IsIoT;
+#endif
+            }
+        }
+
 #if !UNIX
         private static bool? _isNanoServer = null;
         private static bool? _isIoT = null;

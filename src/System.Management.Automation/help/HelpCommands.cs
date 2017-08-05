@@ -642,7 +642,7 @@ namespace Microsoft.PowerShell.Commands
                 browserProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
                 browserProcess.StartInfo.Arguments = uriToLaunch.OriginalString;
                 browserProcess.Start();
-#elif CORECLR
+#else
                 if (Platform.IsNanoServer || Platform.IsIoT)
                 {
                     // We cannot open the URL in browser on headless SKUs.
@@ -653,11 +653,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // We can call ShellExecute directly on Full Windows.
                     browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
-                    ShellExecuteHelper.Start(browserProcess.StartInfo);
+                    browserProcess.StartInfo.UseShellExecute = true;
+                    browserProcess.Start();
                 }
-#else
-                browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
-                browserProcess.Start();
 #endif
             }
             catch (InvalidOperationException ioe)
