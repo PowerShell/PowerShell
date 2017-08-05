@@ -134,6 +134,12 @@ if [[ ! -d $(brew --prefix cask) ]]; then
     fi
 fi
 
+# Suppress output, it's very noisy on travis-ci
+echo "Refreshing Homebrew cache..."
+if ! brew update >/dev/null; then
+    echo "ERROR: Refreshing Homebrew cache failed..." >&2
+fi
+
 if ! hash powershell 2>/dev/null; then
     echo "Installing PowerShell..."
     if ! brew cask install powershell; then
