@@ -743,7 +743,6 @@ namespace System.Management.Automation.Remoting
             // This is used by the initial session state configuration providers like Exchange.
             if (Context != null)
             {
-
                 _senderInfo.ClientTimeZone = Context.ClientCapability.TimeZone;
             }
 
