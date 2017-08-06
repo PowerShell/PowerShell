@@ -1,4 +1,10 @@
 ﻿Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
+    BeforeAll {
+        class fruit {
+            [string] $name;
+        }
+    }
+
     $customPSObject = [pscustomobject]@{ "prop1" = "val1"; "prop2" = "val2" }
     $newLine = [System.Environment]::NewLine
     It "Test convertto-xml with a depth parameter" {
@@ -76,7 +82,7 @@
         $x.Objects.Object."#text" | Should BeExactly $i
     }
 
-    It "Serialize dictionary type" {
+    It "Serialize ContainerType.Dictionary type" {
         $a = @{foo="bar"}
         $x = $a | ConvertTo-Xml
         $x.Objects.Object.Type | Should BeExactly $a.GetType().ToString()
@@ -86,24 +92,19 @@
         $x.Objects.Object.Property[1]."#text" | Should BeExactly "bar"
     }
 
-    It "Serialize enumerable type" {
-        class fruit
-        {
-            [string] $name;
-        }
-
+    It "Serialize ContainerType.Enumerable type" {
         $fruit1 = [fruit]::new()
         $fruit1.name = "apple"
         $fruit2 = [fruit]::new()
         $fruit2.name = "banana"
         $x = $fruit1,$fruit2 | ConvertTo-Xml
         $x.Objects.Object.Count | Should BeExactly 2
-        $x.Objects.Object[0].Type = "fruit"
-        $x.Objects.Object[0].Property.Name = "name"
-        $x.Objects.Object[0].Property."#text" = "apple"
-        $x.Objects.Object[1].Type = "fruit"
-        $x.Objects.Object[1].Property.Name = "name"
-        $x.Objects.Object[1].Property."#text" = "banana"
+        $x.Objects.Object[0].Type | Should BeExactly $fruit1.GetType().FullName
+        $x.Objects.Object[0].Property.Name | Should BeExactly "name"
+        $x.Objects.Object[0].Property."#text" | Should BeExactly "apple"
+        $x.Objects.Object[1].Type | Should BeExactly $fruit2.GetType().FullName
+        $x.Objects.Object[1].Property.Name | Should BeExactly "name"
+        $x.Objects.Object[1].Property."#text" | Should BeExactly "banana"
     }
 }
 
