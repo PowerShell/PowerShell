@@ -743,9 +743,7 @@ namespace System.Management.Automation.Remoting
             // This is used by the initial session state configuration providers like Exchange.
             if (Context != null)
             {
-#if !CORECLR // TimeZone Not In CoreCLR
                 _senderInfo.ClientTimeZone = Context.ClientCapability.TimeZone;
-#endif
             }
 
             _senderInfo.ApplicationArguments = RemotingDecoder.GetApplicationArguments(rcvdData.Data);
