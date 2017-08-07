@@ -778,27 +778,29 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     It "Verifies Invoke-WebRequest default UserAgent handling with no errors" {
         $UserAgent = [Microsoft.PowerShell.Commands.PSUserAgent]::InternetExplorer
-        $response = ExecuteRequestWithCustomUserAgent -Uri "http://localhost:8081/PowerShell?test=echo" -UserAgent $UserAgent -Cmdlet "Invoke-WebRequest"
+        $response = ExecuteRequestWithCustomUserAgent -Uri "http://localhost:8080/PowerShell?test=echo" -UserAgent $UserAgent -Cmdlet "Invoke-WebRequest"
 
         $response.Error | Should BeNullOrEmpty
-        $response.Content.Headers.'User-Agent' | Should Match $UserAgent
+        $Pattern = [regex]::Escape($UserAgent)
+        $response.Content.UserAgent | Should Match $Pattern
     }
 
     It "Verifies Invoke-WebRequest default UserAgent handling reports an error is returned for an invalid UserAgent value" {
         $UserAgent = 'Invalid:Agent'
-        $response = ExecuteRequestWithCustomUserAgent -Uri "http://localhost:8081/PowerShell?test=echo" -UserAgent $UserAgent  -Cmdlet "Invoke-WebRequest"
+        $response = ExecuteRequestWithCustomUserAgent -Uri "http://localhost:8080/PowerShell?test=echo" -UserAgent $UserAgent  -Cmdlet "Invoke-WebRequest"
 
         $response.Error | Should Not BeNullOrEmpty
-        $response.Error.FullyQualifiedErrorId | Should Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        $response.Error.FullyQualifiedErrorId | Should Be "System.FormatException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
         $response.Error.Exception.Message | Should Be "The format of value 'Invalid:Agent' is invalid."
     }
 
     It "Verifies Invoke-WebRequest UserAgent handling does not report an error when using -SkipHeaderValidation" {
         $UserAgent = 'Invalid:Agent'
-        $response = ExecuteRequestWithCustomUserAgent -Uri "http://localhost:8081/PowerShell?test=echo" -UserAgent $UserAgent  -SkipHeaderValidation -Cmdlet "Invoke-WebRequest"
+        $response = ExecuteRequestWithCustomUserAgent -Uri "http://localhost:8080/PowerShell?test=echo" -UserAgent $UserAgent  -SkipHeaderValidation -Cmdlet "Invoke-WebRequest"
 
         $response.Error | Should BeNullOrEmpty
-        $response.Content.Headers.'User-Agent' | Should Match $UserAgent
+        $Pattern = [regex]::Escape($UserAgent)
+        $response.Content.UserAgent | Should Match $Pattern
     }
 
     #endregion SkipHeaderVerification Tests
@@ -1297,7 +1299,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $response = ExecuteRequestWithCustomUserAgent -Uri "http://localhost:8081/PowerShell?test=echo" -UserAgent $UserAgent -Cmdlet "Invoke-RestMethod"
 
         $response.Error | Should BeNullOrEmpty
-        $response.Content.Headers.'User-Agent' | Should Match $UserAgent
+        $Pattern = [regex]::Escape($UserAgent)
+        $response.Content.UserAgent | Should Match $Pattern
     }
 
     It "Verifies Invoke-RestMethod default UserAgent handling reports an error is returned for an invalid UserAgent value" {
@@ -1314,7 +1317,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $response = ExecuteRequestWithCustomUserAgent -Uri "http://localhost:8081/PowerShell?test=echo" -UserAgent $UserAgent  -SkipHeaderValidation -Cmdlet "Invoke-RestMethod"
 
         $response.Error | Should BeNullOrEmpty
-        $response.Content.Headers.'User-Agent' | Should Match $UserAgent
+        $Pattern = [regex]::Escape($UserAgent)
+        $response.Content.UserAgent | Should Match $Pattern
     }
 
     #endregion SkipHeaderVerification tests
