@@ -2,16 +2,19 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
 
     BeforeAll {
         $powershell = Join-Path $PSHOME "powershell"
+        $notEnglish = $false
 
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if ( ! $IsWindows ) {
+        if ( ! $IsWindows )
+        {
             $PSDefaultParameterValues["it:skip"] = $true
         }
-
-        $notEnglish = $false
-        if ([System.Globalization.CultureInfo]::CurrentCulture.Name -ne "en-US")
+        else 
         {
-            $notEnglish = $true
+            if ([System.Globalization.CultureInfo]::CurrentCulture.Name -ne "en-US")
+            {
+                $notEnglish = $true
+            }
         }
     }
     
