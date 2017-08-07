@@ -339,6 +339,40 @@ and is a single binary.
 
 ## macOS 10.12
 
+### Installation via Homebrew (preferred) - macOS 10.12
+
+[Homebrew][brew] is the missing package manager for macOS.
+If the `brew` command is not found,
+you need to install Homebrew following [their instructions][brew].
+
+Once you've installed Homebrew, installing PowerShell is easy.
+First, install [Homebrew-Cask][cask], so you can install more packages:
+
+```sh
+brew tap caskroom/cask
+```
+
+Now, you can install PowerShell:
+
+```sh
+brew cask install powershell
+```
+
+When new versions of PowerShell are released,
+simply update Homebrew's formulae and upgrade PowerShell:
+
+```sh
+brew update
+brew reinstall powershell
+```
+
+> Note: because of [this issue in Cask](https://github.com/caskroom/homebrew-cask/issues/29301), you currently have to do a reinstall to upgrade.
+
+[brew]: http://brew.sh/
+[cask]: https://caskroom.github.io/
+
+### Installation via Direct Download - macOS 10.12
+
 Using macOS 10.12, download the PKG package
 `powershell-6.0.0-beta.5-osx.10.12-x64.pkg`
 from the [releases][] page onto the macOS machine.
@@ -352,9 +386,14 @@ sudo installer -pkg powershell-6.0.0-beta.5-osx.10.12-x64.pkg -target /
 
 ### Uninstallation - macOS 10.12
 
-PowerShell on MacOS must be removed manually.
+If you installed PowerShell with Homebrew, uninstallation is easy:
 
-To remove the installed package:
+```sh
+brew cask uninstall powershell
+```
+
+If you installed PowerShell via direct download,
+PowerShell must be removed manually:
 
 ```sh
 sudo rm -rf /usr/local/bin/powershell /usr/local/microsoft/powershell
@@ -363,27 +402,29 @@ sudo rm -rf /usr/local/bin/powershell /usr/local/microsoft/powershell
 To uninstall the additional PowerShell paths (such as the user profile path)
 please see the [paths][paths] section below in this document
 and remove the desired the paths with `sudo rm`.
+(Note: this is not necessary if you installed with Homebrew.)
 
 [paths]:#paths
 
-## OpenSSL
+### OpenSSL on macOS
 
-Also install [Homebrew's OpenSSL][openssl]:
+On macOS, .NET Core requires Homebrew's OpenSSL
+because the "OpenSSL" system libraries on macOS are not OpenSSL,
+as Apple deprecated OpenSSL in favor of their own libraries.
+This requirement is not a hard requirement for all of PowerShell.
+However, most networking functions (such as `Invoke-WebRequest`)
+do require OpenSSL to work properly.
+
+The PowerShell formula for Homebrew includes this OpenSSL as a dependency,
+so you if you installed via Homebrew, you shouldn't run into these problems.
+
+If you installed via direct download (or through some means other than Homebrew),
+the easiest fix for these issues is to install [Homebrew's OpenSSL][openssl]:
 
 ```bash
 brew install openssl
 brew install curl --with-openssl
 ```
-
-[Homebrew][brew] is the missing package manager for macOS.
-If the `brew` command was not found,
-you need to install Homebrew following [their instructions][brew].
-
-.NET Core requires Homebrew's OpenSSL because the "OpenSSL" system libraries on macOS are not OpenSSL,
-as Apple deprecated OpenSSL in favor of their own libraries.
-This requirement is not a hard requirement for all of PowerShell;
-however, most networking functions (such as `Invoke-WebRequest`)
-do require OpenSSL to work properly.
 
 **Please ignore** .NET Core's installation instructions to manually link the OpenSSL libraries.
 This is **not** required for PowerShell as we patch .NET Core's cryptography libraries to find Homebrew's OpenSSL in its installed location.
@@ -407,7 +448,6 @@ and the build script patches the libraries on-the-fly when building from source.
 You *can* run this command manually if you're having trouble with .NET Core's cryptography libraries.
 
 [openssl]: https://github.com/Homebrew/homebrew-core/blob/master/Formula/openssl.rb
-[brew]: http://brew.sh/
 [homebrew-patch]: https://github.com/Homebrew/brew/pull/597
 
 ## Kali
