@@ -42,6 +42,12 @@ Describe "PSReadLine" -tags "CI" {
         (Get-PSReadLineKeyHandler | Where-Object { $_.Key -ceq "Alt+B" }).Function | Should Be SelectBackwardWord
     }
 
+    It "Should ignore case when using Function binding" {
+        $lowerCaseFunctionName = "yank"
+        Set-PSReadlineKeyHandler "Ctrl+F24" -Function $lowerCaseFunctionName
+        (Get-PSReadlineKeyHandler | Where { $_.Key -eq "Ctrl+F24"}).Function | Should Be "Yank"
+    }
+
     AfterAll {
         Remove-Module PSReadLine
 
