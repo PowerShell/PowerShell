@@ -4,6 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.IO;
 using System.IO.Compression;
 using System.Management.Automation;
@@ -449,6 +450,23 @@ namespace Microsoft.PowerShell.Commands
             return DecodeStream(stream, ref encoding);
         }
 
+        static bool TryGetEncoding(string characterSet, out Encoding encoding)
+        {
+            bool result = false;
+            try
+            {
+                encoding = Encoding.GetEncoding(characterSet);
+                result = true;
+            }
+            catch (ArgumentException)
+            {
+                encoding = null;
+            }
+            return result;
+        }
+
+        static readonly Regex s_metaexp = new Regex(@"<meta\s*charset\s*=\s*[""']([a-zA-Z0-9]*)[""']");
+
         internal static string DecodeStream(Stream stream, ref Encoding encoding)
         {
             bool isDefaultEncoding = false;
@@ -460,30 +478,22 @@ namespace Microsoft.PowerShell.Commands
             }
 
             string content = StreamToString (stream, encoding);
-
             if (isDefaultEncoding) do
             {
-                // check for a charset meta element to override the default.
-                string searchString = "<meta charset=\"";
-                int startIndex = content.IndexOf(searchString);
-                if (startIndex == -1) {break;}
-
-                startIndex += searchString.Length;
-                int endIndex = content.IndexOf('"', startIndex);
-                if (endIndex == -1) {break;}
-
-                string characterSet = content.Substring(startIndex, endIndex - startIndex);
-                try
+                // check for a charset attribute on the meta element to override the default.
+                Match match = s_metaexp.Match(content);
+                if (match.Success && match.Groups.Count > 1)
                 {
-                    Encoding localEncoding = Encoding.GetEncoding(characterSet);
-                    stream.Seek(0, SeekOrigin.Begin);
-                    content = StreamToString(stream, localEncoding);
-                    // report the encoding used.
-                    encoding = localEncoding;
-                }
-                catch (ArgumentException)
-                {
-                    // don't propagate an invalid encoding string.
+                    Encoding localEncoding = null;
+                    string characterSet = match.Groups[1].Value;
+
+                    if (TryGetEncoding(characterSet, out localEncoding))
+                    {
+                        stream.Seek(0, SeekOrigin.Begin);
+                        content = StreamToString(stream, localEncoding);
+                        // report the encoding used.
+                        encoding = localEncoding;
+                    }
                 }
             } while (false);
 

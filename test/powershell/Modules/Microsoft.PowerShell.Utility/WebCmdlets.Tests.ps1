@@ -865,6 +865,16 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
             $response.Output | Should BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
         }
+
+        It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared" {
+            $output = '<html><head><meta charset="invalid"></head></html>'
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
+            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html&output=$output" -UseBasicParsing
+
+            $response.Error | Should BeNullOrEmpty
+            $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
+            $response.Output | Should BeOfType 'Microsoft.PowerShell.Commands.BasicHtmlWebResponseObject'
+        }
     }
 
     Context  "HtmlWebResponseObject Encoding" {
@@ -899,6 +909,17 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             # NOTE: meta charset should be ignored
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-2022-jp')
             $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html; charset=iso-2022-jp&output=$output"
+
+            $response.Error | Should BeNullOrEmpty
+            $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
+            # Update to test for HtmlWebResponseObject when mshtl dependency has been resolved.
+            $response.Output | Should BeOfType 'Microsoft.PowerShell.Commands.HtmlWebResponseObject'
+        }
+
+        It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared" -Pending {
+            $output = '<html><head><meta charset="invalid"></head></html>'
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
+            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html&output=$output"
 
             $response.Error | Should BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
