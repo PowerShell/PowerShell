@@ -304,7 +304,16 @@ namespace System.Management.Automation
                 this.NativeParameterBinderController.BindParameters(arguments);
             }
 
-            InitNativeProcess();
+            try
+            {
+                InitNativeProcess();
+            }
+            catch (Exception)
+            {
+                // Do the cleanup and rethrow the exception
+                CleanUp();
+                throw;
+            }
         }
 
         /// <summary>
@@ -312,12 +321,21 @@ namespace System.Management.Automation
         /// </summary>
         internal override void ProcessRecord()
         {
-            while (Read())
+            try
             {
-                _inputWriter.Add(Command.CurrentPipelineObject);
-            }
+                while (Read())
+                {
+                    _inputWriter.Add(Command.CurrentPipelineObject);
+                }
 
-            ConsumeAvailableNativeProcessOutput(blocking: false);
+                ConsumeAvailableNativeProcessOutput(blocking: false);
+            }
+            catch (Exception)
+            {
+                // Do the cleanup and rethrow the exception
+                CleanUp();
+                throw;
+            }
         }
 
         /// <summary>
@@ -341,6 +359,12 @@ namespace System.Management.Automation
         /// Usually a windows program which is the last command in a pipeline can be executed as 'background' -- we don't need to capture its output/error streams.
         /// </summary>
         private bool _isRunningInBackground;
+
+        /// <summary>
+        /// Indicate if we have called 'NotifyBeginApplication()' on the host, so that
+        /// we can call the counterpart 'NotifyEndApplication' as approriate.
+        /// </summary>
+        private bool _hasNotifiedBeginApplication;
 
         /// <summary>
         /// This output queue helps us keep the output and error (if redirected) order correct.
@@ -401,9 +425,10 @@ namespace System.Management.Automation
                 // If this process is being run standalone, tell the host, which might want
                 // to save off the window title or other such state as might be tweaked by
                 // the native process
-                if (!redirectOutput)
+                if (_runStandAlone)
                 {
                     this.Command.Context.EngineHostInterface.NotifyBeginApplication();
+                    _hasNotifiedBeginApplication = true;
 
                     // Also, store the Raw UI coordinates so that we can scrape the screen after
                     // if we are transcribing.
@@ -730,11 +755,7 @@ namespace System.Management.Automation
             }
             finally
             {
-                if (!_nativeProcess.StartInfo.RedirectStandardOutput)
-                {
-                    this.Command.Context.EngineHostInterface.NotifyEndApplication();
-                }
-                // Do the clean up...
+                // Do the cleanup...
                 CleanUp();
             }
 
@@ -995,6 +1016,12 @@ namespace System.Management.Automation
         /// </summary>
         private void CleanUp()
         {
+            // We need to call 'NotifyEndApplication' as appropriate during cleanup
+            if (_hasNotifiedBeginApplication)
+            {
+                this.Command.Context.EngineHostInterface.NotifyEndApplication();
+            }
+
             try
             {
                 if (_nativeProcess != null)
@@ -1179,7 +1206,6 @@ namespace System.Management.Automation
             redirectOutput = true;
             redirectError = true;
 
-
             // Figure out if we're going to run this process "standalone" i.e. without
             // redirecting anything. This is a bit tricky as we always run redirected so
             // we have to see if the redirection is actually being done at the topmost level or not.
@@ -1259,8 +1285,7 @@ namespace System.Management.Automation
                 }
             }
 
-            if (!(redirectInput || redirectOutput))
-                _runStandAlone = true;
+            _runStandAlone = !redirectInput && !redirectOutput && !redirectError;
         }
 
         private bool ValidateExtension(string path)
