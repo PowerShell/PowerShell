@@ -1070,6 +1070,24 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     #endregion charset encoding tests
 
+    It "Verifies Invoke-WebRequest includes Content headers in Headers property" {
+        $command = "Invoke-WebRequest -Uri 'http://httpbin.org/get'"
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse $result
+
+        $result.Output.Headers.'Content-Type' | Should Not BeNullOrEmpty
+        $result.Output.Headers.'Content-Length' | Should Not BeNullOrEmpty
+    }
+
+    It "Verifies Invoke-WebRequest includes Content headers in RawContent property" {
+        $command = "Invoke-WebRequest -Uri 'http://httpbin.org/get'"
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse $result
+
+        $result.Output.RawContent | Should Match 'Content-Type:'
+        $result.Output.RawContent | Should Match 'Content-Length:'
+    }
+
     BeforeEach {
         if ($env:http_proxy) {
             $savedHttpProxy = $env:http_proxy
