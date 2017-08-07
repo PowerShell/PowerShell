@@ -448,7 +448,7 @@ function Invoke-AppveyorFinish
         }
 
         # Build packages
-        $packages = Start-PSPackage @packageParams
+        $packages = Start-PSPackage @packageParams -SkipReleaseChecks
 
         $name = Get-PackageName
 
