@@ -655,6 +655,12 @@
   </data>
   <data name="CSCmdsShellNotPowerShellBased" xml:space="preserve">
     <value>Session configuration "{0}" is not a Windows PowerShell-based shell.</value>
+</data>
+  <data name="CSCmdsPowerShellCoreShellNotModifiable" xml:space="preserve">
+    <value>Session configuration "{0}" is a PowerShell Core-based shell. Please use PowerShell Core to modify it.</value>
+  </data>
+  <data name="CSCmdsWindowsPowerShellCoreNotModifiable" xml:space="preserve">
+    <value>Session configuration "{0}" is a Windows PowerShell-based shell. Please use Windows PowerShell to modify it.</value>
   </data>
   <data name="CustomShellNotFound" xml:space="preserve">
     <value>No session configuration matches criteria "{0}".</value>
@@ -1638,6 +1644,15 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
   </data>
   <data name="SSHAbruptlyTerminated" xml:space="preserve">
     <value>The SSH transport process has abruptly terminated causing this remote session to break.</value>
+  </data>
+  <data name="InvalidProcessorArchitecture" xml:space="preserve">
+    <value>PowerShell Core does not support WOW64. The binary must match the architecture of the processor.</value>
+  </data>
+  <data name="UnableToInstallPlugin" xml:space="preserve">
+      <value>Unable to install plugin {0} to directory {1}.</value>
+  </data>
+  <data name="PluginDllMissing" xml:space="preserve">
+      <value>The WinRM plugin DLL {0} is missing for PowerShell Core. Please run Enable-PSRemoting and then retry this command.</value>
   </data>
   <data name="WSManClientDllNotAvailable" xml:space="preserve">
     <value>This parameter set requires WSMan, and no supported WSMan client library was found. WSMan is either not installed or unavailable for this system.</value>

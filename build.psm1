@@ -252,7 +252,8 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$
         $FilesToCopy = @('pwrshplugin.dll', 'pwrshplugin.pdb')
         $dstPath = "$PSScriptRoot\src\powershell-win-core"
         $FilesToCopy | ForEach-Object {
-            $srcPath = Join-Path (Join-Path (Join-Path (Get-Location) "bin") $Configuration) "CoreClr/$_"
+            $srcPath = [IO.Path]::Combine((Get-Location), "bin", $Configuration, "CoreClr/$_") 
+
             log "  Copying $srcPath to $dstPath"
             Copy-Item $srcPath $dstPath
         }
