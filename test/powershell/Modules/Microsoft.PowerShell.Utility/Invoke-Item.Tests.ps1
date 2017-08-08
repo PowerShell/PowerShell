@@ -51,17 +51,30 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
     }
 
     It "Should invoke an executable file without error" {
-        $executable = Get-Command "ping" -CommandType Application | ForEach-Object Source
+        $ping = Get-Command "ping" -CommandType Application | ForEach-Object Source
         $redirectFile = Join-Path -Path $TestDrive -ChildPath "redirect2.txt"
 
         if ($IsWindows) {
-            ## 'ping.exe' on Windows writes out usage to stdout.
-            & $powershell -noprofile -c "Invoke-Item '$executable'" > $redirectFile
+            if ([System.Management.Automation.Platform]::IsNanoServer -or [System.Management.Automation.Platform]::IsIoT) {
+                ## On headless SKUs, we use `UseShellExecute = false`
+                ## 'ping.exe' on Windows writes out usage to stdout.
+                & $powershell -noprofile -c "Invoke-Item '$ping'" > $redirectFile
+                Get-Content $redirectFile -Raw | Should Match "usage: ping"
+            } else {
+                ## On full desktop, we use `UseShellExecute = true` to align with Windows PowerShell
+                $notepad = Get-Command "notepad.exe" -CommandType Application | ForEach-Object Source
+                Get-Process -Name notepad | Stop-Process -Force
+                Invoke-Item -Path $notepad
+                $notepadProcess = Get-Process -Name notepad
+                $notepadProcess.Name | Should Be notepad
+                Stop-Process -InputObject $notepadProcess
+            }
         } else {
+            ## On Unix, we use `UseShellExecute = false`
             ## 'ping' on Unix write out usage to stderr
-            & $powershell -noprofile -c "Invoke-Item '$executable'" 2> $redirectFile
+            & $powershell -noprofile -c "Invoke-Item '$ping'" 2> $redirectFile
+            Get-Content $redirectFile -Raw | Should Match "usage: ping"
         }
-        Get-Content $redirectFile -Raw | Should Match "usage: ping"
     }
 
     Context "Invoke a folder" {

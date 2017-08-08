@@ -121,7 +121,7 @@ Describe "Native Command Processor" -tags "Feature" {
     }
 }
 
-Describe "Open a text file with NativeCommandProcessor" -tags "Feature" {
+Describe "Open a text file with NativeCommandProcessor" -tags @("Feature", "RequireAdminOnWindows") {
     BeforeAll {
         if ($IsWindows) {
             $TestFile = Join-Path -Path $TestDrive -ChildPath "TextFileTest.foo"
