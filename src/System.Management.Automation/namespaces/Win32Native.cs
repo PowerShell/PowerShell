@@ -140,7 +140,7 @@ namespace Microsoft.PowerShell.Commands.Internal
         [ResourceExposure(ResourceScope.Machine)]
         [SuppressMessage("Microsoft.Security", "CA2118:ReviewSuppressUnmanagedCodeSecurityUsage")]
         [return: MarshalAs(UnmanagedType.Bool)]
-        internal static extern bool OpenProcessToken(SafeHandle processHandle, uint desiredAccess, out IntPtr tokenHandle);
+        internal static extern bool OpenProcessToken(IntPtr processHandle, uint desiredAccess, out IntPtr tokenHandle);
 
         /// <summary>
         /// The GetTokenInformation function retrieves a specified type of information about an access token.
