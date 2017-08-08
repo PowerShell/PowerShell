@@ -835,8 +835,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     Context  "BasicHtmlWebResponseObject Encoding tests" {
         It "Verifies Invoke-WebRequest detects charset meta value when the ContentType header does not define it." {
-            $output = '<html><head><meta charset="gb2312"></head></html>'
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('gb2312')
+            $output = '<html><head><meta charset="Unicode"></head></html>'
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
             $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&output=$output" -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
@@ -845,7 +845,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
 
         It "Verifies Invoke-WebRequest ignores meta charset value when Content-Type header defines it." {
-            $output = '<html><head><meta charset="gb2312"></head></html>'
+            $output = '<html><head><meta charset="utf-32"></head></html>'
             # NOTE: meta charset should be ignored
             $expectedEncoding = [System.Text.Encoding]::UTF8
             $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html; charset=utf-8&output=$output" -UseBasicParsing
@@ -856,10 +856,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
 
         It "Verifies Invoke-WebRequest honors non-utf8 charsets in the Content-Type header" {
-            $output = '<html><head><meta charset="gb2312"></head></html>'
+            $output = '<html><head><meta charset="utf-32"></head></html>'
             # NOTE: meta charset should be ignored
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-2022-jp')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html; charset=iso-2022-jp&output=$output" -UseBasicParsing
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('utf-16')
+            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html; charset=utf-16&output=$output" -UseBasicParsing
 
             $response.Error | Should BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
@@ -881,8 +881,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         # these tests are dependent on https://github.com/PowerShell/PowerShell/issues/2867
         # Currently, all paths return BasicHtmlWebResponseObject
         It "Verifies Invoke-WebRequest detects charset meta value when the ContentType header does not define it." -Pending {
-            $output = '<html><head><meta charset="gb2312"></head></html>'
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('gb2312')
+            $output = '<html><head><meta charset="Unicode"></head></html>'
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
             $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&output=$output"
 
             $response.Error | Should BeNullOrEmpty
@@ -892,7 +892,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
 
         It "Verifies Invoke-WebRequest ignores meta charset value when Content-Type header defines it." -Pending {
-            $output = '<html><head><meta charset="gb2312"></head></html>'
+            $output = '<html><head><meta charset="utf-16"></head></html>'
             # NOTE: meta charset should be ignored
             $expectedEncoding = [System.Text.Encoding]::UTF8
             # Update to test for HtmlWebResponseObject when mshtl dependency has been resolved.
@@ -905,10 +905,10 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         }
 
         It "Verifies Invoke-WebRequest honors non-utf8 charsets in the Content-Type header" -Pending {
-            $output = '<html><head><meta charset="gb2312"></head></html>'
+            $output = '<html><head><meta charset="utf-32"></head></html>'
             # NOTE: meta charset should be ignored
-            $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-2022-jp')
-            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html; charset=iso-2022-jp&output=$output"
+            $expectedEncoding = [System.Text.Encoding]::GetEncoding('utf-16')
+            $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html; charset=utf-16&output=$output"
 
             $response.Error | Should BeNullOrEmpty
             $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
