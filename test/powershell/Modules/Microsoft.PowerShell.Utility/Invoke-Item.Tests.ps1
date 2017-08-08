@@ -66,7 +66,7 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
                 Get-Process -Name notepad | Stop-Process -Force
                 Invoke-Item -Path $notepad
                 $notepadProcess = Get-Process -Name notepad
-                $notepadProcess.Name | Should Be notepad
+                $notepadProcess.Name | Should Be "notepad"
                 Stop-Process -InputObject $notepadProcess
             }
         } else {
