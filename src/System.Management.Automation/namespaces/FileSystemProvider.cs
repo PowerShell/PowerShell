@@ -1357,7 +1357,7 @@ namespace Microsoft.PowerShell.Commands
                 }
 #else
                 // Use ShellExecute when it's not a headless SKU
-                invokeProcess.StartInfo.UseShellExecute = !Platform.IsNanoServer && !Platform.IsIoT;
+                invokeProcess.StartInfo.UseShellExecute = Platform.IsWindowsDesktop;
                 invokeProcess.Start();
 #endif
             }

@@ -152,7 +152,7 @@ Categories=Application;
             }
         }
         elseif ($IsWindows) {
-            $supportedEnvironment = ![System.Management.Automation.Platform]::IsNanoServer -and ![System.Management.Automation.Platform]::IsIoT
+            $supportedEnvironment = [System.Management.Automation.Platform]::IsWindowsDesktop
             if ($supportedEnvironment) {
                 cmd /c assoc .foo=foofile
                 cmd /c ftype foofile=cmd /c echo %1^> $TestDrive\foo.txt
@@ -215,12 +215,6 @@ Categories=Application;
     }
 
     It "Opening a file with an unregistered extension on Windows should fail" -Skip:(!$IsWindows) {
-        try {
-            $dllFile = "$PSHOME\System.Management.Automation.dll"
-            & $dllFile
-            throw "No Exception!"
-        } catch {
-            $_.FullyQualifiedErrorId | should be "NativeCommandFailed"
-        }
+        { $dllFile = "$PSHOME\System.Management.Automation.dll"; & $dllFile } | ShouldBeErrorId "NativeCommandFailed"
     }
 }
