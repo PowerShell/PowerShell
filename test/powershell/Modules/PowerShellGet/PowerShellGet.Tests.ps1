@@ -226,7 +226,7 @@ Describe "PowerShellGet - Script tests (Admin)" -tags @('Feature', 'RequireAdmin
     }
 }
 
-Describe 'PowerShellGet Type tests' -tags @('BVT','CI') {
+Describe 'PowerShellGet Type tests' -tags @('CI') {
     BeforeAll {
         Import-Module PowerShellGet -Force
     }
