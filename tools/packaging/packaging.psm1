@@ -52,7 +52,7 @@ function Start-PSPackage {
 
     # Make sure the most recent build satisfies the package requirement
     if (-not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
-        -not $crossGenCorrect -or                       ## Last build didn't specify -CrossGen
+        -not $crossGenCorrect -or                               ## Last build didn't specify '-CrossGen' correctly
         $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
         $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
         $Script:Options.Framework -ne "netcoreapp2.0")          ## Last build wasn't for CoreCLR
