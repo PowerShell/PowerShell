@@ -184,7 +184,7 @@ else
         foreach($package in $packages)
         {
             # Publish the packages to the nuget feed if:
-            # 1 - It's a fullBuild (allready checked, for not a PR)
+            # 1 - It's a fullBuild (already checked, for not a PR)
             # 2 - We have the info to publish (NUGET_KEY and NUGET_URL)
             # 3 - it's a nupkg file
             if($isFullBuild -and $env:NUGET_KEY -and $env:NUGET_URL -and [system.io.path]::GetExtension($package) -ieq '.nupkg')
