@@ -3,9 +3,10 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
     BeforeAll {
         $powershell = Join-Path $PSHOME "powershell"
         $notEnglish = $false
+        $IsToBeSkipped = !$IsWindows;
 
         $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
-        if ( ! $IsWindows )
+        if ( $IsToBeSkipped )
         {
             $PSDefaultParameterValues["it:skip"] = $true
         }
@@ -23,10 +24,13 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
     }
 
     BeforeEach {
-        $errtxt = "$testdrive/error.txt"
-        Remove-Item $errtxt -Force -ErrorAction SilentlyContinue
-        $donefile = "$testdrive/done"
-        Remove-Item $donefile -Force -ErrorAction SilentlyContinue
+        if ( ! $IsToBeSkipped )
+        {
+            $errtxt = "$testdrive/error.txt"
+            Remove-Item $errtxt -Force -ErrorAction SilentlyContinue
+            $donefile = "$testdrive/done"
+            Remove-Item $donefile -Force -ErrorAction SilentlyContinue
+        }
     }
 
     It "Error returned if invalid parameters: <description>" -TestCases @(
@@ -37,7 +41,7 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
         { Enable-WSManCredSSP @params } | ShouldBeErrorId "System.InvalidOperationException,Microsoft.WSMan.Management.EnableWSManCredSSPCommand"
     }
 
-    It "Enable-WSManCredSSP works: <description>" -Skip:($NotEnglish) -TestCases @(
+    It "Enable-WSManCredSSP works: <description>" -Skip:($NotEnglish -or $IsToBeSkipped) -TestCases @(
         @{params=@{Role="Client";DelegateComputer="*"};description="client"},
         @{params=@{Role="Server"};description="server"}
     ) {
@@ -56,7 +60,7 @@ Describe "CredSSP cmdlet tests" -Tags 'Feature','RequireAdminOnWindows' {
         }
     }
 
-    It "Disable-WSManCredSSP works: <role>" -Skip:($NotEnglish) -TestCases @(
+    It "Disable-WSManCredSSP works: <role>" -Skip:($NotEnglish -or $IsToBeSkipped) -TestCases @(
         @{Role="Client"},
         @{Role="Server"}
     ) {
