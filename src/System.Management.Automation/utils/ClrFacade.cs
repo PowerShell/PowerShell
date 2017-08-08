@@ -47,20 +47,6 @@ namespace System.Management.Automation
         /// </summary>
         internal static readonly char FIRST_CHAR_PSASSEMBLY_MARK = (char)0x29f9;
 
-        #region Process
-
-        /// <summary>
-        /// Facade for Process.Handle to get SafeHandle
-        /// </summary>
-        /// <param name="process"></param>
-        /// <returns>SafeHandle</returns>
-        internal static SafeHandle GetSafeProcessHandle(Process process)
-        {
-            return process.SafeHandle;
-        }
-
-        #endregion Process
-
         #region Assembly
 
         internal static IEnumerable<Assembly> GetAssemblies(TypeResolutionState typeResolutionState, TypeName typeName)

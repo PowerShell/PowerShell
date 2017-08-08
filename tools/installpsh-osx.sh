@@ -131,7 +131,15 @@ if [[ ! -d $(brew --prefix cask) ]]; then
     echo "Installing cask..."
     if ! brew tap caskroom/cask >/dev/null; then
         echo "ERROR: Cask failed to install! Cannot install powershell..." >&2
+        exit 2
     fi
+fi
+
+# Suppress output, it's very noisy on travis-ci
+echo "Refreshing Homebrew cache..."
+if ! brew update >/dev/null; then
+    echo "ERROR: Refreshing Homebrew cache failed..." >&2
+    exit 2
 fi
 
 if ! hash powershell 2>/dev/null; then

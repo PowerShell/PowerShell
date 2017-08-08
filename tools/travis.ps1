@@ -50,7 +50,6 @@ function Set-DailyBuildBadge
     $headers = @{
         "x-ms-date"      = $now
         "cache-control"  = "no-cache"
-        "last-modified"  = $now
         "x-ms-blob-type" = "BlockBlob"
         "x-ms-version"   = "$headerDate"
     }

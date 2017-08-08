@@ -107,7 +107,7 @@ function Register-PSSessionConfiguration
     {{
         if ($force)
         {{
-            if (Test-Path WSMan:\localhost\Plugin\""$pluginName"")
+            if (Test-Path (Join-Path WSMan:\localhost\Plugin ""$pluginName""))
             {{
                 Unregister-PSSessionConfiguration -name ""$pluginName"" -force
             }}
@@ -129,9 +129,11 @@ function Register-PSSessionConfiguration
         {{
             try {{
                 $runAsCredential = new-object system.management.automation.PSCredential($runAsUserName, $runAsPassword)
-                set-item -WarningAction SilentlyContinue WSMan:\localhost\Plugin\""$pluginName""\RunAsUser $runAsCredential -confirm:$false
+                $pluginWsmanRunAsUserPath = [System.IO.Path]::Combine(""WSMan:\localhost\Plugin"", ""$pluginName"", ""RunAsUser"")
+                set-item -WarningAction SilentlyContinue $pluginWsmanRunAsUserPath $runAsCredential -confirm:$false
             }} catch {{
-                remove-item WSMan:\localhost\Plugin\""$pluginName"" -recurse -force
+                 
+                remove-item (Join-Path WSMan:\localhost\Plugin ""$pluginName"") -recurse -force
                 write-error $_
                 # Do not add anymore clean up code after Write-Error, because if EA=Stop is set by user
                 # any code at this point will not execute.
@@ -238,7 +240,7 @@ function Register-PSSessionConfiguration
                 }}
 
             }} catch {{
-                remove-item WSMan:\localhost\Plugin\""$pluginName"" -recurse -force
+                remove-item (Join-Path WSMan:\localhost\Plugin ""$pluginName"") -recurse -force
                 write-error $_
                 # Do not add anymore clean up code after Write-Error, because if EA=Stop is set by user
                 # any code at this point will not execute.
@@ -279,7 +281,7 @@ else
         private const string pluginXmlFormat = @"
 <PlugInConfiguration xmlns='http://schemas.microsoft.com/wbem/wsman/1/config/PluginConfiguration'
     Name='{0}'
-    Filename='%windir%\system32\{1}'
+    Filename='{1}'
     SDKVersion='{12}'
     XmlRenderingType='text' {2} {6} {7} {8} {9} {10}>
   <InitializationParameters>
@@ -484,6 +486,15 @@ else
                         "UseSharedProcess"));
                     ThrowTerminatingError(ioe.ErrorRecord);
                 }
+            }
+
+            string pluginPath = PSSessionConfigurationCommandUtilities.GetWinrmPluginDllPath();
+            pluginPath = Environment.ExpandEnvironmentVariables(pluginPath);
+            if (!System.IO.File.Exists(pluginPath))
+            {
+                PSInvalidOperationException ioe = new PSInvalidOperationException(
+                        StringUtil.Format(RemotingErrorIdStrings.PluginDllMissing, RemotingConstants.PSPluginDLLName));
+                    ThrowTerminatingError(ioe.ErrorRecord);
             }
         }
 
@@ -764,10 +775,11 @@ else
 
             try
             {
-                StreamWriter fileStream = File.CreateText(tmpFileName);
-                fileStream.Write(pluginContent);
-                fileStream.Flush();
-                fileStream.Dispose();
+                using (StreamWriter fileStream = File.CreateText(tmpFileName))
+                {
+                    fileStream.Write(pluginContent);
+                    fileStream.Flush();
+                }
             }
             catch (UnauthorizedAccessException uae)
             {
@@ -988,8 +1000,14 @@ else
                     if (string.Equals(procArch, "amd64", StringComparison.OrdinalIgnoreCase) ||
                         string.Equals(procArch, "ia64", StringComparison.OrdinalIgnoreCase))
                     {
+#if CORECLR
+                        InvalidOperationException ioe = new InvalidOperationException(RemotingErrorIdStrings.InvalidProcessorArchitecture);
+                        ErrorRecord er = new ErrorRecord(ioe, "InvalidProcessorArchitecture", ErrorCategory.InvalidArgument, Path);
+                        ThrowTerminatingError(er);
+#else
                         // syswow64 is applicable only on 64 bit platforms.
                         destPath = destPath.ToLowerInvariant().Replace("\\system32\\", "\\syswow64\\");
+#endif
                     }
                 }
 
@@ -1000,6 +1018,12 @@ else
                 destConfigFilePath = destPath;
 
                 // Copy File.
+                string destConfigFileDirectory = System.IO.Path.GetDirectoryName(destConfigFilePath);
+
+                // The directory is not auto-created for PowerShell Core.
+                // The call will create it or return its path if it already exists
+                System.IO.Directory.CreateDirectory(destConfigFileDirectory);
+
                 File.Copy(srcConfigFilePath, destConfigFilePath, true);
 
                 initParameters.Append(string.Format(CultureInfo.InvariantCulture,
@@ -1241,10 +1265,12 @@ else
                 (transportOption as WSManConfigurationOption).ProcessIdleTimeoutSec = 0;
             }
 
+            string psPluginDllPath = PSSessionConfigurationCommandUtilities.GetWinrmPluginDllPath();
+
             string result = string.Format(CultureInfo.InvariantCulture,
                 pluginXmlFormat,
                 shellName, /* {0} */
-                RemotingConstants.PSPluginDLLName, /* {1} */
+                psPluginDllPath, /* {1} */
                 architectureParameter, /* {2} */
                 initParameters.ToString(), /* {3} */
                 WSManNativeApi.ResourceURIPrefix + shellName, /* {4} */
@@ -1526,6 +1552,33 @@ else
             if (groups == null) { return string.Empty; }
 
             return string.Join(";", groups);
+        }
+
+        /// <summary>
+        /// Returns the default WinRM plugin shell name for this instance of PowerShell
+        /// </summary>
+        /// <returns></returns>
+        internal static string GetWinrmPluginShellName()
+        {
+            // PowerShell Core uses a versioned directory to hold the plugin
+            Hashtable versionTable = PSVersionInfo.GetPSVersionTable();
+            // TODO: This should be PSVersionInfo.PSVersionName once we get
+            // closer to release. Right now it doesn't support alpha versions.
+            return System.String.Concat("PowerShell.", (string)versionTable["GitCommitId"]);
+        }
+
+        /// <summary>
+        /// Returns the default WinRM plugin DLL file path for this instance of PowerShell
+        /// </summary>
+        /// <returns></returns>
+        internal static string GetWinrmPluginDllPath()
+        {
+            // PowerShell Core uses its versioned directory instead of system32
+            Hashtable versionTable = PSVersionInfo.GetPSVersionTable();
+            // TODO: This should be PSVersionInfo.PSVersionName once we get
+            // closer to release. Right now it doesn't support alpha versions.
+            string pluginDllDirectory =  System.IO.Path.Combine("%windir%\\system32\\PowerShell", (string)versionTable["GitCommitId"]);
+            return System.IO.Path.Combine(pluginDllDirectory, RemotingConstants.PSPluginDLLName);
         }
 
         #endregion
@@ -2493,7 +2546,16 @@ function Unregister-PSSessionConfiguration
            {{
                 return
            }}
-
+           else
+           {{
+                if (($pluginFileName.Value -match 'system32\\{0}') -OR
+                    ($pluginFileName.Value -match 'syswow64\\{0}'))
+                {{
+                    # Filter out WindowsPowerShell endpoints when running as PowerShell Core
+                    return
+                }}
+           }}
+           
            $shellsFound++
 
            $shouldProcessTargetString = $targetTemplate -f $_.Name
@@ -2717,9 +2779,12 @@ function ExtractPluginProperties([string]$pluginDir, $objectToWriteTo)
     }}
 
     Get-Details $pluginDir $h
-
-    if ($h[""AssemblyName""] -eq ""Microsoft.PowerShell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"") {{
-
+    
+    # Workflow is not supported in PowerShell Core. Attempting to load the
+    # assembly results in a FileNotFoundException.
+    if (![System.Management.Automation.Platform]::IsCoreCLR -AND
+        $h[""AssemblyName""] -eq ""Microsoft.PowerShell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"") {{
+        
         $serviceCore = [Reflection.Assembly]::Load(""Microsoft.Powershell.Workflow.ServiceCore, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL"")
 
         if ($null -ne $serviceCore) {{
@@ -2783,18 +2848,26 @@ function ExtractPluginProperties([string]$pluginDir, $objectToWriteTo)
 $shellNotErrMsgFormat = $args[1]
 $force = $args[2]
 $args[0] | ForEach-Object {{
-  $shellsFound = 0;
-  $filter = $_
-  Get-ChildItem 'WSMan:\localhost\Plugin\' -Force:$force | Where-Object {{ $_.name -like ""$filter"" }} | ForEach-Object {{
-     $customPluginObject = new-object object
-     $customPluginObject.pstypenames.Insert(0, '{0}')
-     ExtractPluginProperties ""$($_.PSPath)"" $customPluginObject
-     # this is powershell based custom shell only if its plugin dll is pwrshplugin.dll
-     if (($customPluginObject.FileName) -and ($customPluginObject.FileName -match '{1}'))
-     {{
-        $shellsFound++
-        $customPluginObject
-     }}
+    $shellsFound = 0;
+    $filter = $_
+    Get-ChildItem 'WSMan:\localhost\Plugin\' -Force:$force | ? {{ $_.name -like ""$filter"" }} | ForEach-Object {{
+        $customPluginObject = new-object object
+        $customPluginObject.pstypenames.Insert(0, '{0}')
+        ExtractPluginProperties ""$($_.PSPath)"" $customPluginObject
+        # This is powershell based custom shell only if its plugin dll is pwrshplugin.dll
+        if (($customPluginObject.FileName) -and ($customPluginObject.FileName -match '{1}'))
+        {{
+            # Filter the endpoints based on the typeof PowerShell that is
+            # executing the cmdlet. {1} in another location indicates that it
+            # is a PowerShell Core endpoint
+            if (!($customPluginObject.FileName -match 'system32\\{1}') -AND # WindowsPowerShell
+                !($customPluginObject.FileName -match 'syswow64\\{1}'))     # WOW64 WindowsPowerShell
+            {{
+                # Add the PowerShell Core endpoint when running as PowerShell Core
+                $shellsFound++
+                $customPluginObject
+            }}
+        }}
     }} # end of foreach
 
     if (!$shellsFound -and !([System.Management.Automation.WildcardPattern]::ContainsWildcardCharacters($_)))
@@ -3019,6 +3092,8 @@ function Set-PSSessionConfiguration([PSObject]$customShellObject,
      [string]$resourceUri,
      [string]$pluginNotFoundErrorMsg,
      [string]$pluginNotPowerShellMsg,
+     [string]$pluginForPowerShellCoreMsg,
+     [string]$pluginForWindowsPowerShellMsg,
      [System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode]$accessMode
 )
 {{
@@ -3044,6 +3119,16 @@ function Set-PSSessionConfiguration([PSObject]$customShellObject,
    {{
       Write-Error $pluginNotPowerShellMsg
       return
+   }}
+   else
+   {{
+        # Filter out WindowsPowerShell endpoints when running as PowerShell Core
+        if (($pluginFileName.Value -match 'system32\\{0}') -OR
+            ($pluginFileName.Value -match 'syswow64\\{0}'))
+        {{
+            Write-Error $pluginForWindowsPowerShellMsg
+            return
+        }}
    }}
 
    # set Initialization Parameters
@@ -3100,7 +3185,7 @@ function Set-PSSessionConfiguration([PSObject]$customShellObject,
         $null = winrm configsddl $resourceUri
    }}
 
-   # If accessmode is 'Disabled', we don't bother to check the sddl
+   # If accessmode is Disabled, we do not bother to check the sddl
    if ([System.Management.Automation.Runspaces.PSSessionConfigurationAccessMode]::Disabled.Equals($accessMode))
    {{
         return
@@ -3181,7 +3266,7 @@ function Set-PSSessionConfiguration([PSObject]$customShellObject,
    }}
 }}
 
-Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5] $args[6] $args[7] $args[8] $args[9]
+Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5] $args[6] $args[7] $args[8] $args[9] $args[10] $args[11]
 ";
         private const string initParamFormat = @"<Param Name='{0}' Value='{1}' />";
         private const string privateDataFormat = @"<Param Name='PrivateData'>{0}</Param>";
@@ -3439,6 +3524,8 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
 
             string shellNotFoundErrorMsg = StringUtil.Format(RemotingErrorIdStrings.CSCmdsShellNotFound, shellName);
             string shellNotPowerShellMsg = StringUtil.Format(RemotingErrorIdStrings.CSCmdsShellNotPowerShellBased, shellName);
+            string shellForPowerShellCoreMsg = StringUtil.Format(RemotingErrorIdStrings.CSCmdsPowerShellCoreShellNotModifiable, shellName);
+            string shellForWindowsPowerShellMsg = StringUtil.Format(RemotingErrorIdStrings.CSCmdsWindowsPowerShellCoreNotModifiable, shellName);
 
             // construct object to update the properties
             PSObject propertiesToUpdate = ConstructPropertiesForUpdate();
@@ -3463,6 +3550,8 @@ Set-PSSessionConfiguration $args[0] $args[1] $args[2] $args[3] $args[4] $args[5]
                                                WSManNativeApi.ResourceURIPrefix + shellName,
                                                shellNotFoundErrorMsg,
                                                shellNotPowerShellMsg,
+                                               shellForPowerShellCoreMsg,
+                                               shellForWindowsPowerShellMsg,
                                                accessModeSpecified ? AccessMode : PSSessionConfigurationAccessMode.Disabled,
            });
 
@@ -4406,7 +4495,7 @@ $_ | Enable-PSSessionConfiguration -force $args[0] -sddl $args[1] -isSDDLSpecifi
             // if user did not specify any shell, act on the default shell.
             if (_shellsToEnable.Count == 0)
             {
-                _shellsToEnable.Add(RemotingConstants.DefaultShellName);
+                _shellsToEnable.Add(PSSessionConfigurationCommandUtilities.GetWinrmPluginShellName());
             }
 
             WriteVerbose(StringUtil.Format(RemotingErrorIdStrings.EcsScriptMessageV, enablePluginSbFormat));
@@ -4645,7 +4734,7 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
             // if user did not specify any shell, act on the default shell.
             if (_shellsToDisable.Count == 0)
             {
-                _shellsToDisable.Add(RemotingConstants.DefaultShellName);
+                _shellsToDisable.Add(PSSessionConfigurationCommandUtilities.GetWinrmPluginShellName());
             }
 
             //WriteWarning(StringUtil.Format(RemotingErrorIdStrings.DcsWarningMessage));
@@ -4704,10 +4793,8 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
     /// <summary>
     ///
     /// </summary>
-#if !CORECLR
     [Cmdlet(VerbsLifecycle.Enable, RemotingConstants.PSRemotingNoun,
         SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144300")]
-#endif
     public sealed class EnablePSRemotingCommand : PSCmdlet
     {
         #region Private Data
@@ -4718,6 +4805,18 @@ $_ | Disable-PSSessionConfiguration -force $args[0] -whatif:$args[1] -confirm:$a
 
         //TODO: CLR4: Remove the logic for setting the MaxMemoryPerShellMB to 200 MB once IPMO->Get-Command->Get-Help memory usage issue is fixed.
         private const string enableRemotingSbFormat = @"
+function Generate-PluginConfigFile
+{{
+param(
+    [Parameter()] [string] $pluginInstallPath
+)
+    $pluginConfigFile = Join-Path $pluginInstallPath ""RemotePowerShellConfig.txt""
+
+    # This always overwrites the file with a new version of it (if it already exists)
+    Set-Content -Path $pluginConfigFile -Value ""PSHOMEDIR=$PSHOME""
+    Add-Content -Path $pluginConfigFile -Value ""CORECLRDIR=$PSHOME""
+}}
+
 function Enable-PSRemoting
 {{
 [CmdletBinding(SupportsShouldProcess=$true, ConfirmImpact=""Medium"")]
@@ -4727,7 +4826,8 @@ param(
     [Parameter()] [string] $captionForRegisterDefault,
     [Parameter()] [string] $queryForSet,
     [Parameter()] [string] $captionForSet,
-    [Parameter()] [bool] $skipNetworkProfileCheck
+    [Parameter()] [bool] $skipNetworkProfileCheck,
+    [Parameter()] [string] $errorMsgUnableToInstallPlugin
 )
 
     end
@@ -4738,16 +4838,23 @@ param(
             $null = $PSBoundParameters.Remove(""captionForRegisterDefault"")
             $null = $PSBoundParameters.Remove(""queryForSet"")
             $null = $PSBoundParameters.Remove(""captionForSet"")
+            $null = $PSBoundParameters.Remove(""errorMsgUnableToInstallPlugin"")
 
             $PSBoundParameters.Add(""Name"",""*"")
 
             # first try to enable all the sessions
             Enable-PSSessionConfiguration @PSBoundParameters
 
-            # make sure default powershell end points exist
-            #  ie., Microsoft.PowerShell
-            #       and Microsoft.PowerShell32 (wow64)
-
+            #
+            # This cmdlet will make sure default powershell end points exist upon successful completion.
+            #
+            # Windows PowerShell:
+            #   Microsoft.PowerShell
+            #   Microsoft.PowerShell32 (wow64)
+            #
+            # PowerShell Core:
+            #   PowerShell.<version ID>
+            #
             $errorCount = $error.Count
             $endPoint = Get-PSSessionConfiguration {0} -Force:$Force -ErrorAction silentlycontinue 2>&1
             $newErrorCount = $error.Count
@@ -4762,47 +4869,53 @@ param(
             if ((!$endpoint) -and
                 ($force  -or $pscmdlet.ShouldProcess($qMessage, $captionForRegisterDefault)))
             {{
-                $null = Register-PSSessionConfiguration {0} -force
+                $resolvedPluginInstallPath = """"
+                #
+                # Section 1:
+                # Move pwrshplugin.dll from $PSHOME to the endpoint directory
+                #
+                $pluginInstallPath = Join-Path ""$env:WINDIR\System32\PowerShell"" $psversiontable.GitCommitId
+                if (!(Test-Path $pluginInstallPath))
+                {{
+                    $resolvedPluginInstallPath = New-Item -Type Directory -Path $pluginInstallPath
+                }}
+                else
+                {{
+                    $resolvedPluginInstallPath = Resolve-Path $pluginInstallPath
+                }}
+                if (!(Test-Path $resolvedPluginInstallPath\{5}))
+                {{
+                    Copy-Item $PSHOME\{5} $resolvedPluginInstallPath -Force
+                    if (!(Test-Path $resolvedPluginInstallPath\{5}))
+                    {{
+                        Write-Error ($errorMsgUnableToInstallPlugin -f ""{5}"", $resolvedPluginInstallPath)
+                        return
+                    }}
+                }}
+
+                #
+                # Section 2:
+                # Generate the Plugin Configuration File
+                #
+                Generate-PluginConfigFile $resolvedPluginInstallPath
+
+                #
+                # Section 3:
+                # Register the endpoint
+                #
+                $null = Register-PSSessionConfiguration -Name {0} -force
+
                 set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\{0}\Quotas\MaxShellsPerUser -value ""25"" -confirm:$false
                 set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\{0}\Quotas\MaxIdleTimeoutms -value {4} -confirm:$false
                 restart-service winrm -confirm:$false
             }}
 
-            # Check Microsoft.PowerShell.Workflow endpoint
-            $errorCount = $error.Count
-            $endPoint = Get-PSSessionConfiguration {0}.workflow -Force:$Force -ErrorAction silentlycontinue 2>&1
-            $newErrorCount = $error.Count
-
-            # remove the 'No Session Configuration matches criteria' errors
-            for ($index = 0; $index -lt ($newErrorCount - $errorCount); $index ++)
+            # PowerShell Workflow and WOW are not supported for PowerShell Core
+            if (![System.Management.Automation.Platform]::IsCoreCLR)
             {{
-                $error.RemoveAt(0)
-            }}
-
-            if (!$endpoint)
-            {{
-                $qMessage = $queryForRegisterDefault -f ""Microsoft.PowerShell.Workflow"",""Register-PSSessionConfiguration Microsoft.PowerShell.Workflow -force""
-                if ($force -or $pscmdlet.ShouldProcess($qMessage, $captionForRegisterDefault)) {{
-                    $tempxmlfile = [io.path]::Gettempfilename()
-                    ""{1}"" | out-file -force -filepath $tempxmlfile -confirm:$false
-                    $null = winrm create winrm/config/plugin?Name=Microsoft.PowerShell.Workflow -file:$tempxmlfile
-                    remove-item -path $tempxmlfile -force -confirm:$false
-                    restart-service winrm -confirm:$false
-                }}
-            }}
-
-            $pa = $env:PROCESSOR_ARCHITECTURE
-            if ($pa -eq ""x86"")
-            {{
-                # on 64-bit platforms, wow64 bit process has the correct architecture
-                # available in processor_architew6432 variable
-                $pa = $env:PROCESSOR_ARCHITEW6432
-            }}
-            if ((($pa -eq ""amd64"")) -and (test-path $env:windir\syswow64\pwrshplugin.dll))
-            {{
-                # Check availability of WOW64 endpoint. Register if not available.
+                # Check Microsoft.PowerShell.Workflow endpoint
                 $errorCount = $error.Count
-                $endPoint = Get-PSSessionConfiguration {0}32 -Force:$Force -ErrorAction silentlycontinue 2>&1
+                $endPoint = Get-PSSessionConfiguration {0}.workflow -Force:$Force -ErrorAction silentlycontinue 2>&1
                 $newErrorCount = $error.Count
 
                 # remove the 'No Session Configuration matches criteria' errors
@@ -4811,17 +4924,50 @@ param(
                     $error.RemoveAt(0)
                 }}
 
-                $qMessage = $queryForRegisterDefault -f ""{0}32"",""Register-PSSessionConfiguration {0}32 -processorarchitecture x86 -force""
-                if ((!$endpoint) -and
-                    ($force  -or $pscmdlet.ShouldProcess($qMessage, $captionForRegisterDefault)))
+                if (!$endpoint)
                 {{
-                    $null = Register-PSSessionConfiguration {0}32 -processorarchitecture x86 -force
-                    set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\{0}32\Quotas\MaxShellsPerUser -value ""25"" -confirm:$false
-                    set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\{0}32\Quotas\MaxIdleTimeoutms -value {4} -confirm:$false
-                    restart-service winrm -confirm:$false
+                    $qMessage = $queryForRegisterDefault -f ""Microsoft.PowerShell.Workflow"",""Register-PSSessionConfiguration Microsoft.PowerShell.Workflow -force""
+                    if ($force -or $pscmdlet.ShouldProcess($qMessage, $captionForRegisterDefault)) {{
+                        $tempxmlfile = [io.path]::Gettempfilename()
+                        ""{1}"" | out-file -force -filepath $tempxmlfile -confirm:$false
+                        $null = winrm create winrm/config/plugin?Name=Microsoft.PowerShell.Workflow -file:$tempxmlfile
+                        remove-item -path $tempxmlfile -force -confirm:$false
+                        restart-service winrm -confirm:$false
+                    }}
+                }}
+
+                $pa = $env:PROCESSOR_ARCHITECTURE
+                if ($pa -eq ""x86"")
+                {{
+                    # on 64-bit platforms, wow64 bit process has the correct architecture
+                    # available in processor_architew6432 variable
+                    $pa = $env:PROCESSOR_ARCHITEW6432
+                }}
+                if ((($pa -eq ""amd64"")) -and (test-path $env:windir\syswow64\pwrshplugin.dll))
+                {{
+                    # Check availability of WOW64 endpoint. Register if not available.
+                    $errorCount = $error.Count
+                    $endPoint = Get-PSSessionConfiguration {0}32 -Force:$Force -ErrorAction silentlycontinue 2>&1
+                    $newErrorCount = $error.Count
+
+                    # remove the 'No Session Configuration matches criteria' errors
+                    for ($index = 0; $index -lt ($newErrorCount - $errorCount); $index ++)
+                    {{
+                        $error.RemoveAt(0)
+                    }}
+
+                    $qMessage = $queryForRegisterDefault -f ""{0}32"",""Register-PSSessionConfiguration {0}32 -processorarchitecture x86 -force""
+                    if ((!$endpoint) -and
+                        ($force  -or $pscmdlet.ShouldProcess($qMessage, $captionForRegisterDefault)))
+                    {{
+                        $null = Register-PSSessionConfiguration {0}32 -processorarchitecture x86 -force
+                        set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\{0}32\Quotas\MaxShellsPerUser -value ""25"" -confirm:$false
+                        set-item -WarningAction SilentlyContinue wsman:\localhost\plugin\{0}32\Quotas\MaxIdleTimeoutms -value {4} -confirm:$false
+                        restart-service winrm -confirm:$false
+                    }}
                 }}
             }}
-
+            
             # remove the 'network deny all' tag
             Get-PSSessionConfiguration -Force:$Force | ForEach-Object {{
                 $sddl = $null
@@ -4888,7 +5034,7 @@ param(
     }} # end of end block
 }} # end of Enable-PSRemoting
 
-Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForRegisterDefault $args[2] -queryForSet $args[3] -captionForSet $args[4] -whatif:$args[5] -confirm:$args[6] -skipNetworkProfileCheck $args[7]
+Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForRegisterDefault $args[2] -queryForSet $args[3] -captionForSet $args[4] -whatif:$args[5] -confirm:$args[6] -skipNetworkProfileCheck $args[7] -errorMsgUnableToInstallPlugin $args[8]
 ";
 
         private const string _workflowConfigXml = @"
@@ -4942,11 +5088,11 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
                 PSSessionConfigurationCommandBase.GetLocalSddl());
 
             string enableRemotingScript = string.Format(CultureInfo.InvariantCulture,
-                enableRemotingSbFormat, RemotingConstants.DefaultShellName,
+                enableRemotingSbFormat, PSSessionConfigurationCommandUtilities.GetWinrmPluginShellName(),
                 // Workflow endpoint configuration will be done through Register-PSSessionConfiguration
                 // when the new features are available.
                 workflowConfigXml, PSSessionConfigurationCommandBase.RemoteManagementUsersSID, PSSessionConfigurationCommandBase.InteractiveUsersSID,
-                RemotingConstants.MaxIdleTimeoutMS);
+                RemotingConstants.MaxIdleTimeoutMS, RemotingConstants.PSPluginDLLName);
 
             // compile the script block statically and reuse the same instance
             // everytime the command is run..This will save on parsing time.
@@ -5039,7 +5185,8 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
                                                setCaptionMessage,
                                                whatIf,
                                                confirm,
-                                               _skipNetworkProfileCheck});
+                                               _skipNetworkProfileCheck,
+                                               RemotingErrorIdStrings.UnableToInstallPlugin});
         }
 
         #endregion
@@ -5054,10 +5201,8 @@ Enable-PSRemoting -force $args[0] -queryForRegisterDefault $args[1] -captionForR
     /// Only disable the network access to the Session Configuration. The
     /// local access is still enabled
     /// </summary>
-#if !CORECLR
     [Cmdlet(VerbsLifecycle.Disable, RemotingConstants.PSRemotingNoun,
         SupportsShouldProcess = true, ConfirmImpact = ConfirmImpact.Medium, HelpUri = "https://go.microsoft.com/fwlink/?LinkID=144298")]
-#endif
     public sealed class DisablePSRemotingCommand : PSCmdlet
     {
         # region Private Data

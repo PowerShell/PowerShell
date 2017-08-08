@@ -62,9 +62,6 @@ namespace Microsoft.PowerShell.Commands
         [SecurityPermission(SecurityAction.LinkDemand)]
         protected override void Dispose(bool disposing)
         {
-#if CORECLR
-            base.Dispose(disposing);
-#else
             try
             {
                 if (disposing)
@@ -76,21 +73,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 base.Dispose(disposing);
             }
-#endif
         }
-
-#if !CORECLR
-        /// <summary>
-        /// Closes the dialog and then calls the base class Close
-        /// </summary>
-        [SecurityPermission(SecurityAction.LinkDemand)]
-        public override void Close()
-        {
-            // Call the base class close
-
-            base.Close();
-        }
-#endif
 
         #endregion TraceListener constructors and disposer
 
