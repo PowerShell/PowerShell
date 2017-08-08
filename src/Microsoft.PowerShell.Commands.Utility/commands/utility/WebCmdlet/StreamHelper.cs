@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        static readonly Regex s_metaexp = new Regex(@"<meta\s*charset\s*=\s*[""']([a-zA-Z0-9]*)[""']");
+        static readonly Regex s_metaexp = new Regex(@"<meta\s+charset\s*=\s*[""'](?<charset>.[^""']+)");
 
         internal static string DecodeStream(Stream stream, ref Encoding encoding)
         {
@@ -482,10 +482,10 @@ namespace Microsoft.PowerShell.Commands
             {
                 // check for a charset attribute on the meta element to override the default.
                 Match match = s_metaexp.Match(content);
-                if (match.Success && match.Groups.Count > 1)
+                if (match.Success)
                 {
                     Encoding localEncoding = null;
-                    string characterSet = match.Groups[1].Value;
+                    string characterSet = match.Groups["charset"].Value;
 
                     if (TryGetEncoding(characterSet, out localEncoding))
                     {
