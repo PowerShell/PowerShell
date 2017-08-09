@@ -110,7 +110,9 @@ else
 
 
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
-$isFullBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api' -or $commitMessage -match '\[feature\]'
+$hasFeatureTag = $commitMessage -match '\[feature\]'
+$isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
+$isFullBuild = $isDailyBuild -or $hasFeatureTag
 
 if($Bootstrap.IsPresent)
 {
@@ -140,7 +142,8 @@ else
     $originalProgressPreference = $ProgressPreference
     $ProgressPreference = 'SilentlyContinue' 
     try {
-        Start-PSBuild -CrossGen:$isFullBuild -PSModuleRestore
+        ## We use CrossGen build to run tests only if it's the daily build.
+        Start-PSBuild -CrossGen:$isDailyBuild -PSModuleRestore
     }
     finally{
         $ProgressPreference = $originalProgressPreference    
@@ -167,7 +170,7 @@ else
     if (-not $isPr) {
         # Run 'CrossGen' for push commit, so that we can generate package.
         # It won't rebuild powershell, but only CrossGen the already built assemblies.
-        if (-not $isFullBuild) { Start-PSBuild -CrossGen }
+        if (-not $isDailyBuild) { Start-PSBuild -CrossGen }
         
         $packageParams = @{}
         if($env:TRAVIS_BUILD_NUMBER)
@@ -196,7 +199,7 @@ else
             $resultError = $_
             $result = "FAIL"
         }
-        if ( $isFullBuild ) {
+        if ( $isDailyBuild ) {
             # now update the badge if you've done a full build, these are not fatal issues
             try {
                 $svgData = Get-DailyBadge -result $result
