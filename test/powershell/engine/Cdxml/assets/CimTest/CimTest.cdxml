@@ -22,7 +22,7 @@
       </GetCmdletParameters>
 
       <Cmdlet>
-        <CmdletMetadata Verb="Remove" ConfirmImpact="High" />
+        <CmdletMetadata Verb="Remove" ConfirmImpact="Medium" />
         <Method MethodName="cim:DeleteInstance">
           <Parameters>
             <Parameter ParameterName="cim:operationOption:SourceCaller" DefaultValue="Microsoft.PowerShell">
@@ -44,7 +44,7 @@
 
     <!-- Set-CimTest -->
       <Cmdlet>
-        <CmdletMetadata Verb="Set" ConfirmImpact="High" HelpUri="http://go.microsoft.com/fwlink/?LinkID=241963" Aliases="ssmbs"/>
+        <CmdletMetadata Verb="Set" ConfirmImpact="Medium" HelpUri="http://go.microsoft.com/fwlink/?LinkID=241963" Aliases="scimt"/>
         <Method MethodName="cim:ModifyInstance">
           <Parameters>
             <Parameter ParameterName="field1">
@@ -81,7 +81,7 @@
     </InstanceCmdlets>
     <StaticCmdlets>
       <Cmdlet>
-        <CmdletMetadata Verb="New" />
+        <CmdletMetadata Verb="New" ConfirmImpact="Medium" />
         <Method MethodName="cim:CreateInstance">
 
           <Parameters>
@@ -104,6 +104,9 @@
         </Method>
       </Cmdlet>
     </StaticCmdlets>
+  <CmdletAdapterPrivateData>
+    <Data Name="ClientSideShouldProcess" />
+  </CmdletAdapterPrivateData>
   </Class>
   <Enums>
     <Enum EnumName="CimTest.field2enum" UnderlyingType="System.Int32">
