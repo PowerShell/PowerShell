@@ -248,9 +248,9 @@ function ExecuteRequestWithCustomUserAgent {
 
     try {
         $Params = @{
-            Uri                  = $Uri 
-            TimeoutSec           = 5 
-            UserAgent            = $UserAgent 
+            Uri                  = $Uri
+            TimeoutSec           = 5
+            UserAgent            = $UserAgent
             SkipHeaderValidation = $SkipHeaderValidation.IsPresent
         }
         if ($Cmdlet -eq 'Invoke-WebRequest') {
@@ -848,7 +848,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $output = @'
 <html>
     <head>
-        <meta 
+        <meta
             charset="Unicode"
             >
     </head>
@@ -877,7 +877,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 <html><head>
 <meta http-equiv="content-type" content="text/html; charset=Unicode">
 </head>
-</html>   
+</html>
 '@
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
             $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&output=$output" -UseBasicParsing
@@ -890,11 +890,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         It "Verifies Invoke-WebRequest detects http-equiv charset meta value newlines are encountered in the element." {
             $output = @'
 <html><head>
-<meta 
-    http-equiv="content-type" 
+<meta
+    http-equiv="content-type"
     content="text/html; charset=Unicode">
 </head>
-</html>   
+</html>
 '@
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
             $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&output=$output" -UseBasicParsing
@@ -941,7 +941,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 <html><head>
 <meta http-equiv="content-type" content="text/html; charset=Invalid">
 </head>
-</html>   
+</html>
 '@
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
             $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html&output=$output" -UseBasicParsing
@@ -970,7 +970,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $output = @'
 <html>
     <head>
-        <meta 
+        <meta
             charset="Unicode"
             >
     </head>
@@ -1002,7 +1002,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 <html><head>
 <meta http-equiv="content-type" content="text/html; charset=Unicode">
 </head>
-</html>   
+</html>
 '@
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
             $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&output=$output"
@@ -1015,11 +1015,11 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         It "Verifies Invoke-WebRequest detects http-equiv charset meta value newlines are encountered in the element." -Pending {
             $output = @'
 <html><head>
-<meta 
-    http-equiv="content-type" 
+<meta
+    http-equiv="content-type"
     content="text/html; charset=Unicode">
 </head>
-</html>   
+</html>
 '@
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('Unicode')
             $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&output=$output"
@@ -1028,7 +1028,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             $response.Output.Encoding.EncodingName | Should Be $expectedEncoding.EncodingName
             $response.Output | Should BeOfType 'Microsoft.PowerShell.Commands.HtmlWebResponseObject'
         }
-        
+
         It "Verifies Invoke-WebRequest honors non-utf8 charsets in the Content-Type header" -Pending {
             $output = '<html><head><meta charset="utf-32"></head></html>'
             # NOTE: meta charset should be ignored
@@ -1051,12 +1051,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             # Update to test for HtmlWebResponseObject when mshtl dependency has been resolved.
             $response.Output | Should BeOfType 'Microsoft.PowerShell.Commands.HtmlWebResponseObject'
         }
+
         It "Verifies Invoke-WebRequest defaults to iso-8859-1 when an unsupported/invalid charset is declared using http-equiv" -Pending {
             $output = @'
 <html><head>
 <meta http-equiv="content-type" content="text/html; charset=Invalid">
 </head>
-</html>   
+</html>
 '@
             $expectedEncoding = [System.Text.Encoding]::GetEncoding('iso-8859-1')
             $response = ExecuteWebRequest -Uri "http://localhost:8080/PowerShell?test=response&contenttype=text/html&output=$output"
