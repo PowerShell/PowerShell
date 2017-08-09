@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
   <metadata>
-    <id>powershell-$runtime$</id>
+    <id>$PackageName$-$runtime$</id>
     <version>$version$</version>
     <title>PowerShell Core for $runtime$</title>
     <authors>PowerShell</authors>

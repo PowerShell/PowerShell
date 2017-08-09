@@ -8,7 +8,7 @@
     <AssemblyName>NotUsed</AssemblyName>
     <Description>PowerShell Core nuget package with .NET CLI host including everything needed to run it.</Description>
     <NuspecFile>powershell.nuspec</NuspecFile>
-    <NuspecProperties>runtime=$(RID);version=$(SemVer)</NuspecProperties>
+    <NuspecProperties>runtime=$(RID);version=$(SemVer);PackageName=$(PackageName)</NuspecProperties>
     <NuspecBasePath>$(StagingPath)</NuspecBasePath>
     <IsTool>True</IsTool>
     <TargetFramework>netcoreapp2.0</TargetFramework>

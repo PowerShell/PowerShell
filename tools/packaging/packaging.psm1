@@ -27,7 +27,9 @@ function Start-PSPackage {
         [ValidateScript({$Environment.IsWindows})]
         [string]$WindowsDownLevel,
 
-        [Switch] $Force
+        [Switch] $Force,
+
+        [Switch] $IncludeSymbols
     )
 
     # Runtime and Configuration settings required by the package
@@ -40,9 +42,17 @@ function Start-PSPackage {
 
     $Script:Options = Get-PSOptions
 
+    $crossGenCorrect = $false
+    if(-not $IncludeSymbols.IsPresent -and $Script:Options.CrossGen) {
+        $crossGenCorrect = $true
+    }
+    elseif ($IncludeSymbols.IsPresent -and -not $Script:Options.CrossGen) {
+        $crossGenCorrect = $true
+    }
+
     # Make sure the most recent build satisfies the package requirement
     if (-not $Script:Options -or                                ## Start-PSBuild hasn't been executed yet
-        -not $Script:Options.CrossGen -or                       ## Last build didn't specify -CrossGen
+        -not $crossGenCorrect -or                               ## Last build didn't specify '-CrossGen' correctly
         $Script:Options.Runtime -ne $Runtime -or                ## Last build wasn't for the required RID
         $Script:Options.Configuration -ne $Configuration -or    ## Last build was with configuration other than 'Release'
         $Script:Options.Framework -ne "netcoreapp2.0")          ## Last build wasn't for CoreCLR
@@ -60,7 +70,15 @@ function Start-PSPackage {
         # This check serves as a simple gate to ensure that the user knows what he is doing, and
         # also ensure `Start-PSPackage` does what the user asks/expects, because once packages
         # are generated, it'll be hard to verify if they were built from the correct content.
-        throw "Please ensure you have run 'Start-PSBuild -Clean -CrossGen -Runtime $Runtime -Configuration $Configuration'!"
+        $params = @('-Clean')
+        if(-not $IncludeSymbols.IsPresent)
+        {
+            $params += '-CrossGen'
+        }
+        $params += '-Runtime', $Runtime
+        $params += '-Configuration', $Configuration
+
+        throw "Please ensure you have run 'Start-PSBuild $params'!"
     }
 
     # If ReleaseTag is specified, use the given tag to calculate Vesrion
@@ -106,6 +124,15 @@ function Start-PSPackage {
         }
     }
 
+    # Add the symbols to the suffix 
+    # if symbols are specified to be included
+    if($IncludeSymbols.IsPresent -and $NameSuffix) {
+        $NameSuffix = "symbols-$NameSuffix"
+    }
+    elseif ($IncludeSymbols.IsPresent) {
+        $NameSuffix = "symbols"
+    }
+
     switch ($Type) {
         "zip" {
             $Arguments = @{
@@ -145,6 +172,11 @@ function Start-PSPackage {
             }
         }
         "AppImage" {
+            if($IncludeSymbols.IsPresent)
+            {
+                throw "AppImage does not support packaging '-IncludeSymbols'"
+            }
+            
             if ($Environment.IsUbuntu14) {
                 $null = Start-NativeExecution { bash -iex "$PSScriptRoot/../appimage.sh" }
                 $appImage = Get-Item PowerShell-*.AppImage
@@ -605,7 +637,7 @@ function New-NugetPackage
 
         # Name of the Product
         [ValidateNotNullOrEmpty()]
-        [string] $PackageName = 'PowerShell',
+        [string] $PackageName = 'powershell',
 
         # Suffix of the Name
         [string] $PackageNameSuffix,
@@ -641,6 +673,11 @@ function New-NugetPackage
 
     $nugetFolder = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetOutput' -Clean
 
+    $nuspecPackageName = $PackageName
+    if($PackageNameSuffix)
+    {
+        $nuspecPackageName += '-' + $PackageNameSuffix
+    }
 
     # Setup staging directory so we don't change the original source directory
     $stagingRoot = New-SubFolder -Path $PSScriptRoot -ChildPath 'nugetStaging' -Clean
@@ -658,6 +695,7 @@ function New-NugetPackage
     $arguments += "/p:StagingPath=$stagingRoot"
     $arguments += "/p:RID=$PackageRuntime"
     $arguments += "/p:SemVer=$nugetSemanticVersion"
+    $arguments += "/p:PackageName=$nuspecPackageName"
     $arguments += $projectFolder
 
     log "Running dotnet $arguments"
