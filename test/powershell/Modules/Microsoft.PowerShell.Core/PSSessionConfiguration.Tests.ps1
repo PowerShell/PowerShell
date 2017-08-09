@@ -495,7 +495,7 @@ namespace PowershellTestConfigNamespace
                     $Result.Session.UseSharedProcess | Should be $UseSharedProcess
                 }
                 
-                It "Validate Register-PSSessionConfiguration -startupscript parameter" {
+                It "Validate Register-PSSessionConfiguration -startupscript parameter" -Pending {
 
                     $null = Register-PSSessionConfiguration -Name $TestSessionConfigName -path $LocalConfigFilePath -StartupScript $LocalStartupScriptPath -Force
 
@@ -511,14 +511,14 @@ namespace PowershellTestConfigNamespace
                 }
                 
                 
-                It "Validate Register-PSSessionConfiguration -ModulesToImport parameter" {
+                It "Validate Register-PSSessionConfiguration -ModulesToImport parameter" -Pending {
 
                     $null = Register-PSSessionConfiguration -Name $TestSessionConfigName -ModulesToImport $LocalTestModulePath -Force
                     
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute "return IsTestModuleImported" -ExpectedOutput $true -ExpectedError $null
                 }
 
-                It "Validate Register-PSSessionConfiguration with ApplicationBase, AssemblyName and ConfigurationTypeName parameter" {
+                It "Validate Register-PSSessionConfiguration with ApplicationBase, AssemblyName and ConfigurationTypeName parameter" -Pending {
 
                     $null = Register-PSSessionConfiguration -Name $TestSessionConfigName -ApplicationBase $script:TestAssemblyDir -AssemblyName $LocalTestAssemblyName -ConfigurationTypeName "PowershellTestConfigNamespace.PowershellTestConfig" -force
                     
@@ -564,7 +564,7 @@ namespace PowershellTestConfigNamespace
                     $Result.Session.UseSharedProcess | Should be $UseSharedProcess
                 }
                 
-                It "Validate Set-PSSessionConfiguration -startupscript parameter" {
+                It "Validate Set-PSSessionConfiguration -startupscript parameter" -Pending {
 
                     $null = Set-PSSessionConfiguration -Name $TestSessionConfigName -StartupScript $LocalStartupScriptPath
 
@@ -578,14 +578,14 @@ namespace PowershellTestConfigNamespace
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute $null -ExpectedOutput $null -ExpectedError "RemoteConnectionDisallowed,PSSessionOpenFailed"
                 }
                 
-                It "Validate Set-PSSessionConfiguration -ModulesToImport parameter" {
+                It "Validate Set-PSSessionConfiguration -ModulesToImport parameter" -Pending {
 
                     $null = Set-PSSessionConfiguration -Name $TestSessionConfigName -ModulesToImport $LocalTestModulePath -Force
                     
                     ValidateRemoteEndpoint -TestSessionConfigName $TestSessionConfigName -ScriptToExecute "return IsTestModuleImported" -ExpectedOutput $true -ExpectedError $null
                 }
 
-                It "Validate Set-PSSessionConfiguration with ApplicationBase, AssemblyName and ConfigurationTypeName parameter" {
+                It "Validate Set-PSSessionConfiguration with ApplicationBase, AssemblyName and ConfigurationTypeName parameter" -Pending {
 
                     $null = Set-PSSessionConfiguration -Name $TestSessionConfigName -ApplicationBase $script:TestAssemblyDir -AssemblyName $LocalTestAssemblyName -ConfigurationTypeName "PowershellTestConfigNamespace.PowershellTestConfig" -force
                     
