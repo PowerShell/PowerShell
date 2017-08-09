@@ -63,10 +63,11 @@ Describe "Invoke-Item basic tests" -Tags "Feature" {
             } else {
                 ## On full desktop, we use `UseShellExecute = true` to align with Windows PowerShell
                 $notepad = Get-Command "notepad.exe" -CommandType Application | ForEach-Object Source
-                Get-Process -Name notepad | Stop-Process -Force
+                $notepadProcessName = "notepad"
+                Get-Process -Name $notepadProcessName | Stop-Process -Force
                 Invoke-Item -Path $notepad
-                $notepadProcess = Get-Process -Name notepad
-                $notepadProcess.Name | Should Be "notepad"
+                $notepadProcess = Get-Process -Name $notepadProcessName
+                $notepadProcess.Name | Should Be $notepadProcessName
                 Stop-Process -InputObject $notepadProcess
             }
         } else {

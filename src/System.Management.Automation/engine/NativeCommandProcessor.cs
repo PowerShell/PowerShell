@@ -310,7 +310,7 @@ namespace System.Management.Automation
             }
             catch (Exception)
             {
-                // Do the cleanup and rethrow the exception
+                // Do cleanup in case of exception
                 CleanUp();
                 throw;
             }
@@ -332,7 +332,7 @@ namespace System.Management.Automation
             }
             catch (Exception)
             {
-                // Do the cleanup and rethrow the exception
+                // Do cleanup in case of exception
                 CleanUp();
                 throw;
             }
@@ -755,7 +755,7 @@ namespace System.Management.Automation
             }
             finally
             {
-                // Do the cleanup...
+                // Do some cleanup
                 CleanUp();
             }
 
@@ -1024,6 +1024,7 @@ namespace System.Management.Automation
 
             try
             {
+                // Dispose the process if it's already created
                 if (_nativeProcess != null)
                 {
                     _nativeProcess.Dispose();
