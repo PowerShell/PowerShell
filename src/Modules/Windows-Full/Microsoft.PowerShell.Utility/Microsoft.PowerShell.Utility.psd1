@@ -8,7 +8,7 @@ PowerShellVersion="3.0"
 CLRVersion="4.0"
 CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Out-File", "Out-Printer", "Out-String",
-    "Out-GridView", "Get-FormatData", "Export-FormatData", "ConvertFrom-Json", "ConvertTo-Json",
+    "Out-GridView", "Get-FormatData", "Export-FormatData", "ConvertFrom-Json", "ConvertFrom-SddlString", "ConvertTo-Json",
     "Invoke-RestMethod", "Invoke-WebRequest", "Register-ObjectEvent", "Register-EngineEvent",
     "Wait-Event", "Get-Event", "Remove-Event", "Get-EventSubscriber", "Unregister-Event", "New-Guid",
     "New-Event", "Add-Member", "Add-Type", "Compare-Object", "ConvertTo-Html", "ConvertFrom-StringData",
@@ -25,8 +25,7 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Send-MailMessage", "Get-TraceSource", "Set-TraceSource", "Trace-Command", "Show-Command", "Unblock-File", "Get-FileHash",
     "Get-Runspace", "Debug-Runspace", "Enable-RunspaceDebug", "Disable-RunspaceDebug", "Get-RunspaceDebug", "Wait-Debugger",
     "ConvertFrom-String", "Convert-String" , "Get-Uptime", "New-TemporaryFile", "Get-Verb", "Format-Hex"
-FunctionsToExport= "ConvertFrom-SddlString"
 AliasesToExport= "CFS", "fhx"
-NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"
+NestedModules="Microsoft.PowerShell.Commands.Utility.dll"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=390787'
 }

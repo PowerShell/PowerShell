@@ -190,6 +190,7 @@ Describe "Verify approved aliases list" -Tags "CI" {
 "Cmdlet", "ConvertFrom-Csv",                                    ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "ConvertFrom-Json",                                   ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "ConvertFrom-SecureString",                           ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
+"Cmdlet", "ConvertFrom-SddlString",                             ,                     $($FullCLR -or $CoreWindows              )
 "Cmdlet", "ConvertFrom-String",                                 ,                     $($FullCLR                               )
 "Cmdlet", "ConvertFrom-StringData",                             ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)
 "Cmdlet", "Convert-Path",                                       ,                     $($FullCLR -or $CoreWindows -or $CoreUnix)

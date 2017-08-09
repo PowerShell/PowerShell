@@ -47,7 +47,7 @@ namespace System.Management.Automation.Runspaces
                 // Building the catalog is expensive, so force that to happen early on a background thread, and do so
                 // on a file we are very likely to read anyway.
                 var pshome = Utils.DefaultPowerShellAppBase;
-                var unused = SecuritySupport.IsProductBinary(Path.Combine(pshome, "Modules", "Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Utility.psm1"));
+                var unused = SecuritySupport.IsProductBinary(Path.Combine(pshome, "Modules", "Microsoft.PowerShell.Utility", "Microsoft.PowerShell.Utility.psd1"));
             });
 
             // One other task for other stuff that's faster, but still a little slow.

@@ -25,6 +25,6 @@ CmdletsToExport= "Format-List", "Format-Custom", "Format-Table", "Format-Wide",
     "Get-RunspaceDebug", "Wait-Debugger" , "Get-Uptime", "New-TemporaryFile", "Get-Verb", "Format-Hex"
 FunctionsToExport= "Import-PowerShellDataFile"
 AliasesToExport= "fhx"
-NestedModules="Microsoft.PowerShell.Commands.Utility.dll","Microsoft.PowerShell.Utility.psm1"
+NestedModules="Microsoft.PowerShell.Commands.Utility.dll"
 HelpInfoURI = 'https://go.microsoft.com/fwlink/?linkid=390787'
 }
