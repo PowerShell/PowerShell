@@ -199,7 +199,7 @@ else
             $resultError = $_
             $result = "FAIL"
         }
-        if ( $isFullBuild ) {
+        if ( $isDailyBuild ) {
             # now update the badge if you've done a full build, these are not fatal issues
             try {
                 $svgData = Get-DailyBadge -result $result
