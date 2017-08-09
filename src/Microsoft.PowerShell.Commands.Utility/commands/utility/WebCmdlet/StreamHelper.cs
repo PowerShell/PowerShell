@@ -465,7 +465,7 @@ namespace Microsoft.PowerShell.Commands
             return result;
         }
 
-        static readonly Regex s_metaexp = new Regex(@"<meta\s+charset\s*=\s*[""'](?<charset>.[^""']+)");
+        static readonly Regex s_metaexp = new Regex(@"<meta\s[.\n]*[^><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]");
 
         internal static string DecodeStream(Stream stream, ref Encoding encoding)
         {
