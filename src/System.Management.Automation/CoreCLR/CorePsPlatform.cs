@@ -148,10 +148,29 @@ namespace System.Management.Automation
             }
         }
 
+        /// <summary>
+        /// True if underlying system is Windows Desktop.
+        /// </summary>
+        public static bool IsWindowsDesktop
+        {
+            get
+            {
+#if UNIX
+                return false;
+#else
+                if (_isWindowsDesktop.HasValue) { return _isWindowsDesktop.Value; }
+                
+                _isWindowsDesktop = !IsNanoServer && !IsIoT;
+                return _isWindowsDesktop.Value;
+#endif
+            }
+        }
+
 #if !UNIX
         private static bool? _isNanoServer = null;
         private static bool? _isIoT = null;
         private static bool? _isInbox = null;
+        private static bool? _isWindowsDesktop = null;
 #endif
 
         // format files

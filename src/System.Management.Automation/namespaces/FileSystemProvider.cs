@@ -1307,14 +1307,6 @@ namespace Microsoft.PowerShell.Commands
         /// </exception>
         protected override void InvokeDefaultAction(string path)
         {
-#if UNIX
-            // Error code 13 -- Permission denied
-            const int NOT_EXECUTABLE = 13;
-#else
-            // Error code 193 -- BAD_EXE_FORMAT (not a valid Win32 application)
-            const int NOT_EXECUTABLE = 193;
-#endif
-
             if (String.IsNullOrEmpty(path))
             {
                 throw PSTraceSource.NewArgumentException("path");
@@ -1330,11 +1322,11 @@ namespace Microsoft.PowerShell.Commands
             {
                 var invokeProcess = new System.Diagnostics.Process();
                 invokeProcess.StartInfo.FileName = path;
+#if UNIX
                 bool invokeDefaultProgram = false;
-
-                if (Directory.Exists(path) && !Platform.IsNanoServer && !Platform.IsIoT)
+                if (Directory.Exists(path))
                 {
-                    // Path points to a directory and it's not NanoServer or IoT, so we can opne the file explorer
+                    // Path points to a directory. We have to use xdg-open/open on Linux/OSX.
                     invokeDefaultProgram = true;
                 }
                 else
@@ -1344,18 +1336,16 @@ namespace Microsoft.PowerShell.Commands
                         // Try Process.Start first. This works for executables on Win/Unix platforms
                         invokeProcess.Start();
                     }
-                    catch (Win32Exception ex) when (ex.NativeErrorCode == NOT_EXECUTABLE)
+                    catch (Win32Exception ex) when (ex.NativeErrorCode == 13)
                     {
-                        // The file is possibly not an executable. If it's headless SKUs, rethrow.
-                        if (Platform.IsNanoServer || Platform.IsIoT) { throw; }
-                        // Otherwise, try invoking the default program that handles this file.
+                        // Error code 13 -- Permission denied
+                        // The file is possibly not an executable. We try xdg-open/open on Linux/OSX.
                         invokeDefaultProgram = true;
                     }
                 }
 
                 if (invokeDefaultProgram)
                 {
-#if UNIX
                     const string quoteFormat = "\"{0}\"";
                     invokeProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
                     if (NativeCommandParameterBinder.NeedQuotes(path))
@@ -1364,10 +1354,12 @@ namespace Microsoft.PowerShell.Commands
                     }
                     invokeProcess.StartInfo.Arguments = path;
                     invokeProcess.Start();
-#else
-                    ShellExecuteHelper.Start(invokeProcess.StartInfo);
-#endif
                 }
+#else
+                // Use ShellExecute when it's not a headless SKU
+                invokeProcess.StartInfo.UseShellExecute = Platform.IsWindowsDesktop;
+                invokeProcess.Start();
+#endif
             }
         } // InvokeDefaultAction
 

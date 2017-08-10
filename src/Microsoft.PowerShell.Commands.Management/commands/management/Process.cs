@@ -1665,18 +1665,6 @@ namespace Microsoft.PowerShell.Commands
         private ManualResetEvent _waithandle = null;
         private bool _isDefaultSetParameterSpecified = false;
 
-        private bool _useShellExecute;
-        private readonly bool _isOnFullWinSku;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public StartProcessCommand()
-        {
-            _isOnFullWinSku = Platform.IsWindows && !Platform.IsNanoServer && !Platform.IsIoT;
-            _useShellExecute = _isOnFullWinSku;
-        }
-
         #region Parameters
 
         /// <summary>
@@ -1877,7 +1865,7 @@ namespace Microsoft.PowerShell.Commands
             string message = string.Empty;
 
             // -Verb and -WindowStyle are not supported on non-Windows platforms as well as Windows headless SKUs
-            if (_isOnFullWinSku)
+            if (Platform.IsWindowsDesktop)
             {
                 // Parameters '-NoNewWindow' and '-WindowStyle' are both valid on full windows SKUs.
                 if (_nonewwindow && _windowstyleSpecified)
@@ -1908,6 +1896,8 @@ namespace Microsoft.PowerShell.Commands
 
             //create an instance of the ProcessStartInfo Class
             ProcessStartInfo startInfo = new ProcessStartInfo();
+            //use ShellExecute by default if we are running on full windows SKUs
+            startInfo.UseShellExecute = Platform.IsWindowsDesktop;
 
             //Path = Mandatory parameter -> Will not be empty.
             try
@@ -1959,7 +1949,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDefaultSetParameterSpecified)
                 {
-                    _useShellExecute = false;
                     startInfo.UseShellExecute = false;
                 }
 
@@ -1970,10 +1959,10 @@ namespace Microsoft.PowerShell.Commands
                     LoadEnvironmentVariable(startInfo, Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine));
                     LoadEnvironmentVariable(startInfo, Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User));
                 }
-#if !CORECLR
+
                 //WindowStyle
                 startInfo.WindowStyle = _windowstyle;
-#endif
+
                 //NewWindow
                 if (_nonewwindow)
                 {
@@ -2054,7 +2043,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-#if !CORECLR // Properties 'Verb' and 'WindowStyle' are missing in CoreCLR
             else if (ParameterSetName.Equals("UseShellExecute"))
             {
                 //Verb
@@ -2062,7 +2050,7 @@ namespace Microsoft.PowerShell.Commands
                 //WindowStyle
                 startInfo.WindowStyle = _windowstyle;
             }
-#endif
+
             //Starts the Process
             Process process = Start(startInfo);
 
@@ -2212,7 +2200,7 @@ namespace Microsoft.PowerShell.Commands
             return process;
 #else
             Process process = null;
-            if (_useShellExecute)
+            if (startInfo.UseShellExecute)
             {
                 process = StartWithShellExecute(startInfo);
             }
@@ -2467,7 +2455,7 @@ namespace Microsoft.PowerShell.Commands
                     lpStartupInfo.dwFlags |= 0x00000001;
 
                     // On headless SKUs like NanoServer and IoT, window style can only be the default value 'Normal'.
-                    switch (WindowStyle)
+                    switch (startinfo.WindowStyle)
                     {
                         case ProcessWindowStyle.Normal:
                             //SW_SHOWNORMAL
@@ -2595,11 +2583,7 @@ namespace Microsoft.PowerShell.Commands
             Process result = null;
             try
             {
-#if CORECLR
-                result = ShellExecuteHelper.Start(startInfo, WindowStyle, Verb);
-#else
                 result = Process.Start(startInfo);
-#endif
             }
             catch (Win32Exception ex)
             {
