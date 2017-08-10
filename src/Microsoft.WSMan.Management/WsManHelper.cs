@@ -80,14 +80,13 @@ namespace Microsoft.WSMan.Management
         //string for operation
         internal string WSManOp = null;
 
-        private ResourceManager _resourceMgr = null;
         private PSCmdlet cmdletname;
         private NavigationCmdletProvider _provider;
 
         private FileStream _fs;
         private StreamReader _sr;
 
-        private static ResourceManager g_resourceMgr = new ResourceManager("Microsoft.WSMan.Management.resources.WsManResources", typeof(WSManHelper).GetTypeInfo().Assembly);
+        private static ResourceManager _resourceMgr = new ResourceManager("Microsoft.WSMan.Management.resources.WsManResources", typeof(WSManHelper).GetTypeInfo().Assembly);
 
 
         //
@@ -153,26 +152,26 @@ namespace Microsoft.WSMan.Management
             System.Security.Principal.WindowsPrincipal principal = new System.Security.Principal.WindowsPrincipal(currentIdentity);
             if (!principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator))
             {
-                string message = g_resourceMgr.GetString("ErrorElevationNeeded");
+                string message = _resourceMgr.GetString("ErrorElevationNeeded");
                 throw new InvalidOperationException(message);
             }
         }
 
         internal string GetResourceMsgFromResourcetext(string rscname)
         {
-            return g_resourceMgr.GetString(rscname);
+            return _resourceMgr.GetString(rscname);
         }
 
         static internal string FormatResourceMsgFromResourcetextS(string rscname,
             params object[] args)
         {
-            return FormatResourceMsgFromResourcetextS(g_resourceMgr, rscname, args);
+            return FormatResourceMsgFromResourcetextS(_resourceMgr, rscname, args);
         }
 
         internal string FormatResourceMsgFromResourcetext(string resourceName,
             params object[] args)
         {
-            return FormatResourceMsgFromResourcetextS(this._resourceMgr, resourceName, args);
+            return FormatResourceMsgFromResourcetextS(_resourceMgr, resourceName, args);
         }
 
         static private string FormatResourceMsgFromResourcetextS(
