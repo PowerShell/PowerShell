@@ -164,13 +164,10 @@ namespace Microsoft.PowerShell.Commands
                 handler.Proxy = WebSession.Proxy;
             }
 
-            /*
-            TODO: HttpClientHandler will support client certificate in RTM
-            See https://github.com/dotnet/corefx/issues/7623 for more details.
             if (null != WebSession.Certificates)
             {
-                handler.ClientCertificates = WebSession.Certificates;
-            }*/
+                handler.ClientCertificates.AddRange(WebSession.Certificates);
+            }
 
             if (SkipCertificateCheck)
             {
