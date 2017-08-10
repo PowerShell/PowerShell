@@ -275,11 +275,6 @@ cd
 cdxml
 int
 p1
- - docs/dev-process/map-json-files.md
-build.psm1
-psl-monad
-sd
-System.Management.Automation.dll
  - docs/FAQ.md
 PoshCode
 SS64.com
@@ -517,6 +512,7 @@ Update-TypeData
  - docs/testing-guidelines/testing-guidelines.md
 100ms
 Api
+build.psm1
 DotNet
 Interop
 MessageAnalyzer
