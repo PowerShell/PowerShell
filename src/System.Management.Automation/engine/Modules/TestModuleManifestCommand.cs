@@ -183,7 +183,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             foreach (ModuleSpecification requiredModule in requiredModules)
                             {
-                                var modules = GetModule(new[] { requiredModule.Name }, false, true);
+                                var modules = GetModule(new[] { requiredModule.Name }, all: false, refresh: true);
                                 if (modules.Count == 0)
                                 {
                                     string errorMsg = StringUtil.Format(Modules.InvalidRequiredModulesinModuleManifest, requiredModule.Name, filePath);
@@ -216,7 +216,7 @@ namespace Microsoft.PowerShell.Commands
                         {
                             foreach (ModuleSpecification moduleListModule in moduleListModules)
                             {
-                                var modules = GetModule(new[] { moduleListModule.Name }, true, true);
+                                var modules = GetModule(new[] { moduleListModule.Name }, all: false, refresh: true);
                                 if (modules.Count == 0)
                                 {
                                     string errorMsg = StringUtil.Format(Modules.InvalidModuleListinModuleManifest, moduleListModule.Name, filePath);
