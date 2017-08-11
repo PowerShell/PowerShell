@@ -7,6 +7,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
@@ -113,7 +114,15 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (ShouldProcess(path))
                 {
-                    AlternateDataStreamUtilities.DeleteFileStream(path, "Zone.Identifier");
+                    try
+                    {
+                        AlternateDataStreamUtilities.DeleteFileStream(path, "Zone.Identifier");
+                    }
+                    catch (Win32Exception accessException)
+                    {
+                        WriteError(new ErrorRecord(accessException, "RemoveItemUnauthorizedAccessError", ErrorCategory.PermissionDenied, path));
+                    }
+
                 }
             }
         }

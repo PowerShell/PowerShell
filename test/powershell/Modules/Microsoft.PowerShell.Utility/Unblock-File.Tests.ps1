@@ -54,7 +54,7 @@ Describe "Unblock-File" -Tags "CI" {
         Test-UnblockFile | Should Be $true
     }
 
-    It "Throw if a file is read only" {
+    It "Write an error if a file is read only" {
         $TestFile = Join-Path $TestDrive "testfileunlock.ps1"
         Set-Content -Path $TestFile -value 'test'
         $ZoneIdentifier = {
@@ -66,6 +66,8 @@ Describe "Unblock-File" -Tags "CI" {
 
         $TestFileCreated = Get-ChildItem $TestFile
         $TestFileCreated.IsReadOnly | Should Be $true
-        { Unblock-File -LiteralPath $TestFile -ErrorAction Stop } | ShouldBeErrorId "System.ComponentModel.Win32Exception,Microsoft.PowerShell.Commands.UnblockFileCommand"
+
+        { Unblock-File -LiteralPath $TestFile -ErrorAction SilentlyContinue } | Should Not Throw
+        $error[0].FullyQualifiedErrorId | Should Be "RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.UnblockFileCommand"
     }
 }
