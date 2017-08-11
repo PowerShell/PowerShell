@@ -298,6 +298,12 @@ function ExecuteWebRequest
 
 
 function GetSelfSignedCert {
+    <#    
+        .NOTES
+            This certificate is not issued for any specific Key Usage
+            It cannot be used for any service that requires a specific key usage
+            It can be used for SSL/TLS Client Authentication
+    #>
     $PfxBase64 = @'
 MIIQwQIBAzCCEIcGCSqGSIb3DQEHAaCCEHgEghB0MIIQcDCCBqcGCSqGSIb3DQEHBqCCBpgwggaU
 AgEAMIIGjQYJKoZIhvcNAQcBMBwGCiqGSIb3DQEMAQYwDgQIfGLU4iludG8CAggAgIIGYA2q8iyw
