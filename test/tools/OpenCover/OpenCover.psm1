@@ -40,6 +40,171 @@ function Get-ClassCoverageData([xml.xmlelement]$element)
     return $classes
 }
 
+# region FileCoverage
+
+class FileCoverage
+{
+    [string]$Path
+    [Collections.Generic.HashSet[int]]$Hit
+    [Collections.Generic.HashSet[int]]$Miss
+    [int]$SequencePointCount = 0
+    [Double]$Coverage
+    FileCoverage([string]$p) {
+        $this.Path = $p
+        $this.Hit = [Collections.Generic.HashSet[int]]::new()
+        $this.Miss = [Collections.Generic.HashSet[int]]::new()
+    }
+}
+
+<#
+.Synopsis
+   Format the coverage data for a file
+.Description
+   Show the lines which were hit or not in a specific file. Line numbers are included in the output.
+   If a line was hit during a test run a '+' will follow the line number, if a line was missed, a '-'
+   will follow the line number. If a line is not hittable, it will not show '+' or '-'.
+
+   You can map file locations with the -oldBase and -newBase parameters (see example below), so you can 
+   view coverage on a system with a different file layout. It is obvious to note that if files are different
+   between the systems, the results will be misleading
+.EXAMPLE
+   PS> $coverage = Get-CodeCoverage -CoverageXmlFile .\opencover.xml
+   PS> Format-FileCoverage -FileCoverageData $coverage.FileCoverage -filter "CredSSP.cs"
+
+   ...
+   0790                   try
+   0791 +                 {
+   0792                       // ServiceController.Start will return before the service is actually started
+   0793                       // This API will wait forever
+   0794 +                     serviceController.WaitForStatus(
+   0795 +                         targetStatus,
+   0796 +                         new TimeSpan(20000000) // 2 seconds
+   0797 +                         );
+   0798 +                     return true; // service reached target status
+   0799                   }
+   0800 -                 catch (System.ServiceProcess.TimeoutException) // still waiting
+   0801 -                 {
+   0802 -                     if (serviceController.Status != pendingStatus
+   ...
+
+.EXAMPLE
+   Map the file location from C:\projects\powershell-f975h to /users/james/src
+   PS> $coverage = Get-CodeCoverage -CoverageXmlFile .\opencover.xml
+   PS> $formatArgs = @{
+       FileCoverageData = $coverage.FileCoverage
+       filter = "Service.cs"
+       oldBase = "C:\\projects\\powershell-f975h"
+       newBase = "/users/james/src"
+   }
+   PS> Format-FileCoverage @formatArgs
+
+   ...
+   0790                   try
+   0791 +                 {
+   0792                       // ServiceController.Start will return before the service is actually started
+   0793                       // This API will wait forever
+   0794 +                     serviceController.WaitForStatus(
+   0795 +                         targetStatus,
+   0796 +                         new TimeSpan(20000000) // 2 seconds
+   0797 +                         );
+   0798 +                     return true; // service reached target status
+   0799                   }
+   0800 -                 catch (System.ServiceProcess.TimeoutException) // still waiting
+   0801 -                 {
+   0802 -                     if (serviceController.Status != pendingStatus
+   ...
+#>
+function Format-FileCoverage
+{
+    param ( 
+        [Parameter(Position=0,Mandatory=$true,ValueFromPipeline=$true)]$FileCoverageData, 
+        [Parameter()][string]$oldBase = "", 
+        [Parameter()][string]$newBase = "", 
+        [Parameter()][string]$filter = ".*" 
+    )
+
+    $files = @($fileCoverageData.Keys) | Where-Object { $_ -match $filter }
+
+    foreach ( $file in $files ) {
+        $coverageData = $FileCoverageData[$file]
+        $filepath = $file -replace "$oldBase","${newBase}"
+        if ( test-path $filepath ) {
+            $content = get-content $filepath
+            for($i = 0; $i -lt $content.length; $i++ ) {
+                if ( $coverageData.Hit -contains ($i+1)) {
+                    $sign = "+"
+                }
+                elseif ( $coverageData.Miss -contains ($i+1)) {
+                    $sign = "-"
+                }
+                else {
+                    $sign = " "
+                }
+                $outputline = "{0:0000} {1} {2}" -f ($i+1),$sign,$content[$i]
+                if ( $sign -eq "+" ) { write-host -fore green $outputline }
+                elseif ( $sign -eq "-" ) { write-host -fore red $outputline }
+                else { write-host -fore white $outputline }
+            }
+        }
+        else {
+            Write-Error "Cannot find $filepath"
+        }
+    }
+}
+
+function Get-FileCoverageData([xml]$CoverageData)
+{
+    $result = [Collections.Generic.Dictionary[string,FileCoverage]]::new()
+    $count = 0
+    Write-Progress "collecting files"
+    $filehash = $CoverageData.SelectNodes(".//File") | %{ $h = @{} } { $h[$_.uid] = $_.fullpath } { $h }
+    Write-Progress "collecting sequence points"
+    $nodes = $CoverageData.SelectNodes(".//SequencePoint")
+    $ncount = $nodes.count
+    Write-Progress "scanning sequence points"
+    foreach($point in $nodes) {
+        $fileid = $point.fileid
+        $filepath = $filehash[$fileid]
+        $s = [int]$point.sl
+        $e = [int]$point.el
+        $filedata = $null
+        if ( ! $result.TryGetValue($filepath, [ref]$filedata) ) {
+            $filedata = [FileCoverage]::new($filepath)
+            $null = $result.Add($filepath, $filedata)
+        }
+
+        for($i = $s; $i -le $e; $i++) {
+            if ( $point.vc -eq "0" ) {
+                $null = $filedata.Miss.Add($i)
+            }
+            else {
+                $null = $filedata.Hit.Add($i)
+            }
+        }
+        if ( (++$count % 50000) -eq 0 ) { Write-Progress "$count of $ncount" }
+    }
+
+    # Almost done, we're looking at two runs, and one run might have missed a line that
+    # was hit in another run, so go throw each one of the collections and remove any
+    # hit from the miss collection
+    Write-Progress "Cleanup up collections"
+    foreach ( $key in $result.keys ) {
+        $collection = $null
+        if ( $result.TryGetValue($key, [ref]$collection ) ) {
+            foreach ( $hit in $collection.hit ) {
+                $null = $collection.miss.remove($hit)
+            }
+            $collection.SequencePointCount = $collection.Hit.Count + $Collection.Miss.Count
+            $collection.Coverage = $collection.Hit.Count/$collection.SequencePointCount*100
+        }
+        else {
+            Write-Error "Could not find '$key'"
+        }
+    }
+    # now return $result
+    $result
+}
+#endregion
 function Get-CodeCoverageChange($r1, $r2, [string[]]$ClassName)
 {
     $h = @{}
@@ -134,6 +299,7 @@ function Get-CoverageData($xmlPath)
         CoverageLogFile = $xmlPath
         CoverageSummary = (Get-CoverageSummary -element $CoverageXml.CoverageSession.Summary)
         Assembly = $assemblies
+        FileCoverage = Get-FileCoverageData $CoverageXml
     }
     $CoverageData.PSTypeNames.Insert(0,"OpenCover.CoverageData")
     Add-Member -InputObject $CoverageData -MemberType ScriptMethod -Name GetClassCoverage -Value { param ( $name ) $this.assembly.classcoverage | Where-Object {$_.classname -match $name } }
