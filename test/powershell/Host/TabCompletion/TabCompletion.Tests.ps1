@@ -615,7 +615,8 @@ Describe "TabCompletion" -Tags CI {
             $inputStr = "function bar { [parameter(]param() }"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn ($inputStr.IndexOf('(') + 1)
             $res.CompletionMatches.Count | Should Be 10
-            $res.CompletionMatches[0].CompletionText | Should Be "Position"
+            $entry = $res.CompletionMatches | Where-Object CompletionText -EQ "Position"
+            $entry.CompletionText | Should Be "Position"
         }
 
         It "Test completion with line continuation" {
@@ -647,7 +648,7 @@ dir -Recurse `
             $inputStr = "using module test"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should Be 1
-            $res.CompletionMatches[0].CompletionText | Should Be ".@{separator}testModule.psm1"
+            $res.CompletionMatches[0].CompletionText | Should Be ".${separator}testModule.psm1"
         }
 
         It "Test complete module name" {
@@ -669,9 +670,7 @@ dir -Recurse `
         BeforeAll {
             $tempDir = Join-Path -Path $TestDrive -ChildPath "CommaTest"
             New-Item -Path $tempDir -ItemType Directory -Force > $null
-
             New-Item -Path "$tempDir\commaA.txt" -ItemType File -Force > $null
-            New-Item -Path "$tempDir\commaB.txt" -ItemType File -Force > $null
 
             $redirectionTestCases = @(
                 @{ inputStr = "gps >";  expected = ".${separator}commaA.txt" }
@@ -692,7 +691,7 @@ dir -Recurse `
 
         It "Test comma with file array element" {
             $inputStr = "dir .\commaA.txt,"
-            $expected = ".${separator}commaB.txt"
+            $expected = ".${separator}commaA.txt"
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should Be 1
             $res.CompletionMatches[0].CompletionText | Should Be $expected
@@ -709,7 +708,7 @@ dir -Recurse `
             param($inputStr, $expected)
 
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
-            $res.CompletionMatches.Count | Should Be 2
+            $res.CompletionMatches.Count | Should Be 1
             $res.CompletionMatches[0].CompletionText | Should Be $expected
         }
 
