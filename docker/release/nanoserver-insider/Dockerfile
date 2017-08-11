@@ -1,7 +1,7 @@
 # escape=`
 # Args used by from statements must be defined here:
-ARG NanoServerVersion=10.0.16237.1001
-ARG WindowsServerCoreVersion=10.0.16237.1001
+ARG NanoServerVersion=10.0.16257.1000
+ARG WindowsServerCoreVersion=10.0.16257.1000
 ARG WindowsServerCoreRepo=microsoft/windowsservercore-insider
 ARG NanoServerRepo=microsoft/nanoserver-insider
 
@@ -21,6 +21,11 @@ RUN Expand-Archive powershell.zip -DestinationPath \PowerShell
 
 # Install PowerShell into NanoServer
 FROM ${NanoServerRepo}:$NanoServerVersion
+
+ARG VCS_REF="none"
+ARG PS_VERSION=6.0.0-beta.5
+ARG IMAGE_NAME=microsoft/nanoserver-insider-powershell
+
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>"
 LABEL readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
 LABEL description="This Dockerfile will install the latest release of PS."
@@ -32,7 +37,7 @@ COPY --from=installer-env ["\\PowerShell\\", "$ProgramFiles\\PowerShell"]
 # Persist %PSCORE% ENV variable for user convenience
 ENV PSCORE="$ProgramFiles\PowerShell\PowerShell.exe"
 
-# setx /M fails on nanoserver-insider, setting the user path
+# Set the path
 RUN setx PATH "%PATH%;%ProgramFiles%\PowerShell"
 
-CMD ["C:\\Program Files\\PowerShell\\PowerShell.exe"]
+CMD ["PowerShell.exe"]
