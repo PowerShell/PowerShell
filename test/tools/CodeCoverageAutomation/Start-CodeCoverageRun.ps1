@@ -143,6 +143,12 @@ $jsonFile = "$outputBaseFolder\CC.json"
 
 try
 {
+    ## This is required so we do not keep on merging coverage reports.
+    if(Test-Path $outputLog)
+    {
+        Remove-Item $outputLog -Force -ErrorAction SilentlyContinue
+    }
+
     $oldErrorActionPreference = $ErrorActionPreference
     $ErrorActionPreference = 'Stop'
     Write-LogPassThru -Message "Starting downloads."
@@ -264,9 +270,5 @@ finally
 
     ## Disable the cleanup till we stabilize.
     #Remove-Item -recurse -force -path $outputBaseFolder
-
-    ## This is required so we do not keep on merging coverage reports.
-    Remove-Item $outputLog -Force -ErrorAction SilentlyContinue
-
     $ErrorActionPreference = $oldErrorActionPreference
 }
