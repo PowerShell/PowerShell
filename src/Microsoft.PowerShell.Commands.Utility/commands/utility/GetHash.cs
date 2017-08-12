@@ -16,7 +16,7 @@ namespace Microsoft.PowerShell.Commands
                                                                  StreamParameterSet
                                                                  })]
     [OutputType(typeof(StringHashInfo), ParameterSetName = new[] { StringHashParameterSet })]
-    public class GetFileHashCommand : HashCmdletBase
+    public class GetHashCommand : HashCmdletBase
     {
         /// <summary>
         /// Path parameter
@@ -124,27 +124,18 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (string str in InputString)
                     {
-                        try
-                        {
-                            //if (str == null)
-                            //{
-                            //    WriteStringHashInfo(Algorithm, string.Empty, string.Empty, Encoding);
-                            //    Exception exception = new Exception("Hash for 'null' string is 'null'", ex);
-                            //    WriteError(new ErrorRecord(exception, "GetHashInvalidData", ErrorCategory.InvalidData, null));
-                            //}
-                            //else
-                            //{
-                                byte[] bytehash = hasher.ComputeHash(EncodingConversion.Convert(this, Encoding).GetBytes(str));
-                                string hash = BitConverter.ToString(bytehash).Replace("-","");
-                                WriteStringHashInfo(Algorithm, hash, str, Encoding);
-                            //}
-                        }
-                        catch (Exception ex)
-                        {
-                            WriteStringHashInfo(Algorithm, string.Empty, string.Empty, Encoding);
-                            Exception exception = new Exception("Hash for 'null' string is 'null'", ex);
-                            WriteError(new ErrorRecord(exception, "GetHashInvalidData", ErrorCategory.InvalidData, null));
-                        }
+						if (str == null)
+						{
+							WriteStringHashInfo(Algorithm, string.Empty, string.Empty, Encoding);
+							Exception exception = new Exception("Hash for 'null' string is 'null'");
+							WriteError(new ErrorRecord(exception, "GetHashInvalidData", ErrorCategory.InvalidData, null));
+						}
+						else
+						{
+							byte[] bytehash = hasher.ComputeHash(EncodingConversion.Convert(this, Encoding).GetBytes(str));
+							string hash = BitConverter.ToString(bytehash).Replace("-","");
+							WriteStringHashInfo(Algorithm, hash, str, Encoding);
+						}
                     }
                 }
 

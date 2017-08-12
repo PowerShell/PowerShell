@@ -79,17 +79,17 @@ Describe "Get-Hash tests for files" -Tags "CI" {
         }
 
         It "Should be throw for wrong algorithm name" {
-            { Get-Hash $testDocument -Algorithm wrongAlgorithm } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetFileHashCommand"
+            { Get-Hash $testDocument -Algorithm wrongAlgorithm } | ShouldBeErrorId "ParameterArgumentValidationError,Microsoft.PowerShell.Commands.GetHashCommand"
         }
     }
 
     Context "Paths tests" {
         It "With '-Path': no file exist" {
-            { Get-Hash -Path nofileexist.ttt -ErrorAction Stop } | ShouldBeErrorId "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
+            { Get-Hash -Path nofileexist.ttt -ErrorAction Stop } | ShouldBeErrorId "FileNotFound,Microsoft.PowerShell.Commands.GetHashCommand"
         }
 
         It "With '-LiteralPath': no file exist" {
-            { Get-Hash -LiteralPath nofileexist.ttt -ErrorAction Stop } | ShouldBeErrorId "FileNotFound,Microsoft.PowerShell.Commands.GetFileHashCommand"
+            { Get-Hash -LiteralPath nofileexist.ttt -ErrorAction Stop } | ShouldBeErrorId "FileNotFound,Microsoft.PowerShell.Commands.GetHashCommand"
         }
 
         It "With '-Path': file exist" {
