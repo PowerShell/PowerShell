@@ -1,0 +1,77 @@
+# https://help.github.com/articles/about-codeowners/
+
+# Areas are not limited to the filters defined in this file
+# First Lets start with areas with no filters or paths
+
+# Area: Performance
+# @lzybkr @steveL-MSFT @adityapatwardhan
+
+# Area: Portability
+# @BrucePay @JamesWTruher @steveL-MSFT
+
+# Area: Security
+# @travisez13 @leeholmes @steveL-MSFT @PaulHigin @chunqingchen
+
+# Now Areas that should have paths or filters, although we might not have them defined
+# Order here must be by precedence of the filter
+# Area: Documentation 
+*.md                                               @joeyaiello @travisez13 @steveL-MSFT
+
+# Area: Test
+test/                                              @JamesWTruher @travisez13 @steveL-MSFT @adityapatwardhan
+
+# Area: Cmdlets Core
+# @JamesWTruher @steveL-MSFT @anmenaga @chunqingchen
+
+# Area: CmdLets Management
+src/Microsoft.PowerShell.Commands.Management/      @daxian-dbw @steveL-MSFT @adityapatwardhan
+     
+# Area: CmdLets Utility     
+src/Microsoft.PowerShell.Commands.Utility/         @JamesWTruher @dantraMSFT @PaulHigin
+     
+# Area: Console     
+src/Microsoft.PowerShell.ConsoleHost/              @daxian-dbw @lzybkr @steveL-MSFT @anmenaga
+
+# Area: Demo
+demos/                                             @joeyaiello @steveL-MSFT @HemantMahawar
+
+# Area: DSC
+src/System.Management.Automation/DscSupport        @travisez13 @steveL-MSFT
+
+# Area: engine
+src/System.Management.Automation/engine            @daxian-dbw @vors @lzybkr @BrucePay @steveL-MSFT
+
+# Area: Debugging
+# Must be below engine to override
+src/System.Management.Automation/engine/debugger/  @BrucePay @steveL-MSFT @dantraMSFT @PaulHigin
+
+# Area: help
+src/System.Management.Automation/help              @steveL-MSFT @Francisco-Gamino @adityapatwardhan
+
+# Area: Intellisense
+# @daxian-dbw @lzybkr @steveL-MSFT @charub
+
+# Area: Language
+# daxian-dbw @vors @lzybkr @BrucePay @steveL-MSFT
+
+# Area: Providers
+src/System.Management.Automation/namespaces        @BrucePay @steveL-MSFT @anmenaga
+
+# Area: PSReadLine
+src/Microsoft.PowerShell.PSReadLine                @lzybkr @steveL-MSFT @charub
+
+# Area: Remoting
+src/System.Management.Automation/engine/remoting   @steveL-MSFT @dantraMSFT @mirichmo @PaulHigin
+
+# Area: Side-By-Side
+# @steveL-MSFT @mirichmo @charub
+
+# Areas: Build
+# Must be last
+*.config   @daxian-dbw @travisez13 @steveL-MSFT @adityapatwardhan
+*.props    @daxian-dbw @travisez13 @steveL-MSFT @adityapatwardhan
+*.yml      @daxian-dbw @travisez13 @steveL-MSFT @adityapatwardhan
+*.csproj   @daxian-dbw @travisez13 @steveL-MSFT @adityapatwardhan
+build.*    @daxian-dbw @travisez13 @steveL-MSFT @adityapatwardhan
+tools/     @daxian-dbw @travisez13 @steveL-MSFT @adityapatwardhan
+docker/    @daxian-dbw @travisez13 @steveL-MSFT @adityapatwardhan
