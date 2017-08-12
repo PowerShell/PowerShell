@@ -249,7 +249,7 @@ Describe "TabCompletion" -Tags CI {
         }
 
         AfterAll {
-            Remove-Item -Path $tempDir -Recurse -Force
+            Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
         }
 
         AfterEach {
@@ -641,7 +641,7 @@ dir -Recurse `
 
         AfterAll {
             Pop-Location
-            Remove-Item -Path $tempDir -Recurse -Force
+            Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
         }
 
         It "Test complete module file name" {
@@ -686,7 +686,7 @@ dir -Recurse `
 
         AfterAll {
             Pop-Location
-            Remove-Item -Path $tempDir -Recurse -Force
+            Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
         }
 
         It "Test comma with file array element" {
@@ -743,7 +743,7 @@ dir -Recurse `
 
         AfterAll {
             Pop-Location
-            Remove-Item -Path $tempDir -Recurse -Force
+            Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
         }
 
         It "Complete special relative path '<inputStr>'" -TestCases $testCases {
