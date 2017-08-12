@@ -145,6 +145,8 @@ Install-Module <ModuleName> -Scope CurrentUser
 
 #### Docker run requires full path
 
+> **Note:** this is fixed in `10.0.16257.1000` of the NanoServer-Insider build.  The powershell version of this should be released soon.
+
 Due to [an issue with the container not picking up the path](https://github.com/Microsoft/Virtualization-Documentation/blob/live/virtualization/windowscontainers/quick-start/Insider-Known-Issues.md#build-16237), you must specify the path
 when running a command on the command line.  For example, you would expect to be able to run:
 
