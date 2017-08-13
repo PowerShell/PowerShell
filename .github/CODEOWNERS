@@ -4,74 +4,74 @@
 # First Lets start with areas with no filters or paths
 
 # Area: Performance
-# @lzybkr @steveL-MSFT @adityapatwardhan
+# @lzybkr @SteveL-MSFT @adityapatwardhan
 
 # Area: Portability
-# @BrucePay @JamesWTruher @steveL-MSFT
+# @BrucePay @JamesWTruher @SteveL-MSFT
 
 # Area: Security
-# @travisez13 @leeholmes @steveL-MSFT @PaulHigin @chunqingchen
+# @TravisEz13 @leeholmes @SteveL-MSFT @PaulHigin @chunqingchen
 
 # Now Areas that should have paths or filters, although we might not have them defined
 # Order here must be by precedence of the filter
 # Area: Documentation 
-*.md                                               @joeyaiello @travisez13 @steveL-MSFT
+*.md                                               @joeyaiello @TravisEz13 @SteveL-MSFT
 
 # Area: Test
-test/                                              @JamesWTruher @travisez13 @steveL-MSFT @adityapatwardhan
+test/                                              @JamesWTruher @TravisEz13 @SteveL-MSFT @adityapatwardhan
 
 # Area: Cmdlets Core
-# @JamesWTruher @steveL-MSFT @anmenaga @chunqingchen
+# @JamesWTruher @SteveL-MSFT @anmenaga @chunqingchen
 
 # Area: CmdLets Management
-src/Microsoft.PowerShell.Commands.Management/      @daxian-dbw @steveL-MSFT @adityapatwardhan
+src/Microsoft.PowerShell.Commands.Management/      @daxian-dbw @SteveL-MSFT @adityapatwardhan
      
 # Area: CmdLets Utility     
 src/Microsoft.PowerShell.Commands.Utility/         @JamesWTruher @dantraMSFT @PaulHigin
      
 # Area: Console     
-src/Microsoft.PowerShell.ConsoleHost/              @daxian-dbw @lzybkr @steveL-MSFT @anmenaga
+src/Microsoft.PowerShell.ConsoleHost/              @daxian-dbw @lzybkr @SteveL-MSFT @anmenaga
 
 # Area: Demo
-demos/                                             @joeyaiello @steveL-MSFT @HemantMahawar
+demos/                                             @joeyaiello @SteveL-MSFT @HemantMahawar
 
 # Area: DSC
-src/System.Management.Automation/DscSupport        @travisez13 @steveL-MSFT
+src/System.Management.Automation/DscSupport        @TravisEz13 @SteveL-MSFT
 
 # Area: engine
-src/System.Management.Automation/engine            @daxian-dbw @vors @lzybkr @BrucePay @steveL-MSFT
+src/System.Management.Automation/engine            @daxian-dbw @vors @lzybkr @BrucePay @SteveL-MSFT
 
 # Area: Debugging
 # Must be below engine to override
-src/System.Management.Automation/engine/debugger/  @BrucePay @steveL-MSFT @dantraMSFT @PaulHigin
+src/System.Management.Automation/engine/debugger/  @BrucePay @SteveL-MSFT @dantraMSFT @PaulHigin
 
 # Area: help
-src/System.Management.Automation/help              @steveL-MSFT @Francisco-Gamino @adityapatwardhan
+src/System.Management.Automation/help              @SteveL-MSFT @Francisco-Gamino @adityapatwardhan
 
 # Area: Intellisense
-# @daxian-dbw @lzybkr @steveL-MSFT @charub
+# @daxian-dbw @lzybkr @SteveL-MSFT @charub
 
 # Area: Language
-# daxian-dbw @vors @lzybkr @BrucePay @steveL-MSFT
+# @daxian-dbw @vors @lzybkr @BrucePay @SteveL-MSFT
 
 # Area: Providers
-src/System.Management.Automation/namespaces        @BrucePay @steveL-MSFT @anmenaga
+src/System.Management.Automation/namespaces        @BrucePay @SteveL-MSFT @anmenaga
 
 # Area: PSReadLine
-src/Microsoft.PowerShell.PSReadLine                @lzybkr @steveL-MSFT @charub
+src/Microsoft.PowerShell.PSReadLine                @lzybkr @SteveL-MSFT @charub
 
 # Area: Remoting
-src/System.Management.Automation/engine/remoting   @steveL-MSFT @dantraMSFT @mirichmo @PaulHigin
+src/System.Management.Automation/engine/remoting   @SteveL-MSFT @dantraMSFT @mirichmo @PaulHigin
 
 # Area: Side-By-Side
-# @steveL-MSFT @mirichmo @charub
+# @SteveL-MSFT @mirichmo @charub
 
 # Areas: Build
 # Must be last
-*.config   @daxian-dbw @travisez13 @steveL-MSFT @adityapatwardhan
-*.props    @daxian-dbw @travisez13 @steveL-MSFT @adityapatwardhan
-*.yml      @daxian-dbw @travisez13 @steveL-MSFT @adityapatwardhan
-*.csproj   @daxian-dbw @travisez13 @steveL-MSFT @adityapatwardhan
-build.*    @daxian-dbw @travisez13 @steveL-MSFT @adityapatwardhan
-tools/     @daxian-dbw @travisez13 @steveL-MSFT @adityapatwardhan
-docker/    @daxian-dbw @travisez13 @steveL-MSFT @adityapatwardhan
+*.config   @daxian-dbw @TravisEz13 @SteveL-MSFT @adityapatwardhan
+*.props    @daxian-dbw @TravisEz13 @SteveL-MSFT @adityapatwardhan
+*.yml      @daxian-dbw @TravisEz13 @SteveL-MSFT @adityapatwardhan
+*.csproj   @daxian-dbw @TravisEz13 @SteveL-MSFT @adityapatwardhan
+build.*    @daxian-dbw @TravisEz13 @SteveL-MSFT @adityapatwardhan
+tools/     @daxian-dbw @TravisEz13 @SteveL-MSFT @adityapatwardhan
+docker/    @daxian-dbw @TravisEz13 @SteveL-MSFT @adityapatwardhan
