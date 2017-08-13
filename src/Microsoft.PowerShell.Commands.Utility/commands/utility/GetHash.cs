@@ -124,18 +124,18 @@ namespace Microsoft.PowerShell.Commands
                 {
                     foreach (string str in InputString)
                     {
-						if (str == null)
-						{
-							WriteStringHashInfo(Algorithm, string.Empty, string.Empty, Encoding);
-							Exception exception = new Exception("Hash for 'null' string is 'null'");
-							WriteError(new ErrorRecord(exception, "GetHashInvalidData", ErrorCategory.InvalidData, null));
-						}
-						else
-						{
-							byte[] bytehash = hasher.ComputeHash(EncodingConversion.Convert(this, Encoding).GetBytes(str));
-							string hash = BitConverter.ToString(bytehash).Replace("-","");
-							WriteStringHashInfo(Algorithm, hash, str, Encoding);
-						}
+                        if (str == null)
+                        {
+                            WriteStringHashInfo(Algorithm, string.Empty, string.Empty, Encoding);
+                            Exception exception = new Exception("Hash for 'null' string is 'null'");
+                            WriteError(new ErrorRecord(exception, "GetHashInvalidData", ErrorCategory.InvalidData, null));
+                        }
+                        else
+                        {
+                            byte[] bytehash = hasher.ComputeHash(EncodingConversion.Convert(this, Encoding).GetBytes(str));
+                            string hash = BitConverter.ToString(bytehash).Replace("-","");
+                            WriteStringHashInfo(Algorithm, hash, str, Encoding);
+                        }
                     }
                 }
 
