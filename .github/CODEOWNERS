@@ -10,7 +10,7 @@
 # @BrucePay @JamesWTruher
 
 # Area: Security
-# @TravisEz13 @leeholmes @PaulHigin @chunqingchen
+# @TravisEz13 @PaulHigin @chunqingchen
 
 # Now Areas that should have paths or filters, although we might not have them defined
 # Order here must be by precedence of the filter
@@ -43,10 +43,10 @@ src/System.Management.Automation/engine            @daxian-dbw @vors @lzybkr @Br
 
 # Area: Debugging
 # Must be below engine to override
-src/System.Management.Automation/engine/debugger/  @BrucePay@dantraMSFT @PaulHigin
+src/System.Management.Automation/engine/debugger/  @BrucePay @dantraMSFT @PaulHigin
 
 # Area: help
-src/System.Management.Automation/help              @@Francisco-Gamino @adityapatwardhan
+src/System.Management.Automation/help              @Francisco-Gamino @adityapatwardhan
 
 # Area: Intellisense
 # @daxian-dbw @lzybkr @charub
