@@ -599,11 +599,13 @@ Describe "TabCompletion" -Tags CI {
         }
 
         It "Test history completion" {
+            $startDate = Get-Date
+            $endDate = $startDate.AddSeconds(1)
             $history = [pscustomobject]@{
                 CommandLine = "Test history completion"
                 ExecutionStatus = "Stopped"
-                StartExecutionTime = "8/11/2017 11:04:10 AM"
-                EndExecutionTime = "8/11/2017 11:05:49 AM"
+                StartExecutionTime = $startDate
+                EndExecutionTime = $endDate
             }
             Add-History -InputObject $history
             $res = TabExpansion2 -inputScript "#" -cursorColumn 1
