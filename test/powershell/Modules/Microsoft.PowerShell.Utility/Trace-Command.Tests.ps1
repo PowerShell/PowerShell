@@ -61,7 +61,7 @@ Describe "Trace-Command" -tags "CI" {
             $log = Get-Content $logfile | Where-Object {$_ -like "*ThreadID=*"}
             $results = $log | ForEach-Object {$_.Split("=")[1]}
 
-            $results | ForEach-Object { $_ | Should Be ([threading.thread]::CurrentThread.ManagedThreadId) }
+            $results | % { $_ | Should Be ([threading.thread]::CurrentThread.ManagedThreadId) }
         }
 
         It "Timestamp creates logs in ascending order" {
@@ -81,30 +81,24 @@ Describe "Trace-Command" -tags "CI" {
         }
     }
 
-	Context "Trace-Command tests for code coverage" {
+    Context "Trace-Command tests for code coverage" {
 
         BeforeEach {
             $filePath = join-path $TestDrive 'testtracefile.txt'
         }
 
         AfterEach {
-            #copy $filePath 'C:\Temp' -Force -ErrorAction SilentlyContinue
             Remove-Item $filePath -Force -ErrorAction SilentlyContinue
         }
 
         It "Get non-existing trace source" {
-            { 'abc' | get-tracesource -ErrorAction Stop} | ShouldBeErrorID 'TraceSourceNotFound,Microsoft.PowerShell.Commands.GetTraceSourceCommand'
+            { '34E7F9FA-EBFB-4D21-A7D2-D7D102E2CC2F' | get-tracesource -ErrorAction Stop} | ShouldBeErrorID 'TraceSourceNotFound,Microsoft.PowerShell.Commands.GetTraceSourceCommand'
         }
 
-        It "Set-TraceSource to file" {
-            Set-TraceSource -Name "ParameterBinding" -Option ExecutionFlow -FilePath $filePath -Force -ListenerOption "ProcessId,TimeStamp" -PassThru
+        It "Set-TraceSource to file and RemoveFileListener wildcard" {
+            $null = Set-TraceSource -Name "ParameterBinding" -Option ExecutionFlow -FilePath $filePath -Force -ListenerOption "ProcessId,TimeStamp" -PassThru
             Set-TraceSource -Name "ParameterBinding" -RemoveFileListener *
             Get-Content $filePath -Raw | Should Match 'ParameterBinding Information'
-        }
-        
-        It "Basic Trace-Command -Expression" {
-            $a = Trace-Command -Name metadata,parameterbinding,cmdlet -Expression {Get-Process} -PSHost
-            $a.count -gt 0 | Should Be $true
         }
 
         It "Trace-Command -Command with error" {
@@ -116,14 +110,14 @@ Describe "Trace-Command" -tags "CI" {
         }
                 
         It "Trace-Command to readonly file" {
-            New-Item $filePath -Force
+            $null = New-Item $filePath -Force
             Set-ItemProperty $filePath -name IsReadOnly -value $true
             Trace-Command -Name ParameterBinding -Command 'Get-PSDrive' -FilePath $filePath -Force
             Get-Content $filePath -Raw | Should Match 'ParameterBinding Information'
         }
 
         It "Trace-Command contains wildcard characters" {
-            $a = Trace-Command -Name ParameterB* -Command 'get-alias' -Debugger
+            $a = Trace-Command -Name ParameterB* -Command 'get-alias'
             $a.count -gt 0 | Should Be $true
         }
     }
