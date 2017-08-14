@@ -86,8 +86,7 @@ function Start-PSPackage {
     if($SkipReleaseChecks.IsPresent) {
         Write-Warning "Skipping release checks."
     }
-
-    if(!$Script:Options.RootInfo.IsValid  -and -not $SkipReleaseChecks.IsPresent){
+    elseif(!$Script:Options.RootInfo.IsValid){
         throw $Script:Options.RootInfo.Warning
     }
 
