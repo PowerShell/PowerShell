@@ -126,4 +126,17 @@ Describe "Get-Content" -Tags "CI" {
     } else {$expected = "Hell","o,ll","ll","Worll","d`nHell","o2,ll","ll","Worll","d2`n"}
     for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
   }
+
+  It "Should support NTFS streams using colon syntax" -Skip:(!$IsWindows) {
+    Set-Content "${testPath}:Stream" -Value "Foo"
+    { Test_path "${testPath}:Stream" | ShouldBeErrorId "ItemExistsNotSupportedError,Microsoft.PowerShell.Commands,TestPathCommand" }
+    Get-Content "${testPath}:Stream" | Should BeExactly "Foo"
+    Get-Content $testPath | Should BeExactly $testString
+  }
+
+  It "Should support colons in filename on Linux/Mac" -Skip:($IsWindows) {
+    Set-Content "${testPath}:Stream" -Value "Hello"
+    Get-Content "${testPath}:Stream" | Should BeExactly "Hello"
+  }
+
 }

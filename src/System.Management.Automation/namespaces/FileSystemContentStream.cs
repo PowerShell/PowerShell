@@ -843,7 +843,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!String.IsNullOrEmpty(streamName))
                 {
+#if !UNIX
                     _stream = AlternateDataStreamUtilities.CreateFileStream(filePath, streamName, fileMode, fileAccess, fileShare);
+#endif
                 }
                 else
                 {
@@ -854,7 +856,9 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!String.IsNullOrEmpty(streamName))
                 {
+#if !UNIX
                     _stream = AlternateDataStreamUtilities.CreateFileStream(filePath, streamName, fileMode, requestedAccess, fileShare);
+#endif
                 }
                 else
                 {

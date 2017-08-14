@@ -14,6 +14,7 @@ using System.Management.Automation.Internal;
 
 #endregion
 
+#if !UNIX
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>Removes the Zone.Identifier stream from a file.</summary>
@@ -162,3 +163,4 @@ namespace Microsoft.PowerShell.Commands
         }
     }
 }
+#endif
