@@ -3683,9 +3683,13 @@ namespace Microsoft.PowerShell.Commands
     /// <summary>
     /// Device Guard hardware security properties
     /// </summary>
-    [SuppressMessage("Microsoft.Design", "CA1008:EnumsShouldHaveZeroValue", Justification = "The underlying MOF definition does not contain a zero value. The converter method will handle it appropriately.")]
     public enum DeviceGuardHardwareSecure
     {
+        /// <summary>
+        /// Undefined (not part of the mof)
+        /// </summary>
+        Undefined = 0,
+
         /// <summary>
         /// Base Virtualization Support
         /// </summary>

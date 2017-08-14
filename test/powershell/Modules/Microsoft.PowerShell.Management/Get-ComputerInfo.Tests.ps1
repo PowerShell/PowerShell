@@ -1365,6 +1365,7 @@ try {
                 $deviceGuard = Get-DeviceGuard
                 # can't get amended qualifiers using cim cmdlets so we define them here
                 $requiredSecurityPropertiesValues = @{
+                    "0" = "Undefined"
                     "1" = "BaseVirtualizationSupport"
                     "2" = "SecureBoot"
                     "3" = "DMAProtection"
@@ -1389,7 +1390,8 @@ try {
                 }
                 else
                 {
-                    $observed.DeviceGuardRequiredSecurityProperties | Should Not BeNullOrEmpty
+                    $deviceGuard.RequiredSecurityProperties.Count | Should BeGreaterThan 0
+                    $observed.DeviceGuardRequiredSecurityProperties.Count | Should BeGreaterThan 0
                     [string]::Join(",", $observed.DeviceGuardRequiredSecurityProperties) | Should Be (Get-StringValuesFromValueMap -valuemap $requiredSecurityPropertiesValues -values $deviceGuard.RequiredSecurityProperties)
                 }
                 $observed.DeviceGuardAvailableSecurityProperties | Should Be $deviceGuard.AvailableSecurityProperties
