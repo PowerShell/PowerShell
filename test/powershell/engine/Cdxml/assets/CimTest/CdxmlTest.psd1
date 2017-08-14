@@ -11,7 +11,4 @@
     AliasesToExport = @()
     CmdletsToExport = @()
     FunctionsToExport = @( 'Get-CimTest', 'Remove-CimTest', 'New-CimTest', 'Set-CimTest' )
-    HelpInfoUri = "https://go.microsoft.com/fwlink/?linkid=390832"
 }
-
-

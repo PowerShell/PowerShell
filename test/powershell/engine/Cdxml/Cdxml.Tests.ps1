@@ -1,8 +1,8 @@
 $script:CimClassName = "PSCore_CimTest1"
 $script:CimNamespace = "root/default"
-$script:moduleDir = join-path $PSScriptRoot assets CimTest
-$script:deleteMof = join-path $moduleDir DeleteCimTest.mof
-$script:createMof = join-path $moduleDir CreateCimTest.mof
+$script:moduleDir = Join-Path -Path $PSScriptRoot -ChildPath assets -AdditionalChildPath CimTest
+$script:deleteMof = Join-Path -Path $moduleDir -ChildPath DeleteCimTest.mof
+$script:createMof = Join-Path -Path $moduleDir -ChildPath CreateCimTest.mof
 
 $CimCmdletArgs = @{
     Namespace = ${script:CimNamespace}
@@ -13,11 +13,11 @@ $CimCmdletArgs = @{
 $script:ItSkipOrPending = @{}
 
 function Test-CimTestClass {
-    (Get-CimClass @CimCmdletArgs) -ne $null
+    $null -eq (Get-CimClass @CimCmdletArgs)
 }
 
 function Test-CimTestInstance {
-    (Get-CimInstance @CimCmdletArgs) -ne $null
+    $null -eq (Get-CimInstance @CimCmdletArgs)
 }
 
 Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
@@ -28,26 +28,39 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
             return
         }
 
-        # start from a clean slate, remove the instances and the 
-        # class if they exist
+        # if MofComp does not exist, we shouldn't bother moving forward
+        # there is a possibility that we could be on Windows, but MofComp
+        # isn't present, in any event we will mark these tests as skipped
+        # since the environment won't support loading the test classes
+        if ( (Get-Command -ea SilentlyContinue Mofcomp.exe) -eq $null ) {
+            $script:ItSkipOrPending = @{ Skip = $true }
+            return
+        }
+
+        # start from a clean slate, remove the instances and the
+        # classes if they exist
         if ( Test-CimTestClass ) {
             if ( Test-CimTestInstance ) {
                 Get-CimInstance @CimCmdletArgs | Remove-CimInstance
             }
+            # if there's a failure with mofcomp then we will have trouble 
+            # executing the tests. Keep track of the exit code
             $result = MofComp.exe $deleteMof
-            if ( $LASTEXITCODE -ne 0 ) {
-                $script:ItSkipOrPending = @{ Pending = $true }
+            $script:MofCompReturnCode = $LASTEXITCODE
+            if ( $script:MofCompReturnCode -ne 0 ) {
                 return
             }
         }
 
         # create the class and instances
+        # and track the exitcode for the compilation of the mof file
+        # if there's a problem, there's no reason to keep going
         $result = MofComp.exe ${script:createMof}
-
-        if ( $LASTEXITCODE -ne 0 ) {
-            $script:ItSkipOrPending = @{ Pending = $true }
+        $script:MofCompReturnCode = $LASTEXITCODE
+        if ( $script:MofCompReturnCode -ne 0 ) {
             return
         }
+
         # now load the cdxml module
         if ( Get-Module CimTest ) {
             Remove-Module -force CimTest
@@ -62,9 +75,15 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
         if ( get-module CimTest ) {
             Remove-Module CimTest -Force
         }
-        $result = MofComp.exe $deleteMof
+        $null = MofComp.exe $deleteMof
         if ( $LASTEXITCODE -ne 0 ) {
             Write-Warning "Could not remove PSCore_CimTest class"
+        }
+    }
+
+    BeforeEach {
+        If ( $script:MofCompReturnCode -ne 0 ) {
+            throw "MofComp.exe failed with exit code $MofCompReturnCode"
         }
     }
 
@@ -108,18 +127,11 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
             try {
                 $job = Get-CimTest -AsJob
                 $result = $null
-                $i = 0
                 # wait up to 10 seconds, then the test will fail
                 # we need to wait long enough, but not too long
                 # the time can be adjusted
-                do {
-                    if ( $job.State -eq "Completed" ) 
-                    { 
-                        $result = $job | Receive-Job
-                        break 
-                    }
-                    start-sleep 1
-                } while ( $i++ -lt 10 )
+                $null = Wait-Job -Job $job -timeout 10
+                $result = $job | Receive-Job
                 $result.Count | should be 4
                 ( $result.id | sort-object ) -join "," | Should be "1,2,3,4"
             }
@@ -139,10 +151,10 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
     Context "Remove-CimTest cmdlet" {
         BeforeEach {
             Get-CimTest | Remove-CimTest
-            1..4 | %{ New-CimInstance -namespace root/default -class PSCore_Test1 -property @{  
+            1..4 | Foreach-Object { New-CimInstance -namespace root/default -class PSCore_Test1 -property @{
                 id = "$_"
                 field1 = "field $_"
-                field2 = 10 * $_ 
+                field2 = 10 * $_
                 }
             }
         }
@@ -156,27 +168,20 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
 
         It "The Remove-CimTest cmdlet should remove piped objects" @ItSkipOrPending {
             Get-CimTest -id 2 | Remove-CimTest
-            $result  = Get-CimTest 
+            $result  = Get-CimTest
             @($result).Count | should be 3
             ($result.id |sort-object) -join ","  | should be "1,3,4"
         }
-        
+
         It "The Remove-CimTest cmdlet should work as a job" @ItSkipOrPending {
             try {
                 $job = Get-CimTest -id 3 | Remove-CimTest -asjob
                 $result = $null
-                $i = 0
                 # wait up to 10 seconds, then the test will fail
                 # we need to wait long enough, but not too long
                 # the time can be adjusted
-                do {
-                    if ( $job.State -eq "Completed" ) 
-                    { 
-                        break 
-                    }
-                    start-sleep 1
-                } while ( $i++ -lt 10 )
-                $result  = Get-CimTest 
+                $null = Wait-Job -Job $job -Timeout 10
+                $result  = Get-CimTest
                 @($result).Count | should be 3
                 ($result.id |sort-object) -join ","  | should be "1,2,4"
             }
@@ -196,7 +201,7 @@ Describe "Cdxml cmdlets are supported" -Tag CI,RequireAdminOnWindows {
                 field2 = 0
             }
             New-CimTest @instanceArgs
-            $result = Get-CimInstance -namespace root/default -class PSCore_Test1 | ?{$_.id -eq "telephone"}
+            $result = Get-CimInstance -namespace root/default -class PSCore_Test1 | Where-Object {$_.id -eq "telephone"}
             $result.field2 | should be 0
             $result.field1 | Should be $instanceArgs.field1
         }
