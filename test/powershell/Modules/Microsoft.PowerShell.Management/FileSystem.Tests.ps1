@@ -203,17 +203,16 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
 
     Context "Validate behavior when access is denied" {
         BeforeAll {
+            $powershell = Join-Path $PSHOME "powershell"
             if ($IsWindows)
             {
-                $powershell = "powershell.exe"
                 $protectedPath = Join-Path ([environment]::GetFolderPath("windows")) "appcompat" "Programs"
                 $protectedPath2 = Join-Path $protectedPath "Install"
                 $newItemPath = Join-Path $protectedPath "foo"
             }
-            $errFile = "error.txt"
-            $doneFile = "done.txt"
+            $errFile = "$testdrive\error.txt"
+            $doneFile = "$testdrive\done.txt"
         }
-
         AfterEach {
             Remove-Item -Force $errFile -ErrorAction SilentlyContinue
             Remove-Item -Force $doneFile -ErrorAction SilentlyContinue
@@ -231,7 +230,7 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
 
             runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline -ErrorAction Stop } catch { `$_.FullyQualifiedErrorId | Out-File $errFile }; New-Item -Type File -Path $doneFile"
             $startTime = Get-Date
-            while (((Get-Date) - $startTime).TotalSeconds -lt 5 -and -not (Test-Path $doneFile))
+            while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and -not (Test-Path $doneFile))
             {
                 Start-Sleep -Milliseconds 100
             }
