@@ -391,7 +391,7 @@ namespace System.Management.Automation
 
         internal static ComEnumerator Create(object comObject)
         {
-            if (!comObject.GetType().IsCOMObject) { return null; }
+            if (comObject == null || !comObject.GetType().IsCOMObject) { return null; }
 
             // The passed-in COM object could already be a IEnumVARIANT interface.
             // e.g. user call '_NewEnum()' on a COM collection interface.

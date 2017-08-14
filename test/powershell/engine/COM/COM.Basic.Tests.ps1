@@ -1,7 +1,7 @@
 
 try {
     $defaultParamValues = $PSdefaultParameterValues.Clone()
-    $PSDefaultParameterValues["it:skip"] = !$IsWindows
+    $PSDefaultParameterValues["it:skip"] = ![System.Management.Automation.Platform]::IsWindowsDesktop
 
     Describe 'Basic COM Tests' -Tags "CI" {
         It "Should enumerate ShellWindows" {
