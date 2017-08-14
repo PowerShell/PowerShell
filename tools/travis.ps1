@@ -179,7 +179,7 @@ else
             $packageParams += @{Version=$version}
         }
         # Only build packages for branches, not pull requests
-        $packages = @(Start-PSPackage @packageParams  -SkipReleaseChecks)
+        $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks)
         # Packaging AppImage depends on the deb package
         $packages += Start-PSPackage  @packageParams -Type AppImage  -SkipReleaseChecks
         foreach($package in $packages)
