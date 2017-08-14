@@ -8762,7 +8762,11 @@ namespace System.Management.Automation.Internal
             }
             string resultPath = path + adjustedStreamName;
 
-            NativeMethods.DeleteFile(resultPath);
+            if (!NativeMethods.DeleteFile(resultPath))
+            {
+                int error = Marshal.GetLastWin32Error();
+                throw new Win32Exception(error);
+            }
         }
 
         internal static void SetZoneOfOrigin(string path, SecurityZone securityZone)
