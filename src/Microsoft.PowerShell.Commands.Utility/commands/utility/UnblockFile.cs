@@ -1,3 +1,4 @@
+#if !UNIX
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -14,7 +15,6 @@ using System.Management.Automation.Internal;
 
 #endregion
 
-#if !UNIX
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>Removes the Zone.Identifier stream from a file.</summary>

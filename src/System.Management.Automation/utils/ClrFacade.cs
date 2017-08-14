@@ -147,12 +147,14 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(Path.IsPathRooted(filePath), "Caller makes sure the path is rooted.");
             Diagnostics.Assert(Utils.NativeFileExists(filePath), "Caller makes sure the file exists.");
+#if !UNIX
             string sysRoot = System.Environment.GetEnvironmentVariable("SystemRoot");
             string urlmonPath = Path.Combine(sysRoot, @"System32\urlmon.dll");
             if (Utils.NativeFileExists(urlmonPath))
             {
                 return MapSecurityZoneWithUrlmon(filePath);
             }
+#endif
             return MapSecurityZoneWithoutUrlmon(filePath);
         }
 

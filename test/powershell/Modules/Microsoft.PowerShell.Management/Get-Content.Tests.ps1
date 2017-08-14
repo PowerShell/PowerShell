@@ -129,13 +129,14 @@ Describe "Get-Content" -Tags "CI" {
 
   It "Should support NTFS streams using colon syntax" -Skip:(!$IsWindows) {
     Set-Content "${testPath}:Stream" -Value "Foo"
-    { Test_path "${testPath}:Stream" | ShouldBeErrorId "ItemExistsNotSupportedError,Microsoft.PowerShell.Commands,TestPathCommand" }
+    { Test-Path "${testPath}:Stream" | ShouldBeErrorId "ItemExistsNotSupportedError,Microsoft.PowerShell.Commands,TestPathCommand" }
     Get-Content "${testPath}:Stream" | Should BeExactly "Foo"
     Get-Content $testPath | Should BeExactly $testString
   }
 
   It "Should support colons in filename on Linux/Mac" -Skip:($IsWindows) {
     Set-Content "${testPath}:Stream" -Value "Hello"
+    "${testPath}:Stream" | Should Exist
     Get-Content "${testPath}:Stream" | Should BeExactly "Hello"
   }
 
