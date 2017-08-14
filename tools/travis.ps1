@@ -181,7 +181,7 @@ else
         # Only build packages for branches, not pull requests
         $packages = @(Start-PSPackage @packageParams -SkipReleaseChecks)
         # Packaging AppImage depends on the deb package
-        $packages += Start-PSPackage  @packageParams -Type AppImage  -SkipReleaseChecks
+        $packages += Start-PSPackage  @packageParams -Type AppImage -SkipReleaseChecks
         foreach($package in $packages)
         {
             # Publish the packages to the nuget feed if:
