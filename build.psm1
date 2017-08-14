@@ -732,7 +732,6 @@ function New-PSOptions {
     {
         $RootInfo += @{Warning = "Please ensure you repo is at the root of the file system and named 'PowerShell' (example: '$($RootInfo.ValidPath)'), when building and packaging for release!" }
         $RootInfo += @{IsValid = $false}
-        Write-Warning -Message $RootInfo.Warning
     }
     else 
     {
