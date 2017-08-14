@@ -65,7 +65,7 @@ Describe "TypeTable duplicate types in reused runspace InitialSessionState TypeT
 
         BeforeAll {
 
-            $typeTable = [System.Management.Automation.Runspaces.TypeTable]::new([string[]](Join-Path $PSScriptRoot "../Common/TestTypeFile.ps1xml"))
+            $typeTable = [System.Management.Automation.Runspaces.TypeTable]::new([string[]](Join-Path $PSScriptRoot "assets/TestTypeFile.ps1xml"))
             [initialsessionstate] $iss = [initialsessionstate]::Create()
             $iss.Types.Add($typeTable)
             [runspace] $rs1 = [runspacefactory]::CreateRunspace($iss)
@@ -98,7 +98,7 @@ Describe "TypeTable duplicate types in reused runspace InitialSessionState TypeT
         BeforeAll {
 
             # Create default ISS and add shared TypeTable.
-            $typeTable = [System.Management.Automation.Runspaces.TypeTable]::new([string[]](Join-Path $PSScriptRoot "../Common/TestTypeFile.ps1xml"))
+            $typeTable = [System.Management.Automation.Runspaces.TypeTable]::new([string[]](Join-Path $PSScriptRoot "assets/TestTypeFile.ps1xml"))
             [initialsessionstate] $iss = [initialsessionstate]::CreateDefault2()
             $iss.Types.Add($typeTable)
             $iss.ThrowOnRunspaceOpenError = $true
