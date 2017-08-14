@@ -81,6 +81,14 @@ function Start-PSPackage {
         throw "Please ensure you have run 'Start-PSBuild $params'!"
     }
 
+    if($ConfigurationOption -iin 'Release','Linux')
+    {
+        if(!$Script:Options.RootInfo.IsValid)
+        {
+            throw $Script:Options.RootInfo.Warning
+        }
+    }
+
     # If ReleaseTag is specified, use the given tag to calculate Vesrion
     if ($PSCmdlet.ParameterSetName -eq "ReleaseTag") {
         $Version = $ReleaseTag -Replace '^v'
