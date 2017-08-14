@@ -555,7 +555,7 @@ function CreateOpenCoverCmdline($target, $outputLog, $targetArgs)
         "-hideskipped:all",
         "-mergeoutput",
         "-filter:`"+[*]* -[Microsoft.PowerShell.PSReadLine]*`"",
-        "-targetargs:`"-EncodedCommand $base64targetArgs`""
+        "-targetargs:`"-NoProfile -EncodedCommand $base64targetArgs`""
 
     $cmdlineAsString = $cmdline -join " "
 
