@@ -1461,6 +1461,12 @@ namespace System.Management.Automation.Remoting.Client
             StartReaderThread(_stdOutReader);
         }
 
+        internal override void CloseAsync()
+        {
+            base.CloseAsync();
+            CloseConnection();
+        }
+
         #endregion
 
         #region Private Methods
