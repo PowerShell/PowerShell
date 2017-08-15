@@ -1,0 +1,77 @@
+# https://help.github.com/articles/about-codeowners/
+
+# Areas are not limited to the filters defined in this file
+# First Lets start with areas with no filters or paths
+
+# Area: Performance
+# @lzybkr @adityapatwardhan
+
+# Area: Portability
+# @BrucePay @JamesWTruher
+
+# Area: Security
+# @TravisEz13 @PaulHigin @chunqingchen
+
+# Now Areas that should have paths or filters, although we might not have them defined
+# Order here must be by precedence of the filter
+# Area: Documentation
+*.md                                               @joeyaiello @TravisEz13
+
+# Area: Test
+test/                                              @JamesWTruher @TravisEz13 @adityapatwardhan
+
+# Area: Cmdlets Core
+# @JamesWTruher @SteveL-MSFT @anmenaga @chunqingchen
+
+# Area: CmdLets Management
+src/Microsoft.PowerShell.Commands.Management/      @daxian-dbw @adityapatwardhan
+
+# Area: CmdLets Utility
+src/Microsoft.PowerShell.Commands.Utility/         @JamesWTruher @dantraMSFT @PaulHigin
+
+# Area: Console
+src/Microsoft.PowerShell.ConsoleHost/              @daxian-dbw @lzybkr @anmenaga
+
+# Area: Demo
+demos/                                             @joeyaiello @SteveL-MSFT @HemantMahawar
+
+# Area: DSC
+src/System.Management.Automation/DscSupport        @TravisEz13 @dantraMSFT
+
+# Area: engine
+src/System.Management.Automation/engine            @daxian-dbw @vors @lzybkr @BrucePay
+
+# Area: Debugging
+# Must be below engine to override
+src/System.Management.Automation/engine/debugger/  @BrucePay @dantraMSFT @PaulHigin
+
+# Area: help
+src/System.Management.Automation/help              @Francisco-Gamino @adityapatwardhan
+
+# Area: Intellisense
+# @daxian-dbw @lzybkr @charub
+
+# Area: Language
+# @daxian-dbw @vors @lzybkr @BrucePay
+
+# Area: Providers
+src/System.Management.Automation/namespaces        @BrucePay @anmenaga
+
+# Area: PSReadLine
+src/Microsoft.PowerShell.PSReadLine                @lzybkr @charub
+
+# Area: Remoting
+src/System.Management.Automation/engine/remoting   @dantraMSFT @mirichmo @PaulHigin
+
+# Area: Side-By-Side
+# @mirichmo @charub
+
+# Areas: Build
+# Must be last
+*.config   @daxian-dbw @TravisEz13 @adityapatwardhan
+*.props    @daxian-dbw @TravisEz13 @adityapatwardhan
+*.yml      @daxian-dbw @TravisEz13 @adityapatwardhan
+*.csproj   @daxian-dbw @TravisEz13 @adityapatwardhan
+build.*    @daxian-dbw @TravisEz13 @adityapatwardhan
+tools/     @daxian-dbw @TravisEz13 @adityapatwardhan
+docker/    @daxian-dbw @TravisEz13 @adityapatwardhan
