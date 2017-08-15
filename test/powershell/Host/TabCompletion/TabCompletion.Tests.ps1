@@ -1,4 +1,8 @@
 Describe "TabCompletion" -Tags CI {
+    BeforeAll {
+        $separator = [System.IO.Path]::DirectorySeparatorChar
+    }
+
     It 'Should complete Command' {
         $res = TabExpansion2 -inputScript 'Get-Com' -cursorColumn 'Get-Com'.Length
         $res.CompletionMatches[0].CompletionText | Should be Get-Command
@@ -212,7 +216,6 @@ Describe "TabCompletion" -Tags CI {
             $oneSubDir = Join-Path -Path $tempDir -ChildPath "oneSubDir"
             $oneSubDirPrime = Join-Path -Path $tempDir -ChildPath "prime"
             $twoSubDir = Join-Path -Path $oneSubDir -ChildPath "twoSubDir"
-            $separator = [System.IO.Path]::DirectorySeparatorChar
 
             New-Item -Path $tempDir -ItemType Directory -Force > $null
             New-Item -Path $oneSubDir -ItemType Directory -Force > $null
@@ -246,7 +249,7 @@ Describe "TabCompletion" -Tags CI {
         }
 
         AfterAll {
-            Remove-Item -Path $tempDir -Recurse -Force
+            Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
         }
 
         AfterEach {
@@ -430,7 +433,10 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = '$global:max'; expected = '$global:MaximumHistoryCount'; setup = $null }
                 @{ inputStr = '$PSMod'; expected = '$PSModuleAutoLoadingPreference'; setup = $null }
                 ## tab completion for variable in path
-                @{ inputStr = 'cd $pshome\Modu'; expected = Join-Path $PSHOME "Modules"; setup = $null }
+                @{ inputStr = 'cd $pshome\Modu'; expected = Join-Path $PSHOME 'Modules'; setup = $null }
+                @{ inputStr = 'cd "$pshome\Modu"'; expected = "`"$(Join-Path $PSHOME 'Modules')`""; setup = $null }
+                @{ inputStr = '$PSHOME\System.Management.Au'; expected = Join-Path $PSHOME 'System.Management.Automation.dll'; setup = $null }
+                @{ inputStr = '"$PSHOME\System.Management.Au"'; expected = "`"$(Join-Path $PSHOME 'System.Management.Automation.dll')`""; setup = $null }
                 ## tab completion AST-based tests
                 @{ inputStr = 'get-date | ForEach-Object { $PSItem.h'; expected = 'Hour'; setup = $null }
                 @{ inputStr = '$a=gps;$a[0].h'; expected = 'Handle'; setup = $null }
@@ -442,6 +448,8 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = 'New-Object System.Collections.Generic.List[datet'; expected = "'System.Collections.Generic.List[datetime]'"; setup = $null }
                 @{ inputStr = '[System.Management.Automation.Runspaces.runspacef'; expected = 'System.Management.Automation.Runspaces.RunspaceFactory'; setup = $null }
                 @{ inputStr = '[specialfol'; expected = 'System.Environment+SpecialFolder'; setup = $null }
+                ## tab completion for variable names in '{}'
+                @{ inputStr = '${PSDefault'; expected = '$PSDefaultParameterValues'; setup = $null }
             )
         }
 
@@ -589,28 +597,155 @@ Describe "TabCompletion" -Tags CI {
             $res.GetNextResult($true).CompletionText | Should Be 'Cmdlet'
             $res.GetNextResult($true).CompletionText | Should Be 'Configuration'
         }
+
+        It "Test history completion" {
+            $startDate = Get-Date
+            $endDate = $startDate.AddSeconds(1)
+            $history = [pscustomobject]@{
+                CommandLine = "Test history completion"
+                ExecutionStatus = "Stopped"
+                StartExecutionTime = $startDate
+                EndExecutionTime = $endDate
+            }
+            Add-History -InputObject $history
+            $res = TabExpansion2 -inputScript "#" -cursorColumn 1
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be "Test history completion"
+        }
+
+        It "Test Attribute member completion" {
+            $inputStr = "function bar { [parameter(]param() }"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn ($inputStr.IndexOf('(') + 1)
+            $res.CompletionMatches.Count | Should Be 10
+            $entry = $res.CompletionMatches | Where-Object CompletionText -EQ "Position"
+            $entry.CompletionText | Should Be "Position"
+        }
+
+        It "Test completion with line continuation" {
+            $inputStr = @'
+dir -Recurse `
+-Lite
+'@
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should Be 1
+            $res.CompletionMatches[0].CompletionText | Should Be "-LiteralPath"
+        }
+    }
+
+    Context "Module completion for 'using module'" {
+        BeforeAll {
+            $tempDir = Join-Path -Path $TestDrive -ChildPath "UsingModule"
+            New-Item -Path $tempDir -ItemType Directory -Force > $null
+            New-Item -Path "$tempDir\testModule.psm1" -ItemType File -Force > $null
+
+            Push-Location -Path $tempDir
+        }
+
+        AfterAll {
+            Pop-Location
+            Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
+        }
+
+        It "Test complete module file name" {
+            $inputStr = "using module test"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should Be 1
+            $res.CompletionMatches[0].CompletionText | Should Be ".${separator}testModule.psm1"
+        }
+
+        It "Test complete module name" {
+            $inputStr = "using module PSRead"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be "PSReadLine"
+        }
+
+        It "Test complete module name with wildcard" {
+            $inputStr = "using module *ReadLi"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be "PSReadLine"
+        }
+    }
+
+    Context "Completion on 'comma', 'redirection' and 'minus' tokens" {
+        BeforeAll {
+            $tempDir = Join-Path -Path $TestDrive -ChildPath "CommaTest"
+            New-Item -Path $tempDir -ItemType Directory -Force > $null
+            New-Item -Path "$tempDir\commaA.txt" -ItemType File -Force > $null
+
+            $redirectionTestCases = @(
+                @{ inputStr = "gps >";  expected = ".${separator}commaA.txt" }
+                @{ inputStr = "gps >>"; expected = ".${separator}commaA.txt" }
+                @{ inputStr = "dir con 2>";  expected = ".${separator}commaA.txt" }
+                @{ inputStr = "dir con 2>>"; expected = ".${separator}commaA.txt" }
+                @{ inputStr = "gps 2>&1>";   expected = ".${separator}commaA.txt" }
+                @{ inputStr = "gps 2>&1>>";  expected = ".${separator}commaA.txt" }
+            )
+
+            Push-Location -Path $tempDir
+        }
+
+        AfterAll {
+            Pop-Location
+            Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
+        }
+
+        It "Test comma with file array element" {
+            $inputStr = "dir .\commaA.txt,"
+            $expected = ".${separator}commaA.txt"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should Be 1
+            $res.CompletionMatches[0].CompletionText | Should Be $expected
+        }
+
+        It "Test comma with Enum array element" {
+            $inputStr = "gcm -CommandType Cmdlet,"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should Be ([System.Enum]::GetNames([System.Management.Automation.CommandTypes]).Count)
+            $res.CompletionMatches[0].CompletionText | Should Be "Alias"
+        }
+
+        It "Test redirection operator '<inputStr>'" -TestCases $redirectionTestCases {
+            param($inputStr, $expected)
+
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should Be 1
+            $res.CompletionMatches[0].CompletionText | Should Be $expected
+        }
+
+        It "Test complete the minus token to operators" {
+            $inputStr = "55 -"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should Be ([System.Management.Automation.CompletionCompleters]::CompleteOperator("").Count)
+            $res.CompletionMatches[0].CompletionText | Should Be '-and'
+        }
     }
 
     Context "Folder/File path tab completion with special characters" {
         BeforeAll {
-            $separator = [System.IO.Path]::DirectorySeparatorChar
+            $tempDir = Join-Path -Path $TestDrive -ChildPath "SpecialChar"
+            New-Item -Path $tempDir -ItemType Directory -Force > $null
+
+            New-Item -Path "$tempDir\My [Path]" -ItemType Directory -Force > $null
+            New-Item -Path "$tempDir\My [Path]\test.ps1" -ItemType File -Force > $null
+            New-Item -Path "$tempDir\)file.txt" -ItemType File -Force > $null
+
             $testCases = @(
                 @{ inputStr = "cd My"; expected = "'.${separator}My ``[Path``]'" }
                 @{ inputStr = "Get-Help '.\My ``[Path``]'\"; expected = "'.${separator}My ``[Path``]${separator}test.ps1'" }
                 @{ inputStr = "Get-Process >My"; expected = "'.${separator}My ``[Path``]'" }
                 @{ inputStr = "Get-Process >'.\My ``[Path``]\'"; expected = "'.${separator}My ``[Path``]${separator}test.ps1'" }
-                @{ inputStr = "Get-Process >${TestDrive}\My"; expected = "'${TestDrive}${separator}My ``[Path``]'" }
-                @{ inputStr = "Get-Process > '${TestDrive}\My ``[Path``]\'"; expected = "'${TestDrive}${separator}My ``[Path``]${separator}test.ps1'" }
+                @{ inputStr = "Get-Process >${tempDir}\My"; expected = "'${tempDir}${separator}My ``[Path``]'" }
+                @{ inputStr = "Get-Process > '${tempDir}\My ``[Path``]\'"; expected = "'${tempDir}${separator}My ``[Path``]${separator}test.ps1'" }
             )
 
-            New-Item -Path "$TestDrive\My [Path]" -ItemType Directory > $null
-            New-Item -Path "$TestDrive\My [Path]\test.ps1" -ItemType File > $null
-
-            Push-Location -Path $TestDrive
+            Push-Location -Path $tempDir
         }
 
         AfterAll {
             Pop-Location
+            Remove-Item -Path $tempDir -Recurse -Force -ErrorAction SilentlyContinue
         }
 
         It "Complete special relative path '<inputStr>'" -TestCases $testCases {
@@ -619,6 +754,13 @@ Describe "TabCompletion" -Tags CI {
             $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
             $res.CompletionMatches.Count | Should BeGreaterThan 0
             $res.CompletionMatches[0].CompletionText | Should Be $expected
+        }
+
+        It "Complete file name starting with special char" {
+            $inputStr = ")"
+            $res = TabExpansion2 -inputScript $inputStr -cursorColumn $inputStr.Length
+            $res.CompletionMatches.Count | Should Be 1
+            $res.CompletionMatches[0].CompletionText | Should Be "& '.${separator})file.txt'"
         }
     }
 
@@ -733,6 +875,15 @@ Describe "TabCompletion" -Tags CI {
                 @{ inputStr = 'Configuration bar { Scri'; expected = 'Script' }
                 @{ inputStr = 'configuration foo { Script ab {Get'; expected = 'GetScript = ' }
                 @{ inputStr = 'configuration foo { Script ab { '; expected = 'DependsOn = ' }
+                @{ inputStr = 'configuration foo { File ab { Attributes ='; expected = "'Archive'" }
+                @{ inputStr = "configuration foo { File ab { Attributes = "; expected = "'Archive'" }
+                @{ inputStr = "configuration foo { File ab { Attributes = ar"; expected = "Archive" }
+                @{ inputStr = "configuration foo { File ab { Attributes = 'ar"; expected = "Archive" }
+                @{ inputStr = 'configuration foo { File ab { Attributes =('; expected = "'Archive'" }
+                @{ inputStr = 'configuration foo { File ab { Attributes =( '; expected = "'Archive'" }
+                @{ inputStr = "configuration foo { File ab { Attributes =('Archive',"; expected = "'Hidden'" }
+                @{ inputStr = "configuration foo { File ab { Attributes =('Archive', "; expected = "'Hidden'" }
+                @{ inputStr = "configuration foo { File ab { Attributes =('Archive', 'Hi"; expected = "Hidden" }
             )
         }
 
