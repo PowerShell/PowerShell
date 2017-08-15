@@ -389,6 +389,12 @@ namespace System.Management.Automation
             _enumVariant.Reset();
         }
 
+        /// <summary>
+        /// Try to create an enumerator for a COM object.
+        /// </summary>
+        /// <returns>
+        /// A 'ComEnumerator' instance, or null if we cannot create an enumerator for the COM object.
+        /// </returns>
         internal static ComEnumerator Create(object comObject)
         {
             if (comObject == null || !comObject.GetType().IsCOMObject) { return null; }
