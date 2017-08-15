@@ -5329,7 +5329,7 @@ end
         internal const string DefaultMoreFunctionText = @"
 param([string[]]$paths)
 # Nano needs to use Unicode, but Windows and Linux need the default
-$OutputEncoding = if ($IsWindows -and $IsCoreCLR) {
+$OutputEncoding = if ([System.Management.Automation.Platform]::IsNanoServer -or [System.Management.Automation.Platform]::IsIoT) {
     [System.Text.Encoding]::Unicode
 } else {
     [System.Console]::OutputEncoding
