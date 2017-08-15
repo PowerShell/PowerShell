@@ -418,7 +418,8 @@ namespace System.Management.Automation
                     }
                     catch (Exception)
                     {
-                        /* Catch all exception. */
+                        // Ignore exceptions. In case of exception, no enumerator can be created
+                        // for the passed-in COM object, and we will return null eventually.
                     }
                 }
             }
