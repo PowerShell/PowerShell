@@ -29,7 +29,9 @@ function Start-PSPackage {
 
         [Switch] $Force,
 
-        [Switch] $IncludeSymbols
+        [Switch] $IncludeSymbols,
+        
+        [Switch] $SkipReleaseChecks
     )
 
     # Runtime and Configuration settings required by the package
@@ -79,6 +81,13 @@ function Start-PSPackage {
         $params += '-Configuration', $Configuration
 
         throw "Please ensure you have run 'Start-PSBuild $params'!"
+    }
+
+    if($SkipReleaseChecks.IsPresent) {
+        Write-Warning "Skipping release checks."
+    }
+    elseif(!$Script:Options.RootInfo.IsValid){
+        throw $Script:Options.RootInfo.Warning
     }
 
     # If ReleaseTag is specified, use the given tag to calculate Vesrion
