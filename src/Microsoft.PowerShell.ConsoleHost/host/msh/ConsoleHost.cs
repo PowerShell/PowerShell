@@ -1687,17 +1687,9 @@ namespace Microsoft.PowerShell
 
         private void OpenConsoleRunspace(Runspace runspace, bool staMode)
         {
-            // staMode will have following values:
-            // On FullPS: 'true'/'false' = default('true'=STA) + possibility of overload through cmdline parameter '-mta'
-            // On NanoPS: always 'false' = default('false'=MTA) + NO possibility of overload through cmdline parameter '-mta'
-            // ThreadOptions should match on FullPS and NanoPS for corresponding ApartmentStates.
             if (staMode)
             {
-                // we can't change ApartmentStates on CoreCLR
-#if !CORECLR
                 runspace.ApartmentState = ApartmentState.STA;
-#endif
-                runspace.ThreadOptions = PSThreadOptions.ReuseThread;
             }
 
             runspace.EngineActivityId = EtwActivity.GetActivityId();
@@ -2897,7 +2889,6 @@ namespace Microsoft.PowerShell
                 base(message)
             {
             }
-#if !CORECLR // ApplicationException & System.Runtime.Serialization.SerializationInfo are Not In CoreCLR
             protected
             ConsoleHostStartupException(
                 System.Runtime.Serialization.SerializationInfo info,
@@ -2906,7 +2897,6 @@ namespace Microsoft.PowerShell
                 base(info, context)
             {
             }
-#endif
             internal
             ConsoleHostStartupException(string message, Exception innerException)
                 :
@@ -2937,23 +2927,7 @@ namespace Microsoft.PowerShell
         private bool _isDisposed;
         internal ConsoleHostUserInterface ui;
 
-#if CORECLR
         internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() => Console.In);
-#else
-        internal Lazy<TextReader> ConsoleIn { get; } = new Lazy<TextReader>(() =>
-        {
-            // This is a workaround for a full clr issue that causes a hang when calling PowerShell from ruby.
-            // They use named pipes instead of anonymous pipes, and for some reason that triggers a hang
-            // reading from Console.In.
-            var inputHandle = ConsoleControl.NativeMethods.GetStdHandle(-10);
-            var s = new FileStream(new ConsoleHandle(inputHandle, false), FileAccess.Read);
-
-            uint codePage = (uint) ConsoleControl.NativeMethods.GetConsoleCP();
-            Encoding encoding = Encoding.GetEncoding((int) codePage);
-
-            return TextReader.Synchronized(new StreamReader(s, encoding, false));
-        });
-#endif
 
         private string _savedWindowTitle = "";
         private Version _ver = PSVersionInfo.PSVersion;

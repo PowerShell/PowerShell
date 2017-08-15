@@ -509,6 +509,18 @@ foo
             }
         }
     }
+
+    Context "Set ApartmentState" {
+        It "powershell starts with <ApartmentState>" -TestCases @(
+            @{ApartmentState = "STA"},
+            @{ApartmentState = "MTA"}
+        ) {
+            param($ApartmentState)
+
+            $cmdline = "powershell -noprofile -nologo -$ApartmentState -command [System.Threading.Thread]::CurrentThread.ApartmentState"
+            Invoke-Expression $cmdline | Should BeExactly $ApartmentState
+        }
+    }
 }
 
 Describe "WindowStyle argument" -Tag Feature {

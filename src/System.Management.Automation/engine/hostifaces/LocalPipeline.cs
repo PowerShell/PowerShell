@@ -151,12 +151,6 @@ namespace System.Management.Automation.Runspaces
                 case PSThreadOptions.Default:
                 case PSThreadOptions.UseNewThread:
                     {
-#if CORECLR
-                        //Start execution of pipeline in another thread
-                        // No ApartmentState/ThreadStackSize In CoreCLR
-                        Thread invokeThread = new Thread(new ThreadStart(this.InvokeThreadProc));
-                        SetupInvokeThread(invokeThread, true);
-#else
                         //Start execution of pipeline in another thread
                         // 2004/05/02-JonN Specify maxStack parameter
                         Thread invokeThread = new Thread(new ThreadStart(this.InvokeThreadProc), MaxStack);
@@ -177,7 +171,6 @@ namespace System.Management.Automation.Runspaces
                         {
                             invokeThread.SetApartmentState(apartmentState);
                         }
-#endif
                         invokeThread.Start();
 
                         break;
@@ -247,7 +240,6 @@ namespace System.Management.Automation.Runspaces
             }
         }
 
-#if !CORECLR
         /// <summary>
         /// Stack Reserve setting for pipeline threads
         /// </summary>
@@ -255,7 +247,7 @@ namespace System.Management.Automation.Runspaces
         {
             get
             {
-                int i = ReadRegistryInt("PipelineMaxStackSizeMB", 10);
+                int i = ReadRegistryInt("PipelineMaxStackSizeMB", 10);  // TODO: move to startupconfig
                 if (i < 10)
                     i = 10; // minimum 10MB
                 else if (i > 100)
@@ -294,7 +286,6 @@ namespace System.Management.Automation.Runspaces
             int i = (int)temp;
             return i;
         }
-#endif
 
         ///<summary>
         /// Helper method for asynchronous invoke
@@ -675,13 +666,11 @@ namespace System.Management.Automation.Runspaces
                 SetPipelineState(PipelineState.Failed, ex);
                 SetHadErrors(true);
             }
-#if !CORECLR // No ThreadAbortException In CoreCLR
             catch (ThreadAbortException ex)
             {
                 SetPipelineState(PipelineState.Failed, ex);
                 SetHadErrors(true);
             }
-#endif
             // 1021203-2005/05/09-JonN
             // HaltCommandException will cause the command
             // to stop, but not be reported as an error.
@@ -1233,15 +1222,6 @@ namespace System.Management.Automation.Runspaces
         /// <summary>
         /// Creates the worker thread and waits for it to be ready
         /// </summary>
-#if CORECLR
-        internal PipelineThread()
-        {
-            _worker = new Thread(WorkerProc);
-            _workItem = null;
-            _workItemReady = new AutoResetEvent(false);
-            _closed = false;
-        }
-#else
         internal PipelineThread(ApartmentState apartmentState)
         {
             _worker = new Thread(WorkerProc, LocalPipeline.MaxStack);
@@ -1254,7 +1234,6 @@ namespace System.Management.Automation.Runspaces
                 _worker.SetApartmentState(apartmentState);
             }
         }
-#endif
 
         /// <summary>
         /// Returns the worker thread

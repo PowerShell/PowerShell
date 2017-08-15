@@ -165,15 +165,11 @@ namespace System.Management.Automation.Runspaces
                     {
                         if (this.RunspaceStateInfo.State != RunspaceState.BeforeOpen)
                         {
-#if CORECLR                 // No ApartmentState.STA Support In CoreCLR
-                            bool allowed = value == PSThreadOptions.ReuseThread;
-#else
                             // if the runspace is already opened we only allow changing the options if
                             // the apartment state is MTA and the new value is ReuseThread
                             bool allowed = (this.ApartmentState == ApartmentState.MTA || this.ApartmentState == ApartmentState.Unknown) // Unknown is the same as MTA
                                            &&
                                            value == PSThreadOptions.ReuseThread;
-#endif
 
                             if (!allowed)
                             {
@@ -798,11 +794,7 @@ namespace System.Management.Automation.Runspaces
         {
             if (_pipelineThread == null)
             {
-#if CORECLR     // No ApartmentState In CoreCLR
-                _pipelineThread = new PipelineThread();
-#else
                 _pipelineThread = new PipelineThread(this.ApartmentState);
-#endif
             }
 
             return _pipelineThread;

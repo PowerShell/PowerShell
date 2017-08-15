@@ -133,26 +133,6 @@ namespace System.Management.Automation
     }
 
     #endregion PSTransaction
-
-    #region ApartmentState
-
-    internal enum ApartmentState
-    {
-        //
-        // Summary:
-        //     The System.Threading.Thread will create and enter a single-threaded apartment.
-        STA = 0,
-        //
-        // Summary:
-        //     The System.Threading.Thread will create and enter a multithreaded apartment.
-        MTA = 1,
-        //
-        // Summary:
-        //     The System.Threading.Thread.ApartmentState property has not been set.
-        Unknown = 2
-    }
-
-    #endregion ApartmentState
 }
 
 namespace System.Management.Automation.Internal

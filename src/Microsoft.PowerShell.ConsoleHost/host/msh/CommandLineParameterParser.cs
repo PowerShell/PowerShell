@@ -432,13 +432,8 @@ namespace Microsoft.PowerShell
                 }
                 else
                 {
-#if CORECLR
-                    // Nano doesn't support STA COM apartment, so on Nano powershell has to use MTA as the default.
-                    return false;
-#else
                     // Win8: 182409 PowerShell 3.0 should run in STA mode by default
                     return true;
-#endif
                 }
             }
         }
@@ -736,7 +731,6 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-#if !CORECLR  // explicit setting of the ApartmentState Not supported on NanoServer
                 else if (MatchSwitch(switchKey, "sta", "s"))
                 {
                     if (_staMode.HasValue)
@@ -763,7 +757,6 @@ namespace Microsoft.PowerShell
 
                     _staMode = false;
                 }
-#endif
                 else
                 {
                     // The first parameter we fail to recognize marks the beginning of the file string.
