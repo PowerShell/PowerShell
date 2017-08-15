@@ -36,7 +36,7 @@ src/Microsoft.PowerShell.ConsoleHost/              @daxian-dbw @lzybkr @anmenaga
 demos/                                             @joeyaiello @SteveL-MSFT @HemantMahawar
 
 # Area: DSC
-src/System.Management.Automation/DscSupport        @TravisEz13
+src/System.Management.Automation/DscSupport        @TravisEz13 @dantraMSFT
 
 # Area: engine
 src/System.Management.Automation/engine            @daxian-dbw @vors @lzybkr @BrucePay
