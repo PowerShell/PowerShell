@@ -37,6 +37,8 @@ Describe "FormatHex" -tags "CI" {
             $thumbprint = $certificateProvider[0].Thumbprint
             $certProviderAvailable = $true
         }
+
+        $skipTest = ([System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsOSX -or (-not $certProviderAvailable))
     }
 
     Context "InputObject Paramater" {
@@ -309,7 +311,6 @@ Describe "FormatHex" -tags "CI" {
     Context "Validate Error Scenarios" {
 
         $testDirectory = $inputFile1.DirectoryName
-        $skipTest = ([System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsOSX)
 
         $testCases = @(
             @{
@@ -327,7 +328,7 @@ Describe "FormatHex" -tags "CI" {
             }
         )
 
-        It "<Name>" -Skip:$($skipTest -or (-not $certProviderAvailable)) -TestCase $testCases {
+        It "<Name>" -Skip:$skipTest -TestCase $testCases {
 
             param ($Name, $PathParameterErrorCase, $Path, $InputObject, $InputObjectErrorCase, $ExpectedFullyQualifiedErrorId)
 
@@ -352,8 +353,6 @@ Describe "FormatHex" -tags "CI" {
     }
 
     Context "Continues to Process Valid Paths" {
-
-        $skipTest = ([System.Management.Automation.Platform]::IsLinux -or [System.Management.Automation.Platform]::IsOSX -or (-not $certProviderAvailable))
 
         $testCases = @(
             @{
