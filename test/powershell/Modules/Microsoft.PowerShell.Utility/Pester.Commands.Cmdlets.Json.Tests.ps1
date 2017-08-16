@@ -211,6 +211,23 @@ Describe "Json Tests" -Tags "Feature" {
             $emptyStringResult = ConvertFrom-Json ""
             $emptyStringResult | Should Be $null
         }
+
+        It "Convert enumerated values to Json" {
+
+            $sampleObject = [pscustomobject]@{
+                PSTypeName = 'Test.EnumSample'
+                SampleSimpleEnum = [System.Management.Automation.ActionPreference]::Ignore
+                SampleBitwiseEnum = [System.Management.Automation.CommandTypes]'Alias,Function,Cmdlet'
+            }
+
+            $response4 = ConvertTo-Json -InputObject $sampleObject -Compress
+            $response4 | Should Be '{"SampleSimpleEnum":4,"SampleBitwiseEnum":11}'
+
+            $response4 = ConvertTo-Json -InputObject $sampleObject -Compress -EnumsAsStrings
+            $response4 | Should Be '{"SampleSimpleEnum":"Ignore","SampleBitwiseEnum":"Alias, Function, Cmdlet"}'
+
+        }
+
     }
 
     Context "JsonObject Tests" {
