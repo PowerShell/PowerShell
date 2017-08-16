@@ -252,7 +252,7 @@ EXAMPLES
     <value>Processing -File '{0}' failed because the file does not have a '.ps1' extension. Specify a valid Windows PowerShell script file name, and then try again.</value>
   </data>
   <data name="ArgumentFileDoesNotExist" xml:space="preserve">
-    <value>The argument '{0}' to the -File parameter does not exist. Provide the path to an existing '.ps1' file as an argument to the -File parameter.</value>
+    <value>The argument '{0}' is not recognized as the name of a script file. Check the spelling of the name, or if a path was included, verify that the path is correct and try again.</value>
   </data>
   <data name="BadArgsValue" xml:space="preserve">
     <value>Cannot process the command because the value specified with -EncodedArguments is not properly encoded. The value must be Base64 encoded.</value>
@@ -268,5 +268,8 @@ EXAMPLES
   </data>
   <data name="MissingConfigurationNameArgument" xml:space="preserve">
     <value>Cannot process the command because -Configuration requires an argument that is a remote endpoint configuration name. Specify this argument and try again.</value>
+  </data>
+  <data name="InvalidArgument" xml:space="preserve">
+    <value>Invalid argument '{0}', did you mean:</value>
   </data>
 </root>
