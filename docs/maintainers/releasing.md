@@ -160,7 +160,7 @@ On Windows, the `-Runtime` parameter should be specified for `Start-PSBuild` to 
 # Install dependencies
 Start-PSBootstrap -Package
 
-# Build for v6.0.0-beta.1 release targeting Windows universal package, set ```-Runtime``` to ```win7-x64```
+# Build for v6.0.0-beta.1 release targeting Windows universal package, set -Runtime to win7-x64
 Start-PSBuild -Clean -CrossGen -PSModuleRestore -Runtime win7-x64 -Configuration Release -ReleaseTag v6.0.0-beta.1
 ```
 

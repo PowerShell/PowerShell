@@ -353,7 +353,6 @@ Ronn
 Toolset
 v6
 WiX
-Runtimewin7-x64
  - docs/testing-guidelines/PowerShellCoreTestStatus.md
 Add-LocalGroupMember
 add-on
