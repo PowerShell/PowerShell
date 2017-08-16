@@ -6612,8 +6612,10 @@ namespace Microsoft.PowerShell.Commands
                     // Get the wait value
                     waitForChanges = dynParams.Wait;
 
+#if !UNIX
                     // Get the stream name
                     streamName = dynParams.Stream;
+#endif
                 } // dynParams != null
             } // DynamicParameters != null
 
@@ -6756,7 +6758,9 @@ namespace Microsoft.PowerShell.Commands
                         encoding = dynParams.EncodingType;
                     }
 
+#if !UNIX
                     streamName = dynParams.Stream;
+#endif
                     suppressNewline = dynParams.NoNewline.IsPresent;
                 } // dynParams != null
             }
@@ -7628,12 +7632,13 @@ namespace Microsoft.PowerShell.Commands
         [Parameter]
         public FileSystemCmdletProviderEncoding Encoding { get; set; } = FileSystemCmdletProviderEncoding.String;
 
+#if !UNIX
         /// <summary>
         /// A parameter to return a stream of an item.
         /// </summary>
         [Parameter]
         public String Stream { get; set; }
-
+#endif
 
         /// <summary>
         /// Gets the encoding from the specified StreamType parameter.
@@ -7677,11 +7682,13 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class FileSystemClearContentDynamicParameters
     {
+#if !UNIX
         /// <summary>
         /// A parameter to return a stream of an item.
         /// </summary>
         [Parameter]
         public String Stream { get; set; }
+#endif
     } //FileSystemContentWriterDynamicParameters
 
     /// <summary>
@@ -7805,6 +7812,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class FileSystemProviderGetItemDynamicParameters
     {
+#if !UNIX
         /// <summary>
         /// A parameter to return the streams of an item.
         /// </summary>
@@ -7812,6 +7820,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Stream { get; set; }
+#endif
     } // class FileSystemItemProviderDynamicParameters
 
     /// <summary>
@@ -7819,6 +7828,7 @@ namespace Microsoft.PowerShell.Commands
     /// </summary>
     public class FileSystemProviderRemoveItemDynamicParameters
     {
+#if !UNIX
         /// <summary>
         /// A parameter to return the streams of an item.
         /// </summary>
@@ -7826,6 +7836,7 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty()]
         [SuppressMessage("Microsoft.Performance", "CA1819:PropertiesShouldNotReturnArrays")]
         public string[] Stream { get; set; }
+#endif
     } // class FileSystemItemProviderDynamicParameters
 
     #endregion
@@ -8285,7 +8296,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
 #if !UNIX
-        internal static bool WinIsSameFileSystemItem(string pathOne, string pathTwo)
+        private static bool WinIsSameFileSystemItem(string pathOne, string pathTwo)
         {
             var access = FileAccess.Read;
             var share = FileShare.Read;
@@ -8324,7 +8335,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
 #if !UNIX
-        internal static bool WinGetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
+        private static bool WinGetInodeData(string path, out System.ValueTuple<UInt64, UInt64> inodeData)
         {
             var access = FileAccess.Read;
             var share = FileShare.Read;

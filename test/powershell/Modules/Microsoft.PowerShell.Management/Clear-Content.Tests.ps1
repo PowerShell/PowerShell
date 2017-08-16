@@ -83,7 +83,7 @@ Describe "Clear-Content cmdlet tests" -Tags "CI" {
       get-content -Path "TESTDRIVE:/$file3" -stream $streamName | should BeNullOrEmpty
     }
 
-    It "the '-Stream' dynamic parameter is visible to get-command in the filesystem" {
+    It "the '-Stream' dynamic parameter is visible to get-command in the filesystem" -Skip:(!$IsWindows) {
       try {
         push-location TESTDRIVE:
         (get-command clear-content -stream foo).parameters.keys -eq "stream" | should be "stream"

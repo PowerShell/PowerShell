@@ -138,6 +138,7 @@ namespace System.Management.Automation
 
         #endregion Encoding
 
+#if !UNIX
         #region Security
 
         /// <summary>
@@ -147,14 +148,12 @@ namespace System.Management.Automation
         {
             Diagnostics.Assert(Path.IsPathRooted(filePath), "Caller makes sure the path is rooted.");
             Diagnostics.Assert(Utils.NativeFileExists(filePath), "Caller makes sure the file exists.");
-#if !UNIX
             string sysRoot = System.Environment.GetEnvironmentVariable("SystemRoot");
             string urlmonPath = Path.Combine(sysRoot, @"System32\urlmon.dll");
             if (Utils.NativeFileExists(urlmonPath))
             {
                 return MapSecurityZoneWithUrlmon(filePath);
             }
-#endif
             return MapSecurityZoneWithoutUrlmon(filePath);
         }
 
@@ -199,10 +198,8 @@ namespace System.Management.Automation
         /// </remarks>
         private static SecurityZone MapSecurityZoneWithoutUrlmon(string filePath)
         {
-#if !UNIX
             SecurityZone reval = ReadFromZoneIdentifierDataStream(filePath);
             if (reval != SecurityZone.NoZone) { return reval; }
-#endif
             // If it reaches here, then we either couldn't get the ZoneId information, or the ZoneId is invalid.
             // In this case, we try to determine the SecurityZone by analyzing the file path.
             Uri uri = new Uri(filePath);
@@ -241,7 +238,6 @@ namespace System.Management.Automation
             }
         }
 
-#if !UNIX
         /// <summary>
         /// Read the 'Zone.Identifier' alternate data stream to determin SecurityZone of the file.
         /// </summary>
@@ -301,7 +297,6 @@ namespace System.Management.Automation
 
             return SecurityZone.NoZone;
         }
-#endif
         #endregion WithoutUrlmon
 
         /// <summary>
@@ -341,6 +336,7 @@ namespace System.Management.Automation
         }
 
         #endregion Security
+#endif
 
         #region Misc
 
