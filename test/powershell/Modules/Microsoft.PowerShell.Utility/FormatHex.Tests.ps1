@@ -107,7 +107,7 @@ Describe "FormatHex" -tags "CI" {
 
             $result.count | Should Be $Count
             $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
-            $result.ToString() | Should Match $ExpectedResult
+            $result.ToString() | Should MatchExactly $ExpectedResult
         }
     }
 
@@ -181,16 +181,16 @@ Describe "FormatHex" -tags "CI" {
 
             $result.count | Should Be $Count
             $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
-            $result[0].ToString() | Should Match $ExpectedResult
+            $result[0].ToString() | Should MatchExactly $ExpectedResult
 
             if ($result.count -gt 1)
             {
-                $result[1].ToString() | Should Match $ExpectedSecondResult
+                $result[1].ToString() | Should MatchExactly $ExpectedSecondResult
             }
         }
     }
 
-    Context "Path and LiteralPath Paramaters" {
+    Context "Path and LiteralPath Parameters" {
 
         $testDirectory = $inputFile1.DirectoryName
 
@@ -247,11 +247,11 @@ Describe "FormatHex" -tags "CI" {
             }
 
             $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
-            $result[0].ToString() | Should Match $ExpectedResult
+            $result[0].ToString() | Should MatchExactly $ExpectedResult
 
             if ($result.count -gt 1)
             {
-                $result[1].ToString() | Should Match $ExpectedSecondResult
+                $result[1].ToString() | Should MatchExactly $ExpectedSecondResult
             }
         }
     }
@@ -304,7 +304,7 @@ Describe "FormatHex" -tags "CI" {
 
             $result.count | Should Be $Count
             $result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
-            $result[0].ToString() | Should Match $ExpectedResult
+            $result[0].ToString() | Should MatchExactly $ExpectedResult
         }
     }
 
@@ -348,7 +348,7 @@ Describe "FormatHex" -tags "CI" {
                 $thrownError = $_
             }
 
-            $thrownError.FullyQualifiedErrorId | Should Match $ExpectedFullyQualifiedErrorId
+            $thrownError.FullyQualifiedErrorId | Should MatchExactly $ExpectedFullyQualifiedErrorId
         }
     }
 
@@ -390,10 +390,10 @@ Describe "FormatHex" -tags "CI" {
                 $output = Format-Hex -LiteralPath $InvalidPath, $inputFile1 -ErrorVariable errorThrown -ErrorAction SilentlyContinue
             }
 
-            $errorThrown.FullyQualifiedErrorId | Should Match $ExpectedFullyQualifiedErrorId
+            $errorThrown.FullyQualifiedErrorId | Should MatchExactly $ExpectedFullyQualifiedErrorId
 
             $output.Length | Should Be 1
-            $output[0].ToString() | Should Match $inputText1
+            $output[0].ToString() | Should MatchExactly $inputText1
         }
     }
 
@@ -406,7 +406,7 @@ Describe "FormatHex" -tags "CI" {
             $result | Should Not BeNullOrEmpty
             ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
             $actualResult = $result.ToString()
-            $actualResult | Should Match $inputText1
+            $actualResult | Should MatchExactly $inputText1
         }
 
         It "Validate file input from Pipeline 'Get-ChildItem `$inputFile1 | Format-Hex'" {
@@ -416,7 +416,7 @@ Describe "FormatHex" -tags "CI" {
             $result | Should Not BeNullOrEmpty
             ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
             $actualResult = $result.ToString()
-            $actualResult | Should Match $inputText1
+            $actualResult | Should MatchExactly $inputText1
         }
 
         It "Validate that streamed text does not have buffer underrun problems ''a' * 30 | Format-Hex'" {
@@ -425,7 +425,7 @@ Describe "FormatHex" -tags "CI" {
 
             $result | Should Not BeNullOrEmpty
             ,$result | Should BeOfType 'Microsoft.PowerShell.Commands.ByteCollection'
-            $result.ToString() | Should be "00000000   61 61 61 61 61 61 61 61 61 61 61 61 61 61 61 61  aaaaaaaaaaaaaaaa`r`n00000010   61 61 61 61 61 61 61 61 61 61 61 61 61 61        aaaaaaaaaaaaaa  "
+            $result.ToString() | Should MatchExactly "00000000   61 61 61 61 61 61 61 61 61 61 61 61 61 61 61 61  aaaaaaaaaaaaaaaa`r`n00000010   61 61 61 61 61 61 61 61 61 61 61 61 61 61        aaaaaaaaaaaaaa  "
         }
 
         It "Validate that files do not have buffer underrun problems 'Format-Hex -path `$InputFile4'" {
@@ -434,9 +434,9 @@ Describe "FormatHex" -tags "CI" {
 
             $result | Should Not BeNullOrEmpty
             $result.Count | Should Be 3
-            $result[0].ToString() | Should be "00000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
-            $result[1].ToString() | Should be "00000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"
-            $result[2].ToString() | Should be "00000020   65 6E 74                                         ent             "
+            $result[0].ToString() | Should MatchExactly "00000000   4E 6F 77 20 69 73 20 74 68 65 20 77 69 6E 74 65  Now is the winte"
+            $result[1].ToString() | Should MatchExactly "00000010   72 20 6F 66 20 6F 75 72 20 64 69 73 63 6F 6E 74  r of our discont"
+            $result[2].ToString() | Should MatchExactly "00000020   65 6E 74                                         ent             "
         }
     }
 }
