@@ -681,7 +681,7 @@ function New-PSOptions {
     # the valid root is the root of the filesystem and the folder PowerShell
     $RootInfo['ValidPath'] = Join-Path -Path ([system.io.path]::GetPathRoot($RootInfo.RepoPath)) -ChildPath 'PowerShell'
     
-    if($RepoInfo.RepoPath -ne $RootInfo.ValidPath)
+    if($RootInfo.RepoPath -ne $RootInfo.ValidPath)
     {
         $RootInfo['Warning'] = "Please ensure you repo is at the root of the file system and named 'PowerShell' (example: '$($RootInfo.ValidPath)'), when building and packaging for release!"
         $RootInfo['IsValid'] = $false
