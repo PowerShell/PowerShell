@@ -617,7 +617,7 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-#if !CORECLR  // windowstyle parameter not supported on NanoServer because ProcessWindowStyle does Not exist on CoreCLR
+#if !UNIX
                 else if (MatchSwitch(switchKey, "windowstyle", "w"))
                 {
                     ++i;
