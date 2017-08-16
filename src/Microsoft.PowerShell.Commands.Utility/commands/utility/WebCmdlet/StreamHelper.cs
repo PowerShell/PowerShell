@@ -4,6 +4,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 
 using System;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.IO;
 using System.IO.Compression;
 using System.Management.Automation;
@@ -391,20 +392,8 @@ namespace Microsoft.PowerShell.Commands
             }
         }
 
-        internal static string DecodeStream(Stream stream, string characterSet)
+        private static string StreamToString(Stream stream, Encoding encoding)
         {
-            Encoding encoding = ContentHelper.GetEncodingOrDefault(characterSet);
-            return DecodeStream(stream, encoding);
-        }
-
-        internal static string DecodeStream(Stream stream, Encoding encoding)
-        {
-            if (null == encoding)
-            {
-                // just use the default encoding if one wasn't provided
-                encoding = ContentHelper.GetDefaultEncoding();
-            }
-
             StringBuilder result = new StringBuilder(capacity: ChunkSize);
             Decoder decoder = encoding.GetDecoder();
 
@@ -413,9 +402,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 useBufferSize = encoding.GetMaxCharCount(10);
             }
+
             char[] chars = new char[useBufferSize];
-
-
             byte[] bytes = new byte[useBufferSize * 4];
             int bytesRead = 0;
             do
@@ -444,10 +432,72 @@ namespace Microsoft.PowerShell.Commands
                     // Increment byteIndex to the next block of bytes in the input buffer, if any, to convert.
                     byteIndex += bytesUsed;
                 }
-            }
-            while (bytesRead != 0);
+            } while (bytesRead != 0);
 
             return result.ToString();
+        }
+
+        internal static string DecodeStream(Stream stream, string characterSet, out Encoding encoding)
+        {
+            try
+            {
+                encoding = Encoding.GetEncoding(characterSet);
+            }
+            catch (ArgumentException)
+            {
+                encoding = null;
+            }
+            return DecodeStream(stream, ref encoding);
+        }
+
+        static bool TryGetEncoding(string characterSet, out Encoding encoding)
+        {
+            bool result = false;
+            try
+            {
+                encoding = Encoding.GetEncoding(characterSet);
+                result = true;
+            }
+            catch (ArgumentException)
+            {
+                encoding = null;
+            }
+            return result;
+        }
+
+        static readonly Regex s_metaexp = new Regex(@"<meta\s[.\n]*[^><]*charset\s*=\s*[""'\n]?(?<charset>[A-Za-z].[^\s""'\n<>]*)[\s""'\n>]");
+
+        internal static string DecodeStream(Stream stream, ref Encoding encoding)
+        {
+            bool isDefaultEncoding = false;
+            if (null == encoding)
+            {
+                // Use the default encoding if one wasn't provided
+                encoding = ContentHelper.GetDefaultEncoding();
+                isDefaultEncoding = true;
+            }
+
+            string content = StreamToString (stream, encoding);
+            if (isDefaultEncoding) do
+            {
+                // check for a charset attribute on the meta element to override the default.
+                Match match = s_metaexp.Match(content);
+                if (match.Success)
+                {
+                    Encoding localEncoding = null;
+                    string characterSet = match.Groups["charset"].Value;
+
+                    if (TryGetEncoding(characterSet, out localEncoding))
+                    {
+                        stream.Seek(0, SeekOrigin.Begin);
+                        content = StreamToString(stream, localEncoding);
+                        // report the encoding used.
+                        encoding = localEncoding;
+                    }
+                }
+            } while (false);
+
+            return content;
         }
 
         internal static Byte[] EncodeToBytes(String str, Encoding encoding)
