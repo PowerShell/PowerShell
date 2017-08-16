@@ -2,8 +2,8 @@
 # On Windows paths is separated by semicolon
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 
-$dotnetCLIChannel = "preview"
-$dotnetCLIRequiredVersion = "2.0.0-preview2-006502"
+$dotnetCLIChannel = "release"
+$dotnetCLIRequiredVersion = "2.0.0"
 
 # Track if tags have been sync'ed
 $tagsUpToDate = $false
