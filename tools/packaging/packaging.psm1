@@ -60,10 +60,7 @@ function Start-PSPackage {
         $Script:Options.Framework -ne "netcoreapp2.0")          ## Last build wasn't for CoreCLR
     {
         # It's possible that the most recent build doesn't satisfy the package requirement but
-        # an earlier build does. e.g., run the following in order on win10-x64:
-        #    Start-PSBuild -Clean -CrossGen -Runtime win10-x64 -Configuration Release
-        #    Start-PSBuild -FullCLR
-        #    Start-PSPackage -Type msi
+        # an earlier build does.
         # It's also possible that the last build actually satisfies the package requirement but
         # then `Start-PSPackage` runs from a new PS session or `build.psm1` was reloaded.
         #

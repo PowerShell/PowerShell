@@ -92,11 +92,10 @@ function Get-PSCommitId
 function Get-EnvironmentInformation
 {
     $environment = @{}
-    # Use the .NET Core APIs to determine the current platform
-    # if a runtime exception is thrown, we are on FullCLR, not .NET Core.
+    # Use the .NET Core APIs to determine the current platform.
+    # If a runtime exception is thrown, we are on Windows PowerShell, not PowerShell Core,
     # because System.Runtime.InteropServices.RuntimeInformation
-    # and System.Runtime.InteropServices.OSPlatform
-    # do not exist in FullCLR
+    # and System.Runtime.InteropServices.OSPlatform do not exist in Windows PowerShell.
     try {
         $Runtime = [System.Runtime.InteropServices.RuntimeInformation]
         $OSPlatform = [System.Runtime.InteropServices.OSPlatform]
@@ -267,7 +266,7 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$
 }
 
 function Start-PSBuild {
-    [CmdletBinding(DefaultParameterSetName='CoreCLR')]
+    [CmdletBinding()]
     param(
         # When specified this switch will stops running dev powershell
         # to help avoid compilation error, because file are in use.
@@ -295,29 +294,16 @@ function Start-PSBuild {
                      "win7-x86",
                      "win81-x64",
                      "win10-x64",
-                     "osx.10.11-x64",
                      "osx.10.12-x64",
                      "opensuse.13.2-x64",
                      "opensuse.42.1-x64")]
-        [Parameter(ParameterSetName='CoreCLR')]
         [string]$Runtime,
-
-        [Parameter(ParameterSetName='FullCLR', Mandatory=$true)]
-        [switch]$FullCLR,
-
-        [Parameter(ParameterSetName='FullCLR')]
-        [switch]$XamlGen,
 
         [ValidateSet('Linux', 'Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
         [string]$Configuration,
 
-        [Parameter(ParameterSetName='CoreCLR')]
-        [switch]$Publish,
-
-        [Parameter(ParameterSetName='CoreCLR')]
         [switch]$CrossGen,
 
-        [Parameter(ParameterSetName='CoreCLR')]
         [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag
@@ -359,15 +345,6 @@ function Start-PSBuild {
 
     # create the telemetry flag file
     $null = new-item -force -type file "$psscriptroot/DELETE_ME_TO_DISABLE_CONSOLEHOST_TELEMETRY"
-
-    # simplify ParameterSetNames
-    if ($PSCmdlet.ParameterSetName -eq 'FullCLR') {
-        $FullCLR = $true
-
-        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
-        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
-        throw "Building against FullCLR is not supported"
-    }
 
     # Add .NET CLI tools to PATH
     Find-Dotnet
@@ -411,7 +388,6 @@ Fix steps:
     $OptionsArguments = @{
         CrossGen=$CrossGen
         Output=$Output
-        FullCLR=$FullCLR
         Runtime=$Runtime
         Configuration=$Configuration
         Verbose=$true
@@ -462,13 +438,6 @@ Fix steps:
     if ($ResGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.ConsoleHost/gen")) {
         log "Run ResGen (generating C# bindings for resx files)"
         Start-ResGen
-    }
-
-    # handle xaml files
-    # Heuristic to resolve xaml on the fresh machine
-    if ($FullCLR -and ($XamlGen -or -not (Test-Path "$PSScriptRoot/src/Microsoft.PowerShell.Activities/gen/*.g.cs"))) {
-        log "Run XamlGen (generating .g.cs and .resources for .xaml files)"
-        Start-XamlGen -MSBuildConfiguration $msbuildConfiguration
     }
 
     # Build native components
@@ -603,7 +572,7 @@ function New-PSOptions {
         [ValidateSet("Linux", "Debug", "Release", "CodeCoverage", "")]
         [string]$Configuration,
 
-        [ValidateSet("netcoreapp2.0", "net451")]
+        [ValidateSet("netcoreapp2.0")]
         [string]$Framework,
 
         # These are duplicated from Start-PSBuild
@@ -618,7 +587,6 @@ function New-PSOptions {
                      "win7-x64",
                      "win81-x64",
                      "win10-x64",
-                     "osx.10.11-x64",
                      "osx.10.12-x64",
                      "opensuse.13.2-x64",
                      "opensuse.42.1-x64")]
@@ -628,19 +596,11 @@ function New-PSOptions {
 
         [string]$Output,
 
-        [switch]$FullCLR,
-
         [switch]$SMAOnly
     )
 
     # Add .NET CLI tools to PATH
     Find-Dotnet
-
-    if ($FullCLR) {
-        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
-        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
-        throw "Building against FullCLR is not supported"
-    }
 
     $ConfigWarningMsg = "The passed-in Configuration value '{0}' is not supported on '{1}'. Use '{2}' instead."
     if (-not $Configuration) {
@@ -673,9 +633,7 @@ function New-PSOptions {
     }
     Write-Verbose "Using configuration '$Configuration'"
 
-    $PowerShellDir = if ($FullCLR) {
-        "powershell-win-full"
-    } elseif ($Configuration -eq 'Linux') {
+    $PowerShellDir = if ($Configuration -eq 'Linux') {
         "powershell-unix"
     } else {
         "powershell-win-core"
@@ -683,13 +641,8 @@ function New-PSOptions {
     $Top = [IO.Path]::Combine($PSScriptRoot, "src", $PowerShellDir)
     Write-Verbose "Top project directory is $Top"
 
-
     if (-not $Framework) {
-        $Framework = if ($FullCLR) {
-            "net451"
-        } else {
-            "netcoreapp2.0"
-        }
+        $Framework = "netcoreapp2.0"
         Write-Verbose "Using framework '$Framework'"
     }
 
@@ -869,20 +822,13 @@ function Start-PSPester {
         [string[]]$Tag = @("CI","Feature"),
         [string[]]$Path = @("$PSScriptRoot/test/common","$PSScriptRoot/test/powershell"),
         [switch]$ThrowOnFailure,
-        [switch]$FullCLR,
-        [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output),
+        [string]$binDir = (Split-Path (New-PSOptions).Output),
         [string]$powershell = (Join-Path $binDir 'powershell'),
         [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester")),
         [switch]$Unelevate,
         [switch]$Quiet,
         [switch]$PassThru
     )
-
-    if ($FullCLR) {
-        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
-        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
-        throw "Building against FullCLR is not supported"
-    }
 
     # we need to do few checks and if user didn't provide $ExcludeTag explicitly, we should alternate the default
     if ($Unelevate)
@@ -923,12 +869,8 @@ function Start-PSPester {
     if ($Environment.IsWindows) {
         $Command += "Set-ExecutionPolicy -Scope Process Unrestricted; "
     }
-    $startParams = @{binDir=$binDir}
 
-    if(!$FullCLR)
-    {
-        $Command += "Import-Module '$Pester'; "
-    }
+    $Command += "Import-Module '$Pester'; "
 
     if ($Unelevate)
     {
@@ -962,49 +904,44 @@ function Start-PSPester {
     Write-Verbose $Command
 
     # To ensure proper testing, the module path must not be inherited by the spawned process
-    if($FullCLR)
-    {
-        Start-DevPowerShell -binDir $binDir -FullCLR -NoNewWindow -ArgumentList '-noprofile', '-noninteractive' -Command $command
-    }
-    else {
-        try {
-            $originalModulePath = $env:PSModulePath
-            if ($Unelevate)
+    try {
+        $originalModulePath = $env:PSModulePath
+        if ($Unelevate)
+        {
+            Start-UnelevatedProcess -process $powershell -arguments @('-noprofile', '-c', $Command)
+            $currentLines = 0
+            while ($true)
             {
-                Start-UnelevatedProcess -process $powershell -arguments @('-noprofile', '-c', $Command)
-                $currentLines = 0
-                while ($true)
+                $lines = Get-Content $outputBufferFilePath | Select-Object -Skip $currentLines
+                $lines | Write-Host
+                if ($lines | Where-Object { $_ -eq '__UNELEVATED_TESTS_THE_END__'})
                 {
-                    $lines = Get-Content $outputBufferFilePath | Select-Object -Skip $currentLines
-                    $lines | Write-Host
-                    if ($lines | Where-Object { $_ -eq '__UNELEVATED_TESTS_THE_END__'})
-                    {
-                        break
-                    }
+                    break
+                }
 
-                    $count = ($lines | measure-object).Count
-                    if ($count -eq 0)
-                    {
-                        sleep 1
-                    }
-                    else
-                    {
-                        $currentLines += $count
-                    }
+                $count = ($lines | measure-object).Count
+                if ($count -eq 0)
+                {
+                    sleep 1
+                }
+                else
+                {
+                    $currentLines += $count
                 }
             }
-            else
-            {
-                & $powershell -noprofile -c $Command
-            }
-        } finally {
-            $env:PSModulePath = $originalModulePath
-            if ($Unelevate)
-            {
-                Remove-Item $outputBufferFilePath
-            }
+        }
+        else
+        {
+            & $powershell -noprofile -c $Command
+        }
+    } finally {
+        $env:PSModulePath = $originalModulePath
+        if ($Unelevate)
+        {
+            Remove-Item $outputBufferFilePath
         }
     }
+
     if($ThrowOnFailure)
     {
         Test-PSPesterResults -TestResultsFile $OutputFile
@@ -1439,21 +1376,13 @@ function Publish-NuGetFeed
 
 function Start-DevPowerShell {
     param(
-        [switch]$FullCLR,
-        [switch]$ZapDisable,
         [string[]]$ArgumentList = '',
         [switch]$LoadProfile,
-        [string]$binDir = (Split-Path (New-PSOptions -FullCLR:$FullCLR).Output),
+        [string]$binDir = (Split-Path (New-PSOptions).Output),
         [switch]$NoNewWindow,
         [string]$Command,
         [switch]$KeepPSModulePath
     )
-
-    if ($FullCLR) {
-        ## Stop building 'FullCLR', but keep the parameters and related scripts for now.
-        ## Once we confirm that portable modules is supported with .NET Core 2.0, we will clean up all FullCLR related scripts.
-        throw "Building against FullCLR is not supported"
-    }
 
     try {
         if ((-not $NoNewWindow) -and ($Environment.IsCoreCLR)) {
@@ -1477,21 +1406,6 @@ function Start-DevPowerShell {
         }
 
         $env:DEVPATH = $binDir
-        if ($ZapDisable) {
-            $env:COMPLUS_ZapDisable = 1
-        }
-
-        if ($FullCLR -and (-not (Test-Path $binDir\powershell.exe.config))) {
-            $configContents = @"
-<?xml version="1.0" encoding="utf-8" ?>
-<configuration>
-<runtime>
-<developmentMode developerInstallation="true"/>
-</runtime>
-</configuration>
-"@
-            $configContents | Out-File -Encoding Ascii $binDir\powershell.exe.config
-        }
 
         # splatting for the win
         $startProcessArgs = @{
@@ -1619,120 +1533,6 @@ function Convert-TxtResourceToXml
     }
 }
 
-function Start-XamlGen
-{
-    [CmdletBinding()]
-    param(
-        [Parameter()]
-        [ValidateSet("Debug", "Release")]
-        [string]
-        $MSBuildConfiguration = "Release"
-    )
-
-    Use-MSBuild
-    Get-ChildItem -Path "$PSScriptRoot/src" -Directory | ForEach-Object {
-        $XamlDir = Join-Path -Path $_.FullName -ChildPath Xamls
-        if ((Test-Path -Path $XamlDir -PathType Container) -and
-            (@(Get-ChildItem -Path "$XamlDir\*.xaml").Count -gt 0)) {
-            $OutputDir = Join-Path -Path $env:TEMP -ChildPath "_Resolve_Xaml_"
-            Remove-Item -Path $OutputDir -Recurse -Force -ErrorAction SilentlyContinue
-            mkdir -Path $OutputDir -Force > $null
-
-            # we will get failures, but it's ok: we only need to copy *.g.cs files in the dotnet cli project.
-            $SourceDir = ConvertFrom-Xaml -Configuration $MSBuildConfiguration -OutputDir $OutputDir -XamlDir $XamlDir -IgnoreMsbuildFailure:$true
-            $DestinationDir = Join-Path -Path $_.FullName -ChildPath gen
-
-            New-Item -ItemType Directory $DestinationDir -ErrorAction SilentlyContinue > $null
-            $filesToCopy = Get-Item "$SourceDir\*.cs", "$SourceDir\*.g.resources"
-            if (-not $filesToCopy) {
-                throw "No .cs or .g.resources files are generated for $XamlDir, something went wrong. Run 'Start-XamlGen -Verbose' for details."
-            }
-
-            $filesToCopy | ForEach-Object {
-                $sourcePath = $_.FullName
-                Write-Verbose "Copy generated xaml artifact: $sourcePath -> $DestinationDir"
-                Copy-Item -Path $sourcePath -Destination $DestinationDir
-            }
-        }
-    }
-}
-
-$Script:XamlProj = @"
-<Project DefaultTargets="ResolveAssemblyReferences;MarkupCompilePass1;PrepareResources" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-    <PropertyGroup>
-        <Language>C#</Language>
-        <AssemblyName>Microsoft.PowerShell.Activities</AssemblyName>
-        <OutputType>library</OutputType>
-        <Configuration>{0}</Configuration>
-        <Platform>Any CPU</Platform>
-        <OutputPath>{1}</OutputPath>
-        <Do_CodeGenFromXaml>true</Do_CodeGenFromXaml>
-    </PropertyGroup>
-
-    <Import Project="`$(MSBuildBinPath)\Microsoft.CSharp.targets" />
-    <Import Project="`$(MSBuildBinPath)\Microsoft.WinFX.targets" Condition="'`$(TargetFrameworkVersion)' == 'v2.0' OR '`$(TargetFrameworkVersion)' == 'v3.0' OR '`$(TargetFrameworkVersion)' == 'v3.5'" />
-
-    <ItemGroup>
-{2}
-        <Reference Include="WindowsBase.dll">
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="PresentationCore.dll">
-            <Private>False</Private>
-        </Reference>
-        <Reference Include="PresentationFramework.dll">
-            <Private>False</Private>
-        </Reference>
-    </ItemGroup>
-</Project>
-"@
-
-$Script:XamlProjPage = @'
-        <Page Include="{0}" />
-
-'@
-
-function script:ConvertFrom-Xaml {
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory=$true)]
-        [string] $Configuration,
-
-        [Parameter(Mandatory=$true)]
-        [string] $OutputDir,
-
-        [Parameter(Mandatory=$true)]
-        [string] $XamlDir,
-
-        [switch] $IgnoreMsbuildFailure
-    )
-
-    log "ConvertFrom-Xaml for $XamlDir"
-
-    $Pages = ""
-    Get-ChildItem -Path "$XamlDir\*.xaml" | ForEach-Object {
-        $Page = $Script:XamlProjPage -f $_.FullName
-        $Pages += $Page
-    }
-
-    $XamlProjContent = $Script:XamlProj -f $Configuration, $OutputDir, $Pages
-    $XamlProjPath = Join-Path -Path $OutputDir -ChildPath xaml.proj
-    Set-Content -Path $XamlProjPath -Value $XamlProjContent -Encoding Ascii -NoNewline -Force
-
-    msbuild $XamlProjPath | Write-Verbose
-
-    if ($LASTEXITCODE -ne 0) {
-        $message = "When processing $XamlDir 'msbuild $XamlProjPath > `$null' failed with exit code $LASTEXITCODE"
-        if ($IgnoreMsbuildFailure) {
-            Write-Verbose $message
-        } else {
-            throw $message
-        }
-    }
-
-    return (Join-Path -Path $OutputDir -ChildPath "obj\Any CPU\$Configuration")
-}
-
 
 function script:Use-MSBuild {
     # TODO: we probably should require a particular version of msbuild, if we are taking this dependency
@@ -1777,23 +1577,6 @@ function script:precheck([string]$command, [string]$missedMessage) {
         return $true
     }
 }
-
-
-function script:Get-InvertedOrderedMap {
-    param(
-        $h
-    )
-    $res = [ordered]@{}
-    foreach ($q in $h.GetEnumerator()) {
-        if ($res.Contains($q.Value)) {
-            throw "Cannot invert hashtable: duplicated key $($q.Value)"
-        }
-
-        $res[$q.Value] = $q.Key
-    }
-    return $res
-}
-
 
 # this function wraps native command Execution
 # for more information, read https://mnaoumov.wordpress.com/2015/01/11/execution-of-external-commands-in-powershell-done-right/
@@ -1981,7 +1764,6 @@ function Start-CrossGen {
                      "win7-x64",
                      "win81-x64",
                      "win10-x64",
-                     "osx.10.11-x64",
                      "osx.10.12-x64",
                      "opensuse.13.2-x64",
                      "opensuse.42.1-x64")]

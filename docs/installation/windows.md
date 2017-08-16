@@ -126,7 +126,7 @@ Note that `New-PSSession` and `Enter-PSSession` invocations that do not specify 
 
 ## Artifact Installation Instructions
 
-We publish an archive with CoreCLR and FullCLR bits on every CI build with [AppVeyor][].
+We publish an archive with CoreCLR bits on every CI build with [AppVeyor][].
 
 [releases]: https://github.com/PowerShell/PowerShell/releases
 [signing]: ../../tools/Sign-Package.ps1
