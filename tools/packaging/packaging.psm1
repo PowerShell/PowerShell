@@ -22,6 +22,11 @@ function Start-PSPackage {
         [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg")]
         [string[]]$Type,
 
+        # Generate windows downlevel package
+        [ValidateSet("win7-x86", "win7-x64")]
+        [ValidateScript({$Environment.IsWindows})]
+        [string]$WindowsRuntime,
+
         [Switch] $Force,
 
         [Switch] $IncludeSymbols,
@@ -30,7 +35,11 @@ function Start-PSPackage {
     )
 
     # Runtime and Configuration settings required by the package
-    ($Runtime, $Configuration) = New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+    ($Runtime, $Configuration) = if ($WindowsRuntime) {
+        $WindowsRuntime, "Release"
+    } else {
+        New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+    }
 
     # We convert the runtime to win7-x64 or win7-x86 to build the universal windows package.
     if($Environment.IsWindows) {
