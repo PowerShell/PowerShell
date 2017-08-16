@@ -845,6 +845,8 @@ namespace Microsoft.PowerShell.Commands
                 {
 #if !UNIX
                     _stream = AlternateDataStreamUtilities.CreateFileStream(filePath, streamName, fileMode, fileAccess, fileShare);
+#else
+                    throw new PlatformNotSupportedException();
 #endif
                 }
                 else
@@ -858,6 +860,8 @@ namespace Microsoft.PowerShell.Commands
                 {
 #if !UNIX
                     _stream = AlternateDataStreamUtilities.CreateFileStream(filePath, streamName, fileMode, requestedAccess, fileShare);
+#else
+                    throw new PlatformNotSupportedException();
 #endif
                 }
                 else

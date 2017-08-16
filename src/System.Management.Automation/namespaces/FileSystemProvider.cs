@@ -2804,17 +2804,22 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-#if !UNIX
-                if ((!removeStreams) && iscontainer)
-#else
+#if UNIX
                 if (iscontainer)
-#endif
                 {
                     RemoveDirectoryInfoItem((DirectoryInfo)fsinfo, recurse, Force, true);
                 }
                 else
                 {
-#if !UNIX
+                    RemoveFileInfoItem((FileInfo)fsinfo, Force);
+                }
+#else
+                if ((!removeStreams) && iscontainer)
+                {
+                    RemoveDirectoryInfoItem((DirectoryInfo)fsinfo, recurse, Force, true);
+                }
+                else
+                {
                     // If we want to remove the file streams, retrieve them and remove them.
                     if (removeStreams)
                     {
@@ -2854,11 +2859,11 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
                     else
-#endif
                     {
                         RemoveFileInfoItem((FileInfo)fsinfo, Force);
                     }
                 }
+#endif
             }
             catch (IOException exception)
             {
@@ -4267,11 +4272,13 @@ namespace Microsoft.PowerShell.Commands
                         ps.AddParameter("force", true);
                     }
 
+#if !UNIX
                     if (isAlternateDataStream)
                     {
                         ps.AddParameter("isAlternateStream", true);
                         ps.AddParameter("streamName", streamName);
                     }
+#endif
 
                     Hashtable op = SafeInvokeCommand.Invoke(ps, this, null);
 
