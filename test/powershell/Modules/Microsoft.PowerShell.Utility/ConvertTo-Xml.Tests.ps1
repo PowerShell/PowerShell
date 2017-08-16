@@ -1,4 +1,10 @@
 ﻿Describe "ConvertTo-Xml DRT Unit Tests" -Tags "CI" {
+    BeforeAll {
+        class fruit {
+            [string] $name;
+        }
+    }
+
     $customPSObject = [pscustomobject]@{ "prop1" = "val1"; "prop2" = "val2" }
     $newLine = [System.Environment]::NewLine
     It "Test convertto-xml with a depth parameter" {
@@ -67,6 +73,38 @@
 		$cmd = [Microsoft.PowerShell.Commands.ConvertToXmlCommand]::new()
 		$cmd.NoTypeInformation = $true
 		$cmd.NoTypeInformation | Should Be $true
-	}
+    }
+
+    It "Serialize primitive type" {
+        [int] $i = 1
+        $x = $i | ConvertTo-Xml
+        $x.Objects.Object.Type | Should BeExactly $i.GetType().ToString()
+        $x.Objects.Object."#text" | Should BeExactly $i
+    }
+
+    It "Serialize ContainerType.Dictionary type" {
+        $a = @{foo="bar"}
+        $x = $a | ConvertTo-Xml
+        $x.Objects.Object.Type | Should BeExactly $a.GetType().ToString()
+        $x.Objects.Object.Property[0].Name | Should BeExactly "Key"
+        $x.Objects.Object.Property[0]."#text" | Should BeExactly "foo"
+        $x.Objects.Object.Property[1].Name | Should BeExactly "Value"
+        $x.Objects.Object.Property[1]."#text" | Should BeExactly "bar"
+    }
+
+    It "Serialize ContainerType.Enumerable type" {
+        $fruit1 = [fruit]::new()
+        $fruit1.name = "apple"
+        $fruit2 = [fruit]::new()
+        $fruit2.name = "banana"
+        $x = $fruit1,$fruit2 | ConvertTo-Xml
+        $x.Objects.Object.Count | Should BeExactly 2
+        $x.Objects.Object[0].Type | Should BeExactly $fruit1.GetType().FullName
+        $x.Objects.Object[0].Property.Name | Should BeExactly "name"
+        $x.Objects.Object[0].Property."#text" | Should BeExactly "apple"
+        $x.Objects.Object[1].Type | Should BeExactly $fruit2.GetType().FullName
+        $x.Objects.Object[1].Property.Name | Should BeExactly "name"
+        $x.Objects.Object[1].Property."#text" | Should BeExactly "banana"
+    }
 }
 
