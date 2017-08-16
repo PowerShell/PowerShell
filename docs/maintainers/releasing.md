@@ -165,10 +165,10 @@ Start-PSBuild -Clean -CrossGen -PSModuleRestore -Runtime win7-x64 -Configuration
 ```
 
 ```powershell
-# Create packages for v6.0.0-beta.1 release targeting Windows universal package. 
-# 'win7-x64' / 'win7-x86' will be used as the runtime.
-Start-PSPackage -Type msi -ReleaseTag v6.0.0-beta.1
-Start-PSPackage -Type zip -ReleaseTag v6.0.0-beta.1
+# Create packages for v6.0.0-beta.1 release targeting Windows universal package.
+# 'win7-x64' / 'win7-x86' should be used for -WindowsRuntime.
+Start-PSPackage -Type msi -ReleaseTag v6.0.0-beta.1 -WindowsRuntime 'win7-x64'
+Start-PSPackage -Type zip -ReleaseTag v6.0.0-beta.1 -WindowsRuntime 'win7-x64'
 ```
 
 ## NuGet Packages
