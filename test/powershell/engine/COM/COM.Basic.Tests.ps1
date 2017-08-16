@@ -4,29 +4,32 @@ try {
     $PSDefaultParameterValues["it:skip"] = ![System.Management.Automation.Platform]::IsWindowsDesktop
 
     Describe 'Basic COM Tests' -Tags "CI" {
-        It "Should enumerate ShellWindows" {
-            $shell = New-Object -ComObject "Shell.Application"
-            $windows = $shell.Windows()
+        BeforeAll {
+            $null = New-Item -Path $TESTDRIVE/file1 -ItemType File
+            $null = New-Item -Path $TESTDRIVE/file2 -ItemType File
+            $null = New-Item -Path $TESTDRIVE/file3 -ItemType File
+        }
 
-            ## $windows is a collection of all of the open windows that belong to the Shell, and it should be enumerated.
-            ##  - If there are any open shell windows, then $element will be the first window from the enumeration;
-            ##  - If there is no open shell window ($windows is an empty collection), then $element will be $null.
-            ## So in either case, $element should not be the same as $windows
-            $element = $windows | Select-Object -First 1
-            [System.Object]::ReferenceEquals($element, $windows) | Should Be $false
+        It "Should enumerate files from a folder" {
+            $shell = New-Object -ComObject "Shell.Application"
+            $folder = $shell.Namespace("$TESTDRIVE")
+            $items = $folder.Items()
+
+            ## $items is a collection of all items belong to the folder, and it should be enumerated.
+            $items | Measure-Object | ForEach-Object Count | Should Be $items.Count
+            $names = $items | ForEach-Object { $_.Name }
+            $names -join "," | Should Be "file1,file2,file3"
         }
 
         It "Should enumerate IEnumVariant interface object without exception" {
             $shell = New-Object -ComObject "Shell.Application"
-            $windows = $shell.Windows()
-            $enumVariant = $windows._NewEnum()
+            $folder = $shell.Namespace("$TESTDRIVE")
+            $items = $folder.Items()
 
-            ## $enumVariant is an IEnumVariant interface of all of the open windows that belong to the Shell, and it should be enumerated.
-            ##  - If there are any open shell windows, then $element will be the first window from the enumeration;
-            ##  - If there is no open shell window ($enumVariant refers to an empty collection), then $element will be $null.
-            ## So in either case, $element should not be the same as $enumVariant
-            $element = $enumVariant | Select-Object -First 1
-            [System.Object]::ReferenceEquals($element, $enumVariant) | Should Be $false
+            ## $enumVariant is an IEnumVariant interface of all items belong to the folder, and it should be enumerated.
+            $enumVariant = $items._NewEnum()
+            $names = $enumVariant | ForEach-Object { $_.Name }
+            $names -join "," | Should Be "file1,file2,file3"
         }
 
         It "Should enumerate drives" {
