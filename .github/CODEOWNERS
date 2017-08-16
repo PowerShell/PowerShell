@@ -12,16 +12,18 @@
 # Area: Security
 # @TravisEz13 @PaulHigin @chunqingchen
 
-# Now Areas that should have paths or filters, although we might not have them defined
-# Order here must be by precedence of the filter
 # Area: Documentation
-*.md                                               @joeyaiello @TravisEz13
+# @joeyaiello @TravisEz13
 
 # Area: Test
-test/                                              @JamesWTruher @TravisEz13 @adityapatwardhan
+# @JamesWTruher @TravisEz13 @adityapatwardhan
 
 # Area: Cmdlets Core
 # @JamesWTruher @SteveL-MSFT @anmenaga @chunqingchen
+
+# Now Areas that should have paths or filters, although we might not have them defined
+# According to the docs, Order here must be by precedence of the filter, with later rules overwritting
+# but the feature seems to make taking a union of all the matching rules.
 
 # Area: CmdLets Management
 src/Microsoft.PowerShell.Commands.Management/      @daxian-dbw @adityapatwardhan
