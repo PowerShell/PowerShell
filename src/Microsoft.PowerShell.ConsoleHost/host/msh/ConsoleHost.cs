@@ -53,10 +53,10 @@ namespace Microsoft.PowerShell
     {
         #region static methods
 
-        internal const uint ExitCodeSuccess = 0x00000000;
-        internal const uint ExitCodeCtrlBreak = 0xFFFE0000;
-        internal const uint ExitCodeInitFailure = 0xFFFF0000;
-        internal const uint ExitCodeBadCommandLineParameter = 0xFFFD0000;
+        internal const int ExitCodeSuccess = 0;
+        internal const int ExitCodeCtrlBreak = 128+21; // SIGBREAK
+        internal const int ExitCodeInitFailure = 70; // Internal Software Error
+        internal const int ExitCodeBadCommandLineParameter = 64; // Command Line Usage Error
 
         // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
         // Removed HandleUnexpectedExceptions infrastructure
@@ -212,10 +212,7 @@ namespace Microsoft.PowerShell
                     {
                         s_theConsoleHost.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
                     }
-                    unchecked
-                    {
-                        return (int)ExitCodeBadCommandLineParameter;
-                    }
+                    return ExitCodeBadCommandLineParameter;
                 }
 
                 // First check for and handle PowerShell running in a server mode.

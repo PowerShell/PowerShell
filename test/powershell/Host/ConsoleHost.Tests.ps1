@@ -52,6 +52,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+        $ExitCodeBadCommandLineParameter = 64
 
         function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
         {
