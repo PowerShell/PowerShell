@@ -35,6 +35,9 @@ function Start-PSPackage {
     # We convert the runtime to win7-x64 or win7-x86 to build the universal windows package.
     if($Environment.IsWindows) {
         $Runtime = $Runtime -replace "win\d+", "win7"
+
+        # Build the name suffix for win-plat packages
+        $NameSuffix = $Runtime -replace 'win\d+', 'win'
     }
 
     log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
@@ -115,11 +118,6 @@ function Start-PSPackage {
         Write-Warning "-Type was not specified, continuing with $Type!"
     }
     log "Packaging Type: $Type"
-
-    # Build the name suffix for win-plat packages
-    if ($Environment.IsWindows) {
-        $NameSuffix = $Runtime -replace 'win\d+', 'win'
-    }
 
     # Add the symbols to the suffix 
     # if symbols are specified to be included
