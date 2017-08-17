@@ -2,8 +2,8 @@
 # On Windows paths is separated by semicolon
 $script:TestModulePathSeparator = [System.IO.Path]::PathSeparator
 
-$dotnetCLIChannel = "preview"
-$dotnetCLIRequiredVersion = "2.0.0-preview2-006502"
+$dotnetCLIChannel = "release"
+$dotnetCLIRequiredVersion = "2.0.0"
 
 # Track if tags have been sync'ed
 $tagsUpToDate = $false
@@ -490,12 +490,6 @@ Fix steps:
         Pop-Location
     }
 
-    # add 'x' permission when building the standalone application
-    # this is temporary workaround to a bug in dotnet.exe, tracking by dotnet/cli issue #6286
-    if ($Options.Configuration -eq "Linux") {
-        chmod u+x $Options.Output
-    }
-
     # publish netcoreapp2.0 reference assemblies
     try {
         Push-Location "$PSScriptRoot/src/TypeCatalogGen"
@@ -798,12 +792,6 @@ function Publish-PSTestTools {
             dotnet publish --output bin --configuration $Options.Configuration --framework $Options.Framework --runtime $Options.Runtime
             $toolPath = Join-Path -Path $tool.Path -ChildPath "bin"
 
-            # add 'x' permission when building the standalone application
-            # this is temporary workaround to a bug in dotnet.exe, tracking by dotnet/cli issue #6286
-            if ($Options.Configuration -eq "Linux") {
-                $executable = Join-Path -Path $toolPath -ChildPath "$($tool.Output)"
-                chmod u+x $executable
-            }
             if ( $env:PATH -notcontains $toolPath ) {
                 $env:PATH = $toolPath+$TestModulePathSeparator+$($env:PATH)
             }
@@ -1843,12 +1831,6 @@ function Start-CrossGen {
         throw "Unable to find latest version of crossgen.exe. 'Please run Start-PSBuild -Clean' first, and then try again."
     }
     Write-Verbose "Matched CrossGen.exe: $crossGenPath" -Verbose
-
-    # 'x' permission is not set for packages restored on Linux/OSX.
-    # this is temporary workaround to a bug in dotnet.exe, tracking by dotnet/cli issue #6286
-    if ($Environment.IsLinux -or $Environment.IsOSX) {
-        chmod u+x $crossGenPath
-    }
 
     # Crossgen.exe requires the following assemblies:
     # mscorlib.dll
