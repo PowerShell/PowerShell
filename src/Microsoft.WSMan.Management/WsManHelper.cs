@@ -17,9 +17,7 @@ using Microsoft.Win32;
 using System.Management.Automation;
 using System.Management.Automation.Provider;
 using System.Threading;
-#if CORECLR
 using System.Xml.XPath;
-#endif
 
 namespace Microsoft.WSMan.Management
 {
@@ -1009,17 +1007,11 @@ namespace Microsoft.WSMan.Management
             {
                 RegistryKey rGPOLocalMachineKey = Registry.LocalMachine.OpenSubKey(
                     Registry_Path_Credentials_Delegation + @"\CredentialsDelegation",
-#if !CORECLR
-                    RegistryKeyPermissionCheck.ReadWriteSubTree,
-#endif
-                    System.Security.AccessControl.RegistryRights.FullControl);
+                        System.Security.AccessControl.RegistryRights.FullControl);
 
                 if (rGPOLocalMachineKey != null)
                 {
                     rGPOLocalMachineKey = rGPOLocalMachineKey.OpenSubKey(Key_Allow_Fresh_Credentials,
-#if !CORECLR
-                        RegistryKeyPermissionCheck.ReadWriteSubTree,
-#endif
                         System.Security.AccessControl.RegistryRights.FullControl);
                     if (rGPOLocalMachineKey == null)
                     {
@@ -1078,11 +1070,7 @@ namespace Microsoft.WSMan.Management
             try
             {
                 string filepath = System.Environment.ExpandEnvironmentVariables("%Windir%") + "\\System32\\Winrm\\" +
-#if CORECLR
                     "0409" /* TODO: don't assume it is always English on CSS? */
-#else
-                    String.Concat("0", String.Format(CultureInfo.CurrentCulture, "{0:x2}", checked((uint)CultureInfo.CurrentUICulture.LCID)))
-#endif
                     + "\\" + "winrm.ini";
                 if (File.Exists(filepath))
                 {

@@ -181,15 +181,10 @@ namespace Microsoft.WSMan.Management
     [Guid("190D8637-5CD3-496D-AD24-69636BB5A3B5")]
     [ComImport]
     [TypeLibType((short)4304)]
-#if CORECLR
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
-#else
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
-#endif
 
     public interface IWSMan
     {
-#if CORECLR
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object GetTypeInfoCount();
 
@@ -201,30 +196,20 @@ namespace Microsoft.WSMan.Management
 
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object Invoke();
-#endif
 
         /// <summary><para><c>CreateSession</c> method of <c>IWSMan</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>CreateSession</c> method was the following:  <c>HRESULT CreateSession ([optional, defaultvalue("")] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
         // IDL: HRESULT CreateSession ([optional, defaultvalue("")] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue);
 
         [DispId(1)]
-#if CORECLR
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object CreateSession([MarshalAs(UnmanagedType.BStr)] string connection, int flags, [MarshalAs(UnmanagedType.IUnknown)] object connectionOptions);
-#else
-        [return: MarshalAs(UnmanagedType.IDispatch)]
-        object CreateSession([MarshalAs(UnmanagedType.BStr)] string connection, int flags, [MarshalAs(UnmanagedType.IDispatch)] object connectionOptions);
-#endif
         /// <summary><para><c>CreateConnectionOptions</c> method of <c>IWSMan</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>CreateConnectionOptions</c> method was the following:  <c>HRESULT CreateConnectionOptions ([out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
         // IDL: HRESULT CreateConnectionOptions ([out, retval] IDispatch** ReturnValue);
         //
         [DispId(2)]
-#if CORECLR
         [return: MarshalAs(UnmanagedType.IUnknown)]
-#else
-        [return: MarshalAs(UnmanagedType.IDispatch)]
-#endif
         object CreateConnectionOptions();
 
         /// <summary><para><c>CommandLine</c> property of <c>IWSMan</c> interface.</para></summary>
@@ -263,15 +248,10 @@ namespace Microsoft.WSMan.Management
     [Guid("F704E861-9E52-464F-B786-DA5EB2320FDD")]
     [ComImport]
     [TypeLibType((short)4288)]
-#if CORECLR
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
-#else
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
-#endif
     [SuppressMessage("Microsoft.Design", "CA1044:PropertiesShouldNotBeWriteOnly")]
     public interface IWSManConnectionOptions
     {
-#if CORECLR
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object GetTypeInfoCount();
 
@@ -283,7 +263,6 @@ namespace Microsoft.WSMan.Management
 
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object Invoke();
-#endif
         /// <summary><para><c>UserName</c> property of <c>IWSManConnectionOptions</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>UserName</c> property was the following:  <c>BSTR UserName</c>;</para></remarks>
         // IDL: BSTR UserName;
@@ -320,11 +299,7 @@ namespace Microsoft.WSMan.Management
     [Guid("EF43EDF7-2A48-4d93-9526-8BD6AB6D4A6B")]
     [ComImport]
     [TypeLibType((short)4288)]
-#if CORECLR
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
-#else
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
-#endif
     [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
     public interface IWSManConnectionOptionsEx : IWSManConnectionOptions
     {
@@ -345,11 +320,7 @@ namespace Microsoft.WSMan.Management
     [Guid("F500C9EC-24EE-48ab-B38D-FC9A164C658E")]
     [ComImport]
     [TypeLibType((short)4288)]
-#if CORECLR
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
-#else
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
-#endif
     public interface IWSManConnectionOptionsEx2 : IWSManConnectionOptionsEx
     {
         /// <summary><para><c>SetProxy</c> method of <c>IWSManConnectionOptionsEx2</c> interface.</para></summary>
@@ -396,15 +367,10 @@ namespace Microsoft.WSMan.Management
     [Guid("F3457CA9-ABB9-4FA5-B850-90E8CA300E7F")]
     [ComImport]
     [TypeLibType((short)4288)]
-#if CORECLR
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
-#else
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
-#endif
 
     public interface IWSManEnumerator
     {
-#if CORECLR
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object GetTypeInfoCount();
 
@@ -416,7 +382,6 @@ namespace Microsoft.WSMan.Management
 
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object Invoke();
-#endif
 
         /// <summary><para><c>ReadItem</c> method of <c>IWSManEnumerator</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>ReadItem</c> method was the following:  <c>HRESULT ReadItem ([out, retval] BSTR* ReturnValue)</c>;</para></remarks>
@@ -460,18 +425,13 @@ namespace Microsoft.WSMan.Management
     [ComImport]
     [TypeLibType((short)4304)]
     [SuppressMessage("Microsoft.Naming", "CA1711:IdentifiersShouldNotHaveIncorrectSuffix")]
-#if CORECLR
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
-#else
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
-#endif
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "str")]
     [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "Cred")]
     [SuppressMessage("Microsoft.Naming", "CA1702:CompoundWordsShouldBeCasedCorrectly", MessageId = "Username")]
     [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Error")]
     public interface IWSManEx
     {
-#if CORECLR
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object GetTypeInfoCount();
 
@@ -483,32 +443,21 @@ namespace Microsoft.WSMan.Management
 
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object Invoke();
-#endif
 
         /// <summary><para><c>CreateSession</c> method of <c>IWSManEx</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>CreateSession</c> method was the following:  <c>HRESULT CreateSession ([optional, defaultvalue("")] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
         // IDL: HRESULT CreateSession ([optional, defaultvalue("")] BSTR connection, [optional, defaultvalue(0)] long flags, [optional] IDispatch* connectionOptions, [out, retval] IDispatch** ReturnValue);
 
         [DispId(1)]
-#if CORECLR
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object CreateSession([MarshalAs(UnmanagedType.BStr)] string connection, int flags, [MarshalAs(UnmanagedType.IUnknown)] object connectionOptions);
-#else
-        [return: MarshalAs(UnmanagedType.IDispatch)]
-        object CreateSession([MarshalAs(UnmanagedType.BStr)] string connection, int flags, [MarshalAs(UnmanagedType.IDispatch)] object connectionOptions);
-#endif
-
 
         /// <summary><para><c>CreateConnectionOptions</c> method of <c>IWSManEx</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>CreateConnectionOptions</c> method was the following:  <c>HRESULT CreateConnectionOptions ([out, retval] IDispatch** ReturnValue)</c>;</para></remarks>
         // IDL: HRESULT CreateConnectionOptions ([out, retval] IDispatch** ReturnValue);
 
         [DispId(2)]
-#if CORECLR
         [return: MarshalAs(UnmanagedType.IUnknown)]
-#else
-        [return: MarshalAs(UnmanagedType.IDispatch)]
-#endif
         object CreateConnectionOptions();
 
 
@@ -548,11 +497,7 @@ namespace Microsoft.WSMan.Management
 
         [SuppressMessage("Microsoft.Naming", "CA1704:IdentifiersShouldBeSpelledCorrectly", MessageId = "str")]
         [DispId(5)]
-#if CORECLR
         [return: MarshalAs(UnmanagedType.IUnknown)]
-#else
-        [return: MarshalAs(UnmanagedType.IDispatch)]
-#endif
         object CreateResourceLocator([MarshalAs(UnmanagedType.BStr)] string strResourceLocator);
 
         /// <summary><para><c>SessionFlagUTF8</c> method of <c>IWSManEx</c> interface.</para></summary>
@@ -723,16 +668,9 @@ namespace Microsoft.WSMan.Management
     [Guid("A7A1BA28-DE41-466A-AD0A-C4059EAD7428")]
     [ComImport]
     [TypeLibType((short)4288)]
-#if CORECLR
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
-#else
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
-#endif
-
-
     public interface IWSManResourceLocator
     {
-#if CORECLR
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object GetTypeInfoCount();
 
@@ -744,7 +682,7 @@ namespace Microsoft.WSMan.Management
 
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object Invoke();
-#endif
+
         /// <summary><para><c>resourceUri</c> property of <c>IWSManResourceLocator</c> interface.  </para><para>Set the resource URI. Must contain path only -- query string is not allowed here.</para></summary>
         /// <remarks><para>An original IDL definition of <c>resourceUri</c> property was the following:  <c>BSTR resourceUri</c>;</para></remarks>
         // Set the resource URI. Must contain path only -- query string is not allowed here.
@@ -892,19 +830,13 @@ namespace Microsoft.WSMan.Management
     [Guid("FC84FC58-1286-40C4-9DA0-C8EF6EC241E0")]
     [ComImport]
     [TypeLibType((short)4288)]
-#if CORECLR
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
-#else
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
-#endif
-
     [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Error")]
     [SuppressMessage("Microsoft.Naming", "CA1716:IdentifiersShouldNotMatchKeywords", MessageId = "Get")]
     [SuppressMessage("Microsoft.Design", "CA1054:UriParametersShouldNotBeStrings", MessageId = "0#")]
     [SuppressMessage("Microsoft.Naming", "CA1709:IdentifiersShouldBeCasedCorrectly", MessageId = "URI")]
     public interface IWSManSession
     {
-#if CORECLR
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object GetTypeInfoCount();
 
@@ -916,7 +848,6 @@ namespace Microsoft.WSMan.Management
 
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object Invoke();
-#endif
 
         /// <summary><para><c>Get</c> method of <c>IWSManSession</c> interface.</para></summary>
         /// <remarks><para>An original IDL definition of <c>Get</c> method was the following:  <c>HRESULT Get (VARIANT resourceUri, [optional, defaultvalue(0)] long flags, [out, retval] BSTR* ReturnValue)</c>;</para></remarks>
@@ -971,11 +902,7 @@ namespace Microsoft.WSMan.Management
         // IDL: HRESULT Enumerate (VARIANT resourceUri, [optional, defaultvalue("")] BSTR filter, [optional, defaultvalue("")] BSTR dialect, [optional, defaultvalue(0)] long flags, [out, retval] IDispatch** ReturnValue);
 
         [DispId(6)]
-#if CORECLR
         [return: MarshalAs(UnmanagedType.IUnknown)]
-#else
-        [return: MarshalAs(UnmanagedType.IDispatch)]
-#endif
         object Enumerate(object resourceUri, [MarshalAs(UnmanagedType.BStr)] string filter, [MarshalAs(UnmanagedType.BStr)] string dialect, int flags);
 
         /// <summary><para><c>Identify</c> method of <c>IWSManSession</c> interface.</para></summary>
@@ -1043,15 +970,10 @@ namespace Microsoft.WSMan.Management
     [Guid("EFFAEAD7-7EC8-4716-B9BE-F2E7E9FB4ADB")]
     [ComImport]
     [TypeLibType((short)400)]
-#if CORECLR
     [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIUnknown)]
-#else
-    [InterfaceTypeAttribute(ComInterfaceType.InterfaceIsIDispatch)]
-#endif
     [SuppressMessage("Microsoft.Design", "CA1040:AvoidEmptyInterfaces")]
     public interface IWSManResourceLocatorInternal
     {
-#if CORECLR
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object GetTypeInfoCount();
 
@@ -1063,7 +985,6 @@ namespace Microsoft.WSMan.Management
 
         [return: MarshalAs(UnmanagedType.IUnknown)]
         object Invoke();
-#endif
     }
 
     #endregion IWSManResourceLocatorInternal
@@ -1072,11 +993,7 @@ namespace Microsoft.WSMan.Management
     /// <summary><para><c>WSMan</c> interface.</para></summary>
     [Guid("BCED617B-EC03-420b-8508-977DC7A686BD")]
     [ComImport]
-#if CORECLR
     [ClassInterface(ClassInterfaceType.None)]
-#else
-    [ClassInterface(ClassInterfaceType.AutoDual)]
-#endif
     public class WSManClass
     {
     }
