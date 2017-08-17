@@ -445,8 +445,7 @@ namespace Microsoft.PowerShell
         internal const int SW_FORCEMINIMIZE = 11;
         internal const int SW_MAX = 11;
 
-
-#if !CORECLR  // ProcessWindowStyle does Not exist on CoreCLR
+#if !UNIX
         /// <summary>
         /// Code to control the display properties of the a window...
         /// </summary>

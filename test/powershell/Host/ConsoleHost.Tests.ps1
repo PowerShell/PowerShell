@@ -52,6 +52,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+        $ExitCodeBadCommandLineParameter = 64
 
         function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
         {
@@ -491,6 +492,95 @@ foo
         It "`$PSHOME should be in front so that powershell.exe starts current running PowerShell" {
             powershell -v | Should Match $psversiontable.GitCommitId
         }
+    }
+
+    Context "Ambiguous arguments" {
+        It "Ambiguous argument '<testArg>' should return possible matches" -TestCases @(
+            @{testArg="-no";expectedMatches=@("-nologo","-noexit","-noprofile","-noninteractive")},
+            @{testArg="-format";expectedMatches=@("-inputformat","-outputformat")}
+        ) {
+            param($testArg, $expectedMatches)
+            $output = & $powershell $testArg -File foo 2>&1
+            $LASTEXITCODE | Should Be $ExitCodeBadCommandLineParameter
+            $outString = [String]::Join(",", $output)
+            foreach ($expectedMatch in $expectedMatches)
+            {
+                $outString | Should Match $expectedMatch
+            }
+        }
+    }
+}
+
+Describe "WindowStyle argument" -Tag Feature {
+    BeforeAll {
+        $defaultParamValues = $PSDefaultParameterValues.Clone()
+        $PSDefaultParameterValues["it:skip"] = !$IsWindows
+
+        if ($IsWindows)
+        {
+            $ExitCodeBadCommandLineParameter = 64
+            Add-Type -Name User32 -Namespace Test -MemberDefinition @"
+public static WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
+{
+    WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
+    placement.length = Marshal.SizeOf(placement);
+    GetWindowPlacement(hwnd, ref placement);
+    return placement;
+}
+
+[DllImport("user32.dll", SetLastError = true)]
+[return: MarshalAs(UnmanagedType.Bool)]
+public static extern bool GetWindowPlacement(
+    IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+
+[Serializable]
+[StructLayout(LayoutKind.Sequential)]
+public struct WINDOWPLACEMENT
+{
+    public int length;
+    public int flags;
+    public ShowWindowCommands showCmd;
+    public System.Drawing.Point ptMinPosition;
+    public System.Drawing.Point ptMaxPosition;
+    public System.Drawing.Rectangle rcNormalPosition;
+}
+
+public enum ShowWindowCommands : int
+{
+    Hidden = 0,
+    Normal = 1,
+    Minimized = 2,
+    Maximized = 3,
+}
+"@
+        }
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $defaultParamValues
+    }
+
+    It "-WindowStyle <WindowStyle> should work on Windows" -TestCases @(
+            @{WindowStyle="Normal"},
+            @{WindowStyle="Minimized"},
+            @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
+        ) {
+        param ($WindowStyle)
+        $ps = Start-Process powershell -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
+        $startTime = Get-Date
+        $showCmd = "Unknown"
+        while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and $showCmd -ne $WindowStyle)
+        {
+            Start-Sleep -Milliseconds 100
+            $showCmd = ([Test.User32]::GetPlacement($ps.MainWindowHandle)).showCmd
+        }
+        $showCmd | Should BeExactly $WindowStyle
+        $ps | Stop-Process -Force
+    }
+
+    It "Invalid -WindowStyle returns error" {
+        powershell -WindowStyle invalid
+        $LASTEXITCODE | Should Be $ExitCodeBadCommandLineParameter
     }
 }
 

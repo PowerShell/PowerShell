@@ -169,6 +169,30 @@ namespace Microsoft.PowerShell
 
     internal class CommandLineParameterParser
     {
+        internal static string[] validParameters = {
+            "psconsoleFile",
+            "version",
+            "nologo",
+            "noexit",
+#if !CORECLR
+            "sta",
+            "mta",
+#endif
+            "noprofile",
+            "noninteractive",
+            "inputformat",
+            "outputformat",
+#if !UNIX
+            "windowstyle",
+#endif
+            "encodedcommand",
+            "configurationname",
+            "file",
+            "executionpolicy",
+            "command",
+            "help"
+        };
+
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
         {
             if (hostUI == null) { throw new PSArgumentNullException("hostUI"); }
@@ -593,7 +617,7 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-#if !CORECLR  // windowstyle parameter not supported on NanoServer because ProcessWindowStyle does Not exist on CoreCLR
+#if !UNIX
                 else if (MatchSwitch(switchKey, "windowstyle", "w"))
                 {
                     ++i;
@@ -657,7 +681,7 @@ namespace Microsoft.PowerShell
                         WriteCommandLineError(
                             "The -module option can only be specified with the -iss option.",
                             showHelp: true,
-                            showBanner: true);
+                            showBanner: false);
                         break;
                     }
 
@@ -880,7 +904,7 @@ namespace Microsoft.PowerShell
                 WriteCommandLineError(
                     CommandLineParameterParserStrings.MissingFileArgument,
                     showHelp: true,
-                    showBanner: true);
+                    showBanner: false);
                 return false;
             }
 
@@ -924,15 +948,36 @@ namespace Microsoft.PowerShell
                 {
                     WriteCommandLineError(
                         string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidFileArgument, args[i], exceptionMessage),
-                        showBanner: true);
+                        showBanner: false);
                     return false;
                 }
 
                 if (!System.IO.File.Exists(_file))
                 {
+                    if (args[i].StartsWith("-") && args[i].Length > 1)
+                    {
+                        string param = args[i].Substring(1, args[i].Length - 1).ToLower();
+                        StringBuilder possibleParameters = new StringBuilder();
+                        foreach (string validParameter in validParameters)
+                        {
+                            if (validParameter.Contains(param))
+                            {
+                                possibleParameters.Append("\n  -");
+                                possibleParameters.Append(validParameter);
+                            }
+                        }
+                        if (possibleParameters.Length > 0)
+                        {
+                            WriteCommandLineError(
+                                string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidArgument, args[i]),
+                                showBanner: false);
+                            WriteCommandLineError(possibleParameters.ToString(), showBanner: false);
+                            return false;
+                        }
+                    }
                     WriteCommandLineError(
                         string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.ArgumentFileDoesNotExist, args[i]),
-                        showBanner: true);
+                        showBanner: false);
                     return false;
                 }
 
