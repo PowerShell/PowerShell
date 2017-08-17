@@ -45,9 +45,9 @@ namespace Microsoft.PowerShell.Commands
                 response.Content == null ? null : response.Content.Headers
             };
 
-            foreach(var headerCollection in headerCollections)
+            foreach (var headerCollection in headerCollections)
             {
-                if(headerCollection == null)
+                if (headerCollection == null)
                 {
                     continue;
                 }
