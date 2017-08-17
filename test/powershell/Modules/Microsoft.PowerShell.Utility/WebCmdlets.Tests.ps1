@@ -917,7 +917,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $response.Content.UserAgent | Should Match $Pattern
     }
 
-    It "Verifies Invoke-WebRequest Certificate Authentication Fails without -Certificate"{
+    #endregion SkipHeaderVerification Tests
+
+    #region Certificate Authentication Tests
+
+    # Test pending creation of native test solution 
+    # https://github.com/PowerShell/PowerShell/issues/4609
+    It "Verifies Invoke-WebRequest Certificate Authentication Fails without -Certificate" -Pending {
         $command = 'Invoke-WebRequest https://prod.idrix.eu/secure/'
         $result = ExecuteWebCommand -command $command
         ValidateResponse -response $result
@@ -925,7 +931,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Output | Should Match ([regex]::Escape('Error: No SSL client certificate presented'))
     }
 
-    It "Verifies Invoke-WebRequest  Certificate Authentication Successful with -Certificate" {
+    # Test pending creation of native test solution 
+    # https://github.com/PowerShell/PowerShell/issues/4609
+    It "Verifies Invoke-WebRequest  Certificate Authentication Successful with -Certificate" -Pending {
         $Certificate = GetSelfSignedCert
         $command = 'Invoke-WebRequest https://prod.idrix.eu/secure/ -Certificate $Certificate'
         $result = ExecuteWebCommand -command $command
@@ -934,7 +942,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Output.Content | Should Match ([regex]::Escape('SSL Authentication OK!'))
     }
 
-    #endregion SkipHeaderVerification Tests
+    #endregion Certificate Authentication Tests
 
     #region charset encoding tests
 
@@ -1693,20 +1701,28 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     #endregion SkipHeaderVerification tests
 
-    It "Verifies Invoke-RestMethod Certificate Authentication Fails without -Certificate"{
+    #region Certificate Authentication Tests
+
+    # Test pending creation of native test solution 
+    # https://github.com/PowerShell/PowerShell/issues/4609
+    It "Verifies Invoke-RestMethod Certificate Authentication Fails without -Certificate" -Pending {
         $command = 'Invoke-RestMethod https://prod.idrix.eu/secure/'
         $result = ExecuteWebCommand -command $command
 
         $result.Output | Should Match ([regex]::Escape('Error: No SSL client certificate presented'))
     }
 
-    It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" {
+    # Test pending creation of native test solution 
+    # https://github.com/PowerShell/PowerShell/issues/4609
+    It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -Pending {
         $Certificate = GetSelfSignedCert
         $command = 'Invoke-RestMethod https://prod.idrix.eu/secure/ -Certificate $Certificate'
         $result = ExecuteWebCommand -command $command
 
         $result.Output | Should Match ([regex]::Escape('SSL Authentication OK!'))
     }
+
+    #endregion Certificate Authentication Tests
 
     BeforeEach {
         if ($env:http_proxy) {
