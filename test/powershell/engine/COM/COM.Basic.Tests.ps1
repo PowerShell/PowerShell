@@ -17,8 +17,6 @@ try {
 
             ## $items is a collection of all items belong to the folder, and it should be enumerated.
             $items | Measure-Object | ForEach-Object Count | Should Be $items.Count
-            $names = $items | ForEach-Object { $_.Name }
-            $names -join "," | Should Be "file1,file2,file3"
         }
 
         It "Should enumerate IEnumVariant interface object without exception" {
@@ -28,8 +26,7 @@ try {
 
             ## $enumVariant is an IEnumVariant interface of all items belong to the folder, and it should be enumerated.
             $enumVariant = $items._NewEnum()
-            $names = $enumVariant | ForEach-Object { $_.Name }
-            $names -join "," | Should Be "file1,file2,file3"
+            $enumVariant | Measure-Object | ForEach-Object Count | Should Be $items.Count
         }
 
         It "Should enumerate drives" {
