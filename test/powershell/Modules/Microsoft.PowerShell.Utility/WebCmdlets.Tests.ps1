@@ -296,7 +296,6 @@ function ExecuteWebRequest
     return $result
 }
 
-
 function GetSelfSignedCert {
     <#    
         .NOTES
