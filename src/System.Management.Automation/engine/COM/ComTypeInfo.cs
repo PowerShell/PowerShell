@@ -16,6 +16,18 @@ namespace System.Management.Automation
     internal class ComTypeInfo
     {
         /// <summary>
+        /// A member with a DISPID equal to –4 is found on a collection interface.
+        /// This special member, often called '_NewEnum', returns an interface that enables clients to enumerate objects in a collection.
+        /// </summary>
+        internal const int DISPID_NEWENUM = -4;
+
+        /// <summary>
+        /// A member with a DISPID equal to 0 is considered a default member.
+        /// Default members in COM can be transformed to default members in .NET (indexers in C#).
+        /// </summary>
+        internal const int DISPID_DEFAULTMEMBER = 0;
+
+        /// <summary>
         ///  Member variables.
         /// </summary>
         private Dictionary<String, ComProperty> _properties = null;
@@ -44,7 +56,7 @@ namespace System.Management.Automation
         /// <summary>
         ///  Collection of properties in the COM object.
         /// </summary>
-        public Dictionary<String, ComProperty> Properties
+        internal Dictionary<String, ComProperty> Properties
         {
             get
             {
@@ -55,7 +67,7 @@ namespace System.Management.Automation
         /// <summary>
         ///  Collection of methods in the COM object.
         /// </summary>
-        public Dictionary<String, ComMethod> Methods
+        internal Dictionary<String, ComMethod> Methods
         {
             get
             {
@@ -63,18 +75,22 @@ namespace System.Management.Automation
             }
         }
 
-
-
         /// <summary>
         ///  Returns the string of the GUID for the type information.
         /// </summary>
-        public string Clsid
+        internal string Clsid
         {
             get
             {
                 return _guid.ToString();
             }
         }
+
+        /// <summary>
+        /// If 'DISPID_NEWENUM' member is present, return the InvokeKind;
+        /// otherwise, return null.
+        /// </summary>
+        internal COM.INVOKEKIND? NewEnumInvokeKind { get; private set; }
 
         /// <summary>
         /// Initializes the typeinfo object
@@ -91,6 +107,8 @@ namespace System.Management.Automation
                 for (int i = 0; i < typeattr.cFuncs; i++)
                 {
                     COM.FUNCDESC funcdesc = GetFuncDesc(_typeinfo, i);
+                    if (funcdesc.memid == DISPID_NEWENUM) { NewEnumInvokeKind = funcdesc.invkind; }
+
                     if ((funcdesc.wFuncFlags & 0x1) == 0x1)
                     {
                         // http://msdn.microsoft.com/en-us/library/ee488948.aspx
