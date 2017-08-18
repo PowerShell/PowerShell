@@ -5027,9 +5027,10 @@ namespace System.Management.Automation.Language
                 Object baseObject = PSObject.Base(target.Value);
                 if ((baseObject != null) && (baseObject.GetType().FullName.Equals("System.__ComObject")))
                 {
-                    // We want to defer only if the 'base' is a COM object, so we need to use a more strict
-                    // restriction to make sure other type of PSObject 'target' doesn't fall in the same rule
-                    // and get unwrapped. Otherwise, we will lose instance members on the PSObject.
+                    // We unwrap only if the 'base' is a COM object. It's unnecessary to unwrap in other cases,
+                    // especially in the case of strings, we would lose instance members on the PSObject.
+                    // Therefore, we need to use a stricter restriction to make sure PSObject 'target' with other
+                    // base types doesn't get unwrapped.
                     return this.DeferForPSObject(target, moreRestrictionForArg0: true).WriteToDebugLog(this);
                 }
             }
@@ -5892,9 +5893,10 @@ namespace System.Management.Automation.Language
                 Object baseObject = PSObject.Base(target.Value);
                 if ((baseObject != null) && (baseObject.GetType().FullName.Equals("System.__ComObject")))
                 {
-                    // We want to defer only if the 'base' of 'target' is a COM object, so we need to use a stricter
-                    // restriction to make sure other type of PSObject 'target' doesn't fall in the same rule and get
-                    // unwrapped. Otherwise, we will lose instance members on the PSObject.
+                    // We unwrap only if the 'base' of 'target' is a COM object. It's unnecessary to unwrap in other cases,
+                    // especially in the case that 'target' is a string, we would lose instance members on the PSObject.
+                    // Therefore, we need to use a stricter restriction to make sure PSObject 'target' with other base types
+                    // doesn't get unwrapped.
                     return this.DeferForPSObject(target, value, moreRestrictionForArg0: true).WriteToDebugLog(this);
                 }
             }
@@ -6412,9 +6414,10 @@ namespace System.Management.Automation.Language
                 Object baseObject = PSObject.Base(target.Value);
                 if ((baseObject != null) && (baseObject.GetType().FullName.Equals("System.__ComObject")))
                 {
-                    // We want to defer only if the 'base' of 'target' is a COM object, so we need to use a stricter
-                    // restriction to make sure other type of PSObject 'target' doesn't fall in the same rule and get
-                    // unwrapped. Otherwise, we will lose instance members on the PSObject.
+                    // We unwrap only if the 'base' of 'target' is a COM object. It's unnecessary to unwrap in other cases,
+                    // especially in the case that 'target' is a string, we would lose instance members on the PSObject.
+                    // Therefore, we need to use a stricter restriction to make sure other type of PSObject 'target'
+                    // doesn't get unwrapped.
                     return this.DeferForPSObject(args.Prepend(target).ToArray(), moreRestrictionForArg0: true).WriteToDebugLog(this);
                 }
             }
