@@ -338,8 +338,26 @@ namespace System.Management.Automation.Language
 
     internal static class DynamicMetaObjectBinderExtensions
     {
-        internal static DynamicMetaObject DeferForPSObject(this DynamicMetaObjectBinder binder,
-                                                           params DynamicMetaObject[] args)
+        internal static DynamicMetaObject DeferForPSObject(this DynamicMetaObjectBinder binder, DynamicMetaObject arg0, bool moreRestrictionForArg0 = false)
+        {
+            Diagnostics.Assert(arg0.Value is PSObject, "arg1 must be a psobject");
+
+            BindingRestrictions restrictions = BindingRestrictions.Empty;
+            Expression expr = ProcessOnePSObject(arg0, ref restrictions, checkBaseTypeForRestriction: moreRestrictionForArg0);
+            return new DynamicMetaObject(DynamicExpression.Dynamic(binder, binder.ReturnType, expr), restrictions);
+        }
+
+        internal static DynamicMetaObject DeferForPSObject(this DynamicMetaObjectBinder binder, DynamicMetaObject arg0, DynamicMetaObject arg1, bool moreRestrictionForArg0 = false)
+        {
+            Diagnostics.Assert(arg0.Value is PSObject || arg1.Value is PSObject, "At least one arg must be a psobject");
+
+            BindingRestrictions restrictions = BindingRestrictions.Empty;
+            Expression expr1 = ProcessOnePSObject(arg0, ref restrictions, checkBaseTypeForRestriction: moreRestrictionForArg0);
+            Expression expr2 = ProcessOnePSObject(arg1, ref restrictions, checkBaseTypeForRestriction: false);
+            return new DynamicMetaObject(DynamicExpression.Dynamic(binder, binder.ReturnType, expr1, expr2), restrictions);
+        }
+
+        internal static DynamicMetaObject DeferForPSObject(this DynamicMetaObjectBinder binder, DynamicMetaObject[] args, bool moreRestrictionForArg0 = false)
         {
             Diagnostics.Assert(args.Any(mo => mo.Value is PSObject), "At least one arg must be a psobject");
 
@@ -347,35 +365,55 @@ namespace System.Management.Automation.Language
             BindingRestrictions restrictions = BindingRestrictions.Empty;
             for (int i = 0; i < args.Length; i++)
             {
-                var baseValue = PSObject.Base(args[i].Value);
-                if (baseValue != args[i].Value)
-                {
-                    exprs[i] = Expression.Call(CachedReflectionInfo.PSObject_Base,
-                                               args[i].Expression.Cast(typeof(object)));
+                bool checkBaseTypeForRestriction = false;
+                if (i == 0) { checkBaseTypeForRestriction = moreRestrictionForArg0; }
+                exprs[i] = ProcessOnePSObject(args[i], ref restrictions, checkBaseTypeForRestriction);
+            }
 
+            return new DynamicMetaObject(DynamicExpression.Dynamic(binder, binder.ReturnType, exprs), restrictions);
+        }
+
+        private static Expression ProcessOnePSObject(DynamicMetaObject arg, ref BindingRestrictions restrictions, bool checkBaseTypeForRestriction = false)
+        {
+            Expression expr = null;
+            object baseValue = PSObject.Base(arg.Value);
+            if (baseValue != arg.Value)
+            {
+                expr = Expression.Call(CachedReflectionInfo.PSObject_Base, arg.Expression.Cast(typeof(object)));
+
+                if (checkBaseTypeForRestriction)
+                {
+                    // Add restrictions about the 'base' to the rule.
                     if (baseValue == null)
                     {
-                        // When 'baseValue' is null and 'args[i].Value' is not, 'args[i].Value' must be 'AutomationNull.Value'.
-                        Diagnostics.Assert(args[i].Value == AutomationNull.Value, "PSObject.Base should only return null for AutomationNull.Value");
+                        // Since 'base != arg', 'arg' must be 'AutomationNull.Value'.
+                        Diagnostics.Assert(arg.Value == AutomationNull.Value, "PSObject.Base should only return null for AutomationNull.Value");
                         restrictions = restrictions
-                            .Merge(BindingRestrictions.GetExpressionRestriction(Expression.Equal(args[i].Expression, ExpressionCache.AutomationNullConstant)));
+                            .Merge(BindingRestrictions.GetExpressionRestriction(Expression.Equal(arg.Expression, ExpressionCache.AutomationNullConstant)));
                     }
                     else
                     {
+                        // Besides the more general condition, add a check about the type of 'base' to the rule.
                         restrictions = restrictions
-                            .Merge(args[i].GetSimpleTypeRestriction())
-                            .Merge(BindingRestrictions.GetTypeRestriction(exprs[i], baseValue.GetType()))
-                            .Merge(BindingRestrictions.GetExpressionRestriction(Expression.NotEqual(exprs[i], args[i].Expression)));
+                            .Merge(arg.GetSimpleTypeRestriction())
+                            .Merge(BindingRestrictions.GetExpressionRestriction(Expression.NotEqual(expr, arg.Expression)))
+                            .Merge(BindingRestrictions.GetTypeRestriction(expr, baseValue.GetType()));
                     }
                 }
                 else
                 {
-                    exprs[i] = args[i].Expression;
-                    restrictions = restrictions.Merge(args[i].PSGetTypeRestriction());
+                    // Use a more general condition for the rule: 'arg' is a PSObject and 'base != arg'
+                    restrictions = restrictions
+                        .Merge(arg.GetSimpleTypeRestriction())
+                        .Merge(BindingRestrictions.GetExpressionRestriction(Expression.NotEqual(expr, arg.Expression)));
                 }
             }
-
-            return new DynamicMetaObject(DynamicExpression.Dynamic(binder, binder.ReturnType, exprs), restrictions);
+            else
+            {
+                expr = arg.Expression;
+                restrictions = restrictions.Merge(arg.PSGetTypeRestriction());
+            }
+            return expr;
         }
 
         internal static DynamicMetaObject UpdateComRestrictionsForPsObject(this DynamicMetaObject binder, DynamicMetaObject[] args)
@@ -4989,7 +5027,10 @@ namespace System.Management.Automation.Language
                 Object baseObject = PSObject.Base(target.Value);
                 if ((baseObject != null) && (baseObject.GetType().FullName.Equals("System.__ComObject")))
                 {
-                    return this.DeferForPSObject(target).WriteToDebugLog(this);
+                    // We want to defer only if the 'base' is a COM object, so we need to use a more strict
+                    // restriction to make sure other type of PSObject 'target' doesn't fall in the same rule
+                    // and get unwrapped. Otherwise, we will lose instance members on the PSObject.
+                    return this.DeferForPSObject(target, moreRestrictionForArg0: true).WriteToDebugLog(this);
                 }
             }
 
@@ -5851,7 +5892,10 @@ namespace System.Management.Automation.Language
                 Object baseObject = PSObject.Base(target.Value);
                 if ((baseObject != null) && (baseObject.GetType().FullName.Equals("System.__ComObject")))
                 {
-                    return this.DeferForPSObject(target, value).WriteToDebugLog(this);
+                    // We want to defer only if the 'base' of 'target' is a COM object, so we need to use a stricter
+                    // restriction to make sure other type of PSObject 'target' doesn't fall in the same rule and get
+                    // unwrapped. Otherwise, we will lose instance members on the PSObject.
+                    return this.DeferForPSObject(target, value, moreRestrictionForArg0: true).WriteToDebugLog(this);
                 }
             }
 
@@ -6368,7 +6412,10 @@ namespace System.Management.Automation.Language
                 Object baseObject = PSObject.Base(target.Value);
                 if ((baseObject != null) && (baseObject.GetType().FullName.Equals("System.__ComObject")))
                 {
-                    return this.DeferForPSObject(args.Prepend(target).ToArray()).WriteToDebugLog(this);
+                    // We want to defer only if the 'base' of 'target' is a COM object, so we need to use a stricter
+                    // restriction to make sure other type of PSObject 'target' doesn't fall in the same rule and get
+                    // unwrapped. Otherwise, we will lose instance members on the PSObject.
+                    return this.DeferForPSObject(args.Prepend(target).ToArray(), moreRestrictionForArg0: true).WriteToDebugLog(this);
                 }
             }
 
