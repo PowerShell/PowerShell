@@ -352,9 +352,21 @@ namespace System.Management.Automation.Language
                 {
                     exprs[i] = Expression.Call(CachedReflectionInfo.PSObject_Base,
                                                args[i].Expression.Cast(typeof(object)));
-                    restrictions = restrictions
-                        .Merge(args[i].GetSimpleTypeRestriction())
-                        .Merge(BindingRestrictions.GetExpressionRestriction(Expression.NotEqual(exprs[i], args[i].Expression)));
+
+                    if (baseValue == null)
+                    {
+                        // When 'baseValue' is null and 'args[i].Value' is not, 'args[i].Value' must be 'AutomationNull.Value'.
+                        Diagnostics.Assert(args[i].Value == AutomationNull.Value, "PSObject.Base should only return null for AutomationNull.Value");
+                        restrictions = restrictions
+                            .Merge(BindingRestrictions.GetExpressionRestriction(Expression.Equal(args[i].Expression, ExpressionCache.AutomationNullConstant)));
+                    }
+                    else
+                    {
+                        restrictions = restrictions
+                            .Merge(args[i].GetSimpleTypeRestriction())
+                            .Merge(BindingRestrictions.GetTypeRestriction(exprs[i], baseValue.GetType()))
+                            .Merge(BindingRestrictions.GetExpressionRestriction(Expression.NotEqual(exprs[i], args[i].Expression)));
+                    }
                 }
                 else
                 {
