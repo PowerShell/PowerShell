@@ -296,6 +296,94 @@ function ExecuteWebRequest
     return $result
 }
 
+function GetSelfSignedCert {
+    <#    
+        .NOTES
+            This certificate is not issued for any specific Key Usage
+            It cannot be used for any service that requires a specific key usage
+            It can be used for SSL/TLS Client Authentication
+    #>
+    $PfxBase64 = @'
+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
+hqPP3QQIlSXpfTECuB4CAggA
+'@
+    $Bytes = [System.Convert]::FromBase64String($PfxBase64)
+    [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($Bytes)
+}
 
 <#
     Defines the list of redirect codes to test as well as the
@@ -830,6 +918,31 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     #endregion SkipHeaderVerification Tests
+
+    #region Certificate Authentication Tests
+
+    # Test pending creation of native test solution 
+    # https://github.com/PowerShell/PowerShell/issues/4609
+    It "Verifies Invoke-WebRequest Certificate Authentication Fails without -Certificate" -Pending {
+        $command = 'Invoke-WebRequest https://prod.idrix.eu/secure/'
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse -response $result
+
+        $result.Output | Should Match ([regex]::Escape('Error: No SSL client certificate presented'))
+    }
+
+    # Test pending creation of native test solution 
+    # https://github.com/PowerShell/PowerShell/issues/4609
+    It "Verifies Invoke-WebRequest  Certificate Authentication Successful with -Certificate" -Pending {
+        $Certificate = GetSelfSignedCert
+        $command = 'Invoke-WebRequest https://prod.idrix.eu/secure/ -Certificate $Certificate'
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse -response $result
+
+        $result.Output.Content | Should Match ([regex]::Escape('SSL Authentication OK!'))
+    }
+
+    #endregion Certificate Authentication Tests
 
     #region charset encoding tests
 
@@ -1587,6 +1700,29 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     }
 
     #endregion SkipHeaderVerification tests
+
+    #region Certificate Authentication Tests
+
+    # Test pending creation of native test solution 
+    # https://github.com/PowerShell/PowerShell/issues/4609
+    It "Verifies Invoke-RestMethod Certificate Authentication Fails without -Certificate" -Pending {
+        $command = 'Invoke-RestMethod https://prod.idrix.eu/secure/'
+        $result = ExecuteWebCommand -command $command
+
+        $result.Output | Should Match ([regex]::Escape('Error: No SSL client certificate presented'))
+    }
+
+    # Test pending creation of native test solution 
+    # https://github.com/PowerShell/PowerShell/issues/4609
+    It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -Pending {
+        $Certificate = GetSelfSignedCert
+        $command = 'Invoke-RestMethod https://prod.idrix.eu/secure/ -Certificate $Certificate'
+        $result = ExecuteWebCommand -command $command
+
+        $result.Output | Should Match ([regex]::Escape('SSL Authentication OK!'))
+    }
+
+    #endregion Certificate Authentication Tests
 
     BeforeEach {
         if ($env:http_proxy) {
