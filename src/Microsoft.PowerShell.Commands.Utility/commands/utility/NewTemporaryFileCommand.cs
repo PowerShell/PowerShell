@@ -2,34 +2,44 @@
 using System;
 using System.IO;
 using System.Management.Automation;
+using System.Management.Automation.Internal;
 
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The implementation of the "New-TemporaryFile" cmdlet
+    /// The implementation of the "New-TemporaryFile" cmdlet that has an optional 'Extension' Parameter property.
+    /// If this cmdlet errors then it throws a non-terminating error.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TemporaryFile", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526726")]
     [OutputType(typeof(System.IO.FileInfo))]
     public class NewTemporaryFileCommand : Cmdlet
     {
-        private string _extension = ".tmp";
-
         /// <summary>
-        /// Specify a different file extension other than the default one, which is '.tmp'. The period in this parameter is optional
+        /// Specify a different file extension other than the default one, which is '.tmp'. The period in this parameter is optional.
         /// </summary>
         [Parameter(Position = 0)]
         [ValidateNotNullOrEmpty]
-        public string Extension
-        {
-            get { return _extension; }
-            set { _extension = value; }
-        }
+        public string Extension { get; set; } = ".tmp";
 
         /// <summary>
-        /// returns a TemporaryFile
+        /// Returns a TemporaryFile.
         /// </summary>
         protected override void EndProcessing()
         {
+            // Check for invalid characters in extension
+            if (!string.IsNullOrEmpty(Extension) && Extension.IndexOfAny(Path.GetInvalidFileNameChars()) != -1)
+            {
+                WriteError(
+                    new ErrorRecord(
+                        new ArgumentException(
+                                StringUtil.Format(UtilityCommonStrings.InvalidCharacterInParameter,
+                                    nameof(Extension), Extension)),
+                        "NewTemporaryInvalidArgument",
+                        ErrorCategory.InvalidArgument,
+                        Extension));
+                return;
+            }
+
             string filePath = null;
             string tempPath = Path.GetTempPath();
 
@@ -44,7 +54,7 @@ namespace Microsoft.PowerShell.Commands
                     try
                     {
                         string fileName = Path.GetRandomFileName();
-                        fileName = Path.ChangeExtension(fileName, _extension);
+                        fileName = Path.ChangeExtension(fileName, Extension);
                         filePath = Path.Combine(tempPath, fileName);
                         using (new FileStream(filePath, FileMode.CreateNew)) { }
                         creationOfFileSuccessful = true;
@@ -70,7 +80,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     WriteError(
                         new ErrorRecord(
-                            new IOException("Could not find an available temporary file name in {tempPath}."),
+                            new IOException(StringUtil.Format(UtilityCommonStrings.CouldNotFindTemporaryFilename, tempPath)),
                                 "NewTemporaryFileResourceUnavailable",
                                 ErrorCategory.ResourceUnavailable,
                                 tempPath));
