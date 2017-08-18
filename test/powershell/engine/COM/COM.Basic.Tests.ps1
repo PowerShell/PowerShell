@@ -82,7 +82,7 @@ try {
 
         It "InvokeMember binder should differentiate PSObject that wraps COM object from other PSObjects" {
             ## InvokeMember on the member name 'Windows'
-            $shell | % { $_.Windows() } > $null
+            $shell | ForEach-Object { $_.Windows() } > $null
 
             ## '$str' is a PSObject that wraps a string, but with ScriptMethod 'Windows'
             $str.Windows() | Should Be "Windows"
