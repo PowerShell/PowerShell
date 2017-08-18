@@ -21,8 +21,8 @@ namespace Microsoft.PowerShell.Commands
         [ValidateNotNullOrEmpty]
         public string Extension
         {
-        get { return _extension; }
-        set { _extension = value; }
+            get { return _extension; }
+            set { _extension = value; }
         }
 
         /// <summary>
@@ -32,48 +32,53 @@ namespace Microsoft.PowerShell.Commands
         {
             string filePath = null;
             string tempPath = Path.GetTempPath();
-            int attempts = 0;
-            bool temporaryFilePathFound = false;
-            while(attempts++ < 10 && !temporaryFilePathFound)
-            {
-                string fileName = Path.GetRandomFileName();
-                fileName = Path.ChangeExtension(fileName, _extension);
-                filePath = Path.Combine(tempPath, fileName);
-                if(!File.Exists(filePath))
-                {
-                    temporaryFilePathFound = true;
-                }
-            }
-            if(!temporaryFilePathFound)
-            {
-                WriteError(
-                    new ErrorRecord(
-                            new IOException("Could not find an available temporary file name in {tempPath}."),
-                            "NewTemporaryFileResourceUnavailable",
-                            ErrorCategory.ResourceUnavailable,
-                            tempPath));
-                    return;
-            }
 
-            if (ShouldProcess(filePath))
+            if (ShouldProcess(tempPath))
             {
-                try
+                int attempts = 0;
+                bool creationOfFileSuccessful = false;
+
+                // In case the random temporary file already exists, retry 
+                while (attempts++ < 10 && !creationOfFileSuccessful)
                 {
-                    using (new FileStream(filePath, FileMode.CreateNew)) { }
-                    FileInfo file = new FileInfo(filePath);
-                    WriteVerbose("Created temporary file {file.FullName}.");
-                    WriteObject(file);
+                    try
+                    {
+                        string fileName = Path.GetRandomFileName();
+                        fileName = Path.ChangeExtension(fileName, _extension);
+                        filePath = Path.Combine(tempPath, fileName);
+                        using (new FileStream(filePath, FileMode.CreateNew)) { }
+                        creationOfFileSuccessful = true;
+                        WriteVerbose("Created temporary file {filePath}.");
+                    }
+                    catch (IOException) // file already exists -> retry
+                    {
+                        attempts++;
+                    }
+                    catch (Exception exception) // fatal error, which could be e.g. insufficient permissions, etc.
+                    {
+                        WriteError(
+                        new ErrorRecord(
+                                exception,
+                                "NewTemporaryFileWriteError",
+                                ErrorCategory.WriteError,
+                                tempPath));
+                        return;
+                    }
                 }
-                catch (Exception e)
+
+                if (!creationOfFileSuccessful)
                 {
                     WriteError(
                         new ErrorRecord(
-                            e,
-                            "NewTemporaryFileWriteError",
-                            ErrorCategory.WriteError,
-                            tempPath));
+                            new IOException("Could not find an available temporary file name in {tempPath}."),
+                                "NewTemporaryFileResourceUnavailable",
+                                ErrorCategory.ResourceUnavailable,
+                                tempPath));
                     return;
                 }
+
+                FileInfo file = new FileInfo(filePath);
+                WriteObject(file);
             }
         }
     }
