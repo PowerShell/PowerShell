@@ -60,6 +60,22 @@ Describe "NewTemporaryFile" -Tags "CI" {
         }
     }
 
+    It "New-TemporaryItem with an an invalid character in the -Extension parameter should throw NewTemporaryInvalidArgument error" {
+        $invalidFileNameChars = [System.IO.Path]::GetInvalidFileNameChars()
+        foreach($invalidFileNameChar in $invalidFileNameChars)
+        {
+            try
+            {
+                New-TemporaryFile -Extension $invalidFileNameChar -ErrorAction Stop
+                throw "No Exception!"
+            }
+            catch
+            {
+                $_.FullyQualifiedErrorId | Should Be "NewTemporaryInvalidArgument,Microsoft.PowerShell.Commands.NewTemporaryFileCommand"
+            }
+        }
+    }
+
     It "with WhatIf does not create a file" {
         New-TemporaryFile -WhatIf | Should Be $null
     }
