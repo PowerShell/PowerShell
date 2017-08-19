@@ -7,7 +7,7 @@ using System.Management.Automation.Internal;
 namespace Microsoft.PowerShell.Commands
 {
     /// <summary>
-    /// The implementation of the "New-TemporaryFile" cmdlet that has an optional 'Extension' Parameter property.
+    /// The implementation of the "New-TemporaryFile" cmdlet that has an optional 'Extension' Parameter property and a 'GuidBasedName' switch.
     /// If this cmdlet errors then it throws a non-terminating error.
     /// </summary>
     [Cmdlet(VerbsCommon.New, "TemporaryFile", SupportsShouldProcess = true, HelpUri = "https://go.microsoft.com/fwlink/?LinkId=526726")]
@@ -20,6 +20,12 @@ namespace Microsoft.PowerShell.Commands
         [Parameter(Position = 0)]
         [ValidateNotNullOrEmpty]
         public string Extension { get; set; } = ".tmp";
+
+        /// <summary>
+        /// Use a Guid as a file name to allow for more than 65,535 unique file names in the temporary folder.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter GuidBasedName  { get; set; }
 
         /// <summary>
         /// Returns a TemporaryFile.
@@ -53,7 +59,15 @@ namespace Microsoft.PowerShell.Commands
                 {
                     try
                     {
-                        string fileName = Path.GetRandomFileName();
+                        string fileName;
+                        if (GuidBasedName.IsPresent)
+                        {
+                            fileName = Guid.NewGuid().ToString();
+                        }
+                        else
+                        {
+                            fileName = Path.GetRandomFileName();
+                        }
                         fileName = Path.ChangeExtension(fileName, Extension);
                         filePath = Path.Combine(tempPath, fileName);
                         using (new FileStream(filePath, FileMode.CreateNew)) { }

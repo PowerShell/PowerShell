@@ -15,6 +15,7 @@
 #>
 
 Describe "NewTemporaryFile" -Tags "CI" {
+    $defaultTemporaryFileExtension = '.tmp'
 
     It "creates a new temporary file" {
         $tempFile = New-TemporaryFile
@@ -23,7 +24,7 @@ Describe "NewTemporaryFile" -Tags "CI" {
             
             Test-Path $tempFile | Should be $true
             $tempFile | Should BeOfType System.IO.FileInfo
-            $tempFile.Extension | Should be '.tmp'
+            $tempFile.Extension | Should be $defaultTemporaryFileExtension
         }
         finally
         {
@@ -31,7 +32,7 @@ Describe "NewTemporaryFile" -Tags "CI" {
         }
     }
 
-    It "creates a new temporary file with a specific extension using the -Extension paramter" {
+    It "creates a new temporary file with a specific extension using the -Extension parameter" {
         $expectedExtension = '.csv'
         
         $tempFile = New-TemporaryFile -Extension $expectedExtension
@@ -52,6 +53,38 @@ Describe "NewTemporaryFile" -Tags "CI" {
         {
             Test-Path $tempFile | Should be $true
             $tempFile | Should BeOfType System.IO.FileInfo
+            $tempFile.Extension | Should be $expectedExtension
+        }
+        finally
+        {
+            Remove-Item $tempFile -ErrorAction SilentlyContinue -Force
+        }
+    }
+
+    It "creates a new temporary file with the name being a Guid using -GuidBasedName switch" {        
+        $tempFile = New-TemporaryFile -GuidBasedName
+        try
+        {
+            Test-Path $tempFile | Should be $true
+            $tempFile | Should BeOfType System.IO.FileInfo
+            $tempFile.BaseName -as [Guid] | Should BeOfType Guid
+            $tempFile.Extension | Should be $defaultTemporaryFileExtension
+        }
+        finally
+        {
+            Remove-Item $tempFile -ErrorAction SilentlyContinue -Force
+        }
+    }
+
+    It "creates a new temporary file with -Extension parameter and -GuidBasedName switch" {        
+        $expectedExtension = '.csv'
+        
+        $tempFile = New-TemporaryFile -Extension $expectedExtension -GuidBasedName
+        try
+        {
+            Test-Path $tempFile | Should be $true
+            $tempFile | Should BeOfType System.IO.FileInfo
+            $tempFile.BaseName -as [Guid] | Should BeOfType Guid
             $tempFile.Extension | Should be $expectedExtension
         }
         finally
