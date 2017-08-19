@@ -1,0 +1,18 @@
+# Stage 1: Build the Application
+FROM microsoft/aspnetcore-build:2.0.0-jessie AS builder
+WORKDIR /source
+COPY *.csproj ./
+RUN dotnet restore
+COPY . .
+RUN dotnet publish --output /app/ --configuration Release
+
+# Stage 2: Create runtime container
+FROM microsoft/aspnetcore:2.0.0-jessie
+WORKDIR /app
+COPY --from=builder /app .
+# ClientCertificateCheck access 3 paramters:
+# <Certificate Path> <Certicate Password> <HTTPS Binding Port>
+# The Certificate is published to /app
+ENTRYPOINT ["dotnet", "ClientCertificateCheck.dll", "ServerCert.pfx", "password"]
+# Allow for easy override of HTTPS binding Port
+CMD ["8443"]
