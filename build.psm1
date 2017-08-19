@@ -632,7 +632,7 @@ Fix steps:
     #   - PowerShellGet, PackageManagement, Microsoft.PowerShell.Archive
     if($PSModuleRestore)
     {
-        Restore-PSModuleToBuild -PublishPath $publishPath -CI:$CI.IsPresent
+        Restore-PSModuleToBuild -PublishPath $publishPath
     }
 }
 
@@ -641,9 +641,7 @@ function Restore-PSModuleToBuild
     param(
         [Parameter(Mandatory)]
         [string]
-        $PublishPath,
-        [Switch]
-        $CI
+        $PublishPath
     )
 
     $ProgressPreference = "SilentlyContinue"
@@ -656,25 +654,10 @@ function Restore-PSModuleToBuild
         # PowerShellGet depends on PackageManagement module, so PackageManagement module will be installed with the PowerShellGet module.
         'PowerShellGet'
         'Microsoft.PowerShell.Archive'
+        'Pester'
     ) -SourceLocation "https://www.powershellgallery.com/api/v2/"
-
-    if($CI.IsPresent)
-    {
-        Restore-PSPester -Destination $modulesDir
-    }
 }
 
-function Restore-PSPester
-{
-    param
-    (
-        [ValidateNotNullOrEmpty()]
-        [string]
-        $Destination = ([IO.Path]::Combine((Split-Path (Get-PSOptions -DefaultToNew).Output), "Modules"))
-    )
-
-    Restore-GitModule -Destination $Destination -Uri 'https://github.com/PowerShell/psl-pester' -Name Pester -CommitSha '1f546b6aaa0893e215e940a14f57c96f56f7eff1'
-}
 function Compress-TestContent {
     [CmdletBinding()]
     param(
@@ -984,10 +967,9 @@ function Start-PSPester {
     {
         Write-Warning @"
 Pester module not found.
-Restore the module to '$Pester' by running:
-    Restore-PSPester
+Install-Module Pester
 "@
-        return;
+        return
     }
 
     if ($IncludeFailingTest.IsPresent)
@@ -2400,54 +2382,6 @@ function Clear-PSRepo
     Get-ChildItem $PSScriptRoot\* -Directory | ForEach-Object {
         Write-Verbose "Cleaning $_ ..."
         git clean -fdX $_
-    }
-}
-
-
-# Install PowerShell modules from a git Repo such as PSL-Pester
-function Restore-GitModule
-{
-    [CmdletBinding()]
-    param(
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Name,
-
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Uri,
-
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$Destination,
-
-        [Parameter(Mandatory=$true)]
-        [ValidateNotNullOrEmpty()]
-        [string]$CommitSha
-    )
-
-    log 'Restoring module from git repo:'
-    log ("Name='{0}', Destination='{1}', Uri='{2}', CommitSha='{3}'" -f $Name, $Destination, $Uri, $CommitSha)
-
-    $clonePath = Join-Path -Path $Destination -ChildPath $Name
-    if(Test-Path $clonePath)
-    {
-        remove-Item -Path $clonePath -recurse -force
-    }
-
-    $null = Start-NativeExecution {git clone --quiet $uri $clonePath}
-
-    Push-location $clonePath
-    try {
-        $null = Start-NativeExecution {git checkout --quiet -b desiredCommit $CommitSha} -SuppressOutput
-
-        $gitItems = Join-Path -Path $clonePath -ChildPath '.git*'
-        $ymlItems = Join-Path -Path $clonePath -ChildPath '*.yml'
-        Get-ChildItem -attributes hidden,normal -Path $gitItems, $ymlItems | Remove-Item -Recurse -Force
-    }
-    finally
-    {
-        pop-location
     }
 }
 
