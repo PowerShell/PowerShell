@@ -296,6 +296,46 @@ function ExecuteWebRequest
     return $result
 }
 
+# Starts the ClientCertificateCheck listener
+function StartClientCertificateCheck 
+{
+    param([int]$Port)
+    $initTimeoutSeconds  = 15
+    $projectRootPath     = Resolve-Path (Join-Path $PSScriptRoot "\..\..\..\..\")
+    $appSrcPath          = Join-Path $projectRootPath  'test\tools\ClientCertificateCheck'
+    $appPublishPath      = Join-Path $appSrcPath 'bin'
+    $appDllPath          = Join-Path $appPublishPath 'ClientCertificateCheck.dll'
+    $serverPfxPath       = Join-Path $appSrcPath 'ServerCert.pfx'
+    $serverPfxPassword   = 'password'
+    $initCompleteMessage = 'Now listening on'
+    
+    $timeOut = (get-date).AddSeconds($initTimeoutSeconds)
+    $Job = Start-Job {
+        Push-Location $using:appPublishPath
+        dotnet $using:appDllPath $using:serverPfxPath $using:serverPfxPassword $using:port
+    }
+    # Wait until the app is running or until the initTimeoutSeconds have been reached
+    do
+    {
+        Start-Sleep -Seconds 1
+        $containerStatus = $Job.ChildJobs[0].Output | Out-String
+        $isRunning = $containerStatus -match $initCompleteMessage
+    }
+    while (-not $isRunning -and (get-date) -lt $timeOut)
+
+    if (-not $isRunning) {
+        throw 'Container did not start before the timeout was reached.'
+    }
+    return $job
+}
+
+# Stops the ClientCertificateCheck listener
+function StopClientCertificateCheck 
+{
+    param($Job)
+    $Job | Stop-Job -PassThru | Remove-Job
+}
+
 <#
     Defines the list of redirect codes to test as well as the
     expected Method when the redirection is handled.
@@ -323,11 +363,13 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     BeforeAll {
         $response = Start-HttpListener -Port 8080
+        $certificateChecker = StartClientCertificateCheck -Port 8443
     }
 
     AfterAll {
         $null = Stop-HttpListener -Port 8080
         $response.PowerShell.Dispose()
+        StopClientCertificateCheck -Job $certificateChecker
     }
 
     # Validate the output of Invoke-WebRequest
@@ -1108,6 +1150,27 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     #endregion Content Header Inclusion
 
+    #region Client Certificate Authentication
+
+    It "Verifies Invoke-WebRequest Certificate Authentication Fails without -Certificate"  {
+        $uri = 'https://localhost:8443/'
+        $result = Invoke-WebRequest -Uri $uri -SkipCertificateCheck
+        $failedMessage = 'Status: Failed'
+        $result.RawContent  | Should Match ([regex]::Escape($failedMessage ))
+    }
+
+    It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" {
+        $uri = 'https://localhost:8443/'
+        $clientPfxPath  = Resolve-Path (Join-Path $PSScriptRoot "\..\..\..\tools\ClientCertificateCheck\ClientCert.pfx")
+        $certificate = Get-PfxCertificate -FilePath $clientPfxPath
+        $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck
+        $successMessage = 'Status: OK'
+        $result.RawContent | Should Match ([regex]::Escape($successMessage))
+        $result.RawContent | Should Match $certificate.Thumbprint
+    }
+
+    #edregion Client Certificate Authentication
+
     BeforeEach {
         if ($env:http_proxy) {
             $savedHttpProxy = $env:http_proxy
@@ -1139,11 +1202,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     BeforeAll {
         $response = Start-HttpListener -Port 8081
+        $certificateChecker = StartClientCertificateCheck -Port 8443
     }
 
     AfterAll {
         $null = Stop-HttpListener -Port 8081
         $response.PowerShell.Dispose()
+        StopClientCertificateCheck -Job $certificateChecker
     }
 
     It "Invoke-RestMethod returns User-Agent" {
@@ -1626,6 +1691,27 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     #endregion SkipHeaderVerification tests
 
+    #region Client Certificate Authentication
+
+    It "Verifies Invoke-RestMethod Certificate Authentication Fails without -Certificate" {
+        $uri = 'https://localhost:8443/'
+        $result = Invoke-RestMethod -Uri $uri -SkipCertificateCheck
+        $failedMessage = 'Status: Failed'
+        $result | Should Match ([regex]::Escape($failedMessage))
+    }
+
+    It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" {
+        $uri = 'https://localhost:8443/'
+        $clientPfxPath  = Resolve-Path (Join-Path $PSScriptRoot "\..\..\..\tools\ClientCertificateCheck\ClientCert.pfx")
+        $certificate = Get-PfxCertificate -FilePath $clientPfxPath
+        $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck
+        $successMessage = 'Status: OK'
+        $result | Should Match ([regex]::Escape($successMessage))
+        $result | Should Match $certificate.Thumbprint
+    }
+
+    #edregion Client Certificate Authentication
+
     BeforeEach {
         if ($env:http_proxy) {
             $savedHttpProxy = $env:http_proxy
@@ -1754,78 +1840,5 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
     It "Execute Invoke-RestMethod" {
         $result = irm "http://localhost:8082/PowerShell?test=response&output={%22hello%22:%22world%22}&contenttype=application/json" -TimeoutSec 5
         $result.Hello | Should Be "world"
-    }
-}
-
-Describe -Name "Web cmdlets tests using Client Certificate Authentication" -Tags "Feature" {
-
-    BeforeAll { 
-        $portNumber          = 8443
-        $uri                 = "https://localhost:{0}/" -f $portNumber
-        $initTimeoutSeconds  = 15
-        $projectRootPath     = Resolve-Path (Join-Path $PSScriptRoot "\..\..\..\..\")
-        $appSrcPath          = Join-Path $projectRootPath  'test\tools\ClientCertificateCheck'
-        $buildPsm            = Join-Path $projectRootPath 'build.psm1'
-        $appPublishPath      = Join-Path $appSrcPath 'bin'
-        $appDllPath          = Join-Path $appPublishPath 'ClientCertificateCheck.dll'
-        $serverPfxPath       = Join-Path $appSrcPath 'ServerCert.pfx'
-        $serverPfxPassword   = 'password'
-        $clientPfxPath       = Join-Path $appSrcPath 'ClientCert.pfx'
-        $initCompleteMessage = 'Now listening on'
-        $successMessage      = 'Status: OK'
-        $failedMessage       = 'Status: Failed'
-        
-        Import-Module $buildPsm
-        Find-Dotnet
-        Push-Location $appSrcPath
-        dotnet restore
-        dotnet publish --output  $appPublishPath --configuration Release
-        $timeOut = (get-date).AddSeconds($initTimeoutSeconds)
-        Pop-Location
-        $Job = Start-Job {
-            Push-Location $using:appPublishPath
-            dotnet $using:appDllPath $using:serverPfxPath $using:serverPfxPassword $using:portNumber
-        }
-        # Wait until the app is running or until the initTimeoutSeconds have been reached
-        do
-        {
-            Start-Sleep -Seconds 1
-            $containerStatus = $Job.ChildJobs[0].Output | Out-String
-            $isRunning = $containerStatus -match $initCompleteMessage
-        }
-        while (-not $isRunning -and (get-date) -lt $timeOut)
-        $Job.ChildJobs[0].Output
-
-        if (-not $isRunning) {
-            throw 'Container did not start before the timeout was reached.'
-        }
-    }
-
-    AfterAll {
-        $Job | Stop-Job -PassThru | Remove-Job
-    }
-
-    It "Verifies Invoke-WebRequest Certificate Authentication Fails without -Certificate"  {
-        $result = Invoke-WebRequest -Uri $uri -SkipCertificateCheck
-        $result.RawContent  | Should Match ([regex]::Escape($failedMessage ))
-    }
-
-    It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" {
-        $certificate = Get-PfxCertificate -FilePath $clientPfxPath
-        $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck
-        $result.RawContent | Should Match ([regex]::Escape($successMessage))
-        $result.RawContent | Should Match $certificate.Thumbprint
-    }
-
-    It "Verifies Invoke-RestMethod Certificate Authentication Fails without -Certificate" {
-        $result = Invoke-RestMethod -Uri $uri -SkipCertificateCheck
-        $result | Should Match ([regex]::Escape($failedMessage))
-    }
-
-    It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" {
-        $certificate = Get-PfxCertificate -FilePath $clientPfxPath
-        $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck
-        $result | Should Match ([regex]::Escape($successMessage))
-        $result | Should Match $certificate.Thumbprint
     }
 }
