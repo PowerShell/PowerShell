@@ -1757,33 +1757,44 @@ Describe "Web cmdlets tests using the cmdlet's aliases" -Tags "CI" {
     }
 }
 
-Describe -Name "Web cmdlets tests using Client Certificate Authentication" -Tags "Feature","Slow" {
+Describe -Name "Web cmdlets tests using Client Certificate Authentication" -Tags "Feature" {
 
     BeforeAll { 
         $portNumber          = 8443
         $uri                 = "https://localhost:{0}/" -f $portNumber
-        $containerName       = 'certcheck'
         $initTimeoutSeconds  = 15
-        $containerPath       = Join-Path $PSScriptRoot 'assets\docker\ClientCertificateCheck'
-        $pfxPath             = Join-Path  $containerPath 'ClientCert.pfx'
+        $projectRootPath     = Resolve-Path (Join-Path $PSScriptRoot "\..\..\..\..\")
+        $appSrcPath          = Join-Path $projectRootPath  'test\tools\ClientCertificateCheck'
+        $buildPsm            = Join-Path $projectRootPath 'build.psm1'
+        $appPublishPath      = Join-Path $appSrcPath 'bin'
+        $appDllPath          = Join-Path $appPublishPath 'ClientCertificateCheck.dll'
+        $serverPfxPath       = Join-Path $appSrcPath 'ServerCert.pfx'
+        $serverPfxPassword   = 'password'
+        $clientPfxPath       = Join-Path $appSrcPath 'ClientCert.pfx'
         $initCompleteMessage = 'Now listening on'
         $successMessage      = 'Status: OK'
         $failedMessage       = 'Status: Failed'
         
-        Push-Location $containerPath
-        $null = docker build -t $containerName .
+        Import-Module $buildPsm
+        Find-Dotnet
+        Push-Location $appSrcPath
+        dotnet restore
+        dotnet publish --output  $appPublishPath --configuration Release
         $timeOut = (get-date).AddSeconds($initTimeoutSeconds)
-        $null = docker run -d -p ${portNumber}:${portNumber} --name $containerName $containerName $portNumber
-        # Wait until the container is running or until the initTimeoutSeconds have been reached
+        Pop-Location
+        $Job = Start-Job {
+            Push-Location $using:appPublishPath
+            dotnet $using:appDllPath $using:serverPfxPath $using:serverPfxPassword $using:portNumber
+        }
+        # Wait until the app is running or until the initTimeoutSeconds have been reached
         do
         {
             Start-Sleep -Seconds 1
-            $containerStatus = docker logs --tail 3 $containerName | Out-String
+            $containerStatus = $Job.ChildJobs[0].Output | Out-String
             $isRunning = $containerStatus -match $initCompleteMessage
         }
         while (-not $isRunning -and (get-date) -lt $timeOut)
-        
-        Pop-Location
+        $Job.ChildJobs[0].Output
 
         if (-not $isRunning) {
             throw 'Container did not start before the timeout was reached.'
@@ -1791,8 +1802,7 @@ Describe -Name "Web cmdlets tests using Client Certificate Authentication" -Tags
     }
 
     AfterAll {
-        $null = docker kill $containerName
-        $null = docker rm $containerName
+        $Job | Stop-Job -PassThru | Remove-Job
     }
 
     It "Verifies Invoke-WebRequest Certificate Authentication Fails without -Certificate"  {
@@ -1801,9 +1811,10 @@ Describe -Name "Web cmdlets tests using Client Certificate Authentication" -Tags
     }
 
     It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" {
-        $certificate = Get-PfxCertificate -FilePath $pfxPath 
+        $certificate = Get-PfxCertificate -FilePath $clientPfxPath
         $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck
         $result.RawContent | Should Match ([regex]::Escape($successMessage))
+        $result.RawContent | Should Match $certificate.Thumbprint
     }
 
     It "Verifies Invoke-RestMethod Certificate Authentication Fails without -Certificate" {
@@ -1812,8 +1823,9 @@ Describe -Name "Web cmdlets tests using Client Certificate Authentication" -Tags
     }
 
     It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" {
-        $certificate = Get-PfxCertificate -FilePath $pfxPath
-        $result = Invoke-RestMethod -uri $uri -Certificate $Certificate -SkipCertificateCheck
+        $certificate = Get-PfxCertificate -FilePath $clientPfxPath
+        $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck
         $result | Should Match ([regex]::Escape($successMessage))
+        $result | Should Match $certificate.Thumbprint
     }
 }
