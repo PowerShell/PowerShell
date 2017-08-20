@@ -299,32 +299,32 @@ function ExecuteWebRequest
 # Starts the ClientCertificateCheck listener
 function StartClientCertificateCheck 
 {
-    param([int]$Port)
+    param([int]$Port = 8443)
     $initTimeoutSeconds  = 15
-    $projectRootPath     = Resolve-Path (Join-Path $PSScriptRoot "\..\..\..\..\")
-    $appSrcPath          = Join-Path $projectRootPath  'test\tools\ClientCertificateCheck'
-    $appPublishPath      = Join-Path $appSrcPath 'bin'
-    $appDllPath          = Join-Path $appPublishPath 'ClientCertificateCheck.dll'
-    $serverPfxPath       = Join-Path $appSrcPath 'ServerCert.pfx'
+    $appDll              = 'ClientCertificateCheck.dll'
+    $serverPfx           = 'ServerCert.pfx'
     $serverPfxPassword   = 'password'
     $initCompleteMessage = 'Now listening on'
     
     $timeOut = (get-date).AddSeconds($initTimeoutSeconds)
     $Job = Start-Job {
-        Push-Location $using:appPublishPath
-        dotnet $using:appDllPath $using:serverPfxPath $using:serverPfxPassword $using:port
+        $path = Split-Path -parent (get-command ClientCertificateCheck).Path
+        Push-Location $path
+        dotnet $using:appDll $using:serverPfx $using:serverPfxPassword $using:Port
     }
     # Wait until the app is running or until the initTimeoutSeconds have been reached
     do
     {
-        Start-Sleep -Seconds 1
+        Start-Sleep -Milliseconds 100
         $containerStatus = $Job.ChildJobs[0].Output | Out-String
         $isRunning = $containerStatus -match $initCompleteMessage
     }
     while (-not $isRunning -and (get-date) -lt $timeOut)
 
     if (-not $isRunning) {
-        throw 'Container did not start before the timeout was reached.'
+        $Job | Stop-Job -PassThru | Receive-Job
+        $Job | Remove-Job
+        throw 'Job did not start before the timeout was reached.'
     }
     return $job
 }
