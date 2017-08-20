@@ -363,7 +363,7 @@ simply update Homebrew's formulae and upgrade PowerShell:
 
 ```sh
 brew update
-brew reinstall powershell
+brew cask reinstall powershell
 ```
 
 > Note: because of [this issue in Cask](https://github.com/caskroom/homebrew-cask/issues/29301), you currently have to do a reinstall to upgrade.
