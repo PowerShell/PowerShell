@@ -299,7 +299,7 @@ function ExecuteWebRequest
 # Starts the ClientCertificateCheck listener
 function StartClientCertificateCheck 
 {
-    param([int]$Port = 8443)
+    param([int]$Port = 8083)
     $initTimeoutSeconds  = 15
     $appDll              = 'ClientCertificateCheck.dll'
     $serverPfx           = 'ServerCert.pfx'
@@ -316,15 +316,15 @@ function StartClientCertificateCheck
     do
     {
         Start-Sleep -Milliseconds 100
-        $containerStatus = $Job.ChildJobs[0].Output | Out-String
-        $isRunning = $containerStatus -match $initCompleteMessage
+        $initStatus = $Job.ChildJobs[0].Output | Out-String
+        $isRunning = $initStatus -match $initCompleteMessage
     }
     while (-not $isRunning -and (get-date) -lt $timeOut)
 
     if (-not $isRunning) {
         $Job | Stop-Job -PassThru | Receive-Job
         $Job | Remove-Job
-        throw 'Job did not start before the timeout was reached.'
+        throw 'ClientCertificateCheck did not start before the timeout was reached.'
     }
     return $job
 }
@@ -452,7 +452,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     BeforeAll {
         $response = Start-HttpListener -Port 8080
-        $certificateChecker = StartClientCertificateCheck -Port 8443
+        $certificateChecker = StartClientCertificateCheck -Port 8083
     }
 
     AfterAll {
@@ -1242,14 +1242,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     #region Client Certificate Authentication
 
     It "Verifies Invoke-WebRequest Certificate Authentication Fails without -Certificate"  {
-        $uri = 'https://localhost:8443/'
+        $uri = 'https://localhost:8083/'
         $result = Invoke-WebRequest -Uri $uri -SkipCertificateCheck
         $failedMessage = 'Status: Failed'
         $result.RawContent  | Should Match ([regex]::Escape($failedMessage ))
     }
 
     It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" {
-        $uri = 'https://localhost:8443/'
+        $uri = 'https://localhost:8083/'
         $certificate = GetSelfSignedCert
         $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck
         $successMessage = 'Status: OK'
@@ -1257,7 +1257,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.RawContent | Should Match $certificate.Thumbprint
     }
 
-    #edregion Client Certificate Authentication
+    #endregion Client Certificate Authentication
 
     BeforeEach {
         if ($env:http_proxy) {
@@ -1290,7 +1290,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     BeforeAll {
         $response = Start-HttpListener -Port 8081
-        $certificateChecker = StartClientCertificateCheck -Port 8443
+        $certificateChecker = StartClientCertificateCheck -Port 8083
     }
 
     AfterAll {
@@ -1782,14 +1782,14 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     #region Client Certificate Authentication
 
     It "Verifies Invoke-RestMethod Certificate Authentication Fails without -Certificate" {
-        $uri = 'https://localhost:8443/'
+        $uri = 'https://localhost:8083/'
         $result = Invoke-RestMethod -Uri $uri -SkipCertificateCheck
         $failedMessage = 'Status: Failed'
         $result | Should Match ([regex]::Escape($failedMessage))
     }
 
     It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" {
-        $uri = 'https://localhost:8443/'
+        $uri = 'https://localhost:8083/'
         $certificate = GetSelfSignedCert
         $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck
         $successMessage = 'Status: OK'
@@ -1797,7 +1797,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result | Should Match $certificate.Thumbprint
     }
 
-    #edregion Client Certificate Authentication
+    #endregion Client Certificate Authentication
 
     BeforeEach {
         if ($env:http_proxy) {
