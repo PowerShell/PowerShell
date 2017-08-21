@@ -1046,6 +1046,7 @@ namespace Microsoft.PowerShell.Commands
             path = NormalizePath(path);
             path = EnsureDriveIsRooted(path);
 
+#if !UNIX
             // Remove alternate data stream references
             // See if they've used the inline stream syntax. They have more than one colon.
             int firstColon = path.IndexOf(':');
@@ -1054,6 +1055,7 @@ namespace Microsoft.PowerShell.Commands
             {
                 path = path.Substring(0, secondColon);
             }
+#endif
 
             //Make sure the path is either drive rooted or UNC Path
             if (!IsAbsolutePath(path) && !IsUNCPath(path))
@@ -4686,9 +4688,9 @@ namespace Microsoft.PowerShell.Commands
 
             bool result = CopyFileStreamToRemoteSession(file, remoteFilePath, ps, false, null);
 
+#if !UNIX
             bool targetSupportsAlternateStreams = RemoteTargetSupportsAlternateStreams(ps, remoteFilePath);
 
-#if !UNIX
             // Once the file is copied successfully, check if the file has any alternate data streams
             if (result && targetSupportsAlternateStreams)
             {
@@ -5165,6 +5167,7 @@ namespace Microsoft.PowerShell.Commands
 
             s_tracer.WriteLine("basePath = {0}", basePath);
 
+#if !UNIX
             // Remove alternate data stream references
             // See if they've used the inline stream syntax. They have more than one colon.
             string alternateDataStream = String.Empty;
@@ -5176,6 +5179,7 @@ namespace Microsoft.PowerShell.Commands
                 alternateDataStream = path.Replace(newPath, "");
                 path = newPath;
             }
+#endif
 
             string result = path;
 
@@ -5299,10 +5303,12 @@ namespace Microsoft.PowerShell.Commands
                 }
             } while (false);
 
+#if !UNIX
             if (!String.IsNullOrEmpty(alternateDataStream))
             {
                 result = result + alternateDataStream;
             }
+#endif
 
             return result;
         } // NormalizeRelativePathHelper
@@ -6619,6 +6625,7 @@ namespace Microsoft.PowerShell.Commands
                 } // dynParams != null
             } // DynamicParameters != null
 
+#if !UNIX
             // See if they've used the inline stream syntax. They have more than one colon.
             int firstColon = path.IndexOf(':');
             int secondColon = path.IndexOf(':', firstColon + 1);
@@ -6627,6 +6634,7 @@ namespace Microsoft.PowerShell.Commands
                 streamName = path.Substring(secondColon + 1);
                 path = path.Remove(secondColon);
             }
+#endif
 
             FileSystemContentReaderWriter stream = null;
 
@@ -6765,6 +6773,7 @@ namespace Microsoft.PowerShell.Commands
                 } // dynParams != null
             }
 
+#if !UNIX
             // See if they've used the inline stream syntax. They have more than one colon.
             int firstColon = path.IndexOf(':');
             int secondColon = path.IndexOf(':', firstColon + 1);
@@ -6773,6 +6782,7 @@ namespace Microsoft.PowerShell.Commands
                 streamName = path.Substring(secondColon + 1);
                 path = path.Remove(secondColon);
             }
+#endif
 
             FileSystemContentReaderWriter stream = null;
 
