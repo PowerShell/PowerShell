@@ -549,6 +549,7 @@ ShouldShouldIt
 StreamDescribeCIFeatureScenarioDescribeContextItContextContextBeforeAllAfterAllBeforeEachAfterEachshould
 TestDrive
 throw-testcasesItMockDescribe
+HelpersCommon.psm1
  - README.md
 Gitter
 microsoft.com
