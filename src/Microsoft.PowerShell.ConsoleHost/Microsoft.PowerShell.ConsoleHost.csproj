@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\PowerShell.Common.props"/>  
+  <Import Project="..\..\PowerShell.Common.props"/>
 
   <PropertyGroup>
     <Description>PowerShell Host</Description>
@@ -21,7 +21,7 @@
     <Compile Remove="singleshell\installer\EngineInstaller.cs" />
     <Compile Remove="singleshell\installer\MshHostMshSnapin.cs" />
     <Compile Remove="gen\HostMshSnapinResources.cs" />
-    
+
     <EmbeddedResource Remove="resources\HostMshSnapinResources.resx" />
   </ItemGroup>
 

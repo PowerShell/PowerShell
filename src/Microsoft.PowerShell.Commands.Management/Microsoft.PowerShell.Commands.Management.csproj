@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\PowerShell.Common.props"/>  
+  <Import Project="..\..\PowerShell.Common.props"/>
 
   <PropertyGroup>
     <Description>PowerShell Core's Microsoft.PowerShell.Commands.Management project</Description>
@@ -45,7 +45,7 @@
     <Compile Remove="gen\ManagementMshSnapInResources.cs" />
     <Compile Remove="gen\ClearRecycleBinResources.cs" />
     <Compile Remove="gen\ClipboardResources.cs" />
-    
+
     <EmbeddedResource Remove="resources\EventlogResources.resx" />
     <EmbeddedResource Remove="resources\TransactionResources.resx" />
     <EmbeddedResource Remove="resources\WebServiceResources.resx" />

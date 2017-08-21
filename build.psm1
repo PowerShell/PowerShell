@@ -251,7 +251,7 @@ cmd.exe /C cd /d "$location" "&" "$($vcPath)\vcvarsall.bat" "$Arch" "&" cmake "$
         $FilesToCopy = @('pwrshplugin.dll', 'pwrshplugin.pdb')
         $dstPath = "$PSScriptRoot\src\powershell-win-core"
         $FilesToCopy | ForEach-Object {
-            $srcPath = [IO.Path]::Combine((Get-Location), "bin", $Configuration, "CoreClr/$_") 
+            $srcPath = [IO.Path]::Combine((Get-Location), "bin", $Configuration, "CoreClr/$_")
 
             log "  Copying $srcPath to $dstPath"
             Copy-Item $srcPath $dstPath
@@ -364,7 +364,7 @@ function Start-PSBuild {
     }
 
     # Verify if the dotnet in-use is the required version
-    $dotnetCLIInstalledVersion  = (dotnet --version)
+    $dotnetCLIInstalledVersion = (dotnet --version)
     If ($dotnetCLIInstalledVersion -ne $dotnetCLIRequiredVersion) {
         Write-Warning @"
 The currently installed .NET Command Line Tools is not the required version.
@@ -674,13 +674,13 @@ function New-PSOptions {
 
     # the valid root is the root of the filesystem and the folder PowerShell
     $RootInfo['ValidPath'] = Join-Path -Path ([system.io.path]::GetPathRoot($RootInfo.RepoPath)) -ChildPath 'PowerShell'
-    
+
     if($RootInfo.RepoPath -ne $RootInfo.ValidPath)
     {
         $RootInfo['Warning'] = "Please ensure you repo is at the root of the file system and named 'PowerShell' (example: '$($RootInfo.ValidPath)'), when building and packaging for release!"
         $RootInfo['IsValid'] = $false
     }
-    else 
+    else
     {
         $RootInfo['IsValid'] = $true
     }
@@ -910,7 +910,7 @@ function Start-PSPester {
                 $count = ($lines | measure-object).Count
                 if ($count -eq 0)
                 {
-                    sleep 1
+                    Start-Sleep -Seconds 1
                 }
                 else
                 {
