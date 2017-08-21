@@ -1,6 +1,6 @@
-# Client Certificate Check
+# HTTPS Listener
 
-ASP.NET Core 2.0 app for testing Client Certificate Authentication.
+ASP.NET Core 2.0 app for testing HTTPS Requests.
 The included SelF-Signed Certificate `ServerCert.pfx` has the password set to `password` and is issued for the Client and Server Authentication key usages. This certificate is used by the ASP.NET Kestrel server for SSL/TLS. The included SelF-Signed Certificate `ClientCert.pfx` has no password and has not been issued for any specific key usage. The app can be run directly with `dotnet` or as a Docker container.
 
 The default page will return information about the certificate if one was provided.
@@ -35,9 +35,9 @@ Not Before:
 dotnet restore
 dotnet publish --output bin --configuration Release
 cd bin
-dotnet ClientCertificateCheck.dll ServerCert.pfx password 8443
+dotnet HttpsListener.dll ServerCert.pfx password 8443
 ```
 
 The test site can then be accessed via `https://localhost:8443/`.  
 
-The `ClientCertificateCheck.dll` takes 3 arguments: the path to the Server Certificate, the Server Certificate Password, and the TCP Port to bind on.
+The `HttpsListener.dll` takes 3 arguments: the path to the Server Certificate, the Server Certificate Password, and the TCP Port to bind on.

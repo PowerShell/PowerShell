@@ -12,7 +12,7 @@ using Microsoft.AspNetCore.Server.Kestrel.Https;
 using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
 
-namespace ClientCertificateCheck
+namespace HttpsListener
 {
     public class Program
     {

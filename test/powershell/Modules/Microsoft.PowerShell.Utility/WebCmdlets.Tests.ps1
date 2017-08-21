@@ -296,46 +296,6 @@ function ExecuteWebRequest
     return $result
 }
 
-# Starts the ClientCertificateCheck listener
-function StartClientCertificateCheck 
-{
-    param([int]$Port = 8083)
-    $initTimeoutSeconds  = 15
-    $appDll              = 'ClientCertificateCheck.dll'
-    $serverPfx           = 'ServerCert.pfx'
-    $serverPfxPassword   = 'password'
-    $initCompleteMessage = 'Now listening on'
-    
-    $timeOut = (get-date).AddSeconds($initTimeoutSeconds)
-    $Job = Start-Job {
-        $path = Split-Path -parent (get-command ClientCertificateCheck).Path
-        Push-Location $path
-        dotnet $using:appDll $using:serverPfx $using:serverPfxPassword $using:Port
-    }
-    # Wait until the app is running or until the initTimeoutSeconds have been reached
-    do
-    {
-        Start-Sleep -Milliseconds 100
-        $initStatus = $Job.ChildJobs[0].Output | Out-String
-        $isRunning = $initStatus -match $initCompleteMessage
-    }
-    while (-not $isRunning -and (get-date) -lt $timeOut)
-
-    if (-not $isRunning) {
-        $Job | Stop-Job -PassThru | Receive-Job
-        $Job | Remove-Job
-        throw 'ClientCertificateCheck did not start before the timeout was reached.'
-    }
-    return $job
-}
-
-# Stops the ClientCertificateCheck listener
-function StopClientCertificateCheck 
-{
-    param($Job)
-    $Job | Stop-Job -PassThru | Remove-Job
-}
-
 function GetSelfSignedCert {
     <#    
         .NOTES
@@ -452,13 +412,12 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     BeforeAll {
         $response = Start-HttpListener -Port 8080
-        $certificateChecker = StartClientCertificateCheck -Port 8083
+        $httpsListener = Start-HttpsListener -Port 8083
     }
 
     AfterAll {
         $null = Stop-HttpListener -Port 8080
         $response.PowerShell.Dispose()
-        StopClientCertificateCheck -Job $certificateChecker
     }
 
     # Validate the output of Invoke-WebRequest
@@ -1290,13 +1249,12 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     BeforeAll {
         $response = Start-HttpListener -Port 8081
-        $certificateChecker = StartClientCertificateCheck -Port 8083
+        $httpsListener = Start-HttpsListener -Port 8083
     }
 
     AfterAll {
         $null = Stop-HttpListener -Port 8081
         $response.PowerShell.Dispose()
-        StopClientCertificateCheck -Job $certificateChecker
     }
 
     It "Invoke-RestMethod returns User-Agent" {

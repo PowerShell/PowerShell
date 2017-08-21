@@ -7,7 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
 
-namespace ClientCertificateCheck.Pages
+namespace HttpsListener.Pages
 {
     public class IndexModel : PageModel
     {
