@@ -1183,6 +1183,45 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     #endregion charset encoding tests
 
+    #region Content Header Inclusion
+    It "Verifies Invoke-WebRequest includes Content headers in Headers property" {
+        $uri = "http://localhost:8080/PowerShell?test=response&contenttype=text/plain&output=OK"
+        $command = "Invoke-WebRequest -Uri '$uri'"
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse $result
+
+        $result.Output.Headers.'Content-Type' | Should Be 'text/plain'
+        $result.Output.Headers.'Content-Length' | Should Be 2
+    }
+
+    It "Verifies Invoke-WebRequest includes Content headers in RawContent property" {
+        $uri = "http://localhost:8080/PowerShell?test=response&contenttype=text/plain&output=OK"
+        $command = "Invoke-WebRequest -Uri '$uri'"
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse $result
+
+        $result.Output.RawContent | Should Match ([regex]::Escape('Content-Type: text/plain'))
+        $result.Output.RawContent | Should Match ([regex]::Escape('Content-Length: 2'))
+    }
+
+    It "Verifies Invoke-WebRequest Supports Multiple response headers with same name" {
+        $headers = @{
+            'X-Fake-Header' = 'testvalue01','testvalue02'
+        } | ConvertTo-Json -Compress
+        $uri = "http://localhost:8080/PowerShell?test=response&contenttype=text/plain&output=OK&headers=$headers"
+        $command = "Invoke-WebRequest -Uri '$uri'"
+        $result = ExecuteWebCommand -command $command
+        ValidateResponse $result
+
+        $result.Output.Headers.'X-Fake-Header'.Count | Should Be 2
+        $result.Output.Headers.'X-Fake-Header'.Contains('testvalue01') | Should Be $True
+        $result.Output.Headers.'X-Fake-Header'.Contains('testvalue02') | Should Be $True
+        $result.Output.RawContent | Should Match ([regex]::Escape('X-Fake-Header: testvalue01'))
+        $result.Output.RawContent | Should Match ([regex]::Escape('X-Fake-Header: testvalue02'))
+    }
+
+    #endregion Content Header Inclusion
+
     BeforeEach {
         if ($env:http_proxy) {
             $savedHttpProxy = $env:http_proxy

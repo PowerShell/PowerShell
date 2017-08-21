@@ -133,6 +133,20 @@ Function Start-HTTPListener {
                             $statusCode = $queryItems["statuscode"]
                             $contentType = $queryItems["contenttype"]
                             $output = $queryItems["output"]
+                            
+                            # Pass a JSON collection to the 'headers' field
+                            # /PowerShell?test=response&headers={"Pragma":"no-cache","X-Fake-Header":["testvalue01","testvalue02"]}
+                            # In PowerShell:
+                            # $headers = @{Pragma='no-cache';'X-Fake-Header'='testvalue01','testvalue02'} | ConvertTo-Json -Compress
+                            # $uri = "http://localhost:8080/PowerShell?test=response&headers=$headers"
+                            if ($queryItems['headers'])
+                            {
+                                $headerCollection = $queryItems['headers'] | ConvertFrom-Json
+                                foreach ($header in $headerCollection.psobject.Properties.name)
+                                {
+                                    $outputHeader.add($header,$headerCollection.$header)
+                                }
+                            }
                         }
 
                         # Echo the request as the output.
@@ -284,7 +298,10 @@ Function Start-HTTPListener {
                     $response.Headers.Clear()
                     foreach ($header in $outputHeader.Keys)
                     {
-                        $response.Headers.Add($header, $outputHeader[$header])
+                        foreach ($headerValue in $outputHeader.$header)
+                        {
+                            $response.Headers.Add($header, $headerValue)
+                        }
                     }
 
                     if ($null -ne $output)

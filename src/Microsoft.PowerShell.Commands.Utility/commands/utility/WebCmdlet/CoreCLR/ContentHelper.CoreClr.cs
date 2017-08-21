@@ -7,6 +7,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Text;
 using System.Linq;
 using System.Net.Http;
+using System.Net.Http.Headers;
 
 namespace Microsoft.PowerShell.Commands
 {
@@ -37,11 +38,30 @@ namespace Microsoft.PowerShell.Commands
                 raw.AppendFormat("{0} {1} {2}", protocol, statusCode, statusDescription);
                 raw.AppendLine();
             }
-
-            foreach (var entry in response.Headers)
+            
+            HttpHeaders[] headerCollections = 
             {
-                raw.AppendFormat("{0}: {1}", entry.Key, entry.Value.FirstOrDefault());
-                raw.AppendLine();
+                response.Headers, 
+                response.Content == null ? null : response.Content.Headers
+            };
+
+            foreach (var headerCollection in headerCollections)
+            {
+                if (headerCollection == null)
+                {
+                    continue;
+                }
+                foreach (var header in headerCollection)
+                {
+                    // Headers may have multiple entries with different values
+                    foreach (var headerValue in header.Value)
+                    {
+                        raw.Append(header.Key);
+                        raw.Append(": ");
+                        raw.Append(headerValue);
+                        raw.AppendLine();
+                    }
+                }
             }
 
             raw.AppendLine();

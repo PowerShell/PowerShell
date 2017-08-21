@@ -36,6 +36,13 @@ namespace Microsoft.PowerShell.Commands
                 {
                     headers[entry.Key] = entry.Value;
                 }
+                if (BaseResponse.Content != null)
+                {
+                    foreach (var entry in BaseResponse.Content.Headers)
+                    {
+                        headers[entry.Key] = entry.Value;
+                    }
+                }
 
                 return headers;
             }
