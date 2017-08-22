@@ -50,16 +50,18 @@ try {
 
     Describe 'GetMember/SetMember/InvokeMember binders should have more restricted rule for COM object' -Tags "CI" {
         BeforeAll {
-            $null = New-Item -Path $TESTDRIVE/bar -ItemType Directory -Force
+            if ([System.Management.Automation.Platform]::IsWindowsDesktop) {
+                $null = New-Item -Path $TESTDRIVE/bar -ItemType Directory -Force
 
-            $shell = New-Object -ComObject "Shell.Application"
-            $folder = $shell.Namespace("$TESTDRIVE")
-            $item = $folder.Items().Item(0)
-            $item = [psobject]::AsPSObject($item)
+                $shell = New-Object -ComObject "Shell.Application"
+                $folder = $shell.Namespace("$TESTDRIVE")
+                $item = $folder.Items().Item(0)
+                $item = [psobject]::AsPSObject($item)
 
-            ## Create a PSObject that has an instance member 'Name' and a script method 'Windows'
-            $str = Add-Member -InputObject "abc" -MemberType NoteProperty -Name Name -Value "Hello" -PassThru
-            $str = Add-Member -InputObject $str -MemberType ScriptMethod -Name Windows -Value { "Windows" } -PassThru
+                ## Create a PSObject that has an instance member 'Name' and a script method 'Windows'
+                $str = Add-Member -InputObject "abc" -MemberType NoteProperty -Name Name -Value "Hello" -PassThru
+                $str = Add-Member -InputObject $str -MemberType ScriptMethod -Name Windows -Value { "Windows" } -PassThru
+            }
         }
 
         It "GetMember binder should differentiate PSObject that wraps COM object from other PSObjects" {
