@@ -922,13 +922,14 @@ function Start-PSPester {
         }
         else
         {
-            if($PassThru.IsPresent)
+            if ($PassThru.IsPresent)
             {
                 $passThruFile = [System.IO.Path]::GetTempFileName()
-                try {
+                try 
+                {
                     $Command += "|Export-Clixml -Path '$passThruFile' -Force"
                     Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Host $_}
-                    Import-Clixml -Path $passThruFile | Where-Object {$_.TotalCount}
+                    Import-Clixml -Path $passThruFile | Where-Object {$_.TotalCount -is [Int32]}
                 }
                 finally
                 {
@@ -978,14 +979,14 @@ function Show-PSPesterError
         [PSCustomObject]$testFailureObject
         )
     
-    if($PSCmdLet.ParameterSetName -eq 'file')
+    if ($PSCmdLet.ParameterSetName -eq 'xml')
     {
         $description = $testFailure.description
         $name = $testFailure.name
         $message = $testFailure.failure.message
         $stackTrace = $testFailure.failure."stack-trace"
     }
-    elseif($PSCmdLet.ParameterSetName -eq 'object')
+    elseif ($PSCmdLet.ParameterSetName -eq 'object')
     {
         $description = $testFailureObject.Describe + '/' + $testFailureObject.Context
         $name = $testFailureObject.Name
@@ -994,7 +995,7 @@ function Show-PSPesterError
     }
     else
     {
-        throw 'Unknow Show-PSPester parameter set'
+        throw 'Unknown Show-PSPester parameter set'
     }
 
     logerror ("Description: " + $description)
@@ -1033,10 +1034,12 @@ function Test-PSPesterResults
         {
             logerror "TEST FAILURES"
             # switch between methods, SelectNode is not available on dotnet core
-            if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] ) {
+            if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] ) 
+            {
                 $failures = [System.Xml.XmlDocumentXPathExtensions]::SelectNodes($x."test-results",'.//test-case[@result = "Failure"]')
             }
-            else {
+            else 
+            {
                 $failures = $x.SelectNodes('.//test-case[@result = "Failure"]')
             }
             foreach ( $testfail in $failures )
@@ -1046,13 +1049,13 @@ function Test-PSPesterResults
             throw "$($x.'test-results'.failures) tests in $TestArea failed"
         }
     }
-    elseif($PSCmdLet.ParameterSetName -eq 'PesterPassThruObject')
+    elseif ($PSCmdLet.ParameterSetName -eq 'PesterPassThruObject')
     {
-        if($ResultObject.TotalCount -le 0)
+        if ($ResultObject.TotalCount -le 0)
         {
             logerror 'NO TESTS RUN'
         }
-        elseif($ResultObject.FailedCount -gt 0)
+        elseif ($ResultObject.FailedCount -gt 0)
         {
             logerror 'TEST FAILURES'
             $ResultObject.TestResult | Where-Object {$_.Passed -eq $false} | ForEach-Object {
