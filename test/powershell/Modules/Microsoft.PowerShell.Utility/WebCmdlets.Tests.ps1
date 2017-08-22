@@ -1204,7 +1204,9 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Output.RawContent | Should Match ([regex]::Escape('Content-Length: 2'))
     }
 
-    It "Verifies Invoke-WebRequest Supports Multiple response headers with same name" {
+    # Test pending due to HttpListener limitation on Linux/macOS
+    # https://github.com/PowerShell/PowerShell/pull/4640
+    It "Verifies Invoke-WebRequest Supports Multiple response headers with same name" -Pending {
         $headers = @{
             'X-Fake-Header' = 'testvalue01','testvalue02'
         } | ConvertTo-Json -Compress
