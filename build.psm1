@@ -416,6 +416,11 @@ Fix steps:
         $Arguments += "--runtime", $Options.Runtime
     }
 
+    if ($ReleaseTag) {
+        $ReleaseTag1 = $ReleaseTag -Replace '^v'
+        $Arguments += "/property:ReleaseTag=$ReleaseTag1"
+    }
+
     # handle Restore
     if ($Restore -or -not (Test-Path "$($Options.Top)/obj/project.assets.json")) {
         log "Run dotnet restore"
@@ -1319,14 +1324,28 @@ function Start-PSBootstrap {
 function Publish-NuGetFeed
 {
     param(
-        [string]$OutputPath = "$PSScriptRoot/nuget-artifacts"
+        [string]$OutputPath = "$PSScriptRoot/nuget-artifacts",
+        [Parameter(ParameterSetName = "ReleaseTag")]
+        [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
+        [ValidateNotNullOrEmpty()]
+        [string]$ReleaseTag
     )
 
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    # Update 'project.assets.json' files with new version tag value.
-    dotnet restore $TopProject
+    ## NuGet/Home #3953, #4337 -- dotnet pack - version suffix missing from ProjectReference
+    ## Workaround:
+    ##   dotnet restore /p:VersionSuffix=<suffix> # Bake the suffix into project.assets.json
+    ##   dotnet pack --version-suffix <suffix>
+    ## We update 'project.assets.json' files with new version tag value by 'GetPSCoreVersionFromGit' target.
+    $TopProject = (New-PSOptions).Top
+    if ($ReleaseTag) {
+        $ReleaseTag1 = $ReleaseTag -Replace '^v'
+        dotnet restore $TopProject "/property:ReleaseTag=$ReleaseTag1"
+    } else {
+        dotnet restore $TopProject
+    }
 
     try {
         Push-Location $PSScriptRoot
@@ -1343,8 +1362,8 @@ function Publish-NuGetFeed
 'Microsoft.WSMan.Runtime',
 'Microsoft.PowerShell.SDK'
         ) | ForEach-Object {
-            if ($VersionSuffix) {
-                dotnet pack "src/$_" --output $OutputPath --version-suffix $VersionSuffix /p:IncludeSymbols=true
+            if ($ReleaseTag) {
+                dotnet pack "src/$_" --output $OutputPath "/property:ReleaseTag=$ReleaseTag1" /p:IncludeSymbols=true
             } else {
                 dotnet pack "src/$_" --output $OutputPath
             }

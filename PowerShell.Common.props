@@ -7,7 +7,7 @@
           2. Properties in global 'PropertyGroups' is assigned before any targets
           3. and cannot be conditionally excecuted as targets (after this target).
 
-        To assign vertions properties we should excecute the target:
+        To assign versions properties we should excecute the target:
           '_GenerateRestoreProjectSpec' - before 'Restore' target
           'GenerateNuspec'              - before 'Pack' target
           'BeforeBuild'                 - before 'Build' target
@@ -28,14 +28,23 @@
       <GitInfoBaseDir Condition="'$(GitInfoBaseDir)' == ''">$(MSBuildProjectDirectory)/$(GitCDUP)/.git</GitInfoBaseDir>
     </PropertyGroup>
 
-    <Exec Command='$(GitExe) --git-dir="$(GitInfoBaseDir)" describe --abbrev=60 --long' ConsoleToMSBuild="true" EchoOff="true">
+    <Exec Command='$(GitExe) --git-dir="$(GitInfoBaseDir)" describe --abbrev=60 --long'
+          ConsoleToMSBuild="true"
+          EchoOff="true">
       <Output TaskParameter="ConsoleOutput" PropertyName="PowerShellVersion" />
     </Exec>
 
     <PropertyGroup>
       <RegexGitVersion>^v(.+)-(\d+)-g(.+)</RegexGitVersion>
-      <PSCoreBuildVersion>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[1].Value)</PSCoreBuildVersion>
+    </PropertyGroup>
+
+    <PropertyGroup Condition = "'$(ReleaseTag)' != ''">
+      <PSCoreBuildVersion>$(ReleaseTag)</PSCoreBuildVersion>
       <PSCoreAdditionalCommits>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[2].Value)</PSCoreAdditionalCommits>
+    </PropertyGroup>
+
+    <PropertyGroup>
+      <PSCoreBuildVersion Condition = "'$(PSCoreBuildVersion)' == ''">$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[1].Value)</PSCoreBuildVersion>
       <PSCoreCommitSHA>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[3].Value)</PSCoreCommitSHA>
 
       <RegexSymVer>^((\d+).(\d+).(\d+))(?:-(.+))?</RegexSymVer>
@@ -45,7 +54,7 @@
       <PSCorePatchVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[4].Value)</PSCorePatchVersion>
       <PSCoreLabelVersion>$([System.Text.RegularExpressions.Regex]::Match($(PSCoreBuildVersion), $(RegexSymVer)).Groups[5].Value)</PSCoreLabelVersion>
 
-      <PSCoreFormattedVersion Condition = "'$(PSCoreAdditionalCommits)' == '0'">$(PSCoreBuildVersion) SHA: $(PSCoreCommitSHA)</PSCoreFormattedVersion>
+      <PSCoreFormattedVersion Condition = "'$(ReleaseTag)' != '' or '$(PSCoreAdditionalCommits)' == '0'">$(PSCoreBuildVersion) SHA: $(PSCoreCommitSHA)</PSCoreFormattedVersion>
       <PSCoreFormattedVersion Condition = "'$(PSCoreFormattedVersion)' == ''">$(PSCoreBuildVersion) Commits: $(PSCoreAdditionalCommits) SHA: $(PSCoreCommitSHA)</PSCoreFormattedVersion>
 
       <ProductVersion>$(PSCoreFormattedVersion)</ProductVersion>
@@ -69,8 +78,9 @@
     </PropertyGroup>
 
    <!-- for debug output
-        WriteLinesToFile File="targetfile1.txt"
-        Lines="PowerShellVersion=$(PowerShellVersion);
+      <WriteLinesToFile File="targetfile1.txt"
+        Lines="ReleaseTag=$(ReleaseTag);
+               PowerShellVersion=$(PowerShellVersion);
                PSCoreBuildVersion = $(PSCoreBuildVersion);
                PSCoreAdditionalCommits = $(PSCoreAdditionalCommits);
                PSCoreCommitSHA = $(PSCoreCommitSHA);
