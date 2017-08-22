@@ -21,7 +21,7 @@
 
 #gitrepo paths are overrideable to run from your own fork or branch for testing or private distribution
 
-VERSION="1.1.0"
+VERSION="1.1.1"
 gitreposubpath="PowerShell/PowerShell/master"
 gitreposcriptroot="https://raw.githubusercontent.com/$gitreposubpath/tools"
 gitscriptname="install-powershell.psh"
@@ -139,7 +139,11 @@ elif [ "$DistroBasedOn" == "redhat" ] || [ "$DistroBasedOn" == "debian" ] || [ "
       #Script files are not local - pull from remote
       echo "Could not find \"installpsh-$DistroBasedOn.sh\" next to this script..."
       echo "Pulling it from \"$gitreposcriptroot/installpsh-$DistroBasedOn.sh\""
-      bash <(wget -qO- $gitreposcriptroot/installpsh-$DistroBasedOn.sh) $@
+      if [ "$OS" == "osx" ]; then
+        bash <(curl -s $gitreposcriptroot/installpsh-$DistroBasedOn.sh) $@
+      else
+        bash <(wget -qO- $gitreposcriptroot/installpsh-$DistroBasedOn.sh) $@
+      fi
    fi
 else
     echo "Sorry, your operating system is based on $DistroBasedOn and is not supported by PowerShell Core or this installer at this time."

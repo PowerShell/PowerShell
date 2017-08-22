@@ -154,7 +154,7 @@ fi
 if [[ "'$*'" =~ includeide ]] ; then
     echo "\n*** Installing VS Code PowerShell IDE..."
     if [[ ! -d $(brew --prefix visual-studio-code) ]]; then
-        if ! brew install visual-studio-code; then
+        if ! brew cask install visual-studio-code; then
             echo "ERROR: Visual Studio Code failed to install..." >&2
             exit 1
         fi
