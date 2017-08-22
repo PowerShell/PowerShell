@@ -55,6 +55,7 @@ try {
             $shell = New-Object -ComObject "Shell.Application"
             $folder = $shell.Namespace("$TESTDRIVE")
             $item = $folder.Items().Item(0)
+            $item = [psobject]::AsPSObject($item)
 
             ## Create a PSObject that has an instance member 'Name' and a script method 'Windows'
             $str = Add-Member -InputObject "abc" -MemberType NoteProperty -Name Name -Value "Hello" -PassThru
@@ -63,21 +64,23 @@ try {
 
         It "GetMember binder should differentiate PSObject that wraps COM object from other PSObjects" {
             ## GetMember on the member name 'Name'.
-            ## '$_' here is a PSObject that wraps a COM object
-            $item | ForEach-Object { $_.Name } > $null
+            $entry1 = ($item, "bar")
+            $entry2 = ($str, "Hello")
 
-            ## '$str' is a PSObject that wraps a string, but with NoteProperty 'Name'
-            $str.Name | Should Be "Hello"
+            foreach ($pair in ($entry1, $entry2, $entry2, $entry1, $entry1, $entry2)) {
+                $pair[0].Name | Should Be $pair[1]
+            }
         }
 
         It "SetMember binder should differentiate PSObject that wraps COM object from other PSObjects" {
             ## SetMember on the member name 'Name'
-            ## '$_' here is a PSObject that wraps a COM object
-            $item | ForEach-Object { $_.Name = "foo" } > $null
+            $entry1 = ($item, "foo")
+            $entry2 = ($str, "World")
 
-            ## '$str' is a PSObject that wraps a string, but with NoteProperty 'Name'
-            $str.Name = "World"
-            $str.Name | Should Be "World"
+            foreach ($pair in ($entry1, $entry2)) {
+                $pair[0].Name = $pair[1]
+                $pair[0].Name | Should Be $pair[1]
+            }
         }
 
         It "InvokeMember binder should differentiate PSObject that wraps COM object from other PSObjects" {
