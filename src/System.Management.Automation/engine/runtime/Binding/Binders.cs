@@ -340,7 +340,7 @@ namespace System.Management.Automation.Language
     {
         internal static DynamicMetaObject DeferForPSObject(this DynamicMetaObjectBinder binder, DynamicMetaObject target, bool targetIsComObject = false)
         {
-            Diagnostics.Assert(target.Value is PSObject, "arg1 must be a psobject");
+            Diagnostics.Assert(target.Value is PSObject, "target must be a psobject");
 
             BindingRestrictions restrictions = BindingRestrictions.Empty;
             Expression expr = ProcessOnePSObject(target, ref restrictions, argIsComObject: targetIsComObject);
@@ -365,7 +365,7 @@ namespace System.Management.Automation.Language
             BindingRestrictions restrictions = BindingRestrictions.Empty;
             for (int i = 0; i < args.Length; i++)
             {
-                // Target maps to arg0 of the binder.
+                // Target maps to arg[0] of the binder.
                 bool argIsComObject = (i == 0) && targetIsComObject;
                 exprs[i] = ProcessOnePSObject(args[i], ref restrictions, argIsComObject);
             }
