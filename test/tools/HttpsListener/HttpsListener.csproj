@@ -14,5 +14,6 @@
   </ItemGroup>
   <ItemGroup>
      <None Include="ServerCert.pfx" CopyToPublishDirectory="PreserveNewest" />
+     <None Include="ClientCert.pfx" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
 </Project>
