@@ -1044,7 +1044,7 @@ function Test-PSPesterResults
             }
             foreach ( $testfail in $failures )
             {
-                Show-PSPesterError $testfail
+                Show-PSPesterError -testFailure $testfail
             }
             throw "$($x.'test-results'.failures) tests in $TestArea failed"
         }
