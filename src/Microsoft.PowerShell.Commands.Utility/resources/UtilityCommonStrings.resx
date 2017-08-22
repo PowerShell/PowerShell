@@ -178,6 +178,6 @@
     <value>Parameter '{0}' contains at least one invalid character. Its value is: '{1}'</value>
   </data>
   <data name="CouldNotFindTemporaryFilename" xml:space="preserve">
-    <value>'Could not find an available temporary file name in {0}.</value>
+    <value>'Could not create a temporary file name in {0}.</value>
   </data>
 </root>
