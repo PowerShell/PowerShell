@@ -64,6 +64,17 @@ It "Get-Item on a nonexisting file should have error PathNotFound" {
 Note that if get-item were to succeed, a different FullyQualifiedErrorId would be thrown and the test will fail.
 This is the suggested path because Pester wants to check the error message, which will likely not work here because of localized builds, but the FullyQualifiedErrorId is constant regardless of the locale.
 
+However, if you need to check the `InnerException` or other members of the ErrorRecord, the recommended pattern to use is:
+
+```powershell
+	It "InnerException sample" {
+
+	$e = { Invoke-WebRequest https://expired.badssl.com/ } | ShouldBeErrorId "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+	$e.Exception.InnerException.NativeErrorCode | Should Be 12175
+    ...
+	}
+```
+
 ### Describe/Context/It
 For creation of PowerShell tests, the Describe block is the level of granularity suggested and one of three tags should be used: "CI", "Feature", or "Scenario". If the tag is not provided, tests in that describe block will be run any time tests are executed.
 

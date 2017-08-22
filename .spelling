@@ -550,6 +550,7 @@ StreamDescribeCIFeatureScenarioDescribeContextItContextContextBeforeAllAfterAllB
 TestDrive
 throw-testcasesItMockDescribe
 HelpersCommon.psm1
+ErrorRecord
  - README.md
 Gitter
 microsoft.com
