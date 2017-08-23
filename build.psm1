@@ -1325,7 +1325,6 @@ function Publish-NuGetFeed
 {
     param(
         [string]$OutputPath = "$PSScriptRoot/nuget-artifacts",
-        [Parameter(ParameterSetName = "ReleaseTag")]
         [ValidatePattern("^v\d+\.\d+\.\d+(-\w+\.\d+)?$")]
         [ValidateNotNullOrEmpty()]
         [string]$ReleaseTag
@@ -1334,10 +1333,6 @@ function Publish-NuGetFeed
     # Add .NET CLI tools to PATH
     Find-Dotnet
 
-    ## NuGet/Home #3953, #4337 -- dotnet pack - version suffix missing from ProjectReference
-    ## Workaround:
-    ##   dotnet restore /p:VersionSuffix=<suffix> # Bake the suffix into project.assets.json
-    ##   dotnet pack --version-suffix <suffix>
     ## We update 'project.assets.json' files with new version tag value by 'GetPSCoreVersionFromGit' target.
     $TopProject = (New-PSOptions).Top
     if ($ReleaseTag) {

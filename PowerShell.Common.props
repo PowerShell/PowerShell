@@ -16,35 +16,21 @@
     BeforeTargets="_GenerateRestoreProjectSpec;GenerateNuspec;BeforeBuild"
   >
 
-    <PropertyGroup>
-      <GitExe>git</GitExe>
-    </PropertyGroup>
-
-    <Exec Command='$(GitExe) rev-parse --show-cdup' ConsoleToMSBuild="true">
-      <Output TaskParameter="ConsoleOutput" PropertyName="GitCDUP" />
-    </Exec>
-
-    <PropertyGroup>
-      <GitInfoBaseDir Condition="'$(GitInfoBaseDir)' == ''">$(MSBuildProjectDirectory)/$(GitCDUP)/.git</GitInfoBaseDir>
-    </PropertyGroup>
-
-    <Exec Command='$(GitExe) --git-dir="$(GitInfoBaseDir)" describe --abbrev=60 --long'
+    <Exec Command='git describe --abbrev=60 --long'
+          WorkingDirectory=$(MSBuildProjectDirectory)
           ConsoleToMSBuild="true"
-          EchoOff="true">
+          StandardOutputImportance="Low">
       <Output TaskParameter="ConsoleOutput" PropertyName="PowerShellVersion" />
     </Exec>
 
-    <PropertyGroup>
-      <RegexGitVersion>^v(.+)-(\d+)-g(.+)</RegexGitVersion>
-    </PropertyGroup>
-
     <PropertyGroup Condition = "'$(ReleaseTag)' != ''">
       <PSCoreBuildVersion>$(ReleaseTag)</PSCoreBuildVersion>
-      <PSCoreAdditionalCommits>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[2].Value)</PSCoreAdditionalCommits>
     </PropertyGroup>
 
     <PropertyGroup>
+      <RegexGitVersion>^v(.+)-(\d+)-g(.+)</RegexGitVersion>
       <PSCoreBuildVersion Condition = "'$(PSCoreBuildVersion)' == ''">$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[1].Value)</PSCoreBuildVersion>
+      <PSCoreAdditionalCommits>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[2].Value)</PSCoreAdditionalCommits>
       <PSCoreCommitSHA>$([System.Text.RegularExpressions.Regex]::Match($(PowerShellVersion), $(RegexGitVersion)).Groups[3].Value)</PSCoreCommitSHA>
 
       <RegexSymVer>^((\d+).(\d+).(\d+))(?:-(.+))?</RegexSymVer>
