@@ -119,16 +119,6 @@ namespace System.Management.Automation
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        internal static bool IsComObject(this Type type)
-        {
-#if UNIX
-            return false;
-#else
-            return type.IsCOMObject;
-#endif
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         internal static TypeCode GetTypeCode(this Type type)
         {
             return Type.GetTypeCode(type);

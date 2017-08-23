@@ -2472,8 +2472,8 @@ namespace System.Management.Automation
                 if (declaringTypeInfo.IsValueType ||
                     propertyTypeInfo.IsGenericType ||
                     declaringTypeInfo.IsGenericType ||
-                    property.DeclaringType.IsComObject() ||
-                    property.PropertyType.IsComObject())
+                    property.DeclaringType.IsCOMObject ||
+                    property.PropertyType.IsCOMObject)
                 {
                     this.readOnly = property.GetSetMethod() == null;
                     this.writeOnly = property.GetGetMethod() == null;

@@ -463,7 +463,7 @@ namespace System.Management.Automation
 
             if (result == null)
             {
-                if (objectType.IsComObject())
+                if (objectType.IsCOMObject)
                 {
                     // All WinRT types are COM types.
                     // All WinRT types would contain the TypeAttributes flag being set to WindowsRunTime.
