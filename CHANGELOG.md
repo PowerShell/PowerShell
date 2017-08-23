@@ -1,5 +1,53 @@
 # Changelog
 
+## v6.0.0-beta.6 - 2017-08-24
+
+### Engine updates and fixes
+
+* Make resource loading to work with PowerShell SxS installation (#4139)
+* Add missing assemblies to TPA list to make Pwrshplughin.dll work (#4502)
+* Make sure running `powershell` starts instance of the current version of PowerShell. (#4481)
+
+### General cmdlet updates and fixes
+
+* Fix Web CmdLets `-SkipHeaderValidation` to work with non-standard User-Agent headers. (#4479 & #4512) (Thanks @markekraus)
+* Use supported API to set Central Access Policy ID (CAPID) in SACL. (#4496)
+* Make `Start-Trace` support paths that require escaping in the underlying APIs (#3863)
+* Ignore case when binding PSReadline keyhandler functions (#4300) (Thanks @oising)
+* Removing `#if CORECLR` enabled, `Enable-PSRemoting` and `Disable-PSRemoting` (#4538)
+* Enable WSManCredSSP cmdlets and add tests. (#4336)
+* Use .NET Cores implementation for shell execution. (#4523)
+* Fix `Unblock-File` for the case of a read-only file. (#4395) (Thanks @iSazonov)
+* Fix SSH Remoting handling of KeyFileParameter when the path must be quoted. (#4529)
+
+### Build/test and code cleanup
+
+* Add Amazon Linux Docker image and enable related tests. (#4393) (Thanks @DarwinJs)
+* Make sure `install-powershell.sh` installs latest powershell on macOS, even if an old version is cached in brew. (#4509) (Thanks @richardszalay for reporting.)
+* Many stability improvements to our nightly code coverage automation. (#4313 & #4550)
+* Remove hash validation from nanoserver-insider docker file, due to frequent changes. (#4498)
+* Add tests for `New-WinEvent`. (#4384)
+* Update to make Travis-CI daily build badge more reliable. (#4522)
+* Remove unused build files. (#4532)
+* Add additonal acceptance tests for PowerShellGet. (#4531)
+* Only publish a NuGet of the full PowerShell core package on daily builds and not merge. (#4517)
+* Update nanoserver-insider docker due to breaking changes in the base image. (#4555)
+* Cleanup engine tests (#4551)
+* Fix intermittent failures in filesystem tests (#4566)
+* Add more tab completion tests (#4560)
+
+### Documentation
+
+* Added Ilya (@iSazonov) as a Maintainer. ($4365)
+* Grammar fix to the Pull Request Guide. (#4322)
+* Add homebrew for macOS to install documentation. (#3838)
+
+### Cleanup `#if CORECLR` code
+
+PowerShell 6.0 will be exclusively built on top of CoreCLR,
+so we are removing a large amount of code that's built only for FullCLR.
+To read more about this, check out [this blog post](https://blogs.msdn.microsoft.com/powershell/2017/07/14/powershell-6-0-roadmap-coreclr-backwards-compatibility-and-more/).
+
 ## v6.0.0-beta.5 - 2017-08-02
 
 ### Breaking changes
