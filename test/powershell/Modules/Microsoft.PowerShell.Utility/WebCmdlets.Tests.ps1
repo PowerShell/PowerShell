@@ -1118,19 +1118,17 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
             ConvertFrom-Json
         
         $result.Status  | Should Be 'FAILED'
-        $result.Status  | Should Not Be 'OK'
     }
     
     # Test skipped on macOS pending support for Client Certificate Authentication
     # https://github.com/PowerShell/PowerShell/issues/4650
     It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" -skip:$IsOSX {
         $uri = '{0}/Cert/' -f (Get-WebListenerUrl -Https)
-        $certificate = Get-TestClientCertificate
+        $certificate = Get-WebListenerClientCertificate
         $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck | 
             Select-Object -ExcludeProperty Content |
             ConvertFrom-Json
         
-        $result.Status  | Should Not Be 'FAILED'
         $result.Status  | Should Be 'OK'
         $result.Thumbprint | Should Be $certificate.Thumbprint
     }
@@ -1663,17 +1661,15 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result = Invoke-RestMethod -Uri $uri -SkipCertificateCheck
         
         $result.Status  | Should Be 'FAILED'
-        $result.Status  | Should Not Be 'OK'
     }
 
     # Test skipped on macOS pending support for Client Certificate Authentication
     # https://github.com/PowerShell/PowerShell/issues/4650
     It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -skip:$IsOSX {
         $uri = '{0}/Cert/' -f (Get-WebListenerUrl -Https)
-        $certificate = Get-TestClientCertificate
+        $certificate = Get-WebListenerClientCertificate
         $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck
 
-        $result.Status  | Should Not Be 'FAILED'
         $result.Status  | Should Be 'OK'
         $result.Thumbprint | Should Be $certificate.Thumbprint
     }

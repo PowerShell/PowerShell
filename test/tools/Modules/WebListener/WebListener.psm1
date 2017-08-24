@@ -70,7 +70,7 @@ function Start-WebListener
         $Job = Start-Job {
             $path = Split-Path -parent (get-command WebListener).Path
             Push-Location $path
-            dotnet $using:appDll $using:serverPfx $using:serverPfxPassword $using:HtttpPort $using:HtttpsPort
+            dotnet $using:appDll $using:serverPfx $using:serverPfxPassword $using:HttpPort $using:HttpsPort
         }
         $Script:WebListener = [WebListener]@{
             HttpPort  = $HttpPort 
@@ -100,8 +100,7 @@ function Stop-WebListener
 {
     [CmdletBinding(ConfirmImpact = 'Low')]
     [OutputType([Void])]
-    param 
-    ( )
+    param ()
     
     process 
     {
@@ -110,10 +109,10 @@ function Stop-WebListener
     }
 }
 
-function Get-TestClientCertificate {
+function Get-WebListenerClientCertificate {
     [CmdletBinding(ConfirmImpact = 'Low')]
     [OutputType([System.Security.Cryptography.X509Certificates.X509Certificate2])]
-    param ( )
+    param ()
     process {
         $parentPath = Split-Path -parent (get-command WebListener).Path
         $pfxPath = Join-Path $parentPath 'ClientCert.pfx'
@@ -131,7 +130,7 @@ function Get-WebListenerUrl {
         $runningListener = Get-WebListener
         if ($null -eq $runningListener -or $runningListener.GetStatus() -ne 'Running')
         {
-            return
+            return $null
         }
         $Uri = [System.UriBuilder]::new()
         $Uri.Host = 'localhost'

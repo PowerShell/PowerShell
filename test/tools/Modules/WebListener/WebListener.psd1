@@ -2,9 +2,13 @@
     ModuleVersion = '1.0.0'
     GUID = '90572e25-3f15-49b0-8f25-fb717d3ef46a'
     Author = 'Mark Kraus'
-    CompanyName = ''
-    Copyright = ''
     Description = 'An HTTP and HTTPS Listener for testing purposes'
     RootModule = 'WebListener.psm1'
-    FunctionsToExport = @('Start-WebListener','Stop-WebListener', 'Get-WebListener', 'Get-WebListenerUrl','Get-TestClientCertificate')
+    FunctionsToExport = @(
+        'Start-WebListener'
+        'Stop-WebListener'
+        'Get-WebListener'
+        'Get-WebListenerUrl'
+        'Get-WebListenerClientCertificate'
+    )
 }

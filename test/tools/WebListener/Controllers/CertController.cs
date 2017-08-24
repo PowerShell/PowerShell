@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using mvc.Models;
-using System.Collections;
 
 namespace mvc.Controllers
 {
@@ -17,7 +17,7 @@ namespace mvc.Controllers
             Hashtable output = new Hashtable 
             {
                 {"Status", "FAILED"}
-            };
+            }
             if (null != HttpContext.Connection.ClientCertificate)
             {   
                 output = new Hashtable 
@@ -30,8 +30,8 @@ namespace mvc.Controllers
                     {"IssuerName"  , HttpContext.Connection.ClientCertificate.IssuerName.Name},
                     {"NotAfter"    , HttpContext.Connection.ClientCertificate.NotAfter},
                     {"NotBefore"   , HttpContext.Connection.ClientCertificate.NotBefore}
-                };
-            };
+                }
+            }
             return Json(output);
         }
 
