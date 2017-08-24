@@ -505,12 +505,6 @@ Fix steps:
         Pop-Location
     }
 
-    # copy PowerShell host profile if Windows
-    if ($Environment.IsWindows)
-    {
-        Copy-Item -Path "$PSScriptRoot/src/powershell-win-core/Microsoft.PowerShell_profile.ps1" -Destination $publishPath -Force
-    }
-
     if ($Environment.IsRedHatFamily) {
         # add two symbolic links to system shared libraries that libmi.so is dependent on to handle
         # platform specific changes. This is the only set of platforms needed for this currently
