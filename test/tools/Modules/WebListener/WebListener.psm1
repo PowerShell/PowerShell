@@ -1,9 +1,3 @@
-Enum WebListenerProtocol 
-{
-    HTTP
-    HTTPS
-}
-
 Class WebListener 
 {
     [int]$HttpPort
@@ -19,7 +13,7 @@ Class WebListener
 
     [String] GetStatus() 
     {
-        return $This.JobStateInfo.State
+        return $This.Job.JobStateInfo.State
     }
 
 }
@@ -124,7 +118,8 @@ function Get-WebListenerUrl {
     [CmdletBinding()]
     [OutputType([Uri])]
     param (
-        [switch]$Https
+        [switch]$Https,
+        [String]$Test
     )
     process {
         $runningListener = Get-WebListener
@@ -141,6 +136,7 @@ function Get-WebListenerUrl {
             $Uri.Port = $runningListener.HttpPort
             $Uri.Scheme = 'Https'
         }
+        $Uri.Path = $Test
         return [Uri]$Uri.ToString()
     }
 }

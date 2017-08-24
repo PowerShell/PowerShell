@@ -1112,7 +1112,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     #region Client Certificate Authentication
 
     It "Verifies Invoke-WebRequest Certificate Authentication Fails without -Certificate"  {
-        $uri = '{0}/Cert/' -f (Get-WebListenerUrl -Https)
+        $uri = Get-WebListenerUrl -Https -Test 'Cert'
         $result = Invoke-WebRequest -Uri $uri -SkipCertificateCheck | 
             Select-Object -ExcludeProperty Content |
             ConvertFrom-Json
@@ -1123,7 +1123,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     # Test skipped on macOS pending support for Client Certificate Authentication
     # https://github.com/PowerShell/PowerShell/issues/4650
     It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" -skip:$IsOSX {
-        $uri = '{0}/Cert/' -f (Get-WebListenerUrl -Https)
+        $uri = Get-WebListenerUrl -Https -Test 'Cert'
         $certificate = Get-WebListenerClientCertificate
         $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck | 
             Select-Object -ExcludeProperty Content |
@@ -1657,7 +1657,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     #region Client Certificate Authentication
 
     It "Verifies Invoke-RestMethod Certificate Authentication Fails without -Certificate" {
-        $uri = '{0}/Cert/' -f (Get-WebListenerUrl -Https)
+        $uri = Get-WebListenerUrl -Https -Test 'Cert'
         $result = Invoke-RestMethod -Uri $uri -SkipCertificateCheck
         
         $result.Status  | Should Be 'FAILED'
@@ -1666,7 +1666,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     # Test skipped on macOS pending support for Client Certificate Authentication
     # https://github.com/PowerShell/PowerShell/issues/4650
     It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -skip:$IsOSX {
-        $uri = '{0}/Cert/' -f (Get-WebListenerUrl -Https)
+        $uri = Get-WebListenerUrl -Https -Test 'Cert'
         $certificate = Get-WebListenerClientCertificate
         $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck
 
