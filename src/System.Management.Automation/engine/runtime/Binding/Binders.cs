@@ -359,15 +359,17 @@ namespace System.Management.Automation.Language
 
         internal static DynamicMetaObject DeferForPSObject(this DynamicMetaObjectBinder binder, DynamicMetaObject[] args, bool targetIsComObject = false)
         {
+            Diagnostics.Assert(args != null && args.Length > 0, "args should not be null or empty");
             Diagnostics.Assert(args.Any(mo => mo.Value is PSObject), "At least one arg must be a psobject");
 
             Expression[] exprs = new Expression[args.Length];
             BindingRestrictions restrictions = BindingRestrictions.Empty;
-            for (int i = 0; i < args.Length; i++)
+
+            // Target maps to arg[0] of the binder.
+            exprs[0] = ProcessOnePSObject(args[0], ref restrictions, targetIsComObject);
+            for (int i = 1; i < args.Length; i++)
             {
-                // Target maps to arg[0] of the binder.
-                bool argIsComObject = (i == 0) && targetIsComObject;
-                exprs[i] = ProcessOnePSObject(args[i], ref restrictions, argIsComObject);
+                exprs[i] = ProcessOnePSObject(args[i], ref restrictions, argIsComObject: false);
             }
 
             return new DynamicMetaObject(DynamicExpression.Dynamic(binder, binder.ReturnType, exprs), restrictions);
