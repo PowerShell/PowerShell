@@ -1,19 +1,21 @@
 <Project Sdk="Microsoft.NET.Sdk.Web">
+
   <PropertyGroup>
-    <Description>Very simple ASP.NET Core 2.0 app to provide an HTTPS server.</Description>
+    <Description>A simple ASP.NET Core 2.0 MVC app to provide an HTTP and HTTPS server for testing.</Description>
     <TargetFramework>netcoreapp2.0</TargetFramework>
   </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
   </ItemGroup>
+
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
   </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel.Https" Version="2.0.0" />
-  </ItemGroup>
+
   <ItemGroup>
      <None Include="ServerCert.pfx" CopyToPublishDirectory="PreserveNewest" />
      <None Include="ClientCert.pfx" CopyToPublishDirectory="PreserveNewest" />
   </ItemGroup>
+
 </Project>

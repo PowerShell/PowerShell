@@ -778,7 +778,7 @@ function Publish-PSTestTools {
 
     $tools = @(
         @{Path="${PSScriptRoot}/test/tools/TestExe";Output="testexe"}
-        @{Path="${PSScriptRoot}/test/tools/HttpsListener";Output="HttpsListener"}
+        @{Path="${PSScriptRoot}/test/tools/WebListener";Output="WebListener"}
     )
     if ($null -eq $Options)
     {

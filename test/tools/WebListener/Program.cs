@@ -9,18 +9,18 @@ using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Server.Kestrel.Https;
-using System.Security.Authentication;
 using System.Security.Cryptography.X509Certificates;
+using System.Security.Authentication;
 
-namespace HttpsListener
+namespace mvc
 {
     public class Program
     {
         public static void Main(string[] args)
         {
-            if (args.Count() != 3)
+            if (args.Count() != 4)
             {
-                System.Console.WriteLine("Required: <CertificatePath> <CertificatePassword> <PortNumber>");  
+                System.Console.WriteLine("Required: <CertificatePath> <CertificatePassword> <HTTPPortNumber> <HTTPSPortNumber>");  
                 Environment.Exit(1); 
             }
             BuildWebHost(args).Run();
@@ -28,10 +28,10 @@ namespace HttpsListener
 
         public static IWebHost BuildWebHost(string[] args) =>
             WebHost.CreateDefaultBuilder()
-                .UseStartup<Startup>()
-                .UseKestrel(options =>
+                .UseStartup<Startup>().UseKestrel(options =>
                 {
-                   options.Listen(IPAddress.Any, int.Parse(args[2]), listenOptions =>
+                   options.Listen(IPAddress.Loopback, int.Parse(args[2]));
+                   options.Listen(IPAddress.Loopback, int.Parse(args[3]), listenOptions =>
                    {
                        var certificate = new X509Certificate2(args[0], args[1]);
                        HttpsConnectionAdapterOptions httpsOption = new HttpsConnectionAdapterOptions();

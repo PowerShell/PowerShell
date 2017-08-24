@@ -296,18 +296,6 @@ function ExecuteWebRequest
     return $result
 }
 
-function GetSelfSignedCert {
-    <#    
-        .NOTES
-            This certificate is not issued for any specific Key Usage
-            It cannot be used for any service that requires a specific key usage
-            It can be used for SSL/TLS Client Authentication
-    #>
-    $parentPath = Split-Path -parent (get-command HttpsListener).Path
-    $pfxPath = Join-Path $parentPath 'ClientCert.pfx'
-    [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($pfxPath,'password')
-}
-
 <#
     Defines the list of redirect codes to test as well as the
     expected Method when the redirection is handled.
@@ -335,7 +323,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     BeforeAll {
         $response = Start-HttpListener -Port 8080
-        $httpsListener = Start-HttpsListener -Port 8083
+        $WebListener = Start-WebListener
     }
 
     AfterAll {
@@ -1124,21 +1112,27 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     #region Client Certificate Authentication
 
     It "Verifies Invoke-WebRequest Certificate Authentication Fails without -Certificate"  {
-        $uri = 'https://localhost:8083/'
-        $result = Invoke-WebRequest -Uri $uri -SkipCertificateCheck
-        $failedMessage = 'Status: Failed'
-        $result.RawContent  | Should Match ([regex]::Escape($failedMessage ))
+        $uri = '{0}/Cert/' -f (Get-WebListenerUrl -Https)
+        $result = Invoke-WebRequest -Uri $uri -SkipCertificateCheck | 
+            Select-Object -ExcludeProperty Content |
+            ConvertFrom-Json
+        
+        $result.Status  | Should Be 'FAILED'
+        $result.Status  | Should Not Be 'OK'
     }
     
     # Test skipped on macOS pending support for Client Certificate Authentication
     # https://github.com/PowerShell/PowerShell/issues/4650
     It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" -skip:$IsOSX {
-        $uri = 'https://localhost:8083/'
-        $certificate = GetSelfSignedCert
-        $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck
-        $successMessage = 'Status: OK'
-        $result.RawContent | Should Match ([regex]::Escape($successMessage))
-        $result.RawContent | Should Match $certificate.Thumbprint
+        $uri = '{0}/Cert/' -f (Get-WebListenerUrl -Https)
+        $certificate = Get-TestClientCertificate
+        $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck | 
+            Select-Object -ExcludeProperty Content |
+            ConvertFrom-Json
+        
+        $result.Status  | Should Not Be 'FAILED'
+        $result.Status  | Should Be 'OK'
+        $result.Thumbprint | Should Be $certificate.Thumbprint
     }
 
     #endregion Client Certificate Authentication
@@ -1174,7 +1168,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     BeforeAll {
         $response = Start-HttpListener -Port 8081
-        $httpsListener = Start-HttpsListener -Port 8083
+        $WebListener = Start-WebListener
     }
 
     AfterAll {
@@ -1665,21 +1659,23 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
     #region Client Certificate Authentication
 
     It "Verifies Invoke-RestMethod Certificate Authentication Fails without -Certificate" {
-        $uri = 'https://localhost:8083/'
+        $uri = '{0}/Cert/' -f (Get-WebListenerUrl -Https)
         $result = Invoke-RestMethod -Uri $uri -SkipCertificateCheck
-        $failedMessage = 'Status: Failed'
-        $result | Should Match ([regex]::Escape($failedMessage))
+        
+        $result.Status  | Should Be 'FAILED'
+        $result.Status  | Should Not Be 'OK'
     }
 
     # Test skipped on macOS pending support for Client Certificate Authentication
     # https://github.com/PowerShell/PowerShell/issues/4650
     It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -skip:$IsOSX {
-        $uri = 'https://localhost:8083/'
-        $certificate = GetSelfSignedCert
+        $uri = '{0}/Cert/' -f (Get-WebListenerUrl -Https)
+        $certificate = Get-TestClientCertificate
         $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck
-        $successMessage = 'Status: OK'
-        $result | Should Match ([regex]::Escape($successMessage))
-        $result | Should Match $certificate.Thumbprint
+
+        $result.Status  | Should Not Be 'FAILED'
+        $result.Status  | Should Be 'OK'
+        $result.Thumbprint | Should Be $certificate.Thumbprint
     }
 
     #endregion Client Certificate Authentication
