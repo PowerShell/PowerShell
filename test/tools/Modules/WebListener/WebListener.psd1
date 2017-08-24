@@ -5,10 +5,10 @@
     Description = 'An HTTP and HTTPS Listener for testing purposes'
     RootModule = 'WebListener.psm1'
     FunctionsToExport = @(
+        'Get-WebListener'
+        'Get-WebListenerClientCertificate'
+        'Get-WebListenerUrl'
         'Start-WebListener'
         'Stop-WebListener'
-        'Get-WebListener'
-        'Get-WebListenerUrl'
-        'Get-WebListenerClientCertificate'
     )
 }

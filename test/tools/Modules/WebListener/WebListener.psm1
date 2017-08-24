@@ -30,7 +30,7 @@ function Get-WebListener
 {
     [CmdletBinding(ConfirmImpact = 'Low')]
     [OutputType([WebListener])]
-    param ()
+    param()
 
     process 
     {
@@ -100,7 +100,7 @@ function Stop-WebListener
 {
     [CmdletBinding(ConfirmImpact = 'Low')]
     [OutputType([Void])]
-    param ()
+    param()
     
     process 
     {
@@ -112,7 +112,7 @@ function Stop-WebListener
 function Get-WebListenerClientCertificate {
     [CmdletBinding(ConfirmImpact = 'Low')]
     [OutputType([System.Security.Cryptography.X509Certificates.X509Certificate2])]
-    param ()
+    param()
     process {
         $parentPath = Split-Path -parent (get-command WebListener).Path
         $pfxPath = Join-Path $parentPath 'ClientCert.pfx'
