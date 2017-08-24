@@ -1114,7 +1114,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     It "Verifies Invoke-WebRequest Certificate Authentication Fails without -Certificate"  {
         $uri = Get-WebListenerUrl -Https -Test 'Cert'
         $result = Invoke-WebRequest -Uri $uri -SkipCertificateCheck | 
-            Select-Object -ExcludeProperty Content |
+            Select-Object -ExpandProperty Content |
             ConvertFrom-Json
         
         $result.Status  | Should Be 'FAILED'
@@ -1126,7 +1126,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $uri = Get-WebListenerUrl -Https -Test 'Cert'
         $certificate = Get-WebListenerClientCertificate
         $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck | 
-            Select-Object -ExcludeProperty Content |
+            Select-Object -ExpandProperty Content |
             ConvertFrom-Json
         
         $result.Status  | Should Be 'OK'

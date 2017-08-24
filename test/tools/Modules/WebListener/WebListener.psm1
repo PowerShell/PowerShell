@@ -6,11 +6,6 @@ Class WebListener
 
     WebListener () { }
 
-    [string] ToString() 
-    {
-        return ('Port: {0}; Status: {1}' -f $This.Port, $This.JobStateInfo.State)
-    }
-
     [String] GetStatus() 
     {
         return $This.Job.JobStateInfo.State
@@ -133,7 +128,7 @@ function Get-WebListenerUrl {
         $Uri.Scheme = 'Http'
         if ($Https.IsPresent)
         {
-            $Uri.Port = $runningListener.HttpPort
+            $Uri.Port = $runningListener.HttpsPort
             $Uri.Scheme = 'Https'
         }
         $Uri.Path = $Test
