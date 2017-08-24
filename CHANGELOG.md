@@ -4,8 +4,7 @@
 
 ### Breaking change
 
-* Make invalid argument handling to -File and -Command consitent and make exit codes consistent with Unix standards (#4573)
-
+* Make invalid argument error messages for -File and -Command consitent and make exit codes consistent with Unix standards (#4573)
 
 ### Engine updates and fixes
 
@@ -13,7 +12,7 @@
 * Add missing assemblies to TPA list to make Pwrshplughin.dll work (#4502)
 * Make sure running `powershell` starts instance of the current version of PowerShell. (#4481)
 * Make sure we only use Unicode output by default on Nano and IoT systems (#4074)
-* Enable `-WindowStyle` to work. (#4573)
+* Enable `powershell -WindowStyle` to work on Windows. (#4573)
 * Enable enumeration of COM collections. (#4553)
 
 ### General cmdlet updates and fixes
@@ -31,8 +30,7 @@
 * Use .NET Cores implementation for ShellExecute. (#4523)
 * Fix SSH Remoting handling of KeyFileParameter when the path must be quoted. (#4529)
 * Make Web CmdLets use HTML meta charset attribute value, if present (#4338)
-* Move to .NET Core 2.0 (#4603)
-
+* Move to .NET Core 2.0 final (#4603)
 
 ### Build/test and code cleanup
 
@@ -55,7 +53,7 @@
     * tab completion.  (#4560)
     * various types. (#4503)
     * CDXML CmdLets. (#4537)
-* Only allow packaging of powershell, if it was build from a repo at the root of the file system named powershell. (#4569 & #4600)
+* Only allow packaging of powershell, if it was built from a repo at the root of the file system named powershell. (#4569 & #4600)
 * Update `Format-Hex` test cases to use -TestCase instead of foreach loops. (#3800)
 * Added functionality to get code coverage for a single file locally. (#4556)
 
