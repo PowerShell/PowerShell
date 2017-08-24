@@ -1,5 +1,75 @@
 # Changelog
 
+## v6.0.0-beta.6 - 2017-08-24
+
+### Breaking change
+
+* Make invalid argument error messages for -File and -Command consistent and make exit codes consistent with Unix standards (#4573)
+
+### Engine updates and fixes
+
+* Make resource loading to work with PowerShell SxS installation (#4139)
+* Add missing assemblies to TPA list to make Pwrshplughin.dll work (#4502)
+* Make sure running `powershell` starts instance of the current version of PowerShell. (#4481)
+* Make sure we only use Unicode output by default on Nano and IoT systems (#4074)
+* Enable `powershell -WindowStyle` to work on Windows. (#4573)
+* Enable enumeration of COM collections. (#4553)
+
+### General cmdlet updates and fixes
+
+* Fix Web CmdLets `-SkipHeaderValidation` to work with non-standard User-Agent headers. (#4479 & #4512) (Thanks @markekraus)
+* Add Certificate authentication support for Web CmdLets. (#4646) (Thanks @markekraus)
+* Add support for content headers to Web CmdLets. (#4494 & #4640) (Thanks @markekraus)
+* Add support for converting enums to string (#4318) (Thanks @KirkMunro)
+* Ignore casing when binding PSReadline KeyHandler functions (#4300) (Thanks @oising)
+* Fix `Unblock-File` for the case of a read-only file. (#4395) (Thanks @iSazonov)
+* Use supported API to set Central Access Policy ID (CAPID) in SACL. (#4496)
+* Make `Start-Trace` support paths that require escaping in the underlying APIs (#3863)
+* Removing `#if CORECLR` enabled, `Enable-PSRemoting` and `Disable-PSRemoting` (#2671)
+* Enable WSManCredSSP cmdlets and add tests. (#4336)
+* Use .NET Core's implementation for ShellExecute. (#4523)
+* Fix SSH Remoting handling of KeyFileParameter when the path must be quoted. (#4529)
+* Make Web CmdLets use HTML meta charset attribute value, if present (#4338)
+* Move to .NET Core 2.0 final (#4603)
+
+### Build/test and code cleanup
+
+* Add Amazon Linux Docker image and enable related tests. (#4393) (Thanks @DarwinJS)
+* Make MSI verify pre-requisites are installed. (#4602) (Thank @bergmeister)
+* Fixed formatting issues in build files. (#4630) (Thanks @iSazonov)
+* Make sure `install-powershell.sh` installs latest powershell on macOS, even if an old version is cached in brew. (#4509) (Thanks @richardszalay for reporting.)
+* Fixes install scripts issue for macOS. (#4631) (Thanks @DarwinJS)
+* Many stability improvements to our nightly code coverage automation. (#4313 & #4550)
+* Remove hash validation from nanoserver-insider Docker file, due to frequent changes. (#4498)
+* Update to make Travis-CI daily build badge more reliable. (#4522)
+* Remove unused build files, build code, and product code. (#4532, #4580, #4590, #4589, #4588, #4587, #4586, #4583, #4582, #4581)
+* Add additional acceptance tests for PowerShellGet. (#4531)
+* Only publish a NuGet of the full PowerShell core package on daily builds and not merge. (#4517)
+* Update nanoserver-insider Docker file due to breaking changes in the base image. (#4555)
+* Cleanup engine tests (#4551)
+* Fix intermittent failures in filesystem tests (#4566)
+* Add tests for
+    * `New-WinEvent`. (#4384)
+    * tab completion.  (#4560)
+    * various types. (#4503)
+    * CDXML CmdLets. (#4537)
+* Only allow packaging of powershell, if it was built from a repo at the root of the file system named powershell. (#4569 & #4600)
+* Update `Format-Hex` test cases to use -TestCase instead of foreach loops. (#3800)
+* Added functionality to get code coverage for a single file locally. (#4556)
+
+### Documentation
+
+* Added Ilya (@iSazonov) as a Maintainer. (#4365)
+* Grammar fix to the Pull Request Guide. (#4322)
+* Add homebrew for macOS to install documentation. (#3838)
+* Added a CodeOwner file. (#4565 & #4597)
+
+### Cleanup `#if CORECLR` code
+
+PowerShell 6.0 will be exclusively built on top of CoreCLR,
+so we are removing a large amount of code that's built only for FullCLR.
+To read more about this, check out [this blog post](https://blogs.msdn.microsoft.com/powershell/2017/07/14/powershell-6-0-roadmap-coreclr-backwards-compatibility-and-more/).
+
 ## v6.0.0-beta.5 - 2017-08-02
 
 ### Breaking changes
