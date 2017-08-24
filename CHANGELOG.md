@@ -13,10 +13,10 @@
 * Fix Web CmdLets `-SkipHeaderValidation` to work with non-standard User-Agent headers. (#4479 & #4512) (Thanks @markekraus)
 * Use supported API to set Central Access Policy ID (CAPID) in SACL. (#4496)
 * Make `Start-Trace` support paths that require escaping in the underlying APIs (#3863)
-* Ignore case when binding PSReadline keyhandler functions (#4300) (Thanks @oising)
-* Removing `#if CORECLR` enabled, `Enable-PSRemoting` and `Disable-PSRemoting` (#4538)
+* Ignore casing when binding PSReadline keyhandler functions (#4300) (Thanks @oising)
+* Removing `#if CORECLR` enabled, `Enable-PSRemoting` and `Disable-PSRemoting` (#2671)
 * Enable WSManCredSSP cmdlets and add tests. (#4336)
-* Use .NET Cores implementation for shell execution. (#4523)
+* Use .NET Cores implementation for ShellExecute. (#4523)
 * Fix `Unblock-File` for the case of a read-only file. (#4395) (Thanks @iSazonov)
 * Fix SSH Remoting handling of KeyFileParameter when the path must be quoted. (#4529)
 
@@ -38,7 +38,7 @@
 
 ### Documentation
 
-* Added Ilya (@iSazonov) as a Maintainer. ($4365)
+* Added Ilya (@iSazonov) as a Maintainer. (#4365)
 * Grammar fix to the Pull Request Guide. (#4322)
 * Add homebrew for macOS to install documentation. (#3838)
 
