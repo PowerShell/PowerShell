@@ -301,7 +301,8 @@ function Start-PSBuild {
                      "win10-x64",
                      "osx.10.12-x64",
                      "opensuse.13.2-x64",
-                     "opensuse.42.1-x64")]
+                     "opensuse.42.1-x64",
+                     "linux-arm")]
         [string]$Runtime,
 
         [ValidateSet('Linux', 'Debug', 'Release', 'CodeCoverage', '')] # We might need "Checked" as well
@@ -359,6 +360,12 @@ function Start-PSBuild {
 
     if ($Environment.IsLinux -or $Environment.IsMacOS) {
         foreach ($Dependency in 'cmake', 'make', 'g++') {
+            $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap'.")
+        }
+    }
+
+    if ($RunTime -eq "linux-arm") {
+        foreach ($Dependency in 'arm-linux-gnueabihf-gcc', 'arm-linux-gnueabihf-g++') {
             $precheck = $precheck -and (precheck $Dependency "Build dependency '$Dependency' not found. Run 'Start-PSBootstrap'.")
         }
     }
@@ -464,9 +471,17 @@ Fix steps:
 
         try {
             Push-Location $Native
-            Start-NativeExecution { cmake -DCMAKE_BUILD_TYPE=Debug . }
-            Start-NativeExecution { make -j }
-            Start-NativeExecution { ctest --verbose }
+            if ($Runtime -eq "linux-arm")
+            {
+                Start-NativeExecution { cmake -D CMAKE_TOOLCHAIN_FILE=./arm.toolchain.cmake . }
+                Start-NativeExecution { make -j }
+            }
+            else
+            {
+                Start-NativeExecution { cmake -DCMAKE_BUILD_TYPE=Debug . }
+                Start-NativeExecution { make -j }
+                Start-NativeExecution { ctest --verbose }
+            }
         } finally {
             Pop-Location
         }
@@ -587,7 +602,8 @@ function New-PSOptions {
                      "win10-x64",
                      "osx.10.12-x64",
                      "opensuse.13.2-x64",
-                     "opensuse.42.1-x64")]
+                     "opensuse.42.1-x64",
+                     "linux-arm")]
         [string]$Runtime,
 
         [switch]$CrossGen,
@@ -1202,6 +1218,7 @@ function Start-PSBootstrap {
         [switch]$Package,
         [switch]$NoSudo,
         [switch]$BuildWindowsNative,
+        [switch]$BuildLinuxArm,
         [switch]$Force
     )
 
@@ -1225,11 +1242,21 @@ function Start-PSBootstrap {
                 Pop-Location
             }
 
+            if ($BuildLinuxArm -and -not $Environment.IsUbuntu) {
+                Write-Error "Cross compiling for linux-arm is only supported on Ubuntu environment"
+                return
+            }
+
             # Install ours and .NET's dependencies
             $Deps = @()
             if ($Environment.IsUbuntu) {
                 # Build tools
                 $Deps += "curl", "g++", "cmake", "make"
+
+                if ($BuildLinuxArm)
+                {
+                    $Deps += "gcc-arm-linux-gnueabihf", "g++-arm-linux-gnueabihf"
+                }
 
                 # .NET Core required runtime libraries
                 $Deps += "libunwind8"
@@ -1837,7 +1864,8 @@ function Start-CrossGen {
                      "win10-x64",
                      "osx.10.12-x64",
                      "opensuse.13.2-x64",
-                     "opensuse.42.1-x64")]
+                     "opensuse.42.1-x64",
+                     "linux-arm")]
         [string]
         $Runtime
     )
@@ -1894,6 +1922,8 @@ function Start-CrossGen {
         } else {
             "win-x64"
         }
+    } elseif ($Runtime -eq "linux-arm") {
+        throw "crossgen is not available for 'linux-arm'"
     } elseif ($Environment.IsLinux) {
         "linux-x64"
     } elseif ($Environment.IsMacOS) {

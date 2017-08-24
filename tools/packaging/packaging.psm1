@@ -19,13 +19,13 @@ function Start-PSPackage {
         [string]$Name = "powershell",
 
         # Ubuntu, CentOS, Fedora, macOS, and Windows packages are supported
-        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg")]
+        [ValidateSet("deb", "osxpkg", "rpm", "msi", "zip", "AppImage", "nupkg", "deb-arm")]
         [string[]]$Type,
 
         # Generate windows downlevel package
         [ValidateSet("win7-x86", "win7-x64")]
         [ValidateScript({$Environment.IsWindows})]
-        [string]$WindowsRuntime,
+        [string] $WindowsRuntime,
 
         [Switch] $Force,
 
@@ -34,9 +34,15 @@ function Start-PSPackage {
         [Switch] $SkipReleaseChecks
     )
 
+    $Script:Options = Get-PSOptions
+
     # Runtime and Configuration settings required by the package
     ($Runtime, $Configuration) = if ($WindowsRuntime) {
         $WindowsRuntime, "Release"
+    } elseif ($Type -eq "deb-arm") {
+        New-PSOptions -Configuration "Release" -Runtime "Linux-ARM" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
+        # CrossGen isn't supported on ARM yet, so just let the check pass
+        $Script:Options.CrossGen = $true
     } else {
         New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
     }
@@ -50,8 +56,6 @@ function Start-PSPackage {
     }
 
     log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
-
-    $Script:Options = Get-PSOptions
 
     $crossGenCorrect = $false
     if(-not $IncludeSymbols.IsPresent -and $Script:Options.CrossGen) {
