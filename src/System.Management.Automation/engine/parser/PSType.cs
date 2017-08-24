@@ -1118,13 +1118,17 @@ namespace System.Management.Automation.Language
                                       : rootAst.Extent.File
                                       .Replace('\\', (char)0x29f9)
                                       .Replace('/', (char)0x29f9)
-                                      .Replace(',', (char)0x201a)
                                       .Replace(':', (char)0x0589));
 
-            var assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName),
+            // We can not use 'AssemblyName(string assemblyName)' constructor because it is trying to parse the assembly name
+            // as 'Name <,Culture = CultureInfo> <,Version = Major.Minor.Build.Revision> <, StrongName> <,PublicKeyToken> '\0''
+            // See notes in https://msdn.microsoft.com/en-us/library/system.reflection.assemblyname(v=vs.110).aspx
+            var assemblyObj = new AssemblyName();
+            assemblyObj.Name = assemblyName;
+
+            var assembly = AssemblyBuilder.DefineDynamicAssembly(assemblyObj,
                                                                  AssemblyBuilderAccess.RunAndCollect, GetAssemblyAttributeBuilders());
             var module = assembly.DefineDynamicModule(assemblyName);
-
             var defineTypeHelpers = new List<DefineTypeHelper>();
             var defineEnumHelpers = new List<DefineEnumHelper>();
 
@@ -1172,7 +1176,7 @@ namespace System.Management.Automation.Language
 
                         SessionStateKeeper sessionStateKeeper = new SessionStateKeeper();
                         helperType.GetField(s_sessionStateKeeperFieldName, BindingFlags.NonPublic | BindingFlags.Static).SetValue(null, sessionStateKeeper);
-                        
+
                         if (helper._fieldsToInitForMemberFunctions != null)
                         {
                             foreach (var tuple in helper._fieldsToInitForMemberFunctions)
