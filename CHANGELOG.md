@@ -4,7 +4,7 @@
 
 ### Breaking change
 
-* Make invalid argument error messages for -File and -Command consitent and make exit codes consistent with Unix standards (#4573)
+* Make invalid argument error messages for -File and -Command consistent and make exit codes consistent with Unix standards (#4573)
 
 ### Engine updates and fixes
 
@@ -43,7 +43,7 @@
 * Remove hash validation from nanoserver-insider Docker file, due to frequent changes. (#4498)
 * Update to make Travis-CI daily build badge more reliable. (#4522)
 * Remove unused build files, build code, and product code. (#4532, #4580, #4590, #4589, #4588, #4587, #4586, #4583, #4582, #4581)
-* Add additonal acceptance tests for PowerShellGet. (#4531)
+* Add additional acceptance tests for PowerShellGet. (#4531)
 * Only publish a NuGet of the full PowerShell core package on daily builds and not merge. (#4517)
 * Update nanoserver-insider Docker file due to breaking changes in the base image. (#4555)
 * Cleanup engine tests (#4551)
