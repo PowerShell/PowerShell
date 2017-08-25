@@ -5862,7 +5862,7 @@ namespace System.Management.Automation.Language
                 (value.Value is PSObject && (PSObject.Base(value.Value) != value.Value)))
             {
                 Object baseObject = PSObject.Base(target.Value);
-                if ((baseObject != null) && Utils.IsComObject(baseObject))
+                if (baseObject != null && Utils.IsComObject(baseObject))
                 {
                     // We unwrap only if the 'base' of 'target' is a COM object. It's unnecessary to unwrap in other cases,
                     // especially in the case that 'target' is a string, we would lose instance members on the PSObject.
@@ -6383,7 +6383,7 @@ namespace System.Management.Automation.Language
                 args.Any(mo => mo.Value is PSObject && (PSObject.Base(mo.Value) != mo.Value)))
             {
                 Object baseObject = PSObject.Base(target.Value);
-                if ((baseObject != null) && Utils.IsComObject(baseObject))
+                if (baseObject != null && Utils.IsComObject(baseObject))
                 {
                     // We unwrap only if the 'base' of 'target' is a COM object. It's unnecessary to unwrap in other cases,
                     // especially in the case that 'target' is a string, we would lose instance members on the PSObject.
