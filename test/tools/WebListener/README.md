@@ -1,9 +1,6 @@
-# HTTPS Listener
+# WebListener App
 
-ASP.NET Core 2.0 app for testing HTTP and HTTPS Requests.
-The included SelF-Signed Certificate `ServerCert.pfx` has the password set to `password` and is issued for the Client and Server Authentication key usages. This certificate is used by the ASP.NET Kestrel server for SSL/TLS. The included SelF-Signed Certificate `ClientCert.pfx` has the password set to `password` and has not been issued for any specific key usage.
-
-The default page will return a list of available tests.
+ASP.NET Core 2.0 app for testing HTTP and HTTPS Requests. The default page will return a list of available tests.
 
 # Run with `dotnet`
 
@@ -14,7 +11,7 @@ cd bin
 dotnet WebListener.dll ServerCert.pfx password 8083 8084
 ```
 
-The test site can then be accessed via `https://localhost:8084/`.  
+The test site can then be accessed via `http://localhost:8083/` or `https://localhost:8084/`.  
 
 The `WebListener.dll` takes 4 arguments: 
 
@@ -23,6 +20,13 @@ The `WebListener.dll` takes 4 arguments:
 * The TCP Port to bind on for HTTP
 * The TCP Port to bind on for HTTPS
 
+# Run With WebListener Module
+
+```powershell
+Import-Module .\build.psm1
+Publish-PSTestTools
+$Listener = Start-WebListener -HttpPort 8083 -HttpsPort 8084
+```
 
 # Tests
 

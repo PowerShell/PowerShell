@@ -10,7 +10,6 @@ Class WebListener
     {
         return $This.Job.JobStateInfo.State
     }
-
 }
 
 [WebListener]$WebListener
@@ -54,12 +53,12 @@ function Start-WebListener
         $serverPfxPassword   = 'password'
         $initCompleteMessage = 'Now listening on'
         
-        
+        $serverPfxPath = Join-Path $MyInvocation.MyCommand.Module.ModuleBase $serverPfx
         $timeOut = (get-date).AddSeconds($initTimeoutSeconds)
         $Job = Start-Job {
             $path = Split-Path -parent (get-command WebListener).Path
             Push-Location $path
-            dotnet $using:appDll $using:serverPfx $using:serverPfxPassword $using:HttpPort $using:HttpsPort
+            dotnet $using:appDll $using:serverPfxPath $using:serverPfxPassword $using:HttpPort $using:HttpsPort
         }
         $Script:WebListener = [WebListener]@{
             HttpPort  = $HttpPort 
