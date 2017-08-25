@@ -103,8 +103,7 @@ function Get-WebListenerClientCertificate {
     [OutputType([System.Security.Cryptography.X509Certificates.X509Certificate2])]
     param()
     process {
-        $parentPath = Split-Path -parent (get-command WebListener).Path
-        $pfxPath = Join-Path $parentPath 'ClientCert.pfx'
+        $pfxPath = Join-Path $MyInvocation.MyCommand.Module.ModuleBase 'ClientCert.pfx'
         [System.Security.Cryptography.X509Certificates.X509Certificate2]::new($pfxPath,'password')
     }
 }

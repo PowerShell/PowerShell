@@ -11,7 +11,7 @@ namespace mvc.Controllers
 {
     public class CertController : Controller
     {
-        public ActionResult Index()
+        public JsonResult Index()
         {
             // X509Certificate2 objects do not serialize as JSON. Create a HashTable instead
             Hashtable output = new Hashtable 
