@@ -3,6 +3,17 @@ $wixProductFile = Join-Path $thisTestFolder "..\..\..\assets\Product.wxs"
 
 Describe "Windows Installer" -Tags "Scenario" {
 
+    BeforeAll {
+        $originalDefaultParameterValues = $PSDefaultParameterValues.Clone()
+        if ( ! $IsWindows ) {
+            $PSDefaultParameterValues["it:skip"] = $true
+        }
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $originalDefaultParameterValues
+    }
+
     Context "Universal C Runtime Download Link" {
         $universalCRuntimeDownloadLink = 'https://www.microsoft.com/download/details.aspx?id=50410'
         It "Wix file should have download link about Universal C runtime" {
@@ -15,7 +26,7 @@ Describe "Windows Installer" -Tags "Scenario" {
 
     Context "Visual Studio C++ Redistributables Link" {
         $visualStudioCPlusPlusRedistributablesDownloadLink = 'https://www.microsoft.com/download/details.aspx?id=48145'
-        It "WiX file should have documentation about Visual Studio C++ redistributables" {
+        It "WiX file should have documentation about Visual Studio C++ redistributables" -Pending {
            (Get-Content $wixProductFile -Raw).Contains($visualStudioCPlusPlusRedistributablesDownloadLink) | Should Be $true
         }
         It "Should have download link about Universal C runtime that is reachable" {
