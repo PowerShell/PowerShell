@@ -634,7 +634,8 @@ namespace System.Management.Automation.Language
                 // EnumerableOps.NonEnumerableObjectEnumerator for more comments on how this works.
 
                 var bindingRestrictions = BindingRestrictions.GetExpressionRestriction(
-                    Expression.Call(CachedReflectionInfo.Utils_IsComObject, target.Expression));
+                    Expression.Call(CachedReflectionInfo.Utils_IsComObject,
+                                    Expression.Call(CachedReflectionInfo.PSObject_Base, target.Expression)));
                 return new DynamicMetaObject(
                     Expression.Call(CachedReflectionInfo.EnumerableOps_GetCOMEnumerator, target.Expression), bindingRestrictions).WriteToDebugLog(this);
             }

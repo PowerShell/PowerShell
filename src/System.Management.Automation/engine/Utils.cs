@@ -1471,6 +1471,18 @@ namespace System.Management.Automation
         private static readonly Type ComObjectType = typeof(object).Assembly.GetType("System.__ComObject");
 #endif
 
+        internal static bool IsComObject(PSObject psObject)
+        {
+#if UNIX
+            return false;
+#else
+            if (psObject == null) { return false; }
+
+            object obj = PSObject.Base(psObject);
+            return IsComObject(obj);
+#endif
+        }
+
         internal static bool IsComObject(object obj)
         {
 #if UNIX
@@ -1490,7 +1502,6 @@ namespace System.Management.Automation
             // and the results are:
             //    excelApp type: Microsoft.Office.Interop.Excel.ApplicationClass
             //    Is __ComObject assignable from? True
-            obj = PSObject.Base(obj);
             return obj != null && ComObjectType.IsAssignableFrom(obj.GetType());
 #endif
         }
