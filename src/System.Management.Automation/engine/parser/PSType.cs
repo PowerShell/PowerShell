@@ -1119,6 +1119,10 @@ namespace System.Management.Automation.Language
                                       .Replace('\\', (char)0x29f9)
                                       .Replace('/', (char)0x29f9)
                                       .Replace(',', (char)0x201a)
+                                      .Replace('\'', (char)0x2019)
+                                      .Replace('"', (char)0x201d)
+                                      .Replace('=', (char)0xff1d)
+                                      .Replace('~', (char)0x223c)
                                       .Replace(':', (char)0x0589));
 
             var assembly = AssemblyBuilder.DefineDynamicAssembly(new AssemblyName(assemblyName),
