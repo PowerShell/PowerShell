@@ -796,7 +796,7 @@ function Publish-PSTestTools {
 }
 
 function Start-PSPester {
-    [CmdletBinding()]
+    [CmdletBinding(DefaultParameterSetName='default')]
     param(
         [string]$OutputFormat = "NUnitXml",
         [string]$OutputFile = "pester-tests.xml",
@@ -807,8 +807,10 @@ function Start-PSPester {
         [string]$binDir = (Split-Path (New-PSOptions).Output),
         [string]$powershell = (Join-Path $binDir 'powershell'),
         [string]$Pester = ([IO.Path]::Combine($binDir, "Modules", "Pester")),
+        [Parameter(ParameterSetName='Unelevate',Mandatory=$true)]
         [switch]$Unelevate,
         [switch]$Quiet,
+        [Parameter(ParameterSetName='PassThru',Mandatory=$true)]
         [switch]$PassThru
     )
 
@@ -839,7 +841,7 @@ function Start-PSPester {
     }
 
     Write-Verbose "Running pester tests at '$path' with tag '$($Tag -join ''', ''')' and ExcludeTag '$($ExcludeTag -join ''', ''')'" -Verbose
-    Publish-PSTestTools
+    Publish-PSTestTools | ForEach-Object {Write-Host $_}
 
     # All concatenated commands/arguments are suffixed with the delimiter (space)
     $Command = ""
@@ -914,7 +916,24 @@ function Start-PSPester {
         }
         else
         {
-            & $powershell -noprofile -c $Command
+            if ($PassThru.IsPresent)
+            {
+                $passThruFile = [System.IO.Path]::GetTempFileName()
+                try 
+                {
+                    $Command += "|Export-Clixml -Path '$passThruFile' -Force"
+                    Start-NativeExecution -sb {& $powershell -noprofile -c $Command} | ForEach-Object { Write-Host $_}
+                    Import-Clixml -Path $passThruFile | Where-Object {$_.TotalCount -is [Int32]}
+                }
+                finally
+                {
+                    Remove-Item $passThruFile -ErrorAction SilentlyContinue
+                }
+            }
+            else 
+            {
+                Start-NativeExecution -sb {& $powershell -noprofile -c $Command}
+            }
         }
     } finally {
         $env:PSModulePath = $originalModulePath
@@ -946,13 +965,40 @@ function script:Start-UnelevatedProcess
 
 function Show-PSPesterError
 {
-    param ( [Xml.XmlElement]$testFailure )
-    logerror ("Description: " + $testFailure.description)
-    logerror ("Name:        " + $testFailure.name)
+    [CmdletBinding(DefaultParameterSetName='xml')]
+    param ( 
+        [Parameter(ParameterSetName='xml',Mandatory)]
+        [Xml.XmlElement]$testFailure,
+        [Parameter(ParameterSetName='object',Mandatory)]
+        [PSCustomObject]$testFailureObject
+        )
+    
+    if ($PSCmdLet.ParameterSetName -eq 'xml')
+    {
+        $description = $testFailure.description
+        $name = $testFailure.name
+        $message = $testFailure.failure.message
+        $stackTrace = $testFailure.failure."stack-trace"
+    }
+    elseif ($PSCmdLet.ParameterSetName -eq 'object')
+    {
+        $description = $testFailureObject.Describe + '/' + $testFailureObject.Context
+        $name = $testFailureObject.Name
+        $message = $testFailureObject.FailureMessage
+        $stackTrace = $testFailureObject.StackTrace
+    }
+    else
+    {
+        throw 'Unknown Show-PSPester parameter set'
+    }
+
+    logerror ("Description: " + $description)
+    logerror ("Name:        " + $name)
     logerror "message:"
-    logerror $testFailure.failure.message
+    logerror $message
     logerror "stack-trace:"
-    logerror $testFailure.failure."stack-trace"
+    logerror $stackTrace
+
 }
 
 #
@@ -960,32 +1006,56 @@ function Show-PSPesterError
 # Throw if a test failed
 function Test-PSPesterResults
 {
+    [CmdletBinding(DefaultParameterSetName='file')]
     param(
+        [Parameter(ParameterSetName='file')]
         [string]$TestResultsFile = "pester-tests.xml",
-        [string]$TestArea = 'test/powershell'
-    )
+        [Parameter(ParameterSetName='file')]
+        [string]$TestArea = 'test/powershell',
+        [Parameter(ParameterSetName='PesterPassThruObject',Mandatory)]
+        [pscustomobject] $ResultObject
+        )
 
-    if(!(Test-Path $TestResultsFile))
+    if($PSCmdLet.ParameterSetName -eq 'file')
     {
-        throw "Test result file '$testResultsFile' not found for $TestArea."
-    }
-
-    $x = [xml](Get-Content -raw $testResultsFile)
-    if ([int]$x.'test-results'.failures -gt 0)
-    {
-        logerror "TEST FAILURES"
-        # switch between methods, SelectNode is not available on dotnet core
-        if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] ) {
-            $failures = [System.Xml.XmlDocumentXPathExtensions]::SelectNodes($x."test-results",'.//test-case[@result = "Failure"]')
-        }
-        else {
-            $failures = $x.SelectNodes('.//test-case[@result = "Failure"]')
-        }
-        foreach ( $testfail in $failures )
+        if(!(Test-Path $TestResultsFile))
         {
-            Show-PSPesterError $testfail
+            throw "Test result file '$testResultsFile' not found for $TestArea."
         }
-        throw "$($x.'test-results'.failures) tests in $TestArea failed"
+
+        $x = [xml](Get-Content -raw $testResultsFile)
+        if ([int]$x.'test-results'.failures -gt 0)
+        {
+            logerror "TEST FAILURES"
+            # switch between methods, SelectNode is not available on dotnet core
+            if ( "System.Xml.XmlDocumentXPathExtensions" -as [Type] ) 
+            {
+                $failures = [System.Xml.XmlDocumentXPathExtensions]::SelectNodes($x."test-results",'.//test-case[@result = "Failure"]')
+            }
+            else 
+            {
+                $failures = $x.SelectNodes('.//test-case[@result = "Failure"]')
+            }
+            foreach ( $testfail in $failures )
+            {
+                Show-PSPesterError -testFailure $testfail
+            }
+            throw "$($x.'test-results'.failures) tests in $TestArea failed"
+        }
+    }
+    elseif ($PSCmdLet.ParameterSetName -eq 'PesterPassThruObject')
+    {
+        if ($ResultObject.TotalCount -le 0)
+        {
+            logerror 'NO TESTS RUN'
+        }
+        elseif ($ResultObject.FailedCount -gt 0)
+        {
+            logerror 'TEST FAILURES'
+            $ResultObject.TestResult | Where-Object {$_.Passed -eq $false} | ForEach-Object {
+                Show-PSPesterError -testFailureObject $_
+            }
+        }
     }
 }
 

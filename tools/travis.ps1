@@ -149,7 +149,10 @@ else
         $ProgressPreference = $originalProgressPreference    
     }
 
-    $pesterParam = @{ 'binDir' = $output }
+    $pesterParam = @{ 
+        'binDir'   = $output 
+        'PassThru' = $true
+    }
 
     if ($isFullBuild) {
         $pesterParam['Tag'] = @('CI','Feature','Scenario')
@@ -165,7 +168,7 @@ else
         Remove-Item -force ${telemetrySemaphoreFilepath}
     }
 
-    Start-PSPester @pesterParam
+    $pesterPassThruObject = Start-PSPester @pesterParam
 
     if (-not $isPr) {
         # Run 'CrossGen' for push commit, so that we can generate package.
@@ -197,7 +200,7 @@ else
 
         try {
             # this throws if there was an error
-            Test-PSPesterResults
+            Test-PSPesterResults -ResultObject $pesterPassThruObject
             $result = "PASS"
         }
         catch {
