@@ -443,25 +443,30 @@ namespace Microsoft.PowerShell.Commands
                 }
                 if(_metaSpecified)
                 {
+                    List<string> useditems = new List<string>();
                     foreach(string s in _meta.Keys)
                     {
-                        switch(s){
-                            case "content-type":
-                            case "default-style":
-                                WriteObject("<meta http-equiv=\"" + s + "\" content=\"" + _meta[s] + "\">");
-                                break;
-                            case "application-name":
-                            case "author":
-                            case "description":
-                            case "generator":
-                            case "keywords":
-                            case "viewport":
-                                WriteObject("<meta name=\"" + s + "\" content=\"" + _meta[s] + "\">");
-                                break;
-                            default:
-                                Exception exc = new NotSupportedException(StringUtil.Format(ConvertHTMLStrings.MetaPropertyNotFound, s));
-                                ThrowTerminatingError (new ErrorRecord(exc, "MetaPropertyNotFound", ErrorCategory.ParserError, null));
-                                break;
+                        if(!useditems.Contains(s)){
+                            switch(s.ToLower()){
+                                case "content-type":
+                                case "default-style":
+                                case "x-ua-compatible":
+                                    WriteObject("<meta http-equiv=\"" + s + "\" content=\"" + _meta[s] + "\">");
+                                    break;
+                                case "application-name":
+                                case "author":
+                                case "description":
+                                case "generator":
+                                case "keywords":
+                                case "viewport":
+                                    WriteObject("<meta name=\"" + s + "\" content=\"" + _meta[s] + "\">");
+                                    break;
+                                default:
+                                    Exception exc = new NotSupportedException(StringUtil.Format(ConvertHTMLStrings.MetaPropertyNotFound, s));
+                                    ThrowTerminatingError (new ErrorRecord(exc, "MetaPropertyNotFound", ErrorCategory.ParserError, null));
+                                    break;
+                            }
+                            useditems.Add(s);
                         }
                     }
                 }

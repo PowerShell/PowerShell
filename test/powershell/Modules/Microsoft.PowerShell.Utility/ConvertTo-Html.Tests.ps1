@@ -137,7 +137,7 @@ After the object
     }
 
     It "Test ConvertTo-HTML meta with invalid properties should throw"{
-        { ($customObject | ConvertTo-HTML -Meta @{"authors"="John Doe";"keyword"="PowerShell,PSv6"}) -join $newLine } | Should Throw
+        { ($customObject | ConvertTo-HTML -Meta @{"authors"="John Doe";"keyword"="PowerShell,PSv6"}) -join $newLine } | Should Throw "authors is not a supported meta property. Accepted meta properties are content-type, default-style, application-name, author, description, generator, keywords, x-ua-compatible, and viewport."
     }
 
     It "Test ConvertTo-HTML charset"{
@@ -160,21 +160,8 @@ After the object
     }
 
     It "Test ConvertTo-HTML transitional"{
-        $returnString = ($customObject | ConvertTo-HTML -Transitional) -join $newLine
-        $expectedValue = normalizeLineEnds @"
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>HTML TABLE</title>
-</head><body>
-<table>
-<colgroup><col/><col/><col/></colgroup>
-<tr><th>Name</th><th>Age</th><th>Friends</th></tr>
-<tr><td>John Doe</td><td>42</td><td>System.Object[]</td></tr>
-</table>
-</body></html>
-"@
-        $returnString | Should Be $expectedValue
+        $returnString = $customObject | ConvertTo-HTML -Transitional | Select-Object -First 1
+        $returnString | Should Be '<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">'
     }
 }
 
