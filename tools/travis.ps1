@@ -29,6 +29,8 @@ function Get-DailyBadge
 #
 # the best way to do this would be if travis-ci supported a webcall to get
 # the status of cron_job builds, but it doesn't, so we have this
+# also, since we can have a build on Linux which succeeds and one on OSX which
+# doesn't we'll set the appropriate badge so the the README can pick it up
 function Set-DailyBuildBadge
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
@@ -40,7 +42,8 @@ function Set-DailyBuildBadge
     $storageAccountKey = $Env:TestResultAccountKey
 
     # this is the url referenced in README.MD which displays the badge
-    $Url = "https://jimtru1979.blob.core.windows.net/badges/DailyBuildStatus.svg"
+    $platform = if ( $IsOSX ) { "OSX" } else { "Linux" }
+    $Url = "https://jimtru1979.blob.core.windows.net/badges/DailyBuildStatus.${platform}.svg"
 
     $body = $content
     $bytes = ([System.Text.Encoding]::UTF8.GetBytes($body))
@@ -112,6 +115,8 @@ else
 # Run a full build if the build was trigger via cron, api or the commit message contains `[Feature]`
 $hasFeatureTag = $commitMessage -match '\[feature\]'
 $isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
+# only update the build badge for the cron job
+$cronBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron'
 $isFullBuild = $isDailyBuild -or $hasFeatureTag
 
 if($Bootstrap.IsPresent)
@@ -198,6 +203,7 @@ else
             }            
         }
 
+        # Determine whether the build passed
         try {
             # this throws if there was an error
             Test-PSPesterResults -ResultObject $pesterPassThruObject
@@ -207,8 +213,8 @@ else
             $resultError = $_
             $result = "FAIL"
         }
-        if ( $isDailyBuild ) {
-            # now update the badge if you've done a full build, these are not fatal issues
+        # update the badge if you've done a cron build, these are not fatal issues
+        if ( $cronBuild ) {
             try {
                 $svgData = Get-DailyBadge -result $result
                 if ( ! $svgData ) {
