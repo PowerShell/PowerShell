@@ -450,7 +450,7 @@ namespace Microsoft.PowerShell.Commands
             return DecodeStream(stream, ref encoding);
         }
 
-        static bool TryGetEncoding(string characterSet, out Encoding encoding)
+        internal static bool TryGetEncoding(string characterSet, out Encoding encoding)
         {
             bool result = false;
             try
