@@ -290,6 +290,7 @@ namespace System.Management.Automation
                 FullName = fullName;
                 _name = name;
 
+                // TODO: move this to startup json file instead of using env var
                 string tracingEnvVar = Environment.GetEnvironmentVariable("MshEnableTrace");
 
                 if (String.Equals(
