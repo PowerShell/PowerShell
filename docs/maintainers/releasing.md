@@ -160,20 +160,15 @@ On Windows, the `-Runtime` parameter should be specified for `Start-PSBuild` to 
 # Install dependencies
 Start-PSBootstrap -Package
 
-# Build for v6.0.0-beta.1 release targeting Windows 10 and Server 2016
-Start-PSBuild -Clean -CrossGen -PSModuleRestore -Runtime win10-x64 -Configuration Release -ReleaseTag v6.0.0-beta.1
+# Build for v6.0.0-beta.1 release targeting Windows universal package, set -Runtime to win7-x64
+Start-PSBuild -Clean -CrossGen -PSModuleRestore -Runtime win7-x64 -Configuration Release -ReleaseTag v6.0.0-beta.1
 ```
 
-If the package is targeting a downlevel Windows (not Windows 10 or Server 2016),
-the `-WindowsDownLevel` parameter should be specified for `Start-PSPackage`.
-Otherwise, the `-WindowsDownLevel` parameter should be left out.
-
 ```powershell
-# Create packages for v6.0.0-beta.1 release targeting Windows 10 and Server 2016.
-# When creating packages for downlevel Windows, such as Windows 8.1 or Server 2012R2,
-# the parameter '-WindowsDownLevel' must be specified.
-Start-PSPackage -Type msi -ReleaseTag v6.0.0-beta.1 <# -WindowsDownLevel win81-x64 #>
-Start-PSPackage -Type zip -ReleaseTag v6.0.0-beta.1 <# -WindowsDownLevel win81-x64 #>
+# Create packages for v6.0.0-beta.1 release targeting Windows universal package.
+# 'win7-x64' / 'win7-x86' should be used for -WindowsRuntime.
+Start-PSPackage -Type msi -ReleaseTag v6.0.0-beta.1 -WindowsRuntime 'win7-x64'
+Start-PSPackage -Type zip -ReleaseTag v6.0.0-beta.1 -WindowsRuntime 'win7-x64'
 ```
 
 ## NuGet Packages

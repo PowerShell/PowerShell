@@ -23,9 +23,9 @@ function Start-PSPackage {
         [string[]]$Type,
 
         # Generate windows downlevel package
-        [ValidateSet("win81-x64", "win7-x86", "win7-x64")]
+        [ValidateSet("win7-x86", "win7-x64")]
         [ValidateScript({$Environment.IsWindows})]
-        [string]$WindowsDownLevel,
+        [string]$WindowsRuntime,
 
         [Switch] $Force,
 
@@ -35,11 +35,20 @@ function Start-PSPackage {
     )
 
     # Runtime and Configuration settings required by the package
-    ($Runtime, $Configuration) = if ($WindowsDownLevel) {
-        $WindowsDownLevel, "Release"
+    ($Runtime, $Configuration) = if ($WindowsRuntime) {
+        $WindowsRuntime, "Release"
     } else {
         New-PSOptions -Configuration "Release" -WarningAction SilentlyContinue | ForEach-Object { $_.Runtime, $_.Configuration }
     }
+
+    # We convert the runtime to win7-x64 or win7-x86 to build the universal windows package.
+    if($Environment.IsWindows) {
+        $Runtime = $Runtime -replace "win\d+", "win7"
+
+        # Build the name suffix for win-plat packages
+        $NameSuffix = $Runtime -replace 'win\d+', 'win'
+    }
+
     log "Packaging RID: '$Runtime'; Packaging Configuration: '$Configuration'"
 
     $Script:Options = Get-PSOptions
@@ -118,17 +127,6 @@ function Start-PSPackage {
         Write-Warning "-Type was not specified, continuing with $Type!"
     }
     log "Packaging Type: $Type"
-
-    # Build the name suffix for win-plat packages
-    if ($Environment.IsWindows) {
-        # Add the server name to the $RunTime. $runtime produced by dotnet is same for client or server
-        switch ($Runtime) {
-            'win81-x64' {$NameSuffix = 'win81-win2012r2-x64'}
-            'win10-x64' {$NameSuffix = 'win10-win2016-x64'}
-            'win7-x64'  {$NameSuffix = 'win7-win2008r2-x64'}
-            Default {$NameSuffix = $Runtime}
-        }
-    }
 
     # Add the symbols to the suffix 
     # if symbols are specified to be included
