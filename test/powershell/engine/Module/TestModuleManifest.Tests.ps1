@@ -217,3 +217,29 @@ Describe "Tests for circular references in required modules" -tags "CI" {
         { TestImportModule $false $false $true } | ShouldBeErrorId "Modules_InvalidManifest,Microsoft.PowerShell.Commands.ImportModuleCommand"
     }
 }
+
+Describe "Test-ModuleManifest Performance bug followup" -tags "CI" {
+    BeforeAll {
+        $TestModulesPath = [System.IO.Path]::Combine($PSScriptRoot, 'assets', 'testmodulerunspace')
+        $UserModulesPath = "$pshome\Modules"
+
+        # Install the Test Module
+        Copy-Item $TestModulesPath\* $UserModulesPath -Recurse -Force
+    }
+
+    It "Test-ModuleManifest should not load unnessary modules" {
+
+        $job = start-job -name "job1" -ScriptBlock {test-modulemanifest "$using:UserModulesPath\ModuleWithDependencies2\2.0\ModuleWithDependencies2.psd1" -verbose} | Wait-Job
+        
+        $verbose = $job.ChildJobs[0].Verbose.ReadAll()
+        # Before the fix, all modules under $pshome will be imported and will be far more than 15 verbose messages. However, we cannot fix the number in case verbose message may vary.
+        $verbose.Count | Should BeLessThan 15
+    }
+
+    AfterAll {
+        #clean up the test modules
+        Remove-Item $UserModulesPath\ModuleWithDependencies2 -Recurse -Force -ErrorAction SilentlyContinue
+        Remove-Item $UserModulesPath\NestedRequiredModule1 -Recurse -Force -ErrorAction SilentlyContinue
+    }
+}
+
