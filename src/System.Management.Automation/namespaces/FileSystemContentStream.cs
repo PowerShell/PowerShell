@@ -841,22 +841,26 @@ namespace Microsoft.PowerShell.Commands
 
             try
             {
+#if !UNIX
                 if (!String.IsNullOrEmpty(streamName))
                 {
                     _stream = AlternateDataStreamUtilities.CreateFileStream(filePath, streamName, fileMode, fileAccess, fileShare);
                 }
                 else
+#endif
                 {
                     _stream = new FileStream(filePath, fileMode, fileAccess, fileShare);
                 }
             }
             catch (IOException)
             {
+#if !UNIX
                 if (!String.IsNullOrEmpty(streamName))
                 {
                     _stream = AlternateDataStreamUtilities.CreateFileStream(filePath, streamName, fileMode, requestedAccess, fileShare);
                 }
                 else
+#endif
                 {
                     _stream = new FileStream(filePath, fileMode, requestedAccess, fileShare);
                 }

@@ -1304,7 +1304,9 @@ namespace Microsoft.PowerShell.Commands
                     fullPath,
                     file.RawFileData);
 
+#if !UNIX
                 AlternateDataStreamUtilities.SetZoneOfOrigin(fullPath, SecurityZone.Intranet);
+#endif
             }
 
             return relativePathsToCreatedFiles;
