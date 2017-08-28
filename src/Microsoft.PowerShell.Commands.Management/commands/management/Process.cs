@@ -677,7 +677,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 else if (Module.IsPresent)
                 {
-                    //if only modules are to be displayed 
+                    //if only modules are to be displayed
                     try
                     {
                         WriteObject(process.Modules, true);
@@ -800,7 +800,7 @@ namespace Microsoft.PowerShell.Commands
                 do
                 {
                     int error;
-                    if (!Win32Native.OpenProcessToken(ClrFacade.GetSafeProcessHandle(process), TOKEN_QUERY, out processTokenHandler)) { break; }
+                    if (!Win32Native.OpenProcessToken(process.Handle, TOKEN_QUERY, out processTokenHandler)) { break; }
 
                     // Set the default length to be 256, so it will be sufficient for most cases
                     int tokenInfoLength = 256;
@@ -821,7 +821,7 @@ namespace Microsoft.PowerShell.Commands
                         }
                     }
 
-                    var tokenUser = ClrFacade.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
+                    var tokenUser = Marshal.PtrToStructure<Win32Native.TOKEN_USER>(tokenUserInfo);
 
                     // Set the default length to be 256, so it will be sufficient for most cases
                     int userNameLength = 256, domainNameLength = 256;
@@ -1196,7 +1196,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         //Addition by v-ramch Mar 18 2008
-        //Added force parameter 
+        //Added force parameter
         /// <summary>
         /// Specifies whether to force a process to kill
         /// even if it has dependent services.
@@ -1235,7 +1235,7 @@ namespace Microsoft.PowerShell.Commands
 
                 try
                 {
-                    // Many properties including Name are not available if the process has exited.  
+                    // Many properties including Name are not available if the process has exited.
                     // If this is the case, we skip the process. If the process is from a remote
                     // machine, then we generate a non-terminating error because .NET doesn't support
                     // terminate a remote process.
@@ -1370,7 +1370,7 @@ namespace Microsoft.PowerShell.Commands
             IntPtr ph = IntPtr.Zero;
             try
             {
-                if (Win32Native.OpenProcessToken(ClrFacade.GetSafeProcessHandle(process), TOKEN_QUERY, out ph))
+                if (Win32Native.OpenProcessToken(process.Handle, TOKEN_QUERY, out ph))
                 {
                     if (_currentUserName == null)
                     {
@@ -1423,7 +1423,7 @@ namespace Microsoft.PowerShell.Commands
                         string serviceName = oService.CimInstanceProperties["Name"].Value.ToString();
                         using (var service = new System.ServiceProcess.ServiceController(serviceName))
                         {
-                            //try stopping the service, if cant we are not writing exception 
+                            //try stopping the service, if cant we are not writing exception
                             try
                             {
                                 service.Stop();
@@ -1665,18 +1665,6 @@ namespace Microsoft.PowerShell.Commands
         private ManualResetEvent _waithandle = null;
         private bool _isDefaultSetParameterSpecified = false;
 
-        private bool _useShellExecute;
-        private readonly bool _isOnFullWinSku;
-
-        /// <summary>
-        /// Constructor
-        /// </summary>
-        public StartProcessCommand()
-        {
-            _isOnFullWinSku = Platform.IsWindows && !Platform.IsNanoServer && !Platform.IsIoT;
-            _useShellExecute = _isOnFullWinSku;
-        }
-
         #region Parameters
 
         /// <summary>
@@ -1782,7 +1770,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Redirect input 
+        /// Redirect input
         /// </summary>
         [Parameter(ParameterSetName = "Default")]
         [Alias("RSI")]
@@ -1800,7 +1788,7 @@ namespace Microsoft.PowerShell.Commands
 
 
         /// <summary>
-        /// Redirect output 
+        /// Redirect output
         /// </summary>
         [Parameter(ParameterSetName = "Default")]
         [Alias("RSO")]
@@ -1820,7 +1808,7 @@ namespace Microsoft.PowerShell.Commands
         /// Verb
         /// </summary>
         /// <remarks>
-        /// The 'Verb' parameter is not supported in OneCore PowerShell 
+        /// The 'Verb' parameter is not supported in OneCore PowerShell
         /// because 'UseShellExecute' is not supported in CoreCLR.
         /// </remarks>
         [Parameter(ParameterSetName = "UseShellExecute")]
@@ -1877,7 +1865,7 @@ namespace Microsoft.PowerShell.Commands
             string message = string.Empty;
 
             // -Verb and -WindowStyle are not supported on non-Windows platforms as well as Windows headless SKUs
-            if (_isOnFullWinSku)
+            if (Platform.IsWindowsDesktop)
             {
                 // Parameters '-NoNewWindow' and '-WindowStyle' are both valid on full windows SKUs.
                 if (_nonewwindow && _windowstyleSpecified)
@@ -1908,6 +1896,8 @@ namespace Microsoft.PowerShell.Commands
 
             //create an instance of the ProcessStartInfo Class
             ProcessStartInfo startInfo = new ProcessStartInfo();
+            //use ShellExecute by default if we are running on full windows SKUs
+            startInfo.UseShellExecute = Platform.IsWindowsDesktop;
 
             //Path = Mandatory parameter -> Will not be empty.
             try
@@ -1959,7 +1949,6 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (_isDefaultSetParameterSpecified)
                 {
-                    _useShellExecute = false;
                     startInfo.UseShellExecute = false;
                 }
 
@@ -1970,10 +1959,10 @@ namespace Microsoft.PowerShell.Commands
                     LoadEnvironmentVariable(startInfo, Environment.GetEnvironmentVariables(EnvironmentVariableTarget.Machine));
                     LoadEnvironmentVariable(startInfo, Environment.GetEnvironmentVariables(EnvironmentVariableTarget.User));
                 }
-#if !CORECLR
+
                 //WindowStyle
                 startInfo.WindowStyle = _windowstyle;
-#endif
+
                 //NewWindow
                 if (_nonewwindow)
                 {
@@ -2054,7 +2043,6 @@ namespace Microsoft.PowerShell.Commands
                     }
                 }
             }
-#if !CORECLR // Properties 'Verb' and 'WindowStyle' are missing in CoreCLR
             else if (ParameterSetName.Equals("UseShellExecute"))
             {
                 //Verb
@@ -2062,7 +2050,7 @@ namespace Microsoft.PowerShell.Commands
                 //WindowStyle
                 startInfo.WindowStyle = _windowstyle;
             }
-#endif
+
             //Starts the Process
             Process process = Start(startInfo);
 
@@ -2155,7 +2143,7 @@ namespace Microsoft.PowerShell.Commands
         #region Private Methods
 
         /// <summary>
-        /// When Process exits the wait handle is set. 
+        /// When Process exits the wait handle is set.
         /// </summary>
         private void myProcess_Exited(object sender, System.EventArgs e)
         {
@@ -2212,7 +2200,7 @@ namespace Microsoft.PowerShell.Commands
             return process;
 #else
             Process process = null;
-            if (_useShellExecute)
+            if (startInfo.UseShellExecute)
             {
                 process = StartWithShellExecute(startInfo);
             }
@@ -2449,7 +2437,7 @@ namespace Microsoft.PowerShell.Commands
                 {
                     lpStartupInfo.hStdError = new SafeFileHandle(ProcessNativeMethods.GetStdHandle(-12), false);
                 }
-                //STARTF_USESTDHANDLES 
+                //STARTF_USESTDHANDLES
                 lpStartupInfo.dwFlags = 0x100;
 
                 int creationFlags = 0;
@@ -2467,7 +2455,7 @@ namespace Microsoft.PowerShell.Commands
                     lpStartupInfo.dwFlags |= 0x00000001;
 
                     // On headless SKUs like NanoServer and IoT, window style can only be the default value 'Normal'.
-                    switch (WindowStyle)
+                    switch (startinfo.WindowStyle)
                     {
                         case ProcessWindowStyle.Normal:
                             //SW_SHOWNORMAL
@@ -2529,7 +2517,7 @@ namespace Microsoft.PowerShell.Commands
                             }
                             else if (error == 0x424)
                             {
-                                // The API 'CreateProcessWithLogonW' depends on the 'Secondary Logon' service, but the component 'Microsoft-Windows-SecondaryLogonService' 
+                                // The API 'CreateProcessWithLogonW' depends on the 'Secondary Logon' service, but the component 'Microsoft-Windows-SecondaryLogonService'
                                 // is not installed in OneCoreUAP. We will get error code 0x424 when the service is not available.
                                 message = StringUtil.Format(ProcessResources.ParameterNotSupported, "-Credential", "Start-Process");
                                 er = new ErrorRecord(new NotSupportedException(message), "NotSupportedException", ErrorCategory.NotInstalled, null);
@@ -2595,11 +2583,7 @@ namespace Microsoft.PowerShell.Commands
             Process result = null;
             try
             {
-#if CORECLR
-                result = ShellExecuteHelper.Start(startInfo, WindowStyle, Verb);
-#else
                 result = Process.Start(startInfo);
-#endif
             }
             catch (Win32Exception ex)
             {
@@ -2607,7 +2591,7 @@ namespace Microsoft.PowerShell.Commands
                 ErrorRecord er = new ErrorRecord(new InvalidOperationException(message), "InvalidOperationException", ErrorCategory.InvalidOperation, null);
                 ThrowTerminatingError(er);
             }
-            return result; 
+            return result;
         }
 #endif
         #endregion
@@ -2621,7 +2605,7 @@ namespace Microsoft.PowerShell.Commands
     internal class ProcessCollection
     {
         /// <summary>
-        /// JobObjectHandle is a reference to the job object used to track 
+        /// JobObjectHandle is a reference to the job object used to track
         /// the child processes created by the main process hosted by the Start-Process cmdlet.
         /// </summary>
         private Microsoft.PowerShell.Commands.SafeJobHandle _jobObjectHandle;
@@ -2636,7 +2620,7 @@ namespace Microsoft.PowerShell.Commands
         }
 
         /// <summary>
-        /// Start API assigns the process to the JobObject and starts monitoring 
+        /// Start API assigns the process to the JobObject and starts monitoring
         /// the child processes hosted by the process created by Start-Process cmdlet.
         /// </summary>
         internal bool AssignProcessToJobObject(Process process)
@@ -2688,8 +2672,8 @@ namespace Microsoft.PowerShell.Commands
     }
 
     /// <summary>
-    /// JOBOBJECT_BASIC_PROCESS_ID_LIST Contains the process identifier list for a job object. 
-    /// If the job is nested, the process identifier list consists of all 
+    /// JOBOBJECT_BASIC_PROCESS_ID_LIST Contains the process identifier list for a job object.
+    /// If the job is nested, the process identifier list consists of all
     /// processes associated with the job and its child jobs.
     /// </summary>
     [StructLayout(LayoutKind.Sequential)]
@@ -2701,14 +2685,14 @@ namespace Microsoft.PowerShell.Commands
         public uint NumberOfAssignedProcess;
 
         /// <summary>
-        /// The number of process identifiers returned in the ProcessIdList buffer. 
-        /// If this number is less than NumberOfAssignedProcesses, increase 
+        /// The number of process identifiers returned in the ProcessIdList buffer.
+        /// If this number is less than NumberOfAssignedProcesses, increase
         /// the size of the buffer to accommodate the complete list.
         /// </summary>
         public uint NumberOfProcessIdsInList;
 
         /// <summary>
-        /// A variable-length array of process identifiers returned by this call. 
+        /// A variable-length array of process identifiers returned by this call.
         /// Array elements 0 through NumberOfProcessIdsInList minus 1
         /// contain valid process identifiers.
         /// </summary>

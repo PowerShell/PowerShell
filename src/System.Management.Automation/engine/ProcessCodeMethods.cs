@@ -58,11 +58,8 @@ namespace Microsoft.PowerShell {
             Diagnostics.Assert(process != null, "Ensure process is not null before calling");
             PROCESS_BASIC_INFORMATION pbi;
             int size;
-#if CORECLR
-            var res = NtQueryInformationProcess(process.SafeHandle.DangerousGetHandle(), 0, out pbi, Marshal.SizeOf<PROCESS_BASIC_INFORMATION>(), out size);
-#else
             var res = NtQueryInformationProcess(process.Handle, 0, out pbi, Marshal.SizeOf<PROCESS_BASIC_INFORMATION>(), out size);
-#endif
+
             return res != 0 ? InvalidProcessId : pbi.InheritedFromUniqueProcessId.ToInt32();
         }
 

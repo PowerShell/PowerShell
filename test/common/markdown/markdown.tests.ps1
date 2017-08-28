@@ -75,8 +75,10 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
                 './*.md'
                 './docs/*.md'
                 './docs/installation/*.md'
+                './docs/maintainers/README.md'
                 './demos/SSHRemoting/*.md'
                 './docker/*.md'
+                './tools/*.md'
             )
             $filter = ($docsToTest -join ',')
             &"gulp" test-mdsyntax --silent `
@@ -102,21 +104,14 @@ Describe 'Common Tests - Validate Markdown Files' -Tag 'CI' {
 
         $mdIssuesPath | should exist
 
-        Get-Content -Path $mdIssuesPath | ForEach-Object -Process {
-            if ([string]::IsNullOrEmpty($_) -eq $false -and $_ -ne '--EMPTY--')
-            {
-                Write-Warning -Message $_
-                $mdErrors ++
-            }
-        }
-
+        [string] $markdownErrors = Get-Content -Path $mdIssuesPath
         Remove-Item -Path $mdIssuesPath -Force -ErrorAction SilentlyContinue
 
-        if($mdErrors -gt 0)
+        if ($markdownErrors -ne "--EMPTY--")
         {
-            Write-Warning 'See https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md for an explination of the error codes.'
+            $markdownErrors += ' (See https://github.com/DavidAnson/markdownlint/blob/master/doc/Rules.md for an explanation of the error codes)'
         }
 
-        $mdErrors | Should Be 0
+        $markdownErrors | Should BeExactly "--EMPTY--"
     }
 }

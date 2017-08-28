@@ -14,6 +14,7 @@ using Dbg = System.Management.Automation;
 using System.Management.Automation.Internal;
 #if CORECLR
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 #else
 using System.Collections.Specialized;
 using System.Web.Script.Serialization;
@@ -59,6 +60,15 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         [Parameter]
         public SwitchParameter Compress { get; set; }
+
+        /// <summary>
+        /// gets or sets the EnumsAsStrings property.
+        /// If the EnumsAsStrings property is set to true, enum values will
+        /// be converted to their string equivalent. Otherwise, enum values
+        /// will be converted to their numeric equivalent.
+        /// </summary>
+        [Parameter()]
+        public SwitchParameter EnumsAsStrings { get; set; }
 
         #endregion parameters
 
@@ -122,6 +132,10 @@ namespace Microsoft.PowerShell.Commands
                 object preprocessedObject = ProcessValue(objectToProcess, 0);
 #if CORECLR
                 JsonSerializerSettings jsonSettings = new JsonSerializerSettings { TypeNameHandling = TypeNameHandling.None, MaxDepth = 1024 };
+                if (EnumsAsStrings)
+                {
+                    jsonSettings.Converters.Add(new StringEnumConverter());
+                }
                 if (!Compress)
                 {
                     jsonSettings.Formatting = Formatting.Indented;

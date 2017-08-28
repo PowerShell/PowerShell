@@ -169,6 +169,30 @@ namespace Microsoft.PowerShell
 
     internal class CommandLineParameterParser
     {
+        internal static string[] validParameters = {
+            "psconsoleFile",
+            "version",
+            "nologo",
+            "noexit",
+#if !CORECLR
+            "sta",
+            "mta",
+#endif
+            "noprofile",
+            "noninteractive",
+            "inputformat",
+            "outputformat",
+#if !UNIX
+            "windowstyle",
+#endif
+            "encodedcommand",
+            "configurationname",
+            "file",
+            "executionpolicy",
+            "command",
+            "help"
+        };
+
         internal CommandLineParameterParser(PSHostUserInterface hostUI, string bannerText, string helpText)
         {
             if (hostUI == null) { throw new PSArgumentNullException("hostUI"); }
@@ -593,7 +617,7 @@ namespace Microsoft.PowerShell
                         break;
                     }
                 }
-#if !CORECLR  // windowstyle parameter not supported on NanoServer because ProcessWindowStyle does Not exist on CoreCLR
+#if !UNIX
                 else if (MatchSwitch(switchKey, "windowstyle", "w"))
                 {
                     ++i;
@@ -657,7 +681,7 @@ namespace Microsoft.PowerShell
                         WriteCommandLineError(
                             "The -module option can only be specified with the -iss option.",
                             showHelp: true,
-                            showBanner: true);
+                            showBanner: false);
                         break;
                     }
 
@@ -858,13 +882,29 @@ namespace Microsoft.PowerShell
             // of the script to evaluate. If -file comes before -command, it will
             // treat -command as an argument to the script...
 
+            bool TryGetBoolValue(string arg, out bool boolValue)
+            {
+                if (arg.Equals("$true", StringComparison.OrdinalIgnoreCase) || arg.Equals("true", StringComparison.OrdinalIgnoreCase))
+                {
+                    boolValue = true;
+                    return true;
+                }
+                else if (arg.Equals("$false", StringComparison.OrdinalIgnoreCase) || arg.Equals("false", StringComparison.OrdinalIgnoreCase))
+                {
+                    boolValue = false;
+                    return true;
+                }
+                boolValue = false;
+                return false;
+            }
+
             ++i;
             if (i >= args.Length)
             {
                 WriteCommandLineError(
                     CommandLineParameterParserStrings.MissingFileArgument,
                     showHelp: true,
-                    showBanner: true);
+                    showBanner: false);
                 return false;
             }
 
@@ -908,21 +948,41 @@ namespace Microsoft.PowerShell
                 {
                     WriteCommandLineError(
                         string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidFileArgument, args[i], exceptionMessage),
-                        showBanner: true);
+                        showBanner: false);
                     return false;
                 }
 
                 if (!System.IO.File.Exists(_file))
                 {
+                    if (args[i].StartsWith("-") && args[i].Length > 1)
+                    {
+                        string param = args[i].Substring(1, args[i].Length - 1).ToLower();
+                        StringBuilder possibleParameters = new StringBuilder();
+                        foreach (string validParameter in validParameters)
+                        {
+                            if (validParameter.Contains(param))
+                            {
+                                possibleParameters.Append("\n  -");
+                                possibleParameters.Append(validParameter);
+                            }
+                        }
+                        if (possibleParameters.Length > 0)
+                        {
+                            WriteCommandLineError(
+                                string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.InvalidArgument, args[i]),
+                                showBanner: false);
+                            WriteCommandLineError(possibleParameters.ToString(), showBanner: false);
+                            return false;
+                        }
+                    }
                     WriteCommandLineError(
                         string.Format(CultureInfo.CurrentCulture, CommandLineParameterParserStrings.ArgumentFileDoesNotExist, args[i]),
-                        showBanner: true);
+                        showBanner: false);
                     return false;
                 }
 
                 i++;
 
-                Regex argPattern = new Regex(@"^.\w+\:", RegexOptions.CultureInvariant);
                 string pendingParameter = null;
 
                 // Accumulate the arguments to this script...
@@ -939,17 +999,25 @@ namespace Microsoft.PowerShell
                     }
                     else if (!string.IsNullOrEmpty(arg) && SpecialCharacters.IsDash(arg[0]))
                     {
-                        Match m = argPattern.Match(arg);
-                        if (m.Success)
+                        int offset = arg.IndexOf(':');
+                        if (offset >= 0)
                         {
-                            int offset = arg.IndexOf(':');
                             if (offset == arg.Length - 1)
                             {
                                 pendingParameter = arg.TrimEnd(':');
                             }
                             else
                             {
-                                _collectedArgs.Add(new CommandParameter(arg.Substring(0, offset), arg.Substring(offset + 1)));
+                                string argValue = arg.Substring(offset + 1);
+                                string argName = arg.Substring(0, offset);
+                                if (TryGetBoolValue(argValue, out bool boolValue))
+                                {
+                                        _collectedArgs.Add(new CommandParameter(argName, boolValue));
+                                }
+                                else
+                                {
+                                        _collectedArgs.Add(new CommandParameter(argName, argValue));
+                                }
                             }
                         }
                         else

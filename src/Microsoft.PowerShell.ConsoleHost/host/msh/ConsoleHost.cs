@@ -28,7 +28,9 @@ using Dbg = System.Management.Automation.Diagnostics;
 using ConsoleHandle = Microsoft.Win32.SafeHandles.SafeFileHandle;
 using NakedWin32Handle = System.IntPtr;
 using System.Management.Automation.Tracing;
+#if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
+#endif
 using Debugger = System.Management.Automation.Debugger;
 
 namespace Microsoft.PowerShell
@@ -44,15 +46,17 @@ namespace Microsoft.PowerShell
         :
         PSHost,
         IDisposable,
-        IHostSupportsInteractiveSession,
-        IHostProvidesTelemetryData
+#if LEGACYTELEMETRY
+        IHostProvidesTelemetryData,
+#endif
+        IHostSupportsInteractiveSession
     {
         #region static methods
 
-        internal const uint ExitCodeSuccess = 0x00000000;
-        internal const uint ExitCodeCtrlBreak = 0xFFFE0000;
-        internal const uint ExitCodeInitFailure = 0xFFFF0000;
-        internal const uint ExitCodeBadCommandLineParameter = 0xFFFD0000;
+        internal const int ExitCodeSuccess = 0;
+        internal const int ExitCodeCtrlBreak = 128+21; // SIGBREAK
+        internal const int ExitCodeInitFailure = 70; // Internal Software Error
+        internal const int ExitCodeBadCommandLineParameter = 64; // Command Line Usage Error
 
         // NTRAID#Windows Out Of Band Releases-915506-2005/09/09
         // Removed HandleUnexpectedExceptions infrastructure
@@ -130,6 +134,14 @@ namespace Microsoft.PowerShell
             }
 #endif
 
+            // put PSHOME in front of PATH so that calling `powershell` within `powershell` always starts the same running version
+            string path = Environment.GetEnvironmentVariable("PATH");
+            string pshome = Utils.DefaultPowerShellAppBase;
+            if (!path.Contains(pshome))
+            {
+                Environment.SetEnvironmentVariable("PATH", pshome + Path.PathSeparator + path);
+            }
+
             try
             {
                 string profileDir;
@@ -200,10 +212,7 @@ namespace Microsoft.PowerShell
                     {
                         s_theConsoleHost.ui.WriteErrorLine(ConsoleHostStrings.ConflictingServerModeParameters);
                     }
-                    unchecked
-                    {
-                        return (int)ExitCodeBadCommandLineParameter;
-                    }
+                    return ExitCodeBadCommandLineParameter;
                 }
 
                 // First check for and handle PowerShell running in a server mode.
@@ -271,7 +280,9 @@ namespace Microsoft.PowerShell
             {
                 if (s_theConsoleHost != null)
                 {
+#if LEGACYTELEMETRY
                     TelemetryAPI.ReportExitTelemetry(s_theConsoleHost);
+#endif
                     s_theConsoleHost.Dispose();
                 }
             }
@@ -298,11 +309,19 @@ namespace Microsoft.PowerShell
             switch (args.SpecialKey)
             {
                 case ConsoleSpecialKey.ControlC:
-                    SpinUpBreakHandlerThread(false);
+                    SpinUpBreakHandlerThread(shouldEndSession: false);
                     return;
                 case ConsoleSpecialKey.ControlBreak:
-                    // Break into script debugger.
-                    BreakIntoDebugger();
+                    if (s_cpp.NonInteractive)
+                    {
+                        //ControlBreak mimics ControlC in Noninteractive shells
+                        SpinUpBreakHandlerThread(shouldEndSession: true);
+                    }
+                    else
+                    {
+                        // Break into script debugger.
+                        BreakIntoDebugger();
+                    }
                     return;
             }
         }
@@ -319,13 +338,21 @@ namespace Microsoft.PowerShell
             switch (signal)
             {
                 case ConsoleControl.ConsoleBreakSignal.CtrlBreak:
-                    // Break into script debugger.
-                    BreakIntoDebugger();
+                    if (s_cpp.NonInteractive)
+                    {
+                        //ControlBreak mimics ControlC in Noninteractive shells
+                        SpinUpBreakHandlerThread(shouldEndSession: true);
+                    }
+                    else
+                    {
+                        // Break into script debugger.
+                        BreakIntoDebugger();
+                    }
                     return true;
 
                 // Run the break handler...
                 case ConsoleControl.ConsoleBreakSignal.CtrlC:
-                    SpinUpBreakHandlerThread(false);
+                    SpinUpBreakHandlerThread(shouldEndSession: false);
                     return true;
 
                 case ConsoleControl.ConsoleBreakSignal.Logoff:
@@ -337,12 +364,12 @@ namespace Microsoft.PowerShell
 
                 case ConsoleControl.ConsoleBreakSignal.Close:
                 case ConsoleControl.ConsoleBreakSignal.Shutdown:
-                    SpinUpBreakHandlerThread(true);
+                    SpinUpBreakHandlerThread(shouldEndSession: true);
                     return false;
 
                 default:
                     // Log as much sqm data as possible before we exit.
-                    SpinUpBreakHandlerThread(true);
+                    SpinUpBreakHandlerThread(shouldEndSession: true);
                     return false;
             }
         }
@@ -1038,6 +1065,7 @@ namespace Microsoft.PowerShell
             }
         }
 
+#if LEGACYTELEMETRY
         bool IHostProvidesTelemetryData.HostIsInteractive
         {
             get
@@ -1049,6 +1077,7 @@ namespace Microsoft.PowerShell
         double IHostProvidesTelemetryData.ProfileLoadTimeInMS { get { return _profileLoadTimeInMS; } }
         double IHostProvidesTelemetryData.ReadyForInputTimeInMS { get { return _readyForInputTimeInMS; } }
         int IHostProvidesTelemetryData.InteractiveCommandCount { get { return _interactiveCommandCount; } }
+#endif
 
         private double _profileLoadTimeInMS;
         private double _readyForInputTimeInMS;
@@ -1807,10 +1836,11 @@ namespace Microsoft.PowerShell
                     s_tracer.WriteLine("-noprofile option specified: skipping profiles");
                 }
             }
-
+#if LEGACYTELEMETRY
             // Startup is reported after possibly running the profile, but before running the initial command (or file)
             // if one is specified.
             TelemetryAPI.ReportStartupTelemetry(this);
+#endif
 
             // If a file was specified as the argument to run, then run it...
             if (s_cpp != null && s_cpp.File != null)

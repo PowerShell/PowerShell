@@ -1967,7 +1967,7 @@ $result = @{}
 foreach ($computerName in $array[1])
 {
     $ret = $null
-    if ($array[0] -eq $null)
+    if ($null -eq array[0])
     {
         $ret = Invoke-Command -ComputerName $computerName {$true} -SessionOption (New-PSSessionOption -NoMachineProfile) -ErrorAction SilentlyContinue
     }

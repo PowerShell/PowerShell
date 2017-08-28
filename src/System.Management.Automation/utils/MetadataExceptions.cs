@@ -72,6 +72,10 @@ namespace System.Management.Automation
     public class ValidationMetadataException : MetadataException
     {
         internal const string ValidateRangeElementType = "ValidateRangeElementType";
+        internal const string ValidateRangePositiveFailure = "ValidateRangePositiveFailure";
+        internal const string ValidateRangeNonNegativeFailure = "ValidateRangeNonNegativeFailure";
+        internal const string ValidateRangeNegativeFailure = "ValidateRangeNegativeFailure";
+        internal const string ValidateRangeNonPositiveFailure = "ValidateRangeNonPositiveFailure";
         internal const string ValidateRangeMinRangeMaxRangeType = "ValidateRangeMinRangeMaxRangeType";
         internal const string ValidateRangeNotIComparable = "ValidateRangeNotIComparable";
         internal const string ValidateRangeMaxRangeSmallerThanMinRange = "ValidateRangeMaxRangeSmallerThanMinRange";

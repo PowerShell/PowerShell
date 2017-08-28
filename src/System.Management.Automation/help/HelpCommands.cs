@@ -234,7 +234,9 @@ namespace Microsoft.PowerShell.Commands
 #endif
 
         private readonly Stopwatch _timer = new Stopwatch();
+#if LEGACYTELEMETRY
         private bool _updatedHelp;
+#endif
 
         #endregion
 
@@ -252,7 +254,9 @@ namespace Microsoft.PowerShell.Commands
                 if (ShouldContinue(HelpDisplayStrings.UpdateHelpPromptBody, HelpDisplayStrings.UpdateHelpPromptTitle))
                 {
                     System.Management.Automation.PowerShell.Create(RunspaceMode.CurrentRunspace).AddCommand("Update-Help").Invoke();
+#if LEGACYTELEMETRY
                     _updatedHelp = true;
+#endif
                 }
 
                 UpdatableHelpSystem.SetDisablePromptToUpdateHelp();
@@ -332,9 +336,10 @@ namespace Microsoft.PowerShell.Commands
 
                 _timer.Stop();
 
+#if LEGACYTELEMETRY
                 if (!string.IsNullOrEmpty(Name))
                     Microsoft.PowerShell.Telemetry.Internal.TelemetryAPI.ReportGetHelpTelemetry(Name, countOfHelpInfos, _timer.ElapsedMilliseconds, _updatedHelp);
-
+#endif
                 // Write full help as there is only one help info object
                 if (1 == countOfHelpInfos)
                 {
@@ -637,7 +642,7 @@ namespace Microsoft.PowerShell.Commands
                 browserProcess.StartInfo.FileName = Platform.IsLinux ? "xdg-open" : /* OS X */ "open";
                 browserProcess.StartInfo.Arguments = uriToLaunch.OriginalString;
                 browserProcess.Start();
-#elif CORECLR
+#else
                 if (Platform.IsNanoServer || Platform.IsIoT)
                 {
                     // We cannot open the URL in browser on headless SKUs.
@@ -648,11 +653,9 @@ namespace Microsoft.PowerShell.Commands
                 {
                     // We can call ShellExecute directly on Full Windows.
                     browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
-                    ShellExecuteHelper.Start(browserProcess.StartInfo);
+                    browserProcess.StartInfo.UseShellExecute = true;
+                    browserProcess.Start();
                 }
-#else
-                browserProcess.StartInfo.FileName = uriToLaunch.OriginalString;
-                browserProcess.Start();
 #endif
             }
             catch (InvalidOperationException ioe)

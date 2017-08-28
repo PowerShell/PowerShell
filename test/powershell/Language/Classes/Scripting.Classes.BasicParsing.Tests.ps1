@@ -7,15 +7,15 @@ try {
 # CrossGen'ed assemblies cause a hang to happen intermittently when running this test suite in Linux and OSX.
 # The issue has been reported to CoreCLR team. We need to work around it for now with the following approach:
 #  1. For pull request and push commit, build without '-CrossGen' and run the parsing tests
-#  2. For nightly build, build with '-CrossGen' but don't run the parsing tests
-# In this way, we will continue to exercise these parsing tests for each CI build, and skip them for nightly
+#  2. For daily build, build with '-CrossGen' but don't run the parsing tests
+# In this way, we will continue to exercise these parsing tests for each CI build, and skip them for daily
 # build to avoid a hang.
 # Note: this change should be reverted once the 'CrossGen' issue is fixed by CoreCLR. The issue is tracked by
 #       https://github.com/dotnet/coreclr/issues/9745
 #
-$isFullBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
+$isDailyBuild = $env:TRAVIS_EVENT_TYPE -eq 'cron' -or $env:TRAVIS_EVENT_TYPE -eq 'api'
 $defaultParamValues = $PSdefaultParameterValues.Clone()
-$IsSkipped = (!$IsWindows -and $isFullBuild)
+$IsSkipped = (!$IsWindows -and $isDailyBuild)
 $PSDefaultParameterValues["it:skip"] = $IsSkipped
 $PSDefaultParameterValues["ShouldBeParseError:SkipInTravisFullBuild"] = $IsSkipped
 
@@ -566,7 +566,7 @@ Describe 'Check PS Class Assembly Test' -Tags "CI" {
         class C1 {}
         $assem = [C1].Assembly
         $attrs = @($assem.GetCustomAttributes($true))
-        $expectedAttr = @($attrs | ? { $_  -is [System.Management.Automation.DynamicClassImplementationAssemblyAttribute] })
+        $expectedAttr = @($attrs | Where-Object { $_  -is [System.Management.Automation.DynamicClassImplementationAssemblyAttribute] })
         It "Expected a DynamicClassImplementationAssembly attribute" { $expectedAttr.Length | should be 1}
 }
 
@@ -671,7 +671,7 @@ function test-it([EE]$ee){$ee}
 Describe 'Type building' -Tags "CI" {
     It 'should build the type only once for scriptblock' {
         $a = $null
-        1..10 | % {
+        1..10 | ForEach-Object {
             class C {}
             if ($a) {
                 $a -eq [C] | Should Be $true
@@ -682,7 +682,7 @@ Describe 'Type building' -Tags "CI" {
 
     It 'should create a new type every time scriptblock executed?' -Pending {
         $sb = [scriptblock]::Create('class A {static [int] $a }; [A]::new()')
-        1..2 | % {
+        1..2 | ForEach-Object {
         $a = $sb.Invoke()[0]
             ++$a::a | Should Be 1
             ++$a::a | Should Be 2

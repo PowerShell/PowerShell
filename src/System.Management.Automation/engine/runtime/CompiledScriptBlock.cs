@@ -16,7 +16,9 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Threading.Tasks;
+#if LEGACYTELEMETRY
 using Microsoft.PowerShell.Telemetry.Internal;
+#endif
 
 namespace System.Management.Automation
 {
@@ -178,11 +180,12 @@ namespace System.Management.Automation
             Compiler compiler = new Compiler();
             compiler.Compile(this, optimize);
 
+#if LEGACYTELEMETRY
             if (!IsProductCode)
             {
                 TelemetryAPI.ReportScriptTelemetry((Ast)_ast, !optimize, sw.ElapsedMilliseconds);
             }
-
+#endif
             if (etwEnabled) ParserEventSource.Log.CompileStop();
         }
 

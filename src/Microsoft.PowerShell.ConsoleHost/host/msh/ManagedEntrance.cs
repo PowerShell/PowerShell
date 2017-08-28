@@ -10,10 +10,7 @@ using System.Management.Automation.Runspaces;
 using System.Management.Automation.Tracing;
 using System.Globalization;
 using System.Threading;
-
-#if CORECLR
 using System.Runtime.InteropServices;
-#endif
 
 namespace Microsoft.PowerShell
 {
@@ -31,21 +28,10 @@ namespace Microsoft.PowerShell
         /// <param name="args">
         /// Command line arguments to the managed MSH
         /// </param>
-#if CORECLR
 #pragma warning disable 1573
         public static int Start(string consoleFilePath, [MarshalAs(UnmanagedType.LPArray, ArraySubType = UnmanagedType.LPWStr, SizeParamIndex = 2)]string[] args, int argc)
 #pragma warning restore 1573
-#else
-        public int Start(string consoleFilePath, string[] args)
-#endif
         {
-#if !CORECLR
-            // For long-path support, Full .NET requires some AppContext switches;
-            // (for CoreCLR this is Not needed, because CoreCLR supports long paths by default)
-            // internally in .NET they are cached once retrieved and are typically hit very early during an application run;
-            // so per .NET team's recommendation, we are setting them as soon as we enter managed code.
-            EnableLongPathsInDotNetIfAvailable();
-#endif
             System.Management.Automation.Runspaces.EarlyStartup.Init();
 
             // Set ETW activity Id
@@ -110,11 +96,7 @@ namespace Microsoft.PowerShell
             int exitCode = 0;
             try
             {
-#if CORECLR
                 var banner = ManagedEntranceStrings.ShellBannerNonWindowsPowerShell;
-#else
-                var banner = ManagedEntranceStrings.ShellBanner;
-#endif
                 var formattedBanner = string.Format(CultureInfo.InvariantCulture, banner, PSVersionInfo.GitCommitId);
                 exitCode = Microsoft.PowerShell.ConsoleShell.Start(
                     configuration,
@@ -145,27 +127,6 @@ namespace Microsoft.PowerShell
             }
             return exitCode;
         }
-
-#if !CORECLR
-        private static void EnableLongPathsInDotNetIfAvailable()
-        {
-            // We build against CLR4.5 so we can run on Win7/Win8, but we want to use apis added to CLR 4.6, so we use reflection
-            try
-            {
-                Type appContextType = Type.GetType("System.AppContext"); // type is in mscorlib, so it is sufficient to supply the type name qualified by its namespace
-
-                object[] blockLongPathsSwitch = new object[] { "Switch.System.IO.BlockLongPaths", false };
-                object[] useLegacyPathHandlingSwitch = new object[] { "Switch.System.IO.UseLegacyPathHandling", false };
-
-                appContextType.InvokeMember("SetSwitch", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, blockLongPathsSwitch, CultureInfo.InvariantCulture);
-                appContextType.InvokeMember("SetSwitch", BindingFlags.Public | BindingFlags.Static | BindingFlags.InvokeMethod, null, null, useLegacyPathHandlingSwitch, CultureInfo.InvariantCulture);
-            }
-            catch
-            {
-                // If there are any exceptions (e.g. we are running on CLR prior to 4.6.2), we won't be able to use long paths
-            }
-        }
-#endif
     }
 }
 

@@ -1,4 +1,3 @@
-#if CORECLR
 /********************************************************************++
 Copyright (c) Microsoft Corporation.  All rights reserved.
 --********************************************************************/
@@ -16,24 +15,6 @@ using Microsoft.Win32;
 // We use the stubs in this namespace to reduce #if/def in the code as much as possible.
 namespace Microsoft.PowerShell.CoreClr.Stubs
 {
-    #region Misc_Types
-
-    /// <summary>
-    /// Stub for SecurityZone
-    /// </summary>
-    public enum SecurityZone
-    {
-        MyComputer = 0,
-        Intranet = 1,
-        Trusted = 2,
-        Internet = 3,
-        Untrusted = 4,
-
-        NoZone = -1,
-    }
-
-    #endregion Misc_Types
-
     #region SystemManagementStubs
 
     // Summary:
@@ -1131,5 +1112,3 @@ namespace Microsoft.PowerShell
 #endregion TEMPORARY
 
 #pragma warning restore 1591, 1572, 1571, 1573, 1587, 1570, 0067
-
-#endif

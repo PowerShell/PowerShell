@@ -65,9 +65,7 @@ namespace System.Management.Automation.Remoting
             XmlReaderSettings.CheckCharacters = false;
             XmlReaderSettings.IgnoreComments = true;
             XmlReaderSettings.IgnoreProcessingInstructions = true;
-#if !CORECLR  // No XmlReaderSettings.XmlResolver in CoreCLR
             XmlReaderSettings.XmlResolver = null;
-#endif
             XmlReaderSettings.ConformanceLevel = ConformanceLevel.Fragment;
         }
 
@@ -1461,6 +1459,12 @@ namespace System.Management.Automation.Remoting.Client
 
             // Create reader thread and send first PSRP message.
             StartReaderThread(_stdOutReader);
+        }
+
+        internal override void CloseAsync()
+        {
+            base.CloseAsync();
+            CloseConnection();
         }
 
         #endregion

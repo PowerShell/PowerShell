@@ -5,6 +5,7 @@ Copyright (c) Microsoft Corporation.  All rights reserved.
 using System.Runtime.InteropServices;
 using System.Management.Automation.ComInterop;
 using System.Text;
+using System.Collections;
 using System.Collections.ObjectModel;
 using COM = System.Runtime.InteropServices.ComTypes;
 
@@ -49,7 +50,7 @@ namespace System.Management.Automation
             builder.Append(" (");
 
             IntPtr ElementDescriptionArrayPtr = funcdesc.lprgelemdescParam;
-            int ElementDescriptionSize = ClrFacade.SizeOf<COM.ELEMDESC>();
+            int ElementDescriptionSize = Marshal.SizeOf<COM.ELEMDESC>();
 
             for (int i = 0; i < funcdesc.cParams; i++)
             {
@@ -73,7 +74,7 @@ namespace System.Management.Automation
                 }
 #pragma warning restore 56515
 
-                ElementDescription = ClrFacade.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
+                ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
                 string paramstring = GetStringFromTypeDesc(typeinfo, ElementDescription.tdesc);
 
@@ -149,13 +150,13 @@ namespace System.Management.Automation
         {
             if ((VarEnum)typedesc.vt == VarEnum.VT_PTR)
             {
-                COM.TYPEDESC refdesc = ClrFacade.PtrToStructure<COM.TYPEDESC>(typedesc.lpValue);
+                COM.TYPEDESC refdesc = Marshal.PtrToStructure<COM.TYPEDESC>(typedesc.lpValue);
                 return GetStringFromTypeDesc(typeinfo, refdesc);
             }
 
             if ((VarEnum)typedesc.vt == VarEnum.VT_SAFEARRAY)
             {
-                COM.TYPEDESC refdesc = ClrFacade.PtrToStructure<COM.TYPEDESC>(typedesc.lpValue);
+                COM.TYPEDESC refdesc = Marshal.PtrToStructure<COM.TYPEDESC>(typedesc.lpValue);
                 return "SAFEARRAY(" + GetStringFromTypeDesc(typeinfo, refdesc) + ")";
             }
 
@@ -288,7 +289,7 @@ namespace System.Management.Automation
             ParameterInformation[] parameters = new ParameterInformation[cParams];
 
             IntPtr ElementDescriptionArrayPtr = funcdesc.lprgelemdescParam;
-            int ElementDescriptionSize = ClrFacade.SizeOf<COM.ELEMDESC>();
+            int ElementDescriptionSize = Marshal.SizeOf<COM.ELEMDESC>();
 
             for (int i = 0; i < cParams; i++)
             {
@@ -314,7 +315,7 @@ namespace System.Management.Automation
 
 #pragma warning enable 56515
 
-                ElementDescription = ClrFacade.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
+                ElementDescription = Marshal.PtrToStructure<COM.ELEMDESC>(ElementDescriptionPointer);
 
                 //get the type of parameter
                 Type type = ComUtil.GetTypeFromTypeDesc(ElementDescription.tdesc);
@@ -348,11 +349,94 @@ namespace System.Management.Automation
             {
                 IntPtr pFuncDesc;
                 typeInfo.GetFuncDesc(index, out pFuncDesc);
-                COM.FUNCDESC funcdesc = ClrFacade.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
+                COM.FUNCDESC funcdesc = Marshal.PtrToStructure<COM.FUNCDESC>(pFuncDesc);
                 returnValue[count++] = ComUtil.GetMethodInformation(funcdesc, skipLastParameters);
                 typeInfo.ReleaseFuncDesc(pFuncDesc);
             }
             return returnValue;
+        }
+    }
+
+    /// <summary>
+    /// Defines an enumerator that represent a COM collection object.
+    /// </summary>
+    internal class ComEnumerator : IEnumerator
+    {
+        private COM.IEnumVARIANT _enumVariant;
+        private object[] _element;
+
+        private ComEnumerator(COM.IEnumVARIANT enumVariant)
+        {
+            _enumVariant = enumVariant;
+            _element = new object[1];
+        }
+
+        public object Current
+        {
+            get { return _element[0]; }
+        }
+
+        public bool MoveNext()
+        {
+            _element[0] = null;
+            int result = _enumVariant.Next(1, _element, IntPtr.Zero);
+            return result == 0;
+        }
+
+        public void Reset()
+        {
+            _element[0] = null;
+            _enumVariant.Reset();
+        }
+
+        /// <summary>
+        /// Try to create an enumerator for a COM object.
+        /// </summary>
+        /// <returns>
+        /// A 'ComEnumerator' instance, or null if we cannot create an enumerator for the COM object.
+        /// </returns>
+        internal static ComEnumerator Create(object comObject)
+        {
+            if (comObject == null || !comObject.GetType().IsCOMObject) { return null; }
+
+            // The passed-in COM object could already be a IEnumVARIANT interface.
+            // e.g. user call '_NewEnum()' on a COM collection interface.
+            var enumVariant = comObject as COM.IEnumVARIANT;
+            if (enumVariant != null)
+            {
+                return new ComEnumerator(enumVariant);
+            }
+
+            // The passed-in COM object could be a collection.
+            var enumerable = comObject as IEnumerable;
+            var target = comObject as IDispatch;
+            if (enumerable != null && target != null)
+            {
+                try
+                {
+                    var comTypeInfo = ComTypeInfo.GetDispatchTypeInfo(comObject);
+                    if (comTypeInfo != null && comTypeInfo.NewEnumInvokeKind.HasValue)
+                    {
+                        // The COM object is a collection and also a IDispatch interface, so we try to get a
+                        // IEnumVARIANT interface out of it by invoking its '_NewEnum (DispId: -4)' function.
+                        var result = ComInvoker.Invoke(target, ComTypeInfo.DISPID_NEWENUM,
+                                                        args: Utils.EmptyArray<object>(), byRef: null,
+                                                        invokeKind: comTypeInfo.NewEnumInvokeKind.Value);
+                        enumVariant = result as COM.IEnumVARIANT;
+                        if (enumVariant != null)
+                        {
+                            return new ComEnumerator(enumVariant);
+                        }
+                    }
+                }
+                catch (Exception)
+                {
+                    // Ignore exceptions. In case of exception, no enumerator can be created
+                    // for the passed-in COM object, and we will return null eventually.
+                }
+            }
+
+            return null;
         }
     }
 }

@@ -21,7 +21,7 @@ A pull request with the label `Review - waiting on author` for **more than two w
 
 In these cases:
 
-1. Ping the author of PR to remind him of pending changes.
+1. Ping the author of PR to remind them of pending changes.
   - If the contributor responds, it's no longer an abandoned pull request, proceed as normal.
 2. If the contributor does not respond **within a week**:
   - If the reviewer's comments are very minor, merge the change, fix the code immediately, and create a new PR with the fixes addressing the minor comments.

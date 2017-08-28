@@ -93,4 +93,5 @@ Describe "SxS Module Path Basic Tests" -tags "CI" {
         $paths -contains $fakePSHomeModuleDir | Should Be $true
         $paths -contains $customeModules | Should Be $true
     }
+
 }

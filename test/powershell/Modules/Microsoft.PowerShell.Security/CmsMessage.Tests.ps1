@@ -317,7 +317,7 @@ Describe "CmsMessage cmdlets thorough tests" -Tags "Feature" {
         $foundCerts = Get-ChildItem Cert:\CurrentUser -Recurse -DocumentEncryptionCert
 
         # Validate they all match the EKU
-        $correctMatching = $foundCerts | ? {
+        $correctMatching = $foundCerts | Where-Object {
             ($_.EnhancedKeyUsageList.Count -gt 0) -and 
             ($_.EnhancedKeyUsageList[0].ObjectId -eq '1.3.6.1.4.1.311.80.1')
         }

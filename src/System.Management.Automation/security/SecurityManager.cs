@@ -14,11 +14,6 @@ using System.Management.Automation.Language;
 using System.Security;
 using System.Security.Cryptography.X509Certificates;
 
-#if CORECLR
-// Use stub for SecurityZone
-using Microsoft.PowerShell.CoreClr.Stubs;
-#endif
-
 namespace Microsoft.PowerShell
 {
     /// <summary>

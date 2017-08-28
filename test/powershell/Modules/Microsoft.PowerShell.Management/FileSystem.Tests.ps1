@@ -65,6 +65,24 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $existsAfter | Should Be $false
         }
 
+        It "Verify Rename-Item for file" {
+            Rename-Item -Path $testFile -NewName $newTestFile -ErrorAction Stop
+            $testFile | Should Not Exist
+            $newTestFile | Should Exist
+        }
+
+        It "Verify Rename-Item for directory" {
+            Rename-Item -Path $testDir -NewName $newTestDir -ErrorAction Stop
+            $testDir | Should Not Exist
+            $newTestDir | Should Exist
+        }
+
+        It "Verify Rename-Item will not rename to an existing name" {
+            { Rename-Item -Path $testFile -NewName $testDir -ErrorAction Stop } | ShouldBeErrorId "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"
+            $Error[0].Exception | Should BeOfType System.IO.IOException
+            $testFile | Should Exist
+        }
+
         It "Verify Copy-Item" {
             $newFile = Copy-Item -Path $testFile -Destination $newTestFile -PassThru
             $fileExists = Test-Path $newTestFile
@@ -72,7 +90,29 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
             $newFile.Name | Should Be $newTestFile
         }
 
-        It "Verify Move-Item" {
+        It "Verify Move-Item for file" {
+            Move-Item -Path $testFile -Destination $testDir -ErrorAction Stop
+            $testFile | Should Not Exist
+            "$testDir/$testFile" | Should Exist
+        }
+
+        It "Verify Move-Item for directory" {
+            $destDir = "DestinationDirectory"
+            New-Item -Path $destDir -ItemType Directory -ErrorAction Stop >$null
+            Move-Item -Path $testFile -Destination $testDir
+            Move-Item -Path $testDir -Destination $destDir
+            $testDir | Should Not Exist
+            "$destDir/$testDir" | Should Exist
+            "$destDir/$testDir/$testFile" | Should Exist
+        }
+
+        It "Verify Move-Item will not move to an existing file" {
+            { Move-Item -Path $testDir -Destination $testFile -ErrorAction Stop } | ShouldBeErrorId "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"
+            $Error[0].Exception | Should BeOfType System.IO.IOException
+            $testDir | Should Exist
+        }
+
+        It "Verify Move-Item as substitute for Rename-Item" {
             $newFile = Move-Item -Path $testFile -Destination $newTestFile -PassThru
             $fileExists = Test-Path $newTestFile
             $fileExists | Should Be $true
@@ -82,6 +122,12 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
         It "Verify Get-ChildItem" {
             $dirContents = Get-ChildItem "."
             $dirContents.Count | Should Be 2
+        }
+
+        It "Verify Get-ChildItem can get the name of a specified item." {
+            $fileName = Get-ChildItem $testFile -Name
+            $fileInfo = Get-ChildItem $testFile
+            $fileName | Should BeExactly $fileInfo.Name
         }
 
         It "Set-Content to a file" {
@@ -153,6 +199,46 @@ Describe "Basic FileSystem Provider Tests" -Tags "CI" {
                 New-Item -Path $testFile -ItemType File -Force -ErrorAction SilentlyContinue
              }
          }
+    }
+
+    Context "Validate behavior when access is denied" {
+        BeforeAll {
+            $powershell = Join-Path $PSHOME "powershell"
+            if ($IsWindows)
+            {
+                $protectedPath = Join-Path ([environment]::GetFolderPath("windows")) "appcompat" "Programs"
+                $protectedPath2 = Join-Path $protectedPath "Install"
+                $newItemPath = Join-Path $protectedPath "foo"
+            }
+            $errFile = "$testdrive\error.txt"
+            $doneFile = "$testdrive\done.txt"
+        }
+        AfterEach {
+            Remove-Item -Force $errFile -ErrorAction SilentlyContinue
+            Remove-Item -Force $doneFile -ErrorAction SilentlyContinue
+        }
+
+        It "Access-denied test for '<cmdline>" -Skip:(-not $IsWindows) -TestCases @(
+            @{cmdline = "Get-Item $protectedPath2"; expectedError = "ItemExistsUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetItemCommand"}
+            @{cmdline = "Get-ChildItem $protectedPath"; expectedError = "DirUnauthorizedAccessError,Microsoft.PowerShell.Commands.GetChildItemCommand"}
+            @{cmdline = "New-Item -Type File -Path $newItemPath"; expectedError = "NewItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.NewItemCommand"}
+            @{cmdline = "Rename-Item -Path $protectedPath -NewName bar"; expectedError = "RenameItemIOError,Microsoft.PowerShell.Commands.RenameItemCommand"},
+            @{cmdline = "Move-Item -Path $protectedPath -Destination bar"; expectedError = "MoveDirectoryItemIOError,Microsoft.PowerShell.Commands.MoveItemCommand"},
+            @{cmdline = "Remove-Item -Path $protectedPath"; expectedError = "RemoveItemUnauthorizedAccessError,Microsoft.PowerShell.Commands.RemoveItemCommand"}
+        ) {
+            param ($cmdline, $expectedError)
+
+            runas.exe /trustlevel:0x20000 "$powershell -nop -c try { $cmdline -ErrorAction Stop } catch { `$_.FullyQualifiedErrorId | Out-File $errFile }; New-Item -Type File -Path $doneFile"
+            $startTime = Get-Date
+            while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and -not (Test-Path $doneFile))
+            {
+                Start-Sleep -Milliseconds 100
+            }
+
+            $errFile | Should Exist
+            $err = Get-Content $errFile
+            $err | Should Be $expectedError
+        }
     }
 
     Context "Validate basic host navigation functionality" {
@@ -376,11 +462,18 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             $alphaLink = Join-Path $TestDrive "link-alpha"
             $alphaFile1 = Join-Path $alphaDir "AlphaFile1.txt"
             $alphaFile2 = Join-Path $alphaDir "AlphaFile2.txt"
+            $omegaDir = Join-Path $TestDrive "sub-omega"
+            $omegaFile1 = Join-Path $omegaDir "OmegaFile1"
+            $omegaFile2 = Join-Path $omegaDir "OmegaFile2"
             $betaDir = Join-Path $alphaDir "sub-beta"
             $betaLink = Join-Path $alphaDir "link-beta"
             $betaFile1 = Join-Path $betaDir "BetaFile1.txt"
             $betaFile2 = Join-Path $betaDir "BetaFile2.txt"
             $betaFile3 = Join-Path $betaDir "BetaFile3.txt"
+            $gammaDir = Join-Path $betaDir "sub-gamma"
+            $uponeLink = Join-Path $gammaDir "upone-link"
+            $uptwoLink = Join-Path $gammaDir "uptwo-link"
+            $omegaLink = Join-Path $gammaDir "omegaLink"
 
             New-Item -ItemType Directory -Path $alphaDir
             New-Item -ItemType File -Path $alphaFile1
@@ -389,6 +482,9 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             New-Item -ItemType File -Path $betaFile1
             New-Item -ItemType File -Path $betaFile2
             New-Item -ItemType File -Path $betaFile3
+            New-Item -ItemType Directory $omegaDir
+            New-Item -ItemType File -Path $omegaFile1
+            New-Item -ItemType File -Path $omegaFile2
         }
         AfterAll {
             Remove-Item -Path $alphaLink -Force -ErrorAction SilentlyContinue
@@ -407,6 +503,15 @@ Describe "Hard link and symbolic link tests" -Tags "CI", "RequireAdminOnWindows"
             New-Item -ItemType SymbolicLink -Path $betaLink -Value $betaDir
             $ci = Get-ChildItem $alphaLink -Recurse
             $ci.Count | Should BeExactly 7
+        }
+        It "Get-ChildItem will recurse into symlinks given -FollowSymlink, avoiding link loops" {
+            New-Item -ItemType Directory -Path $gammaDir
+            New-Item -ItemType SymbolicLink -Path $uponeLink -Value $betaDir
+            New-Item -ItemType SymbolicLink -Path $uptwoLink -Value $alphaDir
+            New-Item -ItemType SymbolicLink -Path $omegaLink -Value $omegaDir
+            $ci = Get-ChildItem -Path $alphaDir -FollowSymlink -Recurse -WarningVariable w -WarningAction SilentlyContinue
+            $ci.Count | Should BeExactly 13
+            $w.Count | Should BeExactly 3
         }
     }
 

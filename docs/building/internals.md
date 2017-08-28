@@ -6,14 +6,12 @@ The ultimate source of truth is the code in `.\build.psm1` that's getting execut
 
 This document assumes that you can successfully build PowerShell from sources for your platform.
 
-
 ## Top directory
 
 We are calling `dotnet` tool build for `$Top` directory
 
 - `src\powershell-win-core` for CoreCLR on Windows.
 - `src\powershell-unix` for CoreCLR on Linux and macOS.
-- `src\powershell-win-full` for FullCLR builds (Windows only)
 
 ### Dummy dependencies
 
@@ -25,11 +23,8 @@ Dummy dependencies allows us to build just `$Top` folder, instead of building se
 
 ### Dummy dependencies rules
 
-- If assembly is part of FullCLR build,
-  it should be listed as a dependency for FullCLR $Top folder (src\powershell-win-full)
-
-- If assembly is part of CoreCLR build,
-  it should be listed as a dependency for $Top folder (src\powershell-unix or src\powershell-win-core)
+If assembly is part of CoreCLR build,
+it should be listed as a dependency for $Top folder (src\powershell-unix or src\powershell-win-core)
 
 ## Preliminary steps
 

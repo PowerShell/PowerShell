@@ -1,0 +1,31 @@
+<Configuration>
+    <SelectionSets>
+        <SelectionSet>
+            <Name>TestTypes</Name>
+            <Types>
+                <TypeName>NonExistingTestType</TypeName>
+            </Types>
+        </SelectionSet>
+    </SelectionSets>
+
+    <Controls>
+        <Control>
+            <Name>TestTypes-GroupingFormat</Name>
+                    <CustomControl>
+                        <CustomEntries>
+                            <CustomEntry>
+                                <CustomItem>
+                                    <Frame>
+                                        <LeftIndent>0</LeftIndent>
+                                        <CustomItem>
+                                            <Text AssemblyName="System.Management.Automation" BaseName="%BaseName%" ResourceId="DirectoryDisplayGrouping"/>
+                                            <NewLine/>
+                                        </CustomItem> 
+                                    </Frame>
+                                </CustomItem>
+                            </CustomEntry>
+                        </CustomEntries>
+            </CustomControl>
+        </Control>
+    </Controls>
+</Configuration>

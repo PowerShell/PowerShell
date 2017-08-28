@@ -2170,7 +2170,7 @@ namespace System.Management.Automation
         ///
         /// class C1 {}
         /// function foo { class C2 {} }
-        /// 1..10 | % { foo }
+        /// 1..10 | ForEach-Object { foo }
         ///
         /// DefinePowerShellTypes() would be called for two TypeDefinitionAsts at the same time and Types for C1 and C2 would be created at the same assembly.
         /// AddPowerShellTypesToTheScope() would be called for root script first and then for foo\C2, once we call function foo.
@@ -3199,23 +3199,18 @@ namespace System.Management.Automation
         internal static IEnumerator GetCOMEnumerator(object obj)
         {
             object targetValue = PSObject.Base(obj);
-            try
-            {
-                IEnumerable enumerable = targetValue as IEnumerable;
-                if (enumerable != null)
-                {
-                    var enumerator = enumerable.GetEnumerator();
-                    if (enumerator != null)
-                    {
-                        return enumerator;
-                    }
-                }
-            }
-            catch (Exception)
-            {
-            }
 
-            return targetValue as IEnumerator ?? NonEnumerableObjectEnumerator.Create(obj);
+            // We use ComEnumerator to enumerate COM collections because the following code doesn't work in .NET Core
+            //   IEnumerable enumerable = targetValue as IEnumerable;
+            //   if (enumerable != null)
+            //   {
+            //       var enumerator = enumerable.GetEnumerator();
+            //       ...
+            //   }
+            // The call to 'GetEnumerator()' throws exception because COM is not supported in .NET Core.
+            // See https://github.com/dotnet/corefx/issues/19731 for more information.
+            // When COM support is back to .NET Core, we need to change back to the original implementation.
+            return ComEnumerator.Create(targetValue) ?? NonEnumerableObjectEnumerator.Create(obj);
         }
 
         internal static IEnumerator GetGenericEnumerator<T>(IEnumerable<T> enumerable)

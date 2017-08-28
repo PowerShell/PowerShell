@@ -67,7 +67,6 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-#if !CORECLR //TODO: CORECLR 'new  CultureInfo(Int32)' not available yet.
                 int cultureNumber;
                 string trimmedValue = value.Trim();
                 if (trimmedValue.StartsWith("0x", StringComparison.OrdinalIgnoreCase))
@@ -86,7 +85,6 @@ namespace Microsoft.PowerShell.Commands
                     _cultureInfo = new CultureInfo(cultureNumber);
                     return;
                 }
-#endif
                 _cultureInfo = new CultureInfo(value);
             }
         }

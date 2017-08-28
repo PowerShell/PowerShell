@@ -88,12 +88,6 @@ namespace System.Management.Automation
         }
 
         /// <summary>
-        /// Added to enable ClrFacade.GetUninitializedObject to instantiate an uninitialized version of this class.
-        /// </summary>
-        internal ProgressRecord()
-        { }
-
-        /// <summary>
         ///
         /// Gets the Id of the activity to which this record corresponds.  Used as a 'key' for the
         /// linking of subordinate activities.

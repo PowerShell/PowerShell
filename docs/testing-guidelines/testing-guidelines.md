@@ -76,6 +76,15 @@ Additionally, the tag:
 
 * `SLOW` indicates that the test takes a somewhat longer time to execute (97% of our `CI` tests take 100ms or less), a test which takes longer than 1 second should be considered as a candidate for being tagged `Slow`
 
+#### Requesting additional tests for a PR
+
+In our CI systems, we normally run only run tests tagged with `CI`.  If in the first line of the last (most recent) commit description you add `[Feature]`,
+we will ensure that we will also run the tests tagged with `Feature`.  When you would want to do this:
+
+- You have added or changed a `Feature` test.
+- A maintainer asks you to run the `Feature` tests.
+- Based on experience, you are confident that a maintainer will ask you to run the `Feature` tests.
+
 ### xUnit
 
 For those tests which are not easily run via Pester, we have decided to use [xUnit](https://xunit.github.io/) as the test framework.

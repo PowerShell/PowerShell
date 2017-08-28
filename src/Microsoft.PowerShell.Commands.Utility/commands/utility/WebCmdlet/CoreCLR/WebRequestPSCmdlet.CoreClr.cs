@@ -58,11 +58,20 @@ namespace Microsoft.PowerShell.Commands
         /// CoreCLR (HTTPClient) does not have this behavior so web requests that work on
         /// PowerShell/FullCLR can fail with PowerShell/CoreCLR.  To provide compatibility,
         /// we'll detect requests with an Authorization header and automatically strip
-        /// the header when the first redirect occurs. This switch turns off this logic for 
+        /// the header when the first redirect occurs. This switch turns off this logic for
         /// edge cases where the authorization header needs to be preserved across redirects.
         /// </remarks>
         [Parameter]
         public virtual SwitchParameter PreserveAuthorizationOnRedirect { get; set; }
+
+        /// <summary>
+        /// gets or sets the SkipHeaderValidation property
+        /// </summary>
+        /// <remarks>
+        /// This property adds headers to the request's header collection without validation.
+        /// </remarks>
+        [Parameter]
+        public virtual SwitchParameter SkipHeaderValidation { get; set; }
 
         #region Abstract Methods
 
@@ -155,17 +164,15 @@ namespace Microsoft.PowerShell.Commands
                 handler.Proxy = WebSession.Proxy;
             }
 
-            /*
-            TODO: HttpClientHandler will support client certificate in RTM
-            See https://github.com/dotnet/corefx/issues/7623 for more details.
             if (null != WebSession.Certificates)
             {
-                handler.ClientCertificates = WebSession.Certificates;
-            }*/
+                handler.ClientCertificates.AddRange(WebSession.Certificates);
+            }
 
             if (SkipCertificateCheck)
             {
-                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator; 
+                handler.ServerCertificateCustomValidationCallback = HttpClientHandler.DangerousAcceptAnyServerCertificateValidator;
+                handler.ClientCertificateOptions = ClientCertificateOption.Manual;
             }
 
             // This indicates GetResponse will handle redirects.
@@ -240,14 +247,22 @@ namespace Microsoft.PowerShell.Commands
                     }
                     else
                     {
-                        if (stripAuthorization 
-                            && 
+                        if (stripAuthorization
+                            &&
                             String.Equals(entry.Key, HttpKnownHeaderNames.Authorization.ToString(), StringComparison.OrdinalIgnoreCase)
                         )
                         {
                             continue;
                         }
-                        request.Headers.Add(entry.Key, entry.Value);
+
+                        if (SkipHeaderValidation)
+                        {
+                            request.Headers.TryAddWithoutValidation(entry.Key, entry.Value);
+                        }
+                        else
+                        {
+                            request.Headers.Add(entry.Key, entry.Value);
+                        }
                     }
                 }
             }
@@ -266,7 +281,15 @@ namespace Microsoft.PowerShell.Commands
             }
             else
             {
-                request.Headers.Add(HttpKnownHeaderNames.UserAgent, WebSession.UserAgent);
+                if (SkipHeaderValidation)
+                {
+                    request.Headers.TryAddWithoutValidation(HttpKnownHeaderNames.UserAgent, WebSession.UserAgent);
+                }
+                else
+                {
+                    request.Headers.Add(HttpKnownHeaderNames.UserAgent, WebSession.UserAgent);    
+                }
+                
             }
 
             // Set 'Keep-Alive' to false. This means set the Connection to 'Close'.

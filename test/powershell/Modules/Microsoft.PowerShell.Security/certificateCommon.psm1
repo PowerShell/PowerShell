@@ -1,5 +1,13 @@
 Function New-GoodCertificate
 {
+    <#
+        .NOTES
+            This certificate is only issued for the following Key Usages:
+                Key Encipherment
+                Data Encipherment (30)
+                Document Encryption (1.3.6.1.4.1.311.80.1)
+            It Cannot be use for SSL/TLS Client Authentication
+    #>
     $dataEnciphermentCert = "
 MIIKYAIBAzCCCiAGCSqGSIb3DQEHAaCCChEEggoNMIIKCTCCBgoGCSqGSIb3DQEHAaCCBfsEggX3
 MIIF8zCCBe8GCyqGSIb3DQEMCgECoIIE/jCCBPowHAYKKoZIhvcNAQwBAzAOBAgPOFDMBkCffQIC
@@ -103,8 +111,8 @@ function Install-TestCertificates
             $env:PSModulePath = $null
 
             $command = @"
-Import-PfxCertificate $script:certLocation -CertStoreLocation cert:\CurrentUser\My | % PSPath
-Import-Certificate $script:badCertLocation -CertStoreLocation Cert:\CurrentUser\My | % PSPath
+Import-PfxCertificate $script:certLocation -CertStoreLocation cert:\CurrentUser\My | ForEach-Object PSPath
+Import-Certificate $script:badCertLocation -CertStoreLocation Cert:\CurrentUser\My | ForEach-Object PSPath
 "@
             $certPaths = & $fullPowerShell -NoProfile -NonInteractive -Command $command
             $certPaths.Count | Should Be 2 | Out-Null

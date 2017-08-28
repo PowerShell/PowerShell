@@ -574,6 +574,7 @@ namespace Microsoft.PowerShell.Commands.Internal.Format
     {
         internal DatabaseLoadingInfo loadingInfo = null;
         internal string assemblyName = null;
+        internal string assemblyLocation = null;
         internal string baseName = null;
         internal string resourceId = null;
     }

@@ -74,7 +74,7 @@ return $_.Length";
                     .GroupByProperty("PSParentPath", customControl: sharedControls[0])
                     .StartEntry(entrySelectedByType: new[] { "System.IO.FileInfo" })
                         .AddItemProperty(@"Name")
-                        .AddItemScriptBlock(LengthScriptBlock)
+                        .AddItemScriptBlock(LengthScriptBlock, label: "Length")
                         .AddItemProperty(@"CreationTime")
                         .AddItemProperty(@"LastWriteTime")
                         .AddItemProperty(@"LastAccessTime")

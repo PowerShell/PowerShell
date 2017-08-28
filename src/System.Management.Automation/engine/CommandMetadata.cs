@@ -1220,7 +1220,10 @@ end
             typeNameParameter.Attributes.Add(new ValidateLengthAttribute(0, 1000));
             typeNameParameter.Attributes.Add(new ValidateCountAttribute(0, 1000));
 
-            return GetRestrictedCmdlet("Get-FormatData", null, "https://go.microsoft.com/fwlink/?LinkID=144303", typeNameParameter);
+            // This parameter is required for implicit remoting in PS V5.1.
+            ParameterMetadata powershellVersionParameter = new ParameterMetadata("PowerShellVersion", typeof(Version));
+
+            return GetRestrictedCmdlet("Get-FormatData", null, "https://go.microsoft.com/fwlink/?LinkID=144303", typeNameParameter, powershellVersionParameter);
         }
 
         private static CommandMetadata GetRestrictedGetHelp()

@@ -12,7 +12,7 @@
 
     It "Test ConvertTo-Html with no parameters" {
         $returnObject = $customObject | ConvertTo-Html
-        $returnObject -is [System.Array] | Should Be $true
+        ,$returnObject | Should BeOfType System.Object[]
         $returnString = $returnObject -join $newLine
         $expectedValue = normalizeLineEnds @"
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">

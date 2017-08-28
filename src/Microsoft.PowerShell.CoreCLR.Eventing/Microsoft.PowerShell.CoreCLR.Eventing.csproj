@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\PowerShell.Common.props"/>  
+  <Import Project="..\..\PowerShell.Common.props"/>
 
   <PropertyGroup>
     <Description>PowerShell Core's Microsoft.PowerShell.CoreCLR.Eventing project</Description>
@@ -25,7 +25,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="System.Security.Principal.Windows" Version="4.4.0-preview3-25423-02" />
+    <PackageReference Include="System.Security.Principal.Windows" Version="4.4.0" />
   </ItemGroup>
 
 </Project>

@@ -15,7 +15,7 @@ Describe "Get-ChildItem" -Tags "CI" {
             $null = New-Item -Path $TestDrive -Name $item_c -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_D -ItemType "File" -Force
             $null = New-Item -Path $TestDrive -Name $item_E -ItemType "Directory" -Force
-            $null = New-Item -Path $TestDrive -Name $item_F -ItemType "File" -Force | %{$_.Attributes = "hidden"}
+            $null = New-Item -Path $TestDrive -Name $item_F -ItemType "File" -Force | ForEach-Object {$_.Attributes = "hidden"}
         }
 
         It "Should list the contents of the current folder" {
@@ -66,46 +66,6 @@ Describe "Get-ChildItem" -Tags "CI" {
             $file.Count | Should be 1
             $file.Name | Should be $item_F
         }
-        # Test is pending on Unix platforms because of a behavior change in the latest .NET Core.
-        # See https://github.com/dotnet/corefx/issues/20456 for more information.
-        It "Should continue enumerating a directory when a contained item is deleted" -Pending:(!$IsWindows) {
-            $Error.Clear()
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionDelete", $true)
-            $result = Get-ChildItem -Path $TestDrive -ErrorAction SilentlyContinue
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionDelete", $false)
-            if ($IsWindows)
-            {
-                $Error.Count | Should BeExactly 0
-                $result.Count | Should BeExactly 5
-            }
-            else
-            {
-                $Error.Count | Should BeExactly 1
-                $Error[0].FullyQualifiedErrorId | Should BeExactly "DirIOError,Microsoft.PowerShell.Commands.GetChildItemCommand"
-                $Error[0].Exception | Should BeOfType System.Io.FileNotFoundException
-                $result.Count | Should BeExactly 4
-            }
-        }
-        # Test is pending on Unix platforms because of a behavior change in the latest .NET Core.
-        # See https://github.com/dotnet/corefx/issues/20456 for more information.
-        It "Should continue enumerating a directory when a contained item is renamed" -Pending:(!$IsWindows) {
-            $Error.Clear()
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionRename", $true)
-            $result = Get-ChildItem -Path $TestDrive -ErrorAction SilentlyContinue
-            [System.Management.Automation.Internal.InternalTestHooks]::SetTestHook("GciEnumerationActionRename", $false)
-            if ($IsWindows)
-            {
-                $Error.Count | Should BeExactly 0
-                $result.Count | Should BeExactly 4
-            }
-            else
-            {
-                $Error.Count | Should BeExactly 1
-                $Error[0].FullyQualifiedErrorId | Should BeExactly "DirIOError,Microsoft.PowerShell.Commands.GetChildItemCommand"
-                $Error[0].Exception | Should BeOfType System.Io.FileNotFoundException
-                $result.Count | Should BeExactly 3
-            }
-        }
     }
 
     Context 'Env: Provider' {
@@ -116,13 +76,13 @@ Describe "Get-ChildItem" -Tags "CI" {
                 $env:__FOOBAR = 'foo'
                 $env:__foobar = 'bar'
 
-                $foobar = Get-Childitem env: | ? {$_.Name -eq '__foobar'}
+                $foobar = Get-Childitem env: | Where-Object {$_.Name -eq '__foobar'}
                 $count = if ($IsWindows) { 1 } else { 2 }
                 ($foobar | measure).Count | Should Be $count
             }
             catch
             {
-                Get-ChildItem env: | ? {$_.Name -eq '__foobar'} | Remove-Item -ErrorAction SilentlyContinue
+                Get-ChildItem env: | Where-Object {$_.Name -eq '__foobar'} | Remove-Item -ErrorAction SilentlyContinue
             }
         }
     }

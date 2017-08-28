@@ -1,7 +1,7 @@
 ﻿#region privateFunctions
 
 $script:psRepoPath = [string]::Empty
-if ((Get-Command -Name 'git' -ErrorAction Ignore) -ne $Null) {
+if ($null -ne (Get-Command -Name 'git' -ErrorAction Ignore)) {
     $script:psRepoPath = git rev-parse --show-toplevel
 }
 
@@ -40,6 +40,171 @@ function Get-ClassCoverageData([xml.xmlelement]$element)
     return $classes
 }
 
+# region FileCoverage
+
+class FileCoverage
+{
+    [string]$Path
+    [Collections.Generic.HashSet[int]]$Hit
+    [Collections.Generic.HashSet[int]]$Miss
+    [int]$SequencePointCount = 0
+    [Double]$Coverage
+    FileCoverage([string]$p) {
+        $this.Path = $p
+        $this.Hit = [Collections.Generic.HashSet[int]]::new()
+        $this.Miss = [Collections.Generic.HashSet[int]]::new()
+    }
+}
+
+<#
+.Synopsis
+   Format the coverage data for a file
+.Description
+   Show the lines which were hit or not in a specific file. Line numbers are included in the output.
+   If a line was hit during a test run a '+' will follow the line number, if a line was missed, a '-'
+   will follow the line number. If a line is not hittable, it will not show '+' or '-'.
+
+   You can map file locations with the -oldBase and -newBase parameters (see example below), so you can 
+   view coverage on a system with a different file layout. It is obvious to note that if files are different
+   between the systems, the results will be misleading
+.EXAMPLE
+   PS> $coverage = Get-CodeCoverage -CoverageXmlFile .\opencover.xml
+   PS> Format-FileCoverage -FileCoverageData $coverage.FileCoverage -filter "CredSSP.cs"
+
+   ...
+   0790                   try
+   0791 +                 {
+   0792                       // ServiceController.Start will return before the service is actually started
+   0793                       // This API will wait forever
+   0794 +                     serviceController.WaitForStatus(
+   0795 +                         targetStatus,
+   0796 +                         new TimeSpan(20000000) // 2 seconds
+   0797 +                         );
+   0798 +                     return true; // service reached target status
+   0799                   }
+   0800 -                 catch (System.ServiceProcess.TimeoutException) // still waiting
+   0801 -                 {
+   0802 -                     if (serviceController.Status != pendingStatus
+   ...
+
+.EXAMPLE
+   Map the file location from C:\projects\powershell-f975h to /users/james/src
+   PS> $coverage = Get-CodeCoverage -CoverageXmlFile .\opencover.xml
+   PS> $formatArgs = @{
+       FileCoverageData = $coverage.FileCoverage
+       filter = "Service.cs"
+       oldBase = "C:\\projects\\powershell-f975h"
+       newBase = "/users/james/src"
+   }
+   PS> Format-FileCoverage @formatArgs
+
+   ...
+   0790                   try
+   0791 +                 {
+   0792                       // ServiceController.Start will return before the service is actually started
+   0793                       // This API will wait forever
+   0794 +                     serviceController.WaitForStatus(
+   0795 +                         targetStatus,
+   0796 +                         new TimeSpan(20000000) // 2 seconds
+   0797 +                         );
+   0798 +                     return true; // service reached target status
+   0799                   }
+   0800 -                 catch (System.ServiceProcess.TimeoutException) // still waiting
+   0801 -                 {
+   0802 -                     if (serviceController.Status != pendingStatus
+   ...
+#>
+function Format-FileCoverage
+{
+    param ( 
+        [Parameter(Position=0,Mandatory=$true,ValueFromPipeline=$true)]$FileCoverageData, 
+        [Parameter()][string]$oldBase = "", 
+        [Parameter()][string]$newBase = "", 
+        [Parameter()][string]$filter = ".*" 
+    )
+
+    $files = @($fileCoverageData.Keys) | Where-Object { $_ -match $filter }
+
+    foreach ( $file in $files ) {
+        $coverageData = $FileCoverageData[$file]
+        $filepath = $file -replace "$oldBase","${newBase}"
+        if ( test-path $filepath ) {
+            $content = get-content $filepath
+            for($i = 0; $i -lt $content.length; $i++ ) {
+                if ( $coverageData.Hit -contains ($i+1)) {
+                    $sign = "+"
+                }
+                elseif ( $coverageData.Miss -contains ($i+1)) {
+                    $sign = "-"
+                }
+                else {
+                    $sign = " "
+                }
+                $outputline = "{0:0000} {1} {2}" -f ($i+1),$sign,$content[$i]
+                if ( $sign -eq "+" ) { write-host -fore green $outputline }
+                elseif ( $sign -eq "-" ) { write-host -fore red $outputline }
+                else { write-host -fore white $outputline }
+            }
+        }
+        else {
+            Write-Error "Cannot find $filepath"
+        }
+    }
+}
+
+function Get-FileCoverageData([xml]$CoverageData)
+{
+    $result = [Collections.Generic.Dictionary[string,FileCoverage]]::new()
+    $count = 0
+    Write-Progress "collecting files"
+    $filehash = $CoverageData.SelectNodes(".//File") | %{ $h = @{} } { $h[$_.uid] = $_.fullpath } { $h }
+    Write-Progress "collecting sequence points"
+    $nodes = $CoverageData.SelectNodes(".//SequencePoint")
+    $ncount = $nodes.count
+    Write-Progress "scanning sequence points"
+    foreach($point in $nodes) {
+        $fileid = $point.fileid
+        $filepath = $filehash[$fileid]
+        $s = [int]$point.sl
+        $e = [int]$point.el
+        $filedata = $null
+        if ( ! $result.TryGetValue($filepath, [ref]$filedata) ) {
+            $filedata = [FileCoverage]::new($filepath)
+            $null = $result.Add($filepath, $filedata)
+        }
+
+        for($i = $s; $i -le $e; $i++) {
+            if ( $point.vc -eq "0" ) {
+                $null = $filedata.Miss.Add($i)
+            }
+            else {
+                $null = $filedata.Hit.Add($i)
+            }
+        }
+        if ( (++$count % 50000) -eq 0 ) { Write-Progress "$count of $ncount" }
+    }
+
+    # Almost done, we're looking at two runs, and one run might have missed a line that
+    # was hit in another run, so go throw each one of the collections and remove any
+    # hit from the miss collection
+    Write-Progress "Cleanup up collections"
+    foreach ( $key in $result.keys ) {
+        $collection = $null
+        if ( $result.TryGetValue($key, [ref]$collection ) ) {
+            foreach ( $hit in $collection.hit ) {
+                $null = $collection.miss.remove($hit)
+            }
+            $collection.SequencePointCount = $collection.Hit.Count + $Collection.Miss.Count
+            $collection.Coverage = $collection.Hit.Count/$collection.SequencePointCount*100
+        }
+        else {
+            Write-Error "Could not find '$key'"
+        }
+    }
+    # now return $result
+    $result
+}
+#endregion
 function Get-CodeCoverageChange($r1, $r2, [string[]]$ClassName)
 {
     $h = @{}
@@ -47,8 +212,8 @@ function Get-CodeCoverageChange($r1, $r2, [string[]]$ClassName)
 
     if ( $ClassName ) {
         foreach ( $Class in $ClassName ) {
-            $c1 = $r1.Assembly.ClassCoverage | ?{$_.ClassName -eq $Class }
-            $c2 = $r2.Assembly.ClassCoverage | ?{$_.ClassName -eq $Class }
+            $c1 = $r1.Assembly.ClassCoverage | Where-Object {$_.ClassName -eq $Class }
+            $c2 = $r2.Assembly.ClassCoverage | Where-Object {$_.ClassName -eq $Class }
             $ClassCoverageChange = [pscustomobject]@{
                 ClassName     = $Class
                 Branch        = $c2.Branch
@@ -97,11 +262,11 @@ function Get-CodeCoverageChange($r1, $r2, [string[]]$ClassName)
 
 function Get-AssemblyCoverageChange($r1, $r2)
 {
-    if($r1 -eq $null -and $r2 -ne $null)
+    if($null -eq $r1 -and $null -ne $r2)
     {
         $r1 = @{ AssemblyName = $r2.AssemblyName ; Branch = 0 ; Sequence = 0 }
     }
-    elseif($r2 -eq $null -and $r1 -ne $null)
+    elseif($null -eq $r2 -and $null -ne $r1)
     {
         $r2 = @{ AssemblyName = $r1.AssemblyName ; Branch = 0 ; Sequence = 0 }
     }
@@ -122,7 +287,7 @@ function Get-AssemblyCoverageChange($r1, $r2)
 function Get-CoverageData($xmlPath)
 {
     [xml]$CoverageXml = get-content -readcount 0 $xmlPath
-    if ( $CoverageXml.CoverageSession -eq $null ) { throw "CoverageSession data not found" }
+    if ( $null -eq $CoverageXml.CoverageSession ) { throw "CoverageSession data not found" }
 
     $assemblies = New-Object System.Collections.ArrayList
 
@@ -134,9 +299,10 @@ function Get-CoverageData($xmlPath)
         CoverageLogFile = $xmlPath
         CoverageSummary = (Get-CoverageSummary -element $CoverageXml.CoverageSession.Summary)
         Assembly = $assemblies
+        FileCoverage = Get-FileCoverageData $CoverageXml
     }
     $CoverageData.PSTypeNames.Insert(0,"OpenCover.CoverageData")
-    Add-Member -InputObject $CoverageData -MemberType ScriptMethod -Name GetClassCoverage -Value { param ( $name ) $this.assembly.classcoverage | ?{$_.classname -match $name } }
+    Add-Member -InputObject $CoverageData -MemberType ScriptMethod -Name GetClassCoverage -Value { param ( $name ) $this.assembly.classcoverage | Where-Object {$_.classname -match $name } }
     $null = $CoverageXml
 
     ## Adding explicit garbage collection as the $CoverageXml object tends to be very large, in order of 1 GB.
@@ -232,7 +398,6 @@ function Expand-ZipArchive([string] $Path, [string] $DestinationPath)
    Microsoft.PowerShell.PackageManagement              59.77  62.04    Branch:59.77 Sequence:62.04
    Microsoft.PackageManagement                         41.73  44.47    Branch:41.73 Sequence:44.47
    Microsoft.Management.Infrastructure.CimCmdlets      13.20  17.01    Branch:13.20 Sequence:17.01
-   Microsoft.PowerShell.LocalAccounts                  73.15  84.32    Branch:73.15 Sequence:84.32
    Microsoft.PackageManagement.MetaProvider.PowerShell 54.79  57.90    Branch:54.79 Sequence:57.90
    Microsoft.PackageManagement.NuGetProvider           62.36  65.37    Branch:62.36 Sequence:65.37
    Microsoft.PackageManagement.CoreProviders           7.08   7.96     Branch:7.08 Sequence:7.96
@@ -285,7 +450,6 @@ function Get-CodeCoverage
    Microsoft.PowerShell.ConsoleHost                    36.53            0 38.40                0
    Microsoft.PowerShell.CoreCLR.AssemblyLoadContext    53.66            0 95.31                0
    Microsoft.PowerShell.CoreCLR.Eventing               28.70            0 36.23                0
-   Microsoft.PowerShell.LocalAccounts                  73.15            0 84.32                0
    Microsoft.PowerShell.PackageManagement              59.77            0 62.04                0
    Microsoft.PowerShell.PSReadLine                     7.12             0 9.94                 0
    Microsoft.PowerShell.Security                       15.17            0 18.16                0
@@ -312,7 +476,6 @@ function Get-CodeCoverage
    Microsoft.PowerShell.ConsoleHost                    36.53            0 38.40                0
    Microsoft.PowerShell.CoreCLR.AssemblyLoadContext    53.66            0 95.31                0
    Microsoft.PowerShell.CoreCLR.Eventing               28.70            0 36.23                0
-   Microsoft.PowerShell.LocalAccounts                  73.15            0 84.32                0
    Microsoft.PowerShell.PackageManagement              59.77            0 62.04                0
    Microsoft.PowerShell.PSReadLine                     7.12             0 9.94                 0
    Microsoft.PowerShell.Security                       15.17            0 18.16                0
@@ -402,7 +565,7 @@ function Install-OpenCover
     ## We add ErrorAction as we do not have this module on PS v4 and below. Calling import-module will throw an error otherwise.
     import-module Microsoft.PowerShell.Archive -ErrorAction SilentlyContinue
 
-    if ((Get-Command Expand-Archive -ErrorAction Ignore) -ne $null) {
+    if ($null -ne (Get-Command Expand-Archive -ErrorAction Ignore)) {
         Expand-Archive -Path $tempPath -DestinationPath "$TargetDirectory/OpenCover"
     } else {
         Expand-ZipArchive -Path $tempPath -DestinationPath "$TargetDirectory/OpenCover"
@@ -416,21 +579,22 @@ function Install-OpenCover
 .Description
    Invoke-OpenCover runs tests under OpenCover by executing tests on PowerShell.exe located at $PowerShellExeDirectory.
 .EXAMPLE
-   Invoke-OpenCover -TestDirectory $pwd/test/powershell -PowerShellExeDirectory $pwd/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win10-x64
+   Invoke-OpenCover -TestPath $pwd/test/powershell -PowerShellExeDirectory $pwd/src/powershell-win-core/bin/CodeCoverage/netcoreapp1.0/win10-x64
 #>
 function Invoke-OpenCover
 {
     [CmdletBinding(SupportsShouldProcess=$true)]
     param (
         [parameter()]$OutputLog = "$home/Documents/OpenCover.xml",
-        [parameter()]$TestDirectory = "${script:psRepoPath}/test/powershell",
+        [parameter()]$TestPath = "${script:psRepoPath}/test/powershell",
         [parameter()]$OpenCoverPath = "$home/OpenCover",
         [parameter()]$PowerShellExeDirectory = "${script:psRepoPath}/src/powershell-win-core/bin/CodeCoverage/netcoreapp2.0/win10-x64/publish",
         [parameter()]$PesterLogElevated = "$pwd/TestResultsElevated.xml",
         [parameter()]$PesterLogUnelevated = "$pwd/TestResultsUnelevated.xml",
         [parameter()]$PesterLogFormat = "NUnitXml",
         [parameter()]$TestToolsModulesPath = "${script:psRepoPath}/test/tools/Modules",
-        [switch]$CIOnly
+        [switch]$CIOnly,
+        [switch]$SuppressQuiet
         )
 
     # check for elevation
@@ -451,7 +615,7 @@ function Invoke-OpenCover
     {
         # see if it's somewhere else in the path
         $openCoverBin = (Get-Command -Name 'opencover.console' -ErrorAction Ignore).Source
-        if ($openCoverBin -eq $null) {
+        if ($null -eq $openCoverBin) {
             throw "$OpenCoverBin does not exist, use Install-OpenCover"
         }
     }
@@ -465,8 +629,10 @@ function Invoke-OpenCover
 
     # create the arguments for OpenCover
 
-    $startupArgs =  'Set-ExecutionPolicy Bypass -Force -Scope Process;'
-    $targetArgs = "-c","${startupArgs}", "Invoke-Pester","${TestDirectory}"
+    $updatedEnvPath = "${PowerShellExeDirectory}\Modules;$TestToolsModulesPath"
+
+    $startupArgs =  "Set-ExecutionPolicy Bypass -Force -Scope Process; `$env:PSModulePath = '${updatedEnvPath}';"
+    $targetArgs = "${startupArgs}", "Invoke-Pester","${TestPath}","-OutputFormat $PesterLogFormat"
 
     if ( $CIOnly )
     {
@@ -479,46 +645,40 @@ function Invoke-OpenCover
         $targetArgsUnelevated = $targetArgs + @("-excludeTag @('RequireAdminOnWindows')")
     }
 
-    $targetArgsElevated += @("-OutputFile $PesterLogElevated", "-OutputFormat $PesterLogFormat", "-Quiet")
-    $targetArgsUnelevated += @("-OutputFile $PesterLogUnelevated", "-OutputFormat $PesterLogFormat", "-Quiet")
+    $targetArgsElevated += @("-OutputFile $PesterLogElevated")
+    $targetArgsUnelevated += @("-OutputFile $PesterLogUnelevated")
 
-    $targetArgStringElevated = $targetArgsElevated -join " "
-    $targetArgStringUnelevated  = $targetArgsUnelevated -join " "
-    # the order seems to be important. Always keep -targetargs as the last parameter.
-    $openCoverArgsElevated = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all","-mergeoutput","-targetargs:`"$targetArgStringElevated`""
-    $openCoverArgsUnelevated = "-target:$target","-register:user","-output:${outputLog}","-nodefaultfilters","-oldstyle","-hideskipped:all", "-mergeoutput", "-targetargs:`"$targetArgStringUnelevated`""
-    $openCoverArgsUnelevatedString = $openCoverArgsUnelevated -join " "
+    if(-not $SuppressQuiet)
+    {
+        $targetArgsElevated += @("-Quiet")
+        $targetArgsUnelevated += @("-Quiet")
+    }
 
-    if ( $PSCmdlet.ShouldProcess("$OpenCoverBin $openCoverArgsUnelevated")  )
+    $cmdlineElevated = CreateOpenCoverCmdline -target $target -outputLog $OutputLog -targetArgs $targetArgsElevated
+    $cmdlineUnelevated = CreateOpenCoverCmdline -target $target -outputLog $OutputLog -targetArgs $targetArgsUnelevated
+
+    if ( $PSCmdlet.ShouldProcess("$OpenCoverBin $cmdlineUnelevated") )
     {
         try
         {
-            # check to be sure that the module path is present
-            # this isn't done earlier because there's no need to change env:PSModulePath unless we're going to really run tests
-            $saveModPath = $env:PSModulePath
-            $env:PSModulePath = "${PowerShellExeDirectory}\Modules;$TestToolsModulesPath"
-
-            $modulePathParts = $env:PSModulePath -split ';'
-
-            foreach($part in $modulePathParts)
-            {
-                if ( ! (test-path $part) )
-                {
-                    throw "${part} does not exist"
-                }
-            }
-
             # invoke OpenCover elevated
-            & $OpenCoverBin $openCoverArgsElevated
+            # Write the command line to a file and then invoke file.
+            # '&' invoke caused issues with cmdline parameters for opencover.console.exe
+            $elevatedFile = "$env:temp\elevated.ps1"
+            "$OpenCoverBin $cmdlineElevated" | Out-File -FilePath $elevatedFile -force
+            powershell.exe -file $elevatedFile
 
             # invoke OpenCover unelevated and poll for completion
-            "$openCoverBin $openCoverArgsUnelevatedString" | Out-File -FilePath "$env:temp\unelevated.ps1" -Force
-            runas.exe /trustlevel:0x20000 "powershell.exe -file $env:temp\unelevated.ps1"
-            # wait for process to start
-            Start-Sleep -Seconds 5
+            $unelevatedFile = "$env:temp\unelevated.ps1"
+            "$openCoverBin $cmdlineUnelevated" | Out-File -FilePath $unelevatedFile -Force
+            runas.exe /trustlevel:0x20000 "powershell.exe -file $unelevatedFile"
             # poll for process exit every 60 seconds
             # timeout of 6 hours
+            # Runs currently take about 2.5 - 3 hours, we picked 6 hours to be substantially larger.
             $timeOut = ([datetime]::Now).AddHours(6)
+
+            $openCoverExited = $false
+
             while([datetime]::Now -lt $timeOut)
             {
                 Start-Sleep -Seconds 60
@@ -527,15 +687,44 @@ function Invoke-OpenCover
                 if(-not $openCoverProcess)
                 {
                     #run must have completed.
+                    $openCoverExited = $true
                     break
                 }
+            }
+
+            if(-not $openCoverExited)
+            {
+                throw "Opencover has not exited in 6 hours"
             }
         }
         finally
         {
-            # set it back
-            $env:PSModulePath = $saveModPath
-            Remove-Item "$env:temp\unelevated.ps1" -force -ErrorAction SilentlyContinue
+            Remove-Item $elevatedFile -force -ErrorAction SilentlyContinue
+            Remove-Item $unelevatedFile -force -ErrorAction SilentlyContinue
         }
     }
+}
+
+function CreateOpenCoverCmdline($target, $outputLog, $targetArgs)
+{
+    $targetArgString = $targetArgs -join " "
+
+    $bytes = [System.Text.Encoding]::Unicode.GetBytes($targetArgString)
+    $base64targetArgs = [convert]::ToBase64String($bytes)
+
+    # the order seems to be important. Always keep -targetargs as the last parameter.
+    $cmdline = "-target:$target",
+        "-register:user",
+        "-output:${outputLog}",
+        "-nodefaultfilters",
+        "-oldstyle",
+        "-hideskipped:all",
+        "-mergeoutput",
+        "-filter:`"+[*]* -[Microsoft.PowerShell.PSReadLine]*`"",
+        "-targetargs:`"-NoProfile -EncodedCommand $base64targetArgs`""
+
+    $cmdlineAsString = $cmdline -join " "
+
+    return $cmdlineAsString
+
 }

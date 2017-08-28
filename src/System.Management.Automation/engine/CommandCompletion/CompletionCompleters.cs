@@ -4468,9 +4468,8 @@ namespace System.Management.Automation
             {
                 for (int i = 0; i < numEntries; ++i)
                 {
-                    IntPtr curInfoPtr = (IntPtr)((long)shBuf + (ClrFacade.SizeOf<SHARE_INFO_1>() * i));
-                    SHARE_INFO_1 shareInfo = ClrFacade.PtrToStructure<SHARE_INFO_1>(curInfoPtr);
-
+                    IntPtr curInfoPtr = (IntPtr)((long)shBuf + (Marshal.SizeOf<SHARE_INFO_1>() * i));
+                    SHARE_INFO_1 shareInfo = Marshal.PtrToStructure<SHARE_INFO_1>(curInfoPtr);
 
                     if ((shareInfo.type & STYPE_MASK) != STYPE_DISKTREE)
                         continue;
@@ -5705,7 +5704,7 @@ namespace System.Management.Automation
             #endregion Process_TypeAccelerators
 
             #region Process_CoreCLR_TypeCatalog
-#if CORECLR
+
             // In CoreCLR, we have namespace-qualified type names of all available .NET Core types stored in TypeCatalog.
             // Populate the type completion cache using the namespace-qualified type names.
             foreach (string fullTypeName in ClrFacade.AvailableDotNetTypeNames)
@@ -5714,17 +5713,16 @@ namespace System.Management.Automation
                 HandleNamespace(entries, typeCompInString.Namespace);
                 HandleType(entries, fullTypeName, typeCompInString.ShortTypeName, null);
             }
-#endif
+
             #endregion Process_CoreCLR_TypeCatalog
 
             #region Process_LoadedAssemblies
 
             foreach (Assembly assembly in ClrFacade.GetAssemblies())
             {
-#if CORECLR
                 // Ignore the assemblies that are already covered by the type catalog
                 if (ClrFacade.AvailableDotNetAssemblyNames.Contains(assembly.FullName)) { continue; }
-#endif
+
                 try
                 {
                     foreach (Type type in assembly.GetTypes())

@@ -52,6 +52,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
     BeforeAll {
         $powershell = Join-Path -Path $PsHome -ChildPath "powershell"
+        $ExitCodeBadCommandLineParameter = 64
 
         function NewProcessStartInfo([string]$CommandLine, [switch]$RedirectStdIn)
         {
@@ -179,26 +180,64 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
 
         It "-File should be default parameter" {
             Set-Content -Path $testdrive/test -Value "'hello'"
-            $observed = & $powershell $testdrive/test
+            $observed = & $powershell -NoProfile $testdrive/test
             $observed | Should Be "hello"
         }
 
-        It "-File accepts scripts with and without .ps1 extension" -TestCases @(
+        It "-File accepts scripts with and without .ps1 extension: <Filename>" -TestCases @(
             @{Filename="test.ps1"},
             @{Filename="test"}
         ) {
             param($Filename)
             Set-Content -Path $testdrive/$Filename -Value "'hello'"
-            $observed = & $powershell -File $testdrive/$Filename
+            $observed = & $powershell -NoProfile -File $testdrive/$Filename
             $observed | Should Be "hello"
         }
 
         It "-File should pass additional arguments to script" {
             Set-Content -Path $testdrive/script.ps1 -Value 'foreach($arg in $args){$arg}'
-            $observed = & $powershell $testdrive/script.ps1 foo bar
+            $observed = & $powershell -NoProfile $testdrive/script.ps1 foo bar
             $observed.Count | Should Be 2
             $observed[0] | Should Be "foo"
             $observed[1] | Should Be "bar"
+        }
+
+        It "-File should be able to pass bool string values as string to parameters: <BoolString>" -TestCases @(
+            # validates case is preserved
+            @{BoolString = '$truE'},
+            @{BoolString = '$falSe'},
+            @{BoolString = 'trUe'},
+            @{BoolString = 'faLse'}
+        ) {
+            param([string]$BoolString)
+            Set-Content -Path $testdrive/test.ps1 -Value 'param([string]$bool) $bool'
+            $observed = & $powershell -NoProfile -Nologo -File $testdrive/test.ps1 -Bool $BoolString
+            $observed | Should Be $BoolString
+        }
+
+        It "-File should be able to pass bool string values as string to positional parameters: <BoolString>" -TestCases @(
+            # validates case is preserved
+            @{BoolString = '$tRue'},
+            @{BoolString = '$falSe'},
+            @{BoolString = 'tRUe'},
+            @{BoolString = 'fALse'}
+        ) {
+            param([string]$BoolString)
+            Set-Content -Path $testdrive/test.ps1 -Value 'param([string]$bool) $bool'
+            $observed = & $powershell -NoProfile -Nologo -File $testdrive/test.ps1 $BoolString
+            $observed | Should BeExactly $BoolString
+        }
+
+        It "-File should be able to pass bool string values as bool to switches: <BoolString>" -TestCases @(
+            @{BoolString = '$tRue'; BoolValue = 'True'},
+            @{BoolString = '$faLse'; BoolValue = 'False'},
+            @{BoolString = 'tRue'; BoolValue = 'True'},
+            @{BoolString = 'fAlse'; BoolValue = 'False'}
+        ) {
+            param([string]$BoolString, [string]$BoolValue)
+            Set-Content -Path $testdrive/test.ps1 -Value 'param([switch]$switch) $switch.IsPresent'
+            $observed = & $powershell -NoProfile -Nologo -File $testdrive/test.ps1 -switch:$BoolString
+            $observed | Should Be $BoolValue
         }
 
         It "-File should return exit code from script"  -TestCases @(
@@ -209,7 +248,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
             Set-Content -Path $testdrive/$Filename -Value 'exit 123'
             & $powershell $testdrive/$Filename
             $LASTEXITCODE | Should Be 123
-        }        
+        }
     }
 
     Context "Pipe to/from powershell" {
@@ -301,7 +340,7 @@ Describe "ConsoleHost unit tests" -tags "Feature" {
         # All of the following tests replace the prompt (either via an initial command or interactively)
         # so that we can read StandardOutput and reliably know exactly what the prompt is.
 
-        It "Interactive redirected input" -TestCases @(
+        It "Interactive redirected input: <InteractiveSwitch>" -TestCases @(
             @{InteractiveSwitch = ""}
             @{InteractiveSwitch = " -IntERactive"}
             @{InteractiveSwitch = " -i"}
@@ -447,6 +486,101 @@ foo
         It "Should start if HOME is not defined" -skip:($IsWindows) {
             bash -c "unset HOME;$powershell -c '1+1'" | Should BeExactly 2
         }
+    }
+
+    Context "PATH environment variable" {
+        It "`$PSHOME should be in front so that powershell.exe starts current running PowerShell" {
+            powershell -v | Should Match $psversiontable.GitCommitId
+        }
+    }
+
+    Context "Ambiguous arguments" {
+        It "Ambiguous argument '<testArg>' should return possible matches" -TestCases @(
+            @{testArg="-no";expectedMatches=@("-nologo","-noexit","-noprofile","-noninteractive")},
+            @{testArg="-format";expectedMatches=@("-inputformat","-outputformat")}
+        ) {
+            param($testArg, $expectedMatches)
+            $output = & $powershell $testArg -File foo 2>&1
+            $LASTEXITCODE | Should Be $ExitCodeBadCommandLineParameter
+            $outString = [String]::Join(",", $output)
+            foreach ($expectedMatch in $expectedMatches)
+            {
+                $outString | Should Match $expectedMatch
+            }
+        }
+    }
+}
+
+Describe "WindowStyle argument" -Tag Feature {
+    BeforeAll {
+        $defaultParamValues = $PSDefaultParameterValues.Clone()
+        $PSDefaultParameterValues["it:skip"] = !$IsWindows
+
+        if ($IsWindows)
+        {
+            $ExitCodeBadCommandLineParameter = 64
+            Add-Type -Name User32 -Namespace Test -MemberDefinition @"
+public static WINDOWPLACEMENT GetPlacement(IntPtr hwnd)
+{
+    WINDOWPLACEMENT placement = new WINDOWPLACEMENT();
+    placement.length = Marshal.SizeOf(placement);
+    GetWindowPlacement(hwnd, ref placement);
+    return placement;
+}
+
+[DllImport("user32.dll", SetLastError = true)]
+[return: MarshalAs(UnmanagedType.Bool)]
+public static extern bool GetWindowPlacement(
+    IntPtr hWnd, ref WINDOWPLACEMENT lpwndpl);
+
+[Serializable]
+[StructLayout(LayoutKind.Sequential)]
+public struct WINDOWPLACEMENT
+{
+    public int length;
+    public int flags;
+    public ShowWindowCommands showCmd;
+    public System.Drawing.Point ptMinPosition;
+    public System.Drawing.Point ptMaxPosition;
+    public System.Drawing.Rectangle rcNormalPosition;
+}
+
+public enum ShowWindowCommands : int
+{
+    Hidden = 0,
+    Normal = 1,
+    Minimized = 2,
+    Maximized = 3,
+}
+"@
+        }
+    }
+
+    AfterAll {
+        $global:PSDefaultParameterValues = $defaultParamValues
+    }
+
+    It "-WindowStyle <WindowStyle> should work on Windows" -TestCases @(
+            @{WindowStyle="Normal"},
+            @{WindowStyle="Minimized"},
+            @{WindowStyle="Maximized"}  # hidden doesn't work in CI/Server Core
+        ) {
+        param ($WindowStyle)
+        $ps = Start-Process powershell -ArgumentList "-WindowStyle $WindowStyle -noexit -interactive" -PassThru
+        $startTime = Get-Date
+        $showCmd = "Unknown"
+        while (((Get-Date) - $startTime).TotalSeconds -lt 10 -and $showCmd -ne $WindowStyle)
+        {
+            Start-Sleep -Milliseconds 100
+            $showCmd = ([Test.User32]::GetPlacement($ps.MainWindowHandle)).showCmd
+        }
+        $showCmd | Should BeExactly $WindowStyle
+        $ps | Stop-Process -Force
+    }
+
+    It "Invalid -WindowStyle returns error" {
+        powershell -WindowStyle invalid
+        $LASTEXITCODE | Should Be $ExitCodeBadCommandLineParameter
     }
 }
 

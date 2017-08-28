@@ -15,12 +15,29 @@ function Get-ComputerInfoForTest
     }
     else
     {
-        if ( $forceRefresh -or $script:computerInfoAll -eq $null)
+        if ( $forceRefresh -or $null -eq $script:computerInfoAll)
         {
             $script:computerInfoAll = Get-ComputerInfo
         }
         return $script:computerInfoAll
     }
+}
+
+function Get-StringValuesFromValueMap
+{
+    param([string[]] $values, [hashtable] $valuemap)
+
+    [string] $stringValues = [string]::Empty
+
+    foreach ($value in $values)
+    {
+        if ($stringValues -ne [string]::Empty)
+        {
+            $stringValues += ","
+        }
+        $stringValues += $valuemap[$value]
+    }
+    $stringValues
 }
 
 function Get-PropertyNamesForComputerInfoTest
@@ -340,7 +357,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         $configHash = @{}
         foreach ($config in $configs)
         {
-            if ($config.Index -ne $null)
+            if ($null -ne $config.Index)
             {
                 $configHash.Add([string]$config.Index,$config)
             }
@@ -497,7 +514,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         $serverLevels = @{}
         try
         {
-            if ($regKey -ne $null)
+            if ($null -ne $regKey)
             {
                 $serverLevelNames = $regKey.GetValueNames()
 
@@ -513,10 +530,10 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         }
         finally
         {
-            if ($regKey -ne $null) { $regKey.Dispose()}
+            if ($null -ne $regKey) { $regKey.Dispose()}
         }
 
-        if ($serverLevels -eq $null -or $serverLevels.Count -eq 0)
+        if ($null -eq $serverLevels -or $serverLevels.Count -eq 0)
         {
             return $null
         }
@@ -579,7 +596,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
         $virtualizationFirmwareEnabled  = $null
         $vMMonitorModeExtensions  = $null
 
-        if (($hypervisorPresent -ne $null) -and ($hypervisorPresent -ne $true))
+        if (($null -ne $hypervisorPresent) -and ($hypervisorPresent -ne $true))
         {
             $dataExecutionPrevention_Available = Get-CimClassPropVal Win32_OperatingSystem DataExecutionPrevention_Available
 
@@ -610,7 +627,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
             try
             {
                 $layoutAsHex = [System.Convert]::ToUInt32($layout, 16)
-                if ($layoutAsHex -ne $null)
+                if ($null -ne $layoutAsHex)
                 {
                     $result = Convert-LocaleIdToLocaleName $layoutAsHex
                 }
@@ -660,11 +677,11 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
 
         $locale =  Get-CimClassPropVal Win32_OperatingSystem Locale
 
-        if ($locale -ne $null)
+        if ($null -ne $locale)
         {
             #$localeAsHex = $locale -as [hex]
             $localeAsHex = [System.Convert]::ToUInt32($locale, 16)
-            if ($localeAsHex -ne $null)
+            if ($null -ne $localeAsHex)
             {
 
                 try
@@ -679,7 +696,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
                 }
             }
 
-            if ($localeName -eq $null)
+            if ($null -eq $localeName)
             {
                 try
                 {
@@ -699,7 +716,7 @@ public static extern int LCIDToLocaleName(uint localeID, System.Text.StringBuild
     {
         $osPagingFiles = @()
         $pageFileUsage =  Get-CimClass Win32_PageFileUsage
-        if ($pageFileUsage -ne $null)
+        if ($null -ne $pageFileUsage)
         {
             foreach ($pageFileItem in $pageFileUsage)
             {
@@ -1308,7 +1325,7 @@ try {
                     {
                         $instance = Get-CimInstance Win32_DeviceGuard -Namespace 'root\Microsoft\Windows\DeviceGuard' -ErrorAction Stop
                         $ss = $instance.VirtualizationBasedSecurityStatus;
-                        if ($ss -ne $null)
+                        if ($null -ne $ss)
                         {
                             $returnValue.SmartStatus = $ss;
                         }
@@ -1332,7 +1349,7 @@ try {
             }
         }
 
-        It "Test for DeviceGuard properties" {
+        It "Test for DeviceGuard properties" -Pending {
             if (-not (HasDeviceGuardLicense))
             {
                 $observed.DeviceGuardSmartStatus | Should Be 0
@@ -1346,11 +1363,46 @@ try {
             else
             {
                 $deviceGuard = Get-DeviceGuard
-                $observed.DeviceGuardSmartStatus | Should Be $deviceGuard.SmartStatus
-                $observed.DeviceGuardRequiredSecurityProperties | Should Be $deviceGuard.RequiredSecurityProperties
+                # can't get amended qualifiers using cim cmdlets so we define them here
+                $requiredSecurityPropertiesValues = @{
+                    "1" = "BaseVirtualizationSupport"
+                    "2" = "SecureBoot"
+                    "3" = "DMAProtection"
+                    "4" = "SecureMemoryOverwrite"
+                    "5" = "UEFICodeReadonly"
+                    "6" = "SMMSecurityMitigations1.0"
+                }
+                $smartStatusValues = @{
+                    "0" = "Off"
+                    "1" = "Enabled"
+                    "2" = "Running"
+                }
+                $securityServicesRunningValues = @{
+                    "0" = "0"
+                    "1" = "CredentialGuard"
+                    "2" = "HypervisorEnforcedCodeIntegrity"
+                }
+                $observed.DeviceGuardSmartStatus | Should Be (Get-StringValuesFromValueMap -valuemap $smartStatusValues -values $deviceGuard.SmartStatus)
+                if ($deviceGuard.RequiredSecurityProperties -eq $null)
+                {
+                    $observed.DeviceGuardRequiredSecurityProperties | Should BeNullOrEmpty
+                }
+                else
+                {
+                    $observed.DeviceGuardRequiredSecurityProperties | Should Not BeNullOrEmpty
+                    [string]::Join(",", $observed.DeviceGuardRequiredSecurityProperties) | Should Be (Get-StringValuesFromValueMap -valuemap $requiredSecurityPropertiesValues -values $deviceGuard.RequiredSecurityProperties)
+                }
                 $observed.DeviceGuardAvailableSecurityProperties | Should Be $deviceGuard.AvailableSecurityProperties
                 $observed.DeviceGuardSecurityServicesConfigured | Should Be $deviceGuard.SecurityServicesConfigured
-                $observed.DeviceGuardSecurityServicesRunning | Should Be $deviceGuard.SecurityServicesRunning
+                if ($deviceGuard.SecurityServicesRunning -eq $null)
+                {
+                    $observed.DeviceGuardSecurityServicesRunning | Should BeNullOrEmpty
+                }
+                else
+                {
+                    $observed.DeviceGuardSecurityServicesRunning | Should Not BeNullOrEmpty
+                    [string]::Join(",", $observed.DeviceGuardSecurityServicesRunning) | Should Be (Get-StringValuesFromValueMap -valuemap $securityServicesRunningValues -values $deviceGuard.SecurityServicesRunning)
+                }
                 $observed.DeviceGuardCodeIntegrityPolicyEnforcementStatus | Should Be $deviceGuard.CodeIntegrityPolicyEnforcementStatus
                 $observed.DeviceGuardUserModeCodeIntegrityPolicyEnforcementStatus | Should Be $deviceGuard.UserModeCodeIntegrityPolicyEnforcementStatus
             }

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\PowerShell.Common.props"/>  
+  <Import Project="..\..\PowerShell.Common.props"/>
 
   <PropertyGroup>
     <Description>PowerShell Host</Description>
@@ -10,7 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\System.Management.Automation\System.Management.Automation.csproj" />
-    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.3.0" />
+    <PackageReference Include="Microsoft.ApplicationInsights" Version="2.4.0" />
   </ItemGroup>
 
   <PropertyGroup>
@@ -21,7 +21,7 @@
     <Compile Remove="singleshell\installer\EngineInstaller.cs" />
     <Compile Remove="singleshell\installer\MshHostMshSnapin.cs" />
     <Compile Remove="gen\HostMshSnapinResources.cs" />
-    
+
     <EmbeddedResource Remove="resources\HostMshSnapinResources.resx" />
   </ItemGroup>
 

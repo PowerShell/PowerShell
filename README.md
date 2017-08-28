@@ -1,12 +1,19 @@
 # ![logo][] PowerShell
 
 Welcome to the PowerShell GitHub Community!
-PowerShell is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework
-that works well with your existing tools and is optimized for dealing with structured data
-(e.g. JSON, CSV, XML, etc.), REST APIs, and object models.  It includes a command-line shell, an
-associated scripting language and a framework for processing cmdlets.
+PowerShell Core is a cross-platform (Windows, Linux, and macOS) automation and configuration tool/framework that works well with your existing tools and is optimized
+for dealing with structured data (e.g. JSON, CSV, XML, etc.), REST APIs, and object models.
+It includes a command-line shell, an associated scripting language and a framework for processing cmdlets.
 
 [logo]: assets/Powershell_64.png
+
+## Windows PowerShell vs PowerShell Core
+
+Although this repo started as a fork of the Windows PowerShell code base, changes made in this repo do not make their way back to Windows PowerShell 5.1 automatically.
+This also means that issues tracked here are only for PowerShell Core 6.0.
+Windows PowerShell specific issues should be opened on [UserVoice][].
+
+[UserVoice]: https://windowsserver.uservoice.com/forums/301869-powershell
 
 ## New to PowerShell?
 
@@ -36,16 +43,16 @@ You can download and install a PowerShell package for any of the following platf
 | Docker                             |                        | [Instructions][in-docker]     |
 | Kali Linux                         | [.deb][rl-ubuntu16]    | [Instructions][in-kali]
 
-[rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.3/PowerShell-6.0.0-beta.3-win10-win2016-x64.msi
-[rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.3/PowerShell-6.0.0-beta.3-win81-win2012r2-x64.msi
-[rl-windows7-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win7-win2008r2-x64.msi
-[rl-windows7-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-alpha.18/PowerShell-6.0.0-alpha.18-win7-x86.msi
-[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.3/powershell_6.0.0-beta.3-1ubuntu1.16.04.1_amd64.deb
-[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.3/powershell_6.0.0-beta.3-1ubuntu1.14.04.1_amd64.deb
-[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.3/powershell-6.0.0_beta.3-1.el7.x86_64.rpm
-[rl-ai]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.3/PowerShell-6.0.0-beta.3-x86_64.AppImage
-[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.3/powershell-6.0.0-beta.3-osx.10.12-x64.pkg
-[rl-opensuse421]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.3/powershell-6.0.0_beta.3-1.suse.42.1.x86_64.rpm
+[rl-windows10]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.6/PowerShell-6.0.0-beta.6-win10-win2016-x64.msi
+[rl-windows81]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.6/PowerShell-6.0.0-beta.6-win81-win2012r2-x64.msi
+[rl-windows7-64]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.6/PowerShell-6.0.0-beta.6-win7-win2008r2-x64.msi
+[rl-windows7-86]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.6/PowerShell-6.0.0-beta.6-win7-x86.msi
+[rl-ubuntu16]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.6/powershell_6.0.0-beta.6-1ubuntu1.16.04.1_amd64.deb
+[rl-ubuntu14]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.6/powershell_6.0.0-beta.6-1ubuntu1.14.04.1_amd64.deb
+[rl-centos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.6/powershell-6.0.0_beta.6-1.el7.x86_64.rpm
+[rl-ai]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.6/PowerShell-6.0.0-beta.6-x86_64.AppImage
+[rl-macos]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.6/powershell-6.0.0-beta.6-osx.10.12-x64.pkg
+[rl-opensuse421]: https://github.com/PowerShell/PowerShell/releases/download/v6.0.0-beta.6/powershell-6.0.0_beta.6-1.suse.42.1.x86_64.rpm
 
 [installation]: docs/installation
 [in-windows]: docs/installation/windows.md#msi
@@ -118,8 +125,8 @@ If you have any problems building, please consult the developer [FAQ][].
 [tv-nightly-image]: https://jimtru1979.blob.core.windows.net/badges/DailyBuildStatus.svg
 [av-nightly-image]: https://ci.appveyor.com/api/projects/status/46yd4jogtm2jodcq?svg=true
 [av-nightly-site]: https://ci.appveyor.com/project/PowerShell/powershell-f975h
-[cc-site]: https://coveralls.io/github/PowerShell/PowerShell?branch=master
-[cc-image]: https://coveralls.io/repos/github/PowerShell/PowerShell/badge.svg?branch=master
+[cc-site]: https://codecov.io/gh/PowerShell/PowerShell
+[cc-image]: https://codecov.io/gh/PowerShell/PowerShell/branch/master/graph/badge.svg
 
 ## Downloading the Source Code
 

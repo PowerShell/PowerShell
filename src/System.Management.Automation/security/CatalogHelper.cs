@@ -95,7 +95,7 @@ namespace System.Management.Automation
             int catalogVersion = -1;
 
             IntPtr catalogData = NativeMethods.CryptCATStoreFromHandle(catalogHandle);
-            NativeMethods.CRYPTCATSTORE catalogInfo = ClrFacade.PtrToStructure<NativeMethods.CRYPTCATSTORE>(catalogData);
+            NativeMethods.CRYPTCATSTORE catalogInfo = Marshal.PtrToStructure<NativeMethods.CRYPTCATSTORE>(catalogData);
 
             if (catalogInfo.dwPublicVersion == catalogVersion2)
             {
@@ -384,7 +384,7 @@ namespace System.Management.Automation
         {
             string relativePath = string.Empty;
 
-            NativeMethods.CRYPTCATATTRIBUTE currentMemberAttr = ClrFacade.PtrToStructure<NativeMethods.CRYPTCATATTRIBUTE>(memberAttrInfo);
+            NativeMethods.CRYPTCATATTRIBUTE currentMemberAttr = Marshal.PtrToStructure<NativeMethods.CRYPTCATATTRIBUTE>(memberAttrInfo);
 
             // check if this is the attribute we are looking for
             // catalog generated other way not using New-FileCatalog can have attributes we don't understand
@@ -524,8 +524,8 @@ namespace System.Management.Automation
                         memberInfo = NativeMethods.CryptCATEnumerateMember(resultCatalog, memberInfo);
                         if (memberInfo != IntPtr.Zero)
                         {
-                            NativeMethods.CRYPTCATMEMBER currentMember = ClrFacade.PtrToStructure<NativeMethods.CRYPTCATMEMBER>(memberInfo);
-                            NativeMethods.SIP_INDIRECT_DATA pIndirectData = ClrFacade.PtrToStructure<NativeMethods.SIP_INDIRECT_DATA>(currentMember.pIndirectData);
+                            NativeMethods.CRYPTCATMEMBER currentMember = Marshal.PtrToStructure<NativeMethods.CRYPTCATMEMBER>(memberInfo);
+                            NativeMethods.SIP_INDIRECT_DATA pIndirectData = Marshal.PtrToStructure<NativeMethods.SIP_INDIRECT_DATA>(currentMember.pIndirectData);
 
                             // For Catalog version 2 CryptoAPI puts hashes of file attributes(relative path in our case) in Catalog as well
                             // We validate those along with file hashes so we are skipping duplicate entries

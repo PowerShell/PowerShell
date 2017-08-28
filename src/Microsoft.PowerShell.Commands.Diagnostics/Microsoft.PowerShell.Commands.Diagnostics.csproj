@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <Import Project="..\..\PowerShell.Common.props"/>  
+  <Import Project="..\..\PowerShell.Common.props"/>
 
   <PropertyGroup>
     <Description>PowerShell Core's Microsoft.PowerShell.Commands.Diagnostics project</Description>
@@ -17,7 +17,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="CounterFileInfo.cs" />
+    <Compile Remove="CounterSample.cs" />
+    <Compile Remove="CounterSet.cs" />
+    <Compile Remove="ExportCounterCommand.cs" />
+    <Compile Remove="GetCounterCommand.cs" />
     <Compile Remove="GetEventSnapin.cs" />
+    <Compile Remove="ImportCounterCommand.cs" />
+    <Compile Remove="PdhHelper.cs" />
+    <Compile Remove="PdhSafeHandle.cs" />
     <Compile Remove="gen\GetEventResources.cs" />
   </ItemGroup>
 

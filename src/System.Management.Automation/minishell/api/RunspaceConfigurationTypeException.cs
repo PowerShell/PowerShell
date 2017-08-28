@@ -20,12 +20,7 @@ namespace System.Management.Automation.Runspaces
     ///     2. ISerializable
     /// -->
     [Serializable]
-#if CORECLR
-    internal
-#else
-    public
-#endif
-    class RunspaceConfigurationTypeException : SystemException, IContainsErrorRecord
+    internal class RunspaceConfigurationTypeException : SystemException, IContainsErrorRecord
     {
         /// <summary>
         /// Initiate an instance for RunspaceConfigurationTypeException

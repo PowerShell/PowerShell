@@ -159,7 +159,7 @@ namespace System.Management.Automation
                 else
                 {
                     NativeMethods.CRYPT_OID_INFO oidInfo =
-                        ClrFacade.PtrToStructure<NativeMethods.CRYPT_OID_INFO>(oidPtr);
+                        Marshal.PtrToStructure<NativeMethods.CRYPT_OID_INFO>(oidPtr);
 
                     hashOid = oidInfo.pszOID;
                 }
@@ -216,7 +216,7 @@ namespace System.Management.Automation
 
                 if (si.pSignExtInfo != null)
                 {
-                    ClrFacade.DestroyStructure<NativeMethods.CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO>(si.pSignExtInfo);
+                    Marshal.DestroyStructure<NativeMethods.CRYPTUI_WIZ_DIGITAL_SIGN_EXTENDED_INFO>(si.pSignExtInfo);
                     Marshal.FreeCoTaskMem(si.pSignExtInfo);
                 }
 
@@ -268,7 +268,7 @@ namespace System.Management.Automation
             }
             finally
             {
-                ClrFacade.DestroyStructure<NativeMethods.CRYPTUI_WIZ_DIGITAL_SIGN_INFO>(pSignInfo);
+                Marshal.DestroyStructure<NativeMethods.CRYPTUI_WIZ_DIGITAL_SIGN_INFO>(pSignInfo);
                 Marshal.FreeCoTaskMem(pSignInfo);
             }
 
@@ -548,13 +548,13 @@ namespace System.Management.Automation
                     wtdBuffer);
 #pragma warning enable 56523
 
-                wtData = ClrFacade.PtrToStructure<NativeMethods.WINTRUST_DATA>(wtdBuffer);
+                wtData = Marshal.PtrToStructure<NativeMethods.WINTRUST_DATA>(wtdBuffer);
             }
             finally
             {
-                ClrFacade.DestroyStructure<Guid>(WINTRUST_ACTION_GENERIC_VERIFY_V2);
+                Marshal.DestroyStructure<Guid>(WINTRUST_ACTION_GENERIC_VERIFY_V2);
                 Marshal.FreeCoTaskMem(WINTRUST_ACTION_GENERIC_VERIFY_V2);
-                ClrFacade.DestroyStructure<NativeMethods.WINTRUST_DATA>(wtdBuffer);
+                Marshal.DestroyStructure<NativeMethods.WINTRUST_DATA>(wtdBuffer);
                 Marshal.FreeCoTaskMem(wtdBuffer);
             }
             return dwResult;
@@ -576,7 +576,7 @@ namespace System.Management.Automation
             {
                 NativeMethods.CRYPT_PROVIDER_CERT provCert =
                     (NativeMethods.CRYPT_PROVIDER_CERT)
-                    ClrFacade.PtrToStructure<NativeMethods.CRYPT_PROVIDER_CERT>(pCert);
+                    Marshal.PtrToStructure<NativeMethods.CRYPT_PROVIDER_CERT>(pCert);
                 signerCert = new X509Certificate2(provCert.pCert);
             }
 
@@ -651,7 +651,7 @@ namespace System.Management.Automation
                 {
                     NativeMethods.CRYPT_PROVIDER_SGNR provSigner =
                         (NativeMethods.CRYPT_PROVIDER_SGNR)
-                        ClrFacade.PtrToStructure<NativeMethods.CRYPT_PROVIDER_SGNR>(pProvSigner);
+                        Marshal.PtrToStructure<NativeMethods.CRYPT_PROVIDER_SGNR>(pProvSigner);
                     if (provSigner.csCounterSigners == 1)
                     {
                         //

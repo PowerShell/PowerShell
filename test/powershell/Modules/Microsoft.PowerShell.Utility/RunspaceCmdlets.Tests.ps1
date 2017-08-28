@@ -34,8 +34,8 @@ Describe "Get-Runspace cmdlet tests" -Tag "CI" {
         It "Get-Runspace should return the new runspaces" {
             $result = get-runspace
             # if the ids don't match, we'll get null passed to should
-            $result.id | ?{$_ -eq $r1.id } | should be $r1.id
-            $result.id | ?{$_ -eq $r2.id } | should be $r2.id
+            $result.id | Where-Object {$_ -eq $r1.id } | should be $r1.id
+            $result.id | Where-Object {$_ -eq $r2.id } | should be $r2.id
         }
     }
 }

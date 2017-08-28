@@ -445,8 +445,7 @@ namespace Microsoft.PowerShell
         internal const int SW_FORCEMINIMIZE = 11;
         internal const int SW_MAX = 11;
 
-
-#if !CORECLR  // ProcessWindowStyle does Not exist on CoreCLR
+#if !UNIX
         /// <summary>
         /// Code to control the display properties of the a window...
         /// </summary>
@@ -3327,7 +3326,7 @@ namespace Microsoft.PowerShell
         internal static void MimicKeyPress(INPUT[] inputs)
         {
             Dbg.Assert(inputs != null && inputs.Length > 0, "inputs should not be null or empty");
-            var numberOfSuccessfulEvents = NativeMethods.SendInput((uint)inputs.Length, inputs, ClrFacade.SizeOf<INPUT>());
+            var numberOfSuccessfulEvents = NativeMethods.SendInput((uint)inputs.Length, inputs, Marshal.SizeOf<INPUT>());
 
             if (numberOfSuccessfulEvents == 0)
             {
