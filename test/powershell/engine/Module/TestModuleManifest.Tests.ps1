@@ -220,8 +220,7 @@ Describe "Tests for circular references in required modules" -tags "CI" {
 
 Describe "Test-ModuleManifest Performance bug followup" -tags "CI" {
     BeforeAll {
-        $TestModulesFolder= 'testmodulerunspace'
-        $TestModulesPath = Join-path "$PSScriptRoot\assets" $TestModulesFolder
+        $TestModulesPath = [System.IO.Path]::Combine($PSScriptRoot, 'assets', 'testmodulerunspace')
         $UserModulesPath = "$pshome\Modules"
 
         # Install the Test Module
@@ -238,10 +237,9 @@ Describe "Test-ModuleManifest Performance bug followup" -tags "CI" {
     }
 
     AfterAll {
-        #clean up the test module
-        Remove-Item $UserModulesPath\ModuleWithDependencies2 -Recurse -Force -ErrorAction Ignore
-        Remove-Item $UserModulesPath\NestedRequiredModule1 -Recurse -Force -ErrorAction Ignore
+        #clean up the test modules
+        Remove-Item $UserModulesPath\ModuleWithDependencies2 -Recurse -Force -ErrorAction SilentlyContinue
+        Remove-Item $UserModulesPath\NestedRequiredModule1 -Recurse -Force -ErrorAction SilentlyContinue
     }
-
 }
 
