@@ -29,22 +29,21 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         $psdefaultParameterValues.Remove("out-file:encoding")
     }
 
-    It "If encoding is unset, redirection should be Unicode" {
+    It "If encoding is unset, redirection should be platform appropriate" {
         $asciiString > TESTDRIVE:\file.txt
+        $encoder = [Microsoft.PowerShell.EncodingUtils]::GetEncoding("utf8nobom")
         $bytes = get-content -encoding byte TESTDRIVE:\file.txt
         # create the expected
-        $BOM = [text.encoding]::unicode.GetPreamble()
-        $TXT = [text.encoding]::unicode.GetBytes($asciiString)
-        $CR  = [text.encoding]::unicode.GetBytes($asciiCR)
+        $BOM = $encoder.GetPreamble()
+        $TXT = $encoder.GetBytes($asciiString)
+        $CR  = $encoder.GetBytes($asciiCR)
         $expectedBytes = .{ $BOM; $TXT; $CR }
         $bytes.Count | should be $expectedBytes.count
-        for($i = 0; $i -lt $bytes.count; $i++) {
-            $bytes[$i] | Should be $expectedBytes[$i]
-        }
+        $bytes -join "-" | should be ($expectedBytes -join "-")
     }
 
-    # $availableEncodings = "unknown","string","unicode","bigendianunicode","utf8","utf7", "utf32","ascii","default","oem"
-    $availableEncodings = (get-command out-file).Parameters["Encoding"].Attributes.ValidValues
+    # WindowsLegacy encoding tests will be done elsewhere
+    $availableEncodings = [enum]::GetNames([Microsoft.PowerShell.FileEncoding])|?{@("default","WindowsLegacy") -notcontains $_ }
 
     foreach($encoding in $availableEncodings) {
         $skipTest = $false
@@ -60,7 +59,7 @@ Describe "Redirection operator now supports encoding changes" -Tags "CI" {
         # and out-file has its own translation, so we'll
         # not do that logic here, but simply ignore those encodings
         # as they eventually are translated to "real" encoding
-        $enc = [system.text.encoding]::$encoding
+        $enc = [Microsoft.PowerShell.EncodingUtils]::GetEncoding($encoding)
         if ( $enc )
         {
             $msg = "Overriding encoding for out-file is respected for $encoding"

@@ -14,6 +14,7 @@ using System.IO;
 using System.Management.Automation;
 using System.Management.Automation.Internal;
 using System.Diagnostics.CodeAnalysis;
+using Microsoft.PowerShell;
 using Dbg = System.Management.Automation.Diagnostics;
 
 //
@@ -941,11 +942,7 @@ namespace Microsoft.PowerShell.Commands
                 PathUtils.MasterStreamOpen(
                     this,
                     filePath,
-#if UNIX
-                    new UTF8Encoding(false), // UTF-8, no BOM
-#else
-                    EncodingConversion.Unicode, // UTF-16 with BOM
-#endif
+                    FileEncoding.Unspecified,
                     /* defaultEncoding */ false,
                     /* Append */ false,
                     /* Force */ false,

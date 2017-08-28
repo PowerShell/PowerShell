@@ -20,6 +20,7 @@ using System.Threading;
 using System.Security;
 using Microsoft.Win32.SafeHandles;
 using System.Runtime.InteropServices.ComTypes;
+using Microsoft.PowerShell;
 
 namespace System.Management.Automation
 {
@@ -99,7 +100,7 @@ namespace System.Management.Automation
                 EncodingRegisterProvider();
 
                 uint currentAnsiCp = NativeMethods.GetACP();
-                s_defaultEncoding = Encoding.GetEncoding((int)currentAnsiCp);
+                s_defaultEncoding = EncodingUtils.GetDefaultEncoding();
 #endif
             }
             return s_defaultEncoding;
@@ -112,15 +113,20 @@ namespace System.Management.Automation
         /// </summary>
         internal static Encoding GetOEMEncoding()
         {
+            // The OEM code pages are sometimes used by Win32 console applications, and
+            // on non-Windows platforms they still may have uses (if installed) and
+            // could be used if desired.
+            // On non-windows platforms, they have more limited uses, and probably won't
+            // be installed.
             if (s_oemEncoding == null)
             {
 #if UNIX        // PowerShell Core on Unix
                 s_oemEncoding = GetDefaultEncoding();
-#else           // PowerShell Core on Windows
+#else           // PowerShell Core on Windows, which needs provider registration
                 EncodingRegisterProvider();
 
                 uint oemCp = NativeMethods.GetOEMCP();
-                s_oemEncoding = Encoding.GetEncoding((int)oemCp);
+                s_oemEncoding = EncodingUtils.GetDefaultEncoding();
 #endif
             }
             return s_oemEncoding;
@@ -255,6 +261,7 @@ namespace System.Management.Automation
                                             FileAccess.Read, FileShare.Read);
 
                 // If we successfully get the zone data stream, try to read the ZoneId information
+                // use the method in this class not EncodingUtils.
                 using (StreamReader zoneDataReader = new StreamReader(zoneDataSteam, GetDefaultEncoding()))
                 {
                     string line = null;

@@ -6,6 +6,7 @@ using System.IO;
 using System.Text;
 using System.Collections.ObjectModel;
 using System.Management.Automation.Runspaces;
+using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
 using System.Collections.Generic;
 using System.Management.Automation.Language;
@@ -467,7 +468,7 @@ namespace System.Management.Automation
                 {
                     using (FileStream readerStream = new FileStream(_path, FileMode.Open, FileAccess.Read))
                     {
-                        Encoding defaultEncoding = ClrFacade.GetDefaultEncoding();
+                        Encoding defaultEncoding = EncodingUtils.GetDefaultEncoding();
                         Microsoft.Win32.SafeHandles.SafeFileHandle safeFileHandle = readerStream.SafeFileHandle;
 
                         using (StreamReader scriptReader = new StreamReader(readerStream, defaultEncoding))

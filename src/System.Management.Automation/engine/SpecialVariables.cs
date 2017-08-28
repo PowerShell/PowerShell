@@ -196,6 +196,9 @@ namespace System.Management.Automation
         internal const string InformationPreference = "InformationPreference";
         internal static readonly VariablePath InformationPreferenceVarPath = new VariablePath(InformationPreference);
 
+        internal const string DefaultFileEncodingPreference = "PSDefaultFileEncoding";
+        internal static readonly VariablePath DefaultFileEncodingVarPath = new VariablePath(DefaultFileEncodingPreference);
+
         #endregion Preference Variables
 
         internal const string ErrorView = "ErrorView";

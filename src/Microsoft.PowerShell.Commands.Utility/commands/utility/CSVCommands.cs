@@ -10,6 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Management.Automation;
+using Microsoft.PowerShell;
 using System.Text;
 using Dbg = System.Management.Automation.Diagnostics;
 
@@ -206,8 +207,7 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag
         /// </summary>
         [Parameter()]
-        [ValidateSetAttribute(new string[] { "Unicode", "UTF7", "UTF8", "ASCII", "UTF32", "BigEndianUnicode", "Default", "OEM" })]
-        public string Encoding { get; set; }
+        public FileEncoding Encoding { get; set; } = FileEncoding.Unspecified;
 
         /// <summary>
         /// Property that sets append parameter.
@@ -367,7 +367,7 @@ namespace Microsoft.PowerShell.Commands
                 PathUtils.MasterStreamOpen(
                     this,
                     this.Path,
-                    Encoding ?? "ASCII",
+                    Encoding,
                     false, // defaultEncoding
                     Append,
                     Force,
@@ -571,8 +571,7 @@ namespace Microsoft.PowerShell.Commands
         /// Encoding optional flag
         /// </summary>
         [Parameter()]
-        [ValidateSetAttribute(new[] { "Unicode", "UTF7", "UTF8", "ASCII", "UTF32", "BigEndianUnicode", "Default", "OEM" })]
-        public string Encoding { get; set; }
+        public FileEncoding Encoding { get; set; } = FileEncoding.Unspecified;
 
         /// <summary>
         /// Avoid writing out duplicate warning messages when there are

@@ -387,7 +387,7 @@ namespace Microsoft.PowerShell.Commands
             PathUtils.MasterStreamOpen(
                 this,
                 this.Path,
-                EncodingConversion.Unicode,
+                FileEncoding.Unicode,
                 false, // defaultEncoding
                 Append,
                 Force,

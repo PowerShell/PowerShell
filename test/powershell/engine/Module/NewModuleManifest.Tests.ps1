@@ -9,9 +9,10 @@ Describe "New-ModuleManifest tests" -tags "CI" {
     }
 
     BeforeAll {
-        if ($IsWindows)
+        # encoding is the same on all platforms, except for new lines
+        if ( $IsWindows ) 
         {
-            $ExpectedManifestBytes = @(255,254,35,0,13,0,10,0)
+            $ExpectedManifestBytes = @(35,13,10)
         }
         else
         {

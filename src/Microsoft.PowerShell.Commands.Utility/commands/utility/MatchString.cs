@@ -1200,17 +1200,7 @@ namespace Microsoft.PowerShell.Commands
         /// The text encoding to process each file as.
         /// </summary>
         [Parameter]
-        [ValidateNotNullOrEmpty]
-        [ValidateSetAttribute(new string[] {
-            EncodingConversion.Unicode,
-            EncodingConversion.Utf7,
-            EncodingConversion.Utf8,
-            EncodingConversion.Utf32,
-            EncodingConversion.Ascii,
-            EncodingConversion.BigEndianUnicode,
-            EncodingConversion.Default,
-            EncodingConversion.OEM })]
-        public string Encoding { get; set; }
+        public FileEncoding Encoding { get; set; } = FileEncoding.Unspecified;
 
         private System.Text.Encoding _textEncoding;
 
@@ -1282,9 +1272,9 @@ namespace Microsoft.PowerShell.Commands
         protected override void BeginProcessing()
         {
             // Process encoding switch.
-            if (Encoding != null)
+            if (Encoding != FileEncoding.Unspecified )
             {
-                _textEncoding = EncodingConversion.Convert(this, Encoding);
+                _textEncoding = EncodingUtils.GetEncoding(this, Encoding);
             }
             else
             {

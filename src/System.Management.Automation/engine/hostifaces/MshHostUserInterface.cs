@@ -10,6 +10,7 @@ using System.Collections.ObjectModel;
 using System.Security;
 using System.Globalization;
 using System.Management.Automation.Runspaces;
+using Microsoft.PowerShell;
 using Microsoft.PowerShell.Commands;
 using System.Threading;
 using System.Threading.Tasks;
@@ -1070,11 +1071,11 @@ namespace System.Management.Automation.Host
                 _path = value;
 
                 Encoding = Encoding.UTF8;
-                FileSystemCmdletProviderEncoding fileEncoding = Utils.GetEncoding(value);
+                FileEncoding fileEncoding = EncodingUtils.GetFileEncodingFromFile(value);
 
-                if (fileEncoding != FileSystemCmdletProviderEncoding.Default)
+                if (fileEncoding != FileEncoding.Default)
                 {
-                    Encoding = Utils.GetEncodingFromEnum(fileEncoding);
+                    Encoding = EncodingUtils.GetEncoding(fileEncoding);
                 }
             }
         }

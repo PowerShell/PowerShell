@@ -9,6 +9,7 @@ using System.IO;
 using System.Text;
 using System.Management.Automation.Language;
 using System.Text.RegularExpressions;
+using Microsoft.PowerShell;
 
 namespace System.Management.Automation
 {
@@ -95,7 +96,7 @@ namespace System.Management.Automation
         {
             using (FileStream readerStream = new FileStream(path, FileMode.Open, FileAccess.Read))
             {
-                Encoding defaultEncoding = ClrFacade.GetDefaultEncoding();
+                Encoding defaultEncoding = EncodingUtils.GetDefaultEncoding();
                 Microsoft.Win32.SafeHandles.SafeFileHandle safeFileHandle = readerStream.SafeFileHandle;
 
                 using (StreamReader scriptReader = new StreamReader(readerStream, defaultEncoding))

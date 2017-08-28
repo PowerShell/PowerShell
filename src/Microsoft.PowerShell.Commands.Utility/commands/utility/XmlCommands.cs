@@ -14,6 +14,7 @@ using System.Management.Automation.Internal;
 using System.Security;
 using System.Text;
 using System.Xml;
+using Microsoft.PowerShell;
 using Dbg = System.Management.Automation.Diagnostics;
 
 namespace Microsoft.PowerShell.Commands
@@ -108,8 +109,7 @@ namespace Microsoft.PowerShell.Commands
         /// </summary>
         ///
         [Parameter]
-        [ValidateSetAttribute(new string[] { "Unicode", "UTF7", "UTF8", "ASCII", "UTF32", "BigEndianUnicode", "Default", "OEM" })]
-        public string Encoding { get; set; } = "Unicode";
+        public FileEncoding Encoding { get; set; } = FileEncoding.Unspecified;
 
         #endregion Command Line Parameters
 
