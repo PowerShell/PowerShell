@@ -641,6 +641,13 @@ function New-PSOptions {
             }
         }
 
+        # We plan to release packages targetting win7-x64 and win7-x86 RIDs, 
+        # which supports all supported windows platforms.
+        # So we, will change the RID to win7-<arch>
+        if ($Environment.IsWindows) {
+            $Runtime = $Runtime -replace "win\d+", "win7"
+        }
+
         if (-not $Runtime) {
             Throw "Could not determine Runtime Identifier, please update dotnet"
         } else {
