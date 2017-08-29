@@ -4072,7 +4072,23 @@ namespace System.Management.Automation
                     // can succeed.  This call will mount the drive if it wasn't already.
                     executionContext.SessionState.Drive.GetAtScope(wordToComplete.Substring(0, 1), "global");
                 }
+#if UNIX
+                StringBuilder sb = new StringBuilder();
 
+                foreach (var ch in wordToComplete.ToCharArray())
+                {
+                    if (Char.IsLetter(ch))
+                    {
+                        sb.Append('[').Append(Char.ToLower(ch)).Append(Char.ToUpper(ch)).Append(']');
+                    }
+                    else
+                    {
+                        sb.Append(ch);
+                    }
+                }
+
+                wordToComplete = sb.ToString();
+#endif
                 var powerShellExecutionHelper = context.Helper;
                 powerShellExecutionHelper
                     .AddCommandWithPreferenceSetting("Microsoft.PowerShell.Management\\Resolve-Path")

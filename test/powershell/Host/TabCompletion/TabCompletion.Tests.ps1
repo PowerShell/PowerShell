@@ -197,8 +197,12 @@ Describe "TabCompletion" -Tags CI {
 
     Context "File name completion" {
         BeforeAll {
+            $oneSubDirLowerTest = "onesubd"
+            $oneSubDirUpperTest = "oNeSubD"
+            $oneSubDirTest = "oneSubDir"
+
             $tempDir = Join-Path -Path $TestDrive -ChildPath "baseDir"
-            $oneSubDir = Join-Path -Path $tempDir -ChildPath "oneSubDir"
+            $oneSubDir = Join-Path -Path $tempDir -ChildPath $oneSubDirTest
             $oneSubDirPrime = Join-Path -Path $tempDir -ChildPath "prime"
             $twoSubDir = Join-Path -Path $oneSubDir -ChildPath "twoSubDir"
 
@@ -239,6 +243,17 @@ Describe "TabCompletion" -Tags CI {
 
         AfterEach {
             Pop-Location
+        }
+
+        It "TabCompletion should be case-insensitive for file names" {
+            Push-Location -Path $tempDir
+            $res = TabExpansion2 -inputScript $oneSubDirLowerTest -cursorColumn $oneSubDirLowerTest.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be ".${separator}$oneSubDirTest"
+
+            $res = TabExpansion2 -inputScript $oneSubDirUpperTest -cursorColumn $oneSubDirUpperTest.Length
+            $res.CompletionMatches.Count | Should BeGreaterThan 0
+            $res.CompletionMatches[0].CompletionText | Should Be ".${separator}$oneSubDirTest"
         }
 
         It "Input '<inputStr>' should successfully complete" -TestCases $testCases {
