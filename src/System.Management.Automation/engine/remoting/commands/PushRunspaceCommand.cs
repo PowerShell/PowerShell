@@ -1284,6 +1284,10 @@ namespace Microsoft.PowerShell.Commands
         {
             var sshConnectionInfo = new SSHConnectionInfo(this.UserName, ResolveComputerName(HostName), this.KeyFilePath, this.Port);
             var typeTable = TypeTable.LoadDefaultTypeFiles();
+
+            // Use the class _tempRunspace field while the runspace is being opened so that StopProcessing can be handled at that time.
+            // This is only needed for SSH sessions where a Ctrl+C during an SSH password prompt can abort the session before a connection
+            // is established.
             _tempRunspace = RunspaceFactory.CreateRunspace(sshConnectionInfo, this.Host, typeTable) as RemoteRunspace;
             _tempRunspace.Open();
             _tempRunspace.ShouldCloseOnPop = true;
