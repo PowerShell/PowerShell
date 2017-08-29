@@ -309,7 +309,7 @@ function ExecuteRestMethod
 
         [switch] $UseBasicParsing
     )
-    $result = [PSObject]@{Output = $null; Error = $null; Encoding = $null; Content = $null}
+    $result = @{Output = $null; Error = $null; Encoding = $null; Content = $null}
     $verbosePreferenceSave = $VerbosePreference
     $VerbosePreference = 'Continue'
     try
@@ -334,7 +334,7 @@ function ExecuteRestMethod
             }
             if ($result.Encoding -eq $null)
             {
-                throw "Encoding not found in verbose output. Lines: $($result).Verbose.Count Content:$($result.Verbose)"
+                throw "Encoding not found in verbose output. Lines: $($result.Verbose.Count) Content:$($result.Verbose)"
             }
         }
 
@@ -352,7 +352,7 @@ function ExecuteRestMethod
         $VerbosePreference = $verbosePreferenceSave
         if (Test-Path -Path $verboseFile)
         {
-            Remove-Item -Path $verboseFile -ErrorAction Ignore
+            Remove-Item -Path $verboseFile -ErrorAction SilentlyContinue
         }
     }
 
