@@ -1358,7 +1358,7 @@ function Publish-NuGetFeed
 'Microsoft.PowerShell.SDK'
         ) | ForEach-Object {
             if ($ReleaseTag) {
-                dotnet pack "src/$_" --output $OutputPath "/property:ReleaseTag=$ReleaseTag1" /p:IncludeSymbols=true
+                dotnet pack "src/$_" --output $OutputPath "/property:IncludeSymbols=true;ReleaseTag=$ReleaseTag1"
             } else {
                 dotnet pack "src/$_" --output $OutputPath
             }

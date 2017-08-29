@@ -470,7 +470,7 @@ function Invoke-AppveyorFinish
         # only publish to nuget feed if it is a daily build and tests passed
         if((Test-DailyBuild) -and $env:TestPassed -eq 'True')
         {
-            Publish-NuGetFeed -OutputPath .\nuget-artifacts -ReleaseTag "/property:ReleaseTag=$preReleaseVersion"
+            Publish-NuGetFeed -OutputPath .\nuget-artifacts -ReleaseTag $preReleaseVersion
         }
 
         $nugetArtifacts = Get-ChildItem .\nuget-artifacts -ErrorAction SilentlyContinue | ForEach-Object { $_.FullName }

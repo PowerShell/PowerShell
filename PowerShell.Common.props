@@ -17,7 +17,7 @@
   >
 
     <Exec Command='git describe --abbrev=60 --long'
-          WorkingDirectory=$(MSBuildProjectDirectory)
+          WorkingDirectory="$(MSBuildProjectDirectory)"
           ConsoleToMSBuild="true"
           StandardOutputImportance="Low">
       <Output TaskParameter="ConsoleOutput" PropertyName="PowerShellVersion" />
@@ -50,9 +50,6 @@
       -->
       <Version>$(PSCoreBuildVersion)</Version>
       <InformationalVersion>$(PSCoreFormattedVersion)</InformationalVersion>
-
-      <!--VersionPrefix>$(PSCorePrefixVersion)</VersionPrefix-->
-      <!--VersionSuffix>$(PSCoreLabelVersion)</VersionSuffix-->
 
       <!--
             We have explicitly assign 'PackageVersion'
