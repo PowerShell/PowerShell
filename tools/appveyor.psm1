@@ -320,7 +320,7 @@ function Invoke-AppVeyorTest
     #
     # CoreCLR
 
-    $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (New-PSOptions -Configuration 'Release'))
+    $env:CoreOutput = Split-Path -Parent (Get-PSOutput -Options (Get-PSOptions))
     Write-Host -Foreground Green 'Run CoreCLR tests'
     $testResultsNonAdminFile = "$pwd\TestsResultsNonAdmin.xml"
     $testResultsAdminFile = "$pwd\TestsResultsAdmin.xml"
