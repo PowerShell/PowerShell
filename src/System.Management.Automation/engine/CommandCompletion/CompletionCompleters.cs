@@ -4061,10 +4061,8 @@ namespace System.Management.Automation
                 var relativePaths = context.GetOption("RelativePaths", @default: defaultRelative);
                 var useLiteralPath = context.GetOption("LiteralPaths", @default: false);
 
-                if (useLiteralPath && LocationGlobber.StringContainsGlobCharacters(wordToComplete))
-                {
-                    wordToComplete = WildcardPattern.Escape(wordToComplete, Utils.Separators.StarOrQuestion);
-                }
+                // We should always escape '[' and ']' if present.
+                wordToComplete = WildcardPattern.Escape(wordToComplete, Utils.Separators.StarOrQuestion);
 
                 if (!defaultRelative && wordToComplete.Length >= 2 && wordToComplete[1] == ':' && char.IsLetter(wordToComplete[0]) && executionContext != null)
                 {
@@ -4072,6 +4070,7 @@ namespace System.Management.Automation
                     // can succeed.  This call will mount the drive if it wasn't already.
                     executionContext.SessionState.Drive.GetAtScope(wordToComplete.Substring(0, 1), "global");
                 }
+
 #if UNIX
                 // We use globbing to get completions.
                 // Globbing is based on system functions which is case-sensitive on Unix.
