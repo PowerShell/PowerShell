@@ -1864,21 +1864,11 @@ namespace System.Management.Automation
         private void EnterScope()
         {
             _commandRuntime.SetVariableListsInPipe();
-
-            if (!_useLocalScope)
-            {
-                this.Context.SessionState.Internal.CurrentScope.DottedScopes.Push(_localsTuple);
-            }
         }
 
         private void ExitScope()
         {
             _commandRuntime.RemoveVariableListsInPipe();
-
-            if (!_useLocalScope)
-            {
-                this.Context.SessionState.Internal.CurrentScope.DottedScopes.Pop();
-            }
         }
 
         private void RunClause(Action<FunctionContext> clause, object dollarUnderbar, object inputToProcess)
@@ -1986,12 +1976,33 @@ namespace System.Management.Automation
             return null;
         }
 
-        public void PrepareForBinding(SessionStateScope scope, CommandLineParameters commandLineParameters)
+        /// <summary>
+        /// If the script cmdlet will run in a new local scope, this method is used to set the locals to the newly created scope.
+        /// </summary>
+        internal void SetLocalsTupleForNewScope(SessionStateScope scope)
         {
-            if (_useLocalScope && scope.LocalsTuple == null)
-            {
-                scope.LocalsTuple = _localsTuple;
-            }
+            Diagnostics.Assert(scope.LocalsTuple == null, "a newly created scope shouldn't have it's tuple set.");
+            scope.LocalsTuple = _localsTuple;
+        }
+
+        /// <summary>
+        /// If the script cmdlet is dotted, this method is used to push the locals to the 'DottedScopes' of the current scope.
+        /// </summary>
+        internal void PushDottedScope(SessionStateScope scope)
+        {
+            scope.DottedScopes.Push(_localsTuple);
+        }
+
+        /// <summary>
+        /// If the script cmdlet is dotted, this method is used to pop the locals from the 'DottedScopes' of the current scope.
+        /// </summary>
+        internal void PopDottedScope(SessionStateScope scope)
+        {
+            scope.DottedScopes.Pop();
+        }
+
+        internal void PrepareForBinding(CommandLineParameters commandLineParameters)
+        {
             _localsTuple.SetAutomaticVariable(AutomaticVariable.PSBoundParameters,
                                               commandLineParameters.GetValueToBindToPSBoundParameters(), this.Context);
             _localsTuple.SetAutomaticVariable(AutomaticVariable.MyInvocation, MyInvocation, this.Context);
