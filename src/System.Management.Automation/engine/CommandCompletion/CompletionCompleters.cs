@@ -4073,21 +4073,41 @@ namespace System.Management.Automation
                     executionContext.SessionState.Drive.GetAtScope(wordToComplete.Substring(0, 1), "global");
                 }
 #if UNIX
-                StringBuilder sb = new StringBuilder();
-
-                foreach (var ch in wordToComplete.ToCharArray())
+                // We use globbing to get completions.
+                // Globbing is based on system functions which is case-sensitive on Unix.
+                // To make globbing on Unix case-insensitive we transform every char from the input string:
+                // "alias:dir" -> "alias:[dD][iI][rR]"
+                if (context.GetOption("UnixCaseInsensitiveGlobbing", @default: true) == true)
                 {
-                    if (Char.IsLetter(ch))
-                    {
-                        sb.Append('[').Append(Char.ToLower(ch)).Append(Char.ToUpper(ch)).Append(']');
-                    }
-                    else
-                    {
-                        sb.Append(ch);
-                    }
-                }
+                    StringBuilder sb = new StringBuilder(wordToComplete.Length * 4);
 
-                wordToComplete = sb.ToString();
+                    //wordToComplete = WildcardPattern.Escape(wordToComplete, Utils.Separators.Brackets);
+
+                    // Copy a provider name "as is" without transformation.
+                    var providerPrefixIndex = wordToComplete.IndexOf(':') + 1;
+                    int i;
+                    for (i=0; i < providerPrefixIndex; i++)
+                    {
+                        sb.Append(wordToComplete[i]);
+                    }
+
+                    // Transform rest of input string after a provider prefix.
+                    for (var j=i; j < wordToComplete.Length; j++)
+                    {
+                        var lch = Char.ToLower(wordToComplete[j]);
+                        var uch = Char.ToUpper(wordToComplete[j]);
+                        if (lch != uch)
+                        {
+                            sb.Append('[').Append(lch).Append(uch).Append(']');
+                        }
+                        else
+                        {
+                            sb.Append(wordToComplete[j]);
+                        }
+                    }
+
+                    wordToComplete = sb.ToString();
+                }
 #endif
                 var powerShellExecutionHelper = context.Helper;
                 powerShellExecutionHelper
