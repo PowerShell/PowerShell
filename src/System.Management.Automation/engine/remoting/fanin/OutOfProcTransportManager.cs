@@ -1647,7 +1647,7 @@ namespace System.Management.Automation.Remoting.Client
                     }
                     else
                     {
-                        // The first PSRP message from the server indicates that the connection is established and that PSRP is running.
+                        // The first received PSRP message from the server indicates that the connection is established and that PSRP is running.
                         if (!_connectionEstablished) { _connectionEstablished = true; }
 
                         // Normal output data.
@@ -2419,3 +2419,4 @@ namespace System.Management.Automation.Remoting.Server
         #endregion
     }
 }
+
