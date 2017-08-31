@@ -1,6 +1,6 @@
 Describe "Credential tests" -Tags "CI" {
     It "Explicit cast for an empty credential returns null" {
          # We should explicitly check that the expression returns $null
-         [PSCredential]::Empty.GetNetworkCredential() -eq $null | Should Be $true
+         [PSCredential]::Empty.GetNetworkCredential() | Should Be $null
     }
 }
