@@ -13,6 +13,7 @@ AppImage
 AppVeyor
 artifact
 artifacts
+ASP.NET
 AssemblyLoadContext
 behavior
 behaviors
@@ -920,6 +921,7 @@ v0.5.0
 v0.6.0
 v6.0.0
 ValidateNotNullOrEmpty
+WebListener
 WebRequest
 win7-x86
 WindowsVersion

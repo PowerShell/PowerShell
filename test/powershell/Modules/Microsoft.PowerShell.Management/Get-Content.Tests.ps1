@@ -126,4 +126,42 @@ Describe "Get-Content" -Tags "CI" {
     } else {$expected = "Hell","o,ll","ll","Worll","d`nHell","o2,ll","ll","Worll","d2`n"}
     for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
   }
+
+  It "Should support NTFS streams using colon syntax" -Skip:(!$IsWindows) {
+    Set-Content "${testPath}:Stream" -Value "Foo"
+    { Test-Path "${testPath}:Stream" | ShouldBeErrorId "ItemExistsNotSupportedError,Microsoft.PowerShell.Commands,TestPathCommand" }
+    Get-Content "${testPath}:Stream" | Should BeExactly "Foo"
+    Get-Content $testPath | Should BeExactly $testString
+  }
+
+  It "Should support NTFS streams using -stream" -Skip:(!$IsWindows) {
+    Set-Content -Path $testPath -Stream hello -Value World
+    Get-Content -Path $testPath | Should Be $testString
+    Get-Content -Path $testPath -Stream hello | Should Be "World"
+    $item = Get-Item -Path $testPath -Stream hello
+    $item | Should BeOfType System.Management.Automation.Internal.AlternateStreamData
+    $item.Stream | Should Be "hello"
+    Clear-Content -Path $testPath -Stream hello
+    Get-Content -Path $testPath -Stream hello | Should BeNullOrEmpty
+    Remove-Item -Path $testPath -Stream hello
+    { Get-Content -Path $testPath -Stream hello | ShouldBeErrorId "GetContentReaderFileNotFoundError,Microsoft.PowerShell.Commands.GetContentCommand" }
+  }
+
+  It "Should support colons in filename on Linux/Mac" -Skip:($IsWindows) {
+    Set-Content "${testPath}:Stream" -Value "Hello"
+    "${testPath}:Stream" | Should Exist
+    Get-Content "${testPath}:Stream" | Should BeExactly "Hello"
+  }
+
+  It "-Stream is not a valid parameter for <cmdlet> on Linux/Mac" -Skip:($IsWindows) -TestCases @(
+    @{cmdlet="get-content"},
+    @{cmdlet="set-content"},
+    @{cmdlet="clear-content"},
+    @{cmdlet="add-content"},
+    @{cmdlet="get-item"},
+    @{cmdlet="remove-item"}
+  ) {
+    param($cmdlet)
+    (Get-Command $cmdlet).Parameters["stream"] | Should BeNullOrEmpty
+  }  
 }

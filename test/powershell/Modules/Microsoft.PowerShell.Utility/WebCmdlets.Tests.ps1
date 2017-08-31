@@ -475,6 +475,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     BeforeAll {
         $response = Start-HttpListener -Port 8080
+        $WebListener = Start-WebListener
     }
 
     AfterAll {
@@ -1287,6 +1288,32 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     #endregion Content Header Inclusion
 
+    #region Client Certificate Authentication
+
+    It "Verifies Invoke-WebRequest Certificate Authentication Fails without -Certificate"  {
+        $uri = Get-WebListenerUrl -Https -Test 'Cert'
+        $result = Invoke-WebRequest -Uri $uri -SkipCertificateCheck | 
+            Select-Object -ExpandProperty Content |
+            ConvertFrom-Json
+        
+        $result.Status  | Should Be 'FAILED'
+    }
+    
+    # Test skipped on macOS pending support for Client Certificate Authentication
+    # https://github.com/PowerShell/PowerShell/issues/4650
+    It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" -skip:$IsOSX {
+        $uri = Get-WebListenerUrl -Https -Test 'Cert'
+        $certificate = Get-WebListenerClientCertificate
+        $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck | 
+            Select-Object -ExpandProperty Content |
+            ConvertFrom-Json
+        
+        $result.Status  | Should Be 'OK'
+        $result.Thumbprint | Should Be $certificate.Thumbprint
+    }
+
+    #endregion Client Certificate Authentication
+
     BeforeEach {
         if ($env:http_proxy) {
             $savedHttpProxy = $env:http_proxy
@@ -1318,6 +1345,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     BeforeAll {
         $response = Start-HttpListener -Port 8081
+        $WebListener = Start-WebListener
     }
 
     AfterAll {
@@ -1805,28 +1833,27 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     #endregion SkipHeaderVerification tests
 
-    #region Certificate Authentication Tests
+    #region Client Certificate Authentication
 
-    # Test pending creation of native test solution
-    # https://github.com/PowerShell/PowerShell/issues/4609
-    It "Verifies Invoke-RestMethod Certificate Authentication Fails without -Certificate" -Pending {
-        $command = 'Invoke-RestMethod https://prod.idrix.eu/secure/'
-        $result = ExecuteWebCommand -command $command
-
-        $result.Output | Should Match ([regex]::Escape('Error: No SSL client certificate presented'))
+    It "Verifies Invoke-RestMethod Certificate Authentication Fails without -Certificate" {
+        $uri = Get-WebListenerUrl -Https -Test 'Cert'
+        $result = Invoke-RestMethod -Uri $uri -SkipCertificateCheck
+        
+        $result.Status  | Should Be 'FAILED'
     }
 
-    # Test pending creation of native test solution
-    # https://github.com/PowerShell/PowerShell/issues/4609
-    It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -Pending {
-        $Certificate = GetSelfSignedCert
-        $command = 'Invoke-RestMethod https://prod.idrix.eu/secure/ -Certificate $Certificate'
-        $result = ExecuteWebCommand -command $command
+    # Test skipped on macOS pending support for Client Certificate Authentication
+    # https://github.com/PowerShell/PowerShell/issues/4650
+    It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -skip:$IsOSX {
+        $uri = Get-WebListenerUrl -Https -Test 'Cert'
+        $certificate = Get-WebListenerClientCertificate
+        $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck
 
-        $result.Output | Should Match ([regex]::Escape('SSL Authentication OK!'))
+        $result.Status  | Should Be 'OK'
+        $result.Thumbprint | Should Be $certificate.Thumbprint
     }
 
-    #endregion Certificate Authentication Tests
+    #endregion Client Certificate Authentication
 
     #region charset encoding tests
 
