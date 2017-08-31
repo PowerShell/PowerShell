@@ -133,7 +133,7 @@ Describe "Get-Content" -Tags "CI" {
     Get-Content "${testPath}:Stream" | Should BeExactly "Foo"
     Get-Content $testPath | Should BeExactly $testString
   }
-
+  
   It "Should support NTFS streams using -stream" -Skip:(!$IsWindows) {
     Set-Content -Path $testPath -Stream hello -Value World
     Get-Content -Path $testPath | Should Be $testString
@@ -163,5 +163,82 @@ Describe "Get-Content" -Tags "CI" {
   ) {
     param($cmdlet)
     (Get-Command $cmdlet).Parameters["stream"] | Should BeNullOrEmpty
-  }  
+  }
+ 
+  It "Should return no content when an empty path is used with -Raw switch" {
+    Get-ChildItem $TestDrive -Filter "*.raw" | Get-Content -Raw | Should Be $null
+  }
+
+  It "Should return no content when -TotalCount value is 0" {
+	  Get-Content -Path $testPath -TotalCount 0 | Should Be $null
+  }
+
+  It "Should throw TailAndHeadCannotCoexist when both -Tail and -TotalCount switches are used" {
+    try {
+      Get-Content -path $testPath -Tail 1 -TotalCount 1 -ea stop
+      throw "expected exception was not delivered"
+    }
+    catch {
+      $_.FullyQualifiedErrorId | should be "TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand"
+    }
+  }
+
+  It "Should throw TailNotSupported when -Tail used with an unsupported provider" {
+    pushd env:
+    try {
+      Get-Content PATH -Tail 1 -ea stop
+      throw "expected exception was not delivered"
+    }
+    catch {
+      $_.FullyQualifiedErrorId | should be "TailNotSupported,Microsoft.PowerShell.Commands.GetContentCommand"
+    }
+  	popd
+  }
+
+  It "Should throw InvalidOperation when -Tail and -Raw switches are used" {
+    try {
+      Get-Content -Path $testPath -Tail 1 -ea stop -Raw
+      throw "expected exception was not delivered"
+    }
+    catch {
+      $_.FullyQualifiedErrorId | should be "InvalidOperation,Microsoft.PowerShell.Commands.GetContentCommand"
+    }
+  }
+
+  It "Should Get-Content containing multi-byte chars for a variety of -Tail and -ReadCount values" {
+      Set-content -path $testPath "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
+      $result = Get-Content -path $testPath -ReadCount:-1 -Tail 5 -Encoding UTF7
+      $result.Length | Should Be 4
+      $expected = "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
+      for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+
+      $result = Get-Content -path $testPath -ReadCount 0 -Tail 3 -Encoding UTF7
+      $result.Length    | Should Be 3
+      $expected = "Hello2,World2","Hello3,World3","Hello4,World4"
+      for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+
+      $result=Get-Content -path $testPath -ReadCount 1 -Tail 3 -Encoding UTF7
+      $result.Length    | Should Be 3
+      $expected = "Hello2,World2","Hello3,World3","Hello4,World4"
+      for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+
+      $result=Get-Content -path $testPath -ReadCount 99999 -Tail 3 -Encoding UTF7
+      $result.Length    | Should Be 3
+      $expected = "Hello2,World2","Hello3,World3","Hello4,World4"
+      for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+
+      $result=Get-Content -path $testPath -ReadCount 2 -Tail 3 -Encoding UTF7
+      $result.Length    | Should Be 2
+      $expected = "Hello2,World2","Hello3,World3"
+      $expected = $expected,"Hello4,World4"
+      for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+
+      $result=Get-Content -path $testPath -TotalCount 0 -ReadCount 1 -Encoding UTF7
+      $result.Length    | Should Be 0
+
+      $result=Get-Content -path $testPath -TotalCount 3 -ReadCount 2 -Encoding UTF7
+      $result.Length    | Should Be 2
+      $expected = "Hello,World","Hello2,World2"
+      $expected = $expected, "Hello3,World3"
+  }
 }
