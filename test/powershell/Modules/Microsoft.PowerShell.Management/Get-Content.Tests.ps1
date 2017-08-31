@@ -174,71 +174,65 @@ Describe "Get-Content" -Tags "CI" {
   }
 
   It "Should throw TailAndHeadCannotCoexist when both -Tail and -TotalCount switches are used" {
-    try {
-      Get-Content -path $testPath -Tail 1 -TotalCount 1 -ea stop
-      throw "expected exception was not delivered"
-    }
-    catch {
-      $_.FullyQualifiedErrorId | should be "TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand"
-    }
+    { 
+      Get-Content -Path $testPath -Tail 1 -TotalCount 1 -ErrorAction Stop
+    } | ShouldBeErrorId "TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand"
   }
 
   It "Should throw TailNotSupported when -Tail used with an unsupported provider" {
-    pushd env:
-    try {
-      Get-Content PATH -Tail 1 -ea stop
-      throw "expected exception was not delivered"
-    }
-    catch {
-      $_.FullyQualifiedErrorId | should be "TailNotSupported,Microsoft.PowerShell.Commands.GetContentCommand"
-    }
-  	popd
+    Push-Location env:
+    {
+      Get-Content PATH -Tail 1 -ErrorAction Stop
+    } | ShouldBeErrorId "TailNotSupported,Microsoft.PowerShell.Commands.GetContentCommand"
+  	Pop-Location
   }
 
   It "Should throw InvalidOperation when -Tail and -Raw switches are used" {
-    try {
-      Get-Content -Path $testPath -Tail 1 -ea stop -Raw
-      throw "expected exception was not delivered"
-    }
-    catch {
-      $_.FullyQualifiedErrorId | should be "InvalidOperation,Microsoft.PowerShell.Commands.GetContentCommand"
-    }
+    {
+      Get-Content -Path $testPath -Tail 1 -ErrorAction Stop -Raw
+    } | ShouldBeErrorId "InvalidOperation,Microsoft.PowerShell.Commands.GetContentCommand"
   }
 
   It "Should Get-Content containing multi-byte chars for a variety of -Tail and -ReadCount values" {
-      Set-content -path $testPath "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
-      $result = Get-Content -path $testPath -ReadCount:-1 -Tail 5 -Encoding UTF7
-      $result.Length | Should Be 4
-      $expected = "Hello,World","Hello2,World2","Hello3,World3","Hello4,World4"
-      for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+    $firstLine = "Hello,World"
+    $secondLine = "Hello2,World2"
+    $thirdLine = "Hello3,World3"
+    $fourthLine = "Hello4,World4"
+    $fileContent = $firstLine,$secondLine,$thirdLine,$fourthLine
+    Set-content -Path $testPath $fileContent
+    $result = Get-Content -Path $testPath -ReadCount:-1 -Tail 5 -Encoding UTF7
+    $result.Length | Should Be 4
+    $expected = $fileContent
+    Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
 
-      $result = Get-Content -path $testPath -ReadCount 0 -Tail 3 -Encoding UTF7
-      $result.Length    | Should Be 3
-      $expected = "Hello2,World2","Hello3,World3","Hello4,World4"
-      for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+    $result = Get-Content -Path $testPath -ReadCount 0 -Tail 3 -Encoding UTF7
+    $result.Length    | Should Be 3
+    $expected = $secondLine,$thirdLine,$fourthLine
+    Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
 
-      $result=Get-Content -path $testPath -ReadCount 1 -Tail 3 -Encoding UTF7
-      $result.Length    | Should Be 3
-      $expected = "Hello2,World2","Hello3,World3","Hello4,World4"
-      for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+    $result = Get-Content -Path $testPath -ReadCount 1 -Tail 3 -Encoding UTF7
+    $result.Length    | Should Be 3
+    $expected = $secondLine,$thirdLine,$fourthLine
+    Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
 
-      $result=Get-Content -path $testPath -ReadCount 99999 -Tail 3 -Encoding UTF7
-      $result.Length    | Should Be 3
-      $expected = "Hello2,World2","Hello3,World3","Hello4,World4"
-      for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+    $result = Get-Content -Path $testPath -ReadCount 99999 -Tail 3 -Encoding UTF7
+    $result.Length    | Should Be 3
+    $expected = $secondLine,$thirdLine,$fourthLine
+    Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
 
-      $result=Get-Content -path $testPath -ReadCount 2 -Tail 3 -Encoding UTF7
-      $result.Length    | Should Be 2
-      $expected = "Hello2,World2","Hello3,World3"
-      $expected = $expected,"Hello4,World4"
-      for ($i = 0; $i -lt $result.Length ; $i++) { $result[$i]  | Should BeExactly $expected[$i]}
+    $result = Get-Content -Path $testPath -ReadCount 2 -Tail 3 -Encoding UTF7
+    $result.Length    | Should Be 2
+    $expected = $secondLine,$thirdLine
+    $expected = $expected,$fourthLine
+    Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
 
-      $result=Get-Content -path $testPath -TotalCount 0 -ReadCount 1 -Encoding UTF7
-      $result.Length    | Should Be 0
+    $result = Get-Content -Path $testPath -TotalCount 0 -ReadCount 1 -Encoding UTF7
+    $result.Length    | Should Be 0
 
-      $result=Get-Content -path $testPath -TotalCount 3 -ReadCount 2 -Encoding UTF7
-      $result.Length    | Should Be 2
-      $expected = "Hello,World","Hello2,World2"
-      $expected = $expected, "Hello3,World3"
+    $result = Get-Content -Path $testPath -TotalCount 3 -ReadCount 2 -Encoding UTF7
+    $result.Length    | Should Be 2
+    $expected = $firstLine,$secondLine
+    $expected = $expected, $thirdLine
+    Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
   }
 }
