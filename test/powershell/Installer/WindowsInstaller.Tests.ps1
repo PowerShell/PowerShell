@@ -16,7 +16,7 @@ Describe "Windows Installer" -Tags "Scenario" {
 
     Context "Universal C Runtime Download Link" {
         $universalCRuntimeDownloadLink = 'https://www.microsoft.com/download/details.aspx?id=50410'
-        It "Wix file should have download link about Universal C runtime" {
+        It "Wix file should have download link about Universal C runtime" -Pending {
            (Get-Content $wixProductFile -Raw).Contains($universalCRuntimeDownloadLink) | Should Be $true
         }
         It "Should have download link about Universal C runtime that is reachable" {
