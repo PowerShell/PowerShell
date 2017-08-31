@@ -17,15 +17,20 @@
 
 Describe "NewTemporaryFile" -Tags "CI" {
 
+    $defaultExtension = '.tmp'
+
     AfterEach {
-        Remove-Item $script:tempFile -ErrorAction SilentlyContinue -Force # variable needs script scope because it gets defined in It block
+        if ($null -ne $script:tempFile)
+        {
+            Remove-Item $script:tempFile -ErrorAction SilentlyContinue -Force # variable needs script scope because it gets defined in It block
+        }
     }
 
     It "creates a new temporary file" {
         $script:tempFile = New-TemporaryFile
         $tempFile | Should Exist
         $tempFile | Should BeOfType System.IO.FileInfo
-        $tempFile.Extension | Should be ".tmp"
+        $tempFile.Extension | Should be $defaultExtension
     }
 
     $extensionParameterTestCases = @(
@@ -40,6 +45,8 @@ Describe "NewTemporaryFile" -Tags "CI" {
         
         $script:tempFile = New-TemporaryFile -Extension $extension
             $tempFile | Should Exist
+            # Because the internal algorithm does renaming it is worthwhile checking that the original file does not get left behin
+            [System.IO.Path]::ChangeExtension($tempFile, $defaultExtension) | Should Not Exist
             $tempFile | Should BeOfType System.IO.FileInfo
             $tempFile.Extension | Should be ".csv"
             $tempFile.FullName.EndsWith($extension) | Should be $true

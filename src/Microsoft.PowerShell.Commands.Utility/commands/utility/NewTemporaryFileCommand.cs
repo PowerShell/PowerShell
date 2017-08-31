@@ -14,12 +14,14 @@ namespace Microsoft.PowerShell.Commands
     [OutputType(typeof(System.IO.FileInfo))]
     public class NewTemporaryFileCommand : Cmdlet
     {
+        private const string defaultExtension = ".tmp";
+
         /// <summary>
         /// Specify a different file extension other than the default one, which is '.tmp'. The period in this parameter is optional.
         /// </summary>
         [Parameter(Position = 0)]
         [ValidateNotNullOrEmpty]
-        public string Extension { get; set; } = ".tmp";
+        public string Extension { get; set; } = defaultExtension;
 
         /// <summary>
         /// Returns a TemporaryFile.
@@ -40,7 +42,7 @@ namespace Microsoft.PowerShell.Commands
                 return;
             }
 
-            string filePath = null;
+            string temporaryFilePath = null;
             string tempPath = Path.GetTempPath();
 
             if (ShouldProcess(tempPath))
@@ -51,20 +53,26 @@ namespace Microsoft.PowerShell.Commands
                 // In case the random temporary file already exists, retry 
                 while (attempts++ < 10 && !creationOfFileSuccessful)
                 {
-                    string fileName = Path.GetRandomFileName();
                     try
-                    {                     
-                        fileName = Path.ChangeExtension(fileName, Extension);
-                        filePath = Path.Combine(tempPath, fileName);
-                        // Try to create the temporary file.
-                        // If this is successful then we will always be able to return it to the user and therefore do not need to remove it.
-                        using (new FileStream(filePath, FileMode.CreateNew)) { }
+                    {
+                        temporaryFilePath = Path.GetTempFileName(); // this already creates the temporary file
+                        if (Extension != defaultExtension)
+                        {
+                            // rename file
+                            var temporaryFileWithCustomExtension = Path.ChangeExtension(temporaryFilePath, Extension);
+                            File.Move(temporaryFilePath, temporaryFileWithCustomExtension);
+                            temporaryFilePath = temporaryFileWithCustomExtension;
+                        }
                         creationOfFileSuccessful = true;
-                        WriteVerbose($"Created temporary file {filePath}.");
+                        WriteVerbose($"Created temporary file {temporaryFilePath}.");
                     }
                     catch (IOException) // file already exists -> retry
                     {
                         attempts++;
+                        if (temporaryFilePath != null)
+                        {
+                            File.Delete(temporaryFilePath);
+                        }
                     }
                     catch (Exception exception) // fatal error, which could be e.g. insufficient permissions, etc.
                     {
@@ -89,7 +97,7 @@ namespace Microsoft.PowerShell.Commands
                     return;
                 }
 
-                FileInfo file = new FileInfo(filePath);
+                FileInfo file = new FileInfo(temporaryFilePath);
                 WriteObject(file);
             }
         }
