@@ -195,8 +195,8 @@ Additional references:
    - `Request changes` if you believe the PR merge should be blocked if your feedback is not addressed,
    - `Approve` if you believe your feedback has been addressed or the code is fine as-is, it is customary (although not required) to leave a simple "Looks good to me" (or "LGTM") as the comment for approval.
    - `Comment` if you are making suggestions that the *author* does not have to accept.
-   Early in the review, it is acceptable to provide feedback on coding style based on the published [Coding Guidelines](../docs/dev-process/coding-guidelines.md), however,
-   after the PR has been approved, it is generally _not_ recommended to focus on style issues unless they go against the [Coding Guidelines](../docs/dev-process/coding-guidelines.md).
+   Early in the review, it is acceptable to provide feedback on coding formatting based on the published [Coding Guidelines](../docs/dev-process/coding-guidelines.md), however,
+   after the PR has been approved, it is generally _not_ recommended to focus on formatting issues unless they go against the [Coding Guidelines](../docs/dev-process/coding-guidelines.md).
    Non-critical late feedback (after PR has been approved) can be submitted as a new issue or new pull request from the *reviewer*.
 1. *Assignee* who are always *Maintainers* ensure that proper review has occurred and if they believe one approval is not sufficient, the *maintainer* is responsible to add more reviewers.
    An *assignee* may also be a reviewer, but the roles are distinct.
