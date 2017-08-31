@@ -43,18 +43,19 @@
       <PSCoreFormattedVersion Condition = "'$(ReleaseTag)' != '' or '$(PSCoreAdditionalCommits)' == '0'">$(PSCoreBuildVersion) SHA: $(PSCoreCommitSHA)</PSCoreFormattedVersion>
       <PSCoreFormattedVersion Condition = "'$(PSCoreFormattedVersion)' == ''">$(PSCoreBuildVersion) Commits: $(PSCoreAdditionalCommits) SHA: $(PSCoreCommitSHA)</PSCoreFormattedVersion>
 
-      <ProductVersion>$(PSCoreFormattedVersion)</ProductVersion>
       <!--
-            Here we define explicitly 'Version' to set 'FileVersion' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
+            Here we define explicitly 'Version' to set 'FileVersion' and 'AssemblyVersion' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
             Here we define explicitly 'InformationalVersion' because by default it is defined as 'Version' by 'GetAssemblyVersion' target in 'Microsoft.NET.GenerateAssemblyInfo.targets'.
       -->
       <Version>$(PSCoreBuildVersion)</Version>
       <InformationalVersion>$(PSCoreFormattedVersion)</InformationalVersion>
+      <ProductVersion>$(PSCoreFormattedVersion)</ProductVersion>
 
       <!--
             We have explicitly assign 'PackageVersion'
             because there is a bug: 'PackageVersion' is correctly assigned as 'Version' in 'NuGet.targets'
             but then immediately redefined as '1.0.0'.
+            Tracking Issue https://github.com/dotnet/sdk/issues/1557
       -->
       <PackageVersion>$(PSCoreBuildVersion)</PackageVersion>
 
@@ -71,7 +72,6 @@
                PSCoreMinorVersion = $(PSCoreMinorVersion);
                PSCorePatchVersion = $(PSCorePatchVersion);
                PSCoreLabelVersion = $(PSCoreLabelVersion);
-               GitCDUP = $(GitCDUP);
                RegexGitVersion = $(RegexGitVersion);
                PSCoreFormattedVersion = $(PSCoreFormattedVersion);
                ProductVersion = $(ProductVersion);
