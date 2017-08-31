@@ -188,20 +188,19 @@ Additional references:
    When updating your pull request, please **create new commits** and **don't rewrite the commits history**. 
    This way it's very easy for the reviewers to see diff between iterations.
    If you rewrite the history in the pull request, review could be much slower.
-   Once the review is done, you can rewrite the history to make it prettier, if you like.
-   Otherwise it's likely would be squashed on merge to master by the *assignee*.
-1. *Reviewers* are any anyone who wants to contribute.
-   They are responsible for ensuring the code: addresses the issue being fixed, does not create new issues (functional, performance, or reliability), and implements proper design.
+   The PR is likely to be squashed on merge to master by the *assignee*.
+1. *Reviewers* are anyone who wants to contribute.
+   They are responsible for ensuring the code: addresses the issue being fixed, does not create new issues (functional, performance, reliability, or security), and implements proper design.
    *Reviewers* should use the `Review changes` drop down to indicate they are done with their review.
    - `Request changes` if you believe the PR merge should be blocked if your feedback is not addressed,
    - `Approve` if you believe your feedback has been addressed or the code is fine as-is, it is customary (although not required) to leave a simple "Looks good to me" (or "LGTM") as the comment for approval.
    - `Comment` if you are making suggestions that the *author* does not have to accept.
-   Early in the review, it is acceptable to provide feedback on coding style based on the published [Coding Guidelines](../docs/dev-process/coding-guidelines.md), however, after
-   the *author* has already pushed commits to address feedback, it is generally _not_ acceptable to focus on style issues as it disrupts the PR process.
+   Early in the review, it is acceptable to provide feedback on coding style based on the published [Coding Guidelines](../docs/dev-process/coding-guidelines.md), however,
+   after the PR has been approved, it is generally _not_ acceptable to focus on style issues as it disrupts the PR process.
    Non-critical late feedback (after PR has been approved) can be submitted as a new issue or new pull request from the *reviewer*.
 1. *Assignee* who are always *Maintainers* ensure that proper review has occurred and if they believe one approval is not sufficient, the *maintainer* is responsible to add more reviewers.
    An *assignee* may also be a reviewer, but the roles are distinct.
-   Once the PR has been approved and the CI system is passing, the *assignee* will merge the PR.
+   Once the PR has been approved and the CI system is passing, the *assignee* will merge the PR after giving one business day for any critical feedback.
    For more information on the PowerShell Maintainers' process, see the [documentation](../docs/maintainers).
 
 #### Pull Requests - Abandoned
