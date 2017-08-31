@@ -348,7 +348,7 @@ namespace System.Management.Automation
         public const string Assert = "Assert";
 
         /// <summary>
-        /// Creates an artifact (usually a binary or ) out of some set of input files (usually source code or declarative documents)
+        /// Creates an artifact (usually a binary or document) out of some set of input files (usually source code or declarative documents)
         /// </summary>
         public const string Build = "Build";
 
