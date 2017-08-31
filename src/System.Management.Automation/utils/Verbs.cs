@@ -348,6 +348,11 @@ namespace System.Management.Automation
         public const string Assert = "Assert";
 
         /// <summary>
+        /// Creates an artifact (usually a binary or ) out of some set of input files (usually source code or declarative documents)
+        /// </summary>
+        public const string Build = "Build";
+
+        /// <summary>
         /// Finalize an interruptable activity. Makes pending changes permanent.
         /// </summary>
         public const string Complete = "Complete";
@@ -361,6 +366,11 @@ namespace System.Management.Automation
         /// Refuse, object, block, or oppose the state of a resource or process
         /// </summary>
         public const string Deny = "Deny";
+
+        /// <summary>
+        /// Sends an application, website, or solution to a remote target[s] in such a way that a consumer of that solution can access it after deployment is complete.
+        /// </summary>
+        public const string Deploy = "Deploy";
 
         /// <summary>
         /// Stop and/or configure something to be unavailable (e.g unable to not start again)
@@ -635,7 +645,6 @@ namespace System.Management.Automation
             s_recommendedAlternateVerbs.Add("boot", new string[] { "Start" });
             s_recommendedAlternateVerbs.Add("break", new string[] { "Disconnect" });
             s_recommendedAlternateVerbs.Add("broadcast", new string[] { "Send" });
-            s_recommendedAlternateVerbs.Add("build", new string[] { "New" });
             s_recommendedAlternateVerbs.Add("burn", new string[] { "Backup" });
             s_recommendedAlternateVerbs.Add("calculate", new string[] { "Measure" });
             s_recommendedAlternateVerbs.Add("cancel", new string[] { "Stop" });
@@ -645,13 +654,13 @@ namespace System.Management.Automation
             s_recommendedAlternateVerbs.Add("clone", new string[] { "Copy" });
             s_recommendedAlternateVerbs.Add("combine", new string[] { "Join", "Merge" });
             s_recommendedAlternateVerbs.Add("compact", new string[] { "Compress" });
+            s_recommendedAlternateVerbs.Add("compile", new string[] { "Build" });
             s_recommendedAlternateVerbs.Add("concatenate", new string[] { "Add" });
             s_recommendedAlternateVerbs.Add("configure", new string[] { "Set" });
             s_recommendedAlternateVerbs.Add("create", new string[] { "New" });
             s_recommendedAlternateVerbs.Add("cut", new string[] { "Remove" });
             //recommendedAlternateVerbs.Add("debug",      new string[] {"Ping"});
             s_recommendedAlternateVerbs.Add("delete", new string[] { "Remove" });
-            s_recommendedAlternateVerbs.Add("deploy", new string[] { "Install", "Publish" });
             s_recommendedAlternateVerbs.Add("detach", new string[] { "Dismount", "Remove" });
             s_recommendedAlternateVerbs.Add("determine", new string[] { "Measure", "Resolve" });
             s_recommendedAlternateVerbs.Add("diagnose", new string[] { "Debug", "Test" });
