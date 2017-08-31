@@ -81,8 +81,21 @@ function ShouldBeParseError
     #       https://github.com/dotnet/coreclr/issues/9745
     #
     if ($SkipInTravisFullBuild) {
-        ## Report that we skipped the test and return
-        It "Parse error expected: <<$src>>" -Skip {}
+        ## Report that we skipped the tests and return
+        ## be sure to report the same number of tests
+        ## it should have the same appearance as if the tests were run
+        Context "Parse error expected: <<$src>>" {
+            if ($SkipAndCheckRuntimeError)
+            {
+                It "error should happen at parse time, not at runtime" -Skip {}
+            }
+            It "Error count" -Skip { }
+            foreach($expectedError in $expectedErrors)
+            {
+                It "Error Id" -Skip { }
+                It "Error position" -Skip { }
+            }
+        }
         return
     }
 
