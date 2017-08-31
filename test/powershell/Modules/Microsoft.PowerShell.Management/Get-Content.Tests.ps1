@@ -173,7 +173,7 @@ Describe "Get-Content" -Tags "CI" {
 	  Get-Content -Path $testPath -TotalCount 0 | Should Be $null
   }
 
-  It "Should throw TailAndHeadCannotCoexist when both -Tail and -TotalCount switches are used" {
+  It "Should throw TailAndHeadCannotCoexist when both -Tail and -TotalCount are used" {
     { 
       Get-Content -Path $testPath -Tail 1 -TotalCount 1 -ErrorAction Stop
     } | ShouldBeErrorId "TailAndHeadCannotCoexist,Microsoft.PowerShell.Commands.GetContentCommand"
@@ -187,7 +187,7 @@ Describe "Get-Content" -Tags "CI" {
   	Pop-Location
   }
 
-  It "Should throw InvalidOperation when -Tail and -Raw switches are used" {
+  It "Should throw InvalidOperation when -Tail and -Raw are used" {
     {
       Get-Content -Path $testPath -Tail 1 -ErrorAction Stop -Raw
     } | ShouldBeErrorId "InvalidOperation,Microsoft.PowerShell.Commands.GetContentCommand"
