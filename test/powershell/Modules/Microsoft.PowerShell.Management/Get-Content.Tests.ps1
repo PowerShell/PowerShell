@@ -200,39 +200,33 @@ Describe "Get-Content" -Tags "CI" {
     $fourthLine = "Hello4,World4"
     $fileContent = $firstLine,$secondLine,$thirdLine,$fourthLine
     Set-content -Path $testPath $fileContent
-    $result = Get-Content -Path $testPath -ReadCount:-1 -Tail 5 -Encoding UTF7
+    $result = Get-Content -Path $testPath -ReadCount -1 -Tail 5 -Encoding UTF7
     $result.Length | Should Be 4
     $expected = $fileContent
     Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
-
     $result = Get-Content -Path $testPath -ReadCount 0 -Tail 3 -Encoding UTF7
-    $result.Length    | Should Be 3
+    $result.Length | Should Be 3
     $expected = $secondLine,$thirdLine,$fourthLine
     Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
-
     $result = Get-Content -Path $testPath -ReadCount 1 -Tail 3 -Encoding UTF7
-    $result.Length    | Should Be 3
+    $result.Length | Should Be 3
     $expected = $secondLine,$thirdLine,$fourthLine
     Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
-
     $result = Get-Content -Path $testPath -ReadCount 99999 -Tail 3 -Encoding UTF7
-    $result.Length    | Should Be 3
+    $result.Length | Should Be 3
     $expected = $secondLine,$thirdLine,$fourthLine
     Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
-
     $result = Get-Content -Path $testPath -ReadCount 2 -Tail 3 -Encoding UTF7
-    $result.Length    | Should Be 2
+    $result.Length | Should Be 2
     $expected = $secondLine,$thirdLine
     $expected = $expected,$fourthLine
     Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
-
     $result = Get-Content -Path $testPath -TotalCount 0 -ReadCount 1 -Encoding UTF7
-    $result.Length    | Should Be 0
-
+    $result.Length | Should Be 0
     $result = Get-Content -Path $testPath -TotalCount 3 -ReadCount 2 -Encoding UTF7
-    $result.Length    | Should Be 2
+    $result.Length | Should Be 2
     $expected = $firstLine,$secondLine
-    $expected = $expected, $thirdLine
+    $expected = $expected,$thirdLine
     Compare-Object -ReferenceObject $expected -DifferenceObject $result | Should BeNullOrEmpty
   }
 }
