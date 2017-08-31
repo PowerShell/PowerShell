@@ -686,12 +686,14 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     It "Validate Invoke-WebRequest -SkipCertificateCheck" {
 
         # validate that exception is thrown for URI with expired certificate
-        $command = "Invoke-WebRequest -Uri 'https://expired.badssl.com'"
+        $Uri = Get-WebListenerUrl -Https
+        $command = "Invoke-WebRequest -Uri '$Uri'"
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
 
         # validate that no exception is thrown for URI with expired certificate when using -SkipCertificateCheck option
-        $command = "Invoke-WebRequest -Uri 'https://expired.badssl.com' -SkipCertificateCheck"
+        $Uri = Get-WebListenerUrl -Https
+        $command = "Invoke-WebRequest -Uri '$Uri' -SkipCertificateCheck"
         $result = ExecuteWebCommand -command $command
         $result.Error | Should BeNullOrEmpty
     }
@@ -747,8 +749,8 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
     }
 
     It "Validate Invoke-WebRequest returns native HTTPS error message in exception" {
-
-        $command = "Invoke-WebRequest -Uri https://incomplete.chain.badssl.com"
+        $uri = Get-WebListenerUrl -Https
+        $command = "Invoke-WebRequest -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
 
         # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
@@ -1495,12 +1497,13 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
         # HTTP method HEAD must be used to not retrieve an unparsable HTTP body
         # validate that exception is thrown for URI with expired certificate
-        $command = "Invoke-RestMethod -Uri 'https://expired.badssl.com' -Method HEAD"
+        $uri= Get-WebListenerUrl -Https
+        $command = "Invoke-RestMethod -Uri '$uri' -Method HEAD"
         $result = ExecuteWebCommand -command $command
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
 
         # validate that no exception is thrown for URI with expired certificate when using -SkipCertificateCheck option
-        $command = "Invoke-RestMethod -Uri 'https://expired.badssl.com' -SkipCertificateCheck -Method HEAD"
+        $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck -Method HEAD"
         $result = ExecuteWebCommand -command $command
         $result.Error | Should BeNullOrEmpty
     }
@@ -1563,7 +1566,8 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     It "Validate Invoke-RestMethod returns native HTTPS error message in exception" {
 
-        $command = "Invoke-RestMethod -Uri https://incomplete.chain.badssl.com"
+        $uri = Get-WebListenerUrl -Https
+        $command = "Invoke-RestMethod -Uri '$uri'"
         $result = ExecuteWebCommand -command $command
 
         # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
