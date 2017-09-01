@@ -276,7 +276,18 @@ namespace Microsoft.PowerShell.Commands
         /// <returns></returns>
         [Parameter(ParameterSetName = "Page")]
         [ValidateNotNullOrEmpty]
-        public SwitchParameter Transitional;
+        public SwitchParameter Transitional
+        {
+            get
+            {
+                return _transitional;
+            }
+            set
+            {
+                _transitional = true;
+            }
+        }
+        private bool _transitional = false;
 
         /// <summary>
         /// definitions for hash table keys
@@ -415,7 +426,7 @@ namespace Microsoft.PowerShell.Commands
 
             if (!_fragment)
             {
-                if(!Transitional)
+                if(!_transitional)
                 {
                     WriteObject("<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\"  \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">");
                 }
