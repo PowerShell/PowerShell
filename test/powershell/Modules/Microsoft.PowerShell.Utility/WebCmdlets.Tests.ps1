@@ -1182,7 +1182,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 Select-Object -ExpandProperty Content |
                 ConvertFrom-Json
             
-            $result.Status  | Should Be 'FAILED'
+            $result.Status | Should Be 'FAILED'
         }
         
         # Test skipped on macOS pending support for Client Certificate Authentication
@@ -1194,7 +1194,7 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
                 Select-Object -ExpandProperty Content |
                 ConvertFrom-Json
             
-            $result.Status  | Should Be 'OK'
+            $result.Status | Should Be 'OK'
             $result.Thumbprint | Should Be $certificate.Thumbprint
         }
     }
@@ -1723,7 +1723,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $uri = Get-WebListenerUrl -Https -Test 'Cert'
             $result = Invoke-RestMethod -Uri $uri -SkipCertificateCheck
             
-            $result.Status  | Should Be 'FAILED'
+            $result.Status | Should Be 'FAILED'
         }
         
         # Test skipped on macOS pending support for Client Certificate Authentication
@@ -1733,7 +1733,7 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
             $certificate = Get-WebListenerClientCertificate
             $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck
             
-            $result.Status  | Should Be 'OK'
+            $result.Status | Should Be 'OK'
             $result.Thumbprint | Should Be $certificate.Thumbprint
         }
     }
