@@ -64,7 +64,7 @@ namespace Microsoft.PowerShell.Commands
                             temporaryFilePath = temporaryFileWithCustomExtension;
                         }
                         creationOfFileSuccessful = true;
-                        WriteVerbose($"Created temporary file {temporaryFilePath}.");
+                        WriteDebug($"Created temporary file {temporaryFilePath}.");
                     }
                     catch (IOException) // file already exists -> retry
                     {
