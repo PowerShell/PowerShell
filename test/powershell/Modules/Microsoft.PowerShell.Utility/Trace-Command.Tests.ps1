@@ -80,4 +80,45 @@ Describe "Trace-Command" -tags "CI" {
             $results | ForEach-Object { $_ | Should Be $pid }
         }
     }
+
+    Context "Trace-Command tests for code coverage" {
+
+        BeforeAll {
+            $filePath = join-path $TestDrive 'testtracefile.txt'
+        }
+
+        AfterEach {
+            Remove-Item $filePath -Force -ErrorAction SilentlyContinue
+        }
+
+        It "Get non-existing trace source" {
+            { '34E7F9FA-EBFB-4D21-A7D2-D7D102E2CC2F' | get-tracesource -ErrorAction Stop} | ShouldBeErrorID 'TraceSourceNotFound,Microsoft.PowerShell.Commands.GetTraceSourceCommand'
+        }
+
+        It "Set-TraceSource to file and RemoveFileListener wildcard" {
+            $null = Set-TraceSource -Name "ParameterBinding" -Option ExecutionFlow -FilePath $filePath -Force -ListenerOption "ProcessId,TimeStamp" -PassThru
+            Set-TraceSource -Name "ParameterBinding" -RemoveFileListener *
+            Get-Content $filePath -Raw | Should Match 'ParameterBinding Information'
+        }
+
+        It "Trace-Command -Command with error" {
+            { Trace-Command -Name ParameterBinding -Command 'Get-PSDrive' -ArgumentList 'NonExistingDrive' -Option ExecutionFlow -FilePath $filePath -Force -ListenerOption "ProcessId,TimeStamp" -ErrorAction Stop } | ShouldBeErrorID 'GetLocationNoMatchingDrive,Microsoft.PowerShell.Commands.TraceCommandCommand'
+        }
+
+        It "Trace-Command fails for non-filesystem paths" {
+            { Trace-Command -Name ParameterBinding -Expression {$null} -FilePath "Env:\Test" -ErrorAction Stop } | ShouldBeErrorID 'FileListenerPathResolutionFailed,Microsoft.PowerShell.Commands.TraceCommandCommand'
+        }
+                
+        It "Trace-Command to readonly file" {
+            $null = New-Item $filePath -Force
+            Set-ItemProperty $filePath -name IsReadOnly -value $true
+            Trace-Command -Name ParameterBinding -Command 'Get-PSDrive' -FilePath $filePath -Force
+            Get-Content $filePath -Raw | Should Match 'ParameterBinding Information'
+        }
+
+        It "Trace-Command contains wildcard characters" {
+            $a = Trace-Command -Name ParameterB* -Command 'get-alias'
+            $a.count | Should BeGreaterThan 0
+        }
+    }
 }
