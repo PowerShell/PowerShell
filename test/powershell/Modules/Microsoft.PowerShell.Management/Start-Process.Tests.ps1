@@ -108,6 +108,12 @@ Describe "Start-Process" -Tags @("Feature") {
     It "Should be able to use the whatif switch without error" {
         { Start-Process $pingCommand -ArgumentList $pingParam -WhatIf } | Should Not Throw
     }
+
+    It "Should be able to use the whatif switch without performing the actual action" {
+        $pingOutput = Join-Path $TestDrive "pingOutput.txt"
+        Start-Process -Wait $pingCommand -ArgumentList $pingParam -RedirectStandardOutput $pingOutput -WhatIf
+        Test-Path $pingOutput | Should Be $false
+    }
 }
 
 Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWindows" {
