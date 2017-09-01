@@ -523,5 +523,27 @@ using module FooForPaths
             }
         }
     }
+
+    Context "module has non-terminating error handled with 'SilentlyContinue'" {
+        BeforeAll {
+            $testFile = Join-Path -Path $TestDrive -ChildPath "testmodule.psm1"
+            $content = @'
+Get-Command -CommandType Application -Name NonExisting -ErrorAction SilentlyContinue
+class TestClass { [string] GetName() { return "TestClass" } }
+'@
+            Set-Content -Path $testFile -Value $content -Force
+        }
+        AfterAll {
+            Remove-Module -Name testmodule -Force -ErrorAction SilentlyContinue
+        }
+
+        It "'using module' should succeed" {
+            $result = [scriptblock]::Create(@"
+using module $testFile
+[TestClass]::new()
+"@).Invoke()
+            $result.GetName() | Should Be "TestClass"
+        }
+    }
 }
 
