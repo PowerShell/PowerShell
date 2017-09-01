@@ -104,6 +104,10 @@ Describe "Start-Process" -Tags @("Feature") {
         $process.Name | Should Be "notepad"
         $process | Stop-Process
     }
+
+    It "Should be able to use the whatif switch without error" {
+        { Start-Process $pingCommand -ArgumentList $pingParam -WhatIf } | Should Not Throw
+    }
 }
 
 Describe "Start-Process tests requiring admin" -Tags "Feature","RequireAdminOnWindows" {
