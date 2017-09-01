@@ -54,3 +54,27 @@ Response when certificate is not provided in request:
   "Status": "FAILED"
 }
 ```
+
+
+## /Get/
+
+Returns a JSON object containing the Request URL, Request Headers, GET Query Fields and Values, and Origin IP. This emulates the functionality of [HttpBin's get test](https://httpbin.org/get).
+
+```powershell
+Invoke-WebRequest -Uri 'http://localhost:8083/Get/' -Body @{TestField = 'TestValue'}
+```
+
+```json
+{
+  "url": "http://localhost:8083/Get/?TestField=TestValue",
+  "args": {
+    "TestField": "TestValue"
+  },
+  "headers": {
+    "Connection": "Keep-Alive",
+    "User-Agent": "Mozilla/5.0 (Windows NT; Microsoft Windows 10.0.15063 ; en-US) WindowsPowerShell/6.0.0",
+    "Host": "localhost:8083"
+  },
+  "origin": "127.0.0.1"
+}
+```
