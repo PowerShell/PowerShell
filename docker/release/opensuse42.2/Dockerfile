@@ -1,5 +1,5 @@
 # Docker image file that describes an OpenSUSE 42.1 (AKA leap 42.1) image with PowerShell installed from PowerShell Release
-FROM opensuse:42.1
+FROM opensuse:42.2
 
 LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>"
 LABEL readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
