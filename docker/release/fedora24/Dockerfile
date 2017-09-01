@@ -1,7 +1,4 @@
 FROM fedora:24
-LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>"
-LABEL readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md"
-LABEL description="This Dockerfile will install the latest release of PS."
 
 # TODO: Until a release of PowerShell for Fedora 24 is available,
 # this Dockerfile installs the CentOS 7 version for compatibility.
@@ -9,6 +6,24 @@ LABEL description="This Dockerfile will install the latest release of PS."
 ARG POWERSHELL_VERSION=6.0.0-beta.6
 ARG POWERSHELL_RELEASE=v6.0.0-beta.6
 ARG POWERSHELL_PACKAGE=powershell-6.0.0_beta.6-1.el7.x86_64.rpm
+ARG IMAGE_NAME=microsoft/powershell:fedora24
+
+LABEL maintainer="PowerShell Team <powershellteam@hotmail.com>" \
+      readme.md="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md" \
+      description="This Dockerfile will install the latest release of PS." \
+      org.label-schema.usage="https://github.com/PowerShell/PowerShell/tree/master/docker#run-the-docker-image-you-built" \
+      org.label-schema.url="https://github.com/PowerShell/PowerShell/blob/master/docker/README.md" \
+      org.label-schema.vcs-url="https://github.com/PowerShell/PowerShell" \
+      org.label-schema.name="powershell" \
+      org.label-schema.vendor="PowerShell" \
+      org.label-schema.version=${POWERSHELL_VERSION} \
+      org.label-schema.schema-version="1.0" \
+      org.label-schema.docker.cmd="docker run ${IMAGE_NAME} powershell -c '$psversiontable'" \
+      org.label-schema.docker.cmd.devel="docker run ${IMAGE_NAME}" \
+      org.label-schema.docker.cmd.test="docker run ${IMAGE_NAME} powershell -c Invoke-Pester" \
+      org.label-schema.docker.cmd.help="docker run ${IMAGE_NAME} powershell -c Get-Help"
+
+# TODO: addd LABEL org.label-schema.vcs-ref=${VCS_REF}
 
 # The CentOS 7 release relies on an older version of libicu, so we'll be downloading it
 # from the University of Kent (GB) mirror service.
