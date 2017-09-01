@@ -12,8 +12,8 @@ Please read the rest of this document to ensure a smooth contribution process.
 
 * Make sure you have a [GitHub account](https://github.com/signup/free).
 * Learning Git:
-  * GitHub Help: [Good Resources for Learning Git and GitHub][good-git-resources]
-  * [Git Basics](../docs/git/basics.md): install and getting started
+    * GitHub Help: [Good Resources for Learning Git and GitHub][good-git-resources]
+    * [Git Basics](../docs/git/basics.md): install and getting started
 * [GitHub Flow Guide](https://guides.github.com/introduction/flow/):
   step-by-step instructions of GitHub Flow
 
@@ -136,8 +136,8 @@ Additional references:
   ```
 
 * Please use the present tense and imperative mood when describing your changes:
-  * Instead of "Adding support for Windows Server 2012 R2", write "Add support for Windows Server 2012 R2".
-  * Instead of "Fixed for server connection issue", write "Fix server connection issue".
+    * Instead of "Adding support for Windows Server 2012 R2", write "Add support for Windows Server 2012 R2".
+    * Instead of "Fixed for server connection issue", write "Fix server connection issue".
 
   This form is akin to giving commands to the code base
   and is recommended by the Git SCM developers.
@@ -171,12 +171,12 @@ Additional references:
 
 1. The PR *author* creates a pull request from a fork.
 1. The *author* ensures that their pull request passes the [CI system][ci-system] build.
-   - If the build fails, a [Repository Maintainer][repository-maintainer] adds the `Review - waiting on author` label to the pull request. 
+   - If the build fails, a [Repository Maintainer][repository-maintainer] adds the `Review - waiting on author` label to the pull request.
    The *author* can then continue to update the pull request until the build passes.
 1. If the *author* knows whom should participate in the review, they should add them otherwise they can add the recommended *reviewers*.
 1. Once the build passes, if there is not sufficient review, the *maintainer* adds the `Review - needed` label.
 1. An [Area Expert][area-expert] should also review the pull request.
-   - If the *author* does not meet the *reviewer*'s standards, the *reviewer* makes comments. A *maintainer* then removes the `Review - needed` label and adds 
+   - If the *author* does not meet the *reviewer*'s standards, the *reviewer* makes comments. A *maintainer* then removes the `Review - needed` label and adds
    the `Review - waiting on author` label. The *author* must address the comments and repeat from step 2.
    - If the *author* meets the *reviewer*'s standards, the *reviewer* approves the PR. A maintainer then removes the `need review` label.
 1. Once the code review is completed, a *maintainer* merges the pull request after one business day to allow for additional critical feedback.
@@ -185,7 +185,7 @@ Additional references:
 
 1. The PR *author* is responsible for moving the PR forward to get it Approved.
    This includes addressing feedback within a timely period and indicating feedback has been addressed by adding a comment and mentioning the specific *reviewers*.
-   When updating your pull request, please **create new commits** and **don't rewrite the commits history**. 
+   When updating your pull request, please **create new commits** and **don't rewrite the commits history**.
    This way it's very easy for the reviewers to see diff between iterations.
    If you rewrite the history in the pull request, review could be much slower.
    The PR is likely to be squashed on merge to master by the *assignee*.
@@ -214,7 +214,7 @@ In these cases:
 1. If the *author* does not respond **within a week**:
    - If the *reviewer*'s comments are very minor, merge the change, fix the code immediately, and create a new PR with the fixes addressing the minor comments.
    - If the changes required to merge the pull request are significant but needed, *assignee* creates a new branch with the changes and open an issue to merge the code into the dev branch.
-   Mention the original pull request ID in the description of the new issue and close the abandoned pull request. 
+   Mention the original pull request ID in the description of the new issue and close the abandoned pull request.
    - If the changes in an abandoned pull request are no longer needed (e.g. due to refactoring of the code base or a design change), *assignee* will simply close the pull request.
 
 ## Making Breaking Changes
@@ -240,7 +240,7 @@ we encourage contributors to follow these common engineering practices:
 
 * Format commit messages following these guidelines:
 
-```
+```text
 Summarize change in 50 characters or less
 
 Similar to email, this is the body of the commit message,
