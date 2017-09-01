@@ -683,19 +683,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
-    It "Validate Invoke-WebRequest -SkipCertificateCheck" {
-
-        # validate that exception is thrown for URI with expired certificate
-        $command = "Invoke-WebRequest -Uri 'https://expired.badssl.com'"
-        $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
-
-        # validate that no exception is thrown for URI with expired certificate when using -SkipCertificateCheck option
-        $command = "Invoke-WebRequest -Uri 'https://expired.badssl.com' -SkipCertificateCheck"
-        $result = ExecuteWebCommand -command $command
-        $result.Error | Should BeNullOrEmpty
-    }
-
     It "Validate Invoke-WebRequest handles missing Content-Type in response header" {
 
         #Validate that exception is not thrown when response headers are missing Content-Type.
@@ -743,16 +730,6 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
         $result.Error.Exception.Response.StatusCode | Should Be 418
         $result.Error.Exception.Response.ReasonPhrase | Should Be "I'm a teapot"
         $result.Error.Exception.Message | Should Match ": 418 \(I'm a teapot\)\."
-        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
-    }
-
-    It "Validate Invoke-WebRequest returns native HTTPS error message in exception" {
-
-        $command = "Invoke-WebRequest -Uri https://incomplete.chain.badssl.com"
-        $result = ExecuteWebCommand -command $command
-
-        # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
-        $result.Error.ErrorDetails.Message | Should Match $result.Error.Exception.InnerException.Message
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
     }
 
@@ -1174,31 +1151,53 @@ Describe "Invoke-WebRequest tests" -Tags "Feature" {
 
     #endregion Content Header Inclusion
 
-    #region Client Certificate Authentication
-
-    It "Verifies Invoke-WebRequest Certificate Authentication Fails without -Certificate"  {
-        $uri = Get-WebListenerUrl -Https -Test 'Cert'
-        $result = Invoke-WebRequest -Uri $uri -SkipCertificateCheck | 
-            Select-Object -ExpandProperty Content |
-            ConvertFrom-Json
+    Context "HTTPS Tests" {
+        It "Validate Invoke-WebRequest -SkipCertificateCheck" {
+            # validate that exception is thrown for URI with expired certificate
+            $Uri = Get-WebListenerUrl -Https
+            $command = "Invoke-WebRequest -Uri '$Uri'"
+            $result = ExecuteWebCommand -command $command
+            $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+            
+            # validate that no exception is thrown for URI with expired certificate when using -SkipCertificateCheck option
+            $Uri = Get-WebListenerUrl -Https
+            $command = "Invoke-WebRequest -Uri '$Uri' -SkipCertificateCheck"
+            $result = ExecuteWebCommand -command $command
+            $result.Error | Should BeNullOrEmpty
+        }
         
-        $result.Status  | Should Be 'FAILED'
-    }
-    
-    # Test skipped on macOS pending support for Client Certificate Authentication
-    # https://github.com/PowerShell/PowerShell/issues/4650
-    It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" -skip:$IsOSX {
-        $uri = Get-WebListenerUrl -Https -Test 'Cert'
-        $certificate = Get-WebListenerClientCertificate
-        $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck | 
-            Select-Object -ExpandProperty Content |
-            ConvertFrom-Json
+        It "Validate Invoke-WebRequest returns native HTTPS error message in exception" {
+            $uri = Get-WebListenerUrl -Https
+            $command = "Invoke-WebRequest -Uri '$uri'"
+            $result = ExecuteWebCommand -command $command
+            
+            # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
+            $result.Error.ErrorDetails.Message | Should Match $result.Error.Exception.InnerException.Message
+            $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeWebRequestCommand"
+        }
         
-        $result.Status  | Should Be 'OK'
-        $result.Thumbprint | Should Be $certificate.Thumbprint
+        It "Verifies Invoke-WebRequest Certificate Authentication Fails without -Certificate"  {
+            $uri = Get-WebListenerUrl -Https -Test 'Cert'
+            $result = Invoke-WebRequest -Uri $uri -SkipCertificateCheck | 
+                Select-Object -ExpandProperty Content |
+                ConvertFrom-Json
+            
+            $result.Status | Should Be 'FAILED'
+        }
+        
+        # Test skipped on macOS pending support for Client Certificate Authentication
+        # https://github.com/PowerShell/PowerShell/issues/4650
+        It "Verifies Invoke-WebRequest Certificate Authentication Successful with -Certificate" -Pending:$IsOSX {
+            $uri = Get-WebListenerUrl -Https -Test 'Cert'
+            $certificate = Get-WebListenerClientCertificate
+            $result = Invoke-WebRequest -Uri $uri -Certificate $certificate -SkipCertificateCheck | 
+                Select-Object -ExpandProperty Content |
+                ConvertFrom-Json
+            
+            $result.Status | Should Be 'OK'
+            $result.Thumbprint | Should Be $certificate.Thumbprint
+        }
     }
-
-    #endregion Client Certificate Authentication
 
     BeforeEach {
         if ($env:http_proxy) {
@@ -1491,20 +1490,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $jsonContent.headers.'User-Agent' | Should Match "WindowsPowerShell"
     }
 
-    It "Validate Invoke-RestMethod -SkipCertificateCheck" {
-
-        # HTTP method HEAD must be used to not retrieve an unparsable HTTP body
-        # validate that exception is thrown for URI with expired certificate
-        $command = "Invoke-RestMethod -Uri 'https://expired.badssl.com' -Method HEAD"
-        $result = ExecuteWebCommand -command $command
-        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
-
-        # validate that no exception is thrown for URI with expired certificate when using -SkipCertificateCheck option
-        $command = "Invoke-RestMethod -Uri 'https://expired.badssl.com' -SkipCertificateCheck -Method HEAD"
-        $result = ExecuteWebCommand -command $command
-        $result.Error | Should BeNullOrEmpty
-    }
-
     It "Validate Invoke-RestMethod handles missing Content-Type in response header" {
 
         #Validate that exception is not thrown when response headers are missing Content-Type.
@@ -1558,16 +1543,6 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
         $result.Error.Exception.Response.StatusCode | Should Be 418
         $result.Error.Exception.Response.ReasonPhrase | Should Be "I'm a teapot"
         $result.Error.Exception.Message | Should Match ": 418 \(I'm a teapot\)\."
-        $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
-    }
-
-    It "Validate Invoke-RestMethod returns native HTTPS error message in exception" {
-
-        $command = "Invoke-RestMethod -Uri https://incomplete.chain.badssl.com"
-        $result = ExecuteWebCommand -command $command
-
-        # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
-        $result.Error.ErrorDetails.Message | Should Match $result.Error.Exception.InnerException.Message
         $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
     }
 
@@ -1719,27 +1694,49 @@ Describe "Invoke-RestMethod tests" -Tags "Feature" {
 
     #endregion SkipHeaderVerification tests
 
-    #region Client Certificate Authentication
-
-    It "Verifies Invoke-RestMethod Certificate Authentication Fails without -Certificate" {
-        $uri = Get-WebListenerUrl -Https -Test 'Cert'
-        $result = Invoke-RestMethod -Uri $uri -SkipCertificateCheck
+    Context "HTTPS Tests" {
+        It "Validate Invoke-RestMethod -SkipCertificateCheck" {
+            # HTTP method HEAD must be used to not retrieve an unparsable HTTP body
+            # validate that exception is thrown for URI with expired certificate
+            $uri= Get-WebListenerUrl -Https
+            $command = "Invoke-RestMethod -Uri '$uri' -Method HEAD"
+            $result = ExecuteWebCommand -command $command
+            $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+            
+            # validate that no exception is thrown for URI with expired certificate when using -SkipCertificateCheck option
+            $command = "Invoke-RestMethod -Uri '$uri' -SkipCertificateCheck -Method HEAD"
+            $result = ExecuteWebCommand -command $command
+            $result.Error | Should BeNullOrEmpty
+        }
         
-        $result.Status  | Should Be 'FAILED'
+        It "Validate Invoke-RestMethod returns native HTTPS error message in exception" {
+            $uri = Get-WebListenerUrl -Https
+            $command = "Invoke-RestMethod -Uri '$uri'"
+            $result = ExecuteWebCommand -command $command
+            
+            # need to check against inner exception since Linux and Windows uses different HTTP client libraries so errors aren't the same
+            $result.Error.ErrorDetails.Message | Should Match $result.Error.Exception.InnerException.Message
+            $result.Error.FullyQualifiedErrorId | Should Be "WebCmdletWebResponseException,Microsoft.PowerShell.Commands.InvokeRestMethodCommand"
+        }
+        
+        It "Verifies Invoke-RestMethod Certificate Authentication Fails without -Certificate" {
+            $uri = Get-WebListenerUrl -Https -Test 'Cert'
+            $result = Invoke-RestMethod -Uri $uri -SkipCertificateCheck
+            
+            $result.Status | Should Be 'FAILED'
+        }
+        
+        # Test skipped on macOS pending support for Client Certificate Authentication
+        # https://github.com/PowerShell/PowerShell/issues/4650
+        It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -Pending:$IsOSX {
+            $uri = Get-WebListenerUrl -Https -Test 'Cert'
+            $certificate = Get-WebListenerClientCertificate
+            $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck
+            
+            $result.Status | Should Be 'OK'
+            $result.Thumbprint | Should Be $certificate.Thumbprint
+        }
     }
-
-    # Test skipped on macOS pending support for Client Certificate Authentication
-    # https://github.com/PowerShell/PowerShell/issues/4650
-    It "Verifies Invoke-RestMethod Certificate Authentication Successful with -Certificate" -skip:$IsOSX {
-        $uri = Get-WebListenerUrl -Https -Test 'Cert'
-        $certificate = Get-WebListenerClientCertificate
-        $result = Invoke-RestMethod -uri $uri -Certificate $certificate -SkipCertificateCheck
-
-        $result.Status  | Should Be 'OK'
-        $result.Thumbprint | Should Be $certificate.Thumbprint
-    }
-
-    #endregion Client Certificate Authentication
 
     #region charset encoding tests
 
