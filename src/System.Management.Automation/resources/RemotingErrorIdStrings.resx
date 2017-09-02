@@ -1030,7 +1030,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>Modules to import when applied to a session</value>
   </data>
   <data name="DISCPowerShellVersionComment" xml:space="preserve">
-    <value>Version of the Windows PowerShell engine to use  when applied to a session</value>
+    <value>Version of the Windows PowerShell engine to use when applied to a session</value>
   </data>
   <data name="DISCProcessorArchitectureComment" xml:space="preserve">
     <value>Processor architecture to use when applied to a session</value>
@@ -1369,7 +1369,7 @@ All WinRM sessions connected to Windows PowerShell session configurations, such 
     <value>The remote session to which you are connected does not support remote debugging. You must connect to a remote computer that is running Windows PowerShell {0} or greater.</value>
   </data>
   <data name="ICMInvalidSessionState" xml:space="preserve">
-    <value>Because the session state for session {0}, {1}, {2} is not equal to Open, you cannot run a command  in the session.  The session state is {3}.</value>
+    <value>Because the session state for session {0}, {1}, {2} is not equal to Open, you cannot run a command in the session.  The session state is {3}.</value>
   </data>
   <data name="ICMNoValidRunspaces" xml:space="preserve">
     <value>No valid sessions were specified.  Ensure you provide valid sessions that are in the Opened state and are available to run commands.</value>
