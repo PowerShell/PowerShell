@@ -95,7 +95,7 @@ namespace System.Management.Automation.Language
                     {
                         if (!reportAmbiguousException)
                         {
-                            // accelerator  for the common case, when we are not interested  in ambiguity exception.
+                            // accelerator for the common case, when we are not interested in ambiguity exception.
                             return targetType;
                         }
 

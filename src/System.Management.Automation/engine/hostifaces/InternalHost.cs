@@ -144,7 +144,7 @@ namespace System.Management.Automation.Internal.Host
                     {
                         throw PSTraceSource.NewNotImplementedException();
                     }
-#pragma warning restore  56503
+#pragma warning restore 56503
                 }
                 return _idResult;
             }

@@ -267,7 +267,7 @@ namespace Microsoft.PowerShell.Commands
 
         #region Private Methods
         /// <summary>
-        /// Runs the script in a new PowerShell instance and  hooks up error stream to potentially display error popup.
+        /// Runs the script in a new PowerShell instance and hooks up error stream to potentially display error popup.
         /// This method has the inconvenience of not showing to the console user the script being executed.
         /// </summary>
         /// <param name="script">script to be run</param>

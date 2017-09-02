@@ -185,7 +185,7 @@ function ExecuteRedirectRequest
 }
 
 # This function calls either Invoke-WebRequest or Invoke-RestMethod with the given uri
-# using the custum headers and the  optional SkipHeaderValidation switch.
+# using the custum headers and the optional SkipHeaderValidation switch.
 function ExecuteRequestWithCustomHeaders
 {
     param (
@@ -228,7 +228,7 @@ function ExecuteRequestWithCustomHeaders
 }
 
 # This function calls either Invoke-WebRequest or Invoke-RestMethod with the given uri
-# using the custom UserAgent and the  optional SkipHeaderValidation switch.
+# using the custom UserAgent and the optional SkipHeaderValidation switch.
 function ExecuteRequestWithCustomUserAgent {
     param (
         [Parameter(Mandatory)]

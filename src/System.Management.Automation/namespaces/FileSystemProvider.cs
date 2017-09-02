@@ -8318,8 +8318,8 @@ namespace Microsoft.PowerShell.Commands
             {
                 if (!sfOne.IsInvalid && !sfTwo.IsInvalid)
                 {
-                    BY_HANDLE_FILE_INFORMATION  infoOne;
-                    BY_HANDLE_FILE_INFORMATION  infoTwo;
+                    BY_HANDLE_FILE_INFORMATION infoOne;
+                    BY_HANDLE_FILE_INFORMATION infoTwo;
                     if (   GetFileInformationByHandle(sfOne.DangerousGetHandle(), out infoOne)
                         && GetFileInformationByHandle(sfTwo.DangerousGetHandle(), out infoTwo))
                     {

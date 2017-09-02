@@ -838,9 +838,9 @@ namespace Microsoft.WSMan.Management
         void AddOption([MarshalAs(UnmanagedType.BStr)] string OptionName, object OptionValue, int mustComply);
 
 
-        /// <summary><para><c>MustUnderstandOptions</c> property of <c>IWSManResourceLocator</c> interface.  </para><para>Sets the  MustUnderstandOptions value</para></summary>
+        /// <summary><para><c>MustUnderstandOptions</c> property of <c>IWSManResourceLocator</c> interface.  </para><para>Sets the MustUnderstandOptions value</para></summary>
         /// <remarks><para>An original IDL definition of <c>MustUnderstandOptions</c> property was the following:  <c>long MustUnderstandOptions</c>;</para></remarks>
-        // Sets the  MustUnderstandOptions value
+        // Sets the MustUnderstandOptions value
         // IDL: long MustUnderstandOptions;
 
         int MustUnderstandOptions

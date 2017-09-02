@@ -75,7 +75,7 @@ namespace System.Management.Automation
         /// <param name="allUsersAllHosts">The profile file name for all users and all hosts.</param>
         /// <param name="allUsersCurrentHost">The profile file name for all users and current host.</param>
         /// <param name="currentUserAllHosts">The profile file name for current user and all hosts.</param>
-        /// <param name="currentUserCurrentHost">The profile  name for current user and current host.</param>
+        /// <param name="currentUserCurrentHost">The profile name for current user and current host.</param>
         /// <returns>A PSObject whose base object is currentUserCurrentHost and with notes for the other 4 parameters.</returns>
         internal static PSObject GetDollarProfile(string allUsersAllHosts, string allUsersCurrentHost, string currentUserAllHosts, string currentUserCurrentHost)
         {

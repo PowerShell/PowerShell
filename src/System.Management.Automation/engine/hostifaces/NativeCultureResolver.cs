@@ -136,7 +136,7 @@ namespace Microsoft.PowerShell
                                 }
 
                                 // There is atleast 1 duplicate in m_fallbacks which was not added to
-                                // fallbacksForTheParent array. Resize the array to take care of  this.
+                                // fallbacksForTheParent array. Resize the array to take care of this.
                                 if (_fallbacks.Length != currentIndex)
                                 {
                                     Array.Resize<string>(ref fallbacksForTheParent, currentIndex);

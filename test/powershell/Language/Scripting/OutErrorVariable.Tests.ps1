@@ -235,7 +235,7 @@ Describe "Update both OutVariable and ErrorVariable" -Tags "CI" {
 
     It 'Update OutVariable and ErrorVariable' {
 
-        get-bar2 -OutVariable script:bar_out -errorVariable script:bar_err  2> $null > $null
+        get-bar2 -OutVariable script:bar_out -errorVariable script:bar_err 2> $null > $null
 
         $foo_out | Should be @("foo-output-0", "foo-output-1")
         $foo_err | Should be 'foo-error'

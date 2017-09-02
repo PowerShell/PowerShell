@@ -244,7 +244,7 @@ function DateTimesAreEqualish
     )
 
     $span = $dtA - $dtB
-    return ([math]::Floor([math]::Abs($span.TotalMilliseconds)) -eq  0)
+    return ([math]::Floor([math]::Abs($span.TotalMilliseconds)) -eq 0)
 }
 
 # Compare the content of counter sets

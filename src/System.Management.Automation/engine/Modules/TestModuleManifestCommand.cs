@@ -314,7 +314,7 @@ namespace Microsoft.PowerShell.Commands
                 }
                 path = pathInfos[0].Path;
 
-                // First, we validate if the path  does exist.
+                // First, we validate if the path does exist.
                 if (!File.Exists(path) && !Directory.Exists(path))
                 {
                     return false;

@@ -289,7 +289,7 @@ namespace System.Management.Automation.Host
         /// that process boundary in the same fashion as any object in a pipeline is serialized when crossing process boundaries.
         /// In this case, the BaseObject property of the value will be null.
         ///
-        /// If the host is using an in-process Runspace, then the BaseObject property can be a non-null value  a live object.
+        /// If the host is using an in-process Runspace, then the BaseObject property can be a non-null value a live object.
         /// No guarantees are made as to the app domain or thread that the BaseObject is accessed if it is accessed in the
         /// runspace. No guarantees of threadsafety or reentrancy are made.  The object set in the BaseObject property of
         /// the value returned by this method is responsible for ensuring its own threadsafety and re-entrance safety.

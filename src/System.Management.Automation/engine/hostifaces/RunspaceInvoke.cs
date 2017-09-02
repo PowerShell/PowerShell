@@ -111,7 +111,7 @@ namespace System.Management.Automation
             }
         }
 
-        #endregion  constructors
+        #endregion constructors
 
         #region invoke
 

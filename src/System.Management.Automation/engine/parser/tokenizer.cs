@@ -119,7 +119,7 @@ namespace System.Management.Automation.Language
         }
 
         /// <summary>
-        /// Pop up previous  dynamicKeywords cache
+        /// Pop up previous dynamicKeywords cache
         /// </summary>
         public static void Pop()
         {

@@ -71,7 +71,7 @@ namespace System.Management.Automation.Remoting
 
         #endregion
 
-        #region  Constructor
+        #region Constructor
 
         /// <summary>
         /// Constructs a PrioritySendDataCollection object.

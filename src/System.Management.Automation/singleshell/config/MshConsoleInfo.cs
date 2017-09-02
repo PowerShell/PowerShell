@@ -236,7 +236,7 @@ namespace System.Management.Automation.Runspaces
                 {
                     if (isPSVersionProcessed)
                     {
-                        s_mshsnapinTracer.TraceError("Console file {0} contains more than one  msh versions", path);
+                        s_mshsnapinTracer.TraceError("Console file {0} contains more than one msh versions", path);
 
                         throw new XmlException(StringUtil.Format(ConsoleInfoErrorStrings.MultipleMshSnapinsElementNotSupported, PSVERSION));
                     }
