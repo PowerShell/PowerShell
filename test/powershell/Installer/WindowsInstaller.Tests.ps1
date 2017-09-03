@@ -14,24 +14,22 @@ Describe "Windows Installer" -Tags "Scenario" {
         $global:PSDefaultParameterValues = $originalDefaultParameterValues
     }
 
-    Context "Universal C Runtime Download Link" {
-        $universalCRuntimeDownloadLink = 'https://www.microsoft.com/download/details.aspx?id=50410'
-        It "Wix file should have download link about Universal C runtime" -Pending {
-           (Get-Content $wixProductFile -Raw).Contains($universalCRuntimeDownloadLink) | Should Be $true
-        }
-        It "Should have download link about Universal C runtime that is reachable" {
-           (Invoke-WebRequest $universalCRuntimeDownloadLink.Replace("https://",'http://')) | Should Not Be $null
-        }
+    $universalCRuntimeDownloadLink = 'https://www.microsoft.com/download/details.aspx?id=50410'
+    $visualStudioCPlusPlusRedistributablesDownloadLink = 'https://www.microsoft.com/download/details.aspx?id=48145'
+
+    $downloadLinks = @(
+        @{ downloadLink = $universalCRuntimeDownloadLink; Name = 'Universal C Runtime' }
+        @{ downloadLink = $visualStudioCPlusPlusRedistributablesDownloadLink; Name = 'Visual Studio C++ 2015 Redistributables' }
+    )
+        
+    It "WiX (Windows Installer XML) file contains download link '<downloadLink>' for '<Name>'" -TestCases $downloadLinks -Test {
+        Param ([string]$downloadLink)
+        (Get-Content $wixProductFile -Raw).Contains($downloadLink) | Should Be $true
     }
 
-    Context "Visual Studio C++ Redistributables Link" {
-        $visualStudioCPlusPlusRedistributablesDownloadLink = 'https://www.microsoft.com/download/details.aspx?id=48145'
-        It "WiX file should have documentation about Visual Studio C++ redistributables" -Pending {
-           (Get-Content $wixProductFile -Raw).Contains($visualStudioCPlusPlusRedistributablesDownloadLink) | Should Be $true
-        }
-        It "Should have download link about Universal C runtime that is reachable" {
-           (Invoke-WebRequest $visualStudioCPlusPlusRedistributablesDownloadLink.Replace("https://",'http://')) | Should Not Be $null
-        }
+    It "Download link '<downloadLink>' for '<Name>' is reachable" -TestCases $downloadLinks -Test {
+        Param ([string]$downloadLink)
+        (Invoke-WebRequest $universalCRuntimeDownloadLink.Replace("https://", 'http://')) | Should Not Be $null
     }
-
+	
 }

@@ -60,15 +60,25 @@
 
     <!--We need to show EULA, and provide option to customize download location-->        
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
-	
-    <!-- Prerequisites check for Windows Universal C time and Visual Studio 2015 C++ redistributables -->
+
+    <!-- Prerequisite check for Windows Universal C time -->
     <Property Id="UCRTINSTALLED" Secure="yes">
-      <DirectorySearch Id="Windows_System32" Path="[WindowsFolder]System32" Depth="0">
+      <DirectorySearch Id="Windows_System32_search1" Path="[WindowsFolder]System32" Depth="0">
         <FileSearch Name="ucrtbase.dll"/>
       </DirectorySearch>
     </Property>	
     <Condition Message="$(env.ProductName) requires the Universal C Runtime to be installed. You can download it here: https://www.microsoft.com/download/details.aspx?id=50410">
       <![CDATA[Installed OR UCRTINSTALLED]]>
+    </Condition>
+
+     <!-- Prerequisite check for Visual Studio 2015 C++ redistributables -->
+     <Property Id="VCRUNTIMEINSTALLED" Secure="yes">
+      <DirectorySearch Id="Windows_System32_search2" Path="[WindowsFolder]System32" Depth="0">
+        <FileSearch Name="vcruntime140.dll"/>
+      </DirectorySearch>
+    </Property>	
+    <Condition Message="$(env.ProductName) requires the Visual Studio 2015 C++ redistributables to be installed. You can download it here: https://www.microsoft.com/download/details.aspx?id=48145">
+      <![CDATA[Installed OR VCRUNTIMEINSTALLED]]>
     </Condition>
 
     <Directory Id="TARGETDIR" Name="SourceDir">
