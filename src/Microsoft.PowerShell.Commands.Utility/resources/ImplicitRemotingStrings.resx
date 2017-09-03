@@ -139,7 +139,7 @@
     <value>Could not resolve remote alias '{0}'.</value>
   </data>
   <data name="ErrorSkippedNonRequestedCommand" xml:space="preserve">
-    <value>Proxy creation has been skipped for the '{0}' command, because the name did not match the value of the Name  parameter.</value>
+    <value>Proxy creation has been skipped for the '{0}' command, because the name did not match the value of the Name parameter.</value>
   </data>
   <data name="ErrorSkippedNonRequestedTypeDefinition" xml:space="preserve">
     <value>Extended type definition has been skipped for the '{0}' type because its name did not match the value of the FormatTypeName parameter.</value>

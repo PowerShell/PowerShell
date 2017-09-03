@@ -166,7 +166,7 @@
     <value>Do you want to remove the "{0}" source from the "{1}" computer?</value>
   </data>
   <data name="InvalidOverflowAction" xml:space="preserve">
-    <value>Retention days is valid only if the overflow action is "OverwriteOlder". Please change  and try again.</value>
+    <value>Retention days is valid only if the overflow action is "OverwriteOlder". Please change and try again.</value>
   </data>
   <data name="InvalidArgument" xml:space="preserve">
     <value>Specify a valid value for the number of retention days.</value>
