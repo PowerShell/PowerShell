@@ -592,6 +592,1018 @@ namespace System.Management.Automation
     }
 
     /// <summary>
+    /// Verb descriptions.
+    /// </summary>
+    public static class VerbDescriptions
+    {
+        /// <summary>
+        /// Adds a resource to a container, or attaches an item to another item
+        /// </summary>
+        public const string Add = "Adds a resource to a container, or attaches an item to another item";
+
+        /// <summary>
+        /// Confirms or agrees to the status of a resource or process
+        /// </summary>
+        public const string Approve = "Confirms or agrees to the status of a resource or process";
+
+        /// <summary>
+        /// Affirms the state of a resource
+        /// </summary>
+        public const string Assert = "Affirms the state of a resource";
+
+        /// <summary>
+        /// Stores data by replicating it
+        /// </summary>
+        public const string Backup = "Stores data by replicating it";
+
+        /// <summary>
+        /// Restricts access to a resource
+        /// </summary>
+        public const string Block = "Restricts access to a resource";
+
+        /// <summary>
+        /// Creates an artifact (usually a binary or document) out of some set of input files (usually source code or declarative documents)
+        /// </summary>
+        public const string Build = "Creates an artifact (usually a binary or document) out of some set of input files (usually source code or declarative documents)";
+
+        /// <summary>
+        /// Creates a snapshot of the current state of the data or of its configuration
+        /// </summary>
+        public const string Checkpoint = "Creates a snapshot of the current state of the data or of its configuration";
+
+        /// <summary>
+        /// Removes all the resources from a container but does not delete the container
+        /// </summary>
+        public const string Clear = "Removes all the resources from a container but does not delete the container";
+
+        /// <summary>
+        /// Changes the state of a resource to make it inaccessible, unavailable, or unusable
+        /// </summary>
+        public const string Close = "Changes the state of a resource to make it inaccessible, unavailable, or unusable";
+
+        /// <summary>
+        /// Evaluates the data from one resource against the data from another resource
+        /// </summary>
+        public const string Compare = "Evaluates the data from one resource against the data from another resource";
+
+        /// <summary>
+        /// Concludes an operation
+        /// </summary>
+        public const string Complete = "Concludes an operation";
+
+        /// <summary>
+        /// Compacts the data of a resource
+        /// </summary>
+        public const string Compress = "Compacts the data of a resource";
+
+        /// <summary>
+        /// Acknowledges, verifies, or validates the state of a resource or process
+        /// </summary>
+        public const string Confirm = "Acknowledges, verifies, or validates the state of a resource or process";
+
+        /// <summary>
+        /// Creates a link between a source and a destination
+        /// </summary>
+        public const string Connect = "Creates a link between a source and a destination";
+
+        /// <summary>
+        /// Changes the data from one representation to another when the cmdlet supports bidirectional conversion or when the cmdlet supports conversion between multiple data types
+        /// </summary>
+        public const string Convert = "Changes the data from one representation to another when the cmdlet supports bidirectional conversion or when the cmdlet supports conversion between multiple data types";
+
+        /// <summary>
+        /// Converts one primary type of input (the cmdlet noun indicates the input) to one or more supported output types
+        /// </summary>
+        public const string ConvertFrom = "Converts one primary type of input (the cmdlet noun indicates the input) to one or more supported output types";
+
+        /// <summary>
+        /// Converts from one or more types of input to a primary output type (the cmdlet noun indicates the output type)
+        /// </summary>
+        public const string ConvertTo = "Converts from one or more types of input to a primary output type (the cmdlet noun indicates the output type)";
+
+        /// <summary>
+        /// Copies a resource to another name or to another container
+        /// </summary>
+        public const string Copy = "Copies a resource to another name or to another container";
+
+        /// <summary>
+        /// Examines a resource to diagnose operational problems
+        /// </summary>
+        public const string Debug = "Examines a resource to diagnose operational problems";
+
+        /// <summary>
+        /// Refuses, objects, blocks, or opposes the state of a resource or process
+        /// </summary>
+        public const string Deny = "Refuses, objects, blocks, or opposes the state of a resource or process";
+
+        /// <summary>
+        /// Sends an application, website, or solution to a remote target[s] in such a way that a consumer of that solution can access it after deployment is complete
+        /// </summary>
+        public const string Deploy = "Sends an application, website, or solution to a remote target[s] in such a way that a consumer of that solution can access it after deployment is complete";
+
+        /// <summary>
+        /// Configures a resource to an unavailable or inactive state
+        /// </summary>
+        public const string Disable = "Configures a resource to an unavailable or inactive state";
+
+        /// <summary>
+        /// Breaks the link between a source and a destination
+        /// </summary>
+        public const string Disconnect = "Breaks the link between a source and a destination";
+
+        /// <summary>
+        /// Detaches a named entity from a location
+        /// </summary>
+        public const string Dismount = "Detaches a named entity from a location";
+
+        /// <summary>
+        /// Modifies existing data by adding or removing content
+        /// </summary>
+        public const string Edit = "Modifies existing data by adding or removing content";
+
+        /// <summary>
+        /// Configures a resource to an available or active state
+        /// </summary>
+        public const string Enable = "Configures a resource to an available or active state";
+
+        /// <summary>
+        /// Specifies an action that allows the user to move into a resource
+        /// </summary>
+        public const string Enter = "Specifies an action that allows the user to move into a resource";
+
+        /// <summary>
+        /// Sets the current environment or context to the most recently used context
+        /// </summary>
+        public const string Exit = "Sets the current environment or context to the most recently used context";
+
+        /// <summary>
+        /// Restores the data of a resource that has been compressed to its original state
+        /// </summary>
+        public const string Expand = "Restores the data of a resource that has been compressed to its original state";
+
+        /// <summary>
+        /// Encapsulates the primary input into a persistent data store, such as a file, or into an interchange format
+        /// </summary>
+        public const string Export = "Encapsulates the primary input into a persistent data store, such as a file, or into an interchange format";
+
+        /// <summary>
+        /// Looks for an object in a container that is unknown, implied, optional, or specified
+        /// </summary>
+        public const string Find = "Looks for an object in a container that is unknown, implied, optional, or specified";
+
+        /// <summary>
+        /// Arranges objects in a specified form or layout
+        /// </summary>
+        public const string Format = "Arranges objects in a specified form or layout";
+
+        /// <summary>
+        /// Specifies an action that retrieves a resource
+        /// </summary>
+        public const string Get = "Specifies an action that retrieves a resource";
+
+        /// <summary>
+        /// Allows access to a resource
+        /// </summary>
+        public const string Grant = "Allows access to a resource";
+
+        /// <summary>
+        /// Arranges or associates one or more resources
+        /// </summary>
+        public const string Group = "Arranges or associates one or more resources";
+
+        /// <summary>
+        /// Makes a resource undetectable
+        /// </summary>
+        public const string Hide = "Makes a resource undetectable";
+
+        /// <summary>
+        /// Creates a resource from data that is stored in a persistent data store (such as a file) or in an interchange format
+        /// </summary>
+        public const string Import = "Creates a resource from data that is stored in a persistent data store (such as a file) or in an interchange format";
+
+        /// <summary>
+        /// Prepares a resource for use, and sets it to a default state
+        /// </summary>
+        public const string Initialize = "Prepares a resource for use, and sets it to a default state";
+
+        /// <summary>
+        /// Places a resource in a location, and optionally initializes it
+        /// </summary>
+        public const string Install = "Places a resource in a location, and optionally initializes it";
+
+        /// <summary>
+        /// Performs an action, such as running a command or a method
+        /// </summary>
+        public const string Invoke = "Performs an action, such as running a command or a method";
+
+        /// <summary>
+        /// Combines resources into one resource
+        /// </summary>
+        public const string Join = "Combines resources into one resource";
+
+        /// <summary>
+        /// Applies constraints to a resource
+        /// </summary>
+        public const string Limit = "Applies constraints to a resource";
+
+        /// <summary>
+        /// Secures a resource
+        /// </summary>
+        public const string Lock = "Secures a resource";
+
+        /// <summary>
+        /// Identifies resources that are consumed by a specified operation, or retrieves statistics about a resource
+        /// </summary>
+        public const string Measure = "Identifies resources that are consumed by a specified operation, or retrieves statistics about a resource";
+
+        /// <summary>
+        /// Creates a single resource from multiple resources
+        /// </summary>
+        public const string Merge = "Creates a single resource from multiple resources";
+
+        /// <summary>
+        /// Attaches a named entity to a location
+        /// </summary>
+        public const string Mount = "Attaches a named entity to a location";
+
+        /// <summary>
+        /// Moves a resource from one location to another
+        /// </summary>
+        public const string Move = "Moves a resource from one location to another";
+
+        /// <summary>
+        /// Creates a resource
+        /// </summary>
+        public const string New = "Creates a resource";
+
+        /// <summary>
+        /// Changes the state of a resource to make it accessible, available, or usable
+        /// </summary>
+        public const string Open = "Changes the state of a resource to make it accessible, available, or usable";
+
+        /// <summary>
+        /// Increases the effectiveness of a resource
+        /// </summary>
+        public const string Optimize = "Increases the effectiveness of a resource";
+
+        /// <summary>
+        /// Sends data out of the environment
+        /// </summary>
+        public const string Out = "Sends data out of the environment";
+
+        /// <summary>
+        /// Use the Test verb
+        /// </summary>
+        public const string Ping = "Use the Test verb";
+
+        /// <summary>
+        /// Removes an item from the top of a stack
+        /// </summary>
+        public const string Pop = "Removes an item from the top of a stack";
+
+        /// <summary>
+        /// Safeguards a resource from attack or loss
+        /// </summary>
+        public const string Protect = "Safeguards a resource from attack or loss";
+
+        /// <summary>
+        /// Makes a resource available to others
+        /// </summary>
+        public const string Publish = "Makes a resource available to others";
+
+        /// <summary>
+        /// Adds an item to the top of a stack
+        /// </summary>
+        public const string Push = "Adds an item to the top of a stack";
+
+        /// <summary>
+        /// Acquires information from a source
+        /// </summary>
+        public const string Read = "Acquires information from a source";
+
+        /// <summary>
+        /// Accepts information sent from a source
+        /// </summary>
+        public const string Receive = "Accepts information sent from a source";
+
+        /// <summary>
+        /// Resets a resource to the state that was undone
+        /// </summary>
+        public const string Redo = "Resets a resource to the state that was undone";
+
+        /// <summary>
+        /// Creates an entry for a resource in a repository such as a database
+        /// </summary>
+        public const string Register = "Creates an entry for a resource in a repository such as a database";
+
+        /// <summary>
+        /// Deletes a resource from a container
+        /// </summary>
+        public const string Remove = "Deletes a resource from a container";
+
+        /// <summary>
+        /// Changes the name of a resource
+        /// </summary>
+        public const string Rename = "Changes the name of a resource";
+
+        /// <summary>
+        /// Restores a resource to a usable condition
+        /// </summary>
+        public const string Repair = "Restores a resource to a usable condition";
+
+        /// <summary>
+        /// Asks for a resource or asks for permissions
+        /// </summary>
+        public const string Request = "Asks for a resource or asks for permissions";
+
+        /// <summary>
+        /// Sets a resource back to its original state
+        /// </summary>
+        public const string Reset = "Sets a resource back to its original state";
+
+        /// <summary>
+        /// Changes the size of a resource
+        /// </summary>
+        public const string Resize = "Changes the size of a resource";
+
+        /// <summary>
+        /// Maps a shorthand representation of a resource to a more complete representation
+        /// </summary>
+        public const string Resolve = "Maps a shorthand representation of a resource to a more complete representation";
+
+        /// <summary>
+        /// Stops an operation and then starts it again
+        /// </summary>
+        public const string Restart = "Stops an operation and then starts it again";
+
+        /// <summary>
+        /// Sets a resource to a predefined state, such as a state set by Checkpoint
+        /// </summary>
+        public const string Restore = "Sets a resource to a predefined state, such as a state set by Checkpoint";
+
+        /// <summary>
+        /// Starts an operation that has been suspended
+        /// </summary>
+        public const string Resume = "Starts an operation that has been suspended";
+
+        /// <summary>
+        /// Specifies an action that does not allow access to a resource
+        /// </summary>
+        public const string Revoke = "Specifies an action that does not allow access to a resource";
+
+        /// <summary>
+        /// Preserves data to avoid loss
+        /// </summary>
+        public const string Save = "Preserves data to avoid loss";
+
+        /// <summary>
+        /// Creates a reference to a resource in a container
+        /// </summary>
+        public const string Search = "Creates a reference to a resource in a container";
+
+        /// <summary>
+        /// Locates a resource in a container
+        /// </summary>
+        public const string Select = "Locates a resource in a container";
+
+        /// <summary>
+        /// Delivers information to a destination
+        /// </summary>
+        public const string Send = "Delivers information to a destination";
+
+        /// <summary>
+        /// Replaces data on an existing resource or creates a resource that contains some data
+        /// </summary>
+        public const string Set = "Replaces data on an existing resource or creates a resource that contains some data";
+
+        /// <summary>
+        /// Makes a resource visible to the user
+        /// </summary>
+        public const string Show = "Makes a resource visible to the user";
+
+        /// <summary>
+        /// Assures that two or more resources are in the same state
+        /// </summary>
+        public const string Sync = "Assures that two or more resources are in the same state";
+
+        /// <summary>
+        /// Bypasses one or more resources or points in a sequence
+        /// </summary>
+        public const string Skip = "Bypasses one or more resources or points in a sequence";
+
+        /// <summary>
+        /// Separates parts of a resource
+        /// </summary>
+        public const string Split = "Separates parts of a resource";
+
+        /// <summary>
+        /// Initiates an operation
+        /// </summary>
+        public const string Start = "Initiates an operation";
+
+        /// <summary>
+        /// Moves to the next point or resource in a sequence
+        /// </summary>
+        public const string Step = "Moves to the next point or resource in a sequence";
+
+        /// <summary>
+        /// Discontinues an activity
+        /// </summary>
+        public const string Stop = "Discontinues an activity";
+
+        /// <summary>
+        /// Presents a resource for approval
+        /// </summary>
+        public const string Submit = "Presents a resource for approval";
+
+        /// <summary>
+        /// Pauses an activity
+        /// </summary>
+        public const string Suspend = "Pauses an activity";
+
+        /// <summary>
+        /// Specifies an action that alternates between two resources, such as to change between two locations, responsibilities, or states
+        /// </summary>
+        public const string Switch = "Specifies an action that alternates between two resources, such as to change between two locations, responsibilities, or states";
+
+        /// <summary>
+        /// Verifies the operation or consistency of a resource
+        /// </summary>
+        public const string Test = "Verifies the operation or consistency of a resource";
+
+        /// <summary>
+        /// Tracks the activities of a resource
+        /// </summary>
+        public const string Trace = "Tracks the activities of a resource";
+
+        /// <summary>
+        /// Removes restrictions to a resource
+        /// </summary>
+        public const string Unblock = "Removes restrictions to a resource";
+
+        /// <summary>
+        /// Sets a resource to its previous state
+        /// </summary>
+        public const string Undo = "Sets a resource to its previous state";
+
+        /// <summary>
+        /// Removes a resource from an indicated location
+        /// </summary>
+        public const string Uninstall = "Removes a resource from an indicated location";
+
+        /// <summary>
+        /// Releases a resource that was locked
+        /// </summary>
+        public const string Unlock = "Releases a resource that was locked";
+
+        /// <summary>
+        /// Removes safeguards from a resource that were added to prevent it from attack or loss
+        /// </summary>
+        public const string Unprotect = "Removes safeguards from a resource that were added to prevent it from attack or loss";
+
+        /// <summary>
+        /// Makes a resource unavailable to others
+        /// </summary>
+        public const string Unpublish = "Makes a resource unavailable to others";
+
+        /// <summary>
+        /// Removes the entry for a resource from a repository
+        /// </summary>
+        public const string Unregister = "Removes the entry for a resource from a repository";
+
+        /// <summary>
+        /// Brings a resource up-to-date to maintain its state, accuracy, conformance, or compliance
+        /// </summary>
+        public const string Update = "Brings a resource up-to-date to maintain its state, accuracy, conformance, or compliance";
+
+        /// <summary>
+        /// Uses or includes a resource to do something
+        /// </summary>
+        public const string Use = "Uses or includes a resource to do something";
+
+        /// <summary>
+        /// Pauses an operation until a specified event occurs
+        /// </summary>
+        public const string Wait = "Pauses an operation until a specified event occurs";
+
+        /// <summary>
+        /// Continually inspects or monitors a resource for changes
+        /// </summary>
+        public const string Watch = "Continually inspects or monitors a resource for changes";
+
+        /// <summary>
+        /// Adds information to a target
+        /// </summary>
+        public const string Write = "Adds information to a target";
+    }//VerbDescriptions
+
+    /// <summary>
+    /// Verb Alias prefixes.
+    /// </summary>
+    public static class VerbAliasPrefixes
+    {
+        /// <summary>
+        /// "Add" verb alias prefix
+        /// </summary>
+        public const string Add = "a";
+
+        /// <summary>
+        /// "Approve" verb alias prefix
+        /// </summary>
+        public const string Approve = "ap";
+
+        /// <summary>
+        /// "Assert" verb alias prefix
+        /// </summary>
+        public const string Assert = "as";
+
+        /// <summary>
+        /// "Backup" verb alias prefix
+        /// </summary>
+        public const string Backup = "ba";
+
+        /// <summary>
+        /// "Block" verb alias prefix
+        /// </summary>
+        public const string Block = "bl";
+
+        /// <summary>
+        /// "Build" verb alias prefix
+        /// </summary>
+        public const string Build = "";
+
+        /// <summary>
+        /// "Checkpoint" verb alias prefix
+        /// </summary>
+        public const string Checkpoint = "ch";
+
+        /// <summary>
+        /// "Clear" verb alias prefix
+        /// </summary>
+        public const string Clear = "cl";
+
+        /// <summary>
+        /// "Close" verb alias prefix
+        /// </summary>
+        public const string Close = "cs";
+
+        /// <summary>
+        /// "Compare" verb alias prefix
+        /// </summary>
+        public const string Compare = "cr";
+
+        /// <summary>
+        /// "Complete" verb alias prefix
+        /// </summary>
+        public const string Complete = "cp";
+
+        /// <summary>
+        /// "Compress" verb alias prefix
+        /// </summary>
+        public const string Compress = "cm";
+
+        /// <summary>
+        /// "Confirm" verb alias prefix
+        /// </summary>
+        public const string Confirm = "cn";
+
+        /// <summary>
+        /// "Connect" verb alias prefix
+        /// </summary>
+        public const string Connect = "cc";
+
+        /// <summary>
+        /// "Convert" verb alias prefix
+        /// </summary>
+        public const string Convert = "cv";
+
+        /// <summary>
+        /// "ConvertFrom" verb alias prefix
+        /// </summary>
+        public const string ConvertFrom = "cf";
+
+        /// <summary>
+        /// "ConvertTo" verb alias prefix
+        /// </summary>
+        public const string ConvertTo = "ct";
+
+        /// <summary>
+        /// "Copy" verb alias prefix
+        /// </summary>
+        public const string Copy = "cp";
+
+        /// <summary>
+        /// "Debug" verb alias prefix
+        /// </summary>
+        public const string Debug = "db";
+
+        /// <summary>
+        /// "Deny" verb alias prefix
+        /// </summary>
+        public const string Deny = "dn";
+
+        /// <summary>
+        /// "Deploy" verb alias prefix
+        /// </summary>
+        public const string Deploy = "";
+
+        /// <summary>
+        /// "Disable" verb alias prefix
+        /// </summary>
+        public const string Disable = "d";
+
+        /// <summary>
+        /// "Disconnect" verb alias prefix
+        /// </summary>
+        public const string Disconnect = "dc";
+
+        /// <summary>
+        /// "Dismount" verb alias prefix
+        /// </summary>
+        public const string Dismount = "dm";
+
+        /// <summary>
+        /// "Edit" verb alias prefix
+        /// </summary>
+        public const string Edit = "ed";
+
+        /// <summary>
+        /// "Enable" verb alias prefix
+        /// </summary>
+        public const string Enable = "e";
+
+        /// <summary>
+        /// "Enter" verb alias prefix
+        /// </summary>
+        public const string Enter = "et";
+
+        /// <summary>
+        /// "Exit" verb alias prefix
+        /// </summary>
+        public const string Exit = "ex";
+
+        /// <summary>
+        /// "Expand" verb alias prefix
+        /// </summary>
+        public const string Expand = "en";
+
+        /// <summary>
+        /// "Export" verb alias prefix
+        /// </summary>
+        public const string Export = "ep";
+
+        /// <summary>
+        /// "Find" verb alias prefix
+        /// </summary>
+        public const string Find = "fd";
+
+        /// <summary>
+        /// "Format" verb alias prefix
+        /// </summary>
+        public const string Format = "f";
+
+        /// <summary>
+        /// "Get" verb alias prefix
+        /// </summary>
+        public const string Get = "g";
+
+        /// <summary>
+        /// "Grant" verb alias prefix
+        /// </summary>
+        public const string Grant = "gr";
+
+        /// <summary>
+        /// "Group" verb alias prefix
+        /// </summary>
+        public const string Group = "gp";
+
+        /// <summary>
+        /// "Hide" verb alias prefix
+        /// </summary>
+        public const string Hide = "h";
+
+        /// <summary>
+        /// "Import" verb alias prefix
+        /// </summary>
+        public const string Import = "ip";
+
+        /// <summary>
+        /// "Initialize" verb alias prefix
+        /// </summary>
+        public const string Initialize = "in";
+
+        /// <summary>
+        /// "Install" verb alias prefix
+        /// </summary>
+        public const string Install = "is";
+
+        /// <summary>
+        /// "Invoke" verb alias prefix
+        /// </summary>
+        public const string Invoke = "i";
+
+        /// <summary>
+        /// "Join" verb alias prefix
+        /// </summary>
+        public const string Join = "j";
+
+        /// <summary>
+        /// "Limit" verb alias prefix
+        /// </summary>
+        public const string Limit = "l";
+
+        /// <summary>
+        /// "Lock" verb alias prefix
+        /// </summary>
+        public const string Lock = "lk";
+
+        /// <summary>
+        /// "Measure" verb alias prefix
+        /// </summary>
+        public const string Measure = "ms";
+
+        /// <summary>
+        /// "Merge" verb alias prefix
+        /// </summary>
+        public const string Merge = "mg";
+
+        /// <summary>
+        /// "Mount" verb alias prefix
+        /// </summary>
+        public const string Mount = "mt";
+
+        /// <summary>
+        /// "Move" verb alias prefix
+        /// </summary>
+        public const string Move = "m";
+
+        /// <summary>
+        /// "New" verb alias prefix
+        /// </summary>
+        public const string New = "n";
+
+        /// <summary>
+        /// "Open" verb alias prefix
+        /// </summary>
+        public const string Open = "op";
+
+        /// <summary>
+        /// "Optimize" verb alias prefix
+        /// </summary>
+        public const string Optimize = "";
+
+        /// <summary>
+        /// "Out" verb alias prefix
+        /// </summary>
+        public const string Out = "o";
+
+        /// <summary>
+        /// "Ping" verb alias prefix
+        /// </summary>
+        public const string Ping = "pi";
+
+        /// <summary>
+        /// "Pop" verb alias prefix
+        /// </summary>
+        public const string Pop = "pop";
+
+        /// <summary>
+        /// "Protect" verb alias prefix
+        /// </summary>
+        public const string Protect = "pt";
+
+        /// <summary>
+        /// "Publish" verb alias prefix
+        /// </summary>
+        public const string Publish = "pb";
+
+        /// <summary>
+        /// "Push" verb alias prefix
+        /// </summary>
+        public const string Push = "pu";
+
+        /// <summary>
+        /// "Read" verb alias prefix
+        /// </summary>
+        public const string Read = "rd";
+
+        /// <summary>
+        /// "Receive" verb alias prefix
+        /// </summary>
+        public const string Receive = "rc";
+
+        /// <summary>
+        /// "Redo" verb alias prefix
+        /// </summary>
+        public const string Redo = "re";
+
+        /// <summary>
+        /// "Register" verb alias prefix
+        /// </summary>
+        public const string Register = "rg";
+
+        /// <summary>
+        /// "Remove" verb alias prefix
+        /// </summary>
+        public const string Remove = "r";
+
+        /// <summary>
+        /// "Rename" verb alias prefix
+        /// </summary>
+        public const string Rename = "rn";
+
+        /// <summary>
+        /// "Repair" verb alias prefix
+        /// </summary>
+        public const string Repair = "rp";
+
+        /// <summary>
+        /// "Request" verb alias prefix
+        /// </summary>
+        public const string Request = "rq";
+
+        /// <summary>
+        /// "Reset" verb alias prefix
+        /// </summary>
+        public const string Reset = "rs";
+
+        /// <summary>
+        /// "Resize" verb alias prefix
+        /// </summary>
+        public const string Resize = "";
+
+        /// <summary>
+        /// "Resolve" verb alias prefix
+        /// </summary>
+        public const string Resolve = "rv";
+
+        /// <summary>
+        /// "Restart" verb alias prefix
+        /// </summary>
+        public const string Restart = "rt";
+
+        /// <summary>
+        /// "Restore" verb alias prefix
+        /// </summary>
+        public const string Restore = "rr";
+
+        /// <summary>
+        /// "Resume" verb alias prefix
+        /// </summary>
+        public const string Resume = "ru";
+
+        /// <summary>
+        /// "Revoke" verb alias prefix
+        /// </summary>
+        public const string Revoke = "rk";
+
+        /// <summary>
+        /// "Save" verb alias prefix
+        /// </summary>
+        public const string Save = "sv";
+
+        /// <summary>
+        /// "Search" verb alias prefix
+        /// </summary>
+        public const string Search = "sr";
+
+        /// <summary>
+        /// "Select" verb alias prefix
+        /// </summary>
+        public const string Select = "sc";
+
+        /// <summary>
+        /// "Send" verb alias prefix
+        /// </summary>
+        public const string Send = "sd";
+
+        /// <summary>
+        /// "Set" verb alias prefix
+        /// </summary>
+        public const string Set = "s";
+
+        /// <summary>
+        /// "Show" verb alias prefix
+        /// </summary>
+        public const string Show = "sh";
+
+        /// <summary>
+        /// "Sync" verb alias prefix
+        /// </summary>
+        public const string Sync = "sy";
+
+        /// <summary>
+        /// "Skip" verb alias prefix
+        /// </summary>
+        public const string Skip = "sk";
+
+        /// <summary>
+        /// "Split" verb alias prefix
+        /// </summary>
+        public const string Split = "sl";
+
+        /// <summary>
+        /// "Start" verb alias prefix
+        /// </summary>
+        public const string Start = "sa";
+
+        /// <summary>
+        /// "Step" verb alias prefix
+        /// </summary>
+        public const string Step = "st";
+
+        /// <summary>
+        /// "Stop" verb alias prefix
+        /// </summary>
+        public const string Stop = "sp";
+
+        /// <summary>
+        /// "Submit" verb alias prefix
+        /// </summary>
+        public const string Submit = "sb";
+
+        /// <summary>
+        /// "Suspend" verb alias prefix
+        /// </summary>
+        public const string Suspend = "ss";
+
+        /// <summary>
+        /// "Switch" verb alias prefix
+        /// </summary>
+        public const string Switch = "sw";
+
+        /// <summary>
+        /// "Test" verb alias prefix
+        /// </summary>
+        public const string Test = "t";
+
+        /// <summary>
+        /// "Trace" verb alias prefix
+        /// </summary>
+        public const string Trace = "tr";
+
+        /// <summary>
+        /// "Unblock" verb alias prefix
+        /// </summary>
+        public const string Unblock = "ul";
+
+        /// <summary>
+        /// "Undo" verb alias prefix
+        /// </summary>
+        public const string Undo = "un";
+
+        /// <summary>
+        /// "Uninstall" verb alias prefix
+        /// </summary>
+        public const string Uninstall = "us";
+
+        /// <summary>
+        /// "Unlock" verb alias prefix
+        /// </summary>
+        public const string Unlock = "uk";
+
+        /// <summary>
+        /// "Unprotect" verb alias prefix
+        /// </summary>
+        public const string Unprotect = "up";
+
+        /// <summary>
+        /// "Unpublish" verb alias prefix
+        /// </summary>
+        public const string Unpublish = "ub";
+
+        /// <summary>
+        /// "Unregister" verb alias prefix
+        /// </summary>
+        public const string Unregister = "ur";
+
+        /// <summary>
+        /// "Update" verb alias prefix
+        /// </summary>
+        public const string Update = "ud";
+
+        /// <summary>
+        /// "Use" verb alias prefix
+        /// </summary>
+        public const string Use = "u";
+
+        /// <summary>
+        /// "Wait" verb alias prefix
+        /// </summary>
+        public const string Wait = "w";
+
+        /// <summary>
+        /// "Watch" verb alias prefix
+        /// </summary>
+        public const string Watch = "wc";
+
+        /// <summary>
+        /// "Write" verb alias prefix
+        /// </summary>
+        public const string Write = "wr";
+    }//VerbAliasPrefixes
+
+    /// <summary>
     /// Class for Verbs and Groups
     /// </summary>
     public class VerbInfo
@@ -605,9 +1617,25 @@ namespace System.Management.Automation
         }
 
         /// <summary>
+        /// Alias Prefix
+        /// </summary>
+        public string AliasPrefix
+        {
+            get;set;
+        }
+
+        /// <summary>
         /// Group Name
         /// </summary>
         public string Group
+        {
+            get;set;
+        }
+
+        /// <summary>
+        /// Description
+        /// </summary>
+        public string Description
         {
             get;set;
         }
