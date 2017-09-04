@@ -1,7 +1,5 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
-  <Import Project="..\..\PowerShell.Common.props"/>
-
+﻿<Project Sdk="Microsoft.NET.Sdk" ToolsVersion="15.0">
+  <Import Project="..\..\PowerShell.Common.props" />
   <PropertyGroup>
     <Description>PowerShell Core on Windows top-level project</Description>
     <AssemblyName>powershell</AssemblyName>
@@ -55,5 +53,7 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'CodeCoverage' ">
     <DebugType>full</DebugType>
   </PropertyGroup>
-
+  <PropertyGroup>
+    <RootNamespace>Microsoft.PowerShell</RootNamespace>
+  </PropertyGroup>
 </Project>
