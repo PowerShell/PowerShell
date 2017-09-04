@@ -108,8 +108,8 @@ Describe "Split Operator" -Tags CI {
     Context "Binary split operator options" {
         BeforeAll {
             $testText = "a12a`nb34b`nc56c`nd78d"
-            # Add '#' - now second line do not start with 'b'.
-            $testText2 = "a12a`n#b34b`nc56c`nd78d"
+            # Add '%' - now second line doesn't start with 'b'.
+            $testText2 = "a12a`n%b34b`nc56c`nd78d"
         }
 
         It "Binary split operator has no Singleline and no Multiline by default" {
@@ -130,7 +130,7 @@ Describe "Split Operator" -Tags CI {
 
             $res = $testText2 -split 'b.+c', 0, 'Singleline'
             $res.count | Should Be 2
-            $res[0] | Should Be "a12a`n#"
+            $res[0] | Should Be "a12a`n%"
             $res[1] | Should Be "`nd78d"
         }
 
@@ -149,7 +149,7 @@ Describe "Split Operator" -Tags CI {
 
             $res = $testText2 -split 'b.+c', 0, 'Singleline,Multiline'
             $res.count | Should Be 2
-            $res[0] | Should Be "a12a`n#"
+            $res[0] | Should Be "a12a`n%"
             $res[1] | Should Be "`nd78d"
 
             $res = $testText -split '^b.+c', 0, 'Singleline,Multiline'
