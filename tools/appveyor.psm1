@@ -457,7 +457,7 @@ function Invoke-AppveyorFinish
         {
             $previewVersion = (git describe --abbrev=0).Split('-')
             $previewPrefix = $previewVersion[0]
-            $previewLabel = $previewVersion[1].Replace('.','')
+            $previewLabel = $previewVersion[1]
 
             if(Test-DailyBuild)
             {
