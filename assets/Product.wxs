@@ -61,7 +61,7 @@
     <!--We need to show EULA, and provide option to customize download location-->        
     <Property Id="WIXUI_INSTALLDIR" Value="INSTALLFOLDER" />
 
-    <!-- Prerequisite check for Windows Universal C time -->
+    <!-- Prerequisite check for Windows Universal C runtime -->
     <Property Id="UCRTINSTALLED" Secure="yes">
       <DirectorySearch Id="Windows_System32_search1" Path="[WindowsFolder]System32" Depth="0">
         <FileSearch Name="ucrtbase.dll"/>
