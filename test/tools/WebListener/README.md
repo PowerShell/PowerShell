@@ -1,6 +1,6 @@
 # WebListener App
 
-ASP.NET Core 2.0 app for testing HTTP and HTTPS Requests. The default page will return a list of available tests.
+ASP.NET Core 2.0 app for testing HTTP and HTTPS Requests.
 
 # Run with `dotnet`
 
@@ -29,6 +29,10 @@ $Listener = Start-WebListener -HttpPort 8083 -HttpsPort 8084
 ```
 
 # Tests
+
+## / or /Home/
+
+Returns a static HTML page containing links and descriptions of the available tests in WebListener.
 
 ## /Cert/
 

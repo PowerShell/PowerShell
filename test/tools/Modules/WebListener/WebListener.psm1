@@ -115,6 +115,7 @@ function Get-WebListenerUrl {
         [ValidateSet(
             'Cert',
             'Get',
+            'Home',
             '/'
         )]
         [String]$Test
