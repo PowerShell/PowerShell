@@ -34,12 +34,7 @@ Describe "Get-Date DRT Unit Tests" -Tags "CI" {
     }
 
     It "using -uformat 'StTuUVwWxXyYZ' produces the correct output" {
-        Get-date -Date 1/1/0030 -uformat %S%T%u%U%V%w%W%x%X%y%Y%% | Should be "0000:00:0020532001/01/3000:00:00300030%"
-    }
-
-    It "using -uformat 'V' produces correct ISO-8601 week number" {
-        Get-Date -Date 2017-01-01 -UFormat "%V" | Should Be 52
-        Get-Date -Date 2017-01-08 -UFormat "%V" | Should Be 1
+        Get-date -Date 1/1/0030 -uformat %S%T%u%U%V%w%W%x%X%y%Y%% | Should be "0000:00:002012001/01/3000:00:00300030%"
     }
 
     It "Get-date works with pipeline input" {

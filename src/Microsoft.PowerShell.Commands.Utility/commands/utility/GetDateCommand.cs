@@ -459,8 +459,7 @@ namespace Microsoft.PowerShell.Commands
                             break;
 
                         case 'V':
-                            GregorianCalendar calendar = new GregorianCalendar();
-                            sb.Append(calendar.GetWeekOfYear(dateTime, CalendarWeekRule.FirstFullWeek, DayOfWeek.Monday));
+                            sb.Append((dateTime.DayOfYear / 7) + 1);
                             break;
 
                         case 'G':
