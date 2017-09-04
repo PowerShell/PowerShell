@@ -32,7 +32,7 @@ $Listener = Start-WebListener -HttpPort 8083 -HttpsPort 8084
 
 ## / or /Home/
 
-Returns a static HTML page containing links and descriptions of the available tests in WebListener.
+Returns a static HTML page containing links and descriptions of the available tests in WebListener. This can be used as a default or general test where no specific test functionality or return data is required.
 
 ## /Cert/
 
