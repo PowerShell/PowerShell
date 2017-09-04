@@ -17,12 +17,12 @@ namespace mvc.Controllers
             Hashtable args = new Hashtable();
             foreach (var key in Request.Query.Keys)
             {
-                args.Add(key, String.Join(" ,", Request.Query[key]));
+                args.Add(key, String.Join(Constants.HeaderSeparator, Request.Query[key]));
             }
             Hashtable headers = new Hashtable();
             foreach (var key in Request.Headers.Keys)
             {
-                headers.Add(key, String.Join(" ,", Request.Headers[key]));
+                headers.Add(key, String.Join(Constants.HeaderSeparator, Request.Headers[key]));
             }
             Hashtable output = new Hashtable
             {
