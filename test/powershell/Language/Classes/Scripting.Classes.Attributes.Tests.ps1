@@ -394,6 +394,10 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
             Get-TestValidateSetPS4 -Param1 "TestString1" -ErrorAction SilentlyContinue | Should BeExactly "TestString1"
         }
 
+        It 'Get the appropriate error message' {
+            {Get-TestValidateSetPS4 -Param1 "TestStringWrong" -ErrorAction Stop} | ShouldBeErrorId "ParameterArgumentValidationError,Get-TestValidateSetPS4"
+        }
+
         It 'Empty dynamically generated set throws in PowerShell script' {
             $exc = {
                 Get-TestValidateSetPS5 -Param1 "TestString1" -ErrorAction Stop
@@ -476,6 +480,5 @@ Describe 'ValidateSet support a dynamically generated set' -Tag "CI" {
             Start-Sleep 3
             Get-TestValidateSetPS5 -Param1 "TestString2" -ErrorAction SilentlyContinue | Should BeExactly "TestString2"
         }
-
     }
 }
