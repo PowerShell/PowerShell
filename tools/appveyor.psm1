@@ -451,20 +451,20 @@ function Invoke-AppveyorFinish
 
         if ($env:APPVEYOR_REPO_TAG_NAME)
         {
-            $preReleaseVersion = "v$($env:APPVEYOR_REPO_TAG_NAME)"
+            $preReleaseVersion = $env:APPVEYOR_REPO_TAG_NAME
         }
         else
         {
             $previewVersion = (git describe --abbrev=0).Split('-')
             $previewPrefix = $previewVersion[0]
-            $previewLabel = $previewVersion[1]
+            $previewLabel = $previewVersion[1].replace('.','')
 
             if(Test-DailyBuild)
             {
-                $previewLabel= "daily-{0}" -f $previewLabel
+                $previewLabel= "daily{0}" -f $previewLabel
             }
 
-            $preReleaseVersion = "$previewPrefix-$previewLabel-$($env:APPVEYOR_BUILD_NUMBER.Replace('.','-'))"
+            $preReleaseVersion = "$previewPrefix-$previewLabel.$env:APPVEYOR_BUILD_NUMBER"
         }
 
         # only publish to nuget feed if it is a daily build and tests passed

@@ -51,6 +51,8 @@ function Sync-PSTags
 # Gets the latest tag for the current branch
 function Get-PSLatestTag
 {
+    [CmdletBinding()]
+    param()
     # This function won't always return the correct value unless tags have been sync'ed
     # So, Write a warning to run Sync-PSTags
     if(!$tagsUpToDate)
@@ -63,6 +65,7 @@ function Get-PSLatestTag
 
 function Get-PSVersion
 {
+    [CmdletBinding()]
     param(
         [switch]
         $OmitCommitId
@@ -79,6 +82,8 @@ function Get-PSVersion
 
 function Get-PSCommitId
 {
+    [CmdletBinding()]
+    param()
     # This function won't always return the correct value unless tags have been sync'ed
     # So, Write a warning to run Sync-PSTags
     if(!$tagsUpToDate)
@@ -339,7 +344,7 @@ function Start-PSBuild {
     $gitCommitId = $ReleaseTag
     if (-not $gitCommitId) {
         # if ReleaseTag is not specified, use 'git describe' to get the commit id
-        $gitCommitId = Get-PSCommitId
+        $gitCommitId = Get-PSCommitId -WarningAction SilentlyContinue
     }
     $gitCommitId > "$psscriptroot/powershell.version"
 
@@ -417,8 +422,8 @@ Fix steps:
     }
 
     if ($ReleaseTag) {
-        $ReleaseTag1 = $ReleaseTag -Replace '^v'
-        $Arguments += "/property:ReleaseTag=$ReleaseTag1"
+        $ReleaseTagToUse = $ReleaseTag -Replace '^v'
+        $Arguments += "/property:ReleaseTag=$ReleaseTagToUse"
     }
 
     # handle Restore
@@ -1336,8 +1341,8 @@ function Publish-NuGetFeed
     ## We update 'project.assets.json' files with new version tag value by 'GetPSCoreVersionFromGit' target.
     $TopProject = (New-PSOptions).Top
     if ($ReleaseTag) {
-        $ReleaseTag1 = $ReleaseTag -Replace '^v'
-        dotnet restore $TopProject "/property:ReleaseTag=$ReleaseTag1"
+        $ReleaseTagToUse = $ReleaseTag -Replace '^v'
+        dotnet restore $TopProject "/property:ReleaseTag=$ReleaseTagToUse"
     } else {
         dotnet restore $TopProject
     }
@@ -1358,7 +1363,7 @@ function Publish-NuGetFeed
 'Microsoft.PowerShell.SDK'
         ) | ForEach-Object {
             if ($ReleaseTag) {
-                dotnet pack "src/$_" --output $OutputPath "/property:IncludeSymbols=true;ReleaseTag=$ReleaseTag1"
+                dotnet pack "src/$_" --output $OutputPath "/property:IncludeSymbols=true;ReleaseTag=$ReleaseTagToUse"
             } else {
                 dotnet pack "src/$_" --output $OutputPath
             }
